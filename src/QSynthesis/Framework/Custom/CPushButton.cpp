@@ -20,10 +20,11 @@ CPushButton::CPushButton(const QIcon &icon, const QString &text, QWidget *parent
 CPushButton::~CPushButton() {
 }
 
-void CPushButton::init(){
+void CPushButton::init() {
 #ifdef QS_NO_TAB_FOCUS
     QS_REMOVE_TAB_FOCUS(this)
 #endif
+    m_autoCheck = true;
 }
 
 QSvgUri CPushButton::iconUp() const {
@@ -102,6 +103,14 @@ void CPushButton::setIconDisabled(const QSvgUri &iconDisabled) {
     emit iconChanged();
 }
 
+bool CPushButton::autoCheck() const {
+    return m_autoCheck;
+}
+
+void CPushButton::setAutoCheck(bool autoCheck) {
+    m_autoCheck = autoCheck;
+}
+
 bool CPushButton::event(QEvent *event) {
     switch (event->type()) {
     case QEvent::MouseButtonPress:
@@ -119,8 +128,10 @@ bool CPushButton::event(QEvent *event) {
 }
 
 void CPushButton::nextCheckState() {
-    QPushButton::nextCheckState();
-    reloadIcon();
+    if (m_autoCheck) {
+        QPushButton::nextCheckState();
+        reloadIcon();
+    }
 }
 
 void CPushButton::checkStateSet() {

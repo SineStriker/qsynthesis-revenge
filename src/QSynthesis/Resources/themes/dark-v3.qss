@@ -8,6 +8,10 @@ QWidget {
 
 /* Window */
 
+MainWindow {
+    background-color: #1E1E1E;
+}
+
 CWindowBarV2 {
     background-color: #3C3C3C;
     qproperty-titleColor: #ECECEC;
@@ -149,4 +153,96 @@ CMenu::right-arrow {
     width: 20px;
     height: 20px;
     padding: 0 5px;
+}
+
+
+/* QScrollableTabWidget */
+
+QScrollableTabBar {
+    background-color: #252526;
+}
+
+QScrollableTabBarTab {
+    qproperty-icon: url(":/svg/image/folder-icon.svg");
+    padding: 9px 9px;
+    border-left: 1px solid #252526;
+    border-right: 1px solid #252526;
+    background-color: #2D2D2D;
+}
+
+QScrollableTabBarTab:hover {
+    background-color: #333333;
+}
+
+QScrollableTabBarTab[selected=true] {
+    color: white;
+    background-color: #1E1E1E;
+}
+
+QScrollableTabBarTab>QLabel#text-label {
+    padding: 0 4px;
+    color: #A0A0A0;
+}
+
+QScrollableTabBarTab>QLabel#text-label[selected=true] {
+    color: white;
+}
+
+QScrollableTabBarTab>CPushButton#icon-button {
+    padding: 0;
+    background-color: transparent;
+}
+
+QScrollableTabBarTab>CPushButton#close-button {
+    qproperty-iconUp: svg(":/svg/tab-button/close-line.svg", #808080);
+    qproperty-iconUpChecked: svg(":/svg/tab-button/close-line.svg", #D4D4D4);
+    qproperty-iconSize: 11px 11px;
+    padding: 4px;
+    background-color: transparent;
+    border-radius: 3px;
+}
+
+QScrollableTabBarTab>CPushButton#close-button:hover {
+    background-color: rgba(255, 255, 255, 10%);
+}
+
+QScrollableTabBarTab>CPushButton#close-button:pressed {
+    background-color: rgba(255, 255, 255, 7.5%);
+}
+
+QScrollableTabBar>QScrollBar#scroll-bar {
+    background: transparent;
+    margin: 0;
+    min-height: 4px;
+    max-height: 4px;
+}
+
+QScrollableTabBar>QScrollBar#scroll-bar::handle {
+    background: rgba(255, 255, 255, 30%);
+    border: 0px;
+    min-width: 150px;
+}
+
+QScrollableTabBar>QScrollBar#scroll-bar::handle:hover {
+    background: rgba(255, 255, 255, 40%);
+}
+
+QScrollableTabBar>QScrollBar#scroll-bar::sub-line,
+QScrollableTabBar>QScrollBar#scroll-bar::add-line {
+    background: transparent;
+    width: 0px;
+}
+
+QScrollableTabBar>QScrollBar#scroll-bar::sub-page,
+QScrollableTabBar>QScrollBar#scroll-bar::add-page,
+QScrollableTabBar>QScrollBar#scroll-bar::up-arrow,
+QScrollableTabBar>QScrollBar#scroll-bar::down-arrow {
+    background: transparent;
+}
+
+
+/* QCommandPalette */
+
+QCommandPaletteItemWidget>QLabel[type=label] {
+    padding: 4px;
 }

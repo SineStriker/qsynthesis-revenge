@@ -7,6 +7,8 @@
 #include <QVariant>
 #include <QtGlobal>
 
+#include "CPushButton.h"
+
 class QScrollableTabBarTab;
 
 class QScrollableTabBarTabPrivate {
@@ -21,9 +23,9 @@ public:
 
     QHBoxLayout *layout;
 
-    QPushButton *iconButton;
+    CPushButton *iconButton;
     QLabel *textLabel;
-    QPushButton *closeButton;
+    CPushButton *closeButton;
 
     QVariant data;
 };

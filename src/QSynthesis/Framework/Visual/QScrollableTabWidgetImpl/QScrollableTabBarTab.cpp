@@ -69,8 +69,15 @@ bool QScrollableTabBarTab::selected() const {
 }
 
 void QScrollableTabBarTab::setSelected(bool selected) {
+    Q_D(QScrollableTabBarTab);
+
     setProperty("selected", selected);
     style()->polish(this);
+
+    d->textLabel->setProperty("selected", selected);
+    d->textLabel->style()->polish(d->textLabel);
+
+    d->closeButton->setChecked(selected);
 }
 
 QAbstractButton *QScrollableTabBarTab::closeButton() const {
@@ -84,4 +91,6 @@ QScrollableTabBarTab::QScrollableTabBarTab(QScrollableTabBarTabPrivate &d, QWidg
     d.init();
 
     setProperty("selected", false);
+    d.textLabel->setProperty("selected", false);
+    d.closeButton->setChecked(false);
 }

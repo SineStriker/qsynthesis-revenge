@@ -45,6 +45,9 @@ public:
     QSvgUri iconDisabled() const;
     void setIconDisabled(const QSvgUri &iconDisabled);
 
+    bool autoCheck() const;
+    void setAutoCheck(bool autoCheck);
+
 protected:
     QSvgUri m_svgUris[7];
 
@@ -55,6 +58,8 @@ protected:
     QIcon m_iconOverChecked;
     QIcon m_iconDownChecked;
     QIcon m_iconDisabled;
+
+    bool m_autoCheck;
 
     bool event(QEvent *event) override;
 

@@ -7,6 +7,7 @@ CToolButton::CToolButton(QWidget *parent) : QToolButton(parent) {
 #ifdef QS_NO_TAB_FOCUS
     QS_REMOVE_TAB_FOCUS(this)
 #endif
+    m_autoCheck = true;
 }
 
 CToolButton::~CToolButton() {
@@ -88,6 +89,14 @@ void CToolButton::setIconDisabled(const QSvgUri &iconDisabled) {
     emit iconChanged();
 }
 
+bool CToolButton::autoCheck() const {
+    return m_autoCheck;
+}
+
+void CToolButton::setAutoCheck(bool autoCheck) {
+    m_autoCheck = autoCheck;
+}
+
 bool CToolButton::event(QEvent *event) {
     switch (event->type()) {
     case QEvent::MouseButtonPress:
@@ -105,8 +114,10 @@ bool CToolButton::event(QEvent *event) {
 }
 
 void CToolButton::nextCheckState() {
-    QToolButton::nextCheckState();
-    reloadIcon();
+    if (m_autoCheck) {
+        QToolButton::nextCheckState();
+        reloadIcon();
+    }
 }
 
 void CToolButton::checkStateSet() {

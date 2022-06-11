@@ -154,6 +154,7 @@ add_files(INCLUDE_PATHS
     Framework/Metatypes
     Framework/Metatypes/Core
     Framework/Metatypes/User
+    Framework/Visual
     Frontend
     Frontend/Window
     LowLevel

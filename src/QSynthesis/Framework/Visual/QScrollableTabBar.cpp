@@ -318,18 +318,17 @@ bool QScrollableTabBar::eventFilter(QObject *obj, QEvent *event) {
             break;
         }
         case QEvent::MouseMove: {
-            d->draggedIndex = d->entityLayout->indexOf(tab);
-
-            // Release Mouse
             QMouseEvent *e = static_cast<QMouseEvent *>(event);
-            {
+            if (e->buttons() & Qt::LeftButton) {
+                // Release Mouse
                 QMouseEvent newEvent(QEvent::MouseButtonRelease, e->pos(), Qt::LeftButton,
                                      Qt::NoButton, Qt::NoModifier);
                 QApplication::sendEvent(this, &newEvent);
+                // Start Drag
+                d->draggedIndex = d->entityLayout->indexOf(tab);
+                d->startDrag(tab);
+                d->draggedIndex = -1;
             }
-            d->startDrag(tab);
-
-            d->draggedIndex = -1;
             break;
         }
         case QEvent::MouseButtonRelease: {

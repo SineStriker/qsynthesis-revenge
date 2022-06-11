@@ -126,9 +126,6 @@
         <file>svg/voice-dir-panel/arrow-right-s-line.svg</file>
         <file>svg/voice-dir-panel/light/arrow-down-s-line.svg</file>
         <file>svg/voice-dir-panel/light/arrow-right-s-line.svg</file>
-        <file>themes/dark-v2.qss</file>
-        <file>themes/light-v2.qss</file>
-        <file>themes/multi-color-v2.qss</file>
         <file>themes/dark-v3.qss</file>
     </qresource>
 </RCC>
