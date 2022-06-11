@@ -17,7 +17,6 @@
         <file>svg/app/logo-white.svg</file>
         <file>svg/menu/arrow-right-s-line.svg</file>
         <file>svg/menu/checked-line.svg</file>
-        <file>translations/qsynthesis_cn.qm</file>
         <file>svg/dialog/close.svg</file>
         <file>svg/tab-icon/database-solid.svg</file>
         <file>svg/tab-icon/file-alt-regular.svg</file>
@@ -111,9 +110,6 @@
         <file>svg/tuning-panel-bar/quote-right-solid.svg</file>
         <file>svg/tuning-panel-bar/sliders-solid.svg</file>
         <file>svg/tuning-tool-bar/wave-square-solid.svg</file>
-        <file>translations/qsynthesis_cht.qm</file>
-        <file>translations/qsynthesis_en.qm</file>
-        <file>translations/qsynthesis_jp.qm</file>
         <file>svg/voice-panel-bar/folder-solid.svg</file>
         <file>svg/voice-panel-bar/headphones-simple-solid.svg</file>
         <file>svg/voice-panel-bar/magnifying-glass-solid.svg</file>
