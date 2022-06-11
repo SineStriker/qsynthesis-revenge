@@ -4,23 +4,20 @@
 
 QSynthesis is an open-source software and a remake of vocal synthesis UTAU to provide UTAU community with user-friendly experience.
 
-QSynthesis gains its name from Qt, a popular C++ GUI framework, and a part of the phrase "Vocal Synthesis".
-
-This repository is the version of the second iteration.
-
+The project is in its second iteration.
 
 ## Compatibility
 
 Compatible for all UTAU project files and voice database, as well as resamplers and wavtools which meet UTAU standards.
 
-All 64bit UTAU plugins for Windows are supported on QSynthesis that inherits UTAU's plug-in interface.
+QSynthesis inherits UTAU's plug-in interface so that most original UTAU plugins for Windows are supported.
 
 QSynthesis is able to run on **Windows, MacOS and Linux**.
 
 
 ## Build from source
 
-The whole QSynthesis source code is written in C++ with Qt library. In order to facilitate code reuse and reduce compile trouble, the project uses as few other static libraries as possible.
+The whole QSynthesis source code is written in C++ with Qt library. In order to facilitate code reuse and reduce compilation troubles, the project uses as few other libraries as possible.
 
 ### Requirements
 
