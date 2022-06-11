@@ -1,5 +1,5 @@
 #include "QCommandPalette_p.h"
-#include "QCommandPalette.h"
+#include "../QCommandPalette.h"
 
 QCommandPalettePrivate::QCommandPalettePrivate() {
 }

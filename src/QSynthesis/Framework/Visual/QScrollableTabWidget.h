@@ -3,7 +3,8 @@
 
 #include <QWidget>
 
-class QScrollableTabBar;
+#include "QScrollableTabWidgetImpl/QScrollableTabBar.h"
+
 class QScrollableTabWidgetPrivate;
 
 class QScrollableTabWidget : public QWidget {

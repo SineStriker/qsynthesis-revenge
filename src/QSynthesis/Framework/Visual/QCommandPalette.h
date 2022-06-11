@@ -4,8 +4,9 @@
 #include <QListWidgetItem>
 #include <QWidget>
 
+#include "QCommandPaletteImpl/QCommandPaletteItem.h"
+
 class QCommandPalettePrivate;
-class QCommandPaletteItemWidget;
 
 class QCommandPalette : public QWidget {
     Q_OBJECT

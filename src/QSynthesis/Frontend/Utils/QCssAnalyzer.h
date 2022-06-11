@@ -4,6 +4,9 @@
 #include <QFile>
 
 class QCssAnalyzer : public QFile {
+#ifndef QT_NO_QOBJECT
+    Q_OBJECT
+#endif
 public:
     QCssAnalyzer();
     QCssAnalyzer(const QString &filename);

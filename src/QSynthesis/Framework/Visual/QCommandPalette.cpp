@@ -1,7 +1,6 @@
 #include "QCommandPalette.h"
-#include "QCommandPalette_p.h"
-
-#include "QCommandPaletteItem.h"
+#include "QCommandPaletteImpl/QCommandPaletteItem.h"
+#include "QCommandPaletteImpl/QCommandPalette_p.h"
 
 #include <QApplication>
 #include <QEvent>

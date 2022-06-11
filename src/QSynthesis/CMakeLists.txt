@@ -71,6 +71,7 @@ endmacro()
 add_qt_module(QT_LIBS Widgets)
 add_qt_module(QT_LIBS Svg)
 add_qt_module(QT_LIBS Network)
+add_qt_module(QT_LIBS Multimedia)
 
 include_qt_private(Gui)
 include_qt_private(Widgets)
