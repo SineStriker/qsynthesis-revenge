@@ -41,6 +41,8 @@ CWindowBarV2::CWindowBarV2(QMenuBar *menuBar, QWidget *parent) : CBaseTitleBarV2
     setCloseButton(m_closeButton);
     setMenuBar(m_menuBar);
 
+    reloadStrings();
+
     //    Q_TR_NOTIFY(CWindowBarV2)
 }
 
@@ -71,7 +73,7 @@ QPixelSize CWindowBarV2::titleMargin() const {
 void CWindowBarV2::setTitleMargin(const QPixelSize &titleMargin) {
     m_titleMargin = titleMargin;
     update();
-    emit titleMarginChanged();
+    emit styleChanged();
 }
 
 void CWindowBarV2::drawCentralTitle(QPainter &painter) {

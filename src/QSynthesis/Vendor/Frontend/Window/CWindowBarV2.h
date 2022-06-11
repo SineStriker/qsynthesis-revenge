@@ -15,7 +15,7 @@
 class CWindowBarV2 : public CBaseTitleBarV2 {
     Q_OBJECT
     Q_PROPERTY(
-        QPixelSize titleMargin READ titleMargin WRITE setTitleMargin NOTIFY titleMarginChanged)
+        QPixelSize titleMargin READ titleMargin WRITE setTitleMargin NOTIFY styleChanged)
 public:
     explicit CWindowBarV2(QMenuBar *menuBar, QWidget *parent = nullptr);
     ~CWindowBarV2();
@@ -50,6 +50,6 @@ signals:
     void maxRequested();
     void closeRequested();
 
-    void titleMarginChanged();
+    void styleChanged();
 };
 #endif // CWINDOWBARV2_H

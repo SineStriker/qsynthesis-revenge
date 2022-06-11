@@ -8,6 +8,7 @@ QWidget {
 
 /* Window */
 
+TestWindow,
 MainWindow {
     background-color: #1E1E1E;
 }
@@ -245,4 +246,73 @@ QScrollableTabBar>QScrollBar#scroll-bar::down-arrow {
 
 QCommandPaletteItemWidget>QLabel[type=label] {
     padding: 4px;
+}
+
+
+/* CCoupleTabFrame */
+
+CCoupleTabFrame {
+    background-color: transparent;
+}
+
+CCoupleTabBar {
+    border: 1px solid transparent;
+}
+
+CCoupleTabDoubleBar {
+    border: 1px solid transparent;
+}
+
+CCoupleTabDoubleBar[highlight=false] {
+    background-color: transparent;
+}
+
+CCoupleTabDoubleBar[highlight=true] {
+    background-color: #2F2F2F;
+}
+
+CCoupleTabBarCard {
+    color: #CCCCCC;
+    background-color: transparent;
+    border: 1px solid transparent;
+    padding: 4px 8px;
+    qproperty-iconSize: 16px 16px;
+    qproperty-spaceRatio: 0.25;
+}
+
+CCoupleTabBarCard:checked {
+    color: white;
+    background-color: #2F2F2F;
+}
+
+CCoupleTabBarCard:!checked:hover {
+    background-color: #292929;
+}
+
+CCoupleTabSplitter:handle {
+    background-color: transparent;
+}
+
+CCoupleTabSplitter:handle:horizontal {
+    width: 0;
+}
+
+CCoupleTabSplitter:handle:vertical {
+    height: 0;
+}
+
+CCoupleTabContainer:handle {
+    background-color: transparent;
+}
+
+CCoupleTabContainer:handle:horizontal {
+    width: 0;
+}
+
+CCoupleTabContainer:handle:vertical {
+    height: 0;
+}
+
+CCoupleTabBarCard {
+    qproperty-iconUp: svg(":/svg/app/logo-light.svg", white);
 }

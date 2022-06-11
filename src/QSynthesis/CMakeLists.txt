@@ -91,19 +91,20 @@ endif ()
 # Add fixed files
 add_recursively(PROJECT_SOURCES "${MY_SRC_DIR}/Framework/*.cpp" "${MY_SRC_DIR}/Framework/*.cc")
 add_recursively(PROJECT_HEADERS "${MY_SRC_DIR}/Framework/*.hpp" "${MY_SRC_DIR}/Framework/*.h")
-add_recursively(PROJECT_SOURCES "${MY_SRC_DIR}/Frontend/*.cpp" "${MY_SRC_DIR}/Frontend/*.cc")
-add_recursively(PROJECT_HEADERS "${MY_SRC_DIR}/Frontend/*.hpp" "${MY_SRC_DIR}/Frontend/*.h")
-add_recursively(PROJECT_SOURCES "${MY_SRC_DIR}/LowLevel/*.cpp" "${MY_SRC_DIR}/LowLevel/*.cc")
-add_recursively(PROJECT_HEADERS "${MY_SRC_DIR}/LowLevel/*.hpp" "${MY_SRC_DIR}/LowLevel/*.h")
+add_recursively(PROJECT_SOURCES "${MY_SRC_DIR}/Meta/*.cpp" "${MY_SRC_DIR}/Meta/*.cc")
+add_recursively(PROJECT_HEADERS "${MY_SRC_DIR}/Meta/*.hpp" "${MY_SRC_DIR}/Meta/*.h")
+add_recursively(PROJECT_SOURCES "${MY_SRC_DIR}/Vendor/*.cpp" "${MY_SRC_DIR}/Vendor/*.cc")
+add_recursively(PROJECT_HEADERS "${MY_SRC_DIR}/Vendor/*.hpp" "${MY_SRC_DIR}/Vendor/*.h")
+add_recursively(PROJECT_SOURCES "${MY_SRC_DIR}/Staging/*.cpp" "${MY_SRC_DIR}/Staging/*.cc")
+add_recursively(PROJECT_HEADERS "${MY_SRC_DIR}/Staging/*.hpp" "${MY_SRC_DIR}/Staging/*.h")
+
 
 # Add specific files
 add_files(PROJECT_SOURCES
         main.cpp
-        MainWindow.cpp
         )
 
 add_files(PROJECT_HEADERS
-        MainWindow.h
         )
 
 # Add executable
@@ -156,10 +157,21 @@ add_files(INCLUDE_PATHS
     Framework/Metatypes/Core
     Framework/Metatypes/User
     Framework/Visual
-    Frontend
-    Frontend/Window
-    LowLevel
-    LowLevel/Utau
+    Meta
+    Staging
+    Staging/Application
+    Staging/Basic
+    Vendor/Frontend
+    Vendor/Frontend/Window
+    Vendor/Backend
+    Vendor/Backend/Basic
+    Vendor/Backend/Freq
+    Vendor/Backend/Import
+    Vendor/Backend/Project
+    Vendor/Backend/Utils
+    Vendor/Backend/VoiceBank
+    Vendor/LowLevel
+    Vendor/LowLevel/Utau
     )
 
 foreach (Path ${INCLUDE_PATHS})

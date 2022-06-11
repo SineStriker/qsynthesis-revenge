@@ -9,5 +9,7 @@ class MainWindow : public BasicWindow {
 public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
+
+    void reloadStrings();
 };
 #endif // MAINWINDOW_H

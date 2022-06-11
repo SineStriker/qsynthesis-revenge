@@ -1,27 +1,17 @@
 #include "MainWindow.h"
 #include "CMenu.h"
 
-#include "Utils/QCssAnalyzer.h"
 #include "QScrollableTabWidget.h"
+#include "Utils/QCssAnalyzer.h"
+
+#include "Managers/DataManager.h"
 
 #include <QApplication>
 #include <QDebug>
 #include <QFile>
 #include <QScreen>
 
-static void loadStyleSheet() {
-    QCssAnalyzer qss(":/themes/dark-v3.qss");
-    double ratio = qApp->primaryScreen()->logicalDotsPerInch() / 96.0;
-    qss.setRatio(0.8 * ratio);
-    if (qss.open(QIODevice::ReadOnly | QIODevice::Text)) {
-        qApp->setStyleSheet(qss.readAndApply());
-        qss.close();
-    }
-}
-
 MainWindow::MainWindow(QWidget *parent) : BasicWindow(parent) {
-    loadStyleSheet();
-
     auto bar = menuBar();
     auto menu1 = new CMenu("Menu 1");
     auto menu2 = new CMenu("Menu 2");
@@ -47,7 +37,13 @@ MainWindow::MainWindow(QWidget *parent) : BasicWindow(parent) {
     resize(1280, 720);
 
     setWindowTitle(qApp->applicationDisplayName());
+
+    Q_TR_NOTIFY(MainWindow)
 }
 
 MainWindow::~MainWindow() {
+}
+
+void MainWindow::reloadStrings() {
+    m_titleBar->reloadStrings();
 }

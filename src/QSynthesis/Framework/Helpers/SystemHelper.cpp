@@ -154,7 +154,7 @@ QString Sys::removeTailSlashes(const QString &dirname) {
 }
 
 QString Sys::appPath() {
-    return QDir::currentPath();
+    return qApp->applicationDirPath();
 }
 
 void Sys::enableScaling() {

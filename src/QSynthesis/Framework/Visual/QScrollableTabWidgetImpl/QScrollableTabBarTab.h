@@ -34,6 +34,7 @@ public:
 
 public:
     QAbstractButton *closeButton() const;
+    void setCloseButton(QAbstractButton *button);
 
 protected:
     QScrollableTabBarTab(QScrollableTabBarTabPrivate &d, QWidget *parent = nullptr);

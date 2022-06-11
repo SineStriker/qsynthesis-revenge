@@ -3,9 +3,7 @@
 
 #include <QHBoxLayout>
 #include <QLabel>
-#include <QPushButton>
 #include <QVariant>
-#include <QtGlobal>
 
 #include "CPushButton.h"
 

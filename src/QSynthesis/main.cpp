@@ -1,15 +1,12 @@
 #include "MainWindow.h"
+#include "QsApplication.h"
 
-#include "CApplication.h"
+#include "Test/TestWindow.h"
 
 int main(int argc, char *argv[]) {
-    CApplication a(argc, argv);
+    QsApplication a(argc, argv);
 
-    QFont font("Microsoft YaHei");
-    font.setStyleStrategy(QFont::PreferAntialias);
-    a.setFont(font);
-
-    MainWindow w;
+    TestWindow w;
     w.show();
 
     return a.exec();
