@@ -92,6 +92,8 @@ add_recursively(PROJECT_SOURCES "${MY_SRC_DIR}/Framework/*.cpp" "${MY_SRC_DIR}/F
 add_recursively(PROJECT_HEADERS "${MY_SRC_DIR}/Framework/*.hpp" "${MY_SRC_DIR}/Framework/*.h")
 add_recursively(PROJECT_SOURCES "${MY_SRC_DIR}/Frontend/*.cpp" "${MY_SRC_DIR}/Frontend/*.cc")
 add_recursively(PROJECT_HEADERS "${MY_SRC_DIR}/Frontend/*.hpp" "${MY_SRC_DIR}/Frontend/*.h")
+add_recursively(PROJECT_SOURCES "${MY_SRC_DIR}/LowLevel/*.cpp" "${MY_SRC_DIR}/LowLevel/*.cc")
+add_recursively(PROJECT_HEADERS "${MY_SRC_DIR}/LowLevel/*.hpp" "${MY_SRC_DIR}/LowLevel/*.h")
 
 # Add specific files
 add_files(PROJECT_SOURCES
@@ -132,11 +134,13 @@ set_target_properties(${CURRENT_PROJECT_NAME} PROPERTIES
         MACOSX_BUNDLE_SHORT_VERSION_STRING 1.0
         )
 
-# Link Qt libraries
-target_link_libraries(${CURRENT_PROJECT_NAME} PRIVATE ${QT_LIBS})
-
 # Link Custom libraries
 target_link_libraries(${CURRENT_PROJECT_NAME} PRIVATE FramelessHelper::Widgets)
+
+target_link_libraries(${CURRENT_PROJECT_NAME} PRIVATE QMidi)
+
+# Link Qt libraries
+target_link_libraries(${CURRENT_PROJECT_NAME} PRIVATE ${QT_LIBS})
 
 
 # ------------------------------ Promote code experience ------------------------------
@@ -152,6 +156,8 @@ add_files(INCLUDE_PATHS
     Framework/Metatypes/User
     Frontend
     Frontend/Window
+    LowLevel
+    LowLevel/Utau
     )
 
 foreach (Path ${INCLUDE_PATHS})

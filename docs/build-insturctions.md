@@ -34,7 +34,7 @@ Qt doesn't work well with input programs, you may need to move some shared libra
 
 ## Build from source
 
-There's no other libraries you need to compile advance.
+There's no other libraries you need to compile in advance.
 
 You can compile the source code without any further compiling preparation and it should successfully build the executable file with a few minite. 
 

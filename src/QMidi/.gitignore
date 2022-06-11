@@ -1,0 +1,10 @@
+*.user*
+*build*
+*.o
+*.exe
+*.app
+Makefile*
+.qmake.stash
+moc_*
+*.moc
+!meson.build

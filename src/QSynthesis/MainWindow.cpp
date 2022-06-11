@@ -1,22 +1,20 @@
 #include "MainWindow.h"
 #include "CMenu.h"
+#include "Utils/QCssAnalyzer.h"
 
 #include <QApplication>
 #include <QDebug>
 #include <QFile>
+#include <QScreen>
 
 static void loadStyleSheet() {
-    QFont font("Microsoft YaHei");
-    font.setStyleStrategy(QFont::PreferAntialias);
-    qApp->setFont(font);
-
-    QFile qss(":/themes/dark-v3.qss");
-    if (!qss.open(QIODevice::ReadOnly | QIODevice::Text)) {
-        return;
+    QCssAnalyzer qss(":/themes/dark-v3.qss");
+    double ratio = qApp->primaryScreen()->logicalDotsPerInch() / 96.0;
+    qss.setRatio(0.8 * ratio);
+    if (qss.open(QIODevice::ReadOnly | QIODevice::Text)) {
+        qApp->setStyleSheet(qss.readAndApply());
+        qss.close();
     }
-
-    QString data = qss.readAll();
-    qApp->setStyleSheet(data);
 }
 
 MainWindow::MainWindow(QWidget *parent) : BasicWindow(parent) {
@@ -31,6 +29,8 @@ MainWindow::MainWindow(QWidget *parent) : BasicWindow(parent) {
 
     bar->addMenu(menu1);
     bar->addMenu(menu2);
+
+    resize(1280, 720);
 }
 
 MainWindow::~MainWindow() {

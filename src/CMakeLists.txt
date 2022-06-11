@@ -10,6 +10,10 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(APP_DEPLOY OFF)
 set(APP_VERSION 0.2.12)
 
+# Set Directories
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/bin)
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/lib)
+
 # Determining Current System
 set(SYS_WIN OFF)
 set(SYS_MAC OFF)
@@ -30,6 +34,8 @@ endif ()
 
 # Libraries
 add_subdirectory(FramelessHelper)
+
+add_subdirectory(QMidi)
 
 # Application
 add_subdirectory(QSynthesis)

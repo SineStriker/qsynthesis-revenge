@@ -85,12 +85,12 @@ For detailed information, see [Synthesizing Tools](./docs/synthesizing-tools.md)
 
 #### FsNotifier
 + Source: https://github.com/SineStriker/fsnotifier
-+ License: Apache-2.0 License
++ License: Apache 2.0 License
 
 #### QScrollableTabWidget
 
 + Source: https://github.com/SineStriker/QScrollableTabWidget
-+ License: Apache-2.0 License
++ License: Apache 2.0 License
 
 ## UTAU FRQ References
 
