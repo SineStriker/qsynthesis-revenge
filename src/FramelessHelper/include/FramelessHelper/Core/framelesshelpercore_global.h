@@ -186,7 +186,7 @@ namespace Global
 
 Q_NAMESPACE_EXPORT(FRAMELESSHELPER_CORE_API)
 
-[[maybe_unused]] static constexpr const int kDefaultResizeBorderThickness = 6;
+[[maybe_unused]] static constexpr const int kDefaultResizeBorderThickness = 8;
 [[maybe_unused]] static constexpr const int kDefaultCaptionHeight = 23;
 [[maybe_unused]] static constexpr const int kDefaultTitleBarHeight = 32;
 [[maybe_unused]] static constexpr const int kDefaultExtendedTitleBarHeight = 48;

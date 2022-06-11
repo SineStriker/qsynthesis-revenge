@@ -1,5 +1,5 @@
 #include "QScrollableTabBar_p.h"
-#include "QScrollableTabBar.h"
+#include "../QScrollableTabBar.h"
 
 #include <QApplication>
 #include <QDateTime>

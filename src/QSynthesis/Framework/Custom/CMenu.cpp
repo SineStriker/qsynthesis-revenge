@@ -1,6 +1,6 @@
 #include "CMenu.h"
+#include "CApplication.h"
 
-#include <QApplication>
 #include <QDebug>
 
 CMenu::CMenu(QWidget *parent) : QMenu(parent) {

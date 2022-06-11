@@ -1,5 +1,5 @@
 #include "QScrollableTabWidget_p.h"
-#include "QScrollableTabWidget.h"
+#include "../QScrollableTabWidget.h"
 
 QScrollableTabWidgetPrivate::QScrollableTabWidgetPrivate() {
 }

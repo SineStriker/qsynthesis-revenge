@@ -1,94 +1,108 @@
-#include "CToolButton.h"
+#include "CPushButton.h"
 #include "CApplication.h"
 
-#include <QEvent>
+#include <QDateTime>
+#include <QPaintEvent>
 
-CToolButton::CToolButton(QWidget *parent) : QToolButton(parent) {
+CPushButton::CPushButton(QWidget *parent) : QPushButton(parent) {
+    init();
+}
+
+CPushButton::CPushButton(const QString &text, QWidget *parent) : QPushButton(text, parent) {
+    init();
+}
+
+CPushButton::CPushButton(const QIcon &icon, const QString &text, QWidget *parent)
+    : QPushButton(icon, text, parent) {
+    init();
+}
+
+CPushButton::~CPushButton() {
+}
+
+void CPushButton::init(){
 #ifdef QS_NO_TAB_FOCUS
     QS_REMOVE_TAB_FOCUS(this)
 #endif
 }
 
-CToolButton::~CToolButton() {
-}
-
-QSvgUri CToolButton::iconUp() const {
+QSvgUri CPushButton::iconUp() const {
     return m_svgUris[0];
 }
 
-void CToolButton::setIconUp(const QSvgUri &iconUp) {
+void CPushButton::setIconUp(const QSvgUri &iconUp) {
     m_svgUris[0] = iconUp;
     m_iconUp = iconUp.toIcon();
     reloadIcon();
     emit iconChanged();
 }
 
-QSvgUri CToolButton::iconOver() const {
+QSvgUri CPushButton::iconOver() const {
     return m_svgUris[1];
 }
 
-void CToolButton::setIconOver(const QSvgUri &iconOver) {
+void CPushButton::setIconOver(const QSvgUri &iconOver) {
     m_svgUris[1] = iconOver;
     m_iconOver = iconOver.toIcon();
     reloadIcon();
     emit iconChanged();
 }
 
-QSvgUri CToolButton::iconDown() const {
+QSvgUri CPushButton::iconDown() const {
     return m_svgUris[2];
 }
 
-void CToolButton::setIconDown(const QSvgUri &iconDown) {
+void CPushButton::setIconDown(const QSvgUri &iconDown) {
     m_svgUris[2] = iconDown;
     m_iconDown = iconDown.toIcon();
     reloadIcon();
     emit iconChanged();
 }
-QSvgUri CToolButton::iconUpChecked() const {
+QSvgUri CPushButton::iconUpChecked() const {
     return m_svgUris[3];
 }
 
-void CToolButton::setIconUpChecked(const QSvgUri &iconUpChecked) {
+void CPushButton::setIconUpChecked(const QSvgUri &iconUpChecked) {
     m_svgUris[3] = iconUpChecked;
     m_iconUpChecked = iconUpChecked.toIcon();
     reloadIcon();
     emit iconChanged();
 }
 
-QSvgUri CToolButton::iconOverChecked() const {
+QSvgUri CPushButton::iconOverChecked() const {
     return m_svgUris[4];
 }
 
-void CToolButton::setIconOverChecked(const QSvgUri &iconOverChecked) {
+void CPushButton::setIconOverChecked(const QSvgUri &iconOverChecked) {
     m_svgUris[4] = iconOverChecked;
     m_iconOverChecked = iconOverChecked.toIcon();
     reloadIcon();
     emit iconChanged();
 }
 
-QSvgUri CToolButton::iconDownChecked() const {
+QSvgUri CPushButton::iconDownChecked() const {
     return m_svgUris[5];
 }
 
-void CToolButton::setIconDownChecked(const QSvgUri &iconDownChecked) {
+void CPushButton::setIconDownChecked(const QSvgUri &iconDownChecked) {
     m_svgUris[5] = iconDownChecked;
     m_iconDownChecked = iconDownChecked.toIcon();
     reloadIcon();
     emit iconChanged();
 }
 
-QSvgUri CToolButton::iconDisabled() const {
+QSvgUri CPushButton::iconDisabled() const {
     return m_svgUris[6];
 }
 
-void CToolButton::setIconDisabled(const QSvgUri &iconDisabled) {
+void CPushButton::setIconDisabled(const QSvgUri &iconDisabled) {
     m_svgUris[6] = iconDisabled;
     m_iconDownChecked = iconDisabled.toIcon();
     reloadIcon();
     emit iconChanged();
 }
 
-bool CToolButton::event(QEvent *event) {
+bool CPushButton::event(QEvent *event) {
     switch (event->type()) {
     case QEvent::MouseButtonPress:
     case QEvent::MouseButtonRelease:
@@ -101,20 +115,20 @@ bool CToolButton::event(QEvent *event) {
     default:
         break;
     }
-    return QToolButton::event(event);
+    return QPushButton::event(event);
 }
 
-void CToolButton::nextCheckState() {
-    QToolButton::nextCheckState();
+void CPushButton::nextCheckState() {
+    QPushButton::nextCheckState();
     reloadIcon();
 }
 
-void CToolButton::checkStateSet() {
-    QToolButton::checkStateSet();
+void CPushButton::checkStateSet() {
+    QPushButton::checkStateSet();
     reloadIcon();
 }
 
-void CToolButton::reloadIcon() {
+void CPushButton::reloadIcon() {
     if (!isEnabled() && !m_iconDisabled.isNull()) {
         setIcon(m_iconDisabled);
         return;

@@ -31,6 +31,8 @@ MainWindow::MainWindow(QWidget *parent) : BasicWindow(parent) {
     bar->addMenu(menu2);
 
     resize(1280, 720);
+
+    setWindowTitle(qApp->applicationDisplayName());
 }
 
 MainWindow::~MainWindow() {

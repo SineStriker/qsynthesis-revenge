@@ -5,7 +5,7 @@
 #include <QVBoxLayout>
 #include <QStackedWidget>
 
-#include "QScrollableTabBar.h"
+#include "../QScrollableTabBar.h"
 
 class QScrollableTabWidget;
 

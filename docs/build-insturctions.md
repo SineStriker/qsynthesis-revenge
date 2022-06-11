@@ -4,7 +4,7 @@
 
 ### Windows
 
-The Windows SDK is required since it ships the headers and the libraries required to build Windows Applications.
+Windows SDK 10.0.19044 or newer is required since it ships the headers and the libraries required to build Windows Applications.
 
 ### Mac OS
 

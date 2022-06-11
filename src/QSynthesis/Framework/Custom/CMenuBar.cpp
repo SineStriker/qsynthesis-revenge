@@ -1,8 +1,9 @@
 #include "CMenuBar.h"
+#include "CApplication.h"
 #include "CMenu.h"
+
 #include "private/qmenubar_p.h"
 
-#include <QApplication>
 #include <QDebug>
 #include <QToolButton>
 

@@ -1,6 +1,6 @@
 #include "QScrollableTabWidget.h"
-#include "QScrollableTabBar_p.h"
-#include "QScrollableTabWidget_p.h"
+#include "QScrollableTabWidgetImpl/QScrollableTabBar_p.h"
+#include "QScrollableTabWidgetImpl/QScrollableTabWidget_p.h"
 
 #include <QApplication>
 #include <QDebug>
