@@ -1,39 +1,81 @@
-# QSynthesisRearranged
+# QSynthesis
 
-#### 介绍
-{**以下是 Gitee 平台说明，您可以替换此简介**
-Gitee 是 OSCHINA 推出的基于 Git 的代码托管平台（同时支持 SVN）。专为开发者提供稳定、高效、安全的云端软件开发协作平台
-无论是个人、团队、或是企业，都能够用 Gitee 实现代码托管、项目管理、协作开发。企业项目请看 [https://gitee.com/enterprises](https://gitee.com/enterprises)}
+## 介绍
 
-#### 软件架构
-软件架构说明
+歌声合成工具，兼容“歌声合成ツールUTAU”的所有工程文件、音源库、引擎，以及几乎所有的插件。
 
+使用Qt开发，含有部分独立的跨平台代码，支持Windows、MacOS与Linux系统。
 
-#### 安装教程
+支持English、简体中文、繁體中文、日本語。
 
-1.  xxxx
-2.  xxxx
-3.  xxxx
+支持用户自定义颜色主题，默认提供浅色、深色两个主题。
 
-#### 使用说明
+## 软件部署
 
-1.  xxxx
-2.  xxxx
-3.  xxxx
+### Windows
 
-#### 参与贡献
+从发布页面下载后，解压，将整个文件夹拷贝至您的个人目录，并手动创建桌面快捷方式即可。
+
+建议赋予管理员权限。
+
+### MacOS
+
+从发布页面下载后，解压，将整个文件夹拷贝至您的个人目录，使用“xattr -cr”对文件夹赋予权限，然后可以手动创建桌面替身。
+
+### Linux
+
+从发布页面下载后，解压，将整个文件夹拷贝至您的个人目录，使用“chmod -R +x”对文件夹赋予权限，然后执行“./QSynthesis -d”自动创建.desktop快捷方式，剪切至桌面即可。
+
+## 使用说明
+
+1. 在Windows平台，本软件是64位程序，某些32位的引擎与插件可能无法正常调用
+2.  请勿在两个进程中打开同一个音源文件夹，会有竞争问题
+
+## 依赖
+
+### Entropia File System Watcher
+
+跨平台文件系统监视器，以静态库的形式链接到本程序的可执行文件中。
+
+链接：https://github.com/SpartanJ/efsw
+
++ Windows：此仓库已准备了使用 MSVC2019 与 MinGW 8.1.0 编译的 efsw 静态库(.lib)，如果您用来编译本项目的编译器是其中之一，那么不用做任何改动；如果不是，那么请根据使用您的编译器编译此库，并修改.pro文件。
+
++ Linux64：此仓库已准备了使用 g++ 构建的 efsw 静态库(.a)。其他发行版的Linux请自行编译此库，并修改.pro文件。
+
++ MacOS：此仓库已准备了使用 Clang 64 构建的 efsw 静态库(.a)。如果使用其他编译器编译本项目，请自行编译此库，并修改.pro文件。
+
+## 源代码构建
+
+### Qt 5.15.2
+
+在您的设备上安装 Qt 5.15.2， 执行qmake可直接编译。
+
+### 运行
+
+在工作目录下创建voice、plugins、config三个目录，继续在config中创建translations、themes两个目录，即可正常运行。
+
+### 启动器
+
+在Windows与Linux平台使用额外的启动器，只调用平台API，用以设置工作目录与创建本体进程，代码已开源。
+
+## 获取引擎
+
+### Windows
+
+可用的引擎较多，直接拷贝UTAU自带的resampler.exe与wavtool.exe至QSynthesis目录并调用即可
+
+### MacOS & Linux
+
+可从以下页面获取 macres(tn_fnds) 的发布版本，已做了跨平台适配。
+
+可从以下页面获取 world4utau 的发布版本，已做了跨平台适配。
+
+可从以下页面获取 wavtool-yawu 的发布版本。
+
+## 参与贡献
 
 1.  Fork 本仓库
 2.  新建 Feat_xxx 分支
 3.  提交代码
 4.  新建 Pull Request
-
-
-#### 特技
-
-1.  使用 Readme\_XXX.md 来支持不同的语言，例如 Readme\_en.md, Readme\_zh.md
-2.  Gitee 官方博客 [blog.gitee.com](https://blog.gitee.com)
-3.  你可以 [https://gitee.com/explore](https://gitee.com/explore) 这个地址来了解 Gitee 上的优秀开源项目
-4.  [GVP](https://gitee.com/gvp) 全称是 Gitee 最有价值开源项目，是综合评定出的优秀开源项目
-5.  Gitee 官方提供的使用手册 [https://gitee.com/help](https://gitee.com/help)
-6.  Gitee 封面人物是一档用来展示 Gitee 会员风采的栏目 [https://gitee.com/gitee-stars/](https://gitee.com/gitee-stars/)
