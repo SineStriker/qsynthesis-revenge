@@ -1,5 +1,7 @@
 # ------------------------------ Basic information ------------------------------
 
+set (CURRENT_PROJECT_NAME ${PROJECT_NAME})
+
 # Include current directory
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
@@ -53,6 +55,16 @@ macro(add_files List)
     list_append_with_prefix(${List} ${MY_SRC_DIR}/ ${ARGN})
 endmacro()
 
+# Use to add files recursively
+macro(add_recursively List)
+    set(TEMP_LIST)
+    file(GLOB_RECURSE TEMP_LIST ${ARGN})
+    foreach (Item ${TEMP_LIST})
+        list(APPEND ${List} ${Item})
+    endforeach ()
+    set(TEMP_LIST)
+endmacro()
+
 
 # ------------------------------ Include/Import/Link ------------------------------
 
@@ -63,6 +75,25 @@ add_qt_module(QT_LIBS Network)
 include_qt_private(Gui)
 include_qt_private(Widgets)
 
+# Qt resources file (.qrc)
+add_files(QT_RESOURCES Resources/res.qrc)
+
+# Add resource files
+if (SYS_WIN)
+    # Add windows resource file
+    add_files(RC_FILES Resources/logo/win/res.rc)
+elseif (SYS_MAC)
+    # Add mac icon file
+    add_files(ICONS Resources/logo/mac/qsynth2.icns)
+endif ()
+
+# Add fixed files
+add_recursively(PROJECT_SOURCES "${MY_SRC_DIR}/Framework/*.cpp" "${MY_SRC_DIR}/Framework/*.cc")
+add_recursively(PROJECT_HEADERS "${MY_SRC_DIR}/Framework/*.hpp" "${MY_SRC_DIR}/Framework/*.h")
+add_recursively(PROJECT_SOURCES "${MY_SRC_DIR}/Frontend/*.cpp" "${MY_SRC_DIR}/Frontend/*.cc")
+add_recursively(PROJECT_HEADERS "${MY_SRC_DIR}/Frontend/*.hpp" "${MY_SRC_DIR}/Frontend/*.h")
+
+# Add specific files
 add_files(PROJECT_SOURCES
         main.cpp
         MainWindow.cpp
@@ -75,26 +106,26 @@ add_files(PROJECT_HEADERS
 # Add executable
 if (SYS_WIN)
     # Windows need rc files
-    add_executable(${PROJECT_NAME} ${PROJECT_SOURCES} ${PROJECT_HEADERS} ${QT_RESOURCES} ${RC_FILES})
+    add_executable(${CURRENT_PROJECT_NAME} ${PROJECT_SOURCES} ${PROJECT_HEADERS} ${QT_RESOURCES} ${RC_FILES})
 elseif (SYS_MAC)
     # Mac need icon
-    add_executable(${PROJECT_NAME} ${PROJECT_SOURCES} ${PROJECT_HEADERS} ${QT_RESOURCES} ${ICONS})
+    add_executable(${CURRENT_PROJECT_NAME} ${PROJECT_SOURCES} ${PROJECT_HEADERS} ${QT_RESOURCES} ${ICONS})
 else ()
     # Linux
-    add_executable(${PROJECT_NAME} ${PROJECT_SOURCES} ${PROJECT_HEADERS} ${QT_RESOURCES})
+    add_executable(${CURRENT_PROJECT_NAME} ${PROJECT_SOURCES} ${PROJECT_HEADERS} ${QT_RESOURCES})
 endif ()
 
 # Link OS dependent libraries
 if (SYS_WIN)
-    target_link_libraries(${PROJECT_NAME} PRIVATE dwmapi user32 shell32 advapi32 winmm)
+    target_link_libraries(${CURRENT_PROJECT_NAME} PRIVATE dwmapi user32 shell32 advapi32 winmm)
 elseif (SYS_MAC)
-    target_link_libraries(${PROJECT_NAME} PRIVATE CoreMIDI CoreFoundation CoreAudio)
+    target_link_libraries(${CURRENT_PROJECT_NAME} PRIVATE CoreMIDI CoreFoundation CoreAudio)
 else ()
-    target_link_libraries(${PROJECT_NAME} PRIVATE asound)
+    target_link_libraries(${CURRENT_PROJECT_NAME} PRIVATE asound)
 endif ()
 
 # Set Properties
-set_target_properties(${PROJECT_NAME} PROPERTIES
+set_target_properties(${CURRENT_PROJECT_NAME} PROPERTIES
         WIN32_EXECUTABLE TRUE
         MACOSX_BUNDLE TRUE
         MACOSX_BUNDLE_BUNDLE_VERSION 1.0.0.0
@@ -102,15 +133,26 @@ set_target_properties(${PROJECT_NAME} PROPERTIES
         )
 
 # Link Qt libraries
-target_link_libraries(${PROJECT_NAME} PRIVATE ${QT_LIBS})
+target_link_libraries(${CURRENT_PROJECT_NAME} PRIVATE ${QT_LIBS})
 
 # Link Custom libraries
-target_link_libraries(${PROJECT_NAME} PRIVATE FramelessHelper::Widgets)
+target_link_libraries(${CURRENT_PROJECT_NAME} PRIVATE FramelessHelper::Widgets)
 
 
 # ------------------------------ Promote code experience ------------------------------
 
 # Include directories
+
+add_files(INCLUDE_PATHS
+    Framework
+    Framework/Custom
+    Framework/Helpers
+    Framework/Metatypes
+    Framework/Metatypes/Core
+    Framework/Metatypes/User
+    Frontend
+    Frontend/Window
+    )
 
 foreach (Path ${INCLUDE_PATHS})
     include_directories(${Path})

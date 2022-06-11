@@ -1,10 +1,9 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
-#include <QMainWindow>
+#include "BasicWindow.h"
 
-class MainWindow : public QMainWindow
-{
+class MainWindow : public BasicWindow {
     Q_OBJECT
 
 public:
