@@ -1,6 +1,7 @@
 #ifndef QSCROLLABLETABWIDGET_H
 #define QSCROLLABLETABWIDGET_H
 
+#include <QAbstractButton>
 #include <QWidget>
 
 #include "QScrollableTabWidgetImpl/QScrollableTabBar.h"
@@ -50,7 +51,7 @@ public:
     void clear();
 
 signals:
-    void currentChanged(int index);
+    void currentChanged(int index, int orgIndex);
     void tabCloseRequested(int index);
     void tabBarClicked(Qt::MouseButton button, int index);
     void tabBarDoubleClicked(int index);
@@ -58,6 +59,7 @@ signals:
 protected:
     virtual void tabInserted(int index);
     virtual void tabRemoved(int index);
+    virtual void tabSelected(int index, int orgIndex);
 
     void setTabBar(QScrollableTabBar *tabBar);
 
@@ -69,8 +71,12 @@ protected:
 
     QScopedPointer<QScrollableTabWidgetPrivate> d_ptr;
 
+public:
+    QAbstractButton *closeButton(int index) const;
+    void setCloseButton(int index, QAbstractButton *button);
+
 private:
-    void _q_showTab(int index);
+    void _q_showTab(int index, int orgIndex);
     void _q_removeTab(int index);
     void _q_tabMoved(int from, int to);
 

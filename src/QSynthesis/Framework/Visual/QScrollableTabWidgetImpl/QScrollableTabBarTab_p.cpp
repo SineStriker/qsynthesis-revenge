@@ -1,6 +1,10 @@
 #include "QScrollableTabBarTab_p.h"
 #include "QScrollableTabBarTab.h"
 
+#include <QDebug>
+#include <QFontMetrics>
+#include <QPushButton>
+
 QScrollableTabBarTabPrivate::QScrollableTabBarTabPrivate() {
 }
 
@@ -15,30 +19,39 @@ void QScrollableTabBarTabPrivate::init() {
     layout->setMargin(0);
     layout->setSpacing(0);
 
-    iconButton = new CPushButton();
-    iconButton->setAttribute(Qt::WA_TransparentForMouseEvents);
-    iconButton->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-    iconButton->setObjectName("icon-button");
+    iconSize = QSize(12, 12);
+    iconMargins = QMargins(0, 0, 0, 0);
+    textMargins = QMargins(0, 0, 0, 0);
 
-    textLabel = new QLabel();
-    textLabel->setAttribute(Qt::WA_TransparentForMouseEvents);
-    textLabel->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-    textLabel->setObjectName("text-label");
+    iconTextItem = new QSpacerItem(0, 0, QSizePolicy::Fixed, QSizePolicy::Preferred);
 
-    closeButton = new CPushButton();
+    closeButton = new QPushButton();
     closeButton->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-    closeButton->setCheckable(true);
-    closeButton->setAutoCheck(false);
     closeButton->setObjectName("close-button");
 
-    layout->addWidget(iconButton);
-    layout->addWidget(textLabel);
+    layout->addItem(iconTextItem);
     layout->addWidget(closeButton);
-
-    // Empty
-    iconButton->hide();
-    textLabel->hide();
 
     q->setLayout(layout);
     q->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+}
+
+void QScrollableTabBarTabPrivate::updateIconAndText() {
+    Q_Q(QScrollableTabBarTab);
+
+    QFontMetrics font(q->font());
+    QSize fontSize(font.horizontalAdvance(text), font.height());
+
+    int w =
+        (icon.isNull() ? 0 : (iconSize.width() + iconMargins.left() + iconMargins.right())) +
+        (text.isEmpty() ? 0 : (fontSize.width() + textMargins.left() + textMargins.right() * 2));
+    int h =
+        qMax(icon.isNull() ? 0 : (iconSize.height() + iconMargins.top() + iconMargins.bottom()),
+             text.isEmpty() ? 0 : (fontSize.height() + textMargins.top() + textMargins.bottom()));
+
+    QSizePolicy policy = iconTextItem->sizePolicy();
+    iconTextItem->changeSize(w, h, policy.horizontalPolicy(), policy.verticalPolicy());
+    layout->invalidate();
+
+    q->update();
 }

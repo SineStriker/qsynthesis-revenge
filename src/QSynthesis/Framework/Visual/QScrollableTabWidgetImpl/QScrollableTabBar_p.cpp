@@ -149,10 +149,12 @@ QScrollableTabBarTab *QScrollableTabBarPrivate::tabAtIndex(int index) const {
 void QScrollableTabBarPrivate::setCurrentTab(QScrollableTabBarTab *tab) {
     Q_Q(QScrollableTabBar);
 
+    int orgIndex = -1;
     if (current) {
         if (current == tab) {
             goto out;
         }
+        orgIndex = entityLayout->indexOf(current);
         current->setSelected(false);
     }
     tab->setSelected(true);
@@ -163,7 +165,7 @@ out:
     needAutoScroll = true;
     q->updateGeometry();
 
-    emit q->currentChanged(entityLayout->indexOf(tab));
+    emit q->currentChanged(entityLayout->indexOf(tab), orgIndex);
 }
 
 void QScrollableTabBarPrivate::autoScrollToCurrent() const {

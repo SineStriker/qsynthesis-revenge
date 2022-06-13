@@ -1,6 +1,6 @@
 #include "QScrollableTabBar.h"
-#include "QScrollableTabBar_p.h"
 #include "../QScrollableTabWidget.h"
+#include "QScrollableTabBar_p.h"
 
 #include <QApplication>
 #include <QDebug>
@@ -434,6 +434,25 @@ QScrollableTabWidget *QScrollableTabBar::tabWidget() const {
 
 QScrollableTabBar *QScrollableTabBar::currentDraggedTabBar() {
     return QScrollableTabBarPrivate::draggedTabBar;
+}
+
+QAbstractButton *QScrollableTabBar::closeButton(int index) const {
+    Q_D(const QScrollableTabBar);
+    auto tab = d->tabAtIndex(index);
+    if (!tab) {
+        return nullptr;
+    }
+    return tab->closeButton();
+}
+
+void QScrollableTabBar::setCloseButton(int index, QAbstractButton *button) {
+    Q_D(QScrollableTabBar);
+    auto tab = d->tabAtIndex(index);
+    if (!tab) {
+        return;
+    }
+    tab->setCloseButton(button);
+    connect(button, &QAbstractButton::clicked, this, &QScrollableTabBar::_q_closeTab);
 }
 
 int QScrollableTabBar::currentDraggedIndex() {

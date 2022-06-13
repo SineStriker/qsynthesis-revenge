@@ -129,12 +129,14 @@ else ()
 endif ()
 
 # Set Properties
-set_target_properties(${CURRENT_PROJECT_NAME} PROPERTIES
-        WIN32_EXECUTABLE TRUE
-        MACOSX_BUNDLE TRUE
-        MACOSX_BUNDLE_BUNDLE_VERSION 1.0.0.0
-        MACOSX_BUNDLE_SHORT_VERSION_STRING 1.0
-        )
+if (APP_DEPLOY)
+    set_target_properties(${CURRENT_PROJECT_NAME} PROPERTIES
+            WIN32_EXECUTABLE TRUE
+            MACOSX_BUNDLE TRUE
+            MACOSX_BUNDLE_BUNDLE_VERSION 1.0.0.0
+            MACOSX_BUNDLE_SHORT_VERSION_STRING 1.0
+            )
+endif()
 
 # Link Custom libraries
 target_link_libraries(${CURRENT_PROJECT_NAME} PRIVATE FramelessHelper::Widgets)
@@ -162,6 +164,7 @@ add_files(INCLUDE_PATHS
     Staging/Application
     Staging/Basic
     Vendor/Frontend
+    Vendor/Frontend/Utils
     Vendor/Frontend/Window
     Vendor/Backend
     Vendor/Backend/Basic

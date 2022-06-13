@@ -14,9 +14,9 @@ MainWindow {
 }
 
 CWindowBarV2 {
-    background-color: #3C3C3C;
-    qproperty-titleColor: #ECECEC;
     qproperty-titleMargin: 20px;
+    color: #ECECEC;
+    background-color: #3C3C3C;
 }
 
 CWindowBarV2>QLabel#win-title-label {
@@ -165,9 +165,13 @@ QScrollableTabBar {
 
 QScrollableTabBarTab {
     qproperty-icon: url(":/svg/image/folder-icon.svg");
+    qproperty-iconSize: 20px 20px;
+    qproperty-iconMargins: qmargins(4px, 4px);
+    qproperty-textMargins: qmargins(4px, 0, 4px, 0);
     padding: 9px 9px;
     border-left: 1px solid #252526;
     border-right: 1px solid #252526;
+    color: #A0A0A0;
     background-color: #2D2D2D;
 }
 
@@ -180,19 +184,8 @@ QScrollableTabBarTab[selected=true] {
     background-color: #1E1E1E;
 }
 
-QScrollableTabBarTab>QLabel#text-label {
-    padding: 0 4px;
-    color: #A0A0A0;
-}
 
-QScrollableTabBarTab>QLabel#text-label[selected=true] {
-    color: white;
-}
-
-QScrollableTabBarTab>CPushButton#icon-button {
-    padding: 0;
-    background-color: transparent;
-}
+/* Tab Close Button */
 
 QScrollableTabBarTab>CPushButton#close-button {
     qproperty-iconUp: svg(":/svg/tab-button/close-line.svg", #808080);
@@ -210,6 +203,9 @@ QScrollableTabBarTab>CPushButton#close-button:hover {
 QScrollableTabBarTab>CPushButton#close-button:pressed {
     background-color: rgba(255, 255, 255, 7.5%);
 }
+
+
+/* Tab Scroll Bar */
 
 QScrollableTabBar>QScrollBar#scroll-bar {
     background: transparent;

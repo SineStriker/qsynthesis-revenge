@@ -42,8 +42,6 @@ CWindowBarV2::CWindowBarV2(QMenuBar *menuBar, QWidget *parent) : CBaseTitleBarV2
     setMenuBar(m_menuBar);
 
     reloadStrings();
-
-    //    Q_TR_NOTIFY(CWindowBarV2)
 }
 
 CWindowBarV2::~CWindowBarV2() {
@@ -102,7 +100,7 @@ void CWindowBarV2::drawCentralTitle(QPainter &painter) {
     }
 
     QRect rect(expectLeft, m_titleLabel->y(), textWidth, m_titleLabel->height());
-    painter.setPen(QPen(m_titleColor));
+    painter.setPen(QPen(palette().windowText().color()));
     painter.setFont(m_titleLabel->font());
     painter.drawText(rect, Qt::AlignCenter, title);
 }

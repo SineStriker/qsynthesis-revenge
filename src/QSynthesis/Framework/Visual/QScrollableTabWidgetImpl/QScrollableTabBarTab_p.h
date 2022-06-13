@@ -1,11 +1,10 @@
 #ifndef QSCROLLABLETABBARTABPRIVATE_H
 #define QSCROLLABLETABBARTABPRIVATE_H
 
+#include <QAbstractButton>
 #include <QHBoxLayout>
 #include <QLabel>
 #include <QVariant>
-
-#include "CPushButton.h"
 
 class QScrollableTabBarTab;
 
@@ -17,13 +16,21 @@ public:
 
     void init();
 
+    void updateIconAndText();
+
     QScrollableTabBarTab *q_ptr;
 
     QHBoxLayout *layout;
 
-    CPushButton *iconButton;
-    QLabel *textLabel;
-    CPushButton *closeButton;
+    QIcon icon;
+    QSize iconSize;
+    QMargins iconMargins;
+
+    QString text;
+    QMargins textMargins;
+
+    QSpacerItem *iconTextItem;
+    QAbstractButton *closeButton;
 
     QVariant data;
 };

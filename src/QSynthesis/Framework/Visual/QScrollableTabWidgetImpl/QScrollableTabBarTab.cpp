@@ -3,6 +3,8 @@
 
 #include <QDebug>
 #include <QMouseEvent>
+#include <QPaintEvent>
+#include <QPainter>
 #include <QStyle>
 
 QScrollableTabBarTab::QScrollableTabBarTab(QWidget *parent)
@@ -14,44 +16,72 @@ QScrollableTabBarTab::~QScrollableTabBarTab() {
 
 QIcon QScrollableTabBarTab::icon() const {
     Q_D(const QScrollableTabBarTab);
-    return d->iconButton->icon();
+    return d->icon;
 }
 
 void QScrollableTabBarTab::setIcon(const QIcon &icon) {
     Q_D(QScrollableTabBarTab);
-    d->iconButton->setIcon(icon);
-    if (icon.isNull()) {
-        d->iconButton->hide();
-    } else {
-        d->iconButton->show();
-    }
+
+    d->icon = icon;
+    d->updateIconAndText();
+
     emit styleChanged();
 }
 
 QSize QScrollableTabBarTab::iconSize() const {
     Q_D(const QScrollableTabBarTab);
-    return d->iconButton->iconSize();
+    return d->iconSize;
 }
 
 void QScrollableTabBarTab::setIconSize(const QSize &iconSize) {
     Q_D(QScrollableTabBarTab);
-    d->iconButton->setIconSize(iconSize);
+
+    d->iconSize = iconSize;
+    d->updateIconAndText();
+
+    emit styleChanged();
+}
+
+QMargins QScrollableTabBarTab::iconMargins() const {
+    Q_D(const QScrollableTabBarTab);
+    return d->iconMargins;
+}
+
+void QScrollableTabBarTab::setIconMargins(const QMargins &iconMargins) {
+    Q_D(QScrollableTabBarTab);
+
+    d->iconMargins = iconMargins;
+    d->updateIconAndText();
+
     emit styleChanged();
 }
 
 QString QScrollableTabBarTab::text() const {
     Q_D(const QScrollableTabBarTab);
-    return d->textLabel->text();
+    return d->text;
 }
 
 void QScrollableTabBarTab::setText(const QString &text) {
     Q_D(QScrollableTabBarTab);
-    d->textLabel->setText(text);
-    if (text.isEmpty()) {
-        d->textLabel->hide();
-    } else {
-        d->textLabel->show();
-    }
+
+    d->text = text;
+    d->updateIconAndText();
+
+    emit styleChanged();
+}
+
+QMargins QScrollableTabBarTab::textMargins() const {
+    Q_D(const QScrollableTabBarTab);
+    return d->textMargins;
+}
+
+void QScrollableTabBarTab::setTextMargins(const QMargins &textMargins) {
+    Q_D(QScrollableTabBarTab);
+
+    d->textMargins = textMargins;
+    d->updateIconAndText();
+
+    emit styleChanged();
 }
 
 QVariant QScrollableTabBarTab::data() const {
@@ -70,14 +100,11 @@ bool QScrollableTabBarTab::selected() const {
 
 void QScrollableTabBarTab::setSelected(bool selected) {
     Q_D(QScrollableTabBarTab);
+    d->closeButton->setChecked(selected);
 
     setProperty("selected", selected);
     style()->polish(this);
-
-    d->textLabel->setProperty("selected", selected);
-    d->textLabel->style()->polish(d->textLabel);
-
-    d->closeButton->setChecked(selected);
+    update();
 }
 
 QAbstractButton *QScrollableTabBarTab::closeButton() const {
@@ -85,9 +112,11 @@ QAbstractButton *QScrollableTabBarTab::closeButton() const {
     return d->closeButton;
 }
 
-void QScrollableTabBarTab::setCloseButton(QAbstractButton *button)
-{
-
+void QScrollableTabBarTab::setCloseButton(QAbstractButton *button) {
+    Q_D(QScrollableTabBarTab);
+    d->layout->replaceWidget(d->closeButton, button);
+    delete d->closeButton;
+    d->closeButton = button;
 }
 
 QScrollableTabBarTab::QScrollableTabBarTab(QScrollableTabBarTabPrivate &d, QWidget *parent)
@@ -96,6 +125,36 @@ QScrollableTabBarTab::QScrollableTabBarTab(QScrollableTabBarTabPrivate &d, QWidg
     d.init();
 
     setProperty("selected", false);
-    d.textLabel->setProperty("selected", false);
-    d.closeButton->setChecked(false);
+}
+
+void QScrollableTabBarTab::paintEvent(QPaintEvent *event) {
+    QPainter painter(this);
+    painter.setRenderHint(QPainter::Antialiasing);
+    painter.setClipRegion(event->region());
+    painter.translate(contentsRect().topLeft());
+
+    Q_D(const QScrollableTabBarTab);
+
+    int h = contentsRect().height();
+
+    // Draw Icon
+    painter.drawPixmap(
+        QRect(
+            QPoint(d->iconMargins.left(),
+                   (h - d->iconSize.height() + d->iconMargins.top() - d->iconMargins.bottom()) / 2),
+            d->iconSize),
+        d->icon.pixmap(d->iconSize));
+
+    QFontMetrics font(this->font());
+
+    // Draw Text
+    QRect rect(d->iconMargins.left() + d->iconSize.width() + d->iconMargins.right() +
+                   d->textMargins.left(),
+               (h - font.height() + d->textMargins.top() - d->textMargins.bottom()) / 2,
+               font.horizontalAdvance(d->text), font.height());
+    painter.setPen(QPen(palette().windowText().color()));
+    painter.setFont(this->font());
+    painter.drawText(rect, Qt::AlignCenter, d->text);
+
+    QFrame::paintEvent(event);
 }

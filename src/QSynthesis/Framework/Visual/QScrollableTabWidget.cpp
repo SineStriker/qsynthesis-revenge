@@ -143,6 +143,11 @@ void QScrollableTabWidget::tabRemoved(int index) {
     Q_UNUSED(index)
 }
 
+void QScrollableTabWidget::tabSelected(int index, int orgIndex) {
+    Q_UNUSED(index)
+    Q_UNUSED(orgIndex)
+}
+
 void QScrollableTabWidget::setTabBar(QScrollableTabBar *tabBar) {
     Q_D(QScrollableTabWidget);
 
@@ -234,11 +239,22 @@ QScrollableTabWidget::QScrollableTabWidget(QScrollableTabWidgetPrivate &d, QWidg
     d.init();
 }
 
-void QScrollableTabWidget::_q_showTab(int index) {
+QAbstractButton *QScrollableTabWidget::closeButton(int index) const {
+    Q_D(const QScrollableTabWidget);
+    return d->tabBar->closeButton(index);
+}
+
+void QScrollableTabWidget::setCloseButton(int index, QAbstractButton *button) {
+    Q_D(const QScrollableTabWidget);
+    d->tabBar->setCloseButton(index, button);
+}
+
+void QScrollableTabWidget::_q_showTab(int index, int orgIndex) {
     Q_D(QScrollableTabWidget);
     if (index < d->stack->count() && index >= 0) {
         d->stack->setCurrentIndex(index);
-        emit currentChanged(index);
+        tabSelected(index, orgIndex);
+        emit currentChanged(index, orgIndex);
     }
 }
 

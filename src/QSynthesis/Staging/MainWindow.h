@@ -5,7 +5,6 @@
 
 class MainWindow : public BasicWindow {
     Q_OBJECT
-
 public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();

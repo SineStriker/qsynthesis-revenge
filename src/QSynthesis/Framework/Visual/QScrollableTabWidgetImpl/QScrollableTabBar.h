@@ -1,6 +1,7 @@
 #ifndef QSCROLLABLETABBAR_H
 #define QSCROLLABLETABBAR_H
 
+#include <QAbstractButton>
 #include <QFrame>
 #include <QIcon>
 #include <QScrollBar>
@@ -62,7 +63,7 @@ public:
     void setCurrentIndex(int index);
 
 signals:
-    void currentChanged(int index);
+    void currentChanged(int index, int orgIndex);
     void tabCloseRequested(int index);
     void tabMoved(int from, int to);
     void tabBarClicked(Qt::MouseButton button, int index);
@@ -96,6 +97,9 @@ public:
 
     int currentDraggedIndex();
     static QScrollableTabBar *currentDraggedTabBar();
+
+    QAbstractButton *closeButton(int index) const;
+    void setCloseButton(int index, QAbstractButton *button);
 
 signals:
     void styleChanged();

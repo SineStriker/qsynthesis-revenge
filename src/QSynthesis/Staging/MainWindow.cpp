@@ -1,7 +1,7 @@
 #include "MainWindow.h"
 #include "CMenu.h"
 
-#include "QScrollableTabWidget.h"
+#include "Central/CentralTabWidget.h"
 #include "Utils/QCssAnalyzer.h"
 
 #include "Managers/DataManager.h"
@@ -20,7 +20,7 @@ MainWindow::MainWindow(QWidget *parent) : BasicWindow(parent) {
     bar->addMenu(menu1);
     bar->addMenu(menu2);
 
-    auto tabs = new QScrollableTabWidget();
+    auto tabs = new CentralTabWidget();
     setCentralWidget(tabs);
     tabs->addTab(new QLabel("1"), "tab-1");
     tabs->addTab(new QLabel("2"), "tab-2");

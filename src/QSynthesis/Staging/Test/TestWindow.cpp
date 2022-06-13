@@ -2,7 +2,7 @@
 
 #include "CCoupleTabFrame.h"
 #include "CMenu.h"
-#include "QScrollableTabWidget.h"
+#include "Central/CentralTabWidget.h"
 
 #include "Managers/DataManager.h"
 
@@ -49,7 +49,7 @@ TestWindow::TestWindow(QWidget *parent) : BasicWindow(parent) {
     frame->setWidget(new QPushButton("123"));
 
     // Tabs
-    auto tabs = new QScrollableTabWidget();
+    auto tabs = new CentralTabWidget();
     setCentralWidget(tabs);
     tabs->addTab(frame, "tab-1");
     tabs->addTab(new QLabel("2"), "tab-2");
@@ -59,9 +59,6 @@ TestWindow::TestWindow(QWidget *parent) : BasicWindow(parent) {
     tabs->addTab(new QLabel("33"), "tab-33333333");
     tabs->addTab(new QLabel("44"), "tab-4444");
     tabs->addTab(new QLabel("55"), "tab-555555");
-    tabs->addTab(new QLabel("66"), "tab-666");
-    tabs->addTab(new QLabel("77"), "tab-77777777");
-    tabs->addTab(new QLabel("88"), "tab-8888888888");
 
     setWindowTitle(qApp->applicationDisplayName());
     resize(1280, 720);
