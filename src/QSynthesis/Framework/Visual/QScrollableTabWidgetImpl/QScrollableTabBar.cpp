@@ -39,7 +39,6 @@ int QScrollableTabBar::insertTab(int index, const QIcon &icon, const QString &te
 
     int res = d->entityLayout->indexOf(tab);
     tabInserted(res);
-
     if (count() == 1) {
         setCurrentIndex(0);
     }
@@ -93,7 +92,6 @@ void QScrollableTabBar::removeTab(int index) {
 
 void QScrollableTabBar::moveTab(int from, int to) {
     Q_D(QScrollableTabBar);
-
     auto item = d->entityLayout->takeAt(from);
     if (!item) {
         return;

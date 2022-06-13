@@ -210,6 +210,9 @@ void QScrollableTabWidget::dropEvent(QDropEvent *event) {
 
             if (orgBar == bar) {
                 if (index != orgIndex) {
+                    if (index >= bar->count()) {
+                        index = bar->count() - 1;
+                    }
                     bar->moveTab(orgIndex, index);
                 }
             } else {
@@ -225,7 +228,6 @@ void QScrollableTabWidget::dropEvent(QDropEvent *event) {
             }
 
             setCurrentIndex(index);
-
             event->acceptProposedAction();
             return;
         }
