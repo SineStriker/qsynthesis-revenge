@@ -3,6 +3,8 @@
 
 #include <QObject>
 
+class BaseManagerPrivate;
+
 class BaseManager : public QObject {
     Q_OBJECT
 public:
@@ -12,6 +14,11 @@ public:
 public:
     virtual bool load();
     virtual bool save();
+
+protected:
+    BaseManager(BaseManagerPrivate &d, QObject *parent = nullptr);
+
+    QScopedPointer<BaseManagerPrivate> d_ptr;
 
 signals:
 };

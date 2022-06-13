@@ -4,7 +4,7 @@
 #include "Central/CentralTabWidget.h"
 #include "Utils/QCssAnalyzer.h"
 
-#include "Managers/DataManager.h"
+#include "DataManager.h"
 
 #include <QApplication>
 #include <QDebug>
@@ -30,9 +30,6 @@ MainWindow::MainWindow(QWidget *parent) : BasicWindow(parent) {
     tabs->addTab(new QLabel("33"), "tab-33333333");
     tabs->addTab(new QLabel("44"), "tab-4444");
     tabs->addTab(new QLabel("55"), "tab-555555");
-    tabs->addTab(new QLabel("66"), "tab-666");
-    tabs->addTab(new QLabel("77"), "tab-77777777");
-    tabs->addTab(new QLabel("88"), "tab-8888888888");
 
     resize(1280, 720);
 

@@ -36,7 +36,7 @@ namespace Qs {
 
     const char FILE_HEAD_DUMP[] = "qsdump";
 
-    const char DIR_NAME_TEMP[] = "QSyntehsis_Temporary";
+    const char DIR_NAME_TEMP[] = "QSynthTemp";
     const char DIR_NAME_TEMP_PREFIX[] = "qs";
     const char KEY_NAME_MEMORY_PREFIX[] = "QSynthesis_Memory_";
 

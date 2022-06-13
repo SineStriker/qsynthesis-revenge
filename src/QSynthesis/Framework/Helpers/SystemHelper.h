@@ -8,8 +8,6 @@
 #include <QString>
 #include <QTextCodec>
 
-extern const char Slash;
-
 namespace Sys {
 
     inline bool isPathRelative(const QString &path) {

@@ -1,4 +1,6 @@
 #include "DataManager.h"
+#include "DataManager_p.h"
+
 #include "QUtauStrings.h"
 #include "SystemHelper.h"
 
@@ -8,28 +10,48 @@
 #include <QApplication>
 #include <QDebug>
 #include <QFileDialog>
+#include <QMessageBox>
 #include <QStandardPaths>
 
-const QChar ZH_CN_UTFCODE[] = {0x7B80, 0x4F53, 0x4E2D, 0x6587};
-const QChar ZH_CHT_UTFCODE[] = {0x7E41, 0x9AD4, 0x4E2D, 0x6587};
-const QChar JA_JP_UTFCODE[] = {0x65E5, 0x672C, 0x8A9E};
+static const char Slash = '/';
+
+static const QChar ZH_CN_UTFCODE[] = {0x7B80, 0x4F53, 0x4E2D, 0x6587};
+static const QChar ZH_CHT_UTFCODE[] = {0x7E41, 0x9AD4, 0x4E2D, 0x6587};
+static const QChar JA_JP_UTFCODE[] = {0x65E5, 0x672C, 0x8A9E};
 
 #define Q_FROM_UTFCODE(Name)                                                                       \
     QString::fromRawData(Name##_UTFCODE, sizeof(Name##_UTFCODE) / sizeof(QChar))
 
 Q_SINGLETON_DECLARE(DataManager)
 
-QMap<QString, QString> DataManager::lastOpenPaths;
-
-DataManager::DataManager(QObject *parent) : BaseManager(parent) {
-    construct();
-    reloadStrings();
+DataManager::DataManager(QObject *parent) : DataManager(*new DataManagerPrivate(), parent) {
 }
 
 DataManager::~DataManager() {
 }
 
 bool DataManager::load() {
+    Q_D(DataManager);
+
+    // Create directories
+    if (!Sys::isDirExist(d->appDataPath)) {
+        if (!Sys::mkDir(d->appDataPath)) {
+            QMessageBox::warning(nullptr, d->MainTitle,
+                                 tr("Failed to make application data path!"));
+            return false;
+        }
+    }
+    if (!Sys::isDirExist(d->appTempPath)) {
+        if (!Sys::mkDir(d->appTempPath)) {
+            QMessageBox::warning(nullptr, d->MainTitle, tr("Failed to make temporary path!"));
+            return false;
+        }
+    }
+
+    // Load Record
+    qRecord->setFilename(qData->getStandardPath(DataManager::Record));
+    qRecord->load();
+
     if (qRecordCData.translationIndex < 0 || qRecordCData.translationIndex > localeCount()) {
         QLocale ql;
         switch (ql.country()) {
@@ -53,115 +75,110 @@ bool DataManager::load() {
         }
         }
     }
-    loadLocale(qRecordCData.translationIndex);
+    localeLoad(qRecordCData.translationIndex);
 
-    lastOpenPaths = qRecordData.lastOpenPaths;
+    d->lastOpenPaths = qRecordData.lastOpenPaths;
     return true;
 }
 
 bool DataManager::save() {
-    qRecordData.lastOpenPaths = lastOpenPaths;
+    Q_D(DataManager);
+
+    qRecordData.lastOpenPaths = d->lastOpenPaths;
+
+    // Save Record
+    if (QApplication::keyboardModifiers() != Qt::ControlModifier) {
+        qRecord->save(); // Do not save if ctrl is pressed
+    }
+
     return true;
 }
 
 void DataManager::reloadStrings() {
-    MainTitle = "QSynthesis";
-    WindowTitle = MainTitle + QString(" %1").arg(Qs::Version);
-    UntitledPrefix = "*";
+    Q_D(DataManager);
 
-    ErrorTitle = tr("Error");
-    UntitledFileName = tr("Untitled");
-    DeletedPrefix = tr("(Deleted)");
+    d->WindowTitle = d->MainTitle + QString(" %1").arg(Qs::Version);
+    d->UntitledPrefix = "*";
+
+    d->ErrorTitle = tr("Error");
+    d->UntitledFileName = tr("Untitled");
+    d->DeletedPrefix = tr("(Deleted)");
 
 #ifdef Q_OS_WINDOWS
-    fileManagerName = tr("Explorer");
+    d->fileManagerName = tr("Explorer");
 #elif defined(Q_OS_MAC)
-    fileManagerName = tr("Finder");
+    d->fileManagerName = tr("Finder");
 #else
-    fileManagerName = tr("File Manager");
+    d->fileManagerName = tr("File Manager");
 #endif
 
 #if defined(Q_OS_WINDOWS)
-    openFilter = tr("UTAU Sequence Text(*.ust);;All Files(*.*)");
-    saveFilter = tr("UTAU Sequence Text(*.ust);;All Files(*.*)");
-    importFilter = tr("Standard MIDI Files(*.mid);;"
-                      "Synthesizer V Files(*.svp *.s5p);;VOCALOID Files(*.vsqx *.vsq);;"
-                      "OpenUtau Files(*.ustx);;All Files(*.*)");
-    appendFilter = tr("Standard MIDI Files(*.mid);;UTAU Sequence Text(*.ust);;"
-                      "Synthesizer V Files(*.svp *.s5p);;VOCALOID Files(*.vsqx *.vsq);;"
-                      "OpenUtau Files(*.ustx);;All Files(*.*)");
-    exportSelectionFilter =
+    d->projectFilter = tr("UTAU Sequence Text(*.ust);;All Files(*.*)");
+    d->importFilter = tr("Standard MIDI Files(*.mid);;"
+                         "Synthesizer V Files(*.svp *.s5p);;VOCALOID Files(*.vsqx *.vsq);;"
+                         "OpenUtau Files(*.ustx);;All Files(*.*)");
+    d->appendFilter = tr("Standard MIDI Files(*.mid);;UTAU Sequence Text(*.ust);;"
+                         "Synthesizer V Files(*.svp *.s5p);;VOCALOID Files(*.vsqx *.vsq);;"
+                         "OpenUtau Files(*.ustx);;All Files(*.*)");
+    d->exportSelectionFilter =
         tr("Standard MIDI Files(*.mid);;UTAU Sequence Text(*.ust);;"
            "Synthesizer V Files(*.svp);;VOCALOID Files(*.vsqx);;All Files(*.*)");
-    exportTrackFilter = tr("Standard MIDI Files(*.mid);;"
-                           "Synthesizer V Files(*.svp);;VOCALOID Files(*.vsqx);;All Files(*.*)");
-    exportOtoIniFilter = tr("Voice Configurations(oto.ini);;All Files(*.*)");
-    imageFilter = tr("Image Files(*.bmp *.jpg *.jpeg *.png *.gif *.webp);;All Files(*.*)");
+    d->exportTrackFilter = tr("Standard MIDI Files(*.mid);;"
+                              "Synthesizer V Files(*.svp);;VOCALOID Files(*.vsqx);;All Files(*.*)");
+    d->exportOtoIniFilter = tr("Voice Configurations(oto.ini);;All Files(*.*)");
+    d->imageFilter = tr("Image Files(*.bmp *.jpg *.jpeg *.png *.gif *.webp);;All Files(*.*)");
 
-    audioFilter = tr("Audio Files(*.wav);;All Files(*.*)");
-    toolsFilter = tr("Executable(*.exe);;All Files(*.*)");
+    d->audioFilter = tr("Audio Files(*.wav);;All Files(*.*)");
+    d->toolsFilter = tr("Executable(*.exe);;All Files(*.*)");
 #else
-    openFilter = tr("UTAU Sequence Text(*.ust);;All Files(*)");
-    saveFilter = tr("UTAU Sequence Text(*.ust);;All Files(*)");
-    importFilter = tr("Standard MIDI Files(*.mid);;"
-                      "Synthesizer V Files(*.svp *.s5p);;VOCALOID Files(*.vsqx *.vsq);;"
-                      "OpenUtau Files(*.ustx);;All Files(*)");
-    appendFilter = tr("Standard MIDI Files(*.mid);;UTAU Sequence Text(*.ust);;"
-                      "Synthesizer V Files(*.svp *.s5p);;VOCALOID Files(*.vsqx *.vsq);;"
-                      "OpenUtau Files(*.ustx);;All Files(*)");
-    exportSelectionFilter = tr("Standard MIDI Files(*.mid);;UTAU Sequence Text(*.ust);;"
-                               "Synthesizer V Files(*.svp);;VOCALOID Files(*.vsqx);;All Files(*)");
-    exportTrackFilter = tr("Standard MIDI Files(*.mid);;"
-                           "Synthesizer V Files(*.svp);;VOCALOID Files(*.vsqx);;All Files(*)");
-    exportOtoIniFilter = tr("Voice Configurations(oto.ini);;All Files(*)");
-    imageFilter = tr("Image Files(*.bmp *.jpg *.jpeg *.png *.gif *.webp);;All Files(*)");
+    d->projectFilter = tr("UTAU Sequence Text(*.ust);;All Files(*)");
+    d->importFilter = tr("Standard MIDI Files(*.mid);;"
+                         "Synthesizer V Files(*.svp *.s5p);;VOCALOID Files(*.vsqx *.vsq);;"
+                         "OpenUtau Files(*.ustx);;All Files(*)");
+    d->appendFilter = tr("Standard MIDI Files(*.mid);;UTAU Sequence Text(*.ust);;"
+                         "Synthesizer V Files(*.svp *.s5p);;VOCALOID Files(*.vsqx *.vsq);;"
+                         "OpenUtau Files(*.ustx);;All Files(*)");
+    d->exportSelectionFilter =
+        tr("Standard MIDI Files(*.mid);;UTAU Sequence Text(*.ust);;"
+           "Synthesizer V Files(*.svp);;VOCALOID Files(*.vsqx);;All Files(*)");
+    d->exportTrackFilter = tr("Standard MIDI Files(*.mid);;"
+                              "Synthesizer V Files(*.svp);;VOCALOID Files(*.vsqx);;All Files(*)");
+    d->exportOtoIniFilter = tr("Voice Configurations(oto.ini);;All Files(*)");
+    d->imageFilter = tr("Image Files(*.bmp *.jpg *.jpeg *.png *.gif *.webp);;All Files(*)");
 
-    audioFilter = tr("Audio Files(*.wav);;All Files(*)");
-    toolsFilter = tr("Executable(*)");
+    d->audioFilter = tr("Audio Files(*.wav);;All Files(*)");
+    d->toolsFilter = tr("Executable(*)");
 #endif
 
     emit stringUpdated();
 }
 
-bool DataManager::translate(const QString &filename) {
-    QTranslator *t = new QTranslator(this);
-    if (t->load(filename)) {
-        qApp->installTranslator(t);
-        Translators.insert(t);
-        reloadStrings();
-        return true;
-    }
-    delete t;
-    return false;
+DataManager::DataManager(DataManagerPrivate &d, QObject *parent) : BaseManager(d, parent) {
+    construct();
+
+    d.init();
+    reloadStrings();
 }
 
-void DataManager::eliminate() {
-    for (auto it = Translators.begin(); it != Translators.end(); ++it) {
-        auto t = *it;
-        qApp->removeTranslator(t);
-        delete t;
-    }
-    Translators.clear();
-}
-
-void DataManager::loadLocale(int index) {
-    eliminate();
-//    switch (index) {
-//    case 0:
-//        translate(":/translations/qsynthesis_en.qm");
-//        break;
-//    case 1:
-//        translate(":/translations/qsynthesis_cn.qm");
-//        break;
-//    case 2:
-//        translate(":/translations/qsynthesis_cht.qm");
-//        break;
-//    case 3:
-//        translate(":/translations/qsynthesis_jp.qm");
-//        break;
-//    default:
-//        break;
-//    }
+void DataManager::localeLoad(int index) {
+    Q_D(DataManager);
+    d->eliminate();
+    //    switch (index) {
+    //    case 0:
+    //        translate(":/translations/qsynthesis_en.qm");
+    //        break;
+    //    case 1:
+    //        translate(":/translations/qsynthesis_cn.qm");
+    //        break;
+    //    case 2:
+    //        translate(":/translations/qsynthesis_cht.qm");
+    //        break;
+    //    case 3:
+    //        translate(":/translations/qsynthesis_jp.qm");
+    //        break;
+    //    default:
+    //        break;
+    //    }
 }
 
 int DataManager::localeCount() const {
@@ -178,50 +195,6 @@ QStringList DataManager::localeNames() const {
     return list;
 }
 
-QString DataManager::pluginsProfile() {
-    return Sys::appPath() + Slash + Utau::DIR_NAME_PLUGIN;
-}
-
-QString DataManager::voiceProfile() {
-    return Sys::appPath() + Slash + Utau::DIR_NAME_VOICE;
-}
-
-QString DataManager::configProfile() {
-    return Sys::appPath() + Slash + Qs::DIR_NAME_CONFIG;
-}
-
-QString DataManager::fontsProfile() {
-    return configProfile() + Slash + Qs::DIR_NAME_CONFIG_FONTS;
-}
-
-QString DataManager::themesProfile() {
-    return configProfile() + Slash + Qs::DIR_NAME_CONFIG_THEMES;
-}
-
-QString DataManager::toolsProfile() {
-    return configProfile() + Slash + Qs::DIR_NAME_CONFIG_TOOLS;
-}
-
-QString DataManager::tempDir() {
-    return QDir::tempPath();
-}
-
-QString DataManager::desktopDir() {
-    return QStandardPaths::writableLocation(QStandardPaths::DesktopLocation);
-}
-
-QString DataManager::settingConifgPath() {
-    return configProfile() + Slash + Qs::FILE_NAME_SETTING_JSON;
-}
-
-QString DataManager::keyboardConfigPath() {
-    return configProfile() + Slash + Qs::FILE_NAME_KEYBOARD_JSON;
-}
-
-QString DataManager::recordPath() {
-    return Sys::appPath() + Slash + Qs::FILE_NAME_RECORD_JSON;
-}
-
 QString DataManager::openFile(const QString &title, const QString &filter, const QString &flag,
                               QWidget *parent) {
     QString path = QFileDialog::getOpenFileName(parent, title, getLastOpenPath(flag), filter);
@@ -233,8 +206,7 @@ QString DataManager::openFile(const QString &title, const QString &filter, const
 
 QStringList DataManager::openFiles(const QString &title, const QString &filter, const QString &flag,
                                    QWidget *parent) {
-    QStringList paths =
-        QFileDialog::getOpenFileNames(parent, title, getLastOpenPath(flag), filter);
+    QStringList paths = QFileDialog::getOpenFileNames(parent, title, getLastOpenPath(flag), filter);
     if (!paths.isEmpty()) {
         saveLastOpenDir(flag, paths.back());
     }
@@ -264,9 +236,10 @@ QString DataManager::saveFile(const QString &title, const QString &filename, con
 }
 
 QString DataManager::getLastOpenPath(const QString &type) {
-    auto it = lastOpenPaths.find(type);
-    if (it == lastOpenPaths.end()) {
-        it = lastOpenPaths.insert(type, desktopDir());
+    Q_D(DataManager);
+    auto it = d->lastOpenPaths.find(type);
+    if (it == d->lastOpenPaths.end()) {
+        it = d->lastOpenPaths.insert(type, desktopDir());
     } else if (!Sys::isDirExist(it.value())) {
         it.value() = desktopDir();
     }
@@ -274,5 +247,75 @@ QString DataManager::getLastOpenPath(const QString &type) {
 }
 
 void DataManager::saveLastOpenDir(const QString &type, const QString &path) {
-    lastOpenPaths.insert(type, Sys::PathFildDirPath(path));
+    Q_D(DataManager);
+    d->lastOpenPaths.insert(type, Sys::PathFildDirPath(path));
+}
+
+QString DataManager::getFileFilter(DataManager::FileFilter f) const {
+    Q_D(const DataManager);
+    QString res;
+    switch (f) {
+    case ImportFile:
+        res = d->importFilter;
+        break;
+    case AppendFile:
+        res = d->appendFilter;
+        break;
+    case ExportSelection:
+        res = d->exportSelectionFilter;
+        break;
+    case ExportTrack:
+        res = d->exportSelectionFilter;
+        break;
+    case ExportOtoIni:
+        res = d->exportOtoIniFilter;
+        break;
+    case ProjectFiles:
+        res = d->projectFilter;
+        break;
+    case ImageFiles:
+        res = d->imageFilter;
+        break;
+    case AudioFiles:
+        res = d->audioFilter;
+        break;
+    case ExecutableFiles:
+        res = d->toolsFilter;
+        break;
+    };
+    return res;
+}
+
+QString DataManager::getStandardPath(DataManager::StandardPath s) const {
+    Q_D(const DataManager);
+    QString res;
+    switch (s) {
+    case Voice:
+        break;
+    case Plugins:
+        break;
+    case Extensions:
+        break;
+    case Fonts:
+        res = Sys::appPath() + Slash + Qs::DIR_NAME_CONFIG_FONTS;
+        break;
+    case Record:
+        res = d->appDataPath + Slash + Qs::FILE_NAME_RECORD_JSON;
+        break;
+    case SettingConfig:
+        break;
+    case KeyboardConfig:
+        break;
+    case AppData:
+        res = d->appDataPath;
+        break;
+    case AppTemp:
+        res = d->appTempPath;
+        break;
+    }
+    return res;
+}
+
+QString DataManager::desktopDir() {
+    return QStandardPaths::writableLocation(QStandardPaths::DesktopLocation);
 }

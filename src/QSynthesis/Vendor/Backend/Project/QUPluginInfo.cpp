@@ -10,11 +10,12 @@
 #include <QDir>
 #include <QFile>
 #include <QTextStream>
-
 using namespace Utau;
 using namespace Qs;
 
 Q_CHARSET_DECLARE(QUPluginInfo)
+
+static const char Slash = '/';
 
 QUPluginInfo::QUPluginInfo() {
     reset();

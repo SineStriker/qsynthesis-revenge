@@ -1,6 +1,8 @@
 #include "QsApplication.h"
 #include "QsApplication_p.h"
 
+#include "ExtensionsManager.h"
+
 #ifdef Q_QDOC
 QsApplication::QsApplication(int m_argc, char **argv)
     : QsApplication(*new QsApplicationPrivate(), argc, argv) {
@@ -30,5 +32,5 @@ QsApplication::QsApplication(QsApplicationPrivate &d, int &argc, char **argv, in
 
 void QsApplication::q_screenRatioChanged(qreal dpi) {
     Q_UNUSED(dpi)
-    qTheme->loadTheme(qRecordCData.themeIndex);
+    qTheme->themeLoad(qRecordCData.themeIndex);
 }

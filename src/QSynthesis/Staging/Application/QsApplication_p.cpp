@@ -29,11 +29,12 @@ void QsApplicationPrivate::init() {
     initFonts();
 
     // Create
-    data = new DataManager(q);
-    themes = new ColorTheme(q);
     record = new CRecordHolder(q);
 
-    initLogs();
+    data = new DataManager(q);
+    themes = new ExtensionsManager(q);
+    windows = new WindowManager(q);
+
     initModules();
 
     q->connect(q->primaryScreen(), &QScreen::logicalDotsPerInchChanged, q,
@@ -42,24 +43,22 @@ void QsApplicationPrivate::init() {
 
 void QsApplicationPrivate::deinit() {
     quitModules();
-    quitLogs();
 
     // Destroy
-    delete record;
+    delete windows;
     delete themes;
     delete data;
+
+    delete record;
 }
 
 void QsApplicationPrivate::initLocale() {
-    QTextCodec *loc;
     QTextCodec *gbk = QTextCodec::codecForName("GBK");
 
 #ifdef Q_OS_WINDOWS
     QTextCodec::setCodecForLocale(gbk);
-    loc = QTextCodec::codecForName("UTF-8");
-#else
-    loc = QTextCodec::codecForLocale();
 #endif
+
     SequenceTextFile::setCodeForDefault(gbk); // *.ust
     QOtoIni::setCodeForDefault(gbk);          // oto.ini
     QPrefixMap::setCodeForDefault(gbk);       // prefix.map
@@ -81,6 +80,7 @@ void QsApplicationPrivate::initFonts() {
 
 void QsApplicationPrivate::initModules() {
     if (!qData->load()) {
+        ::exit(1);
     }
     if (!qTheme->load()) {
     }
@@ -90,16 +90,5 @@ void QsApplicationPrivate::quitModules() {
     if (!qTheme->save()) {
     }
     if (!qData->save()) {
-    }
-}
-
-void QsApplicationPrivate::initLogs() {
-    qRecord->setFilename(qData->recordPath());
-    qRecord->load();
-}
-
-void QsApplicationPrivate::quitLogs() {
-    if (QApplication::keyboardModifiers() != Qt::ControlModifier) {
-        qRecord->save(); // Do not save if ctrl is pressed
     }
 }

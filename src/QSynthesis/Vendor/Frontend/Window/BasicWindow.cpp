@@ -3,6 +3,9 @@
 
 #include <FramelessWidgetsHelper>
 
+#include <QApplication>
+#include <QDesktopWidget>
+
 FRAMELESSHELPER_USE_NAMESPACE
 
 using namespace Global;
@@ -42,4 +45,20 @@ void BasicWindow::setMenuBar(QMenuBar *menuBar) {
 
 QMenuBar *BasicWindow::menuBar() const {
     return m_titleBar->menuBar();
+}
+
+void BasicWindow::centralize(double r) {
+    QWidget *desktop = qApp->desktop();
+    if (parentWidget()) {
+        desktop = parentWidget();
+    }
+    int dw = desktop->width();
+    int dh = desktop->height();
+
+    QSize size = this->size();
+    if (r > 0 && r <= 1) {
+        size = QSize(dw * r, dh * r);
+    }
+    setGeometry(desktop->x() + (dw - size.width()) / 2, desktop->y() + (dh - size.height()) / 2,
+                size.width(), size.height());
 }

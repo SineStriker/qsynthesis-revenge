@@ -5,6 +5,8 @@ using namespace Sys;
 
 #include <QFile>
 
+static const char Slash = '/';
+
 SpecialConfig::SpecialConfig() {
 }
 

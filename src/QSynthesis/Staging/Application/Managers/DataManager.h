@@ -7,6 +7,8 @@
 #include "BaseManager.h"
 #include "Macros.h"
 
+class DataManagerPrivate;
+
 #define qData DataManager::instance()
 
 // Always call this macro at the end of constructor
@@ -17,6 +19,7 @@
 class DataManager : public BaseManager {
     Q_OBJECT
     Q_SINGLETON(DataManager)
+    Q_DECLARE_PRIVATE(DataManager)
 public:
     explicit DataManager(QObject *parent = nullptr);
     ~DataManager();
@@ -27,73 +30,57 @@ public:
 
     void reloadStrings();
 
+    // Global Variables
 public:
-    // Translators
-    bool translate(const QString &filename);
-    void eliminate();
-
-    void loadLocale(int index);
-
+    void localeLoad(int index);
     int localeCount() const;
     QStringList localeNames() const;
 
-    // Inherit UTAU
-    static QString pluginsProfile();
-    static QString voiceProfile();
-
-    // Qs Special
-    static QString configProfile();
-    static QString fontsProfile();
-    static QString themesProfile();
-    static QString toolsProfile();
-
-    static QString tempDir();
-    static QString desktopDir();
-
-    static QString settingConifgPath();
-    static QString keyboardConfigPath();
-    static QString recordPath(); // Substitution for setting.ini
-
 public:
-    static QString openFile(const QString &title, const QString &filter, const QString &flag,
-                            QWidget *parent = nullptr);
-    static QStringList openFiles(const QString &title, const QString &filter, const QString &flag,
-                                 QWidget *parent = nullptr);
-    static QString openDir(const QString &title, const QString &flag, QWidget *parent = nullptr);
-    static QString saveFile(const QString &title, const QString &filename, const QString &filter,
-                            const QString &flag, QWidget *parent = nullptr);
+    QString openFile(const QString &title, const QString &filter, const QString &flag,
+                     QWidget *parent = nullptr);
+    QStringList openFiles(const QString &title, const QString &filter, const QString &flag,
+                          QWidget *parent = nullptr);
+    QString openDir(const QString &title, const QString &flag, QWidget *parent = nullptr);
+    QString saveFile(const QString &title, const QString &filename, const QString &filter,
+                     const QString &flag, QWidget *parent = nullptr);
 
 private:
-    QSet<QTranslator *> Translators;
+    QString getLastOpenPath(const QString &type);
+    void saveLastOpenDir(const QString &type, const QString &path);
 
-    static QMap<QString, QString> lastOpenPaths;
+    enum FileFilter {
+        ImportFile,
+        AppendFile,
+        ExportSelection,
+        ExportTrack,
+        ExportOtoIni,
+        ProjectFiles,
+        ImageFiles,
+        AudioFiles,
+        ExecutableFiles,
+    };
 
-    static QString getLastOpenPath(const QString &type);
-    static void saveLastOpenDir(const QString &type, const QString &path);
+    QString getFileFilter(FileFilter f) const;
 
-    // Global Variables
-public:
-    QString FontName;
+    enum StandardPath {
+        Voice,
+        Plugins,
+        Extensions,
+        Fonts,
+        Record,
+        SettingConfig,
+        KeyboardConfig,
+        AppData,
+        AppTemp,
+    };
 
-    QString MainTitle;
-    QString WindowTitle;
-    QString ErrorTitle;
-    QString UntitledFileName;
-    QString UntitledPrefix;
-    QString DeletedPrefix;
+    QString getStandardPath(StandardPath s) const;
 
-    QString fileManagerName;
+    static QString desktopDir();
 
-    QString openFilter;            // *.ust
-    QString saveFilter;            // *.ust
-    QString importFilter;          // *.mid *.svp *.s5p *.vsqx *.vsq *.ustx
-    QString appendFilter;          // *.mid *.ust *.svp *.s5p *.vsqx *.vsq *.ustx
-    QString exportSelectionFilter; // *.mid *.ust *.svp *.vsqx
-    QString exportTrackFilter;     // *.mid *.ust *.svp *.s5p *.vsqx
-    QString exportOtoIniFilter;    // oto.ini
-    QString imageFilter;           // *.bmp *.jpg *.jpeg *.png *.gif *.webp
-    QString audioFilter;           // *.wav
-    QString toolsFilter;           // *.exe
+protected:
+    DataManager(DataManagerPrivate &d, QObject *parent = nullptr);
 
 signals:
     void stringUpdated();

@@ -24,10 +24,15 @@ set(INCLUDE_PATHS)
 
 # ------------------------------ Macros/Functions ------------------------------
 
-# Use this micro to include a Qt module
-macro(add_qt_module List Module)
+# Use this micro to find a Qt module
+macro(find_qt_module Module)
     find_package(QT NAMES Qt6 Qt5 COMPONENTS ${Module} REQUIRED)
     find_package(Qt${QT_VERSION_MAJOR} COMPONENTS ${Module} REQUIRED)
+endmacro()
+
+# Use this micro to include a Qt module
+macro(add_qt_module List Module)
+    find_qt_module(${Module})
     list(APPEND ${List} Qt${QT_VERSION_MAJOR}::${Module})
 endmacro()
 
@@ -146,6 +151,20 @@ target_link_libraries(${CURRENT_PROJECT_NAME} PRIVATE QMidi)
 # Link Qt libraries
 target_link_libraries(${CURRENT_PROJECT_NAME} PRIVATE ${QT_LIBS})
 
+# ------------------------------ Translations ------------------------------
+
+set (TS_FILES)
+set (QM_FILES)
+
+find_qt_module(LinguistTools)
+
+# Simplified Chinese
+add_files(TS_FILES Resources/translations/qsynthesis_zh_CN.ts)
+
+set_source_files_properties(${TS_FILES}
+    PROPERTIES OUTPUT_LOCATION "${MY_SRC_DIR}/Resources/translations"
+    )
+qt5_create_translation(QM_FILES ${MY_SRC_DIR} ${TS_FILES})
 
 # ------------------------------ Promote code experience ------------------------------
 
@@ -162,6 +181,7 @@ add_files(INCLUDE_PATHS
     Meta
     Staging
     Staging/Application
+    Staging/Application/Managers
     Staging/Basic
     Vendor/Frontend
     Vendor/Frontend/Utils

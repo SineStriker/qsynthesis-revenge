@@ -5,8 +5,10 @@
 #include "QsApplication.h"
 
 #include "Logs/CRecordHolder.h"
-#include "Managers/ColorTheme.h"
-#include "Managers/DataManager.h"
+
+#include "DataManager.h"
+#include "ExtensionsManager.h"
+#include "WindowManager.h"
 
 class QsApplicationPrivate : public CApplicationPrivate {
     Q_DECLARE_PUBLIC(QsApplication)
@@ -17,9 +19,11 @@ public:
     void init();
     void deinit();
 
-    DataManager* data;
-    ColorTheme* themes;
-    CRecordHolder* record;
+    DataManager *data;
+    ExtensionsManager *themes;
+    WindowManager *windows;
+
+    CRecordHolder *record;
 
 private:
     void initLocale();
@@ -27,9 +31,6 @@ private:
 
     void initModules();
     void quitModules();
-
-    void initLogs();
-    void quitLogs();
 };
 
 #endif // QSAPPLICATIONPRIVATE_H

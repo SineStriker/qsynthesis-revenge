@@ -15,6 +15,8 @@ public:
     void setMenuBar(QMenuBar *menuBar);
     QMenuBar *menuBar() const;
 
+    void centralize(double r);
+
 protected:
     CWindowBarV2 *m_titleBar;
 

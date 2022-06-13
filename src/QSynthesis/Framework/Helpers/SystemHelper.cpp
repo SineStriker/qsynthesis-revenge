@@ -7,7 +7,7 @@
 #include <QGuiApplication>
 #include <QProcess>
 
-const char Slash = '/';
+static const char Slash = '/';
 
 QString Sys::PathFindFileName(const QString &path) {
     QFileInfo info(path);

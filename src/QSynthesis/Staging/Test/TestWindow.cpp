@@ -4,7 +4,7 @@
 #include "CMenu.h"
 #include "Central/CentralTabWidget.h"
 
-#include "Managers/DataManager.h"
+#include "DataManager.h"
 
 #include <QApplication>
 #include <QDebug>

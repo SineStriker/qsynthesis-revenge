@@ -1,49 +1,40 @@
-#include "ColorTheme.h"
+#include "ExtensionsManager.h"
+#include "ExtensionsManager_p.h"
 
 #include "Logs/CRecordHolder.h"
-#include "Namespace.h"
 
 #include <QApplication>
 #include <QDebug>
-#include <QMetaProperty>
 #include <QScreen>
-#include <QStyle>
-#include <QWidget>
 
-#include "DataManager.h"
 #include "Utils/QCssAnalyzer.h"
 
 #include <QMessageBox>
 
-Q_SINGLETON_DECLARE(ColorTheme)
+Q_SINGLETON_DECLARE(ExtensionsManager)
 
-ColorTheme::ColorTheme(QObject *parent) : BaseManager(parent) {
-    construct();
+ExtensionsManager::ExtensionsManager(QObject *parent)
+    : ExtensionsManager(*new ExtensionsManagerPrivate(), parent) {
 }
 
-ColorTheme::~ColorTheme() {
+ExtensionsManager::~ExtensionsManager() {
 }
 
-bool ColorTheme::load() {
-    // Check theme dir
-//    QFileInfo themes(DataManager::themesProfile());
-//    if (!themes.isDir()) {
-//        Q_ERROR(nullptr, qData->ErrorTitle, tr("Cannot load color themes."));
-//        return false;
-//    }
-
+bool ExtensionsManager::load() {
     if (qRecordCData.themeIndex < 0 || qRecordCData.themeIndex > themeCount()) {
         qRecordData.themeIndex = 0;
     }
-    loadTheme(qRecordCData.themeIndex);
+    themeLoad(qRecordCData.themeIndex);
     return true;
 }
 
-bool ColorTheme::save() {
+bool ExtensionsManager::save() {
     return true;
 }
 
-void ColorTheme::loadTheme(int index) {
+void ExtensionsManager::themeLoad(int index) {
+    Q_D(ExtensionsManager);
+
     QCssAnalyzer qss;
 
 #if defined(Q_OS_MAC)
@@ -72,21 +63,24 @@ void ColorTheme::loadTheme(int index) {
         qss.close();
     }
 
-    reloadAppFont();
+    d->reloadAppFont();
 }
 
-int ColorTheme::themeCount() const {
+int ExtensionsManager::themeCount() const {
     return 4;
 }
 
-QStringList ColorTheme::themeNames() const {
-    QStringList list = {tr("Multi-Color (Default)"), tr("Dark (Default)"), tr("Light (Default)"),
+QStringList ExtensionsManager::themeNames() const {
+    QStringList list = {tr("Multi-Color (Default)"), //
+                        tr("Dark (Default)"),        //
+                        tr("Light (Default)"),       //
                         tr("None")};
     return list;
 }
 
-void ColorTheme::reloadAppFont() {
-    QWidget w;
-    qApp->style()->polish(&w);
-    qApp->setFont(w.font());
+ExtensionsManager::ExtensionsManager(ExtensionsManagerPrivate &d, QObject *parent)
+    : BaseManager(d, parent) {
+    construct();
+
+    d.init();
 }
