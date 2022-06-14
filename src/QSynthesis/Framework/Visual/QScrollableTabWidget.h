@@ -75,6 +75,10 @@ public:
     QAbstractButton *closeButton(int index) const;
     void setCloseButton(int index, QAbstractButton *button);
 
+    QWidget *tabBarWidget();
+    QWidget *moveOutTabBarWidget();
+    void moveInTabBarWidget();
+
 private:
     void _q_showTab(int index, int orgIndex);
     void _q_removeTab(int index);

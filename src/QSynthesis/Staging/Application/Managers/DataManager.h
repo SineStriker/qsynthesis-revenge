@@ -45,7 +45,7 @@ public:
     QString saveFile(const QString &title, const QString &filename, const QString &filter,
                      const QString &flag, QWidget *parent = nullptr);
 
-private:
+public:
     QString getLastOpenPath(const QString &type);
     void saveLastOpenDir(const QString &type, const QString &path);
 
@@ -78,6 +78,14 @@ private:
     QString getStandardPath(StandardPath s) const;
 
     static QString desktopDir();
+
+    QString mainTitle() const;
+    QString windowTitle() const;
+    QString errorTitle() const;
+    QString untitledFileName() const;
+    QString untitledPrefix() const;
+    QString deletedPrefix() const;
+    QString fileManagerName() const;
 
 protected:
     DataManager(DataManagerPrivate &d, QObject *parent = nullptr);

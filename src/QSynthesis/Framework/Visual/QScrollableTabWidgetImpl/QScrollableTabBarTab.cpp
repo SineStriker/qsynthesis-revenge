@@ -138,23 +138,29 @@ void QScrollableTabBarTab::paintEvent(QPaintEvent *event) {
     int h = contentsRect().height();
 
     // Draw Icon
-    painter.drawPixmap(
-        QRect(
-            QPoint(d->iconMargins.left(),
-                   (h - d->iconSize.height() + d->iconMargins.top() - d->iconMargins.bottom()) / 2),
-            d->iconSize),
-        d->icon.pixmap(d->iconSize));
-
-    QFontMetrics font(this->font());
+    if (!d->icon.isNull()) {
+        painter.drawPixmap(
+            QRect(QPoint(d->iconMargins.left(), (h - d->iconSize.height() + d->iconMargins.top() -
+                                                 d->iconMargins.bottom()) /
+                                                    2),
+                  d->iconSize),
+            d->icon.pixmap(d->iconSize));
+    }
 
     // Draw Text
-    QRect rect(d->iconMargins.left() + d->iconSize.width() + d->iconMargins.right() +
-                   d->textMargins.left(),
-               (h - font.height() + d->textMargins.top() - d->textMargins.bottom()) / 2,
-               font.horizontalAdvance(d->text), font.height());
-    painter.setPen(QPen(palette().windowText().color()));
-    painter.setFont(this->font());
-    painter.drawText(rect, Qt::AlignCenter, d->text);
+    if (!d->text.isEmpty()) {
+        QFontMetrics font(this->font());
+        QRect rect(d->iconMargins.left() + d->iconSize.width() + d->iconMargins.right() +
+                       d->textMargins.left(),
+                   (h - font.height() + d->textMargins.top() - d->textMargins.bottom()) / 2,
+                   font.horizontalAdvance(d->text), font.height());
+        if (d->icon.isNull()) {
+            rect.moveLeft(d->textMargins.left());
+        }
+        painter.setPen(QPen(palette().windowText().color()));
+        painter.setFont(this->font());
+        painter.drawText(rect, Qt::AlignCenter, d->text);
+    }
 
     QFrame::paintEvent(event);
 }

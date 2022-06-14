@@ -13,7 +13,7 @@ class QCommandPalettePrivate {
     Q_DECLARE_PUBLIC(QCommandPalette)
 public:
     QCommandPalettePrivate();
-    ~QCommandPalettePrivate();
+    virtual ~QCommandPalettePrivate();
 
     void init();
 

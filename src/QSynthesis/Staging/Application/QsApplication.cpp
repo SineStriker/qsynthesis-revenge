@@ -1,8 +1,6 @@
 #include "QsApplication.h"
 #include "QsApplication_p.h"
 
-#include "ExtensionsManager.h"
-
 #ifdef Q_QDOC
 QsApplication::QsApplication(int m_argc, char **argv)
     : QsApplication(*new QsApplicationPrivate(), argc, argv) {

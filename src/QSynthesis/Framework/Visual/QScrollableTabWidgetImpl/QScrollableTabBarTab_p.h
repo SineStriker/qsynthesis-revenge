@@ -12,7 +12,7 @@ class QScrollableTabBarTabPrivate {
     Q_DECLARE_PUBLIC(QScrollableTabBarTab)
 public:
     QScrollableTabBarTabPrivate();
-    ~QScrollableTabBarTabPrivate();
+    virtual ~QScrollableTabBarTabPrivate();
 
     void init();
 

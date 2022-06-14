@@ -19,15 +19,6 @@ public:
     QMap<QString, QString> lastOpenPaths;
 
     // Global Used Strings
-    QString MainTitle;
-    QString WindowTitle;
-    QString ErrorTitle;
-    QString UntitledFileName;
-    QString UntitledPrefix;
-    QString DeletedPrefix;
-
-    QString fileManagerName;
-
     QString projectFilter;         // *.ust
     QString importFilter;          // *.mid *.svp *.s5p *.vsqx *.vsq *.ustx
     QString appendFilter;          // *.mid *.ust *.svp *.s5p *.vsqx *.vsq *.ustx

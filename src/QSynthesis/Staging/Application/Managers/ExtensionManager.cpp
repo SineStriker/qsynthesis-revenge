@@ -1,5 +1,5 @@
-#include "ExtensionsManager.h"
-#include "ExtensionsManager_p.h"
+#include "ExtensionManager.h"
+#include "ExtensionManager_p.h"
 
 #include "Logs/CRecordHolder.h"
 
@@ -11,16 +11,16 @@
 
 #include <QMessageBox>
 
-Q_SINGLETON_DECLARE(ExtensionsManager)
+Q_SINGLETON_DECLARE(ExtensionManager)
 
-ExtensionsManager::ExtensionsManager(QObject *parent)
-    : ExtensionsManager(*new ExtensionsManagerPrivate(), parent) {
+ExtensionManager::ExtensionManager(QObject *parent)
+    : ExtensionManager(*new ExtensionManagerPrivate(), parent) {
 }
 
-ExtensionsManager::~ExtensionsManager() {
+ExtensionManager::~ExtensionManager() {
 }
 
-bool ExtensionsManager::load() {
+bool ExtensionManager::load() {
     if (qRecordCData.themeIndex < 0 || qRecordCData.themeIndex > themeCount()) {
         qRecordData.themeIndex = 0;
     }
@@ -28,12 +28,12 @@ bool ExtensionsManager::load() {
     return true;
 }
 
-bool ExtensionsManager::save() {
+bool ExtensionManager::save() {
     return true;
 }
 
-void ExtensionsManager::themeLoad(int index) {
-    Q_D(ExtensionsManager);
+void ExtensionManager::themeLoad(int index) {
+    Q_D(ExtensionManager);
 
     QCssAnalyzer qss;
 
@@ -66,11 +66,11 @@ void ExtensionsManager::themeLoad(int index) {
     d->reloadAppFont();
 }
 
-int ExtensionsManager::themeCount() const {
+int ExtensionManager::themeCount() const {
     return 4;
 }
 
-QStringList ExtensionsManager::themeNames() const {
+QStringList ExtensionManager::themeNames() const {
     QStringList list = {tr("Multi-Color (Default)"), //
                         tr("Dark (Default)"),        //
                         tr("Light (Default)"),       //
@@ -78,7 +78,7 @@ QStringList ExtensionsManager::themeNames() const {
     return list;
 }
 
-ExtensionsManager::ExtensionsManager(ExtensionsManagerPrivate &d, QObject *parent)
+ExtensionManager::ExtensionManager(ExtensionManagerPrivate &d, QObject *parent)
     : BaseManager(d, parent) {
     construct();
 

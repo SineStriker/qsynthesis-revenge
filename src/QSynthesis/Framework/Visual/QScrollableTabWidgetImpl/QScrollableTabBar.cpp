@@ -426,10 +426,6 @@ QScrollBar *QScrollableTabBar::scrollBar() const {
     return d->scrollBar;
 }
 
-QScrollableTabWidget *QScrollableTabBar::tabWidget() const {
-    return qobject_cast<QScrollableTabWidget *>(parentWidget());
-}
-
 QScrollableTabBar *QScrollableTabBar::currentDraggedTabBar() {
     return QScrollableTabBarPrivate::draggedTabBar;
 }

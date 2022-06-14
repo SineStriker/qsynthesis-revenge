@@ -18,6 +18,8 @@ public:
     explicit QScrollableTabBarTab(QWidget *parent = nullptr);
     ~QScrollableTabBarTab();
 
+    friend class QScrollableTabWidget;
+
 public:
     QIcon icon() const;
     void setIcon(const QIcon &icon);

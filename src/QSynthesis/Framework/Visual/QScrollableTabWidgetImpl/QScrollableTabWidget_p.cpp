@@ -11,16 +11,21 @@ void QScrollableTabWidgetPrivate::init() {
     Q_Q(QScrollableTabWidget);
     q->setAttribute(Qt::WA_StyledBackground);
     q->setAcceptDrops(true);
-
     mainLayout = new QVBoxLayout();
     mainLayout->setMargin(0);
     mainLayout->setSpacing(0);
     q->setLayout(mainLayout);
 
+    // Init Tab Bar Widget
+    tabBarWidget = new QWidget();
+    tabBarWidget->setAttribute(Qt::WA_StyledBackground);
+
     barLayout = new QHBoxLayout();
     barLayout->setMargin(0);
     barLayout->setSpacing(0);
-    mainLayout->addLayout(barLayout);
+    tabBarWidget->setLayout(barLayout);
+
+    mainLayout->addWidget(tabBarWidget);
 
     // Init Stack
     stack = new QStackedWidget();

@@ -16,4 +16,5 @@ public:
 
     QSet<MainWindow *> windows;
 };
+
 #endif // WINDOWMANAGERPRIVATE_H

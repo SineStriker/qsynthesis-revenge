@@ -93,7 +93,6 @@ public:
     void setScrollOpacity(double opacity);
 
     QScrollBar *scrollBar() const;
-    QScrollableTabWidget *tabWidget() const;
 
     int currentDraggedIndex();
     static QScrollableTabBar *currentDraggedTabBar();

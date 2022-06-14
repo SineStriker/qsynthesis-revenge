@@ -95,7 +95,7 @@ void CWindowBarV2::drawCentralTitle(QPainter &painter) {
     }
 
     int expectLeft = (width() - textWidth) / 2;
-    if (expectLeft < limitLeft) {
+    if (expectLeft < limitLeft || expectLeft + textWidth > limitLeft + limitWidth) {
         expectLeft = limitLeft + (limitWidth - textWidth) / 2;
     }
 

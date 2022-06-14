@@ -7,7 +7,7 @@
 #include "Logs/CRecordHolder.h"
 
 #include "DataManager.h"
-#include "ExtensionsManager.h"
+#include "ExtensionManager.h"
 #include "WindowManager.h"
 
 class QsApplicationPrivate : public CApplicationPrivate {
@@ -20,7 +20,7 @@ public:
     void deinit();
 
     DataManager *data;
-    ExtensionsManager *themes;
+    ExtensionManager *themes;
     WindowManager *windows;
 
     CRecordHolder *record;

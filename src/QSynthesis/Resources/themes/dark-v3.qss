@@ -21,7 +21,6 @@ CWindowBarV2 {
 
 CWindowBarV2>QLabel#win-title-label {
     padding: 0;
-    border: none;
     color: transparent;
     background-color: transparent;
     /* Limit window bar height */
@@ -164,7 +163,6 @@ QScrollableTabBar {
 }
 
 QScrollableTabBarTab {
-    qproperty-icon: url(":/svg/image/folder-icon.svg");
     qproperty-iconSize: 20px 20px;
     qproperty-iconMargins: qmargins(4px, 4px);
     qproperty-textMargins: qmargins(4px, 0, 4px, 0);
@@ -311,4 +309,11 @@ CCoupleTabContainer:handle:vertical {
 
 CCoupleTabBarCard {
     qproperty-iconUp: svg(":/svg/app/logo-light.svg", white);
+}
+
+
+/* CentralTab */
+
+DocumentTab {
+    qproperty-icon: url(":/svg/image/folder-icon.svg");
 }

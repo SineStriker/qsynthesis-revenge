@@ -16,8 +16,6 @@ DataManagerPrivate::~DataManagerPrivate() {
 }
 
 void DataManagerPrivate::init() {
-    MainTitle = Qs::AppName;
-
     appDataPath = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation);
     if (!appDataPath.endsWith(Qs::AppName)) {
         appDataPath += Slash + Qs::AppName;

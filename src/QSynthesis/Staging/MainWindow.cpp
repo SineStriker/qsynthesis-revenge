@@ -1,10 +1,10 @@
 #include "MainWindow.h"
 #include "CMenu.h"
 
-#include "Central/CentralTabWidget.h"
-#include "Utils/QCssAnalyzer.h"
-
 #include "DataManager.h"
+
+#include "ActionManager.h"
+#include "TabManager.h"
 
 #include <QApplication>
 #include <QDebug>
@@ -12,28 +12,30 @@
 #include <QScreen>
 
 MainWindow::MainWindow(QWidget *parent) : BasicWindow(parent) {
-    auto bar = menuBar();
-    auto menu1 = new CMenu("Menu 1");
-    auto menu2 = new CMenu("Menu 2");
-    menu1->addActions({new QAction("Action 1"), new QAction("Action 2")});
-    menu2->addActions({new QAction("Action 3"), new QAction("Action 4")});
-    bar->addMenu(menu1);
-    bar->addMenu(menu2);
+    setAcceptDrops(true);
 
-    auto tabs = new CentralTabWidget();
-    setCentralWidget(tabs);
-    tabs->addTab(new QLabel("1"), "tab-1");
-    tabs->addTab(new QLabel("2"), "tab-2");
-    tabs->addTab(new QLabel("3"), "tab-3");
-    tabs->addTab(new QLabel("11"), "tab-111111");
-    tabs->addTab(new QLabel("22"), "tab-222222");
-    tabs->addTab(new QLabel("33"), "tab-33333333");
-    tabs->addTab(new QLabel("44"), "tab-4444");
-    tabs->addTab(new QLabel("55"), "tab-555555");
+    m_layout = new QVBoxLayout();
+    m_layout->setMargin(0);
+    m_layout->setSpacing(0);
 
-    resize(1280, 720);
+    m_widget = new QWidget();
+    m_widget->setAttribute(Qt::WA_StyledBackground);
+    m_widget->setLayout(m_layout);
 
-    setWindowTitle(qApp->applicationDisplayName());
+    m_tabs = new CentralTabWidget();
+    m_frame = new CCoupleTabFrame();
+
+    m_layout->addWidget(m_tabs->moveOutTabBarWidget());
+    m_layout->addWidget(m_frame);
+
+    m_frame->setWidget(m_tabs);
+    this->setCentralWidget(m_widget);
+
+    m_tabMgr = new TabManager(this);
+    m_actionMgr = new ActionManager(this);
+
+    m_tabMgr->load();
+    m_actionMgr->load();
 
     Q_TR_NOTIFY(MainWindow)
 }
@@ -43,4 +45,12 @@ MainWindow::~MainWindow() {
 
 void MainWindow::reloadStrings() {
     m_titleBar->reloadStrings();
+}
+
+CentralTabWidget *MainWindow::tabWidget() const {
+    return m_tabs;
+}
+
+CCoupleTabFrame *MainWindow::frame() const {
+    return m_frame;
 }

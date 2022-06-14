@@ -36,14 +36,13 @@ bool DataManager::load() {
     // Create directories
     if (!Sys::isDirExist(d->appDataPath)) {
         if (!Sys::mkDir(d->appDataPath)) {
-            QMessageBox::warning(nullptr, d->MainTitle,
-                                 tr("Failed to make application data path!"));
+            QMessageBox::warning(nullptr, mainTitle(), tr("Failed to make application data path!"));
             return false;
         }
     }
     if (!Sys::isDirExist(d->appTempPath)) {
         if (!Sys::mkDir(d->appTempPath)) {
-            QMessageBox::warning(nullptr, d->MainTitle, tr("Failed to make temporary path!"));
+            QMessageBox::warning(nullptr, mainTitle(), tr("Failed to make temporary path!"));
             return false;
         }
     }
@@ -96,21 +95,6 @@ bool DataManager::save() {
 
 void DataManager::reloadStrings() {
     Q_D(DataManager);
-
-    d->WindowTitle = d->MainTitle + QString(" %1").arg(Qs::Version);
-    d->UntitledPrefix = "*";
-
-    d->ErrorTitle = tr("Error");
-    d->UntitledFileName = tr("Untitled");
-    d->DeletedPrefix = tr("(Deleted)");
-
-#ifdef Q_OS_WINDOWS
-    d->fileManagerName = tr("Explorer");
-#elif defined(Q_OS_MAC)
-    d->fileManagerName = tr("Finder");
-#else
-    d->fileManagerName = tr("File Manager");
-#endif
 
 #if defined(Q_OS_WINDOWS)
     d->projectFilter = tr("UTAU Sequence Text(*.ust);;All Files(*.*)");
@@ -318,4 +302,38 @@ QString DataManager::getStandardPath(DataManager::StandardPath s) const {
 
 QString DataManager::desktopDir() {
     return QStandardPaths::writableLocation(QStandardPaths::DesktopLocation);
+}
+
+QString DataManager::mainTitle() const {
+    return Qs::AppName;
+}
+
+QString DataManager::windowTitle() const {
+    return mainTitle() + QString(" %1").arg(Qs::Version);
+}
+
+QString DataManager::errorTitle() const {
+    return tr("Error");
+}
+
+QString DataManager::untitledFileName() const {
+    return "*";
+}
+
+QString DataManager::untitledPrefix() const {
+    return tr("Untitled");
+}
+
+QString DataManager::deletedPrefix() const {
+    return tr("(Deleted)");
+}
+
+QString DataManager::fileManagerName() const {
+#ifdef Q_OS_WINDOWS
+    return tr("Explorer");
+#elif defined(Q_OS_MAC)
+    return = tr("Finder");
+#else
+    return = tr("File Manager");
+#endif
 }

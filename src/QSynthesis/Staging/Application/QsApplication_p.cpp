@@ -32,7 +32,7 @@ void QsApplicationPrivate::init() {
     record = new CRecordHolder(q);
 
     data = new DataManager(q);
-    themes = new ExtensionsManager(q);
+    themes = new ExtensionManager(q);
     windows = new WindowManager(q);
 
     initModules();

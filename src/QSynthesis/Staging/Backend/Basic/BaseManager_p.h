@@ -7,7 +7,7 @@ class BaseManagerPrivate {
     Q_DECLARE_PUBLIC(BaseManager)
 public:
     BaseManagerPrivate();
-    ~BaseManagerPrivate();
+    virtual ~BaseManagerPrivate();
 
     void init();
 

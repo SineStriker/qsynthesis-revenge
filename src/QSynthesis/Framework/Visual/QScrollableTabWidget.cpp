@@ -1,6 +1,8 @@
 #include "QScrollableTabWidget.h"
 #include "QScrollableTabWidgetImpl/QScrollableTabWidget_p.h"
 
+#include "QScrollableTabWidgetImpl/QScrollableTabBar_p.h"
+
 #include <QApplication>
 #include <QDebug>
 #include <QDragEnterEvent>
@@ -156,6 +158,7 @@ void QScrollableTabWidget::setTabBar(QScrollableTabBar *tabBar) {
         d->tabBar->deleteLater();
     } else {
         d->barLayout->insertWidget(0, tabBar);
+        tabBar->d_func()->tabs = this;
     }
 
     d->tabBar = tabBar;
@@ -174,7 +177,8 @@ void QScrollableTabWidget::setTabBar(QScrollableTabBar *tabBar) {
 
 void QScrollableTabWidget::dragEnterEvent(QDragEnterEvent *event) {
     const QMimeData *mime = event->mimeData();
-    if (mime->hasFormat(id_format())) {
+    QString idFormat = id_format();
+    if (mime->hasFormat(idFormat) && !mime->data(idFormat).compare(metaObject()->className())) {
         event->acceptProposedAction();
         return;
     }
@@ -184,11 +188,11 @@ void QScrollableTabWidget::dragEnterEvent(QDragEnterEvent *event) {
 void QScrollableTabWidget::dropEvent(QDropEvent *event) {
     const QMimeData *mime = event->mimeData();
     QString idFormat = id_format();
-    if (mime->hasFormat(idFormat) &&
-        !mime->data(idFormat).compare(QScrollableTabBar::staticMetaObject.className())) {
+    if (mime->hasFormat(idFormat) && !mime->data(idFormat).compare(metaObject()->className())) {
         auto orgBar = QScrollableTabBar::currentDraggedTabBar();
+        auto orgTabs = orgBar->d_func()->tabs;
         int orgIndex;
-        if (orgBar && (orgIndex = orgBar->currentDraggedIndex()) >= 0) {
+        if (orgBar && orgTabs && (orgIndex = orgBar->currentDraggedIndex()) >= 0) {
             // Calculate New Index
             auto bar = tabBar();
             QPoint p = bar->mapFromGlobal(QCursor::pos());
@@ -217,7 +221,6 @@ void QScrollableTabWidget::dropEvent(QDropEvent *event) {
                 }
             } else {
                 // Record And Remove
-                auto orgTabs = orgBar->tabWidget();
                 auto tab = orgTabs->widget(orgIndex);
                 auto icon = orgBar->tabIcon(orgIndex);
                 auto label = orgBar->tabText(orgIndex);
@@ -249,6 +252,30 @@ QAbstractButton *QScrollableTabWidget::closeButton(int index) const {
 void QScrollableTabWidget::setCloseButton(int index, QAbstractButton *button) {
     Q_D(const QScrollableTabWidget);
     d->tabBar->setCloseButton(index, button);
+}
+
+QWidget *QScrollableTabWidget::tabBarWidget() {
+    Q_D(const QScrollableTabWidget);
+    return d->tabBarWidget;
+}
+
+QWidget *QScrollableTabWidget::moveOutTabBarWidget() {
+    Q_D(QScrollableTabWidget);
+    auto w = d->tabBarWidget;
+    if (w->parentWidget() != this) {
+        return nullptr;
+    }
+    d->mainLayout->removeWidget(w);
+    return w;
+}
+
+void QScrollableTabWidget::moveInTabBarWidget() {
+    Q_D(const QScrollableTabWidget);
+    auto w = d->tabBarWidget;
+    if (w->parentWidget() == this) {
+        return;
+    }
+    d->mainLayout->insertWidget(0, d->tabBarWidget);
 }
 
 void QScrollableTabWidget::_q_showTab(int index, int orgIndex) {

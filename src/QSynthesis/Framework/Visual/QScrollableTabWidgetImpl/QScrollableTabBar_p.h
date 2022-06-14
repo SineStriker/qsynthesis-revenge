@@ -14,13 +14,14 @@
 
 #include "QScrollableTabBarTab.h"
 
+class QScrollableTabWidget;
 class QScrollableTabBar;
 
 class QScrollableTabBarPrivate {
     Q_DECLARE_PUBLIC(QScrollableTabBar)
 public:
     QScrollableTabBarPrivate();
-    ~QScrollableTabBarPrivate();
+    virtual ~QScrollableTabBarPrivate();
 
     void init();
 
@@ -37,6 +38,8 @@ public:
     void autoScrollToCurrent() const;
 
     QScrollableTabBar *q_ptr;
+
+    QScrollableTabWidget *tabs;
 
     // Tabs Entity
     QHBoxLayout *entityLayout;

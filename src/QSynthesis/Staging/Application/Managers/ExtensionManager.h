@@ -7,17 +7,17 @@
 #include "BaseManager.h"
 #include "Macros.h"
 
-#define qTheme ExtensionsManager::instance()
+#define qTheme ExtensionManager::instance()
 
-class ExtensionsManagerPrivate;
+class ExtensionManagerPrivate;
 
-class ExtensionsManager : public BaseManager {
+class ExtensionManager : public BaseManager {
     Q_OBJECT
-    Q_SINGLETON(ExtensionsManager)
-    Q_DECLARE_PRIVATE(ExtensionsManager)
+    Q_SINGLETON(ExtensionManager)
+    Q_DECLARE_PRIVATE(ExtensionManager)
 public:
-    explicit ExtensionsManager(QObject *parent = nullptr);
-    ~ExtensionsManager();
+    explicit ExtensionManager(QObject *parent = nullptr);
+    ~ExtensionManager();
 
 public:
     bool load() override;
@@ -29,7 +29,7 @@ public:
     QStringList themeNames() const;
 
 protected:
-    ExtensionsManager(ExtensionsManagerPrivate &d, QObject *parent = nullptr);
+    ExtensionManager(ExtensionManagerPrivate &d, QObject *parent = nullptr);
 };
 
 #endif // EXTENSIONSMANAGER_H

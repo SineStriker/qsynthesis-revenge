@@ -103,7 +103,6 @@ add_recursively(PROJECT_HEADERS "${MY_SRC_DIR}/Vendor/*.hpp" "${MY_SRC_DIR}/Vend
 add_recursively(PROJECT_SOURCES "${MY_SRC_DIR}/Staging/*.cpp" "${MY_SRC_DIR}/Staging/*.cc")
 add_recursively(PROJECT_HEADERS "${MY_SRC_DIR}/Staging/*.hpp" "${MY_SRC_DIR}/Staging/*.h")
 
-
 # Add specific files
 add_files(PROJECT_SOURCES
         main.cpp
@@ -182,7 +181,11 @@ add_files(INCLUDE_PATHS
     Staging
     Staging/Application
     Staging/Application/Managers
-    Staging/Basic
+    Staging/Backend/Basic
+    Staging/Central
+    Staging/Central/Managers
+    Staging/Central/Tabs
+    Staging/Frontend/Basic
     Vendor/Frontend
     Vendor/Frontend/Utils
     Vendor/Frontend/Window

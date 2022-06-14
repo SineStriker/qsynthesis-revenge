@@ -1,6 +1,8 @@
 #include "QScrollableTabBar_p.h"
 #include "QScrollableTabBar.h"
 
+#include "../QScrollableTabWidget.h"
+
 #include <QApplication>
 #include <QDateTime>
 #include <QDebug>
@@ -24,6 +26,8 @@ QScrollableTabBarPrivate::~QScrollableTabBarPrivate() {
 void QScrollableTabBarPrivate::init() {
     Q_Q(QScrollableTabBar);
     q->setAttribute(Qt::WA_StyledBackground);
+
+    tabs = nullptr;
 
     current = nullptr;
     previous = nullptr;
@@ -118,7 +122,7 @@ void QScrollableTabBarPrivate::startDrag(QScrollableTabBarTab *tab) {
     if (var.type() == QVariant::String) {
         mime->setData("text/plain", var.toString().toUtf8());
     }
-    mime->setData(id_format(), QScrollableTabBar::staticMetaObject.className());
+    mime->setData(id_format(), tabs->metaObject()->className());
 
     QPixmap pixmap(tab->size());
     pixmap.fill(Qt::transparent);
