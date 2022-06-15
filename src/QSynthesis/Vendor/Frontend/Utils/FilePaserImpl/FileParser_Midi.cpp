@@ -2,12 +2,14 @@
 #include "QMidiFile.h"
 #include "QUtauSections.h"
 
+#include "DataManager.h"
+
 using namespace Utau;
 
 bool FileParser::parseMidiFile(const QString &filename, SectionNotes &oNotes) {
     QMidiFile midi;
     if (!midi.load(filename)) {
-//        QMessageBox::warning(Q_W(parent()), qData->MainTitle, tr("Unable to read MIDI file!"));
+        QMessageBox::warning(Q_W(parent()), qData->mainTitle(), tr("Unable to read MIDI file!"));
         return 0;
     }
 

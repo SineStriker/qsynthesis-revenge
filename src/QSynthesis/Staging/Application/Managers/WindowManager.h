@@ -18,7 +18,8 @@ public:
     ~WindowManager();
 
 public:
-    MainWindow *createWindow();
+    MainWindow *NewFilesWindow();
+    MainWindow *NewFolderWindow();
 
 protected:
     WindowManager(WindowManagerPrivate &d, QObject *parent = nullptr);

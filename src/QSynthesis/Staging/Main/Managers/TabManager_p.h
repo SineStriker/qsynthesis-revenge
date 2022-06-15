@@ -1,14 +1,14 @@
 #ifndef TABMANAGERPRIVATE_H
 #define TABMANAGERPRIVATE_H
 
-#include "BaseManager_p.h"
+#include "../CentralManager_p.h"
 
 #include "CentralTab.h"
 #include "TabManager.h"
 
 class MainWindow;
 
-class TabManagerPrivate : public BaseManagerPrivate {
+class TabManagerPrivate : public CentralManagerPrivate {
     Q_DECLARE_PUBLIC(TabManager)
 public:
     TabManagerPrivate();
@@ -21,8 +21,6 @@ public:
     int tabCount() const;
 
     bool tryCloseTab(int index);
-
-    MainWindow *w;
 };
 
 #endif // TABMANAGERPRIVATE_H

@@ -10,10 +10,20 @@ ActionManager::ActionManager(MainWindow *parent)
 ActionManager::~ActionManager() {
 }
 
+void ActionManager::reloadStrings() {
+    Q_D(ActionManager);
+    d->engine->reloadStrings();
+}
+
 bool ActionManager::load() {
+    Q_D(ActionManager);
+
+    d->engine->setup();
+
     return true;
 }
 
-ActionManager::ActionManager(ActionManagerPrivate &d, QObject *parent) : BaseManager(d, parent) {
+ActionManager::ActionManager(ActionManagerPrivate &d, MainWindow *parent)
+    : CentralManager(d, parent) {
     d.init();
 }

@@ -1,7 +1,7 @@
 #ifndef DOCUMENTTABPRIVATE_H
 #define DOCUMENTTABPRIVATE_H
 
-#include "CentralTab_p.h"
+#include "../CentralTab_p.h"
 #include "DocumentTab.h"
 
 class DocumentTabPrivate : public CentralTabPrivate {

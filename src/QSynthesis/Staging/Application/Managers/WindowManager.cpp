@@ -15,10 +15,34 @@ WindowManager::WindowManager(QObject *parent) : WindowManager(*new WindowManager
 WindowManager::~WindowManager() {
 }
 
-MainWindow *WindowManager::createWindow() {
+MainWindow *WindowManager::NewFolderWindow() {
     Q_D(WindowManager);
 
-    auto w = new MainWindow();
+    auto w = new MainWindow(MainWindow::Folder);
+    w->setAttribute(Qt::WA_DeleteOnClose);
+    w->installEventFilter(this);
+
+    // Recover Window State
+    QRect rect = qRecordCData.windowRect;
+    bool max = qRecordCData.windowMaximized;
+    if (!rect.isNull()) {
+        w->setGeometry(rect);
+    } else {
+        w->centralize(2.0 / 3.0);
+    }
+    if (max) {
+        w->showMaximized();
+    }
+    w->show();
+    d->windows.insert(w);
+
+    return w;
+}
+
+MainWindow *WindowManager::NewFilesWindow() {
+    Q_D(WindowManager);
+
+    auto w = new MainWindow(MainWindow::Files);
     w->setAttribute(Qt::WA_DeleteOnClose);
     w->installEventFilter(this);
 

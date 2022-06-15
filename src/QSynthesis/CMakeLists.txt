@@ -123,6 +123,9 @@ else ()
     add_executable(${CURRENT_PROJECT_NAME} ${PROJECT_SOURCES} ${PROJECT_HEADERS} ${QT_RESOURCES})
 endif ()
 
+# Add Definitions
+target_compile_definitions(${CURRENT_PROJECT_NAME} PRIVATE APP_VERSION="${APP_VERSION}")
+
 # Link OS dependent libraries
 if (SYS_WIN)
     target_link_libraries(${CURRENT_PROJECT_NAME} PRIVATE dwmapi user32 shell32 advapi32 winmm)
@@ -182,9 +185,9 @@ add_files(INCLUDE_PATHS
     Staging/Application
     Staging/Application/Managers
     Staging/Backend/Basic
-    Staging/Central
-    Staging/Central/Managers
-    Staging/Central/Tabs
+    Staging/Main
+    Staging/Main/Managers
+    Staging/Main/Tabs
     Staging/Frontend/Basic
     Vendor/Frontend
     Vendor/Frontend/Utils

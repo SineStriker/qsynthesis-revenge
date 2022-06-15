@@ -7,10 +7,12 @@
 #include <QMap>
 #include <QString>
 
+#include "QMidiDef.h"
+
 class QMidiEvent;
 struct NativeMidiOutInstances;
 
-class QMidiOut
+class Q_MIDI_API QMidiOut
 {
 public:
 	static QMap<QString /* key */, QString /* name */> devices();

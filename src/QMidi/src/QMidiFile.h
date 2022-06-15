@@ -9,7 +9,9 @@
 #include <QMap>
 #include <QList>
 
-class QMidiEvent
+#include "QMidiDef.h"
+
+class Q_MIDI_API QMidiEvent
 {
 public:
 	enum EventType {
@@ -98,7 +100,7 @@ private:
 	int fTrackNumber;
 };
 
-class QMidiFile
+class Q_MIDI_API QMidiFile
 {
 public:
 	enum DivisionType {

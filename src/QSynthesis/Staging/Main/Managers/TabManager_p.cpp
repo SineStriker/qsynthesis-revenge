@@ -13,13 +13,11 @@ TabManagerPrivate::~TabManagerPrivate() {
 void TabManagerPrivate::init() {
     Q_Q(TabManager);
 
-    w = qobject_cast<MainWindow *>(q->parent());
-    Q_ASSERT(w);
-
-    w->installEventFilter(q);
+    // Proxy All Drag Drop Events
+    auto tabs = w->tabWidget();
+    tabs->setAcceptDrops(false);
 
     // Connect Signals And Slots
-    auto tabs = w->tabWidget();
     q->connect(tabs, &CentralTabWidget::currentTabTextChanged, q, &TabManager::_q_tabTitleChanged);
     q->connect(tabs, &CentralTabWidget::tabCloseRequested, q, &TabManager::_q_tabCloseRequested);
     q->connect(tabs, &CentralTabWidget::currentChanged, q, &TabManager::_q_tabIndexChanged);

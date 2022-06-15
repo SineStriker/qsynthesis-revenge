@@ -3,8 +3,11 @@
 
 #include "QScrollableTabWidget.h"
 
+class CentralTabWidgetPrivate;
+
 class CentralTabWidget : public QScrollableTabWidget {
     Q_OBJECT
+    Q_DECLARE_PRIVATE(CentralTabWidget)
 public:
     explicit CentralTabWidget(QWidget *parent = nullptr);
     ~CentralTabWidget();
@@ -26,6 +29,9 @@ private:
 
 signals:
     void currentTabTextChanged(const QString &text);
+
+protected:
+    CentralTabWidget(CentralTabWidgetPrivate &d, QWidget *parent = nullptr);
 };
 
 #endif // CENTRALTABWIDGET_H

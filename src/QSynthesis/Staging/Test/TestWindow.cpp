@@ -2,7 +2,7 @@
 
 #include "CCoupleTabFrame.h"
 #include "CMenu.h"
-#include "Central/CentralTabWidget.h"
+#include "CentralTabWidget.h"
 
 #include "DataManager.h"
 

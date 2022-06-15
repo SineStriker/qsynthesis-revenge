@@ -8,9 +8,11 @@
 #include <QString>
 #include <QObject>
 
+#include "QMidiDef.h"
+
 struct NativeMidiInInstances;
 
-class QMidiIn : public QObject
+class Q_MIDI_API QMidiIn : public QObject
 {
 	Q_OBJECT
 public:

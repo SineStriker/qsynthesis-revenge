@@ -1,7 +1,7 @@
 #ifndef FOLDERTABPRIVATE_H
 #define FOLDERTABPRIVATE_H
 
-#include "CentralTab_p.h"
+#include "../CentralTab_p.h"
 
 #include "FolderTab.h"
 

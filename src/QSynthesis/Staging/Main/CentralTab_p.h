@@ -2,6 +2,7 @@
 #define CENTRALTAB_P_H
 
 #include "BaseTab_p.h"
+
 #include "CentralTab.h"
 
 class CentralTabPrivate : public BaseTabPrivate {

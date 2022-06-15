@@ -1,12 +1,12 @@
 #ifndef TABMANAGER_H
 #define TABMANAGER_H
 
-#include "BaseManager.h"
+#include "../CentralManager.h"
 
 class MainWindow;
 class TabManagerPrivate;
 
-class TabManager : public BaseManager {
+class TabManager : public CentralManager {
     Q_OBJECT
     Q_DECLARE_PRIVATE(TabManager)
 public:
@@ -17,7 +17,7 @@ public:
     bool load() override;
 
 protected:
-    TabManager(TabManagerPrivate &d, QObject *parent = nullptr);
+    TabManager(TabManagerPrivate &d, MainWindow *parent = nullptr);
 
     bool eventFilter(QObject *obj, QEvent *event) override;
 

@@ -1,4 +1,5 @@
 #include "CentralTabWidget.h"
+#include "CentralTabWidget_p.h"
 
 #include "CPushButton.h"
 #include "CentralTab.h"
@@ -6,7 +7,7 @@
 #include <QApplication>
 #include <QHoverEvent>
 
-CentralTabWidget::CentralTabWidget(QWidget *parent) : QScrollableTabWidget(parent) {
+CentralTabWidget::CentralTabWidget(QWidget *parent) : CentralTabWidget(*new CentralTabWidgetPrivate(), parent) {
 }
 
 CentralTabWidget::~CentralTabWidget() {
@@ -69,4 +70,8 @@ void CentralTabWidget::_q_tabIconChanged(const QIcon &icon) {
     if (tab) {
         setTabIcon(indexOf(tab), icon);
     }
+}
+
+CentralTabWidget::CentralTabWidget(CentralTabWidgetPrivate &d, QWidget *parent) : QScrollableTabWidget(d, parent) {
+    d.init();
 }

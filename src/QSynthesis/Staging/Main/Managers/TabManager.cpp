@@ -35,21 +35,27 @@ bool TabManager::load() {
     return true;
 }
 
-TabManager::TabManager(TabManagerPrivate &d, QObject *parent) : BaseManager(d, parent) {
+TabManager::TabManager(TabManagerPrivate &d, MainWindow *parent) : CentralManager(d, parent) {
     d.init();
 }
 
 bool TabManager::eventFilter(QObject *obj, QEvent *event) {
     Q_D(TabManager);
-    if (obj == d->w) {
+    auto window = d->w;
+    if (obj == window) {
         switch (event->type()) {
         // Proxy Drag And Drop Events To Tabs
         case QEvent::DragEnter:
         case QEvent::Drop: {
-            auto tabs = d->w->tabWidget();
-            tabs->event(event);
-            if (event->isAccepted()) {
-                return true;
+            auto tabs = window->tabWidget();
+            auto bar = QScrollableTabBar::currentDraggedTabBar();
+            MainWindow *fromWindow;
+            if (bar && (fromWindow = qobject_cast<MainWindow *>(bar->window())) &&
+                fromWindow->editType() == window->editType()) {
+                tabs->event(event);
+                if (event->isAccepted()) {
+                    return true;
+                }
             }
             break;
         }

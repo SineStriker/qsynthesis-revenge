@@ -1,6 +1,6 @@
 #include "Namespace.h"
 
-const char Qs::Version[] = "0.2.16";
+const char Qs::Version[] = APP_VERSION;
 const char Qs::AppName[] = "QSynthesis";
 
 const int Qs::SampleRate = 44100;

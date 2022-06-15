@@ -304,6 +304,10 @@ QString DataManager::desktopDir() {
     return QStandardPaths::writableLocation(QStandardPaths::DesktopLocation);
 }
 
+QString DataManager::appName() const {
+    return Qs::AppName;
+}
+
 QString DataManager::mainTitle() const {
     return Qs::AppName;
 }

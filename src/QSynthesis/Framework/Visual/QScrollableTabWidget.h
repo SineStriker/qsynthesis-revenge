@@ -2,6 +2,7 @@
 #define QSCROLLABLETABWIDGET_H
 
 #include <QAbstractButton>
+#include <QMimeData>
 #include <QWidget>
 
 #include "QScrollableTabWidgetImpl/QScrollableTabBar.h"
@@ -35,6 +36,9 @@ public:
     QString tabToolTip(int index) const;
     void setTabToolTip(int index, const QString &tip);
 
+    QVariant tabData(int index) const;
+    void setTabData(int index, const QVariant &data);
+
     int currentIndex() const;
     void setCurrentIndex(int index);
 
@@ -59,7 +63,9 @@ signals:
 protected:
     virtual void tabInserted(int index);
     virtual void tabRemoved(int index);
+
     virtual void tabSelected(int index, int orgIndex);
+    virtual bool tabIncoming(const QMimeData *mime) const;
 
     void setTabBar(QScrollableTabBar *tabBar);
 

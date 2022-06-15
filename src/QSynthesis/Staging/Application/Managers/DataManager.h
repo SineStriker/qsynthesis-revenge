@@ -79,6 +79,7 @@ public:
 
     static QString desktopDir();
 
+    QString appName() const;
     QString mainTitle() const;
     QString windowTitle() const;
     QString errorTitle() const;

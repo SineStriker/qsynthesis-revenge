@@ -12,7 +12,8 @@ int main(int argc, char *argv[]) {
     QsApplication a(argc, argv);
 
     // Create Window
-    WindowManager::instance()->createWindow();
+    WindowManager::instance()->NewFilesWindow();
+    WindowManager::instance()->NewFolderWindow();
 
     return a.exec();
 }

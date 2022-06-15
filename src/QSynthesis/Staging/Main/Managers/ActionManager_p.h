@@ -1,11 +1,12 @@
 #ifndef ACTIONMANAGERPRIVATE_H
 #define ACTIONMANAGERPRIVATE_H
 
-#include "BaseManager_p.h"
+#include "../CentralManager_p.h"
 
 #include "ActionManager.h"
+#include "ActionManagerImpl/ActionManagerEngine.h"
 
-class ActionManagerPrivate : public BaseManagerPrivate {
+class ActionManagerPrivate : public CentralManagerPrivate {
     Q_DECLARE_PUBLIC(ActionManager)
 public:
     ActionManagerPrivate();
@@ -13,7 +14,7 @@ public:
 
     void init();
 
-    MainWindow *w;
+    ActionManagerEngine *engine;
 };
 
 #endif // ACTIONMANAGERPRIVATE_H

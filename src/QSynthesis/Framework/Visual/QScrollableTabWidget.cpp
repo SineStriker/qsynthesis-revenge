@@ -7,7 +7,6 @@
 #include <QDebug>
 #include <QDragEnterEvent>
 #include <QDropEvent>
-#include <QMimeData>
 
 static inline QString id_format() {
     return QString("application/%1.pid%2.data")
@@ -88,6 +87,16 @@ void QScrollableTabWidget::setTabToolTip(int index, const QString &tip) {
     d->tabBar->setTabToolTip(index, tip);
 }
 
+QVariant QScrollableTabWidget::tabData(int index) const {
+    Q_D(const QScrollableTabWidget);
+    return d->tabBar->tabData(index);
+}
+
+void QScrollableTabWidget::setTabData(int index, const QVariant &data) {
+    Q_D(QScrollableTabWidget);
+    d->tabBar->setTabData(index, data);
+}
+
 int QScrollableTabWidget::currentIndex() const {
     Q_D(const QScrollableTabWidget);
     return d->tabBar->currentIndex();
@@ -150,6 +159,11 @@ void QScrollableTabWidget::tabSelected(int index, int orgIndex) {
     Q_UNUSED(orgIndex)
 }
 
+bool QScrollableTabWidget::tabIncoming(const QMimeData *mime) const {
+    Q_UNUSED(mime);
+    return true;
+}
+
 void QScrollableTabWidget::setTabBar(QScrollableTabBar *tabBar) {
     Q_D(QScrollableTabWidget);
 
@@ -192,7 +206,8 @@ void QScrollableTabWidget::dropEvent(QDropEvent *event) {
         auto orgBar = QScrollableTabBar::currentDraggedTabBar();
         auto orgTabs = orgBar->d_func()->tabs;
         int orgIndex;
-        if (orgBar && orgTabs && (orgIndex = orgBar->currentDraggedIndex()) >= 0) {
+        if (orgBar && orgTabs && (orgIndex = orgBar->currentDraggedIndex()) >= 0 &&
+            tabIncoming(mime)) {
             // Calculate New Index
             auto bar = tabBar();
             QPoint p = bar->mapFromGlobal(QCursor::pos());
