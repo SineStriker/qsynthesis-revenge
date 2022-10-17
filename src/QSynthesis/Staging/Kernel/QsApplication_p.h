@@ -4,6 +4,8 @@
 #include "Private/CApplication_p.h"
 #include "QsApplication.h"
 
+#include "Managers/FileManager.h"
+#include "Managers/PluginManager.h"
 #include "Windows/WindowManager.h"
 
 class QsApplicationPrivate : public CApplicationPrivate {
@@ -12,6 +14,8 @@ public:
     QsApplicationPrivate();
     ~QsApplicationPrivate();
 
+    PluginManager *pluginMgr;
+    FileManager *fileMgr;
     WindowManager *windowMgr;
 
     void init();

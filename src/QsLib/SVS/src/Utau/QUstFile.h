@@ -16,12 +16,12 @@ public:
     ~QUstFile();
 
 public:
+    // Specify before loading or saving
+    QString voiceDir;
+
     QUstVersion sectionVersion;
     QUstSettings sectionSettings;
     QList<QUstNote> sectionNotes;
-
-    // Specify by loading or saving
-    QString voiceDir;
 
 public:
     bool load(const QString &filename);

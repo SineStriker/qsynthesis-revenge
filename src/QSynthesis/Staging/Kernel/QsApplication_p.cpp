@@ -32,6 +32,8 @@ void QsApplicationPrivate::init() {
     q->setFont(f);
 #endif
 
+    pluginMgr = new PluginManager(q);
+    fileMgr = new FileManager(q);
     windowMgr = new WindowManager(q);
 
     // Load Modules
@@ -43,5 +45,7 @@ void QsApplicationPrivate::init() {
 void QsApplicationPrivate::deinit() {
     // Save Modules
 
+    delete pluginMgr;
+    delete fileMgr;
     delete windowMgr;
 }

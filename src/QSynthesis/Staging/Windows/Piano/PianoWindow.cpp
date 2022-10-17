@@ -79,8 +79,9 @@ void PianoWindow::_q_actionTriggered(int actionId) {
 
             QString text =
                 tr("<h2>%1 %2</h2>"
-                   "<p>Diffusion Singer using "
-                   "<span style=\"font-weight: bold;\">QSynthesis</span> framework.</p>"
+                   "<p>"
+                   "<span style=\"font-weight: bold;\">QSynthesis</span> for UTAU with innovative "
+                   "framework.</p>"
                    "<p>Copyright (C) OpenVPI, 2020-2022. </p>"
                    "<h3>FFmpeg</h3>"
                    "%3"
