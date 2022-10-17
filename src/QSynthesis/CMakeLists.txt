@@ -108,6 +108,6 @@ target_link_libraries(${PROJECT_NAME} PRIVATE ${QT_LIBS})
 
 # Add include dirs
 target_include_directories(${PROJECT_NAME} PRIVATE
+    Core
     Staging
-    Vendor/Utau
 )

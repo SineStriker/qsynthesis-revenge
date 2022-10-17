@@ -1,11 +1,11 @@
 #ifndef HOMEWINDOW_H
 #define HOMEWINDOW_H
 
-#include "Vendor/Windows/BasicWindow.h"
+#include "Controls/Windows/NativeWindow.h"
 
 class HomeWindowPrivate;
 
-class HomeWindow : public BasicWindow {
+class HomeWindow : public NativeWindow {
     Q_OBJECT
     Q_DECLARE_PRIVATE(HomeWindow)
 public:

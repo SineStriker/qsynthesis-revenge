@@ -10,12 +10,11 @@
 #ifdef Q_QDOC
 CApplication::CApplication(int m_argc, char **argv)
     : CApplication(*new CApplicationPrivate(), argc, argv) {
-}
 #else
 CApplication::CApplication(int &argc, char **argv, int _internal)
     : CApplication(*new CApplicationPrivate(), argc, argv, _internal) {
-}
 #endif
+}
 
 CApplication::~CApplication() {
     removeAllNotifyFilters();
@@ -78,16 +77,13 @@ void CApplication::removeAllNotifyFilters() {
 #ifdef Q_QDOC
 CApplication::CApplication(CApplicationPrivate &d, int &argc, char **argv)
     : QApplication(argc, argv), d_ptr(&d) {
-    d.q_ptr = this;
-    d.init();
-}
 #else
 CApplication::CApplication(CApplicationPrivate &d, int &argc, char **argv, int _internal)
     : QApplication(argc, argv, _internal), d_ptr(&d) {
+#endif
     d.q_ptr = this;
     d.init();
 }
-#endif
 
 bool CApplication::notify(QObject *obj, QEvent *event) {
     Q_D(CApplication);

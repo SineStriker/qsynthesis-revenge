@@ -8,6 +8,10 @@
 #endif
 #define qApp (qobject_cast<QsApplication *>(QCoreApplication::instance()))
 
+#define Q_TR_NOTIFY(T)                                                                             \
+    reloadStrings();                                                                               \
+    connect(qApp, &QsApplication::stringUpdated, this, &T::reloadStrings);
+
 class QsApplicationPrivate;
 
 class QsApplication : public CApplication {
@@ -21,6 +25,11 @@ public:
 #endif
     ~QsApplication();
 
+public:
+    void reloadStrings();
+
+    void reloadScreen();
+
 protected:
 #ifdef Q_QDOC
     QsApplication(QsApplicationPrivate &d, int &argc, char **argv);
@@ -31,6 +40,9 @@ protected:
 
 private:
     void q_screenRatioChanged(qreal dpi);
+
+signals:
+    void stringUpdated();
 };
 
 #endif // QSAPPLICATION_H

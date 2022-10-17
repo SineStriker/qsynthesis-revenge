@@ -1,18 +1,18 @@
-#include "QMidiImporter.h"
+#include "QMidiConverter.h"
 
 #include "QMidiFile.h"
 
 #include "Utau/Config/UtaConstants.h"
 #include "Utau/QUstUtils.h"
 
-QMidiImporter::QMidiImporter() {
+QMidiConverter::QMidiConverter() {
 }
 
-QMidiImporter::~QMidiImporter() {
+QMidiConverter::~QMidiConverter() {
 }
 
-bool QMidiImporter::parse(const QString &filename, IFormatImporter::Callback callback,
-                          QUstFile *out) {
+bool QMidiConverter::load(const QString &filename, QUstFile *out,
+                         ISVSConverter::Callback callback) {
     QMidiFile midi;
     if (!midi.load(filename)) {
         return false;
@@ -208,4 +208,8 @@ bool QMidiImporter::parse(const QString &filename, IFormatImporter::Callback cal
 
     out->sectionSettings.projectName = trackNames[track];
     return true;
+}
+
+bool QMidiConverter::save(const QString &filename, const QUstFile &in) {
+    return false;
 }

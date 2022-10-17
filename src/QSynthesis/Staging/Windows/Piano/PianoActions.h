@@ -5,7 +5,7 @@
 #include <QMenu>
 #include <QObject>
 
-#include "Application/Types/Actions.h"
+#include "Kernel/Actions.h"
 
 class PianoWindow;
 

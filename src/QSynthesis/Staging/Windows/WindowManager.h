@@ -7,8 +7,9 @@
  *
  */
 
+#include "Basic/BasicManager.h"
+
 #include "qsutils_macros.h"
-#include "Vendor/Objects/BasicManager.h"
 
 class HomeWindow;
 class PianoWindow;

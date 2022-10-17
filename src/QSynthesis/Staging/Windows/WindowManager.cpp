@@ -1,7 +1,7 @@
 #include "WindowManager.h"
 #include "WindowManager_p.h"
 
-#include "Application/Types/Events.h"
+#include "Kernel/Events.h"
 
 #include "SystemHelper.h"
 #include "ViewHelper.h"

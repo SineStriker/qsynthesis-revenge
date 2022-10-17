@@ -1,22 +1,22 @@
-#include "Application/Managers/WindowManager.h"
-#include "Application/QsApplication.h"
+#include "Kernel/QsApplication.h"
+#include "Windows/WindowManager.h"
 
 #include <QDebug>
 #include <QMessageBox>
 #include <QPluginLoader>
 
-#include "api/IFormatImporter.h"
+#include "api/ISVSConverter.h"
 
 int main(int argc, char *argv[]) {
     QsApplication a(argc, argv);
 
     WindowManager::instance()->showHome();
 
-    QPluginLoader loader(qApp->applicationDirPath() + "/QMidiImporter.dll");
+    QPluginLoader loader(qApp->applicationDirPath() + "/QMidiConverter.dll");
     QObject *instance = loader.instance(); //
     if (instance != NULL) {
         qDebug() << loader.fileName() + " is loaded";
-//        auto avc = qobject_cast<IFormatImporter *>(instance);
+        //        auto avc = qobject_cast<IFormatImporter *>(instance);
         qDebug() << instance;
         qDebug() << loader.metaData();
     } else {

@@ -1,9 +1,9 @@
 #include "PianoWindow.h"
 #include "PianoWindow_p.h"
 
-#include "Application/Managers/DataManager.h"
-#include "Application/Managers/WindowManager.h"
-#include "Application/Types/Events.h"
+#include "Kernel/Events.h"
+#include "Kernel/QsApplication.h"
+#include "Windows/WindowManager.h"
 #include "qsmedia_version.h"
 
 #include <QApplication>
@@ -22,7 +22,7 @@ void PianoWindow::reloadStrings() {
     d->reloadStrings_helper();
 }
 
-PianoWindow::PianoWindow(PianoWindowPrivate &d, QWidget *parent) : BasicWindow(parent), d_ptr(&d) {
+PianoWindow::PianoWindow(PianoWindowPrivate &d, QWidget *parent) : NativeWindow(parent), d_ptr(&d) {
     d.q_ptr = this;
 
     d.init();
@@ -41,7 +41,7 @@ bool PianoWindow::event(QEvent *event) {
         default:
             break;
     }
-    return BasicWindow::event(event);
+    return NativeWindow::event(event);
 }
 
 void PianoWindow::closeEvent(QCloseEvent *event) {

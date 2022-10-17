@@ -1,4 +1,4 @@
-#include "BasicWindow.h"
+#include "NativeWindow.h"
 #include "CMenuBar.h"
 
 #include <QApplication>
@@ -11,7 +11,7 @@ FRAMELESSHELPER_USE_NAMESPACE
 
 using namespace Global;
 
-BasicWindow::BasicWindow(QWidget *parent) : FramelessMainWindow(parent) {
+NativeWindow::NativeWindow(QWidget *parent) : FramelessMainWindow(parent) {
     auto helper = FramelessWidgetsHelper::get(this);
 
     // Insert Menu Bar To Title Bar
@@ -32,30 +32,17 @@ BasicWindow::BasicWindow(QWidget *parent) : FramelessMainWindow(parent) {
     helper->setHitTestVisible(bar); // IMPORTANT!
 }
 #else
-// #include <QResizeEvent>
-
-BasicWindow::BasicWindow(QWidget *parent) : QMainWindow(parent) {
-    // Insert Menu Bar To Title Bar
-    // auto bar = new CMenuBar();
-
-    // // New Window Bar
-    // m_titleBar = new CWindowBarV2(bar);
-    // m_titleBar->installEventFilter(this);
-
-    // // setMenuWidget(): make the menu widget become the first row of the window.
-    // this->setMenuWidget(m_titleBar);
-    // m_titleBar->setWidget(this);
-
+NativeWindow::NativeWindow(QWidget *parent) : QMainWindow(parent) {
     setMenuBar(new CMenuBar());
 }
 
 #endif
 
-BasicWindow::~BasicWindow() {
+NativeWindow::~NativeWindow() {
 }
 
 #ifndef Q_OS_MAC
-void BasicWindow::setMenuBar(QMenuBar *menuBar) {
+void NativeWindow::setMenuBar(QMenuBar *menuBar) {
     auto helper = FramelessWidgetsHelper::get(this);
     auto orgBar = this->menuBar();
     if (orgBar) {
@@ -65,12 +52,12 @@ void BasicWindow::setMenuBar(QMenuBar *menuBar) {
     m_titleBar->setMenuBar(menuBar);
 }
 
-QMenuBar *BasicWindow::menuBar() const {
+QMenuBar *NativeWindow::menuBar() const {
     return m_titleBar->menuBar();
 }
 #endif
 
-void BasicWindow::resizeByDesktop(double r, bool centralize) {
+void NativeWindow::resizeByDesktop(double r, bool centralize) {
     QWidget *desktop = qApp->desktop();
     if (parentWidget()) {
         desktop = parentWidget();
@@ -89,21 +76,6 @@ void BasicWindow::resizeByDesktop(double r, bool centralize) {
     }
 }
 
-bool BasicWindow::eventFilter(QObject *obj, QEvent *event) {
-#ifdef Q_OS_MAC
-//    if (obj == m_titleBar) {
-//        switch (event->type()) {
-//        case QEvent::Resize: {
-//            auto e = static_cast<QResizeEvent *>(event);
-//            if (e->oldSize().height() != e->size().height()) {
-//                setTitleBarHeight(m_titleBar->height());
-//            }
-//            break;
-//        }
-//        default:
-//            break;
-//        }
-//    }
-#endif
+bool NativeWindow::eventFilter(QObject *obj, QEvent *event) {
     return Super::eventFilter(obj, event);
 }

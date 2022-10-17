@@ -1,30 +1,25 @@
-#ifndef BASICWINDOW_H
-#define BASICWINDOW_H
+#ifndef NATIVEWINDOW_H
+#define NATIVEWINDOW_H
 
 #include "CWindowBarV2.h"
 
 #ifndef Q_OS_MAC
 #include <FramelessMainWindow>
-class BasicWindow : public FRAMELESSHELPER_NAMESPACE::FramelessMainWindow {
+class NativeWindow : public FRAMELESSHELPER_NAMESPACE::FramelessMainWindow {
     Q_OBJECT
     using Super = FRAMELESSHELPER_NAMESPACE::FramelessMainWindow;
 #else
-// #include "MacMainWindow.h"
-// class BasicWindow : public MacMainWindow {
-//     Q_OBJECT
-//     using Super = MacMainWindow;
-
 #include <QMainWindow>
 
 #include "CMenu.h"
 
-class BasicWindow : public QMainWindow {
+class NativeWindow : public QMainWindow {
     Q_OBJECT
     using Super = QMainWindow;
 #endif
 public:
-    explicit BasicWindow(QWidget *parent = nullptr);
-    ~BasicWindow();
+    explicit NativeWindow(QWidget *parent = nullptr);
+    ~NativeWindow();
 
 public:
 
@@ -46,4 +41,4 @@ protected:
 signals:
 };
 
-#endif // BASICWINDOW_H
+#endif // NATIVEWINDOW_H

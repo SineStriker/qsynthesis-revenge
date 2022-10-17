@@ -1,11 +1,11 @@
 #ifndef WINDOWMANAGERPRIVATE_H
 #define WINDOWMANAGERPRIVATE_H
 
-#include "Vendor/Objects/BasicManager_p.h"
+#include "Basic/BasicManager_p.h"
 #include "WindowManager.h"
 
-#include "Windows/Home/HomeWindow.h"
-#include "Windows/Piano/PianoWindow.h"
+#include "Home/HomeWindow.h"
+#include "Piano/PianoWindow.h"
 
 #include <QSet>
 

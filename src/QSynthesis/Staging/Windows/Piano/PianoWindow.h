@@ -1,11 +1,11 @@
 #ifndef PIANOWINDOW_H
 #define PIANOWINDOW_H
 
-#include "Vendor/Windows/BasicWindow.h"
+#include "Controls/Windows/NativeWindow.h"
 
 class PianoWindowPrivate;
 
-class PianoWindow : public BasicWindow {
+class PianoWindow : public NativeWindow {
     Q_OBJECT
     Q_DECLARE_PRIVATE(PianoWindow)
 public:

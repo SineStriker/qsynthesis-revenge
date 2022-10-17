@@ -1,8 +1,8 @@
 #include "HomeWindow.h"
 #include "HomeWindow_p.h"
 
-#include "Application/Managers/DataManager.h"
-#include "Application/Managers/WindowManager.h"
+#include "Kernel/QsApplication.h"
+#include "Windows/WindowManager.h"
 
 #include <QDebug>
 
@@ -17,7 +17,7 @@ void HomeWindow::reloadStrings() {
     d->reloadStrings_helper();
 }
 
-HomeWindow::HomeWindow(HomeWindowPrivate &d, QWidget *parent) : BasicWindow(parent), d_ptr(&d) {
+HomeWindow::HomeWindow(HomeWindowPrivate &d, QWidget *parent) : NativeWindow(parent), d_ptr(&d) {
     d.q_ptr = this;
 
     d.init();
