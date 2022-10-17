@@ -92,7 +92,7 @@ endif()
 
 # Embedded libraries
 if (USE_FRAMELESS)
-    target_link_libraries(${PROJECT_NAME} PRIVATE FramelessHelper::Widgets)
+    target_link_libraries(${PROJECT_NAME} PRIVATE FramelessHelper::FramelessHelperWidgets)
 else()
     target_compile_definitions(${PROJECT_NAME} PUBLIC NO_FRAMELESS_HELPER)
 endif()

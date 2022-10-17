@@ -68,47 +68,10 @@ For detailed information, see [Synthesizing Tools](./docs/synthesizing-tools.md)
 + License: MIT License
 + Owner: waddlesplash
 
-#### Frq Reader
-+ Source: https://github.com/titinko/frq_reader
-+ License: MIT License
-+ Owner: titinko
-
 #### JetBrains IntelliJ IDEA
 + Source: https://github.com/JetBrains/intellij-community
 + License: Apache 2.0 License
 + Owner: JetBrains s.r.o.
-
-## Libraries built for QSynthesis
-
-#### FsNotifier
-+ Source: https://github.com/SineStriker/fsnotifier
-+ License: Apache 2.0 License
-
-#### QScrollableTabWidget
-
-+ Source: https://github.com/SineStriker/QScrollableTabWidget
-+ License: Apache 2.0 License
-
-## UTAU FRQ References
-
-#### VocalShifter
-+ Home: http://ackiesound.ifdef.jp/soko.html
-+ License: *Unknown*
-
-#### Mrq
-+ Source: https://github.com/Sleepwalking/mrq
-+ License: BSD
-+ Owner: Kanru Hua
-
-#### Pmk (TIPS frequency map file)
-+ Origin: ScientistB
-+ Owner: Masao
-+ License: *Unknown*
-
-#### World4Utau
-+ Source: https://github.com/Luk3M/world4utau
-+ License: GPL v3
-+ Owner: Luk3M
 
 ## Contributors
 

@@ -32,3 +32,4 @@ Configure the CMake project in `pkg` directory and build virtual target `install
 
 + SDL2
 + QuaZip & Zlib
++ FramelessHelper

@@ -47,19 +47,19 @@ if (USE_PREBUILT_LIBS)
     file(GLOB SDL2_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../pkg/libs/cmake/SDL*")
     file(GLOB QuaZip_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../pkg/libs/cmake/QuaZip*")
     file(GLOB FFmpeg_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../pkg/libs/cmake/FFmpeg*")
+    if (USE_FRAMELESS)
+        file(GLOB FramelessHelper_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../pkg/libs/cmake/FramelessHelper*")
+    endif()
 endif()
 
 find_package(SDL2 REQUIRED)
-
 find_package(QuaZip NAMES QuaZip-Qt5 QuaZip-Qt6 REQUIRED)
-
 find_package(FFmpeg REQUIRED)
-
-# Application
 if (USE_FRAMELESS)
-    add_subdirectory(FramelessHelper)
+    find_package(FramelessHelper REQUIRED COMPONENTS Core Widgets)
 endif()
 
+# Application
 add_subdirectory(fsnotifier)
 
 add_subdirectory(QsLib)

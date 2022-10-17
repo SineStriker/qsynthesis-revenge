@@ -1,3 +1,5 @@
+add_subdirectory(FramelessHelper)
+
 add_subdirectory(quazip)
 
 add_subdirectory(SDL2)
