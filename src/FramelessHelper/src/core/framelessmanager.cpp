@@ -25,15 +25,50 @@
 #include "framelessmanager.h"
 #include "framelessmanager_p.h"
 #include <QtCore/qmutex.h>
+#include <QtCore/qdebug.h>
 #include <QtGui/qguiapplication.h>
 #include <QtGui/qscreen.h>
 #include <QtGui/qwindow.h>
+#include <QtGui/qfontdatabase.h>
 #include "framelesshelper_qt.h"
 #include "framelessconfig_p.h"
 #include "utils.h"
 #ifdef Q_OS_WINDOWS
 #  include "framelesshelper_win.h"
 #endif
+
+#ifndef COMPILER_STRING
+#  ifdef Q_CC_CLANG // Must be before GNU, because Clang claims to be GNU too.
+#    define COMPILER_STRING __VERSION__ // Already includes the compiler's name.
+#  elif defined(Q_CC_GHS)
+#    define COMPILER_STRING "GHS " QT_STRINGIFY(__GHS_VERSION_NUMBER)
+#  elif defined(Q_CC_GNU)
+#    define COMPILER_STRING "GCC " __VERSION__
+#  elif defined(Q_CC_MSVC)
+#    if (_MSC_VER < 1910)
+#      define COMPILER_STRING "MSVC 2015"
+#    elif (_MSC_VER < 1917)
+#      define COMPILER_STRING "MSVC 2017"
+#    elif (_MSC_VER < 1930)
+#      define COMPILER_STRING "MSVC 2019"
+#    elif (_MSC_VER < 2000)
+#      define COMPILER_STRING "MSVC 2022"
+#    else
+#      define COMPILER_STRING "MSVC version " QT_STRINGIFY(_MSC_VER)
+#    endif
+#  else
+#    define COMPILER_STRING "UNKNOWN"
+#  endif
+#endif
+
+// The "Q_INIT_RESOURCE()" macro can't be used within a namespace,
+// so we wrap it into a separate function outside of the namespace and
+// then call it instead inside the namespace, that's also the recommended
+// workaround provided by Qt's official documentation.
+static inline void initResource()
+{
+    Q_INIT_RESOURCE(framelesshelpercore);
+}
 
 FRAMELESSHELPER_BEGIN_NAMESPACE
 
@@ -58,6 +93,10 @@ FRAMELESSHELPER_BYTEARRAY_CONSTANT(xcb)
 static constexpr const char MAC_LAYER_ENV_VAR[] = "QT_MAC_WANTS_LAYER";
 FRAMELESSHELPER_BYTEARRAY_CONSTANT2(ValueOne, "1")
 #endif
+
+FRAMELESSHELPER_STRING_CONSTANT2(IconFontFilePath, ":/org.wangwenx190.FramelessHelper/resources/fonts/Segoe Fluent Icons.ttf")
+FRAMELESSHELPER_STRING_CONSTANT2(IconFontName, "Segoe Fluent Icons")
+static constexpr const int kIconFontPointSize = 8;
 
 FramelessManagerPrivate::FramelessManagerPrivate(FramelessManager *q) : QObject(q)
 {
@@ -87,6 +126,30 @@ const FramelessManagerPrivate *FramelessManagerPrivate::get(const FramelessManag
         return nullptr;
     }
     return pub->d_func();
+}
+
+void FramelessManagerPrivate::initializeIconFont()
+{
+    static bool inited = false;
+    if (inited) {
+        return;
+    }
+    inited = true;
+    initResource();
+    if (QFontDatabase::addApplicationFont(kIconFontFilePath) < 0) {
+        qWarning() << "Failed to load icon font:" << kIconFontFilePath;
+    }
+}
+
+QFont FramelessManagerPrivate::getIconFont()
+{
+    static const QFont font = []() -> QFont {
+        QFont f = {};
+        f.setFamily(kIconFontName);
+        f.setPointSize(kIconFontPointSize);
+        return f;
+    }();
+    return font;
 }
 
 SystemTheme FramelessManagerPrivate::systemTheme() const
@@ -271,7 +334,7 @@ void FramelessHelper::Core::initialize()
 #if (QT_VERSION >= QT_VERSION_CHECK(5, 14, 0))
     // Non-integer scale factors will cause Qt have some painting defects
     // for both Qt Widgets and Qt Quick applications, and it's still not
-    // totally fixed till now (Qt 6.4), so we round the scale factors to
+    // totally fixed till now (Qt 6.5), so we round the scale factors to
     // get a better looking. Non-integer scale factors will also cause
     // flicker and jitter during window resizing.
     QGuiApplication::setHighDpiScaleFactorRoundingPolicy(Qt::HighDpiScaleFactorRoundingPolicy::Round);
@@ -279,19 +342,36 @@ void FramelessHelper::Core::initialize()
     qRegisterMetaType<Option>();
     qRegisterMetaType<SystemTheme>();
     qRegisterMetaType<SystemButtonType>();
-    qRegisterMetaType<ResourceType>();
     qRegisterMetaType<DwmColorizationArea>();
     qRegisterMetaType<Anchor>();
     qRegisterMetaType<ButtonState>();
     qRegisterMetaType<WindowsVersion>();
     qRegisterMetaType<ApplicationType>();
+    qRegisterMetaType<BlurMode>();
     qRegisterMetaType<VersionNumber>();
     qRegisterMetaType<SystemParameters>();
+    qRegisterMetaType<VersionInfo>();
 }
 
-int FramelessHelper::Core::version()
+void FramelessHelper::Core::uninitialize()
 {
-    return FRAMELESSHELPER_VERSION;
+    // Currently nothing to do here.
+}
+
+VersionInfo FramelessHelper::Core::version()
+{
+    static const VersionInfo result = []() -> VersionInfo {
+        VersionInfo ver = {};
+        ver.version.major = FRAMELESSHELPER_VERSION_MAJOR;
+        ver.version.minor = FRAMELESSHELPER_VERSION_MINOR;
+        ver.version.patch = FRAMELESSHELPER_VERSION_PATCH;
+        ver.version.tweak = FRAMELESSHELPER_VERSION_TWEAK;
+        ver.commit = QUtf8String(FRAMELESSHELPER_COMMIT_STR);
+        ver.compileDateTime = QUtf8String(FRAMELESSHELPER_COMPILE_DATETIME);
+        ver.compiler = QUtf8String(COMPILER_STRING);
+        return ver;
+    }();
+    return result;
 }
 
 FRAMELESSHELPER_END_NAMESPACE

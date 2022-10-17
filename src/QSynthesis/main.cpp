@@ -1,19 +1,29 @@
-#include <FramelessManager>
+#include "Application/Managers/WindowManager.h"
+#include "Application/QsApplication.h"
 
-#include "QsApplication.h"
-#include "WindowManager.h"
+#include <QDebug>
+#include <QMessageBox>
+#include <QPluginLoader>
+
+#include "api/IFormatImporter.h"
 
 int main(int argc, char *argv[]) {
-    // Not necessary, but better call this function, before the construction
-    // of any Q(Core|Gui)Application instances.
-    FRAMELESSHELPER_NAMESPACE::FramelessHelper::Core::initialize();
-
-    // Create Application
     QsApplication a(argc, argv);
 
-    // Create Window
-    WindowManager::instance()->NewFilesWindow();
-    WindowManager::instance()->NewFolderWindow();
+    WindowManager::instance()->showHome();
+
+    QPluginLoader loader(qApp->applicationDirPath() + "/QMidiImporter.dll");
+    QObject *instance = loader.instance(); //
+    if (instance != NULL) {
+        qDebug() << loader.fileName() + " is loaded";
+//        auto avc = qobject_cast<IFormatImporter *>(instance);
+        qDebug() << instance;
+        qDebug() << loader.metaData();
+    } else {
+        QMessageBox::information(nullptr, "failed to load plugin", loader.errorString());
+    }
+    // 需要手动释放
+    delete instance;
 
     return a.exec();
 }

@@ -30,11 +30,11 @@ The whole QSynthesis source code is written in C++ with Qt library. In order to 
 
 On Windows, compiling with Microsoft Visual C++ is strongly recommended.
 
-For detailed information, see [Build Instructions](./docs/build-insturctions.md).
+For detailed information, see [Build Instructions](./docs/build-instructions.md).
 
 ### Modules
 
-On Windows, you can use the default `wavtool.exe` and `resamplers.exe` which are distributed with UTAU to synthesize the audio for QSynthesis.
+On Windows, you can use the default `wavtool.exe` and `resampler.exe` which are distributed with UTAU to synthesize the audio for QSynthesis.
 
 On Mac OS and Linux, there are no ready-made concatenating or resampling tools. You need to compile them yourself.
 

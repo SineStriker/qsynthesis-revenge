@@ -1,20 +1,27 @@
 #ifndef WINDOWMANAGERPRIVATE_H
 #define WINDOWMANAGERPRIVATE_H
 
-#include "BaseManager_p.h"
-
-#include "MainWindow.h"
+#include "Vendor/Objects/BasicManager_p.h"
 #include "WindowManager.h"
 
-class WindowManagerPrivate : public BaseManagerPrivate {
+#include "Windows/Home/HomeWindow.h"
+#include "Windows/Piano/PianoWindow.h"
+
+#include <QSet>
+
+class WindowManagerPrivate : public BasicManagerPrivate {
     Q_DECLARE_PUBLIC(WindowManager)
 public:
     WindowManagerPrivate();
-    ~WindowManagerPrivate();
+    virtual ~WindowManagerPrivate();
 
     void init();
 
-    QSet<MainWindow *> windows;
+    HomeWindow *createHomeWin();
+    PianoWindow *createPianoWin();
+
+    HomeWindow *homeWin;
+    QSet<PianoWindow *> projWins;
 };
 
 #endif // WINDOWMANAGERPRIVATE_H

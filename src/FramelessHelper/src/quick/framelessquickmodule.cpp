@@ -25,6 +25,7 @@
 #include "framelessquickmodule.h"
 #include "framelessquickhelper.h"
 #include "framelessquickutils.h"
+#include "quickchromepalette.h"
 #if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
 #  include "quickstandardsystembutton_p.h"
 #  include "quickstandardtitlebar_p.h"
@@ -55,12 +56,12 @@ void FramelessHelper::Quick::registerTypes(QQmlEngine *engine)
     }
     qRegisterMetaType<QuickGlobal::SystemTheme>();
     qRegisterMetaType<QuickGlobal::SystemButtonType>();
-    qRegisterMetaType<QuickGlobal::ResourceType>();
     qRegisterMetaType<QuickGlobal::DwmColorizationArea>();
     qRegisterMetaType<QuickGlobal::Anchor>();
     qRegisterMetaType<QuickGlobal::ButtonState>();
     qRegisterMetaType<QuickGlobal::WindowsVersion>();
     qRegisterMetaType<QuickGlobal::ApplicationType>();
+    qRegisterMetaType<QuickGlobal::BlurMode>();
     qmlRegisterUncreatableType<QuickGlobal>(QUICK_URI_FULL, "FramelessHelperConstants",
         FRAMELESSHELPER_STRING_LITERAL("The FramelessHelperConstants namespace is not creatable, you can only use it to access it's enums."));
     qmlRegisterSingletonType<FramelessQuickUtils>(QUICK_URI_EXPAND("FramelessUtils"),
@@ -69,6 +70,7 @@ void FramelessHelper::Quick::registerTypes(QQmlEngine *engine)
             Q_UNUSED(scriptEngine);
             return new FramelessQuickUtils;
         });
+    qmlRegisterAnonymousType<QuickChromePalette>(QUICK_URI_SHORT);
     qmlRegisterRevision<QWindow, 254>(QUICK_URI_FULL);
     qmlRegisterRevision<QQuickWindow, 254>(QUICK_URI_FULL);
     qmlRegisterRevision<QQuickItem, 254>(QUICK_URI_FULL);

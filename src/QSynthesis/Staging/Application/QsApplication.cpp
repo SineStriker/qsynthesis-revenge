@@ -30,5 +30,5 @@ QsApplication::QsApplication(QsApplicationPrivate &d, int &argc, char **argv, in
 
 void QsApplication::q_screenRatioChanged(qreal dpi) {
     Q_UNUSED(dpi)
-    qTheme->themeLoad(qRecordCData.themeIndex);
+    qExt->reloadScreen();
 }

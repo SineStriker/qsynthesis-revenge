@@ -1,30 +1,43 @@
 #ifndef WINDOWMANAGER_H
 #define WINDOWMANAGER_H
 
-#include "BaseManager.h"
-#include "Macros.h"
+/*
+ * Usage: Manage windows
+ *
+ *
+ */
+
+#include "qsutils_macros.h"
+#include "Vendor/Objects/BasicManager.h"
+
+class HomeWindow;
+class PianoWindow;
+class WindowManagerPrivate;
 
 #define qWindows WindowManager::instance()
 
-class MainWindow;
-class WindowManagerPrivate;
-
-class WindowManager : public BaseManager {
+class WindowManager : public BasicManager {
     Q_OBJECT
-    Q_SINGLETON(WindowManager)
     Q_DECLARE_PRIVATE(WindowManager)
+
+    Q_SINGLETON(WindowManager)
 public:
-    explicit WindowManager(QObject *parent = nullptr);
+    WindowManager(QObject *parent = nullptr);
     ~WindowManager();
 
 public:
-    MainWindow *NewFilesWindow();
-    MainWindow *NewFolderWindow();
+    HomeWindow *showHome();
+    void hideHome();
+
+    PianoWindow *newProject();
+    PianoWindow *openProject(const QString &filename);
+
+    bool exit();
 
 protected:
     WindowManager(WindowManagerPrivate &d, QObject *parent = nullptr);
 
-    bool eventFilter(QObject *obj, QEvent *event) override;
+    bool eventFilter(QObject *obj, QEvent *event);
 };
 
 #endif // WINDOWMANAGER_H

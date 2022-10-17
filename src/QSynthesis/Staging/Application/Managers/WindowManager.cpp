@@ -1,13 +1,14 @@
 #include "WindowManager.h"
 #include "WindowManager_p.h"
 
-#include "Logs/CRecordHolder.h"
-#include "MainWindow.h"
+#include "Application/Types/Events.h"
+
+#include "SystemHelper.h"
+#include "ViewHelper.h"
 
 #include <QEvent>
-#include <QMessageBox>
 
-Q_SINGLETON_DECLARE(WindowManager)
+Q_SINGLETON_DECLARE(WindowManager);
 
 WindowManager::WindowManager(QObject *parent) : WindowManager(*new WindowManagerPrivate(), parent) {
 }
@@ -15,72 +16,103 @@ WindowManager::WindowManager(QObject *parent) : WindowManager(*new WindowManager
 WindowManager::~WindowManager() {
 }
 
-MainWindow *WindowManager::NewFolderWindow() {
+HomeWindow *WindowManager::showHome() {
     Q_D(WindowManager);
 
-    auto w = new MainWindow(MainWindow::Folder);
-    w->setAttribute(Qt::WA_DeleteOnClose);
-    w->installEventFilter(this);
+    if (d->homeWin) {
+        return d->homeWin;
+    }
 
-    // Recover Window State
-    QRect rect = qRecordCData.windowRect;
-    bool max = qRecordCData.windowMaximized;
-    if (!rect.isNull()) {
-        w->setGeometry(rect);
-    } else {
-        w->centralize(2.0 / 3.0);
-    }
-    if (max) {
-        w->showMaximized();
-    }
+    auto w = d->createHomeWin();
     w->show();
-    d->windows.insert(w);
+    View::centralizeWindow(w, QSizeF(0.4, 0.6));
 
+    d->homeWin = w;
     return w;
 }
 
-MainWindow *WindowManager::NewFilesWindow() {
+void WindowManager::hideHome() {
     Q_D(WindowManager);
 
-    auto w = new MainWindow(MainWindow::Files);
-    w->setAttribute(Qt::WA_DeleteOnClose);
-    w->installEventFilter(this);
+    if (!d->homeWin) {
+        return;
+    }
 
-    // Recover Window State
-    QRect rect = qRecordCData.windowRect;
-    bool max = qRecordCData.windowMaximized;
-    if (!rect.isNull()) {
-        w->setGeometry(rect);
-    } else {
-        w->centralize(2.0 / 3.0);
-    }
-    if (max) {
-        w->showMaximized();
-    }
+    d->homeWin->close();
+    d->homeWin = nullptr;
+}
+
+PianoWindow *WindowManager::newProject() {
+    Q_D(WindowManager);
+
+    auto w = d->createPianoWin();
     w->show();
-    d->windows.insert(w);
+    View::centralizeWindow(w, QSizeF(0.75, 0.75));
 
+    hideHome();
+
+    d->projWins.insert(w);
     return w;
 }
 
-WindowManager::WindowManager(WindowManagerPrivate &d, QObject *parent) : BaseManager(d, parent) {
+PianoWindow *WindowManager::openProject(const QString &filename) {
+    if (!Sys::isFileExist(filename)) {
+        return nullptr;
+    }
+
+    Q_D(WindowManager);
+
+    auto w = d->createPianoWin();
+    w->show();
+    View::centralizeWindow(w, QSizeF(0.75, 0.75));
+
+    hideHome();
+
+    d->projWins.insert(w);
+    return w;
+}
+
+bool WindowManager::exit() {
+    Q_D(WindowManager);
+
+    bool ok = true;
+    auto windows = d->projWins.values();
+    for (auto it = windows.rbegin(); it != windows.rend(); ++it) {
+        auto win = *it;
+        win->close();
+
+        if (win->isVisible()) {
+            ok = false;
+            break;
+        }
+    }
+
+    return ok;
+}
+
+WindowManager::WindowManager(WindowManagerPrivate &d, QObject *parent) : BasicManager(d, parent) {
     construct();
 
     d.init();
 }
 
-bool WindowManager::eventFilter(QObject *obj, QEvent *event) {
+bool WindowManager::WindowManager::eventFilter(QObject *obj, QEvent *event) {
     Q_D(WindowManager);
-    if (strcmp(obj->metaObject()->className(), "MainWindow") == 0) {
-        auto w = qobject_cast<MainWindow *>(obj);
-        if (event->type() == QEvent::Close) {
-            // Save Window State
-            if (d->windows.size() == 1) {
-                qRecordData.windowRect = w->geometry();
-                qRecordData.windowMaximized = w->isMaximized();
+    if (qstrcmp(obj->metaObject()->className(), "PianoWindow") == 0) {
+        auto w = qobject_cast<PianoWindow *>(obj);
+        switch (static_cast<int>(event->type())) {
+            case QEventImpl::WindowClose: {
+                // Detach Window
+                auto e = static_cast<QEventImpl::WindowCloseEvent *>(event);
+                d->projWins.remove(w);
+                if (e->closeOnly() && d->projWins.isEmpty()) {
+                    showHome();
+                }
+                break;
             }
-            d->windows.remove(w);
+            default:
+                break;
         }
     }
-    return BaseManager::eventFilter(obj, event);
+    return BasicManager::eventFilter(obj, event);
 }

@@ -26,6 +26,7 @@
 
 #include "framelesshelperquick_global.h"
 #if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
+#include "quickchromepalette.h"
 #include <QtQuick/private/qquickrectangle_p.h>
 #include <QtQuickTemplates2/private/qquicklabel_p.h>
 
@@ -50,8 +51,8 @@ class FRAMELESSHELPER_QUICK_API QuickStandardTitleBar : public QQuickRectangle
     Q_PROPERTY(QuickStandardSystemButton* maximizeButton READ maximizeButton CONSTANT FINAL)
     Q_PROPERTY(QuickStandardSystemButton* closeButton READ closeButton CONSTANT FINAL)
     Q_PROPERTY(bool extended READ isExtended WRITE setExtended NOTIFY extendedChanged FINAL)
-    Q_PROPERTY(bool useAlternativeBackground READ isUsingAlternativeBackground WRITE setUseAlternativeBackground NOTIFY useAlternativeBackgroundChanged FINAL)
     Q_PROPERTY(bool hideWhenClose READ isHideWhenClose WRITE setHideWhenClose NOTIFY hideWhenCloseChanged FINAL)
+    Q_PROPERTY(QuickChromePalette* chromePalette READ chromePalette CONSTANT FINAL)
 
 public:
     explicit QuickStandardTitleBar(QQuickItem *parent = nullptr);
@@ -68,11 +69,10 @@ public:
     Q_NODISCARD bool isExtended() const;
     void setExtended(const bool value);
 
-    Q_NODISCARD bool isUsingAlternativeBackground() const;
-    void setUseAlternativeBackground(const bool value);
-
     Q_NODISCARD bool isHideWhenClose() const;
     void setHideWhenClose(const bool value);
+
+    Q_NODISCARD QuickChromePalette *chromePalette() const;
 
 protected:
     void itemChange(const ItemChange change, const ItemChangeData &value) override;
@@ -82,6 +82,7 @@ private Q_SLOTS:
     void updateMaximizeButton();
     void updateTitleLabelText();
     void updateTitleBarColor();
+    void updateChromeButtonColor();
     void clickMinimizeButton();
     void clickMaximizeButton();
     void clickCloseButton();
@@ -90,7 +91,6 @@ private Q_SLOTS:
 Q_SIGNALS:
     void titleLabelAlignmentChanged();
     void extendedChanged();
-    void useAlternativeBackgroundChanged();
     void hideWhenCloseChanged();
 
 private:
@@ -108,8 +108,8 @@ private:
     QMetaObject::Connection m_windowActiveChangeConnection = {};
     QMetaObject::Connection m_windowTitleChangeConnection = {};
     bool m_extended = false;
-    bool m_useAlternativeBackground = false;
     bool m_hideWhenClose = false;
+    QScopedPointer<QuickChromePalette> m_chromePalette;
 };
 
 FRAMELESSHELPER_END_NAMESPACE

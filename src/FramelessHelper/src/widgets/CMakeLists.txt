@@ -23,9 +23,9 @@
 ]]
 
 set(SUB_MOD_NAME Widgets)
-set(SUB_PROJ_NAME ${CURRENT_PROJECT_NAME}${SUB_MOD_NAME})
+set(SUB_PROJ_NAME ${PROJECT_NAME}${SUB_MOD_NAME})
 
-set(INCLUDE_PREFIX ../../include/${CURRENT_PROJECT_NAME}/${SUB_MOD_NAME})
+set(INCLUDE_PREFIX ../../include/${PROJECT_NAME}/${SUB_MOD_NAME})
 
 set(SOURCES
     ${INCLUDE_PREFIX}/framelesshelperwidgets_global.h
@@ -50,7 +50,12 @@ set(SOURCES
 
 if(WIN32 AND NOT FRAMELESSHELPER_BUILD_STATIC)
     enable_language(RC)
-    list(APPEND SOURCES framelesshelperwidgets.rc)
+    configure_file(
+        ${CMAKE_CURRENT_SOURCE_DIR}/../core/framelesshelper.rc.in
+        ${CMAKE_CURRENT_BINARY_DIR}/framelesshelperwidgets.rc @ONLY)
+    list(APPEND SOURCES
+        ${CMAKE_CURRENT_BINARY_DIR}/framelesshelperwidgets.rc
+    )
 endif()
 
 if(FRAMELESSHELPER_BUILD_STATIC)
@@ -58,7 +63,7 @@ if(FRAMELESSHELPER_BUILD_STATIC)
 else()
     add_library(${SUB_PROJ_NAME} SHARED ${SOURCES})
 endif()
-add_library(${CURRENT_PROJECT_NAME}::${SUB_MOD_NAME} ALIAS ${SUB_PROJ_NAME})
+add_library(${PROJECT_NAME}::${SUB_MOD_NAME} ALIAS ${SUB_PROJ_NAME})
 
 if(FRAMELESSHELPER_BUILD_STATIC)
     target_compile_definitions(${SUB_PROJ_NAME} PUBLIC
@@ -76,7 +81,7 @@ target_compile_definitions(${SUB_PROJ_NAME} PRIVATE
     QT_NO_FOREACH
     QT_USE_QSTRINGBUILDER
     QT_DEPRECATED_WARNINGS
-    QT_DISABLE_DEPRECATED_BEFORE=0x060400
+    QT_DISABLE_DEPRECATED_BEFORE=0x060500
     FRAMELESSHELPER_WIDGETS_LIBRARY
 )
 
@@ -95,7 +100,7 @@ target_link_libraries(${SUB_PROJ_NAME} PRIVATE
 )
 
 target_link_libraries(${SUB_PROJ_NAME} PUBLIC
-    ${CURRENT_PROJECT_NAME}::Core
+    ${PROJECT_NAME}::Core
 )
 
 target_include_directories(${SUB_PROJ_NAME} PUBLIC

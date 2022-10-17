@@ -29,22 +29,31 @@ if(UNIX AND NOT APPLE)
 endif()
 
 set(SUB_MOD_NAME Core)
-set(SUB_PROJ_NAME ${CURRENT_PROJECT_NAME}${SUB_MOD_NAME})
+set(SUB_PROJ_NAME ${PROJECT_NAME}${SUB_MOD_NAME})
 
-set(INCLUDE_PREFIX ../../include/${CURRENT_PROJECT_NAME}/${SUB_MOD_NAME})
+set(INCLUDE_PREFIX ../../include/${PROJECT_NAME}/${SUB_MOD_NAME})
+
+configure_file(framelesshelper_version.inc.in
+    ${PROJECT_BINARY_DIR}/framelesshelper_version.inc @ONLY)
 
 set(SOURCES
+    ${PROJECT_BINARY_DIR}/framelesshelper_version.inc
     ${INCLUDE_PREFIX}/framelesshelpercore_global.h
     ${INCLUDE_PREFIX}/framelesshelper_qt.h
     ${INCLUDE_PREFIX}/framelessmanager.h
     ${INCLUDE_PREFIX}/utils.h
+    ${INCLUDE_PREFIX}/chromepalette.h
     ${INCLUDE_PREFIX}/private/framelessmanager_p.h
     ${INCLUDE_PREFIX}/private/framelessconfig_p.h
+    ${INCLUDE_PREFIX}/private/sysapiloader_p.h
+    ${INCLUDE_PREFIX}/private/chromepalette_p.h
     framelesshelpercore.qrc
     utils.cpp
     framelesshelper_qt.cpp
     framelessmanager.cpp
     framelessconfig.cpp
+    sysapiloader.cpp
+    chromepalette.cpp
 )
 
 if(WIN32)
@@ -62,7 +71,12 @@ endif()
 
 if(WIN32 AND NOT FRAMELESSHELPER_BUILD_STATIC)
     enable_language(RC)
-    list(APPEND SOURCES framelesshelpercore.rc)
+    configure_file(
+        ${CMAKE_CURRENT_SOURCE_DIR}/framelesshelper.rc.in
+        ${CMAKE_CURRENT_BINARY_DIR}/framelesshelpercore.rc @ONLY)
+    list(APPEND SOURCES
+        ${CMAKE_CURRENT_BINARY_DIR}/framelesshelpercore.rc
+    )
 endif()
 
 if(FRAMELESSHELPER_BUILD_STATIC)
@@ -70,7 +84,7 @@ if(FRAMELESSHELPER_BUILD_STATIC)
 else()
     add_library(${SUB_PROJ_NAME} SHARED ${SOURCES})
 endif()
-add_library(${CURRENT_PROJECT_NAME}::${SUB_MOD_NAME} ALIAS ${SUB_PROJ_NAME})
+add_library(${PROJECT_NAME}::${SUB_MOD_NAME} ALIAS ${SUB_PROJ_NAME})
 
 if(FRAMELESSHELPER_BUILD_STATIC)
     target_compile_definitions(${SUB_PROJ_NAME} PUBLIC
@@ -88,7 +102,7 @@ target_compile_definitions(${SUB_PROJ_NAME} PRIVATE
     QT_NO_FOREACH
     QT_USE_QSTRINGBUILDER
     QT_DEPRECATED_WARNINGS
-    QT_DISABLE_DEPRECATED_BEFORE=0x060400
+    QT_DISABLE_DEPRECATED_BEFORE=0x060500
     FRAMELESSHELPER_CORE_LIBRARY
 )
 
@@ -111,7 +125,12 @@ else()
     )
 endif()
 
-if(UNIX AND NOT APPLE)
+if (APPLE)
+    target_link_libraries(${SUB_PROJ_NAME} PRIVATE
+        "-framework Foundation"
+        "-framework Cocoa"
+    )
+elseif (UNIX)
     target_compile_definitions(${SUB_PROJ_NAME} PRIVATE
         GDK_VERSION_MIN_REQUIRED=GDK_VERSION_3_6
     )
@@ -132,4 +151,5 @@ target_link_libraries(${SUB_PROJ_NAME} PRIVATE
 target_include_directories(${SUB_PROJ_NAME} PUBLIC
     "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>/${INCLUDE_PREFIX}"
     "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>/${INCLUDE_PREFIX}/private"
+    "$<BUILD_INTERFACE:${PROJECT_BINARY_DIR}>"
 )

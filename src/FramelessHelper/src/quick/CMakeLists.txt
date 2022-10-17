@@ -26,16 +26,16 @@ find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS QuickTemplates2 QuickControls2
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS QuickTemplates2 QuickControls2)
 
 set(SUB_MOD_NAME Quick)
-set(SUB_PROJ_NAME ${CURRENT_PROJECT_NAME}${SUB_MOD_NAME})
+set(SUB_PROJ_NAME ${PROJECT_NAME}${SUB_MOD_NAME})
 
-set(INCLUDE_PREFIX ../../include/${CURRENT_PROJECT_NAME}/${SUB_MOD_NAME})
+set(INCLUDE_PREFIX ../../include/${PROJECT_NAME}/${SUB_MOD_NAME})
 
 set(SOURCES
-    framelesshelperquick.qrc
     ${INCLUDE_PREFIX}/framelesshelperquick_global.h
     ${INCLUDE_PREFIX}/framelessquickmodule.h
     ${INCLUDE_PREFIX}/framelessquickhelper.h
     ${INCLUDE_PREFIX}/framelessquickutils.h
+    ${INCLUDE_PREFIX}/quickchromepalette.h
     ${INCLUDE_PREFIX}/private/quickstandardsystembutton_p.h
     ${INCLUDE_PREFIX}/private/quickstandardtitlebar_p.h
     ${INCLUDE_PREFIX}/private/framelessquickhelper_p.h
@@ -47,11 +47,17 @@ set(SOURCES
     framelessquickmodule.cpp
     framelessquickwindow.cpp
     framelessquickhelper.cpp
+    quickchromepalette.cpp
 )
 
 if(WIN32 AND NOT FRAMELESSHELPER_BUILD_STATIC)
     enable_language(RC)
-    list(APPEND SOURCES framelesshelperquick.rc)
+    configure_file(
+        ${CMAKE_CURRENT_SOURCE_DIR}/../core/framelesshelper.rc.in
+        ${CMAKE_CURRENT_BINARY_DIR}/framelesshelperquick.rc @ONLY)
+    list(APPEND SOURCES
+        ${CMAKE_CURRENT_BINARY_DIR}/framelesshelperquick.rc
+    )
 endif()
 
 if(FRAMELESSHELPER_BUILD_STATIC)
@@ -59,7 +65,25 @@ if(FRAMELESSHELPER_BUILD_STATIC)
 else()
     add_library(${SUB_PROJ_NAME} SHARED ${SOURCES})
 endif()
-add_library(${CURRENT_PROJECT_NAME}::${SUB_MOD_NAME} ALIAS ${SUB_PROJ_NAME})
+add_library(${PROJECT_NAME}::${SUB_MOD_NAME} ALIAS ${SUB_PROJ_NAME})
+
+set(_import_dir ${PROJECT_BINARY_DIR}/imports)
+if(${FRAMELESSHELPER_IMPORT_DIR})
+    set(_import_dir ${FRAMELESSHELPER_IMPORT_DIR})
+endif()
+string(APPEND _import_dir /org/wangwenx190/${PROJECT_NAME})
+
+if(${QT_VERSION} VERSION_GREATER_EQUAL 6.2)
+    qt_add_qml_module(${SUB_PROJ_NAME}
+        URI org.wangwenx190.${PROJECT_NAME}
+        VERSION 1.0
+        OUTPUT_DIRECTORY ${_import_dir}
+        IMPORTS
+            QtQml
+            QtQuick
+            QtQuick.Controls.Basic
+    )
+endif()
 
 if(FRAMELESSHELPER_BUILD_STATIC)
     target_compile_definitions(${SUB_PROJ_NAME} PUBLIC
@@ -77,7 +101,7 @@ target_compile_definitions(${SUB_PROJ_NAME} PRIVATE
     QT_NO_FOREACH
     QT_USE_QSTRINGBUILDER
     QT_DEPRECATED_WARNINGS
-    QT_DISABLE_DEPRECATED_BEFORE=0x060400
+    QT_DISABLE_DEPRECATED_BEFORE=0x060500
     FRAMELESSHELPER_QUICK_LIBRARY
 )
 
@@ -107,7 +131,7 @@ target_link_libraries(${SUB_PROJ_NAME} PRIVATE
 )
 
 target_link_libraries(${SUB_PROJ_NAME} PUBLIC
-    ${CURRENT_PROJECT_NAME}::Core
+    ${PROJECT_NAME}::Core
 )
 
 target_include_directories(${SUB_PROJ_NAME} PUBLIC

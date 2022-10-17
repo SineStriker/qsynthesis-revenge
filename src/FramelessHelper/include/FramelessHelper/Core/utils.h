@@ -38,10 +38,7 @@ namespace Utils
                                                                       const QPoint &pos);
 FRAMELESSHELPER_CORE_API void startSystemMove(QWindow *window, const QPoint &globalPos);
 FRAMELESSHELPER_CORE_API void startSystemResize(QWindow *window, const Qt::Edges edges, const QPoint &globalPos);
-[[nodiscard]] FRAMELESSHELPER_CORE_API QVariant
-getSystemButtonIconResource(const Global::SystemButtonType button,
-                            const Global::SystemTheme theme,
-                            const Global::ResourceType type);
+[[nodiscard]] FRAMELESSHELPER_CORE_API QString getSystemButtonIconCode(const Global::SystemButtonType button);
 [[nodiscard]] FRAMELESSHELPER_CORE_API QWindow *findWindow(const WId windowId);
 FRAMELESSHELPER_CORE_API void moveWindowToDesktopCenter(
     const Global::GetWindowScreenCallback &getWindowScreen,
@@ -56,6 +53,8 @@ FRAMELESSHELPER_CORE_API void moveWindowToDesktopCenter(
     const Global::SystemButtonType button, const Global::ButtonState state);
 [[nodiscard]] FRAMELESSHELPER_CORE_API bool shouldAppsUseDarkMode();
 [[nodiscard]] FRAMELESSHELPER_CORE_API bool isTitleBarColorized();
+[[nodiscard]] FRAMELESSHELPER_CORE_API bool
+    setBlurBehindWindowEnabled(const WId windowId, const Global::BlurMode mode, const QColor &color);
 
 #ifdef Q_OS_WINDOWS
 [[nodiscard]] FRAMELESSHELPER_CORE_API bool isWindowsVersionOrGreater(const Global::WindowsVersion version);

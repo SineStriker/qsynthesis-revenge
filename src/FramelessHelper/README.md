@@ -1,13 +1,14 @@
-# FramelessHelper 2.1
+# FramelessHelper 2.x
 
 Cross-platform window customization framework for Qt Widgets and Qt Quick. Supports Windows, Linux and macOS.
 
-## Join with us :triangular_flag_on_post:
+## Join with Us :triangular_flag_on_post:
 
 You can join our [Discord channel](https://discord.gg/grrM4Tmesy) to communicate with us. You can share your findings, thoughts and ideas on improving / implementing FramelessHelper functionalities on more platforms and apps!
 
-## Roadmap for 2.2
+## Roadmap
 
+- Common: Add cross-platform blur behind window feature.
 - Common: Add cross-platform customizable system menu for both Qt Widgets and Qt Quick. Also supports both light and dark theme.
 - Common: Migrate to categorized logging output.
 - Examples: Add QtWebEngine based demo projects for both Qt Widgets and Qt Quick. The whole user interface will be written in HTML instead of C++/QML.
@@ -16,9 +17,9 @@ You can join our [Discord channel](https://discord.gg/grrM4Tmesy) to communicate
 - Examples: Add demo projects that have transparent background and doesn't have rectangular window frame.
 - Feature requests are welcome!
 
-## Highlights compared to 2.0
+## Highlights v2.1
 
-- Windows: Added support for the snap layouts feature introduced in Windows 11.
+- Windows: Added support for the snap layout feature introduced in Windows 11.
 - Widgets: Redesigned the public interface, the use of FramelessHelper is now more elegant.
 - Quick: Redesigned the public interface, the use of FramelessHelper is now more elegant.
 - Common: Redesigned the standard title bar interface, it's now possible to customize it from outside. Previously there's no standard title bar in the widgets module, it's now added and exported.
@@ -26,7 +27,7 @@ You can join our [Discord channel](https://discord.gg/grrM4Tmesy) to communicate
 - Misc: Removed bundled Qt internal classes that are licensed under Commercial/GPL/LGPL. This library is now pure MIT licensed.
 - Misc: Bug fixes and internal refactorings.
 
-## Highlights compared to 1.x
+## Highlights v2.0
 
 - Windows: Gained the ability to only remove the title bar but preserve the window frame at the same time.
 - Windows: The flicker and jitter during window resizing is completely gone.
@@ -60,6 +61,14 @@ You can join our [Discord channel](https://discord.gg/grrM4Tmesy) to communicate
 
 ![Dark](./doc/mac_dark.png)
 
+## Use Cases
+
+### QVogenClient
+
+![QVogenClient](./doc/QVogenClient.png)
+
+Vogen editor using **QSynthesis** framework. Repository URL: <https://gitee.com/functioner/qvogenclient>.
+
 ## Requiredments
 
 - Compiler: a modern compiler which supports C++17 at least. Tested on MSVC 2022 (Windows), GCC 11 (Linux) and Clang 13 (macOS).
@@ -67,7 +76,7 @@ You can join our [Discord channel](https://discord.gg/grrM4Tmesy) to communicate
 - Qt modules: QtCore and QtGui for the core module; QtWidgets for the widgets module; QtQuick, QtQuickControls2 and QtQuickTemplates2 for the quick module.
 - CMake & ninja: the newer, the better. Other build systems are not tested.
 
-## Supported platforms
+## Supported Platforms
 
 - Windows: Windows 7, Windows 8, Windows 8.1, Windows 10, Windows 11 (only actively tested on Windows 10 & 11)
 - Linux: any modern Linux distros should work, but only tested on Ubuntu 20.04 and Ubuntu 22.04
@@ -85,7 +94,7 @@ cmake -DCMAKE_PREFIX_PATH=<YOUR_QT_SDK_DIR_PATH> -DCMAKE_BUILD_TYPE=Release -GNi
 cmake --build . --config Release --target all --parallel
 ```
 
-**Important note**: On Linux you need to install the _GTK3_ and _X11_ development packages first.
+**IMPORTANT NOTE**: On Linux you need to install the _GTK3_ and _X11_ development packages first.
 
 ## Use
 
@@ -96,7 +105,7 @@ object is to call the static method `FramelessWidgetsHelper *FramelessWidgetsHel
 
 There are also two classes called `FramelessWidget` and `FramelessMainWindow`, they are only simple wrappers of `FramelessWidgetsHelper`, which just saves the call of the `void FramelessWidgetsHelper::extendsContentIntoTitleBar()` function for you. You can absolutely use plain `QWidget` instead.
 
-#### Code snippet
+#### Code Snippet
 
 First of all, call `void FramelessHelper::Core::initialize()` in your `main` function in a very early stage:
 
@@ -147,7 +156,7 @@ void MyWidget::myFunction2()
 
 ### Qt Quick
 
-#### Code snippet
+#### Code Snippet
 
 First of all, you should call `void FramelessHelper::Core::initialize()` in your `main` function in a very early stage:
 
@@ -249,29 +258,40 @@ Window {
 
 Please refer to the demo projects to see more detailed usages: [examples](./examples/)
 
-### Title bar design guidance
+### Title Bar Design Guidance
 
 - Microsoft: <https://docs.microsoft.com/en-us/windows/apps/design/basics/titlebar-design>
 - KDE: <https://develop.kde.org/hig/>
 - GNOME: <https://developer.gnome.org/hig/patterns/containers/header-bars.html>
 - Apple: <https://developer.apple.com/design/human-interface-guidelines/macos/windows-and-views/window-anatomy/>
 
-## Platform notes
+## Platform Notes
 
 ### Windows
 
 - If DWM composition is disabled in some very rare cases (only possible on Windows 7), the top-left corner and top-right corner will appear in round shape. The round corners can be restored to square if you re-enable DWM composition.
 - There's an OpenGL driver bug which will cause some frameless windows have a strange black bar right on top of your homemade title bar, and it also makes the controls in your windows shifted to the bottom-right corner for some pixels. It's a bug of your graphics card driver, specifically, your OpenGL driver, not FramelessHelper. There are some solutions provided by our users but some of them may not work in all conditions, you can pick one from them:
-  - Upgrade your graphics card driver to the latest version.
-  - Change your system theme to "Basic".
-  - If you have multiple graphics cards, try to use another one instead.
-  - Force your application use the ANGLE backend instead of the Desktop OpenGL.
-  - Force your application use pure software rendering instead of rendering through OpenGL.
-  - Or just don't use OpenGL at all, try to use Direct3D/Vulkan/Metal instead.
+
+  Solution | Principle
+  -------- | ---------
+  Upgrade the graphics driver | Try to use a newer driver which may ship with the fix
+  Change the system theme to "Basic" (in contrary to "Windows Aero") | Let Windows use pure software rendering
+  If there are multiple graphics cards, use another one instead | Try to use a different driver which may don't have such bug at all
+  Upgrade the system to at least Windows 11 | Windows 11 redesigned the windowing system so the bug can no longer be triggered
+  Remove the `WS_THICKFRAME` and `WS_OVERLAPPED` styles from the window, and maybe also add the `WS_POPUP` style at the same time, and don't do anything inside the `WM_NCCALCSIZE` block (just return `false` directly or remove/comment out the whole block) | Try to mirror Qt's `FramelessWindowHint`'s behavior
+  Use `Qt::FramelessWindowHint` instead of doing the `WM_NCCALCSIZE` trick | Qt's rendering code path is totally different between these two solutions
+  Force Qt to use the ANGLE backend instead of the Desktop OpenGL | ANGLE will translate OpenGL directives into D3D ones
+  Force Qt to use pure software rendering instead of rendering through OpenGL | Qt is not using OpenGL at all
+  Force Qt to use the Mesa 3D libraries instead of normal OpenGL | Try to use a different OpenGL implementation
+  Use Direct3D/Vulkan/Metal instead of OpenGL | Just don't use the buggy OpenGL
+
+  If you are lucky enough, one of them may fix the issue for you. If not, you may try to use multiple solutions together. But I can't guarantee the issue can 100% be fixed.
 - Due to there are many sub-versions of Windows 10, it's highly recommended to use the latest version of Windows 10, at least no older than Windows 10 1809. If you try to use this framework on some very old Windows 10 versions such as 1507 or 1607, there may be some compatibility issues. Using this framework on Windows 7 is also supported but not recommended. To get the most stable behavior and the best appearance, you should use it on the latest version of Windows 10 or Windows 11.
 - To make the snap layout work as expected, there are some additional rules for your homemade system buttons to follow:
+  - Add a manifest file to your application, in the manifest file, you need to claim your application supports Windows 11 explicitly. This step is very important. Without this step, the snap layout feature can't be enabled.
   - Make sure there are two public invokable functions (slot functions are always invokable): `void setHovered(bool)` and `void setPressed(bool)`. These two functions will be invoked by FramelessHelper when the button is being hovered or pressed. You should change the button's visual state inside these functions. If you need to show tooltips, you'll have to do it manually in these functions.
   - Make sure there's a public signal: `void clicked()`. When the button is being clicked, that signal will be triggered by FramelessHelper. You should connect your event handler to that signal.
+  - For Qt Quick applications, for the C++ side, you need to inherit your button from the `QQuickAbstractButton` class, for the QML side, you need to inherit your button from the `Button` type (from the `QtQuick.Controls.Basic` module). They have all the invokable functions and signals we need, so no more extra work is needed.
   - Don't forget to call `setSystemButton()` for each button to let FramelessHelper know which is the minimize/maximize/close button.
   - System buttons will not be able to receive any actual mouse and keyboard events so there's no need to handle these events inside these buttons. That's also why we need to set the button's visual state manually.
   - I know this is making everything complicated but unfortunately we can't avoid this mess if we need to support the snap layout feature. Snap layout is really only designed for the original standard window frame, so if we want to forcely support it without a standard window frame, many black magic will be needed.

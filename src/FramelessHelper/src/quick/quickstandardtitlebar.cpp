@@ -26,8 +26,6 @@
 #if (QT_VERSION >= QT_VERSION_CHECK(6, 0, 0))
 #include "quickstandardsystembutton_p.h"
 #include "framelessquickwindow_p.h"
-#include <framelessmanager.h>
-#include <utils.h>
 #include <QtQuick/private/qquickitem_p.h>
 #include <QtQuick/private/qquickanchors_p.h>
 #include <QtQuick/private/qquickanchors_p_p.h>
@@ -129,20 +127,6 @@ void QuickStandardTitleBar::setExtended(const bool value)
     Q_EMIT extendedChanged();
 }
 
-bool QuickStandardTitleBar::isUsingAlternativeBackground() const
-{
-    return m_useAlternativeBackground;
-}
-
-void QuickStandardTitleBar::setUseAlternativeBackground(const bool value)
-{
-    if (m_useAlternativeBackground == value) {
-        return;
-    }
-    m_useAlternativeBackground = value;
-    Q_EMIT useAlternativeBackgroundChanged();
-}
-
 bool QuickStandardTitleBar::isHideWhenClose() const
 {
     return m_hideWhenClose;
@@ -155,6 +139,11 @@ void QuickStandardTitleBar::setHideWhenClose(const bool value)
     }
     m_hideWhenClose = value;
     Q_EMIT hideWhenCloseChanged();
+}
+
+QuickChromePalette *QuickStandardTitleBar::chromePalette() const
+{
+    return m_chromePalette.data();
 }
 
 void QuickStandardTitleBar::updateMaximizeButton()
@@ -184,46 +173,42 @@ void QuickStandardTitleBar::updateTitleBarColor()
         return;
     }
     const bool active = w->isActive();
-    const bool dark = Utils::shouldAppsUseDarkMode();
-    const bool colorizedTitleBar = Utils::isTitleBarColorized();
-    QColor backgroundColor = {};
-    QColor foregroundColor = {};
-    if (active) {
-        if (colorizedTitleBar) {
-#ifdef Q_OS_WINDOWS
-            backgroundColor = Utils::getDwmColorizationColor();
-#endif
-#ifdef Q_OS_LINUX
-            backgroundColor = Utils::getWmThemeColor();
-#endif
-#ifdef Q_OS_MACOS
-            backgroundColor = Utils::getControlsAccentColor();
-#endif
-            foregroundColor = kDefaultWhiteColor;
-        } else {
-            if (dark) {
-                backgroundColor = kDefaultBlackColor;
-                foregroundColor = kDefaultWhiteColor;
-            } else {
-                backgroundColor = kDefaultWhiteColor;
-                foregroundColor = kDefaultBlackColor;
-            }
-        }
-    } else {
-        if (dark) {
-            backgroundColor = kDefaultSystemDarkColor;
-        } else {
-            backgroundColor = kDefaultWhiteColor;
-        }
-        foregroundColor = kDefaultDarkGrayColor;
-    }
-    if (!m_useAlternativeBackground) {
-        setColor(backgroundColor);
-    }
+    const QColor backgroundColor = (active ?
+        m_chromePalette->titleBarActiveBackgroundColor() :
+        m_chromePalette->titleBarInactiveBackgroundColor());
+    const QColor foregroundColor = (active ?
+        m_chromePalette->titleBarActiveForegroundColor() :
+        m_chromePalette->titleBarInactiveForegroundColor());
+    setColor(backgroundColor);
     m_windowTitleLabel->setColor(foregroundColor);
-    m_minimizeButton->setInactive(!active);
-    m_maximizeButton->setInactive(!active);
-    m_closeButton->setInactive(!active);
+}
+
+void QuickStandardTitleBar::updateChromeButtonColor()
+{
+    const QQuickWindow * const w = window();
+    if (!w) {
+        return;
+    }
+    const bool active = w->isActive();
+    const QColor color = (active ?
+        m_chromePalette->titleBarActiveForegroundColor() :
+        m_chromePalette->titleBarInactiveForegroundColor());
+    const QColor normal = m_chromePalette->chromeButtonNormalColor();
+    const QColor hover = m_chromePalette->chromeButtonHoverColor();
+    const QColor press = m_chromePalette->chromeButtonPressColor();
+    m_minimizeButton->setColor(color);
+    m_minimizeButton->setNormalColor(normal);
+    m_minimizeButton->setHoverColor(hover);
+    m_minimizeButton->setPressColor(press);
+    m_maximizeButton->setColor(color);
+    m_maximizeButton->setNormalColor(normal);
+    m_maximizeButton->setHoverColor(hover);
+    m_maximizeButton->setPressColor(press);
+    m_closeButton->setColor(color);
+    // The close button is special.
+    m_closeButton->setNormalColor(m_chromePalette->closeButtonNormalColor());
+    m_closeButton->setHoverColor(m_chromePalette->closeButtonHoverColor());
+    m_closeButton->setPressColor(m_chromePalette->closeButtonPressColor());
 }
 
 void QuickStandardTitleBar::clickMinimizeButton()
@@ -281,6 +266,12 @@ void QuickStandardTitleBar::retranslateUi()
 
 void QuickStandardTitleBar::initialize()
 {
+    m_chromePalette.reset(new QuickChromePalette(this));
+    connect(m_chromePalette.data(), &ChromePalette::titleBarColorChanged,
+        this, &QuickStandardTitleBar::updateTitleBarColor);
+    connect(m_chromePalette.data(), &ChromePalette::chromeButtonColorChanged,
+        this, &QuickStandardTitleBar::updateChromeButtonColor);
+
     QQuickPen * const b = border();
     b->setWidth(0.0);
     b->setColor(kDefaultTransparentColor);
@@ -302,8 +293,6 @@ void QuickStandardTitleBar::initialize()
     connect(m_maximizeButton.data(), &QuickStandardSystemButton::clicked, this, &QuickStandardTitleBar::clickMaximizeButton);
     m_closeButton.reset(new QuickStandardSystemButton(QuickGlobal::SystemButtonType::Close, m_systemButtonsRow.data()));
     connect(m_closeButton.data(), &QuickStandardSystemButton::clicked, this, &QuickStandardTitleBar::clickCloseButton);
-
-    connect(FramelessManager::instance(), &FramelessManager::systemThemeChanged, this, &QuickStandardTitleBar::updateTitleBarColor);
 
     setTitleLabelAlignment(Qt::AlignLeft | Qt::AlignVCenter);
     retranslateUi();
@@ -327,7 +316,10 @@ void QuickStandardTitleBar::itemChange(const ItemChange change, const ItemChange
             m_windowTitleChangeConnection = {};
         }
         m_windowStateChangeConnection = connect(value.window, &QQuickWindow::visibilityChanged, this, &QuickStandardTitleBar::updateMaximizeButton);
-        m_windowActiveChangeConnection = connect(value.window, &QQuickWindow::activeChanged, this, &QuickStandardTitleBar::updateTitleBarColor);
+        m_windowActiveChangeConnection = connect(value.window, &QQuickWindow::activeChanged, this, [this](){
+            updateTitleBarColor();
+            updateChromeButtonColor();
+        });
         m_windowTitleChangeConnection = connect(value.window, &QQuickWindow::windowTitleChanged, this, &QuickStandardTitleBar::updateTitleLabelText);
         updateAll();
         value.window->installEventFilter(this);
@@ -347,6 +339,7 @@ void QuickStandardTitleBar::updateAll()
     updateMaximizeButton();
     updateTitleLabelText();
     updateTitleBarColor();
+    updateChromeButtonColor();
 }
 
 FRAMELESSHELPER_END_NAMESPACE

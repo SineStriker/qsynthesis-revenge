@@ -5,16 +5,12 @@
 #include <QFontDatabase>
 #include <QMessageBox>
 #include <QScreen>
+#include <QStandardPaths>
 #include <QTextCodec>
 
-#include "QOtoIni.h"
-#include "QPrefixMap.h"
-#include "QReadmeText.h"
-#include "QUPluginInfo.h"
-#include "QVoiceInfo.h"
-#include "SequenceTextFile.h"
-
 #include "SystemHelper.h"
+
+#include "Types/Events.h"
 
 QsApplicationPrivate::QsApplicationPrivate() {
 }
@@ -25,15 +21,15 @@ QsApplicationPrivate::~QsApplicationPrivate() {
 void QsApplicationPrivate::init() {
     Q_Q(QsApplication);
 
+    QEventImpl::Register();
+
     initLocale();
     initFonts();
 
     // Create
-    record = new CRecordHolder(q);
-
-    data = new DataManager(q);
-    themes = new ExtensionManager(q);
-    windows = new WindowManager(q);
+    dataMgr = new DataManager(q);
+    extMgr = new ExtentManager(q);
+    winMgr = new WindowManager(q);
 
     initModules();
 
@@ -45,11 +41,9 @@ void QsApplicationPrivate::deinit() {
     quitModules();
 
     // Destroy
-    delete windows;
-    delete themes;
-    delete data;
-
-    delete record;
+    delete winMgr;
+    delete extMgr;
+    delete dataMgr;
 }
 
 void QsApplicationPrivate::initLocale() {
@@ -58,13 +52,6 @@ void QsApplicationPrivate::initLocale() {
 #ifdef Q_OS_WINDOWS
     QTextCodec::setCodecForLocale(gbk);
 #endif
-
-    SequenceTextFile::setCodeForDefault(gbk); // *.ust
-    QOtoIni::setCodeForDefault(gbk);          // oto.ini
-    QPrefixMap::setCodeForDefault(gbk);       // prefix.map
-    QReadmeText::setCodeForDefault(gbk);      // readme.txt
-    QVoiceInfo::setCodeForDefault(gbk);       // character.txt
-    QUPluginInfo::setCodeForDefault(gbk);     // plugin.txt
 }
 
 void QsApplicationPrivate::initFonts() {
@@ -72,6 +59,7 @@ void QsApplicationPrivate::initFonts() {
 #if defined(Q_OS_WINDOWS)
     QFont f("Microsoft YaHei");
     f.setStyleStrategy(QFont::PreferAntialias);
+    f.setPixelSize(12 * (qApp->primaryScreen()->logicalDotsPerInch() / 96.0));
     q->setFont(f);
 #elif defined(Q_OS_LINUX)
     // ?
@@ -82,12 +70,12 @@ void QsApplicationPrivate::initModules() {
     if (!qData->load()) {
         ::exit(1);
     }
-    if (!qTheme->load()) {
+    if (!qExt->load()) {
     }
 }
 
 void QsApplicationPrivate::quitModules() {
-    if (!qTheme->save()) {
+    if (!qExt->save()) {
     }
     if (!qData->save()) {
     }

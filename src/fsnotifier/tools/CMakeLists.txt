@@ -1,0 +1,12 @@
+project(fsnotifier C)
+
+if(CMAKE_SYSTEM_NAME MATCHES "Windows")
+    add_subdirectory(WinFsNotifier)
+elseif(CMAKE_SYSTEM_NAME MATCHES "Linux")
+    file(GLOB _src fsNotifier/linux/*.h fsNotifier/linux/*.c)
+    add_executable(fsnotifier ${_src})
+elseif(APPLE)
+    add_subdirectory(fsNotifier/mac)
+else()
+    message(FATAL_ERROR "Unsupported System !!!")
+endif()

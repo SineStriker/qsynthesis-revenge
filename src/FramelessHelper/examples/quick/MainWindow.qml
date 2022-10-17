@@ -22,11 +22,10 @@
  * SOFTWARE.
  */
 
-import QtQuick 2.0
-import QtQuick.Window 2.0
-import QtQuick.Controls 2.0
-import org.wangwenx190.FramelessHelper 1.0
-import Demo 1.0
+import QtQuick
+import QtQuick.Controls.Basic
+import org.wangwenx190.FramelessHelper
+import Demo
 
 FramelessWindow {
     id: window
@@ -74,7 +73,7 @@ FramelessWindow {
     StandardTitleBar {
         id: titleBar
         anchors {
-            top: window.topBorderBottom // IMPORTANT!
+            top: window.topBorderBottom // VERY IMPORTANT!
             left: parent.left
             right: parent.right
         }

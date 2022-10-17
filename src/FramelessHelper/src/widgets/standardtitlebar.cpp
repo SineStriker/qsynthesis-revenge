@@ -25,22 +25,14 @@
 #include "standardtitlebar.h"
 #include "standardtitlebar_p.h"
 #include "standardsystembutton.h"
-#include "standardsystembutton_p.h"
 #include <QtCore/qcoreevent.h>
-#include <QtGui/qpainter.h>
-#include <QtWidgets/qlabel.h>
 #include <QtWidgets/qboxlayout.h>
-#include <QtWidgets/qstyle.h>
 #include <QtWidgets/qstyleoption.h>
-#include <framelessmanager.h>
-#include <utils.h>
+#include <QtWidgets/qstylepainter.h>
 
 FRAMELESSHELPER_BEGIN_NAMESPACE
 
 using namespace Global;
-
-FRAMELESSHELPER_STRING_CONSTANT2(StyleSheetColorTemplate, "color: %1;")
-FRAMELESSHELPER_STRING_CONSTANT2(StyleSheetBackgroundColorTemplate, "background-color: %1;")
 
 StandardTitleBarPrivate::StandardTitleBarPrivate(StandardTitleBar *q) : QObject(q)
 {
@@ -83,28 +75,8 @@ void StandardTitleBarPrivate::setTitleLabelAlignment(const Qt::Alignment value)
         return;
     }
     m_labelAlignment = value;
-    bool needsInvalidate = false;
-    if (m_labelAlignment & Qt::AlignLeft) {
-        m_labelLeftStretch->changeSize(kDefaultTitleBarContentsMargin, 0, QSizePolicy::Fixed);
-        m_labelRightStretch->changeSize(0, 0, QSizePolicy::Expanding);
-        needsInvalidate = true;
-    }
-    if (m_labelAlignment & Qt::AlignRight) {
-        m_labelLeftStretch->changeSize(0, 0, QSizePolicy::Expanding);
-        m_labelRightStretch->changeSize(kDefaultTitleBarContentsMargin, 0, QSizePolicy::Fixed);
-        needsInvalidate = true;
-    }
-    if (m_labelAlignment & Qt::AlignHCenter) {
-        m_labelLeftStretch->changeSize(0, 0, QSizePolicy::Expanding);
-        m_labelRightStretch->changeSize(0, 0, QSizePolicy::Expanding);
-        needsInvalidate = true;
-    }
     Q_Q(StandardTitleBar);
-    if (needsInvalidate) {
-        // Tell the layout manager that we have changed the layout item's size
-        // manually to let it refresh the layout immediately.
-        q->layout()->invalidate();
-    }
+    q->update();
     Q_EMIT q->titleLabelAlignmentChanged();
 }
 
@@ -124,21 +96,6 @@ void StandardTitleBarPrivate::setExtended(const bool value)
     Q_EMIT q->extendedChanged();
 }
 
-bool StandardTitleBarPrivate::isUsingAlternativeBackground() const
-{
-    return m_useAlternativeBackground;
-}
-
-void StandardTitleBarPrivate::setUseAlternativeBackground(const bool value)
-{
-    if (m_useAlternativeBackground == value) {
-        return;
-    }
-    m_useAlternativeBackground = value;
-    Q_Q(StandardTitleBar);
-    Q_EMIT q->useAlternativeBackgroundChanged();
-}
-
 bool StandardTitleBarPrivate::isHideWhenClose() const
 {
     return m_hideWhenClose;
@@ -154,6 +111,71 @@ void StandardTitleBarPrivate::setHideWhenClose(const bool value)
     Q_EMIT q->hideWhenCloseChanged();
 }
 
+ChromePalette *StandardTitleBarPrivate::chromePalette() const
+{
+    return m_chromePalette.data();
+}
+
+void StandardTitleBarPrivate::paintTitleBar(QPaintEvent *event)
+{
+    Q_UNUSED(event);
+    Q_Q(StandardTitleBar);
+#if 0
+    // This block of code ensures that our widget can still apply the stylesheet correctly.
+    // Enabling the "Qt::WA_StyledBackground" attribute can also achieve the same
+    // effect, but since it's documented as only for internal uses, we use the
+    // public way to do that instead.
+    QStyleOption option;
+    option.initFrom(q);
+    QStylePainter painter(q);
+    painter.drawPrimitive(QStyle::PE_Widget, option);
+#else
+    if (!m_window || m_chromePalette.isNull()) {
+        return;
+    }
+    const bool active = m_window->isActiveWindow();
+    const QColor backgroundColor = (active ?
+        m_chromePalette->titleBarActiveBackgroundColor() :
+        m_chromePalette->titleBarInactiveBackgroundColor());
+    const QColor foregroundColor = (active ?
+        m_chromePalette->titleBarActiveForegroundColor() :
+        m_chromePalette->titleBarInactiveForegroundColor());
+    QPainter painter(q);
+    painter.save();
+    painter.setRenderHints(QPainter::Antialiasing |
+        QPainter::TextAntialiasing | QPainter::SmoothPixmapTransform);
+    painter.fillRect(QRect(QPoint(0, 0), q->size()), backgroundColor);
+    const QString text = m_window->windowTitle();
+    if (!text.isEmpty()) {
+        const QFont font = [q]() -> QFont {
+            QFont f = q->font();
+            f.setPointSize(kDefaultTitleBarFontPointSize);
+            return f;
+        }();
+        painter.setPen(foregroundColor);
+        painter.setFont(font);
+        const QRect rect = [this, q]() -> QRect {
+            const int w = q->width();
+            int leftMargin = 0;
+            int rightMargin = 0;
+            if (m_labelAlignment & Qt::AlignLeft) {
+                leftMargin = kDefaultTitleBarContentsMargin;
+            }
+            if (m_labelAlignment & Qt::AlignRight) {
+                rightMargin = (w - m_minimizeButton->x() + kDefaultTitleBarContentsMargin);
+            }
+            const int x = leftMargin;
+            const int y = 0;
+            const int width = (w - leftMargin - rightMargin);
+            const int height = q->height();
+            return {QPoint(x, y), QSize(width, height)};
+        }();
+        painter.drawText(rect, m_labelAlignment, text);
+    }
+    painter.restore();
+#endif
+}
+
 void StandardTitleBarPrivate::updateMaximizeButton()
 {
     const bool max = m_window->isMaximized();
@@ -161,47 +183,34 @@ void StandardTitleBarPrivate::updateMaximizeButton()
     m_maximizeButton->setToolTip(max ? tr("Restore") : tr("Maximize"));
 }
 
-void StandardTitleBarPrivate::updateTitleBarStyleSheet()
+void StandardTitleBarPrivate::updateTitleBarColor()
+{
+    Q_Q(StandardTitleBar);
+    q->update();
+}
+
+void StandardTitleBarPrivate::updateChromeButtonColor()
 {
     const bool active = m_window->isActiveWindow();
-    const bool dark = Utils::shouldAppsUseDarkMode();
-    const bool colorizedTitleBar = Utils::isTitleBarColorized();
-    const QColor titleBarBackgroundColor = [active, colorizedTitleBar, dark]() -> QColor {
-        if (active) {
-            if (colorizedTitleBar) {
-#ifdef Q_OS_WINDOWS
-                return Utils::getDwmColorizationColor();
-#endif
-#ifdef Q_OS_LINUX
-                return Utils::getWmThemeColor();
-#endif
-#ifdef Q_OS_MACOS
-                return Utils::getControlsAccentColor();
-#endif
-            } else {
-                if (dark) {
-                    return kDefaultBlackColor;
-                } else {
-                    return kDefaultWhiteColor;
-                }
-            }
-        } else {
-            if (dark) {
-                return kDefaultSystemDarkColor;
-            } else {
-                return kDefaultWhiteColor;
-            }
-        }
-    }();
-    const QColor windowTitleLabelTextColor = (active ? ((dark || colorizedTitleBar) ? kDefaultWhiteColor : kDefaultBlackColor) : kDefaultDarkGrayColor);
-    m_windowTitleLabel->setStyleSheet(kStyleSheetColorTemplate.arg(windowTitleLabelTextColor.name()));
-    StandardSystemButtonPrivate::get(m_minimizeButton.data())->setInactive(!active);
-    StandardSystemButtonPrivate::get(m_maximizeButton.data())->setInactive(!active);
-    StandardSystemButtonPrivate::get(m_closeButton.data())->setInactive(!active);
-    if (!m_useAlternativeBackground) {
-        Q_Q(StandardTitleBar);
-        q->setStyleSheet(kStyleSheetBackgroundColorTemplate.arg(titleBarBackgroundColor.name()));
-    }
+    const QColor color = (active ?
+        m_chromePalette->titleBarActiveForegroundColor() :
+        m_chromePalette->titleBarInactiveForegroundColor());
+    const QColor normal = m_chromePalette->chromeButtonNormalColor();
+    const QColor hover = m_chromePalette->chromeButtonHoverColor();
+    const QColor press = m_chromePalette->chromeButtonPressColor();
+    m_minimizeButton->setColor(color);
+    m_minimizeButton->setNormalColor(normal);
+    m_minimizeButton->setHoverColor(hover);
+    m_minimizeButton->setPressColor(press);
+    m_maximizeButton->setColor(color);
+    m_maximizeButton->setNormalColor(normal);
+    m_maximizeButton->setHoverColor(hover);
+    m_maximizeButton->setPressColor(press);
+    m_closeButton->setColor(color);
+    // The close button is special.
+    m_closeButton->setNormalColor(m_chromePalette->closeButtonNormalColor());
+    m_closeButton->setHoverColor(m_chromePalette->closeButtonHoverColor());
+    m_closeButton->setPressColor(m_chromePalette->closeButtonPressColor());
 }
 
 void StandardTitleBarPrivate::retranslateUi()
@@ -230,7 +239,8 @@ bool StandardTitleBarPrivate::eventFilter(QObject *object, QEvent *event)
         updateMaximizeButton();
         break;
     case QEvent::ActivationChange:
-        updateTitleBarStyleSheet();
+        updateTitleBarColor();
+        updateChromeButtonColor();
         break;
     case QEvent::LanguageChange:
         retranslateUi();
@@ -245,15 +255,17 @@ void StandardTitleBarPrivate::initialize()
 {
     Q_Q(StandardTitleBar);
     m_window = (q->nativeParentWidget() ? q->nativeParentWidget() : q->window());
+    m_chromePalette.reset(new ChromePalette(this));
+    connect(m_chromePalette.data(), &ChromePalette::titleBarColorChanged,
+        this, &StandardTitleBarPrivate::updateTitleBarColor);
+    connect(m_chromePalette.data(), &ChromePalette::chromeButtonColorChanged,
+        this, &StandardTitleBarPrivate::updateChromeButtonColor);
     q->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
     q->setFixedHeight(kDefaultTitleBarHeight);
-    m_windowTitleLabel.reset(new QLabel(q));
-    m_windowTitleLabel->setFrameShape(QFrame::NoFrame);
-    QFont windowTitleFont = q->font();
-    windowTitleFont.setPointSize(kDefaultTitleBarFontPointSize);
-    m_windowTitleLabel->setFont(windowTitleFont);
-    m_windowTitleLabel->setText(m_window->windowTitle());
-    connect(m_window, &QWidget::windowTitleChanged, m_windowTitleLabel.data(), &QLabel::setText);
+    connect(m_window, &QWidget::windowTitleChanged, this, [q](const QString &title){
+        Q_UNUSED(title);
+        q->update();
+    });
     m_minimizeButton.reset(new StandardSystemButton(SystemButtonType::Minimize, q));
     connect(m_minimizeButton.data(), &StandardSystemButton::clicked, m_window, &QWidget::showMinimized);
     m_maximizeButton.reset(new StandardSystemButton(SystemButtonType::Maximize, q));
@@ -273,14 +285,6 @@ void StandardTitleBarPrivate::initialize()
             m_window->close();
         }
     });
-    m_labelLeftStretch = new QSpacerItem(0, 0);
-    m_labelRightStretch = new QSpacerItem(0, 0);
-    const auto titleLabelLayout = new QHBoxLayout;
-    titleLabelLayout->setSpacing(0);
-    titleLabelLayout->setContentsMargins(0, 0, 0, 0);
-    titleLabelLayout->addSpacerItem(m_labelLeftStretch);
-    titleLabelLayout->addWidget(m_windowTitleLabel.data());
-    titleLabelLayout->addSpacerItem(m_labelRightStretch);
     // According to the title bar design guidance, the system buttons should always be
     // placed on the top-right corner of the window, so we need the following additional
     // layouts to ensure this.
@@ -298,14 +302,13 @@ void StandardTitleBarPrivate::initialize()
     const auto titleBarLayout = new QHBoxLayout(q);
     titleBarLayout->setSpacing(0);
     titleBarLayout->setContentsMargins(0, 0, 0, 0);
-    titleBarLayout->addLayout(titleLabelLayout);
+    titleBarLayout->addStretch();
     titleBarLayout->addLayout(systemButtonsOuterLayout);
     q->setLayout(titleBarLayout);
     setTitleLabelAlignment(Qt::AlignLeft | Qt::AlignVCenter);
     retranslateUi();
-    updateTitleBarStyleSheet();
-    connect(FramelessManager::instance(), &FramelessManager::systemThemeChanged,
-                              this, &StandardTitleBarPrivate::updateTitleBarStyleSheet);
+    updateTitleBarColor();
+    updateChromeButtonColor();
     m_window->installEventFilter(this);
 }
 
@@ -326,12 +329,6 @@ void StandardTitleBar::setTitleLabelAlignment(const Qt::Alignment value)
 {
     Q_D(StandardTitleBar);
     d->setTitleLabelAlignment(value);
-}
-
-QLabel *StandardTitleBar::titleLabel() const
-{
-    Q_D(const StandardTitleBar);
-    return d->m_windowTitleLabel.data();
 }
 
 StandardSystemButton *StandardTitleBar::minimizeButton() const
@@ -364,18 +361,6 @@ void StandardTitleBar::setExtended(const bool value)
     d->setExtended(value);
 }
 
-bool StandardTitleBar::isUsingAlternativeBackground() const
-{
-    Q_D(const StandardTitleBar);
-    return d->isUsingAlternativeBackground();
-}
-
-void StandardTitleBar::setUseAlternativeBackground(const bool value)
-{
-    Q_D(StandardTitleBar);
-    d->setUseAlternativeBackground(value);
-}
-
 bool StandardTitleBar::isHideWhenClose() const
 {
     Q_D(const StandardTitleBar);
@@ -388,17 +373,16 @@ void StandardTitleBar::setHideWhenClose(const bool value)
     d->setHideWhenClose(value);
 }
 
+ChromePalette *StandardTitleBar::chromePalette() const
+{
+    Q_D(const StandardTitleBar);
+    return d->chromePalette();
+}
+
 void StandardTitleBar::paintEvent(QPaintEvent *event)
 {
-    Q_UNUSED(event);
-    // This block of code ensures that our widget can still apply the stylesheet correctly.
-    // Enabling the "Qt::WA_StyledBackground" attribute can also achieve the same
-    // effect, but since it's documented as only for internal uses, we use the
-    // public way to do that instead.
-    QStyleOption option;
-    option.initFrom(this);
-    QPainter painter(this);
-    style()->drawPrimitive(QStyle::PE_Widget, &option, &painter, this);
+    Q_D(StandardTitleBar);
+    d->paintTitleBar(event);
 }
 
 FRAMELESSHELPER_END_NAMESPACE

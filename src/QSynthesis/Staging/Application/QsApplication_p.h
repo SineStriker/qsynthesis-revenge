@@ -4,11 +4,9 @@
 #include "Private/CApplication_p.h"
 #include "QsApplication.h"
 
-#include "Logs/CRecordHolder.h"
-
-#include "DataManager.h"
-#include "ExtensionManager.h"
-#include "WindowManager.h"
+#include "Managers/DataManager.h"
+#include "Managers/WindowManager.h"
+#include "Managers/ExtentManager.h"
 
 class QsApplicationPrivate : public CApplicationPrivate {
     Q_DECLARE_PUBLIC(QsApplication)
@@ -19,11 +17,9 @@ public:
     void init();
     void deinit();
 
-    DataManager *data;
-    ExtensionManager *themes;
-    WindowManager *windows;
-
-    CRecordHolder *record;
+    DataManager *dataMgr;
+    WindowManager *winMgr;
+    ExtentManager *extMgr;
 
 private:
     void initLocale();
