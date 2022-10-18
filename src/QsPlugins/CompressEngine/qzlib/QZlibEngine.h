@@ -1,15 +1,15 @@
-#ifndef QZLIBCOMPRESSENGINE_H
-#define QZLIBCOMPRESSENGINE_H
+#ifndef QZLIBENGINE_H
+#define QZLIBENGINE_H
 
 #include "Api/ICompressEngine.h"
 
-class QZlibCompressEngine : public ICompressEngine {
+class QZlibEngine : public ICompressEngine {
     Q_OBJECT
     Q_INTERFACES(ICompressEngine)
     Q_PLUGIN_METADATA(IID ICompressEngine_IID FILE "plugin.json")
 public:
-    explicit QZlibCompressEngine(QObject *parent = nullptr);
-    ~QZlibCompressEngine();
+    explicit QZlibEngine(QObject *parent = nullptr);
+    ~QZlibEngine();
 
 public:
     bool createFromDirectory(const QString &dir, const QString &filename) override;
@@ -18,4 +18,4 @@ public:
 signals:
 };
 
-#endif // QZLIBCOMPRESSENGINE_H
+#endif // QZLIBENGINE_H

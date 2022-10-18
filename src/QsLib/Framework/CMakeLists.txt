@@ -28,7 +28,7 @@ set(PROJECT_SRC ${GLOBAL_INC} ${GLOBAL_SRC})
 
 if (QSFRAMEWORK_BUILD_STATIC)
     add_library(${PROJECT_NAME} STATIC ${PROJECT_SRC})
-    target_compile_definitions(${PROJECT_NAME} PUBLIC QSFRAMEWORK_BUILD_STATIC)
+    target_compile_definitions(${PROJECT_NAME} PUBLIC QSFRAMEWORK_STATIC)
 else()
     add_library(${PROJECT_NAME} SHARED ${PROJECT_SRC})
 endif()

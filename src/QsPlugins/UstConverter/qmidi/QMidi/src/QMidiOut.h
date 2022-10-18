@@ -12,7 +12,7 @@
 class QMidiEvent;
 struct NativeMidiOutInstances;
 
-class Q_MIDI_API QMidiOut
+class QMIDI_API QMidiOut
 {
 public:
 	static QMap<QString /* key */, QString /* name */> devices();

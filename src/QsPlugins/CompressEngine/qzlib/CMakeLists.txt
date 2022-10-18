@@ -24,7 +24,7 @@ if (WIN32)
     # Specify your plugin metadata
     set(PROJECT_EXPORT_FILENAME ${PROJECT_NAME})
     set(PROJECT_AUTHOR "Sine Striker")
-    set(PROJECT_DESC "QSynthesis Plugin for Zip")
+    set(PROJECT_DESC "QSynthesis Plugin for IO Compression")
     set(PROJECT_COPYRIGHT_START_YEAR "2020")
     set(PROJECT_COPYRIGHT_END_YEAR "2022")
     set(PROJECT_PRODUCT_NAME ${PROJECT_NAME})

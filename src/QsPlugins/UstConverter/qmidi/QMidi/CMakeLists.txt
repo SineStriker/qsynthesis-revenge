@@ -33,10 +33,12 @@ endif ()
 # Add library
 if (BUILD_STATIC)
     add_library(${PROJECT_NAME} STATIC ${SOURCES})
-    target_compile_definitions(${PROJECT_NAME} PRIVATE Q_MIDI_BUILD_STATIC)
+    target_compile_definitions(${PROJECT_NAME} PUBLIC QMIDI_STATIC)
 else ()
     add_library(${PROJECT_NAME} SHARED ${SOURCES})
 endif ()
 
+target_compile_definitions(${PROJECT_NAME} PRIVATE QMIDI_LIBRARY)
+
 target_include_directories(${PROJECT_NAME} PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/src")
-target_link_libraries(${PROJECT_NAME} ${LIBRARIES})
+target_link_libraries(${PROJECT_NAME} PUBLIC ${LIBRARIES})

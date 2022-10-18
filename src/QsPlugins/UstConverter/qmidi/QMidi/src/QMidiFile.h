@@ -11,7 +11,7 @@
 
 #include "QMidiDef.h"
 
-class Q_MIDI_API QMidiEvent
+class QMIDI_API QMidiEvent
 {
 public:
 	enum EventType {
@@ -100,7 +100,7 @@ private:
 	int fTrackNumber;
 };
 
-class Q_MIDI_API QMidiFile
+class QMIDI_API QMidiFile
 {
 public:
 	enum DivisionType {

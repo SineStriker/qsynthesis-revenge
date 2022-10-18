@@ -12,7 +12,7 @@
 
 struct NativeMidiInInstances;
 
-class Q_MIDI_API QMidiIn : public QObject
+class QMIDI_API QMidiIn : public QObject
 {
 	Q_OBJECT
 public:

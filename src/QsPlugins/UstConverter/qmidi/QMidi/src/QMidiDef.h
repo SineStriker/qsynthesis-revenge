@@ -2,8 +2,14 @@
 
 #include <qglobal.h>
 
-#ifdef Q_MIDI_BUILD_STATIC
-#define Q_MIDI_API
-#else
-#define Q_MIDI_API __declspec(dllexport)
+#ifndef QMIDI_API
+#  ifdef QMIDI_STATIC
+#    define QMIDI_API
+#  else
+#    ifdef QMIDI_LIBRARY
+#      define QMIDI_API Q_DECL_EXPORT
+#    else
+#      define QMIDI_API Q_DECL_IMPORT
+#    endif
+#  endif
 #endif
