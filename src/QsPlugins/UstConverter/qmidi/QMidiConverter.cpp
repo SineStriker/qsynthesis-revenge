@@ -5,7 +5,7 @@
 #include "Utau/Config/UtaConstants.h"
 #include "Utau/QUtaUtils.h"
 
-QMidiConverter::QMidiConverter(QObject *parent) : QObject(parent) {
+QMidiConverter::QMidiConverter(QObject *parent) : IUstConverter(parent) {
 }
 
 QMidiConverter::~QMidiConverter() {

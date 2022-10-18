@@ -57,6 +57,9 @@ set(_IMPORT_PREFIX ${CMAKE_CURRENT_LIST_DIR}/../..)
 
 foreach(_target ${ffmpeg_subprojects})
     add_library(FFmpeg::${_target} SHARED IMPORTED)
+    set_target_properties(FFmpeg::${_target} PROPERTIES
+        INTERFACE_INCLUDE_DIRECTORIES "${_IMPORT_PREFIX}/include/FFmpeg"
+    )
 endforeach()
 
 # Load information for each installed configuration.

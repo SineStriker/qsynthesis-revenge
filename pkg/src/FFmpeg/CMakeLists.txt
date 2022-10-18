@@ -38,12 +38,8 @@ set(INSTALL_LIB_DIR "${CMAKE_INSTALL_PREFIX}/lib")
 set(INSTALL_INC_DIR "${CMAKE_INSTALL_PREFIX}/include/FFmpeg")
 set(INSTALL_CMAKE_DIR "${CMAKE_INSTALL_PREFIX}/cmake/FFmpeg")
 
-add_custom_target(ffmpeg_install)
-
-add_custom_command(TARGET ffmpeg_install
-    COMMAND ${CMAKE_COMMAND} -E copy_directory ${ffmpeg_dir}/bin ${INSTALL_BIN_DIR}
-    COMMAND ${CMAKE_COMMAND} -E copy_directory ${ffmpeg_dir}/lib ${INSTALL_LIB_DIR}
-    COMMAND ${CMAKE_COMMAND} -E copy_directory ${ffmpeg_dir}/include ${INSTALL_INC_DIR}
-    COMMAND ${CMAKE_COMMAND} -E copy_directory ${ffmpeg_dir}/share ${CMAKE_INSTALL_PREFIX}/share
-    COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_CURRENT_SOURCE_DIR}/cmake ${INSTALL_CMAKE_DIR}
-)
+install(DIRECTORY ${ffmpeg_dir}/bin/ DESTINATION ${INSTALL_BIN_DIR})
+install(DIRECTORY ${ffmpeg_dir}/lib/ DESTINATION ${INSTALL_LIB_DIR})
+install(DIRECTORY ${ffmpeg_dir}/include/ DESTINATION ${INSTALL_INC_DIR})
+install(DIRECTORY ${ffmpeg_dir}/share/ DESTINATION ${CMAKE_INSTALL_PREFIX}/share)
+install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/cmake/ DESTINATION ${INSTALL_CMAKE_DIR})

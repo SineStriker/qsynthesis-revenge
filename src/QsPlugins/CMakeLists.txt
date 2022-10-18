@@ -9,6 +9,10 @@ endmacro()
 
 set(PLUGIN_WINRC_FILE ${CMAKE_CURRENT_SOURCE_DIR}/win32/res.rc.in)
 
+add_subdirectory(CompressEngine)
+
 add_subdirectory(UstConverter)
 
 add_subdirectory(UtaPlugin)
+
+add_subdirectory(WindowFactory)

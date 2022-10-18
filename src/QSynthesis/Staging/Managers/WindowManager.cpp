@@ -28,6 +28,7 @@ HomeWindow *WindowManager::showHome() {
     View::centralizeWindow(w, QSizeF(0.4, 0.6));
 
     d->homeWin = w;
+
     return w;
 }
 

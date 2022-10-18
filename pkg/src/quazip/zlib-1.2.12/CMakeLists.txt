@@ -86,7 +86,6 @@ configure_file( ${CMAKE_CURRENT_SOURCE_DIR}/zlib.pc.cmakein
 		${ZLIB_PC} @ONLY)
 configure_file(	${CMAKE_CURRENT_SOURCE_DIR}/zconf.h.cmakein
 		${CMAKE_CURRENT_BINARY_DIR}/zconf.h @ONLY)
-include_directories(${CMAKE_CURRENT_BINARY_DIR} ${CMAKE_SOURCE_DIR})
 
 
 #============================================================================
@@ -252,10 +251,22 @@ if(HAVE_OFF64_T)
 endif()
 
 # For further installation
-add_library(ZLIB::ZLIB ALIAS zlib)
-add_library(ZLIB::ZLIB_STATIC ALIAS zlibstatic)
+add_library(ZLIB::zlib ALIAS zlib)
+add_library(ZLIB::zlibstatic ALIAS zlibstatic)
 
 set(INSTALL_CMAKE_DIR "${CMAKE_INSTALL_PREFIX}/cmake/zlib")
+
+target_include_directories(zlib PUBLIC 
+	$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
+	$<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}>
+	$<INSTALL_INTERFACE:${INSTALL_INC_DIR}>
+)
+
+target_include_directories(zlibstatic PUBLIC 
+	$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
+	$<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}>
+	$<INSTALL_INTERFACE:${INSTALL_INC_DIR}>
+)
 
 install(TARGETS zlib zlibstatic
     EXPORT ZlibTargets

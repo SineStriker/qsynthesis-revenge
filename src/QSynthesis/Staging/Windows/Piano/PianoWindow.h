@@ -1,11 +1,11 @@
 #ifndef PIANOWINDOW_H
 #define PIANOWINDOW_H
 
-#include "Controls/Windows/NativeWindow.h"
+#include "Controls/Windows/PlainWindow.h"
 
 class PianoWindowPrivate;
 
-class PianoWindow : public NativeWindow {
+class PianoWindow : public PlainWindow {
     Q_OBJECT
     Q_DECLARE_PRIVATE(PianoWindow)
 public:
@@ -18,10 +18,7 @@ public:
 protected:
     PianoWindow(PianoWindowPrivate &d, QWidget *parent = nullptr);
 
-    QScopedPointer<PianoWindowPrivate> d_ptr;
-
     bool event(QEvent *event) override;
-
     void closeEvent(QCloseEvent *event) override;
 
 private:

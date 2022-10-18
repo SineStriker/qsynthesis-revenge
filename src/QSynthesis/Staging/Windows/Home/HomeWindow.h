@@ -1,11 +1,11 @@
 #ifndef HOMEWINDOW_H
 #define HOMEWINDOW_H
 
-#include "Controls/Windows/NativeWindow.h"
+#include "Controls/Windows/PlainWindow.h"
 
 class HomeWindowPrivate;
 
-class HomeWindow : public NativeWindow {
+class HomeWindow : public PlainWindow {
     Q_OBJECT
     Q_DECLARE_PRIVATE(HomeWindow)
 public:
@@ -17,8 +17,6 @@ public:
 
 protected:
     HomeWindow(HomeWindowPrivate &d, QWidget *parent = nullptr);
-
-    QScopedPointer<HomeWindowPrivate> d_ptr;
 
 private:
     void _q_searchBoxChanged(const QString &text);

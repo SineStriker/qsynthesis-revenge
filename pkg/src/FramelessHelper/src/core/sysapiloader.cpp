@@ -98,7 +98,7 @@ bool SysApiLoader::isAvailable(const QString &library, const QString &function)
     const QFunctionPointer symbol = SysApiLoader::resolve(library, function);
     if (symbol) {
         m_functionCache.insert(function, symbol);
-        DEBUG << "Successfully loaded" << function << "from" << library;
+        // DEBUG << "Successfully loaded" << function << "from" << library;
         return true;
     }
     m_functionCache.insert(function, std::nullopt);

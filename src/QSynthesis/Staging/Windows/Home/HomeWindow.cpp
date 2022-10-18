@@ -1,5 +1,5 @@
 #include "HomeWindow.h"
-#include "HomeWindow_p.h"
+#include "private/HomeWindow_p.h"
 
 #include "Kernel/QsApplication.h"
 #include "Managers/WindowManager.h"
@@ -17,9 +17,7 @@ void HomeWindow::reloadStrings() {
     d->reloadStrings_helper();
 }
 
-HomeWindow::HomeWindow(HomeWindowPrivate &d, QWidget *parent) : NativeWindow(parent), d_ptr(&d) {
-    d.q_ptr = this;
-
+HomeWindow::HomeWindow(HomeWindowPrivate &d, QWidget *parent) : PlainWindow(d, parent) {
     d.init();
 
     Q_TR_NOTIFY(HomeWindow)

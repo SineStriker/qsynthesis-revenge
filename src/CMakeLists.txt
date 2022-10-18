@@ -4,7 +4,6 @@ project(QSynthesis CXX)
 
 # User Options
 set(USE_PREBUILT_LIBS on)
-set(USE_FRAMELESS on)
 set(USE_DELAY_LOAD off)
 set(BUILD_TEST on)
 
@@ -43,21 +42,19 @@ else()
     message(FATAL_ERROR "Unsupported System !!!")
 endif()
 
+set (PREBUILT_LIBRARY_PATH_PREFIX "${CMAKE_CURRENT_SOURCE_DIR}/../pkg/libs")
+
 if (USE_PREBUILT_LIBS)
-    file(GLOB SDL2_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../pkg/libs/cmake/SDL*")
-    file(GLOB QuaZip_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../pkg/libs/cmake/QuaZip*")
-    file(GLOB FFmpeg_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../pkg/libs/cmake/FFmpeg*")
-    if (USE_FRAMELESS)
-        file(GLOB FramelessHelper_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../pkg/libs/cmake/FramelessHelper*")
-    endif()
+    file(GLOB SDL2_DIR "${PREBUILT_LIBRARY_PATH_PREFIX}/cmake/SDL*")
+    file(GLOB QuaZip_DIR "${PREBUILT_LIBRARY_PATH_PREFIX}/cmake/QuaZip*")
+    file(GLOB FFmpeg_DIR "${PREBUILT_LIBRARY_PATH_PREFIX}/cmake/FFmpeg*")
+    file(GLOB FramelessHelper_DIR "${PREBUILT_LIBRARY_PATH_PREFIX}/cmake/FramelessHelper*")
 endif()
 
 find_package(SDL2 REQUIRED)
 find_package(QuaZip NAMES QuaZip-Qt5 QuaZip-Qt6 REQUIRED)
 find_package(FFmpeg REQUIRED)
-if (USE_FRAMELESS)
-    find_package(FramelessHelper REQUIRED COMPONENTS Core Widgets)
-endif()
+find_package(FramelessHelper REQUIRED COMPONENTS Core Widgets)
 
 # Application
 add_subdirectory(fsnotifier)
@@ -67,3 +64,7 @@ add_subdirectory(QsLib)
 add_subdirectory(QsPlugins)
 
 add_subdirectory(QSynthesis)
+
+if (BUILD_TEST)
+    add_subdirectory(Test)
+endif()

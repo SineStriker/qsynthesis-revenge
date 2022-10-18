@@ -35,4 +35,4 @@ if (WIN32)
     target_sources(${PROJECT_NAME} PRIVATE ${PROJECT_BINARY_DIR}/res.rc)
 endif()
 
-settle_plugin(QMidiConverter ustconverter)
+settle_plugin(${PROJECT_NAME} ustconverters)

@@ -5,7 +5,7 @@ include(${PROJECT_SCRIPTS_DIR}/Modules/ListUtil.cmake)
 # ------------------------------ Basic information ------------------------------
 
 project(QSynthesis
-    VERSION 0.0.0.1
+    VERSION 0.2.18.1
     LANGUAGES CXX
 )
 
@@ -91,13 +91,7 @@ if(APP_DEPLOY OR NOT DEFINED NOT_QT_CREATOR)
 endif()
 
 # Embedded libraries
-if (USE_FRAMELESS)
-    target_link_libraries(${PROJECT_NAME} PRIVATE FramelessHelper::FramelessHelperWidgets)
-else()
-    target_compile_definitions(${PROJECT_NAME} PUBLIC NO_FRAMELESS_HELPER)
-endif()
-
-target_link_libraries(${PROJECT_NAME} PRIVATE QsUtils QsFramework QsMedia QsSVS)
+target_link_libraries(${PROJECT_NAME} PRIVATE QsUtils QsFramework QsSVS)
 
 target_link_libraries(${PROJECT_NAME} PRIVATE QuaZip::QuaZip)
 

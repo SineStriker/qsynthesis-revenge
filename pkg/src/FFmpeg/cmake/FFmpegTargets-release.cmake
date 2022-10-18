@@ -22,7 +22,6 @@ foreach(_target ${ffmpeg_subprojects})
         set_target_properties(FFmpeg::${_target} PROPERTIES
             IMPORTED_IMPLIB_RELEASE ${_lib}
             IMPORTED_LOCATION_RELEASE ${_dll}
-            INTERFACE_INCLUDE_DIRECTORIES "${_IMPORT_PREFIX}/include/FFmpeg"
         )
 
         list(APPEND _IMPORT_CHECK_TARGETS FFmpeg::${_target})
@@ -51,7 +50,6 @@ foreach(_target ${ffmpeg_subprojects})
         set_target_properties(FFmpeg::${_target} PROPERTIES
             IMPORTED_LOCATION_RELEASE ${_so}
             IMPORTED_SONAME_RELEASE ${_name}
-            INTERFACE_INCLUDE_DIRECTORIES "${_IMPORT_PREFIX}/include/FFmpeg"
         )
 
         list(APPEND _IMPORT_CHECK_TARGETS FFmpeg::${_target})

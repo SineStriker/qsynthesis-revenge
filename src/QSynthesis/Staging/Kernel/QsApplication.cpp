@@ -1,5 +1,5 @@
 #include "QsApplication.h"
-#include "QsApplication_p.h"
+#include "private/QsApplication_p.h"
 
 #ifdef Q_QDOC
 QsApplication::QsApplication(int m_argc, char **argv)

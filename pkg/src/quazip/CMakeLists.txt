@@ -89,7 +89,7 @@ if(NOT QUAZIP_QT_ZLIB_USED)
     else()
         add_subdirectory(zlib-1.2.12)
     endif()
-    set(QUAZIP_LIB_LIBRARIES ${QUAZIP_LIB_LIBRARIES} ZLIB::ZLIB)
+    set(QUAZIP_LIB_LIBRARIES ${QUAZIP_LIB_LIBRARIES} ZLIB::zlib)
 endif()
 
 add_subdirectory(quazip)
