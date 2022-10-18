@@ -1,5 +1,5 @@
 #include "QUstFile.h"
-#include "QUstUtils.h"
+#include "QUtaUtils.h"
 
 #include "Config/UtaConstants.h"
 #include "Config/UtaProjectText.h"
@@ -222,7 +222,7 @@ bool QUstFile::parseSectionNote(const QStringList &sectionList, QUstNote &note) 
     double valueDouble;
     bool isInt, isDouble;
 
-    QUstUtils::PBStrings mode2;
+    QUtaUtils::PBStrings mode2;
     QString strEnv;
 
     for (i = 0; i < sectionList.size(); ++i) {
@@ -300,17 +300,17 @@ bool QUstFile::parseSectionNote(const QStringList &sectionList, QUstNote &note) 
             }
         } else if (key == KEY_NAME_PICHES || key == KEY_NAME_PITCHES ||
                    key == KEY_NAME_PITCH_BEND) {
-            note.pitches = QUstUtils::StringsToDoubles(value.split(COMMA)); // Mode1 Pitch
+            note.pitches = QUtaUtils::StringsToDoubles(value.split(COMMA)); // Mode1 Pitch
         } else if (key == KEY_NAME_VBR) {
-            note.vibrato = QUstUtils::StringsToDoubles(value.split(COMMA)); // Vibrato
+            note.vibrato = QUtaUtils::StringsToDoubles(value.split(COMMA)); // Vibrato
         } else if (key == KEY_NAME_ENVELOPE) {
             strEnv = value; // Envelope
         } else if (!key.startsWith('@')) {
             note.customData.append(qMakePair(key, value)); // Custom Values
         }
     }
-    note.Mode2Pitch = QUstUtils::StringToPortamento(mode2); // Mode2 Pitch
-    note.envelope = QUstUtils::StringToEnvelope(strEnv);
+    note.Mode2Pitch = QUtaUtils::StringToPortamento(mode2); // Mode2 Pitch
+    note.envelope = QUtaUtils::StringToEnvelope(strEnv);
 
     return isValid;
 }
@@ -367,13 +367,13 @@ bool QUstFile::parseSectionSettings(const QStringList &sectionList, QUstSettings
             settings.outputFileName = value; // Output File Name
         } else if (key == KEY_NAME_VOICE_DIR) {
             settings.voiceDirectory =
-                QUstUtils::fromUSTVoiceDir(value, voiceDir); // Voice Directory
+                QUtaUtils::fromUSTVoiceDir(value, voiceDir); // Voice Directory
         } else if (key == KEY_NAME_CACHE_DIR) {
             settings.cacheDirectory = value; // Cache Directory
         } else if (key == KEY_NAME_TOOL1) {
-            settings.wavtoolPath = QUstUtils::fromUSTToolsDir(value); // Wavtool
+            settings.wavtoolPath = QUtaUtils::fromUSTToolsDir(value); // Wavtool
         } else if (key == KEY_NAME_TOOL2) {
-            settings.resamplerPath = QUstUtils::fromUSTToolsDir(value); // Resampler
+            settings.resamplerPath = QUtaUtils::fromUSTToolsDir(value); // Resampler
         } else if (key == KEY_NAME_MODE2) {
             if (value != "True") {
                 isValid = false;
@@ -410,15 +410,15 @@ void QUstFile::writeSectionNote(int num, const QUstNote &note, QTextStream &out)
     writeSectionName(num, out);
 
     // Items maybe not exist
-    QString aVibrato = QUstUtils::DoublesToStrings(note.vibrato).join(COMMA);
-    QString aPitchBend = QUstUtils::DoublesToStrings(note.pitches).join(COMMA);
+    QString aVibrato = QUtaUtils::DoublesToStrings(note.vibrato).join(COMMA);
+    QString aPitchBend = QUtaUtils::DoublesToStrings(note.pitches).join(COMMA);
 
     // Complex items
-    QUstUtils::PBStrings mode2;
+    QUtaUtils::PBStrings mode2;
     QString strEnvelope;
 
-    mode2 = QUstUtils::PortamentoToString(note.Mode2Pitch);
-    strEnvelope = QUstUtils::EnvelopeToString(note.envelope);
+    mode2 = QUtaUtils::PortamentoToString(note.Mode2Pitch);
+    strEnvelope = QUtaUtils::EnvelopeToString(note.envelope);
 
     // Items always exists
     out << KEY_NAME_LENGTH << "=" << note.length << Qt::endl;
@@ -426,22 +426,22 @@ void QUstFile::writeSectionNote(int num, const QUstNote &note, QTextStream &out)
     out << KEY_NAME_NOTE_NUM << "=" << note.noteNum << Qt::endl;
 
     // Items can be omitted
-    if (note.preUttr != QUstUtils::NODEF_DOUBLE) {
+    if (note.preUttr != QUtaUtils::NODEF_DOUBLE) {
         out << KEY_NAME_PRE_UTTERANCE << "=" << note.preUttr << Qt::endl;
     }
-    if (note.overlap != QUstUtils::NODEF_DOUBLE) {
+    if (note.overlap != QUtaUtils::NODEF_DOUBLE) {
         out << KEY_NAME_VOICE_OVERLAP << "=" << note.overlap << Qt::endl;
     }
-    if (note.velocity != QUstUtils::NODEF_DOUBLE) {
+    if (note.velocity != QUtaUtils::NODEF_DOUBLE) {
         out << KEY_NAME_VELOCITY << "=" << QString::number(note.velocity) << Qt::endl;
     }
-    if (note.intensity != QUstUtils::NODEF_DOUBLE) {
+    if (note.intensity != QUtaUtils::NODEF_DOUBLE) {
         out << KEY_NAME_INTENSITY << "=" << note.intensity << Qt::endl;
     }
-    if (note.modulation != QUstUtils::NODEF_DOUBLE) {
+    if (note.modulation != QUtaUtils::NODEF_DOUBLE) {
         out << KEY_NAME_MODULATION << "=" << note.modulation << Qt::endl;
     }
-    if (note.stp != QUstUtils::NODEF_DOUBLE) {
+    if (note.stp != QUtaUtils::NODEF_DOUBLE) {
         out << KEY_NAME_START_POINT << "=" << note.stp << Qt::endl;
     }
     if (!note.flags.isEmpty()) {
@@ -470,13 +470,13 @@ void QUstFile::writeSectionNote(int num, const QUstNote &note, QTextStream &out)
     if (!note.vibrato.isEmpty()) {
         out << KEY_NAME_VBR << "=" << aVibrato << Qt::endl;
     }
-    if (note.tempo != QUstUtils::NODEF_DOUBLE) {
+    if (note.tempo != QUtaUtils::NODEF_DOUBLE) {
         out << KEY_NAME_TEMPO << "=" << note.tempo << Qt::endl;
     }
-    if (note.region != QUstUtils::NODEF_STRING) {
+    if (note.region != QUtaUtils::NODEF_STRING) {
         out << KEY_NAME_REGION_START << "=" << note.region << Qt::endl;
     }
-    if (note.regionEnd != QUstUtils::NODEF_STRING) {
+    if (note.regionEnd != QUtaUtils::NODEF_STRING) {
         out << KEY_NAME_REGION_END << "=" << note.regionEnd << Qt::endl;
     }
 
@@ -505,12 +505,12 @@ void QUstFile::writeSectionSettings(QTextStream &oStream) {
     oStream << KEY_NAME_TRACKS << "=" << VALUE_TRACKS_SINGLE << Qt::endl;
     oStream << KEY_NAME_PROJECT_NAME << "=" << sectionSettings.projectName << Qt::endl;
     oStream << KEY_NAME_VOICE_DIR << "="
-            << QUstUtils::toUSTVoiceDir(sectionSettings.voiceDirectory, voiceDir) << Qt::endl;
+            << QUtaUtils::toUSTVoiceDir(sectionSettings.voiceDirectory, voiceDir) << Qt::endl;
     oStream << KEY_NAME_OUTPUT_FILE << "=" << sectionSettings.outputFileName << Qt::endl;
     oStream << KEY_NAME_CACHE_DIR << "=" << sectionSettings.cacheDirectory << Qt::endl;
-    oStream << KEY_NAME_TOOL1 << "=" << QUstUtils::toUSTToolsDir(sectionSettings.wavtoolPath)
+    oStream << KEY_NAME_TOOL1 << "=" << QUtaUtils::toUSTToolsDir(sectionSettings.wavtoolPath)
             << Qt::endl;
-    oStream << KEY_NAME_TOOL2 << "=" << QUstUtils::toUSTToolsDir(sectionSettings.resamplerPath)
+    oStream << KEY_NAME_TOOL2 << "=" << QUtaUtils::toUSTToolsDir(sectionSettings.resamplerPath)
             << Qt::endl;
 
     if (sectionSettings.isMode2) {

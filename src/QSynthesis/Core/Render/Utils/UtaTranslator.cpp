@@ -1,6 +1,6 @@
 ﻿#include "UtaTranslator.h"
 
-#include "Utau/QUstUtils.h"
+#include "Utau/QUtaUtils.h"
 
 static const char COMMA = ',';
 
@@ -109,7 +109,7 @@ QStringList UtaTranslator::EnvelopeToStringList(const QList<QUstPoint> &tpoints,
 void UtaTranslator::getCorrectPBSY(int prevNoteNum, const QString &prevLyric, int curNoteNum,
                                    QUstPoint &curPoint) {
     double y1 = (prevNoteNum <= 0) ? 0 : double((prevNoteNum - curNoteNum) * 10);
-    if (!QUstUtils::isRestLyric(prevLyric)) {
+    if (!QUtaUtils::isRestLyric(prevLyric)) {
         curPoint.Y = y1;
     }
 }

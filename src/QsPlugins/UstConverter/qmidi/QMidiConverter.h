@@ -1,14 +1,16 @@
 #ifndef QMIDICONVERTER_H
 #define QMIDICONVERTER_H
 
-#include "api/ISVSConverter.h"
+#include "api/IUstConverter.h"
 
-class Q_DECL_EXPORT QMidiConverter : public QObject, public ISVSConverter {
+#include <QObject>
+
+class Q_DECL_EXPORT QMidiConverter : public QObject, public IUstConverter {
     Q_OBJECT
-    Q_INTERFACES(ISVSConverter)
-    Q_PLUGIN_METADATA(IID IFormatImporter_IID FILE "plugin.json")
+    Q_INTERFACES(IUstConverter)
+    Q_PLUGIN_METADATA(IID IUstConverter_IID FILE "plugin.json")
 public:
-    QMidiConverter();
+    explicit QMidiConverter(QObject *parent = nullptr);
     ~QMidiConverter();
 
     bool load(const QString &filename, QUstFile *out, Callback callback) override;

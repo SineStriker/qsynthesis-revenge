@@ -12,7 +12,8 @@ public:
     QString desc;
 };
 
-typedef QList<QSCommand> QSCommandList;
+typedef QSharedPointer<QSCommand> QSCommandRef;
+typedef QList<QSCommandRef> QSCommandList;
 
 class ICommandSubscriber {
 public:

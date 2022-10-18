@@ -15,7 +15,7 @@ void CommandManager::undo() {
 void CommandManager::redo() {
 }
 
-void CommandManager::execute(const QSCommand &cmd, bool isUndo) {
+void CommandManager::execute(const QSCommandRef &cmd, bool isUndo) {
 }
 
 void CommandManager::execute(const QSCommandList &cmds, bool isUndo) {

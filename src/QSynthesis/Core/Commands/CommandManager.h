@@ -16,7 +16,7 @@ public:
     void undo();
     void redo();
 
-    void execute(const QSCommand &cmd, bool isUndo);
+    void execute(const QSCommandRef &cmd, bool isUndo);
     void execute(const QSCommandList &cmds, bool isUndo);
 
     void startRecord();

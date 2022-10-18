@@ -10,7 +10,7 @@
 
 #include "qssvs_global.h"
 
-namespace QUstUtils {
+namespace QUtaUtils {
 
     const char NODEF_STRING[] = "%NODEF%";
     const int NODEF_INT = INT_MIN;

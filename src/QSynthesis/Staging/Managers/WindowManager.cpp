@@ -1,5 +1,5 @@
 #include "WindowManager.h"
-#include "WindowManager_p.h"
+#include "private/WindowManager_p.h"
 
 #include "Kernel/Events.h"
 

@@ -4,7 +4,7 @@
 #include <QJsonValue>
 
 #include "Config/UtaConstants.h"
-#include "QUstUtils.h"
+#include "QUtaUtils.h"
 
 using namespace Utau;
 
@@ -29,21 +29,21 @@ void QUstNote::clear() {
     lyric = "a";
     flags = "";
 
-    noteNum = QUstUtils::StandardToneNum();
+    noteNum = QUtaUtils::StandardToneNum();
     length = TIME_BASE;
 
-    velocity = preUttr = overlap = stp = QUstUtils::NODEF_DOUBLE;
+    velocity = preUttr = overlap = stp = QUtaUtils::NODEF_DOUBLE;
     intensity = 100.0;
     modulation = 0.0;
 
-    tempo = QUstUtils::NODEF_DOUBLE;
+    tempo = QUtaUtils::NODEF_DOUBLE;
 
     envelope = {};
 
     Mode2Pitch = {};
     vibrato = {};
 
-    pbstart = QUstUtils::NODEF_DOUBLE;
+    pbstart = QUtaUtils::NODEF_DOUBLE;
     pitches = {};
     pbtype = "";
 
@@ -106,7 +106,7 @@ QJsonObject QUstNote::toJson() const {
             QJsonObject pt;
             pt.insert("X", Mode2Pitch.at(i).X);
             pt.insert("Y", Mode2Pitch.at(i).Y);
-            pt.insert("P", QUstUtils::PointToString(Mode2Pitch.at(i).P));
+            pt.insert("P", QUtaUtils::PointToString(Mode2Pitch.at(i).P));
             arr.append(pt);
         }
         obj.insert("PBMode2", arr);
@@ -179,7 +179,7 @@ QUstNote QUstNote::fromJson(const QJsonObject &obj) {
                             } else if (it2.key() == "Y") {
                                 p.Y = it2.value().toDouble();
                             } else if (it2.key() == "P") {
-                                p.P = QUstUtils::StringTpoint(it2.value().toString());
+                                p.P = QUtaUtils::StringTpoint(it2.value().toString());
                             }
                         }
                         note.Mode2Pitch.append(p);

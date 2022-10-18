@@ -3,7 +3,8 @@
 
 #include "Kernel/Events.h"
 #include "Kernel/QsApplication.h"
-#include "Windows/WindowManager.h"
+#include "Managers/WindowManager.h"
+
 #include "qsmedia_version.h"
 
 #include <QApplication>

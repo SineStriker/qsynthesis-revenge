@@ -1,4 +1,4 @@
-#include "QUstUtils.h"
+#include "QUtaUtils.h"
 
 #include <QDir>
 #include <QFileInfo>
@@ -18,14 +18,14 @@ static const char SLASH = '/';
 
 using namespace Utau;
 
-QString QUstUtils::fromFrqName(const QString &filename) {
+QString QUtaUtils::fromFrqName(const QString &filename) {
     if (filename.endsWith(FRQ_SUFFIX)) {
         return filename.mid(0, filename.size() - FRQ_SUFFIX.size()) + ".wav";
     }
     return "";
 }
 
-QString QUstUtils::toFrqName(const QString &filename) {
+QString QUtaUtils::toFrqName(const QString &filename) {
     int index = filename.lastIndexOf('.');
     if (index < 0) {
         return filename + FRQ_SUFFIX;
@@ -34,23 +34,23 @@ QString QUstUtils::toFrqName(const QString &filename) {
     }
 }
 
-QString QUstUtils::mrqName() {
+QString QUtaUtils::mrqName() {
     return "desc.mrq";
 }
 
-QList<QUstPoint> QUstUtils::DefaultEnvelope() {
+QList<QUstPoint> QUtaUtils::DefaultEnvelope() {
     return {{0, 0}, {5, 100}, {35, 100}, {0, 0}};
 }
 
-QList<double> QUstUtils::DefaultVibrato() {
+QList<double> QUtaUtils::DefaultVibrato() {
     return {65, 180, 35, 20, 20, 0, 0, 0};
 }
 
-QList<QUstPoint> QUstUtils::DefaultPortamento() {
+QList<QUstPoint> QUtaUtils::DefaultPortamento() {
     return {{-15, 0}, {15, 0}};
 }
 
-QString QUstUtils::PointToString(QUstPoint::PointType type) {
+QString QUtaUtils::PointToString(QUstPoint::PointType type) {
     QString res;
     switch (type) {
         case QUstPoint::sJoin:
@@ -68,7 +68,7 @@ QString QUstUtils::PointToString(QUstPoint::PointType type) {
     return res;
 }
 
-QUstPoint::PointType QUstUtils::StringTpoint(const QString &name) {
+QUstPoint::PointType QUtaUtils::StringTpoint(const QString &name) {
     QUstPoint::PointType res;
     if (name == "s") {
         res = QUstPoint::linearJoin;
@@ -82,7 +82,7 @@ QUstPoint::PointType QUstUtils::StringTpoint(const QString &name) {
     return res;
 }
 
-QList<QUstPoint> QUstUtils::StringToPortamento(const QUstUtils::PBStrings &pbstr) {
+QList<QUstPoint> QUtaUtils::StringToPortamento(const QUtaUtils::PBStrings &pbstr) {
     QUstPoint p;
     QList<QUstPoint> res;
 
@@ -116,7 +116,7 @@ QList<QUstPoint> QUstUtils::StringToPortamento(const QUstUtils::PBStrings &pbstr
             p.Y = (PBYs.at(i).isEmpty()) ? 0 : PBYs.at(i).toDouble();
         }
         if (PBMs.size() > i) {
-            p.P = QUstUtils::StringTpoint(PBMs.at(i));
+            p.P = QUtaUtils::StringTpoint(PBMs.at(i));
         }
         p.X += res.back().X;
         res.push_back(p);
@@ -135,7 +135,7 @@ QList<QUstPoint> QUstUtils::StringToPortamento(const QUstUtils::PBStrings &pbstr
     return res;
 }
 
-QUstUtils::PBStrings QUstUtils::PortamentoToString(const QList<QUstPoint> &points) {
+QUtaUtils::PBStrings QUtaUtils::PortamentoToString(const QList<QUstPoint> &points) {
     QStringList strs;
     PBStrings res;
     if (points.isEmpty()) {
@@ -167,13 +167,13 @@ QUstUtils::PBStrings QUstUtils::PortamentoToString(const QList<QUstPoint> &point
     // PBM
     strs.clear();
     for (int i = 1; i < points.size(); i++) {
-        strs.push_back(QUstUtils::PointToString(points.at(i).P));
+        strs.push_back(QUtaUtils::PointToString(points.at(i).P));
     }
     res.PBM = strs.join(COMMA);
     return res;
 }
 
-QList<QUstPoint> QUstUtils::StringToEnvelope(const QString &str) {
+QList<QUstPoint> QUtaUtils::StringToEnvelope(const QString &str) {
     QStringList strList = str.split(COMMA);
     QList<double> nums;
     QList<QUstPoint> res;
@@ -200,7 +200,7 @@ QList<QUstPoint> QUstUtils::StringToEnvelope(const QString &str) {
     return res;
 }
 
-QString QUstUtils::EnvelopeToString(const QList<QUstPoint> &points) {
+QString QUtaUtils::EnvelopeToString(const QList<QUstPoint> &points) {
     int offset;
     QList<double> nums;
     QStringList res;
@@ -235,7 +235,7 @@ QString QUstUtils::EnvelopeToString(const QList<QUstPoint> &points) {
     return res.join(COMMA);
 }
 
-QOtoItem QUstUtils::StringToGenon(const QString &str) {
+QOtoItem QUtaUtils::StringToGenon(const QString &str) {
     if (str.isEmpty()) {
         return QOtoItem();
     }
@@ -265,7 +265,7 @@ QOtoItem QUstUtils::StringToGenon(const QString &str) {
     return res;
 }
 
-QString QUstUtils::GenonToString(const QOtoItem &genon) {
+QString QUtaUtils::GenonToString(const QOtoItem &genon) {
     QString res;
     QTextStream out(&res);
 
@@ -280,7 +280,7 @@ QString QUstUtils::GenonToString(const QOtoItem &genon) {
     return res;
 }
 
-QList<double> QUstUtils::StringsToDoubles(const QStringList &strs) {
+QList<double> QUtaUtils::StringsToDoubles(const QStringList &strs) {
     QList<double> nums;
     for (auto it = strs.begin(); it != strs.end(); ++it) {
         nums.append(it->isEmpty() ? 0.0 : it->toDouble());
@@ -288,7 +288,7 @@ QList<double> QUstUtils::StringsToDoubles(const QStringList &strs) {
     return nums;
 }
 
-QStringList QUstUtils::DoublesToStrings(const QList<double> &nums) {
+QStringList QUtaUtils::DoublesToStrings(const QList<double> &nums) {
     QStringList strs;
     for (auto it = nums.begin(); it != nums.end(); ++it) {
         strs.append(((*it) == 0) ? "" : NUM2STR(*it));
@@ -299,7 +299,7 @@ QStringList QUstUtils::DoublesToStrings(const QList<double> &nums) {
     return strs;
 }
 
-int QUstUtils::ToneNameToToneNum(const QString &name) {
+int QUtaUtils::ToneNameToToneNum(const QString &name) {
     int octave;
 
     if (name.length() < 2) {
@@ -323,11 +323,11 @@ int QUstUtils::ToneNameToToneNum(const QString &name) {
            static_cast<int>(name[1] == TONE_NAME_SHARP);
 }
 
-QString QUstUtils::ToneNumToToneName(int num) {
+QString QUtaUtils::ToneNumToToneName(int num) {
     return ToneNumToToneName(num % TONE_OCTAVE_STEPS, num / TONE_OCTAVE_STEPS - 2);
 }
 
-QString QUstUtils::ToneNumToToneName(int nameIndex, int octaveIndex) {
+QString QUtaUtils::ToneNumToToneName(int nameIndex, int octaveIndex) {
     QString tone_names(TONE_NAMES);
     QString name = tone_names.at(nameIndex);
     if (nameIndex > 0 && tone_names.at(nameIndex) == tone_names.at(nameIndex - 1)) {
@@ -337,24 +337,24 @@ QString QUstUtils::ToneNumToToneName(int nameIndex, int octaveIndex) {
     return name;
 }
 
-double QUstUtils::TickToTime(int tick, double tempo) {
+double QUtaUtils::TickToTime(int tick, double tempo) {
     return (static_cast<unsigned long>(60000) * tick) / (tempo * TIME_BASE);
 }
 
-int QUstUtils::TimeToTick(double time, double tempo) {
+int QUtaUtils::TimeToTick(double time, double tempo) {
     return static_cast<int>(time * tempo * TIME_BASE / 60000);
 }
 
-bool QUstUtils::isRestLyric(const QString &lyric) {
+bool QUtaUtils::isRestLyric(const QString &lyric) {
     QString lrc = lyric.trimmed();
     return (lrc.isEmpty() || !lrc.compare(LYRIC_R, Qt::CaseInsensitive));
 }
 
-int QUstUtils::StandardToneNum() {
+int QUtaUtils::StandardToneNum() {
     return (4 - TONE_OCTAVE_MIN) * TONE_OCTAVE_STEPS + TONE_NUMBER_BASE;
 }
 
-QString QUstUtils::fromUSTVoiceDir(const QString &filePath, const QString &voicePath) {
+QString QUtaUtils::fromUSTVoiceDir(const QString &filePath, const QString &voicePath) {
     QString path = QDir::fromNativeSeparators(filePath);
     QString voice = voicePath + SLASH;
 
@@ -367,7 +367,7 @@ QString QUstUtils::fromUSTVoiceDir(const QString &filePath, const QString &voice
     return path;
 }
 
-QString QUstUtils::toUSTVoiceDir(const QString &filePath, const QString &voicePath) {
+QString QUtaUtils::toUSTVoiceDir(const QString &filePath, const QString &voicePath) {
     QString path = filePath;
     QString voice = voicePath + SLASH;
 
@@ -379,7 +379,7 @@ QString QUstUtils::toUSTVoiceDir(const QString &filePath, const QString &voicePa
     return path;
 }
 
-QString QUstUtils::fromUSTToolsDir(const QString &filePath) {
+QString QUtaUtils::fromUSTToolsDir(const QString &filePath) {
     QString path = QDir::fromNativeSeparators(filePath);
     if (path.startsWith("./")) {
         path.remove(0, 2);
@@ -390,7 +390,7 @@ QString QUstUtils::fromUSTToolsDir(const QString &filePath) {
     return path;
 }
 
-QString QUstUtils::toUSTToolsDir(const QString &filePath) {
+QString QUtaUtils::toUSTToolsDir(const QString &filePath) {
     QString path = filePath;
     QString app = qApp->applicationDirPath() + SLASH;
     if (filePath.startsWith(app)) {
@@ -400,7 +400,7 @@ QString QUstUtils::toUSTToolsDir(const QString &filePath) {
     return path;
 }
 
-double QUstUtils::prop(double val, NoteProperty prop, double def) {
+double QUtaUtils::prop(double val, NoteProperty prop, double def) {
     double res = NODEF_DOUBLE;
     switch (prop) {
     case Intensity:
@@ -434,7 +434,7 @@ double QUstUtils::prop(double val, NoteProperty prop, double def) {
     return res;
 }
 
-QString QUstUtils::prop(const QString &val, NoteProperty prop, const QString &def) {
+QString QUtaUtils::prop(const QString &val, NoteProperty prop, const QString &def) {
     QString res = NODEF_STRING;
     switch (prop) {
     case Flags:

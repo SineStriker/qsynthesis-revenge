@@ -4,7 +4,7 @@
 
 #include <QPoint>
 
-#include "Utau/QUstUtils.h"
+#include "Utau/QUtaUtils.h"
 
 static const char SLASH = '/';
 
@@ -103,12 +103,12 @@ QList<RenderArgs> QBatchRenderer::getArgs(QPoint range) const {
         int aLength = aNote.length;
 
         QString aLyric = aNote.lyric;
-        QString aFlags = prop(aNote.flags, QUstUtils::Flags);
+        QString aFlags = prop(aNote.flags, QUtaUtils::Flags);
 
-        double aTempo = QUstUtils::prop(aNote.tempo, QUstUtils::Tempo);
-        double aIntensity = QUstUtils::prop(aNote.intensity, QUstUtils::Intensity);
-        double aModulation = QUstUtils::prop(aNote.modulation, QUstUtils::Modulation);
-        double aVelocity = QUstUtils::prop(aNote.velocity, QUstUtils::Velocity);
+        double aTempo = QUtaUtils::prop(aNote.tempo, QUtaUtils::Tempo);
+        double aIntensity = QUtaUtils::prop(aNote.intensity, QUtaUtils::Intensity);
+        double aModulation = QUtaUtils::prop(aNote.modulation, QUtaUtils::Modulation);
+        double aVelocity = QUtaUtils::prop(aNote.velocity, QUtaUtils::Velocity);
 
         QOtoItem aGenon = notes.at(i).g;
         QOtoItemBrief aCorrect = notes.at(i).c;
@@ -207,7 +207,7 @@ QList<RenderArgs> QBatchRenderer::getArgs(QPoint range) const {
             aNextPreUttr, aNextOverlap, aNextLength, aPrevPitch, aPrevVibrato, aPrevLength);
 
         // Real Length
-        double aDuration = QUstUtils::TickToTime(aLength, aTempo); // convert from ticks
+        double aDuration = QUtaUtils::TickToTime(aLength, aTempo); // convert from ticks
         double aDurationFix = aPreUttr - aNextPreUttr + aNextOverlap;
 
         double aRealLength = aDuration + aDurationFix + aStartPoint + 50;
@@ -215,7 +215,7 @@ QList<RenderArgs> QBatchRenderer::getArgs(QPoint range) const {
         aRealLength = int((aRealLength + 25) / 50) * 50;
 
         // Cache Name
-        QString aToneName = QUstUtils::ToneNumToToneName(aNoteNum);
+        QString aToneName = QUtaUtils::ToneNumToToneName(aNoteNum);
         QString aCacheName = QString::number(i) + "_" + UtaTranslator::fixFilename(aLyric) + "_" +
                              aToneName + "_" + QString::number(aLength) + ".wav";
 
@@ -252,7 +252,7 @@ QList<RenderArgs> QBatchRenderer::getArgs(QPoint range) const {
         wav.setVoiceOverlap(aOverlap);
         wav.setEnvelope(aEnvelope);
 
-        if (QUstUtils::isRestLyric(aLyric)) {
+        if (QUtaUtils::isRestLyric(aLyric)) {
             wav.setRest(true);
         }
 

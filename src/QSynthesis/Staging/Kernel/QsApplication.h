@@ -27,8 +27,18 @@ public:
 
 public:
     void reloadStrings();
-
     void reloadScreen();
+
+    QString mainTitle() const;
+    QString windowTitle() const;
+    QString errorTitle() const;
+    QString untitledFileName() const;
+    QString unsavedPrefix() const;
+    QString deletedPrefix() const;
+    QString fileManagerName() const;
+
+    QString appDataPath() const;
+    QString appTempPath() const;
 
 protected:
 #ifdef Q_QDOC

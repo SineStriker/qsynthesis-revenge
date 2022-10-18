@@ -1,5 +1,5 @@
 #include "PluginManager.h"
-#include "PluginManager_p.h"
+#include "private/PluginManager_p.h"
 
 Q_SINGLETON_DECLARE(PluginManager)
 

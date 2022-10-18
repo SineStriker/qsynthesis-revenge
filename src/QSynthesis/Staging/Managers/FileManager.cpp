@@ -1,5 +1,5 @@
 #include "FileManager.h"
-#include "FileManager_p.h"
+#include "private/FileManager_p.h"
 
 Q_SINGLETON_DECLARE(FileManager)
 

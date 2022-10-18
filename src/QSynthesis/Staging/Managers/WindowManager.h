@@ -1,12 +1,6 @@
 #ifndef WINDOWMANAGER_H
 #define WINDOWMANAGER_H
 
-/*
- * Usage: Manage windows
- *
- *
- */
-
 #include "Basic/BasicManager.h"
 
 #include "qsutils_macros.h"

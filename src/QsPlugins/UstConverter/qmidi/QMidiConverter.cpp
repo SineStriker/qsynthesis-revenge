@@ -3,16 +3,16 @@
 #include "QMidiFile.h"
 
 #include "Utau/Config/UtaConstants.h"
-#include "Utau/QUstUtils.h"
+#include "Utau/QUtaUtils.h"
 
-QMidiConverter::QMidiConverter() {
+QMidiConverter::QMidiConverter(QObject *parent) : QObject(parent) {
 }
 
 QMidiConverter::~QMidiConverter() {
 }
 
 bool QMidiConverter::load(const QString &filename, QUstFile *out,
-                         ISVSConverter::Callback callback) {
+                          IUstConverter::Callback callback) {
     QMidiFile midi;
     if (!midi.load(filename)) {
         return false;
@@ -62,8 +62,8 @@ bool QMidiConverter::load(const QString &filename, QUstFile *out,
 
     // Pitch range
     for (int i = 0; i < trackRanges.size(); ++i) {
-        QString low = QUstUtils::ToneNumToToneName(trackRanges[i].x());
-        QString high = QUstUtils::ToneNumToToneName(trackRanges[i].y());
+        QString low = QUtaUtils::ToneNumToToneName(trackRanges[i].x());
+        QString high = QUtaUtils::ToneNumToToneName(trackRanges[i].y());
         if (trackNoteCounts[i] == 0) {
             trackRangeStrings.append("");
         } else {
@@ -194,7 +194,7 @@ bool QMidiConverter::load(const QString &filename, QUstFile *out,
 
         // Update Tempo
         if (!temp.isEmpty()) {
-            if (temp[0].tempo == QUstUtils::NODEF_DOUBLE) {
+            if (temp[0].tempo == QUtaUtils::NODEF_DOUBLE) {
                 if (tempos.isEmpty()) {
                     temp[0].tempo = Utau::DEFAULT_VALUE_TEMPO;
                 } else {

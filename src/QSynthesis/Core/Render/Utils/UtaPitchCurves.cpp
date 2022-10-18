@@ -3,7 +3,7 @@
 //
 #include "UtaPitchCurves.h"
 
-#include "Utau/QUstUtils.h"
+#include "Utau/QUtaUtils.h"
 
 #include <QtMath>
 
@@ -281,7 +281,7 @@ QString UtaPitchCurves::encode_from_vector(const QList<int> &pitchBend) {
 
     while (pos < pitchBend.size()) {
         pos++;
-        curInt = (pitchBend[pos - 1] == QUstUtils::NODEF_INT) ? 0 : pitchBend[pos - 1];
+        curInt = (pitchBend[pos - 1] == QUtaUtils::NODEF_INT) ? 0 : pitchBend[pos - 1];
 
         if (curInt == prevInt) {
             ++count;

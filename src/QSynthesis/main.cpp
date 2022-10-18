@@ -1,11 +1,11 @@
 #include "Kernel/QsApplication.h"
-#include "Windows/WindowManager.h"
+#include "Managers/WindowManager.h"
 
 #include <QDebug>
 #include <QMessageBox>
 #include <QPluginLoader>
 
-#include "api/ISVSConverter.h"
+#include "api/IUstConverter.h"
 
 int main(int argc, char *argv[]) {
     QsApplication a(argc, argv);

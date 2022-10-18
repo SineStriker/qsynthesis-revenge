@@ -1,6 +1,6 @@
 #include "ResamplerArgs.h"
 #include "../Utils/UtaPitchCurves.h"
-#include "Utau/QUstUtils.h"
+#include "Utau/QUtaUtils.h"
 
 #include <QFileInfo>
 
@@ -39,8 +39,8 @@ void ResamplerArgs::setInFile(const QString &inFile) {
     m_inFile = inFile;
 
     m_voiceTime = QFileInfo(inFile).lastModified();
-    m_frqTime = QFileInfo(QUstUtils::toFrqName(inFile)).lastModified();
-    m_mrqTime = QFileInfo(QUstUtils::mrqName()).lastModified();
+    m_frqTime = QFileInfo(QUtaUtils::toFrqName(inFile)).lastModified();
+    m_mrqTime = QFileInfo(QUtaUtils::mrqName()).lastModified();
 }
 
 QString ResamplerArgs::outFile() const {
@@ -60,7 +60,7 @@ void ResamplerArgs::setToneName(const QString &toneName) {
 }
 
 void ResamplerArgs::setToneName(int noteNum) {
-    m_toneName = QUstUtils::ToneNumToToneName(noteNum);
+    m_toneName = QUtaUtils::ToneNumToToneName(noteNum);
 }
 
 double ResamplerArgs::velocity() const {

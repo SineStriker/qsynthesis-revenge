@@ -2,7 +2,7 @@
 #include "HomeWindow_p.h"
 
 #include "Kernel/QsApplication.h"
-#include "Windows/WindowManager.h"
+#include "Managers/WindowManager.h"
 
 #include <QDebug>
 

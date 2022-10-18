@@ -1,6 +1,6 @@
 #include "QUstPoint.h"
 
-#include "QUstUtils.h"
+#include "QUtaUtils.h"
 
 QUstPoint::QUstPoint() {
     X = 0.0;
@@ -74,7 +74,7 @@ QDebug operator<<(QDebug debug, const QUstPoint &point) {
     QString info = QString("QUstPoint(X:%1; Y:%2; P:%3)")
                        .arg(point.X)
                        .arg(point.Y)
-                       .arg(QUstUtils::PointToString(point.P));
+                       .arg(QUtaUtils::PointToString(point.P));
     debug.noquote() << info;
     return debug;
 }
