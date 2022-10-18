@@ -1,4 +1,4 @@
-project(qzlib
+project(FrqEditor
     VERSION 0.0.0.1
     LANGUAGES CXX
 )
@@ -14,14 +14,13 @@ file(GLOB _src ${CMAKE_CURRENT_SOURCE_DIR}/*.h ${CMAKE_CURRENT_SOURCE_DIR}/*.cpp
 add_library(${PROJECT_NAME} SHARED ${_src})
 
 target_link_libraries(${PROJECT_NAME} PUBLIC Qt${QT_VERSION_MAJOR}::Core)
-target_link_libraries(${PROJECT_NAME} PUBLIC QuaZip::QuaZip)
-target_link_libraries(${PROJECT_NAME} PUBLIC QsUtils)
+target_link_libraries(${PROJECT_NAME} PUBLIC QsSVS)
 
 if (WIN32)
     # Specify your plugin metadata
     set(PROJECT_EXPORT_FILENAME ${PROJECT_NAME})
     set(PROJECT_AUTHOR "Sine Striker")
-    set(PROJECT_DESC "QSynthesis Plugin for IO Compression")
+    set(PROJECT_DESC "QSynthesis Plugin for Voice Bank")
     set(PROJECT_COPYRIGHT_START_YEAR "2020")
     set(PROJECT_COPYRIGHT_END_YEAR "2022")
     set(PROJECT_PRODUCT_NAME ${PROJECT_NAME})
@@ -33,4 +32,4 @@ if (WIN32)
     target_sources(${PROJECT_NAME} PRIVATE ${PROJECT_BINARY_DIR}/res.rc)
 endif()
 
-settle_plugin(${PROJECT_NAME} compressengines)
+settle_plugin(${PROJECT_NAME} otoplugins)

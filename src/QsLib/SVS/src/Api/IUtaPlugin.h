@@ -55,7 +55,7 @@ public:
     virtual int exec(PluginArguments *args, void *userdata) = 0;
 };
 
-#define IUtaPlugin_IID "QSynthesis.Plugin.SVS.UstConverter"
+#define IUtaPlugin_IID "QSynthesis.Plugin.SVS.UtaPlugin"
 
 QT_BEGIN_NAMESPACE
 Q_DECLARE_INTERFACE(IUtaPlugin, IUtaPlugin_IID)
