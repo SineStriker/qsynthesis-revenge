@@ -73,8 +73,7 @@ void QsApplicationPrivate::init() {
     // Setup plugin environment
     pluginDir = qApp->applicationDirPath() + "/plugins";
     if (!Sys::mkDir(pluginDir)) {
-        QMessageBox::warning(nullptr, q->errorTitle(),
-                             QObject::tr("Failed to make plugin path!"));
+        QMessageBox::warning(nullptr, q->errorTitle(), QObject::tr("Failed to make plugin path!"));
         ::exit(-1);
     }
     q->addLibraryPath(pluginDir);
@@ -85,8 +84,7 @@ void QsApplicationPrivate::init() {
 #ifdef Q_OS_WINDOWS
     runtimeDir = qApp->applicationDirPath() + "/lib";
     if (!Sys::mkDir(runtimeDir)) {
-        QMessageBox::warning(nullptr, q->errorTitle(),
-                             QObject::tr("Failed to make runtime path!"));
+        QMessageBox::warning(nullptr, q->errorTitle(), QObject::tr("Failed to make runtime path!"));
         ::exit(-1);
     }
     ::SetDefaultDllDirectories(LOAD_LIBRARY_SEARCH_APPLICATION_DIR |
@@ -100,12 +98,16 @@ void QsApplicationPrivate::init() {
     fileMgr = new FileManager(q);
     windowMgr = new WindowManager(q);
 
+    pluginMgr->load();
+
     q->connect(q->primaryScreen(), &QScreen::logicalDotsPerInchChanged, q,
                &QsApplication::q_screenRatioChanged);
 }
 
 void QsApplicationPrivate::deinit() {
     // Save Modules
+
+    pluginMgr->save();
 
     delete pluginMgr;
     delete fileMgr;

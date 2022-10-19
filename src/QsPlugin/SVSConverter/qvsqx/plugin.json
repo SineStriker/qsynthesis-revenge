@@ -4,5 +4,8 @@
     "author": "You-Know-Who",
     "license": "Apache 2.0",
     "target": "Vocaloid File",
-    "filter": "*.vsqx *.vsq"
+    "filters": [
+        "vsqx",
+        "vsq"
+    ]
 }

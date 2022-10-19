@@ -4,5 +4,8 @@
     "author": "You-Know-Who",
     "license": "Apache 2.0",
     "target": "Synthesizer V File",
-    "filter": "*.svp *.s5p"
+    "filters": [
+        "svp",
+        "s5p"
+    ]
 }

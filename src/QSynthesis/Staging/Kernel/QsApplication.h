@@ -40,6 +40,8 @@ public:
     QString appDataPath() const;
     QString appTempPath() const;
 
+    QString appPluginDir() const;
+
 protected:
 #ifdef Q_QDOC
     QsApplication(QsApplicationPrivate &d, int &argc, char **argv);

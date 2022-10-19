@@ -65,6 +65,11 @@ QString QsApplication::appTempPath() const {
     return d->tempPath;
 }
 
+QString QsApplication::appPluginDir() const {
+    Q_D(const QsApplication);
+    return d->pluginDir;
+}
+
 #ifdef Q_QDOC
 QsApplication::QsApplication(QsApplicationPrivate &d, int &argc, char **argv)
     : CApplication(d, argc, argv) {

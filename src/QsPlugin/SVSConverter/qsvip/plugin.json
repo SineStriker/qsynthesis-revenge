@@ -4,5 +4,7 @@
     "author": "You-Know-Who",
     "license": "Apache 2.0",
     "target": "X Studio File",
-    "filter": "*.vsqx *.vsq"
+    "filters": [
+        "svip"
+    ]
 }

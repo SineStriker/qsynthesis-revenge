@@ -15,13 +15,13 @@ public:
     ISVSConverter(QObject *parent = nullptr);
     ~ISVSConverter();
 
+    QString err;
+
     virtual bool load(const QString &filename, QSvipFile *out,
                       const QMap<QString, QVariant> &args) = 0;
 
     virtual bool save(const QString &filename, const QSvipFile &in,
                       const QMap<QString, QVariant> &args) = 0;
-
-    QString err;
 };
 
 #define ISVSConverter_IID "QSynthesis.Plugin.SVS.SVSConverter"

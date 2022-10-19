@@ -4,5 +4,7 @@
     "author": "Sine Striker",
     "license": "Apache 2.0",
     "target": "Standard Midi File",
-    "filter": "*.mid"
+    "filters": [
+        "mid"
+    ]
 }

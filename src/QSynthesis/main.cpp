@@ -1,4 +1,5 @@
 #include "Kernel/QsApplication.h"
+#include "Managers/PluginManager.h"
 #include "Managers/WindowManager.h"
 
 int main(int argc, char *argv[]) {
