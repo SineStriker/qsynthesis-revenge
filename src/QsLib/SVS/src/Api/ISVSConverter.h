@@ -15,22 +15,11 @@ public:
     ISVSConverter(QObject *parent = nullptr);
     ~ISVSConverter();
 
-    /**
-     * @brief load: Load another SVS porject file and convert to ust file
-     * @param filename: Absolute path of input file
-     * @param out: Output instance
-     * @param callback: A selection callback if there's many tracks
-     * @return true if success, false if failed
-     */
-    virtual bool load(const QString &filename, QSvipFile *out) = 0;
+    virtual bool load(const QString &filename, QSvipFile *out,
+                      const QMap<QString, QVariant> &args) = 0;
 
-    /**
-     * @brief save: Convert ust to another SVS project and store to file system
-     * @param filename: Absolute path of output file
-     * @param in: Input instance
-     * @return true if success, false if failed
-     */
-    virtual bool save(const QString &filename, const QSvipFile &in) = 0;
+    virtual bool save(const QString &filename, const QSvipFile &in,
+                      const QMap<QString, QVariant> &args) = 0;
 };
 
 #define ISVSConverter_IID "QSynthesis.Plugin.SVS.SVSConverter"

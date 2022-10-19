@@ -11,7 +11,8 @@ QMidiConverter::QMidiConverter(QObject *parent) : ISVSConverter(parent) {
 QMidiConverter::~QMidiConverter() {
 }
 
-bool QMidiConverter::load(const QString &filename, QSvipFile *out) {
+bool QMidiConverter::load(const QString &filename, QSvipFile *out,
+                          const QMap<QString, QVariant> &args) {
     QMidiFile midi;
     if (!midi.load(filename)) {
         return false;
@@ -25,6 +26,7 @@ bool QMidiConverter::load(const QString &filename, QSvipFile *out) {
     return false;
 }
 
-bool QMidiConverter::save(const QString &filename, const QSvipFile &in) {
+bool QMidiConverter::save(const QString &filename, const QSvipFile &in,
+                          const QMap<QString, QVariant> &args) {
     return false;
 }

@@ -11,8 +11,10 @@ public:
     explicit QSvipConverter(QObject *parent = nullptr);
     ~QSvipConverter();
 
-    bool load(const QString &filename, QSvipFile *out) override;
-    bool save(const QString &filename, const QSvipFile &in) override;
+    bool load(const QString &filename, QSvipFile *out,
+              const QMap<QString, QVariant> &args) override;
+    bool save(const QString &filename, const QSvipFile &in,
+              const QMap<QString, QVariant> &args) override;
 };
 
 #endif // QSVIPCONVERTER_H

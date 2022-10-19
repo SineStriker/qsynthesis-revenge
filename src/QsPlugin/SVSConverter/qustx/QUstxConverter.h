@@ -11,8 +11,11 @@ public:
     explicit QUstxConverter(QObject *parent = nullptr);
     ~QUstxConverter();
 
-    bool load(const QString &filename, QSvipFile *out) override;
-    bool save(const QString &filename, const QSvipFile &in) override;
+    bool load(const QString &filename, QSvipFile *out,
+              const QMap<QString, QVariant> &args) override;
+
+    bool save(const QString &filename, const QSvipFile &in,
+              const QMap<QString, QVariant> &args) override;
 };
 
 #endif // QUSTXCONVERTER_H
