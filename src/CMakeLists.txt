@@ -61,7 +61,7 @@ add_subdirectory(fsnotifier)
 
 add_subdirectory(QsLib)
 
-add_subdirectory(QsPlugins)
+add_subdirectory(QsPlugin)
 
 add_subdirectory(QSynthesis)
 
