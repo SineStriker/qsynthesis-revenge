@@ -1,4 +1,4 @@
-project(SDLPlayback
+project(qust
     VERSION 0.0.0.1
     LANGUAGES CXX
 )
@@ -11,25 +11,17 @@ find_package(QT NAMES Qt6 Qt5 COMPONENTS Core REQUIRED)
 find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Core REQUIRED)
 
 file(GLOB _src ${CMAKE_CURRENT_SOURCE_DIR}/*.h ${CMAKE_CURRENT_SOURCE_DIR}/*.cpp)
-
-set(_main_dirs private)
-foreach(_dir ${_main_dirs})
-    set(_temp)
-    file(GLOB_RECURSE _temp ${_dir}/*.h ${_dir}/*.cpp)
-    list(APPEND _src ${_temp})
-endforeach()
-
 add_library(${PROJECT_NAME} SHARED ${_src})
 
-target_link_libraries(${PROJECT_NAME} PUBLIC Qt${QT_VERSION_MAJOR}::Core)
-target_link_libraries(${PROJECT_NAME} PUBLIC QsMedia)
-target_link_libraries(${PROJECT_NAME} PUBLIC SDL2::SDL2)
+target_link_libraries(${PROJECT_NAME} PRIVATE QMidi)
+target_link_libraries(${PROJECT_NAME} PRIVATE Qt${QT_VERSION_MAJOR}::Core)
+target_link_libraries(${PROJECT_NAME} PRIVATE QsSVS)
 
 if (WIN32)
     # Specify your plugin metadata
     set(PROJECT_EXPORT_FILENAME ${PROJECT_NAME})
     set(PROJECT_AUTHOR "Sine Striker")
-    set(PROJECT_DESC "QSynthesis Plugin for Audio Encode")
+    set(PROJECT_DESC "QSynthesis Plugin for Project Convertion")
     set(PROJECT_COPYRIGHT_START_YEAR "2020")
     set(PROJECT_COPYRIGHT_END_YEAR "2022")
     set(PROJECT_PRODUCT_NAME ${PROJECT_NAME})
@@ -41,4 +33,4 @@ if (WIN32)
     target_sources(${PROJECT_NAME} PRIVATE ${PROJECT_BINARY_DIR}/res.rc)
 endif()
 
-settle_plugin(${PROJECT_NAME} audioplaybacks)
+settle_plugin(${PROJECT_NAME} svsconverters)

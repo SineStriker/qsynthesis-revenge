@@ -38,6 +38,10 @@ else ()
     add_library(${PROJECT_NAME} SHARED ${SOURCES})
 endif ()
 
+set_target_properties(${PROJECT_NAME} PROPERTIES
+    OUTPUT_NAME ${PROJECT_NAME}-Qt${QT_VERSION_MAJOR}
+)
+
 target_compile_definitions(${PROJECT_NAME} PRIVATE QMIDI_LIBRARY)
 
 target_include_directories(${PROJECT_NAME} PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/src")

@@ -21,7 +21,7 @@ add_subdirectory(CompressEngine)
 
 add_subdirectory(OtoPlugin)
 
-add_subdirectory(UstConverter)
+add_subdirectory(SVSConverter)
 
 add_subdirectory(UtaPlugin)
 

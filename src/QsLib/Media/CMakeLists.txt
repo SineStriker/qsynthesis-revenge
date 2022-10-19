@@ -31,10 +31,6 @@ endif()
 
 target_compile_definitions(${PROJECT_NAME} PRIVATE QSMEDIA_LIBRARY)
 
-ffmpeg_link_libraries(${PROJECT_NAME} PUBLIC avcodec avformat avutil swresample)
-
-target_link_libraries(${PROJECT_NAME} PUBLIC SDL2::SDL2)
-
 target_link_libraries(${PROJECT_NAME} PUBLIC ${QT_LIBS})
 
 target_include_directories(${PROJECT_NAME} PUBLIC

@@ -7,8 +7,8 @@ IAudioPlaybackPrivate::~IAudioPlaybackPrivate() {
 }
 
 void IAudioPlaybackPrivate::init() {
-    state = IAudioPlayback::Stopped;
     decoder = nullptr;
+    state = IAudioPlayback::Stopped;
 }
 
 void IAudioPlaybackPrivate::setup() {

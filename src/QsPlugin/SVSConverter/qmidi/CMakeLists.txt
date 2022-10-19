@@ -1,4 +1,4 @@
-project(QMidiConverter
+project(qmidi
     VERSION 0.0.0.1
     LANGUAGES CXX
 )
@@ -35,4 +35,4 @@ if (WIN32)
     target_sources(${PROJECT_NAME} PRIVATE ${PROJECT_BINARY_DIR}/res.rc)
 endif()
 
-settle_plugin(${PROJECT_NAME} ustconverters)
+settle_plugin(${PROJECT_NAME} svsconverters)

@@ -1,0 +1,7 @@
+{
+    "name": "qustx",
+    "author": "You-Know-Who",
+    "license": "Apache 2.0",
+    "target": "OpenUtau File",
+    "filter": "*.ustx"
+}

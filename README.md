@@ -17,8 +17,6 @@ QSynthesis is able to run on **Windows, MacOS and Linux**.
 
 ## Build from source
 
-The whole QSynthesis source code is written in C++ with Qt library. In order to facilitate code reuse and reduce compilation troubles, the project uses as few other libraries as possible.
-
 ### Requirements
 
 | Component  | Requirement | Detailed |
@@ -41,37 +39,26 @@ On Mac OS and Linux, there are no ready-made concatenating or resampling tools. 
 For detailed information, see [Synthesizing Tools](./docs/synthesizing-tools.md).
 
 
-## Features
-
-+ Frameless Window
-+ Customized Color And Themes
-+ Real-time Rendering
-+ Multilingual Environment
-+ Effcient Voice Bank Management
-+ Easy to draw pitch
-
-
 ## Open-source softwares used
 
-#### Qt 5.15.2
-+ Home: https://www.qt.io/
-+ License: LGPL v3
-+ Owner: Qt Company
-
-#### Frameless Helper
-+ Source: https://github.com/wangwenx190/framelesshelper
-+ License: MIT License
-+ Owner: wangwenx190
-
-#### QMidi
-+ Source: https://github.com/waddlesplash/QMidi
-+ License: MIT License
-+ Owner: waddlesplash
-
-#### JetBrains IntelliJ IDEA
-+ Source: https://github.com/JetBrains/intellij-community
-+ License: Apache 2.0 License
-+ Owner: JetBrains s.r.o.
++ [Qt 5.15.2](https://www.qt.io/) (Core, Widgets, Svg, Network)
+    + GNU LGPL v3
++ [FFmpeg](https://github.com/FFmpeg/FFmpeg) (libavcodec libavformat libavutil libswresample)
+    + GNU LGPL v3
++ [SDL](https://github.com/libsdl-org/SDL) (Audio)
+    + Zlib License
++ [FramelessHelper](https://github.com/wangwenx190/framelesshelper) (Core, Widgets)
+    + MIT License
++ [QuaZip](https://github.com/stachenov/quazip)
+    + GNU LGPL v2.1
++ [Zlib](http://www.zlib.net/)
+    + Zlib License
++ [QMidi](https://github.com/waddlesplash/QMidi)
+    + MIT License
++ [IntelliJ IDEA](https://github.com/JetBrains/intellij-community)
+    + Apache 2.0 License
++ [OpenSVIP](https://github.com/yqzhishen/opensvip)
+    + MIT license
 
 ## Contributors
 

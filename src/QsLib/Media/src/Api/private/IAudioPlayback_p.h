@@ -3,6 +3,8 @@
 
 #include "../IAudioPlayback.h"
 
+#include <QAtomicInt>
+
 class QSMEDIA_API IAudioPlaybackPrivate {
     Q_DECLARE_PUBLIC(IAudioPlayback)
 public:
@@ -19,9 +21,10 @@ public:
 
     IAudioPlayback *q_ptr;
 
-    IAudioPlayback::PlaybackState state;
-
     IAudioDecoder *decoder;
+
+    // Atomic int as playback state
+    QAtomicInt state;
 };
 
 #endif // IAUDIOPLAYBACKPRIVATE_H

@@ -30,7 +30,7 @@ void IAudioPlayback::dispose() {
 
 void IAudioPlayback::play() {
     Q_D(IAudioPlayback);
-    if (state() == Playing) {
+    if (d->state == Playing) {
         return;
     }
     d->play();
@@ -38,7 +38,7 @@ void IAudioPlayback::play() {
 
 void IAudioPlayback::stop() {
     Q_D(IAudioPlayback);
-    if (state() != Playing) {
+    if (d->state != Playing) {
         return;
     }
     d->stop();
@@ -46,7 +46,7 @@ void IAudioPlayback::stop() {
 
 IAudioPlayback::PlaybackState IAudioPlayback::state() const {
     Q_D(const IAudioPlayback);
-    return d->state;
+    return static_cast<IAudioPlayback::PlaybackState>(d->state.loadRelaxed());
 }
 
 IAudioPlayback::IAudioPlayback(IAudioPlaybackPrivate &d, QObject *parent)

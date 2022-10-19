@@ -1,4 +1,4 @@
- #include "PlainWindow_p.h"
+#include "PlainWindow_p.h"
 
 #include "Api/IWindowFactory.h"
 
@@ -19,8 +19,8 @@ PlainWindowPrivate::~PlainWindowPrivate() {
 void PlainWindowPrivate::init() {
     Q_Q(PlainWindow);
 
-    winHandle = nullptr;
     loader = nullptr;
+    winHandle = nullptr;
 
     auto loader = new QPluginLoader("windowfactories/NativeWindow");
     auto instance = loader->instance();
@@ -28,13 +28,11 @@ void PlainWindowPrivate::init() {
         auto avc = qobject_cast<IWindowFactory *>(instance);
         if (!avc) {
             qDebug() << "NativeWindow plugin not compatible.";
-
             delete instance;
             loader->unload();
             delete loader;
         } else {
             qDebug() << "NativeWindow plugin loaded.";
-
             winHandle = avc->create(q);
             winHandle->setup();
             this->loader = loader;
