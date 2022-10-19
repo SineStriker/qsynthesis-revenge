@@ -1,4 +1,4 @@
-#include "PlainWindow_p.h"
+ #include "PlainWindow_p.h"
 
 #include "Api/IWindowFactory.h"
 

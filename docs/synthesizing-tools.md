@@ -32,6 +32,11 @@ Source: https://github.com/m13253/wavtool-yawu
 
 ## UTAU FRQ References
 
+#### Frq
++ Source: https://github.com/titinko/frq_reader
++ License: MIT License
++ Owner: titinko
+
 #### VocalShifter
 + Home: http://ackiesound.ifdef.jp/soko.html
 + License: *Unknown*

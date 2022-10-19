@@ -1,9 +1,7 @@
 #ifndef IUTAPLUGIN_H
 #define IUTAPLUGIN_H
 
-#include <QJsonObject>
-#include <QObject>
-#include <QStringList>
+#include "ISVSPlugin.h"
 
 #include "Utau/QUstFile.h"
 #include "Utau/QUstSettings.h"
@@ -11,7 +9,7 @@
 
 #include "qssvs_global.h"
 
-class QSSVS_API IUtaPlugin : public QObject {
+class QSSVS_API IUtaPlugin : public ISVSPlugin {
     Q_OBJECT
 public:
     IUtaPlugin(QObject *parent = nullptr);
@@ -40,11 +38,6 @@ public:
         bool hasNext;
         int startSeq;
     };
-
-    /**
-     *  Useful information for plugin to acquire
-     */
-    QString path;
 
     /**
      * @brief exec: Start plugin and block main thread

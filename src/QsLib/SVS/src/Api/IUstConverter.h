@@ -1,8 +1,7 @@
 #ifndef IUSTCONVERTER_H
 #define IUSTCONVERTER_H
 
-#include <QObject>
-#include <QStringList>
+#include "ISVSPlugin.h"
 
 #include <functional>
 
@@ -10,7 +9,7 @@
 
 #include "qssvs_global.h"
 
-class QSSVS_API IUstConverter : public QObject {
+class QSSVS_API IUstConverter : public ISVSPlugin {
     Q_OBJECT
 public:
     IUstConverter(QObject *parent = nullptr);

@@ -1,6 +1,6 @@
 #include "IUstConverter.h"
 
-IUstConverter::IUstConverter(QObject *parent) : QObject(parent) {
+IUstConverter::IUstConverter(QObject *parent) : ISVSPlugin(parent) {
 }
 
 IUstConverter::~IUstConverter() {

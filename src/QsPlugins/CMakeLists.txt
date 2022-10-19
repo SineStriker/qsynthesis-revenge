@@ -9,6 +9,12 @@ endmacro()
 
 set(PLUGIN_WINRC_FILE ${CMAKE_CURRENT_SOURCE_DIR}/win32/res.rc.in)
 
+add_subdirectory(AudioDecoder)
+
+add_subdirectory(AudioEncoder)
+
+add_subdirectory(AudioPlayback)
+
 add_subdirectory(CompressEngine)
 
 add_subdirectory(OtoPlugin)

@@ -1,6 +1,6 @@
 #include "IOtoPlugin.h"
 
-IOtoPlugin::IOtoPlugin(QObject *parent) : QObject(parent) {
+IOtoPlugin::IOtoPlugin(QObject *parent) : ISVSPlugin(parent) {
 }
 
 IOtoPlugin::~IOtoPlugin() {
