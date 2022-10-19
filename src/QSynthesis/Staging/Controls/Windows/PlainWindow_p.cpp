@@ -33,6 +33,7 @@ void PlainWindowPrivate::init() {
             delete loader;
         } else {
             qDebug() << "NativeWindow plugin loaded.";
+            qDebug() << loader->metaData();
             winHandle = avc->create(q);
             winHandle->setup();
             this->loader = loader;

@@ -31,9 +31,6 @@ int main(int argc, char *argv[]) {
     QPluginLoader loader(dllPath);
     QObject *instance = loader.instance(); //
     if (instance != NULL) {
-        qDebug() << loader.fileName() + " is loaded";
-        qDebug() << loader.metaData();
-
         auto avc = qobject_cast<ICompressEngine *>(instance);
 
         // Enter path

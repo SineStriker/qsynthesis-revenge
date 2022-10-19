@@ -20,6 +20,8 @@ public:
 
     virtual bool save(const QString &filename, const QSvipFile &in,
                       const QMap<QString, QVariant> &args) = 0;
+
+    QString err;
 };
 
 #define ISVSConverter_IID "QSynthesis.Plugin.SVS.SVSConverter"
