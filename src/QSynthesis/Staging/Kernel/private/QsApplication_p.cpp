@@ -11,6 +11,7 @@
 
 #include "Kernel/Events.h"
 #include "SystemHelper.h"
+#include "ViewHelper.h"
 
 static const char Slash = '/';
 
@@ -112,6 +113,14 @@ void QsApplicationPrivate::deinit() {
     delete pluginMgr;
     delete fileMgr;
     delete windowMgr;
+}
+
+void QsApplicationPrivate::instanceStarted_helper() {
+    View::bringWindowToForeground(windowMgr->firstWindow());
+}
+
+void QsApplicationPrivate::messageReceived_helper(const QStringList &args) {
+    qDebug() << args;
 }
 
 bool QsApplicationPrivate::translate(const QString &filename) {

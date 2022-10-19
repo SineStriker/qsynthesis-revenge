@@ -9,8 +9,6 @@ PianoWindowPrivate::~PianoWindowPrivate() {
 void PianoWindowPrivate::init() {
     Q_Q(PianoWindow);
 
-    closeFlag = false;
-
     actions = new PianoActions(q);
     actions->setup();
 

@@ -18,11 +18,7 @@ class QsApplication : public CApplication {
     Q_OBJECT
     Q_DECLARE_PRIVATE(QsApplication)
 public:
-#ifdef Q_QDOC
     QsApplication(int &argc, char **argv);
-#else
-    QsApplication(int &argc, char **argv, int _internal = ApplicationFlags);
-#endif
     ~QsApplication();
 
 public:
@@ -43,12 +39,7 @@ public:
     QString appPluginDir() const;
 
 protected:
-#ifdef Q_QDOC
     QsApplication(QsApplicationPrivate &d, int &argc, char **argv);
-#else
-    QsApplication(QsApplicationPrivate &d, int &argc, char **argv,
-                  int _internal = ApplicationFlags);
-#endif
 
 private:
     void q_screenRatioChanged(qreal dpi);

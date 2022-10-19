@@ -1,5 +1,7 @@
 #include "WindowManager_p.h"
 
+#include "Windows/Piano/PianoWindow.h"
+
 WindowManagerPrivate::WindowManagerPrivate() {
 }
 

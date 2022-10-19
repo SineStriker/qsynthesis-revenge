@@ -21,6 +21,9 @@ public:
     void init();
     void deinit();
 
+    void instanceStarted_helper() override;
+    void messageReceived_helper(const QStringList &args) override;
+
     // Data
     QString dataPath;
     QString tempPath;

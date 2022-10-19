@@ -23,26 +23,12 @@ void PianoWindow::reloadStrings() {
     d->reloadStrings_helper();
 }
 
-PianoWindow::PianoWindow(PianoWindowPrivate &d, QWidget *parent) : PlainWindow(d, parent) {
+PianoWindow::PianoWindow(PianoWindowPrivate &d, QWidget *parent) : ProjectWindow(d, parent) {
     d.q_ptr = this;
 
     d.init();
 
     Q_TR_NOTIFY(PianoWindow)
-}
-
-bool PianoWindow::event(QEvent *event) {
-    Q_D(PianoWindow);
-    switch (event->type()) {
-        case QEvent::Hide: {
-            QEventImpl::WindowCloseEvent e(d->closeFlag);
-            QApplication::sendEvent(this, &e);
-            break;
-        }
-        default:
-            break;
-    }
-    return QMainWindow::event(event);
 }
 
 void PianoWindow::closeEvent(QCloseEvent *event) {

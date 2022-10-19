@@ -69,6 +69,7 @@ QPluginLoader *PluginManager::loadInternalPlugin(InternalPlugins id) {
         case ZipLib: {
             loader = new QPluginLoader("compressengines/qzlib");
             if (!(loader->load() && qobject_cast<ICompressEngine *>(loader->instance()))) {
+                loader->unload();
                 delete loader;
                 loader = nullptr;
             }

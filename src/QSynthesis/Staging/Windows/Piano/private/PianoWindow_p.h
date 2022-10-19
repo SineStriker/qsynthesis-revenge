@@ -1,12 +1,12 @@
 #ifndef PIANOWINDOWPRIVATE_H
 #define PIANOWINDOWPRIVATE_H
 
-#include "Controls/Windows/PlainWindow_p.h"
+#include "Windows/Basic/ProjectWindow_p.h"
 
 #include "../PianoActions.h"
 #include "../PianoWindow.h"
 
-class PianoWindowPrivate : public PlainWindowPrivate {
+class PianoWindowPrivate : public ProjectWindowPrivate {
     Q_DECLARE_PUBLIC(PianoWindow)
 public:
     PianoWindowPrivate();
@@ -15,8 +15,6 @@ public:
     void init();
 
     void reloadStrings_helper();
-
-    bool closeFlag;
 
     PianoActions *actions;
 };

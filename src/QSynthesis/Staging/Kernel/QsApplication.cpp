@@ -1,13 +1,8 @@
 #include "QsApplication.h"
 #include "private/QsApplication_p.h"
 
-#ifdef Q_QDOC
-QsApplication::QsApplication(int m_argc, char **argv)
+QsApplication::QsApplication(int &argc, char **argv)
     : QsApplication(*new QsApplicationPrivate(), argc, argv) {
-#else
-QsApplication::QsApplication(int &argc, char **argv, int _internal)
-    : QsApplication(*new QsApplicationPrivate(), argc, argv, _internal){
-#endif
 }
 
 QsApplication::~QsApplication() {
@@ -70,13 +65,8 @@ QString QsApplication::appPluginDir() const {
     return d->pluginDir;
 }
 
-#ifdef Q_QDOC
 QsApplication::QsApplication(QsApplicationPrivate &d, int &argc, char **argv)
     : CApplication(d, argc, argv) {
-#else
-QsApplication::QsApplication(QsApplicationPrivate &d, int &argc, char **argv, int _internal)
-    : CApplication(d, argc, argv, _internal) {
-#endif
     d.init();
 }
 

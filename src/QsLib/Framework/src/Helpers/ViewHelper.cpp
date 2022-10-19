@@ -11,6 +11,10 @@
 
 #include <QtGui/private/qcssparser_p.h>
 
+#ifdef Q_OS_WINDOWS
+#include <Windows.h>
+#endif
+
 QPixmap View::createBitmapFromSVG(QString fullpath, QSize size) {
     QSvgRenderer svgRender(fullpath);
     QPixmap bmp(size);
@@ -226,4 +230,32 @@ QPoint View::fixDesktopPos(const QPoint &pos, const QSize &size) {
         target.setY(dh - h);
     }
     return target;
+}
+
+void View::bringWindowToForeground(QWidget *w) {
+    // Make sure the window isn't minimized
+    // TODO: this always puts it in the "normal" state but it might have been maximized
+    // before minimized...so either a flag needs stored or find a Qt call to do it appropriately
+    if (w->isMinimized())
+        w->showNormal();
+
+#ifdef Q_OS_WIN
+    // TODO: there doesn't seem to be a cross platform way to force the window
+    // to the foreground. So this will need moved to a platform specific file
+
+    HWND hWnd = reinterpret_cast<HWND>(w->effectiveWinId());
+    if (hWnd) {
+        // I have no idea what this does but it works mostly
+        // https://www.codeproject.com/Articles/1724/Some-handy-dialog-box-tricks-tips-and-workarounds
+
+        ::AttachThreadInput(::GetWindowThreadProcessId(::GetForegroundWindow(), nullptr),
+                            ::GetCurrentThreadId(), TRUE);
+
+        ::SetForegroundWindow(hWnd);
+        ::SetFocus(hWnd);
+
+        ::AttachThreadInput(GetWindowThreadProcessId(GetForegroundWindow(), nullptr),
+                            GetCurrentThreadId(), FALSE);
+    }
+#endif
 }

@@ -34,6 +34,8 @@ namespace View {
 
     QSFRAMEWORK_API QPoint fixDesktopPos(const QPoint &pos, const QSize &size);
 
+    QSFRAMEWORK_API void bringWindowToForeground(QWidget *w);
+
 } // namespace View
 
 #endif // VIEWHELPER_H

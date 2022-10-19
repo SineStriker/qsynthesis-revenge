@@ -1,10 +1,11 @@
 #ifndef CAPPLICATION_H
 #define CAPPLICATION_H
 
-#include <QApplication>
 #include <QDebug>
 #include <QObjectList>
 #include <QPair>
+
+#include <SingleApplication>
 
 #include "qsframework_global.h"
 
@@ -16,15 +17,11 @@
 class CAppNotifyFilter;
 class CApplicationPrivate;
 
-class QSFRAMEWORK_API CApplication : public QApplication {
+class QSFRAMEWORK_API CApplication : public SingleApplication {
     Q_OBJECT
     Q_DECLARE_PRIVATE(CApplication)
 public:
-#ifdef Q_QDOC
     CApplication(int &argc, char **argv);
-#else
-    CApplication(int &argc, char **argv, int _internal = ApplicationFlags);
-#endif
     ~CApplication();
 
 public:
@@ -39,16 +36,16 @@ public:
     void removeAllNotifyFilters();
 
 protected:
-#ifdef Q_QDOC
     CApplication(CApplicationPrivate &d, int &argc, char **argv);
-#else
-    CApplication(CApplicationPrivate &d, int &argc, char **argv, int _internal = ApplicationFlags);
-#endif
 
     QScopedPointer<CApplicationPrivate> d_ptr;
 
 protected:
     bool notify(QObject *obj, QEvent *event) override;
+
+private:
+    void _q_instanceStarted();
+    void _q_messageReceived(quint32 instanceId, QByteArray message);
 
 signals:
 };

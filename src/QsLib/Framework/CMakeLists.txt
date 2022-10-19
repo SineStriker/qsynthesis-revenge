@@ -14,6 +14,8 @@ set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 
+add_subdirectory(thirdparty)
+
 find_package(QT NAMES Qt6 Qt5 COMPONENTS Widgets REQUIRED)
 find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Widgets REQUIRED)
 list(APPEND QT_LIBS Qt${QT_VERSION_MAJOR}::Widgets)
@@ -38,6 +40,8 @@ target_compile_definitions(${PROJECT_NAME} PRIVATE QSFRAMEWORK_LIBRARY)
 target_link_libraries(${PROJECT_NAME} PUBLIC ${QT_LIBS})
 
 target_link_libraries(${PROJECT_NAME} PUBLIC QsUtils)
+
+target_link_libraries(${PROJECT_NAME} PUBLIC SingleApplication::SingleApplication)
 
 target_include_directories(${PROJECT_NAME} PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}/include

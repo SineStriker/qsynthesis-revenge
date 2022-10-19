@@ -5,6 +5,8 @@
 
 #include "qsutils_macros.h"
 
+#include <QMainWindow>
+
 class HomeWindow;
 class PianoWindow;
 class WindowManagerPrivate;
@@ -26,6 +28,8 @@ public:
 
     PianoWindow *newProject();
     PianoWindow *openProject(const QString &filename);
+
+    QMainWindow *firstWindow() const;
 
     bool exit();
 

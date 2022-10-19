@@ -6,6 +6,8 @@
 #include "SystemHelper.h"
 #include "ViewHelper.h"
 
+#include "Windows/Piano/PianoWindow.h"
+
 #include <QEvent>
 
 Q_SINGLETON_DECLARE(WindowManager);
@@ -73,6 +75,17 @@ PianoWindow *WindowManager::openProject(const QString &filename) {
     return w;
 }
 
+QMainWindow *WindowManager::firstWindow() const {
+    Q_D(const WindowManager);
+    if (d->homeWin) {
+        return d->homeWin;
+    }
+    if (!d->projWins.isEmpty()) {
+        return *d->projWins.begin();
+    }
+    return nullptr;
+}
+
 bool WindowManager::exit() {
     Q_D(WindowManager);
 
@@ -99,8 +112,8 @@ WindowManager::WindowManager(WindowManagerPrivate &d, QObject *parent) : BasicMa
 
 bool WindowManager::WindowManager::eventFilter(QObject *obj, QEvent *event) {
     Q_D(WindowManager);
-    if (qstrcmp(obj->metaObject()->className(), "PianoWindow") == 0) {
-        auto w = qobject_cast<PianoWindow *>(obj);
+    ProjectWindow *w;
+    if ((w = qobject_cast<ProjectWindow *>(obj)) != nullptr) {
         switch (static_cast<int>(event->type())) {
             case QEventImpl::WindowClose: {
                 // Detach Window

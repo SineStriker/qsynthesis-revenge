@@ -1,19 +1,18 @@
 #include "CApplication.h"
 #include "QMetaTypeImpl.h"
 
-#include "Private/CApplication_p.h"
+#include "private/CApplication_p.h"
 
 #include <QDateTime>
 #include <QMouseEvent>
 #include <QWidget>
 
-#ifdef Q_QDOC
-CApplication::CApplication(int m_argc, char **argv)
+static const SingleApplication::Options opts = SingleApplication::ExcludeAppPath |
+                                               SingleApplication::ExcludeAppVersion |
+                                               SingleApplication::SecondaryNotification;
+
+CApplication::CApplication(int &argc, char **argv)
     : CApplication(*new CApplicationPrivate(), argc, argv) {
-#else
-CApplication::CApplication(int &argc, char **argv, int _internal)
-    : CApplication(*new CApplicationPrivate(), argc, argv, _internal) {
-#endif
 }
 
 CApplication::~CApplication() {
@@ -74,19 +73,15 @@ void CApplication::removeAllNotifyFilters() {
     d->notifyFilters.clear();
 }
 
-#ifdef Q_QDOC
 CApplication::CApplication(CApplicationPrivate &d, int &argc, char **argv)
-    : QApplication(argc, argv), d_ptr(&d) {
-#else
-CApplication::CApplication(CApplicationPrivate &d, int &argc, char **argv, int _internal)
-    : QApplication(argc, argv, _internal), d_ptr(&d) {
-#endif
+    : SingleApplication(argc, argv, true, opts), d_ptr(&d) {
     d.q_ptr = this;
     d.init();
 }
 
 bool CApplication::notify(QObject *obj, QEvent *event) {
     Q_D(CApplication);
+
     for (auto it = d->notifyFilters.begin(); it != d->notifyFilters.end(); ++it) {
         auto cur = *it;
         bool res = cur->notifyFilter(obj, event);
@@ -95,4 +90,23 @@ bool CApplication::notify(QObject *obj, QEvent *event) {
         }
     }
     return QApplication::notify(obj, event);
+}
+
+void CApplication::_q_instanceStarted() {
+    Q_D(CApplication);
+
+    d->instanceStarted_helper();
+}
+
+void CApplication::_q_messageReceived(quint32 instanceId, QByteArray message) {
+    Q_D(CApplication);
+
+    Q_UNUSED(instanceId)
+
+    QDataStream stream(&message, QIODevice::ReadOnly);
+    QStringList args;
+
+    stream >> args;
+
+    d->messageReceived_helper(args);
 }

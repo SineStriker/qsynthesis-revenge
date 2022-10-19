@@ -13,6 +13,9 @@ public:
 
     void init();
 
+    virtual void instanceStarted_helper();
+    virtual void messageReceived_helper(const QStringList &args);
+
     CApplication *q_ptr;
 
     QList<CAppNotifyFilter *> notifyFilters;

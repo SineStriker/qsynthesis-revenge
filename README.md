@@ -58,7 +58,9 @@ For detailed information, see [Synthesizing Tools](./docs/synthesizing-tools.md)
 + [IntelliJ IDEA](https://github.com/JetBrains/intellij-community)
     + Apache 2.0 License
 + [OpenSVIP](https://github.com/yqzhishen/opensvip)
-    + MIT license
+    + MIT License
++ [SingleApplication](https://github.com/itay-grudev/SingleApplication)
+    + MIT License
 
 ## Contributors
 

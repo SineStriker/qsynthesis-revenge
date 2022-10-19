@@ -4,8 +4,8 @@
 #include "../WindowManager.h"
 #include "Basic/BasicManager_p.h"
 
+#include "Windows/Basic/ProjectWindow.h"
 #include "Windows/Home/HomeWindow.h"
-#include "Windows/Piano/PianoWindow.h"
 
 #include <QSet>
 
@@ -21,7 +21,7 @@ public:
     PianoWindow *createPianoWin();
 
     HomeWindow *homeWin;
-    QSet<PianoWindow *> projWins;
+    QSet<ProjectWindow *> projWins;
 };
 
 #endif // WINDOWMANAGERPRIVATE_H
