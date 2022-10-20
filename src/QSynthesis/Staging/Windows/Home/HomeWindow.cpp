@@ -4,6 +4,8 @@
 #include "Kernel/QsApplication.h"
 #include "Managers/WindowManager.h"
 
+#include "Managers/PluginManager.h"
+
 #include <QDebug>
 
 HomeWindow::HomeWindow(QWidget *parent) : HomeWindow(*new HomeWindowPrivate(), parent) {

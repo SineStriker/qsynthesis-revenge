@@ -53,14 +53,14 @@ For detailed information, see [Synthesizing Tools](./docs/synthesizing-tools.md)
     + GNU LGPL v2.1
 + [Zlib](http://www.zlib.net/)
     + Zlib License
-+ [QMidi](https://github.com/waddlesplash/QMidi)
-    + MIT License
 + [IntelliJ IDEA](https://github.com/JetBrains/intellij-community)
     + Apache 2.0 License
 + [OpenSVIP](https://github.com/yqzhishen/opensvip)
     + MIT License
 + [SingleApplication](https://github.com/itay-grudev/SingleApplication)
     + MIT License
+
+See [Plugins Brief](./docs/plugins-brief.md) for dependencies for each plugin.
 
 ## Contributors
 

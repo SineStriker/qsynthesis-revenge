@@ -37,14 +37,13 @@ bool QUstFile::load(const QString &filename) {
     file.close();
 
     QTextStream in(&data);
-    if (!m_codec) {
-        // Detect Code
-        QTextCodec *codec = Txt::GetUtfCodec(data, &m_charsetDetermined);
-        if (codec) {
-            m_codec = codec;
-        } else {
-            m_codec = s_codeForDefault;
-        }
+
+    // Detect Code
+    QTextCodec *codec = Txt::GetUtfCodec(data, &m_charsetDetermined);
+    if (codec) {
+        m_codec = codec;
+    } else if (!m_codec) {
+        m_codec = s_codeForDefault;
     }
     in.setCodec(m_codec);
 

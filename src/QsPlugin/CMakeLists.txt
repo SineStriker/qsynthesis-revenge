@@ -4,25 +4,29 @@ macro(settle_plugin _target _category)
             $<TARGET_FILE_DIR:${_target}>/plugins/${_category}
         COMMAND ${CMAKE_COMMAND} -E copy
             $<TARGET_FILE:${_target}> $<TARGET_FILE_DIR:${_target}>/plugins/${_category} 
-        COMMAND ${CMAKE_COMMAND} -E rm
-            $<TARGET_FILE:${_target}>
+#        COMMAND ${CMAKE_COMMAND} -E rm
+#            $<TARGET_FILE:${_target}>
     )
 endmacro()
 
 set(PLUGIN_WINRC_FILE ${CMAKE_CURRENT_SOURCE_DIR}/win32/res.rc.in)
 
-add_subdirectory(AudioDecoder)
+if (NOT BUILD_PLUGINS_ONLY)
 
-add_subdirectory(AudioEncoder)
+    add_subdirectory(AudioDecoder)
 
-add_subdirectory(AudioPlayback)
+    add_subdirectory(AudioEncoder)
 
-add_subdirectory(CompressEngine)
+    add_subdirectory(AudioPlayback)
+
+    add_subdirectory(CompressEngine)
+
+    add_subdirectory(WindowFactory)
+
+endif()
 
 add_subdirectory(OtoPlugin)
 
 add_subdirectory(SVSConverter)
 
 add_subdirectory(UtaPlugin)
-
-add_subdirectory(WindowFactory)

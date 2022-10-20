@@ -6,6 +6,7 @@ project(QSynthesis CXX)
 set(USE_PREBUILT_LIBS on)
 set(USE_DELAY_LOAD off)
 set(BUILD_TEST on)
+set(BUILD_PLUGINS_ONLY off)
 
 # CPP Version
 set(CMAKE_CXX_STANDARD 17)
@@ -51,20 +52,30 @@ if (USE_PREBUILT_LIBS)
     file(GLOB FramelessHelper_DIR "${PREBUILT_LIBRARY_PATH_PREFIX}/cmake/FramelessHelper*")
 endif()
 
-find_package(SDL2 REQUIRED)
-find_package(QuaZip NAMES QuaZip-Qt5 QuaZip-Qt6 REQUIRED)
-find_package(FFmpeg REQUIRED)
-find_package(FramelessHelper REQUIRED COMPONENTS Core Widgets)
+if (NOT BUILD_PLUGINS_ONLY)
+    find_package(SDL2 REQUIRED)
+    find_package(QuaZip NAMES QuaZip-Qt5 QuaZip-Qt6 REQUIRED)
+    find_package(FFmpeg REQUIRED)
+    find_package(FramelessHelper REQUIRED COMPONENTS Core Widgets)
+endif()
 
 # Application
-add_subdirectory(fsnotifier)
-
 add_subdirectory(QsLib)
 
 add_subdirectory(QsPlugin)
 
-add_subdirectory(QSynthesis)
+if (NOT BUILD_PLUGINS_ONLY)
+
+    add_subdirectory(fsnotifier)
+
+    add_subdirectory(QSynthesis)
+
+endif()
 
 if (BUILD_TEST)
+
     add_subdirectory(Test)
+
 endif()
+
+

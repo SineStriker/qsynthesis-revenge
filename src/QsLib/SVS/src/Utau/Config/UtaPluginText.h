@@ -11,6 +11,8 @@ namespace Utau {
     const char KEY_NAME_PLUGIN_NOTE[] = "note";
     const char KEY_NAME_PLUGIN_UST_VERSION[] = "ustversion";
 
+    const char KEY_NAME_PLUGIN_CHARSET[] = "charset"; // Added
+
     const char VALUE_NAME_PLUGIN_SHELL[] = "use";
     const char VALUE_NAME_PLUGIN_NOTE[] = "all";
 

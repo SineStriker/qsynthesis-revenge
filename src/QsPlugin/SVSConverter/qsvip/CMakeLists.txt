@@ -13,7 +13,6 @@ find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Core REQUIRED)
 file(GLOB _src ${CMAKE_CURRENT_SOURCE_DIR}/*.h ${CMAKE_CURRENT_SOURCE_DIR}/*.cpp)
 add_library(${PROJECT_NAME} SHARED ${_src})
 
-target_link_libraries(${PROJECT_NAME} PRIVATE QMidi)
 target_link_libraries(${PROJECT_NAME} PRIVATE Qt${QT_VERSION_MAJOR}::Core)
 target_link_libraries(${PROJECT_NAME} PRIVATE QsSVS)
 

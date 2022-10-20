@@ -84,7 +84,8 @@ public:
 
     class QSSVS_API SingingTrack : public Track {
     public:
-        SingingTrack() : Track(Singing) {}
+        SingingTrack() : Track(Singing) {
+        }
 
     public:
         QString AISingerName;
@@ -95,7 +96,8 @@ public:
 
     class QSSVS_API InstrumentalTrack : public Track {
     public:
-        InstrumentalTrack() : Track(Instrumental) {}
+        InstrumentalTrack() : Track(Instrumental) {
+        }
 
     public:
         QString AudioFilePath;
@@ -115,10 +117,12 @@ public:
         double BPM = 120.0;
     };
 
+    using TrackRef = QSharedPointer<Track>;
+
     QString Version;
     QList<SongTempo> SongTempoList;
     QList<TimeSignature> TimeSignatureList;
-    QList<QSharedPointer<Track>> TrackList;
+    QList<TrackRef> TrackList;
 
 public:
     // Load or save as a json file

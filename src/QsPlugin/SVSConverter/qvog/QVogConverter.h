@@ -12,10 +12,10 @@ public:
     ~QVogConverter();
 
     bool load(const QString &filename, QSvipFile *out,
-              const QMap<QString, QVariant> &args) override;
+              const QMap<QString, QVariant> &args = {}) override;
 
     bool save(const QString &filename, const QSvipFile &in,
-              const QMap<QString, QVariant> &args) override;
+              const QMap<QString, QVariant> &args = {}) override;
 };
 
 #endif // QVOGCONVERTER_H

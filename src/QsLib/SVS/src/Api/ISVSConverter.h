@@ -18,10 +18,10 @@ public:
     QString err;
 
     virtual bool load(const QString &filename, QSvipFile *out,
-                      const QMap<QString, QVariant> &args) = 0;
+                      const QMap<QString, QVariant> &args = {}) = 0;
 
     virtual bool save(const QString &filename, const QSvipFile &in,
-                      const QMap<QString, QVariant> &args) = 0;
+                      const QMap<QString, QVariant> &args = {}) = 0;
 };
 
 #define ISVSConverter_IID "QSynthesis.Plugin.SVS.SVSConverter"
