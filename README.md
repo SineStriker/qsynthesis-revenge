@@ -59,8 +59,6 @@ For detailed information, see [Synthesizing Tools](./docs/synthesizing-tools.md)
     + MIT License
 + [SingleApplication](https://github.com/itay-grudev/SingleApplication)
     + MIT License
-+ [Yaml CPP](https://github.com/jbeder/yaml-cpp)
-    + MIT License
 
 See [Plugins Brief](./docs/plugins-brief.md) for dependencies for each plugin.
 

@@ -9,6 +9,8 @@ project(QSynthesis
     LANGUAGES CXX
 )
 
+set(DELAY_LOAD ON)
+
 # Include current directory
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
@@ -41,13 +43,20 @@ foreach(_dir ${_main_dirs})
         ${CMAKE_CURRENT_SOURCE_DIR}/${_dir}/*.hpp ${CMAKE_CURRENT_SOURCE_DIR}/${_dir}/*.h)
 endforeach()
 
-list(APPEND PROJECT_SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/main.cpp)
-
 # Add executable
-add_executable(${PROJECT_NAME} ${PROJECT_SOURCES} ${PROJECT_HEADERS} ${QT_RESOURCES} ${MAC_RES})
+set(APP_BLOCK "QsBlock")
+set(LOADER_OUTPUT_NAME qsblock-qt${QT_VERSION_MAJOR})
+add_library(${APP_BLOCK} SHARED
+    ${PROJECT_SOURCES} ${PROJECT_HEADERS} ${QT_RESOURCES} ${MAC_RES})
+set_target_properties(${APP_BLOCK} PROPERTIES
+    OUTPUT_NAME ${LOADER_OUTPUT_NAME}
+)
+
+add_executable(${PROJECT_NAME} main.cpp)
+add_dependencies(${PROJECT_NAME} ${APP_BLOCK})
 
 # Add definitions
-add_compile_definitions(APP_VERSION="${PROJECT_VERSION}")
+target_compile_definitions(${APP_BLOCK} PRIVATE APP_VERSION="${PROJECT_VERSION}")
 
 # Link OS dependent libraries
 if(SYS_WIN)
@@ -91,17 +100,37 @@ if(APP_DEPLOY OR NOT DEFINED NOT_QT_CREATOR)
 endif()
 
 # Embedded libraries
-target_link_libraries(${PROJECT_NAME} PRIVATE QsUtils QsFramework QsSVS)
+target_link_libraries(${APP_BLOCK} PRIVATE QsUtils QsFramework QsSVS)
 
-target_link_libraries(${PROJECT_NAME} PRIVATE QuaZip::QuaZip)
-
-target_link_libraries(${PROJECT_NAME} PRIVATE fsnotifier-lib)
+target_link_libraries(${APP_BLOCK} PRIVATE fsnotifier-lib)
 
 # Link Qt libraries
-target_link_libraries(${PROJECT_NAME} PRIVATE ${QT_LIBS})
+target_link_libraries(${APP_BLOCK} PRIVATE ${QT_LIBS})
 
 # Add include dirs
-target_include_directories(${PROJECT_NAME} PRIVATE
+target_include_directories(${APP_BLOCK} PRIVATE
     Core
     Staging
 )
+
+target_include_directories(${APP_BLOCK} PUBLIC
+    Staging/Kernel
+)
+
+if (WIN32 AND DELAY_LOAD)
+    add_custom_command(TARGET ${APP_BLOCK} POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E make_directory
+            $<TARGET_FILE_DIR:${APP_BLOCK}>/lib
+        COMMAND ${CMAKE_COMMAND} -E copy
+            $<TARGET_FILE:${APP_BLOCK}> $<TARGET_FILE_DIR:${APP_BLOCK}>/lib
+    )
+    target_compile_definitions(${PROJECT_NAME} PRIVATE DELAY_LOAD)
+    target_compile_definitions(${PROJECT_NAME} PRIVATE LIB_DIR="lib")
+    if (MSVC)
+        target_compile_definitions(${PROJECT_NAME} PRIVATE APP_DLL="${LOADER_OUTPUT_NAME}.dll")
+    else()
+        target_compile_definitions(${PROJECT_NAME} PRIVATE APP_DLL="lib${LOADER_OUTPUT_NAME}.dll")
+    endif()
+else()
+    target_link_libraries(${PROJECT_NAME} PRIVATE ${APP_BLOCK})
+endif()

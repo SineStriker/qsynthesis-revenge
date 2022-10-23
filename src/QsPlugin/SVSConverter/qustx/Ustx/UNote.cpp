@@ -82,7 +82,7 @@ double UVibrato::normalizedStart() const {
     return 1.0 - _length / 100.0;
 }
 
-QPoint UVibrato::evaluate(double nPos, double nPeriod, const UNote &note) const {
+QPointF UVibrato::evaluate(double nPos, double nPeriod, const UNote &note) const {
     double nStart = normalizedStart();
     double nIn = _length / 100.0 * _in / 100.0;
     double nInPos = nStart + nIn;
@@ -97,7 +97,53 @@ QPoint UVibrato::evaluate(double nPos, double nPeriod, const UNote &note) const 
     } else if (nPos > nOutPos) {
         y *= (1.0 - nPos) / nOut;
     }
-    return QPoint(note.position + note.duration * nPos, note.tone + y / 100.0);
+    return QPointF(note.position + note.duration * nPos, note.tone + y / 100.0);
+}
+
+
+PitchPoint::PitchPoint() : X(0), Y(0), shape(Shape::io) {
+}
+
+PitchPoint::PitchPoint(double x, double y, PitchPoint::Shape shape) : X(x), Y(y), shape(shape) {
+}
+
+bool PitchPoint::operator<(const PitchPoint &another) const {
+    return X < another.X;
+}
+
+bool PitchPoint::operator==(const PitchPoint &another) const {
+    return X == another.X && Y == another.Y && shape == another.shape;
+}
+
+QString PitchPoint::ShapeToString(Shape shape) {
+    QString res;
+    switch (shape) {
+        case Shape::io:
+            res = "io";
+            break;
+        case Shape::l:
+            res = "l";
+            break;
+        case Shape::i:
+            res = "i";
+            break;
+        case Shape::o:
+            res = "o";
+            break;
+    }
+    return res;
+}
+
+PitchPoint::Shape PitchPoint::StringToShape(const QString &str) {
+    Shape res = Shape::io;
+    if (str == "l") {
+        res = Shape::l;
+    } else if (str == "i") {
+        res = Shape::i;
+    } else if (str == "o") {
+        res = Shape::o;
+    }
+    return res;
 }
 
 UPitch::UPitch() {
@@ -150,17 +196,3 @@ int UNote::end() const {
 
 // uint qHash(const UNote &note, uint seed) {
 // }
-
-PitchPoint::PitchPoint() : X(0), Y(0), shape(Shape::io) {
-}
-
-PitchPoint::PitchPoint(double x, double y, PitchPoint::Shape shape) : X(x), Y(y), shape(shape) {
-}
-
-bool PitchPoint::operator<(const PitchPoint &another) const {
-    return X < another.X;
-}
-
-bool PitchPoint::operator==(const PitchPoint &another) const {
-    return X == another.X && Y == another.Y && shape == another.shape;
-}

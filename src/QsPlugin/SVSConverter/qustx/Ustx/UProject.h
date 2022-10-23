@@ -6,22 +6,15 @@
 #include "UTrack.h"
 
 #include <QMap>
-#include <QVersionNumber>
+
+/**
+ *  Interpret from OpenUtau.Core.Ustx
+ */
 
 class UProject {
 public:
     UProject();
     ~UProject();
-
-    //    struct Version {
-    //        int major;
-    //        int minor;
-    //        int build;
-    //        int revision;
-    //        Version() : major(0), minor(0), build(-1), revision(-1){};
-    //        Version(int major, int minor, int build, int revision)
-    //            : major(major), minor(minor), build(build), revision(revision){};
-    //    };
 
     QString name;
     QString comment;
@@ -44,6 +37,9 @@ public:
     bool save(const QString &filename);
 
     void reset();
+
+    int MillisecondToTick(double ms) const;
+    double TickToMillisecond(double tick) const;
 };
 
 #endif // UPROJECT_H

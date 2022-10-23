@@ -18,6 +18,32 @@ UExpressionDescriptor::UExpressionDescriptor(const QString &name, const QString 
 UExpressionDescriptor::~UExpressionDescriptor() {
 }
 
+QString UExpressionDescriptor::TypeToString(UExpressionDescriptor::Type type) {
+    QString res;
+    switch (type) {
+        case Numerical:
+            res = "Numerical";
+            break;
+        case Options:
+            res = "Options";
+            break;
+        case Curve:
+            res = "Curve";
+            break;
+    }
+    return res;
+}
+
+UExpressionDescriptor::Type UExpressionDescriptor::StringtoType(const QString &str) {
+    Type res = Numerical;
+    if (str == "Options") {
+        res = Options;
+    } else if (str == "Curve") {
+        res = Curve;
+    }
+    return res;
+}
+
 void UExpression::setValue(double value) {
     _value = (_descriptor.isNull())
                  ? value
@@ -47,18 +73,4 @@ UExpression::UExpression(UExpression &&another) {
 }
 
 UExpression::~UExpression() {
-}
-
-UExpression &UExpression::operator=(const UExpression &another) {
-    _value = another._value;
-    _descriptor = another._descriptor;
-    abbr = another.abbr;
-    return *this;
-}
-
-UExpression &UExpression::operator=(UExpression &&another) {
-    _value = another._value;
-    _descriptor = std::move(another._descriptor);
-    abbr = another.abbr;
-    return *this;
 }

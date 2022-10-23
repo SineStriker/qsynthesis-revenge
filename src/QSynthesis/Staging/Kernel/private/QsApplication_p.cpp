@@ -15,10 +15,6 @@
 
 static const char Slash = '/';
 
-#ifdef Q_OS_WINDOWS
-#include <Windows.h>
-#endif
-
 QsApplicationPrivate::QsApplicationPrivate() {
 }
 
@@ -78,21 +74,6 @@ void QsApplicationPrivate::init() {
         ::exit(-1);
     }
     q->addLibraryPath(pluginDir);
-
-    // Add dll searching path
-    // Linux: ./lib
-    // Windows: ./lib
-#ifdef Q_OS_WINDOWS
-    runtimeDir = qApp->applicationDirPath() + "/lib";
-    if (!Sys::mkDir(runtimeDir)) {
-        QMessageBox::warning(nullptr, q->errorTitle(), QObject::tr("Failed to make runtime path!"));
-        ::exit(-1);
-    }
-    ::SetDefaultDllDirectories(LOAD_LIBRARY_SEARCH_APPLICATION_DIR |
-                               LOAD_LIBRARY_SEARCH_DEFAULT_DIRS | LOAD_LIBRARY_SEARCH_SYSTEM32 |
-                               LOAD_LIBRARY_SEARCH_USER_DIRS);
-    ::AddDllDirectory(runtimeDir.toStdWString().c_str());
-#endif
 
     // Init managers
     pluginMgr = new PluginManager(q);

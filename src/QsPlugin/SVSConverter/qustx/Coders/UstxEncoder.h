@@ -4,6 +4,10 @@
 #include "Svip/QSvipFile.h"
 #include "Ustx/UProject.h"
 
+/**
+ *  Interpret from OxygenDioxide.UstxPlugin.Stream
+ */
+
 class UstxEncoder {
 public:
     UstxEncoder();

@@ -4,6 +4,10 @@
 #include <QPoint>
 #include <QStringList>
 
+/**
+ *  Interpret from OpenUtau.Core.Ustx
+ */
+
 class UNote;
 
 class UVibrato {
@@ -37,16 +41,16 @@ public:
     double normalizedStart() const;
 
 private:
-    double _length;    // Vibrato percentage of note length.
-    double _period;    // Period in milliseconds.
-    double _depth;     // Depth in cents (1 semitone = 100 cents).
-    double _in;        // Fade-in percentage of vibrato length.
-    double _out;       // Fade-out percentage of vibrato length.
-    double _shift = 0; // Shift percentage of period length.
+    double _length; // Vibrato percentage of note length.
+    double _period; // Period in milliseconds.
+    double _depth;  // Depth in cents (1 semitone = 100 cents).
+    double _in;     // Fade-in percentage of vibrato length.
+    double _out;    // Fade-out percentage of vibrato length.
+    double _shift;  // Shift percentage of period length.
     double _drift;
 
 public:
-    QPoint evaluate(double nPos, double nPeriod, const UNote &note) const;
+    QPointF evaluate(double nPos, double nPeriod, const UNote &note) const;
 };
 
 class PitchPoint {
@@ -62,6 +66,9 @@ public:
 
     bool operator<(const PitchPoint &another) const;
     bool operator==(const PitchPoint &another) const;
+
+    static QString ShapeToString(Shape shape);
+    static Shape StringToShape(const QString &str);
 };
 
 class UPitch {

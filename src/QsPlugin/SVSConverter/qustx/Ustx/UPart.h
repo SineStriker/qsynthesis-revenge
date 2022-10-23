@@ -7,6 +7,10 @@
 #include "UCurve.h"
 #include "UNote.h"
 
+/**
+ *  Interpret from OpenUtau.Core.Ustx
+ */
+
 class UPart {
 public:
     UPart();

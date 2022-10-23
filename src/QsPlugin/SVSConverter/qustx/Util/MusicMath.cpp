@@ -1,4 +1,5 @@
 #include "MusicMath.h"
+#include "Ustx/UNote.h"
 
 #include <QtMath>
 
@@ -42,6 +43,34 @@ double MusicMath::Linear(double x0, double x1, double y0, double y1, double x) {
 
 double MusicMath::LinearX(double x0, double x1, double y0, double y1, double y) {
     return (y - y0) / (y1 - y0) * (x1 - x0) + x0;
+}
+
+double MusicMath::InterpolateShape(double x0, double x1, double y0, double y1, double x,
+                                   int shape) {
+    switch (shape) {
+        case (int) PitchPoint::Shape::io:
+            return SinEasingInOut(x0, x1, y0, y1, x);
+        case (int) PitchPoint::Shape::i:
+            return SinEasingIn(x0, x1, y0, y1, x);
+        case (int) PitchPoint::Shape::o:
+            return SinEasingOut(x0, x1, y0, y1, x);
+        default:
+            return Linear(x0, x1, y0, y1, x);
+    }
+}
+
+double MusicMath::InterpolateShapeX(double x0, double x1, double y0, double y1, double y,
+                                    int shape) {
+    switch (shape) {
+        case (int) PitchPoint::Shape::io:
+            return SinEasingInOutX(x0, x1, y0, y1, y);
+        case (int) PitchPoint::Shape::i:
+            return SinEasingInX(x0, x1, y0, y1, y);
+        case (int) PitchPoint::Shape::o:
+            return SinEasingOutX(x0, x1, y0, y1, y);
+        default:
+            return LinearX(x0, x1, y0, y1, y);
+    }
 }
 
 double MusicMath::DecibelToLinear(double db) {

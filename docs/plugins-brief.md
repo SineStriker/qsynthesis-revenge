@@ -21,6 +21,9 @@
 + [yaml-cpp](https://github.com/jbeder/yaml-cpp)
     + MIT License
 
++ [OpenUtau](https://github.com/stakira/OpenUtau)
+    + MIT License
+
 #### Usage
 
 + Parse OpenUtau project files

@@ -3,6 +3,10 @@
 
 #include <QStringList>
 
+/**
+ *  Interpret from OpenUtau.Core.Ustx
+ */
+
 class UTrack {
 public:
     UTrack();

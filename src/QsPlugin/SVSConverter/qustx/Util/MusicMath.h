@@ -1,6 +1,10 @@
 #ifndef MUSICMATH_H
 #define MUSICMATH_H
 
+/**
+ *  Interpret from OpenUtau.Core.Util
+ */
+
 namespace MusicMath {
 
     double TickToMillisecond(double tick, double BPM, int beatUnit, int resolution);
@@ -23,15 +27,19 @@ namespace MusicMath {
 
     double LinearX(double x0, double x1, double y0, double y1, double y);
 
-     double DecibelToLinear(double db);
+    double InterpolateShape(double x0, double x1, double y0, double y1, double x, int shape);
 
-     double LinearToDecibel(double v);
+    double InterpolateShapeX(double x0, double x1, double y0, double y1, double y, int shape);
 
-     double ToneToFreq(int tone);
+    double DecibelToLinear(double db);
 
-     double ToneToFreq(double tone);
+    double LinearToDecibel(double v);
 
-     double FreqToTone(double freq);
+    double ToneToFreq(int tone);
+
+    double ToneToFreq(double tone);
+
+    double FreqToTone(double freq);
 
 }; // namespace MusicMath
 

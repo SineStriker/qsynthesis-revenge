@@ -6,6 +6,10 @@
 
 #include "UExpression.h"
 
+/**
+ *  Interpret from OpenUtau.Core.Ustx
+ */
+
 class UCurve {
 public:
     UCurve();

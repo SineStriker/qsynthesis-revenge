@@ -4,6 +4,10 @@
 #include <QSharedPointer>
 #include <QStringList>
 
+/**
+ *  Interpret from OpenUtau.Core.Ustx
+ */
+
 class UExpressionDescriptor {
 public:
     enum Type {
@@ -28,6 +32,9 @@ public:
     UExpressionDescriptor(const QString &name, const QString &abbr, bool isFlag,
                           const QStringList &options);
     ~UExpressionDescriptor();
+
+    static QString TypeToString(Type type);
+    static Type StringtoType(const QString &str);
 };
 
 class UExpression {
@@ -48,9 +55,6 @@ public:
     UExpression(const UExpression &another);
     UExpression(UExpression &&another);
     ~UExpression();
-
-    UExpression &operator=(const UExpression &another);
-    UExpression &operator=(UExpression &&another);
 
 private:
     double _value;

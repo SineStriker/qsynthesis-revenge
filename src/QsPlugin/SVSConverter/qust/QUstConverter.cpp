@@ -13,12 +13,11 @@ QUstConverter::~QUstConverter() {
 
 bool QUstConverter::load(const QString &filename, QSvipFile *out,
                          const QMap<QString, QVariant> &args) {
-
     QUstFile ust;
     {
         auto it = args.find("DefaultCharset");
         if (it != args.end()) {
-            auto codec = QTextCodec::codecForName(it.value().toString().toLatin1());
+            auto codec = QTextCodec::codecForName(it.value().toByteArray());
             if (codec) {
                 ust.setCodec(codec);
             }

@@ -29,9 +29,6 @@ public:
     QString tempPath;
 
     QString pluginDir;
-#ifdef Q_OS_WINDOWS
-    QString runtimeDir;
-#endif
 
     // Translators
     bool translate(const QString &filename);
