@@ -1,5 +1,6 @@
 include(${PROJECT_SCRIPTS_DIR}/Modules/Basic.cmake)
 include(${PROJECT_SCRIPTS_DIR}/Modules/FindQt.cmake)
+include(${PROJECT_SCRIPTS_DIR}/Modules/Link.cmake)
 include(${PROJECT_SCRIPTS_DIR}/Modules/ListUtil.cmake)
 
 # ------------------------------ Basic information ------------------------------
@@ -9,6 +10,11 @@ project(QSynthesis
     LANGUAGES CXX
 )
 
+# Pass metadata to parent scope
+set(APP_VERSION_SHORT ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}.${PROJECT_VERSION_PATCH})
+set(APP_VERSION_SHORT ${APP_VERSION_SHORT} PARENT_SCOPE)
+
+# Keep the option on on Windows
 set(DELAY_LOAD ON)
 
 # Include current directory
@@ -30,6 +36,7 @@ set(INCLUDE_PATHS)
 # ------------------------------ Include/Import/Link ------------------------------
 add_qt_module(QT_LIBS Widgets)
 add_qt_module(QT_LIBS Svg)
+add_qt_module(QT_LIBS Network)
 
 include_qt_private(Gui)
 include_qt_private(Widgets)
@@ -56,7 +63,7 @@ add_executable(${PROJECT_NAME} main.cpp)
 add_dependencies(${PROJECT_NAME} ${APP_BLOCK})
 
 # Add definitions
-target_compile_definitions(${APP_BLOCK} PRIVATE APP_VERSION="${PROJECT_VERSION}")
+target_compile_definitions(${APP_BLOCK} PRIVATE APP_VERSION="${APP_VERSION_SHORT}")
 
 # Link OS dependent libraries
 if(SYS_WIN)
@@ -118,12 +125,6 @@ target_include_directories(${APP_BLOCK} PUBLIC
 )
 
 if (WIN32 AND DELAY_LOAD)
-    add_custom_command(TARGET ${APP_BLOCK} POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E make_directory
-            $<TARGET_FILE_DIR:${APP_BLOCK}>/lib
-        COMMAND ${CMAKE_COMMAND} -E copy
-            $<TARGET_FILE:${APP_BLOCK}> $<TARGET_FILE_DIR:${APP_BLOCK}>/lib
-    )
     target_compile_definitions(${PROJECT_NAME} PRIVATE DELAY_LOAD)
     target_compile_definitions(${PROJECT_NAME} PRIVATE LIB_DIR="lib")
     if (MSVC)
@@ -131,6 +132,55 @@ if (WIN32 AND DELAY_LOAD)
     else()
         target_compile_definitions(${PROJECT_NAME} PRIVATE APP_DLL="lib${LOADER_OUTPUT_NAME}.dll")
     endif()
+
+    # Deploy Qt
+    if (APP_DEPLOY)
+        if(NOT DEFINED QT_QMAKE_EXECUTABLE)
+            get_target_property(QT_QMAKE_EXECUTABLE Qt::qmake IMPORTED_LOCATION)
+        endif()
+        if(NOT EXISTS "${QT_QMAKE_EXECUTABLE}")
+            message("Cannot find the QMake executable.")
+            return()
+        endif()
+        get_filename_component(QT_BIN_DIRECTORY "${QT_QMAKE_EXECUTABLE}" DIRECTORY)
+        find_program(QT_DEPLOY_EXECUTABLE NAMES windeployqt macdeployqt HINTS "${QT_BIN_DIRECTORY}")
+        if(NOT EXISTS "${QT_DEPLOY_EXECUTABLE}")
+            message("Cannot find the deployqt tool.")
+            return()
+        endif()
+        add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+            COMMAND "${QT_DEPLOY_EXECUTABLE}"
+            --libdir "$<TARGET_FILE_DIR:${PROJECT_NAME}>/lib"
+            --plugindir "$<TARGET_FILE_DIR:${PROJECT_NAME}>/plugins"
+            --no-translations
+            --no-system-d3d-compiler
+            --no-virtualkeyboard
+            --no-compiler-runtime
+            --no-opengl-sw
+            --force
+            --verbose 0
+            "$<TARGET_FILE:${APP_BLOCK}>"
+        )
+    endif()
+    
+    deploy_shared_libraries(
+        TARGET ${PROJECT_NAME}
+        DESTINATION lib
+        DEPENDENCIES ${APP_BLOCK} QsUtils QsFramework QsSVS QsMedia fsnotifier-lib
+        RELATIVE
+    )
+
+    deploy_shared_libraries(
+        TARGET ${PROJECT_NAME}
+        DESTINATION lib
+        DEPENDENCIES FFmpeg::avcodec FFmpeg::avformat FFmpeg::avutil FFmpeg::swresample
+                     SDL2::SDL2
+                     FramelessHelper::FramelessHelperCore FramelessHelper::FramelessHelperWidgets
+                     QuaZip::QuaZip ZLIB::zlib
+                     yaml-cpp
+        RELATIVE PREBUILT
+    )
+
 else()
     target_link_libraries(${PROJECT_NAME} PRIVATE ${APP_BLOCK})
 endif()

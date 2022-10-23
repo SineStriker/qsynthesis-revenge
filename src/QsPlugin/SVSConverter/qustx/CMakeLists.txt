@@ -23,9 +23,9 @@ endforeach()
 
 add_library(${PROJECT_NAME} SHARED ${_src})
 
-target_link_libraries(${PROJECT_NAME} PRIVATE yaml-cpp)
 target_link_libraries(${PROJECT_NAME} PUBLIC Qt${QT_VERSION_MAJOR}::Core)
 target_link_libraries(${PROJECT_NAME} PUBLIC QsSVS)
+target_link_libraries(${PROJECT_NAME} PRIVATE yaml-cpp)
 
 if (WIN32)
     # Specify your plugin metadata
