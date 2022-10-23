@@ -50,6 +50,7 @@ if (USE_PREBUILT_LIBS)
     file(GLOB QuaZip_DIR "${PREBUILT_LIBRARY_PATH_PREFIX}/cmake/QuaZip*")
     file(GLOB FFmpeg_DIR "${PREBUILT_LIBRARY_PATH_PREFIX}/cmake/FFmpeg*")
     file(GLOB FramelessHelper_DIR "${PREBUILT_LIBRARY_PATH_PREFIX}/cmake/FramelessHelper*")
+    file(GLOB yaml-cpp_DIR "${PREBUILT_LIBRARY_PATH_PREFIX}/cmake/yaml-cpp*")
 endif()
 
 if (NOT BUILD_PLUGINS_ONLY)
@@ -57,6 +58,7 @@ if (NOT BUILD_PLUGINS_ONLY)
     find_package(QuaZip NAMES QuaZip-Qt5 QuaZip-Qt6 REQUIRED)
     find_package(FFmpeg REQUIRED)
     find_package(FramelessHelper REQUIRED COMPONENTS Core Widgets)
+    find_package(yaml-cpp REQUIRED)
 endif()
 
 # Application

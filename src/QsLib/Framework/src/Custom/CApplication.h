@@ -5,7 +5,7 @@
 #include <QObjectList>
 #include <QPair>
 
-#include <SingleApplication>
+#include "Thirdparty/SingleApplication/singleapplication.h"
 
 #include "qsframework_global.h"
 

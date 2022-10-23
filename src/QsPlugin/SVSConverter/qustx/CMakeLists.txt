@@ -12,11 +12,9 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 find_package(QT NAMES Qt6 Qt5 COMPONENTS Core REQUIRED)
 find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Core REQUIRED)
 
-add_subdirectory(yaml-cpp)
-
 file(GLOB _src ${CMAKE_CURRENT_SOURCE_DIR}/*.h ${CMAKE_CURRENT_SOURCE_DIR}/*.cpp)
 
-set(_main_dirs Ustx Util)
+set(_main_dirs Coders Ustx Util)
 foreach(_dir ${_main_dirs})
     set(_temp)
     file(GLOB_RECURSE _temp ${_dir}/*.h ${_dir}/*.cpp)
@@ -25,9 +23,9 @@ endforeach()
 
 add_library(${PROJECT_NAME} SHARED ${_src})
 
-target_link_libraries(${PROJECT_NAME} PRIVATE yaml-cpp::yaml-cpp)
-target_link_libraries(${PROJECT_NAME} PRIVATE Qt${QT_VERSION_MAJOR}::Core)
-target_link_libraries(${PROJECT_NAME} PRIVATE QsSVS)
+target_link_libraries(${PROJECT_NAME} PRIVATE yaml-cpp)
+target_link_libraries(${PROJECT_NAME} PUBLIC Qt${QT_VERSION_MAJOR}::Core)
+target_link_libraries(${PROJECT_NAME} PUBLIC QsSVS)
 
 if (WIN32)
     # Specify your plugin metadata

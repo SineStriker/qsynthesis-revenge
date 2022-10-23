@@ -14,8 +14,6 @@ set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 
-add_subdirectory(thirdparty)
-
 find_package(QT NAMES Qt6 Qt5 COMPONENTS Widgets REQUIRED)
 find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Widgets REQUIRED)
 list(APPEND QT_LIBS Qt${QT_VERSION_MAJOR}::Widgets)
@@ -23,6 +21,10 @@ list(APPEND QT_LIBS Qt${QT_VERSION_MAJOR}::Widgets)
 find_package(QT NAMES Qt6 Qt5 COMPONENTS Svg REQUIRED)
 find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Svg REQUIRED)
 list(APPEND QT_LIBS Qt${QT_VERSION_MAJOR}::Svg)
+
+find_package(QT NAMES Qt6 Qt5 COMPONENTS Network REQUIRED)
+find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Network REQUIRED)
+list(APPEND QT_LIBS Qt${QT_VERSION_MAJOR}::Network)
 
 file(GLOB_RECURSE GLOBAL_INC ${CMAKE_CURRENT_SOURCE_DIR}/include/*.h ${CMAKE_CURRENT_SOURCE_DIR}/include/*.cpp)
 file(GLOB_RECURSE GLOBAL_SRC ${CMAKE_CURRENT_SOURCE_DIR}/src/*.h ${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp)
@@ -41,7 +43,10 @@ target_link_libraries(${PROJECT_NAME} PUBLIC ${QT_LIBS})
 
 target_link_libraries(${PROJECT_NAME} PUBLIC QsUtils)
 
-target_link_libraries(${PROJECT_NAME} PUBLIC SingleApplication::SingleApplication)
+# SingleApplication Requirements
+if(WIN32)
+    target_link_libraries(${PROJECT_NAME} PRIVATE advapi32)
+endif()
 
 target_include_directories(${PROJECT_NAME} PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}/include

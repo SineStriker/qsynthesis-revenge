@@ -14,3 +14,5 @@ add_executable(${PROJECT_NAME} main.cpp)
 target_link_libraries(${PROJECT_NAME} PRIVATE ${QT_LIBS})
 
 target_link_libraries(${PROJECT_NAME} PRIVATE QsSVS)
+
+target_link_libraries(${PROJECT_NAME} PRIVATE yaml-cpp)

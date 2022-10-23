@@ -9,10 +9,11 @@ endif()
 
 project(YAML_CPP VERSION 0.7.0 LANGUAGES CXX)
 
-set(YAML_CPP_MAIN_PROJECT OFF)
-if(CMAKE_SOURCE_DIR STREQUAL PROJECT_SOURCE_DIR)
-  set(YAML_CPP_MAIN_PROJECT ON)
-endif()
+# set(YAML_CPP_MAIN_PROJECT OFF)
+# if(CMAKE_SOURCE_DIR STREQUAL PROJECT_SOURCE_DIR)
+#   set(YAML_CPP_MAIN_PROJECT ON)
+# endif()
+set(YAML_CPP_MAIN_PROJECT ON)
 
 include(CMakePackageConfigHelpers)
 include(CMakeDependentOption)
@@ -21,7 +22,7 @@ include(GNUInstallDirs)
 
 option(YAML_CPP_BUILD_CONTRIB "Enable yaml-cpp contrib in library" ON)
 option(YAML_CPP_BUILD_TOOLS "Enable parse tools" OFF)
-option(YAML_BUILD_SHARED_LIBS "Build yaml-cpp shared library" OFF)
+option(YAML_BUILD_SHARED_LIBS "Build yaml-cpp shared library" ON)
 option(YAML_CPP_INSTALL "Enable generation of yaml-cpp install targets" ${YAML_CPP_MAIN_PROJECT})
 option(YAML_CPP_FORMAT_SOURCE "Format source" ON)
 
@@ -147,7 +148,7 @@ set_target_properties(yaml-cpp PROPERTIES
   PROJECT_LABEL "yaml-cpp ${yaml-cpp-label-postfix}"
   DEBUG_POSTFIX "${CMAKE_DEBUG_POSTFIX}")
 
-set(CONFIG_EXPORT_DIR "${CMAKE_INSTALL_LIBDIR}/cmake/yaml-cpp")
+set(CONFIG_EXPORT_DIR "${CMAKE_INSTALL_PREFIX}/cmake/yaml-cpp")
 set(EXPORT_TARGETS yaml-cpp)
 configure_package_config_file(
   "${PROJECT_SOURCE_DIR}/yaml-cpp-config.cmake.in"

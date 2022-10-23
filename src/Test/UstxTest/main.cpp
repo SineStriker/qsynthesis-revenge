@@ -12,6 +12,8 @@
 #include <Windows.h>
 #endif
 
+#include <yaml-cpp/yaml.h>
+
 #define PLUGINS_DIR qApp->applicationDirPath() + "/plugins"
 
 int main(int argc, char *argv[]) {

@@ -1,3 +1,0 @@
-set(QAPPLICATION_CLASS QApplication)
-
-add_subdirectory(SingleApplication)
