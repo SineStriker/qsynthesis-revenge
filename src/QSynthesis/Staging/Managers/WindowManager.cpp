@@ -117,6 +117,7 @@ bool WindowManager::WindowManager::eventFilter(QObject *obj, QEvent *event) {
         switch (static_cast<int>(event->type())) {
             case QEventImpl::WindowClose: {
                 // Detach Window
+                // qDebug() << "?";
                 auto e = static_cast<QEventImpl::WindowCloseEvent *>(event);
                 d->projWins.remove(w);
                 if (e->closeOnly() && d->projWins.isEmpty()) {

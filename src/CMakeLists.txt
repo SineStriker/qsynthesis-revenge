@@ -102,5 +102,3 @@ if (APP_DEPLOY)
         COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:${FSNOTIFIER_TARGET}> ${APP_DEPLOY_DIR}
     )
 endif()
-
-

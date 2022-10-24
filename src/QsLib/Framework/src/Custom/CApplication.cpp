@@ -95,11 +95,15 @@ bool CApplication::notify(QObject *obj, QEvent *event) {
 void CApplication::_q_instanceStarted() {
     Q_D(CApplication);
 
+    qDebug() << "instance started";
+
     d->instanceStarted_helper();
 }
 
 void CApplication::_q_messageReceived(quint32 instanceId, QByteArray message) {
     Q_D(CApplication);
+
+    qDebug() << "message received" << instanceId;
 
     Q_UNUSED(instanceId)
 

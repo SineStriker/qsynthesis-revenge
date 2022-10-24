@@ -9,7 +9,7 @@
 #define _TO_UNICODE(y) L##y
 #define TO_UNICODE(x) _TO_UNICODE(x)
 
-int main(int argc, char *argv[]);
+int main(int, char *[]);
 
 /*
   WinMain() - Initializes Windows and calls user's startup function main().
@@ -45,13 +45,14 @@ extern "C" int APIENTRY WinMain(HINSTANCE, HINSTANCE, LPSTR /*cmdParamarg*/, int
 
 #endif
 
-#ifdef DELAY_LOAD
-
 #include <iostream>
 
-typedef int (*EntryFun)(int, char *[]);
+#ifndef DELAY_LOAD
+#include "Entry.h"
+#endif
 
 int main(int argc, char *argv[]) {
+#ifdef _WIN32
     // Get current directory
     std::wstring wstr;
     unsigned long size = ::GetCurrentDirectoryW(0, NULL);
@@ -67,10 +68,13 @@ int main(int argc, char *argv[]) {
     wstr += L"\\";
     wstr += TO_UNICODE(LIB_DIR);
     ::SetDllDirectoryW(wstr.data());
+#endif
 
-    // Append block library name
+#if defined(_WIN32) && defined(DELAY_LOAD)
     wstr += L"\\";
     wstr += TO_UNICODE(APP_DLL);
+
+    typedef int (*EntryFun)(int, char *[]);
 
     HINSTANCE hDLL = ::LoadLibraryW(wstr.c_str());
     int res = -1;
@@ -81,19 +85,12 @@ int main(int argc, char *argv[]) {
         } else {
             res = ::GetLastError();
         }
-        FreeLibrary(hDLL);
+        ::FreeLibrary(hDLL);
     } else {
         res = ::GetLastError();
     }
     return res;
-}
-
 #else
-
-#include "Entry.h"
-
-int main(int argc, char *argv[]) {
     return app_entry(argc, argv);
-}
-
 #endif
+}

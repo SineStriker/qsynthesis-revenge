@@ -2,6 +2,7 @@
 #include "ProjectWindow_p.h"
 
 #include <QApplication>
+#include <QCloseEvent>
 #include <QEvent>
 
 #include "Kernel/Events.h"
@@ -17,18 +18,13 @@ ProjectWindow::ProjectWindow(ProjectWindowPrivate &d, QWidget *parent) : PlainWi
 }
 
 bool ProjectWindow::event(QEvent *event) {
-    Q_D(ProjectWindow);
-    switch (event->type()) {
-        case QEvent::Hide: {
-            QEventImpl::WindowCloseEvent e(d->closeFlag);
-            QApplication::sendEvent(this, &e);
-            break;
-        }
-        default:
-            break;
-    }
     return QMainWindow::event(event);
 }
 
 void ProjectWindow::closeEvent(QCloseEvent *event) {
+    Q_D(ProjectWindow);
+    if (event->isAccepted()) {
+        QEventImpl::WindowCloseEvent e(d->closeFlag);
+        QApplication::sendEvent(this, &e);
+    }
 }

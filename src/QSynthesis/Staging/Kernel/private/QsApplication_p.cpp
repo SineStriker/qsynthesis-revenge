@@ -97,11 +97,12 @@ void QsApplicationPrivate::deinit() {
 }
 
 void QsApplicationPrivate::instanceStarted_helper() {
-    View::bringWindowToForeground(windowMgr->firstWindow());
 }
 
 void QsApplicationPrivate::messageReceived_helper(const QStringList &args) {
-    qDebug() << args;
+    View::bringWindowToForeground(windowMgr->firstWindow());
+
+    Q_UNUSED(args);
 }
 
 bool QsApplicationPrivate::translate(const QString &filename) {

@@ -86,3 +86,33 @@ function(deploy_shared_libraries)
         endif()
     endforeach()
 endfunction()
+
+function(deploy_shared_libraries_self)
+    set(options PREBUILT RELATIVE CUT)
+    set(oneValueArgs TARGET DESTINATION)
+    set(multiValueArgs DEPENDENCIES)
+    cmake_parse_arguments(FUNC "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
+    set(_target ${FUNC_TARGET})
+    set(_dest ${FUNC_DESTINATION})
+    if (FUNC_RELATIVE)
+        add_custom_command(TARGET ${_target} POST_BUILD
+            COMMAND ${CMAKE_COMMAND} -E make_directory
+                $<TARGET_FILE_DIR:${_target}>/${_dest}
+            COMMAND ${CMAKE_COMMAND} -E copy_if_different
+                $<TARGET_FILE:${_target}> $<TARGET_FILE_DIR:${_target}>/${_dest}
+        )
+    else()
+        add_custom_command(TARGET ${_target} POST_BUILD
+            COMMAND ${CMAKE_COMMAND} -E make_directory
+                ${_dest}
+            COMMAND ${CMAKE_COMMAND} -E copy_if_different
+                $<TARGET_FILE:${_target}> ${_dest}
+        )
+    endif()
+    if (FUNC_CUT)
+        add_custom_command(TARGET ${_target} POST_BUILD
+            COMMAND ${CMAKE_COMMAND} -E rm
+                $<TARGET_FILE:${_target}>
+        )
+    endif()
+endfunction()

@@ -2,7 +2,7 @@
 #define QSAPPLICATIONPRIVATE_H
 
 #include "../QsApplication.h"
-#include "Private/CApplication_p.h"
+#include "private/CApplication_p.h"
 
 #include "Managers/FileManager.h"
 #include "Managers/PluginManager.h"

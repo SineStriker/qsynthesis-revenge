@@ -32,6 +32,7 @@ PianoWindow::PianoWindow(PianoWindowPrivate &d, QWidget *parent) : ProjectWindow
 }
 
 void PianoWindow::closeEvent(QCloseEvent *event) {
+    ProjectWindow::closeEvent(event);
 }
 
 void PianoWindow::_q_actionTriggered(int actionId) {

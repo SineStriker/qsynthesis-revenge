@@ -16,6 +16,7 @@ protected:
     ProjectWindow(ProjectWindowPrivate &d, QWidget *parent = nullptr);
 
     bool event(QEvent *event) override;
+
     void closeEvent(QCloseEvent *event) override;
 };
 

@@ -10,12 +10,12 @@ project(QSynthesis
     LANGUAGES CXX
 )
 
-# Pass metadata to parent scope
+# Set app data
 set(APP_VERSION_SHORT ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}.${PROJECT_VERSION_PATCH})
 set(APP_VERSION_SHORT ${APP_VERSION_SHORT} PARENT_SCOPE)
 
-# Keep the option on on Windows
-set(DELAY_LOAD ON)
+set(APP_BLOCK QsBlock)
+set(APP_LIB_DIR lib)
 
 # Include current directory
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
@@ -51,16 +51,15 @@ foreach(_dir ${_main_dirs})
 endforeach()
 
 # Add executable
-set(APP_BLOCK "QsBlock")
-set(LOADER_OUTPUT_NAME qsblock-qt${QT_VERSION_MAJOR})
+string(TOLOWER ${APP_BLOCK} APP_BLOCK_LOWER)
+set(BLOCK_OUTPUT_NAME ${APP_BLOCK_LOWER}-qt${QT_VERSION_MAJOR})
 add_library(${APP_BLOCK} SHARED
-    ${PROJECT_SOURCES} ${PROJECT_HEADERS} ${QT_RESOURCES} ${MAC_RES})
+    ${PROJECT_SOURCES} ${PROJECT_HEADERS} ${QT_RESOURCES})
 set_target_properties(${APP_BLOCK} PROPERTIES
-    OUTPUT_NAME ${LOADER_OUTPUT_NAME}
+    OUTPUT_NAME ${BLOCK_OUTPUT_NAME}
 )
 
 add_executable(${PROJECT_NAME} main.cpp)
-add_dependencies(${PROJECT_NAME} ${APP_BLOCK})
 
 # Add definitions
 target_compile_definitions(${APP_BLOCK} PRIVATE APP_VERSION="${APP_VERSION_SHORT}")
@@ -68,17 +67,33 @@ target_compile_definitions(${APP_BLOCK} PRIVATE APP_VERSION="${APP_VERSION_SHORT
 # Link OS dependent libraries
 if(SYS_WIN)
     # generate rc
+    set(PROJECT_ICON_FILENAME "app.ico")
     set(PROJECT_EXPORT_FILENAME ${PROJECT_NAME})
+    set(PROJECT_AUTHOR "QSynthesis Team")
+    set(PROJECT_DESC "QSynthesis")
+    set(PROJECT_COPYRIGHT_START_YEAR "2020")
+    set(PROJECT_COPYRIGHT_END_YEAR "2022")
+    set(PROJECT_PRODUCT_NAME ${PROJECT_NAME})
     configure_file(
-        ${CMAKE_CURRENT_SOURCE_DIR}/Resources/platform/win32/res.rc.in
+        ${CMAKE_CURRENT_SOURCE_DIR}/Resources/platform/win32/res_exe.rc.in
         ${PROJECT_BINARY_DIR}/res.rc
         @ONLY
     )
     # copy ico
     file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/Resources/platform/win32/app.ico DESTINATION ${PROJECT_BINARY_DIR})
     # add files
-    set(RC_FILES ${PROJECT_BINARY_DIR}/res.rc)
-    target_sources(${PROJECT_NAME} PRIVATE ${RC_FILES})
+    target_sources(${PROJECT_NAME} PRIVATE ${PROJECT_BINARY_DIR}/res.rc)
+
+    # generate rc
+    get_target_property(PROJECT_EXPORT_FILENAME ${APP_BLOCK} OUTPUT_NAME)
+    set(PROJECT_DESC "QSynthesis Main Module")
+    set(PROJECT_PRODUCT_NAME ${APP_BLOCK})
+    configure_file(
+        ${CMAKE_CURRENT_SOURCE_DIR}/Resources/platform/win32/res_dll.rc.in
+        ${PROJECT_BINARY_DIR}/res2.rc
+        @ONLY
+    )
+    target_sources(${APP_BLOCK} PRIVATE ${PROJECT_BINARY_DIR}/res2.rc)
 elseif(SYS_MAC)
     # configure files
     set(MAC_RES)
@@ -117,62 +132,16 @@ target_link_libraries(${APP_BLOCK} PRIVATE ${QT_LIBS})
 # Add include dirs
 target_include_directories(${APP_BLOCK} PRIVATE
     Core
-    Staging
 )
 
 target_include_directories(${APP_BLOCK} PUBLIC
-    Staging/Kernel
+    Staging
 )
 
-if (WIN32 AND DELAY_LOAD)
-    target_compile_definitions(${PROJECT_NAME} PRIVATE DELAY_LOAD)
-    target_compile_definitions(${PROJECT_NAME} PRIVATE LIB_DIR="lib")
-    if (MSVC)
-        target_compile_definitions(${PROJECT_NAME} PRIVATE APP_DLL="${LOADER_OUTPUT_NAME}.dll")
-    else()
-        target_compile_definitions(${PROJECT_NAME} PRIVATE APP_DLL="lib${LOADER_OUTPUT_NAME}.dll")
-    endif()
-
-    # Deploy Qt
-    if (APP_DEPLOY)
-        if(NOT DEFINED QT_QMAKE_EXECUTABLE)
-            get_target_property(QT_QMAKE_EXECUTABLE Qt::qmake IMPORTED_LOCATION)
-        endif()
-        if(NOT EXISTS "${QT_QMAKE_EXECUTABLE}")
-            message("Cannot find the QMake executable.")
-            return()
-        endif()
-        get_filename_component(QT_BIN_DIRECTORY "${QT_QMAKE_EXECUTABLE}" DIRECTORY)
-        find_program(QT_DEPLOY_EXECUTABLE NAMES windeployqt macdeployqt HINTS "${QT_BIN_DIRECTORY}")
-        if(NOT EXISTS "${QT_DEPLOY_EXECUTABLE}")
-            message("Cannot find the deployqt tool.")
-            return()
-        endif()
-        add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
-            COMMAND "${QT_DEPLOY_EXECUTABLE}"
-            --libdir "$<TARGET_FILE_DIR:${PROJECT_NAME}>/lib"
-            --plugindir "$<TARGET_FILE_DIR:${PROJECT_NAME}>/plugins"
-            --no-translations
-            --no-system-d3d-compiler
-            --no-virtualkeyboard
-            --no-compiler-runtime
-            --no-opengl-sw
-            --force
-            --verbose 0
-            "$<TARGET_FILE:${APP_BLOCK}>"
-        )
-    endif()
-    
+if (NOT APPLE)
     deploy_shared_libraries(
         TARGET ${PROJECT_NAME}
-        DESTINATION lib
-        DEPENDENCIES ${APP_BLOCK} QsUtils QsFramework QsSVS QsMedia fsnotifier-lib
-        RELATIVE
-    )
-
-    deploy_shared_libraries(
-        TARGET ${PROJECT_NAME}
-        DESTINATION lib
+        DESTINATION ${APP_LIB_DIR}
         DEPENDENCIES FFmpeg::avcodec FFmpeg::avformat FFmpeg::avutil FFmpeg::swresample
                      SDL2::SDL2
                      FramelessHelper::FramelessHelperCore FramelessHelper::FramelessHelperWidgets
@@ -180,7 +149,56 @@ if (WIN32 AND DELAY_LOAD)
                      yaml-cpp
         RELATIVE PREBUILT
     )
+    target_compile_definitions(${PROJECT_NAME} PRIVATE LIB_DIR="${APP_LIB_DIR}")
+endif()
+
+if (WIN32 AND APP_DEPLOY)
+    add_dependencies(${PROJECT_NAME} ${APP_BLOCK})
+    target_compile_definitions(${PROJECT_NAME} PRIVATE DELAY_LOAD)
+
+    if (MSVC)
+        target_compile_definitions(${PROJECT_NAME} PRIVATE APP_DLL="${BLOCK_OUTPUT_NAME}.dll")
+    else()
+        target_compile_definitions(${PROJECT_NAME} PRIVATE APP_DLL="lib${BLOCK_OUTPUT_NAME}.dll")
+    endif()
+
+    # Deploy Qt
+    if(NOT DEFINED QT_QMAKE_EXECUTABLE)
+        get_target_property(QT_QMAKE_EXECUTABLE Qt::qmake IMPORTED_LOCATION)
+    endif()
+    if(NOT EXISTS "${QT_QMAKE_EXECUTABLE}")
+        message("Cannot find the QMake executable.")
+        return()
+    endif()
+    get_filename_component(QT_BIN_DIRECTORY "${QT_QMAKE_EXECUTABLE}" DIRECTORY)
+    find_program(QT_DEPLOY_EXECUTABLE NAMES windeployqt macdeployqt HINTS "${QT_BIN_DIRECTORY}")
+    if(NOT EXISTS "${QT_DEPLOY_EXECUTABLE}")
+        message("Cannot find the deployqt tool.")
+        return()
+    endif()
+    add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+        COMMAND "${QT_DEPLOY_EXECUTABLE}"
+        --libdir "$<TARGET_FILE_DIR:${PROJECT_NAME}>/lib"
+        --plugindir "$<TARGET_FILE_DIR:${PROJECT_NAME}>/plugins"
+        --no-translations
+        --no-system-d3d-compiler
+        --no-virtualkeyboard
+        --no-compiler-runtime
+        --no-opengl-sw
+        --force
+        --verbose 0
+        "$<TARGET_FILE:${APP_BLOCK}>"
+    )
+
+    deploy_shared_libraries(
+        TARGET ${PROJECT_NAME}
+        DESTINATION ${APP_LIB_DIR}
+        DEPENDENCIES ${APP_BLOCK} QsUtils QsFramework QsSVS QsMedia fsnotifier-lib
+        RELATIVE
+    )
 
 else()
+
     target_link_libraries(${PROJECT_NAME} PRIVATE ${APP_BLOCK})
+
 endif()
