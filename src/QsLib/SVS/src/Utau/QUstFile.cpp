@@ -29,7 +29,7 @@ bool QUstFile::load(const QString &filename) {
     QByteArray data;
     bool isUnicode = false;
 
-    if (!file.open(QFile::ReadOnly | QIODevice::Text)) {
+    if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
         return false;
     }
 

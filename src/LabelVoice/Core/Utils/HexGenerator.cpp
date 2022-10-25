@@ -3,26 +3,8 @@
 #include <QRandomGenerator>
 #include <QRegExpValidator>
 
-QSet<QString> HexGenerator::_registered;
-
-const char HexGenerator::_chars[] = {'0', '1', '2', '3', '4', '5', '6', '7',
-                                     '8', '9', 'a', 'b', 'c', 'd', 'e', 'f'};
-
-QString HexGenerator::GenerateOnce(int length) {
-    size_t hexLen = sizeof(_chars);
-    QByteArray codeArr;
-    for (int i = 0; i < length; ++i) {
-        codeArr.append(_chars[QRandomGenerator::global()->bounded(1, hexLen)]);
-    }
-    return QString::fromLatin1(codeArr);
-}
-
-bool HexGenerator::IsValidFormat(const QString &code, int length) {
-    if (code.isEmpty() || code.size() != length) {
-        return false;
-    }
-    return QRegExp(R"(^[0-9a-f].*$)").exactMatch(code);
-}
+static const char _chars[] = {'0', '1', '2', '3', '4', '5', '6', '7',
+                              '8', '9', 'a', 'b', 'c', 'd', 'e', 'f'};
 
 void HexGenerator::Reset() {
     _registered.clear();
@@ -54,4 +36,20 @@ QString HexGenerator::Generate(int length) {
     //  ({length}) after {maxAttempts} attempts.
 
     return QString();
+}
+
+QString HexGenerator::GenerateOnce(int length) {
+    size_t hexLen = sizeof(_chars);
+    QByteArray codeArr;
+    for (int i = 0; i < length; ++i) {
+        codeArr.append(_chars[QRandomGenerator::global()->bounded(1, hexLen)]);
+    }
+    return QString::fromLatin1(codeArr);
+}
+
+bool HexGenerator::IsValidFormat(const QString &code, int length) {
+    if (code.isEmpty() || code.size() != length) {
+        return false;
+    }
+    return QRegExp(R"(^[0-9a-f].*$)").exactMatch(code);
 }

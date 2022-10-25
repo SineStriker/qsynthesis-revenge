@@ -4,11 +4,19 @@
 #include <QMap>
 #include <QStringList>
 
+#include "Utils/HexGenerator.h"
+
 namespace LVModel {
 
     enum class LayerCategory { Sentence, Grapheme, Phoneme, Pitch, Duration, Custom };
 
     enum class ValueType { Text, Integer, Float, Pitch };
+
+    QString LayerCategoryToString(LayerCategory c);
+    LayerCategory StringToLayerCategory(const QString &s);
+
+    QString ValueTypeToString(ValueType c);
+    ValueType StringToValueType(const QString &s);
 
     class LayerDefinition {
     public:
@@ -19,6 +27,7 @@ namespace LVModel {
         ValueType ValType;
 
         LayerDefinition();
+        ~LayerDefinition();
     };
 
     class LanguageDefinition {
@@ -43,13 +52,14 @@ namespace LVModel {
         ResourceType Type;
 
         QString Id;
+        QString Name;
         QString Speaker;
+        QString Language;
         QString VirtualPath;
 
-        QString Name;
-        QString Language;
-
         ItemResource(ResourceType type = Placeholder);
+        ~ItemResource();
+
         bool operator<(const ItemResource &other) const;
     };
 
@@ -78,8 +88,11 @@ namespace LVModel {
         QList<LanguageDefinition> Languages;
         QList<SpeakerDefinition> Speakers;
         QMap<QString, ItemResource> ItemResources;
+
+    protected:
+        HexGenerator registry;
     };
 
-} // namespace LVProj
+} // namespace LVModel
 
 #endif // QLVPROJECT_H

@@ -127,6 +127,8 @@ target_link_libraries(${APP_BLOCK} PRIVATE QsUtils QsFramework QsSVS)
 
 target_link_libraries(${APP_BLOCK} PRIVATE fsnotifier-lib)
 
+target_link_libraries(${APP_BLOCK} PRIVATE yaml-cpp)
+
 # Link Qt libraries
 target_link_libraries(${APP_BLOCK} PRIVATE ${QT_LIBS})
 

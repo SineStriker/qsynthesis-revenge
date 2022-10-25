@@ -187,7 +187,7 @@ QSettingFile::~QSettingFile() {
 
 bool QSettingFile::load(const QString &filename) {
     QFile file(filename);
-    if (!file.open(QFile::ReadOnly | QIODevice::Text)) {
+    if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
         return 0;
     }
 

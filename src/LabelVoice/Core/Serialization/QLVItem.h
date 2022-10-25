@@ -4,6 +4,8 @@
 #include <QMap>
 #include <QStringList>
 
+#include "Utils/HexGenerator.h"
+
 namespace LVModel {
 
     class SliceDefinition {
@@ -12,6 +14,9 @@ namespace LVModel {
         double In;
         double Out;
         QString Language;
+
+        SliceDefinition();
+        ~SliceDefinition();
 
         bool operator<(const SliceDefinition &other) const;
     };
@@ -24,6 +29,20 @@ namespace LVModel {
         QString OwnerProject;
         QString AudioSource;
         QMap<QString, SliceDefinition> Slices;
+
+        ItemModel(HexGenerator &hexGen);
+        ~ItemModel();
+
+    public:
+        bool load(const QString &filename);
+        bool save(const QString &filename);
+
+        void reset();
+
+        void Validate(bool reg = false);
+
+    protected:
+        HexGenerator &registry;
     };
 
 } // namespace LVModel

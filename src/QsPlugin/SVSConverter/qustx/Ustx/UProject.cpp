@@ -25,7 +25,7 @@ UProject::~UProject() {
 
 bool UProject::load(const QString &filename) {
     QFile file(filename);
-    if (!file.open(QFile::ReadOnly | QIODevice::Text)) {
+    if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
         return false;
     }
     QTextStream in(&file); // UTF-8 with BOM
