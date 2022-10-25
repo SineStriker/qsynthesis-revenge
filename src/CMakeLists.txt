@@ -2,6 +2,9 @@ cmake_minimum_required(VERSION 3.17)
 
 project(QSynthesis CXX)
 
+# MainTarget
+set(MAIN_TARGET LabelVoice)
+
 # User Options
 set(USE_PREBUILT_LIBS on)
 set(USE_DELAY_LOAD off)
@@ -72,7 +75,7 @@ if (NOT BUILD_PLUGINS_ONLY)
 
     add_subdirectory(fsnotifier)
 
-    add_subdirectory(QSynthesis)
+    add_subdirectory(${MAIN_TARGET})
 
 endif()
 
@@ -88,7 +91,6 @@ if (APP_DEPLOY)
     set(RELEASE_DIRNAME ${PROJECT_NAME_LOWER}-${SYSTEM_NAME_LOWER}-${SYSTEM_ARCH_LOWER}-${APP_VERSION_SHORT})
     set(APP_DEPLOY_DIR ${PROJECT_RELEASE_DIR}/${RELEASE_DIRNAME})
 
-    set(MAIN_TARGET QSynthesis)
     set(FSNOTIFIER_TARGET fsnotifier)
 
     add_custom_target(deploy_app

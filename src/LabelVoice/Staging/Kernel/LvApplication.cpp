@@ -1,0 +1,76 @@
+#include "LvApplication.h"
+#include "private/LvApplication_p.h"
+
+LvApplication::LvApplication(int &argc, char **argv)
+    : LvApplication(*new LvApplicationPrivate(), argc, argv) {
+}
+
+LvApplication::~LvApplication() {
+    Q_D(LvApplication);
+    d->deinit();
+}
+
+void LvApplication::reloadStrings() {
+}
+
+void LvApplication::reloadScreen() {
+}
+
+QString LvApplication::mainTitle() const {
+    return applicationName();
+}
+
+QString LvApplication::windowTitle() const {
+    return mainTitle() + QString(" %1").arg(applicationVersion());
+}
+
+QString LvApplication::errorTitle() const {
+    return tr("Error");
+}
+
+QString LvApplication::untitledFileName() const {
+    return tr("Untitled");
+}
+
+QString LvApplication::unsavedPrefix() const {
+    return "*";
+}
+
+QString LvApplication::deletedPrefix() const {
+    return tr("(Deleted)");
+}
+
+QString LvApplication::fileManagerName() const {
+#ifdef Q_OS_WINDOWS
+    return tr("Explorer");
+#elif defined(Q_OS_MAC)
+    return tr("Finder");
+#else
+    return tr("File Manager");
+#endif
+}
+
+QString LvApplication::appDataPath() const {
+    Q_D(const LvApplication);
+    return d->dataPath;
+}
+
+QString LvApplication::appTempPath() const {
+    Q_D(const LvApplication);
+    return d->tempPath;
+}
+
+QString LvApplication::appPluginDir() const {
+    Q_D(const LvApplication);
+    return d->pluginDir;
+}
+
+LvApplication::LvApplication(LvApplicationPrivate &d, int &argc, char **argv)
+    : CApplication(d, argc, argv) {
+    d.init();
+}
+
+void LvApplication::q_screenRatioChanged(qreal dpi) {
+    Q_UNUSED(dpi)
+    reloadScreen();
+}
