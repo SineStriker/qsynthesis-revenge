@@ -88,11 +88,17 @@ MinGW是另一个编译套件，可以选，但本工程大概率不会用到。
 
 + 本工程使用CMake构建系统，在Windows上默认使用MSVC 2019 64bit进行开发，如果下载Visual Studio 2022则使用MSVC 2022 64bit。
 
-+ 本工程使用了很多除了Qt以外的库，在Linux上可以直接`make install`，在Windows上我把它们的源码独立在`src`的外面，在开发之前先构建它们
++ 本工程使用了很多除了Qt以外的库，在Linux上可以直接`make install`，在Windows上我把它们的源码独立在`src`的外面，在开发之前先构建它们。
+
+### 准备FFmpeg库
+
++ 下载地址：https://github.com/SineStriker/binary-res
+    + 将`bin`、`include`、`lib`、`share`目录直接复制到`pkg/src/FFmpeg/usr`中。
++ 由于需要自己编译FFmpeg，过于复杂建议直接复制粘贴。
 
 ### 构建Pre-Built库
 
-+ 在开始菜单搜索`x64 Native Tools Command Prompt for VS 2019`（也可能是2022），它会配置好MSVC编译器的一系列环境变量给此终端上下文
++ 在开始菜单搜索`x64 Native Tools Command Prompt for VS 2019`（也可能是2022），它会配置好MSVC编译器的一系列环境变量给此终端上下文。
 
 + 切换到`pkg`目录
 ````
