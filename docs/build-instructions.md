@@ -28,7 +28,7 @@ You may need to change the directory structure, please refer to `pkg/src/FFmpeg/
 
 ### Prepare Pre-built Environment
 
-Configure the CMake project in `pkg` directory and build virtual target `install_all`, then it should generate a directory called `libs` with all files which will be used in the main project.
+Configure the CMake project in `pkg` directory and build all targets and finally run `install`, then it should generate a directory called `libs` with all files which will be used in the main project.
 
 + SDL2
 + QuaZip & Zlib
