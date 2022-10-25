@@ -94,6 +94,7 @@ if(SYS_WIN)
         @ONLY
     )
     target_sources(${APP_BLOCK} PRIVATE ${PROJECT_BINARY_DIR}/res2.rc)
+
 elseif(SYS_MAC)
     # configure files
     set(MAC_RES)

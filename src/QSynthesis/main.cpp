@@ -79,7 +79,7 @@ int main(int argc, char *argv[]) {
     HINSTANCE hDLL = ::LoadLibraryW(wstr.c_str());
     int res = -1;
     if (hDLL != NULL) {
-        EntryFun fun = (EntryFun) GetProcAddress(hDLL, "app_entry");
+        EntryFun fun = (EntryFun)::GetProcAddress(hDLL, "app_entry");
         if (fun != NULL) {
             res = fun(argc, argv);
         } else {
