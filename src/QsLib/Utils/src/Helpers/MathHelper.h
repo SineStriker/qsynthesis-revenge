@@ -58,6 +58,17 @@ namespace Math {
     }
 
     template <class T>
+    inline bool batchCheck(const QList<T> &list, bool fun(const T &)) {
+        QList<T> res;
+        for (auto it = list.begin(); it != list.end(); ++it) {
+            if (!fun(*it)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    template <class T>
     inline QList<T> batchReplace(const QList<T> &list, T fun(const T &)) {
         QList<T> res;
         for (auto it = list.begin(); it != list.end(); ++it) {

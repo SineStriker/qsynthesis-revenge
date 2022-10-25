@@ -85,3 +85,6 @@ _workingDir*
 .idea
 .cache
 cache
+.vs
+out/
+CMakeSettings.json

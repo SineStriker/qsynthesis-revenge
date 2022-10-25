@@ -82,6 +82,8 @@ namespace Sys {
 
     QSUTILS_API void exitApp(int code);
 
+    QSUTILS_API QString invalidFileNameChars();
+
 } // namespace Sys
 
 #endif // SYSTEMHELPER_H
