@@ -43,7 +43,7 @@ static const char LVPROJ_ATTRIBUTE_ITEM_NAME[] = "Name";
 static const char LVPROJ_ATTRIBUTE_ITEM_SPEAKER[] = "Speaker";
 static const char LVPROJ_ATTRIBUTE_ITEM_LANGUAGE[] = "Language";
 static const char LVPROJ_ATTRIBUTE_ITEM_VIRTUAL_PATH[] = "VirtualPath";
-static const char LVPROJ_KEY_PLACEHOLDER[] = "PlaceHolder";
+static const char LVPROJ_KEY_PLACEHOLDER[] = "Placeholder";
 
 QString LVModel::LayerCategoryToString(LayerCategory c) {
     QString res;
@@ -176,10 +176,9 @@ bool LVModel::ProjectModel::load(const QString &filename) {
 
     while (!reader.atEnd()) {
         QXmlStreamReader::TokenType nType = reader.readNext();
-
         switch (nType) {
             case QXmlStreamReader::StartDocument: {
-                qDebug() << "********** Start XML ********** ";
+                qDebug() << "********** Start LVPROJ ********** ";
                 QString strVersion = reader.documentVersion().toString();
                 QString strEncoding = reader.documentEncoding().toString();
                 bool bAlone = reader.isStandaloneDocument();
@@ -308,7 +307,7 @@ bool LVModel::ProjectModel::load(const QString &filename) {
                     case Sections::ItemResources:
                         if (name == LVPROJ_KEY_ITEM) {
                             // Parse LVProject.Languages.Item
-                            ItemResource item;
+                            ItemResource item(ItemResource::Definition);
                             QXmlStreamAttributes attrs = reader.attributes();
                             for (const auto &attr : qAsConst(attrs)) {
                                 QString name = attr.name().toString();
@@ -408,7 +407,7 @@ bool LVModel::ProjectModel::load(const QString &filename) {
                 break;
             }
             case QXmlStreamReader::EndDocument: {
-                qDebug() << QString::fromLocal8Bit("********** End XML ********** ");
+                qDebug() << QString::fromLocal8Bit("********** End LVPROJ ********** ");
                 break;
             }
             default:
@@ -420,10 +419,13 @@ bool LVModel::ProjectModel::load(const QString &filename) {
             success = false;
             break;
         }
-        reader.readNext();
     }
 
     file.close();
+
+    if (success) {
+        Validate(true);
+    }
     return success;
 }
 
@@ -432,6 +434,8 @@ bool LVModel::ProjectModel::save(const QString &filename) {
     if (!file.open(QIODevice::WriteOnly | QIODevice::Truncate | QIODevice::Text)) {
         return false;
     }
+
+    Validate();
 
     QXmlStreamWriter writer(&file);
     writer.setAutoFormatting(true);

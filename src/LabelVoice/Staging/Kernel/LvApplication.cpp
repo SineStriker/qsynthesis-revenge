@@ -1,6 +1,10 @@
 #include "LvApplication.h"
 #include "private/LvApplication_p.h"
 
+#include "Styles/QCssAnalyzer.h"
+
+#include <QScreen>
+
 LvApplication::LvApplication(int &argc, char **argv)
     : LvApplication(*new LvApplicationPrivate(), argc, argv) {
 }
@@ -14,6 +18,9 @@ void LvApplication::reloadStrings() {
 }
 
 void LvApplication::reloadScreen() {
+    Q_D(LvApplication);
+    setStyleSheet(QCssAnalyzer().apply(d->stylesheets.join("\n"),
+                                       primaryScreen()->logicalDotsPerInch() / 96.0 * 0.8));
 }
 
 QString LvApplication::mainTitle() const {

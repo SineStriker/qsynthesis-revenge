@@ -8,7 +8,12 @@
 
 #include <QDebug>
 
+#include "Serialization/QLVProject.h"
+
 HomeWindow::HomeWindow(QWidget *parent) : HomeWindow(*new HomeWindowPrivate(), parent) {
+    LVModel::ProjectModel proj;
+
+    qDebug() << proj.load("test.lvproj");
 }
 
 HomeWindow::~HomeWindow() {
@@ -27,11 +32,4 @@ HomeWindow::HomeWindow(HomeWindowPrivate &d, QWidget *parent) : PlainWindow(d, p
 
 void HomeWindow::_q_searchBoxChanged(const QString &text) {
     qDebug() << text;
-}
-
-void HomeWindow::_q_newButtonClicked() {
-    qWindows->newProject();
-}
-
-void HomeWindow::_q_openButtonClicked() {
 }

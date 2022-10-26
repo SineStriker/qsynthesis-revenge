@@ -13,6 +13,8 @@
 #include "SystemHelper.h"
 #include "ViewHelper.h"
 
+#include "Styles/QCssAnalyzer.h"
+
 static const char Slash = '/';
 
 LvApplicationPrivate::LvApplicationPrivate() {
@@ -60,7 +62,7 @@ void LvApplicationPrivate::init() {
     }
 
     // Create temporary path
-    tempPath = QDir::tempPath() + Slash + "QSynthTemp";
+    tempPath = QDir::tempPath() + Slash + q->applicationName();
     if (!Sys::mkDir(tempPath)) {
         QMessageBox::warning(nullptr, q->errorTitle(),
                              QObject::tr("Failed to make temporary path!"));
@@ -80,6 +82,7 @@ void LvApplicationPrivate::init() {
     fileMgr = new FileManager(q);
     windowMgr = new WindowManager(q);
 
+    fileMgr->load();
     pluginMgr->load();
 
     q->connect(q->primaryScreen(), &QScreen::logicalDotsPerInchChanged, q,
@@ -90,6 +93,7 @@ void LvApplicationPrivate::deinit() {
     // Save Modules
 
     pluginMgr->save();
+    fileMgr->save();
 
     delete pluginMgr;
     delete fileMgr;
@@ -127,4 +131,25 @@ void LvApplicationPrivate::eliminate() {
         delete t;
     }
     translators.clear();
+}
+
+bool LvApplicationPrivate::addTheme(const QString &filename) {
+    Q_Q(LvApplication);
+
+    QFile file(filename);
+    if (file.open(QIODevice::ReadOnly | QIODevice::Text)) {
+        stylesheets.append(file.readAll());
+        file.close();
+        q->reloadScreen();
+        return true;
+    }
+
+    return false;
+}
+
+void LvApplicationPrivate::removeThemes() {
+    Q_Q(LvApplication);
+
+    stylesheets.clear();
+    q->reloadScreen();
 }

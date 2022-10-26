@@ -207,10 +207,13 @@ bool LVModel::ItemModel::load(const QString &filename) {
             success = false;
             break;
         }
-        reader.readNext();
+    }
+    file.close();
+
+    if (success) {
+        Validate(true);
     }
 
-    file.close();
     return success;
 }
 
@@ -219,6 +222,8 @@ bool LVModel::ItemModel::save(const QString &filename) {
     if (!file.open(QIODevice::WriteOnly | QIODevice::Truncate | QIODevice::Text)) {
         return false;
     }
+
+    Validate();
 
     QXmlStreamWriter writer(&file);
     writer.setAutoFormatting(true);

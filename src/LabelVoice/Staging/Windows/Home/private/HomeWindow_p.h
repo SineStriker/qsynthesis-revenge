@@ -3,12 +3,15 @@
 
 #include "Controls/Windows/PlainWindow_p.h"
 
+#include "../FileListWidget.h"
 #include "../HomeWindow.h"
 
 #include <QBoxLayout>
 #include <QWidget>
 
+#include <QLabel>
 #include <QLineEdit>
+#include <QSplitter>
 #include <QListWidget>
 #include <QPushButton>
 
@@ -24,17 +27,19 @@ public:
 
     QWidget *w;
 
-    QVBoxLayout *mainLayout;
-    QHBoxLayout *topLayout;
+    QWidget *leftWidget;
+    QWidget *rightWidget;
 
+    QHBoxLayout *mainLayout;
+    QVBoxLayout *leftLayout, *rightLayout;
+
+    QSplitter *splitter;
+
+    QLabel *titleLabel;
+    QLabel *subtitleLabel;
+
+    FileListWidget *templateList, *recentList;
     QLineEdit *searchBox;
-
-    QPushButton *newButton;
-    QPushButton *openButton;
-
-    QListWidget *fileList;
-
-    QWidgetWindow *winHandle;
 };
 
 #endif // HOMEWINDOWPRIVATE_H

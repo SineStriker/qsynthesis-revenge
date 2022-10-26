@@ -35,6 +35,12 @@ public:
     void eliminate();
 
     QSet<QTranslator *> translators;
+
+    // Stylesheets
+    bool addTheme(const QString &filename);
+    void removeThemes();
+
+    QStringList stylesheets;
 };
 
 #endif // LVAPPLICATIONPRIVATE_H

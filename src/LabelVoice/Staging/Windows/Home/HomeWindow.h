@@ -20,9 +20,6 @@ protected:
 
 private:
     void _q_searchBoxChanged(const QString &text);
-
-    void _q_newButtonClicked();
-    void _q_openButtonClicked();
 };
 
 #endif // HOMEWINDOW_H

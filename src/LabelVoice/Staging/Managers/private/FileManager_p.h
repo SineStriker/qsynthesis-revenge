@@ -3,6 +3,7 @@
 
 #include "../FileManager.h"
 #include "Basic/BasicManager_p.h"
+#include "Templates/QFileSet.h"
 
 #include <QMap>
 
@@ -13,6 +14,9 @@ public:
     ~FileManagerPrivate();
 
     void init();
+
+    QFileSet projects;
+    QFileSet folders;
 
     QMap<QString, QString> lastOpenPaths;
 };

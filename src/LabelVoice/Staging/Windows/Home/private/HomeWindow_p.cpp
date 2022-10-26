@@ -14,40 +14,64 @@ void HomeWindowPrivate::init() {
     w = new QWidget();
     q->setCentralWidget(w);
 
+    // Left
+    titleLabel = new QLabel();
+    titleLabel->setObjectName("title-label");
+
+    subtitleLabel = new QLabel();
+    subtitleLabel->setObjectName("subtilte-label");
+
+    templateList = new FileListWidget();
+
+    leftLayout = new QVBoxLayout();
+    leftLayout->setMargin(0);
+    leftLayout->setSpacing(0);
+
+    leftLayout->addWidget(titleLabel);
+    leftLayout->addWidget(subtitleLabel);
+    leftLayout->addWidget(templateList);
+
+    leftWidget = new QWidget();
+    leftWidget->setLayout(leftLayout);
+
+    // Right
     searchBox = new QLineEdit();
-    newButton = new QPushButton();
-    openButton = new QPushButton();
+    searchBox->setObjectName("search-box");
 
-    topLayout = new QHBoxLayout();
-    topLayout->setMargin(0);
-    topLayout->setSpacing(0);
+    recentList = new FileListWidget();
 
-    topLayout->addWidget(searchBox);
-    topLayout->addWidget(newButton);
-    topLayout->addWidget(openButton);
+    rightLayout = new QVBoxLayout();
+    rightLayout->setMargin(0);
+    rightLayout->setSpacing(0);
 
-    fileList = new QListWidget();
+    rightLayout->addWidget(searchBox);
+    rightLayout->addWidget(recentList);
 
-    mainLayout = new QVBoxLayout();
+    rightWidget = new QWidget();
+    rightWidget->setLayout(rightLayout);
+
+    // Main
+    mainLayout = new QHBoxLayout();
     mainLayout->setMargin(0);
     mainLayout->setSpacing(0);
 
-    mainLayout->addLayout(topLayout);
-    mainLayout->addWidget(fileList);
+    splitter = new QSplitter(Qt::Horizontal);
+    splitter->addWidget(leftWidget);
+    splitter->addWidget(rightWidget);
+
+    mainLayout->addWidget(splitter);
 
     w->setLayout(mainLayout);
 
     q->connect(searchBox, &QLineEdit::textChanged, q, &HomeWindow::_q_searchBoxChanged);
-    q->connect(newButton, &QPushButton::clicked, q, &HomeWindow::_q_newButtonClicked);
-    q->connect(openButton, &QPushButton::clicked, q, &HomeWindow::_q_openButtonClicked);
 }
 
 void HomeWindowPrivate::reloadStrings_helper() {
     Q_Q(HomeWindow);
 
-    searchBox->setPlaceholderText(HomeWindow::tr("Search Files"));
-    newButton->setText(HomeWindow::tr("New"));
-    openButton->setText(HomeWindow::tr("Open"));
+    titleLabel->setText(qApp->applicationName());
+    subtitleLabel->setText(HomeWindow::tr("Select a template"));
+    searchBox->setPlaceholderText(HomeWindow::tr("Search recent files"));
 
     q->setWindowTitle(HomeWindow::tr("Welcome to %1").arg(qApp->applicationName()));
 }

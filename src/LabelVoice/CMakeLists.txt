@@ -50,6 +50,8 @@ foreach(_dir ${_main_dirs})
         ${CMAKE_CURRENT_SOURCE_DIR}/${_dir}/*.hpp ${CMAKE_CURRENT_SOURCE_DIR}/${_dir}/*.h)
 endforeach()
 
+set(QT_RESOURCES ${CMAKE_CURRENT_SOURCE_DIR}/Resources/res.qrc)
+
 # Add executable
 string(TOLOWER ${APP_BLOCK} APP_BLOCK_LOWER)
 set(BLOCK_OUTPUT_NAME ${APP_BLOCK_LOWER}-qt${QT_VERSION_MAJOR})
