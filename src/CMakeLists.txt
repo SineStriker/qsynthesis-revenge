@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.17)
 
-project(QSynthesis CXX)
+project(LabelVoice CXX)
 
 # MainTarget
 set(MAIN_TARGET LabelVoice)

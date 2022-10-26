@@ -14,6 +14,14 @@ void NativeHandlePrivate::init() {
     titleBar = nullptr;
 }
 
+void NativeHandlePrivate::updateTitleBar() {
+    titleBar->m_iconButton->setVisible(titleBarFlags & IWindowHandle::WindowIcon);
+    titleBar->m_closeButton->setVisible(titleBarFlags & IWindowHandle::WindowCloseButton);
+    titleBar->m_maxButton->setVisible(titleBarFlags & IWindowHandle::WindowMaximizeButton);
+    titleBar->m_minButton->setVisible(titleBarFlags & IWindowHandle::WindowMinimizeButton);
+    titleBar->setTitleVisible(titleBarFlags & IWindowHandle::WindowTitle);
+}
+
 void NativeHandlePrivate::setup_helper() {
     Q_Q(NativeHandle);
 

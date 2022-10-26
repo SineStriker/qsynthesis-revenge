@@ -11,15 +11,23 @@ HomeWindowPrivate::~HomeWindowPrivate() {
 void HomeWindowPrivate::init() {
     Q_Q(HomeWindow);
 
-    w = new QWidget();
+    // Don't show icon and title
+    if (winHandle) {
+        winHandle->setTitleBarFlags(winHandle->titleBarFlags() & ~IWindowHandle::WindowIcon &
+                                    ~IWindowHandle::WindowTitle);
+    }
+
+    w = new QFrame();
+    w->setObjectName("home-widget");
     q->setCentralWidget(w);
 
     // Left
-    titleLabel = new QLabel();
+    titleLabel = new CTabButton();
     titleLabel->setObjectName("title-label");
 
     subtitleLabel = new QLabel();
-    subtitleLabel->setObjectName("subtilte-label");
+    subtitleLabel->setObjectName("subtitle-label");
+    subtitleLabel->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Fixed);
 
     templateList = new FileListWidget();
 
@@ -31,7 +39,8 @@ void HomeWindowPrivate::init() {
     leftLayout->addWidget(subtitleLabel);
     leftLayout->addWidget(templateList);
 
-    leftWidget = new QWidget();
+    leftWidget = new QFrame();
+    leftWidget->setObjectName("home-welcome-widget");
     leftWidget->setLayout(leftLayout);
 
     // Right
@@ -47,7 +56,8 @@ void HomeWindowPrivate::init() {
     rightLayout->addWidget(searchBox);
     rightLayout->addWidget(recentList);
 
-    rightWidget = new QWidget();
+    rightWidget = new QFrame();
+    rightWidget->setObjectName("home-recent-widget");
     rightWidget->setLayout(rightLayout);
 
     // Main
@@ -56,6 +66,8 @@ void HomeWindowPrivate::init() {
     mainLayout->setSpacing(0);
 
     splitter = new QSplitter(Qt::Horizontal);
+    splitter->setObjectName("home-splitter");
+    splitter->setChildrenCollapsible(false);
     splitter->addWidget(leftWidget);
     splitter->addWidget(rightWidget);
 

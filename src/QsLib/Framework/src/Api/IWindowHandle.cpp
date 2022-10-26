@@ -26,6 +26,17 @@ QMenuBar *IWindowHandle::menuBar() const {
     return d->w->menuBar();
 }
 
+void IWindowHandle::setTitleBarFlags(TitleBarFlags flags) {
+    Q_D(IWindowHandle);
+    d->titleBarFlags = flags;
+    d->updateTitleBar();
+}
+
+IWindowHandle::TitleBarFlags IWindowHandle::titleBarFlags() {
+    Q_D(const IWindowHandle);
+    return d->titleBarFlags;
+}
+
 IWindowHandle::IWindowHandle(IWindowHandlePrivate &d, QMainWindow *parent)
     : QObject(parent), d_ptr(&d) {
     d.q_ptr = this;

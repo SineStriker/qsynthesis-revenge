@@ -23,6 +23,20 @@ public:
     virtual void setMenuBar(QMenuBar *menuBar);
     virtual QMenuBar *menuBar() const;
 
+    enum TitleBarFlag {
+        WindowIcon = 0x1,
+        WindowTitle = 0x2,
+        WindowMinimizeButton = 0x4,
+        WindowMaximizeButton = 0x8,
+        WindowCloseButton = 0x10,
+        TitleBarFlagMask = WindowIcon | WindowTitle | WindowMinimizeButton | WindowMaximizeButton |
+                           WindowCloseButton,
+    };
+    Q_DECLARE_FLAGS(TitleBarFlags, TitleBarFlag);
+
+    void setTitleBarFlags(TitleBarFlags flags);
+    TitleBarFlags titleBarFlags();
+
 protected:
     IWindowHandle(IWindowHandlePrivate &d, QMainWindow *parent);
 

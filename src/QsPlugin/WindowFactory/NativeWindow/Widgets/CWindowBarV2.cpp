@@ -7,6 +7,7 @@
 
 CWindowBarV2::CWindowBarV2(QMenuBar *menuBar, QWidget *parent) : CBaseTitleBarV2(parent) {
     m_titleMargin = 20;
+    m_titleVisible = true;
 
     m_titleLabel = new QLabel();
     m_titleLabel->setObjectName("win-title-label");
@@ -58,6 +59,7 @@ void CWindowBarV2::reloadStrings() {
 #ifndef Q_OS_MAC
     m_minButton->setToolTip(tr("Minimize"));
     m_closeButton->setToolTip(tr("Close"));
+
     reloadMaxButtonState();
 #endif
 }
@@ -83,6 +85,15 @@ void CWindowBarV2::setTitleMargin(const QPixelSize &titleMargin) {
     m_titleMargin = titleMargin;
     update();
     emit styleChanged();
+}
+
+bool CWindowBarV2::titleVisible() const {
+    return m_titleVisible;
+}
+
+void CWindowBarV2::setTitleVisible(bool titleVisible) {
+    m_titleVisible = titleVisible;
+    update();
 }
 
 void CWindowBarV2::drawCentralTitle(QPainter &painter) {
@@ -120,18 +131,27 @@ void CWindowBarV2::paintEvent(QPaintEvent *event) {
     QPainter painter(this);
     painter.setClipRegion(event->region());
     painter.setRenderHint(QPainter::Antialiasing);
-    drawCentralTitle(painter);
+    if (m_titleVisible) {
+        drawCentralTitle(painter);
+    }
 }
 
 bool CWindowBarV2::eventFilter(QObject *obj, QEvent *event) {
     auto w = widget();
     if (obj == w) {
         switch (event->type()) {
-        case QEvent::WindowTitleChange:
-            update();
-            break;
-        default:
-            break;
+            case QEvent::WindowTitleChange:
+                update();
+                break;
+            default:
+                break;
+        }
+    } else if (obj == m_titleLabel) {
+        switch (event->type()) {
+            case QEvent::Paint:
+                return true;
+            default:
+                break;
         }
     }
     return CBaseTitleBarV2::eventFilter(obj, event);

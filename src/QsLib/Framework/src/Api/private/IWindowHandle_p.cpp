@@ -11,4 +11,9 @@ void IWindowHandlePrivate::init() {
     Q_Q(IWindowHandle);
 
     w = qobject_cast<QMainWindow *>(q->parent());
+
+    titleBarFlags = IWindowHandle::TitleBarFlagMask;
+}
+
+void IWindowHandlePrivate::updateTitleBar() {
 }

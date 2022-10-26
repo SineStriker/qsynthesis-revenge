@@ -28,6 +28,9 @@ public:
     QPixelSize titleMargin() const;
     void setTitleMargin(const QPixelSize &titleMargin);
 
+    bool titleVisible() const;
+    void setTitleVisible(bool titleVisible);
+
 private:
     CToolButton *m_minButton;
     CToolButton *m_maxButton;
@@ -35,7 +38,9 @@ private:
     CToolButton *m_iconButton;
 
     QLabel *m_titleLabel;
+
     QPixelSize m_titleMargin;
+    bool m_titleVisible;
 
     QMenuBar *m_menuBar;
 
@@ -51,6 +56,8 @@ signals:
     void closeRequested();
 
     void styleChanged();
+
+    friend class NativeHandlePrivate;
 };
 
 #endif // CWINDOWBARV2_H

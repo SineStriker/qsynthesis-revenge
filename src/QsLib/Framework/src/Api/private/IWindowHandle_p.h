@@ -11,9 +11,13 @@ public:
 
     void init();
 
+    virtual void updateTitleBar();
+
     IWindowHandle *q_ptr;
 
     QMainWindow *w;
+
+    IWindowHandle::TitleBarFlags titleBarFlags;
 };
 
 #endif // IWINDOWHANDLEPRIVATE_H

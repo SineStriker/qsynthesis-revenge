@@ -18,6 +18,8 @@ public:
 
     void init();
 
+    void updateTitleBar() override;
+
     void setup_helper();
     void setMenuBar_helper(QMenuBar *menuBar);
 

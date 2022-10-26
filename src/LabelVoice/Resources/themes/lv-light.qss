@@ -1,0 +1,101 @@
+/* Global */
+
+QWidget {
+    font-size: 15px;
+    outline: none;
+}
+
+
+/* HomeWindow */
+
+CWindowBarV2 {
+    background-color: transparent;
+    qproperty-titleMargin: 20px;
+}
+
+CWindowBarV2>QLabel#win-title-label {
+    padding: 0;
+    border: none;
+    color: transparent;
+    background-color: transparent;
+    /* Limit window bar height */
+    min-height: 40px;
+}
+
+CWindowBarV2>CToolButton#min-button {
+    qproperty-iconUp: svg(":/svg/window/minimize.svg", #111111);
+    qproperty-iconSize: 12px 12px;
+    min-width: 50px;
+    border: none;
+    padding: 0;
+    background-color: transparent;
+}
+
+CWindowBarV2>CToolButton#min-button:hover,
+CWindowBarV2>CToolButton#min-button:pressed {
+    background-color: rgba(0, 0, 0, 10%);
+}
+
+CWindowBarV2>CToolButton#max-button {
+    qproperty-iconUp: svg(":/svg/window/maximize.svg", #111111);
+    qproperty-iconUpChecked: svg(":/svg/window/maximize2.svg", #111111);
+    qproperty-iconSize: 12px 12px;
+    min-width: 50px;
+    border: none;
+    padding: 0;
+    background-color: transparent;
+}
+
+CWindowBarV2>CToolButton#max-button:hover,
+CWindowBarV2>CToolButton#max-button:pressed {
+    background-color: rgba(0, 0, 0, 10%);
+}
+
+CWindowBarV2>CToolButton#win-close-button {
+    qproperty-iconUp: svg(":/svg/window/close.svg", #111111);
+    qproperty-iconOver: svg(":/svg/window/close.svg", #FFFFFF);
+    qproperty-iconSize: 12px 12px;
+    min-width: 50px;
+    border: none;
+    padding: 0;
+    background-color: transparent;
+}
+
+CWindowBarV2>CToolButton#win-close-button:hover,
+CWindowBarV2>CToolButton#win-close-button:pressed {
+    background-color: #e81123;
+}
+
+HomeWindow {
+    background-color: #EEEEEE;
+}
+
+QWidget#home-widget {
+    padding: 15px;
+}
+
+QWidget#home-welcome-widget {
+    padding: 15px;
+}
+
+QWidget#home-recent-widget {
+    padding: 15px;
+}
+
+QWidget#home-welcome-widget>CPushButton#title-label {
+    color: #2B2B2B;
+    font-size: 50px;
+    font-weight: 900;
+    qproperty-iconUp: svg(":/svg/app/logo-grey.svg");
+    qproperty-iconSize: 80px 80px;
+    text-align: left;
+    background-color: transparent;
+    border: none;
+    qproperty-spaceRatio: 0.2;
+}
+
+QWidget#home-welcome-widget>QLabel#subtitle-label {
+    color: darkgrey;
+    font-size: 20px;
+    padding: 20px 0;
+}

@@ -1,5 +1,12 @@
 <RCC>
     <qresource prefix="/">
-        <file>themes/lv-dark.qss</file>
+        <file>themes/lv-light.qss</file>
+        <file>svg/window/close.svg</file>
+        <file>svg/window/fullscreen.svg</file>
+        <file>svg/window/icon.svg</file>
+        <file>svg/window/maximize.svg</file>
+        <file>svg/window/maximize2.svg</file>
+        <file>svg/window/minimize.svg</file>
+        <file>svg/app/logo-grey.svg</file>
     </qresource>
 </RCC>

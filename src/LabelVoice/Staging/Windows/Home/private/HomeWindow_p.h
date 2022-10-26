@@ -6,14 +6,16 @@
 #include "../FileListWidget.h"
 #include "../HomeWindow.h"
 
+#include "CTabButton.h"
+
 #include <QBoxLayout>
 #include <QWidget>
 
 #include <QLabel>
 #include <QLineEdit>
-#include <QSplitter>
 #include <QListWidget>
 #include <QPushButton>
+#include <QSplitter>
 
 class HomeWindowPrivate : public PlainWindowPrivate {
     Q_DECLARE_PUBLIC(HomeWindow)
@@ -35,7 +37,7 @@ public:
 
     QSplitter *splitter;
 
-    QLabel *titleLabel;
+    CTabButton *titleLabel;
     QLabel *subtitleLabel;
 
     FileListWidget *templateList, *recentList;
