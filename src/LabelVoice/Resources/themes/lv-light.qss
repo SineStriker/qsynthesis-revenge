@@ -67,11 +67,26 @@ CWindowBarV2>CToolButton#win-close-button:pressed {
 }
 
 HomeWindow {
-    background-color: #f6f7f8;
+    background-color: #F2F3F4;
+    qproperty-templateStyleData: qvariants(/* styleData */
+    svg(":/svg/letter/+.svg", #111111), /* empty */
+    24px, 24px, /* empty */
+    svg(":/svg/letter/o.svg", #111111), /* opencpop */
+    24px, 24px, /* opencpop */
+    svg(":/svg/letter/d.svg", #111111), /* diffsinger */
+    24px, 24px, /* diffsinger */
+    svg(":/svg/letter/o.svg", #111111), /* openvpi */
+    24px, 24px, /* openvpi */
+    );
 }
 
 QWidget#home-widget {
     padding: 15px;
+}
+
+QWidget#home-widget>QSplitter#home-splitter:handle {
+    background-color: transparent;
+    width: 0;
 }
 
 QWidget#home-welcome-widget {
@@ -107,16 +122,16 @@ QWidget#home-recent-widget>FileListWidget {
     border: none;
     background-color: transparent;
     qproperty-styleData: qvariants(/* styleData */
+    qtypeface(rgba(255, 255, 255, 100%), 1), /* idleType */
     qtypeface(rgba(0, 0, 0, 4%), 1), /* selectType */
     qtypeface(transparent, 1), /* underline */
-    qtypeface(black, 17px, 75), /* fileType */
-    qtypeface(#666666, 15px), /* locType */
-    qtypeface(#666666, 15px), /* dateType */
-    qmargins(10px, 15px, 10px, 3px), /* fileMargins */
-    qmargins(10px, 3px, 10px, 15px), /* locMargins */
+    qtypeface(black, 15px, 75), /* fileType */
+    qtypeface(#666666, 12px), /* locType */
+    qtypeface(#666666, 12px), /* dateType */
+    qmargins(10px, 12px, 10px, 3px), /* fileMargins */
+    qmargins(10px, 3px, 10px, 12px), /* locMargins */
     qmargins(10px, 10px, 20px, 10px), /* dateMargins */
     qmargins(20px, 10px, 10px, 10px), /* iconMargins */
     qmargins(3px, 10px, 3px, 10px), /* margins */
-    qtypeface(rgba(255, 255, 255, 100%), 1), /* idleType */
     );
 }

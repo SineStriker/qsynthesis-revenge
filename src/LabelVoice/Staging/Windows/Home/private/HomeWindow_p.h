@@ -43,13 +43,19 @@ public:
     FileListWidget *templateList, *recentList;
     QLineEdit *searchBox;
 
+    // Style
     struct TemplateConfig {
         QIcon icon;
+        QSize iconSize;
         QString title;
         QString subtitle;
         QString cont;
+        int id;
     };
-    QList<TemplateConfig> templates;
+    TemplateConfig emptyItemConfig;
+    TemplateConfig opencpopItemConfig;
+    TemplateConfig diffItemConfig;
+    TemplateConfig openvpiItemConfig;
 
     void reloadTemplates();
 };

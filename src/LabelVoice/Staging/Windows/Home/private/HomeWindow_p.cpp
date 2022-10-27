@@ -93,37 +93,22 @@ void HomeWindowPrivate::reloadStrings_helper() {
 }
 
 void HomeWindowPrivate::reloadTemplates() {
-    templates.clear();
-    templates.append(TemplateConfig{
-        QIcon(":/svg/letter/+.svg"),
-        HomeWindow::tr("Empty Template"),
-        HomeWindow::tr("Create empty project for marking"),
-        ">",
-    });
-    templates.append(TemplateConfig{
-        QIcon(":/svg/letter/o.svg"),
-        HomeWindow::tr("Opencpop Template"),
-        HomeWindow::tr("Use Opencpop template for marking"),
-        ">",
-    });
-    templates.append(TemplateConfig{
-        QIcon(":/svg/letter/d.svg"),
-        HomeWindow::tr("DiffSinger Template"),
-        HomeWindow::tr("Use DiffSinger template for marking"),
-        ">",
-    });
-    templates.append(TemplateConfig{
-        QIcon(":/svg/letter/o.svg"),
-        HomeWindow::tr("OpenVPI Template"),
-        HomeWindow::tr("Use OpenVPI template for marking"),
-        ">",
-    });
-
-    // Templates
     templateList->clear();
-    for (auto it = templates.begin(); it != templates.end(); ++it) {
-        const TemplateConfig &info = *it;
-        templateList->addFileItem(info.icon, QSize(32, 32), 0, info.title, info.subtitle,
-                                  info.cont);
-    }
+
+#define SET_AND_ADD(CFG, TITLE, SUBTITLE, ID)                                                      \
+    CFG.title = TITLE;                                                                             \
+    CFG.subtitle = SUBTITLE;                                                                       \
+    CFG.id = ID;                                                                                   \
+    templateList->addFileItem(CFG.icon, CFG.iconSize, CFG.id, CFG.title, CFG.subtitle, CFG.cont);
+
+    SET_AND_ADD(emptyItemConfig, HomeWindow::tr("Empty Template"),
+                HomeWindow::tr("Create empty project for marking"), 0);
+    SET_AND_ADD(opencpopItemConfig, HomeWindow::tr("Opencpop Template"),
+                HomeWindow::tr("Use Opencpop template for marking"), 1);
+    SET_AND_ADD(diffItemConfig, HomeWindow::tr("DiffSinger Template"),
+                HomeWindow::tr("Use DiffSinger template for marking"), 2);
+    SET_AND_ADD(openvpiItemConfig, HomeWindow::tr("OpenVPI Template"),
+                HomeWindow::tr("Use OpenVPI template for marking"), 3);
+
+#undef SET_AND_ADD
 }
