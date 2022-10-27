@@ -1,0 +1,324 @@
+.TH audiowaveform 1 "18 May 2022"
+
+.SH NAME
+
+audiowaveform \- generates and renders waveforms from audio files
+
+.SH SYNOPSIS
+
+.B audiowaveform [options]
+
+.SH DESCRIPTION
+
+.B audiowaveform
+generates waveform data from either MP3, WAV, FLAC, Ogg Vorbis, or Opus format
+audio files. Waveform data can be used to produce a visual rendering of the
+audio, similar in appearance to audio editing applications.
+
+Waveform data files are saved in either binary format (.dat) or JSON (.json).
+Given an input waveform data file,
+.B audiowaveform
+can also render the audio waveform as a PNG image at a given time offset and
+zoom level.
+
+The waveform data is produced from an input audio signal by first combining the
+input channels to produce a mono signal. The next stage is to compute the
+minimum and maximum sample values over groups of
+.I N
+input samples (where
+.I N
+is controlled by either the
+.B --zoom
+or
+.B --pixels-per-second
+option), such that each
+.I N
+input samples produces one pair of minimum and maximum points in the output.
+
+Refer to
+.BR audiowaveform (5)
+for details of the binary and JSON waveform data file formats.
+
+.SH OPTIONS
+
+.TP 4
+.B --help
+Show help message.
+
+.TP
+.B --version\fR, \fB-v\fR
+Show version information.
+
+.TP
+.B --quiet\fR, \fB-q\fR
+Disables status messages.
+
+.TP
+.B --input-filename\fR, \fB-i\fR <filename>
+Input filename, which should be a MP3, WAV, FLAC, Ogg Vorbis, or Opus audio file,
+or a binary waveform data file. By default, \fBaudiowaveform\fR uses the file
+extension to decide how to read the input file (either .mp3, .wav, .flac, .ogg,
+\&.oga, .opus, or .dat, as appropriate), but this can be overridden by the
+\fB--input-format\fR option. If the \fB--input-filename\fR option is \fB-\fR or
+is omitted, \fBaudiowaveform\fR reads from standard input, and the
+\fB--input-format\fR option must be used to specify the data format.
+
+Note that Opus support requires libsndfile 1.0.29 or later, so may not be
+available on all systems.
+
+.TP
+.B --output-filename\fR, \fB-o\fR <filename>
+Output filename, which may be either a WAV audio file, a binary or JSON format
+waveform data file, or a PNG image file. By default, \fBaudiowaveform\fR
+uses the file extension to decide the kind of output to generate
+(either .wav, .dat, .json, or .png, as appropriate), but this can be overridden
+by the \fB--output-format\fR option. If the \fB--output-filename\fR option is
+\fB-\fR or is omitted, \fBaudiowaveform\fR writes to standard output, and the
+\fB--output-format\fR option must be used to specify the data format.
+
+.TP
+.B --input-format\fR <format>
+Input data format, either \fBwav\fR, \fBmp3\fR, \fBflac\fR, \fBogg\fR,
+\fBopus\fR, or \fBdat\fR. This option must be used when reading from standard
+input. It may also be used to set the input file format, instead of it being
+determined from the file extension from the \fB--input-filename\fR option.
+
+.TP
+.B --output-format\fR <format>
+Output data format, either \fBwav\fR, \fBdat\fR, \fBjson\fR, or \fBpng\fR. This
+option must be used when writing to standard output. It may also be used to set
+the output file format, instead of it being determined from the file extension
+from the \fB--output-filename\fR option.
+
+.TP
+.B --zoom\fR, \fB-z\fR <zoom> (default: 256)
+When creating a waveform data file or image, specifies the number of input
+samples to use to generate each output waveform data point.
+Note: this option cannot be used if either the \fB--pixels-per-second\fR or
+\fB--end\fR option is specified. When creating a PNG image file, a value of
+\fBauto\fR scales the waveform automatically to fit the image width.
+
+.TP
+.B --pixels-per-second\fR <zoom> (default: 100)
+When creating a waveform data file or image, specifies the number of output
+waveform data points to generate for each second of audio input.
+Note: this option cannot be used if either the \fB--zoom\fR or \fB--end\fR
+option is specified.
+
+.TP
+.B --bits\fR, \fB-b\fR <bits> (default: 16)
+When creating a waveform data file, specifies the number of data bits to use for
+output waveform data points. Valid values are either 8 or 16.
+
+.TP
+.B --split-channels
+Output files are multi-channel, not combined into a single waveform.
+
+.TP
+.B --start\fR, \fB-s\fR <start> (default: 0)
+When creating a waveform image, specifies the start time, in seconds.
+
+.TP
+.B --end\fR, \fB-e\fR <end> (default: 0)
+When creating a waveform image, specifies the end time, in seconds.
+Note: this option cannot be used if the \fB--zoom\fR option is specified.
+
+.TP
+.B --width\fR, \fB-w\fR <width> (default: 800)
+When creating a waveform image, specifies the image width.
+
+.TP
+.B --height\fR, \fB-h\fR <height> (default: 250)
+When creating a waveform image, specifies the image height.
+
+.TP
+.B --colors\fR, \fB-c\fR <colors> (default: audacity)
+When creating a waveform image, specifies the color scheme to use. Valid values
+are either \fBaudacity\fR, which generates a blue waveform on a grey background,
+similar to Audacity, or \fBaudition\fR, which generates a green waveform on a
+dark background, similar to Adobe Audition.
+
+.TP
+.B --border-color <rrggbb[aa]>
+When creating a waveform image, specifies the border color. If not given,
+the default color used is controlled by the \fB--colors\fR option.
+
+The color value should include two hexadecimal digits for each of red, green,
+and blue (00 to FF), and optional alpha transparency (00 to FF).
+
+.TP
+.B --background-color <rrggbb[aa]>
+When creating a waveform image, specifies the background color. If not given,
+the default color used is controlled by the \fB--colors\fR option.
+
+.TP
+.B --waveform-color <rrggbb[aa]>
+When creating a waveform image, specifies the waveform color. If not given,
+the default color used is controlled by the \fB--colors\fR option.
+
+.TP
+.B --axis-label-color <rrggbb[aa]>
+When creating a waveform image, specifies the axis labels color. If not given,
+the default color used is controlled by the \fB--colors\fR option.
+
+.TP
+.B --with-axis-labels\fR, \fB--no-axis-labels\fR (default: with axis labels)
+When creating a waveform image, specifies whether to render axis labels and
+image border.
+
+.TP
+.B --amplitude-scale\fR <scale> (default: 1)
+When creating a waveform image or waveform data file, specifies an amplitude
+scaling (or vertical zoom) to apply to the waveform. Must be either a number
+or \fBauto\fR, which scales the waveform to the maximum height.
+
+.TP
+.B --compression\fR <level> (default: -1)
+When creating a waveform image, specifies the PNG compression level. Must be
+either -1 (default compression) or between 0 (fastest) and 9 (best compression).
+
+.SH EXAMPLES
+
+Generate waveform data from an MP3 file, at 256 samples per point with 8-bit
+resolution:
+
+.in +4
+.nf
+.na
+audiowaveform -i test.mp3 -o test.dat -z 256 -b 8
+.ad
+.fi
+.in -4
+
+Generate waveform data containing multiple channels, rather than
+combining all channels into a single waveform:
+
+.in +4
+.nf
+.na
+audiowaveform -i test.mp3 -o test.dat -z 256 -b 8 --split-channels
+.ad
+.fi
+.in -4
+
+Generate waveform data in JSON format from a FLAC file, at 256 samples per point
+with 8-bit resolution:
+
+.in +4
+.nf
+.na
+audiowaveform -i test.flac -o test.json -z 256 -b 8
+.ad
+.fi
+.in -4
+
+Generate a 1000x200 pixel PNG image from a waveform data file, at 512 samples
+per pixel, starting at 5.0 seconds from the start of the audio:
+
+.in +4
+.nf
+.na
+audiowaveform -i test.dat -o test.png -z 512 -s 5.0 -w 1000 -h 200
+.ad
+.fi
+.in -4
+
+Generate a 1000x200 pixel PNG image from a waveform data file, starting at 5.0
+seconds from the start of the audio, ending at 10.0 seconds:
+
+.in +4
+.nf
+.na
+audiowaveform -i test.dat -o test.png -s 5.0 -e 10.0 -w 1000 -h 200
+.ad
+.fi
+.in -4
+
+Generate a 1000x200 pixel PNG image from a waveform data file, at 200 pixels per
+second, starting at 5.0 seconds from the start of the audio:
+
+.in +4
+.nf
+.na
+audiowaveform -i test.dat -o test.png --pixels-per-second 200 -s 5.0 -w 1000 -h 200
+.ad
+.fi
+.in -4
+
+Generate a 1000x200 PNG image directly from a WAV file, at 300 samples per
+pixel, starting at 60.0 seconds from the start of the audio:
+
+.in +4
+.nf
+.na
+audiowaveform -i test.wav -o test.png -z 300 -s 60.0 -w 1000 -h 200
+.ad
+.fi
+.in -4
+
+Generate a 1000x200 PNG image from an MP3 file, showing the entire duration:
+
+.in +4
+.nf
+.na
+audiowaveform -i test.mp3 -o test.png -w 1000 -h 200 -z auto
+.ad
+.fi
+.in -4
+
+Generate a waveform data file from standard input, to standard output, using
+\fBffmpeg\fR to convert a video file to WAV format:
+
+.in +4
+.nf
+.na
+ffmpeg -i test.mp4 -f wav - | audiowaveform --input-format wav --output-format dat -b 8 > test.dat
+.ad
+.fi
+.in -4
+
+Note: If you want to render multiple images from the same audio file, it's
+generally preferable to first create a waveform data (.dat) file, and create
+the images from that, as decoding long MP3 files can take significant time.
+
+Convert a waveform data file to JSON format:
+
+.in +4
+.nf
+.na
+audiowaveform -i test.dat -o test.json
+.ad
+.fi
+.in -4
+
+Convert MP3 to WAV format audio:
+
+.in +4
+.nf
+.na
+audiowaveform -i test.mp3 -o test.wav
+.ad
+.fi
+.in -4
+
+.SH LIMITATIONS
+
+The
+.B audiowaveform
+program has the following limitations:
+
+.IP \[bu] 2
+When generating PNG images the maximum audio sample rate is 50,000 Hz.
+
+.IP \[bu]
+When generating PNG files, it is not valid to specify a zoom level smaller
+than that used to generate the input waveform data file.
+
+.SH SEE ALSO
+.BR audiowaveform (5)
+
+.SH AUTHOR
+
+.UR chris@chrisneedham.com
+Chris Needham
+.UE
