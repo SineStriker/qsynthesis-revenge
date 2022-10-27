@@ -151,7 +151,12 @@ if (NOT APPLE)
                      SDL2::SDL2
                      FramelessHelper::FramelessHelperCore FramelessHelper::FramelessHelperWidgets
                      QuaZip::QuaZip ZLIB::zlib
-                     yaml-cpp
+        RELATIVE PREBUILT
+    )
+    deploy_shared_libraries(
+        TARGET ${PROJECT_NAME}
+        DESTINATION .
+        DEPENDENCIES yaml-cpp
         RELATIVE PREBUILT
     )
     target_compile_definitions(${PROJECT_NAME} PRIVATE LIB_DIR="${APP_LIB_DIR}")
