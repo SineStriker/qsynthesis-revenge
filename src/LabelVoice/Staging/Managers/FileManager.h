@@ -26,8 +26,20 @@ public:
     void commitRecent(RecentType rType, ChangeType cType, const QString &filename = QString());
     QStringList fetchRecent(RecentType rType) const;
 
+public:
+    QString openFile(const QString &title, const QString &filter, const QString &flag,
+                     QWidget *parent = nullptr);
+    QStringList openFiles(const QString &title, const QString &filter, const QString &flag,
+                          QWidget *parent = nullptr);
+    QString openDir(const QString &title, const QString &flag, QWidget *parent = nullptr);
+    QString saveFile(const QString &title, const QString &filename, const QString &filter,
+                     const QString &flag, QWidget *parent = nullptr);
+
 protected:
     FileManager(FileManagerPrivate &d, QObject *parent = nullptr);
+
+    QString getLastOpenPath(const QString &type);
+    void saveLastOpenDir(const QString &type, const QString &path);
 
 signals:
     void recentCommited(RecentType rType);

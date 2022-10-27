@@ -5,9 +5,9 @@
 #include "QSvgUri.h"
 
 #include "Kernel/LvApplication.h"
-#include "Managers/WindowManager.h"
-
+#include "Managers/FileManager.h"
 #include "Managers/PluginManager.h"
+#include "Managers/WindowManager.h"
 
 #include <QDebug>
 
@@ -86,12 +86,54 @@ void HomeWindow::setTemplateStyleData(const QTypeList &list) {
     }
 }
 
-HomeWindow::HomeWindow(HomeWindowPrivate &d, QWidget *parent) : PlainWindow(d, parent) {
+QTypeList HomeWindow::recentStyleData() const {
+    return {};
+}
+
+void HomeWindow::setRecentStyleData(const QTypeList &list) {
+    Q_UNUSED(list);
+}
+
+HomeWindow::HomeWindow(HomeWindowPrivate &d, QWidget *parent)
+    : PlainWindow(d, parent), ProjectCommonBlock(this) {
     d.init();
 
     Q_TR_NOTIFY(HomeWindow)
 }
 
+void HomeWindow::_q_openButtonClicked() {
+    openProject();
+}
+
 void HomeWindow::_q_searchBoxChanged(const QString &text) {
     qDebug() << text;
+}
+
+void HomeWindow::_q_templateItemClicked(const QModelIndex &index, int button) {
+    Q_D(HomeWindow);
+    int type = index.data(FileListItemDelegate::Type).toInt();
+    if (button == Qt::LeftButton) {
+        switch (type) {
+            case HomeWindowPrivate::Empty:
+                d->cb_switchIn();
+                break;
+            case HomeWindowPrivate::Opencpop:
+                break;
+            case HomeWindowPrivate::DiffSinger:
+                break;
+            case HomeWindowPrivate::OpenVPI:
+                break;
+        }
+    } else {
+        // Right click handle
+    }
+}
+
+void HomeWindow::_q_confirmCreate() {
+    newProject();
+}
+
+void HomeWindow::_q_cancelCreate() {
+    Q_D(HomeWindow);
+    d->cb_switchOut();
 }

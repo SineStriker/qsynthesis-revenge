@@ -1,19 +1,11 @@
-/* Global */
+/* Home Window */
 
-QWidget {
-    font-size: 15px;
-    outline: none;
-}
-
-
-/* HomeWindow */
-
-CWindowBarV2 {
+HomeWindow>CWindowBarV2 {
     background-color: transparent;
     qproperty-titleMargin: 20px;
 }
 
-CWindowBarV2>QLabel#win-title-label {
+HomeWindow>CWindowBarV2>QLabel#win-title-label {
     padding: 0;
     border: none;
     color: transparent;
@@ -22,7 +14,7 @@ CWindowBarV2>QLabel#win-title-label {
     min-height: 40px;
 }
 
-CWindowBarV2>CToolButton#min-button {
+HomeWindow>CWindowBarV2>CToolButton#min-button {
     qproperty-iconUp: svg(":/svg/window/minimize.svg", #111111);
     qproperty-iconSize: 12px 12px;
     min-width: 50px;
@@ -31,12 +23,12 @@ CWindowBarV2>CToolButton#min-button {
     background-color: transparent;
 }
 
-CWindowBarV2>CToolButton#min-button:hover,
-CWindowBarV2>CToolButton#min-button:pressed {
+HomeWindow>CWindowBarV2>CToolButton#min-button:hover,
+HomeWindow>CWindowBarV2>CToolButton#min-button:pressed {
     background-color: rgba(0, 0, 0, 10%);
 }
 
-CWindowBarV2>CToolButton#max-button {
+HomeWindow>CWindowBarV2>CToolButton#max-button {
     qproperty-iconUp: svg(":/svg/window/maximize.svg", #111111);
     qproperty-iconUpChecked: svg(":/svg/window/maximize2.svg", #111111);
     qproperty-iconSize: 12px 12px;
@@ -46,12 +38,12 @@ CWindowBarV2>CToolButton#max-button {
     background-color: transparent;
 }
 
-CWindowBarV2>CToolButton#max-button:hover,
-CWindowBarV2>CToolButton#max-button:pressed {
+HomeWindow>CWindowBarV2>CToolButton#max-button:hover,
+HomeWindow>CWindowBarV2>CToolButton#max-button:pressed {
     background-color: rgba(0, 0, 0, 10%);
 }
 
-CWindowBarV2>CToolButton#win-close-button {
+HomeWindow>CWindowBarV2>CToolButton#win-close-button {
     qproperty-iconUp: svg(":/svg/window/close.svg", #111111);
     qproperty-iconOver: svg(":/svg/window/close.svg", #FFFFFF);
     qproperty-iconSize: 12px 12px;
@@ -61,8 +53,8 @@ CWindowBarV2>CToolButton#win-close-button {
     background-color: transparent;
 }
 
-CWindowBarV2>CToolButton#win-close-button:hover,
-CWindowBarV2>CToolButton#win-close-button:pressed {
+HomeWindow>CWindowBarV2>CToolButton#win-close-button:hover,
+HomeWindow>CWindowBarV2>CToolButton#win-close-button:pressed {
     background-color: #e81123;
 }
 
@@ -81,7 +73,7 @@ HomeWindow {
 }
 
 QWidget#home-widget {
-    padding: 15px;
+    padding: 20px;
 }
 
 QWidget#home-widget>QSplitter#home-splitter:handle {
@@ -90,19 +82,13 @@ QWidget#home-widget>QSplitter#home-splitter:handle {
 }
 
 QWidget#home-welcome-widget {
-    padding: 15px;
-}
-
-QWidget#home-recent-widget {
-    padding: 15px;
-    margin: 15px;
-    background-color: #FEFEFE;
+    padding: 20px;
 }
 
 QWidget#home-welcome-widget>CPushButton#title-label {
     color: #2B2B2B;
     font-size: 45px;
-    font-weight: 900;
+    font-weight: bold;
     qproperty-iconUp: svg(":/svg/app/logo-grey.svg");
     qproperty-iconSize: 90px 90px;
     text-align: left;
@@ -115,6 +101,23 @@ QWidget#home-welcome-widget>QLabel#subtitle-label {
     color: darkgrey;
     font-size: 20px;
     padding: 20px 0;
+}
+
+QWidget#home-welcome-widget>CPushButton#open-button {
+    color: white;
+    padding: 10px 20px;
+    background-color: #0078D7;
+    border-radius: 3px;
+    border: none;
+    font-weight: bold;
+}
+
+QWidget#home-welcome-widget>CPushButton#open-button:hover {
+    background-color: #429CE3;
+}
+
+QWidget#home-welcome-widget>CPushButton#open-button:pressed {
+    background-color: #005A9E;
 }
 
 QWidget#home-welcome-widget>FileListWidget,
@@ -134,4 +137,57 @@ QWidget#home-recent-widget>FileListWidget {
     qmargins(20px, 10px, 10px, 10px), /* iconMargins */
     qmargins(3px, 10px, 3px, 10px), /* margins */
     );
+}
+
+QWidget#home-recent-widget {
+    padding: 20px;
+    margin: 20px;
+    background-color: #FEFEFE;
+}
+
+QWidget#home-recent-widget>QLineEdit#search-box {
+    padding: 8px;
+    border-color: #999999;
+}
+
+
+/* create-widget */
+
+QWidget#home-create-widget {
+    padding: 60px;
+}
+
+QWidget#home-create-widget>QLabel#title-label {
+    color: #2B2B2B;
+    font-size: 40px;
+}
+
+QWidget#home-create-widget>QLabel#subtitle-label {
+    color: #2B2B2B;
+    font-size: 20px;
+    padding: 20px 0;
+}
+
+QWidget#home-create-widget>LabelTextBlock {
+    max-width: 750px;
+}
+
+QWidget#home-create-widget>LabelTextBlock>QLabel {
+    padding: 10px 0;
+}
+
+QWidget#home-create-widget>LabelTextBlock>QLineEdit {
+    padding: 8px;
+}
+
+QWidget#home-create-widget>LabelTextBlock>CPushButton {
+    padding: 10px 20px;
+    margin-left: 20px;
+}
+
+QWidget#home-create-widget>CPushButton#prev-button,
+QWidget#home-create-widget>CPushButton#ok-button {
+    padding: 10px;
+    margin: 0 10px;
+    min-width: 100px;
 }

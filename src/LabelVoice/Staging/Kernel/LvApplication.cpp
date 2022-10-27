@@ -4,6 +4,7 @@
 #include "Styles/QCssAnalyzer.h"
 
 #include <QScreen>
+#include <QStandardPaths>
 
 LvApplication::LvApplication(int &argc, char **argv)
     : LvApplication(*new LvApplicationPrivate(), argc, argv) {
@@ -57,6 +58,14 @@ QString LvApplication::fileManagerName() const {
 #endif
 }
 
+QString LvApplication::allFilesFilter() const {
+#if defined(Q_OS_WINDOWS)
+    return tr("*.*");
+#else
+    return tr("*");
+#endif
+}
+
 QString LvApplication::appDataPath() const {
     Q_D(const LvApplication);
     return d->dataPath;
@@ -70,6 +79,10 @@ QString LvApplication::appTempPath() const {
 QString LvApplication::appPluginDir() const {
     Q_D(const LvApplication);
     return d->pluginDir;
+}
+
+QString LvApplication::desktopDir() {
+    return QStandardPaths::writableLocation(QStandardPaths::DesktopLocation);
 }
 
 LvApplication::LvApplication(LvApplicationPrivate &d, int &argc, char **argv)

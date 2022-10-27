@@ -32,11 +32,12 @@ public:
     QString unsavedPrefix() const;
     QString deletedPrefix() const;
     QString fileManagerName() const;
+    QString allFilesFilter() const;
 
     QString appDataPath() const;
     QString appTempPath() const;
-
     QString appPluginDir() const;
+    QString desktopDir();
 
 protected:
     LvApplication(LvApplicationPrivate &d, int &argc, char **argv);

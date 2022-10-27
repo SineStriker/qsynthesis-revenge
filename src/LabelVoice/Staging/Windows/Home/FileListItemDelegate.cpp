@@ -177,9 +177,9 @@ bool FileListItemDelegate::editorEvent(QEvent *event, QAbstractItemModel *model,
         QMouseEvent *mouseEvent = static_cast<QMouseEvent *>(event);
 
         if (mouseEvent->button() == Qt::RightButton) {
-            emit rightClick(index);
+            emit clicked(index, Qt::RightButton);
         } else if (mouseEvent->button() == Qt::LeftButton) {
-            emit leftClick(index);
+            emit clicked(index, Qt::LeftButton);
         }
     }
 

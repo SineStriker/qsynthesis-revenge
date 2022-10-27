@@ -57,8 +57,7 @@ protected:
                      const QModelIndex &index) override;
 
 signals:
-    void leftClick(const QModelIndex &index);
-    void rightClick(const QModelIndex &index);
+    void clicked(const QModelIndex &index, int button);
 };
 
 #endif // FILELISTITEMDELEGATE_H

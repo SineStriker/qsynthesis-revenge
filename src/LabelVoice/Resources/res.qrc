@@ -1,6 +1,5 @@
 <RCC>
     <qresource prefix="/">
-        <file>themes/lv-light.qss</file>
         <file>svg/window/close.svg</file>
         <file>svg/window/fullscreen.svg</file>
         <file>svg/window/icon.svg</file>
@@ -11,5 +10,11 @@
         <file>svg/letter/+.svg</file>
         <file>svg/letter/d.svg</file>
         <file>svg/letter/o.svg</file>
+        <file>themes/light/home-light.qss</file>
+        <file>themes/light/piano-light.qss</file>
+        <file>themes/light/base-light.qss</file>
+        <file>svg/menu/arrow-right-s-line.svg</file>
+        <file>svg/menu/checked-line.svg</file>
+        <file>svg/menu/more-line.svg</file>
     </qresource>
 </RCC>

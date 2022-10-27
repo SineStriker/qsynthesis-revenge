@@ -9,6 +9,11 @@ PianoWindowPrivate::~PianoWindowPrivate() {
 void PianoWindowPrivate::init() {
     Q_Q(PianoWindow);
 
+    // Don't show icon
+    if (winHandle) {
+        winHandle->setTitleBarFlags(winHandle->titleBarFlags() & ~IWindowHandle::WindowIcon);
+    }
+
     actions = new PianoActions(q);
     actions->setup();
 
