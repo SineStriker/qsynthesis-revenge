@@ -57,7 +57,11 @@ QTypeList FileListWidget::styleData() const {
     var7.setValue(m_delegate->m_dateMargins);
     QVariant var8;
     var8.setValue(m_delegate->m_iconMargins);
-    return {var0, var1, var2, var3, var4, var5, var6, var7, var8};
+    QVariant var9;
+    var9.setValue(m_delegate->m_margins);
+    QVariant var10;
+    var10.setValue(m_delegate->m_idleType);
+    return {var0, var1, var2, var3, var4, var5, var6, var7, var8, var9, var10};
 }
 
 void FileListWidget::setStyleData(const QTypeList &list) {
@@ -71,6 +75,11 @@ void FileListWidget::setStyleData(const QTypeList &list) {
         QVariant var6 = list.at(6);
         QVariant var7 = list.at(7);
         QVariant var8 = list.at(8);
+        QVariant var9 = list.at(9);
+        QVariant var10 = list.at(10);
+        if (var0.convert(qMetaTypeId<QTypeFace>())) {
+            m_delegate->m_idleType = var0.value<QTypeFace>();
+        }
         if (var0.convert(qMetaTypeId<QTypeFace>())) {
             m_delegate->m_selectType = var0.value<QTypeFace>();
         }
@@ -97,6 +106,12 @@ void FileListWidget::setStyleData(const QTypeList &list) {
         }
         if (var8.convert(qMetaTypeId<QMargins>())) {
             m_delegate->m_iconMargins = var8.value<QMargins>();
+        }
+        if (var9.convert(qMetaTypeId<QMargins>())) {
+            m_delegate->m_margins = var9.value<QMargins>();
+        }
+        if (var10.convert(qMetaTypeId<QTypeFace>())) {
+            m_delegate->m_idleType = var10.value<QTypeFace>();
         }
     }
     update();

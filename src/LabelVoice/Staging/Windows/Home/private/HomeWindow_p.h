@@ -42,6 +42,16 @@ public:
 
     FileListWidget *templateList, *recentList;
     QLineEdit *searchBox;
+
+    struct TemplateConfig {
+        QIcon icon;
+        QString title;
+        QString subtitle;
+        QString cont;
+    };
+    QList<TemplateConfig> templates;
+
+    void reloadTemplates();
 };
 
 #endif // HOMEWINDOWPRIVATE_H

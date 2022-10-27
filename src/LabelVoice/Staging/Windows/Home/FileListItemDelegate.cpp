@@ -28,6 +28,7 @@ QSize FileListItemDelegate::sizeHint(const QStyleOptionViewItem &option,
     int dateHeight =
         QFontMetrics(m_dateType.font()).height() + m_dateMargins.top() + m_dateMargins.bottom();
     int h = qMax(iconHeight, qMax(midHeight, dateHeight));
+    h += m_margins.bottom() + m_margins.top();
     if (size.height() < h) {
         size.setHeight(h);
     }
@@ -37,6 +38,7 @@ QSize FileListItemDelegate::sizeHint(const QStyleOptionViewItem &option,
 void FileListItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option,
                                  const QModelIndex &index) const {
     QRect rect = option.rect;
+    rect.adjust(m_margins.left(), m_margins.top(), -m_margins.right(), -m_margins.bottom());
 
     // Fetch data
     QString filename = index.data(Filename).toString();
@@ -106,9 +108,10 @@ void FileListItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &
     painter->setPen(Qt::NoPen);
     if (option.state & QStyle::State_Selected || option.state & QStyle::State_MouseOver) {
         painter->setBrush(m_selectType.color());
-        painter->drawRect(rect);
+    } else {
+        painter->setBrush(m_idleType.color());
     }
-    painter->setBrush(Qt::NoBrush);
+    painter->drawRect(rect);
 
     // Icon
     if (!icon.isNull()) {
