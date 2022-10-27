@@ -254,7 +254,7 @@ void HomeWindowPrivate::cb_reloadStrings() {
     cb.projectName->label->setText(HomeWindow::tr("Project Name"));
     cb.location->label->setText(HomeWindow::tr("Location"));
     cb.location->browseButton->setText(HomeWindow::tr("..."));
-    cb.solution->label->setText(HomeWindow::tr("Solution Name"));
+    cb.solution->label->setText(HomeWindow::tr("Definition File Name"));
 
     cb.backButton->setText(HomeWindow::tr("Back"));
     cb.createButton->setText(HomeWindow::tr("Create"));

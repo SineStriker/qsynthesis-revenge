@@ -83,10 +83,14 @@ int main(int argc, char *argv[]) {
         if (fun != NULL) {
             res = fun(argc, argv);
         } else {
+            ::MessageBoxW(nullptr, TO_UNICODE("Failed to find entry!"), TO_UNICODE("Error"),
+                          MB_OK | MB_ICONERROR);
             res = ::GetLastError();
         }
         ::FreeLibrary(hDLL);
     } else {
+        ::MessageBoxW(nullptr, TO_UNICODE("Failed to load main module!"), TO_UNICODE("Error"),
+                      MB_OK | MB_ICONERROR);
         res = ::GetLastError();
     }
     return res;

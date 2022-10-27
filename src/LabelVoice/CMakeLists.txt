@@ -207,6 +207,15 @@ if (WIN32 AND APP_DEPLOY)
         RELATIVE
     )
 
+    deploy_shared_libraries(
+        TARGET ${PROJECT_NAME}
+        DESTINATION ${APP_LIB_DIR}
+        DEPENDENCIES Qt${QT_VERSION_MAJOR}::Core Qt${QT_VERSION_MAJOR}::Gui
+                     Qt${QT_VERSION_MAJOR}::Widgets Qt${QT_VERSION_MAJOR}::Svg
+                     Qt${QT_VERSION_MAJOR}::Network
+        RELATIVE PREBUILT
+    )
+
 else()
 
     target_link_libraries(${PROJECT_NAME} PRIVATE ${APP_BLOCK})
