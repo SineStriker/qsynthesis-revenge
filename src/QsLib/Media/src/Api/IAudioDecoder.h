@@ -10,6 +10,8 @@ class QSMEDIA_API IAudioDecoder : public QObject {
 public:
     IAudioDecoder(QObject *parent = nullptr);
     ~IAudioDecoder();
+
+public:
 };
 
 #define IAudioDecoder_IID "QSynthesis.Plugin.Media.AudioDecoder"

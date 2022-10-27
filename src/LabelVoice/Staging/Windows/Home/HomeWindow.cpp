@@ -9,30 +9,11 @@
 #include "Managers/PluginManager.h"
 #include "Managers/WindowManager.h"
 
+#include "HomeMainWidget.h"
+
 #include <QDebug>
 
-#include "Serialization/QLVProject.h"
-
-#define DECODE_STYLE(VAR, VARIANT, TYPE)                                                           \
-    {                                                                                              \
-        QVariant var = VARIANT;                                                                    \
-        if (var.convert(qMetaTypeId<TYPE>())) {                                                    \
-            VAR = var.value<TYPE>();                                                               \
-        }                                                                                          \
-    }
-
-#define DECODE_STYLE_SETTER(VAR, VARIANT, TYPE, SETTER)                                            \
-    {                                                                                              \
-        QVariant var = VARIANT;                                                                    \
-        if (var.convert(qMetaTypeId<TYPE>())) {                                                    \
-            VAR.SETTER(var.value<TYPE>());                                                         \
-        }                                                                                          \
-    }
-
 HomeWindow::HomeWindow(QWidget *parent) : HomeWindow(*new HomeWindowPrivate(), parent) {
-    LVModel::ProjectModel proj;
-
-    qDebug() << proj.load("test.lvproj");
 }
 
 HomeWindow::~HomeWindow() {
@@ -45,53 +26,26 @@ void HomeWindow::reloadStrings() {
 
 QTypeList HomeWindow::templateStyleData() const {
     Q_D(const HomeWindow);
-    return {
-        QVariant::fromValue(d->emptyItemConfig.icon),
-        d->emptyItemConfig.iconSize.width(),
-        d->emptyItemConfig.iconSize.height(),
-        QVariant::fromValue(d->opencpopItemConfig.icon),
-        d->opencpopItemConfig.iconSize.width(),
-        d->opencpopItemConfig.iconSize.height(),
-        QVariant::fromValue(d->diffItemConfig.icon),
-        d->diffItemConfig.iconSize.width(),
-        d->diffItemConfig.iconSize.height(),
-        QVariant::fromValue(d->openvpiItemConfig.icon),
-        d->openvpiItemConfig.iconSize.width(),
-        d->openvpiItemConfig.iconSize.height(),
-    };
+    return d->mainWidget->styleData();
 }
 
 void HomeWindow::setTemplateStyleData(const QTypeList &list) {
     Q_D(HomeWindow);
-    if (list.size() >= 12) {
-        int i = 0;
-        DECODE_STYLE(d->emptyItemConfig.icon, list.at(i++), QSvgUri);
-        DECODE_STYLE_SETTER(d->emptyItemConfig.iconSize, list.at(i++), QPixelSize, setWidth);
-        DECODE_STYLE_SETTER(d->emptyItemConfig.iconSize, list.at(i++), QPixelSize, setHeight);
 
-        DECODE_STYLE(d->opencpopItemConfig.icon, list.at(i++), QSvgUri);
-        DECODE_STYLE_SETTER(d->opencpopItemConfig.iconSize, list.at(i++), QPixelSize, setWidth);
-        DECODE_STYLE_SETTER(d->opencpopItemConfig.iconSize, list.at(i++), QPixelSize, setHeight);
-
-        DECODE_STYLE(d->diffItemConfig.icon, list.at(i++), QSvgUri);
-        DECODE_STYLE_SETTER(d->diffItemConfig.iconSize, list.at(i++), QPixelSize, setWidth);
-        DECODE_STYLE_SETTER(d->diffItemConfig.iconSize, list.at(i++), QPixelSize, setHeight);
-
-        DECODE_STYLE(d->openvpiItemConfig.icon, list.at(i++), QSvgUri);
-        DECODE_STYLE_SETTER(d->openvpiItemConfig.iconSize, list.at(i++), QPixelSize, setWidth);
-        DECODE_STYLE_SETTER(d->openvpiItemConfig.iconSize, list.at(i++), QPixelSize, setHeight);
-
-        d->reloadTemplates();
-        emit styleDataChanged();
-    }
+    d->mainWidget->setStyleData(list);
+    emit styleDataChanged();
 }
 
 QTypeList HomeWindow::recentStyleData() const {
-    return {};
+    Q_D(const HomeWindow);
+    return d->projConfWidget->styleData();
 }
 
 void HomeWindow::setRecentStyleData(const QTypeList &list) {
-    Q_UNUSED(list);
+    Q_D(HomeWindow);
+
+    d->projConfWidget->setStyleData(list);
+    emit styleDataChanged();
 }
 
 HomeWindow::HomeWindow(HomeWindowPrivate &d, QWidget *parent)
@@ -101,39 +55,32 @@ HomeWindow::HomeWindow(HomeWindowPrivate &d, QWidget *parent)
     Q_TR_NOTIFY(HomeWindow)
 }
 
-void HomeWindow::_q_openButtonClicked() {
+void HomeWindow::_q_openRequested() {
     openProject();
 }
 
-void HomeWindow::_q_searchBoxChanged(const QString &text) {
-    qDebug() << text;
-}
-
-void HomeWindow::_q_templateItemClicked(const QModelIndex &index, int button) {
+void HomeWindow::_q_newRequested(int type) {
     Q_D(HomeWindow);
-    int type = index.data(FileListItemDelegate::Type).toInt();
-    if (button == Qt::LeftButton) {
-        switch (type) {
-            case HomeWindowPrivate::Empty:
-                d->cb_switchIn();
-                break;
-            case HomeWindowPrivate::Opencpop:
-                break;
-            case HomeWindowPrivate::DiffSinger:
-                break;
-            case HomeWindowPrivate::OpenVPI:
-                break;
-        }
-    } else {
-        // Right click handle
+    switch (type) {
+        case HomeMainWidget::Empty:
+            d->cb_switchIn();
+            break;
+        case HomeMainWidget::Opencpop:
+            break;
+        case HomeMainWidget::DiffSinger:
+            break;
+        case HomeMainWidget::OpenVPI:
+            break;
+        default:
+            break;
     }
 }
 
-void HomeWindow::_q_confirmCreate() {
-    newProject();
-}
-
-void HomeWindow::_q_cancelCreate() {
+void HomeWindow::_q_cancelProjectConfigure() {
     Q_D(HomeWindow);
     d->cb_switchOut();
+}
+
+void HomeWindow::_q_confirmProjectConfigure() {
+    newProject();
 }

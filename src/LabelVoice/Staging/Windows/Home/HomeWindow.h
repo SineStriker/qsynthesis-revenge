@@ -32,12 +32,11 @@ protected:
     HomeWindow(HomeWindowPrivate &d, QWidget *parent = nullptr);
 
 private:
-    void _q_openButtonClicked();
-    void _q_searchBoxChanged(const QString &text);
-    void _q_templateItemClicked(const QModelIndex &index, int button);
+    void _q_openRequested();
+    void _q_newRequested(int type);
 
-    void _q_confirmCreate();
-    void _q_cancelCreate();
+    void _q_cancelProjectConfigure();
+    void _q_confirmProjectConfigure();
 
 signals:
     void styleDataChanged();
