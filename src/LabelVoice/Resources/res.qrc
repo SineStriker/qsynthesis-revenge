@@ -8,5 +8,8 @@
         <file>svg/window/maximize2.svg</file>
         <file>svg/window/minimize.svg</file>
         <file>svg/app/logo-grey.svg</file>
+        <file>svg/letter/+.svg</file>
+        <file>svg/letter/d.svg</file>
+        <file>svg/letter/o.svg</file>
     </qresource>
 </RCC>

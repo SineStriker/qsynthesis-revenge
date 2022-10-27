@@ -37,6 +37,7 @@ public:
                const QModelIndex &index) const override;
 
 protected:
+    QTypeFace m_idleType;
     QTypeFace m_selectType;
     QTypeFace m_underline;
 
@@ -47,6 +48,7 @@ protected:
     QMargins m_fileMargins;
     QMargins m_locMargins;
     QMargins m_dateMargins;
+    QMargins m_margins;
 
     QMargins m_iconMargins;
 
