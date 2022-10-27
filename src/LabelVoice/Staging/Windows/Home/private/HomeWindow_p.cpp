@@ -30,6 +30,7 @@ void HomeWindowPrivate::init() {
     subtitleLabel->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Fixed);
 
     templateList = new FileListWidget();
+    templateList->setObjectName("template-list");
 
     leftLayout = new QVBoxLayout();
     leftLayout->setMargin(0);
@@ -48,6 +49,7 @@ void HomeWindowPrivate::init() {
     searchBox->setObjectName("search-box");
 
     recentList = new FileListWidget();
+    recentList->setObjectName("recent-list");
 
     rightLayout = new QVBoxLayout();
     rightLayout->setMargin(0);
@@ -82,8 +84,46 @@ void HomeWindowPrivate::reloadStrings_helper() {
     Q_Q(HomeWindow);
 
     titleLabel->setText(qApp->applicationName());
-    subtitleLabel->setText(HomeWindow::tr("Select a template"));
-    searchBox->setPlaceholderText(HomeWindow::tr("Search recent files"));
+    subtitleLabel->setText(HomeWindow::tr("Select a template to create a project"));
+    searchBox->setPlaceholderText(HomeWindow::tr("Search for recent projects"));
 
     q->setWindowTitle(HomeWindow::tr("Welcome to %1").arg(qApp->applicationName()));
+
+    reloadTemplates();
+}
+
+void HomeWindowPrivate::reloadTemplates() {
+    templates.clear();
+    templates.append(TemplateConfig{
+        QIcon(":/svg/letter/+.svg"),
+        HomeWindow::tr("Empty Template"),
+        HomeWindow::tr("Create empty project for marking"),
+        ">",
+    });
+    templates.append(TemplateConfig{
+        QIcon(":/svg/letter/o.svg"),
+        HomeWindow::tr("Opencpop Template"),
+        HomeWindow::tr("Use Opencpop template for marking"),
+        ">",
+    });
+    templates.append(TemplateConfig{
+        QIcon(":/svg/letter/d.svg"),
+        HomeWindow::tr("DiffSinger Template"),
+        HomeWindow::tr("Use DiffSinger template for marking"),
+        ">",
+    });
+    templates.append(TemplateConfig{
+        QIcon(":/svg/letter/o.svg"),
+        HomeWindow::tr("OpenVPI Template"),
+        HomeWindow::tr("Use OpenVPI template for marking"),
+        ">",
+    });
+
+    // Templates
+    templateList->clear();
+    for (auto it = templates.begin(); it != templates.end(); ++it) {
+        const TemplateConfig &info = *it;
+        templateList->addFileItem(info.icon, QSize(32, 32), 0, info.title, info.subtitle,
+                                  info.cont);
+    }
 }

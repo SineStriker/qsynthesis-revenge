@@ -67,6 +67,7 @@ QTypeFace QTypeFace::fromStringList(const QStringList &stringList) {
             QString strColor = content.front();
             int pixelSize = -1;
             double pointSize = -1;
+            int weight = -1;
             tf.setColor(View::CssStringToColor(strColor));
 
             if (content.size() > 1) {
@@ -87,17 +88,21 @@ QTypeFace QTypeFace::fromStringList(const QStringList &stringList) {
                     }
                 }
             }
-            if (content.size() > 3) {
-                QString strFont = content.mid(2).join(',');
-                QFont font;
-                if (font.fromString(strFont)) {
-                    tf.setFont(font);
+            if (content.size() > 2) {
+                QString strWeight = content.at(2);
+                bool isNum;
+                int num = strWeight.toDouble(&isNum);
+                if (isNum) {
+                    weight = num;
                 }
             }
             if (pixelSize > 0) {
                 tf.m_font.setPixelSize(pixelSize);
             } else if (pointSize > 0) {
                 tf.m_font.setPointSizeF(pointSize);
+            }
+            if (weight > 0) {
+                tf.m_font.setWeight(weight);
             }
             return tf;
         }

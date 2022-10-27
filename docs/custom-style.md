@@ -43,9 +43,9 @@ This document only briefly describes how to use the additional syntax, and you c
 ### QTypeFace
 
 + Abstract: A struct containing a font and a color.
-+ Format: **qtypeface(*color*, *size*, *font_family*...)**
++ Format: **qtypeface(*color*, *size*, *weight*...)**
 + Examples:
-  + qtypeface(#000000, 10px, Microsoft YaHei)
+  + qtypeface(#000000, 10px, 75)
   + qtypeface(rgb(0, 0, 0), 12.5)
 + Details:
   + The color parameter is parsed into QColor by CSS syntax format.
