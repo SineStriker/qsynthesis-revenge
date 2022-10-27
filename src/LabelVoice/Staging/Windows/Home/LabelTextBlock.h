@@ -9,7 +9,7 @@
 
 #include "CPushButton.h"
 
-class LabelTextBlock : public QWidget {
+class LabelTextBlock : public QFrame {
     Q_OBJECT
 public:
     explicit LabelTextBlock(bool browse, QWidget *parent = nullptr);

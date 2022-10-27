@@ -1,9 +1,9 @@
 #ifndef NONESCROLLAREA_H
 #define NONESCROLLAREA_H
 
-#include <QWidget>
+#include <QFrame>
 
-class NoneScrollArea : public QWidget {
+class NoneScrollArea : public QFrame {
     Q_OBJECT
 public:
     explicit NoneScrollArea(QWidget *parent = nullptr);

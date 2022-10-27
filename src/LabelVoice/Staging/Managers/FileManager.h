@@ -39,7 +39,7 @@ protected:
     FileManager(FileManagerPrivate &d, QObject *parent = nullptr);
 
     QString getLastOpenPath(const QString &type);
-    void saveLastOpenDir(const QString &type, const QString &path);
+    void saveLastOpenDir(const QString &type, const QString &path, bool upper = true);
 
 signals:
     void recentCommited(RecentType rType);

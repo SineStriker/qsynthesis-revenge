@@ -6,7 +6,7 @@
 
 const char FLAG_BROWSE[] = "%BROWSE%";
 
-LabelTextBlock::LabelTextBlock(bool browse, QWidget *parent) : QWidget(parent) {
+LabelTextBlock::LabelTextBlock(bool browse, QWidget *parent) : QFrame(parent) {
     label = new QLabel();
     label->setObjectName("label");
 

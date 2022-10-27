@@ -255,7 +255,7 @@ void QScrollableTabWidget::dropEvent(QDropEvent *event) {
 }
 
 QScrollableTabWidget::QScrollableTabWidget(QScrollableTabWidgetPrivate &d, QWidget *parent)
-    : QWidget(parent), d_ptr(&d) {
+    : QFrame(parent), d_ptr(&d) {
     d.q_ptr = this;
     d.init();
 }

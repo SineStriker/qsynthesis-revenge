@@ -13,7 +13,7 @@ using namespace CCoupleTabTypes;
 const char PROPERTY_HIGHLIGHT[] = "highlight";
 const char PROPERTY_WIDTHHINT[] = "widthhint";
 
-CCoupleTabDoubleBar::CCoupleTabDoubleBar(QWidget *parent) : QWidget(parent) {
+CCoupleTabDoubleBar::CCoupleTabDoubleBar(QWidget *parent) : QFrame(parent) {
     init();
 }
 
@@ -140,7 +140,7 @@ void CCoupleTabDoubleBar::resetLayout() {
 }
 
 void CCoupleTabDoubleBar::mousePressEvent(QMouseEvent *event) {
-    QWidget::mousePressEvent(event);
+    QFrame::mousePressEvent(event);
 }
 
 void CCoupleTabDoubleBar::handleCardAdded(CCoupleTabBarCard *card) {

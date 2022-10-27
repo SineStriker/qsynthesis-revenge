@@ -43,10 +43,10 @@ int CCoupleTabContainer::insertWidget(CCoupleTabTypes::Number num, int index, QW
         if (!isVisible()) {
             show();
         }
-    } else {
+    }/* else {
         container->hide();
         updateVisible();
-    }
+    }*/
     return res;
 }
 

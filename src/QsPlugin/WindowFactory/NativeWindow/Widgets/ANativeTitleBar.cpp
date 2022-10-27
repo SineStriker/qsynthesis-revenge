@@ -177,7 +177,7 @@ void ANativeTitleBar::setIconFollowWindow(bool value) {
 }
 
 ANativeTitleBar::ANativeTitleBar(ANativeTitleBarPrivate &d, QWidget *parent)
-    : QWidget(parent), d_ptr(&d) {
+    : QFrame(parent), d_ptr(&d) {
     d.q_ptr = this;
     d.init();
     setAttribute(Qt::WA_StyledBackground);
@@ -195,21 +195,21 @@ bool ANativeTitleBar::eventFilter(QObject *obj, QEvent *event) {
         QLabel *label = titleLabel();
         QAbstractButton *maxBtn = maxButton();
         switch (event->type()) {
-        case QEvent::WindowIconChange:
-            if (d_ptr->autoIcon && iconBtn)
-                iconBtn->setIcon(w->windowIcon());
-            break;
-        case QEvent::WindowTitleChange:
-            if (d_ptr->autoTitle && label)
-                label->setText(w->windowTitle());
-            break;
-        case QEvent::WindowStateChange:
-            if (maxBtn) {
-                maxBtn->setChecked(w->isMaximized());
-            }
-            break;
-        default:
-            break;
+            case QEvent::WindowIconChange:
+                if (d_ptr->autoIcon && iconBtn)
+                    iconBtn->setIcon(w->windowIcon());
+                break;
+            case QEvent::WindowTitleChange:
+                if (d_ptr->autoTitle && label)
+                    label->setText(w->windowTitle());
+                break;
+            case QEvent::WindowStateChange:
+                if (maxBtn) {
+                    maxBtn->setChecked(w->isMaximized());
+                }
+                break;
+            default:
+                break;
         }
     }
     return QWidget::eventFilter(obj, event);

@@ -4,9 +4,12 @@
 #include "Windows/Basic/ProjectWindow_p.h"
 
 #include "CCoupleTabFrame.h"
+#include "QScrollableTabWidget.h"
 
 #include "../PianoActions.h"
 #include "../PianoWindow.h"
+
+#include "../Panels/VExplorerPanel.h"
 
 class PianoWindowPrivate : public ProjectWindowPrivate {
     Q_DECLARE_PUBLIC(PianoWindow)
@@ -19,12 +22,13 @@ public:
     void reloadStrings_helper();
 
     CCoupleTabFrame *frame;
+    QScrollableTabWidget *tabs;
 
     CCoupleTabBarCard *expCard;
     CCoupleTabBarCard *spkCard;
     CCoupleTabBarCard *langCard;
 
-    QWidget *expPanel;
+    VExplorerPanel *expPanel;
     QWidget *spkPanel;
     QWidget *langPanel;
 

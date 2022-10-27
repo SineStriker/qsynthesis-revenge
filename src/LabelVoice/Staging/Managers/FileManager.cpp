@@ -131,7 +131,7 @@ QStringList FileManager::openFiles(const QString &title, const QString &filter, 
 QString FileManager::openDir(const QString &title, const QString &flag, QWidget *parent) {
     QString path = QFileDialog::getExistingDirectory(parent, title, getLastOpenPath(flag));
     if (!path.isEmpty()) {
-        saveLastOpenDir(flag, path);
+        saveLastOpenDir(flag, path, false);
     }
     return path;
 }
@@ -161,9 +161,9 @@ QString FileManager::getLastOpenPath(const QString &type) {
     return it.value();
 }
 
-void FileManager::saveLastOpenDir(const QString &type, const QString &path) {
+void FileManager::saveLastOpenDir(const QString &type, const QString &path, bool upper) {
     Q_D(FileManager);
-    d->lastOpenPaths.insert(type, Sys::PathFildDirPath(path));
+    d->lastOpenPaths.insert(type, upper ? Sys::PathFildDirPath(path) : path);
 }
 
 FileManager::FileManager(FileManagerPrivate &d, QObject *parent) : BasicManager(d, parent) {

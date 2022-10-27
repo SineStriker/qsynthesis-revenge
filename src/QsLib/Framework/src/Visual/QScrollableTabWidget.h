@@ -11,7 +11,7 @@
 
 class QScrollableTabWidgetPrivate;
 
-class QSFRAMEWORK_API QScrollableTabWidget : public QWidget {
+class QSFRAMEWORK_API QScrollableTabWidget : public QFrame {
     Q_OBJECT
     Q_DECLARE_PRIVATE(QScrollableTabWidget)
 public:

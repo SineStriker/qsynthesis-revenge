@@ -107,7 +107,7 @@ QWidget#home-welcome-widget>CPushButton#open-button {
     color: white;
     padding: 10px 20px;
     background-color: #0078D7;
-    border-radius: 3px;
+    border-radius: 5px;
     border: none;
     font-weight: bold;
 }

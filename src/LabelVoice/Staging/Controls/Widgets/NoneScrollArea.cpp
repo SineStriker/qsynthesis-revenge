@@ -2,7 +2,7 @@
 
 #include <QDebug>
 
-NoneScrollArea::NoneScrollArea(QWidget *parent) : QWidget(parent), m_widget(nullptr) {
+NoneScrollArea::NoneScrollArea(QWidget *parent) : QFrame(parent), m_widget(nullptr) {
     setAttribute(Qt::WA_StyledBackground);
 }
 

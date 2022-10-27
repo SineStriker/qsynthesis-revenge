@@ -147,3 +147,56 @@ PianoWindow>CWindowBarV2>CMenuBar>CMenu::separator {
 PianoWindow>CWindowBarV2>CMenuBar>CMenu::indicator:checked {
     image: url(:/svg/menu/dark/checked-line.svg);
 } */
+
+
+/* MainFrame */
+
+CCoupleTabFrame#piano-main-frame {
+    padding: 10px;
+}
+
+CCoupleTabFrame#piano-main-frame>CCoupleTabDoubleBar {
+    border: 1px solid transparent;
+}
+
+CCoupleTabFrame#piano-main-frame>CCoupleTabDoubleBar[highlight=false] {
+    background-color: transparent;
+}
+
+CCoupleTabFrame#piano-main-frame>CCoupleTabDoubleBar[highlight=true] {
+    background-color: rgba(0, 0, 0, 4%);
+}
+
+CCoupleTabBarCard[parent=piano-main-frame] {
+    color: rgba(0, 0, 0, 61%);
+    background-color: rgba(0, 0, 0, 6%);
+    border: none;
+    border-radius: 5px;
+    padding: 8px 20px;
+    margin: 3px;
+}
+
+CCoupleTabBarCard[parent=piano-main-frame]:checked {
+    color: white;
+    background-color: #005FB8;
+}
+
+CCoupleTabBarCard[parent=piano-main-frame]:!checked:hover {
+    background-color: rgba(0, 0, 0, 10%);
+}
+
+VExplorerPanel {
+    margin: 0 10px;
+}
+
+QWidget#explorer-items-widget>QLabel#items-label,
+QWidget#explorer-slices-widget>QLabel#slices-label {
+    padding: 10px 0;
+    font-weight: bold;
+}
+
+QWidget#explorer-items-widget>QLineEdit#items-search-box,
+QWidget#explorer-slices-widget>QLineEdit#slices-search-box {
+    padding: 10px;
+    margin: 5px 0;
+}
