@@ -5,7 +5,16 @@
 
 #include "Kernel/LvApplication.h"
 
+#include "SystemHelper.h"
+#include "Utils/VirtualPathValidator.h"
+
+#include "Serialization/QLVProject.h"
+
 #include <QMessageBox>
+
+static const char Slash = '/';
+
+static const char LVPROJ_SUFFIX[] = ".lvproj";
 
 static const char FLAG_OPEN[] = "%PROJ%";
 
@@ -15,8 +24,46 @@ ProjectCommonBlock::ProjectCommonBlock(QWidget *w) : w(w) {
 ProjectCommonBlock::~ProjectCommonBlock() {
 }
 
-void ProjectCommonBlock::newProject() const {
-    WindowManager::instance()->newProject();
+QString ProjectCommonBlock::newProject(const TemplateConfig &config) const {
+    if (config.name.isEmpty() || !VirtualPathValidator::IsValidName(config.name)) {
+        QMessageBox::critical(w, qApp->errorTitle(),
+                              QObject::tr("Invalid project name!").arg(config.dir));
+        return QString();
+    }
+
+    if (!Sys::isDirExist(config.dir)) {
+        QMessageBox::critical(w, qApp->errorTitle(),
+                              QObject::tr("Directory %1 dosn't exists!").arg(config.dir));
+        return QString();
+    }
+
+    QString fileBase = config.name.chopped(config.name.endsWith(LVPROJ_SUFFIX, Qt::CaseInsensitive)
+                                               ? QString(LVPROJ_SUFFIX).size()
+                                               : 0);
+    QString path = config.dir + Slash + fileBase;
+    if (Sys::isDirExist(path)) {
+        QMessageBox::critical(
+            w, qApp->errorTitle(),
+            QObject::tr("There's already a directory with same name on this path."));
+        return QString();
+    }
+    if (!Sys::mkDir(path)) {
+        QMessageBox::critical(w, qApp->errorTitle(),
+                              QObject::tr("Failed to create project directory!"));
+        return QString();
+    }
+
+    QString filePath = path + Slash + fileBase + LVPROJ_SUFFIX;
+    LVModel::ProjectModel proj;
+    proj.Name = config.name;
+
+    if (!proj.save(filePath)) {
+        QMessageBox::critical(w, qApp->errorTitle(), QObject::tr("Failed to create project file!"));
+        Sys::rmDir(path);
+        return QString();
+    }
+
+    return filePath;
 }
 
 void ProjectCommonBlock::openProject() const {
@@ -27,6 +74,10 @@ void ProjectCommonBlock::openProject() const {
     if (!path.isEmpty()) {
         WindowManager::instance()->openProject(path);
     }
+}
+
+void ProjectCommonBlock::openProject(const QString &filename) const {
+    WindowManager::instance()->openProject(filename);
 }
 
 void ProjectCommonBlock::aboutApp() const {

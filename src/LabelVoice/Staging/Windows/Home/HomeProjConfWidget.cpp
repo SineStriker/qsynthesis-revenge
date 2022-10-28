@@ -4,7 +4,8 @@
 
 #include "Kernel/LvApplication.h"
 
-HomeProjConfWidget::HomeProjConfWidget(QWidget *parent) : QFrame(parent) {
+HomeProjConfWidget::HomeProjConfWidget(ProjectCommonBlock *block, QWidget *parent)
+    : QFrame(parent), block(block) {
     titleLabel = new QLabel();
     titleLabel->setObjectName("title-label");
 
@@ -105,5 +106,15 @@ void HomeProjConfWidget::_q_backButtonClicked() {
 }
 
 void HomeProjConfWidget::_q_createButtonClicked() {
-    emit confirmed();
+    QString filePath = block->newProject(ProjectCommonBlock::TemplateConfig{
+        location->text->text(),
+        solution->text->text(),
+        projectName->text->text(),
+    });
+
+    if (filePath.isEmpty()) {
+        return;
+    }
+
+    emit confirmed(filePath);
 }

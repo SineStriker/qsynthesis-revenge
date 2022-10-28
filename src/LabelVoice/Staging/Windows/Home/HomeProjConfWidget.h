@@ -9,10 +9,12 @@
 
 #include "QTypeList.h"
 
+#include "Windows/Basic/ProjectCommonBlock.h"
+
 class HomeProjConfWidget : public QFrame {
     Q_OBJECT
 public:
-    explicit HomeProjConfWidget(QWidget *parent = nullptr);
+    explicit HomeProjConfWidget(ProjectCommonBlock *block, QWidget *parent = nullptr);
     ~HomeProjConfWidget();
 
     void reloadStrings();
@@ -21,6 +23,8 @@ public:
 
     QTypeList styleData() const;
     void setStyleData(const QTypeList &list);
+
+    ProjectCommonBlock *block;
 
     QHBoxLayout *upperLayout;
     QVBoxLayout *entityLayout;
@@ -43,7 +47,7 @@ private:
     void _q_createButtonClicked();
 
 signals:
-    void confirmed();
+    void confirmed(const QString &filename);
     void canceled();
 };
 

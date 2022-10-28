@@ -70,13 +70,19 @@ HomeWindow {
     svg(":/svg/letter/o.svg", #111111), /* openvpi */
     24px, 24px, /* openvpi */
     );
+    qproperty-recentStyleData: qvariants(/* styleData */
+    svg(":/svg/letter/z.svg", #111111), /* empty */
+    24px, 24px, /* file */
+    svg(":/svg/letter/o.svg", #111111), /* opencpop */
+    24px, 24px, /* dir */
+    );
 }
 
-QWidget#home-widget {
+QWidget#home-main-widget {
     padding: 20px;
 }
 
-QWidget#home-widget>QSplitter#home-splitter:handle {
+QWidget#home-main-widget>QSplitter#home-splitter:handle {
     background-color: transparent;
     width: 0;
 }

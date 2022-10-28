@@ -26,25 +26,25 @@ void HomeWindow::reloadStrings() {
 
 QTypeList HomeWindow::templateStyleData() const {
     Q_D(const HomeWindow);
-    return d->mainWidget->styleData();
+    return d->mainWidget->templateStyleData();
 }
 
 void HomeWindow::setTemplateStyleData(const QTypeList &list) {
     Q_D(HomeWindow);
 
-    d->mainWidget->setStyleData(list);
+    d->mainWidget->setTemplateStyleData(list);
     emit styleDataChanged();
 }
 
 QTypeList HomeWindow::recentStyleData() const {
     Q_D(const HomeWindow);
-    return d->projConfWidget->styleData();
+    return d->mainWidget->recentStyleData();
 }
 
 void HomeWindow::setRecentStyleData(const QTypeList &list) {
     Q_D(HomeWindow);
 
-    d->projConfWidget->setStyleData(list);
+    d->mainWidget->setRecentStyleData(list);
     emit styleDataChanged();
 }
 
@@ -55,7 +55,7 @@ HomeWindow::HomeWindow(HomeWindowPrivate &d, QWidget *parent)
     Q_TR_NOTIFY(HomeWindow)
 }
 
-void HomeWindow::_q_openRequested() {
+void HomeWindow::_q_browseRequested() {
     openProject();
 }
 
@@ -76,11 +76,15 @@ void HomeWindow::_q_newRequested(int type) {
     }
 }
 
+void HomeWindow::_q_openRequested(const QString &filename) {
+    openProject(filename);
+}
+
 void HomeWindow::_q_cancelProjectConfigure() {
     Q_D(HomeWindow);
     d->cb_switchOut();
 }
 
-void HomeWindow::_q_confirmProjectConfigure() {
-    newProject();
+void HomeWindow::_q_confirmProjectConfigure(const QString &filename) {
+    openProject(filename);
 }

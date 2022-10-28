@@ -21,6 +21,8 @@ public:
 
     void reloadStrings_helper();
 
+    QString filename;
+
     CCoupleTabFrame *frame;
     QScrollableTabWidget *tabs;
 

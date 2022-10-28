@@ -3,7 +3,9 @@
 
 #include "WaveFormat.h"
 
-class WaveFormatExtraData : public WaveFormat {
+#include "qsmedia_global.h"
+
+class QSMEDIA_API WaveFormatExtraData : public WaveFormat {
 private:
     char extraData[100];
 

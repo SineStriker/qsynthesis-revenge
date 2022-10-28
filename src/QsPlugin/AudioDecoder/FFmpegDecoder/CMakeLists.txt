@@ -11,6 +11,14 @@ find_package(QT NAMES Qt6 Qt5 COMPONENTS Core REQUIRED)
 find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Core REQUIRED)
 
 file(GLOB _src ${CMAKE_CURRENT_SOURCE_DIR}/*.h ${CMAKE_CURRENT_SOURCE_DIR}/*.cpp)
+
+set(_main_dirs private)
+foreach(_dir ${_main_dirs})
+    set(_temp)
+    file(GLOB_RECURSE _temp ${_dir}/*.h ${_dir}/*.cpp)
+    list(APPEND _src ${_temp})
+endforeach()
+
 add_library(${PROJECT_NAME} SHARED ${_src})
 
 target_link_libraries(${PROJECT_NAME} PUBLIC Qt${QT_VERSION_MAJOR}::Core)

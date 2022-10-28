@@ -1,6 +1,7 @@
 #include "IAudioDecoder.h"
 
-IAudioDecoder::IAudioDecoder(QObject *parent) : QObject(parent) {
+IAudioDecoder::IAudioDecoder(const WaveArguments &args, QObject *parent)
+    : QObject(parent), WaveDecoder(args) {
 }
 
 IAudioDecoder::~IAudioDecoder() {

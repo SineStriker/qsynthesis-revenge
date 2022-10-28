@@ -6,6 +6,8 @@
 #include "Managers/FileManager.h"
 #include "Managers/WindowManager.h"
 
+#include "Serialization/QLVProject.h"
+
 #include <QApplication>
 #include <QCloseEvent>
 #include <QDebug>
@@ -15,6 +17,34 @@ PianoWindow::PianoWindow(QWidget *parent) : PianoWindow(*new PianoWindowPrivate(
 }
 
 PianoWindow::~PianoWindow() {
+}
+
+QString PianoWindow::filename() const {
+    Q_D(const PianoWindow);
+    return d->filename;
+}
+
+void PianoWindow::setFilename(const QString &filename) {
+    Q_D(PianoWindow);
+    d->filename = filename;
+}
+
+bool PianoWindow::load() {
+    Q_D(PianoWindow);
+    LVModel::ProjectModel proj;
+
+    if (!proj.load(d->filename)) {
+        FileManager::instance()->commitRecent(FileManager::Project, FileManager::Remove,
+                                              d->filename);
+        return false;
+    }
+
+    FileManager::instance()->commitRecent(FileManager::Project, FileManager::Advance, d->filename);
+    return true;
+}
+
+bool PianoWindow::save() {
+    return true;
 }
 
 void PianoWindow::reloadStrings() {
@@ -39,7 +69,6 @@ void PianoWindow::_q_actionTriggered(int actionId) {
     Q_D(PianoWindow);
     switch (actionId) {
         case ActionImpl::File_New: {
-            newProject();
             break;
         }
         case ActionImpl::File_Open: {

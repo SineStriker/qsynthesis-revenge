@@ -110,11 +110,11 @@ QString WaveFormat::toString() const {
             return QString::asprintf("%d bit IEEFloat: %dHz %d channels", this->bitsPerSample,
                                      this->sampleRate, this->channels);
         default:
-            return "Tag: " + QString::number(waveFormatTag);
+            return "NAudio.WaveFormat " + QString::number(waveFormatTag);
     }
 }
 
-bool WaveFormat::operator=(const WaveFormat &waveFormat) const {
+bool WaveFormat::operator==(const WaveFormat &waveFormat) const {
     return this->waveFormatTag == waveFormat.waveFormatTag &&
            (int) this->channels == (int) waveFormat.channels &&
            this->sampleRate == waveFormat.sampleRate &&

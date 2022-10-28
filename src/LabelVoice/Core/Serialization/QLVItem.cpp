@@ -277,7 +277,7 @@ bool LVModel::ItemModel::save(const QString &filename) {
 }
 
 void LVModel::ItemModel::reset() {
-    Version.clear();
+    Version = "0.0.1";
     Id.clear();
     Name.clear();
     OwnerProject.clear();

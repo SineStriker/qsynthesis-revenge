@@ -4,6 +4,8 @@
 #include "QSvgUri.h"
 
 #include "Kernel/LvApplication.h"
+#include "Managers/FileManager.h"
+#include "SystemHelper.h"
 
 #define DECODE_STYLE(VAR, VARIANT, TYPE)                                                           \
     {                                                                                              \
@@ -21,7 +23,10 @@
         }                                                                                          \
     }
 
-HomeMainWidget::HomeMainWidget(QWidget *parent) : QFrame(parent) {
+static const char DateFormat[] = "yyyy-MM-dd hh:mm";
+
+HomeMainWidget::HomeMainWidget(ProjectCommonBlock *block, QWidget *parent)
+    : QFrame(parent), block(block) {
     // Left
     titleLabel = new CTabButton();
     titleLabel->setObjectName("title-label");
@@ -91,6 +96,13 @@ HomeMainWidget::HomeMainWidget(QWidget *parent) : QFrame(parent) {
     connect(searchBox, &QLineEdit::textChanged, this, &HomeMainWidget::_q_searchBoxChanged);
     connect(templateList->delegate(), &FileListItemDelegate::clicked, this,
             &HomeMainWidget::_q_templateItemClicked);
+    connect(recentList->delegate(), &FileListItemDelegate::clicked, this,
+            &HomeMainWidget::_q_recentItemClicked);
+
+    connect(FileManager::instance(), &FileManager::recentCommited, this,
+            &HomeMainWidget::_q_recentCommited);
+
+    reloadRecentList();
 }
 
 HomeMainWidget::~HomeMainWidget() {
@@ -123,18 +135,33 @@ void HomeMainWidget::reloadTemplates() {
 #undef SET_AND_ADD
 }
 
-QTypeList HomeMainWidget::styleData() const {
+void HomeMainWidget::reloadRecentList() {
+    recentList->clear();
+
+    QStringList files = FileManager::instance()->fetchRecent(FileManager::Project);
+    for (const QString &file : qAsConst(files)) {
+        QFileInfo info(file);
+        recentList->addFileItem(recentFileConfig.icon, recentFileConfig.iconSize,
+                                FileManager::Project, QDir::toNativeSeparators(info.fileName()),
+                                QDir::toNativeSeparators(info.absoluteFilePath()),
+                                info.lastModified().toString(DateFormat));
+    }
+}
+
+QTypeList HomeMainWidget::templateStyleData() const {
     return {
-        QVariant::fromValue(QSvgUri()),      emptyItemConfig.iconSize.width(),
-        emptyItemConfig.iconSize.height(),   QVariant::fromValue(QSvgUri()),
-        opencpopItemConfig.iconSize.width(), opencpopItemConfig.iconSize.height(),
-        QVariant::fromValue(QSvgUri()),      diffItemConfig.iconSize.width(),
-        diffItemConfig.iconSize.height(),    QVariant::fromValue(QSvgUri()),
-        openvpiItemConfig.iconSize.width(),  openvpiItemConfig.iconSize.height(),
+        QVariant::fromValue(QSvgUri()),       emptyItemConfig.iconSize.width(),
+        emptyItemConfig.iconSize.height(), //
+        QVariant::fromValue(QSvgUri()),       opencpopItemConfig.iconSize.width(),
+        opencpopItemConfig.iconSize.height(), //
+        QVariant::fromValue(QSvgUri()),       diffItemConfig.iconSize.width(),
+        diffItemConfig.iconSize.height(), //
+        QVariant::fromValue(QSvgUri()),       openvpiItemConfig.iconSize.width(),
+        openvpiItemConfig.iconSize.height(), //
     };
 }
 
-void HomeMainWidget::setStyleData(const QTypeList &list) {
+void HomeMainWidget::setTemplateStyleData(const QTypeList &list) {
     if (list.size() >= 12) {
         int i = 0;
         DECODE_STYLE(emptyItemConfig.icon, list.at(i++), QSvgUri);
@@ -154,6 +181,30 @@ void HomeMainWidget::setStyleData(const QTypeList &list) {
         DECODE_STYLE_SETTER(openvpiItemConfig.iconSize, list.at(i++), QPixelSize, setHeight);
 
         reloadTemplates();
+    }
+}
+
+QTypeList HomeMainWidget::recentStyleData() const {
+    return {
+        QVariant::fromValue(QSvgUri()),     recentFileConfig.iconSize.width(),
+        recentFileConfig.iconSize.height(), //
+        QVariant::fromValue(QSvgUri()),     recentDirConfig.iconSize.width(),
+        recentDirConfig.iconSize.height(), //
+    };
+}
+
+void HomeMainWidget::setRecentStyleData(const QTypeList &list) {
+    if (list.size() >= 6) {
+        int i = 0;
+        DECODE_STYLE(recentFileConfig.icon, list.at(i++), QSvgUri);
+        DECODE_STYLE_SETTER(recentFileConfig.iconSize, list.at(i++), QPixelSize, setWidth);
+        DECODE_STYLE_SETTER(recentFileConfig.iconSize, list.at(i++), QPixelSize, setHeight);
+
+        DECODE_STYLE(recentDirConfig.icon, list.at(i++), QSvgUri);
+        DECODE_STYLE_SETTER(recentDirConfig.iconSize, list.at(i++), QPixelSize, setWidth);
+        DECODE_STYLE_SETTER(recentDirConfig.iconSize, list.at(i++), QPixelSize, setHeight);
+
+        reloadRecentList();
     }
 }
 
@@ -178,4 +229,22 @@ void HomeMainWidget::_q_templateItemClicked(const QModelIndex &index, int button
     } else {
         // Right click handle
     }
+}
+
+void HomeMainWidget::_q_recentItemClicked(const QModelIndex &index, int button) {
+    int type = index.data(FileListItemDelegate::Type).toInt();
+    QString filename = index.data(FileListItemDelegate::Location).toString();
+    if (button == Qt::LeftButton) {
+        if (type == FileManager::Project) {
+            emit openRequested(filename);
+        } else {
+            // Dir handle
+        }
+    } else {
+        // Right click handle
+    }
+}
+
+void HomeMainWidget::_q_recentCommited() {
+    reloadRecentList();
 };

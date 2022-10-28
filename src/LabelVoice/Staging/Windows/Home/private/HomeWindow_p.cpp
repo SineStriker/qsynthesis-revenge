@@ -4,6 +4,8 @@
 
 #include "Kernel/LvApplication.h"
 
+#include "Managers/FileManager.h"
+
 HomeWindowPrivate::HomeWindowPrivate() {
 }
 
@@ -19,21 +21,24 @@ void HomeWindowPrivate::init() {
                                     ~IWindowHandle::WindowTitle);
     }
 
-    mainWidget = new HomeMainWidget();
+    mainWidget = new HomeMainWidget(q);
     mainWidget->setObjectName("home-main-widget");
 
-    projConfWidget = new HomeProjConfWidget();
+    projConfWidget = new HomeProjConfWidget(q);
     projConfWidget->setObjectName("home-create-widget");
 
     stack = new QStackedWidget();
+    stack->setObjectName("home-stack");
+
     stack->addWidget(mainWidget);
     stack->addWidget(projConfWidget);
 
     stack->setCurrentWidget(mainWidget);
     q->setCentralWidget(stack);
 
-    q->connect(mainWidget->openButton, &QPushButton::clicked, q, &HomeWindow::_q_openRequested);
+    q->connect(mainWidget->openButton, &QPushButton::clicked, q, &HomeWindow::_q_browseRequested);
     q->connect(mainWidget, &HomeMainWidget::newRequested, q, &HomeWindow::_q_newRequested);
+    q->connect(mainWidget, &HomeMainWidget::openRequested, q, &HomeWindow::_q_openRequested);
 
     q->connect(projConfWidget, &HomeProjConfWidget::confirmed, q,
                &HomeWindow::_q_confirmProjectConfigure);

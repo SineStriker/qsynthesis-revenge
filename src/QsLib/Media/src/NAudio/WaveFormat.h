@@ -6,7 +6,9 @@
 
 #include "WaveFormatEncoding.h"
 
-class WaveFormat {
+#include "qsmedia_global.h"
+
+class QSMEDIA_API WaveFormat {
 protected:
     WaveFormatEncoding waveFormatTag;
     short channels;
@@ -47,7 +49,7 @@ public:
 
     QString toString() const;
 
-    bool operator=(const WaveFormat &waveFormat) const;
+    bool operator==(const WaveFormat &waveFormat) const;
 
     int toHashCode() const;
 

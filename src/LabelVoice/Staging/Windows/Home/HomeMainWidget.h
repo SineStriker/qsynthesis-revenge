@@ -5,23 +5,32 @@
 
 #include <QBoxLayout>
 #include <QLabel>
-#include <QSplitter>
 #include <QLineEdit>
+#include <QSplitter>
 
-#include "FileListWidget.h"
 #include "CTabButton.h"
+#include "FileListWidget.h"
+
+#include "Windows/Basic/ProjectCommonBlock.h"
 
 class HomeMainWidget : public QFrame {
     Q_OBJECT
 public:
-    explicit HomeMainWidget(QWidget *parent = nullptr);
+    explicit HomeMainWidget(ProjectCommonBlock *block, QWidget *parent = nullptr);
     ~HomeMainWidget();
 
     void reloadStrings();
     void reloadTemplates();
 
-    QTypeList styleData() const;
-    void setStyleData(const QTypeList &list);
+    void reloadRecentList();
+
+    QTypeList templateStyleData() const;
+    void setTemplateStyleData(const QTypeList &list);
+
+    QTypeList recentStyleData() const;
+    void setRecentStyleData(const QTypeList &list);
+
+    ProjectCommonBlock *block;
 
     QWidget *leftWidget;
     QWidget *rightWidget;
@@ -46,6 +55,7 @@ public:
         DiffSinger,
         OpenVPI,
     };
+
     struct TemplateConfig {
         QIcon icon;
         QSize iconSize;
@@ -54,17 +64,30 @@ public:
         QString cont;
         int id;
     };
+
+    struct RecentConfig {
+        QIcon icon;
+        QSize iconSize;
+    };
+
     TemplateConfig emptyItemConfig;
     TemplateConfig opencpopItemConfig;
     TemplateConfig diffItemConfig;
     TemplateConfig openvpiItemConfig;
 
+    RecentConfig recentFileConfig;
+    RecentConfig recentDirConfig;
+
 private:
     void _q_searchBoxChanged(const QString &text);
     void _q_templateItemClicked(const QModelIndex &index, int button);
+    void _q_recentItemClicked(const QModelIndex &index, int button);
+
+    void _q_recentCommited();
 
 signals:
     void newRequested(int type);
+    void openRequested(const QString &filename);
 };
 
 #endif // HOMEMAINWIDGET_H

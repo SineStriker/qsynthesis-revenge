@@ -8,9 +8,17 @@ public:
     ProjectCommonBlock(QWidget *w);
     ~ProjectCommonBlock();
 
+    struct TemplateConfig {
+        QString dir;
+        QString file;
+        QString name;
+    };
+
 public:
-    void newProject() const;
+    QString newProject(const TemplateConfig &config) const;
+
     void openProject() const;
+    void openProject(const QString &filename) const;
 
     void aboutApp() const;
     void aboutQt() const;

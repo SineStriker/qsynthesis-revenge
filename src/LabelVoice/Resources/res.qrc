@@ -16,5 +16,6 @@
         <file>svg/menu/arrow-right-s-line.svg</file>
         <file>svg/menu/checked-line.svg</file>
         <file>svg/menu/more-line.svg</file>
+        <file>svg/letter/z.svg</file>
     </qresource>
 </RCC>

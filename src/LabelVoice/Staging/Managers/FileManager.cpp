@@ -49,6 +49,7 @@ void FileManager::load() {
 void FileManager::save() {
     Q_D(FileManager);
     QFile file(qApp->appDataPath() + Slash + FILE_NAME_RECENT_JSON);
+
     if (file.open(QIODevice::WriteOnly | QIODevice::Truncate | QIODevice::Text)) {
         QJsonDocument doc;
         QJsonObject obj{

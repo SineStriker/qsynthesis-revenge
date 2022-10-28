@@ -14,6 +14,12 @@ public:
     ~PianoWindow();
 
 public:
+    QString filename() const;
+    void setFilename(const QString &filename);
+
+    bool load();
+    bool save();
+
     void reloadStrings();
 
 protected:
