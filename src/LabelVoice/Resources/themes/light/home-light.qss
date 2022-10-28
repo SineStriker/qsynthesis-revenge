@@ -153,6 +153,7 @@ QWidget#home-recent-widget {
 
 QWidget#home-recent-widget>QLineEdit#search-box {
     padding: 8px;
+    margin: 5px;
     border-color: #999999;
 }
 

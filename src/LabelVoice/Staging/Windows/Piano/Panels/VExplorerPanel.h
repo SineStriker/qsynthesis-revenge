@@ -10,13 +10,17 @@
 #include "VSliceListWidget.h"
 #include "VSpeakerTreeWidget.h"
 
-class VExplorerPanel : public QFrame {
+#include "Commands/LVCommand.h"
+
+class VExplorerPanel : public QFrame, public ICommandSubscriber {
     Q_OBJECT
 public:
     explicit VExplorerPanel(QWidget *parent = nullptr);
     ~VExplorerPanel();
 
     void reloadStrings();
+
+    void execute(const LVCommandList &cmds, bool isUndo) override;
 
     // Items
     QFrame *itemsWidget;

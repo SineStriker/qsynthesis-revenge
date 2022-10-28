@@ -38,8 +38,10 @@ bool PianoWindow::load() {
                                               d->filename);
         return false;
     }
-
     FileManager::instance()->commitRecent(FileManager::Project, FileManager::Advance, d->filename);
+
+
+
     return true;
 }
 

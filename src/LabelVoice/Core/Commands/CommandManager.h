@@ -4,7 +4,7 @@
 #include <QObject>
 #include <QSet>
 
-#include "QSCommand.h"
+#include "LVCommand.h"
 
 class CommandManager : public QObject {
     Q_OBJECT
@@ -13,29 +13,40 @@ public:
     ~CommandManager();
 
 public:
+    void saveNow();
+    bool isEdited() const;
+
+    bool canUndo() const;
+    bool canRedo() const;
+
     void undo();
     void redo();
 
     void execute(const QSCommandRef &cmd, bool isUndo);
-    void execute(const QSCommandList &cmds, bool isUndo);
+    void execute(const LVCommandList &cmds, bool isUndo);
 
     void startRecord();
-    void stopRecord();
+    void stopRecord(const QString &desc);
 
     void addSubscriber(ICommandSubscriber *subscriber);
     void removeSubscriber(ICommandSubscriber *subscriber);
 
 protected:
-    QList<QSCommandList> historyStack;
+    QList<LVCommandList> historyStack;
     int historyIndex;
     int savedHistoryIndex;
     QSet<ICommandSubscriber *> subscribers;
 
     // temp
     bool recording;
-    QSCommandList curCmdList;
+    LVCommandList recordList;
+
+    bool edited;
+
+    void setEdited(bool edited);
 
 signals:
+    void editStateChanged(bool saved);
 };
 
 #endif // COMMANDMANAGER_H

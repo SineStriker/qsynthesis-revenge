@@ -19,6 +19,8 @@ void PianoWindowPrivate::init() {
 
     q->connect(actions, &PianoActions::triggered, q, &PianoWindow::_q_actionTriggered);
 
+    docMgr = new CommandManager(q);
+
     frame = new CCoupleTabFrame();
     frame->setObjectName("piano-main-frame");
 
@@ -56,6 +58,8 @@ void PianoWindowPrivate::init() {
     frame->setWidget(tabs);
 
     q->setCentralWidget(frame);
+
+    docMgr->addSubscriber(expPanel);
 }
 
 void PianoWindowPrivate::reloadStrings_helper() {

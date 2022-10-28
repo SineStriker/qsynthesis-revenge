@@ -30,13 +30,8 @@ public:
     QTypeList recentStyleData() const;
     void setRecentStyleData(const QTypeList &list);
 
-    ProjectCommonBlock *block;
-
     QWidget *leftWidget;
     QWidget *rightWidget;
-
-    QHBoxLayout *mainLayout;
-    QVBoxLayout *leftLayout, *rightLayout;
 
     QSplitter *splitter;
 
@@ -44,7 +39,6 @@ public:
 
     QLabel *subtitleLabel;
     CPushButton *openButton;
-    QHBoxLayout *subtitleButtonLayout;
 
     FileListWidget *templateList, *recentList;
     QLineEdit *searchBox;
@@ -77,6 +71,13 @@ public:
 
     RecentConfig recentFileConfig;
     RecentConfig recentDirConfig;
+
+protected:
+    ProjectCommonBlock *block;
+
+    QHBoxLayout *mainLayout;
+    QVBoxLayout *leftLayout, *rightLayout;
+    QHBoxLayout *subtitleButtonLayout;
 
 private:
     void _q_searchBoxChanged(const QString &text);

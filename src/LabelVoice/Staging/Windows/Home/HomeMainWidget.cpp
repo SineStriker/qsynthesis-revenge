@@ -122,14 +122,16 @@ void HomeMainWidget::reloadTemplates() {
     CFG.title = TITLE;                                                                             \
     CFG.subtitle = SUBTITLE;                                                                       \
     CFG.id = ID;                                                                                   \
+    CFG.cont = QString();                                                                                 \
     templateList->addFileItem(CFG.icon, CFG.iconSize, CFG.id, CFG.title, CFG.subtitle, CFG.cont);
 
-    SET_AND_ADD(emptyItemConfig, ("Empty Template"), ("Create empty project for marking"), Empty);
-    SET_AND_ADD(opencpopItemConfig, ("Opencpop Template"), ("Use Opencpop template for marking"),
-                Opencpop);
-    SET_AND_ADD(diffItemConfig, ("DiffSinger Template"), ("Use DiffSinger template for marking"),
-                DiffSinger);
-    SET_AND_ADD(openvpiItemConfig, ("OpenVPI Template"), ("Use OpenVPI template for marking"),
+    SET_AND_ADD(emptyItemConfig, tr("Empty Template"), tr("Create empty project for marking"),
+                Empty);
+    SET_AND_ADD(opencpopItemConfig, tr("Opencpop Template"),
+                tr("Use Opencpop template for marking"), Opencpop);
+    SET_AND_ADD(diffItemConfig, tr("DiffSinger Template"),
+                tr("Use DiffSinger template for marking"), DiffSinger);
+    SET_AND_ADD(openvpiItemConfig, tr("OpenVPI Template"), tr("Use OpenVPI template for marking"),
                 OpenVPI);
 
 #undef SET_AND_ADD

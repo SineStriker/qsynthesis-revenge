@@ -53,6 +53,10 @@ void FileListItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &
     QFont locFont = m_locType.font();
     QFont dateFont = m_dateType.font();
 
+//    fileFont.setStyleStrategy(QFont::PreferAntialias);
+//    locFont.setStyleStrategy(QFont::PreferAntialias);
+//    dateFont.setStyleStrategy(QFont::PreferAntialias);
+
     QFontMetrics fileFontM(fileFont);
     QFontMetrics locFontM(locFont);
     QFontMetrics dateFontM(dateFont);

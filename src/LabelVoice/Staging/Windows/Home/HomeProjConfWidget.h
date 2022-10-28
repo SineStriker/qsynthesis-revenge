@@ -24,11 +24,6 @@ public:
     QTypeList styleData() const;
     void setStyleData(const QTypeList &list);
 
-    ProjectCommonBlock *block;
-
-    QHBoxLayout *upperLayout;
-    QVBoxLayout *entityLayout;
-
     QLabel *titleLabel;
     QLabel *subtitleLabel;
 
@@ -38,6 +33,12 @@ public:
 
     CPushButton *backButton;
     CPushButton *createButton;
+
+protected:
+    ProjectCommonBlock *block;
+
+    QHBoxLayout *upperLayout;
+    QVBoxLayout *entityLayout;
 
     QVBoxLayout *mainLayout;
     QHBoxLayout *buttonLayout;

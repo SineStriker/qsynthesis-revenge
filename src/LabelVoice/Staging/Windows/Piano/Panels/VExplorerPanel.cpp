@@ -1,5 +1,7 @@
 #include "VExplorerPanel.h"
 
+#include "../Commands/VPianoCommand.h"
+
 VExplorerPanel::VExplorerPanel(QWidget *parent) : QFrame(parent) {
     // Items
     itemsLabel = new QLabel();
@@ -27,8 +29,8 @@ VExplorerPanel::VExplorerPanel(QWidget *parent) : QFrame(parent) {
     slicesLabel = new QLabel();
     slicesLabel->setObjectName("slices-label");
 
-    secsSearchBox = new QLineEdit();
-    secsSearchBox->setObjectName("slices-search-box");
+    slicesSearchBox = new QLineEdit();
+    slicesSearchBox->setObjectName("slices-search-box");
 
     slicesList = new VSliceListWidget();
     slicesList->setObjectName("slices-list");
@@ -41,7 +43,7 @@ VExplorerPanel::VExplorerPanel(QWidget *parent) : QFrame(parent) {
     slicesLayout->setSpacing(0);
 
     slicesLayout->addWidget(slicesLabel);
-    slicesLayout->addWidget(secsSearchBox);
+    slicesLayout->addWidget(slicesSearchBox);
     slicesLayout->addWidget(slicesList);
 
     slicesWidget = new QFrame();
@@ -69,5 +71,43 @@ void VExplorerPanel::reloadStrings() {
     itemsSearchBox->setPlaceholderText(tr("Search Items"));
 
     slicesLabel->setText(tr("Slices"));
-    secsSearchBox->setPlaceholderText(tr("Search Slices"));
+    slicesSearchBox->setPlaceholderText(tr("Search Slices"));
+}
+
+void VExplorerPanel::execute(const LVCommandList &cmds, bool isUndo) {
+    if (isUndo) {
+        for (auto it = cmds.rbegin(); it != cmds.rend(); ++it) {
+            auto cmd = static_cast<VPianoCommand *>(it->data());
+            switch (cmd->type()) {
+                case VPianoCommand::ItemAdd: {
+                    break;
+                }
+                case VPianoCommand::ItemRemove: {
+                    break;
+                }
+                case VPianoCommand::ItemMove: {
+                    break;
+                }
+                default:
+                    break;
+            }
+        }
+    } else {
+        for (auto it = cmds.begin(); it != cmds.end(); ++it) {
+            auto cmd = static_cast<VPianoCommand *>(it->data());
+            switch (cmd->type()) {
+                case VPianoCommand::ItemAdd: {
+                    break;
+                }
+                case VPianoCommand::ItemRemove: {
+                    break;
+                }
+                case VPianoCommand::ItemMove: {
+                    break;
+                }
+                default:
+                    break;
+            }
+        }
+    }
 }

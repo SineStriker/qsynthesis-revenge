@@ -11,6 +11,8 @@
 
 #include "../Panels/VExplorerPanel.h"
 
+#include "Commands/CommandManager.h"
+
 class PianoWindowPrivate : public ProjectWindowPrivate {
     Q_DECLARE_PUBLIC(PianoWindow)
 public:
@@ -35,6 +37,8 @@ public:
     QWidget *langPanel;
 
     PianoActions *actions;
+
+    CommandManager *docMgr;
 };
 
 #endif // PIANOWINDOWPRIVATE_H
