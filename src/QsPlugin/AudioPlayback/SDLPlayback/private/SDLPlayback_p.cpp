@@ -11,7 +11,7 @@ static const ushort PLAYBACK_SAMPLE_RATE = 44100; // 默认采样率
 static const uint PLAYBACK_POLL_INTERVAL = 1; // 轮循时间间隔(ms)
 
 static void workCallback(void *udata, quint8 *stream, int len) {
-    SDLPlaybackPrivate *d = (SDLPlaybackPrivate *) udata;
+    auto d = (SDLPlaybackPrivate *) udata;
     d->workCallback(stream, len);
 }
 
@@ -50,7 +50,7 @@ bool SDLPlaybackPrivate::setup(const QVariantMap &args) {
 #endif
 
     bufferSamples = (bufferSamples <= 0) ? PLAYBACK_BUFFER_SAMPLES : bufferSamples;
-    sampleRate = (sampleRate < 0) ? PLAYBACK_SAMPLE_FORMAT : sampleRate;
+    sampleRate = (sampleRate <= 0) ? PLAYBACK_SAMPLE_RATE : sampleRate;
 
     // 配置音频参数结构体
     spec.freq = sampleRate;
@@ -59,7 +59,7 @@ bool SDLPlaybackPrivate::setup(const QVariantMap &args) {
     spec.silence = 0;
     spec.samples = bufferSamples; //缓冲区字节数/单个采样字节数/声道数
     spec.callback = ::workCallback;
-    spec.userdata = (void *) this;
+    spec.userdata = (void *) this; // 回调到成员函数
 
     // 缓冲区
     pcm_buffer_size = bufferSamples * channels;
@@ -87,7 +87,6 @@ void SDLPlaybackPrivate::play() {
     // 如果没有打开音频设备那么打开第一个音频设备
     if (curDevId == 0) {
         QStringList devices = q->devices();
-        qDebug().noquote() << QString("SDL: Select default device %1").arg(devices.front());
         q->setDevice(devices.front());
     }
 
