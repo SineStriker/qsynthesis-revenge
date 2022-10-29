@@ -29,7 +29,8 @@ public:
         WindowMinimizeButton = 0x4,
         WindowMaximizeButton = 0x8,
         WindowCloseButton = 0x10,
-        TitleBarFlagMask = WindowIcon | WindowTitle | WindowMinimizeButton | WindowMaximizeButton |
+        TitleBarFlagMask = WindowIcon | WindowTitle |                    //
+                           WindowMinimizeButton | WindowMaximizeButton | //
                            WindowCloseButton,
     };
     Q_DECLARE_FLAGS(TitleBarFlags, TitleBarFlag);

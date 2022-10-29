@@ -45,6 +45,8 @@ For detailed information, see [Build Instructions](./docs/build-instructions.md)
     + MIT License
 + [SingleApplication](https://github.com/itay-grudev/SingleApplication)
     + MIT License
++ [yaml-cpp](https://github.com/jbeder/yaml-cpp)
+    + MIT License
 
 See [Plugins Brief](./docs/plugins-brief.md) for dependencies for each plugin.
 

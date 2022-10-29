@@ -3,7 +3,7 @@
 
 #include "../IAudioPlayback.h"
 
-#include <QAtomicInt>
+#include <atomic>
 
 class QSMEDIA_API IAudioPlaybackPrivate {
     Q_DECLARE_PUBLIC(IAudioPlayback)
@@ -13,7 +13,7 @@ public:
 
     void init();
 
-    virtual void setup();
+    virtual bool setup(const QVariantMap &args);
     virtual void dispose();
 
     virtual void play();
@@ -24,7 +24,12 @@ public:
     IAudioDecoder *decoder;
 
     // Atomic int as playback state
-    QAtomicInt state;
+    std::atomic_int state;
+
+    // Arguments
+    int bufferSamples;
+    int sampleRate;
+    int channels;
 };
 
 #endif // IAUDIOPLAYBACKPRIVATE_H

@@ -59,7 +59,6 @@ bool FFmpegDecoder::open(const QVariantMap &args) {
         it = args.find(QsMedia::KEY_NAME_SAMPLE_RATE);
         if (it != args.end()) {
             wavArgs.SampleRate = extractInt(it.value(), wavArgs.SampleRate);
-            return false;
         }
 
         // Sample format
@@ -67,14 +66,12 @@ bool FFmpegDecoder::open(const QVariantMap &args) {
         if (it != args.end()) {
             wavArgs.SampleFormat =
                 static_cast<AVSampleFormat>(extractInt(it.value(), wavArgs.SampleFormat));
-            return false;
         }
 
         // Channels
         it = args.find(QsMedia::KEY_NAME_CHANNELS);
         if (it != args.end()) {
             wavArgs.Channels = extractInt(it.value(), wavArgs.Channels);
-            return false;
         }
 
         d->_arguments = wavArgs;
@@ -106,7 +103,7 @@ WaveFormat FFmpegDecoder::outFormat() const {
 
 void FFmpegDecoder::SetPosition(qint64 pos) {
     Q_D(FFmpegDecoder);
-    QMutexLocker locker(&d->lockObject);
+    std::lock_guard locker(d->lockObject);
     d->_pos = d->dest2src_bytes(pos / d->_arguments.Channels);
     d->seek();
 }
@@ -124,7 +121,7 @@ qint64 FFmpegDecoder::Length() const {
 int FFmpegDecoder::Read(char *buffer, int offset, int count) {
     Q_D(FFmpegDecoder);
 
-    QMutexLocker locker(&d->lockObject);
+    std::lock_guard locker(d->lockObject);
     int res = 0;
 
     if (offset > 0) {
@@ -149,7 +146,7 @@ int FFmpegDecoder::Read(float *buffer, int offset, int count) {
         return -1;
     }
 
-    QMutexLocker locker(&d->lockObject);
+    std::lock_guard locker(d->lockObject);
     int res = 0;
     const int bytesPerSample = 4;
 

@@ -9,9 +9,9 @@ extern "C" {
 
 #include "../FFmpegDecoder.h"
 
-#include <QMutex>
+#include <mutex>
 
-class FFmpegDecoderPrivate {
+class Q_DECL_EXPORT FFmpegDecoderPrivate {
     Q_DECLARE_PUBLIC(FFmpegDecoder);
 
 public:
@@ -91,7 +91,7 @@ public:
 
     int _remainSamples; // 重采样器余量
 
-    QMutex lockObject;
+    std::mutex lockObject;
 
     int orgBytesPerSample() const;
 

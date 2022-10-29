@@ -14,6 +14,15 @@ public:
     SDLPlayback(QObject *parent = nullptr);
     ~SDLPlayback();
 
+public:
+    QStringList drivers() const override;
+    QString currentDriver() const override;
+    bool setDriver(const QString &driver) override;
+
+    QStringList devices() const override;
+    QString currentDevice() const override;
+    bool setDevice(const QString &device) override;
+
 protected:
     SDLPlayback(SDLPlaybackPrivate &d, QObject *parent = nullptr);
 };

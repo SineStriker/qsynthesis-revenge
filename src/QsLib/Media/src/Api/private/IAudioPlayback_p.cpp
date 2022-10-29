@@ -9,9 +9,15 @@ IAudioPlaybackPrivate::~IAudioPlaybackPrivate() {
 void IAudioPlaybackPrivate::init() {
     decoder = nullptr;
     state = IAudioPlayback::Stopped;
+
+    bufferSamples = 0;
+    sampleRate = 0;
+    channels = 0;
 }
 
-void IAudioPlaybackPrivate::setup() {
+bool IAudioPlaybackPrivate::setup(const QVariantMap &args) {
+    Q_UNUSED(args);
+    return false;
 }
 
 void IAudioPlaybackPrivate::dispose() {
