@@ -40,7 +40,26 @@ bool PianoWindow::load() {
     }
     FileManager::instance()->commitRecent(FileManager::Project, FileManager::Advance, d->filename);
 
+    // Update View
+    {
+        QList<PianoSpec::SpeakerDesc> speakers;
+        for (const auto &spk : qAsConst(proj.Speakers)) {
+            speakers.append(PianoSpec::SpeakerDesc{spk.Id, spk.Name});
+        }
+        d->expPanel->setSpeakers(speakers);
 
+        QList<QPair<QString, PianoSpec::ItemDesc>> items;
+        for (const auto &item : qAsConst(proj.ItemResources)) {
+            items.append(qMakePair(item.VirtualPath, //
+                                   PianoSpec::ItemDesc{
+                                       item.Id,
+                                       item.Name,
+                                       item.Speaker,
+                                       item.Type == LVModel::ItemResource::Placeholder,
+                                   }));
+        }
+        d->expPanel->setItems(items);
+    }
 
     return true;
 }

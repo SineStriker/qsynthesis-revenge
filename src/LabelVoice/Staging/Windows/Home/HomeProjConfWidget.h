@@ -43,6 +43,8 @@ protected:
     QVBoxLayout *mainLayout;
     QHBoxLayout *buttonLayout;
 
+    bool eventFilter(QObject *obj, QEvent *event) override;
+
 private:
     void _q_backButtonClicked();
     void _q_createButtonClicked();

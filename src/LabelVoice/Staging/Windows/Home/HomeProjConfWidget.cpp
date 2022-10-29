@@ -6,6 +6,8 @@
 
 HomeProjConfWidget::HomeProjConfWidget(ProjectCommonBlock *block, QWidget *parent)
     : QFrame(parent), block(block) {
+    setFocusPolicy(Qt::ClickFocus);
+
     titleLabel = new QLabel();
     titleLabel->setObjectName("title-label");
 
@@ -89,9 +91,9 @@ void HomeProjConfWidget::reloadStrings() {
 }
 
 void HomeProjConfWidget::clear() {
-    projectName->text->setText(tr("LVProject1"));
+    projectName->text->setText(tr("LVProject%1").arg(QString::number(block->newProjectIndex)));
     location->text->setText(QDir::toNativeSeparators(qApp->desktopDir()));
-    solution->text->setText(tr("LVProject1"));
+    solution->text->setText(tr("LVProject%1").arg(QString::number(block->newProjectIndex)));
 }
 
 QTypeList HomeProjConfWidget::styleData() const {
@@ -99,6 +101,10 @@ QTypeList HomeProjConfWidget::styleData() const {
 }
 
 void HomeProjConfWidget::setStyleData(const QTypeList &list) {
+}
+
+bool HomeProjConfWidget::eventFilter(QObject *obj, QEvent *event) {
+    return QFrame::eventFilter(obj, event);
 }
 
 void HomeProjConfWidget::_q_backButtonClicked() {

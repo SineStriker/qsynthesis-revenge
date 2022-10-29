@@ -8,11 +8,13 @@
 #include <QVBoxLayout>
 
 #include "VSliceListWidget.h"
-#include "VSpeakerTreeWidget.h"
+#include "VSpkTreeWidget.h"
 
 #include "Commands/LVCommand.h"
 
-class VExplorerPanel : public QFrame, public ICommandSubscriber {
+#include "../PianoSpec.h"
+
+class VExplorerPanel : public QFrame {
     Q_OBJECT
 public:
     explicit VExplorerPanel(QWidget *parent = nullptr);
@@ -20,7 +22,8 @@ public:
 
     void reloadStrings();
 
-    void execute(const LVCommandList &cmds, bool isUndo) override;
+    void setSpeakers(const QList<PianoSpec::SpeakerDesc> &speakers);
+    void setItems(const QList<QPair<QString, PianoSpec::ItemDesc>> &items);
 
     // Items
     QFrame *itemsWidget;
@@ -28,13 +31,13 @@ public:
     QLabel *itemsLabel;
     QLineEdit *itemsSearchBox;
 
-    VSpeakerTreeWidget *speakersTree;
+    VSpkTreeWidget *itemsTree;
 
     // Sections
     QFrame *slicesWidget;
 
     QLabel *slicesLabel;
-    QLineEdit *secsSearchBox;
+    QLineEdit *slicesSearchBox;
 
     VSliceListWidget *slicesList;
 
@@ -46,6 +49,40 @@ protected:
     QVBoxLayout *slicesLayout;
 
     QVBoxLayout *mainLayout;
+
+    // Data Structure
+    enum LVNodeType {
+        RootSpeaker = QTreeWidgetItem::UserType + 1,
+        VirtualDir,
+        LVItem,
+    };
+
+    enum LVItemDataType {
+        LVItem_ID = Qt::UserRole + 1,
+        LVItem_Name,
+        LVItem_Speaker,
+    };
+
+    enum LVSpeakerDataType {
+        LVSpeaker_ID = Qt::UserRole + 1,
+        LVSpeaker_Name,
+    };
+
+    struct TreeNode {
+        typedef QSharedPointer<TreeNode> Ref;
+
+        QString name;
+        QTreeWidgetItem *item;
+
+        // Key: dir
+        QHash<QString, Ref> subdirs;
+        QHash<QString, QTreeWidgetItem *> files;
+    };
+    // Key: speaker.id
+    QHash<QString, TreeNode::Ref> speakerNodes;
+
+private:
+    void _q_itemDropped(QTreeWidgetItem *item, QTreeWidgetItem *oldParent);
 
 signals:
 };

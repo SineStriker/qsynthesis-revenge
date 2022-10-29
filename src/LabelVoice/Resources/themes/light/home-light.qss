@@ -192,8 +192,7 @@ QWidget#home-create-widget>LabelTextBlock>CPushButton {
     margin-left: 20px;
 }
 
-QWidget#home-create-widget>CPushButton#prev-button,
-QWidget#home-create-widget>CPushButton#ok-button {
+QWidget#home-create-widget>CPushButton {
     padding: 10px;
     margin: 0 10px;
     min-width: 100px;

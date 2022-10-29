@@ -18,6 +18,8 @@ static const char LVPROJ_SUFFIX[] = ".lvproj";
 
 static const char FLAG_OPEN[] = "%PROJ%";
 
+int ProjectCommonBlock::newProjectIndex = 1;
+
 ProjectCommonBlock::ProjectCommonBlock(QWidget *w) : w(w) {
 }
 
@@ -62,6 +64,8 @@ QString ProjectCommonBlock::newProject(const TemplateConfig &config) const {
         Sys::rmDir(path);
         return QString();
     }
+
+    newProjectIndex++;
 
     return filePath;
 }

@@ -14,6 +14,8 @@ public:
         QString name;
     };
 
+    static int newProjectIndex;
+
 public:
     QString newProject(const TemplateConfig &config) const;
 

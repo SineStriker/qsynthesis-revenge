@@ -37,8 +37,6 @@ public:
     QWidget *langPanel;
 
     PianoActions *actions;
-
-    CommandManager *docMgr;
 };
 
 #endif // PIANOWINDOWPRIVATE_H

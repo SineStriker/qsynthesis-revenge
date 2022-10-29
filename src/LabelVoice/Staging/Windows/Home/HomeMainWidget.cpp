@@ -27,6 +27,8 @@ static const char DateFormat[] = "yyyy-MM-dd hh:mm";
 
 HomeMainWidget::HomeMainWidget(ProjectCommonBlock *block, QWidget *parent)
     : QFrame(parent), block(block) {
+    setFocusPolicy(Qt::ClickFocus);
+
     // Left
     titleLabel = new CTabButton();
     titleLabel->setObjectName("title-label");

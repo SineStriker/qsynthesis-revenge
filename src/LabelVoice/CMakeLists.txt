@@ -6,7 +6,7 @@ include(${PROJECT_SCRIPTS_DIR}/Modules/ListUtil.cmake)
 # ------------------------------ Basic information ------------------------------
 
 project(LabelVoice
-    VERSION 0.0.1.1
+    VERSION 0.0.1.2
     LANGUAGES CXX
 )
 
