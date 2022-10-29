@@ -1,19 +1,23 @@
 #ifndef IAUDIODECODER_H
 #define IAUDIODECODER_H
 
-#include <QIODevice>
-
-#include "NAudio/WaveDecoder.h"
-
 #include "qsmedia_global.h"
 
-class QSMEDIA_API IAudioDecoder : public QObject, public WaveDecoder {
+#include "NAudio/WaveStream.h"
+
+#include <QVariantMap>
+
+class QSMEDIA_API IAudioDecoder : public QObject, public WaveStream {
     Q_OBJECT
 public:
-    IAudioDecoder(const WaveArguments &args, QObject *parent = nullptr);
+    IAudioDecoder(QObject *parent = nullptr);
     ~IAudioDecoder();
 
 public:
+    virtual bool open(const QVariantMap &args = {}) = 0;
+    virtual void close() = 0;
+
+    virtual WaveFormat outFormat() const = 0;
 };
 
 #define IAudioDecoder_IID "QSynthesis.Plugin.Media.AudioDecoder"

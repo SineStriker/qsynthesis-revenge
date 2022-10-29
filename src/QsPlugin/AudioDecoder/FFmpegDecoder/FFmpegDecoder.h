@@ -13,22 +13,21 @@ class Q_DECL_EXPORT FFmpegDecoder : public IAudioDecoder {
     Q_DECLARE_PRIVATE(FFmpegDecoder)
 public:
     explicit FFmpegDecoder(QObject *parent = nullptr);
-    FFmpegDecoder(const WaveArguments &args, QObject *parent = nullptr);
-    FFmpegDecoder(const QString &fileName, const WaveArguments &args, QObject *parent = nullptr);
     ~FFmpegDecoder();
 
-    bool open();
-    void close();
+    /*
+     *  FileName (*)
+     *  SampleRate
+     *  SampleFormat
+     *  Channels
+     */
+    bool open(const QVariantMap &args = {}) override;
 
-public:
-    QString fileName() const;
-    void setFileName(const QString &fileName);
-
-    WaveFormat inputFormat() const;
-    WaveFormat inputBitsPerSample() const;
+    void close() override;
 
 public:
     WaveFormat Format() const override;
+    WaveFormat outFormat() const override;
 
     void SetPosition(qint64 pos) override;
 
@@ -39,7 +38,7 @@ public:
     int Read(float *buffer, int offset, int count) override;
 
 protected:
-    FFmpegDecoder(FFmpegDecoderPrivate &d, const WaveArguments &args, QObject *parent = nullptr);
+    FFmpegDecoder(FFmpegDecoderPrivate &d, QObject *parent = nullptr);
 
     QScopedPointer<FFmpegDecoderPrivate> d_ptr;
 

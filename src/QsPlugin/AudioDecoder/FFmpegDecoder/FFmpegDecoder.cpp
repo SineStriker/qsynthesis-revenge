@@ -2,52 +2,96 @@
 
 #include "private/FFmpegDecoder_p.h"
 
+#include "Common/CodecArguments.h"
+
 #include <QDebug>
 
-FFmpegDecoder::FFmpegDecoder(QObject *parent) : FFmpegDecoder(WaveArguments(), parent) {
+static int extractInt(const QVariant &var, int defaultValue) {
+    int res = defaultValue;
+    switch (var.type()) {
+        case QVariant::Int:
+            res = var.toInt();
+            break;
+        case QVariant::UInt:
+            res = var.toInt();
+            break;
+        case QVariant::LongLong:
+            res = var.toLongLong();
+            break;
+        case QVariant::ULongLong:
+            res = var.toULongLong();
+            break;
+        case QVariant::Double:
+            res = var.toDouble();
+            break;
+        default:
+            break;
+    }
+    return res;
 }
 
-FFmpegDecoder::FFmpegDecoder(const WaveArguments &args, QObject *parent)
-    : FFmpegDecoder(*new FFmpegDecoderPrivate(), args, parent) {
-}
-
-FFmpegDecoder::FFmpegDecoder(const QString &fileName, const WaveDecoder::WaveArguments &args,
-                             QObject *parent)
-    : FFmpegDecoder(args, parent) {
-    setFileName(fileName);
+FFmpegDecoder::FFmpegDecoder(QObject *parent) : FFmpegDecoder(*new FFmpegDecoderPrivate(), parent) {
 }
 
 FFmpegDecoder::~FFmpegDecoder() {
+    FFmpegDecoder::close();
 }
 
-bool FFmpegDecoder::open() {
+bool FFmpegDecoder::open(const QVariantMap &args) {
+    Q_D(FFmpegDecoder);
+
+    FFmpegDecoderPrivate::WaveArguments wavArgs;
+
+    // Extract Arguments
+    {
+        QVariant var;
+
+        // File name
+        auto it = args.find(QsMedia::KEY_NAME_FILE_NAME);
+        if (it != args.end() && (var = it.value()).type() == QVariant::String) {
+            d->_fileName = var.toString();
+        } else {
+            qDebug() << "FFmpeg: Required argument FileName not specified";
+            return false;
+        }
+
+        // Sample rate
+        it = args.find(QsMedia::KEY_NAME_SAMPLE_RATE);
+        if (it != args.end()) {
+            wavArgs.SampleRate = extractInt(it.value(), wavArgs.SampleRate);
+            return false;
+        }
+
+        // Sample format
+        it = args.find(QsMedia::KEY_NAME_SAMPLE_FORMAT);
+        if (it != args.end()) {
+            wavArgs.SampleFormat =
+                static_cast<AVSampleFormat>(extractInt(it.value(), wavArgs.SampleFormat));
+            return false;
+        }
+
+        // Channels
+        it = args.find(QsMedia::KEY_NAME_CHANNELS);
+        if (it != args.end()) {
+            wavArgs.Channels = extractInt(it.value(), wavArgs.Channels);
+            return false;
+        }
+
+        d->_arguments = wavArgs;
+    }
+
+    if (!d->initDecoder()) {
+        return false;
+    }
+
     return true;
 }
 
 void FFmpegDecoder::close() {
-}
-
-QString FFmpegDecoder::fileName() const {
-    Q_D(const FFmpegDecoder);
-    return d->_fileName;
-}
-
-void FFmpegDecoder::setFileName(const QString &fileName) {
     Q_D(FFmpegDecoder);
-    if (d->isOpen) {
-        qDebug() << "FFmpegDecoder: Change input when decoder is open is prohibited";
-        return;
-    }
-    d->_fileName = fileName;
-}
 
-WaveFormat FFmpegDecoder::inputFormat() const {
-    Q_D(const FFmpegDecoder);
-    return d->_waveFormat;
-}
-
-WaveFormat FFmpegDecoder::inputBitsPerSample() const {
-    return 0;
+    if (d->isOpen)
+        d->quitDecoder();
 }
 
 WaveFormat FFmpegDecoder::Format() const {
@@ -55,28 +99,81 @@ WaveFormat FFmpegDecoder::Format() const {
     return d->_resampledFormat;
 }
 
+WaveFormat FFmpegDecoder::outFormat() const {
+    Q_D(const FFmpegDecoder);
+    return d->_waveFormat;
+}
+
 void FFmpegDecoder::SetPosition(qint64 pos) {
+    Q_D(FFmpegDecoder);
+    QMutexLocker locker(&d->lockObject);
+    d->_pos = d->dest2src_bytes(pos / d->_arguments.Channels);
+    d->seek();
 }
 
 qint64 FFmpegDecoder::Position() const {
-    return 0;
+    Q_D(const FFmpegDecoder);
+    return d->src2dest_bytes(d->_pos) * d->_arguments.Channels;
 }
 
 qint64 FFmpegDecoder::Length() const {
-    return 0;
+    Q_D(const FFmpegDecoder);
+    return d->src2dest_bytes(d->_length) * d->_arguments.Channels;
 }
 
 int FFmpegDecoder::Read(char *buffer, int offset, int count) {
-    return 0;
+    Q_D(FFmpegDecoder);
+
+    QMutexLocker locker(&d->lockObject);
+    int res = 0;
+
+    if (offset > 0) {
+        int err = d->decode(nullptr, offset);
+        if (err < 0) {
+            return err;
+        }
+    }
+
+    if (count > 0) {
+        res = d->decode(buffer, count);
+    }
+
+    return res;
 }
 
 int FFmpegDecoder::Read(float *buffer, int offset, int count) {
-    return 0;
+    Q_D(FFmpegDecoder);
+
+    if (d->_arguments.SampleFormat != AV_SAMPLE_FMT_FLT) {
+        qDebug() << "FFmpeg: Sample format should be FLT.";
+        return -1;
+    }
+
+    QMutexLocker locker(&d->lockObject);
+    int res = 0;
+    const int bytesPerSample = 4;
+
+    offset *= bytesPerSample;
+    count *= bytesPerSample;
+
+    if (offset > 0) {
+        int err = d->decode(nullptr, offset);
+        if (err < 0) {
+            return err;
+        }
+    }
+
+    if (count > 0) {
+        res = d->decode((char *) buffer, count);
+    }
+
+    res /= bytesPerSample;
+
+    return res;
 }
 
-FFmpegDecoder::FFmpegDecoder(FFmpegDecoderPrivate &d, const WaveDecoder::WaveArguments &args,
-                             QObject *parent)
-    : IAudioDecoder(args, parent), d_ptr(&d) {
+FFmpegDecoder::FFmpegDecoder(FFmpegDecoderPrivate &d, QObject *parent)
+    : IAudioDecoder(parent), d_ptr(&d) {
     d.q_ptr = this;
     d.init();
 }
