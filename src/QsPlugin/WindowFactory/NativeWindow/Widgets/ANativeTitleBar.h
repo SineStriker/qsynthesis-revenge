@@ -8,7 +8,7 @@
 
 class ANativeTitleBarPrivate;
 
-class Q_DECL_EXPORT ANativeTitleBar : public QWidget {
+class Q_DECL_EXPORT ANativeTitleBar : public QFrame {
     Q_OBJECT
     Q_DECLARE_PRIVATE(ANativeTitleBar)
 public:

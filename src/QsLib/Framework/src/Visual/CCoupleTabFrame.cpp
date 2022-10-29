@@ -4,7 +4,7 @@
 
 using namespace CCoupleTabTypes;
 
-CCoupleTabFrame::CCoupleTabFrame(QWidget *parent) : QWidget(parent) {
+CCoupleTabFrame::CCoupleTabFrame(QWidget *parent) : QFrame(parent) {
     init();
 }
 

@@ -3,13 +3,17 @@
 
 #include <QIODevice>
 
+#include "NAudio/WaveDecoder.h"
+
 #include "qsmedia_global.h"
 
-class QSMEDIA_API IAudioDecoder : public QObject {
+class QSMEDIA_API IAudioDecoder : public QObject, public WaveDecoder {
     Q_OBJECT
 public:
-    IAudioDecoder(QObject *parent = nullptr);
+    IAudioDecoder(const WaveArguments &args, QObject *parent = nullptr);
     ~IAudioDecoder();
+
+public:
 };
 
 #define IAudioDecoder_IID "QSynthesis.Plugin.Media.AudioDecoder"

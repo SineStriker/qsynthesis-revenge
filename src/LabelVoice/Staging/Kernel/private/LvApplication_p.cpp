@@ -86,7 +86,9 @@ void LvApplicationPrivate::init() {
     pluginMgr->load();
 
     // Default translations and styles
-    addTheme(":/themes/lv-light.qss");
+    addTheme(":/themes/light/base-light.qss");
+    addTheme(":/themes/light/home-light.qss");
+    addTheme(":/themes/light/piano-light.qss");
 
     q->connect(q->primaryScreen(), &QScreen::logicalDotsPerInchChanged, q,
                &LvApplication::q_screenRatioChanged);

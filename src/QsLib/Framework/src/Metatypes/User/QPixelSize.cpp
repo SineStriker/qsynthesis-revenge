@@ -33,6 +33,14 @@ void QPixelSize::setValueF(double value) {
     m_value = value;
 }
 
+QPixelSize::operator int() const {
+    return m_value;
+}
+
+QPixelSize::operator double() const {
+    return m_value;
+}
+
 QPixelSize QPixelSize::fromString(const QString &string) {
     QString str;
     QLatin1String px(PixelSizeUnit);

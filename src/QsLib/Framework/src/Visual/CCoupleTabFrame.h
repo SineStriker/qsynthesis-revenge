@@ -11,7 +11,7 @@
 #include "CCoupleTabWidgetImpl/CCoupleTabSplitter.h"
 #include "CCoupleTabWidgetImpl/CCoupleTabContainer.h"
 
-class QSFRAMEWORK_API CCoupleTabFrame : public QWidget {
+class QSFRAMEWORK_API CCoupleTabFrame : public QFrame {
     Q_OBJECT
     Q_PROPERTY(
         QSize dragAreaSize READ dragAreaSize WRITE setDragAreaSize NOTIFY dragAreaSizeChanged)

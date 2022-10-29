@@ -74,6 +74,10 @@ bool QSvgUri::isNull() const {
     return m_filename.isEmpty();
 }
 
+QSvgUri::operator QIcon() const {
+    return toIcon();
+}
+
 QSvgUri QSvgUri::fromStringList(const QStringList &stringList) {
     if (stringList.size() == 2 &&
         !stringList.front().compare(MetaFunctionName(), Qt::CaseInsensitive)) {

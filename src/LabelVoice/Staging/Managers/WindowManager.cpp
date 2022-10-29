@@ -2,6 +2,7 @@
 #include "private/WindowManager_p.h"
 
 #include "Kernel/Events.h"
+#include "Kernel/LvApplication.h"
 
 #include "SystemHelper.h"
 #include "ViewHelper.h"
@@ -9,6 +10,7 @@
 #include "Windows/Piano/PianoWindow.h"
 
 #include <QEvent>
+#include <QMessageBox>
 
 Q_SINGLETON_DECLARE(WindowManager);
 
@@ -66,12 +68,20 @@ PianoWindow *WindowManager::openProject(const QString &filename) {
     Q_D(WindowManager);
 
     auto w = d->createPianoWin();
+    w->setFilename(filename);
+    if (!w->load()) {
+        QMessageBox::critical(
+            firstWindow(), qApp->errorTitle(),
+            tr("Failed to load project %1").arg(QDir::toNativeSeparators(filename)));
+        w->deleteLater();
+        return nullptr;
+    }
+
     w->show();
     View::centralizeWindow(w, QSizeF(0.75, 0.75));
-
     hideHome();
-
     d->projWins.insert(w);
+
     return w;
 }
 

@@ -13,7 +13,7 @@ using namespace CCoupleTabTypes;
 CCoupleTabBar::CCoupleTabBar(QWidget *parent) : CCoupleTabBar(Forward, parent) {
 }
 
-CCoupleTabBar::CCoupleTabBar(BarDirection barDirection, QWidget *parent) : QWidget(parent) {
+CCoupleTabBar::CCoupleTabBar(BarDirection barDirection, QWidget *parent) : QFrame(parent) {
     setAttribute(Qt::WA_StyledBackground);
 
     m_placeholderIndex = -1;

@@ -53,6 +53,10 @@ void FileListItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &
     QFont locFont = m_locType.font();
     QFont dateFont = m_dateType.font();
 
+//    fileFont.setStyleStrategy(QFont::PreferAntialias);
+//    locFont.setStyleStrategy(QFont::PreferAntialias);
+//    dateFont.setStyleStrategy(QFont::PreferAntialias);
+
     QFontMetrics fileFontM(fileFont);
     QFontMetrics locFontM(locFont);
     QFontMetrics dateFontM(dateFont);
@@ -177,9 +181,9 @@ bool FileListItemDelegate::editorEvent(QEvent *event, QAbstractItemModel *model,
         QMouseEvent *mouseEvent = static_cast<QMouseEvent *>(event);
 
         if (mouseEvent->button() == Qt::RightButton) {
-            emit rightClick(index);
+            emit clicked(index, Qt::RightButton);
         } else if (mouseEvent->button() == Qt::LeftButton) {
-            emit leftClick(index);
+            emit clicked(index, Qt::LeftButton);
         }
     }
 

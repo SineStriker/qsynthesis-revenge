@@ -11,8 +11,7 @@ QRegExp VirtualPathValidator::_containsBadCharacters("^(?!\\s)[" +
 
 bool VirtualPathValidator::IsValidName(const QString &name) {
 
-    return QRegExp(_noSurroundingWhitespaces).exactMatch(name) &&
-           !_containsBadCharacters.exactMatch(name);
+    return _noSurroundingWhitespaces.exactMatch(name) && !_containsBadCharacters.exactMatch(name);
 }
 
 

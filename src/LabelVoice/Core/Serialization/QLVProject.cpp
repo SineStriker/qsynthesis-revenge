@@ -426,6 +426,7 @@ bool LVModel::ProjectModel::load(const QString &filename) {
     if (success) {
         Validate(true);
     }
+
     return success;
 }
 
@@ -524,7 +525,7 @@ bool LVModel::ProjectModel::save(const QString &filename) {
 }
 
 void LVModel::ProjectModel::reset() {
-    Version.clear();
+    Version = "0.0.1";
     Name.clear();
     LabelSchema.clear();
     Languages.clear();

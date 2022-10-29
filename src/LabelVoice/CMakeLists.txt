@@ -6,13 +6,14 @@ include(${PROJECT_SCRIPTS_DIR}/Modules/ListUtil.cmake)
 # ------------------------------ Basic information ------------------------------
 
 project(LabelVoice
-    VERSION 0.0.1.1
+    VERSION 0.0.1.2
     LANGUAGES CXX
 )
 
 # Set app data
 set(APP_VERSION_SHORT ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}.${PROJECT_VERSION_PATCH})
 set(APP_VERSION_SHORT ${APP_VERSION_SHORT} PARENT_SCOPE)
+set(APP_VERSION_VERBOSE ${PROJECT_VERSION} PARENT_SCOPE)
 
 set(APP_BLOCK LvBlock)
 set(APP_LIB_DIR lib)
@@ -205,6 +206,15 @@ if (WIN32 AND APP_DEPLOY)
         DESTINATION ${APP_LIB_DIR}
         DEPENDENCIES ${APP_BLOCK} QsUtils QsFramework QsSVS QsMedia fsnotifier-lib
         RELATIVE
+    )
+
+    deploy_shared_libraries(
+        TARGET ${PROJECT_NAME}
+        DESTINATION ${APP_LIB_DIR}
+        DEPENDENCIES Qt${QT_VERSION_MAJOR}::Core Qt${QT_VERSION_MAJOR}::Gui
+                     Qt${QT_VERSION_MAJOR}::Widgets Qt${QT_VERSION_MAJOR}::Svg
+                     Qt${QT_VERSION_MAJOR}::Network
+        RELATIVE PREBUILT
     )
 
 else()

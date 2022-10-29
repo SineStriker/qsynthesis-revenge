@@ -35,6 +35,8 @@ public:
 
     bool isNull() const;
 
+    operator QIcon() const;
+
 private:
     QString m_filename;
     QString m_currentColor;

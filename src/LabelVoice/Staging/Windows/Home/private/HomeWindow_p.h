@@ -3,19 +3,15 @@
 
 #include "Controls/Windows/PlainWindow_p.h"
 
-#include "../FileListWidget.h"
 #include "../HomeWindow.h"
 
 #include "CTabButton.h"
 
-#include <QBoxLayout>
 #include <QWidget>
+#include <QStackedWidget>
 
-#include <QLabel>
-#include <QLineEdit>
-#include <QListWidget>
-#include <QPushButton>
-#include <QSplitter>
+#include "../HomeMainWidget.h"
+#include "../HomeProjConfWidget.h"
 
 class HomeWindowPrivate : public PlainWindowPrivate {
     Q_DECLARE_PUBLIC(HomeWindow)
@@ -27,31 +23,13 @@ public:
 
     void reloadStrings_helper();
 
-    QWidget *w;
+    QStackedWidget *stack;
 
-    QWidget *leftWidget;
-    QWidget *rightWidget;
+    HomeMainWidget *mainWidget;
+    HomeProjConfWidget *projConfWidget;
 
-    QHBoxLayout *mainLayout;
-    QVBoxLayout *leftLayout, *rightLayout;
-
-    QSplitter *splitter;
-
-    CTabButton *titleLabel;
-    QLabel *subtitleLabel;
-
-    FileListWidget *templateList, *recentList;
-    QLineEdit *searchBox;
-
-    struct TemplateConfig {
-        QIcon icon;
-        QString title;
-        QString subtitle;
-        QString cont;
-    };
-    QList<TemplateConfig> templates;
-
-    void reloadTemplates();
+    void cb_switchIn();
+    void cb_switchOut();
 };
 
 #endif // HOMEWINDOWPRIVATE_H

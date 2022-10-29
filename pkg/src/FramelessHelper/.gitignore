@@ -73,7 +73,7 @@ user.conf
 [Dd]oc/
 [Dd]ocs/
 Thumbs.db
-*.rc
+# *.rc
 *.bin
 *.run
 .qmake.conf

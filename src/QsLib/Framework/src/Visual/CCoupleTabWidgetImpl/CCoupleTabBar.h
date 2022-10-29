@@ -1,14 +1,14 @@
 #ifndef CCOUPLETABBAR_H
 #define CCOUPLETABBAR_H
 
-#include <QWidget>
+#include <QFrame>
 
 #include "CCoupleTabBarCard.h"
 #include "qsframework_global.h"
 
 class CCoupleTabDoubleBar;
 
-class QSFRAMEWORK_API CCoupleTabBar : public QWidget {
+class QSFRAMEWORK_API CCoupleTabBar : public QFrame {
     Q_OBJECT
 public:
     explicit CCoupleTabBar(QWidget *parent = nullptr);

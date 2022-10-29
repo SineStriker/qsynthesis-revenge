@@ -1,6 +1,10 @@
 #include "HomeWindow_p.h"
 
-#include <QCoreApplication>
+#include <QDir>
+
+#include "Kernel/LvApplication.h"
+
+#include "Managers/FileManager.h"
 
 HomeWindowPrivate::HomeWindowPrivate() {
 }
@@ -17,113 +21,47 @@ void HomeWindowPrivate::init() {
                                     ~IWindowHandle::WindowTitle);
     }
 
-    w = new QFrame();
-    w->setObjectName("home-widget");
-    q->setCentralWidget(w);
+    mainWidget = new HomeMainWidget(q);
+    mainWidget->setObjectName("home-main-widget");
 
-    // Left
-    titleLabel = new CTabButton();
-    titleLabel->setObjectName("title-label");
+    projConfWidget = new HomeProjConfWidget(q);
+    projConfWidget->setObjectName("home-create-widget");
 
-    subtitleLabel = new QLabel();
-    subtitleLabel->setObjectName("subtitle-label");
-    subtitleLabel->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Fixed);
+    stack = new QStackedWidget();
+    stack->setObjectName("home-stack");
 
-    templateList = new FileListWidget();
-    templateList->setObjectName("template-list");
+    stack->addWidget(mainWidget);
+    stack->addWidget(projConfWidget);
 
-    leftLayout = new QVBoxLayout();
-    leftLayout->setMargin(0);
-    leftLayout->setSpacing(0);
+    stack->setCurrentWidget(mainWidget);
+    q->setCentralWidget(stack);
 
-    leftLayout->addWidget(titleLabel);
-    leftLayout->addWidget(subtitleLabel);
-    leftLayout->addWidget(templateList);
+    q->connect(mainWidget->openButton, &QPushButton::clicked, q, &HomeWindow::_q_browseRequested);
+    q->connect(mainWidget, &HomeMainWidget::newRequested, q, &HomeWindow::_q_newRequested);
+    q->connect(mainWidget, &HomeMainWidget::openRequested, q, &HomeWindow::_q_openRequested);
 
-    leftWidget = new QFrame();
-    leftWidget->setObjectName("home-welcome-widget");
-    leftWidget->setLayout(leftLayout);
-
-    // Right
-    searchBox = new QLineEdit();
-    searchBox->setObjectName("search-box");
-
-    recentList = new FileListWidget();
-    recentList->setObjectName("recent-list");
-
-    rightLayout = new QVBoxLayout();
-    rightLayout->setMargin(0);
-    rightLayout->setSpacing(0);
-
-    rightLayout->addWidget(searchBox);
-    rightLayout->addWidget(recentList);
-
-    rightWidget = new QFrame();
-    rightWidget->setObjectName("home-recent-widget");
-    rightWidget->setLayout(rightLayout);
-
-    // Main
-    mainLayout = new QHBoxLayout();
-    mainLayout->setMargin(0);
-    mainLayout->setSpacing(0);
-
-    splitter = new QSplitter(Qt::Horizontal);
-    splitter->setObjectName("home-splitter");
-    splitter->setChildrenCollapsible(false);
-    splitter->addWidget(leftWidget);
-    splitter->addWidget(rightWidget);
-
-    mainLayout->addWidget(splitter);
-
-    w->setLayout(mainLayout);
-
-    q->connect(searchBox, &QLineEdit::textChanged, q, &HomeWindow::_q_searchBoxChanged);
+    q->connect(projConfWidget, &HomeProjConfWidget::confirmed, q,
+               &HomeWindow::_q_confirmProjectConfigure);
+    q->connect(projConfWidget, &HomeProjConfWidget::canceled, q,
+               &HomeWindow::_q_cancelProjectConfigure);
 }
 
 void HomeWindowPrivate::reloadStrings_helper() {
     Q_Q(HomeWindow);
 
-    titleLabel->setText(qApp->applicationName());
-    subtitleLabel->setText(HomeWindow::tr("Select a template to create a project"));
-    searchBox->setPlaceholderText(HomeWindow::tr("Search for recent projects"));
+    q->setWindowTitle(HomeWindow::tr("%1").arg(qApp->applicationName()));
 
-    q->setWindowTitle(HomeWindow::tr("Welcome to %1").arg(qApp->applicationName()));
+    mainWidget->reloadStrings();
+    projConfWidget->reloadStrings();
 
-    reloadTemplates();
+    mainWidget->reloadTemplates();
 }
 
-void HomeWindowPrivate::reloadTemplates() {
-    templates.clear();
-    templates.append(TemplateConfig{
-        QIcon(":/svg/letter/+.svg"),
-        HomeWindow::tr("Empty Template"),
-        HomeWindow::tr("Create empty project for marking"),
-        ">",
-    });
-    templates.append(TemplateConfig{
-        QIcon(":/svg/letter/o.svg"),
-        HomeWindow::tr("Opencpop Template"),
-        HomeWindow::tr("Use Opencpop template for marking"),
-        ">",
-    });
-    templates.append(TemplateConfig{
-        QIcon(":/svg/letter/d.svg"),
-        HomeWindow::tr("DiffSinger Template"),
-        HomeWindow::tr("Use DiffSinger template for marking"),
-        ">",
-    });
-    templates.append(TemplateConfig{
-        QIcon(":/svg/letter/o.svg"),
-        HomeWindow::tr("OpenVPI Template"),
-        HomeWindow::tr("Use OpenVPI template for marking"),
-        ">",
-    });
+void HomeWindowPrivate::cb_switchIn() {
+    projConfWidget->clear();
+    stack->setCurrentWidget(projConfWidget);
+}
 
-    // Templates
-    templateList->clear();
-    for (auto it = templates.begin(); it != templates.end(); ++it) {
-        const TemplateConfig &info = *it;
-        templateList->addFileItem(info.icon, QSize(32, 32), 0, info.title, info.subtitle,
-                                  info.cont);
-    }
+void HomeWindowPrivate::cb_switchOut() {
+    stack->setCurrentWidget(mainWidget);
 }

@@ -22,6 +22,9 @@ public:
     double valueF() const;
     void setValueF(double value);
 
+    operator int() const;
+    operator double() const;
+
 protected:
     double m_value;
 
