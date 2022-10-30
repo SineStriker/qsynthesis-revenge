@@ -106,6 +106,11 @@ cd pkg
 ````
 
 + 执行CMake Configure
+    + 在 macOS 平台编译时，如果因为使用homebrew安装Qt等原因导致产生了诸如`Could not find a package configuration file provided by "Qt5" with any of the following names:...`之类的错误，请在configure前提供如下环境变量以使CMake能找到Qt库的位置（请视情况自行根据安装Qt库的位置改变命令中的路径）：
+      ```sh
+      export QT_DIR=/opt/homebrew/opt/qt@5
+      export Qt5_DIR=/opt/homebrew/opt/qt@5
+      ```
 ````
 cmake --no-warn-unused-cli -DCMAKE_EXPORT_COMPILE_COMMANDS:BOOL=TRUE -DCMAKE_BUILD_TYPE:STRING=Release -S. -Bbuild -G Ninja
 ````

@@ -27,9 +27,29 @@ foreach(_target ${ffmpeg_subprojects})
         list(APPEND _IMPORT_CHECK_TARGETS FFmpeg::${_target})
         list(APPEND _IMPORT_CHECK_FILES_FOR_FFmpeg::${_target} ${_lib} ${_dll})
     elseif (APPLE)
+        file(GLOB _dylib ${_IMPORT_PREFIX}/lib/*${_target}*.dylib)
+        if ("${_dylib}" STREQUAL "")
+            message(FATAL_ERROR "Failed to find definition file of ${_target}.")
+        endif()
 
-        # To be added
+        get_filename_component(_name ${_dylib} NAME)
+        if (IS_SYMLINK ${_dylib})
+            file(READ_SYMLINK ${_dylib} _symlink)
+            if (IS_ABSOLUTE ${_symlink})
+                set(_dylib ${_symlink})
+            else()
+                set(_dylib ${_IMPORT_PREFIX}/lib/${_symlink})
+            endif()
+        endif()
 
+        set_property(TARGET FFmpeg::${_target} APPEND PROPERTY IMPORTED_CONFIGURATIONS RELEASE)
+        set_target_properties(FFmpeg::${_target} PROPERTIES
+            IMPORTED_LOCATION_RELEASE ${_dylib}
+            IMPORTED_SONAME_RELEASE ${_name}
+        )
+
+        list(APPEND _IMPORT_CHECK_TARGETS FFmpeg::${_target})
+        list(APPEND _IMPORT_CHECK_FILES_FOR_FFmpeg::${_target} ${_dylib})
     else()
         file(GLOB _so ${_IMPORT_PREFIX}/lib/*${_target}*.so)
         if ("${_so}" STREQUAL "")
