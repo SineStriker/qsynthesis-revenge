@@ -14,7 +14,7 @@ static T fromBytes(QIODevice *d) {
 }
 
 WaveFormat::WaveFormat(int rate, int bits, int channels) {
-    this->waveFormatTag = WaveFormatEncoding::Pcm;
+    this->waveFormatTag = NAudio::Pcm;
     this->channels = (short) channels;
     this->sampleRate = rate;
     this->bitsPerSample = (short) bits;
@@ -30,8 +30,8 @@ int WaveFormat::ConvertLatencyToByteSize(int milliseconds) const {
     return byteSize;
 }
 
-WaveFormat WaveFormat::CreateCustomFormat(WaveFormatEncoding tag, int sampleRate, int channels,
-                                          int averageBytesPerSecond, int blockAlign,
+WaveFormat WaveFormat::CreateCustomFormat(NAudio::WaveFormatEncoding tag, int sampleRate,
+                                          int channels, int averageBytesPerSecond, int blockAlign,
                                           int bitsPerSample) {
     WaveFormat fmt;
     fmt.waveFormatTag = tag;
@@ -45,18 +45,18 @@ WaveFormat WaveFormat::CreateCustomFormat(WaveFormatEncoding tag, int sampleRate
 }
 
 WaveFormat WaveFormat::CreateALawFormat(int sampleRate, int channels) {
-    return WaveFormat::CreateCustomFormat(WaveFormatEncoding::ALaw, sampleRate, channels,
-                                          sampleRate * channels, channels, 8);
+    return WaveFormat::CreateCustomFormat(NAudio::ALaw, sampleRate, channels, sampleRate * channels,
+                                          channels, 8);
 }
 
 WaveFormat WaveFormat::CreateMuLawFormat(int sampleRate, int channels) {
-    return WaveFormat::CreateCustomFormat(WaveFormatEncoding::MuLaw, sampleRate, channels,
+    return WaveFormat::CreateCustomFormat(NAudio::MuLaw, sampleRate, channels,
                                           sampleRate * channels, channels, 8);
 }
 
 WaveFormat WaveFormat::CreateIeeeFloatWaveFormat(int sampleRate, int channels) {
     WaveFormat ieeeFloatWaveFormat;
-    ieeeFloatWaveFormat.waveFormatTag = WaveFormatEncoding::IeeeFloat;
+    ieeeFloatWaveFormat.waveFormatTag = NAudio::IeeeFloat;
     ieeeFloatWaveFormat.channels = channels;
     ieeeFloatWaveFormat.bitsPerSample = 32;
     ieeeFloatWaveFormat.sampleRate = sampleRate;
@@ -80,7 +80,7 @@ bool WaveFormat::ReadWaveFormat(QIODevice *br, int formatChunkLength) {
     if (formatChunkLength < 16) {
         return false;
     }
-    this->waveFormatTag = (WaveFormatEncoding) fromBytes<quint32>(br);
+    this->waveFormatTag = (NAudio::WaveFormatEncoding) fromBytes<quint32>(br);
     this->channels = fromBytes<quint16>(br);
     this->sampleRate = fromBytes<qint32>(br);
     this->averageBytesPerSecond = fromBytes<qint32>(br);
@@ -102,11 +102,11 @@ WaveFormat::WaveFormat(QIODevice *br) {
 
 QString WaveFormat::toString() const {
     switch (this->waveFormatTag) {
-        case WaveFormatEncoding::Pcm:
-        case WaveFormatEncoding::Extensible:
+        case NAudio::Pcm:
+        case NAudio::Extensible:
             return QString::asprintf("%d bit PCM: %dHz %d channels", this->bitsPerSample,
                                      this->sampleRate, this->channels);
-        case WaveFormatEncoding::IeeeFloat:
+        case NAudio::IeeeFloat:
             return QString::asprintf("%d bit IEEFloat: %dHz %d channels", this->bitsPerSample,
                                      this->sampleRate, this->channels);
         default:
@@ -124,13 +124,14 @@ bool WaveFormat::operator==(const WaveFormat &waveFormat) const {
 }
 
 int WaveFormat::toHashCode() const {
-    return (this->waveFormatTag ^ (WaveFormatEncoding) this->channels ^
-            (WaveFormatEncoding) this->sampleRate ^
-            (WaveFormatEncoding) this->averageBytesPerSecond ^
-            (WaveFormatEncoding) this->blockAlign ^ (WaveFormatEncoding) this->bitsPerSample);
+    return (this->waveFormatTag ^ (NAudio::WaveFormatEncoding) this->channels ^
+            (NAudio::WaveFormatEncoding) this->sampleRate ^
+            (NAudio::WaveFormatEncoding) this->averageBytesPerSecond ^
+            (NAudio::WaveFormatEncoding) this->blockAlign ^
+            (NAudio::WaveFormatEncoding) this->bitsPerSample);
 }
 
-WaveFormatEncoding WaveFormat::Encoding() const {
+NAudio::WaveFormatEncoding WaveFormat::Encoding() const {
     return this->waveFormatTag;
 }
 

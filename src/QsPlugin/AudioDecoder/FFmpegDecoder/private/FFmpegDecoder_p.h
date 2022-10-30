@@ -9,9 +9,9 @@ extern "C" {
 
 #include "../FFmpegDecoder.h"
 
-#include <QMutex>
+#include <mutex>
 
-class FFmpegDecoderPrivate {
+class Q_DECL_EXPORT FFmpegDecoderPrivate {
     Q_DECLARE_PUBLIC(FFmpegDecoder);
 
 public:
@@ -21,11 +21,38 @@ public:
     void init();
 
     void clear();
-    void dispose();
+
+    bool initDecoder();
+    void quitDecoder();
+
+    int decode(char *buf, int size);
+    void seek();
 
     FFmpegDecoder *q_ptr;
 
     bool isOpen;
+
+    struct WaveArguments {
+        int SampleRate;
+        AVSampleFormat SampleFormat;
+        int Channels;
+
+        WaveArguments() : WaveArguments(-1, AV_SAMPLE_FMT_NONE, -1) {
+        }
+
+        WaveArguments(AVSampleFormat fmt) : WaveArguments(-1, fmt, -1) {
+        }
+
+        WaveArguments(int sampleRate, AVSampleFormat fmt, int channels) {
+            SampleRate = sampleRate;
+            SampleFormat = fmt;
+            Channels = channels;
+        }
+
+        int BytesPerSample() const {
+            return av_get_bytes_per_sample(SampleFormat);
+        }
+    };
 
     // FFmpeg 指针
     AVFormatContext *_formatContext;
@@ -48,7 +75,7 @@ public:
     QString _fileName;
 
     // 输出参数
-    WaveDecoder::WaveArguments _arguments;
+    WaveArguments _arguments;
 
     // 音频信息
     long _length; // 不包括声道
@@ -64,15 +91,15 @@ public:
 
     int _remainSamples; // 重采样器余量
 
-    QMutex lockObject;
+    std::mutex lockObject;
 
-    int orgBytesPerSample();
+    int orgBytesPerSample() const;
 
-    qint64 src2dest_bytes(qint64 bytes);
+    qint64 src2dest_bytes(qint64 bytes) const;
 
-    qint64 dest2src_bytes(qint64 bytes);
+    qint64 dest2src_bytes(qint64 bytes) const;
 
-    static int getArgsBytesPerSample(const WaveDecoder::WaveArguments &args);
+    void error_on_channel_copy(int code) const;
 };
 
 #endif // FFMPEGDECODERPRIVATE_H

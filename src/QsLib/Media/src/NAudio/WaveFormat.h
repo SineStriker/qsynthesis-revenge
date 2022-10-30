@@ -10,7 +10,7 @@
 
 class QSMEDIA_API WaveFormat {
 protected:
-    WaveFormatEncoding waveFormatTag;
+    NAudio::WaveFormatEncoding waveFormatTag;
     short channels;
     int sampleRate;
     int averageBytesPerSecond;
@@ -29,8 +29,8 @@ public:
 
     int ConvertLatencyToByteSize(int milliseconds) const;
 
-    static WaveFormat CreateCustomFormat(WaveFormatEncoding tag, int sampleRate, int channels,
-                                         int averageBytesPerSecond, int blockAlign,
+    static WaveFormat CreateCustomFormat(NAudio::WaveFormatEncoding tag, int sampleRate,
+                                         int channels, int averageBytesPerSecond, int blockAlign,
                                          int bitsPerSample);
 
     static WaveFormat CreateALawFormat(int sampleRate, int channels);
@@ -53,7 +53,7 @@ public:
 
     int toHashCode() const;
 
-    WaveFormatEncoding Encoding() const;
+    NAudio::WaveFormatEncoding Encoding() const;
 
     virtual void Serialize(QIODevice *writer);
 

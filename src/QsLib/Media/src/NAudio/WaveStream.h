@@ -3,8 +3,6 @@
 
 #include <QIODevice>
 
-#include <fstream>
-
 #include "WaveFormat.h"
 
 class QSMEDIA_API WaveStream {

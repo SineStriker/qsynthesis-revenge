@@ -22,18 +22,45 @@ public:
     };
 
 public:
-    void setup(IAudioDecoder *decoder);
+    struct PlaybackArguments {
+        int bufferSamples;
+        int sampleRate;
+        int channels;
+        QVariantMap custom;
+    };
+
+    bool setup(const PlaybackArguments &args);
     void dispose();
+
+    void setDecoder(IAudioDecoder *decoder);
+    bool isReady() const;
 
     void play();
     void stop();
 
     PlaybackState state() const;
 
+    virtual QStringList drivers() const;
+    virtual QString currentDriver() const;
+    virtual bool setDriver(const QString &driver);
+
+    virtual QStringList devices() const;
+    virtual QString currentDevice() const;
+    virtual bool setDevice(const QString &device);
+
+    int bufferSamples() const;
+    int sampleRate() const;
+    int channels() const;
+
 protected:
     IAudioPlayback(IAudioPlaybackPrivate &d, QObject *parent = nullptr);
 
     QScopedPointer<IAudioPlaybackPrivate> d_ptr;
+
+signals:
+    void stateChanged();
+    void driverChanged();
+    void deviceChanged();
 };
 
 #define IAudioPlayback_IID "QSynthesis.Plugin.Media.AudioPlayback"
