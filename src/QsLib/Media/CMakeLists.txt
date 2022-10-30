@@ -33,6 +33,8 @@ target_compile_definitions(${PROJECT_NAME} PRIVATE QSMEDIA_LIBRARY)
 
 target_link_libraries(${PROJECT_NAME} PUBLIC ${QT_LIBS})
 
+target_link_libraries(${PROJECT_NAME} PUBLIC QsUtils)
+
 target_include_directories(${PROJECT_NAME} PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}/include
     ${CMAKE_CURRENT_SOURCE_DIR}/src

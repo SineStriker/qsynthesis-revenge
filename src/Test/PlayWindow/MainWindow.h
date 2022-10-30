@@ -1,18 +1,17 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
-#include <QMainWindow>
-
+#include <QAction>
+#include <QBoxLayout>
 #include <QLabel>
-#include <QLineEdit>
-#include <QLocalSocket>
+#include <QMainWindow>
+#include <QMenu>
 #include <QPushButton>
-#include <QHBoxLayout>
-#include <QVBoxLayout>
-#include <QThread>
-#include <QLocalServer>
+#include <QSet>
+#include <QSlider>
 
-#include "WaveObject.h"
+#include "Api/IAudioDecoder.h"
+#include "Api/IAudioPlayback.h"
 
 class MainWindow : public QMainWindow {
     Q_OBJECT
@@ -21,31 +20,51 @@ public:
     ~MainWindow();
 
 protected:
-    QLabel *pipenameLabel, *waveLabel;
-    QLineEdit *pipenameText, *waveText;
+    IAudioDecoder *decoder;
+    IAudioPlayback *playback;
 
-    QPushButton *browseButton;
-    QPushButton *connectButton;
-    QPushButton *disconnectButton;
+    QMenu *fileMenu;
+    QAction *browseAction;
 
-    QHBoxLayout *waveBrowseLayout;
-    QHBoxLayout *buttonsLayout;
+    QMenu *deviceMenu;
+    QActionGroup *deviceActionGroup;
+
+    QLabel *fileLabel;
+    QSlider *slider;
+    QLabel *timeLabel;
+    QPushButton *playButton;
+    QPushButton *stopButton;
+
     QVBoxLayout *mainLayout;
+    QHBoxLayout *buttonsLayout;
 
-    QLocalSocket *client;
-    QLocalServer *server;
+    int notifyTimerId;
+    bool playing;
+    QString filename;
+    QSet<QString> filters;
 
-    void tryDisconnect();
+    void openFile(const QString &filename);
+    void setPlaying(bool playing);
+
+    void timerEvent(QTimerEvent *event) override;
+    void dragEnterEvent(QDragEnterEvent *event) override;
+    void dropEvent(QDropEvent *event) override;
 
 private:
-    void _q_browseButtonClicked();
-    void _q_connectButtonClicked();
-    void _q_disconnectButtonClicked();
+    void initPlugins();
+    void initStyleSheet();
 
-    void _q_socketConnectSuccess();
-    void _q_socketDisconnectSuccess();
-    void _q_socketErrorOccured(QLocalSocket::LocalSocketError e);
+    void reloadDevices();
+    void reloadButtonStatus();
+    void reloadSliderStatus();
+    void reloadDeviceActionStatus();
 
-    void _q_socketReadyRead();
+    void _q_browseActionTriggered();
+    void _q_playButtonClicked();
+    void _q_stopButtonClicked();
+    void _q_sliderReleased();
+    void _q_deviceActionTriggered(QAction *action);
+    void _q_playStateChanged();
+    void _q_audioDeviceChanged();
 };
 #endif // MAINWINDOW_H

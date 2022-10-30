@@ -3,196 +3,339 @@
 #include <QApplication>
 #include <QDebug>
 #include <QDir>
+#include <QDragEnterEvent>
 #include <QFileDialog>
 #include <QJsonDocument>
 #include <QJsonObject>
+#include <QMenuBar>
 #include <QMessageBox>
+#include <QMimeData>
+#include <QPluginLoader>
+#include <QTime>
+
+#include "Common/CodecArguments.h"
+#include "Common/SampleFormat.h"
+
+#include "MathHelper.h"
+#include "SystemHelper.h"
+
+// https://iconduck.com/icons
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
-    pipenameLabel = new QLabel("Pipe Name");
-    pipenameText = new QLineEdit();
+    notifyTimerId = 0;
+    playing = false;
+    filters = QSet<QString>{"wav", "mp3", "m4a", "flac"};
 
-    waveLabel = new QLabel("Wave Path");
-    waveText = new QLineEdit();
+    setAcceptDrops(true);
 
-    browseButton = new QPushButton("...");
+    initPlugins();
+    initStyleSheet();
 
-    waveBrowseLayout = new QHBoxLayout();
-    waveBrowseLayout->setMargin(0);
-    waveBrowseLayout->addWidget(waveText);
-    waveBrowseLayout->addWidget(browseButton);
+    // Init Menu Bar
+    browseAction = new QAction("Open Audio", this);
+    browseAction->setShortcut(QKeySequence("Ctrl+O"));
 
-    connectButton = new QPushButton("Connect");
-    disconnectButton = new QPushButton("Disconnect");
+    fileMenu = new QMenu("File(&F)", this);
+    fileMenu->addAction(browseAction);
+
+    deviceMenu = new QMenu("Devices(&D)", this);
+    deviceActionGroup = new QActionGroup(this);
+    deviceActionGroup->setExclusive(true);
+
+    auto bar = menuBar();
+    bar->addMenu(fileMenu);
+    bar->addMenu(deviceMenu);
+
+    // Init Central
+    fileLabel = new QLabel("Select audio file.");
+    timeLabel = new QLabel("--:--/--:--");
+
+    slider = new QSlider(Qt::Horizontal);
+    slider->setRange(0, 10000);
+
+    playButton = new QPushButton();
+    playButton->setObjectName("play-button");
+
+    stopButton = new QPushButton();
+    stopButton->setObjectName("stop-button");
 
     buttonsLayout = new QHBoxLayout();
-    buttonsLayout->setMargin(0);
-    buttonsLayout->addWidget(connectButton);
-    buttonsLayout->addWidget(disconnectButton);
+    buttonsLayout->addWidget(playButton);
+    buttonsLayout->addWidget(stopButton);
+    buttonsLayout->addStretch();
+    buttonsLayout->addWidget(timeLabel);
 
     mainLayout = new QVBoxLayout();
-    mainLayout->addWidget(pipenameLabel);
-    mainLayout->addWidget(pipenameText);
-    mainLayout->addWidget(waveLabel);
-    mainLayout->addLayout(waveBrowseLayout);
+    mainLayout->addWidget(fileLabel);
+    mainLayout->addWidget(slider);
     mainLayout->addLayout(buttonsLayout);
 
-    QWidget *w = new QWidget();
+    auto w = new QFrame();
+    w->setObjectName("central-widget");
     w->setLayout(mainLayout);
+
     setCentralWidget(w);
 
-    connect(browseButton, &QPushButton::clicked, this, &MainWindow::_q_browseButtonClicked);
-    connect(connectButton, &QPushButton::clicked, this, &MainWindow::_q_connectButtonClicked);
-    connect(disconnectButton, &QPushButton::clicked, this, &MainWindow::_q_disconnectButtonClicked);
+    connect(browseAction, &QAction::triggered, this, &MainWindow::_q_browseActionTriggered);
+    connect(playButton, &QPushButton::clicked, this, &MainWindow::_q_playButtonClicked);
+    connect(stopButton, &QPushButton::clicked, this, &MainWindow::_q_stopButtonClicked);
+    connect(slider, &QSlider::sliderReleased, this, &MainWindow::_q_sliderReleased);
+    connect(deviceMenu, &QMenu::triggered, this, &MainWindow::_q_deviceActionTriggered);
 
-    client = new QLocalSocket(this);
-    connect(client, &QLocalSocket::connected, this, &MainWindow::_q_socketConnectSuccess);
-    connect(client, &QLocalSocket::disconnected, this, &MainWindow::_q_socketDisconnectSuccess);
-    connect(client, &QLocalSocket::errorOccurred, this, &MainWindow::_q_socketErrorOccured);
+    connect(playback, &IAudioPlayback::stateChanged, this, &MainWindow::_q_playStateChanged);
+    connect(playback, &IAudioPlayback::deviceChanged, this, &MainWindow::_q_audioDeviceChanged);
 
-    connect(client, &QLocalSocket::readyRead, this, &MainWindow::_q_socketReadyRead);
+    reloadDevices();
+    reloadButtonStatus();
+    stopButton->setIcon(QIcon(":/res/stop.svg"));
 
-    resize(750, 5);
-
-    // Read history
-    QFile file(qApp->applicationDirPath() + "/client.json");
-    if (file.open(QIODevice::ReadOnly)) {
-        QByteArray data(file.readAll());
-        QJsonParseError err;
-        QJsonDocument doc = QJsonDocument::fromJson(data, &err);
-        if (err.error == QJsonParseError::NoError && doc.isObject()) {
-            QJsonObject obj = doc.object();
-            {
-                auto it = obj.find("pipename");
-                if (it != obj.end() && it->isString()) {
-                    pipenameText->setText(it->toString());
-                }
-            }
-            {
-                auto it = obj.find("wave");
-                if (it != obj.end() && it->isString()) {
-                    waveText->setText(QDir::toNativeSeparators(it->toString()));
-                }
-            }
-        }
-        file.close();
-    }
+    resize(750, 10);
 }
 
 MainWindow::~MainWindow() {
-    if (client->state() == QLocalSocket::ConnectedState) {
-        tryDisconnect();
-    }
-
-    // Save history
-    QFile file(qApp->applicationDirPath() + "/client.json");
-    if (file.open(QIODevice::WriteOnly | QIODevice::Truncate | QIODevice::Text)) {
-        QJsonDocument doc;
-        QJsonObject obj{
-            {"pipename", pipenameText->text()},
-            {"wave", QDir::toNativeSeparators(waveText->text())},
-        };
-        doc.setObject(obj);
-        file.write(doc.toJson());
-        file.close();
-    }
+    playback->dispose();
+    decoder->close();
 }
 
-void MainWindow::tryDisconnect() {
-    // Disconnect
-    client->disconnectFromServer();
-}
-
-void MainWindow::_q_browseButtonClicked() {
-    QString path = QFileDialog::getOpenFileName(this, "Browse", ".", "Wave Files(*.wav)");
-    if (!path.isEmpty()) {
-        waveText->setText(QDir::toNativeSeparators(path));
+void MainWindow::openFile(const QString &filename) {
+    setPlaying(false);
+    if (decoder->isOpen()) {
+        decoder->close();
     }
-}
-
-void MainWindow::_q_connectButtonClicked() {
-    if (client->state() != QLocalSocket::UnconnectedState) {
-        QMessageBox::information(this, qAppName(), "Client is connected.");
+    if (!decoder->open({{QsMedia::KEY_NAME_FILE_NAME, filename},
+                        {QsMedia::KEY_NAME_SAMPLE_RATE, 44100},
+                        {QsMedia::KEY_NAME_SAMPLE_FORMAT, QsMedia::AV_SAMPLE_FMT_FLT},
+                        {QsMedia::KEY_NAME_CHANNELS, 2}})) {
+        QMessageBox::critical(this, qAppName(), "Failed to initialize decoder!");
         return;
     }
 
-    QString pipe = pipenameText->text();
-    QString path = waveText->text();
+    fileLabel->setText(filename);
+    this->filename = filename;
 
-    if (!QFileInfo(path).isFile()) {
-        QMessageBox::critical(this, qAppName(), "Not a file!");
-        return;
-    }
-    if (pipe.isEmpty()) {
-        QMessageBox::critical(this, qAppName(), "Empty pipe name!");
-        return;
-    }
-    client->connectToServer(pipe);
+    slider->setMinimum(0);
+    slider->setMaximum(decoder->Length());
+
+    reloadSliderStatus();
 }
 
-void MainWindow::_q_disconnectButtonClicked() {
-    if (client->state() != QLocalSocket::ConnectedState) {
-        QMessageBox::information(this, qAppName(), "Client is not connected.");
+void MainWindow::setPlaying(bool playing) {
+    if (this->playing == playing) {
         return;
     }
 
-    tryDisconnect();
-}
+    this->playing = playing;
 
-void MainWindow::_q_socketConnectSuccess() {
-    qDebug() << "Connect to server success";
+    if (playing) {
+        playback->play();
 
-    QString path = waveText->text();
-    client->write(path.toUtf8());
-    client->write("\n");
-}
+        notifyTimerId = this->startTimer(20);
+    } else {
+        playback->stop();
 
-void MainWindow::_q_socketDisconnectSuccess() {
-    qDebug() << "Disconnect from server success.";
-}
-
-void MainWindow::_q_socketErrorOccured(QLocalSocket::LocalSocketError e) {
-    QString msg;
-    switch (e) {
-        case QLocalSocket::ConnectionRefusedError:
-            msg = "Connection Refused";
-            break;
-        case QLocalSocket::PeerClosedError:
-            msg = "Remote Host Closed";
-            break;
-        case QLocalSocket::ServerNotFoundError:
-            msg = "Server Not Found";
-            break;
-        case QLocalSocket::SocketAccessError:
-            msg = "Socket Access Error";
-            break;
-        case QLocalSocket::SocketResourceError:
-            msg = "Socket Resource Error";
-            break;
-        case QLocalSocket::SocketTimeoutError:
-            msg = "Socket Timeout Error";
-            break;
-        case QLocalSocket::DatagramTooLargeError:
-            msg = "Datagram Too Large";
-            break;
-        case QLocalSocket::ConnectionError:
-            msg = "Connection Error";
-            break;
-        case QLocalSocket::UnsupportedSocketOperationError:
-            msg = "Unsupported Socket Operation";
-            break;
-        case QLocalSocket::UnknownSocketError:
-            msg = "Unknown Socket";
-            break;
-        case QLocalSocket::OperationError:
-            msg = "Operation Error";
-            break;
+        killTimer(notifyTimerId);
+        notifyTimerId = 0;
     }
-    QMessageBox::critical(this, qAppName(), QString("Error: %1.").arg(msg));
+
+    reloadButtonStatus();
+    reloadSliderStatus();
 }
 
-void MainWindow::_q_socketReadyRead() {
-    static int i = 0;
+void MainWindow::timerEvent(QTimerEvent *event) {
+    if (event->timerId() == notifyTimerId) {
+        reloadSliderStatus();
+    }
+}
 
-    qDebug() << i++ << client->readAll().size();
+void MainWindow::dragEnterEvent(QDragEnterEvent *event) {
+    auto e = static_cast<QDragEnterEvent *>(event);
+    const QMimeData *mime = e->mimeData();
+    if (mime->hasUrls()) {
+        auto urls = mime->urls();
+        QStringList filenames;
+        for (auto it = urls.begin(); it != urls.end(); ++it) {
+            if (it->isLocalFile()) {
+                filenames.append(Sys::removeTailSlashes(it->toLocalFile()));
+            }
+        }
+        bool ok = false;
+        if (filenames.size() == 1) {
+            QString filename = filenames.front();
+            QString suffix = QFileInfo(filename).suffix().toLower();
+            if (filters.contains(suffix)) {
+                ok = true;
+            }
+        }
+        if (ok) {
+            e->acceptProposedAction();
+        }
+    }
+}
+
+void MainWindow::dropEvent(QDropEvent *event) {
+    auto e = static_cast<QDropEvent *>(event);
+    const QMimeData *mime = e->mimeData();
+    if (mime->hasUrls()) {
+        auto urls = mime->urls();
+        QStringList filenames;
+        for (auto it = urls.begin(); it != urls.end(); ++it) {
+            if (it->isLocalFile()) {
+                filenames.append(Sys::removeTailSlashes(it->toLocalFile()));
+            }
+        }
+        bool ok = false;
+        if (filenames.size() == 1) {
+            QString filename = filenames.front();
+            QString suffix = QFileInfo(filename).suffix().toLower();
+            if (filters.contains(suffix)) {
+                ok = true;
+                openFile(filename);
+            }
+        }
+        if (ok) {
+            e->acceptProposedAction();
+        }
+    }
+}
+
+void MainWindow::initPlugins() {
+    decoder = qobject_cast<IAudioDecoder *> //
+        (QPluginLoader("audiodecoders/FFmpegDecoder").instance());
+    playback = qobject_cast<IAudioPlayback *> //
+        (QPluginLoader("audioplaybacks/SDLPlayback").instance());
+
+    if (!decoder || !playback) {
+        QMessageBox::critical(this, qAppName(), "Failed to load plugins!");
+        ::exit(-1);
+    }
+
+    if (!playback->setup(IAudioPlayback::PlaybackArguments{1024, 44100, 2, {}})) {
+        QMessageBox::critical(this, qAppName(), "Failed to initialize playback!");
+        ::exit(-1);
+    }
+    playback->setDecoder(decoder);
+}
+
+void MainWindow::initStyleSheet() {
+    QFile file(":/res/app.qss");
+    if (file.open(QIODevice::ReadOnly | QIODevice::Text)) {
+        qApp->setStyleSheet(file.readAll());
+    }
+}
+
+void MainWindow::reloadDevices() {
+    deviceMenu->clear();
+
+    QStringList devices = playback->devices();
+    for (const QString &dev : qAsConst(devices)) {
+        auto action = new QAction(dev, deviceMenu);
+        action->setCheckable(true);
+        action->setData(dev);
+        deviceMenu->addAction(action);
+        deviceActionGroup->addAction(action);
+    }
+}
+
+void MainWindow::reloadButtonStatus() {
+    playButton->setIcon(QIcon(!playing ? ":/res/play.svg" : ":/res/pause.svg"));
+}
+
+void MainWindow::reloadSliderStatus() {
+    qint64 max = decoder->Length();
+    qint64 pos = decoder->Position();
+
+    if (!slider->isSliderDown()) {
+        slider->setValue(pos);
+    }
+
+    auto fmt = decoder->outFormat();
+    int len_msecs = (double(max) / fmt.SampleRate() / 4 / fmt.Channels()) * 1000;
+    int pos_msecs = (double(pos) / fmt.SampleRate() / 4 / fmt.Channels()) * 1000;
+
+    QTime time(0, 0, 0);
+    timeLabel->setText(time.addMSecs(pos_msecs).toString("mm:ss") + "/" +
+                       time.addMSecs(len_msecs).toString("mm:ss"));
+}
+
+void MainWindow::reloadDeviceActionStatus() {
+    QString dev = playback->currentDevice();
+    const auto &actions = deviceMenu->actions();
+
+    for (QAction *action : actions) {
+        action->setChecked(false);
+    }
+    for (QAction *action : actions) {
+        if (action->data().toString() == dev) {
+            action->setChecked(true);
+            break;
+        }
+    }
+}
+
+void MainWindow::_q_browseActionTriggered() {
+    setPlaying(false);
+
+    QString dir = QFileInfo(filename).absolutePath();
+    QString path = QFileDialog::getOpenFileName(
+        this, "Open Audio", QFileInfo(dir).isDir() ? dir : ".",
+        QString("Audio Files(%1)")
+            .arg(Math::batchReplace<QString>(
+                     filters.values(), //
+                     [](const QString &str) -> QString { return "*." + str; })
+                     .join(" ")));
+    if (path.isEmpty()) {
+        return;
+    }
+    openFile(path);
+}
+
+void MainWindow::_q_playButtonClicked() {
+    if (!decoder->isOpen()) {
+        return;
+    }
+    setPlaying(!playing);
+}
+
+void MainWindow::_q_stopButtonClicked() {
+    if (!decoder->isOpen()) {
+        return;
+    }
+    decoder->SetPosition(0);
+    setPlaying(false);
+}
+
+void MainWindow::_q_sliderReleased() {
+    if (!decoder->isOpen()) {
+        slider->setValue(0);
+        return;
+    }
+
+    double percentage = double(slider->value()) / slider->maximum();
+
+    decoder->SetPosition(decoder->Length() * percentage);
+    setPlaying(true);
+}
+
+void MainWindow::_q_deviceActionTriggered(QAction *action) {
+    if (playing) {
+        QMessageBox::warning(this, qAppName(), "Stop sound first!");
+    } else {
+        QString dev = action->data().toString();
+        playback->setDevice(dev);
+    }
+
+    reloadDeviceActionStatus();
+}
+
+void MainWindow::_q_playStateChanged() {
+    bool isPlaying = playback->state() == IAudioPlayback::Playing;
+    if (playing != isPlaying) {
+        // Sound complete
+        decoder->SetPosition(0);
+        setPlaying(isPlaying);
+    }
+}
+
+void MainWindow::_q_audioDeviceChanged() {
+    reloadDeviceActionStatus();
 }
