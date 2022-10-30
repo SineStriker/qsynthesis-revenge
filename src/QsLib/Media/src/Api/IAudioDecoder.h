@@ -17,6 +17,8 @@ public:
     virtual bool open(const QVariantMap &args = {}) = 0;
     virtual void close() = 0;
 
+    virtual bool isOpen() const = 0;
+
     virtual WaveFormat outFormat() const = 0;
 };
 

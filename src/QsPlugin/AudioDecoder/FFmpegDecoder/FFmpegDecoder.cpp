@@ -40,6 +40,10 @@ FFmpegDecoder::~FFmpegDecoder() {
 bool FFmpegDecoder::open(const QVariantMap &args) {
     Q_D(FFmpegDecoder);
 
+    if (d->isOpen) {
+        close();
+    }
+
     FFmpegDecoderPrivate::WaveArguments wavArgs;
 
     // Extract Arguments
@@ -91,14 +95,19 @@ void FFmpegDecoder::close() {
         d->quitDecoder();
 }
 
+bool FFmpegDecoder::isOpen() const {
+    Q_D(const FFmpegDecoder);
+    return d->isOpen;
+}
+
 WaveFormat FFmpegDecoder::Format() const {
     Q_D(const FFmpegDecoder);
-    return d->_resampledFormat;
+    return d->_waveFormat;
 }
 
 WaveFormat FFmpegDecoder::outFormat() const {
     Q_D(const FFmpegDecoder);
-    return d->_waveFormat;
+    return d->_resampledFormat;
 }
 
 void FFmpegDecoder::SetPosition(qint64 pos) {

@@ -25,6 +25,8 @@ public:
 
     void close() override;
 
+    bool isOpen() const override;
+
 public:
     WaveFormat Format() const override;
     WaveFormat outFormat() const override;
