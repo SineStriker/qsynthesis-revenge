@@ -1,4 +1,6 @@
-add_subdirectory(FramelessHelper)
+if (NOT APPLE)
+    add_subdirectory(FramelessHelper)
+endif()
 
 add_subdirectory(quazip)
 
