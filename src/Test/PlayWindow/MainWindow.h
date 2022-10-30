@@ -66,5 +66,7 @@ private:
     void _q_deviceActionTriggered(QAction *action);
     void _q_playStateChanged();
     void _q_audioDeviceChanged();
+    void _q_audioDeviceAdded();
+    void _q_audioDeviceRemoved();
 };
 #endif // MAINWINDOW_H

@@ -24,9 +24,13 @@ SDLPlaybackPrivate::~SDLPlaybackPrivate() {
 void SDLPlaybackPrivate::init() {
     curDevId = 0;
 
+    memset(&spec, 0, sizeof(spec));
+
     producer = nullptr;
 
-    memset(&spec, 0, sizeof(spec));
+    memset(&scb, 0, sizeof(scb));
+
+    pcm_buffer_size = 0;
 }
 
 bool SDLPlaybackPrivate::setup(const QVariantMap &args) {
@@ -65,6 +69,9 @@ bool SDLPlaybackPrivate::setup(const QVariantMap &args) {
     pcm_buffer_size = bufferSamples * channels;
     pcm_buffer.reset(new float[pcm_buffer_size * sizeof(float)]);
 
+    // 开始侦听音频设备
+    producer = new std::thread(&SDLPlaybackPrivate::poll, this);
+
     Q_UNUSED(args);
 
     return true;
@@ -74,6 +81,15 @@ void SDLPlaybackPrivate::dispose() {
     Q_Q(SDLPlayback);
 
     QSignalBlocker blocker(q);
+
+    // 结束侦听音频设备
+    {
+        notifyQuitPoll();
+        producer->join();
+
+        delete producer;
+        producer = nullptr;
+    }
 
     switchDevId(0);
     switchDriver(QString());
@@ -95,19 +111,11 @@ void SDLPlaybackPrivate::play() {
     scb.audio_len = 0;
     scb.audio_pos = 0;
 
-    // 启动生产者线程
-    producer = new std::thread(&SDLPlaybackPrivate::poll, this);
+    notifyPlay();
 }
 
 void SDLPlaybackPrivate::stop() {
-    // 结束生产者线程
     notifyStop();
-
-    // 等待结束
-    producer->join();
-
-    delete producer;
-    producer = nullptr;
 }
 
 void SDLPlaybackPrivate::switchState(IAudioPlayback::PlaybackState newState) {
@@ -158,6 +166,10 @@ void SDLPlaybackPrivate::switchDevId(int newId) {
         SDL_CloseAudioDevice(orgId);
     }
 
+    if (newId == 0) {
+        device.clear();
+    }
+
     // 通知音频设备已更改
     if (curDevId != orgId) {
         emit q->deviceChanged();
@@ -173,6 +185,18 @@ void SDLPlaybackPrivate::notifyGetAudioFrame() {
 void SDLPlaybackPrivate::notifyStop() {
     SDL_Event e;
     e.type = (SDL_EventType) SDL_EVENT_MANUAL_STOP;
+    SDL_PushEvent(&e);
+}
+
+void SDLPlaybackPrivate::notifyPlay() {
+    SDL_Event e;
+    e.type = (SDL_EventType) SDL_EVENT_MANUAL_PLAY;
+    SDL_PushEvent(&e);
+}
+
+void SDLPlaybackPrivate::notifyQuitPoll() {
+    SDL_Event e;
+    e.type = (SDL_EventType) SDL_EVENT_QUIT_POLL;
     SDL_PushEvent(&e);
 }
 
@@ -204,17 +228,13 @@ void SDLPlaybackPrivate::workCallback(quint8 *stream, int len) {
 }
 
 void SDLPlaybackPrivate::poll() {
+    Q_Q(SDLPlayback);
 
-    // 设置暂停标识位
-    SDL_PauseAudioDevice(curDevId, 0);
-    switchState(IAudioPlayback::Playing);
-
-    // 第一次事件
-    notifyGetAudioFrame();
+    bool quit = false;
 
     // 外层循环
     while (true) {
-        bool over = false;
+        bool over = false; // 每次循环末尾检测是否需要变更播放状态
 
         // 不停地获取事件
         SDL_Event e;
@@ -252,8 +272,28 @@ void SDLPlaybackPrivate::poll() {
                     break;
                 }
 
+                // 播放命令
+                case SDL_EVENT_MANUAL_PLAY: {
+                    // 设置暂停标识位
+                    SDL_PauseAudioDevice(curDevId, 0);
+                    switchState(IAudioPlayback::Playing);
+
+                    // 第一次事件
+                    notifyGetAudioFrame();
+                    break;
+                }
+
+                // 结束命令
+                case SDL_EVENT_QUIT_POLL: {
+                    over = true;
+                    quit = true;
+                    break;
+                }
+
                 // 音频设备移除
                 case SDL_AUDIODEVICEREMOVED: {
+                    emit q->deviceRemoved();
+
                     quint32 dev = e.adevice.which;
                     if (dev == curDevId) {
                         switchDevId(0);
@@ -262,19 +302,28 @@ void SDLPlaybackPrivate::poll() {
 
                     break;
                 }
+
+                // 音频设备添加
+                case SDL_AUDIODEVICEADDED: {
+                    emit q->deviceAdded();
+                    break;
+                }
+
                 default:
                     break;
             }
         }
 
-        if (over) {
+        if (over && state == IAudioPlayback::Playing) {
+            // 设置暂停标识位
+            SDL_PauseAudioDevice(curDevId, 1);
+            switchState(IAudioPlayback::Stopped);
+        }
+
+        if (quit) {
             break;
         }
 
         SDL_Delay(PLAYBACK_POLL_INTERVAL);
     }
-
-    // 设置暂停标识位
-    SDL_PauseAudioDevice(curDevId, 1);
-    switchState(IAudioPlayback::Stopped);
 }

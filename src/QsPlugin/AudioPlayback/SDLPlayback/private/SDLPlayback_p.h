@@ -32,13 +32,18 @@ public:
 
     void notifyGetAudioFrame();
     void notifyStop();
+    void notifyPlay();
+    void notifyQuitPoll();
 
     void workCallback(quint8 *stream, int len);
+
     void poll();
 
     enum SDL_UserEvent {
         SDL_EVENT_BUFFER_END = SDL_USEREVENT + 1,
         SDL_EVENT_MANUAL_STOP,
+        SDL_EVENT_MANUAL_PLAY,
+        SDL_EVENT_QUIT_POLL,
     };
 
     // 控制参数

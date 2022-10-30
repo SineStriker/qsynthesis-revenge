@@ -60,7 +60,10 @@ protected:
 signals:
     void stateChanged();
     void driverChanged();
+
     void deviceChanged();
+    void deviceAdded();
+    void deviceRemoved();
 };
 
 #define IAudioPlayback_IID "QSynthesis.Plugin.Media.AudioPlayback"

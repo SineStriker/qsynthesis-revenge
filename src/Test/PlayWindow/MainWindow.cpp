@@ -84,6 +84,8 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
 
     connect(playback, &IAudioPlayback::stateChanged, this, &MainWindow::_q_playStateChanged);
     connect(playback, &IAudioPlayback::deviceChanged, this, &MainWindow::_q_audioDeviceChanged);
+    connect(playback, &IAudioPlayback::deviceAdded, this, &MainWindow::_q_audioDeviceAdded);
+    connect(playback, &IAudioPlayback::deviceRemoved, this, &MainWindow::_q_audioDeviceRemoved);
 
     reloadDevices();
     reloadButtonStatus();
@@ -234,6 +236,8 @@ void MainWindow::reloadDevices() {
         deviceMenu->addAction(action);
         deviceActionGroup->addAction(action);
     }
+
+    reloadDeviceActionStatus();
 }
 
 void MainWindow::reloadButtonStatus() {
@@ -330,12 +334,22 @@ void MainWindow::_q_deviceActionTriggered(QAction *action) {
 void MainWindow::_q_playStateChanged() {
     bool isPlaying = playback->state() == IAudioPlayback::Playing;
     if (playing != isPlaying) {
-        // Sound complete
-        decoder->SetPosition(0);
+        if (decoder->Position() == decoder->Length()) {
+            // Sound complete
+            decoder->SetPosition(0);
+        }
         setPlaying(isPlaying);
     }
 }
 
 void MainWindow::_q_audioDeviceChanged() {
     reloadDeviceActionStatus();
+}
+
+void MainWindow::_q_audioDeviceAdded() {
+    reloadDevices();
+}
+
+void MainWindow::_q_audioDeviceRemoved() {
+    reloadDevices();
 }
