@@ -22,6 +22,7 @@ public:
     IAudioPlayback *q_ptr;
 
     IAudioDecoder *decoder;
+    bool available;
 
     // Atomic int as playback state
     std::atomic_int state;

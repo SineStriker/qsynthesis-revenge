@@ -27,8 +27,9 @@ public:
     void stop() override;
 
     void switchState(IAudioPlayback::PlaybackState newState);
+
+    bool switchDevId(const QString &dev);
     bool switchDriver(const QString &drv);
-    void switchDevId(int newId);
 
     void notifyGetAudioFrame();
     void notifyStop();

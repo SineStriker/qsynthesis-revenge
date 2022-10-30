@@ -102,8 +102,12 @@ MainWindow::~MainWindow() {
 void MainWindow::openFile(const QString &filename) {
     setPlaying(false);
     if (decoder->isOpen()) {
+        decoder->SetPosition(0);
+        reloadSliderStatus();
         decoder->close();
+        timeLabel->setText("--:--/--:--");
     }
+
     if (!decoder->open({{QsMedia::KEY_NAME_FILE_NAME, filename},
                         {QsMedia::KEY_NAME_SAMPLE_RATE, 44100},
                         {QsMedia::KEY_NAME_SAMPLE_FORMAT, QsMedia::AV_SAMPLE_FMT_FLT},

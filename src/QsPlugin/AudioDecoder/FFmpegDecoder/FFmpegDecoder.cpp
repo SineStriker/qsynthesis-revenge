@@ -100,14 +100,14 @@ bool FFmpegDecoder::isOpen() const {
     return d->isOpen;
 }
 
-WaveFormat FFmpegDecoder::Format() const {
-    Q_D(const FFmpegDecoder);
-    return d->_waveFormat;
-}
-
 WaveFormat FFmpegDecoder::outFormat() const {
     Q_D(const FFmpegDecoder);
     return d->_resampledFormat;
+}
+
+WaveFormat FFmpegDecoder::Format() const {
+    Q_D(const FFmpegDecoder);
+    return d->_waveFormat;
 }
 
 void FFmpegDecoder::SetPosition(qint64 pos) {

@@ -32,6 +32,8 @@ public:
     bool setup(const PlaybackArguments &args);
     void dispose();
 
+    bool isAvailable() const;
+
     void setDecoder(IAudioDecoder *decoder);
     bool isReady() const;
 
@@ -39,6 +41,7 @@ public:
     void stop();
 
     PlaybackState state() const;
+    bool isPlaying() const;
 
     virtual QStringList drivers() const;
     virtual QString currentDriver() const;

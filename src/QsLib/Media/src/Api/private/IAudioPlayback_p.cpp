@@ -8,6 +8,7 @@ IAudioPlaybackPrivate::~IAudioPlaybackPrivate() {
 
 void IAudioPlaybackPrivate::init() {
     decoder = nullptr;
+    available = false;
     state = IAudioPlayback::Stopped;
 
     bufferSamples = 0;

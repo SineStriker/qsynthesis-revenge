@@ -6,7 +6,6 @@ IAudioPlayback::IAudioPlayback(QObject *parent)
 }
 
 IAudioPlayback::~IAudioPlayback() {
-    stop();
 }
 
 bool IAudioPlayback::setup(const PlaybackArguments &args) {
@@ -20,11 +19,13 @@ bool IAudioPlayback::setup(const PlaybackArguments &args) {
     d->channels = args.channels;
 
     // Setup
-    if (d->setup(args.custom)) {
-        return true;
+    if (!d->setup(args.custom)) {
+        return false;
     }
 
-    return false;
+    d->available = true;
+
+    return true;
 }
 
 void IAudioPlayback::dispose() {
@@ -33,6 +34,13 @@ void IAudioPlayback::dispose() {
     stop();
 
     d->dispose();
+
+    d->available = false;
+}
+
+bool IAudioPlayback::isAvailable() const {
+    Q_D(const IAudioPlayback);
+    return d->available;
 }
 
 void IAudioPlayback::setDecoder(IAudioDecoder *decoder) {
@@ -70,6 +78,10 @@ void IAudioPlayback::stop() {
 IAudioPlayback::PlaybackState IAudioPlayback::state() const {
     Q_D(const IAudioPlayback);
     return static_cast<IAudioPlayback::PlaybackState>(d->state.load());
+}
+
+bool IAudioPlayback::isPlaying() const {
+    return state() == IAudioPlayback::Playing;
 }
 
 QStringList IAudioPlayback::drivers() const {
