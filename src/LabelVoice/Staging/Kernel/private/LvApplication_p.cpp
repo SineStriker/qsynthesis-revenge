@@ -13,8 +13,6 @@
 #include "SystemHelper.h"
 #include "ViewHelper.h"
 
-#include "Styles/QCssAnalyzer.h"
-
 static const char Slash = '/';
 
 LvApplicationPrivate::LvApplicationPrivate() {

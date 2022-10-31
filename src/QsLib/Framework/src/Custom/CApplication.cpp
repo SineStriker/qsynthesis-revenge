@@ -1,7 +1,7 @@
 #include "CApplication.h"
 #include "QMetaTypeImpl.h"
 
-#include "private/CApplication_p.h"
+#include "Private/CApplication_p.h"
 
 #include <QDateTime>
 #include <QMouseEvent>

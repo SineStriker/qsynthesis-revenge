@@ -58,7 +58,7 @@ public:
         QString Lyric;
         QString Pronunciation;
         Phones EditedPhones;
-        Vibrato Vibrato;
+        QSvipFile::Vibrato Vibrato;
     };
 
     class QSSVS_API Track {

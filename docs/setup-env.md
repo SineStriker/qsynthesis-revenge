@@ -82,6 +82,23 @@ MinGW是另一个编译套件，可以选，但本工程大概率不会用到。
 + 添加环境变量
     + 将`cmake`命令所在目录添加到环境变量即可
 
+
+## OS Preparation
+
+### Mac OSX
+
++ 在 macOS 平台编译时，如果因为使用homebrew安装Qt等原因导致产生了诸如`Could not find a package configuration file provided by "Qt5" with any of the following names:...`之类的错误，请在configure前提供如下环境变量以使CMake能找到Qt库的位置（请视情况自行根据安装Qt库的位置改变命令中的路径）：
+   ```sh
+   export QT_DIR=/opt/homebrew/opt/qt@5
+   export Qt5_DIR=/opt/homebrew/opt/qt@5
+   ```
+
+### Linux
+
+````
+sudo apt install mesa-common-dev libgtk-3-dev libxext-dev libasound2-dev libqt5x11extras5-dev
+````
+
 ## 本工程的配置
 
 ### 工程说明
@@ -106,11 +123,6 @@ cd pkg
 ````
 
 + 执行CMake Configure
-    + 在 macOS 平台编译时，如果因为使用homebrew安装Qt等原因导致产生了诸如`Could not find a package configuration file provided by "Qt5" with any of the following names:...`之类的错误，请在configure前提供如下环境变量以使CMake能找到Qt库的位置（请视情况自行根据安装Qt库的位置改变命令中的路径）：
-      ```sh
-      export QT_DIR=/opt/homebrew/opt/qt@5
-      export Qt5_DIR=/opt/homebrew/opt/qt@5
-      ```
 ````
 cmake --no-warn-unused-cli -DCMAKE_EXPORT_COMPILE_COMMANDS:BOOL=TRUE -DCMAKE_BUILD_TYPE:STRING=Release -S. -Bbuild -G Ninja
 ````

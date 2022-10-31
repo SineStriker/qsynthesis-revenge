@@ -1,27 +1,18 @@
 #include "QJsonFormatter.h"
 
 #define BASE_VARIANT_DECLARE(Class, TypeName)                                                      \
-    QJsonFormatter::Class::Class() {                                                               \
-    }                                                                                              \
+    QJsonFormatter::Class::Class() {}                                                              \
                                                                                                    \
-    QJsonFormatter::Class::~Class() {                                                              \
-    }                                                                                              \
+    QJsonFormatter::Class::~Class() {}                                                             \
                                                                                                    \
-    QJsonFormatter::Type QJsonFormatter::Class::type() const {                                     \
-        return TypeName;                                                                           \
-    }
+    QJsonFormatter::Type QJsonFormatter::Class::type() const { return TypeName; }
 
 #define EXTEND_VARIANT_DECLARE(Class)                                                              \
-    QJsonFormatter::Class::Class() {                                                               \
-        ref = nullptr;                                                                             \
-    }                                                                                              \
+    QJsonFormatter::Class::Class() { ref = nullptr; }                                              \
                                                                                                    \
-    QJsonFormatter::Class::~Class() {                                                              \
-    }                                                                                              \
+    QJsonFormatter::Class::~Class() {}                                                             \
                                                                                                    \
-    QJsonFormatter::Type QJsonFormatter::Class::type() const {                                     \
-        return Class##Type;                                                                        \
-    }
+    QJsonFormatter::Type QJsonFormatter::Class::type() const { return Class##Type; }
 
 #define ALLOCATE_VARIANT_DECLARE(Class, RealClass)                                                 \
     QJsonFormatter::Class *QJsonFormatter::New##Class(RealClass *ref) {                            \
@@ -116,64 +107,64 @@ QJsonFormatter::ObjectTemp *
 bool QJsonFormatter::parse(const QJsonValue &json, QJsonFormatter::Variant *variant) const {
     bool res = true;
     switch (variant->type()) {
-    case NoType:
-    case BoolType:
-    case DoubleType:
-    case IntType:
-    case StringType:
-    case ArrayType:
-    case ObjectType:
-    case BoolListType:
-    case DoubleListType:
-    case StringListType:
-    case ArrayListType:
-    case ObjectListType:
-    case BoolMapType:
-    case DoubleMapType:
-    case StringMapType:
-    case ArrayMapType:
-    case ObjectMapType:
-        res = fill(json, variant);
-        break;
-    case ArrayTempType: {
-        if (json.isArray()) {
-            QJsonArray arr = json.toArray();
-            ArrayTemp *val = static_cast<ArrayTemp *>(variant);
-            const auto &childs = val->childs;
-            auto it0 = arr.begin();
-            auto it1 = childs.begin();
-            for (; it0 != arr.end() && it1 != childs.end(); ++it0, ++it1) {
-                QJsonValueRef src = *it0;
-                Variant *dest = *it1;
-                res = fill(src, dest);
-            }
-        } else {
-            res = false;
-        }
-        break;
-    }
-    case ObjectTempType: {
-        if (json.isObject()) {
-            QJsonObject obj = json.toObject();
-            ObjectTemp *val = static_cast<ObjectTemp *>(variant);
-            const auto &childs = val->childs;
-            for (auto it = childs.begin(); it != childs.end(); ++it) {
-                auto it2 = obj.find(it.key());
-                if (it2 != obj.end()) {
-                    QJsonValueRef src = it2.value();
-                    Variant *dest = it.value();
-
+        case NoType:
+        case BoolType:
+        case DoubleType:
+        case IntType:
+        case StringType:
+        case ArrayType:
+        case ObjectType:
+        case BoolListType:
+        case DoubleListType:
+        case StringListType:
+        case ArrayListType:
+        case ObjectListType:
+        case BoolMapType:
+        case DoubleMapType:
+        case StringMapType:
+        case ArrayMapType:
+        case ObjectMapType:
+            res = fill(json, variant);
+            break;
+        case ArrayTempType: {
+            if (json.isArray()) {
+                QJsonArray arr = json.toArray();
+                ArrayTemp *val = static_cast<ArrayTemp *>(variant);
+                const auto &childs = val->childs;
+                auto it0 = arr.begin();
+                auto it1 = childs.begin();
+                for (; it0 != arr.end() && it1 != childs.end(); ++it0, ++it1) {
+                    QJsonValueRef src = *it0;
+                    Variant *dest = *it1;
                     res = fill(src, dest);
                 }
+            } else {
+                res = false;
             }
-        } else {
-            res = false;
+            break;
         }
-        break;
-    }
-    default:
-        res = false;
-        break;
+        case ObjectTempType: {
+            if (json.isObject()) {
+                QJsonObject obj = json.toObject();
+                ObjectTemp *val = static_cast<ObjectTemp *>(variant);
+                const auto &childs = val->childs;
+                for (auto it = childs.begin(); it != childs.end(); ++it) {
+                    auto it2 = obj.find(it.key());
+                    if (it2 != obj.end()) {
+                        QJsonValueRef src = it2.value();
+                        Variant *dest = it.value();
+
+                        res = fill(src, dest);
+                    }
+                }
+            } else {
+                res = false;
+            }
+            break;
+        }
+        default:
+            res = false;
+            break;
     }
     return res;
 }
@@ -191,7 +182,8 @@ bool QJsonFormatter::fill(const QJsonValue &src, QJsonFormatter::Variant *dest) 
             if (v.is##Class()) {                                                                   \
                 list.append(v.to##Class());                                                        \
             } else {                                                                               \
-                qDebug() << QString::asprintf("QJsonFormattor: \"%s\" supposed to be %s", #Class); \
+                qDebug() << QString("QJsonFormattor: list[%1] supposed to be %2")                  \
+                                .arg(QString::number(it - arr.begin()), #Class);                   \
                 success = false;                                                                   \
                 break;                                                                             \
             }                                                                                      \
@@ -213,7 +205,8 @@ bool QJsonFormatter::fill(const QJsonValue &src, QJsonFormatter::Variant *dest) 
             if (v.is##Class()) {                                                                   \
                 map.insert(it.key(), v.to##Class());                                               \
             } else {                                                                               \
-                qDebug() << QString::asprintf("QJsonFormattor: \"%s\" supposed to be %s", #Class); \
+                qDebug()                                                                           \
+                    << QString("QJsonFormattor: map[%1] supposed to be %2").arg(it.key(), #Class); \
                 success = false;                                                                   \
                 break;                                                                             \
             }                                                                                      \
@@ -233,70 +226,70 @@ bool QJsonFormatter::fill(const QJsonValue &src, QJsonFormatter::Variant *dest) 
 
     bool res = false;
     switch (src.type()) {
-    case QJsonValue::Bool: {
-        PARSE_SINGLE(Bool)
-        break;
-    }
-    case QJsonValue::Double: {
-        if (dest->type() == DoubleType) {
-            PARSE_SINGLE(Double)
-        } else {
-            PARSE_SINGLE(Int)
+        case QJsonValue::Bool: {
+            PARSE_SINGLE(Bool)
+            break;
         }
-        break;
-    }
-    case QJsonValue::String: {
-        PARSE_SINGLE(String)
-        break;
-    }
-    case QJsonValue::Array: {
-        if (dest->type() == ArrayType) {
-            Array *dest2 = static_cast<Array *>(dest);
-            if (dest2->ref) {
-                *dest2->ref = src.toArray();
-                res = true;
+        case QJsonValue::Double: {
+            if (dest->type() == DoubleType) {
+                PARSE_SINGLE(Double)
+            } else {
+                PARSE_SINGLE(Int)
             }
-        } else if (dest->type() == BoolListType) {
-            PARSE_LIST(Bool, QList<bool>)
-        } else if (dest->type() == DoubleListType) {
-            PARSE_LIST(Double, QList<double>)
-        } else if (dest->type() == StringListType) {
-            PARSE_LIST(String, QStringList)
-        } else if (dest->type() == StringListType) {
-            PARSE_LIST(Array, QList<QJsonArray>)
-        } else if (dest->type() == ObjectListType) {
-            PARSE_LIST(Object, QList<QJsonObject>)
-        } else if (dest->type() == ArrayTempType) {
-            ArrayTemp *dest2 = static_cast<ArrayTemp *>(dest);
-            res |= parse(src.toArray(), dest2); // Recursive
+            break;
         }
-        break;
-    }
-    case QJsonValue::Object: {
-        if (dest->type() == ObjectType) {
-            Object *dest2 = static_cast<Object *>(dest);
-            if (dest2->ref) {
-                *dest2->ref = src.toObject();
-                res = true;
+        case QJsonValue::String: {
+            PARSE_SINGLE(String)
+            break;
+        }
+        case QJsonValue::Array: {
+            if (dest->type() == ArrayType) {
+                Array *dest2 = static_cast<Array *>(dest);
+                if (dest2->ref) {
+                    *dest2->ref = src.toArray();
+                    res = true;
+                }
+            } else if (dest->type() == BoolListType) {
+                PARSE_LIST(Bool, QList<bool>)
+            } else if (dest->type() == DoubleListType) {
+                PARSE_LIST(Double, QList<double>)
+            } else if (dest->type() == StringListType) {
+                PARSE_LIST(String, QStringList)
+            } else if (dest->type() == StringListType) {
+                PARSE_LIST(Array, QList<QJsonArray>)
+            } else if (dest->type() == ObjectListType) {
+                PARSE_LIST(Object, QList<QJsonObject>)
+            } else if (dest->type() == ArrayTempType) {
+                ArrayTemp *dest2 = static_cast<ArrayTemp *>(dest);
+                res |= parse(src.toArray(), dest2); // Recursive
             }
-        } else if (dest->type() == BoolMapType) {
-            PARSE_MAP(Bool, bool)
-        } else if (dest->type() == DoubleMapType) {
-            PARSE_MAP(Double, double)
-        } else if (dest->type() == StringMapType) {
-            PARSE_MAP(String, QString)
-        } else if (dest->type() == ArrayMapType) {
-            PARSE_MAP(Array, QJsonArray)
-        } else if (dest->type() == ObjectMapType) {
-            PARSE_MAP(Object, QJsonObject)
-        } else if (dest->type() == ObjectTempType) {
-            ObjectTemp *dest2 = static_cast<ObjectTemp *>(dest);
-            res |= parse(src.toObject(), dest2); // Recursive
+            break;
         }
-        break;
-    }
-    default:
-        break;
+        case QJsonValue::Object: {
+            if (dest->type() == ObjectType) {
+                Object *dest2 = static_cast<Object *>(dest);
+                if (dest2->ref) {
+                    *dest2->ref = src.toObject();
+                    res = true;
+                }
+            } else if (dest->type() == BoolMapType) {
+                PARSE_MAP(Bool, bool)
+            } else if (dest->type() == DoubleMapType) {
+                PARSE_MAP(Double, double)
+            } else if (dest->type() == StringMapType) {
+                PARSE_MAP(String, QString)
+            } else if (dest->type() == ArrayMapType) {
+                PARSE_MAP(Array, QJsonArray)
+            } else if (dest->type() == ObjectMapType) {
+                PARSE_MAP(Object, QJsonObject)
+            } else if (dest->type() == ObjectTempType) {
+                ObjectTemp *dest2 = static_cast<ObjectTemp *>(dest);
+                res |= parse(src.toObject(), dest2); // Recursive
+            }
+            break;
+        }
+        default:
+            break;
     }
 
 #undef PARSE_LIST

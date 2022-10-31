@@ -16,6 +16,16 @@ QString allFiles;
 #define ALL_FILES "*"
 #endif
 
+static QString toLibFile(const QString &dir, const QString &filename) {
+#ifdef Q_OS_LINUX
+    return dir + "/lib" + filename;
+#elif defined(Q_OS_WINDOWS)
+    return dir + "/" + filename;
+#else
+    return dir + "/" + filename;
+#endif
+}
+
 PluginManager::PluginManager(QObject *parent) : PluginManager(*new PluginManagerPrivate(), parent) {
 }
 
@@ -67,8 +77,9 @@ QPluginLoader *PluginManager::loadInternalPlugin(InternalPlugins id) {
 
     switch (id) {
         case ZipLib: {
-            loader = new QPluginLoader("compressengines/qzlib");
+            loader = new QPluginLoader(toLibFile("compressengines", "qzlib"));
             if (!(loader->load() && qobject_cast<ICompressEngine *>(loader->instance()))) {
+                qDebug() << "PluginManager: Failed to load qzlib." << loader->errorString();
                 loader->unload();
                 delete loader;
                 loader = nullptr;
@@ -76,8 +87,9 @@ QPluginLoader *PluginManager::loadInternalPlugin(InternalPlugins id) {
             break;
         }
         case NativeWindow: {
-            loader = new QPluginLoader("windowfactories/NativeWindow");
+            loader = new QPluginLoader(toLibFile("windowfactories", "NativeWindow"));
             if (!(loader->load() && qobject_cast<IWindowFactory *>(loader->instance()))) {
+                qDebug() << "PluginManager: Failed to load NativeWindow." << loader->errorString();
                 loader->unload();
                 delete loader;
                 loader = nullptr;
