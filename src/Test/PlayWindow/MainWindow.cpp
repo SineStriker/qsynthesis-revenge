@@ -336,7 +336,7 @@ void MainWindow::_q_deviceActionTriggered(QAction *action) {
 }
 
 void MainWindow::_q_playStateChanged() {
-    bool isPlaying = playback->state() == IAudioPlayback::Playing;
+    bool isPlaying = playback->isPlaying();
     if (playing != isPlaying) {
         if (decoder->Position() == decoder->Length()) {
             // Sound complete

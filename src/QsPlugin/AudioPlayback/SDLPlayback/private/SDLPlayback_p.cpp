@@ -114,10 +114,14 @@ void SDLPlaybackPrivate::play() {
     scb.audio_pos = 0;
 
     notifyPlay();
+    while (state == IAudioPlayback::Stopped) {
+    }
 }
 
 void SDLPlaybackPrivate::stop() {
     notifyStop();
+    while (state == IAudioPlayback::Playing) {
+    }
 }
 
 void SDLPlaybackPrivate::switchState(IAudioPlayback::PlaybackState newState) {

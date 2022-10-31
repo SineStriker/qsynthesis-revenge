@@ -34,10 +34,12 @@ QString SDLPlayback::currentDriver() const {
 bool SDLPlayback::setDriver(const QString &driver) {
     Q_D(SDLPlayback);
 
-    if (state() == Playing) {
-        qDebug().noquote() << "SDLPlayback: Don't change audio driver when playing.";
-        return false;
-    }
+    //    if (state() == Playing) {
+    //        qDebug().noquote() << "SDLPlayback: Don't change audio driver when playing.";
+    //        return false;
+    //    }
+
+    stop();
 
     return d->switchDriver(driver);
 }
@@ -59,10 +61,12 @@ QString SDLPlayback::currentDevice() const {
 bool SDLPlayback::setDevice(const QString &device) {
     Q_D(SDLPlayback);
 
-    if (state() == Playing) {
-        qDebug().noquote() << "SDLPlayback: Don't change audio device when playing.";
-        return false;
-    }
+    //    if (state() == Playing) {
+    //        qDebug().noquote() << "SDLPlayback: Don't change audio device when playing.";
+    //        return false;
+    //    }
+
+    stop();
 
     return d->switchDevId(device);
 }
