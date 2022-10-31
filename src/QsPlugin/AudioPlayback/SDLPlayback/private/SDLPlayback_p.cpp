@@ -8,7 +8,9 @@ static const ushort PLAYBACK_BUFFER_SAMPLES = 1024; // 默认缓冲区长度
 
 static const ushort PLAYBACK_SAMPLE_RATE = 44100; // 默认采样率
 
-static const uint PLAYBACK_POLL_INTERVAL = 1; // 轮循时间间隔(ms)
+static const uint PLAYBACK_POLL_INTERVAL_PLAYING = 1; // 播放轮循时间间隔(ms)
+
+static const uint PLAYBACK_POLL_INTERVAL_IDLE = 1; // 空闲轮循时间间隔(ms)
 
 static void workCallback(void *udata, quint8 *stream, int len) {
     auto d = (SDLPlaybackPrivate *) udata;
@@ -91,7 +93,7 @@ void SDLPlaybackPrivate::dispose() {
         producer = nullptr;
     }
 
-    switchDevId(0);
+    switchDevId(QString());
     switchDriver(QString());
 
     SDL_Quit();
@@ -112,10 +114,14 @@ void SDLPlaybackPrivate::play() {
     scb.audio_pos = 0;
 
     notifyPlay();
+    while (state == IAudioPlayback::Stopped) {
+    }
 }
 
 void SDLPlaybackPrivate::stop() {
     notifyStop();
+    while (state == IAudioPlayback::Playing) {
+    }
 }
 
 void SDLPlaybackPrivate::switchState(IAudioPlayback::PlaybackState newState) {
@@ -130,10 +136,41 @@ void SDLPlaybackPrivate::switchState(IAudioPlayback::PlaybackState newState) {
     }
 }
 
+bool SDLPlaybackPrivate::switchDevId(const QString &dev) {
+    Q_Q(SDLPlayback);
+
+    uint id = 0;
+    if (!dev.isEmpty()) {
+        // 打开音频设备
+        if ((id = SDL_OpenAudioDevice(dev.toStdString().data(), 0, &spec, nullptr, 0)) == 0) {
+            qDebug().noquote()
+                << QString("SDLPlayback: Failed to open audio device: %1.").arg(SDL_GetError());
+            return false;
+        }
+        qDebug().noquote() << QString("SDLPlayback: %1").arg(dev);
+    }
+
+    // 关闭旧音频设备
+    if (curDevId > 0) {
+        SDL_CloseAudioDevice(curDevId);
+    }
+    curDevId = id;
+
+    auto orgDev = device;
+    device = dev;
+
+    // 通知音频设备已更改
+    if (device != orgDev) {
+        emit q->deviceChanged();
+    }
+
+    return true;
+}
+
 bool SDLPlaybackPrivate::switchDriver(const QString &drv) {
     Q_Q(SDLPlayback);
 
-    switchDevId(0);
+    switchDevId(QString());
 
     if (!driver.isEmpty()) {
         SDL_AudioQuit();
@@ -154,26 +191,6 @@ bool SDLPlaybackPrivate::switchDriver(const QString &drv) {
     }
 
     return true;
-}
-
-void SDLPlaybackPrivate::switchDevId(int newId) {
-    Q_Q(SDLPlayback);
-
-    auto orgId = curDevId;
-    curDevId = newId;
-
-    if (orgId > 0) {
-        SDL_CloseAudioDevice(orgId);
-    }
-
-    if (newId == 0) {
-        device.clear();
-    }
-
-    // 通知音频设备已更改
-    if (curDevId != orgId) {
-        emit q->deviceChanged();
-    }
 }
 
 void SDLPlaybackPrivate::notifyGetAudioFrame() {
@@ -296,7 +313,7 @@ void SDLPlaybackPrivate::poll() {
 
                     quint32 dev = e.adevice.which;
                     if (dev == curDevId) {
-                        switchDevId(0);
+                        switchDevId(QString());
                         over = true;
                     }
 
@@ -324,6 +341,7 @@ void SDLPlaybackPrivate::poll() {
             break;
         }
 
-        SDL_Delay(PLAYBACK_POLL_INTERVAL);
+        SDL_Delay((state == IAudioPlayback::Playing) ? PLAYBACK_POLL_INTERVAL_PLAYING
+                                                     : PLAYBACK_POLL_INTERVAL_IDLE);
     }
 }

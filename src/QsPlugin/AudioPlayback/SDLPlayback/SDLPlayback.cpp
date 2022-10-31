@@ -7,6 +7,10 @@ SDLPlayback::SDLPlayback(QObject *parent) : SDLPlayback(*new SDLPlaybackPrivate(
 }
 
 SDLPlayback::~SDLPlayback() {
+    Q_D(SDLPlayback);
+    if (d->available) {
+        dispose();
+    }
 }
 
 QStringList SDLPlayback::drivers() const {
@@ -29,6 +33,14 @@ QString SDLPlayback::currentDriver() const {
 
 bool SDLPlayback::setDriver(const QString &driver) {
     Q_D(SDLPlayback);
+
+    //    if (state() == Playing) {
+    //        qDebug().noquote() << "SDLPlayback: Don't change audio driver when playing.";
+    //        return false;
+    //    }
+
+    stop();
+
     return d->switchDriver(driver);
 }
 
@@ -48,26 +60,15 @@ QString SDLPlayback::currentDevice() const {
 
 bool SDLPlayback::setDevice(const QString &device) {
     Q_D(SDLPlayback);
-    if (state() == Playing) {
-        qDebug().noquote() << "SDLPlayback: Don't change audio device when playing.";
-        return false;
-    }
 
-    d->device = device;
+    //    if (state() == Playing) {
+    //        qDebug().noquote() << "SDLPlayback: Don't change audio device when playing.";
+    //        return false;
+    //    }
 
-    // 打开音频设备
-    uint id;
-    if ((id = SDL_OpenAudioDevice(device.toStdString().data(), 0, &d->spec, nullptr, 0)) == 0) {
-        qDebug().noquote()
-            << QString("SDLPlayback: Failed to open audio device: %1.").arg(SDL_GetError());
-        return false;
-    }
+    stop();
 
-    qDebug().noquote() << QString("SDLPlayback: %1").arg(d->device);
-
-    d->switchDevId(id);
-
-    return true;
+    return d->switchDevId(device);
 }
 
 SDLPlayback::SDLPlayback(SDLPlaybackPrivate &d, QObject *parent) : IAudioPlayback(d, parent) {

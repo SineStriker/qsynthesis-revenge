@@ -22,14 +22,14 @@ public:
      *  Channels
      */
     bool open(const QVariantMap &args = {}) override;
-
     void close() override;
 
     bool isOpen() const override;
 
+    WaveFormat outFormat() const override;
+
 public:
     WaveFormat Format() const override;
-    WaveFormat outFormat() const override;
 
     void SetPosition(qint64 pos) override;
 
