@@ -96,7 +96,7 @@ MinGW是另一个编译套件，可以选，但本工程大概率不会用到。
 ### Linux
 
 ````
-sudo apt install mesa-common-dev libgtk-3-dev libxext-dev libasound2-dev libqt5x11extras5-dev
+sudo apt install mesa-common-dev libgtk-3-dev libxext-dev libasound2-dev libpulse-dev
 ````
 
 ## 本工程的配置

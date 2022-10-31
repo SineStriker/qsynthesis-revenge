@@ -205,11 +205,17 @@ void MainWindow::dropEvent(QDropEvent *event) {
 }
 
 void MainWindow::initPlugins() {
+#ifdef Q_OS_LINUX
+    decoder = qobject_cast<IAudioDecoder *> //
+        (QPluginLoader("audiodecoders/libFFmpegDecoder").instance());
+    playback = qobject_cast<IAudioPlayback *> //
+        (QPluginLoader("audioplaybacks/libSDLPlayback").instance());
+#else
     decoder = qobject_cast<IAudioDecoder *> //
         (QPluginLoader("audiodecoders/FFmpegDecoder").instance());
     playback = qobject_cast<IAudioPlayback *> //
         (QPluginLoader("audioplaybacks/SDLPlayback").instance());
-
+#endif
     if (!decoder || !playback) {
         QMessageBox::critical(this, qAppName(), "Failed to load plugins!");
         ::exit(-1);
