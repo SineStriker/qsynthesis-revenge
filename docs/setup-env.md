@@ -9,6 +9,7 @@
 + VSCode（需要下载CMake、Clangd插件，编写settings.json）
 
 ### 注意事项
+
 + 除了Qt Creator以外，其他所有非官方IDE都无法使用图形界面给工程添加资源条目，因此Qt Creator是必须安装的，在需要改动资源时用QtCreator打开`qrc`文件单独修改
 + 只有Qt Creator和VS支持qmake项目，不过本工程是CMake项目，所以都可以
 
@@ -18,24 +19,40 @@
 
 + Microsoft VC++ 编译器
 + Qt 5.15.2 开发套件
-+ LLVM 静态分析工具（使用Qt Creator时需要安装）
++ LLVM 静态分析工具（使用Qt Creator或VSCode时需要安装）
 
-### 软件附带
+### Qt Creator/Visual Studio自带
 
 + CMake
 + Ninja Build
 
 在Qt与MSVC装完以后，它们各自都会带一份自己的CMake和Ninja，选择其中一个，将它们所在路径添加到系统环境变量中。
 
-### MSVC
+## 工具安装
 
-+ 在Visual Studio Installer中增加`使用C+的桌面开发`模块，添加如下组件，建议都选，ATL与MFC可以不选。
+### 编译器
+
+#### MSVC
+
++ 在Windows中，在Visual Studio Installer中增加`使用C++的桌面开发`模块，添加如下组件，建议都选，ATL与MFC可以不选。
 
 ![](./images/image1.png)
 
+#### Clang
+
++ 在Mac中，一般自带。
+
+#### GCC
+
++ 在Linux中，使用`apt install build-essential`安装GNU编译套件。
+
 ### Qt
 
-+ 参考链接：https://blog.csdn.net/Qi_1337/article/details/121249717
++ 下载链接：https://download.qt.io/official_releases/online_installers/
+    + 需要先注册账号，同意所有协议，选择个人开发者
+    + Windows/Mac/Linux都需要在这里下载，最好不要用包管理器安装
+
++ 参考教程：https://blog.csdn.net/Qi_1337/article/details/121249717
 
 + 版本选择：5.15.2
 
@@ -60,32 +77,55 @@ MinGW是另一个编译套件，可以选，但本工程大概率不会用到。
 ### LLVM
 
 + 下载地址：https://github.com/llvm/llvm-project/releases
+    + Windows安装时建议同意添加路径到系统环境变量
+    + Linux中可使用`apt install llvm clangd`
 
-+ 初始化：
-    + 打开Qt Creator
-    + 帮助-关于插件-C++
-    + 打开Beautifier
-    + 重启Qt Creator
-    + 工具-选项-Beautifier-Clang Format
-    + 修改ClangForamtCommand为`安装路径\bin\clang-format.exe`
-    + 环境-键盘
-    + 命令ClangFormat-FormatFile，快捷键自定义，我用的`Ctrl+Alt+L`
-    + 确定保存即可
++ 重要组件：
+    + clang-format：代码格式化工具
+    + clangd：代码补全、静态分析服务器，需要构建工具提供`compile_commands.json`
 
 ### CMake
 
-+ VS的cmake插件在类似下面路径
-    + `C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\bin\cmake.exe`
-    + 也可以手动从官网下载最新版本的CMake全套工具（包括GUI虽然没什么用），然后添加环境变量
 + 下载地址：https://cmake.org/files
+    + 推荐版本3.24及以上，在Linux中不推荐使用`apt`安装（版本只有3.16）
 
 + 添加环境变量
     + 将`cmake`命令所在目录添加到环境变量即可
 
++ Linux快速安装命令
+    ```sh
+    # 下载、解压、安装
+    wget https://cmake.org/files/v3.25/cmake-3.25.0-rc2-linux-x86_64.tar.gz
+    tar -C /usr/local -xzf cmake-3.25.0-rc2-linux-x86_64.tar.gz
+    mv /usr/local/cmake-3.25.0-rc2-linux-x86_64 /usr/local/cmake
+    rm -rf cmake-3.25.0-rc2-linux-x86_64.tar.gz
 
-## OS Preparation
+    # 配置环境变量
+    echo "export PATH=\$PATH:/usr/local/cmake/bin" >> ~/.bashrc
+    source ~/.bashrc
+    ````
 
-### Mac OSX
+### Ninja
+
++ Windows中因为Visual Studio套件自带，不需要额外安装
+
++ Mac中一般直接使用Qt Creator，也是自带，不需要额外安装
+
++ Linux中没有自带Ninja工具，需要自己安装
+    ```sh
+    sudo apt install ninja-build
+    ````
+
+
+## 平台相关配置
+
+### Windows
+
++ VS的cmake插件在类似下面路径
+    + `C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\bin\cmake.exe`
+    + 也可以直接使用这个CMake，将其添加到环境变量即可
+
+### Mac
 
 + 在 macOS 平台编译时，如果因为使用homebrew安装Qt等原因导致产生了诸如`Could not find a package configuration file provided by "Qt5" with any of the following names:...`之类的错误，请在configure前提供如下环境变量以使CMake能找到Qt库的位置（请视情况自行根据安装Qt库的位置改变命令中的路径）：
    ```sh
@@ -95,17 +135,16 @@ MinGW是另一个编译套件，可以选，但本工程大概率不会用到。
 
 ### Linux
 
-````
-sudo apt install mesa-common-dev libgtk-3-dev libxext-dev libasound2-dev libpulse-dev
-````
++ 安装必要的库
+    ````
+    sudo apt install mesa-common-dev libgtk-3-dev libxext-dev libasound2-dev libpulse-dev
+    ````
 
 ## 本工程的配置
 
 ### 工程说明
 
-+ 本工程使用CMake构建系统，在Windows上默认使用MSVC 2019 64bit进行开发，如果下载Visual Studio 2022则使用MSVC 2022 64bit。
-
-+ 本工程使用了很多除了Qt以外的库，在Linux上可以直接`make install`，在Windows上我把它们的源码独立在`src`的外面，在开发之前先构建它们。
++ 本工程使用CMake构建系统，在Windows上默认使用MSVC 2019 64bit进行开发（如果下载Visual Studio 2022则使用MSVC 2022 64bit），Mac默认使用Clang 64，Linux使用GCC 64。
 
 
 ### 使用vcpkg下载并预构建依赖库
@@ -117,7 +156,7 @@ sudo apt install mesa-common-dev libgtk-3-dev libxext-dev libasound2-dev libpuls
     + 打开`scripts/vcpkg/triplets/paths/path_qt.cmake`
     + 修改`_qt_dir`的右值为你的Qt安装目录
 
-+ 执行`setup-vcpkg.bat`或`setup-vcpkg.sh`
++ 在仓库根目录执行`setup-vcpkg.bat`或`setup-vcpkg.sh`
 
 <!-- ### 准备FFmpeg库
 
@@ -155,12 +194,75 @@ cmake --build build --target install
 
 ### 打开工程
 
-+ 使用Qt Creator打开`src/CMakeLists.txt`，选择编译器为64位MSVC，构建目录放在上一层
+#### Qt Creator
 
-+ 使用Visual Studio直接打开工程目录，VS会自动检测CMake工程，添加配置可以点击上方`x64-Debug`下拉选择管理配置
++ 配置Clang-Format
+    + 打开Qt Creator
+    + 帮助-关于插件-C++
+    + 打开Beautifier
+    + 重启Qt Creator
+    + 工具-选项-Beautifier-Clang Format
+    + 修改ClangForamtCommand为`LLVM安装路径\bin\clang-format.exe`
+        + 如果LLVM安装路径已在系统环境变量中，可直接填`clang-format`
+    + 环境-键盘
+    + 命令ClangFormat-FormatFile，快捷键自定义，我用的`Ctrl+Alt+L`
+    + 确定保存即可
+
++ 打开`src/CMakeLists.txt`（不要打开仓库根目录），Windows中选择编译器为64位MSVC，构建目录放在上一层。
+
+
+#### Visual Studio
+
++ 直接打开仓库目录，VS会自动检测CMake工程，添加配置可以点击上方`x64-Debug`下拉选择管理配置；
 
 ![](./images/image2.png)
 
 + 可以为本项目添加x64-Release目标
 + 当前目标选择为`LabelVoice.exe`
 + 由于插件目标与主目标没有隐式依赖关系，而VS又是不支持同时构建所有目标的，所以如果更改了插件，那么请先构建插件目标，比如`NativeWindow.dll`，如果不构建此插件，那么`LabelVoice`会找不到无边框窗体插件而使用系统边框。
+
+#### Clion
+
++ 直接打开仓库目录，Clion会自动检测CMake工程；
++ 使用Clion默认不带Ninja构建，如想使用请自行添加编译参数`-G Ninja`
+    + 如果使用`Ninja`重载掉默认参数后，似乎会导致忽略默认编译器信息，如果你的电脑安装了MinGW就会变成MinGW，如想使用MSVC需要显式指定编译器，因此不建议使用。
+    + https://youtrack.jetbrains.com/issue/CPP-17735
+
+#### Visual Studio Code
+
++ 安装C/C++ Extension Pack（包含CMake）、Clangd扩展
+
+![](./images/image3.png)
+
++ 默认重排代码快捷键为`Ctrl+Shift+I(Linux)`/`Alt+Shift+F(Windows)`，可以手动改成JetBrains风格的`Ctrl+Alt+L`；
++ 编辑`.vscode/settings.json`
+    ```json
+    {
+        "cmake.generator": "Ninja",
+        "cmake.configureOnOpen": false,
+        "cmake.configureOnEdit": false,
+        "clangd.arguments": [
+            "--header-insertion=never",
+            "--function-arg-placeholders=false",
+            "--clang-tidy"
+        ],
+        "C_Cpp.intelliSenseEngine": "Disabled",
+        "editor.gotoLocation.alternativeDefinitionCommand": "editor.action.revealDeclaration",
+        // "cmake.copyCompileCommands": "build",
+        // "clangd.path": "C:\\Program Files\\LLVM\\bin\\clangd.exe",
+    }
+    ````
+    + 设定生成器为`Ninja`
+    + 设置启动时或改动后不自动执行`CMake Confiugre`
+    + 设置Clangd不自动添加头文件，函数不自动填充
+    + 关闭`C/C++ IntelliSense`引擎
+    + 设置`Ctrl`单击函数时，自动转到声明
+    + 设置CMake输出`compile_commands.json`到`build`目录（已注释，Windows似乎不需要）
+    + 设置Clangd文件路径（已注释，如果不在系统环境变量中需要启用）
+
++ `Ctrl+Shift+P`打开命令选择器，下面这些命令很常用
+    + `CMake Configure`：配置项目
+    + `CMake Build`：构建项目（下方Build按钮也可以）
+    + `CMake Clean`：清理项目
+
++ 直接打开仓库目录，执行`CMake Configure`。
