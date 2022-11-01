@@ -107,7 +107,19 @@ sudo apt install mesa-common-dev libgtk-3-dev libxext-dev libasound2-dev libpuls
 
 + 本工程使用了很多除了Qt以外的库，在Linux上可以直接`make install`，在Windows上我把它们的源码独立在`src`的外面，在开发之前先构建它们。
 
-### 准备FFmpeg库
+
+### 使用vcpkg下载并预构建依赖库
+
++ 找到Qt安装目录（此目录中包含Qt5Config.cmake）
+    + Windows中一般是`C:\Qt\5.15.2\msvc2019\lib\cmake\Qt5`
+
++ 修改vcpkg的自定义`triplet`参数
+    + 打开`scripts/vcpkg/triplets/paths/path_qt.cmake`
+    + 修改`_qt_dir`的右值为你的Qt安装目录
+
++ 执行`setup-vcpkg.bat`或`setup-vcpkg.sh`
+
+<!-- ### 准备FFmpeg库
 
 + 下载地址：https://github.com/SineStriker/binary-res
     + 将`bin`、`include`、`lib`、`share`目录直接复制到`pkg/src/FFmpeg/usr`中。
@@ -139,7 +151,7 @@ cmake --build build --target install
 
 + 这些库也可以放在工程里一起参与构建，但是可能会带来不必要的编译任务，所以提前全部编译好。Ninja是用来引入并行化加速构建过程的，因此Build过程可能出错，重新执行Build命令即可。
 
-+ 此外，由于一些库Debug版本与Release版本是不兼容的，还需要构建一份Debug版本的，在CMake Configure中把参数`-DCMAKE_BUILD_TYPE:STRING=Release`改为`-DCMAKE_BUILD_TYPE:STRING=Debug`，然后再次执行三次命令，CMake有热更新机制不用执行Clean。
++ 此外，由于一些库Debug版本与Release版本是不兼容的，还需要构建一份Debug版本的，在CMake Configure中把参数`-DCMAKE_BUILD_TYPE:STRING=Release`改为`-DCMAKE_BUILD_TYPE:STRING=Debug`，然后再次执行三次命令，CMake有热更新机制不用执行Clean。 -->
 
 ### 打开工程
 

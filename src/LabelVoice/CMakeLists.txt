@@ -151,7 +151,7 @@ if (NOT APPLE)
         DEPENDENCIES FFmpeg::avcodec FFmpeg::avformat FFmpeg::avutil FFmpeg::swresample
                      SDL2::SDL2
                      FramelessHelper::FramelessHelperCore FramelessHelper::FramelessHelperWidgets
-                     QuaZip::QuaZip ZLIB::zlib
+                     QuaZip::QuaZip # ZLIB::zlib
         RELATIVE PREBUILT
     )
     deploy_shared_libraries(

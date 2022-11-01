@@ -89,3 +89,4 @@ cache
 .vs
 out/
 CMakeSettings.json
+/vcpkg

@@ -6,6 +6,7 @@
 #include <QLabel>
 #include <QMainWindow>
 #include <QMenu>
+#include <QPluginLoader>
 #include <QPushButton>
 #include <QSet>
 #include <QSlider>
@@ -20,6 +21,8 @@ public:
     ~MainWindow();
 
 protected:
+    QPluginLoader decoderLoader, playbackLoader;
+
     IAudioDecoder *decoder;
     IAudioPlayback *playback;
 
@@ -54,6 +57,8 @@ private:
     void initPlugins();
     void initStyleSheet();
 
+    void uninitPlugins();
+
     void reloadDevices();
     void reloadButtonStatus();
     void reloadSliderStatus();
@@ -69,4 +74,5 @@ private:
     void _q_audioDeviceAdded();
     void _q_audioDeviceRemoved();
 };
+
 #endif // MAINWINDOW_H

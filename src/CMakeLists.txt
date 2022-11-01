@@ -6,8 +6,6 @@ project(LabelVoice CXX)
 set(MAIN_TARGET LabelVoice)
 
 # User Options
-set(USE_PREBUILT_LIBS on)
-set(USE_DELAY_LOAD off)
 set(BUILD_TEST on)
 set(BUILD_PLUGINS_ONLY off)
 
@@ -48,27 +46,25 @@ else()
     message(FATAL_ERROR "Unsupported System !!!")
 endif()
 
-set (PREBUILT_LIBRARY_PATH_PREFIX "${CMAKE_CURRENT_SOURCE_DIR}/../pkg/libs")
+# ToolChain
+include(${CMAKE_CURRENT_SOURCE_DIR}/../vcpkg/scripts/buildsystems/vcpkg.cmake)
 
-if (USE_PREBUILT_LIBS)
-    file(GLOB SDL2_DIR "${PREBUILT_LIBRARY_PATH_PREFIX}/cmake/SDL*")
-    file(GLOB QuaZip_DIR "${PREBUILT_LIBRARY_PATH_PREFIX}/cmake/QuaZip*")
-    file(GLOB FFmpeg_DIR "${PREBUILT_LIBRARY_PATH_PREFIX}/cmake/FFmpeg*")
-    if (NOT SYS_MAC)
-        file(GLOB FramelessHelper_DIR "${PREBUILT_LIBRARY_PATH_PREFIX}/cmake/FramelessHelper*")
-    endif()
-    file(GLOB yaml-cpp_DIR "${PREBUILT_LIBRARY_PATH_PREFIX}/cmake/yaml-cpp*")
+# SDL2
+find_package(SDL2 REQUIRED)
+
+# yaml-cpp
+find_package(yaml-cpp REQUIRED)
+
+# FFmpeg
+find_package(ffmpeg-fake REQUIRED NAMES FFmpeg)
+
+# FramelessHelper
+if (NOT SYS_MAC)
+    find_package(FramelessHelper REQUIRED COMPONENTS Core Widgets)
 endif()
 
-if (NOT BUILD_PLUGINS_ONLY)
-    find_package(SDL2 REQUIRED)
-    find_package(QuaZip NAMES QuaZip-Qt5 QuaZip-Qt6 REQUIRED)
-    find_package(FFmpeg REQUIRED)
-    if (NOT SYS_MAC)
-        find_package(FramelessHelper REQUIRED COMPONENTS Core Widgets)
-    endif()
-    find_package(yaml-cpp REQUIRED)
-endif()
+# QuaZip
+find_package(QuaZip NAMES quazip QuaZip-Qt5 QuaZip-Qt6 REQUIRED)
 
 # Application
 add_subdirectory(QsLib)

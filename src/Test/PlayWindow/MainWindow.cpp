@@ -97,6 +97,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
 MainWindow::~MainWindow() {
     playback->dispose();
     decoder->close();
+    uninitPlugins();
 }
 
 void MainWindow::openFile(const QString &filename) {
@@ -206,26 +207,35 @@ void MainWindow::dropEvent(QDropEvent *event) {
 
 void MainWindow::initPlugins() {
 #ifdef Q_OS_LINUX
-    decoder = qobject_cast<IAudioDecoder *> //
-        (QPluginLoader("audiodecoders/libFFmpegDecoder").instance());
-    playback = qobject_cast<IAudioPlayback *> //
-        (QPluginLoader("audioplaybacks/libSDLPlayback").instance());
+    decoderLoader.setFileName("audiodecoders/libFFmpegDecoder");
+    playbackLoader.setFileName("audioplaybacks/libSDLPlayback");
 #else
-    decoder = qobject_cast<IAudioDecoder *> //
-        (QPluginLoader("audiodecoders/FFmpegDecoder").instance());
-    playback = qobject_cast<IAudioPlayback *> //
-        (QPluginLoader("audioplaybacks/SDLPlayback").instance());
+    decoderLoader.setFileName("audiodecoders/FFmpegDecoder");
+    playbackLoader.setFileName("audioplaybacks/SDLPlayback");
 #endif
+
+    decoder = qobject_cast<IAudioDecoder *>(decoderLoader.instance());
+    playback = qobject_cast<IAudioPlayback *>(playbackLoader.instance());
+
     if (!decoder || !playback) {
-        QMessageBox::critical(this, qAppName(), "Failed to load plugins!");
-        ::exit(-1);
+        QMessageBox::critical(
+            this, qAppName(),
+            QString("Failed to load plugins: %1!").arg(decoderLoader.errorString()));
+        goto out;
     }
 
     if (!playback->setup(IAudioPlayback::PlaybackArguments{1024, 44100, 2, {}})) {
-        QMessageBox::critical(this, qAppName(), "Failed to initialize playback!");
-        ::exit(-1);
+        QMessageBox::critical(
+            this, qAppName(),
+            QString("Failed to load playback: %1!").arg(playbackLoader.errorString()));
+        goto out;
     }
     playback->setDecoder(decoder);
+    return;
+
+out:
+    uninitPlugins();
+    ::exit(-1);
 }
 
 void MainWindow::initStyleSheet() {
@@ -233,6 +243,13 @@ void MainWindow::initStyleSheet() {
     if (file.open(QIODevice::ReadOnly | QIODevice::Text)) {
         qApp->setStyleSheet(file.readAll());
     }
+}
+
+void MainWindow::uninitPlugins() {
+    delete playback;
+    delete decoder;
+    decoderLoader.unload();
+    playbackLoader.unload();
 }
 
 void MainWindow::reloadDevices() {
