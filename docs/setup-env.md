@@ -156,7 +156,7 @@ MinGW是另一个编译套件，可以选，但本工程大概率不会用到。
     + 打开`scripts/vcpkg/triplets/paths/path_qt.cmake`
     + 修改`_qt_dir`的右值为你的Qt安装目录
 
-+ 在仓库根目录执行`setup-vcpkg.bat`或`setup-vcpkg.sh`
++ 在仓库根目录执行`setup-vcpkg.bat`或`setup-vcpkg.sh`，此脚本简单地从GitHub中拉取`vcpkg`并执行一系列`vcpkg install`命令。
 
 <!-- ### 准备FFmpeg库
 
@@ -218,15 +218,17 @@ cmake --build build --target install
 ![](./images/image2.png)
 
 + 可以为本项目添加x64-Release目标
-+ 当前目标选择为`LabelVoice.exe`
-+ 由于插件目标与主目标没有隐式依赖关系，而VS又是不支持同时构建所有目标的，所以如果更改了插件，那么请先构建插件目标，比如`NativeWindow.dll`，如果不构建此插件，那么`LabelVoice`会找不到无边框窗体插件而使用系统边框。
++ 关于单个目标构建：由于插件目标与主目标没有隐式依赖关系，而VS又是不支持同时构建所有目标的，所以如果更改了插件，那么请先构建插件目标，比如`NativeWindow.dll`，如果不构建此插件，那么`LabelVoice`会找不到无边框窗体插件而使用系统边框。
++ 每次构建建议不要点工具栏单个构建，应该执行`菜单栏-生成-全部生成`。
 
 #### Clion
 
++ 将Visual Studio设为默认工具链，架构选择amd64
 + 直接打开仓库目录，Clion会自动检测CMake工程；
 + 使用Clion默认不带Ninja构建，如想使用请自行添加编译参数`-G Ninja`
-    + 如果使用`Ninja`重载掉默认参数后，似乎会导致忽略默认编译器信息，如果你的电脑安装了MinGW就会变成MinGW，如想使用MSVC需要显式指定编译器，因此不建议使用。
+    + 较早版本的Clion如果使用`Ninja`重载掉默认参数后，似乎会导致忽略默认编译器信息，如果你的电脑安装了MinGW就会变成MinGW，如想使用MSVC需要显式指定编译器，因此建议升级最新版本。
     + https://youtrack.jetbrains.com/issue/CPP-17735
++ 每次构建选择`Main Menu-Build-Build All`，可将`Build All`这个项添加到`Main Toolbar-Toolbar Run Actions`。
 
 #### Visual Studio Code
 
@@ -265,4 +267,4 @@ cmake --build build --target install
     + `CMake Build`：构建项目（下方Build按钮也可以）
     + `CMake Clean`：清理项目
 
-+ 直接打开仓库目录，执行`CMake Configure`。
++ 直接打开仓库目录，执行`CMake Configure`，如出现选择编译套件选择`Visual Studio - amd64`。

@@ -73,19 +73,19 @@ echo.
 echo.
 echo ================================= Build zlib =================================
 
-vcpkg install zlib:%TRIPLET%
+vcpkg install zlib:%TRIPLET% --overlay-triplets=%MY_TRIPLETS%
 
 echo.
 echo.
 echo ================================= Build sdl2 =================================
 
-vcpkg install sdl2:%TRIPLET%
+vcpkg install sdl2:%TRIPLET% --overlay-triplets=%MY_TRIPLETS%
 
 echo.
 echo.
 echo ================================= Build yaml-cpp =================================
 
-vcpkg install yaml-cpp:%TRIPLET%
+vcpkg install yaml-cpp:%TRIPLET% --overlay-triplets=%MY_TRIPLETS%
 
 echo.
 echo.
@@ -104,7 +104,7 @@ echo.
 echo ================================= Build ffmpeg =================================
 
 @REM vcpkg install ffmpeg[core,avcodec,avdevice,avfilter,avformat,swresample,swscale,ffmpeg,ffprobe]:%TRIPLET% --recurse
-vcpkg install ffmpeg-fake:%TRIPLET% --overlay-ports=%MY_PORTS%
+vcpkg install ffmpeg-fake:%TRIPLET% --overlay-ports=%MY_PORTS% --overlay-triplets=%MY_TRIPLETS%
 
 echo.
 echo.

@@ -2,7 +2,9 @@
 
 ---
 
-## Get Pre-built libraries
+This project use Microsoft vcpkg to manage its dependencies, you should finish the pre-build work before open the project. The vcpkg works as a submodule.
+
+## Get Pre-built Libraries
 
 + Find Qt Configuration path (The directory should contain `Qt5Config.cmake`)
     + For example, `C:\Qt\5.15.2\msvc2019\lib\cmake\Qt5`
@@ -11,7 +13,7 @@
     + Edit `scripts/vcpkg/triplets/paths/path_qt.cmake`
     + Change the value of `_qt_dir` to your Qt Configuration path
 
-+ Run `setup-vcpkg.bat` or `setup-vcpkg.sh` at repository root path
++ Run `setup-vcpkg.bat` or `setup-vcpkg.sh` at repository root path. The script simply pulls `vcpkg` from GitHub and run a series of `vcpkg install` commands.
 
 ## Dependencies (No need to build)
 

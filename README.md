@@ -33,6 +33,8 @@ For detailed information, see [Build Instructions](./docs/build-instructions.md)
     + GNU LGPL v3
 + [SDL](https://github.com/libsdl-org/SDL) (Audio)
     + Zlib License
++ [vcpkg](https://github.com/microsoft/vcpkg)
+    + MIT License
 + [FramelessHelper](https://github.com/wangwenx190/framelesshelper) (Core, Widgets)
     + MIT License
 + [QuaZip](https://github.com/stachenov/quazip)
