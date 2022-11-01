@@ -14,8 +14,9 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # Application Information
-set(APP_DEPLOY OFF)
-set(APP_TEST OFF)
+if (NOT DEFINED APP_DEPLOY)
+    set(APP_DEPLOY OFF)
+endif()
 
 # Set Directories
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)

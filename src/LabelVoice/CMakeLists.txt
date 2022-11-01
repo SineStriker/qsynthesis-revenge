@@ -149,15 +149,9 @@ if (NOT APPLE)
         TARGET ${PROJECT_NAME}
         DESTINATION ${APP_LIB_DIR}
         DEPENDENCIES FFmpeg::avcodec FFmpeg::avformat FFmpeg::avutil FFmpeg::swresample
-                     SDL2::SDL2
+                     SDL2::SDL2 yaml-cpp
                      FramelessHelper::FramelessHelperCore FramelessHelper::FramelessHelperWidgets
                      QuaZip::QuaZip # ZLIB::zlib
-        RELATIVE PREBUILT
-    )
-    deploy_shared_libraries(
-        TARGET ${PROJECT_NAME}
-        DESTINATION .
-        DEPENDENCIES yaml-cpp
         RELATIVE PREBUILT
     )
     target_compile_definitions(${PROJECT_NAME} PRIVATE LIB_DIR="${APP_LIB_DIR}")
