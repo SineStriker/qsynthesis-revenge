@@ -1,5 +1,17 @@
 @echo off
 
+set TRIPLET=
+set MY_PORTS=../scripts/vcpkg/ports
+set MY_TRIPLETS=../scripts/vcpkg/triplets
+
+@rem determine processor
+reg Query "HKLM\Hardware\Description\System\CentralProcessor\0" | find /i "x86" > NUL && set OS=32BIT || set OS=64BIT
+if %OS%==32BIT set TRIPLET=x86-windows
+if %OS%==64BIT set TRIPLET=x64-windows
+
+
+@rem ================================= Start =================================
+
 @rem check working dir
 if not exist scripts/vcpkg (
     echo scripts dir not found.
@@ -44,7 +56,7 @@ echo.
 echo ================================= Build vcpkg =================================
 
 @rem check if repository is valid
-if not exist vcpkg\bootstrap-vcpkg.bat (
+if not exist vcpkg/bootstrap-vcpkg.bat (
     echo bootstrap-vcpkg.bat not found.
     goto :Lab_Exit
 )
@@ -61,38 +73,38 @@ echo.
 echo.
 echo ================================= Build zlib =================================
 
-vcpkg install zlib:x64-windows
+vcpkg install zlib:%TRIPLET%
 
 echo.
 echo.
 echo ================================= Build sdl2 =================================
 
-vcpkg install sdl2:x64-windows
+vcpkg install sdl2:%TRIPLET%
 
 echo.
 echo.
 echo ================================= Build yaml-cpp =================================
 
-vcpkg install yaml-cpp:x64-windows
+vcpkg install yaml-cpp:%TRIPLET%
 
 echo.
 echo.
 echo ================================= Build quazip =================================
 
-vcpkg install quazip:x64-windows --overlay-ports=../scripts/vcpkg/ports --overlay-triplets=../scripts/vcpkg/triplets
+vcpkg install quazip:%TRIPLET% --overlay-ports=%MY_PORTS% --overlay-triplets=%MY_TRIPLETS%
 
 echo.
 echo.
 echo ================================= Build framelesshelper =================================
 
-vcpkg install framelesshelper:x64-windows --overlay-ports=../scripts/vcpkg/ports --overlay-triplets=../scripts/vcpkg/triplets
+vcpkg install framelesshelper:%TRIPLET% --overlay-ports=%MY_PORTS% --overlay-triplets=%MY_TRIPLETS%
 
 echo.
 echo.
 echo ================================= Build ffmpeg =================================
 
-@REM vcpkg install ffmpeg[core,avcodec,avdevice,avfilter,avformat,swresample,swscale,ffmpeg,ffprobe]:x64-windows --recurse
-vcpkg install ffmpeg-fake:x64-windows --overlay-ports=../scripts/vcpkg/ports
+@REM vcpkg install ffmpeg[core,avcodec,avdevice,avfilter,avformat,swresample,swscale,ffmpeg,ffprobe]:%TRIPLET% --recurse
+vcpkg install ffmpeg-fake:%TRIPLET% --overlay-ports=%MY_PORTS%
 
 echo.
 echo.
@@ -108,7 +120,7 @@ echo Remove Packages
 rd /s /q packages
 
 @REM echo Remove Caches
-@REM rd /s /q %LOCALAPPDATA%\vcpkg
+@REM rd /s /q %LOCALAPPDATA%/vcpkg
 
 echo.
 echo.
