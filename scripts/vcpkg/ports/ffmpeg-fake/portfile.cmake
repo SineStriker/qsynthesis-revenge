@@ -1,8 +1,27 @@
-vcpkg_from_github(
-    OUT_SOURCE_PATH SOURCE_PATH
-    REPO SineStriker/ffmpeg-fake
-    REF 0.0.3
-    SHA512 d37d41f1c8755579a69be0a868392848452c013dc048adf1a610bcc12b7db35f6d15b29cca11d5b2cd04c543ca501dc99c96d01722f1874df5b69d74d9be54a5
+set(LIB_PREFIX "https://github.com/SineStriker/ffmpeg-fake/releases/download")
+set(LIB_VERSION 0.0.3)
+
+if (WIN32)
+    set(FILE_NAME ffmpeg-fake-windows-amd64-${LIB_VERSION}.zip)
+    set(FILE_CHECK_SUM 43e1a793e72332663eacad2473a8ee5be64f6e55faa5de1ce658c99478ac1e4739ec00cdd21bf0eac9f32487b62225f5cc3b977ce110b8ee8b5c83c7d6d5e69e)
+elseif (APPLE)
+    set(FILE_NAME ffmpeg-fake-mac-amd64-${LIB_VERSION}.zip)
+    set(FILE_CHECK_SUM 0)
+else()
+    set(FILE_NAME ffmpeg-fake-linux-amd64-${LIB_VERSION}.zip)
+    set(FILE_CHECK_SUM 0)
+endif()
+
+vcpkg_download_distfile(ARCHIVE
+    URLS ${LIB_PREFIX}/${LIB_VERSION}/${FILE_NAME}
+    FILENAME ${FILE_NAME}
+    SHA512 ${FILE_CHECK_SUM}
+)
+
+vcpkg_extract_source_archive(
+    SOURCE_PATH
+    ARCHIVE "${ARCHIVE}"
+    # NO_REMOVE_ONE_LEVEL
 )
 
 vcpkg_cmake_configure(
