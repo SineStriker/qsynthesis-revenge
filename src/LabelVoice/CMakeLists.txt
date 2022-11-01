@@ -217,6 +217,15 @@ if (WIN32 AND APP_DEPLOY)
         RELATIVE PREBUILT
     )
 
+    if (MSVC)
+        # ZLIB's package file doesn't provide dll information
+        add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+            COMMAND ${CMAKE_COMMAND} -E copy_if_different
+                $<TARGET_FILE_DIR:${PROJECT_NAME}>/zlib1.dll
+                $<TARGET_FILE_DIR:${PROJECT_NAME}>/${APP_LIB_DIR}
+        )
+    endif()
+
 else()
 
     target_link_libraries(${PROJECT_NAME} PRIVATE ${APP_BLOCK})
