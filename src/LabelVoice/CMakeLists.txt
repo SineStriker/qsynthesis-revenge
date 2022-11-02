@@ -7,10 +7,14 @@ set(INNER_PROJECT ${PROJECT_NAME})
 
 set(INNER_VERSION ${PROJECT_VERSION})
 
+set(INNER_PLUGIN_DIR ${APP_PLUGINS_DIR})
+
 add_subdirectory(Core)
 
-add_subdirectory(Plugin)
-
 add_subdirectory(Staging)
+
+if (NOT DISABLE_LV_PLUGINS)
+    add_subdirectory(Plugin)
+endif()
 
 add_subdirectory(WinMain)

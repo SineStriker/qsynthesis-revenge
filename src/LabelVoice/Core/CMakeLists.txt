@@ -39,7 +39,7 @@ include_qt_private(Gui)
 include_qt_private(Widgets)
 
 # Add fixed files
-set(_main_dirs Basic Commands Render Serialization Utils)
+set(_main_dirs Api Basic Commands Render Serialization Utils)
 foreach(_dir ${_main_dirs})
     list_add_recursively(PROJECT_SOURCES
         ${CMAKE_CURRENT_SOURCE_DIR}/${_dir}/*.cpp ${CMAKE_CURRENT_SOURCE_DIR}/${_dir}/*.cc)
