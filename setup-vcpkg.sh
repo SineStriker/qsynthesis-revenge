@@ -12,7 +12,7 @@ if [[ $OS == MINGW* ]]; then
     else
         TRIPLET=x86-windows
     fi
-elif [[ $OS == linux* ]]; then
+elif [[ $OS == Linux* ]]; then
     if [[ `uname -m` == x86_64 ]]; then
         TRIPLET=x64-linux
     else
@@ -70,7 +70,7 @@ function build_libs() {
     rm -rf packages
 
     # echo "Remove Caches"
-    # rm -rf %LOCALAPPDATA%\vcpkg
+    # rm -rf ~/.cache/vcpkg
 
 }
 
@@ -118,7 +118,10 @@ if [ ! -f "vcpkg/bootstrap-vcpkg.sh" ]; then
 fi
 
 cd vcpkg
-./bootstrap-vcpkg.sh
+
+if [ ! -f "vcpkg" ]; then
+    ./bootstrap-vcpkg.sh
+fi
 
 if [ ! -f "vcpkg" ]; then
     echo "vcpkg executable not found."

@@ -136,8 +136,8 @@ MinGW是另一个编译套件，可以选，但本工程大概率不会用到。
 ### Linux
 
 + 安装必要的库
-    ````
-    sudo apt install mesa-common-dev libgtk-3-dev libxext-dev libasound2-dev libpulse-dev
+    ```sh
+    sudo apt install curl mesa-common-dev libgtk-3-dev libxext-dev libasound2-dev libpulse-dev
     ````
 
 ## 本工程的配置

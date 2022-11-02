@@ -62,7 +62,10 @@ if not exist vcpkg/bootstrap-vcpkg.bat (
 )
 
 cd vcpkg
-call "bootstrap-vcpkg.bat"
+
+if not exist vcpkg.exe (
+    call "bootstrap-vcpkg.bat"
+)
 
 if not exist vcpkg.exe (
     echo vcpkg.exe not found.
