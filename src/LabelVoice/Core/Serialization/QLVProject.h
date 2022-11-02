@@ -6,19 +6,21 @@
 
 #include "Utils/HexGenerator.h"
 
+#include "lvcore_global.h"
+
 namespace LVModel {
 
     enum class LayerCategory { Sentence, Grapheme, Phoneme, Pitch, Duration, Custom };
 
     enum class ValueType { Text, Integer, Float, Pitch };
 
-    QString LayerCategoryToString(LayerCategory c);
-    LayerCategory StringToLayerCategory(const QString &s);
+    LVCORE_API QString LayerCategoryToString(LayerCategory c);
+    LVCORE_API LayerCategory StringToLayerCategory(const QString &s);
 
-    QString ValueTypeToString(ValueType c);
-    ValueType StringToValueType(const QString &s);
+    LVCORE_API QString ValueTypeToString(ValueType c);
+    LVCORE_API ValueType StringToValueType(const QString &s);
 
-    class LayerDefinition {
+    class LVCORE_API LayerDefinition {
     public:
         LayerCategory Category;
         QString Name;
@@ -30,7 +32,7 @@ namespace LVModel {
         ~LayerDefinition();
     };
 
-    class LanguageDefinition {
+    class LVCORE_API LanguageDefinition {
     public:
         QString Id;
         QString Name;
@@ -39,13 +41,13 @@ namespace LVModel {
         QString AlignerRootPath;
     };
 
-    class SpeakerDefinition {
+    class LVCORE_API SpeakerDefinition {
     public:
         QString Id;
         QString Name;
     };
 
-    class ItemResource {
+    class LVCORE_API ItemResource {
     public:
         enum ResourceType { Definition, Placeholder };
 
@@ -64,7 +66,7 @@ namespace LVModel {
     };
 
 
-    class ProjectModel {
+    class LVCORE_API ProjectModel {
     public:
         ProjectModel();
         ~ProjectModel();

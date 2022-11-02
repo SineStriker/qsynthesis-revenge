@@ -1,8 +1,17 @@
 cmake_minimum_required(VERSION 3.17)
 
-project(LabelVoice CXX)
+project(LabelVoice
+    LANGUAGES CXX
+    VERSION 0.0.1.3
+)
 
-# MainTarget
+# App Data
+set(APP_VERSION_SHORT ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}.${PROJECT_VERSION_PATCH})
+set(APP_VERSION_SHORT ${APP_VERSION_SHORT})
+set(APP_VERSION_VERBOSE ${PROJECT_VERSION})
+set(APP_LIB_DIR lib)
+
+# Main Target
 set(MAIN_TARGET LabelVoice)
 
 # User Options
@@ -30,18 +39,13 @@ set(PROJECT_RELEASE_DIR ${CMAKE_BINARY_DIR})                            # Releas
 set(APP_DOC_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../docs/doc) # Doc
 
 # Determining Current System
-set(SYS_WIN OFF)
-set(SYS_MAC OFF)
-set(SYS_LINUX OFF)
-
+set(LINUX OFF)
 if(CMAKE_SYSTEM_NAME MATCHES "Windows")
-    set(SYS_WIN ON)
     message(STATUS "[INFO] Current System is Windows")
 elseif(CMAKE_SYSTEM_NAME MATCHES "Linux")
-    set(SYS_LINUX ON)
+    set(LINUX ON)
     message(STATUS "[INFO] Current System is Linux")
 elseif(APPLE)
-    set(SYS_MAC ON)
     message(STATUS "[INFO] Current System is Macintosh")
 else()
     message(FATAL_ERROR "Unsupported System !!!")
@@ -60,7 +64,7 @@ find_package(yaml-cpp REQUIRED)
 find_package(ffmpeg-fake REQUIRED NAMES FFmpeg)
 
 # FramelessHelper
-if (NOT SYS_MAC)
+if (NOT APPLE)
     find_package(FramelessHelper REQUIRED COMPONENTS Core Widgets)
 endif()
 

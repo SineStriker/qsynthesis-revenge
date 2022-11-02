@@ -3,7 +3,9 @@
 
 #include "Utau/QUstPoint.h"
 
-class WavtoolArgs {
+#include "lvcore_global.h"
+
+class LVCORE_API WavtoolArgs {
 public:
     WavtoolArgs();
     ~WavtoolArgs();

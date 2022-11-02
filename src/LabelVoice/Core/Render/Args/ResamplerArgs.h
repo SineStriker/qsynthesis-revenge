@@ -6,7 +6,9 @@
 
 #include <QDateTime>
 
-class ResamplerArgs {
+#include "lvcore_global.h"
+
+class LVCORE_API ResamplerArgs {
 public:
     ResamplerArgs();
     ~ResamplerArgs();

@@ -1,3 +1,3 @@
-if (NOT SYS_MAC)
+if (NOT APPLE)
     add_subdirectory(NativeWindow)
 endif()

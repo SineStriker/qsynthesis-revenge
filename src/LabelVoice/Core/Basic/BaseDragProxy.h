@@ -3,7 +3,9 @@
 
 #include <QObject>
 
-class BaseDragProxy : public QObject {
+#include "lvcore_global.h"
+
+class LVCORE_API BaseDragProxy : public QObject {
     Q_OBJECT
 public:
     explicit BaseDragProxy(QObject *parent = nullptr);

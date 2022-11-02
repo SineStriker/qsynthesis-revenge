@@ -4,7 +4,9 @@
 #include "ResamplerArgs.h"
 #include "WavtoolArgs.h"
 
-class RenderArgs {
+#include "lvcore_global.h"
+
+class LVCORE_API RenderArgs {
 public:
     RenderArgs();
     RenderArgs(const ResamplerArgs &res, const WavtoolArgs &wav);

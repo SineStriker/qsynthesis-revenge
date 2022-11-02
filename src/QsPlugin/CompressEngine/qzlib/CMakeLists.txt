@@ -27,10 +27,10 @@ if (WIN32)
     set(PROJECT_PRODUCT_NAME ${PROJECT_NAME})
 
     configure_file(${PLUGIN_WINRC_FILE}
-        ${PROJECT_BINARY_DIR}/res.rc
+        ${CMAKE_CURRENT_BINARY_DIR}/res.rc
         @ONLY
     )
-    target_sources(${PROJECT_NAME} PRIVATE ${PROJECT_BINARY_DIR}/res.rc)
+    target_sources(${PROJECT_NAME} PRIVATE ${CMAKE_CURRENT_BINARY_DIR}/res.rc)
 endif()
 
 settle_plugin(${PROJECT_NAME} compressengines)

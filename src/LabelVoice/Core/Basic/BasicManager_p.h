@@ -3,7 +3,9 @@
 
 #include "BasicManager.h"
 
-class BasicManagerPrivate {
+#include "lvcore_global.h"
+
+class LVCORE_API BasicManagerPrivate {
     Q_DECLARE_PUBLIC(BasicManager)
 public:
     BasicManagerPrivate();

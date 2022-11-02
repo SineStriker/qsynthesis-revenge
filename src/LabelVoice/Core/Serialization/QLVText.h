@@ -9,9 +9,11 @@
 
 #include "Utils/HexGenerator.h"
 
+#include "lvcore_global.h"
+
 namespace LVModel {
 
-    class AudioSourceReference {
+    class LVCORE_API AudioSourceReference {
     public:
         QString Path;
         double In;
@@ -22,7 +24,7 @@ namespace LVModel {
     };
 
 
-    class Boundary {
+    class LVCORE_API Boundary {
     public:
         int Id;
         double Position;
@@ -36,7 +38,7 @@ namespace LVModel {
         }
     };
 
-    class TextLayer {
+    class LVCORE_API TextLayer {
     public:
         QString Name;
         std::set<Boundary> Boundaries;

@@ -6,9 +6,11 @@
 
 #include "Utils/HexGenerator.h"
 
+#include "lvcore_global.h"
+
 namespace LVModel {
 
-    class SliceDefinition {
+    class LVCORE_API SliceDefinition {
     public:
         QString Id;
         double In;
@@ -21,7 +23,7 @@ namespace LVModel {
         bool operator<(const SliceDefinition &other) const;
     };
 
-    class ItemModel {
+    class LVCORE_API ItemModel {
     public:
         QString Version;
         QString Id;

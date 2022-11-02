@@ -6,7 +6,9 @@
 
 #include "LVCommand.h"
 
-class CommandManager : public QObject {
+#include "lvcore_global.h"
+
+class LVCORE_API CommandManager : public QObject {
     Q_OBJECT
 public:
     explicit CommandManager(QObject *parent = nullptr);

@@ -4,7 +4,9 @@
 #include <QSharedPointer>
 #include <QStringList>
 
-class LVCommand {
+#include "lvcore_global.h"
+
+class LVCORE_API LVCommand {
 public:
     LVCommand();
     virtual ~LVCommand();
@@ -15,7 +17,7 @@ public:
 typedef QSharedPointer<LVCommand> QSCommandRef;
 typedef QList<QSCommandRef> LVCommandList;
 
-class ICommandSubscriber {
+class LVCORE_API ICommandSubscriber {
 public:
     virtual void execute(const LVCommandList &cmds, bool isUndo) = 0;
 };

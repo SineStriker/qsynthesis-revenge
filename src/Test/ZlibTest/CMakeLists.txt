@@ -1,4 +1,4 @@
-include(${PROJECT_SCRIPTS_DIR}/Modules/FindQt.cmake)
+include(${PROJECT_SCRIPTS_DIR}/Modules/Find.cmake)
 
 project(ZlibTest)
 

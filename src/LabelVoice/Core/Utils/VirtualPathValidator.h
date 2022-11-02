@@ -4,15 +4,17 @@
 #include <QRegExp>
 #include <QString>
 
+#include "lvcore_global.h"
+
 namespace VirtualPathValidator {
 
-    extern QRegExp _noSurroundingWhitespaces;
+    LVCORE_API extern QRegExp _noSurroundingWhitespaces;
 
-    extern QRegExp _containsBadCharacters;
+    LVCORE_API extern QRegExp _containsBadCharacters;
 
-    bool IsValidName(const QString &name);
+    LVCORE_API bool IsValidName(const QString &name);
 
-    bool IsValidPath(const QString &path);
+    LVCORE_API bool IsValidPath(const QString &path);
 
 }; // namespace VirtualPathValidator
 

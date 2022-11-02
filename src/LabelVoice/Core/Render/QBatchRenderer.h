@@ -6,13 +6,16 @@
 #include "Utau/QUstNote.h"
 #include "Args/RenderArgs.h"
 
-struct NoteInfo {
+#include "lvcore_global.h"
+
+class LVCORE_API NoteInfo {
+public:
     QUstNote n;
     QOtoItem g;
     QOtoItemBrief c;
 };
 
-class QBatchRenderer {
+class LVCORE_API QBatchRenderer {
 public:
     QBatchRenderer();
     ~QBatchRenderer();

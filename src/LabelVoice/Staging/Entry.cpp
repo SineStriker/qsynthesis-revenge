@@ -4,7 +4,7 @@
 
 #include "Entry.h"
 
-int app_entry(int argc, char *argv[]) {
+int main_entry(int argc, char *argv[]) {
     LvApplication a(argc, argv);
 
     WindowManager::instance()->showHome();

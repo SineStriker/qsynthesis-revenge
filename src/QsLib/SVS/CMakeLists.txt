@@ -47,8 +47,8 @@ target_include_directories(${PROJECT_NAME} PRIVATE
 if (WIN32)
     set(PROJECT_EXPORT_FILENAME ${PROJECT_NAME})
     configure_file(win32/res.rc.in
-        ${PROJECT_BINARY_DIR}/res.rc
+        ${CMAKE_CURRENT_BINARY_DIR}/res.rc
         @ONLY
     )
-    target_sources(${PROJECT_NAME} PRIVATE ${PROJECT_BINARY_DIR}/res.rc)
+    target_sources(${PROJECT_NAME} PRIVATE ${CMAKE_CURRENT_BINARY_DIR}/res.rc)
 endif()

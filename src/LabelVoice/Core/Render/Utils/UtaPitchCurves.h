@@ -3,28 +3,30 @@
 
 #include "Utau/QUstPoint.h"
 
+#include "lvcore_global.h"
+
 #define PI 3.1415926
 
 extern const char Base64EncodeMap[];
 
 namespace UtaPitchCurves {
 
-    double f_x(const double &x1, const double &y1, const double &x2, const double &y2,
-               const double &x);
+    LVCORE_API double f_x(const double &x1, const double &y1, const double &x2, const double &y2,
+                          const double &x);
 
-    double f_r(const double &x1, const double &y1, const double &x2, const double &y2,
-               const double &x);
+    LVCORE_API double f_r(const double &x1, const double &y1, const double &x2, const double &y2,
+                          const double &x);
 
-    double f_j(const double &x1, const double &y1, const double &x2, const double &y2,
-               const double &x);
+    LVCORE_API double f_j(const double &x1, const double &y1, const double &x2, const double &y2,
+                          const double &x);
 
-    double f_s(const double &x1, const double &y1, const double &x2, const double &y2,
-               const double &x);
+    LVCORE_API double f_s(const double &x1, const double &y1, const double &x2, const double &y2,
+                          const double &x);
 
-    double f_type(const QUstPoint::PointType &ptype, const double &x1, const double &y1,
-                  const double &x2, const double &y2, const double &x);
+    LVCORE_API double f_type(const QUstPoint::PointType &ptype, const double &x1, const double &y1,
+                             const double &x2, const double &y2, const double &x);
 
-    QList<int> convert_from_vector_point(
+    LVCORE_API QList<int> convert_from_vector_point(
         const double &tempo1, const QList<QUstPoint> &curNote, const QList<double> &curVBR,
         const double &curPre, const double &curStp, const int &curLength,
 
@@ -34,13 +36,13 @@ namespace UtaPitchCurves {
         const QList<QUstPoint> &prevNote = {}, const QList<double> &prevVBR = {},
         const int &prevLength = 0);
 
-    QString encode_from_vector(const QList<int> &pitchBend);
+    LVCORE_API QString encode_from_vector(const QList<int> &pitchBend);
 
-    QString encode_single_num(int n);
+    LVCORE_API QString encode_single_num(int n);
 
-    int find_impact(const QList<QUstPoint> &portamento, int &startIndex, int curTick,
-                    const double &PositiveTempo, double NegativeTempo = 0,
-                    const QList<double> &vibrato = {}, const int &length = 0);
+    LVCORE_API int find_impact(const QList<QUstPoint> &portamento, int &startIndex, int curTick,
+                               const double &PositiveTempo, double NegativeTempo = 0,
+                               const QList<double> &vibrato = {}, const int &length = 0);
 
 }; // namespace UtaPitchCurves
 

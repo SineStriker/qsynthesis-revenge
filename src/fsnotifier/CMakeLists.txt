@@ -43,10 +43,10 @@ set_target_properties(${PROJECT_NAME} PROPERTIES
 if (WIN32)
     get_target_property(PROJECT_EXPORT_FILENAME ${PROJECT_NAME} OUTPUT_NAME)
     configure_file(win32/res.rc.in
-        ${PROJECT_BINARY_DIR}/res.rc
+        ${CMAKE_CURRENT_BINARY_DIR}/res.rc
         @ONLY
     )
-    target_sources(${PROJECT_NAME} PRIVATE ${PROJECT_BINARY_DIR}/res.rc)
+    target_sources(${PROJECT_NAME} PRIVATE ${CMAKE_CURRENT_BINARY_DIR}/res.rc)
 endif()
 
 add_subdirectory(tools)

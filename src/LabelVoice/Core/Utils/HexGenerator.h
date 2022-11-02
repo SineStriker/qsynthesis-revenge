@@ -4,7 +4,9 @@
 #include <QSet>
 #include <QString>
 
-class HexGenerator {
+#include "lvcore_global.h"
+
+class LVCORE_API HexGenerator {
 public:
     void Reset();
     bool Register(const QString &code);
