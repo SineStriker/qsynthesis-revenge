@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.17)
 
-include(../config.cmake)
+include(../Config.cmake)
 
 # Project
 project(${MAIN_TARGET}

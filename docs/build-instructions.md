@@ -17,6 +17,11 @@ This project use Microsoft vcpkg to manage its dependencies, you should finish t
 
 + Use `git update-index --no-skip-worktree <file>`to untrack `path_qt.cmake` without deleting it。
 
+## Project Configuration
+
++ The LabelVoice Application uses a lot of QSynthesis Modules and the restare disbled(e.g. Utaplugin).
++ See `Config.cmake` for details.
+
 ## Dependencies (No need to build)
 
 ### FFmpeg
