@@ -53,16 +53,23 @@ extern "C" int APIENTRY WinMain(HINSTANCE, HINSTANCE, LPSTR /*cmdParamarg*/, int
 
 int main(int argc, char *argv[]) {
 #ifdef _WIN32
-    // Get current directory
+    // Get executable file path
     std::wstring wstr;
-    unsigned long size = ::GetCurrentDirectoryW(0, NULL);
-    wchar_t *buf = new wchar_t[size];
-    if (::GetCurrentDirectoryW(size, buf) != 0) {
+    wchar_t buf[MAX_PATH + 1] = {0};
+    if (::GetModuleFileNameW(NULL, buf, MAX_PATH) != 0) {
         wstr = buf;
     } else {
         ::exit(-1);
     }
-    delete[] buf;
+
+    // Get executable directory
+    size_t idx = wstr.find_last_of(L"\\");
+    if (idx == std::wstring::npos) {
+        ::MessageBoxW(nullptr, TO_UNICODE("Bad file path!"), TO_UNICODE("Error"),
+                      MB_OK | MB_ICONERROR);
+        return -1;
+    }
+    wstr.resize(idx);
 
     // Append subdirectory
     wstr += L"\\";
@@ -76,22 +83,22 @@ int main(int argc, char *argv[]) {
 
     typedef int (*EntryFun)(int, char *[]);
 
-    HINSTANCE hDLL = ::LoadLibraryW(wstr.c_str());
+    HINSTANCE hDLL = ::LoadLibraryW(wstr.data());
     int res = -1;
     if (hDLL != NULL) {
         EntryFun fun = (EntryFun)::GetProcAddress(hDLL, "main_entry");
         if (fun != NULL) {
             res = fun(argc, argv);
         } else {
+            res = ::GetLastError();
             ::MessageBoxW(nullptr, TO_UNICODE("Failed to find entry!"), TO_UNICODE("Error"),
                           MB_OK | MB_ICONERROR);
-            res = ::GetLastError();
         }
         ::FreeLibrary(hDLL);
     } else {
+        res = ::GetLastError();
         ::MessageBoxW(nullptr, TO_UNICODE("Failed to load main module!"), TO_UNICODE("Error"),
                       MB_OK | MB_ICONERROR);
-        res = ::GetLastError();
     }
     return res;
 #else
