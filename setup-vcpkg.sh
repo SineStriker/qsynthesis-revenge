@@ -24,6 +24,17 @@ else
 fi
 
 
+function rm_cache() {
+    if [[ $OS == MINGW* ]]; then
+        rm -rf $LOCALAPPDATA/vcpkg
+    elif [[ $OS == Linux* ]]; then
+        rm -rf ~/.cache/vcpkg
+    else
+        rm -rf ~/.cache/vcpkg
+    fi
+}
+
+
 function build_libs() {
 
     echo -e "\n"
@@ -70,7 +81,7 @@ function build_libs() {
     rm -rf packages
 
     # echo "Remove Caches"
-    # rm -rf ~/.cache/vcpkg
+    # rm_cache
 
 }
 

@@ -13,11 +13,11 @@ LabelVoice is able to run on **Windows, MacOS and Linux**.
 
 ### Requirements
 
-| Component  | Requirement | Detailed |
-| :----:     | :----:      | :----:   |
-| Qt         | >=5.15    | Core, Gui, Svg, Network, Multimedia    |
-| Compiler      | >=C++17       | MSVC 2019, MinGW 0.8.1, GCC, Clang   |
-| CMake      |  >=3.5      | >=3.20 is recommended  |
+| Component | Requirement |              Detailed               |
+|:---------:|:-----------:|:-----------------------------------:|
+|    Qt     |   >=5.15    | Core, Gui, Svg, Network, Multimedia |
+| Compiler  |   >=C++17   | MSVC 2019, MinGW 0.8.1, GCC, Clang  |
+|   CMake   |    >=3.5    |        >=3.20 is recommended        |
 
 
 On Windows, compiling with Microsoft Visual C++ is strongly recommended.

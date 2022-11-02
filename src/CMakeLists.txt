@@ -1,5 +1,6 @@
 cmake_minimum_required(VERSION 3.17)
 
+# Same as option
 macro(option_ex _name _val)
     if (NOT DEFINED ${_name})
         set(${_name} ${_val})

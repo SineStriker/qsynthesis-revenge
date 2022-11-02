@@ -64,7 +64,7 @@ int main(int argc, char *argv[]) {
     }
     delete[] buf;
 
-    // Append sub directory
+    // Append subdirectory
     wstr += L"\\";
     wstr += TO_UNICODE(APP_LIB_DIR);
     ::SetDllDirectoryW(wstr.data());
