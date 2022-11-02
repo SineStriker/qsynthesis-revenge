@@ -1,6 +1,6 @@
-project(LabelVoice
+project(${INNER_PROJECT}
     LANGUAGES CXX
-    VERSION ${APP_VERSION_VERBOSE}
+    VERSION ${INNER_VERSION}
 )
 
 add_executable(${PROJECT_NAME} main.cpp)
@@ -25,27 +25,33 @@ if(WIN32)
     # add files
     target_sources(${PROJECT_NAME} PRIVATE ${CMAKE_CURRENT_BINARY_DIR}/res.rc)
 elseif(APPLE)
-    # configure files
-    set(MAC_RES)
-    foreach (Item ${MAC_RES})
-        set_source_files_properties(${Item} PROPERTIES MACOSX_PACKAGE_LOCATION "Resources")
-    endforeach()
+    set(MAC_PINFO_LIST_TEMPLATE MacOSXBundleInfo.plist.in)
+
+    # copy files
+    find_file(INFO_PLIST_FILE ${MAC_PINFO_LIST_TEMPLATE} ${CMAKE_MODULE_PATH})
+    file(COPY ${INFO_PLIST_FILE} DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
+    file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/mac/qsynth2.icns DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
+
     # configure project
     set_property(TARGET ${PROJECT_NAME} PROPERTY
-        MACOSX_BUNDLE_INFO_PLIST
-        ${CMAKE_CURRENT_SOURCE_DIR}/Resources/platform/mac/Info.plist.in
+        MACOSX_BUNDLE TRUE
+        MACOSX_BUNDLE_INFO_PLIST ${CMAKE_CURRENT_BINARY_DIR}/${MAC_PINFO_LIST_TEMPLATE}
+        MACOSX_BUNDLE_EXECUTABLE_NAME ${PROJECT_NAME}
+        MACOSX_BUNDLE_INFO_STRING ${PROJECT_NAME}
+        MACOSX_BUNDLE_ICON_FILE qsynth2.icns
+        MACOSX_BUNDLE_GUI_IDENTIFIER com.OpenVPI.LabelVoice
+        MACOSX_BUNDLE_BUNDLE_NAME ${PROJECT_NAME}
+        MACOSX_BUNDLE_SHORT_VERSION_STRING ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}.${PROJECT_VERSION_PATCH}
+        MACOSX_BUNDLE_BUNDLE_VERSION ${PROJECT_VERSION}
+        MACOSX_BUNDLE_COPYRIGHT "Apache 2.0 License"
     )
-    # add files
-    target_sources(${PROJECT_NAME} PRIVATE ${MAC_RES})
+    
 endif()
 
 # Set Properties
 if(APP_DEPLOY OR NOT DEFINED NOT_QT_CREATOR)
     set_target_properties(${PROJECT_NAME} PROPERTIES
         WIN32_EXECUTABLE TRUE
-        MACOSX_BUNDLE TRUE
-        MACOSX_BUNDLE_BUNDLE_VERSION 1.0.0.0
-        MACOSX_BUNDLE_SHORT_VERSION_STRING 1.0
     )
 endif()
 
@@ -55,9 +61,6 @@ else()
     target_link_libraries(${PROJECT_NAME} PRIVATE LvStaging)
 endif()
 
-if (WIN32)
-    target_compile_definitions(${PROJECT_NAME} PRIVATE LIB_DIR="${APP_LIB_DIR}")
-endif()
 if (WIN32 AND APP_DEPLOY)
     get_target_property(_dll_name LvStaging OUTPUT_NAME)
 
@@ -68,3 +71,5 @@ if (WIN32 AND APP_DEPLOY)
         target_compile_definitions(${PROJECT_NAME} PRIVATE APP_DLL="lib${_dll_name}.dll")
     endif()
 endif()
+
+target_compile_definitions(${PROJECT_NAME} PRIVATE APP_LIB_DIR="${APP_LIB_DIR}")

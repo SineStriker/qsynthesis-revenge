@@ -68,7 +68,7 @@ void LvApplicationPrivate::init() {
     }
 
     // Setup plugin environment
-    pluginDir = qApp->applicationDirPath() + "/plugins";
+    pluginDir = qApp->applicationDirPath() + "/" + APP_PLUGINS_DIR;
     if (!Sys::mkDir(pluginDir)) {
         QMessageBox::warning(nullptr, q->errorTitle(), QObject::tr("Failed to make plugin path!"));
         ::exit(-1);

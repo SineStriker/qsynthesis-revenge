@@ -1,8 +1,9 @@
-#include "Kernel/LvApplication.h"
+#include "lvstaging_global.h"
+
+#include "LvApplication.h"
+
 #include "Managers/PluginManager.h"
 #include "Managers/WindowManager.h"
-
-#include "Entry.h"
 
 int main_entry(int argc, char *argv[]) {
     LvApplication a(argc, argv);

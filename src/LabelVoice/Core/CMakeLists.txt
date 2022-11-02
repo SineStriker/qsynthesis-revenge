@@ -8,8 +8,11 @@ include(${PROJECT_SCRIPTS_DIR}/Modules/ListUtil.cmake)
 
 project(LvCore
     LANGUAGES CXX
-    VERSION ${APP_VERSION_VERBOSE}
+    VERSION ${INNER_VERSION}
 )
+
+# Library type
+set(LVCORE_BUILD_STATIC OFF)
 
 # Include current directory
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
@@ -46,9 +49,6 @@ endforeach()
 list(APPEND PROJECT_SOURCES lvcore_global.h)
 
 # Add library
-string(TOLOWER ${PROJECT_NAME} PROJECT_NAME_LOWER)
-set(PROJECT_OUTPUT_NAME ${PROJECT_NAME_LOWER}-qt${QT_VERSION_MAJOR})
-
 if (LVCORE_BUILD_STATIC)
     add_library(${PROJECT_NAME} STATIC ${PROJECT_SOURCES} ${PROJECT_HEADERS} ${QT_RESOURCES})
     target_compile_definitions(${PROJECT_NAME} PUBLIC LVCORE_STATIC)
@@ -58,6 +58,8 @@ endif()
 
 target_compile_definitions(${PROJECT_NAME} PRIVATE LVCORE_LIBRARY)
 
+string(TOLOWER ${PROJECT_NAME} PROJECT_NAME_LOWER)
+set(PROJECT_OUTPUT_NAME ${PROJECT_NAME_LOWER}-qt${QT_VERSION_MAJOR})
 set_target_properties(${PROJECT_NAME} PROPERTIES
     OUTPUT_NAME ${PROJECT_OUTPUT_NAME}
 )
@@ -84,9 +86,9 @@ endif()
 # Link libraries
 target_link_libraries(${PROJECT_NAME} PRIVATE yaml-cpp)
 
-target_link_libraries(${PROJECT_NAME} PRIVATE QsUtils QsFramework QsSVS)
+target_link_libraries(${PROJECT_NAME} PUBLIC QsUtils QsSVS)
 
-target_link_libraries(${PROJECT_NAME} PRIVATE ${QT_LIBS})
+target_link_libraries(${PROJECT_NAME} PUBLIC ${QT_LIBS})
 
 # Add definitions
-target_compile_definitions(${PROJECT_NAME} PRIVATE APP_VERSION="${APP_VERSION_SHORT}")
+target_compile_definitions(${PROJECT_NAME} PUBLIC APP_VERSION="${APP_VERSION_SHORT}")

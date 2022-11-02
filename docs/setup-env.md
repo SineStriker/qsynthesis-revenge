@@ -158,6 +158,8 @@ MinGW是另一个编译套件，可以选，但本工程大概率不会用到。
 
 + 在仓库根目录执行`setup-vcpkg.bat`或`setup-vcpkg.sh`，此脚本简单地从GitHub中拉取`vcpkg`并执行一系列`vcpkg install`命令。
 
++ 可使用`git update-index --no-skip-worktree <file>`在不删除的前提下取消对`path_qt.cmake`的跟踪。
+
 <!-- ### 准备FFmpeg库
 
 + 下载地址：https://github.com/SineStriker/binary-res
@@ -201,7 +203,7 @@ cmake --build build --target install
     + 帮助-关于插件-C++
     + 打开Beautifier
     + 重启Qt Creator
-    + 工具-选项-Beautifier-Clang Format
+    + 工具-选项（或者编辑-首选项）-Beautifier-Clang Format
     + 修改ClangForamtCommand为`LLVM安装路径\bin\clang-format.exe`
         + 如果LLVM安装路径已在系统环境变量中，可直接填`clang-format`
     + 环境-键盘

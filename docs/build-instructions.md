@@ -15,6 +15,8 @@ This project use Microsoft vcpkg to manage its dependencies, you should finish t
 
 + Run `setup-vcpkg.bat` or `setup-vcpkg.sh` at repository root path. The script simply pulls `vcpkg` from GitHub and run a series of `vcpkg install` commands.
 
++ Use `git update-index --no-skip-worktree <file>`to untrack `path_qt.cmake` without deleting it。
+
 ## Dependencies (No need to build)
 
 ### FFmpeg

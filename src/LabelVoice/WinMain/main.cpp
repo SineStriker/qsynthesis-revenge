@@ -48,7 +48,7 @@ extern "C" int APIENTRY WinMain(HINSTANCE, HINSTANCE, LPSTR /*cmdParamarg*/, int
 #include <iostream>
 
 #ifndef DELAY_LOAD
-#include "Entry.h"
+#include "lvstaging_global.h"
 #endif
 
 int main(int argc, char *argv[]) {
@@ -66,7 +66,7 @@ int main(int argc, char *argv[]) {
 
     // Append sub directory
     wstr += L"\\";
-    wstr += TO_UNICODE(LIB_DIR);
+    wstr += TO_UNICODE(APP_LIB_DIR);
     ::SetDllDirectoryW(wstr.data());
 #endif
 

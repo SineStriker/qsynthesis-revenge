@@ -8,8 +8,11 @@ include(${PROJECT_SCRIPTS_DIR}/Modules/ListUtil.cmake)
 
 project(LvStaging
     LANGUAGES CXX
-    VERSION ${APP_VERSION_VERBOSE}
+    VERSION ${INNER_VERSION}
 )
+
+# Library type
+set(LVSTAGING_BUILD_STATIC OFF)
 
 # Include current directory
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
@@ -43,15 +46,22 @@ foreach(_dir ${_main_dirs})
     list_add_recursively(PROJECT_HEADERS
         ${CMAKE_CURRENT_SOURCE_DIR}/${_dir}/*.hpp ${CMAKE_CURRENT_SOURCE_DIR}/${_dir}/*.h)
 endforeach()
-list(APPEND PROJECT_SOURCES Entry.h Entry.cpp)
+list(APPEND PROJECT_SOURCES lvstaging_global.h)
 
 set(QT_RESOURCES ${CMAKE_CURRENT_SOURCE_DIR}/Resources/res.qrc)
 
 # Add library
+if (LVSTAGING_BUILD_STATIC)
+    add_library(${PROJECT_NAME} STATIC ${PROJECT_SOURCES} ${PROJECT_HEADERS} ${QT_RESOURCES})
+    target_compile_definitions(${PROJECT_NAME} PUBLIC LVSTAGING_STATIC)
+else()
+    add_library(${PROJECT_NAME} SHARED ${PROJECT_SOURCES} ${PROJECT_HEADERS} ${QT_RESOURCES})
+endif()
+
+target_compile_definitions(${PROJECT_NAME} PRIVATE LVSTAGING_LIBRARY)
+
 string(TOLOWER ${PROJECT_NAME} PROJECT_NAME_LOWER)
 set(PROJECT_OUTPUT_NAME ${PROJECT_NAME_LOWER}-qt${QT_VERSION_MAJOR})
-
-add_library(${PROJECT_NAME} SHARED ${PROJECT_SOURCES} ${PROJECT_HEADERS} ${QT_RESOURCES})
 set_target_properties(${PROJECT_NAME} PROPERTIES
     OUTPUT_NAME ${PROJECT_OUTPUT_NAME}
 )
@@ -76,14 +86,14 @@ if(WIN32)
 endif()
 
 # Link libraries
-target_link_libraries(${PROJECT_NAME} PRIVATE QsUtils QsFramework QsSVS)
+target_link_libraries(${PROJECT_NAME} PUBLIC QsUtils QsFramework QsSVS)
 
-target_link_libraries(${PROJECT_NAME} PRIVATE LvCore)
+target_link_libraries(${PROJECT_NAME} PUBLIC LvCore)
 
-target_link_libraries(${PROJECT_NAME} PRIVATE ${QT_LIBS})
+target_link_libraries(${PROJECT_NAME} PUBLIC ${QT_LIBS})
 
-# Add definitions
-target_compile_definitions(${PROJECT_NAME} PRIVATE APP_VERSION="${APP_VERSION_SHORT}")
+# Application Definitions
+target_compile_definitions(${PROJECT_NAME} PUBLIC APP_PLUGINS_DIR="${APP_PLUGINS_DIR}")
 
 
 # ------------------------------ Deploy ------------------------------
@@ -107,8 +117,8 @@ if (WIN32 AND APP_DEPLOY)
 
     add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
         COMMAND "${QT_DEPLOY_EXECUTABLE}"
-        --libdir "$<TARGET_FILE_DIR:${PROJECT_NAME}>/lib"
-        --plugindir "$<TARGET_FILE_DIR:${PROJECT_NAME}>/plugins"
+        --libdir "$<TARGET_FILE_DIR:${PROJECT_NAME}>/${APP_LIB_DIR}"
+        --plugindir "$<TARGET_FILE_DIR:${PROJECT_NAME}>/${APP_PLUGINS_DIR}"
         --no-translations
         --no-system-d3d-compiler
         --no-virtualkeyboard

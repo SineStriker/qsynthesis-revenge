@@ -2,11 +2,16 @@
 
 cmake_minimum_required(VERSION 3.17)
 
-project(QSynthesis LANGUAGES CXX)
+# Main Target
+set(MAIN_TARGET LabelVoice)
+set(APP_VERSION_VERBOSE 0.0.1.3)
+set(APP_DEPLOY ON)
 
-set(PROJECT_SCRIPTS_DIR ${CMAKE_CURRENT_SOURCE_DIR}/scripts/cmake) # Scripts
-set(PROJECT_ARCHIVE_DIR ${CMAKE_CURRENT_BINARY_DIR}/etc) # Etc
-set(PROJECT_DEPLOY_PATH ${CMAKE_CURRENT_SOURCE_DIR}/release) # Release
+# Project
+project(${MAIN_TARGET}
+    LANGUAGES C CXX
+    VERSION ${APP_VERSION_VERBOSE}
+)
 
 set(NOT_QT_CREATOR 1)
 

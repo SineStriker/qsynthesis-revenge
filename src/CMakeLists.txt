@@ -1,18 +1,26 @@
 cmake_minimum_required(VERSION 3.17)
 
-project(LabelVoice
+macro(option_ex _name _val)
+    if (NOT DEFINED ${_name})
+        set(${_name} ${_val})
+    endif()
+endmacro()
+
+# Pre-defined Variables
+option_ex(MAIN_TARGET           LabelVoice)
+option_ex(APP_VERSION_VERBOSE   0.0.1.3)
+option_ex(APP_DEPLOY            OFF)
+option_ex(APP_LIB_DIR           lib)
+option_ex(APP_PLUGINS_DIR       plugins)
+
+# Project
+project(${MAIN_TARGET}
     LANGUAGES CXX
-    VERSION 0.0.1.3
+    VERSION ${APP_VERSION_VERBOSE}
 )
 
 # App Data
 set(APP_VERSION_SHORT ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}.${PROJECT_VERSION_PATCH})
-set(APP_VERSION_SHORT ${APP_VERSION_SHORT})
-set(APP_VERSION_VERBOSE ${PROJECT_VERSION})
-set(APP_LIB_DIR lib)
-
-# Main Target
-set(MAIN_TARGET LabelVoice)
 
 # User Options
 set(BUILD_TEST on)
@@ -21,11 +29,6 @@ set(BUILD_PLUGINS_ONLY off)
 # CPP Version
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
-
-# Application Information
-if (NOT DEFINED APP_DEPLOY)
-    set(APP_DEPLOY OFF)
-endif()
 
 # Determining Current System
 set(LINUX OFF)
@@ -93,6 +96,12 @@ if (BUILD_TEST)
 endif()
 
 if (APP_DEPLOY)
+    message(STATUS "[Info] Deployment mode, virtual target is added")
+
+    if (NOT WIN32)
+        message(FATAL_ERROR "Deployment mode is only implemented on Windows!")
+    endif()
+
     string(TOLOWER ${MAIN_TARGET} PROJECT_NAME_LOWER)
     string(TOLOWER ${CMAKE_SYSTEM_NAME} SYSTEM_NAME_LOWER)
     string(TOLOWER ${CMAKE_SYSTEM_PROCESSOR} SYSTEM_ARCH_LOWER)
@@ -107,8 +116,10 @@ if (APP_DEPLOY)
         COMMAND ${CMAKE_COMMAND} -E rm -rf ${APP_DEPLOY_DIR}
         COMMAND ${CMAKE_COMMAND} -E make_directory ${APP_DEPLOY_DIR}
         COMMAND ${CMAKE_COMMAND} -E copy_directory ${APP_DOC_DIR} ${APP_DEPLOY_DIR}/doc
-        COMMAND ${CMAKE_COMMAND} -E copy_directory $<TARGET_FILE_DIR:${MAIN_TARGET}>/lib ${APP_DEPLOY_DIR}/lib
-        COMMAND ${CMAKE_COMMAND} -E copy_directory $<TARGET_FILE_DIR:${MAIN_TARGET}>/plugins ${APP_DEPLOY_DIR}/plugins
+        COMMAND ${CMAKE_COMMAND} -E copy_directory $<TARGET_FILE_DIR:${MAIN_TARGET}>/${APP_LIB_DIR}
+                                                   ${APP_DEPLOY_DIR}/${APP_LIB_DIR}
+        COMMAND ${CMAKE_COMMAND} -E copy_directory $<TARGET_FILE_DIR:${MAIN_TARGET}>/${APP_PLUGINS_DIR}
+                                                   ${APP_DEPLOY_DIR}/${APP_PLUGINS_DIR}
         COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:${MAIN_TARGET}> ${APP_DEPLOY_DIR}
         COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:${FSNOTIFIER_TARGET}> ${APP_DEPLOY_DIR}
     )
