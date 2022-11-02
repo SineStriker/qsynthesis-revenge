@@ -88,7 +88,7 @@ fi
 
 echo "================================= Detect Proxy ================================="
 
-echo "No system proxy detected."
+echo "Please set http_proxy and https_proxy yourself."
 
 
 # check if repository is empty, remove if empty
