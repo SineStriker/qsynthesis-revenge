@@ -17,11 +17,11 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # Determining Current System
 set(LINUX OFF)
-if(CMAKE_SYSTEM_NAME MATCHES "Windows")
-    message(STATUS "[INFO] Current System is Windows")
-elseif(CMAKE_SYSTEM_NAME MATCHES "Linux")
+if(CMAKE_SYSTEM_NAME MATCHES "Linux")
     set(LINUX ON)
     message(STATUS "[INFO] Current System is Linux")
+elseif(WIN32)
+    message(STATUS "[INFO] Current System is Windows")
 elseif(APPLE)
     message(STATUS "[INFO] Current System is Macintosh")
 else()
@@ -37,16 +37,17 @@ else()
 endif()
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 
-set(PROJECT_ARCHIVE_DIR ${CMAKE_BINARY_DIR}/etc)                        # Etc
-set(PROJECT_SCRIPTS_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../scripts/cmake)   # Scripts
-set(PROJECT_RELEASE_DIR ${CMAKE_BINARY_DIR})                            # Release
+set(PROJECT_ARCHIVE_DIR ${CMAKE_BINARY_DIR}/etc)                                # Etc
+set(PROJECT_MODULES_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../scripts/cmake/Modules)   # Scripts
+set(PROJECT_RELEASE_DIR ${CMAKE_BINARY_DIR})                                    # Release
+set(PROJECT_DOCUMENT_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../docs/doc)               # Doc
 
-set(APP_DOC_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../docs/doc) # Doc
-
-# Platform Embedded File Template
-find_file(MACOSX_INFO_PLIST MacOSXBundleInfo.plist.in ${CMAKE_MODULE_PATH})
-set(WIN32_DLL_RC ${PROJECT_SCRIPTS_DIR}/Modules/Win32DllRes.rc.in)
-set(WIN32_EXE_RC ${PROJECT_SCRIPTS_DIR}/Modules/Win32ExeRes.rc.in)
+# Global Variables
+set(                TIME_PROJECT_START_YEAR            2020)
+string(TIMESTAMP    TIME_CURRENT_YEAR                  %Y)
+find_file(          MACOSX_INFO_PLIST                  MacOSXBundleInfo.plist.in ${CMAKE_MODULE_PATH})
+set(                WIN32_DLL_RC                       ${PROJECT_MODULES_DIR}/Win32DllRes.rc.in)
+set(                WIN32_EXE_RC                       ${PROJECT_MODULES_DIR}/Win32ExeRes.rc.in)
 
 # ToolChain
 include(${CMAKE_CURRENT_SOURCE_DIR}/../vcpkg/scripts/buildsystems/vcpkg.cmake)
@@ -82,7 +83,9 @@ if (NOT BUILD_SVS_PLUGINS_ONLY)
 endif()
 
 if (BUILD_TEST)
+
     add_subdirectory(Test)
+    
 endif()
 
 if (APP_DEPLOY)
@@ -105,7 +108,7 @@ if (APP_DEPLOY)
         DEPENDS all
         COMMAND ${CMAKE_COMMAND} -E rm -rf ${APP_DEPLOY_DIR}
         COMMAND ${CMAKE_COMMAND} -E make_directory ${APP_DEPLOY_DIR}
-        COMMAND ${CMAKE_COMMAND} -E copy_directory ${APP_DOC_DIR} ${APP_DEPLOY_DIR}/doc
+        COMMAND ${CMAKE_COMMAND} -E copy_directory ${PROJECT_DOCUMENT_DIR} ${APP_DEPLOY_DIR}/doc
         COMMAND ${CMAKE_COMMAND} -E copy_directory $<TARGET_FILE_DIR:${MAIN_TARGET}>/${APP_LIB_DIR}
                                                    ${APP_DEPLOY_DIR}/${APP_LIB_DIR}
         COMMAND ${CMAKE_COMMAND} -E copy_directory $<TARGET_FILE_DIR:${MAIN_TARGET}>/${APP_PLUGINS_DIR}

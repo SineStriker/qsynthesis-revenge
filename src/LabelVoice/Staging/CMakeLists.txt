@@ -1,7 +1,7 @@
-include(${PROJECT_SCRIPTS_DIR}/Modules/Basic.cmake)
-include(${PROJECT_SCRIPTS_DIR}/Modules/Find.cmake)
-include(${PROJECT_SCRIPTS_DIR}/Modules/Link.cmake)
-include(${PROJECT_SCRIPTS_DIR}/Modules/ListUtil.cmake)
+include(${PROJECT_MODULES_DIR}/Basic.cmake)
+include(${PROJECT_MODULES_DIR}/Find.cmake)
+include(${PROJECT_MODULES_DIR}/Link.cmake)
+include(${PROJECT_MODULES_DIR}/ListUtil.cmake)
 
 
 # ------------------------------ Basic information ------------------------------
@@ -72,8 +72,8 @@ target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 if(WIN32)
     # generate rc
     get_target_property(WIN32_EXPORT_NAME ${PROJECT_NAME} OUTPUT_NAME)
-    set(WIN32_COPYRIGHT_START_YEAR "2020")
-    set(WIN32_COPYRIGHT_END_YEAR "2022")
+    set(WIN32_COPYRIGHT_START_YEAR "${TIME_PROJECT_START_YEAR}")
+    set(WIN32_COPYRIGHT_END_YEAR "${TIME_CURRENT_YEAR}")
     set(WIN32_AUTHOR_NAME "OpenVPI Team")
     set(WIN32_FILE_DESC "LabelVoice Main Module")
     set(WIN32_PRODUCT_NAME "LabelVoice.Staging")

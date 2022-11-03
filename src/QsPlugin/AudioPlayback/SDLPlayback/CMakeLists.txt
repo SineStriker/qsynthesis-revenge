@@ -29,8 +29,8 @@ if (WIN32)
     # Specify your plugin metadata
     # Specify your plugin metadata
     set(WIN32_EXPORT_NAME ${PROJECT_NAME})
-    set(WIN32_COPYRIGHT_START_YEAR "2020")
-    set(WIN32_COPYRIGHT_END_YEAR "2022")
+    set(WIN32_COPYRIGHT_START_YEAR "${TIME_PROJECT_START_YEAR}")
+    set(WIN32_COPYRIGHT_END_YEAR "${TIME_CURRENT_YEAR}")
     set(WIN32_AUTHOR_NAME "Sine Striker")
     set(WIN32_FILE_DESC "QSynthesis Plugin for Audio Playback")
     set(WIN32_PRODUCT_NAME ${PROJECT_NAME})

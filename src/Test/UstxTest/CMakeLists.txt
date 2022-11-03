@@ -1,4 +1,4 @@
-include(${PROJECT_SCRIPTS_DIR}/Modules/Find.cmake)
+include(${PROJECT_MODULES_DIR}/Find.cmake)
 
 project(UstxTest)
 
