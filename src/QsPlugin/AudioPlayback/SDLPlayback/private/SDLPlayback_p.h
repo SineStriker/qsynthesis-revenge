@@ -12,7 +12,7 @@ extern "C" {
 #include <SDL2/SDL.h>
 }
 
-class Q_DECL_EXPORT SDLPlaybackPrivate : public IAudioPlaybackPrivate {
+class SDLPlaybackPrivate : public IAudioPlaybackPrivate {
     Q_DECLARE_PUBLIC(SDLPlayback)
 public:
     SDLPlaybackPrivate();

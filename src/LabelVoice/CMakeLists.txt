@@ -13,7 +13,7 @@ add_subdirectory(Core)
 
 add_subdirectory(Staging)
 
-if (NOT DISABLE_LV_PLUGINS)
+if (ENABLE_LV_PLUGINS)
     add_subdirectory(Plugin)
 endif()
 

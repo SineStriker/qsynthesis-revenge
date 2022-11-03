@@ -23,7 +23,7 @@ add_library(${PROJECT_NAME} SHARED ${_src})
 
 target_link_libraries(${PROJECT_NAME} PUBLIC Qt${QT_VERSION_MAJOR}::Widgets)
 target_link_libraries(${PROJECT_NAME} PUBLIC QsFramework)
-target_link_libraries(${PROJECT_NAME} PUBLIC FramelessHelper::FramelessHelperWidgets)
+target_link_libraries(${PROJECT_NAME} PRIVATE FramelessHelper::FramelessHelperWidgets)
 
 target_include_directories(${PROJECT_NAME} PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}

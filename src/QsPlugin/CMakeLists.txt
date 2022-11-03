@@ -25,11 +25,11 @@ if (NOT BUILD_SVS_PLUGINS_ONLY)
 
 endif()
 
-if (NOT DISABLE_UTA_PLUGINS)
+if (ENABLE_UTA_PLUGINS)
     add_subdirectory(OtoPlugin)
     add_subdirectory(UtaPlugin)
 endif()
 
-if (NOT DISABLE_SVS_CONVERTERS)
+if (ENABLE_SVS_CONVERTERS)
     add_subdirectory(SVSConverter)
 endif()

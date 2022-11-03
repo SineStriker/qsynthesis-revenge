@@ -10,7 +10,7 @@
 
 FRAMELESSHELPER_USE_NAMESPACE
 
-class Q_DECL_EXPORT NativeHandlePrivate : public IWindowHandlePrivate {
+class NativeHandlePrivate : public IWindowHandlePrivate {
     Q_DECLARE_PUBLIC(NativeHandle)
 public:
     NativeHandlePrivate();

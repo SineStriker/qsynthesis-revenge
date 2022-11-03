@@ -3,7 +3,7 @@
 
 #include "../NativeWindow.h"
 
-class Q_DECL_EXPORT NativeWindowPrivate {
+class NativeWindowPrivate {
     Q_DECLARE_PUBLIC(NativeWindow)
 public:
     NativeWindowPrivate();

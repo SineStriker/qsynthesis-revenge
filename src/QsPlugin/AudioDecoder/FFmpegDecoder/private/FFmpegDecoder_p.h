@@ -11,7 +11,7 @@ extern "C" {
 
 #include <mutex>
 
-class Q_DECL_EXPORT FFmpegDecoderPrivate {
+class FFmpegDecoderPrivate {
     Q_DECLARE_PUBLIC(FFmpegDecoder);
 
 public:

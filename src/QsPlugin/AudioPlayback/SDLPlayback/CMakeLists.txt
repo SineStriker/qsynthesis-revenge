@@ -23,7 +23,7 @@ add_library(${PROJECT_NAME} SHARED ${_src})
 
 target_link_libraries(${PROJECT_NAME} PUBLIC Qt${QT_VERSION_MAJOR}::Core)
 target_link_libraries(${PROJECT_NAME} PUBLIC QsMedia)
-target_link_libraries(${PROJECT_NAME} PUBLIC SDL2::SDL2)
+target_link_libraries(${PROJECT_NAME} PRIVATE SDL2::SDL2)
 
 if (WIN32)
     # Specify your plugin metadata

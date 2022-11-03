@@ -251,6 +251,7 @@ int FFmpegDecoderPrivate::decode(char *buf, int size) {
             // 忽略
             qDebug() << QString("FFmpeg: Error getting next frame with code %1, ignored")
                             .arg(QString::number(-ret));
+            continue;
         }
 
         // 跳过其他流
@@ -267,6 +268,7 @@ int FFmpegDecoderPrivate::decode(char *buf, int size) {
             qDebug() << QString(
                             "FFmpeg: Error submitting a packet for decoding with code %1, ignored")
                             .arg(QString::number(-ret));
+            continue;
         }
 
         while (ret >= 0) {
@@ -282,6 +284,7 @@ int FFmpegDecoderPrivate::decode(char *buf, int size) {
                 // 忽略
                 qDebug() << QString("FFmpeg: Error decoding frame with code %1, ignored")
                                 .arg(QString::number(-ret));
+                continue;
             }
 
             // 记录当前时间

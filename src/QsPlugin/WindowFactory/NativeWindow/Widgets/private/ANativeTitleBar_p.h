@@ -6,7 +6,7 @@
 #include "../ANativeTitleBar.h"
 #include "../ANativeTitleBarLayout.h"
 
-class Q_DECL_EXPORT ANativeTitleBarPrivate {
+class ANativeTitleBarPrivate {
     Q_DECLARE_PUBLIC(ANativeTitleBar)
 public:
     ANativeTitleBarPrivate();
