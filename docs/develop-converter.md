@@ -37,7 +37,7 @@
 
 + 进入`src/QsPlugin/SVSConverter`，将`sample`文件夹复制一份，改名为`qacep`，并进入此文件夹。
 
-+ 将`CMakeLists.txt`第一行`project`名`sample`改为`qacep`，可修改`VERSION`后的版本号。后面涉及Windows资源文件的配置，将`PROJECT_AUTHOR`变量的值更改为你的名字，`PROJECT_COPYRIGHT_START_YEAR`与`PROJECT_COPYRIGHT_END_YEAR`可以按需修改。
++ 将`CMakeLists.txt`第一行`project`名`sample`改为`qacep`，可修改`VERSION`后的版本号。后面涉及Windows资源文件的配置，将`WIN32_AUTHOR_NAME`变量的值更改为你的名字，`WIN32_COPYRIGHT_START_YEAR`与`WIN32_COPYRIGHT_END_YEAR`可以按需修改。
 
 + 将`plugin.json`按照同样的方式修改，需要指定开源协议、目标工程格式名字、目标工程格式扩展名（字符串数组）。
 

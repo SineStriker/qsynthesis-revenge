@@ -9,6 +9,6 @@ macro(settle_plugin _target _category)
     )
 endmacro()
 
-set(PLUGIN_WINRC_FILE ${CMAKE_CURRENT_SOURCE_DIR}/win32/res.rc.in)
+set(PLUGIN_WINRC_FILE ${WIN32_DLL_RC})
 
 add_subdirectory(TemplateGenerator)

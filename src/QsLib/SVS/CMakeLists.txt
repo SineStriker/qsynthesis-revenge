@@ -45,8 +45,14 @@ target_include_directories(${PROJECT_NAME} PRIVATE
 )
 
 if (WIN32)
-    set(PROJECT_EXPORT_FILENAME ${PROJECT_NAME})
-    configure_file(win32/res.rc.in
+    set(WIN32_EXPORT_NAME ${PROJECT_NAME})
+    set(WIN32_COPYRIGHT_START_YEAR "2020")
+    set(WIN32_COPYRIGHT_END_YEAR "2022")
+    set(WIN32_AUTHOR_NAME "QSynthesis Team")
+    set(WIN32_FILE_DESC "QSynthesis Common Utilities")
+    set(WIN32_PRODUCT_NAME "QSynthesis.SVS")
+    configure_file(
+        ${WIN32_DLL_RC}
         ${CMAKE_CURRENT_BINARY_DIR}/res.rc
         @ONLY
     )

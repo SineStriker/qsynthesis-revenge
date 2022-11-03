@@ -71,14 +71,14 @@ target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 # OS Specific
 if(WIN32)
     # generate rc
-    get_target_property(PROJECT_EXPORT_FILENAME ${PROJECT_NAME} OUTPUT_NAME)
-    set(PROJECT_AUTHOR "OpenVPI Team")
-    set(PROJECT_DESC "LabelVoice Main Module")
-    set(PROJECT_COPYRIGHT_START_YEAR "2020")
-    set(PROJECT_COPYRIGHT_END_YEAR "2022")
-    set(PROJECT_PRODUCT_NAME "LabelVoice.Staging")
+    get_target_property(WIN32_EXPORT_NAME ${PROJECT_NAME} OUTPUT_NAME)
+    set(WIN32_COPYRIGHT_START_YEAR "2020")
+    set(WIN32_COPYRIGHT_END_YEAR "2022")
+    set(WIN32_AUTHOR_NAME "OpenVPI Team")
+    set(WIN32_FILE_DESC "LabelVoice Main Module")
+    set(WIN32_PRODUCT_NAME "LabelVoice.Staging")
     configure_file(
-        ${CMAKE_CURRENT_SOURCE_DIR}/Resources/win32/res.rc.in
+        ${WIN32_DLL_RC}
         ${CMAKE_CURRENT_BINARY_DIR}/res.rc
         @ONLY
     )

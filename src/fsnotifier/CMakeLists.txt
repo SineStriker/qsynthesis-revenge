@@ -41,8 +41,14 @@ set_target_properties(${PROJECT_NAME} PROPERTIES
 )
 
 if (WIN32)
-    get_target_property(PROJECT_EXPORT_FILENAME ${PROJECT_NAME} OUTPUT_NAME)
-    configure_file(win32/res.rc.in
+    get_target_property(WIN32_EXPORT_NAME ${PROJECT_NAME} OUTPUT_NAME)
+    set(WIN32_COPYRIGHT_START_YEAR "2020")
+    set(WIN32_COPYRIGHT_END_YEAR "2022")
+    set(WIN32_AUTHOR_NAME "Sine Striker")
+    set(WIN32_FILE_DESC "C++ Wrapper for IDEA FSNotifier")
+    set(WIN32_PRODUCT_NAME "fsnotifier")
+    configure_file(
+        ${WIN32_DLL_RC}
         ${CMAKE_CURRENT_BINARY_DIR}/res.rc
         @ONLY
     )

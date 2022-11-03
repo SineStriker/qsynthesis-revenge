@@ -27,14 +27,15 @@ target_link_libraries(${PROJECT_NAME} PRIVATE SDL2::SDL2)
 
 if (WIN32)
     # Specify your plugin metadata
-    set(PROJECT_EXPORT_FILENAME ${PROJECT_NAME})
-    set(PROJECT_AUTHOR "Sine Striker")
-    set(PROJECT_DESC "QSynthesis Plugin for Audio Encode")
-    set(PROJECT_COPYRIGHT_START_YEAR "2020")
-    set(PROJECT_COPYRIGHT_END_YEAR "2022")
-    set(PROJECT_PRODUCT_NAME ${PROJECT_NAME})
-
-    configure_file(${PLUGIN_WINRC_FILE}
+    # Specify your plugin metadata
+    set(WIN32_EXPORT_NAME ${PROJECT_NAME})
+    set(WIN32_COPYRIGHT_START_YEAR "2020")
+    set(WIN32_COPYRIGHT_END_YEAR "2022")
+    set(WIN32_AUTHOR_NAME "Sine Striker")
+    set(WIN32_FILE_DESC "QSynthesis Plugin for Audio Playback")
+    set(WIN32_PRODUCT_NAME ${PROJECT_NAME})
+    configure_file(
+        ${WIN32_DLL_RC}
         ${CMAKE_CURRENT_BINARY_DIR}/res.rc
         @ONLY
     )

@@ -43,6 +43,11 @@ set(PROJECT_RELEASE_DIR ${CMAKE_BINARY_DIR})                            # Releas
 
 set(APP_DOC_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../docs/doc) # Doc
 
+# Platform Embedded File Template
+find_file(MACOSX_INFO_PLIST MacOSXBundleInfo.plist.in ${CMAKE_MODULE_PATH})
+set(WIN32_DLL_RC ${PROJECT_SCRIPTS_DIR}/Modules/Win32DllRes.rc.in)
+set(WIN32_EXE_RC ${PROJECT_SCRIPTS_DIR}/Modules/Win32ExeRes.rc.in)
+
 # ToolChain
 include(${CMAKE_CURRENT_SOURCE_DIR}/../vcpkg/scripts/buildsystems/vcpkg.cmake)
 
