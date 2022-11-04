@@ -81,9 +81,6 @@ protected:
     // Key: speaker.id
     QHash<QString, TreeNode::Ref> speakerNodes;
 
-private:
-    void _q_itemDropped(QTreeWidgetItem *item, QTreeWidgetItem *oldParent);
-
 signals:
 };
 

@@ -2,7 +2,6 @@
 #include "private/LvApplication_p.h"
 
 #include "Styles/QCssAnalyzer.h"
-
 #include <QScreen>
 #include <QStandardPaths>
 

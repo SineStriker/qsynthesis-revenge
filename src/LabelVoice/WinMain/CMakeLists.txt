@@ -3,11 +3,35 @@ project(${INNER_PROJECT}
     VERSION ${INNER_VERSION}
 )
 
+
+# ------------------------------ Configure Target Begin ------------------------------
+
+# Add executable
 add_executable(${PROJECT_NAME} main.cpp)
 
-# Link OS dependent libraries
+# Set Properties
+if(APP_DEPLOY OR NOT DEFINED NOT_QT_CREATOR)
+    set_target_properties(${PROJECT_NAME} PROPERTIES
+        WIN32_EXECUTABLE TRUE
+    )
+endif()
+
+# Add definitions
+if (WIN32 AND APP_DEPLOY)
+    get_target_property(_dll_name LvStaging OUTPUT_NAME)
+    target_compile_definitions(${PROJECT_NAME} PRIVATE DELAY_LOAD)
+    if (MSVC)
+        target_compile_definitions(${PROJECT_NAME} PRIVATE APP_DLL="${_dll_name}.dll")
+    else()
+        target_compile_definitions(${PROJECT_NAME} PRIVATE APP_DLL="lib${_dll_name}.dll")
+    endif()
+endif()
+
+target_compile_definitions(${PROJECT_NAME} PRIVATE APP_LIB_DIR="${APP_LIB_DIR}")
+
+# Add embedded resources
 if(WIN32)
-    # generate rc
+    # configure rc
     set(WIN32_ICON_NAME "app.ico")
     set(WIN32_EXPORT_NAME ${PROJECT_NAME})
     set(WIN32_COPYRIGHT_START_YEAR "${TIME_PROJECT_START_YEAR}")
@@ -31,7 +55,7 @@ elseif(APPLE)
     file(COPY ${MACOSX_INFO_PLIST} DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
     file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/mac/qsynth2.icns DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
 
-    # configure project
+    # configure mac plist
     set_property(TARGET ${PROJECT_NAME} PROPERTY
         MACOSX_BUNDLE TRUE
         MACOSX_BUNDLE_INFO_PLIST ${CMAKE_CURRENT_BINARY_DIR}/${MACOSX_INFO_PLIST_FILENAME}
@@ -44,31 +68,13 @@ elseif(APPLE)
         MACOSX_BUNDLE_BUNDLE_VERSION ${PROJECT_VERSION}
         MACOSX_BUNDLE_COPYRIGHT "Apache 2.0 License"
     )
-    
 endif()
 
-# Set Properties
-if(APP_DEPLOY OR NOT DEFINED NOT_QT_CREATOR)
-    set_target_properties(${PROJECT_NAME} PROPERTIES
-        WIN32_EXECUTABLE TRUE
-    )
-endif()
-
+# Link libraries
 if (APP_DEPLOY)
     add_dependencies(${PROJECT_NAME} LvStaging)
 else()
     target_link_libraries(${PROJECT_NAME} PRIVATE LvStaging)
 endif()
 
-if (WIN32 AND APP_DEPLOY)
-    get_target_property(_dll_name LvStaging OUTPUT_NAME)
-
-    target_compile_definitions(${PROJECT_NAME} PRIVATE DELAY_LOAD)
-    if (MSVC)
-        target_compile_definitions(${PROJECT_NAME} PRIVATE APP_DLL="${_dll_name}.dll")
-    else()
-        target_compile_definitions(${PROJECT_NAME} PRIVATE APP_DLL="lib${_dll_name}.dll")
-    endif()
-endif()
-
-target_compile_definitions(${PROJECT_NAME} PRIVATE APP_LIB_DIR="${APP_LIB_DIR}")
+# ------------------------------ Configure Target End ------------------------------

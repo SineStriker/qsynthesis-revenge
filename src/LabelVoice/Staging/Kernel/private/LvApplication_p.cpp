@@ -15,6 +15,16 @@
 
 static const char Slash = '/';
 
+static QString loadAppleFont() {
+    QString fontDir = qApp->applicationDirPath() + "/resources/fonts";
+    int fontId = QFontDatabase::addApplicationFont(fontDir + "/PingFang SC.ttf");
+    QStringList fonts = QFontDatabase::applicationFontFamilies(fontId);
+    if (fonts.isEmpty()) {
+        return QString();
+    }
+    return fonts.front();
+}
+
 LvApplicationPrivate::LvApplicationPrivate() {
 }
 
@@ -35,7 +45,8 @@ void LvApplicationPrivate::init() {
     auto gbk = QTextCodec::codecForName("GBK");
     QTextCodec::setCodecForLocale(gbk);
 
-    QFont f("Microsoft YaHei");
+    QString fontName = loadAppleFont();
+    QFont f(fontName.isEmpty() ? "Microsoft YaHei" : fontName);
     f.setStyleStrategy(QFont::PreferAntialias);
     f.setPixelSize(12 * (qApp->primaryScreen()->logicalDotsPerInch() / 96.0));
     q->setFont(f);

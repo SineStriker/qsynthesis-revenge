@@ -8,14 +8,11 @@ project(${MAIN_TARGET}
     VERSION ${APP_VERSION_VERBOSE}
 )
 
-# App Data
-set(APP_VERSION_SHORT ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}.${PROJECT_VERSION_PATCH})
-
-# CPP Version
+# Language configuration
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-# Determining Current System
+# Check operating system
 set(LINUX OFF)
 if(CMAKE_SYSTEM_NAME MATCHES "Linux")
     set(LINUX ON)
@@ -28,21 +25,24 @@ else()
     message(FATAL_ERROR "Unsupported System !!!")
 endif()
 
-# Set Directories
+# Set output directories
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 if (WIN32)
     set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 else()
-    set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
+    set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin) #　Build .so/.dylib files at bin-dir
 endif()
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 
-set(PROJECT_ARCHIVE_DIR ${CMAKE_BINARY_DIR}/etc)                                # Etc
-set(PROJECT_MODULES_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../scripts/cmake/Modules)   # Scripts
-set(PROJECT_RELEASE_DIR ${CMAKE_BINARY_DIR})                                    # Release
-set(PROJECT_DOCUMENT_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../docs/doc)               # Doc
+# Set project information
+set(PROJECT_ARCHIVE_DIR     ${CMAKE_BINARY_DIR}/etc)                                # Etc
+set(PROJECT_MODULES_DIR     ${CMAKE_CURRENT_SOURCE_DIR}/../scripts/cmake/Modules)   # Scripts
+set(PROJECT_RELEASE_DIR     ${CMAKE_BINARY_DIR})                                    # Release
+set(PROJECT_DOCUMENT_DIR    ${CMAKE_CURRENT_SOURCE_DIR}/../docs/doc)                # Doc
 
-# Global Variables
+set(PROJECT_VERSION_SHORT   ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}.${PROJECT_VERSION_PATCH})
+
+# Set global variables
 set(                TIME_PROJECT_START_YEAR            2020)
 string(TIMESTAMP    TIME_CURRENT_YEAR                  %Y)
 find_file(          MACOSX_INFO_PLIST                  MacOSXBundleInfo.plist.in ${CMAKE_MODULE_PATH})
@@ -52,42 +52,29 @@ set(                WIN32_EXE_RC                       ${PROJECT_MODULES_DIR}/Wi
 # ToolChain
 include(${CMAKE_CURRENT_SOURCE_DIR}/../vcpkg/scripts/buildsystems/vcpkg.cmake)
 
-# SDL2
+# Find pre-built libraries
 find_package(SDL2 REQUIRED)
-
-# yaml-cpp
 find_package(yaml-cpp REQUIRED)
-
-# FFmpeg
 find_package(ffmpeg-fake REQUIRED NAMES FFmpeg)
-
-# FramelessHelper
+find_package(QuaZip NAMES quazip QuaZip-Qt5 QuaZip-Qt6 REQUIRED)
 if (NOT APPLE)
     find_package(FramelessHelper REQUIRED COMPONENTS Core Widgets)
 endif()
 
-# QuaZip
-find_package(QuaZip NAMES quazip QuaZip-Qt5 QuaZip-Qt6 REQUIRED)
-
-# Application
+# Add subdirectories
 add_subdirectory(QsLib)
-
 add_subdirectory(QsPlugin)
 
 if (NOT BUILD_SVS_PLUGINS_ONLY)
-
     add_subdirectory(fsnotifier)
-
     add_subdirectory(${MAIN_TARGET})
-
 endif()
 
 if (BUILD_TEST)
-
     add_subdirectory(Test)
-    
 endif()
 
+# Add deploy target
 if (APP_DEPLOY)
     message(STATUS "[Info] Deployment mode, virtual target is added")
 

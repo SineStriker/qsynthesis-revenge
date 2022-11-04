@@ -1,6 +1,4 @@
-project(fsnotifier C)
-
-if(CMAKE_SYSTEM_NAME MATCHES "Windows")
+if(WIN32)
     add_subdirectory(WinFsNotifier)
 elseif(CMAKE_SYSTEM_NAME MATCHES "Linux")
     file(GLOB _src fsNotifier/linux/*.h fsNotifier/linux/*.c)

@@ -13,6 +13,6 @@ endmacro()
 
 
 # Use this micro to include a Qt private header
-macro(include_qt_private Module)
-    include_directories(${Qt${QT_VERSION_MAJOR}${Module}_PRIVATE_INCLUDE_DIRS})
+macro(add_qt_private_inc List Module)
+    list(APPEND ${List} ${Qt${QT_VERSION_MAJOR}${Module}_PRIVATE_INCLUDE_DIRS})
 endmacro()

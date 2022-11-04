@@ -3,28 +3,44 @@ project(FFmpegDecoder
     LANGUAGES CXX
 )
 
+# Qt Auto Compiler
 set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 
+# Add source files
+set(QT_LIBS)
+set(SOURCES)
+
 find_package(QT NAMES Qt6 Qt5 COMPONENTS Core REQUIRED)
 find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Core REQUIRED)
+list(APPEND QT_LIBS Qt${QT_VERSION_MAJOR}::Core)
 
-file(GLOB _src ${CMAKE_CURRENT_SOURCE_DIR}/*.h ${CMAKE_CURRENT_SOURCE_DIR}/*.cpp)
+file(GLOB _root_src ${CMAKE_CURRENT_SOURCE_DIR}/*.h ${CMAKE_CURRENT_SOURCE_DIR}/*.cpp)
+list(APPEND SOURCES ${_root_src})
 
 set(_main_dirs private)
 foreach(_dir ${_main_dirs})
     set(_temp)
     file(GLOB_RECURSE _temp ${_dir}/*.h ${_dir}/*.cpp)
-    list(APPEND _src ${_temp})
+    list(APPEND SOURCES ${_temp})
+    unset(_temp)
 endforeach()
 
-add_library(${PROJECT_NAME} SHARED ${_src})
+# Add library
+add_library(${PROJECT_NAME} SHARED ${SOURCES})
 
-target_link_libraries(${PROJECT_NAME} PUBLIC Qt${QT_VERSION_MAJOR}::Core)
+# Link libraries
+target_link_libraries(${PROJECT_NAME} PUBLIC ${QT_LIBS})
 target_link_libraries(${PROJECT_NAME} PUBLIC QsMedia)
 ffmpeg_link_libraries(${PROJECT_NAME} PRIVATE avcodec avformat avutil swresample)
 
+# Include directories
+target_include_directories(${PROJECT_NAME} PUBLIC
+    ${CMAKE_CURRENT_SOURCE_DIR}
+)
+
+# Add embedded resources
 if (WIN32)
     # Specify your plugin metadata
     set(WIN32_EXPORT_NAME ${PROJECT_NAME})
@@ -41,4 +57,5 @@ if (WIN32)
     target_sources(${PROJECT_NAME} PRIVATE ${CMAKE_CURRENT_BINARY_DIR}/res.rc)
 endif()
 
+# Add task to copy to plugins dir after build
 settle_plugin(${PROJECT_NAME} audiodecoders)

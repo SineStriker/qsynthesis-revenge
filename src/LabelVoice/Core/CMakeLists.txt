@@ -3,9 +3,6 @@ include(${PROJECT_MODULES_DIR}/Find.cmake)
 include(${PROJECT_MODULES_DIR}/Link.cmake)
 include(${PROJECT_MODULES_DIR}/ListUtil.cmake)
 
-
-# ------------------------------ Basic information ------------------------------
-
 project(LvCore
     LANGUAGES CXX
     VERSION ${INNER_VERSION}
@@ -14,61 +11,70 @@ project(LvCore
 # Library type
 set(LVCORE_BUILD_STATIC OFF)
 
-# Include current directory
-set(CMAKE_INCLUDE_CURRENT_DIR ON)
-
 # Qt Auto Compiler
 set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 
-# Variables
+
+# ------------------------------ Configure Target Begin ------------------------------
+
+# Add source files
 set(QT_LIBS)
-set(QT_RESOURCES)
-set(PROJECT_SOURCES)
-set(PROJECT_HEADERS)
-
-
-# ------------------------------ Include/Import/Link ------------------------------
+set(QT_INCS)
+set(SOURCES)
 
 add_qt_module(QT_LIBS Widgets)
 add_qt_module(QT_LIBS Svg)
 add_qt_module(QT_LIBS Network)
 
-include_qt_private(Gui)
-include_qt_private(Widgets)
+add_qt_private_inc(QT_INCS Gui)
+add_qt_private_inc(QT_INCS Widgets)
 
-# Add fixed files
 set(_main_dirs Api Basic Commands Render Serialization Utils)
 foreach(_dir ${_main_dirs})
-    list_add_recursively(PROJECT_SOURCES
-        ${CMAKE_CURRENT_SOURCE_DIR}/${_dir}/*.cpp ${CMAKE_CURRENT_SOURCE_DIR}/${_dir}/*.cc)
-    list_add_recursively(PROJECT_HEADERS
-        ${CMAKE_CURRENT_SOURCE_DIR}/${_dir}/*.hpp ${CMAKE_CURRENT_SOURCE_DIR}/${_dir}/*.h)
+    list_add_recursively(SOURCES
+        ${CMAKE_CURRENT_SOURCE_DIR}/${_dir}/*.h
+        ${CMAKE_CURRENT_SOURCE_DIR}/${_dir}/*.hpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/${_dir}/*.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/${_dir}/*.cc
+    )
 endforeach()
 list(APPEND PROJECT_SOURCES lvcore_global.h)
 
 # Add library
 if (LVCORE_BUILD_STATIC)
-    add_library(${PROJECT_NAME} STATIC ${PROJECT_SOURCES} ${PROJECT_HEADERS} ${QT_RESOURCES})
+    add_library(${PROJECT_NAME} STATIC ${SOURCES})
     target_compile_definitions(${PROJECT_NAME} PUBLIC LVCORE_STATIC)
 else()
-    add_library(${PROJECT_NAME} SHARED ${PROJECT_SOURCES} ${PROJECT_HEADERS} ${QT_RESOURCES})
+    add_library(${PROJECT_NAME} SHARED ${SOURCES})
 endif()
 
 target_compile_definitions(${PROJECT_NAME} PRIVATE LVCORE_LIBRARY)
 
+# Set library properties
 string(TOLOWER ${PROJECT_NAME} PROJECT_NAME_LOWER)
 set(PROJECT_OUTPUT_NAME ${PROJECT_NAME_LOWER}-qt${QT_VERSION_MAJOR})
 set_target_properties(${PROJECT_NAME} PROPERTIES
     OUTPUT_NAME ${PROJECT_OUTPUT_NAME}
 )
 
+# Link libraries
+target_link_libraries(${PROJECT_NAME} PRIVATE yaml-cpp)
+target_link_libraries(${PROJECT_NAME} PUBLIC QsUtils QsSVS)
+target_link_libraries(${PROJECT_NAME} PUBLIC ${QT_LIBS})
+
+# Add definitions
+target_compile_definitions(${PROJECT_NAME} PUBLIC APP_VERSION="${PROJECT_VERSION_SHORT}")
+
+# Include directories
+target_include_directories(${PROJECT_NAME} PRIVATE ${QT_INCS})
+
 target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 
-# OS Specific
+# Add embedded resources
 if(WIN32)
-    # generate rc
+    # configure rc
     get_target_property(WIN32_EXPORT_NAME ${PROJECT_NAME} OUTPUT_NAME)
     set(WIN32_COPYRIGHT_START_YEAR "${TIME_PROJECT_START_YEAR}")
     set(WIN32_COPYRIGHT_END_YEAR "${TIME_CURRENT_YEAR}")
@@ -83,12 +89,4 @@ if(WIN32)
     target_sources(${PROJECT_NAME} PRIVATE ${CMAKE_CURRENT_BINARY_DIR}/res.rc)
 endif()
 
-# Link libraries
-target_link_libraries(${PROJECT_NAME} PRIVATE yaml-cpp)
-
-target_link_libraries(${PROJECT_NAME} PUBLIC QsUtils QsSVS)
-
-target_link_libraries(${PROJECT_NAME} PUBLIC ${QT_LIBS})
-
-# Add definitions
-target_compile_definitions(${PROJECT_NAME} PUBLIC APP_VERSION="${APP_VERSION_SHORT}")
+# ------------------------------ Configure Target End ------------------------------

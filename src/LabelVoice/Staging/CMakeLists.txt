@@ -3,9 +3,6 @@ include(${PROJECT_MODULES_DIR}/Find.cmake)
 include(${PROJECT_MODULES_DIR}/Link.cmake)
 include(${PROJECT_MODULES_DIR}/ListUtil.cmake)
 
-
-# ------------------------------ Basic information ------------------------------
-
 project(LvStaging
     LANGUAGES CXX
     VERSION ${INNER_VERSION}
@@ -14,63 +11,70 @@ project(LvStaging
 # Library type
 set(LVSTAGING_BUILD_STATIC OFF)
 
-# Include current directory
-set(CMAKE_INCLUDE_CURRENT_DIR ON)
-
 # Qt Auto Compiler
 set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 
-# Variables
+
+# ------------------------------ Configure Target Begin ------------------------------
+
+# Add source files
 set(QT_LIBS)
-set(QT_RESOURCES)
-set(PROJECT_SOURCES)
-set(PROJECT_HEADERS)
-
-
-# ------------------------------ Include/Import/Link ------------------------------
+set(QT_INCS)
+set(SOURCES)
 
 add_qt_module(QT_LIBS Widgets)
 add_qt_module(QT_LIBS Svg)
 add_qt_module(QT_LIBS Network)
 
-include_qt_private(Gui)
-include_qt_private(Widgets)
+add_qt_private_inc(QT_INCS Gui)
+add_qt_private_inc(QT_INCS Widgets)
 
-# Add fixed files
 set(_main_dirs Controls Kernel Managers Styles Windows)
 foreach(_dir ${_main_dirs})
-    list_add_recursively(PROJECT_SOURCES
-        ${CMAKE_CURRENT_SOURCE_DIR}/${_dir}/*.cpp ${CMAKE_CURRENT_SOURCE_DIR}/${_dir}/*.cc)
-    list_add_recursively(PROJECT_HEADERS
-        ${CMAKE_CURRENT_SOURCE_DIR}/${_dir}/*.hpp ${CMAKE_CURRENT_SOURCE_DIR}/${_dir}/*.h)
+    list_add_recursively(SOURCES
+        ${CMAKE_CURRENT_SOURCE_DIR}/${_dir}/*.h
+        ${CMAKE_CURRENT_SOURCE_DIR}/${_dir}/*.hpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/${_dir}/*.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/${_dir}/*.cc
+    )
 endforeach()
 list(APPEND PROJECT_SOURCES lvstaging_global.h)
 
-set(QT_RESOURCES ${CMAKE_CURRENT_SOURCE_DIR}/Resources/res.qrc)
-
 # Add library
 if (LVSTAGING_BUILD_STATIC)
-    add_library(${PROJECT_NAME} STATIC ${PROJECT_SOURCES} ${PROJECT_HEADERS} ${QT_RESOURCES})
+    add_library(${PROJECT_NAME} STATIC ${SOURCES})
     target_compile_definitions(${PROJECT_NAME} PUBLIC LVSTAGING_STATIC)
 else()
-    add_library(${PROJECT_NAME} SHARED ${PROJECT_SOURCES} ${PROJECT_HEADERS} ${QT_RESOURCES})
+    add_library(${PROJECT_NAME} SHARED ${SOURCES})
 endif()
 
 target_compile_definitions(${PROJECT_NAME} PRIVATE LVSTAGING_LIBRARY)
 
+# Set library properties
 string(TOLOWER ${PROJECT_NAME} PROJECT_NAME_LOWER)
 set(PROJECT_OUTPUT_NAME ${PROJECT_NAME_LOWER}-qt${QT_VERSION_MAJOR})
 set_target_properties(${PROJECT_NAME} PROPERTIES
     OUTPUT_NAME ${PROJECT_OUTPUT_NAME}
 )
 
+# Link libraries
+target_link_libraries(${PROJECT_NAME} PUBLIC QsUtils QsFramework QsSVS)
+target_link_libraries(${PROJECT_NAME} PUBLIC LvCore)
+target_link_libraries(${PROJECT_NAME} PUBLIC ${QT_LIBS})
+
+# Add definitions
+target_compile_definitions(${PROJECT_NAME} PUBLIC APP_PLUGINS_DIR="${APP_PLUGINS_DIR}")
+
+# Include directories
+target_include_directories(${PROJECT_NAME} PRIVATE ${QT_INCS})
+
 target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 
-# OS Specific
+# Add embedded resources
 if(WIN32)
-    # generate rc
+    # configure rc
     get_target_property(WIN32_EXPORT_NAME ${PROJECT_NAME} OUTPUT_NAME)
     set(WIN32_COPYRIGHT_START_YEAR "${TIME_PROJECT_START_YEAR}")
     set(WIN32_COPYRIGHT_END_YEAR "${TIME_CURRENT_YEAR}")
@@ -85,19 +89,12 @@ if(WIN32)
     target_sources(${PROJECT_NAME} PRIVATE ${CMAKE_CURRENT_BINARY_DIR}/res.rc)
 endif()
 
-# Link libraries
-target_link_libraries(${PROJECT_NAME} PUBLIC QsUtils QsFramework QsSVS)
-
-target_link_libraries(${PROJECT_NAME} PUBLIC LvCore)
-
-target_link_libraries(${PROJECT_NAME} PUBLIC ${QT_LIBS})
-
-# Application Definitions
-target_compile_definitions(${PROJECT_NAME} PUBLIC APP_PLUGINS_DIR="${APP_PLUGINS_DIR}")
+target_sources(${PROJECT_NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/Resources/res.qrc)
 
 
-# ------------------------------ Deploy ------------------------------
+# ------------------------------ Configure Target End ------------------------------
 
+# Add depleploy commands
 if (WIN32 AND APP_DEPLOY)
 
     # Deploy Qt
@@ -142,7 +139,7 @@ if (WIN32 AND APP_DEPLOY)
     deploy_shared_libraries(
         TARGET ${PROJECT_NAME}
         DESTINATION ${APP_LIB_DIR}
-        DEPENDENCIES ${PROJECT_NAME} LvCore QsUtils QsFramework QsSVS QsMedia fsnotifier-lib
+        DEPENDENCIES ${PROJECT_NAME} LvCore QsUtils QsFramework QsSVS QsMedia fsnotifier-qt
         RELATIVE
     )
 

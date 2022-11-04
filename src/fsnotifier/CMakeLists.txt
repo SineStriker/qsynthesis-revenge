@@ -1,16 +1,25 @@
-project(fsnotifier-lib
+cmake_minimum_required(VERSION 3.17)
+
+# Project
+project(fsnotifier-qt
     VERSION 0.0.0.1
     LANGUAGES CXX C
 )
 
+# Set library configuration
+set(FSNOTIFIER_BUILD_STATIC off)
+
+# Qt Auto Compiler
 set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 
-set(FSNOTIFIER_BUILD_STATIC off)
 
-set(FSNOTIFIER_SOURCES)
+# ------------------------------ Configure Target Begin ------------------------------
+
+# Add source files
 set(QT_LIBS)
+set(SOURCES)
 
 find_package(QT NAMES Qt6 Qt5 COMPONENTS Core REQUIRED)
 find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Core REQUIRED)
@@ -20,26 +29,30 @@ file(GLOB_RECURSE _internal_src
     ${CMAKE_CURRENT_SOURCE_DIR}/include/*.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/*.h
     ${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp)
+list(APPEND SOURCES ${_internal_src})
 
-set(FSNOTIFIER_SOURCES ${_internal_src})
-
+# Add library
 if (FSNOTIFIER_BUILD_STATIC)
-    add_library(${PROJECT_NAME} STATIC ${FSNOTIFIER_SOURCES})
+    add_library(${PROJECT_NAME} STATIC ${SOURCES})
     target_compile_definitions(${PROJECT_NAME} PUBLIC FSNOTIFIER_STATIC)
 else()
-    add_library(${PROJECT_NAME} SHARED ${FSNOTIFIER_SOURCES})
+    add_library(${PROJECT_NAME} SHARED ${SOURCES})
 endif()
 
 target_compile_definitions(${PROJECT_NAME} PRIVATE FSNOTIFIER_LIBRARY)
 
-target_link_libraries(${PROJECT_NAME} PUBLIC ${QT_LIBS})
-
-target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
-
+# Set library properties
 set_target_properties(${PROJECT_NAME} PROPERTIES
     OUTPUT_NAME fsnotifier-qt${QT_VERSION_MAJOR}
 )
 
+# Link libraries
+target_link_libraries(${PROJECT_NAME} PUBLIC ${QT_LIBS})
+
+# Include directories
+target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
+
+# Add embedded resources
 if (WIN32)
     get_target_property(WIN32_EXPORT_NAME ${PROJECT_NAME} OUTPUT_NAME)
     set(WIN32_COPYRIGHT_START_YEAR "${TIME_PROJECT_START_YEAR}")
@@ -54,5 +67,8 @@ if (WIN32)
     )
     target_sources(${PROJECT_NAME} PRIVATE ${CMAKE_CURRENT_BINARY_DIR}/res.rc)
 endif()
+
+# ------------------------------ Configure Target End ------------------------------
+
 
 add_subdirectory(tools)

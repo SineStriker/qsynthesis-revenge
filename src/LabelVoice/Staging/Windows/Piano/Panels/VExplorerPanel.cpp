@@ -68,8 +68,6 @@ VExplorerPanel::VExplorerPanel(QWidget *parent) : QFrame(parent) {
     mainLayout->addWidget(splitter);
 
     setLayout(mainLayout);
-
-    connect(itemsTree, &VSpkTreeWidget::currentItemChanged, this, &VExplorerPanel::_q_itemDropped);
 }
 
 VExplorerPanel::~VExplorerPanel() {
@@ -161,16 +159,3 @@ void VExplorerPanel::setItems(const QList<QPair<QString, PianoSpec::ItemDesc>> &
     }
 }
 
-void VExplorerPanel::_q_itemDropped(QTreeWidgetItem *item, QTreeWidgetItem *oldParent) {
-    if (!item) {
-        return;
-    }
-
-    int type = item->type();
-
-    // item and virtual dir cannot be at root
-    qDebug() << item->text(0) << (item->parent() ? item->parent()->text(0) : "");
-    if (type != RootSpeaker && !item->parent()) {
-        oldParent->addChild(item);
-    }
-}
