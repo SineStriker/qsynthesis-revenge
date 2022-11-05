@@ -1,5 +1,7 @@
 #!/usr/bin/python3
 
+from __future__ import annotations
+
 import os
 import sys
 import shutil
@@ -79,12 +81,12 @@ if __name__ == "__main__":
     os_name = platform.system().lower()
     arch_name = platform.machine().lower()
 
-    if arch_name == "i386":
+    if arch_name == "i386" or arch_name == "x86":
         arch_name = "x86"
-    elif arch_name == "amd64":
+    elif arch_name == "amd64" or arch_name == "x86_64":
         arch_name = "x64"
     else:
-        print("Unsupported architecture!")
+        print(f"Unsupported architecture {arch_name}!")
         sys.exit(-1)
 
     # Determine file extension name
@@ -125,6 +127,7 @@ if __name__ == "__main__":
     print_begin("Setup context proxy")
 
     proxy = urllib.request.getproxies()
+
     if "http" in proxy:
         print(f"HTTP proxy detected: {proxy['http']}")
         os.environ["http_proxy"] = proxy['http']
