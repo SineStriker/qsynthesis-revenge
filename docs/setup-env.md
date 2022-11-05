@@ -156,7 +156,7 @@ MinGW是另一个编译套件，可以选，但本工程大概率不会用到。
     + 打开`scripts/vcpkg/triplets/paths/path_qt.cmake`
     + 修改`_qt_dir`的右值为你的Qt安装目录
 
-+ 在仓库根目录执行`setup-vcpkg.bat`或`setup-vcpkg.sh`，此脚本简单地从GitHub中拉取`vcpkg`并执行一系列`vcpkg install`命令。
++ 在仓库根目录执行`python setup-vcpkg.py`，此脚本简单地从GitHub中拉取`vcpkg`并执行一系列`vcpkg install`命令。
 
 + 可使用`git update-index --no-skip-worktree <file>`在不删除的前提下取消对`path_qt.cmake`的跟踪。
 
