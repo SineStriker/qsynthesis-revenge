@@ -7,6 +7,7 @@ import sys
 import shutil
 import platform
 
+import enum
 import argparse
 import urllib.request
 
@@ -26,6 +27,26 @@ def rmir(dir: str):
         shutil.rmtree(dir)
 
 
+class OSFlags(enum.Flag):
+    WINDOWS = 1
+    MAC = 2
+    LINUX = 4
+    EXCLUDE_WINDOWS = MAC | LINUX
+    EXCLUDE_MAC = WINDOWS | LINUX
+    EXCLUDE_LINUX = WINDOWS | MAC
+    ALL = WINDOWS | MAC | LINUX
+
+    def Validate(os_flags: OSFlags) -> bool:
+        os_name = platform.system().lower()
+        if os_name == "windows":
+            return os_flags & OSFlags.WINDOWS
+        elif os_name == "darwin":
+            return os_flags & OSFlags.MAC
+        elif os_name == "linux":
+            return os_flags & OSFlags.LINUX
+        return False
+
+
 class library_task:
 
     vcpkg: str                  # vcpkg command
@@ -33,12 +54,24 @@ class library_task:
     overlay_ports: str          # repository override
     overlay_triplets: str       # build configuration override
 
-    def __init__(self, name: str, use_overlay_ports: bool = False, use_overlay_triplets: bool = True):
+    """
+    name                 : package name
+    use_overlay_ports    : use your repository ports instead of default ports
+    use_overlay_triplets : use your own build settings (Always on)
+    os_flags             : specify operating systems the library supports
+    """
+    def __init__(self, name: str,
+                 use_overlay_ports: bool = False,
+                 use_overlay_triplets: bool = True,
+                 os_flags: OSFlags = OSFlags.ALL):
         self.name = name
         self.use_overlay_ports = use_overlay_ports
         self.use_overlay_triplets = use_overlay_triplets
+        self.os_flags = os_flags
 
     def install(self) -> int:
+        if not OSFlags.Validate(self.os_flags):
+            return 0
         cmds: list[str] = []
         cmds.append(f"{library_task.vcpkg}")
         cmds.append("install")
@@ -59,7 +92,7 @@ vcpkg_tasks: list[library_task] = [
     library_task("sdl2"),
     library_task("yaml-cpp"),
     library_task("quazip", True),
-    library_task("framelesshelper", True),
+    library_task("framelesshelper", True, os_flags=OSFlags.EXCLUDE_MAC),
     library_task("ffmpeg-fake", True),
 ]
 

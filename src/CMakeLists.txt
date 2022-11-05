@@ -45,7 +45,7 @@ set(PROJECT_VERSION_SHORT   ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}.${
 # Set global variables
 set(                TIME_PROJECT_START_YEAR            2020)
 string(TIMESTAMP    TIME_CURRENT_YEAR                  %Y)
-find_file(          MACOSX_INFO_PLIST                  MacOSXBundleInfo.plist.in ${CMAKE_MODULE_PATH})
+set(                MACOSX_BUNDLE_PLIST                ${PROJECT_MODULES_DIR}/MacOSXBundleInfo.plist.in)
 set(                WIN32_DLL_RC                       ${PROJECT_MODULES_DIR}/Win32DllRes.rc.in)
 set(                WIN32_EXE_RC                       ${PROJECT_MODULES_DIR}/Win32ExeRes.rc.in)
 
