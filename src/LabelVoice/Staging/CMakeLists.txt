@@ -40,7 +40,7 @@ foreach(_dir ${_main_dirs})
         ${CMAKE_CURRENT_SOURCE_DIR}/${_dir}/*.cc
     )
 endforeach()
-list(APPEND PROJECT_SOURCES lvstaging_global.h)
+list(APPEND SOURCES lvstaging_global.h)
 
 # Add library
 if (LVSTAGING_BUILD_STATIC)

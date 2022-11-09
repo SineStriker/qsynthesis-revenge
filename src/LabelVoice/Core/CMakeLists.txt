@@ -40,7 +40,7 @@ foreach(_dir ${_main_dirs})
         ${CMAKE_CURRENT_SOURCE_DIR}/${_dir}/*.cc
     )
 endforeach()
-list(APPEND PROJECT_SOURCES lvcore_global.h)
+list(APPEND SOURCES lvcore_global.h)
 
 # Add library
 if (LVCORE_BUILD_STATIC)

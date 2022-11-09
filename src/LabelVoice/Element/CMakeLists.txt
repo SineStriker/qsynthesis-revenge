@@ -40,7 +40,7 @@ foreach(_dir ${_main_dirs})
         ${CMAKE_CURRENT_SOURCE_DIR}/${_dir}/*.cc
     )
 endforeach()
-list(APPEND PROJECT_SOURCES lvelem_global.h)
+list(APPEND SOURCES lvelem_global.h)
 
 # Add library
 if (LVELEM_BUILD_STATIC)
