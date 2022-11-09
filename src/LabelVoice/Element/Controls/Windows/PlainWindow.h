@@ -5,7 +5,9 @@
 
 class PlainWindowPrivate;
 
-class PlainWindow : public QMainWindow {
+#include "lvelem_global.h"
+
+class LVELEM_API PlainWindow : public QMainWindow {
     Q_OBJECT
     Q_DECLARE_PRIVATE(PlainWindow)
 public:

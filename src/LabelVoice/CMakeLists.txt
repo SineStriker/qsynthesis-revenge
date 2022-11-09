@@ -6,10 +6,11 @@ project(LabelVoice
 # Set global variable for current project
 set(INNER_PROJECT ${PROJECT_NAME})
 set(INNER_VERSION ${PROJECT_VERSION})
-set(INNER_PLUGIN_DIR ${APP_PLUGINS_DIR})
+set(INNER_PLUGIN_DIR ${APP_RES_DIR}/${APP_RES_PLUGINS_DIR})
 
 # Add subdirectories
 add_subdirectory(Core)
+add_subdirectory(Element)
 add_subdirectory(Staging)
 add_subdirectory(WinMain)
 

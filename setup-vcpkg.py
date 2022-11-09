@@ -86,7 +86,7 @@ class library_task:
 # Vcpkg repo
 vcpkg_repo = "https://github.com/microsoft/vcpkg.git"
 
-# To be added...
+# TODO: To be added.
 vcpkg_tasks: list[library_task] = [
     library_task("zlib"),
     library_task("sdl2"),
@@ -173,13 +173,14 @@ if __name__ == "__main__":
     # -- Execute git clone
     print_begin("Pull vcpkg")
 
+    # Remove dir if .git doesn't esist
     if os.path.isdir(vcpkg_dir) and not os.path.isdir(vcpkg_dir + "/.git"):
         print("Vcpkg repository is not valid, auto remove")
         rmir(vcpkg_dir)
 
     if not os.path.isdir(vcpkg_dir):
         print(f"Clone {vcpkg_repo}")
-        code = os.system(f"git clone {vcpkg_repo}")
+        code = os.system(f"git clone {vcpkg_repo}") # git clone vcpkg.git
         if code != 0:
             print("Clone failed")
             sys.exit(code)
@@ -193,7 +194,7 @@ if __name__ == "__main__":
 
     os.chdir(vcpkg_dir)  # cd vcpkg
     if not os.path.isfile(vcpkg_exe):
-        code = os.system(f"{bootstrap_cmd}")
+        code = os.system(f"{bootstrap_cmd}") # ./bootstrap
         if code != 0:
             print("Bootstrap failed")
             sys.exit(code)
@@ -206,7 +207,7 @@ if __name__ == "__main__":
     for task in vcpkg_tasks:
         print_begin(f"Build {task.name}")
 
-        code = task.install()
+        code = task.install()               # ./vcpkg install ...
         if code != 0:
             print(f"Build {task.name} failed")
             sys.exit(code)

@@ -65,6 +65,7 @@ Thumbs.db
 *.Release
 
 # Python byte code
+__pycache__
 *.pyc
 
 # Binaries
@@ -90,3 +91,5 @@ cache
 out/
 CMakeSettings.json
 /vcpkg
+
+*.sublime-*

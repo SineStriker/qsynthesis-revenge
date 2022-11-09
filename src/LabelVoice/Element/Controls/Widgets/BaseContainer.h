@@ -6,7 +6,9 @@
 
 #include "qsframework_macros.h"
 
-class BaseContainer : public QFrame {
+#include "lvelem_global.h"
+
+class LVELEM_API BaseContainer : public QFrame {
     Q_OBJECT
 
     Q_PROPERTY(QMargins margins READ margins WRITE setMargins NOTIFY marginsChanged)

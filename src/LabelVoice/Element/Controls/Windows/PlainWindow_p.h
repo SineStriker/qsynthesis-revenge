@@ -1,13 +1,14 @@
 #ifndef PLAINWINDOWPRIVATE_H
 #define PLAINWINDOWPRIVATE_H
 
-#include "PlainWindow.h"
-
-#include "Api/IWindowHandle.h"
-
 #include <QPluginLoader>
 
-class PlainWindowPrivate {
+#include "Api/IWindowHandle.h"
+#include "PlainWindow.h"
+
+#include "lvelem_global.h"
+
+class LVELEM_API PlainWindowPrivate {
     Q_DECLARE_PUBLIC(PlainWindow)
 public:
     PlainWindowPrivate();

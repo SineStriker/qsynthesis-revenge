@@ -8,19 +8,20 @@ macro(add_files _src)
 
     set(_temp_src)
 
-    if (FUNC_CLEAR)
+    if(FUNC_CLEAR)
         set(${_src})
-    endif ()
-    if (FUNC_CURRENT)
+    endif()
+    if(FUNC_CURRENT)
         file(GLOB _temp_src ${CMAKE_CURRENT_SOURCE_DIR}/*.h ${CMAKE_CURRENT_SOURCE_DIR}/*.hpp
-                            ${CMAKE_CURRENT_SOURCE_DIR}/*.cpp ${CMAKE_CURRENT_SOURCE_DIR}/*.cc)
-    endif ()
-    foreach (_dir ${FUNC_DIRECTORIES})
+             ${CMAKE_CURRENT_SOURCE_DIR}/*.cpp ${CMAKE_CURRENT_SOURCE_DIR}/*.cc
+        )
+    endif()
+    foreach(_dir ${FUNC_DIRECTORIES})
         set(_temp)
         file(GLOB_RECURSE _temp ${_dir}/*.h ${_dir}/*.cpp)
         list(APPEND _temp_src ${_temp})
         unset(_temp)
-    endforeach ()
+    endforeach()
     list(APPEND ${_src} ${_temp_src})
 
     unset(_temp_src)
@@ -38,21 +39,21 @@ macro(add_test_target _target)
     set(_version 0.0.1.1)
     set(_cxx_standard 17)
 
-    foreach (_lib ${FUNC_QT_LIBRARIES})
+    foreach(_lib ${FUNC_QT_LIBRARIES})
         add_qt_module(_qt_libs ${_lib})
-    endforeach ()
+    endforeach()
 
-    foreach (_inc ${FUNC_QT_PRIVATE_INCLUDES})
+    foreach(_inc ${FUNC_QT_PRIVATE_INCLUDES})
         add_qt_private_inc(_qt_incs ${_inc})
-    endforeach ()
+    endforeach()
 
-    if (FUNC_VERSION)
+    if(FUNC_VERSION)
         set(_version ${FUNC_VERSION})
-    endif ()
+    endif()
 
-    if (FUNC_CXX_STANDARD)
+    if(FUNC_CXX_STANDARD)
         set(_cxx_standard ${FUNC_CXX_STANDARD})
-    endif ()
+    endif()
 
     # Add template
     project(${_target} VERSION ${_version} LANGUAGES CXX)
@@ -66,29 +67,29 @@ macro(add_test_target _target)
 
     add_executable(${_target} ${FUNC_SOURCES})
 
-    foreach (_lib ${_qt_libs})
+    foreach(_lib ${_qt_libs})
         target_link_libraries(${_target} PRIVATE ${_lib})
-    endforeach ()
+    endforeach()
 
-    foreach (_lib ${FUNC_LIBRARIES})
+    foreach(_lib ${FUNC_LIBRARIES})
         target_link_libraries(${_target} PRIVATE ${_lib})
-    endforeach ()
+    endforeach()
 
-    foreach (_inc ${_qt_incs})
+    foreach(_inc ${_qt_incs})
         target_include_directories(${_target} PRIVATE ${_inc})
-    endforeach ()
+    endforeach()
 
-    foreach (_inc ${FUNC_INCLUDE_DIRS})
+    foreach(_inc ${FUNC_INCLUDE_DIRS})
         target_include_directories(${_target} PRIVATE ${_inc})
-    endforeach ()
+    endforeach()
 
-    if (FUNC_INCLUDE_CURRENT)
+    if(FUNC_INCLUDE_CURRENT)
         target_include_directories(${_target} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
-    endif ()
+    endif()
 
-    if (FUNC_WIN32_EXE)
+    if(FUNC_WIN32_EXE)
         set_target_properties(${_target} PROPERTIES WIN32_EXECUTABLE TRUE)
-    endif ()
+    endif()
 
     # Unset temp vars
     unset(_qt_libs)

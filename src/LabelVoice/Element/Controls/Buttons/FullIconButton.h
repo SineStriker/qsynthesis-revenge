@@ -3,7 +3,9 @@
 
 #include "CPushButton.h"
 
-class FullIconButton : public CPushButton {
+#include "lvelem_global.h"
+
+class LVELEM_API FullIconButton : public CPushButton {
     Q_OBJECT
     Q_PROPERTY(QSize iconMargin READ iconMargin WRITE setIconMargin NOTIFY styleChanged)
 public:

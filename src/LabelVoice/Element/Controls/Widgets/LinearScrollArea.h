@@ -6,7 +6,9 @@
 
 #include "CScrollArea.h"
 
-class LinearScrollArea : public CScrollArea {
+#include "lvelem_global.h"
+
+class LVELEM_API LinearScrollArea : public CScrollArea {
     Q_OBJECT
 public:
     explicit LinearScrollArea(Qt::Orientation ori, QWidget *parent = nullptr);

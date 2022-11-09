@@ -1,7 +1,7 @@
 #include "PluginManager_p.h"
 
 #include "Api/ISVSConverter.h"
-#include "Kernel/LvApplication.h"
+#include "Kernel/LvElemApplication.h"
 #include "Serialization/QJsonFormatter.h"
 
 #include <QDir>

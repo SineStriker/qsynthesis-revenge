@@ -1,7 +1,7 @@
 #include "FileManager.h"
 #include "private/FileManager_p.h"
 
-#include "Kernel/LvApplication.h"
+#include "Kernel/LvElemApplication.h"
 #include "Serialization/QJsonFormatter.h"
 
 #include "SystemHelper.h"

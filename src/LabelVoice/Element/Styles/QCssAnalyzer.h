@@ -3,7 +3,9 @@
 
 #include <QByteArray>
 
-class QCssAnalyzer {
+#include "lvelem_global.h"
+
+class LVELEM_API QCssAnalyzer {
 public:
     QCssAnalyzer();
     ~QCssAnalyzer();

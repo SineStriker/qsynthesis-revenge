@@ -31,7 +31,7 @@ add_qt_module(QT_LIBS Network)
 add_qt_private_inc(QT_INCS Gui)
 add_qt_private_inc(QT_INCS Widgets)
 
-set(_main_dirs Controls Kernel Managers Styles Windows)
+set(_main_dirs Kernel Managers Windows)
 foreach(_dir ${_main_dirs})
     list_add_recursively(SOURCES
         ${CMAKE_CURRENT_SOURCE_DIR}/${_dir}/*.h
@@ -60,12 +60,8 @@ set_target_properties(${PROJECT_NAME} PROPERTIES
 )
 
 # Link libraries
-target_link_libraries(${PROJECT_NAME} PUBLIC QsUtils QsFramework QsSVS)
-target_link_libraries(${PROJECT_NAME} PUBLIC LvCore)
+target_link_libraries(${PROJECT_NAME} PUBLIC LvCore LvElem)
 target_link_libraries(${PROJECT_NAME} PUBLIC ${QT_LIBS})
-
-# Add definitions
-target_compile_definitions(${PROJECT_NAME} PUBLIC APP_PLUGINS_DIR="${APP_PLUGINS_DIR}")
 
 # Include directories
 target_include_directories(${PROJECT_NAME} PRIVATE ${QT_INCS})
@@ -139,7 +135,7 @@ if (WIN32 AND APP_DEPLOY)
     deploy_shared_libraries(
         TARGET ${PROJECT_NAME}
         DESTINATION ${APP_LIB_DIR}
-        DEPENDENCIES ${PROJECT_NAME} LvCore QsUtils QsFramework QsSVS QsMedia fsnotifier-qt
+        DEPENDENCIES ${PROJECT_NAME} LvCore LvElem QsUtils QsFramework QsSVS QsMedia fsnotifier-qt
         RELATIVE
     )
 

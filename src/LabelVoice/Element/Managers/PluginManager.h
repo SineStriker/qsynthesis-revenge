@@ -10,7 +10,9 @@
 
 class PluginManagerPrivate;
 
-class PluginManager : public BasicManager {
+#include "lvelem_global.h"
+
+class LVELEM_API PluginManager : public BasicManager {
     Q_OBJECT
     Q_DECLARE_PRIVATE(PluginManager)
     Q_SINGLETON(PluginManager)
