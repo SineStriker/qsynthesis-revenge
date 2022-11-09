@@ -1,15 +1,15 @@
 #ifndef QUSTFILE_H
 #define QUSTFILE_H
 
+#include "Base/QUtaFile.h"
+
 #include <QString>
 
 #include "QUstNote.h"
 #include "QUstSettings.h"
 #include "QUstVersion.h"
 
-#include "qsutils_macros.h"
-
-class QSSVS_API QUstFile {
+class QSSVS_API QUstFile : public QUtaFile {
     Q_CHARSET
 public:
     QUstFile();
@@ -24,10 +24,11 @@ public:
     QList<QUstNote> sectionNotes;
 
 public:
-    bool load(const QString &filename);
-    bool save(const QString &filename);
+    bool load(const QString &filename) override;
+    bool save(const QString &filename) override;
 
-    void reset();
+    void reset() override;
+    bool isEmpty() const override;
 
 private:
     bool parseSectionName(const QString &str, QString &name);

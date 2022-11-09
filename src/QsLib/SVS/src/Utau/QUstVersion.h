@@ -1,17 +1,19 @@
 #ifndef QUSTVERSION_H
 #define QUSTVERSION_H
 
+#include "Base/QUtaItem.h"
+
 #include <QString>
 
-#include "qssvs_global.h"
-
-class QSSVS_API QUstVersion {
+class QSSVS_API QUstVersion : public QUtaItem {
 public:
-    QUstVersion();
-    void clear();
-
     QString version;
     QString charset;
+
+    QUstVersion();
+    ~QUstVersion();
+
+    void reset() override;
 
     bool operator==(const QUstVersion &another) const;
     bool operator!=(const QUstVersion &another) const;

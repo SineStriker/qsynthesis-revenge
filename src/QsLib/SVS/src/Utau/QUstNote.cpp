@@ -4,28 +4,28 @@
 #include <QJsonValue>
 
 #include "Config/UtaConstants.h"
-#include "QUtaUtils.h"
+#include "Utils/QUtaUtils.h"
 
 using namespace Utau;
 
 QUstNote::QUstNote() {
-    clear();
+    QUstNote::reset();
 }
 
 QUstNote::QUstNote(int noteNum, int length) {
-    clear();
+    QUstNote::reset();
     this->noteNum = noteNum;
     this->length = length;
 }
 
 QUstNote::QUstNote(int noteNum, int length, const QString &lrc) {
-    clear();
+    QUstNote::reset();
     this->noteNum = noteNum;
     this->length = length;
     this->lyric = lrc;
 }
 
-void QUstNote::clear() {
+void QUstNote::reset() {
     lyric = "a";
     flags = "";
 

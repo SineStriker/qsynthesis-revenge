@@ -7,7 +7,7 @@
  * Reference: Masao
  */
 
-#include <QFile>
+#include <QList>
 
 #include "qssvs_global.h"
 
@@ -16,10 +16,10 @@ public:
     QPmkFile();
     ~QPmkFile();
 
-    void reset();
-
     bool load(const QString &filename);
     bool save(const QString &filename);
+
+    void reset();
 
     double KeyFrequency;
     QList<double> Frequency;

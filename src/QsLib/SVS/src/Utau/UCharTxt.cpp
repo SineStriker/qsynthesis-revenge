@@ -14,7 +14,7 @@ using namespace Utau;
 Q_CHARSET_DECLARE(UCharTxt)
 
 UCharTxt::UCharTxt() {
-    reset();
+    UCharTxt::reset();
 }
 
 UCharTxt::~UCharTxt() {
@@ -113,4 +113,8 @@ void UCharTxt::reset() {
     author.clear();
     avatar.clear();
     sprite.clear();
+}
+
+bool UCharTxt::isEmpty() const {
+    return name.isEmpty() && author.isEmpty() && avatar.isEmpty();
 }

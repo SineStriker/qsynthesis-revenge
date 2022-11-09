@@ -1,11 +1,11 @@
 #ifndef QUSTPOINT_H
 #define QUSTPOINT_H
 
+#include "Base/QUtaItem.h"
+
 #include <QDebug>
 
-#include "qssvs_global.h"
-
-class QSSVS_API QUstPoint {
+class QSSVS_API QUstPoint : public QUtaItem {
 public:
     enum PointType { sJoin, linearJoin, rJoin, jJoin };
     double X;
@@ -18,6 +18,9 @@ public:
 
     QUstPoint(double oX, double oY);
     QUstPoint(double oX, double oY, PointType oP);
+
+    void reset() override;
+    bool isEmpty() const override;
 
     QUstPoint operator+(const QUstPoint &point) const;
     QUstPoint &operator+=(const QUstPoint &point);

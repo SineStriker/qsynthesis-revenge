@@ -1,17 +1,12 @@
 #ifndef QUSTSETTINGS_H
 #define QUSTSETTINGS_H
 
+#include "Base/QUtaItem.h"
+
 #include <QString>
 
-#include "qssvs_global.h"
-
-class QSSVS_API QUstSettings {
+class QSSVS_API QUstSettings : public QUtaItem {
 public:
-    QUstSettings();
-    ~QUstSettings();
-
-    void clear();
-
     double globalTempo;
     QString globalFlags;
 
@@ -25,6 +20,11 @@ public:
     QString resamplerPath;
 
     bool isMode2;
+
+    QUstSettings();
+    ~QUstSettings();
+
+    void reset() override;
 
     bool operator==(const QUstSettings &another) const;
     bool operator!=(const QUstSettings &another) const;

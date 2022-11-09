@@ -4,8 +4,8 @@
 #include <QFileInfo>
 #include <QCoreApplication>
 
-#include "Config/UtaConstants.h"
-#include "Config/UtaFilenames.h"
+#include "../Config/UtaConstants.h"
+#include "../Config/UtaFilenames.h"
 
 #define FRQ_SUFFIX QString("_wav.frq")
 

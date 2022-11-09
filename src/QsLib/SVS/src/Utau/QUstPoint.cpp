@@ -1,11 +1,9 @@
 #include "QUstPoint.h"
 
-#include "QUtaUtils.h"
+#include "Utils/QUtaUtils.h"
 
 QUstPoint::QUstPoint() {
-    X = 0.0;
-    Y = 0.0;
-    P = sJoin;
+    QUstPoint::reset();
 }
 
 QUstPoint::QUstPoint(const std::initializer_list<double> &list) {
@@ -25,6 +23,16 @@ QUstPoint::QUstPoint(double oX, double oY, PointType oP) {
     X = oX;
     Y = oY;
     P = oP;
+}
+
+void QUstPoint::reset() {
+    X = 0.0;
+    Y = 0.0;
+    P = sJoin;
+}
+
+bool QUstPoint::isEmpty() const {
+    return (X == 0) && (Y == 0);
 }
 
 QUstPoint QUstPoint::operator+(const QUstPoint &point) const {

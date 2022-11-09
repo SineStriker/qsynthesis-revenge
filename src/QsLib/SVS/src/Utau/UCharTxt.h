@@ -1,12 +1,9 @@
 #ifndef UCHARTXT_H
 #define UCHARTXT_H
 
-#include <QStringList>
+#include "Base/QUtaFile.h"
 
-#include "qssvs_global.h"
-#include "qsutils_macros.h"
-
-class QSSVS_API UCharTxt {
+class QSSVS_API UCharTxt : public QUtaFile {
     Q_CHARSET
 public:
     UCharTxt();
@@ -20,10 +17,11 @@ public:
     QStringList custom; // Other information which can't be edited
 
 public:
-    bool load(const QString &filename);
-    bool save(const QString &filename);
+    bool load(const QString &filename) override;
+    bool save(const QString &filename) override;
 
-    void reset();
+    void reset() override;
+    bool isEmpty() const override;
 };
 
 #endif // UCHARTXT_H

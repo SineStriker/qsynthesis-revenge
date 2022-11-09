@@ -1,12 +1,9 @@
 #ifndef UPLUGINTXT_H
 #define UPLUGINTXT_H
 
-#include <QStringList>
+#include "Base/QUtaFile.h"
 
-#include "qssvs_global.h"
-#include "qsutils_macros.h"
-
-class QSSVS_API UPluginTxt {
+class QSSVS_API UPluginTxt : public QUtaFile {
     Q_CHARSET
 public:
     UPluginTxt();
@@ -23,10 +20,11 @@ public:
     QStringList custom; // Other information which can't be edited
 
 public:
-    bool load(const QString &filename);
-    bool save(const QString &filename);
+    bool load(const QString &filename) override;
+    bool save(const QString &filename) override;
 
-    void reset();
+    void reset() override;
+    bool isEmpty() const override;
 };
 
 #endif // UPLUGINTXT_H

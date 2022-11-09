@@ -3,6 +3,9 @@ project(QsSVS
     LANGUAGES CXX
 )
 
+add_subdirectory(tools)
+
+
 # Library type
 set(QSSVS_BUILD_STATIC off)
 
@@ -50,6 +53,8 @@ target_compile_definitions(${PROJECT_NAME} PRIVATE QSSVS_LIBRARY)
 # Link libraries
 target_link_libraries(${PROJECT_NAME} PUBLIC ${QT_LIBS})
 target_link_libraries(${PROJECT_NAME} PUBLIC QsUtils)
+
+target_link_libraries(${PROJECT_NAME} PRIVATE mrq)
 
 # Include directories
 target_include_directories(${PROJECT_NAME} PRIVATE ${QT_INCS})

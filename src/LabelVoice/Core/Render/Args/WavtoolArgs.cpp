@@ -1,7 +1,7 @@
 #include "WavtoolArgs.h"
-#include "../Utils/UtaTranslator.h"
 
 #include "Utau/Config/UtaConstants.h"
+#include "Utau/Utils/UtaTranslator.h"
 
 using namespace Utau;
 

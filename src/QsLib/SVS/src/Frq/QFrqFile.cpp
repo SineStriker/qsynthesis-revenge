@@ -1,6 +1,7 @@
 #include "QFrqFile.h"
 
 #include <QDataStream>
+#include <QFile>
 
 const char FILE_FRQ_HEADER[] = "FREQ0003";
 
@@ -9,14 +10,6 @@ QFrqFile::QFrqFile() {
 }
 
 QFrqFile::~QFrqFile() {
-}
-
-void QFrqFile::reset() {
-    Amplitude.clear();
-    Frequency.clear();
-
-    SamplesPerFrq = 0;
-    AverageFrq = 0;
 }
 
 bool QFrqFile::load(const QString &filename) {
@@ -86,4 +79,12 @@ bool QFrqFile::save(const QString &filename) {
     }
     file.close();
     return true;
+}
+
+void QFrqFile::reset() {
+    Amplitude.clear();
+    Frequency.clear();
+
+    SamplesPerFrq = 0;
+    AverageFrq = 0;
 }

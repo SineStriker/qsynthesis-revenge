@@ -3,11 +3,14 @@
 //
 #include "UtaPitchCurves.h"
 
-#include "Utau/QUtaUtils.h"
+#include "QUtaUtils.h"
 
 #include <QtMath>
 
-const char Base64EncodeMap[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=";
+#define PI M_PI
+
+static const char Base64EncodeMap[] =
+    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=";
 
 double UtaPitchCurves::f_x(const double &x1, const double &y1, const double &x2, const double &y2,
                            const double &x) {

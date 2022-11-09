@@ -3,7 +3,7 @@
 #define equalDouble(A, B) (A == B)
 
 QOtoItemBrief::QOtoItemBrief() {
-    PreUtterance = VoiceOverlap = StartPoint = 0;
+    QOtoItemBrief::reset();
 }
 
 QOtoItemBrief::QOtoItemBrief(double pre, double ove, double stp) {
@@ -17,6 +17,14 @@ QOtoItemBrief::QOtoItemBrief(const std::initializer_list<double> &list) {
     PreUtterance = *list.begin();
     VoiceOverlap = *std::next(list.begin());
     StartPoint = *std::next(list.begin(), 2);
+}
+
+void QOtoItemBrief::reset() {
+    PreUtterance = VoiceOverlap = StartPoint = 0;
+}
+
+bool QOtoItemBrief::isEmpty() const {
+    return (PreUtterance == 0) && (VoiceOverlap == 0) && (StartPoint == 0);
 }
 
 bool QOtoItemBrief::operator==(const QOtoItemBrief &oCorrect) const {

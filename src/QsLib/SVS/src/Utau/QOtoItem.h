@@ -1,11 +1,11 @@
 #ifndef QOTOITEM_H
 #define QOTOITEM_H
 
+#include "Base/QUtaItem.h"
+
 #include <QDebug>
 
-#include "qssvs_global.h"
-
-class QSSVS_API QOtoItem {
+class QSSVS_API QOtoItem : public QUtaItem {
 public:
     QString FileName;
     QString Alias;
@@ -18,8 +18,8 @@ public:
     QOtoItem();
     QOtoItem(const QString &filename);
 
-    void clear();
-    bool isEmpty() const;
+    void reset() override;
+    bool isEmpty() const override;
 
     bool operator<(const QOtoItem &item) const;
     bool operator==(const QOtoItem &item) const;

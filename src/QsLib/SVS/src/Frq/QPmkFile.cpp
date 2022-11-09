@@ -1,8 +1,10 @@
 #include "QPmkFile.h"
 
 #include <QDataStream>
+#include <QFile>
 
 QPmkFile::QPmkFile() {
+    reset();
 }
 
 QPmkFile::~QPmkFile() {
@@ -86,4 +88,9 @@ bool QPmkFile::load(const QString &filename) {
 
 bool QPmkFile::save(const QString &filename) {
     return true;
+}
+
+void QPmkFile::reset() {
+    KeyFrequency = 0;
+    Frequency.clear();
 }

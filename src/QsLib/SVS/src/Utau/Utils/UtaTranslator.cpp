@@ -1,6 +1,6 @@
 ﻿#include "UtaTranslator.h"
 
-#include "Utau/QUtaUtils.h"
+#include "QUtaUtils.h"
 
 static const char COMMA = ',';
 

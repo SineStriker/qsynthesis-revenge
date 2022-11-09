@@ -8,7 +8,6 @@
  */
 
 #include <QDebug>
-#include <QFile>
 
 #include "qssvs_global.h"
 
@@ -16,10 +15,11 @@ class QSSVS_API QFrqFile {
 public:
     QFrqFile();
     ~QFrqFile();
-    void reset();
 
     bool load(const QString &filename);
     bool save(const QString &filename);
+
+    void reset();
 
     QList<double> Amplitude;
     QList<double> Frequency;

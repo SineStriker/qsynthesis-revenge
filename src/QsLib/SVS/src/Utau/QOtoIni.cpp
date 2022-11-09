@@ -1,10 +1,10 @@
 #include "QOtoIni.h"
-#include "QUtaUtils.h"
 
 #include "Config/UtaConstants.h"
+#include "Utils/QUtaUtils.h"
 
-#include "TextHelper.h"
 #include "SystemHelper.h"
+#include "TextHelper.h"
 
 using namespace Utau;
 
@@ -15,7 +15,7 @@ Q_CHARSET_DECLARE(QOtoIni)
 static const char Slash = '/';
 
 QOtoIni::QOtoIni() {
-    reset();
+    QOtoIni::reset();
 }
 
 QOtoIni::~QOtoIni() {
@@ -100,4 +100,8 @@ bool QOtoIni::save(const QString &filename) {
 void QOtoIni::reset() {
     m_codec = nullptr;
     OtoSamples.clear();
+}
+
+bool QOtoIni::isEmpty() const {
+    return OtoSamples.isEmpty();
 }

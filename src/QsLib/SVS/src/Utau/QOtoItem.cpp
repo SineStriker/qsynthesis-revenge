@@ -5,15 +5,15 @@
 #define equalDouble(A, B) (A == B)
 
 QOtoItem::QOtoItem() {
-    clear();
+    QOtoItem::reset();
 }
 
 QOtoItem::QOtoItem(const QString &filename) {
-    clear();
+    QOtoItem::reset();
     FileName = filename;
 }
 
-void QOtoItem::clear() {
+void QOtoItem::reset() {
     FileName = "";
     Alias = "";
     Offset = 0.0;
@@ -35,8 +35,7 @@ bool QOtoItem::operator<(const QOtoItem &oGenon) const {
 bool QOtoItem::operator==(const QOtoItem &oGenon) const {
     bool b = (FileName == oGenon.FileName) && (Alias == oGenon.Alias) &&
              equalDouble(Offset, oGenon.Offset) && equalDouble(Constant, oGenon.Constant) &&
-             equalDouble(Blank, oGenon.Blank) &&
-             equalDouble(PreUtterance, oGenon.PreUtterance) &&
+             equalDouble(Blank, oGenon.Blank) && equalDouble(PreUtterance, oGenon.PreUtterance) &&
              equalDouble(VoiceOverlap, oGenon.VoiceOverlap);
     return b;
 }

@@ -6,9 +6,7 @@
 
 #include "QUstPoint.h"
 
-#include "qssvs_global.h"
-
-class QSSVS_API QUstNote {
+class QSSVS_API QUstNote : public QUtaItem {
 public:
     QUstNote();
     QUstNote(int noteNum, int length);
@@ -46,7 +44,7 @@ public:
     QList<QPair<QString, QString>> customData;
 
 public:
-    void clear();
+    void reset() override;
 
     QJsonObject toJson() const;
     static QUstNote fromJson(const QJsonObject &obj);

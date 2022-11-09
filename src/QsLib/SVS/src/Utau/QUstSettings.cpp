@@ -3,21 +3,21 @@
 #include "Config/UtaConstants.h"
 
 QUstSettings::QUstSettings() {
-    clear();
+    QUstSettings::reset();
 }
 
 QUstSettings::~QUstSettings() {
 }
 
-void QUstSettings::clear() {
+void QUstSettings::reset() {
     globalTempo = Utau::DEFAULT_VALUE_TEMPO;
-    globalFlags = "";
-    projectName = "";
-    outputFileName = "";
-    voiceDirectory = "";
-    cacheDirectory = "";
-    wavtoolPath = "";
-    resamplerPath = "";
+    globalFlags.clear();
+    projectName.clear();
+    outputFileName.clear();
+    voiceDirectory.clear();
+    cacheDirectory.clear();
+    wavtoolPath.clear();
+    resamplerPath.clear();
     isMode2 = true;
 }
 

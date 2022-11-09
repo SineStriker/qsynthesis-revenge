@@ -3,7 +3,7 @@
 #ifdef Q_OS_WINDOWS
 
 #include "Utau/Config/UtaConstants.h"
-#include "Utils/UtaTranslator.h"
+#include "Utau/Utils/UtaTranslator.h"
 
 #include <QDir>
 #include <QFile>
@@ -86,11 +86,11 @@ bool QBatchRenderer::generateWindowsBatch(const QList<RenderArgs> &args) const {
             fs << " " << res.toneName();        // Tone Name
             fs << " " << wav.outDuration();     // Static Duration
             fs << " " << aCorrect.PreUtterance; // PreUtterance (May not used)
-            fs << " " << aGenon.Offset;        // Offset (Left Blue Area)
+            fs << " " << aGenon.Offset;         // Offset (Left Blue Area)
             fs << " " << res.realLength();
             fs << " " << aGenon.Constant; // Consonant (Constant Area)
             fs << " " << aGenon.Blank;    // Blank (Right Blue Area)
-            fs << " " << res.sequence();   // Sequence Number
+            fs << " " << res.sequence();  // Sequence Number
 
             fs << Qt::endl;
         }

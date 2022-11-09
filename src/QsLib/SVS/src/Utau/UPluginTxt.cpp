@@ -14,7 +14,7 @@ using namespace Utau;
 Q_CHARSET_DECLARE(UPluginTxt)
 
 UPluginTxt::UPluginTxt() {
-    reset();
+    UPluginTxt::reset();
 }
 
 UPluginTxt::~UPluginTxt() {
@@ -117,11 +117,14 @@ bool UPluginTxt::save(const QString &filename) {
 
 void UPluginTxt::reset() {
     useShell = false;
-    ustVersion.clear();
-    name.clear();
-    execute.clear();
+    allNote = false;
 
     charset.clear();
+    name.clear();
+    ustVersion.clear();
+    execute.clear();
+}
 
-    allNote = false;
+bool UPluginTxt::isEmpty() const {
+    return execute.isEmpty();
 }

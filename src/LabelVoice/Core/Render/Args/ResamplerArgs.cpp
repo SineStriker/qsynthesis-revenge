@@ -1,6 +1,7 @@
 #include "ResamplerArgs.h"
-#include "../Utils/UtaPitchCurves.h"
-#include "Utau/QUtaUtils.h"
+
+#include "Utau/Utils/QUtaUtils.h"
+#include "Utau/Utils/UtaPitchCurves.h"
 
 #include <QFileInfo>
 

@@ -4,9 +4,9 @@
 #include <QList>
 #include <QString>
 
-#include "QOtoItem.h"
-#include "QUstNote.h"
-#include "QUstPoint.h"
+#include "../QOtoItem.h"
+#include "../QUstNote.h"
+#include "../QUstPoint.h"
 
 #include "qssvs_global.h"
 
@@ -88,6 +88,6 @@ namespace QUtaUtils {
     QSSVS_API QString prop(const QString &val, NoteProperty prop,
                            const QString &def = NODEF_STRING);
 
-} // namespace QUstUtils
+} // namespace QUtaUtils
 
 #endif // QUSTUTILS_H

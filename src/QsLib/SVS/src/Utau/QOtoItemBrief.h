@@ -1,11 +1,11 @@
 #ifndef QOTOITEMBRIEF_H
 #define QOTOITEMBRIEF_H
 
+#include "Base/QUtaItem.h"
+
 #include <QDebug>
 
-#include "qssvs_global.h"
-
-class QSSVS_API QOtoItemBrief {
+class QSSVS_API QOtoItemBrief : public QUtaItem {
 public:
     double PreUtterance;
     double VoiceOverlap;
@@ -14,6 +14,9 @@ public:
     QOtoItemBrief();
     QOtoItemBrief(double pre, double ove, double stp);
     QOtoItemBrief(const std::initializer_list<double> &list);
+
+    void reset() override;
+    bool isEmpty() const override;
 
     bool operator==(const QOtoItemBrief &oCorrect) const;
     bool operator!=(const QOtoItemBrief &oCorrect) const;

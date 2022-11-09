@@ -4,10 +4,13 @@
 
 // Project File Version
 QUstVersion::QUstVersion() {
-    clear();
+    QUstVersion::clear();
 }
 
-void QUstVersion::clear() {
+QUstVersion::~QUstVersion() {
+}
+
+void QUstVersion::reset() {
     version = Utau::UST_VERSION_1_2;
     charset = "";
 }

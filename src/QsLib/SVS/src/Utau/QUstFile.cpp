@@ -1,8 +1,8 @@
 #include "QUstFile.h"
-#include "QUtaUtils.h"
 
 #include "Config/UtaConstants.h"
 #include "Config/UtaProjectText.h"
+#include "Utils/QUtaUtils.h"
 
 #include "TextHelper.h"
 
@@ -18,7 +18,7 @@ static const char COMMA = ',';
 
 // Project File Reader
 QUstFile::QUstFile() {
-    reset();
+    QUstFile::reset();
 }
 
 QUstFile::~QUstFile() {
@@ -196,6 +196,10 @@ void QUstFile::reset() {
     sectionVersion.clear();
     sectionSettings.clear();
     sectionNotes.clear();
+}
+
+bool QUstFile::isEmpty() const {
+    return sectionNotes.isEmpty();
 }
 
 bool QUstFile::parseSectionName(const QString &str, QString &name) {

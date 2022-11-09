@@ -1,10 +1,10 @@
 #include "QBatchRenderer.h"
-#include "Utils/UtaPitchCurves.h"
-#include "Utils/UtaTranslator.h"
+
+#include "Utau/Utils/QUtaUtils.h"
+#include "Utau/Utils/UtaPitchCurves.h"
+#include "Utau/Utils/UtaTranslator.h"
 
 #include <QPoint>
-
-#include "Utau/QUtaUtils.h"
 
 static const char SLASH = '/';
 

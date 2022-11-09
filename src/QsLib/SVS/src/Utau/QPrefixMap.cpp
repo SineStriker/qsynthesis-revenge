@@ -1,7 +1,7 @@
 ﻿#include "QPrefixMap.h"
-#include "QUtaUtils.h"
 
 #include "Config/UtaConstants.h"
+#include "Utils/QUtaUtils.h"
 
 #include "TextHelper.h"
 
@@ -13,7 +13,7 @@ using namespace Utau;
 Q_CHARSET_DECLARE(QPrefixMap)
 
 QPrefixMap::QPrefixMap() {
-    reset();
+    QPrefixMap::reset();
 }
 
 QPrefixMap::~QPrefixMap() {
@@ -28,26 +28,6 @@ QString QPrefixMap::prefixedLyric(int noteNum, const QString &lyric) const {
     p = SuffixMap.find(noteNum);
     if (p != SuffixMap.end()) {
         res += p.value();
-    }
-    return res;
-}
-
-bool QPrefixMap::isEmpty() const {
-    bool res = true;
-    for (auto it = PrefixMap.begin(); it != PrefixMap.end(); ++it) {
-        if (!it.value().isEmpty()) {
-            res = false;
-            break;
-        }
-    }
-    if (!res) {
-        return false;
-    }
-    for (auto it = SuffixMap.begin(); it != SuffixMap.end(); ++it) {
-        if (!it.value().isEmpty()) {
-            res = false;
-            break;
-        }
     }
     return res;
 }
@@ -139,4 +119,24 @@ void QPrefixMap::reset() {
         PrefixMap[i] = QString();
         SuffixMap[i] = QString();
     }
+}
+
+bool QPrefixMap::isEmpty() const {
+    bool res = true;
+    for (auto it = PrefixMap.begin(); it != PrefixMap.end(); ++it) {
+        if (!it.value().isEmpty()) {
+            res = false;
+            break;
+        }
+    }
+    if (!res) {
+        return false;
+    }
+    for (auto it = SuffixMap.begin(); it != SuffixMap.end(); ++it) {
+        if (!it.value().isEmpty()) {
+            res = false;
+            break;
+        }
+    }
+    return res;
 }
