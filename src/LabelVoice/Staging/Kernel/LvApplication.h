@@ -8,10 +8,6 @@
 #endif
 #define qApp (qobject_cast<LvApplication *>(QCoreApplication::instance()))
 
-#define Q_TR_NOTIFY(T)                                                                             \
-    reloadStrings();                                                                               \
-    connect(qApp, &LvApplication::stringUpdated, this, &T::reloadStrings);
-
 class LvApplicationPrivate;
 
 class LvApplication : public LvElemApplication {

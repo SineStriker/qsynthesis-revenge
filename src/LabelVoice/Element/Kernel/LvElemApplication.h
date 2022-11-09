@@ -10,7 +10,7 @@
 
 #define Q_TR_NOTIFY(T)                                                                             \
     reloadStrings();                                                                               \
-    connect(qApp, &LvApplication::stringUpdated, this, &T::reloadStrings);
+    connect(qApp, &LvElemApplication::stringUpdated, this, &T::reloadStrings);
 
 class LvElemApplicationPrivate;
 

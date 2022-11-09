@@ -1,4 +1,4 @@
-include(lvtest.cmake)
+include(Template.cmake)
 
 if (NOT BUILD_SVS_PLUGINS_ONLY)
     add_subdirectory(PlayWindow)
