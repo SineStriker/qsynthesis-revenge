@@ -23,31 +23,31 @@ void LvElemApplication::reloadScreen() {
                                        primaryScreen()->logicalDotsPerInch() / 96.0 * 0.8));
 }
 
-QString LvElemApplication::mainTitle() const {
+QString LvElemApplication::mainTitle() {
     return applicationName();
 }
 
-QString LvElemApplication::windowTitle() const {
+QString LvElemApplication::windowTitle() {
     return mainTitle() + QString(" %1").arg(applicationVersion());
 }
 
-QString LvElemApplication::errorTitle() const {
+QString LvElemApplication::errorTitle() {
     return tr("Error");
 }
 
-QString LvElemApplication::untitledFileName() const {
+QString LvElemApplication::untitledFileName() {
     return tr("Untitled");
 }
 
-QString LvElemApplication::unsavedPrefix() const {
+QString LvElemApplication::unsavedPrefix() {
     return "*";
 }
 
-QString LvElemApplication::deletedPrefix() const {
+QString LvElemApplication::deletedPrefix() {
     return tr("(Deleted)");
 }
 
-QString LvElemApplication::fileManagerName() const {
+QString LvElemApplication::fileManagerName() {
 #ifdef Q_OS_WINDOWS
     return tr("Explorer");
 #elif defined(Q_OS_MAC)
@@ -57,7 +57,7 @@ QString LvElemApplication::fileManagerName() const {
 #endif
 }
 
-QString LvElemApplication::allFilesFilter() const {
+QString LvElemApplication::allFilesFilter() {
 #if defined(Q_OS_WINDOWS)
     return tr("*.*");
 #else

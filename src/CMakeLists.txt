@@ -98,7 +98,7 @@ if(APP_DEPLOY)
         DEPENDS all
         COMMAND ${CMAKE_COMMAND} -E rm -rf ${APP_DEPLOY_DIR}
         COMMAND ${CMAKE_COMMAND} -E make_directory ${APP_DEPLOY_DIR}
-        COMMAND ${CMAKE_COMMAND} -E copy_directory ${PROJECT_DOCUMENT_DIR} ${APP_DEPLOY_DIR}/doc
+        COMMAND ${CMAKE_COMMAND} -E copy_directory ${PROJECT_DOCUMENT_DIR} ${APP_RES_DIR}/docs
         COMMAND ${CMAKE_COMMAND} -E copy_directory $<TARGET_FILE_DIR:${MAIN_TARGET}>/${APP_LIB_DIR}
                 ${APP_DEPLOY_DIR}/${APP_LIB_DIR}
         COMMAND

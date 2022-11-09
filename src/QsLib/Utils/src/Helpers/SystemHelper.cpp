@@ -1,4 +1,5 @@
 #include "SystemHelper.h"
+
 #include "qsutils_macros.h"
 
 #include <QCoreApplication>

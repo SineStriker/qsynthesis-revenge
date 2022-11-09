@@ -8,8 +8,6 @@
 
 Q_SINGLETON_DECLARE(PluginManager)
 
-QString allFiles;
-
 #ifdef Q_OS_WINDOWS
 #define ALL_FILES "*.*"
 #else
@@ -17,7 +15,7 @@ QString allFiles;
 #endif
 
 static QString toLibFile(const QString &dir, const QString &filename) {
-#ifdef Q_OS_LINUX
+#if defined (Q_OS_LINUX) || defined (__MINGW32__)
     return dir + "/lib" + filename;
 #elif defined(Q_OS_WINDOWS)
     return dir + "/" + filename;

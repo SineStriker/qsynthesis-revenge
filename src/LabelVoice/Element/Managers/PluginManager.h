@@ -4,13 +4,12 @@
 #include "Api/ISVSConverter.h"
 #include "Basic/BasicManager.h"
 
-#include "qsutils_macros.h"
-
 #include <QPluginLoader>
 
-class PluginManagerPrivate;
-
 #include "lvelem_global.h"
+#include "qsutils_macros.h"
+
+class PluginManagerPrivate;
 
 class LVELEM_API PluginManager : public BasicManager {
     Q_OBJECT

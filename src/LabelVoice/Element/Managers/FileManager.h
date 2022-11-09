@@ -3,11 +3,10 @@
 
 #include "Basic/BasicManager.h"
 
+#include "lvelem_global.h"
 #include "qsutils_macros.h"
 
 class FileManagerPrivate;
-
-#include "lvelem_global.h"
 
 class LVELEM_API FileManager : public BasicManager {
     Q_OBJECT

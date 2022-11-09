@@ -4,9 +4,8 @@
 #include <QFrame>
 #include <QWidget>
 
-#include "qsframework_macros.h"
-
 #include "lvelem_global.h"
+#include "qsframework_macros.h"
 
 class LVELEM_API BaseContainer : public QFrame {
     Q_OBJECT

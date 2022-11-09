@@ -1,9 +1,9 @@
 #ifndef ITEMPLATEGENERATOR_H
 #define ITEMPLATEGENERATOR_H
 
-#include "lvcore_global.h"
-
 #include <QObject>
+
+#include "lvcore_global.h"
 
 class LVCORE_API ITemplateGenerator : public QObject {
     Q_OBJECT

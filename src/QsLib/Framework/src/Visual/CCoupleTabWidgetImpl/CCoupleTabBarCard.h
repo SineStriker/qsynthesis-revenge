@@ -3,10 +3,11 @@
 
 #include "CCoupleTabTypes.h"
 #include "CLTabButton.h"
-#include "qsframework_global.h"
-#include "qsutils_macros.h"
 
 #include <QSizePolicy>
+
+#include "qsframework_global.h"
+#include "qsutils_macros.h"
 
 class CCoupleTabBar;
 

@@ -27,14 +27,14 @@ public:
     void reloadStrings();
     void reloadScreen();
 
-    QString mainTitle() const;
-    QString windowTitle() const;
-    QString errorTitle() const;
-    QString untitledFileName() const;
-    QString unsavedPrefix() const;
-    QString deletedPrefix() const;
-    QString fileManagerName() const;
-    QString allFilesFilter() const;
+    static QString mainTitle();
+    static QString windowTitle();
+    static QString errorTitle();
+    static QString untitledFileName();
+    static QString unsavedPrefix();
+    static QString deletedPrefix();
+    static QString fileManagerName();
+    static QString allFilesFilter();
 
     QString appDataPath() const;
     QString appTempPath() const;

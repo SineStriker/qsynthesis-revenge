@@ -3,9 +3,9 @@
 
 #include "Basic/BasicManager.h"
 
-#include "qsutils_macros.h"
-
 #include <QMainWindow>
+
+#include "qsutils_macros.h"
 
 class HomeWindow;
 class PianoWindow;
