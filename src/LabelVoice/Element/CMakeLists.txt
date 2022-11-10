@@ -71,6 +71,8 @@ target_compile_definitions(${PROJECT_NAME} PUBLIC APP_PLUGINS_DIR="${APP_PLUGINS
 
 target_compile_definitions(${PROJECT_NAME} PUBLIC APP_RES_DIR="${APP_RES_DIR}")
 
+target_compile_definitions(${PROJECT_NAME} PUBLIC APP_RES_BUILTIN_DIR="${APP_RES_BUILTIN_DIR}")
+
 target_compile_definitions(${PROJECT_NAME} PUBLIC APP_RES_PLUGINS_DIR="${APP_RES_PLUGINS_DIR}")
 
 # Include directories

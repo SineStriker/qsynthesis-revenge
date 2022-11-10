@@ -1,6 +1,7 @@
 #include "HomeProjConfWidget.h"
 
 #include <QDir>
+#include <QStandardPaths>
 
 #include "Kernel/LvApplication.h"
 
@@ -92,7 +93,8 @@ void HomeProjConfWidget::reloadStrings() {
 
 void HomeProjConfWidget::clear() {
     projectName->text->setText(tr("LVProject%1").arg(QString::number(block->newProjectIndex)));
-    location->text->setText(QDir::toNativeSeparators(qApp->desktopDir()));
+    location->text->setText(QDir::toNativeSeparators(
+        QStandardPaths::writableLocation(QStandardPaths::DesktopLocation)));
     solution->text->setText(tr("LVProject%1").arg(QString::number(block->newProjectIndex)));
 }
 

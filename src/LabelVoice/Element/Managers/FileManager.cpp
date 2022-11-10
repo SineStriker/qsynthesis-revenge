@@ -1,7 +1,7 @@
 #include "FileManager.h"
 #include "private/FileManager_p.h"
 
-#include "Kernel/LvElemApplication.h"
+#include "Kernel/LvDistConfig.h"
 #include "Serialization/QJsonFormatter.h"
 
 #include "SystemHelper.h"
@@ -10,6 +10,7 @@
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QJsonParseError>
+#include <QStandardPaths>
 
 Q_SINGLETON_DECLARE(FileManager)
 
@@ -27,7 +28,7 @@ FileManager::~FileManager() {
 
 void FileManager::load() {
     Q_D(FileManager);
-    QFile file(qApp->appDataPath() + Slash + FILE_NAME_RECENT_JSON);
+    QFile file(qAppConf->dataPath() + Slash + FILE_NAME_RECENT_JSON);
     if (file.open(QIODevice::ReadOnly)) {
         QByteArray data(file.readAll());
         QJsonParseError err;
@@ -48,7 +49,7 @@ void FileManager::load() {
 
 void FileManager::save() {
     Q_D(FileManager);
-    QFile file(qApp->appDataPath() + Slash + FILE_NAME_RECENT_JSON);
+    QFile file(qAppConf->dataPath() + Slash + FILE_NAME_RECENT_JSON);
 
     if (file.open(QIODevice::WriteOnly | QIODevice::Truncate | QIODevice::Text)) {
         QJsonDocument doc;
@@ -155,9 +156,10 @@ QString FileManager::getLastOpenPath(const QString &type) {
     Q_D(FileManager);
     auto it = d->lastOpenPaths.find(type);
     if (it == d->lastOpenPaths.end()) {
-        it = d->lastOpenPaths.insert(type, qApp->desktopDir());
+        it = d->lastOpenPaths.insert(
+            type, QStandardPaths::writableLocation(QStandardPaths::DesktopLocation));
     } else if (!Sys::isDirExist(it.value())) {
-        it.value() = qApp->desktopDir();
+        it.value() = QStandardPaths::writableLocation(QStandardPaths::DesktopLocation);
     }
     return it.value();
 }

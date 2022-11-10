@@ -6,6 +6,12 @@
 
 #include "qssvs_global.h"
 
+/*
+ *
+ * Qt wrapper of mrq.h
+ *
+ */
+
 class QSSVS_API QMrqFile {
 public:
     QMrqFile();

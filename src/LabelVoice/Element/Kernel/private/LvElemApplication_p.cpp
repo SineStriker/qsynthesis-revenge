@@ -14,6 +14,12 @@
 
 static const char Slash = '/';
 
+static const char LVConfig_Filename[] = "lvconf.json";
+
+static bool checkDir(const QString &dir) {
+    return Sys::isDirExist(dir);
+}
+
 static QString loadAppleFont() {
     QString fontDir = qApp->applicationDirPath() + "/resources/fonts";
     int fontId = QFontDatabase::addApplicationFont(fontDir + "/PingFang SC.ttf");
@@ -24,7 +30,7 @@ static QString loadAppleFont() {
     return fonts.front();
 }
 
-LvElemApplicationPrivate::LvElemApplicationPrivate() {
+LvElemApplicationPrivate::LvElemApplicationPrivate(LvDistConfig *conf) : conf(conf) {
 }
 
 LvElemApplicationPrivate::~LvElemApplicationPrivate() {
@@ -48,48 +54,46 @@ void LvElemApplicationPrivate::init() {
     q->setFont(f);
 #endif
 
-    // Create data path
-#ifdef Q_OS_WINDOWS
-    dataPath = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation);
-#elif defined(Q_OS_MAC)
-    dataPath =
-        QStandardPaths::writableLocation(QStandardPaths::HomeLocation) + "/.config/QVogenClient";
-#else
-    dataPath = QStandardPaths::writableLocation(QStandardPaths::AppConfigLocation);
-#endif
-    if (!dataPath.endsWith(q->applicationName())) {
-        dataPath += Slash + q->applicationName();
+    if (conf.isNull()) {
+        conf.reset(new LvDistConfig());
     }
-    if (!Sys::mkDir(dataPath)) {
+    conf->load(q->applicationDirPath() + Slash + LVConfig_Filename);
+
+    // Create data path
+    if (!Sys::mkDir(conf->dataPath())) {
         QMessageBox::warning(nullptr, q->errorTitle(),
                              QObject::tr("Failed to make application data path!"));
         ::exit(-1);
     }
 
     // Create temporary path
-    tempPath = QDir::tempPath() + Slash + q->applicationName();
-    if (!Sys::mkDir(tempPath)) {
+    if (!Sys::mkDir(conf->tempPath())) {
         QMessageBox::warning(nullptr, q->errorTitle(),
                              QObject::tr("Failed to make temporary path!"));
         ::exit(-1);
     }
 
-    // Setup plugin environment
-    pluginDir = qApp->applicationDirPath() + "/" + APP_PLUGINS_DIR;
-    if (!Sys::mkDir(pluginDir)) {
+    // Setup qt-plugins environment
+    if (!checkDir(conf->pluginDir())) {
         QMessageBox::warning(nullptr, q->errorTitle(), QObject::tr("Failed to make plugin path!"));
         ::exit(-1);
     }
-    q->addLibraryPath(pluginDir);
+    q->addLibraryPath(conf->pluginDir());
 
-    // Setup extensions environment
-    extDir = qApp->applicationDirPath() + "/" + APP_RES_DIR + "/" + APP_RES_PLUGINS_DIR;
-    if (!Sys::mkDir(extDir)) {
+    // Setup qs-plugins environment
+    if (!checkDir(conf->builtinDir())) {
+        QMessageBox::warning(nullptr, q->errorTitle(), QObject::tr("Failed to make builtin path!"));
+        ::exit(-1);
+    }
+    q->addLibraryPath(conf->builtinDir());
+
+    // Setup lv-plugins environment
+    if (!checkDir(conf->extDir())) {
         QMessageBox::warning(nullptr, q->errorTitle(),
                              QObject::tr("Failed to make extensions path!"));
         ::exit(-1);
     }
-    q->addLibraryPath(extDir);
+    q->addLibraryPath(conf->extDir());
 
     // Init managers
     pluginMgr = new PluginManager(q);
@@ -109,7 +113,6 @@ void LvElemApplicationPrivate::init() {
 
 void LvElemApplicationPrivate::deinit() {
     // Save Modules
-
     pluginMgr->save();
     fileMgr->save();
 

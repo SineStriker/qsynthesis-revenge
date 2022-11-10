@@ -6,26 +6,22 @@
 
 #include "Managers/FileManager.h"
 #include "Managers/PluginManager.h"
-//#include "Managers/WindowManager.h"
+
+#include "../LvDistConfig.h"
 
 class LVELEM_API LvElemApplicationPrivate : public CApplicationPrivate {
     Q_DECLARE_PUBLIC(LvElemApplication)
 public:
-    LvElemApplicationPrivate();
+    LvElemApplicationPrivate(LvDistConfig *conf = nullptr);
     ~LvElemApplicationPrivate();
-
-    PluginManager *pluginMgr;
-    FileManager *fileMgr;
 
     void init();
     void deinit();
 
-    // Data
-    QString dataPath;
-    QString tempPath;
+    QScopedPointer<LvDistConfig> conf;
 
-    QString pluginDir;
-    QString extDir;
+    PluginManager *pluginMgr;
+    FileManager *fileMgr;
 
     // Translators
     bool translate(const QString &filename);

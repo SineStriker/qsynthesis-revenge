@@ -15,7 +15,7 @@ Q_SINGLETON_DECLARE(PluginManager)
 #endif
 
 static QString toLibFile(const QString &dir, const QString &filename) {
-#if defined (Q_OS_LINUX) || defined (__MINGW32__)
+#if defined(Q_OS_LINUX) || defined(__MINGW32__)
     return dir + "/lib" + filename;
 #elif defined(Q_OS_WINDOWS)
     return dir + "/" + filename;
@@ -70,24 +70,28 @@ ISVSConverter *PluginManager::searchConverter(const QString &suffix) const {
     return qobject_cast<ISVSConverter *>(d->converters.at(it.value()).loader->instance());
 }
 
-QPluginLoader *PluginManager::loadInternalPlugin(InternalPlugins id) {
+QPluginLoader *PluginManager::loadInternalPlugin(LvDistConfig::InternalPlugins id) {
     QPluginLoader *loader = nullptr;
 
     switch (id) {
-        case ZipLib: {
-            loader = new QPluginLoader(toLibFile("compressengines", "qzlib"));
+        case LvDistConfig::ZipLib: {
+            QString name = qAppConf->internalPlugin(id);
+            loader = new QPluginLoader(toLibFile("compressengines", name));
             if (!(loader->load() && qobject_cast<ICompressEngine *>(loader->instance()))) {
-                qDebug() << "PluginManager: Failed to load qzlib." << loader->errorString();
+                qDebug() << QString("PluginManager: Failed to load %1.").arg(name)
+                         << loader->errorString();
                 loader->unload();
                 delete loader;
                 loader = nullptr;
             }
             break;
         }
-        case NativeWindow: {
-            loader = new QPluginLoader(toLibFile("windowfactories", "NativeWindow"));
+        case LvDistConfig::NativeWindow: {
+            QString name = qAppConf->internalPlugin(id);
+            loader = new QPluginLoader(toLibFile("windowfactories", name));
             if (!(loader->load() && qobject_cast<IWindowFactory *>(loader->instance()))) {
-                qDebug() << "PluginManager: Failed to load NativeWindow." << loader->errorString();
+                qDebug() << QString("PluginManager: Failed to load %1.").arg(name)
+                         << loader->errorString();
                 loader->unload();
                 delete loader;
                 loader = nullptr;

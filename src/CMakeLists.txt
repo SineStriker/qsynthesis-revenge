@@ -36,6 +36,7 @@ set(PROJECT_ARCHIVE_DIR ${CMAKE_BINARY_DIR}/etc) # Etc
 set(PROJECT_MODULES_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../scripts/cmake/Modules) # Scripts
 set(PROJECT_RELEASE_DIR ${CMAKE_BINARY_DIR}) # Release
 set(PROJECT_DOCUMENT_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../docs/doc) # Doc
+set(PROJECT_LICENSE_FILE ${CMAKE_CURRENT_SOURCE_DIR}/../LICENSE)  # License
 
 set(PROJECT_VERSION_SHORT
     ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}.${PROJECT_VERSION_PATCH}
@@ -63,7 +64,6 @@ endif()
 
 # Add subdirectories
 add_subdirectory(QsLib)
-add_subdirectory(QsPlugin)
 
 if(NOT BUILD_SVS_PLUGINS_ONLY)
     add_subdirectory(fsnotifier)
@@ -98,14 +98,27 @@ if(APP_DEPLOY)
         DEPENDS all
         COMMAND ${CMAKE_COMMAND} -E rm -rf ${APP_DEPLOY_DIR}
         COMMAND ${CMAKE_COMMAND} -E make_directory ${APP_DEPLOY_DIR}
-        COMMAND ${CMAKE_COMMAND} -E copy_directory ${PROJECT_DOCUMENT_DIR} ${APP_RES_DIR}/docs
-        COMMAND ${CMAKE_COMMAND} -E copy_directory $<TARGET_FILE_DIR:${MAIN_TARGET}>/${APP_LIB_DIR}
-                ${APP_DEPLOY_DIR}/${APP_LIB_DIR}
-        COMMAND
-            ${CMAKE_COMMAND} -E copy_directory $<TARGET_FILE_DIR:${MAIN_TARGET}>/${APP_PLUGINS_DIR}
-            ${APP_DEPLOY_DIR}/${APP_PLUGINS_DIR}
+
+        # Copy lib dir
+        COMMAND ${CMAKE_COMMAND} -E copy_directory
+                $<TARGET_FILE_DIR:${MAIN_TARGET}>/${APP_LIB_DIR} ${APP_DEPLOY_DIR}/${APP_LIB_DIR}
+
+        # Copy plugins dir
+        COMMAND ${CMAKE_COMMAND} -E copy_directory
+                $<TARGET_FILE_DIR:${MAIN_TARGET}>/${APP_PLUGINS_DIR} ${APP_DEPLOY_DIR}/${APP_PLUGINS_DIR}
+
+        # Copy res dir
         COMMAND ${CMAKE_COMMAND} -E copy_directory $<TARGET_FILE_DIR:${MAIN_TARGET}>/${APP_RES_DIR}
                 ${APP_DEPLOY_DIR}/${APP_RES_DIR}
+
+        # Copy docs dir
+        COMMAND ${CMAKE_COMMAND} -E copy_directory
+                ${PROJECT_DOCUMENT_DIR} ${APP_DEPLOY_DIR}/${APP_RES_DIR}/docs
+
+        # Copy license
+        COMMAND ${CMAKE_COMMAND} -E copy
+                ${PROJECT_LICENSE_FILE} ${APP_DEPLOY_DIR}/${APP_RES_DIR}/docs
+
         COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:${MAIN_TARGET}> ${APP_DEPLOY_DIR}
         COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:${FSNOTIFIER_TARGET}> ${APP_DEPLOY_DIR}
     )

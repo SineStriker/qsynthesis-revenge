@@ -36,12 +36,6 @@ public:
     static QString fileManagerName();
     static QString allFilesFilter();
 
-    QString appDataPath() const;
-    QString appTempPath() const;
-    QString appPluginDir() const;
-    QString appExtDir() const;
-    QString desktopDir();
-
 protected:
     LvElemApplication(LvElemApplicationPrivate &d, int &argc, char **argv);
 

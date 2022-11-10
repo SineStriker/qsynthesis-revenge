@@ -3,6 +3,7 @@
 
 #include "Api/ISVSConverter.h"
 #include "Basic/BasicManager.h"
+#include "Kernel/LvDistConfig.h"
 
 #include <QPluginLoader>
 
@@ -26,12 +27,7 @@ public:
     QString converterFilters() const;
     ISVSConverter *searchConverter(const QString &suffix) const;
 
-    enum InternalPlugins {
-        ZipLib,
-        NativeWindow,
-    };
-
-    static QPluginLoader *loadInternalPlugin(InternalPlugins id);
+    static QPluginLoader *loadInternalPlugin(LvDistConfig::InternalPlugins id);
 
 protected:
     PluginManager(PluginManagerPrivate &d, QObject *parent = nullptr);

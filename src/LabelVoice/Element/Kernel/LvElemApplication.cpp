@@ -65,30 +65,6 @@ QString LvElemApplication::allFilesFilter() {
 #endif
 }
 
-QString LvElemApplication::appDataPath() const {
-    Q_D(const LvElemApplication);
-    return d->dataPath;
-}
-
-QString LvElemApplication::appTempPath() const {
-    Q_D(const LvElemApplication);
-    return d->tempPath;
-}
-
-QString LvElemApplication::appPluginDir() const {
-    Q_D(const LvElemApplication);
-    return d->pluginDir;
-}
-
-QString LvElemApplication::appExtDir() const {
-    Q_D(const LvElemApplication);
-    return d->extDir;
-}
-
-QString LvElemApplication::desktopDir() {
-    return QStandardPaths::writableLocation(QStandardPaths::DesktopLocation);
-}
-
 LvElemApplication::LvElemApplication(LvElemApplicationPrivate &d, int &argc, char **argv)
     : CApplication(d, argc, argv) {
     d.init();
