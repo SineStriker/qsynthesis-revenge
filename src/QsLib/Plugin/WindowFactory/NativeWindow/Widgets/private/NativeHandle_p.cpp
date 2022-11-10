@@ -25,6 +25,10 @@ void NativeHandlePrivate::updateTitleBar() {
 void NativeHandlePrivate::setup_helper() {
     Q_Q(NativeHandle);
 
+    // Not necessary, but better call this function, before the construction
+    // of any Q(Core|Gui)Application instances.
+    // FramelessHelper::Widgets::initialize();
+
     FramelessWidgetsHelper::get(w)->extendsContentIntoTitleBar();
     m_helper.reset(new WidgetsSharedHelper(q));
     m_helper->setup(w);

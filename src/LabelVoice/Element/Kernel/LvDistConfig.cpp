@@ -47,15 +47,19 @@ QString LvDistConfig::extDir() const {
     return d->extDir;
 }
 
-QString LvDistConfig::internalPlugin(LvDistConfig::InternalPlugins id) {
-    Q_D(LvDistConfig);
+QString LvDistConfig::internalPlugin(LvDistConfig::InternalPlugins id) const {
+    Q_D(const LvDistConfig);
 
     QString res;
     switch (id) {
-        case ZipLib:
+        case AudioDecoder:
+        case AudioEncoder:
+        case AudioPlayback:
+            break;
+        case CompressEngine:
             res = d->compression;
             break;
-        case NativeWindow:
+        case WindowFactory:
             res = d->windowFac;
             break;
         default:

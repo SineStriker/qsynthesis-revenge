@@ -74,7 +74,11 @@ QPluginLoader *PluginManager::loadInternalPlugin(LvDistConfig::InternalPlugins i
     QPluginLoader *loader = nullptr;
 
     switch (id) {
-        case LvDistConfig::ZipLib: {
+        case LvDistConfig::AudioDecoder:
+        case LvDistConfig::AudioEncoder:
+        case LvDistConfig::AudioPlayback:
+            break;
+        case LvDistConfig::CompressEngine: {
             QString name = qAppConf->internalPlugin(id);
             loader = new QPluginLoader(toLibFile("compressengines", name));
             if (!(loader->load() && qobject_cast<ICompressEngine *>(loader->instance()))) {
@@ -86,7 +90,7 @@ QPluginLoader *PluginManager::loadInternalPlugin(LvDistConfig::InternalPlugins i
             }
             break;
         }
-        case LvDistConfig::NativeWindow: {
+        case LvDistConfig::WindowFactory: {
             QString name = qAppConf->internalPlugin(id);
             loader = new QPluginLoader(toLibFile("windowfactories", name));
             if (!(loader->load() && qobject_cast<IWindowFactory *>(loader->instance()))) {

@@ -24,6 +24,7 @@ void LvApplicationPrivate::deinit() {
 }
 
 void LvApplicationPrivate::messageReceived_helper(const QStringList &args) {
+    Q_UNUSED(args)
+
     View::bringWindowToForeground(windowMgr->firstWindow());
-    Q_UNUSED(args);
 }

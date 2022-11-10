@@ -14,7 +14,7 @@
 
 static const char Slash = '/';
 
-static const char LVConfig_Filename[] = "lvconf.json";
+static const char FILENAME_APP_CONFIG[] = "lvconf.json";
 
 static bool checkDir(const QString &dir) {
     return Sys::isDirExist(dir);
@@ -54,10 +54,11 @@ void LvElemApplicationPrivate::init() {
     q->setFont(f);
 #endif
 
+    // Load or create app config
     if (conf.isNull()) {
         conf.reset(new LvDistConfig());
     }
-    conf->load(q->applicationDirPath() + Slash + LVConfig_Filename);
+    conf->load(q->applicationDirPath() + Slash + FILENAME_APP_CONFIG);
 
     // Create data path
     if (!Sys::mkDir(conf->dataPath())) {

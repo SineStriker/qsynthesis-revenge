@@ -1,6 +1,6 @@
 project(QsSVS
     VERSION 0.2.17.0
-    LANGUAGES CXX
+    LANGUAGES C CXX
 )
 
 add_subdirectory(tools)

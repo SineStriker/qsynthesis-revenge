@@ -11,6 +11,18 @@
 
 class LvDistConfigPrivate;
 
+/*
+ * Configuration of the following:
+ *   - Important directories
+ *   - Default built-in plugins
+ *
+ * Ways to instantialize:
+ *   - Create in `init` of LvApplicationPrivate (Default)
+ *   - Inherit LvApplicationPrivate, create and pass to the constructor
+ *     of base LvApplicationPrivate, the LvDistConfig can also be inherited
+ *
+ */
+
 class LVELEM_API LvDistConfig {
     Q_DECLARE_PRIVATE(LvDistConfig)
     Q_SINGLETON(LvDistConfig)
@@ -18,7 +30,7 @@ public:
     LvDistConfig();
     virtual ~LvDistConfig();
 
-    bool load(const QString &filename);
+    virtual bool load(const QString &filename);
 
 public:
     QString dataPath() const;
@@ -28,11 +40,14 @@ public:
     QString extDir() const;
 
     enum InternalPlugins {
-        ZipLib,
-        NativeWindow,
+        AudioDecoder,
+        AudioEncoder,
+        AudioPlayback,
+        CompressEngine,
+        WindowFactory,
     };
 
-    QString internalPlugin(InternalPlugins id);
+    QString internalPlugin(InternalPlugins id) const;
 
 protected:
     LvDistConfig(LvDistConfigPrivate &d);

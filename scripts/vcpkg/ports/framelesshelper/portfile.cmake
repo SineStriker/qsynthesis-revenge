@@ -1,8 +1,8 @@
 vcpkg_from_github(
     OUT_SOURCE_PATH SOURCE_PATH
     REPO wangwenx190/framelesshelper
-    REF 2.3.0
-    SHA512 a5d557362f63c9e50db85e4fa69a4e124a18e00216cf3485ab494eed9ed7d38cb1ea3f6d5f53a10348dd5dd5ec78f6b25a7de49f2752ba3e2da0fa47a419eeab
+    REF 2.3.2
+    SHA512 5045ed575da3133c27af80c8118fc96d5f0d0f7ed40f4783427ad6e44b7ef64984a97d2f75396b4017e972c5d20ac21043d063bbd753782f99e49ad8b517ecd2
 )
 
 vcpkg_cmake_configure(
@@ -12,6 +12,7 @@ vcpkg_cmake_configure(
         -DFRAMELESSHELPER_BUILD_WIDGETS=ON
         -DFRAMELESSHELPER_BUILD_QUICK=OFF
         -DFRAMELESSHELPER_BUILD_EXAMPLES=OFF
+        -DFRAMELESSHELPER_NO_DEBUG_OUTPUT=ON
 )
 
 vcpkg_cmake_install()
