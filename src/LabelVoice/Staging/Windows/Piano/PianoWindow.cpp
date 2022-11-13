@@ -75,8 +75,6 @@ void PianoWindow::reloadStrings() {
 
 PianoWindow::PianoWindow(PianoWindowPrivate &d, QWidget *parent)
     : ProjectWindow(d, parent), ProjectCommonBlock(this) {
-    d.q_ptr = this;
-
     d.init();
 
     Q_TR_NOTIFY(PianoWindow)

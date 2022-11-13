@@ -1,7 +1,7 @@
 #include "FileManager.h"
 #include "private/FileManager_p.h"
 
-#include "Kernel/LvDistConfig.h"
+#include "Kernel/QsDistConfig.h"
 #include "Serialization/QJsonFormatter.h"
 
 #include "SystemHelper.h"
@@ -28,7 +28,7 @@ FileManager::~FileManager() {
 
 void FileManager::load() {
     Q_D(FileManager);
-    QFile file(qAppConf->dataPath() + Slash + FILE_NAME_RECENT_JSON);
+    QFile file(qAppConf->appDir(QsDistConfig::AppData) + Slash + FILE_NAME_RECENT_JSON);
     if (file.open(QIODevice::ReadOnly)) {
         QByteArray data(file.readAll());
         QJsonParseError err;
@@ -49,7 +49,7 @@ void FileManager::load() {
 
 void FileManager::save() {
     Q_D(FileManager);
-    QFile file(qAppConf->dataPath() + Slash + FILE_NAME_RECENT_JSON);
+    QFile file(qAppConf->appDir(QsDistConfig::AppData) + Slash + FILE_NAME_RECENT_JSON);
 
     if (file.open(QIODevice::WriteOnly | QIODevice::Truncate | QIODevice::Text)) {
         QJsonDocument doc;
@@ -114,59 +114,47 @@ QStringList FileManager::fetchRecent(FileManager::RecentType rType) const {
 
 QString FileManager::openFile(const QString &title, const QString &filter, const QString &flag,
                               QWidget *parent) {
-    QString path = QFileDialog::getOpenFileName(parent, title, getLastOpenPath(flag), filter);
+    Q_D(FileManager);
+    QString path = QFileDialog::getOpenFileName(parent, title, d->getLastOpenPath(flag), filter);
     if (!path.isEmpty()) {
-        saveLastOpenDir(flag, path);
+        d->saveLastOpenDir(flag, path);
     }
     return path;
 }
 
 QStringList FileManager::openFiles(const QString &title, const QString &filter, const QString &flag,
                                    QWidget *parent) {
-    QStringList paths = QFileDialog::getOpenFileNames(parent, title, getLastOpenPath(flag), filter);
+    Q_D(FileManager);
+    QStringList paths =
+        QFileDialog::getOpenFileNames(parent, title, d->getLastOpenPath(flag), filter);
     if (!paths.isEmpty()) {
-        saveLastOpenDir(flag, paths.back());
+        d->saveLastOpenDir(flag, paths.back());
     }
     return paths;
 }
 
 QString FileManager::openDir(const QString &title, const QString &flag, QWidget *parent) {
-    QString path = QFileDialog::getExistingDirectory(parent, title, getLastOpenPath(flag));
+    Q_D(FileManager);
+    QString path = QFileDialog::getExistingDirectory(parent, title, d->getLastOpenPath(flag));
     if (!path.isEmpty()) {
-        saveLastOpenDir(flag, path, false);
+        d->saveLastOpenDir(flag, path, false);
     }
     return path;
 }
 
 QString FileManager::saveFile(const QString &title, const QString &filename, const QString &filter,
                               const QString &flag, QWidget *parent) {
+    Q_D(FileManager);
     QFileInfo info(filename);
     if (info.isRelative() || !Sys::isDirExist(info.absolutePath())) {
-        info.setFile(getLastOpenPath(flag) + Slash + info.fileName());
+        info.setFile(d->getLastOpenPath(flag) + Slash + info.fileName());
     }
     QString path =
         QFileDialog::getSaveFileName(parent, title, info.absoluteFilePath(), filter, nullptr);
     if (!path.isEmpty()) {
-        saveLastOpenDir(flag, path);
+        d->saveLastOpenDir(flag, path);
     }
     return path;
-}
-
-QString FileManager::getLastOpenPath(const QString &type) {
-    Q_D(FileManager);
-    auto it = d->lastOpenPaths.find(type);
-    if (it == d->lastOpenPaths.end()) {
-        it = d->lastOpenPaths.insert(
-            type, QStandardPaths::writableLocation(QStandardPaths::DesktopLocation));
-    } else if (!Sys::isDirExist(it.value())) {
-        it.value() = QStandardPaths::writableLocation(QStandardPaths::DesktopLocation);
-    }
-    return it.value();
-}
-
-void FileManager::saveLastOpenDir(const QString &type, const QString &path, bool upper) {
-    Q_D(FileManager);
-    d->lastOpenPaths.insert(type, upper ? Sys::PathFildDirPath(path) : path);
 }
 
 FileManager::FileManager(FileManagerPrivate &d, QObject *parent) : BasicManager(d, parent) {

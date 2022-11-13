@@ -8,7 +8,7 @@
 
 #include <QPluginLoader>
 
-class PluginManagerPrivate : public BasicManagerPrivate {
+class QSINTEGRATE_API PluginManagerPrivate : public BasicManagerPrivate {
     Q_DECLARE_PUBLIC(PluginManager)
 public:
     PluginManagerPrivate();

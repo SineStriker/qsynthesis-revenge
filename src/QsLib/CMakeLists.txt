@@ -8,6 +8,7 @@ add_subdirectory(SVS)
 if (NOT BUILD_SVS_PLUGINS_ONLY)
     add_subdirectory(Framework)
     add_subdirectory(Media)
+    add_subdirectory(Integrate)
 endif()
 
 add_subdirectory(Plugin)

@@ -7,7 +7,7 @@
 
 #include <QMap>
 
-class FileManagerPrivate : public BasicManagerPrivate {
+class QSINTEGRATE_API FileManagerPrivate : public BasicManagerPrivate {
     Q_DECLARE_PUBLIC(FileManager)
 public:
     FileManagerPrivate();
@@ -19,6 +19,9 @@ public:
     QFileSet folders;
 
     QMap<QString, QString> lastOpenPaths;
+
+    QString getLastOpenPath(const QString &type);
+    void saveLastOpenDir(const QString &type, const QString &path, bool upper = true);
 };
 
 #endif // FILEMANAGERPRIVATE_H

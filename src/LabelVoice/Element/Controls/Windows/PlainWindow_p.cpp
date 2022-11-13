@@ -21,7 +21,7 @@ void PlainWindowPrivate::init() {
     Q_Q(PlainWindow);
     winHandle = nullptr;
     // loader = nullptr;
-    loader = PluginManager::loadInternalPlugin(LvDistConfig::WindowFactory);
+    loader = PluginManager::loadInternalPlugin(QsDistConfig::WindowFactory);
     if (loader) {
         winHandle = qobject_cast<IWindowFactory *>(loader->instance())->create(q);
         winHandle->setup();

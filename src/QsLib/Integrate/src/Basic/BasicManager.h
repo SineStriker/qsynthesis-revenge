@@ -3,11 +3,11 @@
 
 #include <QObject>
 
-#include "lvcore_global.h"
+#include "qsintegrate_global.h"
 
 class BasicManagerPrivate;
 
-class LVCORE_API BasicManager : public QObject {
+class QSINTEGRATE_API BasicManager : public QObject {
     Q_OBJECT
     Q_DECLARE_PRIVATE(BasicManager)
 public:

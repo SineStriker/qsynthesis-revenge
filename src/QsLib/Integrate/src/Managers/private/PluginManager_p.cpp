@@ -1,7 +1,7 @@
 #include "PluginManager_p.h"
 
 #include "Api/ISVSConverter.h"
-#include "Kernel/LvDistConfig.h"
+#include "Kernel/QsDistConfig.h"
 #include "Serialization/QJsonFormatter.h"
 
 #include <QDir>
@@ -16,7 +16,7 @@ void PluginManagerPrivate::init() {
 }
 
 void PluginManagerPrivate::loadConverters() {
-    QDir dir(qAppConf->builtinDir() + "/svsconverters");
+    QDir dir(qAppConf->appDir(QsDistConfig::BuiltIn) + "/svsconverters");
     if (!dir.exists()) {
         return;
     }
@@ -56,7 +56,7 @@ void PluginManagerPrivate::unloadConverters() {
         return;
     }
 
-    for (auto info : qAsConst(converters)) {
+    for (const auto &info : qAsConst(converters)) {
         auto loader = info.loader;
         loader->unload();
         delete loader;

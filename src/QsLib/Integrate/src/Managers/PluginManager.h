@@ -3,16 +3,16 @@
 
 #include "Api/ISVSConverter.h"
 #include "Basic/BasicManager.h"
-#include "Kernel/LvDistConfig.h"
+#include "Kernel/QsDistConfig.h"
 
 #include <QPluginLoader>
 
-#include "lvelem_global.h"
+#include "qsintegrate_global.h"
 #include "qsutils_macros.h"
 
 class PluginManagerPrivate;
 
-class LVELEM_API PluginManager : public BasicManager {
+class QSINTEGRATE_API PluginManager : public BasicManager {
     Q_OBJECT
     Q_DECLARE_PRIVATE(PluginManager)
     Q_SINGLETON(PluginManager)
@@ -27,7 +27,7 @@ public:
     QString converterFilters() const;
     ISVSConverter *searchConverter(const QString &suffix) const;
 
-    static QPluginLoader *loadInternalPlugin(LvDistConfig::InternalPlugins id);
+    static QPluginLoader *loadInternalPlugin(QsDistConfig::InternalPlugins id);
 
 protected:
     PluginManager(PluginManagerPrivate &d, QObject *parent = nullptr);

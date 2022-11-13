@@ -60,7 +60,7 @@ set_target_properties(${PROJECT_NAME} PROPERTIES
 )
 
 # Link libraries
-target_link_libraries(${PROJECT_NAME} PUBLIC QsFramework)
+target_link_libraries(${PROJECT_NAME} PUBLIC QsIntegrate)
 target_link_libraries(${PROJECT_NAME} PUBLIC LvCore)
 target_link_libraries(${PROJECT_NAME} PUBLIC ${QT_LIBS})
 

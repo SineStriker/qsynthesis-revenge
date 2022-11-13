@@ -1,3 +1,6 @@
+# ----------------------------
+# Options affecting the linter
+# ----------------------------
 with section("lint"):
   disabled_codes = [
     # A custom command with one output doesn't really need a comment because
@@ -5,14 +8,53 @@ with section("lint"):
     "C0113",
   ]
 
+# ----------------------------------
+# Options affecting listfile parsing
+# ----------------------------------
+with section("parse"):
 
+  # Specify structure for custom cmake functions
+  additional_commands = {
+    "add_bench": {
+      "pargs": 1,
+      "flags": [],
+      "kwargs": {
+        "SOURCES": '*',
+        "DEFINITIONS": '*',
+        "LIBRARIES": '*',
+      }
+    }
+  }
+
+  # Override configurations per-command where available
+  override_spec = {}
+
+  # Specify variable tags.
+  vartags = []
+
+  # Specify property tags.
+  proptags = []
+
+
+# ------------------------------------------------
+# Options affecting comment reflow and formatting.
+# ------------------------------------------------
+with section("markup"):
+
+  # enable comment markup parsing and reflow
+  enable_markup = False
+
+
+# -----------------------------
+# Options affecting formatting.
+# -----------------------------
 with section("format"):
 
   # Disable formatting entirely, making cmake-format a no-op
   disable = False
 
   # How wide to allow formatted cmake files
-  line_width = 100
+  line_width = 120
 
   # How many spaces to tab for indent
   tab_size = 4

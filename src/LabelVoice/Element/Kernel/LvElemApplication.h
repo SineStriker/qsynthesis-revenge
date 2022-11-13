@@ -1,22 +1,18 @@
 #ifndef LVELEMAPPLICATION_H
 #define LVELEMAPPLICATION_H
 
-#include "CApplication.h"
+#include "Kernel/QsApplication.h"
 
 #ifdef qApp
 #undef qApp
 #endif
 #define qApp (qobject_cast<LvElemApplication *>(QCoreApplication::instance()))
 
-#define Q_TR_NOTIFY(T)                                                                             \
-    reloadStrings();                                                                               \
-    connect(qApp, &LvElemApplication::stringUpdated, this, &T::reloadStrings);
-
 class LvElemApplicationPrivate;
 
 #include "lvelem_global.h"
 
-class LVELEM_API LvElemApplication : public CApplication {
+class LVELEM_API LvElemApplication : public QsApplication {
     Q_OBJECT
     Q_DECLARE_PRIVATE(LvElemApplication)
 public:
@@ -24,26 +20,11 @@ public:
     ~LvElemApplication();
 
 public:
-    void reloadStrings();
-    void reloadScreen();
-
-    static QString mainTitle();
-    static QString windowTitle();
-    static QString errorTitle();
-    static QString untitledFileName();
-    static QString unsavedPrefix();
-    static QString deletedPrefix();
-    static QString fileManagerName();
-    static QString allFilesFilter();
+    void reloadStrings() override;
+    void reloadScreen() override;
 
 protected:
     LvElemApplication(LvElemApplicationPrivate &d, int &argc, char **argv);
-
-private:
-    void q_screenRatioChanged(qreal dpi);
-
-signals:
-    void stringUpdated();
 };
 
 #endif // LVELEMAPPLICATION_H

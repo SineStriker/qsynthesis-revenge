@@ -135,7 +135,8 @@ if (WIN32 AND APP_DEPLOY)
     deploy_shared_libraries(
         TARGET ${PROJECT_NAME}
         DESTINATION ${APP_LIB_DIR}
-        DEPENDENCIES ${PROJECT_NAME} LvCore LvElem QsUtils QsFramework QsSVS QsMedia fsnotifier-qt
+        DEPENDENCIES ${PROJECT_NAME} LvCore LvElem QsUtils
+                                     QsIntegrate QsFramework QsSVS QsMedia fsnotifier-qt
         RELATIVE
     )
 

@@ -3,12 +3,12 @@
 
 #include "Basic/BasicManager.h"
 
-#include "lvelem_global.h"
+#include "qsintegrate_global.h"
 #include "qsutils_macros.h"
 
 class FileManagerPrivate;
 
-class LVELEM_API FileManager : public BasicManager {
+class QSINTEGRATE_API FileManager : public BasicManager {
     Q_OBJECT
     Q_DECLARE_PRIVATE(FileManager)
     Q_SINGLETON(FileManager)
@@ -38,9 +38,6 @@ public:
 
 protected:
     FileManager(FileManagerPrivate &d, QObject *parent = nullptr);
-
-    QString getLastOpenPath(const QString &type);
-    void saveLastOpenDir(const QString &type, const QString &path, bool upper = true);
 
 signals:
     void recentCommited(RecentType rType);

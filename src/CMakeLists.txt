@@ -76,7 +76,7 @@ endif()
 
 # Add deploy target
 if(APP_DEPLOY)
-    message(STATUS "[Info] Deployment mode, virtual target is added")
+    message(STATUS "[INFO] Deployment mode, virtual target is added")
 
     if(NOT WIN32)
         message(FATAL_ERROR "Deployment mode is only implemented on Windows!")

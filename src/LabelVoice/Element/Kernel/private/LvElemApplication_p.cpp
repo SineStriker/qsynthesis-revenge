@@ -1,4 +1,5 @@
 #include "LvElemApplication_p.h"
+#include "LvDistConfig_p.h"
 
 #include <QDebug>
 #include <QDir>
@@ -14,12 +15,6 @@
 
 static const char Slash = '/';
 
-static const char FILENAME_APP_CONFIG[] = "lvconf.json";
-
-static bool checkDir(const QString &dir) {
-    return Sys::isDirExist(dir);
-}
-
 static QString loadAppleFont() {
     QString fontDir = qApp->applicationDirPath() + "/resources/fonts";
     int fontId = QFontDatabase::addApplicationFont(fontDir + "/PingFang SC.ttf");
@@ -30,7 +25,7 @@ static QString loadAppleFont() {
     return fonts.front();
 }
 
-LvElemApplicationPrivate::LvElemApplicationPrivate(LvDistConfig *conf) : conf(conf) {
+LvElemApplicationPrivate::LvElemApplicationPrivate() : QsApplicationPrivate(new LvDistConfig()) {
 }
 
 LvElemApplicationPrivate::~LvElemApplicationPrivate() {
@@ -54,114 +49,12 @@ void LvElemApplicationPrivate::init() {
     q->setFont(f);
 #endif
 
-    // Load or create app config
-    if (conf.isNull()) {
-        conf.reset(new LvDistConfig());
-    }
-    conf->load(q->applicationDirPath() + Slash + FILENAME_APP_CONFIG);
-
-    // Create data path
-    if (!Sys::mkDir(conf->dataPath())) {
-        QMessageBox::warning(nullptr, q->errorTitle(),
-                             QObject::tr("Failed to make application data path!"));
-        ::exit(-1);
-    }
-
-    // Create temporary path
-    if (!Sys::mkDir(conf->tempPath())) {
-        QMessageBox::warning(nullptr, q->errorTitle(),
-                             QObject::tr("Failed to make temporary path!"));
-        ::exit(-1);
-    }
-
-    // Setup qt-plugins environment
-    if (!checkDir(conf->pluginDir())) {
-        QMessageBox::warning(nullptr, q->errorTitle(), QObject::tr("Failed to make plugin path!"));
-        ::exit(-1);
-    }
-    q->addLibraryPath(conf->pluginDir());
-
-    // Setup qs-plugins environment
-    if (!checkDir(conf->builtinDir())) {
-        QMessageBox::warning(nullptr, q->errorTitle(), QObject::tr("Failed to make builtin path!"));
-        ::exit(-1);
-    }
-    q->addLibraryPath(conf->builtinDir());
-
-    // Setup lv-plugins environment
-    if (!checkDir(conf->extDir())) {
-        QMessageBox::warning(nullptr, q->errorTitle(),
-                             QObject::tr("Failed to make extensions path!"));
-        ::exit(-1);
-    }
-    q->addLibraryPath(conf->extDir());
-
-    // Init managers
-    pluginMgr = new PluginManager(q);
-    fileMgr = new FileManager(q);
-
-    fileMgr->load();
-    pluginMgr->load();
-
     // Default translations and styles
     addTheme(":/themes/light/base-light.qss");
     addTheme(":/themes/light/home-light.qss");
     addTheme(":/themes/light/piano-light.qss");
-
-    q->connect(q->primaryScreen(), &QScreen::logicalDotsPerInchChanged, q,
-               &LvElemApplication::q_screenRatioChanged);
 }
 
 void LvElemApplicationPrivate::deinit() {
     // Save Modules
-    pluginMgr->save();
-    fileMgr->save();
-
-    delete pluginMgr;
-    delete fileMgr;
-}
-
-bool LvElemApplicationPrivate::translate(const QString &filename) {
-    Q_Q(LvElemApplication);
-    QTranslator *t = new QTranslator(q);
-
-    if (t->load(filename)) {
-        qApp->installTranslator(t);
-        translators.insert(t);
-        q->reloadStrings();
-        return true;
-    }
-
-    delete t;
-    return false;
-}
-
-void LvElemApplicationPrivate::eliminate() {
-    for (auto it = translators.begin(); it != translators.end(); ++it) {
-        auto t = *it;
-        qApp->removeTranslator(t);
-        delete t;
-    }
-    translators.clear();
-}
-
-bool LvElemApplicationPrivate::addTheme(const QString &filename) {
-    Q_Q(LvElemApplication);
-
-    QFile file(filename);
-    if (file.open(QIODevice::ReadOnly | QIODevice::Text)) {
-        stylesheets.append(file.readAll());
-        file.close();
-        q->reloadScreen();
-        return true;
-    }
-
-    return false;
-}
-
-void LvElemApplicationPrivate::removeThemes() {
-    Q_Q(LvElemApplication);
-
-    stylesheets.clear();
-    q->reloadScreen();
 }

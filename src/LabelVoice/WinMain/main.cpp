@@ -6,6 +6,8 @@
 
 #include <shellapi.h>
 
+#include <iostream>
+
 #define _TO_UNICODE(y) L##y
 #define TO_UNICODE(x) _TO_UNICODE(x)
 
@@ -43,9 +45,34 @@ extern "C" int APIENTRY WinMain(HINSTANCE, HINSTANCE, LPSTR /*cmdParamarg*/, int
     return exitCode;
 }
 
-#endif
+// Returns the last Win32 error, in string format. Returns an empty string if there is no error.
+std::wstring GetLastErrorAsString() {
+    // Get the error message ID, if any.
+    DWORD errorMessageID = ::GetLastError();
+    if (errorMessageID == 0) {
+        return std::wstring(); // No error message has been recorded
+    }
 
-#include <iostream>
+    LPWSTR messageBuffer = nullptr;
+
+    // Ask Win32 to give us the string version of that message ID.
+    // The parameters we pass in, tell Win32 to create the buffer that holds the message for us
+    // (because we don't yet know how long the message string will be).
+    size_t size = FormatMessageW(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM |
+                                     FORMAT_MESSAGE_IGNORE_INSERTS,
+                                 NULL, errorMessageID, MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
+                                 (LPWSTR) &messageBuffer, 0, NULL);
+
+    // Copy the error message into a std::string.
+    std::wstring message(messageBuffer, size);
+
+    // Free the Win32's string's buffer.
+    LocalFree(messageBuffer);
+
+    return message;
+}
+
+#endif
 
 #ifndef DELAY_LOAD
 #include "lvstaging_global.h"
@@ -53,6 +80,10 @@ extern "C" int APIENTRY WinMain(HINSTANCE, HINSTANCE, LPSTR /*cmdParamarg*/, int
 
 int main(int argc, char *argv[]) {
 #ifdef _WIN32
+    // Record original error mode
+    UINT prevErrorMode = ::GetErrorMode();
+    ::SetErrorMode(0);
+
     // Get executable file path
     std::wstring wstr;
     wchar_t buf[MAX_PATH + 1] = {0};
@@ -88,17 +119,22 @@ int main(int argc, char *argv[]) {
     if (hDLL != NULL) {
         EntryFun fun = (EntryFun)::GetProcAddress(hDLL, "main_entry");
         if (fun != NULL) {
+            // Restore error mode
+            SetErrorMode(prevErrorMode);
+
             res = fun(argc, argv);
         } else {
             res = ::GetLastError();
-            ::MessageBoxW(nullptr, TO_UNICODE("Failed to find entry!"), TO_UNICODE("Error"),
-                          MB_OK | MB_ICONERROR);
+
+            std::wstring msg = GetLastErrorAsString();
+            ::MessageBoxW(nullptr, msg.data(), TO_UNICODE("Error"), MB_OK | MB_ICONERROR);
         }
         ::FreeLibrary(hDLL);
     } else {
         res = ::GetLastError();
-        ::MessageBoxW(nullptr, TO_UNICODE("Failed to load main module!"), TO_UNICODE("Error"),
-                      MB_OK | MB_ICONERROR);
+
+        std::wstring msg = GetLastErrorAsString();
+        ::MessageBoxW(nullptr, msg.data(), TO_UNICODE("Error"), MB_OK | MB_ICONERROR);
     }
     return res;
 #else
