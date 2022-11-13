@@ -39,6 +39,7 @@ if(WIN32)
     set(WIN32_AUTHOR_NAME "OpenVPI Team")
     set(WIN32_FILE_DESC "LabelVoice")
     set(WIN32_PRODUCT_NAME ${PROJECT_NAME})
+    set(WIN32_MANIFEST_DESC "1 24 \"xpstyle.manifest\"")
     configure_file(
         ${WIN32_EXE_RC}
         ${CMAKE_CURRENT_BINARY_DIR}/res.rc
@@ -46,6 +47,7 @@ if(WIN32)
     )
     # copy ico
     file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/win32/app.ico DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
+    file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/win32/xpstyle.manifest DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
     # add files
     target_sources(${PROJECT_NAME} PRIVATE ${CMAKE_CURRENT_BINARY_DIR}/res.rc)
 elseif(APPLE)

@@ -4,10 +4,10 @@
 #include <QFrame>
 #include <QWidget>
 
-#include "lvelem_global.h"
 #include "qsframework_macros.h"
+#include "qsintegrate_global.h"
 
-class LVELEM_API BaseContainer : public QFrame {
+class QSINTEGRATE_API BaseContainer : public QFrame {
     Q_OBJECT
 
     Q_PROPERTY(QMargins margins READ margins WRITE setMargins NOTIFY marginsChanged)

@@ -1,7 +1,7 @@
 #ifndef PROJECTWINDOWPRIVATE_H
 #define PROJECTWINDOWPRIVATE_H
 
-#include "Controls/Windows/PlainWindow_p.h"
+#include "Controls/Windows/private/PlainWindow_p.h"
 
 #include "ProjectWindow.h"
 

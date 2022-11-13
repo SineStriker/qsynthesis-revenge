@@ -6,8 +6,6 @@
 #include <Windows.h>
 #endif
 
-#define PLUGINS_DIR qApp->applicationDirPath() + "/plugins"
-
 int main(int argc, char *argv[]) {
     QApplication a(argc, argv);
 
@@ -19,7 +17,9 @@ int main(int argc, char *argv[]) {
 #ifdef Q_OS_WINDOWS
     ::SetDllDirectoryW(QString(qApp->applicationDirPath() + "/lib").toStdWString().c_str());
 #endif
-    qApp->addLibraryPath(PLUGINS_DIR);
+    qApp->addLibraryPath(qApp->applicationDirPath() + "/plugins");
+    qApp->addLibraryPath(qApp->applicationDirPath() + "/resources/modules");
+    qApp->addLibraryPath(qApp->applicationDirPath() + "/resources/plugins");
 
     MainWindow w;
     w.show();

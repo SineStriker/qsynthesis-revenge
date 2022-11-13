@@ -1,14 +1,14 @@
 #ifndef HOMEWINDOWPRIVATE_H
 #define HOMEWINDOWPRIVATE_H
 
-#include "Controls/Windows/PlainWindow_p.h"
+#include "Controls/Windows/private/PlainWindow_p.h"
 
 #include "../HomeWindow.h"
 
 #include "CTabButton.h"
 
-#include <QWidget>
 #include <QStackedWidget>
+#include <QWidget>
 
 #include "../HomeMainWidget.h"
 #include "../HomeProjConfWidget.h"

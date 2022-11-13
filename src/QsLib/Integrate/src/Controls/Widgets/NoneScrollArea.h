@@ -3,9 +3,9 @@
 
 #include <QFrame>
 
-#include "lvelem_global.h"
+#include "qsintegrate_global.h"
 
-class LVELEM_API NoneScrollArea : public QFrame {
+class QSINTEGRATE_API NoneScrollArea : public QFrame {
     Q_OBJECT
 public:
     explicit NoneScrollArea(QWidget *parent = nullptr);

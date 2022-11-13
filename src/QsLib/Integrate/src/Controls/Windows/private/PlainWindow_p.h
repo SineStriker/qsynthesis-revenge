@@ -3,12 +3,12 @@
 
 #include <QPluginLoader>
 
+#include "../PlainWindow.h"
 #include "Api/IWindowHandle.h"
-#include "PlainWindow.h"
 
-#include "lvelem_global.h"
+#include "qsintegrate_global.h"
 
-class LVELEM_API PlainWindowPrivate {
+class QSINTEGRATE_API PlainWindowPrivate {
     Q_DECLARE_PUBLIC(PlainWindow)
 public:
     PlainWindowPrivate();

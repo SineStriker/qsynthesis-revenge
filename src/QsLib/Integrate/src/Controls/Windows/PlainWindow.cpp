@@ -1,5 +1,5 @@
 #include "PlainWindow.h"
-#include "PlainWindow_p.h"
+#include "private/PlainWindow_p.h"
 
 PlainWindow::PlainWindow(QWidget *parent) : PlainWindow(*new PlainWindowPrivate(), parent) {
 }
