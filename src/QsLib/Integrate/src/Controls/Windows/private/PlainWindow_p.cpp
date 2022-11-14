@@ -1,7 +1,7 @@
 #include "PlainWindow_p.h"
 
 #include "Api/IWindowFactory.h"
-#include "Managers/PluginManager.h"
+#include "Managers/QsPluginManager.h"
 
 PlainWindowPrivate::PlainWindowPrivate() {
 }
@@ -21,7 +21,7 @@ void PlainWindowPrivate::init() {
     Q_Q(PlainWindow);
     winHandle = nullptr;
     // loader = nullptr;
-    loader = PluginManager::loadInternalPlugin(QsDistConfig::WindowFactory);
+    loader = QsPluginManager::loadInternalPlugin(QsDistConfig::WindowFactory);
     if (loader) {
         winHandle = qobject_cast<IWindowFactory *>(loader->instance())->create(q);
         winHandle->setup();

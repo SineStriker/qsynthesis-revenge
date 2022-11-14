@@ -15,8 +15,6 @@ public:
 
     void initByApp();
 
-    QList<std::function<void()>> initializers;
-
     QsDistConfig *q_ptr;
 
     bool load_helper(const QString &filename);
@@ -71,6 +69,11 @@ public:
     void setDefaultDir(int type, const QString &dir);
 
     void setDefaultPluginName(int type, const QString &dir);
+
+    void addInitializer(const std::function<void()> &fun);
+
+private:
+    QList<std::function<void()>> initializers;
 };
 
 #endif // QSDISTCONFIGPRIVATE_H

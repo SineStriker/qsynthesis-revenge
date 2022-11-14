@@ -1,24 +1,24 @@
-#ifndef FILEMANAGER_H
-#define FILEMANAGER_H
+#ifndef QSFILEMANAGER_H
+#define QSFILEMANAGER_H
 
-#include "Basic/BasicManager.h"
+#include "QsAbstractManager.h"
 
 #include "qsintegrate_global.h"
 #include "qsutils_macros.h"
 
-class FileManagerPrivate;
+class QsFileManagerPrivate;
 
-class QSINTEGRATE_API FileManager : public BasicManager {
+class QSINTEGRATE_API QsFileManager : public QsAbstractManager {
     Q_OBJECT
-    Q_DECLARE_PRIVATE(FileManager)
-    Q_SINGLETON(FileManager)
+    Q_DECLARE_PRIVATE(QsFileManager)
+    Q_SINGLETON(QsFileManager)
 public:
-    FileManager(QObject *parent = nullptr);
-    ~FileManager();
+    QsFileManager(QObject *parent = nullptr);
+    ~QsFileManager();
 
 public:
-    void load();
-    void save();
+    bool load() override;
+    bool save() override;
 
 public:
     enum RecentType { Project, Folder };
@@ -37,10 +37,10 @@ public:
                      const QString &flag, QWidget *parent = nullptr);
 
 protected:
-    FileManager(FileManagerPrivate &d, QObject *parent = nullptr);
+    QsFileManager(QsFileManagerPrivate &d, QObject *parent = nullptr);
 
 signals:
     void recentCommited(RecentType rType);
 };
 
-#endif // FILEMANAGER_H
+#endif // QSFILEMANAGER_H

@@ -59,7 +59,7 @@ QsDistConfigPrivate::~QsDistConfigPrivate() {
 }
 
 void QsDistConfigPrivate::init() {
-    this->initializers.append(std::bind(&QsDistConfigPrivate::initByApp, this));
+    addInitializer(std::bind(&QsDistConfigPrivate::initByApp, this));
 }
 
 void QsDistConfigPrivate::initByApp() {
@@ -307,4 +307,8 @@ void QsDistConfigPrivate::setDefaultPluginName(int type, const QString &dir) {
     }
     PluginInfo &info = it.value();
     info.defaultName = dir;
+}
+
+void QsDistConfigPrivate::addInitializer(const std::function<void()> &fun) {
+    this->initializers.append(fun);
 }

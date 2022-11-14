@@ -2,7 +2,7 @@
 
 #include <QDir>
 
-#include "Managers/FileManager.h"
+#include "Managers/QsFileManager.h"
 
 const char FLAG_BROWSE[] = "%BROWSE%";
 
@@ -51,7 +51,7 @@ void LabelTextBlock::clear() {
 }
 
 void LabelTextBlock::_q_browseClicked() {
-    QString path = FileManager::instance()->openDir(tr("Browse"), FLAG_BROWSE, parentWidget());
+    QString path = QsFileManager::instance()->openDir(tr("Browse"), FLAG_BROWSE, parentWidget());
     if (!path.isEmpty()) {
         text->setText(QDir::toNativeSeparators(path));
     }

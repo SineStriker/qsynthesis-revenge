@@ -80,10 +80,6 @@ std::wstring GetLastErrorAsString() {
 
 int main(int argc, char *argv[]) {
 #ifdef _WIN32
-    // Record original error mode
-    UINT prevErrorMode = ::GetErrorMode();
-    ::SetErrorMode(0);
-
     // Get executable file path
     std::wstring wstr;
     wchar_t buf[MAX_PATH + 1] = {0};
@@ -113,6 +109,10 @@ int main(int argc, char *argv[]) {
     wstr += TO_UNICODE(APP_DLL);
 
     typedef int (*EntryFun)(int, char *[]);
+
+    // Record original error mode
+    UINT prevErrorMode = ::GetErrorMode();
+    ::SetErrorMode(0);
 
     HINSTANCE hDLL = ::LoadLibraryW(wstr.data());
     int res = -1;

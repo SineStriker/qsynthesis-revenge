@@ -114,7 +114,7 @@ bool WindowManager::exit() {
     return ok;
 }
 
-WindowManager::WindowManager(WindowManagerPrivate &d, QObject *parent) : BasicManager(d, parent) {
+WindowManager::WindowManager(WindowManagerPrivate &d, QObject *parent) : QsAbstractManager(d, parent) {
     construct();
 
     d.init();
@@ -139,5 +139,5 @@ bool WindowManager::WindowManager::eventFilter(QObject *obj, QEvent *event) {
                 break;
         }
     }
-    return BasicManager::eventFilter(obj, event);
+    return QsAbstractManager::eventFilter(obj, event);
 }

@@ -48,8 +48,8 @@ void QsApplicationPrivate::init() {
     }
 
     // Init managers
-    pluginMgr = new PluginManager(q);
-    fileMgr = new FileManager(q);
+    pluginMgr = new QsPluginManager(q);
+    fileMgr = new QsFileManager(q);
 
     fileMgr->load();
     pluginMgr->load();

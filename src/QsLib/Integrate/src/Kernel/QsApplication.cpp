@@ -14,9 +14,11 @@ QsApplication::~QsApplication() {
 }
 
 void QsApplication::reloadStrings() {
+    emit stringUpdated();
 }
 
 void QsApplication::reloadScreen() {
+    emit screenUpdated();
 }
 
 QString QsApplication::mainTitle() {
@@ -43,7 +45,7 @@ QString QsApplication::deletedPrefix() {
     return tr("(Deleted)");
 }
 
-QString QsApplication::fileManagerName() {
+QString QsApplication::QsFileManagerName() {
 #ifdef Q_OS_WINDOWS
     return tr("Explorer");
 #elif defined(Q_OS_MAC)
@@ -66,7 +68,7 @@ QsApplication::QsApplication(QsApplicationPrivate &d, int &argc, char **argv)
     d.init();
 }
 
-void QsApplication::q_screenRatioChanged(qreal dpi) {
+void QsApplication::q_screenRatioChanged(double dpi) {
     Q_UNUSED(dpi)
     reloadScreen();
 }

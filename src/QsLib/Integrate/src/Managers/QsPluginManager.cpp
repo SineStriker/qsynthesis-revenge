@@ -1,12 +1,12 @@
-#include "PluginManager.h"
-#include "private/PluginManager_p.h"
+#include "QsPluginManager.h"
+#include "private/QsPluginManager_p.h"
 
 #include "Api/ICompressEngine.h"
 #include "Api/IWindowFactory.h"
 
 #include "Helpers/MathHelper.h"
 
-Q_SINGLETON_DECLARE(PluginManager)
+Q_SINGLETON_DECLARE(QsPluginManager)
 
 #ifdef Q_OS_WINDOWS
 #define ALL_FILES "*.*"
@@ -24,29 +24,33 @@ static QString toLibFile(const QString &dir, const QString &filename) {
 #endif
 }
 
-PluginManager::PluginManager(QObject *parent) : PluginManager(*new PluginManagerPrivate(), parent) {
+QsPluginManager::QsPluginManager(QObject *parent) : QsPluginManager(*new QsPluginManagerPrivate(), parent) {
 }
 
-PluginManager::~PluginManager() {
+QsPluginManager::~QsPluginManager() {
 }
 
-void PluginManager::load() {
-    Q_D(PluginManager);
+bool QsPluginManager::load() {
+    Q_D(QsPluginManager);
 
     // Avoid repeated calling
     d->unloadConverters();
 
     d->loadConverters();
+
+    return true;
 }
 
-void PluginManager::save() {
-    Q_D(PluginManager);
+bool QsPluginManager::save() {
+    Q_D(QsPluginManager);
 
     d->unloadConverters();
+
+    return true;
 }
 
-QString PluginManager::converterFilters() const {
-    Q_D(const PluginManager);
+QString QsPluginManager::converterFilters() const {
+    Q_D(const QsPluginManager);
 
     QStringList filters;
     for (auto info : qAsConst(d->converters)) {
@@ -61,8 +65,8 @@ QString PluginManager::converterFilters() const {
     return filters.join(";;");
 }
 
-ISVSConverter *PluginManager::searchConverter(const QString &suffix) const {
-    Q_D(const PluginManager);
+ISVSConverter *QsPluginManager::searchConverter(const QString &suffix) const {
+    Q_D(const QsPluginManager);
     auto it = d->converterMap.find(suffix.toLower());
     if (it == d->converterMap.end()) {
         return nullptr;
@@ -70,7 +74,7 @@ ISVSConverter *PluginManager::searchConverter(const QString &suffix) const {
     return qobject_cast<ISVSConverter *>(d->converters.at(it.value()).loader->instance());
 }
 
-QPluginLoader *PluginManager::loadInternalPlugin(QsDistConfig::InternalPlugins id) {
+QPluginLoader *QsPluginManager::loadInternalPlugin(QsDistConfig::InternalPlugins id) {
     QPluginLoader *loader = nullptr;
 
     switch (id) {
@@ -82,7 +86,7 @@ QPluginLoader *PluginManager::loadInternalPlugin(QsDistConfig::InternalPlugins i
             QString name = qAppConf->internalPlugin(id);
             loader = new QPluginLoader(toLibFile("compressengines", name));
             if (!(loader->load() && qobject_cast<ICompressEngine *>(loader->instance()))) {
-                qDebug() << QString("PluginManager: Failed to load %1.").arg(name)
+                qDebug() << QString("QsPluginManager: Failed to load %1.").arg(name)
                          << loader->errorString();
                 loader->unload();
                 delete loader;
@@ -94,7 +98,7 @@ QPluginLoader *PluginManager::loadInternalPlugin(QsDistConfig::InternalPlugins i
             QString name = qAppConf->internalPlugin(id);
             loader = new QPluginLoader(toLibFile("windowfactories", name));
             if (!(loader->load() && qobject_cast<IWindowFactory *>(loader->instance()))) {
-                qDebug() << QString("PluginManager: Failed to load %1.").arg(name)
+                qDebug() << QString("QsPluginManager: Failed to load %1.").arg(name)
                          << loader->errorString();
                 loader->unload();
                 delete loader;
@@ -109,7 +113,7 @@ QPluginLoader *PluginManager::loadInternalPlugin(QsDistConfig::InternalPlugins i
     return loader;
 }
 
-PluginManager::PluginManager(PluginManagerPrivate &d, QObject *parent) : BasicManager(d, parent) {
+QsPluginManager::QsPluginManager(QsPluginManagerPrivate &d, QObject *parent) : QsAbstractManager(d, parent) {
     construct();
     d.init();
 }

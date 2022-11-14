@@ -33,17 +33,18 @@ public:
     static QString untitledFileName();
     static QString unsavedPrefix();
     static QString deletedPrefix();
-    static QString fileManagerName();
+    static QString QsFileManagerName();
     static QString allFilesFilter();
 
 protected:
     QsApplication(QsApplicationPrivate &d, int &argc, char **argv);
 
 private:
-    void q_screenRatioChanged(qreal dpi);
+    void q_screenRatioChanged(double dpi);
 
 signals:
     void stringUpdated();
+    void screenUpdated();
 };
 
 #endif // QSELEMAPPLICATION_H

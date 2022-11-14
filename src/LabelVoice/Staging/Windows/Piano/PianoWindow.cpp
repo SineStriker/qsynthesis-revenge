@@ -3,7 +3,7 @@
 
 #include "Kernel/Events.h"
 #include "Kernel/LvApplication.h"
-#include "Managers/FileManager.h"
+#include "Managers/QsFileManager.h"
 #include "Managers/WindowManager.h"
 
 #include "Serialization/QLVProject.h"
@@ -34,11 +34,11 @@ bool PianoWindow::load() {
     LVModel::ProjectModel proj;
 
     if (!proj.load(d->filename)) {
-        FileManager::instance()->commitRecent(FileManager::Project, FileManager::Remove,
+        QsFileManager::instance()->commitRecent(QsFileManager::Project, QsFileManager::Remove,
                                               d->filename);
         return false;
     }
-    FileManager::instance()->commitRecent(FileManager::Project, FileManager::Advance, d->filename);
+    QsFileManager::instance()->commitRecent(QsFileManager::Project, QsFileManager::Advance, d->filename);
 
     // Update View
     {

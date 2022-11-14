@@ -2,7 +2,7 @@
 
 #include "LvApplication.h"
 
-#include "Managers/PluginManager.h"
+#include "Managers/QsPluginManager.h"
 #include "Managers/WindowManager.h"
 
 int main_entry(int argc, char *argv[]) {

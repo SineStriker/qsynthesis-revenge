@@ -1,7 +1,7 @@
 #ifndef WINDOWMANAGER_H
 #define WINDOWMANAGER_H
 
-#include "Basic/BasicManager.h"
+#include "Managers/QsAbstractManager.h"
 
 #include <QMainWindow>
 
@@ -13,7 +13,7 @@ class WindowManagerPrivate;
 
 #define qWindows WindowManager::instance()
 
-class WindowManager : public BasicManager {
+class WindowManager : public QsAbstractManager {
     Q_OBJECT
     Q_DECLARE_PRIVATE(WindowManager)
 

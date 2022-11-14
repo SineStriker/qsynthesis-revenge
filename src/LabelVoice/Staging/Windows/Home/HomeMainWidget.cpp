@@ -4,7 +4,7 @@
 #include "QSvgUri.h"
 
 #include "Kernel/LvApplication.h"
-#include "Managers/FileManager.h"
+#include "Managers/QsFileManager.h"
 #include "SystemHelper.h"
 
 #define DECODE_STYLE(VAR, VARIANT, TYPE)                                                           \
@@ -101,7 +101,7 @@ HomeMainWidget::HomeMainWidget(ProjectCommonBlock *block, QWidget *parent)
     connect(recentList->delegate(), &FileListItemDelegate::clicked, this,
             &HomeMainWidget::_q_recentItemClicked);
 
-    connect(FileManager::instance(), &FileManager::recentCommited, this,
+    connect(QsFileManager::instance(), &QsFileManager::recentCommited, this,
             &HomeMainWidget::_q_recentCommited);
 
     reloadRecentList();
@@ -142,11 +142,11 @@ void HomeMainWidget::reloadTemplates() {
 void HomeMainWidget::reloadRecentList() {
     recentList->clear();
 
-    QStringList files = FileManager::instance()->fetchRecent(FileManager::Project);
+    QStringList files = QsFileManager::instance()->fetchRecent(QsFileManager::Project);
     for (const QString &file : qAsConst(files)) {
         QFileInfo info(file);
         recentList->addFileItem(recentFileConfig.icon, recentFileConfig.iconSize,
-                                FileManager::Project, QDir::toNativeSeparators(info.fileName()),
+                                QsFileManager::Project, QDir::toNativeSeparators(info.fileName()),
                                 QDir::toNativeSeparators(info.absoluteFilePath()),
                                 info.lastModified().toString(DateFormat));
     }
@@ -239,7 +239,7 @@ void HomeMainWidget::_q_recentItemClicked(const QModelIndex &index, int button) 
     int type = index.data(FileListItemDelegate::Type).toInt();
     QString filename = index.data(FileListItemDelegate::Location).toString();
     if (button == Qt::LeftButton) {
-        if (type == FileManager::Project) {
+        if (type == QsFileManager::Project) {
             emit openRequested(filename);
         } else {
             // Dir handle

@@ -1,6 +1,6 @@
 #include "ProjectCommonBlock.h"
 
-#include "Managers/FileManager.h"
+#include "Managers/QsFileManager.h"
 #include "Managers/WindowManager.h"
 
 #include "Kernel/LvApplication.h"
@@ -71,7 +71,7 @@ QString ProjectCommonBlock::newProject(const TemplateConfig &config) const {
 }
 
 void ProjectCommonBlock::openProject() const {
-    QString path = FileManager::instance()->openFile(
+    QString path = QsFileManager::instance()->openFile(
         QObject::tr("Import"),
         QObject::tr("LabelVoice Files(*.lvproj);;All Files(%1)").arg(qApp->allFilesFilter()),
         FLAG_OPEN, w);

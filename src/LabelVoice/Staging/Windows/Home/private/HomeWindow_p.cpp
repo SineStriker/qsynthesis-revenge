@@ -4,7 +4,7 @@
 
 #include "Kernel/LvApplication.h"
 
-#include "Managers/FileManager.h"
+#include "Managers/QsFileManager.h"
 
 HomeWindowPrivate::HomeWindowPrivate() {
 }

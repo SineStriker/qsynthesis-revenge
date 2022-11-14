@@ -4,8 +4,8 @@
 #include "../LvElemApplication.h"
 #include "Kernel/private/QsApplication_p.h"
 
-#include "Managers/FileManager.h"
-#include "Managers/PluginManager.h"
+#include "Managers/QsFileManager.h"
+#include "Managers/QsPluginManager.h"
 
 #include "../LvDistConfig.h"
 

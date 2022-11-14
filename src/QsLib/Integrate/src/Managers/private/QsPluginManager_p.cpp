@@ -1,4 +1,4 @@
-#include "PluginManager_p.h"
+#include "QsPluginManager_p.h"
 
 #include "Api/ISVSConverter.h"
 #include "Kernel/QsDistConfig.h"
@@ -6,16 +6,16 @@
 
 #include <QDir>
 
-PluginManagerPrivate::PluginManagerPrivate() {
+QsPluginManagerPrivate::QsPluginManagerPrivate() {
 }
 
-PluginManagerPrivate::~PluginManagerPrivate() {
+QsPluginManagerPrivate::~QsPluginManagerPrivate() {
 }
 
-void PluginManagerPrivate::init() {
+void QsPluginManagerPrivate::init() {
 }
 
-void PluginManagerPrivate::loadConverters() {
+void QsPluginManagerPrivate::loadConverters() {
     QDir dir(qAppConf->appDir(QsDistConfig::BuiltIn) + "/svsconverters");
     if (!dir.exists()) {
         return;
@@ -51,7 +51,7 @@ void PluginManagerPrivate::loadConverters() {
     }
 }
 
-void PluginManagerPrivate::unloadConverters() {
+void QsPluginManagerPrivate::unloadConverters() {
     if (converters.isEmpty()) {
         return;
     }

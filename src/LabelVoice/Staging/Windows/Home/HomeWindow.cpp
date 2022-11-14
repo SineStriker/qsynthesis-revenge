@@ -5,8 +5,8 @@
 #include "QSvgUri.h"
 
 #include "Kernel/LvApplication.h"
-#include "Managers/FileManager.h"
-#include "Managers/PluginManager.h"
+#include "Managers/QsFileManager.h"
+#include "Managers/QsPluginManager.h"
 #include "Managers/WindowManager.h"
 
 #include "HomeMainWidget.h"

@@ -15,7 +15,7 @@ LvDistConfigPrivate::~LvDistConfigPrivate() {
 }
 
 void LvDistConfigPrivate::init() {
-    this->initializers.append(std::bind(&LvDistConfigPrivate::initByApp, this));
+    addInitializer(std::bind(&LvDistConfigPrivate::initByApp, this));
 }
 
 void LvDistConfigPrivate::initByApp() {

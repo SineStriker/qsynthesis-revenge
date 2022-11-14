@@ -4,8 +4,8 @@
 #include "../QsApplication.h"
 #include "Private/CApplication_p.h"
 
-#include "Managers/FileManager.h"
-#include "Managers/PluginManager.h"
+#include "Managers/QsFileManager.h"
+#include "Managers/QsPluginManager.h"
 
 #include "../QsDistConfig.h"
 
@@ -20,8 +20,8 @@ public:
 
     QScopedPointer<QsDistConfig> conf;
 
-    PluginManager *pluginMgr;
-    FileManager *fileMgr;
+    QsPluginManager *pluginMgr;
+    QsFileManager *fileMgr;
 
     // Translators
     bool translate(const QString &filename);
