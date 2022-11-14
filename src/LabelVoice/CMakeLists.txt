@@ -3,6 +3,8 @@ project(LabelVoice
     VERSION ${APP_VERSION_VERBOSE}
 )
 
+include(Template.cmake)
+
 # Set global variable for current project
 set(INNER_PROJECT ${PROJECT_NAME})
 set(INNER_VERSION ${PROJECT_VERSION})

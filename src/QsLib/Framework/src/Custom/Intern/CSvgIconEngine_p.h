@@ -5,9 +5,7 @@
 
 #include <QSvgRenderer>
 
-#include "qsframework_global.h"
-
-class QSFRAMEWORK_API CSvgIconEnginePrivate : public QSharedData {
+class CSvgIconEnginePrivate : public QSharedData {
 public:
     CSvgIconEnginePrivate();
     ~CSvgIconEnginePrivate();

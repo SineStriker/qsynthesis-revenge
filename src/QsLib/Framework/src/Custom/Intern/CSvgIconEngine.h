@@ -7,7 +7,7 @@
 
 class CSvgIconEnginePrivate;
 
-class QSFRAMEWORK_API CSvgIconEngine : public QIconEngine {
+class CSvgIconEngine : public QIconEngine {
 public:
     CSvgIconEngine();
     CSvgIconEngine(const CSvgIconEngine &other);

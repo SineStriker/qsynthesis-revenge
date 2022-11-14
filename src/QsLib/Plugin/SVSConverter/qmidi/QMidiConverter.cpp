@@ -3,7 +3,7 @@
 #include "QMidiFile.h"
 
 #include "Utau/Config/UtaConstants.h"
-#include "Utau/QUtaUtils.h"
+#include "Utau/Utils/QUtaUtils.h"
 
 QMidiConverter::QMidiConverter(QObject *parent) : ISVSConverter(parent) {
 }

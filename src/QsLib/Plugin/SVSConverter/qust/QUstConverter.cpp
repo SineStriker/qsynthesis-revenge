@@ -1,7 +1,7 @@
 #include "QUstConverter.h"
 
 #include "Utau/QUstFile.h"
-#include "Utau/QUtaUtils.h"
+#include "Utau/Utils/QUtaUtils.h"
 
 #include <QTextCodec>
 

@@ -1,36 +1,7 @@
-include(${PROJECT_MODULES_DIR}/Find.cmake)
-
-macro(add_files _src)
-    set(options CLEAR CURRENT)
-    set(oneValueArgs)
-    set(multiValueArgs DIRECTORIES)
-    cmake_parse_arguments(FUNC "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
-
-    set(_temp_src)
-
-    if(FUNC_CLEAR)
-        set(${_src})
-    endif()
-    if(FUNC_CURRENT)
-        file(GLOB _temp_src ${CMAKE_CURRENT_SOURCE_DIR}/*.h ${CMAKE_CURRENT_SOURCE_DIR}/*.hpp
-             ${CMAKE_CURRENT_SOURCE_DIR}/*.cpp ${CMAKE_CURRENT_SOURCE_DIR}/*.cc
-        )
-    endif()
-    foreach(_dir ${FUNC_DIRECTORIES})
-        set(_temp)
-        file(GLOB_RECURSE _temp ${_dir}/*.h ${_dir}/*.cpp)
-        list(APPEND _temp_src ${_temp})
-        unset(_temp)
-    endforeach()
-    list(APPEND ${_src} ${_temp_src})
-
-    unset(_temp_src)
-endmacro()
-
 macro(add_test_target _target)
     set(options WIN32_EXE INCLUDE_CURRENT)
     set(oneValueArgs VERSION CXX_STANDARD)
-    set(multiValueArgs SOURCES QT_LIBRARIES QT_PRIVATE_INCLUDES LIBRARIES INCLUDE_DIRS)
+    set(multiValueArgs SOURCES QT_LIBRARIES QT_PRIVATE_INCLUDES LINKS INCLUDES)
     cmake_parse_arguments(FUNC "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
 
     # Parse vars
@@ -55,7 +26,7 @@ macro(add_test_target _target)
         set(_cxx_standard ${FUNC_CXX_STANDARD})
     endif()
 
-    # Add template
+    # ----------------- Template Begin -----------------
     project(${_target} VERSION ${_version} LANGUAGES CXX)
 
     set(CMAKE_AUTOUIC ON)
@@ -67,21 +38,11 @@ macro(add_test_target _target)
 
     add_executable(${_target} ${FUNC_SOURCES})
 
-    foreach(_lib ${_qt_libs})
-        target_link_libraries(${_target} PRIVATE ${_lib})
-    endforeach()
+    target_link_libraries(${_target} PRIVATE ${_qt_libs})
+    target_link_libraries(${_target} PRIVATE ${FUNC_LINKS})
 
-    foreach(_lib ${FUNC_LIBRARIES})
-        target_link_libraries(${_target} PRIVATE ${_lib})
-    endforeach()
-
-    foreach(_inc ${_qt_incs})
-        target_include_directories(${_target} PRIVATE ${_inc})
-    endforeach()
-
-    foreach(_inc ${FUNC_INCLUDE_DIRS})
-        target_include_directories(${_target} PRIVATE ${_inc})
-    endforeach()
+    target_include_directories(${_target} PRIVATE ${_qt_incs})
+    target_include_directories(${_target} PRIVATE ${FUNC_INCLUDES})
 
     if(FUNC_INCLUDE_CURRENT)
         target_include_directories(${_target} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
@@ -90,6 +51,8 @@ macro(add_test_target _target)
     if(FUNC_WIN32_EXE)
         set_target_properties(${_target} PROPERTIES WIN32_EXECUTABLE TRUE)
     endif()
+
+    # ----------------- Template End -----------------
 
     # Unset temp vars
     unset(_qt_libs)

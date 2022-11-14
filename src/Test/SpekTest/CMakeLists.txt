@@ -1,12 +1,13 @@
 add_files(_src
     CURRENT
+    PATTERNS *.h *.hpp *.cpp *.cc
 )
 
 add_test_target(SpekTest
     VERSION 0.0.1.2
     SOURCES ${_src}
     QT_LIBRARIES Widgets
-    LIBRARIES QsMedia
+    LINKS QsMedia
     INCLUDE_CURRENT
 )
 

@@ -3,59 +3,21 @@ project(NativeWindow
     LANGUAGES CXX
 )
 
-# Qt Auto Compiler
-set(CMAKE_AUTOUIC ON)
-set(CMAKE_AUTOMOC ON)
-set(CMAKE_AUTORCC ON)
-
-# Add source files
-set(QT_LIBS)
-set(SOURCES)
-
-find_package(QT NAMES Qt6 Qt5 COMPONENTS Widgets REQUIRED)
-find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Widgets REQUIRED)
-list(APPEND QT_LIBS Qt${QT_VERSION_MAJOR}::Widgets)
-
-file(GLOB _root_src ${CMAKE_CURRENT_SOURCE_DIR}/*.h ${CMAKE_CURRENT_SOURCE_DIR}/*.cpp)
-list(APPEND SOURCES ${_root_src})
-
-set(_main_dirs Widgets)
-foreach(_dir ${_main_dirs})
-    set(_temp)
-    file(GLOB_RECURSE _temp ${_dir}/*.h ${_dir}/*.cpp)
-    list(APPEND SOURCES ${_temp})
-    unset(_temp)
-endforeach()
-
-# Add library
-add_library(${PROJECT_NAME} SHARED ${SOURCES})
-
-# Link libraries
-target_link_libraries(${PROJECT_NAME} PUBLIC ${QT_LIBS})
-target_link_libraries(${PROJECT_NAME} PUBLIC QsFramework)
-target_link_libraries(${PROJECT_NAME} PRIVATE FramelessHelper::FramelessHelperWidgets)
-
-# Include directories
-target_include_directories(${PROJECT_NAME} PUBLIC
-    ${CMAKE_CURRENT_SOURCE_DIR}
+add_files(_src
+    CURRENT
+    DIRECTORIES Widgets
+    PATTERNS *.h *.hpp *.cpp *.cc
 )
 
-# Add embedded resources
-if (WIN32)
-    # Specify your plugin metadata
-    set(WIN32_EXPORT_NAME ${PROJECT_NAME})
-    set(WIN32_COPYRIGHT_START_YEAR "${TIME_PROJECT_START_YEAR}")
-    set(WIN32_COPYRIGHT_END_YEAR "${TIME_CURRENT_YEAR}")
-    set(WIN32_AUTHOR_NAME "Sine Striker")
-    set(WIN32_FILE_DESC "QSynthesis Plugin for Window Handler")
-    set(WIN32_PRODUCT_NAME ${PROJECT_NAME})
-    configure_file(
-        ${WIN32_DLL_RC}
-        ${CMAKE_CURRENT_BINARY_DIR}/res.rc
-        @ONLY
-    )
-    target_sources(${PROJECT_NAME} PRIVATE ${CMAKE_CURRENT_BINARY_DIR}/res.rc)
-endif()
+configure_plugin(
+    SOURCES ${_src}
+    QT_LIBRARIES Widgets
+    LINKS QsFramework
+    INCLUDE_CURRENT
+    WIN32_AUTHOR_NAME "Sine Striker"
+    WIN32_FILE_DESC "QSynthesis Plugin for Window Decoration"
+)
 
-# Add task to copy to plugins dir after build
+target_link_libraries(${PROJECT_NAME} PRIVATE FramelessHelper::FramelessHelperWidgets)
+
 settle_plugin(${PROJECT_NAME} windowfactories)
