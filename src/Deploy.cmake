@@ -64,8 +64,6 @@ string(TOLOWER ${CMAKE_SYSTEM_PROCESSOR} SYSTEM_ARCH_LOWER)
 set(_release_name ${PROJECT_NAME_LOWER}-${SYSTEM_NAME_LOWER}-${SYSTEM_ARCH_LOWER}-${APP_VERSION_VERBOSE})
 
 set(_deploy_dir ${PROJECT_RELEASE_DIR}/${_release_name})
-set(_vcpkg_triplet_dir "${CMAKE_CURRENT_SOURCE_DIR}/../vcpkg/installed/${VCPKG_TARGET_TRIPLET}")
-
 set(_libs_dir ${_deploy_dir}/${APP_LIB_DIR})
 set(_plugins_dir ${_deploy_dir}/${APP_PLUGINS_DIR})
 set(_res_dir ${_deploy_dir}/${APP_RES_DIR})
@@ -169,7 +167,7 @@ endforeach()
 
 # Deploy imported libraries
 if(WIN32)
-    file(GLOB _dlls ${_vcpkg_triplet_dir}/bin/*.dll)
+    file(GLOB _dlls ${VCPKG_BINARY_DIR}/bin/*.dll)
 
     foreach(_dll ${_dlls})
         get_filename_component(_name ${_dll} NAME)
