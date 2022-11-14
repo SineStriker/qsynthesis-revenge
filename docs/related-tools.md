@@ -1,15 +1,14 @@
-# Synthesizing Tools
-
-Open-source resamplers and wavtools for UTAU, which are useful for QSynthesis on Mac OS and Linux.
+# Related Tools
 
 ## Resamplers
+
+Open-source resamplers and wavtools for UTAU, which are useful for QSynthesis on Mac OS and Linux.
 
 ### Macres
 
 It's a fork of resampler `tn_fnds`.
 
 Source: https://github.com/titinko/macres
-
 
 ### World4-UTAU
 
@@ -55,3 +54,29 @@ Source: https://github.com/m13253/wavtool-yawu
 + Source: https://github.com/Luk3M/world4utau
 + License: GPL v3
 + Owner: Luk3M
+
+
+## Converters
+
+Project file converters ported from OpenSVIP, and the corresponding libraries used.
+
+### Midi
+
+#### Dependencies
++ [QMidi](https://github.com/waddlesplash/QMidi)
+    + MIT License
+
+#### Contributes
++ Parse SMF files
+
+### Ustx
+
+#### Dependencies
++ [yaml-cpp](https://github.com/jbeder/yaml-cpp)
+    + MIT License
+
++ [OpenUtau](https://github.com/stakira/OpenUtau)
+    + MIT License
+
+#### Contributes
++ Parse OpenUtau files

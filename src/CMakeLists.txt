@@ -58,12 +58,6 @@ set(VCPKG_APPLOCAL_DEPS off)
 set(VCPKG_BINARY_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../vcpkg/installed/${VCPKG_TARGET_TRIPLET}")
 include(${CMAKE_CURRENT_SOURCE_DIR}/../vcpkg/scripts/buildsystems/vcpkg.cmake)
 
-# Copy pre-built libraries
-if(WIN32)
-    file(GLOB _dlls ${VCPKG_BINARY_DIR}/bin/*.dll)
-    file(COPY ${_dlls} DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
-endif()
-
 # Import utils
 include(${PROJECT_MODULES_DIR}/Basic.cmake)
 include(${PROJECT_MODULES_DIR}/FindUtil.cmake)
@@ -91,6 +85,8 @@ endif()
 if(BUILD_TEST)
     add_subdirectory(Test)
 endif()
+
+include(Dep.cmake)
 
 if(APP_DEPLOY)
     include(Deploy.cmake)

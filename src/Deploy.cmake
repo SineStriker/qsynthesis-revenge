@@ -151,6 +151,19 @@ endforeach()
 
 # Deploy libraries
 foreach(_lib ${_lv_libs} ${_qs_libs} ${_other_libs})
+    # Set output dir to APP_LIB_DIR
+    if(WIN32)
+        set_target_properties(
+            ${_lib} PROPERTIES RUNTIME_OUTPUT_DIRECTORY
+            ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${APP_LIB_DIR}
+        )
+    else()
+        set_target_properties(
+            ${_lib} PROPERTIES LIBRARY_OUTPUT_DIRECTORY
+            ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${APP_LIB_DIR}
+        )
+    endif()
+
     add_custom_command(
         TARGET deploy
         COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:${_lib}> ${_libs_dir}
