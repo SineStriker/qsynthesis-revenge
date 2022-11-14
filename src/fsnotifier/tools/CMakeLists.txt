@@ -8,3 +8,10 @@ elseif(APPLE)
 else()
     message(FATAL_ERROR "Unsupported System !!!")
 endif()
+
+set_target_properties(
+    fsnotifier
+    PROPERTIES
+    TC_TARGET_TYPE EXECUTABLE
+    TC_EXECUTABLE_TYPE Tool
+)

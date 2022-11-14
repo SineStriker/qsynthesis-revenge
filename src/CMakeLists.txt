@@ -85,47 +85,6 @@ if(BUILD_TEST)
     add_subdirectory(Test)
 endif()
 
-# Add deploy target
 if(APP_DEPLOY)
-    message(STATUS "[INFO] Deployment mode, virtual target is added")
-
-    if(NOT WIN32)
-        message(FATAL_ERROR "Deployment mode is only implemented on Windows!")
-    endif()
-
-    string(TOLOWER ${MAIN_TARGET} PROJECT_NAME_LOWER)
-    string(TOLOWER ${CMAKE_SYSTEM_NAME} SYSTEM_NAME_LOWER)
-    string(TOLOWER ${CMAKE_SYSTEM_PROCESSOR} SYSTEM_ARCH_LOWER)
-
-    set(RELEASE_DIRNAME ${PROJECT_NAME_LOWER}-${SYSTEM_NAME_LOWER}-${SYSTEM_ARCH_LOWER}-${APP_VERSION_VERBOSE})
-    set(APP_DEPLOY_DIR ${PROJECT_RELEASE_DIR}/${RELEASE_DIRNAME})
-
-    set(FSNOTIFIER_TARGET fsnotifier)
-
-    add_custom_target(
-        deploy
-        DEPENDS all
-        COMMAND ${CMAKE_COMMAND} -E rm -rf ${APP_DEPLOY_DIR}
-        COMMAND ${CMAKE_COMMAND} -E make_directory ${APP_DEPLOY_DIR}
-
-        # Copy lib dir
-        COMMAND ${CMAKE_COMMAND} -E copy_directory $<TARGET_FILE_DIR:${MAIN_TARGET}>/${APP_LIB_DIR}
-        ${APP_DEPLOY_DIR}/${APP_LIB_DIR}
-
-        # Copy plugins dir
-        COMMAND ${CMAKE_COMMAND} -E copy_directory $<TARGET_FILE_DIR:${MAIN_TARGET}>/${APP_PLUGINS_DIR}
-        ${APP_DEPLOY_DIR}/${APP_PLUGINS_DIR}
-
-        # Copy res dir
-        COMMAND ${CMAKE_COMMAND} -E copy_directory $<TARGET_FILE_DIR:${MAIN_TARGET}>/${APP_RES_DIR}
-        ${APP_DEPLOY_DIR}/${APP_RES_DIR}
-
-        # Copy docs dir
-        COMMAND ${CMAKE_COMMAND} -E copy_directory ${PROJECT_DOCUMENT_DIR} ${APP_DEPLOY_DIR}/${APP_RES_DIR}/docs
-
-        # Copy license
-        COMMAND ${CMAKE_COMMAND} -E copy ${PROJECT_LICENSE_FILE} ${APP_DEPLOY_DIR}/${APP_RES_DIR}/docs
-        COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:${MAIN_TARGET}> ${APP_DEPLOY_DIR}
-        COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:${FSNOTIFIER_TARGET}> ${APP_DEPLOY_DIR}
-    )
+    include(Deploy.cmake)
 endif()

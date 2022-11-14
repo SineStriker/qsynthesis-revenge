@@ -18,25 +18,28 @@ set(CMAKE_AUTORCC ON)
 # ------------------------------ Configure Target Begin ------------------------------
 
 # Add source files
-set(QT_LIBS)
-set(SOURCES)
+set(_qt_libs)
+set(_sources)
 
 find_package(QT NAMES Qt6 Qt5 COMPONENTS Core REQUIRED)
 find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Core REQUIRED)
-list(APPEND QT_LIBS Qt${QT_VERSION_MAJOR}::Core)
+list(APPEND _qt_libs Qt${QT_VERSION_MAJOR}::Core)
 
 file(GLOB_RECURSE _internal_src 
     ${CMAKE_CURRENT_SOURCE_DIR}/include/*.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/include/*.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/*.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp)
-list(APPEND SOURCES ${_internal_src})
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp
+)
+
+list(APPEND _sources ${_internal_src})
 
 # Add library
 if (FSNOTIFIER_BUILD_STATIC)
-    add_library(${PROJECT_NAME} STATIC ${SOURCES})
+    add_library(${PROJECT_NAME} STATIC ${_sources})
     target_compile_definitions(${PROJECT_NAME} PUBLIC FSNOTIFIER_STATIC)
 else()
-    add_library(${PROJECT_NAME} SHARED ${SOURCES})
+    add_library(${PROJECT_NAME} SHARED ${_sources})
 endif()
 
 target_compile_definitions(${PROJECT_NAME} PRIVATE FSNOTIFIER_LIBRARY)
@@ -47,7 +50,7 @@ set_target_properties(${PROJECT_NAME} PROPERTIES
 )
 
 # Link libraries
-target_link_libraries(${PROJECT_NAME} PUBLIC ${QT_LIBS})
+target_link_libraries(${PROJECT_NAME} PUBLIC ${_qt_libs})
 
 # Include directories
 target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
@@ -67,6 +70,13 @@ if (WIN32)
     )
     target_sources(${PROJECT_NAME} PRIVATE ${CMAKE_CURRENT_BINARY_DIR}/res.rc)
 endif()
+
+set_target_properties(
+    ${_target}
+    PROPERTIES
+    TC_TARGET_TYPE LIBRARY
+    TC_LIBRARY_TYPE Tool
+)
 
 # ------------------------------ Configure Target End ------------------------------
 

@@ -1,5 +1,5 @@
 # Only link public libraries
-macro(configure_lv_mod)
+macro(lvmod_configure_library)
     set(options INCLUDE_CURRENT ENABLE_SHARED)
     set(oneValueArgs WIN32_FILE_DESC WIN32_PRODUCT_NAME)
     set(multiValueArgs SOURCES QT_LIBRARIES QT_PRIVATE_INCLUDES LINKS INCLUDES)
@@ -24,6 +24,9 @@ macro(configure_lv_mod)
     set(CMAKE_AUTOUIC ON)
     set(CMAKE_AUTOMOC ON)
     set(CMAKE_AUTORCC ON)
+    
+    add_qt_module(_qt_libs ${FUNC_QT_LIBRARIES})
+    add_qt_private_inc(_qt_incs ${FUNC_QT_PRIVATE_INCLUDES})
 
     # Add library
     if(${_prefix}_BUILD_STATIC)
@@ -38,11 +41,9 @@ macro(configure_lv_mod)
     # Set library properties
     set_target_properties(${_target} PROPERTIES OUTPUT_NAME ${_lower}-qt${QT_VERSION_MAJOR})
 
-    add_qt_module(_qt_libs ${FUNC_QT_LIBRARIES})
     target_link_libraries(${_target} PUBLIC ${_qt_libs})
     target_link_libraries(${_target} PUBLIC ${FUNC_LINKS})
 
-    add_qt_private_inc(_qt_incs ${FUNC_QT_PRIVATE_INCLUDES})
     target_include_directories(${_target} PRIVATE ${_qt_incs})
     target_include_directories(${_target} PUBLIC ${FUNC_INCLUDES})
 
@@ -66,6 +67,13 @@ macro(configure_lv_mod)
         )
         target_sources(${_target} PRIVATE ${CMAKE_CURRENT_BINARY_DIR}/res.rc)
     endif()
+
+    set_target_properties(
+        ${_target}
+        PROPERTIES
+        TC_TARGET_TYPE LIBRARY
+        TC_LIBRARY_TYPE LabelVoice
+    )
 
     # ----------------- Template End -----------------
 

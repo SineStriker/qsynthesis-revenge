@@ -1,5 +1,5 @@
 # Only link public libraries
-macro(configure_qs_lib)
+macro(qslib_configure_library)
     set(options INCLUDE_CURRENT ENABLE_SHARED)
     set(oneValueArgs WIN32_FILE_DESC WIN32_PRODUCT_NAME)
     set(multiValueArgs SOURCES QT_LIBRARIES QT_PRIVATE_INCLUDES LINKS INCLUDES)
@@ -62,6 +62,13 @@ macro(configure_qs_lib)
         )
         target_sources(${_target} PRIVATE ${CMAKE_CURRENT_BINARY_DIR}/res.rc)
     endif()
+
+    set_target_properties(
+        ${_target}
+        PROPERTIES
+        TC_TARGET_TYPE LIBRARY
+        TC_LIBRARY_TYPE QSynthesis
+    )
 
     # ----------------- Template End -----------------
 

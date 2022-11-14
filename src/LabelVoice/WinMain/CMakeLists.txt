@@ -3,7 +3,6 @@ project(${INNER_PROJECT}
     VERSION ${INNER_VERSION}
 )
 
-
 # ------------------------------ Configure Target Begin ------------------------------
 
 # Add executable
@@ -17,14 +16,12 @@ if(APP_DEPLOY OR NOT DEFINED NOT_QT_CREATOR)
 endif()
 
 # Add definitions
-if (WIN32 AND APP_DEPLOY)
-    get_target_property(_dll_name LvStaging OUTPUT_NAME)
+if(WIN32 AND APP_DEPLOY)
+    add_dependencies(${PROJECT_NAME} LvStaging)
     target_compile_definitions(${PROJECT_NAME} PRIVATE DELAY_LOAD)
-    if (MSVC)
-        target_compile_definitions(${PROJECT_NAME} PRIVATE APP_DLL="${_dll_name}.dll")
-    else()
-        target_compile_definitions(${PROJECT_NAME} PRIVATE APP_DLL="lib${_dll_name}.dll")
-    endif()
+    target_compile_definitions(${PROJECT_NAME} PRIVATE APP_DLL="$<TARGET_FILE_NAME:LvStaging>")
+else()
+    target_link_libraries(${PROJECT_NAME} PRIVATE LvStaging)
 endif()
 
 target_compile_definitions(${PROJECT_NAME} PRIVATE APP_LIB_DIR="${APP_LIB_DIR}")
@@ -45,15 +42,20 @@ if(WIN32)
         ${CMAKE_CURRENT_BINARY_DIR}/res.rc
         @ONLY
     )
+
     # copy ico
     file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/win32/app.ico DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
     file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/win32/xpstyle.manifest DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
+
     # add files
-    target_sources(${PROJECT_NAME} PRIVATE ${CMAKE_CURRENT_BINARY_DIR}/res.rc)
+    target_sources(${PROJECT_NAME} PRIVATE
+        ${CMAKE_CURRENT_BINARY_DIR}/res.rc
+        # ${CMAKE_CURRENT_BINARY_DIR}/xpstyle.manifest
+    )
 elseif(APPLE)
     # copy files
     get_filename_component(MACOSX_BUNDLE_PLIST_FILENAME ${MACOSX_BUNDLE_PLIST} NAME)
-    
+
     file(COPY ${MACOSX_BUNDLE_PLIST} DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
     file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/mac/qsynth2.icns DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
 
@@ -72,11 +74,11 @@ elseif(APPLE)
     )
 endif()
 
-# Link libraries
-if (APP_DEPLOY)
-    add_dependencies(${PROJECT_NAME} LvStaging)
-else()
-    target_link_libraries(${PROJECT_NAME} PRIVATE LvStaging)
-endif()
+set_target_properties(
+    ${PROJECT_NAME}
+    PROPERTIES
+    TC_TARGET_TYPE EXECUTABLE
+    TC_EXECUTABLE_TYPE Main
+)
 
 # ------------------------------ Configure Target End ------------------------------

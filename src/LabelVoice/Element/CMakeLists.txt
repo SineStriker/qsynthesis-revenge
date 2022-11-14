@@ -9,7 +9,7 @@ add_files(_src
     PATTERNS *.h *.hpp *.cpp *.cc
 )
 
-configure_lv_mod(
+lvmod_configure_library(
     SOURCES ${_src}
     ENABLE_SHARED
     QT_LIBRARIES Widgets Svg

@@ -152,7 +152,7 @@ bool QsDistConfigPrivate::load_helper(const QString &filename) {
             if (it3 == obj.end() || !it3.value().isString()) {
                 continue;
             }
-            info.dir = parse(it3.value().toString());
+            info.dir = parse(QDir::fromNativeSeparators(it3.value().toString()));
         }
     }
 

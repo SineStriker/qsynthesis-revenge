@@ -8,7 +8,7 @@ add_files(_src
     PATTERNS *.h *.hpp *.cpp *.cc
 )
 
-configure_qs_lib(
+qslib_configure_library(
     SOURCES ${_src}
     ENABLE_SHARED
     QT_LIBRARIES Core

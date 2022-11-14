@@ -3,14 +3,22 @@ macro(settle_plugin _target _category)
     if(WIN32)
         set_target_properties(
             ${_target} PROPERTIES RUNTIME_OUTPUT_DIRECTORY
-                                  ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${INNER_PLUGIN_DIR}/${_category}
+            ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${INNER_PLUGIN_DIR}/${_category}
         )
     else()
         set_target_properties(
             ${_target} PROPERTIES LIBRARY_OUTPUT_DIRECTORY
-                                  ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${INNER_PLUGIN_DIR}/${_category}
+            ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${INNER_PLUGIN_DIR}/${_category}
         )
     endif()
+
+    set_target_properties(
+        ${_target}
+        PROPERTIES
+        TC_TARGET_TYPE PLUGIN
+        TC_PLUGIN_TYPE LabelVoice
+        TC_PLUGIN_CATEGORY ${_category}
+    )
 endmacro()
 
 # Only link public libraries
@@ -26,19 +34,19 @@ macro(configure_plugin)
     set(_target ${PROJECT_NAME})
 
     # ----------------- Template Begin -----------------
-
     set(CMAKE_AUTOUIC ON)
     set(CMAKE_AUTOMOC ON)
     set(CMAKE_AUTORCC ON)
+    
+    add_qt_module(_qt_libs ${FUNC_QT_LIBRARIES})
+    add_qt_private_inc(_qt_incs ${FUNC_QT_PRIVATE_INCLUDES})
 
     # Add library
     add_library(${_target} SHARED ${FUNC_SOURCES})
 
-    add_qt_module(_qt_libs ${FUNC_QT_LIBRARIES})
     target_link_libraries(${_target} PUBLIC ${_qt_libs})
     target_link_libraries(${_target} PUBLIC ${FUNC_LINKS})
 
-    add_qt_private_inc(_qt_incs ${FUNC_QT_PRIVATE_INCLUDES})
     target_include_directories(${_target} PRIVATE ${_qt_incs})
     target_include_directories(${_target} PUBLIC ${FUNC_INCLUDES})
 

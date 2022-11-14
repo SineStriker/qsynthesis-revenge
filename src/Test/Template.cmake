@@ -10,14 +10,6 @@ macro(add_test_target _target)
     set(_version 0.0.1.1)
     set(_cxx_standard 17)
 
-    foreach(_lib ${FUNC_QT_LIBRARIES})
-        add_qt_module(_qt_libs ${_lib})
-    endforeach()
-
-    foreach(_inc ${FUNC_QT_PRIVATE_INCLUDES})
-        add_qt_private_inc(_qt_incs ${_inc})
-    endforeach()
-
     if(FUNC_VERSION)
         set(_version ${FUNC_VERSION})
     endif()
@@ -35,6 +27,9 @@ macro(add_test_target _target)
 
     set(CMAKE_CXX_STANDARD ${CXX_STANDARD})
     set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+    add_qt_module(_qt_libs ${FUNC_QT_LIBRARIES})
+    add_qt_private_inc(_qt_incs ${FUNC_QT_PRIVATE_INCLUDES})
 
     add_executable(${_target} ${FUNC_SOURCES})
 
