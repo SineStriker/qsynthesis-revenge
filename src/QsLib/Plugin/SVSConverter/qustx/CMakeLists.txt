@@ -19,5 +19,3 @@ configure_plugin(
 )
 
 target_link_libraries(${PROJECT_NAME} PRIVATE yaml-cpp)
-
-settle_plugin(${PROJECT_NAME} svsconverters)

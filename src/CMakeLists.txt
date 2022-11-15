@@ -71,7 +71,7 @@ endif()
 add_subdirectory(QsLib)
 
 if(NOT BUILD_SVS_PLUGINS_ONLY)
-    add_subdirectory(fsnotifier)
+    add_subdirectory(Utilities)
     add_subdirectory(${MAIN_TARGET})
 endif()
 
@@ -96,7 +96,7 @@ endif()
 
 unset(_suffix)
 
-include(Dep.cmake)
+include(Deps.cmake)
 
 if(APP_DEPLOY)
     include(Deploy.cmake)

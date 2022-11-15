@@ -1,8 +1,8 @@
 include(${PROJECT_MODULES_DIR}/Deploy.cmake)
 
-set(_lv_plugins)
+set(_app_plugins)
 set(_qs_plugins)
-set(_lv_libs)
+set(_app_libs)
 set(_qs_libs)
 set(_other_libs)
 set(_main_exes)
@@ -25,9 +25,9 @@ foreach(_target ${_all_targets})
     if(${_target_type} STREQUAL PLUGIN)
         get_target_property(_plugin_type ${_target} TC_PLUGIN_TYPE)
 
-        if(${_plugin_type} STREQUAL LabelVoice)
-            list(APPEND _lv_plugins ${_target})
-        elseif(${_plugin_type} STREQUAL QSynthesis)
+        if(${_plugin_type} STREQUAL ${MAIN_TARGET})
+            list(APPEND _app_plugins ${_target})
+        elseif(${_plugin_type} STREQUAL QsLib)
             list(APPEND _qs_plugins ${_target})
         endif()
 
@@ -35,7 +35,7 @@ foreach(_target ${_all_targets})
         get_target_property(_lib_type ${_target} TC_LIBRARY_TYPE)
 
         if(${_lib_type} STREQUAL LabelVoice)
-            list(APPEND _lv_libs ${_target})
+            list(APPEND _app_libs ${_target})
         elseif(${_lib_type} STREQUAL QSynthesis)
             list(APPEND _qs_libs ${_target})
         else()
@@ -122,7 +122,7 @@ add_custom_command(
 )
 
 # Deploy lv plugins
-foreach(_plugin ${_lv_plugins})
+foreach(_plugin ${_app_plugins})
     get_target_property(_category ${_plugin} TC_PLUGIN_CATEGORY)
 
     if(${_category} STREQUAL "_category-NOTFOUND")
@@ -156,7 +156,7 @@ foreach(_plugin ${_qs_plugins})
 endforeach()
 
 # Deploy libraries
-foreach(_lib ${_lv_libs} ${_qs_libs} ${_other_libs})
+foreach(_lib ${_app_libs} ${_qs_libs} ${_other_libs})
     # Set output dir to APP_LIB_DIR
     if(WIN32)
         set_target_properties(

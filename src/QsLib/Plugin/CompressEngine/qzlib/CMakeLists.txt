@@ -18,5 +18,3 @@ configure_plugin(
 )
 
 target_link_libraries(${PROJECT_NAME} PRIVATE QuaZip::QuaZip)
-
-settle_plugin(${PROJECT_NAME} compressengines)

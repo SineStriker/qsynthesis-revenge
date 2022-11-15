@@ -1,3 +1,5 @@
+set(CURRENT_PLUGIN_CATEGORY svsconverters)
+
 add_subdirectory(qmidi)
 
 add_subdirectory(qsvip)

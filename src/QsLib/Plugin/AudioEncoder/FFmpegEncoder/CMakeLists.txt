@@ -18,5 +18,3 @@ configure_plugin(
 )
 
 ffmpeg_link_libraries(${PROJECT_NAME} PRIVATE avcodec avformat avutil swresample)
-
-settle_plugin(${PROJECT_NAME} audioencoders)

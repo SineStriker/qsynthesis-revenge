@@ -16,5 +16,3 @@ configure_plugin(
     WIN32_AUTHOR_NAME "Sine Striker"
     WIN32_FILE_DESC "QSynthesis Plugin for Project Convertion"
 )
-
-settle_plugin(${PROJECT_NAME} svsconverters)

@@ -18,6 +18,5 @@ option_ex(APP_RES_PLUGINS_DIR       plugins)
 option_ex(BUILD_TEST                on)
 option_ex(BUILD_SVS_PLUGINS_ONLY    off)
 
-option_ex(ENABLE_UTA_PLUGINS        off)
 option_ex(ENABLE_SVS_CONVERTERS     off)
 option_ex(ENABLE_LV_PLUGINS         on)

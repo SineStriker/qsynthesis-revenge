@@ -1,4 +1,4 @@
-project(EmptyTemplate
+project(FrqEditor
     VERSION 0.0.0.1
     LANGUAGES CXX
 )
@@ -10,11 +10,9 @@ add_files(_src
 
 configure_plugin(
     SOURCES ${_src}
-    INCLUDE_CURRENT
     QT_LIBRARIES Core
-    LINKS LvCore
+    LINKS QsSVS
+    INCLUDE_CURRENT
     WIN32_AUTHOR_NAME "Sine Striker"
-    WIN32_FILE_DESC "LabelVoice Plugin for Initialize Project"
+    WIN32_FILE_DESC "QSynthesis Utau Plugin for Voice Bank"
 )
-
-settle_plugin(${PROJECT_NAME} templategenerators)

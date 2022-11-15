@@ -19,5 +19,3 @@ configure_plugin(
 )
 
 target_link_libraries(${PROJECT_NAME} PRIVATE SDL2::SDL2)
-
-settle_plugin(${PROJECT_NAME} audioplaybacks)

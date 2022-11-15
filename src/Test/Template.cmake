@@ -19,6 +19,7 @@ macro(add_test_target _target)
     endif()
 
     # ----------------- Template Begin -----------------
+    
     project(${_target} VERSION ${_version} LANGUAGES CXX)
 
     set(CMAKE_AUTOUIC ON)

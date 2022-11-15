@@ -19,5 +19,3 @@ configure_plugin(
 )
 
 target_link_libraries(${PROJECT_NAME} PRIVATE FramelessHelper::FramelessHelperWidgets)
-
-settle_plugin(${PROJECT_NAME} windowfactories)

@@ -20,5 +20,3 @@ configure_plugin(
 )
 
 target_link_libraries(${PROJECT_NAME} PRIVATE QMidi)
-
-settle_plugin(${PROJECT_NAME} svsconverters)

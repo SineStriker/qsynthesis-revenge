@@ -14,8 +14,5 @@ configure_plugin(
     LINKS QsSVS
     INCLUDE_CURRENT
     WIN32_AUTHOR_NAME "Sine Striker"
-    WIN32_FILE_DESC "QSynthesis Plugin for Utau Editor"
+    WIN32_FILE_DESC "QSynthesis Utau Plugin for Editor"
 )
-
-# Add task to copy to plugins dir after build
-settle_plugin(${PROJECT_NAME} utaplugins)
