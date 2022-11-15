@@ -1,8 +1,10 @@
-# LabelVoice
+# QSynthesis 2.0
 
 ## Intro
 
-LabelVoice is an open-source software and a labeling tool for vocal synthesis database to provide the community with user-friendly experience.
+QSynthesis is an open-source software and a remake of vocal synthesis UTAU to provide UTAU community with user-friendly experience.
+
+The project is in its second iteration.
 
 ## Compatibility
 
@@ -13,17 +15,26 @@ LabelVoice is able to run on **Windows, MacOS and Linux**.
 
 ### Requirements
 
-| Component | Requirement |              Detailed               |
-|:---------:|:-----------:|:-----------------------------------:|
-|    Qt     |   >=5.15    | Core, Gui, Svg, Network, Multimedia |
-| Compiler  |   >=C++17   | MSVC 2019, MinGW 0.8.1, GCC, Clang  |
-|   CMake   |    >=3.5    |        >=3.20 is recommended        |
-|  Python   |    >=3.1    |     /     |
+| Component | Requirement |              Detailed                |
+|:---------:|:-----------:|:------------------------------------:|
+|    Qt     |   >=5.15    |   Core, Gui, Widgets, Svg, Network   |
+| Compiler  |   >=C++17   |        MSVC 2019, GCC, Clang         |
+|   CMake   |   >=3.17    |        >=3.20 is recommended         |
+|  Python   |   >=3.6     |             annotations              |
 
 
-On Windows, compiling with Microsoft Visual C++ is strongly recommended.
+On Windows, compiling with MinGW is not tested.
 
 For detailed information, see [Build Instructions](./docs/build-instructions.md).
+
+
+### Modules
+
+On Windows, you can use the default `wavtool.exe` and `resampler.exe` which are distributed with UTAU to synthesize the audio for QSynthesis.
+
+On Mac OS and Linux, there are no ready-made concatenating or resampling tools. You need to compile them yourself.
+
+For detailed information, see [Related Tools](./docs/related-tools.md).
 
 
 ## Open-source softwares used
@@ -55,7 +66,7 @@ See [Plugins Brief](./docs/plugins-brief.md) for dependencies for each plugin.
 
 ## Contributors
 
-+ OpenVPI Team
++ Sine Striker
 
 Welcome to commit pull requests.
 
@@ -63,4 +74,4 @@ For Qt/C++ beginners, see [Setup Environment](./docs/setup-env.md) for instructi
 
 ## License
 
-LabelVoice is licensed under Apache 2.0 License.
+QSynthesis 2.0 is licensed under Apache 2.0 License.

@@ -108,11 +108,12 @@ add_custom_command(
 )
 
 # Copy docs dir
+get_filename_component(_license ${PROJECT_LICENSE_FILE} NAME)
 add_custom_command(
     TARGET deploy
     COMMAND ${CMAKE_COMMAND} -E copy_directory ${PROJECT_DOCUMENT_DIR} ${_res_docs_dir}
-    COMMAND ${CMAKE_COMMAND} -E copy "${CMAKE_CURRENT_SOURCE_DIR}/../LICENSE" ${_res_docs_dir}
-    COMMAND ${CMAKE_COMMAND} -E rename ${_res_docs_dir}/LICENSE ${_res_docs_dir}/license.txt
+    COMMAND ${CMAKE_COMMAND} -E copy ${PROJECT_LICENSE_FILE} ${_res_docs_dir}
+    COMMAND ${CMAKE_COMMAND} -E rename ${_res_docs_dir}/${_license} ${_res_docs_dir}/license.txt
 )
 
 # Deploy lv plugins
@@ -180,7 +181,7 @@ endforeach()
 
 # Deploy imported libraries
 if(WIN32)
-    file(GLOB _dlls ${VCPKG_BINARY_DIR}/bin/*.dll)
+    file(GLOB _dlls ${VCPKG_BINARY_DIR}/${VCPKG_BINARY_PAT})
 
     foreach(_dll ${_dlls})
         get_filename_component(_name ${_dll} NAME)

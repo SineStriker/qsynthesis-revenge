@@ -1,7 +1,7 @@
 set(PREBUILT_DLL_LIST)
 
 if(WIN32)
-    file(GLOB _dlls "${VCPKG_BINARY_DIR}/bin/*.dll")
+    file(GLOB _dlls ${VCPKG_BINARY_DIR}/${VCPKG_BINARY_PAT})
 
     foreach(_dll ${_dlls})
         get_filename_component(_name ${_dll} NAME)
@@ -11,7 +11,7 @@ if(WIN32)
             OUTPUT ${_out_dll}
             COMMAND ${CMAKE_COMMAND} -E copy_if_different ${_dll} ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}
         )
-        
+
         list(APPEND PREBUILT_DLL_LIST ${_out_dll})
     endforeach()
 endif()

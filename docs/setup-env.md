@@ -269,7 +269,7 @@ cmake --build build --target install
     + `CMake Build`：构建项目（下方Build按钮也可以）
     + `CMake Clean`：清理项目
 
-+ 直接打开仓库目录，执行`CMake Configure`，如出现选择编译套件选择`Visual Studio - amd64`。
++ 直接打开仓库目录，执行`CMake Configure`，编译工具链选择`Visual Studio - amd64`。
 
 ## 软件发布
 
@@ -305,19 +305,19 @@ cmake --build build --target install
 
 ### 开发模式
 
-+ `src/CMakeLists.txt`中`APP_DEPLOY`变量设为关闭。
++ `Config.cmake`中`APP_DEPLOY`变量设为关闭。
 
 + 在Windows下，`QSynthesis`由操作系统自动链接`QsStaging`，因此两个目标文件必须在同一目录。在开发状态下，两者在同一目录对于依赖关系比较友好。
 
 ### 发布模式
 
-+ `src/CMakeLists.txt`中`APP_DEPLOY`变量设为开启。
++ `Config.cmake`中`APP_DEPLOY`变量设为开启。
 
 + 在Windows下，`QSynthesis`在运行期显式加载`QsStaging`动态库。`QSynthesis`固定从`lib`目录寻找`QsStaging`，`QsStaging`构建后也会输出在`lib`目录。
 
 ## 其他
 
-+ 在Linux和Mac下，不管是开发模式还是发布模式，`QSynthesis`均在编译期直接动态链接`QsBlock`。
++ 在Linux和Mac下，不管是开发模式还是发布模式，`QSynthesis`均在编译期直接动态链接`QsStaging`。
 
 + 在Linux和Windows下，不管是开发模式还是发布模式，构建时会将除了Qt以外的外部库都复制一份到构建目录中。
 

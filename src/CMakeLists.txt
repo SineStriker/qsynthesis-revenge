@@ -28,13 +28,7 @@ endif()
 
 # Set output directories
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
-
-if(WIN32)
-    set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
-else()
-    set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin) # Build .so/.dylib files at bin-dir
-endif()
-
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 
 # Set project information
@@ -55,7 +49,6 @@ set(WIN32_EXE_RC ${PROJECT_MODULES_DIR}/Win32ExeRes.rc.in)
 
 # ToolChain
 set(VCPKG_APPLOCAL_DEPS off)
-set(VCPKG_BINARY_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../vcpkg/installed/${VCPKG_TARGET_TRIPLET}")
 include(${CMAKE_CURRENT_SOURCE_DIR}/../vcpkg/scripts/buildsystems/vcpkg.cmake)
 
 # Import utils
@@ -85,6 +78,23 @@ endif()
 if(BUILD_TEST)
     add_subdirectory(Test)
 endif()
+
+# Add copy or deploy tasks
+set(_suffix)
+
+if(${CMAKE_BUILD_TYPE} STREQUAL Debug)
+    set(_suffix "/debug")
+endif()
+
+if(WIN32)
+    set(VCPKG_BINARY_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../vcpkg/installed/${VCPKG_TARGET_TRIPLET}${_suffix}/bin")
+    set(VCPKG_BINARY_PAT "*.dll")
+else()
+    set(VCPKG_BINARY_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../vcpkg/installed/${VCPKG_TARGET_TRIPLET}${_suffix}/lib")
+    set(VCPKG_BINARY_PAT "*.so*")
+endif()
+
+unset(_suffix)
 
 include(Dep.cmake)
 
