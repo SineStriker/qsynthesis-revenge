@@ -62,7 +62,7 @@ For detailed information, see [Related Tools](./docs/related-tools.md).
 + [yaml-cpp](https://github.com/jbeder/yaml-cpp)
     + MIT License
 
-See [Plugins Brief](./docs/plugins-brief.md) for dependencies for each plugin.
+See [Related Tools](./docs/related-tools.md) for dependencies for each plugin.
 
 ## Contributors
 
