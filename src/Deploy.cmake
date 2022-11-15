@@ -8,6 +8,8 @@ set(_other_libs)
 set(_main_exes)
 set(_other_exes)
 
+set(_qt_binaries)
+
 # get_property(importTargets DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY IMPORTED_TARGETS)
 # foreach(_target ${importTargets})
 # message(STATUS ${_target})
@@ -18,6 +20,7 @@ get_all_targets(_all_targets)
 
 foreach(_target ${_all_targets})
     get_target_property(_target_type ${_target} TC_TARGET_TYPE)
+    get_target_property(_is_qt_bin ${_target} TC_QT_BINARY)
 
     if(${_target_type} STREQUAL PLUGIN)
         get_target_property(_plugin_type ${_target} TC_PLUGIN_TYPE)
@@ -48,6 +51,10 @@ foreach(_target ${_all_targets})
             list(APPEND _other_exes ${_target})
         endif()
     endif()
+
+    if((NOT ${_is_qt_bin} STREQUAL "_qt_bin-NOTFOUND") AND ${_is_qt_bin})
+        list(APPEND _qt_binaries ${_target})
+    endif()
 endforeach()
 
 # Add deploy target
@@ -70,8 +77,6 @@ set(_res_dir ${_deploy_dir}/${APP_RES_DIR})
 set(_res_docs_dir ${_res_dir}/docs)
 set(_res_builtin_dir ${_res_dir}/${APP_RES_BUILTIN_DIR})
 set(_res_plugins_dir ${_res_dir}/${APP_RES_PLUGINS_DIR})
-
-set(_qt_binaries ${_lv_libs} ${_qs_libs})
 
 # Find Qt tools
 get_filename_component(QT_BIN_DIRECTORY "${QT_QMAKE_EXECUTABLE}" DIRECTORY)

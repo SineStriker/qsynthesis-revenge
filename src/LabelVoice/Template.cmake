@@ -73,6 +73,7 @@ macro(lvmod_configure_library)
         PROPERTIES
         TC_TARGET_TYPE LIBRARY
         TC_LIBRARY_TYPE LabelVoice
+        TC_QT_BINARY true
     )
 
     # ----------------- Template End -----------------

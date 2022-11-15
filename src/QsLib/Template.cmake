@@ -68,6 +68,7 @@ macro(qslib_configure_library)
         PROPERTIES
         TC_TARGET_TYPE LIBRARY
         TC_LIBRARY_TYPE QSynthesis
+        TC_QT_BINARY true
     )
 
     # ----------------- Template End -----------------

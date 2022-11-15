@@ -76,6 +76,7 @@ set_target_properties(
     PROPERTIES
     TC_TARGET_TYPE LIBRARY
     TC_LIBRARY_TYPE Tool
+    TC_QT_BINARY true
 )
 
 # ------------------------------ Configure Target End ------------------------------
