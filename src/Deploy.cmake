@@ -6,6 +6,7 @@ set(_app_libs)
 set(_qs_libs)
 set(_other_libs)
 set(_main_exes)
+set(_tool_exes)
 set(_other_exes)
 
 set(_qt_binaries)
@@ -47,6 +48,8 @@ foreach(_target ${_all_targets})
 
         if(${_exe_type} STREQUAL Main)
             list(APPEND _main_exes ${_target})
+        elseif(${_exe_type} STREQUAL Tool)
+            list(APPEND _tool_exes ${_target})
         else()
             list(APPEND _other_exes ${_target})
         endif()
@@ -73,6 +76,7 @@ set(_release_name ${PROJECT_NAME_LOWER}-${SYSTEM_NAME_LOWER}-${SYSTEM_ARCH_LOWER
 set(_deploy_dir ${PROJECT_RELEASE_DIR}/${_release_name})
 set(_libs_dir ${_deploy_dir}/${APP_LIB_DIR})
 set(_plugins_dir ${_deploy_dir}/${APP_PLUGINS_DIR})
+set(_tools_dir ${_deploy_dir}/${APP_TOOLS_DIR})
 set(_res_dir ${_deploy_dir}/${APP_RES_DIR})
 set(_res_docs_dir ${_res_dir}/docs)
 set(_res_builtin_dir ${_res_dir}/${APP_RES_BUILTIN_DIR})
@@ -106,6 +110,7 @@ add_custom_command(
     COMMAND ${CMAKE_COMMAND} -E make_directory ${_deploy_dir}
     COMMAND ${CMAKE_COMMAND} -E make_directory ${_libs_dir}
     COMMAND ${CMAKE_COMMAND} -E make_directory ${_plugins_dir}
+    COMMAND ${CMAKE_COMMAND} -E make_directory ${_tools_dir}
     COMMAND ${CMAKE_COMMAND} -E make_directory ${_res_dir}
     COMMAND ${CMAKE_COMMAND} -E make_directory ${_res_docs_dir}
     COMMAND ${CMAKE_COMMAND} -E make_directory ${_res_builtin_dir}
@@ -177,6 +182,13 @@ foreach(_lib ${_app_libs} ${_qs_libs} ${_other_libs})
 endforeach()
 
 # Deploy executables
+foreach(_exe ${_tool_exes})
+    add_custom_command(
+        TARGET deploy
+        COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:${_exe}> ${_tools_dir}
+    )
+endforeach()
+
 foreach(_exe ${_main_exes} ${_other_exes})
     add_custom_command(
         TARGET deploy

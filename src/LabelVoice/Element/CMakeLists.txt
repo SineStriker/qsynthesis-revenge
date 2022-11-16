@@ -24,6 +24,8 @@ target_compile_definitions(${PROJECT_NAME} PUBLIC APP_VERSION="${PROJECT_VERSION
 
 target_compile_definitions(${PROJECT_NAME} PUBLIC APP_PLUGINS_DIR="${APP_PLUGINS_DIR}")
 
+target_compile_definitions(${PROJECT_NAME} PUBLIC APP_TOOLS_DIR="${APP_TOOLS_DIR}")
+
 target_compile_definitions(${PROJECT_NAME} PUBLIC APP_RES_DIR="${APP_RES_DIR}")
 
 target_compile_definitions(${PROJECT_NAME} PUBLIC APP_RES_BUILTIN_DIR="${APP_RES_BUILTIN_DIR}")

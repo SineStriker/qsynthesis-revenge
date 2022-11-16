@@ -44,6 +44,7 @@ public:
         AppTemp,
         Plugins,
         BuiltIn,
+        BinTool,
         UserDir = 1000,
     };
 
