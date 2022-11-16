@@ -20,8 +20,8 @@ public:
     ~LvElemApplication();
 
 public:
-    void reloadStrings() override;
-    void reloadScreen() override;
+    void reloadStrings(int locale) override;
+    void reloadScreen(int theme) override;
 
 protected:
     LvElemApplication(LvElemApplicationPrivate &d, int &argc, char **argv);

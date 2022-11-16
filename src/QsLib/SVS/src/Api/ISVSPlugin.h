@@ -16,15 +16,6 @@ public:
      * @brief path: Plugin library absolute path
      */
     QString path;
-
-    /**
-     * @brief locale: Current locale when executing plugin
-     *
-     * Install translator at entry and remove before exit, using embedded
-     * qm files is recommended.
-     *
-     */
-    QLocale locale;
 };
 
 #endif // ISVSPLUGIN_H

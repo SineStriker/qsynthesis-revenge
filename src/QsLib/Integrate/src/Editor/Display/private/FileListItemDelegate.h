@@ -21,15 +21,6 @@ public:
 
     friend class FileListWidget;
 
-    enum ItemDataUserRole {
-        Filename = Qt::UserRole + 1,
-        Location,
-        Date,
-        Icon,
-        IconSize,
-        Type,
-    };
-
 public:
     QSize sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const override;
 

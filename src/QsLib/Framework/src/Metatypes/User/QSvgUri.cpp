@@ -1,7 +1,7 @@
 #include "QSvgUri.h"
 #include "QMetaTypeUtils.h"
 
-#include "Intern/CSvgIconEngine.h"
+#include "private/CSvgIconEngine.h"
 
 #include <QFileInfo>
 #include <QMimeDatabase>

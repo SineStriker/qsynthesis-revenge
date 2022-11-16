@@ -3,6 +3,8 @@
 
 #include "../CApplication.h"
 
+#include "../MultistyleHandle.h"
+
 #include "qsframework_global.h"
 
 class QSFRAMEWORK_API CApplicationPrivate {
@@ -17,6 +19,8 @@ public:
     virtual void messageReceived_helper(const QStringList &args);
 
     CApplication *q_ptr;
+
+    QScopedPointer<MultistyleHandle> hMSH;
 
     QList<CAppNotifyFilter *> notifyFilters;
 };

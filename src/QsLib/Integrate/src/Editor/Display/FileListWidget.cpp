@@ -1,6 +1,8 @@
 #include "FileListWidget.h"
 #include "QMarginsImpl.h"
 
+#include "private/FileListItemDelegate.h"
+
 #include <private/qlistwidget_p.h>
 
 #define DECODE_STYLE(VAR, VARIANT, TYPE)                                                           \
@@ -19,30 +21,31 @@ FileListWidget::~FileListWidget() {
 }
 
 void FileListWidget::init() {
-    m_delegate = new FileListItemDelegate(this);
-
     setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Minimum);
-
-    setItemDelegate(m_delegate);
     setSelectionMode(QAbstractItemView::SingleSelection);
+
+    m_delegate = new FileListItemDelegate(this);
+    setItemDelegate(m_delegate);
+
+    connect(m_delegate, &FileListItemDelegate::clicked, this, &FileListWidget::itemClickedEx);
 }
 
-void FileListWidget::addFileItem(const QIcon &icon, const QSize &size, int type,
+void FileListWidget::addItem(const QIcon &icon, const QSize &size, int type,
                                  const QString &filename, const QString &location,
                                  const QString &date) {
-    insertFileItem(count(), icon, size, type, filename, location, date);
+    insertItem(count(), icon, size, type, filename, location, date);
 }
 
-void FileListWidget::insertFileItem(int row, const QIcon &icon, const QSize &size, int type,
+void FileListWidget::insertItem(int row, const QIcon &icon, const QSize &size, int type,
                                     const QString &filename, const QString &location,
                                     const QString &date) {
     QListWidgetItem *item = new QListWidgetItem();
-    item->setData(FileListItemDelegate::Filename, filename);
-    item->setData(FileListItemDelegate::Location, location);
-    item->setData(FileListItemDelegate::Date, date);
-    item->setData(FileListItemDelegate::Icon, icon);
-    item->setData(FileListItemDelegate::IconSize, size);
-    item->setData(FileListItemDelegate::Type, type);
+    item->setData(FileListWidget::Filename, filename);
+    item->setData(FileListWidget::Location, location);
+    item->setData(FileListWidget::Date, date);
+    item->setData(FileListWidget::Icon, icon);
+    item->setData(FileListWidget::IconSize, size);
+    item->setData(FileListWidget::Type, type);
     QListWidget::insertItem(row, item);
 }
 
@@ -105,4 +108,8 @@ void FileListWidget::updateGeometries() {
 void FileListWidget::mouseReleaseEvent(QMouseEvent *event) {
     QListWidget::mouseReleaseEvent(event);
     clearSelection();
+}
+
+void FileListWidget::_q_delegateClicked(const QModelIndex &index, int button) {
+    emit itemClickedEx(index, button);
 }

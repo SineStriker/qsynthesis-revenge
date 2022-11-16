@@ -1,7 +1,5 @@
 #include "VExplorerPanel.h"
 
-#include "../Commands/VPianoCommand.h"
-
 // https://vicrucann.github.io/tutorials/qtreewidget-child-drag-notify/
 
 VExplorerPanel::VExplorerPanel(QWidget *parent) : QFrame(parent) {

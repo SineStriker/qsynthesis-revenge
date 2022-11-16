@@ -1,6 +1,6 @@
-#include "CommandManager.h"
+#include "QsEditorHistory.h"
 
-CommandManager::CommandManager(QObject *parent) : QObject(parent) {
+QsEditorHistory::QsEditorHistory(QObject *parent) : QObject(parent) {
     historyIndex = 0;
     savedHistoryIndex = 0;
     recording = false;
@@ -8,41 +8,41 @@ CommandManager::CommandManager(QObject *parent) : QObject(parent) {
     edited = false;
 }
 
-CommandManager::~CommandManager() {
+QsEditorHistory::~QsEditorHistory() {
 }
 
-void CommandManager::saveNow() {
+void QsEditorHistory::saveNow() {
     savedHistoryIndex = historyIndex;
     setEdited(false);
 }
 
-bool CommandManager::isEdited() const {
+bool QsEditorHistory::isEdited() const {
     return edited;
 }
 
-bool CommandManager::canUndo() const {
+bool QsEditorHistory::canUndo() const {
     return historyIndex != 0;
 }
 
-bool CommandManager::canRedo() const {
+bool QsEditorHistory::canRedo() const {
     return historyIndex != historyStack.size();
 }
 
-void CommandManager::undo() {
+void QsEditorHistory::undo() {
     execute(historyStack.at(historyIndex - 1), true);
 
     historyIndex--;
     setEdited(savedHistoryIndex != historyIndex);
 }
 
-void CommandManager::redo() {
+void QsEditorHistory::redo() {
     execute(historyStack.at(historyIndex), true);
 
     historyIndex++;
     setEdited(savedHistoryIndex != historyIndex);
 }
 
-void CommandManager::execute(const QSCommandRef &cmd, bool isUndo) {
+void QsEditorHistory::execute(const QsUndoCommandRef &cmd, bool isUndo) {
     if (recording) {
         Q_ASSERT(!isUndo);
         recordList.append(cmd);
@@ -52,7 +52,7 @@ void CommandManager::execute(const QSCommandRef &cmd, bool isUndo) {
     }
 }
 
-void CommandManager::execute(const LVCommandList &cmds, bool isUndo) {
+void QsEditorHistory::execute(const QsUndoCommandList &cmds, bool isUndo) {
     if (recording) {
         Q_ASSERT(!isUndo);
         recordList.append(cmds);
@@ -62,14 +62,14 @@ void CommandManager::execute(const LVCommandList &cmds, bool isUndo) {
     }
 }
 
-void CommandManager::startRecord() {
+void QsEditorHistory::startRecord() {
     if (recording) {
         return;
     }
     recording = true;
 }
 
-void CommandManager::stopRecord(const QString &desc) {
+void QsEditorHistory::stopRecord(const QString &desc) {
     if (!recording) {
         return;
     }
@@ -95,15 +95,15 @@ void CommandManager::stopRecord(const QString &desc) {
     recordList.clear();
 }
 
-void CommandManager::addSubscriber(ICommandSubscriber *subscriber) {
+void QsEditorHistory::addSubscriber(QsCommandSubscriber *subscriber) {
     subscribers.insert(subscriber);
 }
 
-void CommandManager::removeSubscriber(ICommandSubscriber *subscriber) {
+void QsEditorHistory::removeSubscriber(QsCommandSubscriber *subscriber) {
     subscribers.remove(subscriber);
 }
 
-void CommandManager::setEdited(bool edited) {
+void QsEditorHistory::setEdited(bool edited) {
     bool org = this->edited;
     this->edited = edited;
     if (this->edited != org) {

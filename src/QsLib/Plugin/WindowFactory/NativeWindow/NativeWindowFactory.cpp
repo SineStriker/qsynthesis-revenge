@@ -1,6 +1,5 @@
 #include "NativeWindowFactory.h"
-
-#include "Widgets/NativeHandle.h"
+#include "NativeHandle.h"
 
 NativeWindowFactory::NativeWindowFactory(QObject *parent) : IWindowFactory(parent) {
 }

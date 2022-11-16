@@ -9,7 +9,7 @@
 #include <QSplitter>
 
 #include "CTabButton.h"
-#include "FileListWidget.h"
+#include "Editor/Display/FileListWidget.h"
 
 #include "Windows/Basic/ProjectCommonBlock.h"
 

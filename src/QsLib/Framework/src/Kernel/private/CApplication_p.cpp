@@ -1,7 +1,7 @@
 #include "CApplication_p.h"
 #include "QMetaTypeImpl.h"
 
-CApplicationPrivate::CApplicationPrivate() {
+CApplicationPrivate::CApplicationPrivate() : hMSH(new MultistyleHandle()) {
 }
 
 void CApplicationPrivate::init() {
@@ -29,6 +29,9 @@ void CApplicationPrivate::init() {
 
     q->connect(q, &SingleApplication::instanceStarted, q, &CApplication::_q_instanceStarted);
     q->connect(q, &SingleApplication::receivedMessage, q, &CApplication::_q_messageReceived);
+
+    q->connect(hMSH.data(), &MultistyleHandle::localeChanged, q, &CApplication::_q_localeChanged);
+    q->connect(hMSH.data(), &MultistyleHandle::themeChanged, q, &CApplication::_q_themeChanged);
 }
 
 void CApplicationPrivate::instanceStarted_helper() {

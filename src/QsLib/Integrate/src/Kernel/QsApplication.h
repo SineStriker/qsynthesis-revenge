@@ -8,10 +8,6 @@
 #endif
 #define qApp (qobject_cast<QsApplication *>(QCoreApplication::instance()))
 
-#define Q_TR_NOTIFY(T)                                                                             \
-    reloadStrings();                                                                               \
-    connect(qApp, &QsApplication::stringUpdated, this, &T::reloadStrings);
-
 class QsApplicationPrivate;
 
 #include "qsintegrate_global.h"
@@ -24,9 +20,6 @@ public:
     ~QsApplication();
 
 public:
-    virtual void reloadStrings();
-    virtual void reloadScreen();
-
     static QString mainTitle();
     static QString windowTitle();
     static QString errorTitle();
@@ -41,10 +34,6 @@ protected:
 
 private:
     void q_screenRatioChanged(double dpi);
-
-signals:
-    void stringUpdated();
-    void screenUpdated();
 };
 
 #endif // QSELEMAPPLICATION_H

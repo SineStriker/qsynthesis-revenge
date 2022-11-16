@@ -1,13 +1,13 @@
 #ifndef VDIRTREEDRAGPROXY_H
 #define VDIRTREEDRAGPROXY_H
 
-#include "Basic/BaseDragProxy.h"
+#include "Editor/Drag/QsAbstractDragProxy.h"
 
 class VSpkTreeWidget;
 class VSpkTreeDragLabel;
 class QTreeWidgetItem;
 
-class VSpkTreeDragProxy : public BaseDragProxy {
+class VSpkTreeDragProxy : public QsAbstractDragProxy {
     Q_OBJECT
 public:
     explicit VSpkTreeDragProxy(QObject *parent = nullptr);

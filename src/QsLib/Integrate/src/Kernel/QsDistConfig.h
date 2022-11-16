@@ -49,6 +49,7 @@ public:
     };
 
     QString appDir(DirType type) const;
+    QString locateBinTool(const QString &name) const;
 
     enum PluginType {
         AudioEncoder,

@@ -21,7 +21,7 @@ public:
     ~HomeWindow();
 
 public:
-    void reloadStrings();
+    void reloadStrings(int locale);
 
 public:
     QTypeList templateStyleData() const;

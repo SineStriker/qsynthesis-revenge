@@ -24,7 +24,7 @@ bool QsDistConfig::load(const QString &filename) {
     if (!d->load_helper(filename)) {
         qDebug() << QString("load_config: configuration file %1 not found.")
                         .arg(Sys::PathFindFileName(filename));
-         d->save_default(filename);
+        d->save_default(filename);
         return false;
     }
     return true;
@@ -33,6 +33,19 @@ bool QsDistConfig::load(const QString &filename) {
 QString QsDistConfig::appDir(QsDistConfig::DirType type) const {
     Q_D(const QsDistConfig);
     return d->dirMap.value(type).dir;
+}
+
+QString QsDistConfig::locateBinTool(const QString &name) const {
+#ifdef Q_OS_WINDOWS
+    const char _suffix[] = ".exe";
+#else
+    const char _suffix[] = "";
+#endif
+    QString filename = appDir(BinTool) + '/' + name + _suffix;
+    if (QFileInfo(filename).isExecutable()) {
+        return filename;
+    }
+    return QString();
 }
 
 QString QsDistConfig::internalPlugin(QsDistConfig::InternalPlugins id) const {

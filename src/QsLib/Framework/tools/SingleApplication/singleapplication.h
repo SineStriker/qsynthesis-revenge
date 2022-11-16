@@ -26,9 +26,11 @@
 #include <QtCore/QtGlobal>
 #include <QtNetwork/QLocalSocket>
 
-#include <QApplication>
+#ifndef QAPPLICATION_CLASS
+  #define QAPPLICATION_CLASS QCoreApplication
+#endif
 
-#include "qsframework_global.h"
+#include QT_STRINGIFY(QAPPLICATION_CLASS)
 
 class SingleApplicationPrivate;
 
@@ -37,11 +39,11 @@ class SingleApplicationPrivate;
  * Application
  * @see QCoreApplication
  */
-class QSFRAMEWORK_API SingleApplication : public QApplication
+class SINGLEAPPLICATION_API SingleApplication : public QAPPLICATION_CLASS
 {
     Q_OBJECT
 
-    using app_t = QApplication;
+    using app_t = QAPPLICATION_CLASS;
 
 public:
     /**

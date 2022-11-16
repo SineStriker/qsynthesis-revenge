@@ -96,9 +96,9 @@ HomeMainWidget::HomeMainWidget(ProjectCommonBlock *block, QWidget *parent)
     setLayout(mainLayout);
 
     connect(searchBox, &QLineEdit::textChanged, this, &HomeMainWidget::_q_searchBoxChanged);
-    connect(templateList->delegate(), &FileListItemDelegate::clicked, this,
+    connect(templateList, &FileListWidget::itemClickedEx, this,
             &HomeMainWidget::_q_templateItemClicked);
-    connect(recentList->delegate(), &FileListItemDelegate::clicked, this,
+    connect(recentList, &FileListWidget::itemClickedEx, this,
             &HomeMainWidget::_q_recentItemClicked);
 
     connect(QsFileManager::instance(), &QsFileManager::recentCommited, this,
@@ -124,8 +124,8 @@ void HomeMainWidget::reloadTemplates() {
     CFG.title = TITLE;                                                                             \
     CFG.subtitle = SUBTITLE;                                                                       \
     CFG.id = ID;                                                                                   \
-    CFG.cont = QString();                                                                                 \
-    templateList->addFileItem(CFG.icon, CFG.iconSize, CFG.id, CFG.title, CFG.subtitle, CFG.cont);
+    CFG.cont = QString();                                                                          \
+    templateList->addItem(CFG.icon, CFG.iconSize, CFG.id, CFG.title, CFG.subtitle, CFG.cont);
 
     SET_AND_ADD(emptyItemConfig, tr("Empty Template"), tr("Create empty project for marking"),
                 Empty);
@@ -145,10 +145,10 @@ void HomeMainWidget::reloadRecentList() {
     QStringList files = QsFileManager::instance()->fetchRecent(QsFileManager::Project);
     for (const QString &file : qAsConst(files)) {
         QFileInfo info(file);
-        recentList->addFileItem(recentFileConfig.icon, recentFileConfig.iconSize,
-                                QsFileManager::Project, QDir::toNativeSeparators(info.fileName()),
-                                QDir::toNativeSeparators(info.absoluteFilePath()),
-                                info.lastModified().toString(DateFormat));
+        recentList->addItem(recentFileConfig.icon, recentFileConfig.iconSize,
+                            QsFileManager::Project, QDir::toNativeSeparators(info.fileName()),
+                            QDir::toNativeSeparators(info.absoluteFilePath()),
+                            info.lastModified().toString(DateFormat));
     }
 }
 
@@ -217,7 +217,7 @@ void HomeMainWidget::_q_searchBoxChanged(const QString &text) {
 }
 
 void HomeMainWidget::_q_templateItemClicked(const QModelIndex &index, int button) {
-    int type = index.data(FileListItemDelegate::Type).toInt();
+    int type = index.data(FileListWidget::Type).toInt();
     if (button == Qt::LeftButton) {
         switch (type) {
             case Empty:
@@ -236,8 +236,8 @@ void HomeMainWidget::_q_templateItemClicked(const QModelIndex &index, int button
 }
 
 void HomeMainWidget::_q_recentItemClicked(const QModelIndex &index, int button) {
-    int type = index.data(FileListItemDelegate::Type).toInt();
-    QString filename = index.data(FileListItemDelegate::Location).toString();
+    int type = index.data(FileListWidget::Type).toInt();
+    QString filename = index.data(FileListWidget::Location).toString();
     if (button == Qt::LeftButton) {
         if (type == QsFileManager::Project) {
             emit openRequested(filename);

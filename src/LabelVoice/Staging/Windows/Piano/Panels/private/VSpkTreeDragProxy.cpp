@@ -4,7 +4,7 @@
 
 #include <QEvent>
 
-VSpkTreeDragProxy::VSpkTreeDragProxy(QObject *parent) : BaseDragProxy(parent) {
+VSpkTreeDragProxy::VSpkTreeDragProxy(QObject *parent) : QsAbstractDragProxy(parent) {
     m_treeWidget = nullptr;
     m_dragger = nullptr;
 }
@@ -42,7 +42,7 @@ bool VSpkTreeDragProxy::eventFilter(QObject *obj, QEvent *event) {
             break;
         }
     }
-    return BaseDragProxy::eventFilter(obj, event);
+    return QsAbstractDragProxy::eventFilter(obj, event);
 }
 
 void VSpkTreeDragProxy::handleDragStarted(QTreeWidgetItem *item) {

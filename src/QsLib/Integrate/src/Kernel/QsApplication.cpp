@@ -13,14 +13,6 @@ QsApplication::~QsApplication() {
     d->deinit();
 }
 
-void QsApplication::reloadStrings() {
-    emit stringUpdated();
-}
-
-void QsApplication::reloadScreen() {
-    emit screenUpdated();
-}
-
 QString QsApplication::mainTitle() {
     return applicationName();
 }
@@ -70,5 +62,5 @@ QsApplication::QsApplication(QsApplicationPrivate &d, int &argc, char **argv)
 
 void QsApplication::q_screenRatioChanged(double dpi) {
     Q_UNUSED(dpi)
-    reloadScreen();
+    qMMH->setTheme(qMMH->theme());
 }

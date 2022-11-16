@@ -11,6 +11,8 @@
 
 #include "HomeMainWidget.h"
 
+#include "Kernel/MultistyleHandle.h"
+
 #include <QDebug>
 
 HomeWindow::HomeWindow(QWidget *parent) : HomeWindow(*new HomeWindowPrivate(), parent) {
@@ -19,7 +21,9 @@ HomeWindow::HomeWindow(QWidget *parent) : HomeWindow(*new HomeWindowPrivate(), p
 HomeWindow::~HomeWindow() {
 }
 
-void HomeWindow::reloadStrings() {
+void HomeWindow::reloadStrings(int locale) {
+    Q_UNUSED(locale);
+
     Q_D(HomeWindow);
     d->reloadStrings_helper();
 }

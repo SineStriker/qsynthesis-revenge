@@ -5,7 +5,7 @@
 #include <QObjectList>
 #include <QPair>
 
-#include "Thirdparty/SingleApplication/singleapplication.h"
+#include <SingleApplication>
 
 #include "qsframework_global.h"
 
@@ -35,6 +35,9 @@ public:
     bool removeNotifyFilter(QObject *obj);
     void removeAllNotifyFilters();
 
+    virtual void reloadStrings(int locale);
+    virtual void reloadScreen(int theme);
+
 protected:
     CApplication(CApplicationPrivate &d, int &argc, char **argv);
 
@@ -46,6 +49,9 @@ protected:
 private:
     void _q_instanceStarted();
     void _q_messageReceived(quint32 instanceId, QByteArray message);
+
+    void _q_localeChanged(int locale);
+    void _q_themeChanged(int theme);
 
 signals:
 };

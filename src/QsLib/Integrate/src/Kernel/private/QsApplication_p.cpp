@@ -14,17 +14,17 @@
 
 static const char Slash = '/';
 
-static const char FILENAME_APP_CONFIG[] = "qsconf.json";
+static const char FILENAME_APP_CONFIG[] = "qsconfig.json";
 
-static QString loadAppleFont() {
-    QString fontDir = qApp->applicationDirPath() + "/resources/fonts";
-    int fontId = QFontDatabase::addApplicationFont(fontDir + "/PingFang SC.ttf");
-    QStringList fonts = QFontDatabase::applicationFontFamilies(fontId);
-    if (fonts.isEmpty()) {
-        return QString();
-    }
-    return fonts.front();
-}
+// static QString loadAppleFont() {
+//     QString fontDir = qApp->applicationDirPath() + "/resources/fonts";
+//     int fontId = QFontDatabase::addApplicationFont(fontDir + "/PingFang SC.ttf");
+//     QStringList fonts = QFontDatabase::applicationFontFamilies(fontId);
+//     if (fonts.isEmpty()) {
+//         return QString();
+//     }
+//     return fonts.front();
+// }
 
 QsApplicationPrivate::QsApplicationPrivate(QsDistConfig *conf) : conf(conf) {
 }
@@ -74,7 +74,7 @@ bool QsApplicationPrivate::translate(const QString &filename) {
     if (t->load(filename)) {
         qApp->installTranslator(t);
         translators.insert(t);
-        q->reloadStrings();
+        q->reloadStrings(qMMH->locale());
         return true;
     }
 
@@ -98,7 +98,7 @@ bool QsApplicationPrivate::addTheme(const QString &filename) {
     if (file.open(QIODevice::ReadOnly | QIODevice::Text)) {
         stylesheets.append(file.readAll());
         file.close();
-        q->reloadScreen();
+        q->reloadScreen(qMMH->theme());
         return true;
     }
 
@@ -109,5 +109,5 @@ void QsApplicationPrivate::removeThemes() {
     Q_Q(QsApplication);
 
     stylesheets.clear();
-    q->reloadScreen();
+    q->reloadScreen(qMMH->theme());
 }

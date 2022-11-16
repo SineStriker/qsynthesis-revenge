@@ -1,4 +1,5 @@
 #include "FileListItemDelegate.h"
+#include "../FileListWidget.h"
 
 #include <QDir>
 
@@ -20,8 +21,8 @@ QSize FileListItemDelegate::sizeHint(const QStyleOptionViewItem &option,
                                      const QModelIndex &index) const {
     QSize size = QStyledItemDelegate::sizeHint(option, index);
 
-    int iconHeight =
-        index.data(IconSize).toSize().height() + m_iconMargins.top() + m_iconMargins.bottom();
+    int iconHeight = index.data(FileListWidget::IconSize).toSize().height() + m_iconMargins.top() +
+                     m_iconMargins.bottom();
     int midHeight = QFontMetrics(m_fileType.font()).height() +
                     QFontMetrics(m_locType.font()).height() + m_fileMargins.top() +
                     m_fileMargins.bottom() + m_locMargins.top() + m_locMargins.bottom();
@@ -41,21 +42,21 @@ void FileListItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &
     rect.adjust(m_margins.left(), m_margins.top(), -m_margins.right(), -m_margins.bottom());
 
     // Fetch data
-    QString filename = index.data(Filename).toString();
-    QString location = QDir::toNativeSeparators(index.data(Location).toString());
-    QString date = index.data(Date).toString();
+    QString filename = index.data(FileListWidget::Filename).toString();
+    QString location = QDir::toNativeSeparators(index.data(FileListWidget::Location).toString());
+    QString date = index.data(FileListWidget::Date).toString();
 
-    QIcon icon = index.data(Icon).value<QIcon>();
-    QSize iconSize = index.data(IconSize).toSize();
+    QIcon icon = index.data(FileListWidget::Icon).value<QIcon>();
+    QSize iconSize = index.data(FileListWidget::IconSize).toSize();
 
     // Calculate size
     QFont fileFont = m_fileType.font();
     QFont locFont = m_locType.font();
     QFont dateFont = m_dateType.font();
 
-//    fileFont.setStyleStrategy(QFont::PreferAntialias);
-//    locFont.setStyleStrategy(QFont::PreferAntialias);
-//    dateFont.setStyleStrategy(QFont::PreferAntialias);
+    //    fileFont.setStyleStrategy(QFont::PreferAntialias);
+    //    locFont.setStyleStrategy(QFont::PreferAntialias);
+    //    dateFont.setStyleStrategy(QFont::PreferAntialias);
 
     QFontMetrics fileFontM(fileFont);
     QFontMetrics locFontM(locFont);
@@ -67,8 +68,8 @@ void FileListItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &
 
     int dateWidth = dateFontM.horizontalAdvance(date);
 
-    int iconHeight =
-        index.data(IconSize).toSize().height() + m_iconMargins.top() + m_iconMargins.bottom();
+    int iconHeight = index.data(FileListWidget::IconSize).toSize().height() + m_iconMargins.top() +
+                     m_iconMargins.bottom();
     int midHeight = fileFontHeight + m_fileMargins.top() + m_fileMargins.bottom() + locFontHeight +
                     m_locMargins.top() + m_locMargins.bottom();
     int dateHeight = dateFontHeight + m_dateMargins.top() + m_dateMargins.bottom();

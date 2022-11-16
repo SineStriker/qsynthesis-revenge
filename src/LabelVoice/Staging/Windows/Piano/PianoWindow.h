@@ -20,7 +20,7 @@ public:
     bool load();
     bool save();
 
-    void reloadStrings();
+    void reloadStrings(int locale);
 
 protected:
     PianoWindow(PianoWindowPrivate &d, QWidget *parent = nullptr);

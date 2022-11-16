@@ -15,16 +15,15 @@ LvElemApplication::~LvElemApplication() {
     d->deinit();
 }
 
-void LvElemApplication::reloadStrings() {
-    QsApplication::reloadStrings();
+void LvElemApplication::reloadStrings(int locale) {
+    Q_UNUSED(locale);
 }
 
-void LvElemApplication::reloadScreen() {
+void LvElemApplication::reloadScreen(int theme) {
     Q_D(LvElemApplication);
+    Q_UNUSED(theme);
     setStyleSheet(QCssAnalyzer().apply(d->stylesheets.join("\n\n"),
                                        primaryScreen()->logicalDotsPerInch() / 96.0 * 0.8));
-
-    QsApplication::reloadScreen();
 }
 
 LvElemApplication::LvElemApplication(LvElemApplicationPrivate &d, int &argc, char **argv)

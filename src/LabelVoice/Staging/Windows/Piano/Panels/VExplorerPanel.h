@@ -10,8 +10,6 @@
 #include "VSliceListWidget.h"
 #include "VSpkTreeWidget.h"
 
-#include "Commands/LVCommand.h"
-
 #include "../PianoSpec.h"
 
 class VExplorerPanel : public QFrame {

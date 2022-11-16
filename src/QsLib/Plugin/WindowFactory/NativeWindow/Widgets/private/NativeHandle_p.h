@@ -2,7 +2,7 @@
 #define NATIVEHANDLEPRIVATE_H
 
 #include "../CWindowBarV2.h"
-#include "../NativeHandle.h"
+#include "../../NativeHandle.h"
 #include "Api/private/IWindowHandle_p.h"
 
 #include <FramelessWidgetsHelper>

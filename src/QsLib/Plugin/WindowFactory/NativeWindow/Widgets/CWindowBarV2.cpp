@@ -5,6 +5,8 @@
 #include <QPainter>
 #include <QRandomGenerator>
 
+#include "Kernel/MultistyleHandle.h"
+
 CWindowBarV2::CWindowBarV2(QMenuBar *menuBar, QWidget *parent) : CBaseTitleBarV2(parent) {
     m_titleMargin = 20;
     m_titleVisible = true;
@@ -49,13 +51,15 @@ CWindowBarV2::CWindowBarV2(QMenuBar *menuBar, QWidget *parent) : CBaseTitleBarV2
     setCloseButton(m_closeButton);
 #endif
 
-    reloadStrings();
+    Q_TR_NOTIFY(CWindowBarV2)
 }
 
 CWindowBarV2::~CWindowBarV2() {
 }
 
-void CWindowBarV2::reloadStrings() {
+void CWindowBarV2::reloadStrings(int locale) {
+    Q_UNUSED(locale);
+
 #ifndef Q_OS_MAC
     m_minButton->setToolTip(tr("Minimize"));
     m_closeButton->setToolTip(tr("Close"));

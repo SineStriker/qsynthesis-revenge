@@ -20,7 +20,7 @@ public:
     explicit CWindowBarV2(QMenuBar *menuBar, QWidget *parent = nullptr);
     ~CWindowBarV2();
 
-    void reloadStrings();
+    void reloadStrings(int locale);
 
 public:
     void reloadMaxButtonState(bool checked = false);

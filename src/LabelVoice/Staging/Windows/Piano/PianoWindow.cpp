@@ -8,6 +8,8 @@
 
 #include "Serialization/QLVProject.h"
 
+#include "Kernel/MultistyleHandle.h"
+
 #include <QApplication>
 #include <QCloseEvent>
 #include <QDebug>
@@ -35,10 +37,11 @@ bool PianoWindow::load() {
 
     if (!proj.load(d->filename)) {
         QsFileManager::instance()->commitRecent(QsFileManager::Project, QsFileManager::Remove,
-                                              d->filename);
+                                                d->filename);
         return false;
     }
-    QsFileManager::instance()->commitRecent(QsFileManager::Project, QsFileManager::Advance, d->filename);
+    QsFileManager::instance()->commitRecent(QsFileManager::Project, QsFileManager::Advance,
+                                            d->filename);
 
     // Update View
     {
@@ -68,7 +71,9 @@ bool PianoWindow::save() {
     return true;
 }
 
-void PianoWindow::reloadStrings() {
+void PianoWindow::reloadStrings(int locale) {
+    Q_UNUSED(locale);
+
     Q_D(PianoWindow);
     d->reloadStrings_helper();
 }
