@@ -220,7 +220,7 @@ foreach(_bin ${_qt_binaries})
         --plugindir ${_plugins_dir}
         --no-translations
         --no-system-d3d-compiler
-        --no-virtualkeyboard
+        # --no-virtualkeyboard
         --no-compiler-runtime
         --no-opengl-sw
         --force
