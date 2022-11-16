@@ -21,11 +21,25 @@ public:
     bool save() override;
 
 public:
-    enum RecentType { Project, Folder };
-    enum ChangeType { Push, Unshift, Advance, Remove, Clear };
+    enum RecentType {
+        Project = 0,
+        // User file types
 
-    void commitRecent(RecentType rType, ChangeType cType, const QString &filename = QString());
-    QStringList fetchRecent(RecentType rType) const;
+        Folder = 65536,
+        // User dir types
+    };
+    int registerFileType(const QString &key, int hint = -1);
+    int registerDirType(const QString &key, int hint = -1);
+
+    enum ChangeType {
+        Push,
+        Unshift,
+        Advance,
+        Remove,
+        Clear,
+    };
+    void commitRecent(int rType, int cType, const QString &filename = QString());
+    QStringList fetchRecent(int rType) const;
 
 public:
     QString openFile(const QString &title, const QString &filter, const QString &flag,
@@ -40,7 +54,7 @@ protected:
     QsFileManager(QsFileManagerPrivate &d, QObject *parent = nullptr);
 
 signals:
-    void recentCommited(RecentType rType);
+    void recentCommited(int rType);
 };
 
 #endif // QSFILEMANAGER_H

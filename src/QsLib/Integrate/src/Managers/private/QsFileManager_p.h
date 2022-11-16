@@ -5,6 +5,7 @@
 #include "QsAbstractManager_p.h"
 #include "Templates/QFileSet.h"
 
+#include <QHash>
 #include <QMap>
 
 class QSINTEGRATE_API QsFileManagerPrivate : public QsAbstractManagerPrivate {
@@ -15,10 +16,18 @@ public:
 
     void init();
 
-    QFileSet projects;
-    QFileSet folders;
+    struct RecentDesc {
+        QString key;
+        QFileSet set;
+    };
+    QHash<int, RecentDesc> recentMap;
+    int fileRegMax;
+    int dirRegMax;
 
     QMap<QString, QString> lastOpenPaths;
+
+    bool load_helper(const QString &filename);
+    bool save_helper(const QString &filename);
 
     QString getLastOpenPath(const QString &type);
     void saveLastOpenDir(const QString &type, const QString &path, bool upper = true);

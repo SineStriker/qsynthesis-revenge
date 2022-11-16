@@ -60,11 +60,13 @@ public:
     QString parse(const QString &str) const;
 
     /* User registry */
-    void registerEscapeVar(const QString &key, const QString &val);
+    void registerEscapeVar(const QString &key, const QString &val, bool replace = true);
 
-    int registerUserDir(const QString &key, const QString &dir, const DirInitArgs &args);
+    int registerUserDir(const QString &key, const QString &dir, const DirInitArgs &args,
+                        int hint = -1);
 
-    int registerUserPlugin(const QString &key, const QString &catagory, const QString &name);
+    int registerUserPlugin(const QString &key, const QString &catagory, const QString &name,
+                           int hint = -1);
 
     void setDefaultDir(int type, const QString &dir);
 

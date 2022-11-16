@@ -16,6 +16,6 @@ add_subdirectory(Element)
 add_subdirectory(Staging)
 add_subdirectory(WinMain)
 
-if (ENABLE_LV_PLUGINS)
+if (ENABLE_APP_PLUGINS)
     add_subdirectory(Plugin)
 endif()

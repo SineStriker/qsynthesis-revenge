@@ -19,4 +19,4 @@ option_ex(BUILD_TEST                on)
 option_ex(BUILD_SVS_PLUGINS_ONLY    off)
 
 option_ex(ENABLE_SVS_CONVERTERS     off)
-option_ex(ENABLE_LV_PLUGINS         on)
+option_ex(ENABLE_APP_PLUGINS        on)

@@ -208,7 +208,6 @@ bool QsDistConfigPrivate::apply_helper() {
 
 bool QsDistConfigPrivate::save_default(const QString &filename) {
     QFile file(filename);
-
     if (!file.open(QIODevice::WriteOnly | QIODevice::Truncate | QIODevice::Text)) {
         return false;
     }
@@ -275,19 +274,28 @@ QString QsDistConfigPrivate::parse(const QString &str) const {
     return str2;
 }
 
-void QsDistConfigPrivate::registerEscapeVar(const QString &key, const QString &val) {
-    vars.insert(key, val);
+void QsDistConfigPrivate::registerEscapeVar(const QString &key, const QString &val, bool replace) {
+    auto it = vars.find(key);
+    if (it != vars.end()) {
+        if (replace) {
+            it.value() = val;
+        }
+    } else {
+        vars.insert(key, val);
+    }
 }
 
 int QsDistConfigPrivate::registerUserDir(const QString &key, const QString &dir,
-                                         const DirInitArgs &args) {
-    dirMap.insert(++dirTypeMax, DirInfo{key, dir, dir, args});
+                                         const DirInitArgs &args, int hint) {
+    dirTypeMax = (hint > dirTypeMax) ? hint : (dirTypeMax + 1);
+    dirMap.insert(dirTypeMax, DirInfo{key, dir, dir, args});
     return dirTypeMax;
 }
 
 int QsDistConfigPrivate::registerUserPlugin(const QString &key, const QString &catagory,
-                                            const QString &name) {
-    pluginMap.insert(++pluginTypeMax, PluginInfo{key, catagory, name, name});
+                                            const QString &name, int hint) {
+    pluginTypeMax = (hint > pluginTypeMax) ? hint : (pluginTypeMax + 1);
+    pluginMap.insert(pluginTypeMax, PluginInfo{key, catagory, name, name});
     return pluginTypeMax;
 }
 
