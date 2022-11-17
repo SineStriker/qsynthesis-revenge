@@ -59,6 +59,7 @@ macro(configure_plugin)
             TARGET ${_target}
             POST_BUILD
             COMMAND ${CMAKE_COMMAND} -E copy_if_different $<TARGET_FILE:${_target}
+
             # Destination
             ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${INNER_PLUGIN_DIR}/${CURRENT_PLUGIN_CATEGORY}
         )

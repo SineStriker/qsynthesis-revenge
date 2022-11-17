@@ -17,6 +17,9 @@ public:
     LvApplication(int &argc, char **argv);
     ~LvApplication();
 
+    void reloadStrings(int locale);
+    void reloadScreen(int theme);
+
 protected:
     LvApplication(LvApplicationPrivate &d, int &argc, char **argv);
 };

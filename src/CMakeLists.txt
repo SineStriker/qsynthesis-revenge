@@ -55,6 +55,7 @@ include(${CMAKE_CURRENT_SOURCE_DIR}/../vcpkg/scripts/buildsystems/vcpkg.cmake)
 include(${PROJECT_MODULES_DIR}/Basic.cmake)
 include(${PROJECT_MODULES_DIR}/FindUtil.cmake)
 include(${PROJECT_MODULES_DIR}/Link.cmake)
+include(${PROJECT_MODULES_DIR}/Linguist.cmake)
 include(${PROJECT_MODULES_DIR}/ListUtil.cmake)
 
 # Find pre-built libraries
@@ -79,28 +80,35 @@ if(BUILD_TEST)
     add_subdirectory(Test)
 endif()
 
-# Add copy or deploy tasks
-set(_suffix)
+# Add other tasks
+if(TRUE)
+    set(_suffix)
 
-if(${CMAKE_BUILD_TYPE} STREQUAL Debug)
-    set(_suffix "/debug")
-endif()
+    if(${CMAKE_BUILD_TYPE} STREQUAL Debug)
+        set(_suffix "/debug")
+    endif()
 
-if(WIN32)
-    set(VCPKG_BINARY_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../vcpkg/installed/${VCPKG_TARGET_TRIPLET}${_suffix}/bin")
-    set(VCPKG_BINARY_PAT "*.dll")
-elseif(APPLE)
-    set(VCPKG_BINARY_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../vcpkg/installed/${VCPKG_TARGET_TRIPLET}${_suffix}/lib")
-    set(VCPKG_BINARY_PAT "*.dylib")
-else()
-    set(VCPKG_BINARY_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../vcpkg/installed/${VCPKG_TARGET_TRIPLET}${_suffix}/lib")
-    set(VCPKG_BINARY_PAT "*.so*")
-endif()
+    if(WIN32)
+        set(VCPKG_BINARY_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../vcpkg/installed/${VCPKG_TARGET_TRIPLET}${_suffix}/bin")
+        set(VCPKG_BINARY_PAT "*.dll")
+    elseif(APPLE)
+        set(VCPKG_BINARY_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../vcpkg/installed/${VCPKG_TARGET_TRIPLET}${_suffix}/lib")
+        set(VCPKG_BINARY_PAT "*.dylib")
+    else()
+        set(VCPKG_BINARY_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../vcpkg/installed/${VCPKG_TARGET_TRIPLET}${_suffix}/lib")
+        set(VCPKG_BINARY_PAT "*.so*")
+    endif()
 
-unset(_suffix)
+    unset(_suffix)
+    
+    get_all_targets(CURRENT_ALL_TARGETS)
 
-include(Deps.cmake)
+    # Copy dlls and and add translations
+    include(Deps.cmake)
 
-if(APP_DEPLOY)
-    include(Deploy.cmake)
+    if(APP_DEPLOY)
+        include(Deploy.cmake)
+    endif()
+
+    unset(CURRENT_ALL_TARGETS)
 endif()

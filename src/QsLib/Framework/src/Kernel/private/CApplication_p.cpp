@@ -26,12 +26,6 @@ void CApplicationPrivate::init() {
 
         ::exit(0);
     }
-
-    q->connect(q, &SingleApplication::instanceStarted, q, &CApplication::_q_instanceStarted);
-    q->connect(q, &SingleApplication::receivedMessage, q, &CApplication::_q_messageReceived);
-
-    q->connect(hMSH.data(), &MultistyleHandle::localeChanged, q, &CApplication::_q_localeChanged);
-    q->connect(hMSH.data(), &MultistyleHandle::themeChanged, q, &CApplication::_q_themeChanged);
 }
 
 void CApplicationPrivate::instanceStarted_helper() {

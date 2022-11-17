@@ -17,9 +17,7 @@ set(_qt_binaries)
 # endforeach()
 
 # Target Collector
-get_all_targets(_all_targets)
-
-foreach(_target ${_all_targets})
+foreach(_target ${CURRENT_ALL_TARGETS})
     get_target_property(_target_type ${_target} TC_TARGET_TYPE)
     get_target_property(_is_qt_bin ${_target} TC_QT_BINARY)
 
@@ -55,7 +53,7 @@ foreach(_target ${_all_targets})
         endif()
     endif()
 
-    if((NOT ${_is_qt_bin} STREQUAL "_qt_bin-NOTFOUND") AND ${_is_qt_bin})
+    if(_is_qt_bin AND ${_is_qt_bin})
         list(APPEND _qt_binaries ${_target})
     endif()
 endforeach()
@@ -130,7 +128,7 @@ add_custom_command(
 foreach(_plugin ${_app_plugins})
     get_target_property(_category ${_plugin} TC_PLUGIN_CATEGORY)
 
-    if(${_category} STREQUAL "_category-NOTFOUND")
+    if(NOT _category)
         continue()
     endif()
 
@@ -147,7 +145,7 @@ endforeach()
 foreach(_plugin ${_qs_plugins})
     get_target_property(_category ${_plugin} TC_PLUGIN_CATEGORY)
 
-    if(${_category} STREQUAL "_category-NOTFOUND")
+    if(NOT _category)
         continue()
     endif()
 

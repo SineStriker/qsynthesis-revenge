@@ -19,9 +19,8 @@ public:
     LvElemApplication(int &argc, char **argv);
     ~LvElemApplication();
 
-public:
-    void reloadStrings(int locale) override;
-    void reloadScreen(int theme) override;
+    void reloadStrings(int locale);
+    void reloadScreen(int theme);
 
 protected:
     LvElemApplication(LvElemApplicationPrivate &d, int &argc, char **argv);

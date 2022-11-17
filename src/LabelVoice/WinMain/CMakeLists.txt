@@ -44,8 +44,8 @@ if(WIN32)
     )
 
     # copy ico
-    file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/win32/app.ico DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
-    file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/win32/xpstyle.manifest DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
+    file(COPY res/win32/app.ico DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
+    file(COPY res/win32/xpstyle.manifest DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
 
     # add files
     target_sources(${PROJECT_NAME} PRIVATE
@@ -57,7 +57,7 @@ elseif(APPLE)
     get_filename_component(MACOSX_BUNDLE_PLIST_FILENAME ${MACOSX_BUNDLE_PLIST} NAME)
 
     file(COPY ${MACOSX_BUNDLE_PLIST} DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
-    file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/mac/qsynth2.icns DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
+    file(COPY res/mac/qsynth2.icns DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
 
     # configure mac plist
     set_property(TARGET ${PROJECT_NAME} PROPERTY

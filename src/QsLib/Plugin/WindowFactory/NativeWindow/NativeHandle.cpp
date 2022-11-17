@@ -1,5 +1,5 @@
 #include "NativeHandle.h"
-#include "Widgets/private/NativeHandle_p.h"
+#include "private/NativeHandle_p.h"
 
 NativeHandle::NativeHandle(QMainWindow *parent) : NativeHandle(*new NativeHandlePrivate(), parent) {
 }

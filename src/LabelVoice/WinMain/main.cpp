@@ -75,7 +75,7 @@ std::wstring GetLastErrorAsString() {
 #endif
 
 #ifndef DELAY_LOAD
-#include "lvstaging_global.h"
+#include "lvstaging.h"
 #endif
 
 int main(int argc, char *argv[]) {

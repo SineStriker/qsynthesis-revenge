@@ -19,6 +19,9 @@ public:
     QsApplication(int &argc, char **argv);
     ~QsApplication();
 
+    void reloadStrings(int locale);
+    void reloadScreen(int theme);
+
 public:
     static QString mainTitle();
     static QString windowTitle();

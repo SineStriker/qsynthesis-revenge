@@ -1,0 +1,7 @@
+<RCC>
+    <qresource prefix="/">
+        <file>translations/NativeWindow_ja_JP.qm</file>
+        <file>translations/NativeWindow_zh_CN.qm</file>
+        <file>translations/NativeWindow_zh_HK.qm</file>
+    </qresource>
+</RCC>

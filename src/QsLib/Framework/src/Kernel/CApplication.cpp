@@ -89,6 +89,9 @@ CApplication::CApplication(CApplicationPrivate &d, int &argc, char **argv)
     : SingleApplication(argc, argv, true, opts), d_ptr(&d) {
     d.q_ptr = this;
     d.init();
+
+    Q_TR_NOTIFY(CApplication);
+    Q_SS_NOTIFY(CApplication);
 }
 
 bool CApplication::notify(QObject *obj, QEvent *event) {
@@ -125,14 +128,4 @@ void CApplication::_q_messageReceived(quint32 instanceId, QByteArray message) {
     stream >> args;
 
     d->messageReceived_helper(args);
-}
-
-void CApplication::_q_localeChanged(int locale) {
-    Q_UNUSED(locale);
-    reloadStrings(locale);
-}
-
-void CApplication::_q_themeChanged(int theme) {
-    Q_UNUSED(theme);
-    reloadScreen(theme);
 }

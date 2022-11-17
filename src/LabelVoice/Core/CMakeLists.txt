@@ -2,7 +2,7 @@ project(LvCore LANGUAGES CXX VERSION ${INNER_VERSION})
 
 add_files(_src
     CURRENT
-    DIRECTORIES Api Basic Commands Render Serialization Utils
+    DIRECTORIES include src
     PATTERNS *.h *.hpp *.cpp *.cc
 )
 
@@ -11,7 +11,7 @@ lvmod_configure_library(
     ENABLE_SHARED
     QT_LIBRARIES Core
     LINKS QsSVS
-    INCLUDE_CURRENT
+    INCLUDES include src
     WIN32_FILE_DESC "LabelVoice Core Module"
     WIN32_PRODUCT_NAME "LabelVoice.Core"
 )

@@ -5,7 +5,7 @@ project(LvElem
 
 add_files(_src
     CURRENT
-    DIRECTORIES Kernel Styles
+    DIRECTORIES include src
     PATTERNS *.h *.hpp *.cpp *.cc
 )
 
@@ -15,7 +15,7 @@ lvmod_configure_library(
     QT_LIBRARIES Widgets Svg
     QT_PRIVATE_INCLUDES Gui Widgets
     LINKS QsUtils QsIntegrate LvCore
-    INCLUDE_CURRENT
+    INCLUDES include src
     WIN32_FILE_DESC "LabelVoice Elementary Module"
     WIN32_PRODUCT_NAME "LabelVoice.Elementary"
 )

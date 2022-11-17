@@ -13,6 +13,14 @@ QsApplication::~QsApplication() {
     d->deinit();
 }
 
+void QsApplication::reloadStrings(int locale) {
+    Q_UNUSED(locale);
+}
+
+void QsApplication::reloadScreen(int theme) {
+    Q_UNUSED(theme);
+}
+
 QString QsApplication::mainTitle() {
     return applicationName();
 }
@@ -58,6 +66,9 @@ QString QsApplication::allFilesFilter() {
 QsApplication::QsApplication(QsApplicationPrivate &d, int &argc, char **argv)
     : CApplication(d, argc, argv) {
     d.init();
+
+    Q_TR_NOTIFY(QsApplication);
+    Q_SS_NOTIFY(QsApplication);
 }
 
 void QsApplication::q_screenRatioChanged(double dpi) {

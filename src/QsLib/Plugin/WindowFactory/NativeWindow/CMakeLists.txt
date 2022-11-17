@@ -5,12 +5,12 @@ project(NativeWindow
 
 add_files(_src
     CURRENT
-    DIRECTORIES Widgets
+    DIRECTORIES widgets private
     PATTERNS *.h *.hpp *.cpp *.cc
 )
 
 configure_plugin(
-    SOURCES ${_src}
+    SOURCES ${_src} res/res.qrc
     QT_LIBRARIES Widgets
     LINKS QsFramework
     INCLUDE_CURRENT
@@ -19,3 +19,8 @@ configure_plugin(
 )
 
 target_link_libraries(${PROJECT_NAME} PRIVATE FramelessHelper::FramelessHelperWidgets)
+
+target_create_translations(${PROJECT_NAME} SOURCES ${_src}
+    LOCALES zh_CN zh_HK ja_JP
+    DESTINATION res/translations
+)

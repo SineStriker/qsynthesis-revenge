@@ -24,11 +24,8 @@ public:
     explicit MultistyleHandle(QObject *parent = nullptr);
     ~MultistyleHandle();
 
-    enum Theme {
-        Light,
-        Dark,
-        MultiColor,
-    };
+public:
+    enum Theme { Light, Dark, MultiColor };
 
     Theme theme() const;
     void setTheme(Theme theme);

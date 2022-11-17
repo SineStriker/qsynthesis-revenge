@@ -1,7 +1,6 @@
-#include "lvstaging_global.h"
+#include "lvstaging.h"
 
-#include "LvApplication.h"
-
+#include "Kernel/LvApplication.h"
 #include "Managers/QsPluginManager.h"
 #include "Managers/WindowManager.h"
 

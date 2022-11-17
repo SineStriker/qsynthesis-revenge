@@ -15,10 +15,4 @@
 #  endif
 #endif
 
-extern "C" {
-
-    LVSTAGING_API int main_entry(int argc, char *argv[]);
-
-}
-
 #endif // LVSTAGING_GLOBAL_H
