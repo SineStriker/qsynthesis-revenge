@@ -6,6 +6,12 @@
 #include <QDirIterator>
 #include <QProcess>
 
+#ifdef Q_OS_WINDOWS
+#include <ShlObj.h>
+#else
+#include <unistd.h>
+#endif
+
 static const char Slash = '/';
 
 QString Sys::PathFindFileName(const QString &path) {
@@ -181,6 +187,18 @@ QStringList Sys::FindRecursiveDirs(const QString &base, int max) {
 
 void Sys::exitApp(int code) {
     ::exit(code);
+}
+
+bool Sys::isUserRoot() {
+    //    QString name = qgetenv("USER");
+    //    if (name.isEmpty())
+    //        name = qgetenv("USERNAME");
+
+#ifdef Q_OS_WINDOWS
+    return ::IsUserAnAdmin();
+#else
+    return geteuid() == 0;
+#endif
 }
 
 QString Sys::invalidFileNameChars() {

@@ -7,6 +7,9 @@
 #include "Managers/QsFileManager.h"
 #include "Managers/QsPluginManager.h"
 
+#include "Kernel/LocalDecorator.h"
+#include "Kernel/LocalLinguist.h"
+
 #include "../LvDistConfig.h"
 
 class LVELEM_API LvElemApplicationPrivate : public QsApplicationPrivate {
@@ -17,6 +20,10 @@ public:
 
     void init();
     void deinit();
+
+private:
+    LocalLinguist *ll;
+    LocalDecorator *ld;
 };
 
 #endif // LVELEMAPPLICATIONPRIVATE_H

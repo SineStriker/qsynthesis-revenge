@@ -20,6 +20,9 @@ public:
     void reloadStrings(int locale);
     void reloadScreen(int theme);
 
+public:
+    QStringList filenameArgs() const;
+
 protected:
     LvApplication(LvApplicationPrivate &d, int &argc, char **argv);
 };

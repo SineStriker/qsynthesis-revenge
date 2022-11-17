@@ -9,7 +9,7 @@ add_files(_src
 )
 
 qslib_configure_library(
-    SOURCES ${_src}
+    SOURCES ${_src} res/res.qrc
     ENABLE_SHARED
     QT_LIBRARIES Widgets
     QT_PRIVATE_INCLUDES Core Widgets
@@ -17,4 +17,10 @@ qslib_configure_library(
     INCLUDES include src
     WIN32_FILE_DESC "QSynthesis Common Utilities"
     WIN32_PRODUCT_NAME "QSynthesis.Integrate"
+)
+
+target_create_translations(${PROJECT_NAME} SOURCES ${_src}
+    LOCALES zh_CN zh_HK ja_JP
+    DESTINATION res/translations
+    CREATE_ONCE
 )

@@ -1,13 +1,12 @@
 #ifndef IOTOPLUGIN_H
 #define IOTOPLUGIN_H
 
-#include "ISVSPlugin.h"
-
+#include "Api/ISVSPlugin.h"
 #include "Utau/QOtoItem.h"
 
-#include "qssvs_global.h"
+#include "lvelem_global.h"
 
-class QSSVS_API IOtoPlugin : public ISVSPlugin {
+class LVELEM_API IOtoPlugin : public ISVSPlugin {
     Q_OBJECT
 public:
     IOtoPlugin(QObject *parent = nullptr);

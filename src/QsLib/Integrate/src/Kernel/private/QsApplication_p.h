@@ -2,10 +2,13 @@
 #define QSELEMAPPLICATIONPRIVATE_H
 
 #include "../QsApplication.h"
-#include "Private/CApplication_p.h"
+#include "private/CApplication_p.h"
 
 #include "Managers/QsFileManager.h"
 #include "Managers/QsPluginManager.h"
+
+#include "Kernel/LocalDecorator.h"
+#include "Kernel/LocalLinguist.h"
 
 #include "../QsDistConfig.h"
 
@@ -18,22 +21,16 @@ public:
     void init();
     void deinit();
 
+    void init2();
+
     QScopedPointer<QsDistConfig> conf;
 
     QsPluginManager *pluginMgr;
     QsFileManager *fileMgr;
 
-    // Translators
-    bool translate(const QString &filename);
-    void eliminate();
-
-    QSet<QTranslator *> translators;
-
-    // Stylesheets
-    bool addTheme(const QString &filename);
-    void removeThemes();
-
-    QStringList stylesheets;
+private:
+    LocalLinguist *ll;
+    LocalDecorator *ld;
 };
 
 #endif // QSELEMAPPLICATIONPRIVATE_H

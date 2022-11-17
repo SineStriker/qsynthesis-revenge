@@ -16,13 +16,33 @@ LvElemApplication::~LvElemApplication() {
 }
 
 void LvElemApplication::reloadStrings(int locale) {
-    Q_UNUSED(locale);
+    Q_D(LvElemApplication);
+
+    switch (locale) {
+        case MultimodeHandle::UnitedStates:
+            d->ll->eliminate();
+            break;
+        case MultimodeHandle::China:
+            d->ll->translateOnly(":/translations/LvElem_zh_CN.qm");
+            break;
+        case MultimodeHandle::HongKong:
+            d->ll->translateOnly(":/translations/LvElem_zh_HK.qm");
+            break;
+        case MultimodeHandle::Japan:
+            d->ll->translateOnly(":/translations/LvElem_ja_JP.qm");
+            break;
+        default:
+            break;
+    }
 }
 
 void LvElemApplication::reloadScreen(int theme) {
     Q_D(LvElemApplication);
     Q_UNUSED(theme);
-    setStyleSheet(QCssAnalyzer().apply(d->stylesheets.join("\n\n"),
+
+    d->ld->addTheme(":/themes/light/base-light.qss");
+
+    setStyleSheet(QCssAnalyzer().apply(d->ld->stylesheets(),
                                        primaryScreen()->logicalDotsPerInch() / 96.0 * 0.8));
 }
 

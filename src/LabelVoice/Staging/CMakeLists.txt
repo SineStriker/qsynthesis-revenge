@@ -19,3 +19,9 @@ lvmod_configure_library(
     WIN32_FILE_DESC "LabelVoice Main Module"
     WIN32_PRODUCT_NAME "LabelVoice.Staging"
 )
+
+target_create_translations(${PROJECT_NAME} SOURCES ${_src}
+    LOCALES zh_CN zh_HK ja_JP
+    DESTINATION res/translations
+    CREATE_ONCE
+)

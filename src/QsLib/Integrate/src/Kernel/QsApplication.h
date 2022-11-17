@@ -29,7 +29,8 @@ public:
     static QString untitledFileName();
     static QString unsavedPrefix();
     static QString deletedPrefix();
-    static QString QsFileManagerName();
+    static QString sysFileManagerName();
+    static QString sysRootUserName();
     static QString allFilesFilter();
 
 protected:

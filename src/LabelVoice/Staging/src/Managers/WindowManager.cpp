@@ -114,7 +114,8 @@ bool WindowManager::exit() {
     return ok;
 }
 
-WindowManager::WindowManager(WindowManagerPrivate &d, QObject *parent) : QsAbstractManager(d, parent) {
+WindowManager::WindowManager(WindowManagerPrivate &d, QObject *parent)
+    : QsAbstractManager(d, parent) {
     construct();
 
     d.init();

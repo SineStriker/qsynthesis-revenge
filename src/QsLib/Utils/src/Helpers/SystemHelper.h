@@ -80,6 +80,8 @@ namespace Sys {
 
     QSUTILS_API QStringList FindRecursiveDirs(const QString &base, int max = -1);
 
+    QSUTILS_API bool isUserRoot();
+
     QSUTILS_API void exitApp(int code);
 
     QSUTILS_API QString invalidFileNameChars();

@@ -40,22 +40,16 @@ void QsApplicationPrivate::init() {
         conf.reset(new QsDistConfig());
     }
     conf->initAll();
-    conf->load(q->applicationDirPath() + Slash + FILENAME_APP_CONFIG);
-
-    // Create temporary path
-    if (!conf->apply()) {
-        ::exit(-1);
-    }
 
     // Init managers
     pluginMgr = new QsPluginManager(q);
     fileMgr = new QsFileManager(q);
 
-    fileMgr->load();
-    pluginMgr->load();
-
     q->connect(q->primaryScreen(), &QScreen::logicalDotsPerInchChanged, q,
                &QsApplication::q_screenRatioChanged);
+
+    ll = new LocalLinguist(q);
+    ld = new LocalDecorator(q);
 }
 
 void QsApplicationPrivate::deinit() {
@@ -67,47 +61,14 @@ void QsApplicationPrivate::deinit() {
     delete fileMgr;
 }
 
-bool QsApplicationPrivate::translate(const QString &filename) {
-    Q_Q(QsApplication);
-    QTranslator *t = new QTranslator(q);
-
-    if (t->load(filename)) {
-        qApp->installTranslator(t);
-        translators.insert(t);
-        q->reloadStrings(qMMH->locale());
-        return true;
-    }
-
-    delete t;
-    return false;
-}
-
-void QsApplicationPrivate::eliminate() {
-    for (auto it = translators.begin(); it != translators.end(); ++it) {
-        auto t = *it;
-        qApp->removeTranslator(t);
-        delete t;
-    }
-    translators.clear();
-}
-
-bool QsApplicationPrivate::addTheme(const QString &filename) {
+void QsApplicationPrivate::init2() {
     Q_Q(QsApplication);
 
-    QFile file(filename);
-    if (file.open(QIODevice::ReadOnly | QIODevice::Text)) {
-        stylesheets.append(file.readAll());
-        file.close();
-        q->reloadScreen(qMMH->theme());
-        return true;
+    conf->load(q->applicationDirPath() + Slash + FILENAME_APP_CONFIG);
+    if (!conf->apply()) {
+        ::exit(-1);
     }
 
-    return false;
-}
-
-void QsApplicationPrivate::removeThemes() {
-    Q_Q(QsApplication);
-
-    stylesheets.clear();
-    q->reloadScreen(qMMH->theme());
+    fileMgr->load();
+    pluginMgr->load();
 }

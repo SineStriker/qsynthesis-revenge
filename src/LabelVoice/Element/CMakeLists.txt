@@ -10,7 +10,7 @@ add_files(_src
 )
 
 lvmod_configure_library(
-    SOURCES ${_src}
+    SOURCES ${_src} res/res.qrc
     ENABLE_SHARED
     QT_LIBRARIES Widgets Svg
     QT_PRIVATE_INCLUDES Gui Widgets
@@ -31,3 +31,9 @@ target_compile_definitions(${PROJECT_NAME} PUBLIC APP_RES_DIR="${APP_RES_DIR}")
 target_compile_definitions(${PROJECT_NAME} PUBLIC APP_RES_BUILTIN_DIR="${APP_RES_BUILTIN_DIR}")
 
 target_compile_definitions(${PROJECT_NAME} PUBLIC APP_RES_PLUGINS_DIR="${APP_RES_PLUGINS_DIR}")
+
+target_create_translations(${PROJECT_NAME} SOURCES ${_src}
+    LOCALES zh_CN zh_HK ja_JP
+    DESTINATION res/translations
+    CREATE_ONCE
+)

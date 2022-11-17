@@ -1,15 +1,15 @@
 #ifndef IUTAPLUGIN_H
 #define IUTAPLUGIN_H
 
-#include "ISVSPlugin.h"
+#include "Api/ISVSPlugin.h"
 
 #include "Utau/QUstFile.h"
 #include "Utau/QUstSettings.h"
 #include "Utau/QUstVersion.h"
 
-#include "qssvs_global.h"
+#include "lvelem_global.h"
 
-class QSSVS_API IUtaPlugin : public ISVSPlugin {
+class LVELEM_API IUtaPlugin : public ISVSPlugin {
     Q_OBJECT
 public:
     IUtaPlugin(QObject *parent = nullptr);

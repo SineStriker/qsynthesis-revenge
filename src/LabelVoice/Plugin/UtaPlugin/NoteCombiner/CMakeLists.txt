@@ -11,7 +11,7 @@ add_files(_src
 configure_plugin(
     SOURCES ${_src}
     QT_LIBRARIES Core
-    LINKS QsSVS
+    LINKS LvElem
     INCLUDE_CURRENT
     WIN32_AUTHOR_NAME "Sine Striker"
     WIN32_FILE_DESC "QSynthesis Utau Plugin for Editor"

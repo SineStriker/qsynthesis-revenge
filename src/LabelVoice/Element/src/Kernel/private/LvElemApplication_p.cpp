@@ -49,10 +49,8 @@ void LvElemApplicationPrivate::init() {
     q->setFont(f);
 #endif
 
-    // Default translations and styles
-    addTheme(":/themes/light/base-light.qss");
-    addTheme(":/themes/light/home-light.qss");
-    addTheme(":/themes/light/piano-light.qss");
+    ll = new LocalLinguist(q);
+    ld = new LocalDecorator(q);
 }
 
 void LvElemApplicationPrivate::deinit() {

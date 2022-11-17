@@ -14,7 +14,24 @@ QsApplication::~QsApplication() {
 }
 
 void QsApplication::reloadStrings(int locale) {
-    Q_UNUSED(locale);
+    Q_D(QsApplication);
+
+    switch (locale) {
+        case MultimodeHandle::UnitedStates:
+            d->ll->eliminate();
+            break;
+        case MultimodeHandle::China:
+            d->ll->translateOnly(":/translations/QsIntegrate_zh_CN.qm");
+            break;
+        case MultimodeHandle::HongKong:
+            d->ll->translateOnly(":/translations/QsIntegrate_zh_HK.qm");
+            break;
+        case MultimodeHandle::Japan:
+            d->ll->translateOnly(":/translations/QsIntegrate_ja_JP.qm");
+            break;
+        default:
+            break;
+    }
 }
 
 void QsApplication::reloadScreen(int theme) {
@@ -45,13 +62,21 @@ QString QsApplication::deletedPrefix() {
     return tr("(Deleted)");
 }
 
-QString QsApplication::QsFileManagerName() {
+QString QsApplication::sysFileManagerName() {
 #ifdef Q_OS_WINDOWS
     return tr("Explorer");
 #elif defined(Q_OS_MAC)
     return tr("Finder");
 #else
     return tr("File Manager");
+#endif
+}
+
+QString QsApplication::sysRootUserName() {
+#if defined(Q_OS_WINDOWS)
+    return tr("Administrator");
+#else
+    return tr("Root User");
 #endif
 }
 
@@ -69,6 +94,8 @@ QsApplication::QsApplication(QsApplicationPrivate &d, int &argc, char **argv)
 
     Q_TR_NOTIFY(QsApplication);
     Q_SS_NOTIFY(QsApplication);
+
+    d.init2();
 }
 
 void QsApplication::q_screenRatioChanged(double dpi) {

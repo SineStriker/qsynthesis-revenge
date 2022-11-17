@@ -23,4 +23,5 @@ target_link_libraries(${PROJECT_NAME} PRIVATE FramelessHelper::FramelessHelperWi
 target_create_translations(${PROJECT_NAME} SOURCES ${_src}
     LOCALES zh_CN zh_HK ja_JP
     DESTINATION res/translations
+    CREATE_ONCE
 )

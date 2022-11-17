@@ -1,6 +1,7 @@
 #include "LocalLinguist.h"
 
 #include <QCoreApplication>
+#include <QDebug>
 
 LocalLinguist::LocalLinguist(QObject *parent) : QObject(parent) {
 }
@@ -22,6 +23,9 @@ bool LocalLinguist::translate(const QString &filename) {
 }
 
 void LocalLinguist::eliminate() {
+    if (qApp->isQuitLockEnabled()) {
+        return;
+    }
     for (auto it = translators.begin(); it != translators.end(); ++it) {
         auto t = *it;
         qApp->removeTranslator(t);
