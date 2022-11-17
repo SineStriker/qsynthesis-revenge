@@ -3,7 +3,7 @@
 #ifndef Q_OS_WINDOWS
 
 #include "Utau/Config/UtaConstants.h"
-#include "Utils/UtaTranslator.h"
+#include "Utau/Utils/UtaTranslator.h"
 
 #include <QDir>
 #include <QFile>

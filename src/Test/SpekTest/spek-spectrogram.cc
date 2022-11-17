@@ -333,7 +333,7 @@ static QString trim(const QString& s, int length, bool trim_end)
 
     // Check if the entire string fits.
     QFontMetrics f(QApplication::font());
-    int w = f.width(s);
+    int w = f.horizontalAdvance(s);
     if(w <= length) {
         return s;
     }
@@ -344,7 +344,7 @@ static QString trim(const QString& s, int length, bool trim_end)
     int k = s.length();
     while (k - i > 1) {
         int j = (i + k) / 2;
-        w = f.width(trim_end ? s.mid(0, j) + fix : fix + s.mid(j));
+        w = f.horizontalAdvance(trim_end ? s.mid(0, j) + fix : fix + s.mid(j));
         if(trim_end != (w > length)) {
             i = j;
         } else {

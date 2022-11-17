@@ -8,21 +8,21 @@ if(TRUE)
         set(_runtime_output_dir ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
     endif()
 
-    if(WIN32)
-        file(GLOB _dlls ${VCPKG_BINARY_DIR}/${VCPKG_BINARY_PAT})
+    # if(WIN32)
+    file(GLOB _dlls ${VCPKG_BINARY_DIR}/${VCPKG_BINARY_PAT})
 
-        foreach(_dll ${_dlls})
-            get_filename_component(_name ${_dll} NAME)
-            set(_out_dll ${_runtime_output_dir}/${_name})
+    foreach(_dll ${_dlls})
+        get_filename_component(_name ${_dll} NAME)
+        set(_out_dll ${_runtime_output_dir}/${_name})
 
-            add_custom_command(
-                OUTPUT ${_out_dll}
-                COMMAND ${CMAKE_COMMAND} -E copy_if_different ${_dll} ${_runtime_output_dir}
-            )
+        add_custom_command(
+            OUTPUT ${_out_dll}
+            COMMAND ${CMAKE_COMMAND} -E copy_if_different ${_dll} ${_runtime_output_dir}
+        )
 
-            list(APPEND PREBUILT_DLL_LIST ${_out_dll})
-        endforeach()
-    endif()
+        list(APPEND PREBUILT_DLL_LIST ${_out_dll})
+    endforeach()
+    # endif()
 
     # Copy pre-built libraries
     add_custom_target(setup_deps DEPENDS ${PREBUILT_DLL_LIST})
@@ -54,5 +54,4 @@ if(TRUE)
         lrelease_all
         DEPENDS ${_lrelease_targets}
     )
-
 endif()

@@ -13,3 +13,6 @@ add_test_target(SpekTest
 
 ffmpeg_link_libraries(${PROJECT_NAME} PRIVATE avcodec avformat avutil swresample)
 
+if (LINUX)
+    target_link_libraries(${PROJECT_NAME} PRIVATE pthread)
+endif()
