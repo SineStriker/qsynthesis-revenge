@@ -9,10 +9,6 @@
 
 #define qMMH MultimodeHandle::instance()
 
-#define Q_TR_NOTIFY(T)                                                                             \
-    reloadStrings(qMMH->locale());                                                                 \
-    connect(qMMH, &MultimodeHandle::localeChanged, this, &T::reloadStrings);
-
 class QSUTILS_API MultimodeHandle : public QObject {
     Q_OBJECT
     Q_SINGLETON(MultimodeHandle)
@@ -38,5 +34,13 @@ protected:
 signals:
     void localeChanged(int old);
 };
+
+#define Q_TR_NOTIFY(T)                                                                             \
+    reloadStrings(qMMH->locale());                                                                 \
+    connect(qMMH, &MultimodeHandle::localeChanged, this, &T::reloadStrings);
+
+#define Q_TR_NOTIFY_PRIVATE(T)                                                                     \
+    q_func()->reloadStrings(qMMH->locale());                                                       \
+    q_func()->connect(qMMH, &MultimodeHandle::localeChanged, q_func(), &T::reloadStrings);
 
 #endif // MULTIMODEHANDLE_H

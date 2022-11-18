@@ -19,14 +19,7 @@ public:
     void init();
     void deinit();
 
-    void init2();
-
     WindowManager *windowMgr;
-
-    bool allowRoot;
-    QStringList filenames;
-
-    void messageReceived_helper(const QStringList &args) override;
 
 private:
     LocalLinguist *ll;

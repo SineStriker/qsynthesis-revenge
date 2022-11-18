@@ -2,125 +2,118 @@
 
 #include "private/CApplication_p.h"
 
+#include "Kernel/MyStartupInfo.h"
+
 #include <QDateTime>
 #include <QMouseEvent>
 #include <QWidget>
+
+extern Q_DECL_IMPORT QWidget *qt_button_down;
 
 CApplication::CApplication(int &argc, char **argv)
     : CApplication(*new CApplicationPrivate(), argc, argv) {
 }
 
 CApplication::~CApplication() {
-    removeAllNotifyFilters();
+    Q_D(CApplication);
+    d->deinit();
 }
-
-extern Q_DECL_IMPORT QWidget *qt_button_down;
-
 QWidget *CApplication::implicitMouseGrabber() const {
     return qt_button_down;
 }
 
-QObjectList CApplication::notifyFilters() const {
-    Q_D(const CApplication);
-    QObjectList list;
-    for (auto it = d->notifyFilters.begin(); it != d->notifyFilters.end(); ++it) {
-        auto of = *it;
-        list.append(of->obj);
-    }
-    return list;
-}
-
-bool CApplication::installNotifyFilter(CAppNotifyFilter *nf) {
-    Q_D(CApplication);
-    if (notifyFilters().contains(nf->obj)) {
-        delete nf;
-        return false;
-    }
-    d->notifyFilters.append(nf);
-    return true;
-}
-
-bool CApplication::removeNotifyFilter(QObject *obj) {
-    Q_D(CApplication);
-
-    CAppNotifyFilter *nf = nullptr;
-    for (auto it = d->notifyFilters.begin(); it != d->notifyFilters.end(); ++it) {
-        auto cur = *it;
-        if (cur->obj == obj) {
-            nf = cur;
-            d->notifyFilters.erase(it);
-            break;
-        }
-    }
-    if (nf) {
-        delete nf;
-        return true;
-    }
-    return false;
-}
-
-void CApplication::removeAllNotifyFilters() {
-    Q_D(CApplication);
-    for (auto it = d->notifyFilters.begin(); it != d->notifyFilters.end(); ++it) {
-        delete *it;
-        break;
-    }
-    d->notifyFilters.clear();
-}
-
 void CApplication::reloadStrings(int locale) {
-    Q_UNUSED(locale)
+    Q_D(CApplication);
 
-    //    qDebug() << "Locale Updated:" << (QLocale::Country) locale;
+    switch (locale) {
+        case MultimodeHandle::UnitedStates:
+            d->ll->eliminate();
+            break;
+        case MultimodeHandle::China:
+            d->ll->translateOnly(":/translations/QsFramework_zh_CN.qm");
+            break;
+        case MultimodeHandle::HongKong:
+            d->ll->translateOnly(":/translations/QsFramework_zh_HK.qm");
+            break;
+        case MultimodeHandle::Japan:
+            d->ll->translateOnly(":/translations/QsFramework_ja_JP.qm");
+            break;
+        default:
+            break;
+    }
 }
 
 void CApplication::reloadScreen(int theme) {
     Q_UNUSED(theme)
+}
 
-    //    qDebug() << "Theme Updated:" << theme;
+QString CApplication::mainTitle() {
+    return qIStup->mainTitle();
+}
+
+QString CApplication::windowTitle() {
+    return qIStup->windowTitle();
+}
+
+QString CApplication::errorTitle() {
+    return qIStup->errorTitle();
+}
+
+QString CApplication::sysFileManagerName() {
+#ifdef Q_OS_WINDOWS
+    return tr("Explorer");
+#elif defined(Q_OS_MAC)
+    return tr("Finder");
+#else
+    return tr("File Manager");
+#endif
+}
+
+QString CApplication::sysRootUserName() {
+#if defined(Q_OS_WINDOWS)
+    return tr("Administrator");
+#else
+    return tr("Root User");
+#endif
+}
+
+QString CApplication::allFilesFilter() {
+#if defined(Q_OS_WINDOWS)
+    return "*.*";
+#else
+    return "*";
+#endif
 }
 
 CApplication::CApplication(CApplicationPrivate &d, int &argc, char **argv)
     : QApplication(argc, argv), d_ptr(&d) {
     d.q_ptr = this;
-    d.init();
 
-    Q_TR_NOTIFY(CApplication);
-    Q_SS_NOTIFY(CApplication);
+    d.init();
 }
 
 bool CApplication::notify(QObject *obj, QEvent *event) {
-    Q_D(CApplication);
-
-    for (auto it = d->notifyFilters.begin(); it != d->notifyFilters.end(); ++it) {
-        auto cur = *it;
-        bool res = cur->notifyFilter(obj, event);
-        if (res) {
-            return true;
-        }
-    }
     return QApplication::notify(obj, event);
 }
 
+void CApplication::newStartedInstance() {
+}
+
+void CApplication::receiveMessage(quint32 instanceId, const QByteArray &message) {
+    Q_UNUSED(instanceId);
+    Q_UNUSED(message);
+}
+
 void CApplication::_q_instanceStarted() {
-    Q_D(CApplication);
-
-    qDebug() << "instance started";
-
-    d->instanceStarted_helper();
+    newStartedInstance();
 }
 
 void CApplication::_q_messageReceived(quint32 instanceId, QByteArray message) {
-    Q_D(CApplication);
+    receiveMessage(instanceId, message);
+}
 
-    qDebug() << "message received" << instanceId;
+void CApplication::_q_screenRatioChanged(double dpi) {
+    Q_UNUSED(dpi);
 
-    Q_UNUSED(instanceId)
-
-    QDataStream stream(&message, QIODevice::ReadOnly);
-    QStringList args;
-
-    stream >> args;
-
-    d->messageReceived_helper(args);
+    qMMH->setTheme(qMMH->theme());
 }

@@ -13,8 +13,6 @@
 #include "SystemHelper.h"
 #include "ViewHelper.h"
 
-static const char Slash = '/';
-
 static QString loadAppleFont() {
     QString fontDir = qApp->applicationDirPath() + "/resources/fonts";
     int fontId = QFontDatabase::addApplicationFont(fontDir + "/PingFang SC.ttf");
@@ -34,9 +32,6 @@ LvElemApplicationPrivate::~LvElemApplicationPrivate() {
 void LvElemApplicationPrivate::init() {
     Q_Q(LvElemApplication);
 
-    // Set app meta data
-    q->setApplicationVersion(APP_VERSION);
-
     // Load codec and fonts
 #if defined(Q_OS_WINDOWS)
     auto gbk = QTextCodec::codecForName("GBK");
@@ -51,6 +46,9 @@ void LvElemApplicationPrivate::init() {
 
     ll = new LocalLinguist(q);
     ld = new LocalDecorator(q);
+
+    Q_TR_NOTIFY_PRIVATE(LvElemApplication);
+    Q_SS_NOTIFY_PRIVATE(LvElemApplication);
 }
 
 void LvElemApplicationPrivate::deinit() {

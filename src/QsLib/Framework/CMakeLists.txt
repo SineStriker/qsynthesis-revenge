@@ -11,7 +11,7 @@ add_files(_src
 )
 
 qslib_configure_library(
-    SOURCES ${_src}
+    SOURCES ${_src} res/res.qrc
     ENABLE_SHARED
     QT_LIBRARIES Widgets Svg Network
     QT_PRIVATE_INCLUDES Widgets
@@ -31,4 +31,10 @@ target_include_directories(${PROJECT_NAME} PUBLIC
     src/Metatypes/Core
     src/Metatypes/User
     src/Visual
+)
+
+target_create_translations(${PROJECT_NAME} SOURCES ${_src}
+    LOCALES zh_CN zh_HK ja_JP
+    DESTINATION res/translations
+    CREATE_ONCE
 )

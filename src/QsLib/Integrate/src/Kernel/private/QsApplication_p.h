@@ -12,7 +12,9 @@
 
 #include "../QsDistConfig.h"
 
-class QSINTEGRATE_API QsApplicationPrivate : public CApplicationPrivate {
+#include <QCommandLineParser>
+
+class QSINTEGRATE_API QsApplicationPrivate {
     Q_DECLARE_PUBLIC(QsApplication)
 public:
     QsApplicationPrivate(QsDistConfig *conf = nullptr);
@@ -21,10 +23,15 @@ public:
     void init();
     void deinit();
 
-    void init2();
+    QsApplication *q_ptr;
 
+    // CMD parser
+    QCommandLineParser parser;
+
+    // App Config
     QScopedPointer<QsDistConfig> conf;
 
+    // Managers
     QsPluginManager *pluginMgr;
     QsFileManager *fileMgr;
 

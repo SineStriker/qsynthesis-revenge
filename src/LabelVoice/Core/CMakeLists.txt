@@ -17,5 +17,3 @@ lvmod_configure_library(
 )
 
 target_link_libraries(${PROJECT_NAME} PRIVATE yaml-cpp)
-
-target_compile_definitions(${PROJECT_NAME} PUBLIC APP_VERSION="${PROJECT_VERSION_SHORT}")

@@ -127,9 +127,8 @@
 <context>
     <name>LvApplication</name>
     <message>
-        <location filename="../../src/Kernel/private/LvApplication_p.cpp" line="56"/>
         <source>You&apos;re trying to start %1 as the %2 which isn&apos;t recommended.</source>
-        <translation type="unfinished">你正在尝试以%2身份运行%1，推荐使用低权限启动。</translation>
+        <translation type="obsolete">你正在尝试以%2身份运行%1，推荐使用低权限启动。</translation>
     </message>
     <message>
         <source>Continue</source>
@@ -353,6 +352,11 @@
         <location filename="../../src/Windows/Basic/ProjectCommonBlock.cpp" line="125"/>
         <source>About Qt</source>
         <translation type="unfinished">关于Qt</translation>
+    </message>
+    <message>
+        <location filename="../../src/Kernel/LvStartupInfo.cpp" line="5"/>
+        <source>Voice data annotation frontend.</source>
+        <translation type="unfinished">声音数据标注工具。</translation>
     </message>
 </context>
 <context>

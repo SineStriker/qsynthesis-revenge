@@ -10,10 +10,6 @@
 #undef qMMH
 #define qMMH qobject_cast<MultistyleHandle *>(MultimodeHandle::instance())
 
-#define Q_SS_NOTIFY(T)                                                                             \
-    reloadScreen(qMMH->theme());                                                                   \
-    connect(qMMH, &MultistyleHandle::themeChanged, this, &T::reloadScreen);
-
 /*
  *  Initialize at constructor of CApplicationPrivate
  */
@@ -37,5 +33,13 @@ protected:
 signals:
     void themeChanged(int theme);
 };
+
+#define Q_SS_NOTIFY(T)                                                                             \
+    reloadScreen(qMMH->theme());                                                                   \
+    connect(qMMH, &MultistyleHandle::themeChanged, this, &T::reloadScreen);
+
+#define Q_SS_NOTIFY_PRIVATE(T)                                                                     \
+    q_func()->reloadScreen(qMMH->theme());                                                         \
+    q_func()->connect(qMMH, &MultistyleHandle::themeChanged, q_func(), &T::reloadScreen);
 
 #endif // MULTISTYLEHANDLE_H

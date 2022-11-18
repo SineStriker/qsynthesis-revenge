@@ -23,21 +23,14 @@ public:
     void reloadScreen(int theme);
 
 public:
-    static QString mainTitle();
-    static QString windowTitle();
-    static QString errorTitle();
     static QString untitledFileName();
     static QString unsavedPrefix();
     static QString deletedPrefix();
-    static QString sysFileManagerName();
-    static QString sysRootUserName();
-    static QString allFilesFilter();
 
 protected:
     QsApplication(QsApplicationPrivate &d, int &argc, char **argv);
 
-private:
-    void q_screenRatioChanged(double dpi);
+    QScopedPointer<QsApplicationPrivate> d_ptr;
 };
 
 #endif // QSELEMAPPLICATION_H

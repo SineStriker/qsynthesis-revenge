@@ -125,14 +125,6 @@
     </message>
 </context>
 <context>
-    <name>LvApplication</name>
-    <message>
-        <location filename="../../src/Kernel/private/LvApplication_p.cpp" line="56"/>
-        <source>You&apos;re trying to start %1 as the %2 which isn&apos;t recommended.</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
     <name>PianoActions</name>
     <message>
         <location filename="../../src/Windows/Piano/PianoActions.cpp" line="124"/>
@@ -344,6 +336,11 @@
     <message>
         <location filename="../../src/Windows/Basic/ProjectCommonBlock.cpp" line="125"/>
         <source>About Qt</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/Kernel/LvStartupInfo.cpp" line="5"/>
+        <source>Voice data annotation frontend.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

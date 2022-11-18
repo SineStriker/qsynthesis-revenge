@@ -4,43 +4,13 @@
 <context>
     <name>QsApplication</name>
     <message>
-        <location filename="../../src/Kernel/QsApplication.cpp" line="50"/>
-        <source>Error</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/Kernel/QsApplication.cpp" line="54"/>
+        <location filename="../../src/Kernel/QsApplication.cpp" line="42"/>
         <source>Untitled</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/Kernel/QsApplication.cpp" line="62"/>
+        <location filename="../../src/Kernel/QsApplication.cpp" line="50"/>
         <source>(Deleted)</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/Kernel/QsApplication.cpp" line="67"/>
-        <source>Explorer</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/Kernel/QsApplication.cpp" line="69"/>
-        <source>Finder</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/Kernel/QsApplication.cpp" line="71"/>
-        <source>File Manager</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/Kernel/QsApplication.cpp" line="77"/>
-        <source>Administrator</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/Kernel/QsApplication.cpp" line="79"/>
-        <source>Root User</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

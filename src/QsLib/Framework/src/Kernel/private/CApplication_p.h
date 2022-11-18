@@ -2,12 +2,14 @@
 #define CAPPLICATIONPRIVATE_H
 
 #include "../CApplication.h"
-
-#include <SingleApplication>
-
 #include "../MultistyleHandle.h"
 
+#include "Kernel/LocalDecorator.h"
+#include "Kernel/LocalLinguist.h"
+
 #include "qsframework_global.h"
+
+class SingleApplication;
 
 class QSFRAMEWORK_API CApplicationPrivate {
     Q_DECLARE_PUBLIC(CApplication)
@@ -18,17 +20,14 @@ public:
     void init();
     void deinit();
 
-    void setupSingle();
-
-    virtual void instanceStarted_helper();
-    virtual void messageReceived_helper(const QStringList &args);
-
     CApplication *q_ptr;
 
-    QScopedPointer<SingleApplication> hSingle;
-    QScopedPointer<MultistyleHandle> hMSH;
+    MultistyleHandle *hModes;
+    SingleApplication *hSingle;
 
-    QList<CAppNotifyFilter *> notifyFilters;
+private:
+    LocalLinguist *ll;
+    LocalDecorator *ld;
 };
 
 #endif // CAPPLICATIONPRIVATE_H

@@ -3,6 +3,7 @@
 #include "private/LvApplication_p.h"
 
 #include "Styles/QCssAnalyzer.h"
+#include "ViewHelper.h"
 
 #include <QScreen>
 
@@ -57,17 +58,15 @@ void LvApplication::reloadScreen(int theme) {
                                        primaryScreen()->logicalDotsPerInch() / 96.0 * 0.8));
 }
 
-QStringList LvApplication::filenameArgs() const {
-    Q_D(const LvApplication);
-    return d->filenames;
+void LvApplication::receiveMessage(quint32 instanceId, const QByteArray &message) {
+    Q_UNUSED(instanceId);
+    Q_UNUSED(message);
+
+    Q_D(LvApplication);
+    View::bringWindowToForeground(d->windowMgr->firstWindow());
 }
 
 LvApplication::LvApplication(LvApplicationPrivate &d, int &argc, char **argv)
     : LvElemApplication(d, argc, argv) {
     d.init();
-
-    Q_TR_NOTIFY(LvApplication);
-    Q_SS_NOTIFY(LvApplication);
-
-    d.init2();
 }

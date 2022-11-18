@@ -35,6 +35,9 @@ QsApplicationPrivate::~QsApplicationPrivate() {
 void QsApplicationPrivate::init() {
     Q_Q(QsApplication);
 
+    ll = new LocalLinguist(q);
+    ld = new LocalDecorator(q);
+
     // Load or create app config
     if (conf.isNull()) {
         conf.reset(new QsDistConfig());
@@ -45,11 +48,16 @@ void QsApplicationPrivate::init() {
     pluginMgr = new QsPluginManager(q);
     fileMgr = new QsFileManager(q);
 
-    q->connect(q->primaryScreen(), &QScreen::logicalDotsPerInchChanged, q,
-               &QsApplication::q_screenRatioChanged);
+    Q_TR_NOTIFY_PRIVATE(QsApplication);
+    Q_SS_NOTIFY_PRIVATE(QsApplication);
 
-    ll = new LocalLinguist(q);
-    ld = new LocalDecorator(q);
+    conf->load(q->applicationDirPath() + Slash + FILENAME_APP_CONFIG);
+    if (!conf->apply()) {
+        ::exit(-1);
+    }
+
+    fileMgr->load();
+    pluginMgr->load();
 }
 
 void QsApplicationPrivate::deinit() {
@@ -59,16 +67,4 @@ void QsApplicationPrivate::deinit() {
 
     delete pluginMgr;
     delete fileMgr;
-}
-
-void QsApplicationPrivate::init2() {
-    Q_Q(QsApplication);
-
-    conf->load(q->applicationDirPath() + Slash + FILENAME_APP_CONFIG);
-    if (!conf->apply()) {
-        ::exit(-1);
-    }
-
-    fileMgr->load();
-    pluginMgr->load();
 }

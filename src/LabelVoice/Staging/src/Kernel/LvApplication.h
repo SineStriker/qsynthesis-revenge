@@ -20,8 +20,8 @@ public:
     void reloadStrings(int locale);
     void reloadScreen(int theme);
 
-public:
-    QStringList filenameArgs() const;
+protected:
+    void receiveMessage(quint32 instanceId, const QByteArray &message) override;
 
 protected:
     LvApplication(LvApplicationPrivate &d, int &argc, char **argv);

@@ -49,7 +49,4 @@ void LvElemApplication::reloadScreen(int theme) {
 LvElemApplication::LvElemApplication(LvElemApplicationPrivate &d, int &argc, char **argv)
     : QsApplication(d, argc, argv) {
     d.init();
-
-    Q_TR_NOTIFY(LvElemApplication);
-    Q_SS_NOTIFY(LvElemApplication);
 }

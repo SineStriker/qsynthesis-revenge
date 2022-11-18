@@ -4,44 +4,34 @@
 <context>
     <name>QsApplication</name>
     <message>
-        <location filename="../../src/Kernel/QsApplication.cpp" line="50"/>
         <source>Error</source>
-        <translation type="unfinished">错误</translation>
+        <translation type="obsolete">错误</translation>
     </message>
     <message>
-        <location filename="../../src/Kernel/QsApplication.cpp" line="54"/>
+        <location filename="../../src/Kernel/QsApplication.cpp" line="42"/>
         <source>Untitled</source>
         <translation type="unfinished">未命名</translation>
     </message>
     <message>
-        <location filename="../../src/Kernel/QsApplication.cpp" line="62"/>
+        <location filename="../../src/Kernel/QsApplication.cpp" line="50"/>
         <source>(Deleted)</source>
         <translation type="unfinished">(已删除)</translation>
     </message>
     <message>
-        <location filename="../../src/Kernel/QsApplication.cpp" line="67"/>
         <source>Explorer</source>
-        <translation type="unfinished">文件资源管理器</translation>
+        <translation type="obsolete">文件资源管理器</translation>
     </message>
     <message>
-        <location filename="../../src/Kernel/QsApplication.cpp" line="69"/>
-        <source>Finder</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/Kernel/QsApplication.cpp" line="71"/>
         <source>File Manager</source>
-        <translation type="unfinished">文件管理器</translation>
+        <translation type="obsolete">文件管理器</translation>
     </message>
     <message>
-        <location filename="../../src/Kernel/QsApplication.cpp" line="77"/>
         <source>Administrator</source>
-        <translation type="unfinished">管理员</translation>
+        <translation type="obsolete">管理员</translation>
     </message>
     <message>
-        <location filename="../../src/Kernel/QsApplication.cpp" line="79"/>
         <source>Root User</source>
-        <translation type="unfinished">Root用户</translation>
+        <translation type="obsolete">Root用户</translation>
     </message>
 </context>
 <context>
