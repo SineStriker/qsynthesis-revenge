@@ -28,7 +28,9 @@ if(TRUE)
     # Copy pre-built libraries
     add_custom_target(setup_deps DEPENDS ${_prebuilt_dlls})
 
-    add_dependencies(${MAIN_TARGET} setup_deps)
+    foreach(_target ${APP_LIST})
+        add_dependencies(${_target} setup_deps)
+    endforeach()
 endif()
 
 # Collect translation targets

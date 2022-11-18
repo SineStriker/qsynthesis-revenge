@@ -1,6 +1,6 @@
 project(LvStaging
     LANGUAGES CXX
-    VERSION ${INNER_VERSION}
+    VERSION ${SUB_VERSION}
 )
 
 add_files(_src

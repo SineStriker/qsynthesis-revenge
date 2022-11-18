@@ -6,7 +6,7 @@ set(CMAKE_POLICY_DEFAULT_CMP0077 NEW)
 include(../Config.cmake)
 
 # Project
-project(${MAIN_TARGET} VERSION ${APP_VERSION_VERBOSE} LANGUAGES CXX)
+project(${APP_TOTAL_NAME} VERSION ${APP_VERSION_VERBOSE} LANGUAGES CXX)
 
 # Language configuration
 set(CMAKE_CXX_STANDARD 17)
@@ -46,6 +46,7 @@ set(MACOSX_BUNDLE_PLIST ${PROJECT_MODULES_DIR}/MacOSXBundleInfo.plist.in)
 set(MACOSX_FRAMEWORK_PLIST ${PROJECT_MODULES_DIR}/MacOSXFrameworkInfo.plist.in)
 set(WIN32_DLL_RC ${PROJECT_MODULES_DIR}/Win32DllRes.rc.in)
 set(WIN32_EXE_RC ${PROJECT_MODULES_DIR}/Win32ExeRes.rc.in)
+set(WIN32_EXE_MANIFEST ${PROJECT_MODULES_DIR}/Win32ExeManifest.manifest.in)
 
 # ToolChain
 set(VCPKG_APPLOCAL_DEPS off)
@@ -68,12 +69,21 @@ if(NOT APPLE)
     find_package(FramelessHelper REQUIRED COMPONENTS Core Widgets)
 endif()
 
+# Add common
+add_subdirectory(Common)
+
+# Include common
+include(Common/Include.cmake)
+
 # Add subdirectories
 add_subdirectory(QsLib)
 
 if(NOT BUILD_SVS_PLUGINS_ONLY)
     add_subdirectory(Utilities)
-    add_subdirectory(${MAIN_TARGET})
+
+    foreach(_target ${APP_LIST})
+        add_subdirectory(${_target})
+    endforeach()
 endif()
 
 if(BUILD_TEST)
@@ -100,7 +110,8 @@ if(TRUE)
     endif()
 
     unset(_suffix)
-    
+
+    # Get all targets in variable CURRENT_ALL_TARGETS
     get_all_targets(CURRENT_ALL_TARGETS)
 
     # Copy dlls and and add translations

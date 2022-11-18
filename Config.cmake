@@ -6,7 +6,8 @@ macro(option_ex _name _val)
 endmacro()
 
 # Project Configurations
-option_ex(MAIN_TARGET               LabelVoice)
+option_ex(APP_TOTAL_NAME            QsToolChain)
+option_ex(APP_LIST                  LabelVoice)
 option_ex(APP_VERSION_VERBOSE       0.0.1.4)
 option_ex(APP_DEPLOY                on)
 option_ex(APP_LIB_DIR               lib)

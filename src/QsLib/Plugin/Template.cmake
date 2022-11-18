@@ -48,7 +48,7 @@ macro(configure_plugin)
         target_sources(${_target} PRIVATE ${CMAKE_CURRENT_BINARY_DIR}/res.rc)
     endif()
 
-    set(_out_dir ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${INNER_PLUGIN_DIR}/${CURRENT_PLUGIN_CATEGORY})
+    set(_out_dir ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${SUB_PLUGIN_DIR}/${CURRENT_PLUGIN_CATEGORY})
 
     # Settle plugin
     if(WIN32)

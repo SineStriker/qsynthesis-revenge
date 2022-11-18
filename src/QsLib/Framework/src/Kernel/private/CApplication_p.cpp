@@ -4,6 +4,10 @@
 #include "Kernel/MyStartupInfo.h"
 #include "SystemHelper.h"
 
+#ifdef Q_OS_WINDOWS
+#include <Windows.h>
+#endif
+
 #include <SingleApplication>
 
 #include <QMessageBox>
@@ -55,7 +59,6 @@ void CApplicationPrivate::init() {
 
     QCommandLineOption option_allowRoot(
         "allow-root", CApplication::tr("Allow running with super user privileges."));
-
     parser.addOption(option_allowRoot);
 
     q->setOrganizationDomain(qIStup->appName);
@@ -66,16 +69,19 @@ void CApplicationPrivate::init() {
 
     // Init Privilege Detections
     if (Sys::isUserRoot()) {
+        QString title = q->mainTitle();
         QString msg = CApplication::tr("You're trying to start %1 as the %2, which may cause "
                                        "security problem and isn't recommended.")
                           .arg(qAppName(), qApp->sysRootUserName());
-        if (parser.isSet(option_allowRoot)) {
-            // if (QMessageBox::warning(nullptr, q->mainTitle(), msg,
-            //     LvApplication::tr("Continue"), LvApplication::tr("Exit"), "", 1) != 0) {
-            //     Sys::exitApp(0);
-            // }
-        } else {
-            QMessageBox::warning(nullptr, q->mainTitle(), msg);
+        if (!parser.isSet(option_allowRoot)) {
+#ifdef Q_OS_WINDOWS
+            ::MessageBoxW(0, msg.toStdWString().data(), title.toStdWString().data(),
+                          MB_OK | MB_TOPMOST | MB_SETFOREGROUND | MB_ICONWARNING);
+#elif Q_OS_LINUX
+            fputs(qPrintable(msg), stdout);
+#else
+            QMessageBox::warning(nullptr, title, msg, CApplication::tr("Confirm"));
+#endif
             Sys::exitApp(0);
         }
     }

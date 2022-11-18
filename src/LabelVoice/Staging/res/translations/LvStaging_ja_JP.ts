@@ -339,8 +339,18 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/Kernel/LvStartupInfo.cpp" line="5"/>
-        <source>Voice data annotation frontend.</source>
+        <location filename="../../src/Kernel/LvStartupInfo.cpp" line="6"/>
+        <source>Voice data annotation tool.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/Kernel/LvStartupInfo.cpp" line="7"/>
+        <source>Project files to open.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/Kernel/LvStartupInfo.cpp" line="8"/>
+        <source>[files]</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

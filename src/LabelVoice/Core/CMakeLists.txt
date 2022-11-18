@@ -1,4 +1,4 @@
-project(LvCore LANGUAGES CXX VERSION ${INNER_VERSION})
+project(LvCore LANGUAGES CXX VERSION ${SUB_VERSION})
 
 add_files(_src
     CURRENT

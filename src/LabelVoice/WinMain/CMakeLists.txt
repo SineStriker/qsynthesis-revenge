@@ -1,12 +1,12 @@
-project(${INNER_PROJECT}
+project(${SUB_PROJECT}
     LANGUAGES CXX
-    VERSION ${INNER_VERSION}
+    VERSION ${SUB_VERSION}
 )
 
 # ------------------------------ Configure Target Begin ------------------------------
 
 # Add executable
-add_executable(${PROJECT_NAME} main.cpp)
+qs_add_executable(${PROJECT_NAME} LvStaging EXTERN_C)
 
 # Set Properties
 if(APP_DEPLOY OR NOT DEFINED NOT_QT_CREATOR)
@@ -14,17 +14,6 @@ if(APP_DEPLOY OR NOT DEFINED NOT_QT_CREATOR)
         WIN32_EXECUTABLE TRUE
     )
 endif()
-
-# Add definitions
-if(WIN32 AND APP_DEPLOY)
-    add_dependencies(${PROJECT_NAME} LvStaging)
-    target_compile_definitions(${PROJECT_NAME} PRIVATE DELAY_LOAD)
-    target_compile_definitions(${PROJECT_NAME} PRIVATE APP_DLL="$<TARGET_FILE_NAME:LvStaging>")
-else()
-    target_link_libraries(${PROJECT_NAME} PRIVATE LvStaging)
-endif()
-
-target_compile_definitions(${PROJECT_NAME} PRIVATE APP_LIB_DIR="${APP_LIB_DIR}")
 
 # Add embedded resources
 if(WIN32)
@@ -36,22 +25,31 @@ if(WIN32)
     set(WIN32_AUTHOR_NAME "OpenVPI Team")
     set(WIN32_FILE_DESC "LabelVoice")
     set(WIN32_PRODUCT_NAME ${PROJECT_NAME})
-    set(WIN32_MANIFEST_DESC "1 24 \"xpstyle.manifest\"")
+    set(WIN32_MANIFEST_DESC "1 24 \"app.manifest\"")
     configure_file(
         ${WIN32_EXE_RC}
         ${CMAKE_CURRENT_BINARY_DIR}/res.rc
         @ONLY
     )
 
+    # configure manifest
+    set(WIN32_MF_COMPANY_NAME OpenVPI)
+    set(WIN32_MF_PRODUCT_NAME ToolChain)
+    set(WIN32_MF_APPLICATION_NAME LabelVoice)
+    set(WIN32_MF_APPLICATION_DESC "Voice data annotation tool.")
+    configure_file(
+        ${WIN32_EXE_MANIFEST}
+        ${CMAKE_CURRENT_BINARY_DIR}/app.manifest
+        @ONLY
+    )
+
     # copy ico
     file(COPY res/win32/app.ico DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
-    file(COPY res/win32/xpstyle.manifest DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
 
     # add files
     target_sources(${PROJECT_NAME} PRIVATE
         ${CMAKE_CURRENT_BINARY_DIR}/res.rc
-
-        # ${CMAKE_CURRENT_BINARY_DIR}/xpstyle.manifest
+        ${CMAKE_CURRENT_BINARY_DIR}/app.manifest
     )
 elseif(APPLE)
     # copy files

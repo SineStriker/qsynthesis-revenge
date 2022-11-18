@@ -5,6 +5,8 @@
 #include "Styles/QCssAnalyzer.h"
 #include "ViewHelper.h"
 
+#include "Kernel/LvStartupInfo.h"
+
 #include <QScreen>
 
 LvApplication::LvApplication(int &argc, char **argv)

@@ -24,7 +24,7 @@ foreach(_target ${CURRENT_ALL_TARGETS})
     if(${_target_type} STREQUAL PLUGIN)
         get_target_property(_plugin_type ${_target} TC_PLUGIN_TYPE)
 
-        if(${_plugin_type} STREQUAL ${MAIN_TARGET})
+        if(${_plugin_type} IN_LIST APP_LIST)
             list(APPEND _app_plugins ${_target})
         elseif(${_plugin_type} STREQUAL QsLib)
             list(APPEND _qs_plugins ${_target})
@@ -33,9 +33,9 @@ foreach(_target ${CURRENT_ALL_TARGETS})
     elseif(${_target_type} STREQUAL LIBRARY)
         get_target_property(_lib_type ${_target} TC_LIBRARY_TYPE)
 
-        if(${_lib_type} STREQUAL LabelVoice)
+        if(${_lib_type} IN_LIST APP_LIST)
             list(APPEND _app_libs ${_target})
-        elseif(${_lib_type} STREQUAL QSynthesis)
+        elseif(${_lib_type} STREQUAL QsLib)
             list(APPEND _qs_libs ${_target})
         else()
             list(APPEND _other_libs ${_target})
@@ -218,6 +218,7 @@ foreach(_bin ${_qt_binaries})
         --plugindir ${_plugins_dir}
         --no-translations
         --no-system-d3d-compiler
+
         # --no-virtualkeyboard
         --no-compiler-runtime
         --no-opengl-sw

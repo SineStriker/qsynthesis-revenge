@@ -4,13 +4,18 @@
 <context>
     <name>CApplication</name>
     <message>
-        <location filename="../../src/Kernel/private/CApplication_p.cpp" line="57"/>
+        <location filename="../../src/Kernel/private/CApplication_p.cpp" line="61"/>
         <source>Allow running with super user privileges.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/Kernel/private/CApplication_p.cpp" line="69"/>
+        <location filename="../../src/Kernel/private/CApplication_p.cpp" line="73"/>
         <source>You&apos;re trying to start %1 as the %2, which may cause security problem and isn&apos;t recommended.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/Kernel/private/CApplication_p.cpp" line="83"/>
+        <source>Confirm</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -110,57 +115,57 @@
 <context>
     <name>QCommandLineParser</name>
     <message>
-        <location filename="../../src/Kernel/private/CApplication_p.cpp" line="14"/>
+        <location filename="../../src/Kernel/private/CApplication_p.cpp" line="18"/>
         <source>Displays version information.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/Kernel/private/CApplication_p.cpp" line="15"/>
+        <location filename="../../src/Kernel/private/CApplication_p.cpp" line="19"/>
         <source>Displays help on commandline options.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/Kernel/private/CApplication_p.cpp" line="16"/>
+        <location filename="../../src/Kernel/private/CApplication_p.cpp" line="20"/>
         <source>Displays help including Qt specific options.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/Kernel/private/CApplication_p.cpp" line="17"/>
+        <location filename="../../src/Kernel/private/CApplication_p.cpp" line="21"/>
         <source>Unknown option &apos;%1&apos;.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/Kernel/private/CApplication_p.cpp" line="18"/>
+        <location filename="../../src/Kernel/private/CApplication_p.cpp" line="22"/>
         <source>Unknown options: %1.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/Kernel/private/CApplication_p.cpp" line="19"/>
+        <location filename="../../src/Kernel/private/CApplication_p.cpp" line="23"/>
         <source>Missing value after &apos;%1&apos;.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/Kernel/private/CApplication_p.cpp" line="20"/>
+        <location filename="../../src/Kernel/private/CApplication_p.cpp" line="24"/>
         <source>Unexpected value after &apos;%1&apos;.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/Kernel/private/CApplication_p.cpp" line="21"/>
+        <location filename="../../src/Kernel/private/CApplication_p.cpp" line="25"/>
         <source>[options]</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/Kernel/private/CApplication_p.cpp" line="22"/>
+        <location filename="../../src/Kernel/private/CApplication_p.cpp" line="26"/>
         <source>Usage: %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/Kernel/private/CApplication_p.cpp" line="23"/>
+        <location filename="../../src/Kernel/private/CApplication_p.cpp" line="27"/>
         <source>Options:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/Kernel/private/CApplication_p.cpp" line="24"/>
+        <location filename="../../src/Kernel/private/CApplication_p.cpp" line="28"/>
         <source>Arguments:</source>
         <translation type="unfinished"></translation>
     </message>

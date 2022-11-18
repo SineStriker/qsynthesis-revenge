@@ -1,8 +1,14 @@
-cmake_minimum_required(VERSION 3.17)
+project(QsLib
+    LANGUAGES CXX
+    VERSION 0.2.18
+)
 
 include(Template.cmake)
 
-set(INNER_PLUGIN_DIR ${APP_RES_DIR}/${APP_RES_BUILTIN_DIR})
+# Set global variable for current project
+set(SUB_PROJECT ${PROJECT_NAME})
+set(SUB_VERSION ${PROJECT_VERSION})
+set(SUB_PLUGIN_DIR ${APP_RES_DIR}/${APP_RES_BUILTIN_DIR})
 
 add_subdirectory(Utils)
 add_subdirectory(SVS)

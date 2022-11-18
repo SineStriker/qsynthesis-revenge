@@ -74,8 +74,17 @@ std::wstring GetLastErrorAsString() {
 
 #endif
 
-#ifndef DELAY_LOAD
-#include "lvstaging.h"
+#ifdef APP_ENABLE_ENTRY
+#include "shared.h"
+#ifdef APP_ENABLE_C_STYLE
+extern "C" {
+#endif
+
+DECL_IMPORT int main_entry(int, char *[]);
+
+#ifdef APP_ENABLE_C_STYLE
+}
+#endif
 #endif
 
 int main(int argc, char *argv[]) {
