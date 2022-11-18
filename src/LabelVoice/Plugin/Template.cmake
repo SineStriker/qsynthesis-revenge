@@ -48,21 +48,23 @@ macro(configure_plugin)
         target_sources(${_target} PRIVATE ${CMAKE_CURRENT_BINARY_DIR}/res.rc)
     endif()
 
+    set(_out_dir ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${INNER_PLUGIN_DIR}/${CURRENT_PLUGIN_CATEGORY})
+
     # Settle plugin
     if(WIN32)
         set_target_properties(
-            ${_target} PROPERTIES RUNTIME_OUTPUT_DIRECTORY
-            ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${INNER_PLUGIN_DIR}/${CURRENT_PLUGIN_CATEGORY}
+            ${_target} PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${_out_dir}
         )
     else()
         add_custom_command(
             TARGET ${_target}
             POST_BUILD
-            COMMAND ${CMAKE_COMMAND} -E copy_if_different $<TARGET_FILE:${_target}>
-            # Destination
-            ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${INNER_PLUGIN_DIR}/${CURRENT_PLUGIN_CATEGORY}
+            COMMAND ${CMAKE_COMMAND} -E make_directory ${_out_dir}
+            COMMAND ${CMAKE_COMMAND} -E copy_if_different $<TARGET_FILE:${_target}> ${_out_dir}
         )
     endif()
+
+    unset(_out_dir)
 
     set_target_properties(
         ${_target}

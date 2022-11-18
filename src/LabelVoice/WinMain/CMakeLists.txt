@@ -50,6 +50,7 @@ if(WIN32)
     # add files
     target_sources(${PROJECT_NAME} PRIVATE
         ${CMAKE_CURRENT_BINARY_DIR}/res.rc
+
         # ${CMAKE_CURRENT_BINARY_DIR}/xpstyle.manifest
     )
 elseif(APPLE)
@@ -72,6 +73,7 @@ elseif(APPLE)
         MACOSX_BUNDLE_BUNDLE_VERSION ${PROJECT_VERSION}
         MACOSX_BUNDLE_COPYRIGHT "Apache 2.0 License"
     )
+else()
 endif()
 
 set_target_properties(

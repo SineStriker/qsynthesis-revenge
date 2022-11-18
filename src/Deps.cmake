@@ -2,7 +2,7 @@
 if(TRUE)
     set(_prebuilt_dlls)
 
-    if(APP_DEPLOY)
+    if(APP_DEPLOY OR NOT WIN32)
         set(_runtime_output_dir ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${APP_LIB_DIR})
     else()
         set(_runtime_output_dir ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
