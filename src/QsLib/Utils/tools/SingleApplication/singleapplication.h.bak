@@ -39,7 +39,7 @@ class SingleApplicationPrivate;
  * Application
  * @see QCoreApplication
  */
-class SINGLEAPPLICATION_API SingleApplication : public QAPPLICATION_CLASS
+class SingleApplication : public QAPPLICATION_CLASS
 {
     Q_OBJECT
 

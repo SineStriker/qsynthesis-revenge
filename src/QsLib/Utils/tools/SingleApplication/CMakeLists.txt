@@ -4,7 +4,7 @@ project(SingleApplication LANGUAGES CXX DESCRIPTION "Replacement for QtSingleApp
 
 set(CMAKE_AUTOMOC ON)
 
-add_library(${PROJECT_NAME} SHARED
+add_library(${PROJECT_NAME} STATIC
     singleapplication.h
     singleapplication.cpp
     singleapplication_p.h
@@ -83,6 +83,3 @@ if(DOXYGEN_FOUND)
         README.md
     )
 endif()
-
-target_compile_definitions(${PROJECT_NAME} INTERFACE SINGLEAPPLICATION_API=Q_DECL_IMPORT)
-target_compile_definitions(${PROJECT_NAME} PRIVATE SINGLEAPPLICATION_API=Q_DECL_EXPORT)

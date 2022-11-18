@@ -32,10 +32,10 @@
 #ifndef SINGLEAPPLICATION_P_H
 #define SINGLEAPPLICATION_P_H
 
+#include "singleapplication.h"
 #include <QtCore/QSharedMemory>
 #include <QtNetwork/QLocalServer>
 #include <QtNetwork/QLocalSocket>
-#include "singleapplication.h"
 
 struct InstancesInfo {
     bool primary;
@@ -52,7 +52,7 @@ struct ConnectionInfo {
 };
 
 class SingleApplicationPrivate : public QObject {
-Q_OBJECT
+    Q_OBJECT
 public:
     enum ConnectionType : quint8 {
         InvalidConnection = 0,
@@ -68,7 +68,7 @@ public:
     };
     Q_DECLARE_PUBLIC(SingleApplication)
 
-    SingleApplicationPrivate( SingleApplication *q_ptr );
+    SingleApplicationPrivate(SingleApplication *q_ptr);
     ~SingleApplicationPrivate() override;
 
     static QString getUsername();
@@ -76,7 +76,7 @@ public:
     void initializeMemoryBlock() const;
     void startPrimary();
     void startSecondary();
-    bool connectToPrimary( int msecs, ConnectionType connectionType );
+    bool connectToPrimary(int msecs, ConnectionType connectionType);
     quint16 blockChecksum() const;
     qint64 primaryPid() const;
     QString primaryUser() const;
@@ -85,7 +85,9 @@ public:
     void readInitMessageBody(QLocalSocket *socket);
     void writeAck(QLocalSocket *sock);
     bool writeConfirmedFrame(int msecs, const QByteArray &msg);
-    bool writeConfirmedMessage(int msecs, const QByteArray &msg, SingleApplication::SendMode sendMode = SingleApplication::NonBlocking);
+    bool writeConfirmedMessage(
+        int msecs, const QByteArray &msg,
+        SingleApplication::SendMode sendMode = SingleApplication::NonBlocking);
     static void randomSleep();
     void addAppData(const QString &data);
     QStringList appData() const;
@@ -97,13 +99,13 @@ public:
     quint32 instanceNumber;
     QString blockServerName;
     SingleApplication::Options options;
-    QMap<QLocalSocket*, ConnectionInfo> connectionMap;
+    QMap<QLocalSocket *, ConnectionInfo> connectionMap;
     QStringList appDataList;
 
 public Q_SLOTS:
     void slotConnectionEstablished();
-    void slotDataAvailable( QLocalSocket*, quint32 );
-    void slotClientConnectionClosed( QLocalSocket*, quint32 );
+    void slotDataAvailable(QLocalSocket *, quint32);
+    void slotClientConnectionClosed(QLocalSocket *, quint32);
 };
 
 #endif // SINGLEAPPLICATION_P_H
