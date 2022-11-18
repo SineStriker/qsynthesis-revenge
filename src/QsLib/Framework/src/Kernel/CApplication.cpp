@@ -1,15 +1,10 @@
 #include "CApplication.h"
-#include "QMetaTypeImpl.h"
 
 #include "private/CApplication_p.h"
 
 #include <QDateTime>
 #include <QMouseEvent>
 #include <QWidget>
-
-static const SingleApplication::Options opts = SingleApplication::ExcludeAppPath |
-                                               SingleApplication::ExcludeAppVersion |
-                                               SingleApplication::SecondaryNotification;
 
 CApplication::CApplication(int &argc, char **argv)
     : CApplication(*new CApplicationPrivate(), argc, argv) {
@@ -86,7 +81,7 @@ void CApplication::reloadScreen(int theme) {
 }
 
 CApplication::CApplication(CApplicationPrivate &d, int &argc, char **argv)
-    : SingleApplication(argc, argv, true, opts), d_ptr(&d) {
+    : QApplication(argc, argv), d_ptr(&d) {
     d.q_ptr = this;
     d.init();
 

@@ -1,6 +1,10 @@
 #include "CApplication_p.h"
 #include "QMetaTypeImpl.h"
 
+static const SingleApplication::Options opts = SingleApplication::ExcludeAppPath |
+                                               SingleApplication::ExcludeAppVersion |
+                                               SingleApplication::SecondaryNotification;
+
 CApplicationPrivate::CApplicationPrivate() : hMSH(new MultistyleHandle()) {
 }
 
@@ -8,8 +12,19 @@ void CApplicationPrivate::init() {
     Q_Q(CApplication);
 
     QMetaTypeImpl::Register();
+}
 
-    if (!q->isPrimary()) {
+void CApplicationPrivate::deinit() {
+    Q_Q(CApplication);
+    hSingle.reset();
+}
+
+void CApplicationPrivate::setupSingle() {
+    Q_Q(CApplication);
+
+    hSingle.reset(new SingleApplication(q, true, opts));
+
+    if (!hSingle->isPrimary()) {
         qInfo() << "Primary instance already running. PID:" << q->primaryPid();
 
         // This eventually needs moved into the NotepadNextApplication to keep
@@ -18,7 +33,7 @@ void CApplicationPrivate::init() {
         QDataStream stream(&buffer, QIODevice::WriteOnly);
 
         stream << q->arguments();
-        q->sendMessage(buffer);
+        hSingle->sendMessage(buffer);
 
         qInfo() << "Secondary instance closing...";
 

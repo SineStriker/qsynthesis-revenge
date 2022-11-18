@@ -4,8 +4,7 @@
 #include <QDebug>
 #include <QObjectList>
 #include <QPair>
-
-#include <SingleApplication>
+#include <QApplication>
 
 #include "qsframework_global.h"
 
@@ -17,7 +16,7 @@
 class CAppNotifyFilter;
 class CApplicationPrivate;
 
-class QSFRAMEWORK_API CApplication : public SingleApplication {
+class QSFRAMEWORK_API CApplication : public QApplication {
     Q_OBJECT
     Q_DECLARE_PRIVATE(CApplication)
 public:

@@ -3,8 +3,6 @@ project(QsUtils
     LANGUAGES CXX
 )
 
-add_subdirectory(tools)
-
 add_files(_src
     DIRECTORIES include src
     PATTERNS *.h *.hpp *.cpp *.cc
@@ -15,7 +13,6 @@ qslib_configure_library(
     ENABLE_SHARED
     QT_LIBRARIES Core
     QT_PRIVATE_INCLUDES Core
-    LIBRARIES SingleApplication
     INCLUDES include src
     WIN32_FILE_DESC "QSynthesis Common Utilities"
     WIN32_PRODUCT_NAME "QSynthesis.Utils"

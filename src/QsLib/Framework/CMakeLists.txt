@@ -3,6 +3,8 @@ project(QsFramework
     LANGUAGES CXX
 )
 
+add_subdirectory(tools)
+
 add_files(_src
     DIRECTORIES include src
     PATTERNS *.h *.hpp *.cpp *.cc
@@ -18,6 +20,8 @@ qslib_configure_library(
     WIN32_FILE_DESC "QSynthesis Common Utilities"
     WIN32_PRODUCT_NAME "QSynthesis.Framework"
 )
+
+target_link_libraries(${PROJECT_NAME} PRIVATE SingleApplication)
 
 target_include_directories(${PROJECT_NAME} PUBLIC
     src/Custom
