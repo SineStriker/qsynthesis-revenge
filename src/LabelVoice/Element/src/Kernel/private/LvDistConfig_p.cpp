@@ -31,6 +31,10 @@ void LvDistConfigPrivate::initByApp() {
                   QString("${APPPATH}") + Slash + APP_TOOLS_DIR //
     );
 
+    setDefaultDir(LvDistConfig::Locales,
+                  QString("${APPPATH}") + Slash + APP_LOCALES_DIR //
+    );
+
     registerUserDir(KEY_NAME_EXTENSIONS_DIR,
                     QString("${APPPATH}") + Slash + APP_RES_DIR + Slash + APP_RES_PLUGINS_DIR,
                     DirInitArgs{DirInitArgs::OnlyCheck, {QApplication::addLibraryPath}} //

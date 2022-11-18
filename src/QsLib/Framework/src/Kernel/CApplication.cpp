@@ -76,13 +76,13 @@ void CApplication::removeAllNotifyFilters() {
 void CApplication::reloadStrings(int locale) {
     Q_UNUSED(locale)
 
-    qDebug() << "Locale Updated:" << (QLocale::Country) locale;
+    //    qDebug() << "Locale Updated:" << (QLocale::Country) locale;
 }
 
 void CApplication::reloadScreen(int theme) {
     Q_UNUSED(theme)
 
-    qDebug() << "Theme Updated:" << theme;
+    //    qDebug() << "Theme Updated:" << theme;
 }
 
 CApplication::CApplication(CApplicationPrivate &d, int &argc, char **argv)

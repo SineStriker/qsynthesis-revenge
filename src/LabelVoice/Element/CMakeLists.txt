@@ -20,17 +20,15 @@ lvmod_configure_library(
     WIN32_PRODUCT_NAME "LabelVoice.Elementary"
 )
 
-target_compile_definitions(${PROJECT_NAME} PUBLIC APP_VERSION="${PROJECT_VERSION_SHORT}")
-
-target_compile_definitions(${PROJECT_NAME} PUBLIC APP_PLUGINS_DIR="${APP_PLUGINS_DIR}")
-
-target_compile_definitions(${PROJECT_NAME} PUBLIC APP_TOOLS_DIR="${APP_TOOLS_DIR}")
-
-target_compile_definitions(${PROJECT_NAME} PUBLIC APP_RES_DIR="${APP_RES_DIR}")
-
-target_compile_definitions(${PROJECT_NAME} PUBLIC APP_RES_BUILTIN_DIR="${APP_RES_BUILTIN_DIR}")
-
-target_compile_definitions(${PROJECT_NAME} PUBLIC APP_RES_PLUGINS_DIR="${APP_RES_PLUGINS_DIR}")
+target_compile_definitions(${PROJECT_NAME} PUBLIC
+    APP_VERSION="${PROJECT_VERSION_SHORT}"
+    APP_PLUGINS_DIR="${APP_PLUGINS_DIR}"
+    APP_TOOLS_DIR="${APP_TOOLS_DIR}"
+    APP_LOCALES_DIR="${APP_LOCALES_DIR}"
+    APP_RES_DIR="${APP_RES_DIR}"
+    APP_RES_BUILTIN_DIR="${APP_RES_BUILTIN_DIR}"
+    APP_RES_PLUGINS_DIR="${APP_RES_PLUGINS_DIR}"
+)
 
 target_create_translations(${PROJECT_NAME} SOURCES ${_src}
     LOCALES zh_CN zh_HK ja_JP

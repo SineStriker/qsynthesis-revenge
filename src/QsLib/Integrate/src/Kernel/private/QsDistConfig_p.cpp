@@ -21,6 +21,7 @@ static const char KEY_NAME_TEMP_DIR[] = "temp";
 static const char KEY_NAME_PLUGIN_DIR[] = "plugin";
 static const char KEY_NAME_BUILTIN_DIR[] = "builtin";
 static const char KEY_NAME_BINTOOL_DIR[] = "tools";
+static const char KEY_NAME_LOCALES_DIR[] = "translations";
 
 static const char SECTION_NAME_PLUGINS[] = "default-plugins";
 static const char KEY_NAME_AUDIO_DECODER[] = "audioDecoder";
@@ -105,6 +106,9 @@ void QsDistConfigPrivate::initByApp() {
         {QsDistConfig::BinTool, //
          wrapDirInfo(KEY_NAME_BINTOOL_DIR, QString("${APPPATH}") + Slash + "tools", "tools",
                      DirInitArgs::OnlyCheck, true)},
+        {QsDistConfig::Locales, //
+         wrapDirInfo(KEY_NAME_LOCALES_DIR, QString("${APPPATH}") + Slash + "translations",
+                     "translations", DirInitArgs::OnlyCheck, true)},
     };
     dirTypeMax = QsDistConfig::UserDir;
 

@@ -56,10 +56,11 @@ void LvApplicationPrivate::init2() {
             LvApplication::tr("You're trying to start %1 as the %2 which isn't recommended.")
                 .arg(qAppName(), qApp->sysRootUserName());
         if (allowRoot) {
-            if (QMessageBox::warning(nullptr, q->mainTitle(), msg, LvApplication::tr("Continue"),
-                                     LvApplication::tr("Exit"), "", 1) != 0) {
-                Sys::exitApp(0);
-            }
+            //            if (QMessageBox::warning(nullptr, q->mainTitle(), msg,
+            //            LvApplication::tr("Continue"),
+            //                                     LvApplication::tr("Exit"), "", 1) != 0) {
+            //                Sys::exitApp(0);
+            //            }
         } else {
             QMessageBox::warning(nullptr, q->mainTitle(), msg);
             Sys::exitApp(0);

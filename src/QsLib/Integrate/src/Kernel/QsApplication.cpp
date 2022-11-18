@@ -82,9 +82,9 @@ QString QsApplication::sysRootUserName() {
 
 QString QsApplication::allFilesFilter() {
 #if defined(Q_OS_WINDOWS)
-    return tr("*.*");
+    return "*.*";
 #else
-    return tr("*");
+    return "*";
 #endif
 }
 

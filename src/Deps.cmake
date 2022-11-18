@@ -1,6 +1,6 @@
 # Copy dlls from vcpkg to build dir
 if(TRUE)
-    set(PREBUILT_DLL_LIST)
+    set(_prebuilt_dlls)
 
     if(APP_DEPLOY)
         set(_runtime_output_dir ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${APP_LIB_DIR})
@@ -20,12 +20,13 @@ if(TRUE)
             COMMAND ${CMAKE_COMMAND} -E copy_if_different ${_dll} ${_runtime_output_dir}
         )
 
-        list(APPEND PREBUILT_DLL_LIST ${_out_dll})
+        list(APPEND _prebuilt_dlls ${_out_dll})
     endforeach()
+
     # endif()
 
     # Copy pre-built libraries
-    add_custom_target(setup_deps DEPENDS ${PREBUILT_DLL_LIST})
+    add_custom_target(setup_deps DEPENDS ${_prebuilt_dlls})
 
     add_dependencies(${MAIN_TARGET} setup_deps)
 endif()
@@ -54,4 +55,20 @@ if(TRUE)
         lrelease_all
         DEPENDS ${_lrelease_targets}
     )
+
+    add_custom_target(lrelease_clear)
+
+    if(WIN32)
+        add_custom_command(
+            TARGET lrelease_clear
+            COMMAND cmd /Q /C del /S /Q "*.qm"
+            WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+        )
+    else()
+        add_custom_command(
+            TARGET lrelease_clear
+            COMMAND bash -c "find . -name '*.qm' -type f -print -exec rm -rf {} \\;"
+            WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+        )
+    endif()
 endif()

@@ -127,18 +127,8 @@
 <context>
     <name>LvApplication</name>
     <message>
-        <location filename="../../src/Kernel/private/LvApplication_p.cpp" line="43"/>
+        <location filename="../../src/Kernel/private/LvApplication_p.cpp" line="56"/>
         <source>You&apos;re trying to start %1 as the %2 which isn&apos;t recommended.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/Kernel/private/LvApplication_p.cpp" line="46"/>
-        <source>Continue</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/Kernel/private/LvApplication_p.cpp" line="47"/>
-        <source>Exit</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

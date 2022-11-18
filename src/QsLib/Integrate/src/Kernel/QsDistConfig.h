@@ -45,6 +45,7 @@ public:
         Plugins,
         BuiltIn,
         BinTool,
+        Locales,
         UserDir = 1000,
     };
 

@@ -72,7 +72,7 @@ if (WIN32)
 endif()
 
 set_target_properties(
-    ${_target}
+    ${PROJECT_NAME}
     PROPERTIES
     TC_TARGET_TYPE LIBRARY
     TC_LIBRARY_TYPE Tool

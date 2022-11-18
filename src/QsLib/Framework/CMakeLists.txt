@@ -21,10 +21,6 @@ qslib_configure_library(
     WIN32_PRODUCT_NAME "QSynthesis.Framework"
 )
 
-if(WIN32)
-    target_link_libraries(${PROJECT_NAME} PRIVATE advapi32) # SingleApplication Requirements
-endif()
-
 target_include_directories(${PROJECT_NAME} PUBLIC
     src/Custom
     src/Helpers

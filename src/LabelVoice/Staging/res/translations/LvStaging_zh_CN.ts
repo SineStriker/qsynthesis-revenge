@@ -127,19 +127,17 @@
 <context>
     <name>LvApplication</name>
     <message>
-        <location filename="../../src/Kernel/private/LvApplication_p.cpp" line="43"/>
+        <location filename="../../src/Kernel/private/LvApplication_p.cpp" line="56"/>
         <source>You&apos;re trying to start %1 as the %2 which isn&apos;t recommended.</source>
-        <translation type="unfinished">你正在以%2身份启动%1，请使用低权限启动。</translation>
+        <translation type="unfinished">你正在尝试以%2身份运行%1，推荐使用低权限启动。</translation>
     </message>
     <message>
-        <location filename="../../src/Kernel/private/LvApplication_p.cpp" line="46"/>
         <source>Continue</source>
-        <translation type="unfinished">继续</translation>
+        <translation type="obsolete">继续</translation>
     </message>
     <message>
-        <location filename="../../src/Kernel/private/LvApplication_p.cpp" line="47"/>
         <source>Exit</source>
-        <translation type="unfinished">退出</translation>
+        <translation type="obsolete">退出</translation>
     </message>
 </context>
 <context>
@@ -212,7 +210,7 @@
     <message>
         <location filename="../../src/Windows/Piano/PianoActions.cpp" line="140"/>
         <source>Exit</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">退出</translation>
     </message>
     <message>
         <location filename="../../src/Windows/Piano/PianoActions.cpp" line="143"/>
@@ -283,7 +281,7 @@
         <location filename="../../src/Windows/Piano/PianoActions.cpp" line="164"/>
         <location filename="../../src/Windows/Piano/PianoActions.cpp" line="165"/>
         <source>About %1</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">关于%1</translation>
     </message>
 </context>
 <context>
@@ -309,52 +307,52 @@
     <message>
         <location filename="../../src/Windows/Basic/ProjectCommonBlock.cpp" line="32"/>
         <source>Invalid project name!</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">非法的工程名！</translation>
     </message>
     <message>
         <location filename="../../src/Windows/Basic/ProjectCommonBlock.cpp" line="38"/>
         <source>Directory %1 dosn&apos;t exists!</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">文件夹%1已存在！</translation>
     </message>
     <message>
         <location filename="../../src/Windows/Basic/ProjectCommonBlock.cpp" line="49"/>
         <source>There&apos;s already a directory with same name on this path.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">该目录已存在同名文件夹。</translation>
     </message>
     <message>
         <location filename="../../src/Windows/Basic/ProjectCommonBlock.cpp" line="54"/>
         <source>Failed to create project directory!</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">无法创建工程目录！</translation>
     </message>
     <message>
         <location filename="../../src/Windows/Basic/ProjectCommonBlock.cpp" line="63"/>
         <source>Failed to create project file!</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">无法创建工程文件！</translation>
     </message>
     <message>
         <location filename="../../src/Windows/Basic/ProjectCommonBlock.cpp" line="75"/>
         <source>Import</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">导入</translation>
     </message>
     <message>
         <location filename="../../src/Windows/Basic/ProjectCommonBlock.cpp" line="76"/>
         <source>LabelVoice Files(*.lvproj);;All Files(%1)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">LabelVoice文件(*.lvproj);;所有文件(%1)</translation>
     </message>
     <message>
         <location filename="../../src/Windows/Basic/ProjectCommonBlock.cpp" line="111"/>
         <source>&lt;h2&gt;%1 %2&lt;/h2&gt;&lt;p&gt;&lt;span style=&quot;font-weight: bold;&quot;&gt;LabelVoice&lt;/span&gt; with innovative framework.&lt;/p&gt;&lt;p&gt;Copyright (C) OpenVPI Team, 2020-2022. &lt;/p&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">&lt;h2&gt;%1 %2&lt;/h2&gt;&lt;p&gt;&lt;span style=&quot;font-weight: bold;&quot;&gt;LabelVoice&lt;/span&gt;，更具创造性的新架构。&lt;/p&gt;&lt;p&gt;版权所有 (C) OpenVPI Team, 2020-2022. &lt;/p&gt;</translation>
     </message>
     <message>
         <location filename="../../src/Windows/Basic/ProjectCommonBlock.cpp" line="121"/>
         <source>About %1</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">关于%1</translation>
     </message>
     <message>
         <location filename="../../src/Windows/Basic/ProjectCommonBlock.cpp" line="125"/>
         <source>About Qt</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">关于Qt</translation>
     </message>
 </context>
 <context>
