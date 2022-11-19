@@ -16,7 +16,7 @@
 #include <Windows.h>
 #endif
 
-#define PLUGINS_DIR qApp->applicationDirPath() + "/plugins"
+#define PLUGINS_DIR qApp->applicationDirPath() + "/" + TEST_PLUGINS_DIR + "/plugins"
 
 int main(int argc, char *argv[]) {
     QCoreApplication a(argc, argv);
@@ -34,7 +34,8 @@ int main(int argc, char *argv[]) {
 
     // Set library loading info
 #ifdef Q_OS_WINDOWS
-    ::SetDllDirectoryW(QString(qApp->applicationDirPath() + "/lib").toStdWString().c_str());
+    ::SetDllDirectoryW(
+        QString(qApp->applicationDirPath() + "/" + TEST_LIB_DIR).toStdWString().c_str());
 #endif
     qApp->addLibraryPath(PLUGINS_DIR);
 

@@ -19,7 +19,6 @@ macro(add_test_target _target)
     endif()
 
     # ----------------- Template Begin -----------------
-    
     project(${_target} VERSION ${_version} LANGUAGES CXX)
 
     set(CMAKE_AUTOUIC ON)
@@ -47,6 +46,11 @@ macro(add_test_target _target)
     if(FUNC_WIN32_EXE)
         set_target_properties(${_target} PROPERTIES WIN32_EXECUTABLE TRUE)
     endif()
+
+    set_target_properties(${_target} PROPERTIES
+        TC_TARGET_TYPE EXECUTABLE
+        TC_EXECUTABLE_TYPE Test
+    )
 
     # ----------------- Template End -----------------
 

@@ -37,7 +37,6 @@ set(PROJECT_MODULES_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../scripts/cmake/Modules) # 
 set(PROJECT_RELEASE_DIR ${CMAKE_BINARY_DIR}) # Release
 set(PROJECT_DOCUMENT_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../docs/doc) # Doc
 set(PROJECT_LICENSE_FILE ${CMAKE_CURRENT_SOURCE_DIR}/../LICENSE) # License
-set(PROJECT_VERSION_SHORT ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}.${PROJECT_VERSION_PATCH})
 
 # Set global variables
 set(TIME_PROJECT_START_YEAR 2020)
@@ -71,18 +70,17 @@ endif()
 
 # Add common
 add_subdirectory(Common)
-
-# Include common
 include(Common/Include.cmake)
 
-# Add subdirectories
+# Add qslib
 add_subdirectory(QsLib)
 
+# Add applications
 if(NOT BUILD_SVS_PLUGINS_ONLY)
     add_subdirectory(Utilities)
 
-    foreach(_target ${APP_LIST})
-        add_subdirectory(${_target})
+    foreach(_app ${APP_LIST})
+        add_subdirectory(${_app})
     endforeach()
 endif()
 

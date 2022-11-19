@@ -1,13 +1,13 @@
 # The macro works same as "option"
-macro(option_ex _name _val)
+macro(option_ex _name)
     if(NOT DEFINED ${_name})
-        set(${_name} ${_val})
+        set(${_name} ${ARGN})
     endif()
 endmacro()
 
 # Project Configurations
 option_ex(APP_TOTAL_NAME            QsToolChain)
-option_ex(APP_LIST                  LabelVoice)
+option_ex(APP_LIST                  LabelVoice QSynthesis)
 option_ex(APP_VERSION_VERBOSE       0.0.1.4)
 option_ex(APP_DEPLOY                on)
 option_ex(APP_LIB_DIR               lib)

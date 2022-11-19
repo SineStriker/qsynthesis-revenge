@@ -1,4 +1,4 @@
-project(LvStaging
+project(QuStaging
     LANGUAGES CXX
     VERSION ${SUB_VERSION}
 )
@@ -9,15 +9,15 @@ add_files(_src
     PATTERNS *.h *.hpp *.cpp *.cc
 )
 
-lvmod_configure_library(
+qsmod_configure_library(
     SOURCES ${_src} res/res.qrc
     ENABLE_SHARED
     QT_LIBRARIES Widgets Svg
     QT_PRIVATE_INCLUDES Gui Widgets
-    LINKS LvCore LvElem
+    LINKS
     INCLUDES include src
-    WIN32_FILE_DESC "LabelVoice Main Module"
-    WIN32_PRODUCT_NAME "LabelVoice.Staging"
+    WIN32_FILE_DESC "QSynthesis Main Module"
+    WIN32_PRODUCT_NAME "QSynthesis.Staging"
 )
 
 target_compile_definitions(${PROJECT_NAME} PUBLIC APP_VERSION="${SUB_VERSION_SHORT}")

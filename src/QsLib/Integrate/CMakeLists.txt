@@ -16,7 +16,7 @@ qslib_configure_library(
     LINKS QsFramework QsMedia QsSVS
     INCLUDES include src
     WIN32_FILE_DESC "QSynthesis Common Utilities"
-    WIN32_PRODUCT_NAME "QSynthesis.Integrate"
+    WIN32_PRODUCT_NAME "QSynthesis.Library.Integrate"
 )
 
 target_create_translations(${PROJECT_NAME} SOURCES ${_src}

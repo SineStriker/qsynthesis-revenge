@@ -21,7 +21,6 @@ lvmod_configure_library(
 )
 
 target_compile_definitions(${PROJECT_NAME} PUBLIC
-    APP_VERSION="${PROJECT_VERSION_SHORT}"
     APP_PLUGINS_DIR="${APP_PLUGINS_DIR}"
     APP_TOOLS_DIR="${APP_TOOLS_DIR}"
     APP_LOCALES_DIR="${APP_LOCALES_DIR}"

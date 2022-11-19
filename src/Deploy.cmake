@@ -7,6 +7,7 @@ set(_qs_libs)
 set(_other_libs)
 set(_main_exes)
 set(_tool_exes)
+set(_test_exes)
 set(_other_exes)
 
 set(_qt_binaries)
@@ -48,6 +49,8 @@ foreach(_target ${CURRENT_ALL_TARGETS})
             list(APPEND _main_exes ${_target})
         elseif(${_exe_type} STREQUAL Tool)
             list(APPEND _tool_exes ${_target})
+        elseif(${_exe_type} STREQUAL Test)
+            list(APPEND _test_exes ${_target})
         else()
             list(APPEND _other_exes ${_target})
         endif()
@@ -184,6 +187,15 @@ foreach(_exe ${_tool_exes})
     add_custom_command(
         TARGET deploy
         COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:${_exe}> ${_tools_dir}
+    )
+endforeach()
+
+# Settle test executables
+foreach(_exe ${_test_exes})
+    # Set output dir to APP_LIB_DIR
+    set_target_properties(
+        ${_exe} PROPERTIES RUNTIME_OUTPUT_DIRECTORY
+        ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${APP_LIB_DIR}
     )
 endforeach()
 

@@ -16,5 +16,5 @@ qslib_configure_library(
     LINKS QsUtils
     INCLUDES include src
     WIN32_FILE_DESC "QSynthesis Common Utilities"
-    WIN32_PRODUCT_NAME "QSynthesis.Media"
+    WIN32_PRODUCT_NAME "QSynthesis.Library.Media"
 )

@@ -18,7 +18,7 @@ qslib_configure_library(
     LINKS QsUtils
     INCLUDES include src
     WIN32_FILE_DESC "QSynthesis Common Utilities"
-    WIN32_PRODUCT_NAME "QSynthesis.SVS"
+    WIN32_PRODUCT_NAME "QSynthesis.Library.SVS"
 )
 
 target_link_libraries(${PROJECT_NAME} PRIVATE mrq)

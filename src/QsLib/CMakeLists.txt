@@ -8,6 +8,8 @@ include(Template.cmake)
 # Set global variable for current project
 set(SUB_PROJECT ${PROJECT_NAME})
 set(SUB_VERSION ${PROJECT_VERSION})
+set(SUB_VERSION_SHORT ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}.${PROJECT_VERSION_PATCH})
+
 set(SUB_PLUGIN_DIR ${APP_RES_DIR}/${APP_RES_BUILTIN_DIR})
 
 add_subdirectory(Utils)

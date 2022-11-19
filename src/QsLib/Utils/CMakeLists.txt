@@ -15,7 +15,7 @@ qslib_configure_library(
     QT_PRIVATE_INCLUDES Core
     INCLUDES include src
     WIN32_FILE_DESC "QSynthesis Common Utilities"
-    WIN32_PRODUCT_NAME "QSynthesis.Utils"
+    WIN32_PRODUCT_NAME "QSynthesis.Library.Utils"
 )
 
 target_include_directories(${PROJECT_NAME} PUBLIC

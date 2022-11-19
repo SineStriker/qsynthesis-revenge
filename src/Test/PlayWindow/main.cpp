@@ -15,11 +15,12 @@ int main(int argc, char *argv[]) {
 
     // Set library loading info
 #ifdef Q_OS_WINDOWS
-    ::SetDllDirectoryW(QString(qApp->applicationDirPath() + "/lib").toStdWString().c_str());
+    ::SetDllDirectoryW(
+        QString(qApp->applicationDirPath() + "/" + TEST_LIB_DIR).toStdWString().c_str());
 #endif
-    qApp->addLibraryPath(qApp->applicationDirPath() + "/plugins");
-    qApp->addLibraryPath(qApp->applicationDirPath() + "/resources/modules");
-    qApp->addLibraryPath(qApp->applicationDirPath() + "/resources/plugins");
+    qApp->addLibraryPath(qApp->applicationDirPath() + "/" + TEST_APP_DIR + "/plugins");
+    qApp->addLibraryPath(qApp->applicationDirPath() + "/" + TEST_APP_DIR + "/resources/modules");
+    qApp->addLibraryPath(qApp->applicationDirPath() + "/" + TEST_APP_DIR + "/resources/plugins");
 
     MainWindow w;
     w.show();
