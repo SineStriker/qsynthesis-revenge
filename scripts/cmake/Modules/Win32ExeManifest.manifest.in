@@ -3,7 +3,7 @@
     <assemblyIdentity
         version="@PROJECT_VERSION@"
         processorArchitecture="*"
-        name="@WIN32_MF_COMPANY_NAME@.@WIN32_MF_PRODUCT_NAME@.@WIN32_MF_APPLICATION_NAME@"
+        name="@WIN32_MF_APPLICATION_IDENTIFIER@"
         type="win32"
     />
     <description>@WIN32_MF_APPLICATION_DESC@</description>

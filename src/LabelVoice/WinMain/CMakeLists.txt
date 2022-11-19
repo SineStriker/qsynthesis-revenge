@@ -33,9 +33,7 @@ if(WIN32)
     )
 
     # configure manifest
-    set(WIN32_MF_COMPANY_NAME OpenVPI)
-    set(WIN32_MF_PRODUCT_NAME ToolChain)
-    set(WIN32_MF_APPLICATION_NAME LabelVoice)
+    set(WIN32_MF_APPLICATION_IDENTIFIER com.OpenVPI.LabelVoice)
     set(WIN32_MF_APPLICATION_DESC "Voice data annotation tool.")
     configure_file(
         ${WIN32_EXE_MANIFEST}
