@@ -14,18 +14,20 @@
 #include <QScreen>
 
 [[maybe_unused]] static void _str_1() {
-    static QString qcommandlineparser_strings[] = {
-        QCommandLineParser::tr("Displays version information."),
-        QCommandLineParser::tr("Displays help on commandline options."),
-        QCommandLineParser::tr("Displays help including Qt specific options."),
-        QCommandLineParser::tr("Unknown option '%1'."),
-        QCommandLineParser::tr("Unknown options: %1."),
-        QCommandLineParser::tr("Missing value after '%1'."),
-        QCommandLineParser::tr("Unexpected value after '%1'."),
-        QCommandLineParser::tr("[options]"),
-        QCommandLineParser::tr("Usage: %1"),
-        QCommandLineParser::tr("Options:"),
-        QCommandLineParser::tr("Arguments:"),
+    static QString MyCommandLineParser_strings[] = {
+        MyCommandLineParser::tr("Display version information."),
+        MyCommandLineParser::tr("Display help on commandline options."),
+        MyCommandLineParser::tr("Display help including Qt specific options."),
+        MyCommandLineParser::tr("Unknown option '%1'."),
+        MyCommandLineParser::tr("Unknown options: %1."),
+        MyCommandLineParser::tr("Missing value after '%1'."),
+        MyCommandLineParser::tr("Unexpected value after '%1'."),
+        MyCommandLineParser::tr("[options]"),
+        MyCommandLineParser::tr("Usage: %1"),
+        MyCommandLineParser::tr("Options:"),
+        MyCommandLineParser::tr("Arguments:"),
+        MyCommandLineParser::tr("Display Qt version."),
+        MyCommandLineParser::tr("Qt version %1\n"),
     };
 }
 
@@ -56,12 +58,13 @@ void CApplicationPrivate::init() {
     Q_ASSERT(qIStup);
 
     auto &parser = qIStup->parser;
+    parser.setApplicationDescription(qIStup->appDescription);
 
     QCommandLineOption option_allowRoot(
         "allow-root", CApplication::tr("Allow running with super user privileges."));
     parser.addOption(option_allowRoot);
 
-    q->setOrganizationDomain(qIStup->appName);
+    q->setApplicationName(qIStup->appName);
     q->setApplicationVersion(qIStup->appVersion);
     q->setApplicationDisplayName(qIStup->appDisplayName);
 

@@ -4,17 +4,17 @@
 <context>
     <name>CApplication</name>
     <message>
-        <location filename="../../src/Kernel/private/CApplication_p.cpp" line="61"/>
+        <location filename="../../src/Kernel/private/CApplication_p.cpp" line="64"/>
         <source>Allow running with super user privileges.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/Kernel/private/CApplication_p.cpp" line="73"/>
+        <location filename="../../src/Kernel/private/CApplication_p.cpp" line="76"/>
         <source>You&apos;re trying to start %1 as the %2, which may cause security problem and isn&apos;t recommended.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/Kernel/private/CApplication_p.cpp" line="83"/>
+        <location filename="../../src/Kernel/private/CApplication_p.cpp" line="86"/>
         <source>Confirm</source>
         <translation type="unfinished"></translation>
     </message>
@@ -113,20 +113,20 @@
     </message>
 </context>
 <context>
-    <name>QCommandLineParser</name>
+    <name>MyCommandLineParser</name>
     <message>
         <location filename="../../src/Kernel/private/CApplication_p.cpp" line="18"/>
-        <source>Displays version information.</source>
+        <source>Display version information.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/Kernel/private/CApplication_p.cpp" line="19"/>
-        <source>Displays help on commandline options.</source>
+        <source>Display help on commandline options.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../src/Kernel/private/CApplication_p.cpp" line="20"/>
-        <source>Displays help including Qt specific options.</source>
+        <source>Display help including Qt specific options.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -167,6 +167,17 @@
     <message>
         <location filename="../../src/Kernel/private/CApplication_p.cpp" line="28"/>
         <source>Arguments:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/Kernel/private/CApplication_p.cpp" line="29"/>
+        <source>Display Qt version.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../src/Kernel/private/CApplication_p.cpp" line="30"/>
+        <source>Qt version %1
+</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

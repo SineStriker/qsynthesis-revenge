@@ -98,11 +98,12 @@ int main(int argc, char *argv[]) {
         ::exit(-1);
     }
 
+    wchar_t errorTitle[] = TO_UNICODE("Fatal Error");
+
     // Get executable directory
     size_t idx = wstr.find_last_of(L"\\");
     if (idx == std::wstring::npos) {
-        ::MessageBoxW(nullptr, TO_UNICODE("Bad file path!"), TO_UNICODE("Error"),
-                      MB_OK | MB_ICONERROR);
+        ::MessageBoxW(nullptr, TO_UNICODE("Bad file path!"), errorTitle, MB_OK | MB_ICONERROR);
         return -1;
     }
     wstr.resize(idx);
@@ -136,14 +137,14 @@ int main(int argc, char *argv[]) {
             res = ::GetLastError();
 
             std::wstring msg = GetLastErrorAsString();
-            ::MessageBoxW(nullptr, msg.data(), TO_UNICODE("Error"), MB_OK | MB_ICONERROR);
+            ::MessageBoxW(nullptr, msg.data(), errorTitle, MB_OK | MB_ICONERROR);
         }
         ::FreeLibrary(hDLL);
     } else {
         res = ::GetLastError();
 
         std::wstring msg = GetLastErrorAsString();
-        ::MessageBoxW(nullptr, msg.data(), TO_UNICODE("Error"), MB_OK | MB_ICONERROR);
+        ::MessageBoxW(nullptr, msg.data(), errorTitle, MB_OK | MB_ICONERROR);
     }
     return res;
 #else
