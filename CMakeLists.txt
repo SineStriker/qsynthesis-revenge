@@ -5,7 +5,7 @@ cmake_minimum_required(VERSION 3.17)
 include(Config.cmake)
 
 # Project
-project(${APP_TOTAL_NAME} LANGUAGES C CXX VERSION ${APP_VERSION_VERBOSE})
+project(${APP_TOOLSET_NAME} LANGUAGES C CXX VERSION ${APP_VERSION_VERBOSE})
 
 set(NOT_QT_CREATOR 1)
 

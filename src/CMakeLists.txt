@@ -6,7 +6,7 @@ set(CMAKE_POLICY_DEFAULT_CMP0077 NEW)
 include(../Config.cmake)
 
 # Project
-project(${APP_TOTAL_NAME} VERSION ${APP_VERSION_VERBOSE} LANGUAGES CXX)
+project(${APP_TOOLSET_NAME} VERSION ${APP_VERSION_VERBOSE} LANGUAGES CXX)
 
 # Language configuration
 set(CMAKE_CXX_STANDARD 17)
@@ -47,7 +47,7 @@ set(WIN32_DLL_RC ${PROJECT_MODULES_DIR}/Win32DllRes.rc.in)
 set(WIN32_EXE_RC ${PROJECT_MODULES_DIR}/Win32ExeRes.rc.in)
 set(WIN32_EXE_MANIFEST ${PROJECT_MODULES_DIR}/Win32ExeManifest.manifest.in)
 
-# ToolChain
+# Vcpkg
 set(VCPKG_APPLOCAL_DEPS off)
 include(${CMAKE_CURRENT_SOURCE_DIR}/../vcpkg/scripts/buildsystems/vcpkg.cmake)
 
@@ -79,7 +79,7 @@ add_subdirectory(QsLib)
 if(NOT BUILD_SVS_PLUGINS_ONLY)
     add_subdirectory(Utilities)
 
-    foreach(_app ${APP_LIST})
+    foreach(_app ${APP_TOOLSET_LIST})
         add_subdirectory(${_app})
     endforeach()
 endif()

@@ -1,15 +1,24 @@
-# QSynthesis 2.0
+# QSynthesis Toolset
 
 ## Intro
 
-QSynthesis is an open-source software and a remake of vocal synthesis UTAU to provide UTAU community with user-friendly experience.
+QSynthesis is originally the name of the Qt-based UTAU editor, as a result of continuous iterations, its functionality has been abstracted into a class that can be used by multiple SVS frontend, so I called the library QSynthesis as well.
 
-The project is in its second iteration.
+All applications in this toolset are free softwares and aim to provide the community with user-friendly experience.
 
 ## Compatibility
 
-LabelVoice is able to run on **Windows, MacOS and Linux**.
+The application is able to run on **Windows, MacOS and Linux**.
 
+## Toolset
+
+### LabelVoice
+
+LabelVoice is an open-source software and a labeling tool for vocal synthesis database.
+
+### QSynthesis
+
+QSynthesis is an open-source software and a remake of UTAU. It is in its second iteration.
 
 ## Build from source
 
@@ -29,10 +38,6 @@ For detailed information, see [Build Instructions](./docs/build-instructions.md)
 
 
 ### Modules
-
-On Windows, you can use the default `wavtool.exe` and `resampler.exe` which are distributed with UTAU to synthesize the audio for QSynthesis.
-
-On Mac OS and Linux, there are no ready-made concatenating or resampling tools. You need to compile them yourself.
 
 For detailed information, see [Related Tools](./docs/related-tools.md).
 
@@ -74,4 +79,4 @@ For Qt/C++ beginners, see [Setup Environment](./docs/setup-env.md) for instructi
 
 ## License
 
-QSynthesis 2.0 is licensed under Apache 2.0 License.
+QSynthesis Toolset is licensed under Apache 2.0 License.

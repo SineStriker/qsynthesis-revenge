@@ -1,59 +1,46 @@
 # Related Tools
 
-## Resamplers
+## UTAU
 
-Open-source resamplers and wavtools for UTAU, which are useful for QSynthesis on Mac OS and Linux.
+On Windows, you can use the default `wavtool.exe` and `resampler.exe` which are distributed with UTAU to synthesize the audio for QSynthesis.
 
-### Macres
+On Mac OS and Linux, there are no ready-made concatenating or resampling tools. You need to compile them yourself.
 
-It's a fork of resampler `tn_fnds`.
+Other open-source resamplers and wavtools for UTAU, which are useful for QSynthesis on non-Windows are as follows.
 
-Source: https://github.com/titinko/macres
+### Resamplers
 
-### World4-UTAU
++ [Macres](https://github.com/titinko/macres)
+    + It's a fork of resampler `tn_fnds`.
 
-It's a fork of `world4utau` by m13253.
++ [World4-UTAU](https://gitee.com/functioner/world4-utau)
+    + It's a fork of `world4utau` by m13253.
 
-Source: https://gitee.com/functioner/world4-utau
++ VS4U
 
-### VS4U
+### Wavtools
 
-To be implemented...
-
-## Wavtools
-
-### Wavtool-Yawu
-
-Yet Another Wavtool for UTAU.
-
-Source: https://github.com/m13253/wavtool-yawu
++ [Wavtool-Yawu](https://github.com/m13253/wavtool-yawu)
+    + Yet Another Wavtool for UTAU.
 
 
-## UTAU FRQ References
+### UTAU FRQ References
 
-#### Frq
-+ Source: https://github.com/titinko/frq_reader
-+ License: MIT License
-+ Owner: titinko
++ [Frq](https://github.com/titinko/frq_reader)
+    + MIT License
 
-#### VocalShifter
-+ Home: http://ackiesound.ifdef.jp/soko.html
-+ License: *Unknown*
++ [VocalShifter](http://ackiesound.ifdef.jp/soko.html)
+    + Unknown License
 
-#### Mrq
-+ Source: https://github.com/Sleepwalking/mrq
-+ License: BSD
-+ Owner: Kanru Hua
++ [Mrq](https://github.com/Sleepwalking/mrq)
+    + BSD
+    + Copyright Kanru Hua
 
-#### Pmk (TIPS frequency map file)
-+ Origin: ScientistB
-+ Owner: Masao
-+ License: *Unknown*
++ Pmk
+    + Frequency map file for TIPS made by ScientistB
 
-#### World4Utau
-+ Source: https://github.com/Luk3M/world4utau
-+ License: GPL v3
-+ Owner: Luk3M
++ [World4Utau](https://github.com/Luk3M/world4utau)
+    + GPL v3
 
 
 ## Converters
@@ -66,9 +53,6 @@ Project file converters ported from OpenSVIP, and the corresponding libraries us
 + [QMidi](https://github.com/waddlesplash/QMidi)
     + MIT License
 
-#### Contributes
-+ Parse SMF files
-
 ### Ustx
 
 #### Dependencies
@@ -77,6 +61,4 @@ Project file converters ported from OpenSVIP, and the corresponding libraries us
 
 + [OpenUtau](https://github.com/stakira/OpenUtau)
     + MIT License
-
-#### Contributes
-+ Parse OpenUtau files
+    
