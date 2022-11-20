@@ -23,6 +23,7 @@ lvmod_configure_library(
 target_compile_definitions(${PROJECT_NAME} PUBLIC
     APP_NAME="${SUB_PROJECT}"
     APP_VERSION="${SUB_VERSION_SHORT}"
+    APP_DESCRIPTION="${SUB_DESCRIPTION}"
 )
 
 target_create_translations(${PROJECT_NAME} SOURCES ${_src}

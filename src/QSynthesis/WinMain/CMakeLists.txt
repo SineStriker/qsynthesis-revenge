@@ -23,7 +23,7 @@ if(WIN32)
     set(WIN32_COPYRIGHT_START_YEAR "${TIME_PROJECT_START_YEAR}")
     set(WIN32_COPYRIGHT_END_YEAR "${TIME_CURRENT_YEAR}")
     set(WIN32_AUTHOR_NAME "Sine Striker")
-    set(WIN32_FILE_DESC "QSynthesis")
+    set(WIN32_FILE_DESC ${PROJECT_NAME})
     set(WIN32_PRODUCT_NAME ${PROJECT_NAME})
     set(WIN32_MANIFEST_DESC "1 24 \"app.manifest\"")
     configure_file(
@@ -33,8 +33,8 @@ if(WIN32)
     )
 
     # configure manifest
-    set(WIN32_MF_APPLICATION_IDENTIFIER com.SineStr.QSynthesis)
-    set(WIN32_MF_APPLICATION_DESC "Remake of Vocal Synthesis UTAU.")
+    set(WIN32_MF_APPLICATION_IDENTIFIER "${SUB_IDENTIFIER}")
+    set(WIN32_MF_APPLICATION_DESC "${SUB_DESCRIPTION}")
     configure_file(
         ${WIN32_EXE_MANIFEST}
         ${CMAKE_CURRENT_BINARY_DIR}/app.manifest

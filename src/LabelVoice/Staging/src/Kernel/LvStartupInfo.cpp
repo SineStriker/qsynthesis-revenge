@@ -3,7 +3,7 @@
 LvStartupInfo::LvStartupInfo() {
     appVersion = APP_VERSION;
     appDisplayName = APP_NAME;
-    appDescription = "Voice data annotation tool.";
+    appDescription = APP_DESCRIPTION;
     parser.addPositionalArgument("files", "Project files to open.", "files");
 }
 

@@ -125,21 +125,6 @@
     </message>
 </context>
 <context>
-    <name>LvApplication</name>
-    <message>
-        <source>You&apos;re trying to start %1 as the %2 which isn&apos;t recommended.</source>
-        <translation type="obsolete">你正在尝试以%2身份运行%1，推荐使用低权限启动。</translation>
-    </message>
-    <message>
-        <source>Continue</source>
-        <translation type="obsolete">继续</translation>
-    </message>
-    <message>
-        <source>Exit</source>
-        <translation type="obsolete">退出</translation>
-    </message>
-</context>
-<context>
     <name>PianoActions</name>
     <message>
         <location filename="../../src/Windows/Piano/PianoActions.cpp" line="124"/>
@@ -352,10 +337,6 @@
         <location filename="../../src/Windows/Basic/ProjectCommonBlock.cpp" line="125"/>
         <source>About Qt</source>
         <translation type="unfinished">关于Qt</translation>
-    </message>
-    <message>
-        <source>Voice data annotation frontend.</source>
-        <translation type="obsolete">声音数据标注工具。</translation>
     </message>
 </context>
 <context>
