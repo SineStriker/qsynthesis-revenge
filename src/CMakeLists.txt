@@ -51,6 +51,12 @@ set(WIN32_EXE_MANIFEST ${PROJECT_MODULES_DIR}/Win32ExeManifest.manifest.in)
 set(VCPKG_APPLOCAL_DEPS off)
 include(${CMAKE_CURRENT_SOURCE_DIR}/../vcpkg/scripts/buildsystems/vcpkg.cmake)
 
+if(WIN32)
+    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /MANIFEST:NO")
+    set(CMAKE_MODULE_LINKER_FLAGS "${CMAKE_MODULE_LINKER_FLAGS} /MANIFEST:NO")
+    set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} /MANIFEST:NO")
+endif()
+
 # Import utils
 include(${PROJECT_MODULES_DIR}/Basic.cmake)
 include(${PROJECT_MODULES_DIR}/FindUtil.cmake)

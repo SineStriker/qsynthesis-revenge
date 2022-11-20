@@ -17,6 +17,21 @@ endif()
 
 # Add embedded resources
 if(WIN32)
+    if(NOT TRUE)
+        set(_manifest_desc)
+    else()
+        set(_manifest_desc "1 24 app.manifest")
+
+        # configure manifest
+        set(WIN32_MF_APPLICATION_IDENTIFIER "${SUB_IDENTIFIER}")
+        set(WIN32_MF_APPLICATION_DESC "${SUB_DESCRIPTION}")
+        configure_file(
+            ${WIN32_EXE_MANIFEST}
+            ${CMAKE_CURRENT_BINARY_DIR}/app.manifest
+            @ONLY
+        )
+    endif()
+
     # configure rc
     set(WIN32_ICON_NAME "app.ico")
     set(WIN32_EXPORT_NAME ${PROJECT_NAME})
@@ -25,19 +40,10 @@ if(WIN32)
     set(WIN32_AUTHOR_NAME "Sine Striker")
     set(WIN32_FILE_DESC ${PROJECT_NAME})
     set(WIN32_PRODUCT_NAME ${PROJECT_NAME})
-    set(WIN32_MANIFEST_DESC "1 24 \"app.manifest\"")
+    # set(WIN32_RC_EXTRA_CONTENT "${_manifest_desc}")
     configure_file(
         ${WIN32_EXE_RC}
         ${CMAKE_CURRENT_BINARY_DIR}/res.rc
-        @ONLY
-    )
-
-    # configure manifest
-    set(WIN32_MF_APPLICATION_IDENTIFIER "${SUB_IDENTIFIER}")
-    set(WIN32_MF_APPLICATION_DESC "${SUB_DESCRIPTION}")
-    configure_file(
-        ${WIN32_EXE_MANIFEST}
-        ${CMAKE_CURRENT_BINARY_DIR}/app.manifest
         @ONLY
     )
 
@@ -47,7 +53,6 @@ if(WIN32)
     # add files
     target_sources(${PROJECT_NAME} PRIVATE
         ${CMAKE_CURRENT_BINARY_DIR}/res.rc
-        ${CMAKE_CURRENT_BINARY_DIR}/app.manifest
     )
 elseif(APPLE)
     # copy files
