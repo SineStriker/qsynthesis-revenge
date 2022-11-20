@@ -22,6 +22,10 @@ This project use Microsoft vcpkg to manage its dependencies, you should finish t
 + The LabelVoice Application uses a lot of QSynthesis Modules and the restare disbled(e.g. Utaplugin).
 + See `Config.cmake` for details.
 
+## Notification
+
++ This project is heavily nested with the particular compiler and specified edition of Qt libraries. As a result, we recommend using exactly Qt 5.15.2 and MSVC, GCC, Clang on each platform.
+
 ## Dependencies (No need to build)
 
 ### FFmpeg

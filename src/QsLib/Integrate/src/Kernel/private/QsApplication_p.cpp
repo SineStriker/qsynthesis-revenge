@@ -14,7 +14,7 @@
 
 static const char Slash = '/';
 
-static const char FILENAME_APP_CONFIG[] = "qsconfig.json";
+static const char FILENAME_APP_CONFIG[] = "appconfig.json";
 
 // static QString loadAppleFont() {
 //     QString fontDir = qApp->applicationDirPath() + "/resources/fonts";

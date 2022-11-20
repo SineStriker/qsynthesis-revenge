@@ -20,7 +20,10 @@ lvmod_configure_library(
     WIN32_PRODUCT_NAME "LabelVoice.Staging"
 )
 
-target_compile_definitions(${PROJECT_NAME} PUBLIC APP_VERSION="${SUB_VERSION_SHORT}")
+target_compile_definitions(${PROJECT_NAME} PUBLIC
+    APP_NAME="${SUB_PROJECT}"
+    APP_VERSION="${SUB_VERSION_SHORT}"
+)
 
 target_create_translations(${PROJECT_NAME} SOURCES ${_src}
     LOCALES zh_CN zh_HK ja_JP

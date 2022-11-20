@@ -60,8 +60,7 @@ void CApplicationPrivate::init() {
     auto &parser = qIStup->parser;
     parser.setApplicationDescription(qIStup->appDescription);
 
-    QCommandLineOption option_allowRoot(
-        "allow-root", CApplication::tr("Allow running with super user privileges."));
+    QCommandLineOption option_allowRoot("allow-root", "Allow running with super user privileges.");
     parser.addOption(option_allowRoot);
 
     q->setApplicationName(qIStup->appName);

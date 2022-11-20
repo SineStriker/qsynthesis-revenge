@@ -8,17 +8,12 @@
         <translation type="obsolete">允许以超级用户权限运行</translation>
     </message>
     <message>
-        <location filename="../../src/Kernel/private/CApplication_p.cpp" line="64"/>
-        <source>Allow running with super user privileges.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/Kernel/private/CApplication_p.cpp" line="76"/>
+        <location filename="../../src/Kernel/private/CApplication_p.cpp" line="75"/>
         <source>You&apos;re trying to start %1 as the %2, which may cause security problem and isn&apos;t recommended.</source>
         <translation type="unfinished">你正在尝试以%2身份运行%1，这可能存在安全问题。请使用低权限启动。</translation>
     </message>
     <message>
-        <location filename="../../src/Kernel/private/CApplication_p.cpp" line="86"/>
+        <location filename="../../src/Kernel/private/CApplication_p.cpp" line="85"/>
         <source>Confirm</source>
         <translation type="unfinished">确定</translation>
     </message>

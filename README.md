@@ -14,11 +14,11 @@ The application is able to run on **Windows, MacOS and Linux**.
 
 ### LabelVoice
 
-LabelVoice is an open-source software and a labeling tool for vocal synthesis database.
+LabelVoice is an annotation tool for vocal synthesis database.
 
 ### QSynthesis
 
-QSynthesis is an open-source software and a remake of UTAU. It is in its second iteration.
+QSynthesis is a remade edition of UTAU, and it is in its second iteration.
 
 ## Build from source
 
@@ -29,7 +29,7 @@ QSynthesis is an open-source software and a remake of UTAU. It is in its second 
 |    Qt     |   >=5.15    |   Core, Gui, Widgets, Svg, Network   |
 | Compiler  |   >=C++17   |        MSVC 2019, GCC, Clang         |
 |   CMake   |   >=3.17    |        >=3.20 is recommended         |
-|  Python   |   >=3.6     |             annotations              |
+|  Python   |   >=3.6     |                  /                   |
 
 
 On Windows, compiling with MinGW is not tested.

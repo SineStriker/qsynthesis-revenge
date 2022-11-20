@@ -4,17 +4,12 @@
 <context>
     <name>CApplication</name>
     <message>
-        <location filename="../../src/Kernel/private/CApplication_p.cpp" line="64"/>
-        <source>Allow running with super user privileges.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/Kernel/private/CApplication_p.cpp" line="76"/>
+        <location filename="../../src/Kernel/private/CApplication_p.cpp" line="75"/>
         <source>You&apos;re trying to start %1 as the %2, which may cause security problem and isn&apos;t recommended.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../src/Kernel/private/CApplication_p.cpp" line="86"/>
+        <location filename="../../src/Kernel/private/CApplication_p.cpp" line="85"/>
         <source>Confirm</source>
         <translation type="unfinished"></translation>
     </message>
