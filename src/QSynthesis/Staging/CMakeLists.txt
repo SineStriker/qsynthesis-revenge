@@ -1,4 +1,4 @@
-project(QuStaging
+project(QUtaStaging
     LANGUAGES CXX
     VERSION ${SUB_VERSION}
 )

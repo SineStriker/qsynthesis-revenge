@@ -137,14 +137,16 @@ int main(int argc, char *argv[]) {
             res = ::GetLastError();
 
             std::wstring msg = GetLastErrorAsString();
-            ::MessageBoxW(nullptr, msg.data(), errorTitle, MB_OK | MB_ICONERROR);
+            ::MessageBoxW(nullptr, msg.data(), errorTitle,
+                          MB_OK | MB_TOPMOST | MB_SETFOREGROUND | MB_ICONERROR);
         }
         ::FreeLibrary(hDLL);
     } else {
         res = ::GetLastError();
 
         std::wstring msg = GetLastErrorAsString();
-        ::MessageBoxW(nullptr, msg.data(), errorTitle, MB_OK | MB_ICONERROR);
+        ::MessageBoxW(nullptr, msg.data(), errorTitle,
+                      MB_OK | MB_TOPMOST | MB_SETFOREGROUND | MB_ICONERROR);
     }
     return res;
 #else

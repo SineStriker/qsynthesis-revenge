@@ -7,6 +7,6 @@ include(Config.cmake)
 # Project
 project(${APP_TOOLSET_NAME} LANGUAGES C CXX VERSION ${APP_VERSION_VERBOSE})
 
-set(NOT_QT_CREATOR 1)
+set(NOT_QT_CREATOR on)
 
 add_subdirectory(src)

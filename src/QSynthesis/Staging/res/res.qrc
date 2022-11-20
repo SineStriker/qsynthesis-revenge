@@ -1,7 +1,7 @@
 <RCC>
     <qresource prefix="/">
-        <file>translations/QuStaging_ja_JP.qm</file>
-        <file>translations/QuStaging_zh_CN.qm</file>
-        <file>translations/QuStaging_zh_HK.qm</file>
+        <file>translations/QUtaStaging_ja_JP.qm</file>
+        <file>translations/QUtaStaging_zh_CN.qm</file>
+        <file>translations/QUtaStaging_zh_HK.qm</file>
     </qresource>
 </RCC>

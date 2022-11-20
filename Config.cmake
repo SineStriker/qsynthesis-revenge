@@ -23,3 +23,5 @@ option_ex(BUILD_SVS_PLUGINS_ONLY    off)
 
 option_ex(ENABLE_SVS_CONVERTERS     off)
 option_ex(ENABLE_APP_PLUGINS        on)
+
+option_ex(CONFIG_WIN32_DEBUG        on)

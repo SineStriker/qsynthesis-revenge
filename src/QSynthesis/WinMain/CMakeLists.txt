@@ -6,10 +6,10 @@ project(${SUB_PROJECT}
 # ------------------------------ Configure Target Begin ------------------------------
 
 # Add executable
-qs_add_executable(${PROJECT_NAME} QuStaging EXTERN_C)
+qs_add_executable(${PROJECT_NAME} QUtaStaging EXTERN_C)
 
 # Set Properties
-if(APP_DEPLOY OR NOT DEFINED NOT_QT_CREATOR)
+if((APP_DEPLOY AND NOT CONFIG_WIN32_DEBUG) OR NOT DEFINED NOT_QT_CREATOR)
     set_target_properties(${PROJECT_NAME} PROPERTIES
         WIN32_EXECUTABLE TRUE
     )

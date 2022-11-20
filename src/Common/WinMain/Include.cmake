@@ -1,3 +1,9 @@
+#[[
+    qs_add_executable <target> <dll> [EXTERN_C]
+    1. set APP_LIB_DIR by project configuration
+    2. set APP_DLL as the target file name of <dll>
+    3. add an executable with name of <target>
+]]#
 function(qs_add_executable _target _dll)
     set(options EXTERN_C)
     set(oneValueArgs)
