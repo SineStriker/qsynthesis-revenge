@@ -1,3 +1,9 @@
+#[[
+    get_all_targets <var>
+
+    args:
+        var: list to accept targets
+#]]
 function(get_all_targets var)
     set(targets)
     get_all_targets_recursive(targets ${CMAKE_CURRENT_SOURCE_DIR})

@@ -1,4 +1,34 @@
-# Only link public libraries
+#[[
+    qsmod_configure_library(
+        SOURCES                 files...
+        QT_LIBRARIES            qtlibs1...
+        QT_PRIVATE_INCLUDES     qtlibs2...
+        LINKS                   libs...
+        INCLUDES                incs...
+
+        [WIN32_FILE_DESC        <desc>]
+        [WIN32_PRODUCT_NAME     <pruduct>]
+
+        [INCLUDE_CURRENT]
+        [ENABLE_SHARED]
+    )
+
+    args:
+        files:              files to add to target
+        qtlibs1:            Qt module names to link
+        qtlibs2:            Qt module names to include private headers
+        libs:               libraries to link publicly
+        incs:               directories to include publicly
+        desc:               dll description  (for windows rc file)
+        pruduct:            product name     (for windows rc file)
+
+    flags:
+        INCLUDE_CURRENT:    include current directory publicly
+        ENABLE_SHARED:      build shared library (always set)
+    
+    usage:
+        create a library target named by PROJECT_NAME
+]]#
 macro(qsmod_configure_library)
     set(options INCLUDE_CURRENT ENABLE_SHARED)
     set(oneValueArgs WIN32_FILE_DESC WIN32_PRODUCT_NAME)

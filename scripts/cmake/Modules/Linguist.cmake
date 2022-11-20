@@ -1,6 +1,61 @@
-# In this project, we use our custom translation file management methods instead of official ones
-
 include(${CMAKE_CURRENT_LIST_DIR}/FindUtil.cmake)
+
+#[[
+    target_create_translations <target> SOURCES files... LOCALES langs... [DESTINATION <dir>] [CREATE_ONCE]
+
+    args:
+        target:      related target name
+        files:       source file list
+        langs:       language names, e.g. zh_CN en_US
+        dir:         output dir of .ts and. qm files, default to CMAKE_CURRENT_SOURCE_DIR
+
+    flags:
+        CREATE_ONCE: generate .ts and .qm file if not exists at configure
+
+    usage:
+        add lupdate and lrelease target for a target using Qt linguist framework
+#]]
+function(target_create_translations _target)
+    set(options CREATE_ONCE)
+    set(oneValueArgs DESTINATION)
+    set(multiValueArgs SOURCES LOCALES)
+    cmake_parse_arguments(FUNC "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
+
+    set(_ts_files)
+
+    if(FUNC_DESTINATION)
+        file(MAKE_DIRECTORY ${FUNC_DESTINATION})
+        set(_ts_dest ${FUNC_DESTINATION})
+    else()
+        set(_ts_dest ${CMAKE_CURRENT_SOURCE_DIR})
+    endif()
+
+    foreach(_loc ${FUNC_LOCALES})
+        list(APPEND _ts_files ${_ts_dest}/${_target}_${_loc}.ts)
+    endforeach()
+
+    find_qt_module(LinguistTools)
+
+    if(FUNC_CREATE_ONCE)
+        set(_create_once CREATE_ONCE)
+    else()
+        set(_create_once)
+    endif()
+
+    add_lupdate_target(${_target}_lupdate
+        INPUT ${FUNC_SOURCES}
+        OUTPUT ${_ts_files}
+        ${_create_once}
+    )
+
+    add_lrelease_target(${_target}_lrelease
+        INPUT ${_ts_files}
+        DESTINATION ${_ts_dest}
+        DEPENDS ${_target}_lupdate
+        ${_create_once}
+    )
+endfunction()
+
 
 # Input: cxx source files
 # Output: target ts files
@@ -119,45 +174,4 @@ function(add_lrelease_target _target)
     if(_LRELEASE_OUTPUT)
         set(${_LRELEASE_OUTPUT} ${_qm_files} PARENT_SCOPE)
     endif()
-endfunction()
-
-function(target_create_translations _target)
-    set(options CREATE_ONCE)
-    set(oneValueArgs DESTINATION)
-    set(multiValueArgs SOURCES LOCALES)
-    cmake_parse_arguments(FUNC "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
-
-    set(_ts_files)
-
-    if(FUNC_DESTINATION)
-        file(MAKE_DIRECTORY ${FUNC_DESTINATION})
-        set(_ts_dest ${FUNC_DESTINATION})
-    else()
-        set(_ts_dest ${CMAKE_CURRENT_SOURCE_DIR})
-    endif()
-
-    foreach(_loc ${FUNC_LOCALES})
-        list(APPEND _ts_files ${_ts_dest}/${_target}_${_loc}.ts)
-    endforeach()
-
-    find_qt_module(LinguistTools)
-
-    if(FUNC_CREATE_ONCE)
-        set(_create_once CREATE_ONCE)
-    else()
-        set(_create_once)
-    endif()
-
-    add_lupdate_target(${_target}_lupdate
-        INPUT ${FUNC_SOURCES}
-        OUTPUT ${_ts_files}
-        ${_create_once}
-    )
-
-    add_lrelease_target(${_target}_lrelease
-        INPUT ${_ts_files}
-        DESTINATION ${_ts_dest}
-        DEPENDS ${_target}_lupdate
-        ${_create_once}
-    )
 endfunction()

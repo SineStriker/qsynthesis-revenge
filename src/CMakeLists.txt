@@ -26,6 +26,12 @@ else()
     message(FATAL_ERROR "Unsupported System !!!")
 endif()
 
+if(WIN32)
+    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /manifest:no")
+    set(CMAKE_MODULE_LINKER_FLAGS "${CMAKE_MODULE_LINKER_FLAGS} /manifest:no")
+    set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} /manifest:no")
+endif()
+
 # Set output directories
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
@@ -51,12 +57,6 @@ set(WIN32_EXE_MANIFEST ${PROJECT_MODULES_DIR}/Win32ExeManifest.manifest.in)
 set(VCPKG_APPLOCAL_DEPS off)
 include(${CMAKE_CURRENT_SOURCE_DIR}/../vcpkg/scripts/buildsystems/vcpkg.cmake)
 
-if(WIN32)
-    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /MANIFEST:NO")
-    set(CMAKE_MODULE_LINKER_FLAGS "${CMAKE_MODULE_LINKER_FLAGS} /MANIFEST:NO")
-    set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} /MANIFEST:NO")
-endif()
-
 # Import utils
 include(${PROJECT_MODULES_DIR}/Basic.cmake)
 include(${PROJECT_MODULES_DIR}/FindUtil.cmake)
@@ -74,7 +74,7 @@ if(NOT APPLE)
     find_package(FramelessHelper REQUIRED COMPONENTS Core Widgets)
 endif()
 
-# Add common
+# Add common components
 add_subdirectory(Common)
 include(Common/Include.cmake)
 
@@ -90,14 +90,16 @@ if(NOT BUILD_SVS_PLUGINS_ONLY)
     endforeach()
 endif()
 
+# Add tests
 if(BUILD_TEST)
     add_subdirectory(Test)
 endif()
 
-# Add other tasks
+# Subsequent configurations
 if(TRUE)
     set(_suffix)
 
+    # Get vcpkg dll dir and dll pattern
     if(${CMAKE_BUILD_TYPE} STREQUAL Debug)
         set(_suffix "/debug")
     endif()
@@ -113,17 +115,17 @@ if(TRUE)
         set(VCPKG_BINARY_PAT "*.so*")
     endif()
 
-    unset(_suffix)
-
     # Get all targets in variable CURRENT_ALL_TARGETS
     get_all_targets(CURRENT_ALL_TARGETS)
 
     # Copy dlls and and add translations
     include(Deps.cmake)
 
+    # Add deploy task
     if(APP_DEPLOY)
         include(Deploy.cmake)
     endif()
 
+    unset(_suffix)
     unset(CURRENT_ALL_TARGETS)
 endif()

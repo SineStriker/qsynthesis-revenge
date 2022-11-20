@@ -1,4 +1,9 @@
-# Split String With Separator
+#[[
+    string_split <var> <string> <separator>
+
+    usage:
+        split a string by separator and return the result into `var`
+#]]
 function(string_split OUTPUT str separator)
     set(list)
 

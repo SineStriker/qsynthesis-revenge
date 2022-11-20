@@ -1,8 +1,18 @@
 #[[
     qs_add_executable <target> <dll> [EXTERN_C]
-    1. set APP_LIB_DIR by project configuration
-    2. set APP_DLL as the target file name of <dll>
-    3. add an executable with name of <target>
+
+    args:
+        target:     target name
+        dll:        shared library target to link or load, it must export an interface called `main_entry`
+    
+    flags:
+        EXTERN_C:   set if `main_entry` is c style
+
+    usage:
+        1. set APP_LIB_DIR by project configuration
+        2. set APP_DLL as the target file name of <dll>
+        3. add an executable with name of <target>
+
 ]]#
 function(qs_add_executable _target _dll)
     set(options EXTERN_C)

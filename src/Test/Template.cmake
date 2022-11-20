@@ -1,3 +1,34 @@
+#[[
+    add_test_target(
+        <target>
+
+        SOURCES                 files...
+        QT_LIBRARIES            qtlibs1...
+        QT_PRIVATE_INCLUDES     qtlibs2...
+        LINKS                   libs...
+        INCLUDES                incs...
+
+        [VERSION                <version>]
+        [CXX_STANDARD           <standard>]
+
+        [INCLUDE_CURRENT]
+        [WIN32_EXE]
+    )
+
+    args:
+        target:             target name
+        files:              files to add to target
+        qtlibs1:            Qt module names to link
+        qtlibs2:            Qt module names to include private headers
+        libs:               libraries to link publicly
+        incs:               directories to include publicly
+        version:            test target version
+        standard:           cpp standard
+
+    flags:
+        INCLUDE_CURRENT:    include current directory publicly
+        WIN32_EXE:          set target as Windows Application on Windows
+]]#
 macro(add_test_target _target)
     set(options WIN32_EXE INCLUDE_CURRENT)
     set(oneValueArgs VERSION CXX_STANDARD)
