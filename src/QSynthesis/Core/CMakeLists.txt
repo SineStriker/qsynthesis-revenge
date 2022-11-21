@@ -6,7 +6,7 @@ add_files(_src
     PATTERNS *.h *.hpp *.cpp *.cc
 )
 
-lvmod_configure_library(
+qutamod_configure_library(
     SOURCES ${_src}
     ENABLE_SHARED
     QT_LIBRARIES Core

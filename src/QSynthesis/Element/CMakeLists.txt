@@ -1,7 +1,4 @@
-project(QUtaElem
-    LANGUAGES CXX
-    VERSION ${SUB_VERSION}
-)
+project(QUtaElem LANGUAGES CXX VERSION ${SUB_VERSION})
 
 add_files(_src
     CURRENT

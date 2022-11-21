@@ -70,13 +70,20 @@ For detailed information, see [Related Tools](./docs/related-tools.md).
 
 See [Related Tools](./docs/related-tools.md) for dependencies for each plugin.
 
-## Contributors
+## Contribute to project
+
+### Contributors
 
 + Sine Striker
++ [Arabaku](https://github.com/Arabaku)
 
 Welcome to commit pull requests.
 
-For Qt/C++ beginners, see [Setup Environment](./docs/setup-env.md) for instructions.
+### Instructions
+
++ For Qt/C++ beginners, see [Setup Environment](./docs/setup-env.md) for instructions.
+
++ Go `docs/dev` for development information.
 
 ## License
 
