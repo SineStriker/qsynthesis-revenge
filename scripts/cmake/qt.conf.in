@@ -1,0 +1,3 @@
+[Paths]
+Plugins = @APP_PLUGINS_DIR@
+Translations = @APP_LOCALES_DIR@

@@ -2,7 +2,7 @@
 
 ## Intro
 
-QSynthesis is originally the name of the Qt-based UTAU editor, as a result of continuous iterations, its functionality has been abstracted into a class that can be used by multiple SVS frontend, so I called the library QSynthesis as well.
+QSynthesis is originally the name of the Qt-based UTAU editor, as a result of continuous iterations, its functionality has been abstracted into a library that can be used by multiple SVS frontend, so we called the library QSynthesis Library as well.
 
 All applications in this toolset are free softwares and aim to provide the community with user-friendly experience.
 
@@ -12,13 +12,14 @@ The application is able to run on **Windows, MacOS and Linux**.
 
 ## Toolset
 
-### LabelVoice
++ LabelVoice
+    + Annnotation tool for vocal synthesis database.
 
-LabelVoice is an annotation tool for vocal synthesis database.
++ QSynthesis
+    + Remade edition of UTAU in second iteration.
 
-### QSynthesis
-
-QSynthesis is a remade edition of UTAU, and it is in its second iteration.
++ QVogenClient
+    + Third-party edition of [Vogen.Client](https://github.com/aqtq314/Vogen.Client).
 
 ## Build from source
 

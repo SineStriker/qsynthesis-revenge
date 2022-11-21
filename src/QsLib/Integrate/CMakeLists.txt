@@ -24,3 +24,9 @@ target_create_translations(${PROJECT_NAME} SOURCES ${_src}
     DESTINATION res/translations
     CREATE_ONCE
 )
+
+configure_file(
+    ${QT_CONF_SETTING}
+    ${CMAKE_CURRENT_SOURCE_DIR}/res/qt/etc/qt.conf
+    @ONLY
+)
