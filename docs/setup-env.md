@@ -74,6 +74,10 @@
 
 MinGW是另一个编译套件，可以选，但本工程大概率不会用到。
 
++ Windows中，需要将Qt库所在目录加入系统Path环境变量（这步非常重要）
+    + 如果安装在C盘，那么应该是这个
+        + `C:\Qt\5.15.2\msvc2019_64\bin`
+
 ### LLVM
 
 + 下载地址：https://github.com/llvm/llvm-project/releases

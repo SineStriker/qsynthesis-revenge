@@ -121,8 +121,8 @@ int main(int argc, char *argv[]) {
     typedef int (*EntryFun)(int, char *[]);
 
     // Record original error mode
-    UINT prevErrorMode = ::GetErrorMode();
-    ::SetErrorMode(0);
+    // UINT prevErrorMode = ::GetErrorMode();
+    // ::SetErrorMode(0);
 
     HINSTANCE hDLL = ::LoadLibraryW(wstr.data());
     int res = -1;
@@ -130,7 +130,7 @@ int main(int argc, char *argv[]) {
         EntryFun fun = (EntryFun)::GetProcAddress(hDLL, "main_entry");
         if (fun != NULL) {
             // Restore error mode
-            SetErrorMode(prevErrorMode);
+            // SetErrorMode(prevErrorMode);
 
             res = fun(argc, argv);
         } else {

@@ -79,6 +79,9 @@ bool FFmpegDecoderPrivate::initDecoder() {
         return false;
     }
 
+    // 没有此句会出现：Could not update timestamps for skipped samples
+    // codec_ctx->pkt_timebase = fmt_ctx->streams[audio_idx]->time_base;
+
     // 打开解码器
     ret = avcodec_open2(codec_ctx, codec, nullptr);
     if (ret < 0) {
@@ -379,7 +382,11 @@ void FFmpegDecoderPrivate::seek() {
 
     auto stream = fmt_ctx->streams[_audioIndex];
     auto timestamp = (long) (_pos / (float) _length * stream->duration);
-    av_seek_frame(fmt_ctx, _audioIndex, timestamp, AVSEEK_FLAG_FRAME);
+
+    int ret = av_seek_frame(fmt_ctx, _audioIndex, timestamp, AVSEEK_FLAG_FRAME);
+    if (ret < 0) {
+        qDebug() << QString("FFmpeg: Error seek frame with code %1").arg(QString::number(-ret));
+    }
 
     // 保存重采样器内部余量
     _remainSamples = (int) swr_get_delay(swr_ctx, _waveFormat.SampleRate());
