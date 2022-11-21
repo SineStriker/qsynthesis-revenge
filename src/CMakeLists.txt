@@ -75,7 +75,7 @@ if(NOT APPLE)
     find_package(FramelessHelper REQUIRED COMPONENTS Core Widgets)
 endif()
 
-# Add common components
+# Go through common components and then include common functions
 add_subdirectory(Common)
 include(Common/Include.cmake)
 

@@ -40,7 +40,6 @@ macro(lvmod_configure_library)
     set(_qt_incs)
     set(_target ${PROJECT_NAME})
     string(TOUPPER ${PROJECT_NAME} _prefix)
-    string(TOLOWER ${PROJECT_NAME} _lower)
 
     # ----------------- Template Begin -----------------
 
@@ -69,7 +68,7 @@ macro(lvmod_configure_library)
     target_compile_definitions(${_target} PRIVATE ${_prefix}_LIBRARY)
 
     # Set library properties
-    set_target_properties(${_target} PROPERTIES OUTPUT_NAME ${_lower}-qt${QT_VERSION_MAJOR})
+    qs_name_dll(${_target} HINT ${FUNC_WIN32_PRODUCT_NAME})
 
     target_link_libraries(${_target} PUBLIC ${_qt_libs})
     target_link_libraries(${_target} PUBLIC ${FUNC_LINKS})
@@ -113,5 +112,4 @@ macro(lvmod_configure_library)
     unset(_qt_incs)
     unset(_target)
     unset(_prefix)
-    unset(_lower)
 endmacro()

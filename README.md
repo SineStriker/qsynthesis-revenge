@@ -57,7 +57,7 @@ For detailed information, see [Related Tools](./docs/related-tools.md).
     + MIT License
 + [QuaZip](https://github.com/stachenov/quazip)
     + GNU LGPL v2.1
-+ [Zlib](http://www.zlib.net/)
++ [Zlib](http://www.zlib.net)
     + Zlib License
 + [IntelliJ IDEA](https://github.com/JetBrains/intellij-community)
     + Apache 2.0 License

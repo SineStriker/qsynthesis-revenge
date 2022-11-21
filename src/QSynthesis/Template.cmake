@@ -28,7 +28,7 @@
     
     usage:
         create a library target named by PROJECT_NAME
-]]#
+]] #
 macro(qutamod_configure_library)
     set(options INCLUDE_CURRENT ENABLE_SHARED)
     set(oneValueArgs WIN32_FILE_DESC WIN32_PRODUCT_NAME)
@@ -40,7 +40,6 @@ macro(qutamod_configure_library)
     set(_qt_incs)
     set(_target ${PROJECT_NAME})
     string(TOUPPER ${PROJECT_NAME} _prefix)
-    string(TOLOWER ${PROJECT_NAME} _lower)
 
     # ----------------- Template Begin -----------------
 
@@ -54,7 +53,7 @@ macro(qutamod_configure_library)
     set(CMAKE_AUTOUIC ON)
     set(CMAKE_AUTOMOC ON)
     set(CMAKE_AUTORCC ON)
-    
+
     add_qt_module(_qt_libs ${FUNC_QT_LIBRARIES})
     add_qt_private_inc(_qt_incs ${FUNC_QT_PRIVATE_INCLUDES})
 
@@ -69,7 +68,7 @@ macro(qutamod_configure_library)
     target_compile_definitions(${_target} PRIVATE ${_prefix}_LIBRARY)
 
     # Set library properties
-    set_target_properties(${_target} PROPERTIES OUTPUT_NAME ${_lower}-qt${QT_VERSION_MAJOR})
+    qs_name_dll(${_target} HINT ${FUNC_WIN32_PRODUCT_NAME})
 
     target_link_libraries(${_target} PUBLIC ${_qt_libs})
     target_link_libraries(${_target} PUBLIC ${FUNC_LINKS})
@@ -113,5 +112,4 @@ macro(qutamod_configure_library)
     unset(_qt_incs)
     unset(_target)
     unset(_prefix)
-    unset(_lower)
 endmacro()
