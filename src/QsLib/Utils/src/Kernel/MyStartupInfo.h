@@ -3,12 +3,18 @@
 
 #include <QString>
 
+#ifdef DISABLE_MYCOMMANDLINEPARSER
+#include <QCommandLineParser>
+using MyCommandLineParser = QCommandLineParser;
+#else
 #include "MyCommandLineParser.h"
+#endif
 
 #ifndef qIStup
 #define qIStup MyStartupInfo::instance()
 #endif
 
+#include "qsutils_global.h"
 #include "qsutils_macros.h"
 
 class QSUTILS_API MyStartupInfo {

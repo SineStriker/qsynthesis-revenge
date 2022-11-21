@@ -1,0 +1,7 @@
+<RCC>
+    <qresource prefix="/">
+        <file>translations/QUtaElem_ja_JP.qm</file>
+        <file>translations/QUtaElem_zh_CN.qm</file>
+        <file>translations/QUtaElem_zh_HK.qm</file>
+    </qresource>
+</RCC>

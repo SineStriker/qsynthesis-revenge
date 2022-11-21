@@ -14,7 +14,7 @@ lvmod_configure_library(
     ENABLE_SHARED
     QT_LIBRARIES Widgets Svg
     QT_PRIVATE_INCLUDES Gui Widgets
-    LINKS LvCore LvElem
+    LINKS LvElem
     INCLUDES include src
     WIN32_FILE_DESC "LabelVoice Main Module"
     WIN32_PRODUCT_NAME "LabelVoice.Staging"

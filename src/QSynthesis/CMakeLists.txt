@@ -15,6 +15,8 @@ set(SUB_IDENTIFIER "com.SineStr.QSynthesis")
 set(SUB_PLUGIN_DIR ${APP_RES_DIR}/${APP_RES_PLUGINS_DIR})
 
 # Add subdirectories
+add_subdirectory(Core)
+add_subdirectory(Element)
 add_subdirectory(Staging)
 
 if (ENABLE_APP_PLUGINS)

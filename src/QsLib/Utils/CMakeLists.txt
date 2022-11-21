@@ -18,6 +18,8 @@ qslib_configure_library(
     WIN32_PRODUCT_NAME "QSynthesis.Library.Utils"
 )
 
+target_compile_definitions(${PROJECT_NAME} PUBLIC DISABLE_MYCOMMANDLINEPARSER)
+
 target_include_directories(${PROJECT_NAME} PUBLIC
     src/Helpers
 )

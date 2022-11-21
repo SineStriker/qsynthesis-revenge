@@ -1,4 +1,32 @@
-# Only link public libraries
+#[[
+    configure_plugin(
+        SOURCES                 files...
+        QT_LIBRARIES            qtlibs1...
+        QT_PRIVATE_INCLUDES     qtlibs2...
+        LINKS                   libs...
+        INCLUDES                incs...
+
+        [WIN32_FILE_DESC        <desc>]
+        [WIN32_AUTHOR_NAME      <author>]
+
+        [INCLUDE_CURRENT]
+    )
+
+    args:
+        files:              files to add to target
+        qtlibs1:            Qt module names to link
+        qtlibs2:            Qt module names to include private headers
+        libs:               libraries to link publicly
+        incs:               directories to include publicly
+        desc:               plugin description (for windows rc file)
+        author:             plugin author name (for windows rc file)
+
+    flags:
+        INCLUDE_CURRENT:    include current directory publicly
+
+    usage:
+        create a library target named by PROJECT_NAME
+]]#
 macro(configure_plugin)
     set(options INCLUDE_CURRENT)
     set(oneValueArgs WIN32_AUTHOR_NAME WIN32_FILE_DESC)

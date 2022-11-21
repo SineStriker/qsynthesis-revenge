@@ -1,10 +1,16 @@
 #include "qutastaging.h"
 
-#include <QApplication>
+#include "Kernel/QUtaApplication.h"
+#include "Kernel/QUtaStartupInfo.h"
+
 #include <QMainWindow>
 
 int main_entry(int argc, char *argv[]) {
-    QApplication a(argc, argv);
+    // Configure startup info
+    QUtaStartupInfo info;
+    
+    // Qt Application
+    QUtaApplication a(argc, argv);
 
     a.setApplicationName(APP_NAME);
     a.setApplicationDisplayName(APP_NAME);
