@@ -1,7 +1,5 @@
 #include "QBatchRenderer.h"
 
-#ifdef Q_OS_WINDOWS
-
 #include "Utau/Config/UtaConstants.h"
 #include "Utau/Utils/UtaTranslator.h"
 
@@ -129,5 +127,3 @@ bool QBatchRenderer::generateWindowsHelper() const {
 
     return true;
 }
-
-#endif

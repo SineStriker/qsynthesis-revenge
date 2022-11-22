@@ -1,7 +1,5 @@
 #include "QBatchRenderer.h"
 
-#ifndef Q_OS_WINDOWS
-
 #include "Utau/Config/UtaConstants.h"
 #include "Utau/Utils/UtaTranslator.h"
 
@@ -142,5 +140,3 @@ bool QBatchRenderer::generateUnixHelper() const {
 
     return true;
 }
-
-#endif
