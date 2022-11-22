@@ -3,8 +3,8 @@
 
 #include <QFrame>
 
-#include "../CVisualTypes.h"
 #include "CDockCard.h"
+#include "Kernel/QsNamespace.h"
 
 #include "qsframework_global.h"
 
@@ -14,18 +14,18 @@ class QSFRAMEWORK_API CDockTabBar : public QFrame {
     Q_OBJECT
 public:
     explicit CDockTabBar(QWidget *parent = nullptr);
-    CDockTabBar(CV::Direction barDirection, QWidget *parent = nullptr);
+    CDockTabBar(Qs::Direction barDirection, QWidget *parent = nullptr);
     ~CDockTabBar();
 
 public:
     Qt::Orientation orientation() const;
     void setOrientation(Qt::Orientation orient);
 
-    CV::Direction barDirection() const;
-    void setBarDirection(CV::Direction barDirection);
+    Qs::Direction barDirection() const;
+    void setBarDirection(Qs::Direction barDirection);
 
-    CV::Direction cardDirection() const;
-    void setCardDirection(CV::Direction cardDirection);
+    Qs::Direction cardDirection() const;
+    void setCardDirection(Qs::Direction cardDirection);
 
     int placeholder() const;
     void setPlaceholder(int placeholder, int width);
@@ -65,8 +65,8 @@ protected:
 
     Qt::Orientation m_orientation;
 
-    CV::Direction m_barDirection;
-    CV::Direction m_cardDirection;
+    Qs::Direction m_barDirection;
+    Qs::Direction m_cardDirection;
 
     QList<CDockCard *> m_cards;
 

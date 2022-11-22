@@ -4,7 +4,7 @@
 #include "Kernel/MyStartupInfo.h"
 #include "SystemHelper.h"
 
-#include "Visual/CVisualTypes.h"
+#include "Kernel/QsNamespace.h"
 
 #ifdef Q_OS_WINDOWS
 #include <Windows.h>
@@ -47,7 +47,7 @@ void CApplicationPrivate::init() {
     // ...
 
     QMetaTypeImpl::Register();
-    CV::Register();
+    Qs::Register();
 
     ll = new LocalLinguist(q);
     ld = new LocalDecorator(q);

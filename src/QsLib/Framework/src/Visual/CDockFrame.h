@@ -4,7 +4,7 @@
 #include <QAbstractButton>
 #include <QFrame>
 
-#include "CVisualTypes.h"
+#include "Kernel/QsNamespace.h"
 
 #include "qsframework_global.h"
 
@@ -23,7 +23,7 @@ public:
     void setWidget(QWidget *w);
     QWidget *takeWidget();
 
-    QAbstractButton *addWidget(Qt::Edge edge, CV::Priority number, QWidget *w);
+    QAbstractButton *addWidget(Qt::Edge edge, Qs::Priority number, QWidget *w);
     void removeWidget(QAbstractButton *card);
 
     QSize dragAreaSize() const;
@@ -44,7 +44,7 @@ private:
 signals:
     void dragAreaSizeChanged();
     void barVisibleToggled(bool visible);
-    void cardToggled(Qt::Edge edge, CV::Priority number, QAbstractButton *card);
+    void cardToggled(Qt::Edge edge, Qs::Priority number, QAbstractButton *card);
 };
 
 

@@ -20,8 +20,8 @@ private:
     void init();
 
 public:
-    CV::Direction cardDirection() const;
-    void setCardDirection(CV::Direction cardDirection);
+    Qs::Direction cardDirection() const;
+    void setCardDirection(Qs::Direction cardDirection);
 
     Qt::Orientation orientation() const;
     void setOrientation(Qt::Orientation orient);
@@ -51,9 +51,9 @@ private:
     void _q_cardToggled(CDockCard *card);
 
 signals:
-    void cardAdded(CV::Priority number, CDockCard *card);
-    void cardRemoved(CV::Priority number, CDockCard *card);
-    void cardToggled(CV::Priority number, CDockCard *card);
+    void cardAdded(Qs::Priority number, CDockCard *card);
+    void cardRemoved(Qs::Priority number, CDockCard *card);
+    void cardToggled(Qs::Priority number, CDockCard *card);
 };
 
 #endif // __CDOCKSIDEBAR_H__

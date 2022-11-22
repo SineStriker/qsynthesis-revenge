@@ -18,11 +18,11 @@ CDockSideBar::CDockSideBar(QWidget *parent) : QFrame(parent) {
 CDockSideBar::~CDockSideBar() {
 }
 
-CV::Direction CDockSideBar::cardDirection() const {
+Qs::Direction CDockSideBar::cardDirection() const {
     return m_firstBar->cardDirection();
 }
 
-void CDockSideBar::setCardDirection(CV::Direction cardDirection) {
+void CDockSideBar::setCardDirection(Qs::Direction cardDirection) {
     m_firstBar->setCardDirection(cardDirection);
     m_secondBar->setCardDirection(cardDirection);
     resetLayout();
@@ -37,7 +37,7 @@ void CDockSideBar::init() {
     m_firstBar = new CDockTabBar();
     m_firstBar->setObjectName("first-bar");
 
-    m_secondBar = new CDockTabBar(CV::Backward);
+    m_secondBar = new CDockTabBar(Qs::Backward);
     m_secondBar->setObjectName("second-bar");
 
     // Forwarding
@@ -143,26 +143,26 @@ void CDockSideBar::mousePressEvent(QMouseEvent *event) {
 void CDockSideBar::_q_cardAdded(CDockCard *card) {
     auto bar = qobject_cast<CDockTabBar *>(sender());
     if (bar == m_firstBar) {
-        emit cardAdded(CV::Primary, card);
+        emit cardAdded(Qs::Primary, card);
     } else {
-        emit cardAdded(CV::Secondary, card);
+        emit cardAdded(Qs::Secondary, card);
     }
 }
 
 void CDockSideBar::_q_cardRemoved(CDockCard *card) {
     auto bar = qobject_cast<CDockTabBar *>(sender());
     if (bar == m_firstBar) {
-        emit cardRemoved(CV::Primary, card);
+        emit cardRemoved(Qs::Primary, card);
     } else {
-        emit cardRemoved(CV::Secondary, card);
+        emit cardRemoved(Qs::Secondary, card);
     }
 }
 
 void CDockSideBar::_q_cardToggled(CDockCard *card) {
     auto bar = qobject_cast<CDockTabBar *>(sender());
     if (bar == m_firstBar) {
-        emit cardToggled(CV::Primary, card);
+        emit cardToggled(Qs::Primary, card);
     } else {
-        emit cardToggled(CV::Secondary, card);
+        emit cardToggled(Qs::Secondary, card);
     }
 }

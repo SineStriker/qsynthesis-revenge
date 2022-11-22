@@ -29,10 +29,10 @@ void CDockFramePrivate::init() {
     m_rightBar->setOrientation(Qt::Vertical);
     m_bottomBar->setOrientation(Qt::Horizontal);
 
-    m_leftBar->setCardDirection(CV::Backward);
-    m_topBar->setCardDirection(CV::Backward);
-    m_rightBar->setCardDirection(CV::Forward);
-    m_bottomBar->setCardDirection(CV::Forward);
+    m_leftBar->setCardDirection(Qs::Backward);
+    m_topBar->setCardDirection(Qs::Backward);
+    m_rightBar->setCardDirection(Qs::Forward);
+    m_bottomBar->setCardDirection(Qs::Forward);
 
     m_leftPanel = new CDockPanel(Qt::Vertical);
     m_topPanel = new CDockPanel(Qt::Horizontal);
@@ -115,7 +115,7 @@ void CDockFramePrivate::init() {
             &CDockFramePrivate::_q_cardToggled);
 }
 
-void CDockFramePrivate::_q_cardAdded(CV::Priority number, CDockCard *card) {
+void CDockFramePrivate::_q_cardAdded(Qs::Priority number, CDockCard *card) {
     auto doubleBar = qobject_cast<CDockSideBar *>(sender());
     CDockPanel *container;
     if (doubleBar == m_leftBar) {
@@ -130,7 +130,7 @@ void CDockFramePrivate::_q_cardAdded(CV::Priority number, CDockCard *card) {
     container->addWidget(number, card->widget(), card->isChecked());
 }
 
-void CDockFramePrivate::_q_cardRemoved(CV::Priority number, CDockCard *card) {
+void CDockFramePrivate::_q_cardRemoved(Qs::Priority number, CDockCard *card) {
     auto doubleBar = qobject_cast<CDockSideBar *>(sender());
     CDockPanel *container;
     if (doubleBar == m_leftBar) {
@@ -145,7 +145,7 @@ void CDockFramePrivate::_q_cardRemoved(CV::Priority number, CDockCard *card) {
     container->removeWidget(number, card->widget());
 }
 
-void CDockFramePrivate::_q_cardToggled(CV::Priority number, CDockCard *card) {
+void CDockFramePrivate::_q_cardToggled(Qs::Priority number, CDockCard *card) {
     auto doubleBar = qobject_cast<CDockSideBar *>(sender());
     CDockPanel *container;
     Qt::Edge edge;

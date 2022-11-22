@@ -26,13 +26,13 @@ void CDockPanel::init() {
     updateVisible();
 }
 
-int CDockPanel::addWidget(CV::Priority num, QWidget *w, bool visible) {
-    return insertWidget(num, (num == CV::Primary) ? m_firstWidget->count() : m_secondWidget->count(),
+int CDockPanel::addWidget(Qs::Priority num, QWidget *w, bool visible) {
+    return insertWidget(num, (num == Qs::Primary) ? m_firstWidget->count() : m_secondWidget->count(),
                         w, visible);
 }
 
-int CDockPanel::insertWidget(CV::Priority num, int index, QWidget *w, bool visible) {
-    QStackedWidget *container = (num == CV::Primary) ? m_firstWidget : m_secondWidget;
+int CDockPanel::insertWidget(Qs::Priority num, int index, QWidget *w, bool visible) {
+    QStackedWidget *container = (num == Qs::Primary) ? m_firstWidget : m_secondWidget;
     int res = container->insertWidget(index, w);
 
     if (visible) {
@@ -48,8 +48,8 @@ int CDockPanel::insertWidget(CV::Priority num, int index, QWidget *w, bool visib
     return res;
 }
 
-void CDockPanel::removeWidget(CV::Priority num, QWidget *w) {
-    QStackedWidget *container = (num == CV::Primary) ? m_firstWidget : m_secondWidget;
+void CDockPanel::removeWidget(Qs::Priority num, QWidget *w) {
+    QStackedWidget *container = (num == Qs::Primary) ? m_firstWidget : m_secondWidget;
     bool isCurrent = container->currentWidget() == w;
     container->removeWidget(w);
 
@@ -59,43 +59,43 @@ void CDockPanel::removeWidget(CV::Priority num, QWidget *w) {
     }
 }
 
-QWidget *CDockPanel::currentWidget(CV::Priority num) const {
-    QStackedWidget *container = (num == CV::Primary) ? m_firstWidget : m_secondWidget;
+QWidget *CDockPanel::currentWidget(Qs::Priority num) const {
+    QStackedWidget *container = (num == Qs::Primary) ? m_firstWidget : m_secondWidget;
     return container->currentWidget();
 }
 
-int CDockPanel::currentIndex(CV::Priority num) const {
-    QStackedWidget *container = (num == CV::Primary) ? m_firstWidget : m_secondWidget;
+int CDockPanel::currentIndex(Qs::Priority num) const {
+    QStackedWidget *container = (num == Qs::Primary) ? m_firstWidget : m_secondWidget;
     return container->currentIndex();
 }
 
-int CDockPanel::indexOf(CV::Priority num, QWidget *w) const {
-    QStackedWidget *container = (num == CV::Primary) ? m_firstWidget : m_secondWidget;
+int CDockPanel::indexOf(Qs::Priority num, QWidget *w) const {
+    QStackedWidget *container = (num == Qs::Primary) ? m_firstWidget : m_secondWidget;
     return container->indexOf(w);
 }
 
-QWidget *CDockPanel::widget(CV::Priority num, int index) const {
-    QStackedWidget *container = (num == CV::Primary) ? m_firstWidget : m_secondWidget;
+QWidget *CDockPanel::widget(Qs::Priority num, int index) const {
+    QStackedWidget *container = (num == Qs::Primary) ? m_firstWidget : m_secondWidget;
     return container->widget(index);
 }
 
-int CDockPanel::count(CV::Priority num) const {
-    QStackedWidget *container = (num == CV::Primary) ? m_firstWidget : m_secondWidget;
+int CDockPanel::count(Qs::Priority num) const {
+    QStackedWidget *container = (num == Qs::Primary) ? m_firstWidget : m_secondWidget;
     return container->count();
 }
 
-void CDockPanel::setCurrentIndex(CV::Priority num, int index) {
-    QStackedWidget *container = (num == CV::Primary) ? m_firstWidget : m_secondWidget;
+void CDockPanel::setCurrentIndex(Qs::Priority num, int index) {
+    QStackedWidget *container = (num == Qs::Primary) ? m_firstWidget : m_secondWidget;
     return container->setCurrentIndex(index);
 }
 
-void CDockPanel::setCurrentWidget(CV::Priority num, QWidget *w) {
-    QStackedWidget *container = (num == CV::Primary) ? m_firstWidget : m_secondWidget;
+void CDockPanel::setCurrentWidget(Qs::Priority num, QWidget *w) {
+    QStackedWidget *container = (num == Qs::Primary) ? m_firstWidget : m_secondWidget;
     return container->setCurrentWidget(w);
 }
 
-void CDockPanel::setContainerVisible(CV::Priority num, bool visible) {
-    QStackedWidget *container = (num == CV::Primary) ? m_firstWidget : m_secondWidget;
+void CDockPanel::setContainerVisible(Qs::Priority num, bool visible) {
+    QStackedWidget *container = (num == Qs::Primary) ? m_firstWidget : m_secondWidget;
     container->setVisible(visible);
     if (visible) {
         show();

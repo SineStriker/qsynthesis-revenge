@@ -6,6 +6,8 @@
 #include <QMap>
 #include <QMargins>
 
+static bool isRegistered = false;
+
 QStringList QMetaTypeImpl::MarginsToStringList(const QMargins &margins) {
     return QMarginsImpl::toStringList(margins);
 }
@@ -111,6 +113,9 @@ QStringList QMetaTypeImpl::TypeListToStringList(const QTypeList &types) {
 }
 
 void QMetaTypeImpl::Register() {
+    Q_ASSERT(!isRegistered);
+    isRegistered = true;
+
     QMetaType::registerConverter<QStringList, QMargins>(StringListToMargins);
     QMetaType::registerConverter<QMargins, QStringList>(MarginsToStringList);
     QMetaType::registerConverter<QString, QMargins>(StringToMargins);

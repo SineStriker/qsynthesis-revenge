@@ -10,7 +10,7 @@ QUstxConverter::QUstxConverter(QObject *parent) : ISVSConverter(parent) {
 QUstxConverter::~QUstxConverter() {
 }
 
-bool QUstxConverter::load(const QString &filename, QSvipFile *out,
+bool QUstxConverter::load(const QString &filename, QSvipModel *out,
                           const QMap<QString, QVariant> &args) {
     Q_UNUSED(args);
     UProject ustx;
@@ -21,7 +21,7 @@ bool QUstxConverter::load(const QString &filename, QSvipFile *out,
     return true;
 }
 
-bool QUstxConverter::save(const QString &filename, const QSvipFile &in,
+bool QUstxConverter::save(const QString &filename, const QSvipModel &in,
                           const QMap<QString, QVariant> &args) {
     Q_UNUSED(args);
     return UstxEncoder().EncodeProject(in).save(filename);

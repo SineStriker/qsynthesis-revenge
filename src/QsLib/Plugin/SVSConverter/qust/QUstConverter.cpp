@@ -11,7 +11,7 @@ QUstConverter::QUstConverter(QObject *parent) : ISVSConverter(parent) {
 QUstConverter::~QUstConverter() {
 }
 
-bool QUstConverter::load(const QString &filename, QSvipFile *out,
+bool QUstConverter::load(const QString &filename, QSvipModel *out,
                          const QMap<QString, QVariant> &args) {
     QUstFile ust;
     {
@@ -28,9 +28,9 @@ bool QUstConverter::load(const QString &filename, QSvipFile *out,
         return false;
     }
 
-    QSvipFile proj;
+    QSvipModel proj;
     {
-        QSvipFile::SongTempo firstTempo;
+        QSvipModel::SongTempo firstTempo;
         firstTempo.Position = 0;
         firstTempo.BPM = ust.sectionSettings.globalTempo;
         proj.SongTempoList.append(firstTempo);
@@ -38,7 +38,7 @@ bool QUstConverter::load(const QString &filename, QSvipFile *out,
         int curLength = 0;
         for (const auto &note : qAsConst(ust.sectionNotes)) {
             if (curLength != 0 && note.tempo != QUtaUtils::NODEF_DOUBLE) {
-                QSvipFile::SongTempo curTempo;
+                QSvipModel::SongTempo curTempo;
                 curTempo.Position = curLength;
                 curTempo.BPM = note.tempo;
                 proj.SongTempoList.append(curTempo);
@@ -49,12 +49,12 @@ bool QUstConverter::load(const QString &filename, QSvipFile *out,
 
     // Parse Track
     {
-        auto track = new QSvipFile::SingingTrack();
+        auto track = new QSvipModel::SingingTrack();
 
         int curLength = 0;
         for (const auto &note : qAsConst(ust.sectionNotes)) {
             if (!QUtaUtils::isRestLyric(note.lyric)) {
-                QSvipFile::Note p;
+                QSvipModel::Note p;
 
                 p.StartPos = curLength;
                 p.Length = note.length;
@@ -66,7 +66,7 @@ bool QUstConverter::load(const QString &filename, QSvipFile *out,
             curLength += note.length;
         }
 
-        proj.TrackList.append(QSvipFile::TrackRef(track));
+        proj.TrackList.append(QSvipModel::TrackRef(track));
     }
 
     *out = proj;
@@ -74,7 +74,7 @@ bool QUstConverter::load(const QString &filename, QSvipFile *out,
     return true;
 }
 
-bool QUstConverter::save(const QString &filename, const QSvipFile &in,
+bool QUstConverter::save(const QString &filename, const QSvipModel &in,
                          const QMap<QString, QVariant> &args) {
     Q_UNUSED(args);
     return false;

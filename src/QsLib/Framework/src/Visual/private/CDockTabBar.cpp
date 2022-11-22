@@ -8,17 +8,17 @@
 
 #include "EventHelper.h"
 
-CDockTabBar::CDockTabBar(QWidget *parent) : CDockTabBar(CV::Forward, parent) {
+CDockTabBar::CDockTabBar(QWidget *parent) : CDockTabBar(Qs::Forward, parent) {
 }
 
-CDockTabBar::CDockTabBar(CV::Direction barDirection, QWidget *parent) : QFrame(parent) {
+CDockTabBar::CDockTabBar(Qs::Direction barDirection, QWidget *parent) : QFrame(parent) {
     setAttribute(Qt::WA_StyledBackground);
 
     m_placeholderIndex = -1;
     m_placeholderWidth = 0;
 
     m_barDirection = barDirection;
-    m_cardDirection = CV::Forward;
+    m_cardDirection = Qs::Forward;
     m_orientation = Qt::Horizontal;
 
     resetLayout();
@@ -38,22 +38,22 @@ void CDockTabBar::setOrientation(Qt::Orientation orient) {
     }
 }
 
-CV::Direction CDockTabBar::barDirection() const {
+Qs::Direction CDockTabBar::barDirection() const {
     return m_barDirection;
 }
 
-void CDockTabBar::setBarDirection(CV::Direction barDirection) {
+void CDockTabBar::setBarDirection(Qs::Direction barDirection) {
     if (m_barDirection != barDirection) {
         m_barDirection = barDirection;
         resetLayout();
     }
 }
 
-CV::Direction CDockTabBar::cardDirection() const {
+Qs::Direction CDockTabBar::cardDirection() const {
     return m_cardDirection;
 }
 
-void CDockTabBar::setCardDirection(CV::Direction cardDirection) {
+void CDockTabBar::setCardDirection(Qs::Direction cardDirection) {
     m_cardDirection = cardDirection;
     for (auto it = m_cards.begin(); it != m_cards.end(); ++it) {
         auto card = *it;
@@ -241,12 +241,12 @@ void CDockTabBar::resetLayout() {
     // New
     if (m_orientation == Qt::Horizontal) {
         layout = new QHBoxLayout();
-        layout->setDirection((m_barDirection == CV::Forward) ? QBoxLayout::LeftToRight
+        layout->setDirection((m_barDirection == Qs::Forward) ? QBoxLayout::LeftToRight
                                                              : QBoxLayout::RightToLeft);
         setSizePolicy(QSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed));
     } else {
         layout = new QVBoxLayout();
-        layout->setDirection((m_barDirection == CV::Forward) ? QBoxLayout::TopToBottom
+        layout->setDirection((m_barDirection == Qs::Forward) ? QBoxLayout::TopToBottom
                                                              : QBoxLayout::BottomToTop);
         setSizePolicy(QSizePolicy(QSizePolicy::Fixed, QSizePolicy::Preferred));
     }

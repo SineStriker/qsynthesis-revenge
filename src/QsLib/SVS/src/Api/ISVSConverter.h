@@ -5,7 +5,7 @@
 
 #include <functional>
 
-#include "Svip/QSvipFile.h"
+#include "Svip/QSvipModel.h"
 
 #include "qssvs_global.h"
 
@@ -17,10 +17,10 @@ public:
 
     QString err;
 
-    virtual bool load(const QString &filename, QSvipFile *out,
+    virtual bool load(const QString &filename, QSvipModel *out,
                       const QMap<QString, QVariant> &args = {}) = 0;
 
-    virtual bool save(const QString &filename, const QSvipFile &in,
+    virtual bool save(const QString &filename, const QSvipModel &in,
                       const QMap<QString, QVariant> &args = {}) = 0;
 };
 

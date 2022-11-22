@@ -8,7 +8,7 @@ UstxEncoder::UstxEncoder() {
 UstxEncoder::~UstxEncoder() {
 }
 
-UProject UstxEncoder::EncodeProject(const QSvipFile &osProject) {
+UProject UstxEncoder::EncodeProject(const QSvipModel &osProject) {
     UProject ustxProject;
 
     // OpenUTAU不支持变速，因此这里采用音轨开头的bpm
@@ -20,21 +20,21 @@ UProject UstxEncoder::EncodeProject(const QSvipFile &osProject) {
     int trackNo = 0;
     for (const auto &osTrack : qAsConst(osProject.TrackList)) {
         ustxProject.tracks.append(EncodeTrack(*osTrack.data()));
-        if (osTrack->type() == QSvipFile::Track::Singing) //合成音轨
+        if (osTrack->type() == QSvipModel::Track::Singing) //合成音轨
         {
             ustxProject.voiceParts.append(
-                EncodeVoicePart(*static_cast<QSvipFile::SingingTrack *>(osTrack.data()), trackNo));
+                EncodeVoicePart(*static_cast<QSvipModel::SingingTrack *>(osTrack.data()), trackNo));
         } else //伴奏音轨
         {
             ustxProject.waveParts.append(EncodeWavePart(
-                *static_cast<QSvipFile::InstrumentalTrack *>(osTrack.data()), trackNo));
+                *static_cast<QSvipModel::InstrumentalTrack *>(osTrack.data()), trackNo));
         }
         trackNo += 1;
     }
     return ustxProject;
 }
 
-UTrack UstxEncoder::EncodeTrack(const QSvipFile::Track &osTrack) {
+UTrack UstxEncoder::EncodeTrack(const QSvipModel::Track &osTrack) {
 
     UTrack ustxTrack;
 
@@ -48,7 +48,7 @@ UTrack UstxEncoder::EncodeTrack(const QSvipFile::Track &osTrack) {
     return ustxTrack;
 }
 
-UVoicePart UstxEncoder::EncodeVoicePart(const QSvipFile::SingingTrack &osTrack, int trackNo) {
+UVoicePart UstxEncoder::EncodeVoicePart(const QSvipModel::SingingTrack &osTrack, int trackNo) {
     UVoicePart ustxVoicePart;
 
     ustxVoicePart.name = osTrack.Title;
@@ -58,7 +58,7 @@ UVoicePart UstxEncoder::EncodeVoicePart(const QSvipFile::SingingTrack &osTrack, 
     int lastNoteEndPos = -480;  //上一个音符的结束时间
     int lastNoteKeyNumber = 60; //上一个音符的音高
 
-    for (const QSvipFile::Note &osNote : qAsConst(osTrack.NoteList)) {
+    for (const QSvipModel::Note &osNote : qAsConst(osTrack.NoteList)) {
         ustxVoicePart.notes.append(
             EncodeNote(osNote, lastNoteEndPos >= osNote.StartPos, lastNoteKeyNumber));
         lastNoteEndPos = osNote.StartPos + osNote.Length;
@@ -68,7 +68,7 @@ UVoicePart UstxEncoder::EncodeVoicePart(const QSvipFile::SingingTrack &osTrack, 
     return ustxVoicePart;
 }
 
-UWavePart UstxEncoder::EncodeWavePart(const QSvipFile::InstrumentalTrack &osTrack, int trackNo) {
+UWavePart UstxEncoder::EncodeWavePart(const QSvipModel::InstrumentalTrack &osTrack, int trackNo) {
 
     UWavePart ustxWavePart;
 
@@ -80,7 +80,7 @@ UWavePart UstxEncoder::EncodeWavePart(const QSvipFile::InstrumentalTrack &osTrac
     return ustxWavePart;
 }
 
-UNote UstxEncoder::EncodeNote(const QSvipFile::Note &osNote, bool snapFirst,
+UNote UstxEncoder::EncodeNote(const QSvipModel::Note &osNote, bool snapFirst,
                               int lastNoteKeyNumber) {
     // snapFirst：是否与上一个音符挨着，挨着就是True
     // lastNoteKeyNumber：上一个音符的音高

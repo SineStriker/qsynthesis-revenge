@@ -8,7 +8,7 @@ endmacro()
 # Project Configurations
 option_ex(APP_TOOLSET_NAME          ChorusKit)
 option_ex(APP_TOOLSET_LIST          LabelVoice QSynthesis)
-option_ex(APP_VERSION_VERBOSE       0.0.1.4)
+option_ex(APP_VERSION_VERBOSE       0.0.1.5)
 option_ex(APP_DEPLOY                on)
 option_ex(APP_LIB_DIR               lib)
 option_ex(APP_PLUGINS_DIR           plugins) # Do not change

@@ -4,7 +4,7 @@
 #include <QSplitter>
 #include <QStackedWidget>
 
-#include "../CVisualTypes.h"
+#include "Kernel/QsNamespace.h"
 
 #include "qsframework_global.h"
 
@@ -24,22 +24,22 @@ public:
     void insertWidget(int index, QWidget *widget) = delete;
     QWidget *replaceWidget(int index, QWidget *widget) = delete;
 
-    int addWidget(CV::Priority num, QWidget *w, bool visible = true);
-    int insertWidget(CV::Priority num, int index, QWidget *w, bool visible = true);
-    void removeWidget(CV::Priority num, QWidget *w);
+    int addWidget(Qs::Priority num, QWidget *w, bool visible = true);
+    int insertWidget(Qs::Priority num, int index, QWidget *w, bool visible = true);
+    void removeWidget(Qs::Priority num, QWidget *w);
 
-    QWidget *currentWidget(CV::Priority num) const;
-    int currentIndex(CV::Priority num) const;
+    QWidget *currentWidget(Qs::Priority num) const;
+    int currentIndex(Qs::Priority num) const;
 
-    int indexOf(CV::Priority num, QWidget *w) const;
-    QWidget *widget(CV::Priority num, int index) const;
-    int count(CV::Priority num) const;
+    int indexOf(Qs::Priority num, QWidget *w) const;
+    QWidget *widget(Qs::Priority num, int index) const;
+    int count(Qs::Priority num) const;
 
-    void setCurrentIndex(CV::Priority num, int index);
-    void setCurrentWidget(CV::Priority num, QWidget *w);
+    void setCurrentIndex(Qs::Priority num, int index);
+    void setCurrentWidget(Qs::Priority num, QWidget *w);
 
     // Addition
-    void setContainerVisible(CV::Priority num, bool visible);
+    void setContainerVisible(Qs::Priority num, bool visible);
 
 private:
     void updateVisible();

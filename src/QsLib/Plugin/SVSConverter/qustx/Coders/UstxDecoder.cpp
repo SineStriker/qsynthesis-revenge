@@ -9,35 +9,35 @@ UstxDecoder::UstxDecoder() {
 UstxDecoder::~UstxDecoder() {
 }
 
-QSvipFile UstxDecoder::DecodeProject(const UProject &ustxProject) {
+QSvipModel UstxDecoder::DecodeProject(const UProject &ustxProject) {
     //曲速：OpenUTAU每个工程只有一个曲速
-    QList<QSvipFile::SongTempo> songTempoList;
-    songTempoList.append(QSvipFile::SongTempo{0, ustxProject.bpm});
+    QList<QSvipModel::SongTempo> songTempoList;
+    songTempoList.append(QSvipModel::SongTempo{0, ustxProject.bpm});
 
     //节拍：OpenUTAU每个工程只有一个节拍
-    QList<QSvipFile::TimeSignature> timeSignatureList;
-    timeSignatureList.append(QSvipFile::TimeSignature{
+    QList<QSvipModel::TimeSignature> timeSignatureList;
+    timeSignatureList.append(QSvipModel::TimeSignature{
         ustxProject.beatPerBar,
         ustxProject.beatUnit,
     });
 
     //音轨
-    QList<QSvipFile::TrackRef> trackList;
+    QList<QSvipModel::TrackRef> trackList;
     for (const UTrack &ustxTrack : qAsConst(ustxProject.tracks)) {
-        auto track = new QSvipFile::SingingTrack();
+        auto track = new QSvipModel::SingingTrack();
         *track = DecodeTrack(ustxTrack);
-        trackList.append(QSvipFile::TrackRef(track));
+        trackList.append(QSvipModel::TrackRef(track));
     }
 
     //区段：OpenUTAU的音轨和区段分开存储，因此这里一个个把区段塞进音轨
     for (const UVoicePart &ustxVoicePart : qAsConst(ustxProject.voiceParts)) {
         DecodeVoicePart(
             ustxVoicePart,
-            *static_cast<QSvipFile::SingingTrack *>(trackList[ustxVoicePart.trackNo].data()),
+            *static_cast<QSvipModel::SingingTrack *>(trackList[ustxVoicePart.trackNo].data()),
             ustxProject);
     }
 
-    QSvipFile osProject;
+    QSvipModel osProject;
 
     osProject.Version = "SVIP7.0.0";
     osProject.SongTempoList = std::move(songTempoList);
@@ -47,8 +47,8 @@ QSvipFile UstxDecoder::DecodeProject(const UProject &ustxProject) {
     return osProject;
 }
 
-QSvipFile::SingingTrack UstxDecoder::DecodeTrack(const UTrack &ustxTrack) {
-    QSvipFile::SingingTrack osTrack;
+QSvipModel::SingingTrack UstxDecoder::DecodeTrack(const UTrack &ustxTrack) {
+    QSvipModel::SingingTrack osTrack;
 
     osTrack.Title = QString();
     osTrack.Mute = ustxTrack.mute;
@@ -62,7 +62,7 @@ QSvipFile::SingingTrack UstxDecoder::DecodeTrack(const UTrack &ustxTrack) {
     return osTrack;
 }
 
-void UstxDecoder::DecodeVoicePart(const UVoicePart &ustxVoicePart, QSvipFile::SingingTrack &osTrack,
+void UstxDecoder::DecodeVoicePart(const UVoicePart &ustxVoicePart, QSvipModel::SingingTrack &osTrack,
                                   const UProject &ustxProject) {
     int partOffset = ustxVoicePart.position;
     for (const UNote &ustxNote : qAsConst(ustxVoicePart.notes)) {
@@ -74,7 +74,7 @@ void UstxDecoder::DecodeVoicePart(const UVoicePart &ustxVoicePart, QSvipFile::Si
     }
 }
 
-QSvipFile::Note UstxDecoder::DecodeNote(const UNote &ustxNote, int partOffset) {
+QSvipModel::Note UstxDecoder::DecodeNote(const UNote &ustxNote, int partOffset) {
     QString lyric = ustxNote.lyric;
 
     // OpenUTAU的连音符为+，多音节词可能还有+~、+4等形式，这里统一转为-
@@ -82,7 +82,7 @@ QSvipFile::Note UstxDecoder::DecodeNote(const UNote &ustxNote, int partOffset) {
         lyric = "-";
     }
 
-    QSvipFile::Note note;
+    QSvipModel::Note note;
     note.StartPos = ustxNote.position + partOffset;
     note.Length = ustxNote.duration;
     note.KeyNumber = ustxNote.tone;

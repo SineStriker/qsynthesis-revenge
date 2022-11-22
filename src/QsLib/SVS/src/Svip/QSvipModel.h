@@ -1,8 +1,8 @@
-#ifndef QSVIPFILE_H
-#define QSVIPFILE_H
+#ifndef QSVIPMODEL_H
+#define QSVIPMODEL_H
 
+#include <QJsonObject>
 #include <QSharedPointer>
-#include <QStringList>
 
 #include "qssvs_global.h"
 
@@ -10,10 +10,10 @@
  *  This model is a C++ implementation of OpenSVIP.Model
  */
 
-class QSSVS_API QSvipFile {
+class QSSVS_API QSvipModel {
 public:
-    QSvipFile();
-    ~QSvipFile();
+    QSvipModel();
+    ~QSvipModel();
 
     class QSSVS_API ParamCurve {
     public:
@@ -58,7 +58,7 @@ public:
         QString Lyric;
         QString Pronunciation;
         Phones EditedPhones;
-        QSvipFile::Vibrato Vibrato;
+        QSvipModel::Vibrato Vibrato;
     };
 
     class QSSVS_API Track {
@@ -125,11 +125,10 @@ public:
     QList<TrackRef> TrackList;
 
 public:
-    // Load or save as a json file
-    bool load(const QString &filename);
-    bool save(const QString &filename);
+    QJsonObject toJsonObject() const;
+    static QSvipModel fromJsonObject(const QJsonObject &obj);
 
     void reset();
 };
 
-#endif // QSVIPFILE_H
+#endif // QSVIPMODEL_H

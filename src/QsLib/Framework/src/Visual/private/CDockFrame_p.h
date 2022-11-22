@@ -6,7 +6,7 @@
 #include <QObject>
 
 #include "../CDockFrame.h"
-#include "../CVisualTypes.h"
+#include "Kernel/QsNamespace.h"
 
 #include "CDockPanel.h"
 #include "CDockPanelSplitter.h"
@@ -45,9 +45,9 @@ public:
     QSize m_dragAreaSize;
 
 private:
-    void _q_cardAdded(CV::Priority number, CDockCard *card);
-    void _q_cardRemoved(CV::Priority number, CDockCard *card);
-    void _q_cardToggled(CV::Priority number, CDockCard *card);
+    void _q_cardAdded(Qs::Priority number, CDockCard *card);
+    void _q_cardRemoved(Qs::Priority number, CDockCard *card);
+    void _q_cardToggled(Qs::Priority number, CDockCard *card);
 };
 
 #endif // __CDOCKFRAME_P_H__

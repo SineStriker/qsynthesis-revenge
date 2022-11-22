@@ -35,7 +35,7 @@ QWidget *CDockFrame::takeWidget() {
 }
 
 
-QAbstractButton *CDockFrame::addWidget(Qt::Edge edge, CV::Priority number, QWidget *w) {
+QAbstractButton *CDockFrame::addWidget(Qt::Edge edge, Qs::Priority number, QWidget *w) {
     CDockSideBar *bar;
     switch (edge) {
         case Qt::LeftEdge:
@@ -53,7 +53,7 @@ QAbstractButton *CDockFrame::addWidget(Qt::Edge edge, CV::Priority number, QWidg
     }
     auto card = new CDockCard();
     card->setWidget(w);
-    ((number == CV::Primary) ? bar->firstBar() : bar->secondBar())->addCard(card);
+    ((number == Qs::Primary) ? bar->firstBar() : bar->secondBar())->addCard(card);
     return card;
 }
 
