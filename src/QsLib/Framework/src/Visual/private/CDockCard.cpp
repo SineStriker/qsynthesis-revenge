@@ -1,5 +1,5 @@
-#include "CCoupleTabBarCard.h"
-#include "CCoupleTabBar.h"
+#include "CDockCard.h"
+#include "CDockTabBar.h"
 
 #include <QApplication>
 #include <QLabel>
@@ -8,29 +8,24 @@
 #include <QResizeEvent>
 #include <QStyle>
 
-Q_UNIQUE_ID_DECLARE(CCoupleTabBarCard)
-
-CCoupleTabBarCard::CCoupleTabBarCard(QWidget *parent) : CLTabButton(parent) {
+CDockCard::CDockCard(QWidget *parent) : CLTabButton(parent) {
     init();
 }
 
-CCoupleTabBarCard::CCoupleTabBarCard(const QString &text, QWidget *parent)
+CDockCard::CDockCard(const QString &text, QWidget *parent)
     : CLTabButton(text, parent) {
     init();
 }
 
-CCoupleTabBarCard::CCoupleTabBarCard(const QIcon &icon, const QString &text, QWidget *parent)
+CDockCard::CDockCard(const QIcon &icon, const QString &text, QWidget *parent)
     : CLTabButton(icon, text, parent) {
     init();
 }
 
-CCoupleTabBarCard::~CCoupleTabBarCard() {
-    destructId();
+CDockCard::~CDockCard() {
 }
 
-void CCoupleTabBarCard::init() {
-    initId();
-
+void CDockCard::init() {
     setCheckable(true);
     setContextMenuPolicy(Qt::CustomContextMenu);
 
@@ -45,63 +40,63 @@ void CCoupleTabBarCard::init() {
     setOrientation(Qt::Horizontal);
 }
 
-Qt::Orientation CCoupleTabBarCard::orientation() const {
+Qt::Orientation CDockCard::orientation() const {
     return m_orientation;
 }
 
-void CCoupleTabBarCard::setOrientation(Qt::Orientation orient) {
+void CDockCard::setOrientation(Qt::Orientation orient) {
     m_orientation = orient;
     setSizePolicy((m_orientation == Qt::Horizontal) ? m_sizePolicyH : m_sizePolicyV);
     adjustSize();
 }
 
-QSize CCoupleTabBarCard::sizeHint() const {
+QSize CDockCard::sizeHint() const {
     return (m_orientation == Qt::Horizontal) ? CTabButton::sizeHint() : CLTabButton::sizeHint();
 }
 
-QSize CCoupleTabBarCard::minimumSizeHint() const {
+QSize CDockCard::minimumSizeHint() const {
     return sizeHint();
 }
 
-int CCoupleTabBarCard::widthHint() const {
+int CDockCard::widthHint() const {
     return CTabButton::sizeHint().height();
 }
 
-QSize CCoupleTabBarCard::dragOffset() const {
+QSize CDockCard::dragOffset() const {
     return m_dragOffset;
 }
 
-void CCoupleTabBarCard::setDragOffset(const QSize &dragOffset) {
+void CDockCard::setDragOffset(const QSize &dragOffset) {
     m_dragOffset = dragOffset;
     emit dragOffsetChanged();
 }
 
-QPixmap CCoupleTabBarCard::cardShot() const {
+QPixmap CDockCard::cardShot() const {
     QPixmap pixmap(size());
     pixmap.fill(Qt::transparent);
-    const_cast<CCoupleTabBarCard *>(this)->render(&pixmap);
+    const_cast<CDockCard *>(this)->render(&pixmap);
     return pixmap;
 }
 
-CCoupleTabBar *CCoupleTabBarCard::tabBar() const {
-    return qobject_cast<CCoupleTabBar *>(parentWidget());
+CDockTabBar *CDockCard::tabBar() const {
+    return qobject_cast<CDockTabBar *>(parentWidget());
 }
 
-QWidget *CCoupleTabBarCard::widget() const {
+QWidget *CDockCard::widget() const {
     return m_widget;
 }
 
-void CCoupleTabBarCard::setWidget(QWidget *widget) {
+void CDockCard::setWidget(QWidget *widget) {
     m_widget = widget;
 }
 
-void CCoupleTabBarCard::mousePressEvent(QMouseEvent *event) {
+void CDockCard::mousePressEvent(QMouseEvent *event) {
     CLTabButton::mousePressEvent(event);
     m_dragPos = event->pos();
     m_readyDrag = true;
 }
 
-void CCoupleTabBarCard::mouseMoveEvent(QMouseEvent *event) {
+void CDockCard::mouseMoveEvent(QMouseEvent *event) {
     CLTabButton::mouseMoveEvent(event);
     if (m_readyDrag) {
         QPoint pos = event->pos();
@@ -113,25 +108,25 @@ void CCoupleTabBarCard::mouseMoveEvent(QMouseEvent *event) {
     }
 }
 
-void CCoupleTabBarCard::mouseReleaseEvent(QMouseEvent *event) {
+void CDockCard::mouseReleaseEvent(QMouseEvent *event) {
     CLTabButton::mouseReleaseEvent(event);
     if (m_readyDrag) {
         m_readyDrag = false;
     }
 }
 
-void CCoupleTabBarCard::leaveEvent(QEvent *event) {
+void CDockCard::leaveEvent(QEvent *event) {
     Q_UNUSED(event)
     if (m_readyDrag) {
         m_readyDrag = false;
     }
 }
 
-void CCoupleTabBarCard::paintEvent(QPaintEvent *event) {
+void CDockCard::paintEvent(QPaintEvent *event) {
     return (m_orientation == Qt::Horizontal) ? CTabButton::paintEvent(event)
                                              : CLTabButton::paintEvent(event);
 }
 
-void CCoupleTabBarCard::resizeEvent(QResizeEvent *event) {
+void CDockCard::resizeEvent(QResizeEvent *event) {
     return CLTabButton::resizeEvent(event);
 }

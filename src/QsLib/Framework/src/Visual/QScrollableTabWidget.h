@@ -7,7 +7,7 @@
 
 #include "qsframework_global.h"
 
-#include "QScrollableTabWidgetImpl/QScrollableTabBar.h"
+#include "QScrollableTabBar.h"
 
 class QScrollableTabWidgetPrivate;
 

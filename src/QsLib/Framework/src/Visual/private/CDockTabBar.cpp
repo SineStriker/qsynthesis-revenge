@@ -1,5 +1,5 @@
-#include "CCoupleTabBar.h"
-#include "CCoupleTabDoubleBar.h"
+#include "CDockTabBar.h"
+#include "CDockSideBar.h"
 
 #include <QDrag>
 #include <QHBoxLayout>
@@ -8,67 +8,65 @@
 
 #include "EventHelper.h"
 
-using namespace CCoupleTabTypes;
-
-CCoupleTabBar::CCoupleTabBar(QWidget *parent) : CCoupleTabBar(Forward, parent) {
+CDockTabBar::CDockTabBar(QWidget *parent) : CDockTabBar(CV::Forward, parent) {
 }
 
-CCoupleTabBar::CCoupleTabBar(BarDirection barDirection, QWidget *parent) : QFrame(parent) {
+CDockTabBar::CDockTabBar(CV::Direction barDirection, QWidget *parent) : QFrame(parent) {
     setAttribute(Qt::WA_StyledBackground);
 
     m_placeholderIndex = -1;
     m_placeholderWidth = 0;
 
     m_barDirection = barDirection;
-    m_cardDirection = TopToBottom;
+    m_cardDirection = CV::Forward;
     m_orientation = Qt::Horizontal;
 
     resetLayout();
 }
 
-CCoupleTabBar::~CCoupleTabBar() {
+CDockTabBar::~CDockTabBar() {
 }
 
-Qt::Orientation CCoupleTabBar::orientation() const {
+Qt::Orientation CDockTabBar::orientation() const {
     return m_orientation;
 }
 
-void CCoupleTabBar::setOrientation(Qt::Orientation orient) {
+void CDockTabBar::setOrientation(Qt::Orientation orient) {
     if (m_orientation != orient) {
         m_orientation = orient;
         resetLayout();
     }
 }
 
-BarDirection CCoupleTabBar::barDirection() const {
+CV::Direction CDockTabBar::barDirection() const {
     return m_barDirection;
 }
 
-void CCoupleTabBar::setBarDirection(const BarDirection &barDirection) {
+void CDockTabBar::setBarDirection(CV::Direction barDirection) {
     if (m_barDirection != barDirection) {
         m_barDirection = barDirection;
         resetLayout();
     }
 }
 
-CardDirection CCoupleTabBar::cardDirection() const {
+CV::Direction CDockTabBar::cardDirection() const {
     return m_cardDirection;
 }
 
-void CCoupleTabBar::setCardDirection(const CardDirection &cardDirection) {
+void CDockTabBar::setCardDirection(CV::Direction cardDirection) {
     m_cardDirection = cardDirection;
     for (auto it = m_cards.begin(); it != m_cards.end(); ++it) {
         auto card = *it;
         card->setLongitudinalDirection(
-            static_cast<CCoupleTabBarCard::LongitudinalDirection>(cardDirection));
+            static_cast<CDockCard::LongitudinalDirection>(cardDirection));
     }
 }
 
-int CCoupleTabBar::placeholder() const {
+int CDockTabBar::placeholder() const {
     return m_placeholderIndex;
 }
 
-void CCoupleTabBar::setPlaceholder(int placeholder, int width) {
+void CDockTabBar::setPlaceholder(int placeholder, int width) {
     removePlaceholder();
 
     QBoxLayout *layout = static_cast<QBoxLayout *>(this->layout());
@@ -83,7 +81,7 @@ void CCoupleTabBar::setPlaceholder(int placeholder, int width) {
     }
 }
 
-void CCoupleTabBar::removePlaceholder() {
+void CDockTabBar::removePlaceholder() {
     QBoxLayout *layout = static_cast<QBoxLayout *>(this->layout());
     if (!layout) {
         return;
@@ -97,11 +95,11 @@ void CCoupleTabBar::removePlaceholder() {
     m_placeholderWidth = 0;
 }
 
-void CCoupleTabBar::addCard(CCoupleTabBarCard *card) {
+void CDockTabBar::addCard(CDockCard *card) {
     insertCard(m_cards.size(), card);
 }
 
-void CCoupleTabBar::insertCard(int index, CCoupleTabBarCard *card) {
+void CDockTabBar::insertCard(int index, CDockCard *card) {
     if (!card->widget()) {
         qWarning().nospace() << "CCoupleTabBar: card \"" << card
                              << "\" doesn't have a valid widget pointer.";
@@ -135,64 +133,64 @@ void CCoupleTabBar::insertCard(int index, CCoupleTabBarCard *card) {
         m_cards.insert(index, card);
     }
     card->show();
-    connect(card, &CCoupleTabBarCard::startDrag, this, &CCoupleTabBar::handleStartDrag);
-    connect(card, &CCoupleTabBarCard::toggled, this, &CCoupleTabBar::handleToggled);
+    connect(card, &CDockCard::startDrag, this, &CDockTabBar::_q_tabDragStarted);
+    connect(card, &CDockCard::toggled, this, &CDockTabBar::_q_tabToggled);
 
     emit cardAdded(card);
 }
 
-void CCoupleTabBar::insertCard(CCoupleTabBarCard *indexCard, CCoupleTabBarCard *card) {
-    return insertCard(indexOf(indexCard),card);
+void CDockTabBar::insertCard(CDockCard *indexCard, CDockCard *card) {
+    return insertCard(indexOf(indexCard), card);
 }
 
-void CCoupleTabBar::removeCard(CCoupleTabBarCard *card) {
+void CDockTabBar::removeCard(CDockCard *card) {
     QBoxLayout *layout = static_cast<QBoxLayout *>(this->layout());
     if (!m_cards.contains(card)) {
         return;
     }
-    disconnect(card, &CCoupleTabBarCard::startDrag, this, &CCoupleTabBar::handleStartDrag);
-    disconnect(card, &CCoupleTabBarCard::toggled, this, &CCoupleTabBar::handleToggled);
+    disconnect(card, &CDockCard::startDrag, this, &CDockTabBar::_q_tabDragStarted);
+    disconnect(card, &CDockCard::toggled, this, &CDockTabBar::_q_tabToggled);
     m_cards.removeOne(card);
     layout->removeWidget(card);
     emit cardRemoved(card);
 }
 
-void CCoupleTabBar::removeAllCards() {
+void CDockTabBar::removeAllCards() {
     QBoxLayout *layout = static_cast<QBoxLayout *>(this->layout());
     for (auto it = m_cards.begin(); it != m_cards.end(); ++it) {
         auto card = *it;
-        disconnect(card, &CCoupleTabBarCard::startDrag, this, &CCoupleTabBar::handleStartDrag);
-        disconnect(card, &CCoupleTabBarCard::toggled, this, &CCoupleTabBar::handleToggled);
+        disconnect(card, &CDockCard::startDrag, this, &CDockTabBar::_q_tabDragStarted);
+        disconnect(card, &CDockCard::toggled, this, &CDockTabBar::_q_tabToggled);
         layout->removeWidget(card);
         emit cardRemoved(card);
     }
     m_cards.clear();
 }
 
-int CCoupleTabBar::count() const {
+int CDockTabBar::count() const {
     return m_cards.size();
 }
 
-int CCoupleTabBar::indexOf(CCoupleTabBarCard *card) const {
+int CDockTabBar::indexOf(CDockCard *card) const {
     return m_cards.indexOf(card);
 }
 
-QList<CCoupleTabBarCard *> CCoupleTabBar::cards() const {
+QList<CDockCard *> CDockTabBar::cards() const {
     return m_cards;
 }
 
-CCoupleTabBarCard *CCoupleTabBar::cardAt(int index) const {
+CDockCard *CDockTabBar::cardAt(int index) const {
     if (index < 0 || index >= m_cards.size()) {
         return nullptr;
     }
     return m_cards.at(index);
 }
 
-CCoupleTabBarCard *CCoupleTabBar::cardAtPos(QPoint pos) const {
-    return qobject_cast<CCoupleTabBarCard *>(childAt(pos));
+CDockCard *CDockTabBar::cardAtPos(QPoint pos) const {
+    return qobject_cast<CDockCard *>(childAt(pos));
 }
 
-int CCoupleTabBar::activeIndex() const {
+int CDockTabBar::activeIndex() const {
     int i = 0;
     int res = -1;
     for (auto it = m_cards.begin(); it != m_cards.end(); ++it) {
@@ -206,7 +204,7 @@ int CCoupleTabBar::activeIndex() const {
     return res;
 }
 
-void CCoupleTabBar::setActiveIndex(int index) {
+void CDockTabBar::setActiveIndex(int index) {
     if (index < 0 || index >= m_cards.size()) {
         int cur = activeIndex();
         if (cur >= 0) {
@@ -224,11 +222,11 @@ void CCoupleTabBar::setActiveIndex(int index) {
     emit cardToggled(card);
 }
 
-CCoupleTabDoubleBar *CCoupleTabBar::doubleTabBar() const {
-    return qobject_cast<CCoupleTabDoubleBar *>(parentWidget());
+CDockSideBar *CDockTabBar::doubleTabBar() const {
+    return qobject_cast<CDockSideBar *>(parentWidget());
 }
 
-void CCoupleTabBar::resetLayout() {
+void CDockTabBar::resetLayout() {
     // Store org
     QList<QWidget *> widgets;
     QBoxLayout *layout = static_cast<QBoxLayout *>(this->layout());
@@ -243,13 +241,13 @@ void CCoupleTabBar::resetLayout() {
     // New
     if (m_orientation == Qt::Horizontal) {
         layout = new QHBoxLayout();
-        layout->setDirection((m_barDirection == Forward) ? QBoxLayout::LeftToRight
-                                                         : QBoxLayout::RightToLeft);
+        layout->setDirection((m_barDirection == CV::Forward) ? QBoxLayout::LeftToRight
+                                                             : QBoxLayout::RightToLeft);
         setSizePolicy(QSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed));
     } else {
         layout = new QVBoxLayout();
-        layout->setDirection((m_barDirection == Forward) ? QBoxLayout::TopToBottom
-                                                         : QBoxLayout::BottomToTop);
+        layout->setDirection((m_barDirection == CV::Forward) ? QBoxLayout::TopToBottom
+                                                             : QBoxLayout::BottomToTop);
         setSizePolicy(QSizePolicy(QSizePolicy::Fixed, QSizePolicy::Preferred));
     }
 
@@ -269,23 +267,23 @@ void CCoupleTabBar::resetLayout() {
     setLayout(layout);
 }
 
-void CCoupleTabBar::resetCardTransform(CCoupleTabBarCard *card) const {
+void CDockTabBar::resetCardTransform(CDockCard *card) const {
     if (card->orientation() != m_orientation) {
         card->setOrientation(m_orientation);
     }
-    auto ld = static_cast<CCoupleTabBarCard::LongitudinalDirection>(m_cardDirection);
+    auto ld = static_cast<CDockCard::LongitudinalDirection>(m_cardDirection);
     if (card->longitudinalDirection() != ld) {
         card->setLongitudinalDirection(ld);
     }
 }
 
-void CCoupleTabBar::handleStartDrag(const QPoint &pos, const QPixmap &pixmap) {
-    auto card = qobject_cast<CCoupleTabBarCard *>(sender());
+void CDockTabBar::_q_tabDragStarted(const QPoint &pos, const QPixmap &pixmap) {
+    auto card = qobject_cast<CDockCard *>(sender());
     emit dragStarted(card, pos, pixmap);
 }
 
-void CCoupleTabBar::handleToggled(bool checked) {
-    auto card = qobject_cast<CCoupleTabBarCard *>(sender());
+void CDockTabBar::_q_tabToggled(bool checked) {
+    auto card = qobject_cast<CDockCard *>(sender());
     if (checked) {
         setActiveIndex(indexOf(card));
     } else {
@@ -293,7 +291,7 @@ void CCoupleTabBar::handleToggled(bool checked) {
     }
 }
 
-QWidget *CCoupleTabBar::createPlaceholder(int width) const {
+QWidget *CDockTabBar::createPlaceholder(int width) const {
     QWidget *w = new QWidget();
     if (m_orientation == Qt::Horizontal) {
         w->setSizePolicy(QSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed));
@@ -305,6 +303,6 @@ QWidget *CCoupleTabBar::createPlaceholder(int width) const {
     return w;
 }
 
-void CCoupleTabBar::paintEvent(QPaintEvent *event) {
+void CDockTabBar::paintEvent(QPaintEvent *event) {
     return QWidget::paintEvent(event);
 }

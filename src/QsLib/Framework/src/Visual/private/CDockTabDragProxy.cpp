@@ -1,6 +1,9 @@
-#include "CCoupleTabDragProxy.h"
-#include "CCoupleTabDragLabel.h"
-#include "../CCoupleTabFrame.h"
+#include "CDockTabDragProxy.h"
+#include "CDockDragLabel.h"
+#include "CDockTabBar.h"
+
+#include "../CDockFrame.h"
+#include "CDockFrame_p.h"
 
 #include <QDrag>
 #include <QDragEnterEvent>
@@ -12,69 +15,67 @@
 
 #include <QtMath>
 
-CCoupleTabDragProxy::CCoupleTabDragProxy(QObject *parent) : QObject(parent) {
+CDockTabDragProxy::CDockTabDragProxy(QObject *parent) : QObject(parent) {
     m_frame = nullptr;
     m_dragger = nullptr;
 }
 
-CCoupleTabDragProxy::~CCoupleTabDragProxy() {
+CDockTabDragProxy::~CDockTabDragProxy() {
 }
 
-CCoupleTabFrame *CCoupleTabDragProxy::frame() const {
+CDockFrame *CDockTabDragProxy::frame() const {
     return m_frame;
 }
 
-void CCoupleTabDragProxy::setFrame(CCoupleTabFrame *frame) {
+void CDockTabDragProxy::setFrame(CDockFrame *frame) {
     if (m_frame) {
-        QList<CCoupleTabBar *> senders = tabBars();
+        QList<CDockTabBar *> senders = tabBars();
         for (auto it = senders.begin(); it != senders.end(); ++it) {
-            disconnect(*it, &CCoupleTabBar::dragStarted, this,
-                       &CCoupleTabDragProxy::handleTabDragStarted);
+            disconnect(*it, &CDockTabBar::dragStarted, this, &CDockTabDragProxy::_q_tabDragStarted);
         }
     }
 
     m_frame = frame;
     if (m_frame) {
-        QList<CCoupleTabBar *> senders = tabBars();
+        QList<CDockTabBar *> senders = tabBars();
         for (auto it = senders.begin(); it != senders.end(); ++it) {
-            connect(*it, &CCoupleTabBar::dragStarted, this,
-                    &CCoupleTabDragProxy::handleTabDragStarted);
+            connect(*it, &CDockTabBar::dragStarted, this, &CDockTabDragProxy::_q_tabDragStarted);
         }
     }
 }
 
-QList<CCoupleTabBar *> CCoupleTabDragProxy::tabBars() const {
+QList<CDockTabBar *> CDockTabDragProxy::tabBars() const {
     return {
-        m_frame->leftBar()->firstBar(),   m_frame->leftBar()->secondBar(),
-        m_frame->topBar()->firstBar(),    m_frame->topBar()->secondBar(),
-        m_frame->rightBar()->firstBar(),  m_frame->rightBar()->secondBar(),
-        m_frame->bottomBar()->firstBar(), m_frame->bottomBar()->secondBar(),
+        m_frame->d->m_leftBar->firstBar(),   m_frame->d->m_leftBar->secondBar(),
+        m_frame->d->m_topBar->firstBar(),    m_frame->d->m_topBar->secondBar(),
+        m_frame->d->m_rightBar->firstBar(),  m_frame->d->m_rightBar->secondBar(),
+        m_frame->d->m_bottomBar->firstBar(), m_frame->d->m_bottomBar->secondBar(),
     };
 }
 
-QList<CCoupleTabDoubleBar *> CCoupleTabDragProxy::doubleTabBars() const {
+QList<CDockSideBar *> CDockTabDragProxy::doubleTabBars() const {
     return {
-        m_frame->leftBar(),
-        m_frame->topBar(),
-        m_frame->rightBar(),
-        m_frame->bottomBar(),
+        m_frame->d->m_leftBar,
+        m_frame->d->m_topBar,
+        m_frame->d->m_rightBar,
+        m_frame->d->m_bottomBar,
     };
 }
 
-bool CCoupleTabDragProxy::eventFilter(QObject *obj, QEvent *event) {
+bool CDockTabDragProxy::eventFilter(QObject *obj, QEvent *event) {
     if (obj == m_dragger) {
         switch (event->type()) {
-        case QEvent::MouseMove:
-            handleTabDragMove();
-            return true;
-            break;
-        case QEvent::FocusOut:
-        case QEvent::MouseButtonRelease:
-            handleTabDragOver();
-            return true;
-            break;
-        default:
-            break;
+            case QEvent::MouseMove:
+                _q_tabDragMove();
+                return true;
+                break;
+            case QEvent::FocusOut:
+            case QEvent::MouseButtonRelease:
+                _q_tabDragOver();
+                return true;
+                break;
+            default:
+                break;
         }
     } else if (obj == m_dragger->currentCard) {
         if (event->type() == QEvent::Paint) {
@@ -84,8 +85,8 @@ bool CCoupleTabDragProxy::eventFilter(QObject *obj, QEvent *event) {
     return QObject::eventFilter(obj, event);
 }
 
-void CCoupleTabDragProxy::handleTabDragStarted(CCoupleTabBarCard *card, const QPoint &pos,
-                                               const QPixmap &pixmap) {
+void CDockTabDragProxy::_q_tabDragStarted(CDockCard *card, const QPoint &pos,
+                                          const QPixmap &pixmap) {
     auto orgDoubleBar = card->tabBar()->doubleTabBar();
     if (orgDoubleBar->count() == 1) {
         card->setDisabled(true);
@@ -94,7 +95,7 @@ void CCoupleTabDragProxy::handleTabDragStarted(CCoupleTabBarCard *card, const QP
         card->hide();
     }
 
-    m_dragger = new CCoupleTabDragLabel(m_frame);
+    m_dragger = new CDockDragLabel(m_frame);
     m_dragger->currentCard = card;
     m_dragger->currentPos = pos;
     m_dragger->originBar = orgDoubleBar;
@@ -106,17 +107,17 @@ void CCoupleTabDragProxy::handleTabDragStarted(CCoupleTabBarCard *card, const QP
     m_dragger->installEventFilter(this);
     m_dragger->grabMouse();
 
-    handleTabDragMove();
+    _q_tabDragMove();
     m_dragger->show();
 }
 
-void CCoupleTabDragProxy::handleTabDragMove() {
+void CDockTabDragProxy::_q_tabDragMove() {
     QPoint pos = m_frame->mapFromGlobal(QCursor::pos());
     m_dragger->move(pos - m_dragger->currentPos);
 
     auto bars = doubleTabBars();
 
-    CCoupleTabDoubleBar *targetBar = nullptr;
+    CDockSideBar *targetBar = nullptr;
     for (auto it = bars.begin(); it != bars.end(); ++it) {
         auto bar = *it;
         if (!targetBar) {
@@ -125,13 +126,13 @@ void CCoupleTabDragProxy::handleTabDragMove() {
             if (bar->count() == 0) {
                 QPoint pos;
                 QSize size;
-                if (bar == m_frame->leftBar()) {
+                if (bar == m_frame->d->m_leftBar) {
                     pos = bar->mapToGlobal(QPoint(0, 0));
                     size = QSize(widthHint, bar->height());
-                } else if (bar == m_frame->rightBar()) {
+                } else if (bar == m_frame->d->m_rightBar) {
                     pos = bar->mapToGlobal(QPoint(bar->width() - widthHint, 0));
                     size = QSize(widthHint, bar->height());
-                } else if (bar == m_frame->topBar()) {
+                } else if (bar == m_frame->d->m_topBar) {
                     pos = bar->mapToGlobal(QPoint(0, 0));
                     size = QSize(bar->width(), widthHint);
                 } else {
@@ -157,7 +158,7 @@ void CCoupleTabDragProxy::handleTabDragMove() {
     m_dragger->targetBar = targetBar;
 }
 
-static int cardAtWidget(CCoupleTabBar *bar, QWidget *w, bool reverse = false) {
+static int cardAtWidget(CDockTabBar *bar, QWidget *w, bool reverse = false) {
     auto cards = bar->cards();
     int index = 0;
     QPoint center = w->mapToGlobal(w->rect().center());
@@ -190,8 +191,8 @@ static int cardAtWidget(CCoupleTabBar *bar, QWidget *w, bool reverse = false) {
     return index;
 };
 
-void CCoupleTabDragProxy::handleTabDragOver() {
-    CCoupleTabBarCard *card = m_dragger->currentCard;
+void CDockTabDragProxy::_q_tabDragOver() {
+    CDockCard *card = m_dragger->currentCard;
 
     if (m_dragger->targetBar) {
         auto bar = m_dragger->targetBar;

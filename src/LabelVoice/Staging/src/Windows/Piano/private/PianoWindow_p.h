@@ -3,7 +3,7 @@
 
 #include "Windows/Basic/ProjectWindow_p.h"
 
-#include "CCoupleTabFrame.h"
+#include "CDockFrame.h"
 #include "QScrollableTabWidget.h"
 
 #include "../PianoActions.h"
@@ -23,12 +23,12 @@ public:
 
     QString filename;
 
-    CCoupleTabFrame *frame;
+    CDockFrame *frame;
     QScrollableTabWidget *tabs;
 
-    CCoupleTabBarCard *expCard;
-    CCoupleTabBarCard *spkCard;
-    CCoupleTabBarCard *langCard;
+    QAbstractButton *expCard;
+    QAbstractButton *spkCard;
+    QAbstractButton *langCard;
 
     VExplorerPanel *expPanel;
     QWidget *spkPanel;

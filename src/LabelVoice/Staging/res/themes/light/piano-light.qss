@@ -151,23 +151,23 @@ PianoWindow>CWindowBarV2>CMenuBar>CMenu::indicator:checked {
 
 /* MainFrame */
 
-CCoupleTabFrame#piano-main-frame {
+CDockFrame#piano-main-frame {
     padding: 10px;
 }
 
-CCoupleTabFrame#piano-main-frame>CCoupleTabDoubleBar {
+CDockFrame#piano-main-frame>CDockSideBar {
     border: 1px solid transparent;
 }
 
-CCoupleTabFrame#piano-main-frame>CCoupleTabDoubleBar[highlight=false] {
+CDockFrame#piano-main-frame>CDockSideBar[highlight=false] {
     background-color: transparent;
 }
 
-CCoupleTabFrame#piano-main-frame>CCoupleTabDoubleBar[highlight=true] {
+CDockFrame#piano-main-frame>CDockSideBar[highlight=true] {
     background-color: rgba(0, 0, 0, 4%);
 }
 
-CCoupleTabBarCard[parent=piano-main-frame] {
+CDockCard[parent=piano-main-frame] {
     color: rgba(0, 0, 0, 61%);
     background-color: rgba(0, 0, 0, 6%);
     border: none;
@@ -176,12 +176,12 @@ CCoupleTabBarCard[parent=piano-main-frame] {
     margin: 3px;
 }
 
-CCoupleTabBarCard[parent=piano-main-frame]:checked {
+CDockCard[parent=piano-main-frame]:checked {
     color: white;
     background-color: #005FB8;
 }
 
-CCoupleTabBarCard[parent=piano-main-frame]:!checked:hover {
+CDockCard[parent=piano-main-frame]:!checked:hover {
     background-color: rgba(0, 0, 0, 10%);
 }
 

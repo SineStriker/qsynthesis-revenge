@@ -1,6 +1,6 @@
 #include "QScrollableTabBar.h"
-#include "../QScrollableTabWidget.h"
-#include "QScrollableTabBar_p.h"
+#include "QScrollableTabWidget.h"
+#include "private/QScrollableTabBar_p.h"
 
 #include <QApplication>
 #include <QDebug>
@@ -67,27 +67,27 @@ void QScrollableTabBar::removeTab(int index) {
     if (d->current == tab) {
         d->current = nullptr;
         switch (d->selectionBehaviorOnRemove) {
-        case QTabBar::SelectPreviousTab:
-            if (d->previous) {
-                d->setCurrentTab(d->previous);
+            case QTabBar::SelectPreviousTab:
+                if (d->previous) {
+                    d->setCurrentTab(d->previous);
+                    break;
+                }
+            case QTabBar::SelectLeftTab: {
+                if (index > 0) {
+                    setCurrentIndex(index - 1);
+                } else if (cnt > 0) {
+                    setCurrentIndex(0);
+                }
                 break;
             }
-        case QTabBar::SelectLeftTab: {
-            if (index > 0) {
-                setCurrentIndex(index - 1);
-            } else if (cnt > 0) {
-                setCurrentIndex(0);
+            case QTabBar::SelectRightTab: {
+                if (index < cnt - 1) {
+                    setCurrentIndex(index + 1);
+                } else if (cnt > 0) {
+                    setCurrentIndex(cnt - 1);
+                }
+                break;
             }
-            break;
-        }
-        case QTabBar::SelectRightTab: {
-            if (index < cnt - 1) {
-                setCurrentIndex(index + 1);
-            } else if (cnt > 0) {
-                setCurrentIndex(cnt - 1);
-            }
-            break;
-        }
         }
     }
     d->updateVisibility();
@@ -317,72 +317,72 @@ bool QScrollableTabBar::eventFilter(QObject *obj, QEvent *event) {
     if (qstrcmp(obj->metaObject()->className(), "QScrollableTabBarTab") == 0) {
         auto tab = qobject_cast<QScrollableTabBarTab *>(obj);
         switch (event->type()) {
-        case QEvent::MouseButtonPress: {
-            QMouseEvent *e = static_cast<QMouseEvent *>(event);
-            if (e->button() == Qt::LeftButton) {
-                d->setCurrentTab(tab);
-            }
-            break;
-        }
-        case QEvent::MouseMove: {
-            QMouseEvent *e = static_cast<QMouseEvent *>(event);
-            if (e->buttons() & Qt::LeftButton) {
-                // Release Mouse
-                QMouseEvent newEvent(QEvent::MouseButtonRelease, e->pos(), Qt::LeftButton,
-                                     Qt::NoButton, Qt::NoModifier);
-                QApplication::sendEvent(this, &newEvent);
-                // Start Drag
-                d->draggedIndex = d->entityLayout->indexOf(tab);
-                d->startDrag(tab);
-                d->draggedIndex = -1;
-            }
-            break;
-        }
-        case QEvent::MouseButtonRelease: {
-            if (d->draggedIndex < 0) {
+            case QEvent::MouseButtonPress: {
                 QMouseEvent *e = static_cast<QMouseEvent *>(event);
-                emit tabBarClicked(e->button(), d->entityLayout->indexOf(tab));
+                if (e->button() == Qt::LeftButton) {
+                    d->setCurrentTab(tab);
+                }
+                break;
             }
-            break;
-        }
-        default:
-            break;
+            case QEvent::MouseMove: {
+                QMouseEvent *e = static_cast<QMouseEvent *>(event);
+                if (e->buttons() & Qt::LeftButton) {
+                    // Release Mouse
+                    QMouseEvent newEvent(QEvent::MouseButtonRelease, e->pos(), Qt::LeftButton,
+                                         Qt::NoButton, Qt::NoModifier);
+                    QApplication::sendEvent(this, &newEvent);
+                    // Start Drag
+                    d->draggedIndex = d->entityLayout->indexOf(tab);
+                    d->startDrag(tab);
+                    d->draggedIndex = -1;
+                }
+                break;
+            }
+            case QEvent::MouseButtonRelease: {
+                if (d->draggedIndex < 0) {
+                    QMouseEvent *e = static_cast<QMouseEvent *>(event);
+                    emit tabBarClicked(e->button(), d->entityLayout->indexOf(tab));
+                }
+                break;
+            }
+            default:
+                break;
         }
     } else if (obj == d->scrollBar) {
         switch (event->type()) {
-        case QEvent::Show: {
-            d->layoutScroll();
-            break;
-        }
-        case QEvent::Resize: {
-            if (d->scrollBar->isVisible()) {
+            case QEvent::Show: {
                 d->layoutScroll();
+                break;
             }
-            break;
-        }
-        default:
-            break;
+            case QEvent::Resize: {
+                if (d->scrollBar->isVisible()) {
+                    d->layoutScroll();
+                }
+                break;
+            }
+            default:
+                break;
         }
     } else if (obj == d->entity) {
         switch (event->type()) {
-        case QEvent::Resize: {
-            auto e = static_cast<QResizeEvent *>(event);
-            d->updateScroll();
-            if (e->oldSize().height() != e->size().height()) {
-                updateGeometry();
+            case QEvent::Resize: {
+                auto e = static_cast<QResizeEvent *>(event);
+                d->updateScroll();
+                if (e->oldSize().height() != e->size().height()) {
+                    updateGeometry();
+                }
+                break;
             }
-            break;
-        }
-        case QEvent::LayoutRequest: {
-            d->entity->adjustSize();
-            if (d->needAutoScroll) {
-                d->autoScrollToCurrent();
-                d->needAutoScroll = false;
+            case QEvent::LayoutRequest: {
+                d->entity->adjustSize();
+                if (d->needAutoScroll) {
+                    d->autoScrollToCurrent();
+                    d->needAutoScroll = false;
+                }
+                break;
             }
-            break;
-        }
-        default:
-            break;
+            default:
+                break;
         }
     }
 

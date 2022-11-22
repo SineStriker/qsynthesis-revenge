@@ -1,25 +1,21 @@
-#ifndef CCOUPLETABBARCARD_H
-#define CCOUPLETABBARCARD_H
+#ifndef __CDOCKCARD_H__
+#define __CDOCKCARD_H__
 
-#include "CCoupleTabTypes.h"
 #include "CLTabButton.h"
-
-#include <QSizePolicy>
 
 #include "qsframework_global.h"
 #include "qsutils_macros.h"
 
-class CCoupleTabBar;
+class CDockTabBar;
 
-class QSFRAMEWORK_API CCoupleTabBarCard : public CLTabButton {
+class QSFRAMEWORK_API CDockCard : public CLTabButton {
     Q_OBJECT
-    Q_UNIQUE_ID(CCoupleTabBarCard)
     Q_PROPERTY(QSize dragOffset READ dragOffset WRITE setDragOffset NOTIFY dragOffsetChanged)
 public:
-    explicit CCoupleTabBarCard(QWidget *parent = nullptr);
-    explicit CCoupleTabBarCard(const QString &text, QWidget *parent = nullptr);
-    CCoupleTabBarCard(const QIcon &icon, const QString &text, QWidget *parent = nullptr);
-    ~CCoupleTabBarCard();
+    explicit CDockCard(QWidget *parent = nullptr);
+    explicit CDockCard(const QString &text, QWidget *parent = nullptr);
+    CDockCard(const QIcon &icon, const QString &text, QWidget *parent = nullptr);
+    ~CDockCard();
 
 private:
     void init();
@@ -37,7 +33,7 @@ public:
 
     QPixmap cardShot() const;
 
-    CCoupleTabBar *tabBar() const;
+    CDockTabBar *tabBar() const;
 
     QWidget *widget() const;
     void setWidget(QWidget *widget);
@@ -68,4 +64,4 @@ signals:
     void dragOffsetChanged();
 };
 
-#endif // CCOUPLETABBARCARD_H
+#endif // __CDOCKCARD_H__

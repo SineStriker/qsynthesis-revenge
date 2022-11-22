@@ -1,4 +1,4 @@
-#include "CCoupleTabDoubleBar.h"
+#include "CDockSideBar.h"
 
 #include <QBoxLayout>
 #include <QDragEnterEvent>
@@ -8,59 +8,56 @@
 
 #include "EventHelper.h"
 
-using namespace CCoupleTabTypes;
-
 const char PROPERTY_HIGHLIGHT[] = "highlight";
 const char PROPERTY_WIDTHHINT[] = "widthhint";
 
-CCoupleTabDoubleBar::CCoupleTabDoubleBar(QWidget *parent) : QFrame(parent) {
+CDockSideBar::CDockSideBar(QWidget *parent) : QFrame(parent) {
     init();
 }
 
-CCoupleTabDoubleBar::~CCoupleTabDoubleBar() {
+CDockSideBar::~CDockSideBar() {
 }
 
-CardDirection CCoupleTabDoubleBar::cardDirection() const {
+CV::Direction CDockSideBar::cardDirection() const {
     return m_firstBar->cardDirection();
 }
 
-void CCoupleTabDoubleBar::setCardDirection(CardDirection cardDirection) {
+void CDockSideBar::setCardDirection(CV::Direction cardDirection) {
     m_firstBar->setCardDirection(cardDirection);
     m_secondBar->setCardDirection(cardDirection);
     resetLayout();
 }
 
-void CCoupleTabDoubleBar::init() {
-    qRegisterMetaType<Number>("CCoupleTabDoubleBar::Number");
-
+void CDockSideBar::init() {
     setAttribute(Qt::WA_StyledBackground);
+
     setProperty(PROPERTY_HIGHLIGHT, false);
     setProperty(PROPERTY_WIDTHHINT, 0);
 
-    m_firstBar = new CCoupleTabBar();
+    m_firstBar = new CDockTabBar();
     m_firstBar->setObjectName("first-bar");
 
-    m_secondBar = new CCoupleTabBar(Backward);
+    m_secondBar = new CDockTabBar(CV::Backward);
     m_secondBar->setObjectName("second-bar");
 
     // Forwarding
-    connect(m_firstBar, &CCoupleTabBar::cardAdded, this, &CCoupleTabDoubleBar::handleCardAdded);
-    connect(m_firstBar, &CCoupleTabBar::cardRemoved, this, &CCoupleTabDoubleBar::handleCardRemoved);
-    connect(m_firstBar, &CCoupleTabBar::cardToggled, this, &CCoupleTabDoubleBar::handleCardToggled);
-    connect(m_secondBar, &CCoupleTabBar::cardAdded, this, &CCoupleTabDoubleBar::handleCardAdded);
-    connect(m_secondBar, &CCoupleTabBar::cardRemoved, this,
-            &CCoupleTabDoubleBar::handleCardRemoved);
-    connect(m_secondBar, &CCoupleTabBar::cardToggled, this,
-            &CCoupleTabDoubleBar::handleCardToggled);
+    connect(m_firstBar, &CDockTabBar::cardAdded, this, &CDockSideBar::_q_cardAdded);
+    connect(m_firstBar, &CDockTabBar::cardRemoved, this, &CDockSideBar::_q_cardRemoved);
+    connect(m_firstBar, &CDockTabBar::cardToggled, this, &CDockSideBar::_q_cardToggled);
+    connect(m_secondBar, &CDockTabBar::cardAdded, this, &CDockSideBar::_q_cardAdded);
+    connect(m_secondBar, &CDockTabBar::cardRemoved, this,
+            &CDockSideBar::_q_cardRemoved);
+    connect(m_secondBar, &CDockTabBar::cardToggled, this,
+            &CDockSideBar::_q_cardToggled);
 
     resetLayout();
 }
 
-Qt::Orientation CCoupleTabDoubleBar::orientation() const {
+Qt::Orientation CDockSideBar::orientation() const {
     return m_firstBar->orientation();
 }
 
-void CCoupleTabDoubleBar::setOrientation(Qt::Orientation orient) {
+void CDockSideBar::setOrientation(Qt::Orientation orient) {
     if (orient != m_firstBar->orientation()) {
         m_firstBar->setOrientation(orient);
         m_secondBar->setOrientation(orient);
@@ -68,11 +65,11 @@ void CCoupleTabDoubleBar::setOrientation(Qt::Orientation orient) {
     }
 }
 
-bool CCoupleTabDoubleBar::highlight() const {
+bool CDockSideBar::highlight() const {
     return property(PROPERTY_HIGHLIGHT).toBool();
 }
 
-void CCoupleTabDoubleBar::setHighlight(bool highlight, int widthHint) {
+void CDockSideBar::setHighlight(bool highlight, int widthHint) {
     if (this->highlight() != highlight) {
         setProperty(PROPERTY_HIGHLIGHT, highlight);
         style()->polish(this);
@@ -85,19 +82,19 @@ void CCoupleTabDoubleBar::setHighlight(bool highlight, int widthHint) {
     updateGeometry();
 }
 
-int CCoupleTabDoubleBar::count() const {
+int CDockSideBar::count() const {
     return m_firstBar->count() + m_secondBar->count();
 }
 
-CCoupleTabBar *CCoupleTabDoubleBar::firstBar() const {
+CDockTabBar *CDockSideBar::firstBar() const {
     return m_firstBar;
 }
 
-CCoupleTabBar *CCoupleTabDoubleBar::secondBar() const {
+CDockTabBar *CDockSideBar::secondBar() const {
     return m_secondBar;
 }
 
-QSize CCoupleTabDoubleBar::sizeHint() const {
+QSize CDockSideBar::sizeHint() const {
     QSize sz = QWidget::sizeHint();
     if (highlight()) {
         int wh = property(PROPERTY_WIDTHHINT).toInt();
@@ -111,11 +108,11 @@ QSize CCoupleTabDoubleBar::sizeHint() const {
     return sz;
 }
 
-QSize CCoupleTabDoubleBar::minimumSizeHint() const {
+QSize CDockSideBar::minimumSizeHint() const {
     return sizeHint();
 }
 
-void CCoupleTabDoubleBar::resetLayout() {
+void CDockSideBar::resetLayout() {
     QBoxLayout *layout = static_cast<QBoxLayout *>(this->layout());
     if (layout) {
         delete layout;
@@ -139,33 +136,33 @@ void CCoupleTabDoubleBar::resetLayout() {
     setLayout(layout);
 }
 
-void CCoupleTabDoubleBar::mousePressEvent(QMouseEvent *event) {
+void CDockSideBar::mousePressEvent(QMouseEvent *event) {
     QFrame::mousePressEvent(event);
 }
 
-void CCoupleTabDoubleBar::handleCardAdded(CCoupleTabBarCard *card) {
-    auto bar = qobject_cast<CCoupleTabBar *>(sender());
+void CDockSideBar::_q_cardAdded(CDockCard *card) {
+    auto bar = qobject_cast<CDockTabBar *>(sender());
     if (bar == m_firstBar) {
-        emit cardAdded(First, card);
+        emit cardAdded(CV::Primary, card);
     } else {
-        emit cardAdded(Second, card);
+        emit cardAdded(CV::Secondary, card);
     }
 }
 
-void CCoupleTabDoubleBar::handleCardRemoved(CCoupleTabBarCard *card) {
-    auto bar = qobject_cast<CCoupleTabBar *>(sender());
+void CDockSideBar::_q_cardRemoved(CDockCard *card) {
+    auto bar = qobject_cast<CDockTabBar *>(sender());
     if (bar == m_firstBar) {
-        emit cardRemoved(First, card);
+        emit cardRemoved(CV::Primary, card);
     } else {
-        emit cardRemoved(Second, card);
+        emit cardRemoved(CV::Secondary, card);
     }
 }
 
-void CCoupleTabDoubleBar::handleCardToggled(CCoupleTabBarCard *card) {
-    auto bar = qobject_cast<CCoupleTabBar *>(sender());
+void CDockSideBar::_q_cardToggled(CDockCard *card) {
+    auto bar = qobject_cast<CDockTabBar *>(sender());
     if (bar == m_firstBar) {
-        emit cardToggled(First, card);
+        emit cardToggled(CV::Primary, card);
     } else {
-        emit cardToggled(Second, card);
+        emit cardToggled(CV::Secondary, card);
     }
 }

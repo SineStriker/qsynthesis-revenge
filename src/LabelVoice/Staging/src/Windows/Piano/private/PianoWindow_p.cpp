@@ -19,7 +19,7 @@ void PianoWindowPrivate::init() {
 
     q->connect(actions, &PianoActions::triggered, q, &PianoWindow::_q_actionTriggered);
 
-    frame = new CCoupleTabFrame();
+    frame = new CDockFrame();
     frame->setObjectName("piano-main-frame");
 
     tabs = new QScrollableTabWidget();
@@ -34,24 +34,18 @@ void PianoWindowPrivate::init() {
     langPanel = new QWidget();
     langPanel->setObjectName("languages-panel");
 
-    expCard = new CCoupleTabBarCard();
+    expCard = frame->addWidget(Qt::LeftEdge, CV::Primary, expPanel);
+    spkCard = frame->addWidget(Qt::LeftEdge, CV::Primary, spkPanel);
+    langCard = frame->addWidget(Qt::LeftEdge, CV::Primary, langPanel);
+
     expCard->setProperty("parent", frame->objectName());
     expCard->setObjectName("explorer-card");
-    expCard->setWidget(expPanel);
 
-    spkCard = new CCoupleTabBarCard();
     spkCard->setProperty("parent", frame->objectName());
     spkCard->setObjectName("speakers-card");
-    spkCard->setWidget(spkPanel);
 
-    langCard = new CCoupleTabBarCard();
     langCard->setProperty("parent", frame->objectName());
     langCard->setObjectName("languages-card");
-    langCard->setWidget(langPanel);
-
-    frame->leftBar()->firstBar()->addCard(expCard);
-    frame->leftBar()->firstBar()->addCard(spkCard);
-    frame->leftBar()->firstBar()->addCard(langCard);
 
     frame->setWidget(tabs);
 
