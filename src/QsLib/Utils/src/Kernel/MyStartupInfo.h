@@ -21,7 +21,7 @@ class QSUTILS_API MyStartupInfo {
     Q_SINGLETON(MyStartupInfo)
 public:
     MyStartupInfo();
-    ~MyStartupInfo();
+    virtual ~MyStartupInfo();
 
     /* Properties can be append in each app's constructor */
     MyCommandLineParser parser;

@@ -6,7 +6,7 @@ macro(option_ex _name)
 endmacro()
 
 # Project Configurations
-option_ex(APP_TOOLSET_NAME          QsToolset)
+option_ex(APP_TOOLSET_NAME          ChorusKit)
 option_ex(APP_TOOLSET_LIST          LabelVoice QSynthesis)
 option_ex(APP_VERSION_VERBOSE       0.0.1.4)
 option_ex(APP_DEPLOY                on)

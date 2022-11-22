@@ -1,9 +1,9 @@
 #ifndef LVSTARTUPINFO_H
 #define LVSTARTUPINFO_H
 
-#include "Kernel/MyStartupInfo.h"
+#include "Kernel/QsStartInfo.h"
 
-class LvStartupInfo : public MyStartupInfo {
+class LvStartupInfo : public QsStartInfo {
 public:
     LvStartupInfo();
     ~LvStartupInfo();

@@ -2,6 +2,8 @@
 #include "SystemHelper.h"
 #include "private/QsDistConfig_p.h"
 
+#include "QsStartInfo.h"
+
 #include <QDebug>
 
 Q_SINGLETON_DECLARE(QsDistConfig)
@@ -21,13 +23,16 @@ void QsDistConfig::initAll() {
 
 bool QsDistConfig::load(const QString &filename) {
     Q_D(QsDistConfig);
+    bool res = true;
     if (!d->load_helper(filename)) {
         qDebug() << QString("load_config: configuration file %1 not found.")
                         .arg(Sys::PathFindFileName(filename));
-        d->save_default(filename);
-        return false;
+        res = false;
     }
-    return true;
+    if (qIStup->parser.isSet("reset-config")) {
+         d->save_default(filename);
+    }
+    return res;
 }
 
 QString QsDistConfig::appDir(QsDistConfig::DirType type) const {

@@ -1,9 +1,9 @@
 #ifndef QUTASTARTUPINFO_H
 #define QUTASTARTUPINFO_H
 
-#include "Kernel/MyStartupInfo.h"
+#include "Kernel/QsStartInfo.h"
 
-class QUtaStartupInfo : public MyStartupInfo {
+class QUtaStartupInfo : public QsStartInfo {
 public:
     QUtaStartupInfo();
     ~QUtaStartupInfo();

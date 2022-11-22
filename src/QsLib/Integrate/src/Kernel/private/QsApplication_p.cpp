@@ -14,7 +14,9 @@
 
 static const char Slash = '/';
 
-static const char FILENAME_APP_CONFIG[] = "appconfig.json";
+static QString GetAppConfig() {
+    return qApp->applicationName() + "_settings.json";
+}
 
 // static QString loadAppleFont() {
 //     QString fontDir = qApp->applicationDirPath() + "/resources/fonts";
@@ -51,7 +53,7 @@ void QsApplicationPrivate::init() {
     Q_TR_NOTIFY_PRIVATE(QsApplication);
     Q_SS_NOTIFY_PRIVATE(QsApplication);
 
-    conf->load(q->applicationDirPath() + Slash + FILENAME_APP_CONFIG);
+    conf->load(q->applicationDirPath() + Slash + GetAppConfig());
     if (!conf->apply()) {
         ::exit(-1);
     }
