@@ -14,7 +14,7 @@ else()
     list(FILTER _src EXCLUDE REGEX ".*_(Win|win|Windows|windows|Mac|mac)\\.(h|cpp|hpp|cc)")
 endif()
 
-qutamod_configure_library(
+configure_library(
     SOURCES ${_src}
     ENABLE_SHARED
     QT_LIBRARIES Core

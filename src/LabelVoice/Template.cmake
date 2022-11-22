@@ -1,5 +1,5 @@
 #[[
-    lvmod_configure_library(
+    configure_library(
         SOURCES                 files...
         QT_LIBRARIES            qtlibs1...
         QT_PRIVATE_INCLUDES     qtlibs2...
@@ -29,7 +29,7 @@
     usage:
         create a library target named by PROJECT_NAME
 ]]#
-macro(lvmod_configure_library)
+macro(configure_library)
     set(options INCLUDE_CURRENT ENABLE_SHARED)
     set(oneValueArgs WIN32_FILE_DESC WIN32_PRODUCT_NAME)
     set(multiValueArgs SOURCES QT_LIBRARIES QT_PRIVATE_INCLUDES LINKS INCLUDES)
