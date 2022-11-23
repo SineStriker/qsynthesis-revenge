@@ -1,5 +1,5 @@
-#ifndef __IFRQDEVICE_H__
-#define __IFRQDEVICE_H__
+#ifndef __IFRQREGISTRY_H__
+#define __IFRQREGISTRY_H__
 
 #include <QObject>
 
@@ -7,11 +7,11 @@
 
 #include "qutacore_global.h"
 
-class QUTACORE_API IFrqDevice : public QObject {
+class QUTACORE_API IFrqRegistry : public QObject {
     Q_OBJECT
 public:
-    IFrqDevice(QObject *parent = nullptr);
-    ~IFrqDevice();
+    IFrqRegistry(QObject *parent = nullptr);
+    ~IFrqRegistry();
 
 public:
     virtual bool loadEntry(const QString dirname,                   // Directory
@@ -19,18 +19,20 @@ public:
                            QFrqFile *out,                           // Out
                            const QMap<QString, QVariant> &args = {} // Arguments
                            ) = 0;
+
     virtual bool saveEntry(const QString dirname,                   // Directory
                            const QString &entry,                    // Entry
                            const QFrqFile &in,                      // In
                            const QMap<QString, QVariant> &args = {} // Arguments
                            ) = 0;
-    virtual QStringList frequencyEntries(const QString dirname) const = 0;
+                           
+    virtual QStringList getEntries(const QString dirname) const = 0;
 };
 
-#define IFrqDevice_IID "QSynthesis.Plugin.SVS.FrqDevice"
+#define IFrqRegistry_IID "QSynthesis.Plugin.SVS.FrqRegistry"
 
 QT_BEGIN_NAMESPACE
-Q_DECLARE_INTERFACE(IFrqDevice, IFrqDevice_IID)
+Q_DECLARE_INTERFACE(IFrqRegistry, IFrqRegistry_IID)
 QT_END_NAMESPACE
 
-#endif // __IFRQDEVICE_H__
+#endif // __IFRQREGISTRY_H__

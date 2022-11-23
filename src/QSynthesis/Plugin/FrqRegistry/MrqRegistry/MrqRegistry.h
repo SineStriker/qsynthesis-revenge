@@ -1,15 +1,15 @@
-#ifndef MRQDEVICE_H
-#define MRQDEVICE_H
+#ifndef __MRQREGISTRY_H__
+#define __MRQREGISTRY_H__
 
-#include "Api/IFrqDevice.h"
+#include "Api/IFrqRegistry.h"
 
-class Q_DECL_EXPORT MrqDevice : public IFrqDevice {
+class Q_DECL_EXPORT MrqRegistry : public IFrqRegistry {
     Q_OBJECT
-    Q_INTERFACES(IFrqDevice)
-    Q_PLUGIN_METADATA(IID IFrqDevice_IID FILE "plugin.json")
+    Q_INTERFACES(IFrqRegistry)
+    Q_PLUGIN_METADATA(IID IFrqRegistry_IID FILE "plugin.json")
 public:
-    explicit MrqDevice(QObject *parent = nullptr);
-    ~MrqDevice();
+    explicit MrqRegistry(QObject *parent = nullptr);
+    ~MrqRegistry();
 
 public:
     bool loadEntry(const QString dirname,                   // Directory
@@ -17,14 +17,17 @@ public:
                    QFrqFile *out,                           // Out
                    const QMap<QString, QVariant> &args = {} // Arguments
                    ) override;
+
     bool saveEntry(const QString dirname,                   // Directory
                    const QString &entry,                    // Entry
                    const QFrqFile &in,                      // In
                    const QMap<QString, QVariant> &args = {} // Arguments
                    ) override;
-    QStringList frequencyEntries(const QString dirname) const override;
+                   
+    QStringList getEntries(const QString dirname) const override;
 
 signals:
 };
 
-#endif // MRQDEVICE_H
+
+#endif // __MRQREGISTRY_H__
