@@ -1,14 +1,12 @@
 #ifndef __QNRBFRECORD_H__
 #define __QNRBFRECORD_H__
 
-#include <QStringList>
-
 #include "QNrbfVariants.h"
-
-#include "qsutils_global.h"
 
 class QSUTILS_API QNrbfRecord {
 public:
+    using Type = QNrbf::RecordTypeEnumeration;
+
     QNrbfRecord();
     ~QNrbfRecord();
 
@@ -17,10 +15,13 @@ public:
         setValue<T>(data);
     }
 
-    QNrbf::RecordTypeEnumeration type() const;
-    inline bool isNull() const {
-        return _type == QNrbf::RecordTypeEnumeration::SerializedStreamHeader;
+    template <class T>
+    QNrbfRecord(T &&data) {
+        setValue<T>(data);
     }
+
+    Type type() const;
+    bool isNull() const;
 
     template <class T>
     T value() const {
@@ -35,8 +36,14 @@ public:
         updateType();
     }
 
+    template <class T>
+    void setValue(T &&data) {
+        _data = data;
+        updateType();
+    }
+
 protected:
-    QNrbf::RecordTypeEnumeration _type;
+    Type _type;
     std::any _data;
 
     void updateType();

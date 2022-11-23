@@ -55,7 +55,7 @@ namespace QNrbf {
     };
 
     // 2.1.2.2 BinaryTypeEnumeration
-    enum class BinaryTypeEnumerator : quint8 {
+    enum class BinaryTypeEnumeration : quint8 {
         Primitive = 0,
         String = 1,
         Object = 2,
@@ -152,6 +152,11 @@ namespace QNrbf {
     // 2.2.3.1 BinaryMethodCall
     class QSUTILS_API BinaryMethodCall {
     public:
+        quint32 messageEnum;
+        StringValueWithCode methodName;
+        StringValueWithCode typeName;
+        StringValueWithCode callContext;
+        ArrayOfValueWithCode args;
     };
 
     // 2.2.3.2 MethodCallArray
@@ -162,6 +167,10 @@ namespace QNrbf {
     // 2.2.3.3 BinaryMethodReturn
     class QSUTILS_API BinaryMethodReturn {
     public:
+        quint32 messageEnum;
+        ValueWithCode returnValue;
+        StringValueWithCode callContext;
+        ArrayOfValueWithCode args;
     };
 
     // 2.2.3.4 MethodReturnCallArray
@@ -180,20 +189,21 @@ namespace QNrbf {
         QStringList memberNames;
     };
 
+    class QSUTILS_API RemotingTypeInfo {
+    public:
+        BinaryTypeEnumeration binaryTypeEnum;
+
+        PrimitiveTypeEnumeration toPrimitiveTypeEnum() const;
+        QString toString() const;
+        ClassTypeInfo toClassTypeInfo() const;
+
+        std::any _data;
+    };
+
     // 2.3.1.2 MemberTypeInfo
     class QSUTILS_API MemberTypeInfo {
     public:
-        class QSUTILS_API Element {
-            BinaryTypeEnumerator binaryTypeEnum;
-
-            PrimitiveTypeEnumeration toPrimitiveTypeEnum() const;
-            QString toString() const;
-            ClassTypeInfo toClassTypeInfo() const;
-
-            std::any _data;
-        };
-
-        QList<Element> additionInfos;
+        QList<RemotingTypeInfo> additionalInfos;
     };
 
     // 2.3.2 Record Definitions
@@ -255,6 +265,13 @@ namespace QNrbf {
     // 2.4.3.1 BinaryArray
     class QSUTILS_API BinaryArray {
     public:
+        qint32 objectId;
+        BinaryArrayTypeEnumeration binaryArrayTypeEnum;
+        qint32 rank;
+        QList<qint32> lengths;
+        QList<qint32> lowerBounds;
+
+        RemotingTypeInfo additionInfo;
     };
 
     // 2.4.3.2 ArraySingleObject
@@ -276,38 +293,44 @@ namespace QNrbf {
 
     // 2.5 Member Reference Records
     // 2.5.1 MemberPrimitiveTyped
-    class QSUTILS_API MemberPrimitiveTyped {
+    class QSUTILS_API MemberPrimitiveTyped : public ValueWithCode {
     public:
     };
 
     // 2.5.2 MemberPrimitiveUnTyped
-    class QSUTILS_API MemberPrimitiveUnTyped {
+    class QSUTILS_API MemberPrimitiveUnTyped : public ValueWithCode {
     public:
     };
 
     // 2.5.3 MemberReference
     class QSUTILS_API MemberReference {
     public:
+        qint32 idRef;
     };
 
     // 2.5.4 ObjectNull
     class QSUTILS_API ObjectNull {
     public:
+        qint8 placeholder;
     };
 
     // 2.5.5 ObjectNullMultiple
     class QSUTILS_API ObjectNullMultiple {
     public:
+        qint32 nullCount;
     };
 
     // 2.5.6 ObjectNullMultiple256
     class QSUTILS_API ObjectNullMultiple256 {
     public:
+        quint8 nullCount;
     };
 
     // 2.5.7 BinaryObjectString
     class QSUTILS_API BinaryObjectString {
     public:
+        qint32 objectId;
+        QString value;
     };
 
     // 2.6 Other Records
@@ -330,7 +353,7 @@ namespace QNrbf {
     // 2.6.3 MessageEnd
     class QSUTILS_API MessageEnd {
     public:
-        int placeholder;
+        qint8 placeholder;
     };
 
 }; // namespace QNrbf

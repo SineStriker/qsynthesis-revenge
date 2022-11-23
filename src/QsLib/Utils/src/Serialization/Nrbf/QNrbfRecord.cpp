@@ -3,7 +3,7 @@
 #include "QNrbfVariants.h"
 
 QNrbfRecord::QNrbfRecord() {
-    _type = QNrbf::RecordTypeEnumeration::SerializedStreamHeader;
+    _type = Type::SerializedStreamHeader;
 }
 
 QNrbfRecord::~QNrbfRecord() {
@@ -13,11 +13,21 @@ QNrbf::RecordTypeEnumeration QNrbfRecord::type() const {
     return _type;
 }
 
+bool QNrbfRecord::isNull() const {
+    return _type == Type::SerializedStreamHeader;
+}
+
 void QNrbfRecord::updateType() {
 
 #define GoOn(TYPE)                                                                                 \
     if (_data.type() == typeid(QNrbf::TYPE)) {                                                     \
         _type = QNrbf::RecordTypeEnumeration::TYPE;                                                \
+        goto out;                                                                                  \
+    }
+
+#define GoOn2(CLASS, TYPE)                                                                         \
+    if (_data.type() == typeid(QNrbf::TYPE)) {                                                     \
+        _type = QNrbf::RecordTypeEnumeration::CLASS;                                               \
         goto out;                                                                                  \
     }
 
@@ -43,11 +53,13 @@ void QNrbfRecord::updateType() {
     GoOn(ArraySinglePrimitive);
     GoOn(ArraySingleString);
 
-//    GoOn(MethodCall);
-//    GoOn(MethodReturn);
+    GoOn2(MethodCall, BinaryMethodCall);
+    GoOn2(MethodReturn, BinaryMethodReturn);
 
+    Q_ASSERT(false);
 
 #undef GoOn
+#undef GoOn2
 
 out:
     return;

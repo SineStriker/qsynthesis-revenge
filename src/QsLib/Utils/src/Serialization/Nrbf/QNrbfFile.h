@@ -12,7 +12,7 @@ public:
     bool save(const QString &filename);
 
 public:
-    QList<QNrbfRecord> records;
+    QVector<QNrbfRecord> records;
 };
 
 #endif // __QNRBFFILE_H__
