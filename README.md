@@ -67,6 +67,8 @@ For detailed information, see [Related Tools](./docs/related-tools.md).
     + MIT License
 + [yaml-cpp](https://github.com/jbeder/yaml-cpp)
     + MIT License
++ [BinaryFormatDataStructure](https://github.com/bbowyersmyth/BinaryFormatDataStructure)
+    + MIT License
 
 See [Related Tools](./docs/related-tools.md) for dependencies for each plugin.
 

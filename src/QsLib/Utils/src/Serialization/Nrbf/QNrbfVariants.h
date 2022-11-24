@@ -26,7 +26,7 @@ namespace QNrbf {
     class QSUTILS_API ClassTypeInfo {
     public:
         QString typeName;
-        int libraryId;
+        qint32 libraryId;
     };
 
     // 2.1.2 Enumerations
@@ -230,8 +230,9 @@ namespace QNrbf {
     };
 
     // 2.3.2.4 SystemClassWithMembers
-    class QSUTILS_API SystemClassWithMembers : public ClassInfo {
+    class QSUTILS_API SystemClassWithMembers {
     public:
+        ClassInfo classInfo;
     };
 
     // 2.3.2.5 ClassWithId
@@ -275,8 +276,9 @@ namespace QNrbf {
     };
 
     // 2.4.3.2 ArraySingleObject
-    class QSUTILS_API ArraySingleObject : public ArrayInfo {
+    class QSUTILS_API ArraySingleObject {
     public:
+        ArrayInfo arrayInfo;
     };
 
     // 2.4.3.3 ArraySinglePrimitive
@@ -287,8 +289,9 @@ namespace QNrbf {
     };
 
     // 2.4.3.4 ArraySingleString
-    class QSUTILS_API ArraySingleString : public ArrayInfo {
+    class QSUTILS_API ArraySingleString {
     public:
+        ArrayInfo arrayInfo;
     };
 
     // 2.5 Member Reference Records
@@ -335,7 +338,7 @@ namespace QNrbf {
 
     // 2.6 Other Records
     // 2.6.1 SerializationHeaderRecord
-    class QSUTILS_API SerializationHeaderRecord {
+    class QSUTILS_API SerializationHeader {
     public:
         qint32 rootId;
         qint32 headerId;
