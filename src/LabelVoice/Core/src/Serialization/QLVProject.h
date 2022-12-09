@@ -20,6 +20,8 @@ namespace LVModel {
     LVCORE_API QString ValueTypeToString(ValueType c);
     LVCORE_API ValueType StringToValueType(const QString &s);
 
+    constexpr int HexIdLength = 4;
+
     class LVCORE_API LayerDefinition {
     public:
         LayerCategory Category;
@@ -91,8 +93,7 @@ namespace LVModel {
         QList<SpeakerDefinition> Speakers;
         QMap<QString, ItemResource> ItemResources;
 
-    protected:
-        HexGenerator registry;
+        HexGenerator hexIdPublisher;
     };
 
 } // namespace LVModel

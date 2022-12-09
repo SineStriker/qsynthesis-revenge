@@ -583,7 +583,7 @@ void LVModel::ProjectModel::ValidateLanguages(bool reg) {
     while (i < Languages.size()) {
         LanguageDefinition language = Languages[i];
         if (!HexGenerator::IsValidFormat(language.Id, 4) ||
-            (reg && !registry.Register(language.Id))) {
+            (reg && !hexIdPublisher.Register(language.Id))) {
             Languages.removeAt(i);
         } else {
             ++i;
@@ -596,7 +596,7 @@ void LVModel::ProjectModel::ValidateSpeakers(bool reg) {
     while (i < Speakers.size()) {
         SpeakerDefinition speaker = Speakers[i];
         if (!HexGenerator::IsValidFormat(speaker.Id, 4) ||
-            (reg && !registry.Register(speaker.Id))) {
+            (reg && !hexIdPublisher.Register(speaker.Id))) {
             Speakers.removeAt(i);
         } else {
             ++i;
@@ -672,6 +672,6 @@ void LVModel::ProjectModel::ValidateItemResources(bool reg) {
     // Register all remaining IDs.
     const auto &keys = ItemResources.keys();
     for (const QString &key : keys) {
-        registry.Register(key);
+        hexIdPublisher.Register(key);
     }
 }
