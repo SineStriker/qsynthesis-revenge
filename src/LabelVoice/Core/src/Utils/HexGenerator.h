@@ -6,6 +6,12 @@
 
 #include "lvcore_global.h"
 
+
+/**
+    @brief Generates a hex sequence string with a given length,
+        guaranteed to be unique in the current instance, mainly used to
+        create unique ID strings for internal data objects.
+*/
 class LVCORE_API HexGenerator {
 public:
     void Reset();
