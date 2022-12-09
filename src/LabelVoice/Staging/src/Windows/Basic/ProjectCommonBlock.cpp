@@ -59,6 +59,22 @@ QString ProjectCommonBlock::newProject(const TemplateConfig &config) const {
     LVModel::ProjectModel proj;
     proj.Name = config.name;
 
+    // Add default speaker and default languages
+    // QUESTION: shall we use translation in object names?
+    // QUESTION: is it ok to keep dictionary files etc as "empty"?
+    LVModel::SpeakerDefinition spk;
+    spk.Id = proj.hexIdPublisher.Generate(4);
+    spk.Name = QObject::tr("Default Speaker", "object name");
+    proj.Speakers.push_back(spk);
+
+    LVModel::LanguageDefinition lang;
+    lang.Id = proj.hexIdPublisher.Generate(4);
+    lang.Name = QObject::tr("Default Language", "object name");
+    lang.AlignerRootPath = "";
+    lang.DictionaryPath = "";
+    lang.PhonemeSetPath = ""; 
+    proj.Languages.push_back(lang);
+
     if (!proj.save(filePath)) {
         QMessageBox::critical(w, qApp->errorTitle(), QObject::tr("Failed to create project file!"));
         Sys::rmDir(path);
