@@ -2,8 +2,14 @@
 #define PIANOSPEC_H
 
 #include <QString>
+#include <QColor>
 
 namespace PianoSpec {
+
+    struct LanguageSpec {
+        QString shortname;
+        QColor color;
+    };
 
     struct SpeakerDesc {
         QString id;
@@ -15,6 +21,7 @@ namespace PianoSpec {
         QString name;
         QString speaker;
         bool isDir;
+        LanguageSpec lang;
     };
 
 } // namespace PianoSpec

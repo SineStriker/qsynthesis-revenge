@@ -9,6 +9,7 @@
 
 #include "VSliceListWidget.h"
 #include "VSpkTreeWidget.h"
+#include "private/VTreeItemDelegate.h"
 
 #include "../PianoSpec.h"
 
@@ -41,13 +42,7 @@ public:
 
     // Main
     QSplitter *splitter;
-
-protected:
-    QVBoxLayout *itemsLayout;
-    QVBoxLayout *slicesLayout;
-
-    QVBoxLayout *mainLayout;
-
+    
     // Data Structure
     enum LVNodeType {
         RootSpeaker = QTreeWidgetItem::UserType + 1,
@@ -59,12 +54,20 @@ protected:
         LVItem_ID = Qt::UserRole + 1,
         LVItem_Name,
         LVItem_Speaker,
+        LVItem_LangName,
+        LVItem_LangColor
     };
 
     enum LVSpeakerDataType {
         LVSpeaker_ID = Qt::UserRole + 1,
         LVSpeaker_Name,
     };
+
+protected:
+    QVBoxLayout *itemsLayout;
+    QVBoxLayout *slicesLayout;
+
+    QVBoxLayout *mainLayout;
 
     struct TreeNode {
         typedef QSharedPointer<TreeNode> Ref;

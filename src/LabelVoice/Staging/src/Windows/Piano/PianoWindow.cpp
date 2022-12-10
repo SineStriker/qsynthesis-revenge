@@ -59,7 +59,13 @@ bool PianoWindow::load() {
                                        item.Name,
                                        item.Speaker,
                                        item.Type == LVModel::ItemResource::Placeholder,
+                                       PianoSpec::LanguageSpec {
+                                            item.Language.left(2),
+                                            QColor('#' + item.Language + item.Language.left(2))
+                                                .darker() // Random color from language ID
+                                       }
                                    }));
+            qInfo() << QColor(item.Id + item.Id.left(2)).darker();
         }
         d->expPanel->setItems(items);
     }

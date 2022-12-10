@@ -200,3 +200,18 @@ QWidget#explorer-slices-widget>QLineEdit#slices-search-box {
     padding: 10px;
     margin: 5px 0;
 }
+
+/* Slicing window */
+
+#speakers-tree {
+    border: none;
+    background-color: transparent;
+    qproperty-styleData: qvariants(/* styleData */
+    20px, /* langTagHeight */
+    qtypeface(black, 14px), /* itemTextType */
+    qtypeface(white, 12px), /* langTextType */
+    qmargins(6, 4, 6, 4), /* langTagMargins */
+    qmargins(11, 6, 11, 8), /* margins */
+    qcolors(rgba(0, 0, 0, 0.05)), /* selectedColor */
+    );
+}

@@ -1,10 +1,22 @@
 #include "VSpkTreeWidget.h"
 #include "MathHelper.h"
+#include "QMarginsImpl.h"
 
 #include <private/qtreewidget_p.h>
 
+#define DECODE_STYLE(VAR, VARIANT, TYPE)                                                           \
+    {                                                                                              \
+        QVariant var = VARIANT;                                                                    \
+        if (var.convert(qMetaTypeId<TYPE>())) {                                                    \
+            VAR = var.value<TYPE>();                                                               \
+        }                                                                                          \
+    }
+
 VSpkTreeWidget::VSpkTreeWidget(QWidget *parent) : CTreeWidget(parent) {
     setHeaderHidden(true);
+
+    m_delegate = new VTreeItemDelegate(this);
+    setItemDelegate(m_delegate);
 }
 
 VSpkTreeWidget::~VSpkTreeWidget() {
@@ -63,4 +75,30 @@ void VSpkTreeWidget::dropEvent(QDropEvent *event) {
 
     /* emit signal about the move */
     emit itemDroped(item, parent);
+}
+
+void VSpkTreeWidget::setStyleData(const QTypeList &list) {
+    if (list.size() >= 6) {
+        int i = 0;
+        DECODE_STYLE(m_delegate->m_langTagHeight, list.at(i++), QPixelSize);
+        DECODE_STYLE(m_delegate->m_itemTextType, list.at(i++), QTypeFace);
+        DECODE_STYLE(m_delegate->m_langTextType, list.at(i++), QTypeFace);
+        DECODE_STYLE(m_delegate->m_langTagMargins, list.at(i++), QMargins);
+        DECODE_STYLE(m_delegate->m_margins, list.at(i++), QMargins);
+        DECODE_STYLE(m_delegate->m_colors, list.at(i++), QColorList);
+
+        update();
+        emit styleDataChanged();
+    }
+}
+
+QTypeList VSpkTreeWidget::styleData() const {
+    return {
+        QVariant::fromValue(m_delegate->m_langTagHeight),
+        QVariant::fromValue(m_delegate->m_itemTextType),
+        QVariant::fromValue(m_delegate->m_langTextType),
+        QVariant::fromValue(m_delegate->m_langTagMargins),
+        QVariant::fromValue(m_delegate->m_margins),
+        QVariant::fromValue(m_delegate->m_colors),
+    };
 }

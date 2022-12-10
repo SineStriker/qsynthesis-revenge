@@ -30,7 +30,7 @@ VExplorerPanel::VExplorerPanel(QWidget *parent) : QFrame(parent) {
     itemsWidget->setObjectName("explorer-items-widget");
     itemsWidget->setLayout(itemsLayout);
 
-    // Speakers
+    // Slices
     slicesLabel = new QLabel();
     slicesLabel->setObjectName("slices-label");
 
@@ -146,6 +146,8 @@ void VExplorerPanel::setItems(const QList<QPair<QString, PianoSpec::ItemDesc>> &
             item->setData(0, LVItem_ID, desc.id);
             item->setData(0, LVItem_Name, desc.name);
             item->setData(0, LVItem_Speaker, desc.speaker);
+            item->setData(0, LVItem_LangName, desc.lang.shortname);
+            item->setData(0, LVItem_LangColor, desc.lang.color);
 
             // Display
             item->setText(0, desc.name);
