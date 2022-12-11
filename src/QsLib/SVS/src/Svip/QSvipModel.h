@@ -17,7 +17,7 @@ public:
 
     class QSSVS_API ParamCurve {
     public:
-        int TotalPointsCount() const {
+        inline int TotalPointsCount() const {
             return PointList.size();
         };
 
@@ -36,36 +36,54 @@ public:
 
     class QSSVS_API Vibrato {
     public:
-        double StartPercent = 0.0;
-        double EndPercent = 0.0;
-        bool IsAntiPhase = false;
+        Vibrato() : Vibrato(0, 0) {
+        }
+        Vibrato(double start, double end)
+            : StartPercent(start), EndPercent(end), IsAntiPhase(false) {
+        }
+
+        double StartPercent;
+        double EndPercent;
+        bool IsAntiPhase;
         ParamCurve Amplitude;
         ParamCurve Frequency;
     };
 
     class QSSVS_API Phones {
     public:
-        double HeadLengthInSecs = -1.0;
-        double MidRatioOverTail = -1.0;
+        Phones() : Phones(-1, -1) {
+        }
+        Phones(double head, double mid) : HeadLengthInSecs(head), MidRatioOverTail(mid) {
+        }
+
+        double HeadLengthInSecs;
+        double MidRatioOverTail;
     };
 
     class QSSVS_API Note {
     public:
-        int StartPos = 0;
-        int Length = 0;
-        int KeyNumber = 60;
+        Note() : Note(0, 0, 60) {
+        }
+        Note(int start, int len, int key) : StartPos(start), Length(len), KeyNumber(key) {
+        }
+
+        int StartPos;
+        int Length;
+        int KeyNumber;
         QString HeadTag;
         QString Lyric;
         QString Pronunciation;
-        Phones EditedPhones;
-        QSvipModel::Vibrato Vibrato;
+        QSharedPointer<Phones> EditedPhones;
+        QSharedPointer<class Vibrato> Vibrato;
     };
 
     class QSSVS_API Track {
     public:
         enum Type { Singing, Instrumental };
 
-        Track(int type) : t(type){};
+        Track(int type) : t(type), Mute(false), Solo(false), Volume(0), Pan(0){};
+        virtual ~Track() {
+        }
 
     public:
         inline int type() const {
@@ -73,10 +91,10 @@ public:
         }
 
         QString Title;
-        bool Mute = false;
-        bool Solo = true;
-        double Volume = 0.0;
-        double Pan = 0.0;
+        bool Mute;
+        bool Solo;
+        double Volume;
+        double Pan;
 
     protected:
         int t;
@@ -106,15 +124,25 @@ public:
 
     class QSSVS_API TimeSignature {
     public:
-        int BarIndex = 0;
-        int Numerator = 0;
-        int Denominator = 0;
+        TimeSignature() : TimeSignature(0, 0, 0) {
+        }
+        TimeSignature(int idx, int num, int den) : BarIndex(idx), Numerator(num), Denominator(den) {
+        }
+
+        int BarIndex;
+        int Numerator;
+        int Denominator;
     };
 
     class QSSVS_API SongTempo {
     public:
-        int Position = 0;
-        double BPM = 120.0;
+        SongTempo() : SongTempo(0, 120) {
+        }
+        SongTempo(int pos, double bpm) : Position(pos), BPM(bpm) {
+        }
+
+        int Position;
+        double BPM;
     };
 
     using TrackRef = QSharedPointer<Track>;

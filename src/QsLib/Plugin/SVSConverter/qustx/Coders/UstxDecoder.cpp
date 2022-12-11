@@ -16,10 +16,8 @@ QSvipModel UstxDecoder::DecodeProject(const UProject &ustxProject) {
 
     //节拍：OpenUTAU每个工程只有一个节拍
     QList<QSvipModel::TimeSignature> timeSignatureList;
-    timeSignatureList.append(QSvipModel::TimeSignature{
-        ustxProject.beatPerBar,
-        ustxProject.beatUnit,
-    });
+    timeSignatureList.append(
+        QSvipModel::TimeSignature{ustxProject.beatPerBar, ustxProject.beatUnit, 0});
 
     //音轨
     QList<QSvipModel::TrackRef> trackList;
@@ -62,8 +60,8 @@ QSvipModel::SingingTrack UstxDecoder::DecodeTrack(const UTrack &ustxTrack) {
     return osTrack;
 }
 
-void UstxDecoder::DecodeVoicePart(const UVoicePart &ustxVoicePart, QSvipModel::SingingTrack &osTrack,
-                                  const UProject &ustxProject) {
+void UstxDecoder::DecodeVoicePart(const UVoicePart &ustxVoicePart,
+                                  QSvipModel::SingingTrack &osTrack, const UProject &ustxProject) {
     int partOffset = ustxVoicePart.position;
     for (const UNote &ustxNote : qAsConst(ustxVoicePart.notes)) {
         osTrack.NoteList.append(DecodeNote(ustxNote, partOffset));

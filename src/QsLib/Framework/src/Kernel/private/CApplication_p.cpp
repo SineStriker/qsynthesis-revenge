@@ -15,24 +15,6 @@
 #include <QMessageBox>
 #include <QScreen>
 
-[[maybe_unused]] static void _str_1() {
-    static QString MyCommandLineParser_strings[] = {
-        MyCommandLineParser::tr("Display version information."),
-        MyCommandLineParser::tr("Display help on commandline options."),
-        MyCommandLineParser::tr("Display help including Qt specific options."),
-        MyCommandLineParser::tr("Unknown option '%1'."),
-        MyCommandLineParser::tr("Unknown options: %1."),
-        MyCommandLineParser::tr("Missing value after '%1'."),
-        MyCommandLineParser::tr("Unexpected value after '%1'."),
-        MyCommandLineParser::tr("[options]"),
-        MyCommandLineParser::tr("Usage: %1"),
-        MyCommandLineParser::tr("Options:"),
-        MyCommandLineParser::tr("Arguments:"),
-        MyCommandLineParser::tr("Display Qt version."),
-        MyCommandLineParser::tr("Qt version %1\n"),
-    };
-}
-
 static const SingleApplication::Options opts = SingleApplication::ExcludeAppPath |
                                                SingleApplication::ExcludeAppVersion |
                                                SingleApplication::SecondaryNotification;

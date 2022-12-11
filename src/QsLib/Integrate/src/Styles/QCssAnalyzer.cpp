@@ -1,12 +1,13 @@
 #include "QCssAnalyzer.h"
-#include "private/QMetaTypeUtils.h"
 
 #include <QDebug>
 #include <QtMath>
 
-const char FixedSizeProperty[] = "fix-";
-const char MinSizeProperty[] = "min-";
-const char MaxSizeProperty[] = "max-";
+static const char FixedSizeProperty[] = "fix-";
+static const char MinSizeProperty[] = "min-";
+static const char MaxSizeProperty[] = "max-";
+
+static const char PixelUnit[] = "px";
 
 QCssAnalyzer::QCssAnalyzer() {
 }
@@ -54,7 +55,7 @@ QString QCssAnalyzer::apply(const QString &stylesheet, double ratio) const {
     // Fix pixel size
     if (ratio != 1) {
         QString res;
-        QString px(PixelSizeUnit);
+        QString px(PixelUnit);
         int i = 0;
         while (i < data.size()) {
             if (i >= data.size() - px.size() + 1) {

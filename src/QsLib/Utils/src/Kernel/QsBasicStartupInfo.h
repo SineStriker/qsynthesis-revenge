@@ -2,13 +2,7 @@
 #define QSBASICSTARTUPINFO_H
 
 #include <QString>
-
-#ifdef DISABLE_MYCOMMANDLINEPARSER
 #include <QCommandLineParser>
-using MyCommandLineParser = QCommandLineParser;
-#else
-#include "MyCommandLineParser.h"
-#endif
 
 #ifndef qIStup
 #define qIStup QsBasicStartupInfo::instance()
@@ -24,7 +18,7 @@ public:
     virtual ~QsBasicStartupInfo();
 
     /* Properties can be append in each app's constructor */
-    MyCommandLineParser parser;
+    QCommandLineParser parser;
 
     /* Properties setup in main functions */
     QString appName;
