@@ -1,6 +1,6 @@
 #include "QTypeFace.h"
-#include "QMetaTypeUtils.h"
 #include "ViewHelper.h"
+#include "private/QMetaTypeUtils.h"
 
 #include <QApplication>
 

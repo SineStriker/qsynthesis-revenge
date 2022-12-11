@@ -26,8 +26,6 @@ namespace QEventImpl {
         bool c;
     };
 
-    void Register();
-
 } // namespace QEventImpl
 
 #endif // EVENTS_H

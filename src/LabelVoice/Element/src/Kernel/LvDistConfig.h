@@ -22,7 +22,7 @@ public:
     ~LvDistConfig();
 
     enum ExtendedPlugins {
-        TemplateGenerator,
+        LvProjTemplate,
     };
 
 protected:

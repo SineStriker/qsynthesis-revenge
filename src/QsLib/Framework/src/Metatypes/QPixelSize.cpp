@@ -1,5 +1,5 @@
 #include "QPixelSize.h"
-#include "QMetaTypeUtils.h"
+#include "private/QMetaTypeUtils.h"
 
 QPixelSize::QPixelSize() : m_value(0) {
 }

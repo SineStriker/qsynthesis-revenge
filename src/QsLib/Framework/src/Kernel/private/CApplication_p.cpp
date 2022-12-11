@@ -1,10 +1,10 @@
 #include "CApplication_p.h"
-#include "QMetaTypeImpl.h"
 
 #include "Kernel/QsBasicStartupInfo.h"
 #include "SystemHelper.h"
 
 #include "Kernel/QsNamespace.h"
+#include "private/QMetaTypeImpl_p.h"
 
 #ifdef Q_OS_WINDOWS
 #include <Windows.h>
@@ -46,7 +46,7 @@ void CApplicationPrivate::init() {
     // Maybe no return
     // ...
 
-    QMetaTypeImpl::Register();
+    Register_QMetaTypeImpl();
 
     // Complete other registration
     qIStup->initAll();

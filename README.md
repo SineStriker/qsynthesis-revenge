@@ -1,4 +1,4 @@
-# QSynthesis Toolset
+# Chorus Kit
 
 ## Intro
 
@@ -78,14 +78,9 @@ See [Related Tools](./docs/related-tools.md) for dependencies for each plugin.
 
 + Sine Striker
 + [Arabaku](https://github.com/Arabaku)
++ RigoLigoRLC
 
 Welcome to commit pull requests.
-
-### Instructions
-
-+ For Qt/C++ beginners, see [Setup Environment](./docs/setup-env.md) for instructions.
-
-+ Go `docs/dev` for development information.
 
 ## License
 

@@ -1,5 +1,5 @@
 #include "QSvgUri.h"
-#include "QMetaTypeUtils.h"
+#include "private/QMetaTypeUtils.h"
 
 #include "private/CSvgIconEngine.h"
 

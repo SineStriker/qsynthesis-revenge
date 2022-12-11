@@ -1,5 +1,5 @@
 #include "QDataUri.h"
-#include "QMetaTypeUtils.h"
+#include "private/QMetaTypeUtils.h"
 
 QDataUri::QDataUri() {
 }

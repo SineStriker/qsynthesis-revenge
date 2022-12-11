@@ -22,7 +22,8 @@ public:
     ~QUtaDistConfig();
 
     enum ExtendedPlugins {
-        TemplateGenerator,
+        OtoPlugin,
+        UtaPlugin,
     };
 
 protected:

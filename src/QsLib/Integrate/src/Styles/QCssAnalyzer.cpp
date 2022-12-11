@@ -1,5 +1,5 @@
 #include "QCssAnalyzer.h"
-#include "QMetaTypeUtils.h"
+#include "private/QMetaTypeUtils.h"
 
 #include <QDebug>
 #include <QtMath>

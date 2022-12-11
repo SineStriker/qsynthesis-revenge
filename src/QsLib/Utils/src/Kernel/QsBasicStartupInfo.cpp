@@ -3,16 +3,11 @@
 #include <QCoreApplication>
 #include <QMetaType>
 
-#include "QsNamespace.h"
+#include "private/QsNamespace_p.h"
 
 Q_SINGLETON_DECLARE(QsBasicStartupInfo)
 
 static bool hasInit = false;
-
-static void registerQsNamespace() {
-    qRegisterMetaType<Qs::Direction>("Qs::Direction");
-    qRegisterMetaType<Qs::Priority>("Qs::Priority");
-}
 
 QsBasicStartupInfo::QsBasicStartupInfo() {
     construct();
@@ -23,7 +18,7 @@ QsBasicStartupInfo::QsBasicStartupInfo() {
     parser.addHelpOption();
     parser.addVersionOption();
 
-    addInitializer(registerQsNamespace);
+    addInitializer(Register_QsNamespace);
 }
 
 QsBasicStartupInfo::~QsBasicStartupInfo() {

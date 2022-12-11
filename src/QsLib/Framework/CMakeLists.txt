@@ -28,8 +28,6 @@ target_include_directories(${PROJECT_NAME} PUBLIC
     src/Helpers
     src/Kernel
     src/Metatypes
-    src/Metatypes/Core
-    src/Metatypes/User
     src/Visual
 )
 

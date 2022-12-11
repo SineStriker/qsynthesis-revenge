@@ -1,6 +1,6 @@
 #include "QTypeList.h"
-#include "QMetaTypeUtils.h"
 #include "QPixelSize.h"
+#include "private/QMetaTypeUtils.h"
 
 #include "ViewHelper.h"
 

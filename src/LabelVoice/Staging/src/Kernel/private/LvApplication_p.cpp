@@ -1,6 +1,6 @@
 #include "LvApplication_p.h"
 
-#include "Kernel/Events.h"
+#include "Events_p.h"
 
 #include "SystemHelper.h"
 #include "ViewHelper.h"
@@ -17,7 +17,7 @@ void LvApplicationPrivate::init() {
     Q_Q(LvApplication);
 
     // Register user types
-    QEventImpl::Register();
+    Register_Events();
 
     windowMgr = new WindowManager(q);
 

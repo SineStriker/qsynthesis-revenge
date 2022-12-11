@@ -1,5 +1,5 @@
 #include "QLineStyle.h"
-#include "QMetaTypeUtils.h"
+#include "private/QMetaTypeUtils.h"
 
 #include "ViewHelper.h"
 

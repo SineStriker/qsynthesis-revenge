@@ -1,5 +1,5 @@
 #include "QRectStyle.h"
-#include "QMetaTypeUtils.h"
+#include "private/QMetaTypeUtils.h"
 
 #include <QDebug>
 
