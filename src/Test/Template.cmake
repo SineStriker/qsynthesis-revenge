@@ -56,7 +56,7 @@ macro(add_test_target _target)
     set(CMAKE_AUTOMOC ON)
     set(CMAKE_AUTORCC ON)
 
-    set(CMAKE_CXX_STANDARD ${CXX_STANDARD})
+    set(CMAKE_CXX_STANDARD ${_cxx_standard})
     set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
     add_qt_module(_qt_libs ${FUNC_QT_LIBRARIES})
