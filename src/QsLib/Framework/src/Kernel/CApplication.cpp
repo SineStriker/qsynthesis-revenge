@@ -2,7 +2,7 @@
 
 #include "private/CApplication_p.h"
 
-#include "Kernel/MyStartupInfo.h"
+#include "Kernel/QsBasicStartupInfo.h"
 
 #include <QDateTime>
 #include <QMouseEvent>

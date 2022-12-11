@@ -6,19 +6,14 @@
 
 #include <QDebug>
 
+static bool hasInit = false;
+
 Q_SINGLETON_DECLARE(QsDistConfig)
 
 QsDistConfig::QsDistConfig() : QsDistConfig(*new QsDistConfigPrivate()) {
 }
 
 QsDistConfig::~QsDistConfig() {
-}
-
-void QsDistConfig::initAll() {
-    Q_D(QsDistConfig);
-    for (auto it = d->initializers.begin(); it != d->initializers.end(); ++it) {
-        (*it)();
-    }
 }
 
 bool QsDistConfig::load(const QString &filename) {
@@ -30,9 +25,14 @@ bool QsDistConfig::load(const QString &filename) {
         res = false;
     }
     if (qIStup->parser.isSet("reset-config")) {
-         d->save_default(filename);
+        d->save_default(filename);
     }
     return res;
+}
+
+bool QsDistConfig::apply() {
+    Q_D(QsDistConfig);
+    return d->apply_helper();
 }
 
 QString QsDistConfig::appDir(QsDistConfig::DirType type) const {
@@ -66,7 +66,14 @@ QsDistConfig::QsDistConfig(QsDistConfigPrivate &d) : d_ptr(&d) {
     d.init();
 }
 
-bool QsDistConfig::apply() {
+void QsDistConfig::initAll() {
+    if (hasInit) {
+        return;
+    }
+    hasInit = true;
+
     Q_D(QsDistConfig);
-    return d->apply_helper();
+    for (const auto &fun : qAsConst(d->initializers)) {
+        fun();
+    }
 }

@@ -9,8 +9,6 @@ namespace Qs {
 
     enum Priority { Primary, Secondary };
 
-    QSUTILS_API void Register();
-
 }; // namespace Qs
 
 #endif // QSNAMESPACE_H

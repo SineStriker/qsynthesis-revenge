@@ -1,7 +1,7 @@
 #include "CApplication_p.h"
 #include "QMetaTypeImpl.h"
 
-#include "Kernel/MyStartupInfo.h"
+#include "Kernel/QsBasicStartupInfo.h"
 #include "SystemHelper.h"
 
 #include "Kernel/QsNamespace.h"
@@ -47,7 +47,9 @@ void CApplicationPrivate::init() {
     // ...
 
     QMetaTypeImpl::Register();
-    Qs::Register();
+
+    // Complete other registration
+    qIStup->initAll();
 
     ll = new LocalLinguist(q);
     ld = new LocalDecorator(q);

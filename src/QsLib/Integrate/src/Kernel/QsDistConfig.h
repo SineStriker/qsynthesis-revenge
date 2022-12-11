@@ -33,8 +33,6 @@ public:
     QsDistConfig();
     virtual ~QsDistConfig();
 
-    void initAll();
-
     virtual bool load(const QString &filename);
     virtual bool apply();
 
@@ -69,6 +67,9 @@ protected:
     QsDistConfig(QsDistConfigPrivate &d);
 
     QScopedPointer<QsDistConfigPrivate> d_ptr;
+
+public:
+    void initAll(); // Call by QsApplication at constructor, don't call manually
 };
 
 #endif // QSDISTCONFIG_H

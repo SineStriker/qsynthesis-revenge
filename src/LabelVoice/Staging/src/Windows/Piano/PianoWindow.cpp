@@ -40,6 +40,7 @@ bool PianoWindow::load() {
                                                 d->filename);
         return false;
     }
+
     QsFileManager::instance()->commitRecent(QsFileManager::Project, QsFileManager::Advance,
                                             d->filename);
 

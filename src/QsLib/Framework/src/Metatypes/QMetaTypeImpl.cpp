@@ -113,7 +113,9 @@ QStringList QMetaTypeImpl::TypeListToStringList(const QTypeList &types) {
 }
 
 void QMetaTypeImpl::Register() {
-    Q_ASSERT(!isRegistered);
+    if (isRegistered) {
+        return;
+    }
     isRegistered = true;
 
     QMetaType::registerConverter<QStringList, QMargins>(StringListToMargins);

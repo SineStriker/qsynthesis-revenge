@@ -65,7 +65,7 @@ namespace QMetaTypeImpl {
 
     QSFRAMEWORK_API QStringList TypeListToStringList(const QTypeList &types);
 
-    QSFRAMEWORK_API void Register();
+    QSFRAMEWORK_API void Register(); // Called by CApplication at constructor, don't call manually
 
 }; // namespace QMetaTypeImpl
 
