@@ -103,21 +103,18 @@ bool FFmpegDecoderPrivate::initDecoder() {
         _arguments.SampleRate = codec_ctx->sample_rate;
         qDebug() << QString("FFmpeg: Set default sample rate as %1")
                         .arg(QString::number(_arguments.SampleRate));
-        return false;
     }
 
     if (_arguments.SampleFormat < 0) {
         _arguments.SampleFormat = codec_ctx->sample_fmt;
         qDebug() << QString("FFmpeg: Set default sample format as %1")
                         .arg(QString(av_get_sample_fmt_name(_arguments.SampleFormat)));
-        return false;
     }
 
     if (_arguments.Channels < 0) {
         _arguments.Channels = srcChannels > 2 ? 2 : srcChannels;
         qDebug() << QString("FFmpeg: Set default channels as %1")
                         .arg(QString::number(_arguments.Channels));
-        return false;
     }
 
     if (_arguments.Channels > 2) {
