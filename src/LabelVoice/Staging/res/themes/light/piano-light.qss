@@ -206,12 +206,16 @@ QWidget#explorer-slices-widget>QLineEdit#slices-search-box {
 #speakers-tree {
     border: none;
     background-color: transparent;
+    show-decoration-selected: 1 ;
     qproperty-styleData: qvariants(/* styleData */
+    40px, /* lineHeight */
+    3px, /* lineRoundEdge */
     20px, /* langTagHeight */
     qtypeface(black, 14px), /* itemTextType */
     qtypeface(white, 12px), /* langTextType */
     qmargins(6, 4, 6, 4), /* langTagMargins */
-    qmargins(11, 6, 11, 8), /* margins */
+    qmargins(11, 6, 8, 11), /* contentMargins */
+    qmargins(5, 3, 5, 3), /* margins */
     qcolors(rgba(0, 0, 0, 0.05)), /* selectedColor */
     );
 }

@@ -80,10 +80,13 @@ void VSpkTreeWidget::dropEvent(QDropEvent *event) {
 void VSpkTreeWidget::setStyleData(const QTypeList &list) {
     if (list.size() >= 6) {
         int i = 0;
+        DECODE_STYLE(m_delegate->m_lineHeight, list.at(i++), QPixelSize);
+        DECODE_STYLE(m_delegate->m_lineRoundEdge, list.at(i++), QPixelSize);
         DECODE_STYLE(m_delegate->m_langTagHeight, list.at(i++), QPixelSize);
         DECODE_STYLE(m_delegate->m_itemTextType, list.at(i++), QTypeFace);
         DECODE_STYLE(m_delegate->m_langTextType, list.at(i++), QTypeFace);
         DECODE_STYLE(m_delegate->m_langTagMargins, list.at(i++), QMargins);
+        DECODE_STYLE(m_delegate->m_contentMargins, list.at(i++), QMargins);
         DECODE_STYLE(m_delegate->m_margins, list.at(i++), QMargins);
         DECODE_STYLE(m_delegate->m_colors, list.at(i++), QColorList);
 
@@ -94,10 +97,13 @@ void VSpkTreeWidget::setStyleData(const QTypeList &list) {
 
 QTypeList VSpkTreeWidget::styleData() const {
     return {
+        QVariant::fromValue(m_delegate->m_lineHeight),
+        QVariant::fromValue(m_delegate->m_lineRoundEdge),
         QVariant::fromValue(m_delegate->m_langTagHeight),
         QVariant::fromValue(m_delegate->m_itemTextType),
         QVariant::fromValue(m_delegate->m_langTextType),
         QVariant::fromValue(m_delegate->m_langTagMargins),
+        QVariant::fromValue(m_delegate->m_contentMargins),
         QVariant::fromValue(m_delegate->m_margins),
         QVariant::fromValue(m_delegate->m_colors),
     };

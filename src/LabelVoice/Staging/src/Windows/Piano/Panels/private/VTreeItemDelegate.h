@@ -26,12 +26,15 @@ public:
                const QModelIndex &index) const override;
 
 protected:
+    QPixelSize m_lineHeight;
+    QPixelSize m_lineRoundEdge;
     QPixelSize m_langTagHeight;
 
     QTypeFace m_itemTextType;
     QTypeFace m_langTextType;
 
     QMargins m_langTagMargins;
+    QMargins m_contentMargins;
     QMargins m_margins;
 
     QColorList m_colors;

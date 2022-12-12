@@ -17,43 +17,41 @@ VTreeItemDelegate::~VTreeItemDelegate() {
 
 QSize VTreeItemDelegate::sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const {
     QSize size = QStyledItemDelegate::sizeHint(option, index);
-
-    int langBoxHeight = m_langTagHeight.value() + m_langTagMargins.top() + m_langTagMargins.bottom();
-    int h = langBoxHeight + m_margins.top() + m_margins.bottom();
-    size.setHeight(h);
+    
+    size.setHeight(m_lineHeight.value());
 
     return size;
 }
 
 void VTreeItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option,
                               const QModelIndex &index) const {
-    QRect origRect = option.rect;
+    QRect bgRect = option.rect.adjusted(m_margins.left(), m_margins.top(), -m_margins.right(), -m_margins.bottom());
 
-    // painter->setPen(Qt::red);
-    // painter->drawRect(rect);
-    QRect rect = origRect.adjusted(m_margins.left(), m_margins.top(), -m_margins.right(), -m_margins.bottom());
-    // painter->setPen(Qt::green);
-    // painter->drawRect(rect);
+    QRect rect = bgRect.adjusted(m_contentMargins.left(), m_contentMargins.top(), -m_contentMargins.right(), -m_contentMargins.bottom());
 
     // Fetch data
     QString langText = index.data(VExplorerPanel::LVItem_LangName).toString();
 
     // Calculate size
-    QFont langTextFont = m_langTextType.font();
     QFont itemTextFont = m_itemTextType.font();
 
-    QFontMetrics langTextMetrics(langTextFont);
     QFontMetrics itemTextMetrics(itemTextFont);
 
-    int langTextWidth = langTextMetrics.horizontalAdvance(langText);
-    int langTagWidth = langTextWidth + m_langTagMargins.left() + m_langTagMargins.right();
-    int langTagHeight = m_langTagHeight.value();
-
+    // Only calculate language tag size when the item is assigned with a language short name
     QRect langTagRect;
-    langTagRect.setTop(rect.top() + (rect.height() - langTagHeight) / 2.0); // Center with `rect`
-    langTagRect.setLeft(rect.right() - langTagWidth); // Right aligned
-    langTagRect.setWidth(langTagWidth);
-    langTagRect.setHeight(langTagHeight);
+    QFont langTextFont = m_langTextType.font();
+    int langTagWidth = 0, langTagHeight = 0;
+    if(!langText.isEmpty()) {
+        QFontMetrics langTextMetrics(langTextFont);
+        int langTextWidth = langTextMetrics.horizontalAdvance(langText);
+        langTagWidth = langTextWidth + m_langTagMargins.left() + m_langTagMargins.right();
+        langTagHeight = m_langTagHeight.value();
+
+        langTagRect.setTop(rect.top() + (rect.height() - langTagHeight) / 2.0); // Center with `rect`
+        langTagRect.setLeft(rect.right() - langTagWidth); // Right aligned
+        langTagRect.setWidth(langTagWidth);
+        langTagRect.setHeight(langTagHeight);
+    }
 
     QRect textRect;
     textRect.setTop(rect.top());
@@ -66,22 +64,26 @@ void VTreeItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opt
     painter->setRenderHint(QPainter::Antialiasing);
 
     // Draw background for selected or expanded
-    if (option.state & (QStyle::State_Selected | QStyle::State_Open)) {
+    if (option.state & (QStyle::State_Selected)) {
         painter->setPen(Qt::NoPen);
         painter->setBrush(m_colors[0]);
-        painter->drawRoundedRect(origRect, 3, 3); // FIXME: use the custom style system
+        painter->drawRoundedRect(bgRect, m_lineRoundEdge.valueF(), m_lineRoundEdge.valueF());
     } 
 
     // Language Tag
-    painter->setBrush(index.data(VExplorerPanel::LVItem_LangColor).value<QColor>());
-    painter->drawRoundedRect(langTagRect, langTagHeight / 2.0, langTagHeight / 2.0);
+    if(!langText.isEmpty()) {
+        painter->setPen(Qt::NoPen);
+        painter->setBrush(index.data(VExplorerPanel::LVItem_LangColor).value<QColor>());
+        painter->drawRoundedRect(langTagRect, langTagHeight / 2.0, langTagHeight / 2.0);
 
-    painter->setPen(m_langTextType.color());
-    painter->setFont(langTextFont);
-    painter->drawText(langTagRect, Qt::AlignCenter, langText);
+        painter->setPen(m_langTextType.color());
+        painter->setFont(langTextFont);
+        painter->drawText(langTagRect, Qt::AlignCenter, langText);
+    }
     
     // Text
     painter->setPen(m_itemTextType.color());
+    painter->setBrush(Qt::NoBrush);
     painter->setFont(m_itemTextType.font());
     painter->drawText(textRect, Qt::AlignLeft | Qt::AlignVCenter, text);
 }
