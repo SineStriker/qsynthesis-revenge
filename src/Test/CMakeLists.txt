@@ -11,9 +11,10 @@ else()
 endif()
 
 if(NOT BUILD_SVS_PLUGINS_ONLY)
-    add_subdirectory(PlayWindow)
+#    add_subdirectory(PlayWindow)
     add_subdirectory(SpekTest)
     add_subdirectory(MrqTest)
+    add_subdirectory(MinLabel)
 
     # add_subdirectory(PipeTest)
     # add_subdirectory(DecodeTest)
