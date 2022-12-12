@@ -22,7 +22,7 @@ int main(int argc, char *argv[]) {
 #elif Q_OS_LINUX
         fputs(qPrintable(msg), stdout);
 #else
-        QMessageBox::warning(nullptr, title, msg, CApplication::tr("Confirm"));
+        QMessageBox::warning(nullptr, title, msg, QApplication::tr("Confirm"));
 #endif
         return 0;
     }
