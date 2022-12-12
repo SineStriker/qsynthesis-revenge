@@ -39,3 +39,16 @@ QSlider::sub-page:horizontal {
 QSlider::sub-page:vertical {
     background: #005A9E;
 }
+
+QPushButton[type=user] {
+    padding: 5px;
+}
+
+QLineEdit {
+    padding: 5px;
+}
+
+QPlainTextEdit {
+    background-color: white;
+    padding: 5px;
+}

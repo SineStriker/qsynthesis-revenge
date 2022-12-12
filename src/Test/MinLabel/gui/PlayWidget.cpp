@@ -40,13 +40,18 @@ PlayWidget::PlayWidget(QWidget *parent) : QWidget(parent) {
     slider->setRange(0, 10000);
 
     playButton = new QPushButton();
+    playButton->setProperty("type", "user");
     playButton->setObjectName("play-button");
 
     stopButton = new QPushButton();
+    stopButton->setProperty("type", "user");
     stopButton->setObjectName("stop-button");
+    stopButton->setIcon(QIcon(":/res/stop.svg"));
 
     devButton = new QPushButton();
+    devButton->setProperty("type", "user");
     devButton->setObjectName("dev-button");
+    devButton->setIcon(QIcon(":/res/audio.svg"));
 
     buttonsLayout = new QHBoxLayout();
     buttonsLayout->addWidget(playButton);
@@ -75,8 +80,6 @@ PlayWidget::PlayWidget(QWidget *parent) : QWidget(parent) {
 
     reloadDevices();
     reloadButtonStatus();
-    stopButton->setIcon(QIcon(":/res/stop.svg"));
-    devButton->setIcon(QIcon(":/res/audio.svg"));
 }
 
 PlayWidget::~PlayWidget() {
@@ -102,7 +105,7 @@ void PlayWidget::openFile(const QString &filename) {
         return;
     }
 
-    fileLabel->setText(filename);
+    fileLabel->setText(QDir::toNativeSeparators(filename));
     this->filename = filename;
 
     slider->setMinimum(0);

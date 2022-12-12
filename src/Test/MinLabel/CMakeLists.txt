@@ -5,7 +5,7 @@ add_files(_src
 )
 
 add_test_target(MinLabel
-    VERSION 0.0.1.2
+    VERSION 0.0.1.3
     SOURCES ${_src} res.qrc
     QT_LIBRARIES Widgets
     LINKS QsMedia

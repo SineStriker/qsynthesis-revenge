@@ -147,7 +147,7 @@ void MainWindow::openFile(const QString &filename) {
         content = QString::fromUtf8(file.readAll());
     }
 
-    textWidget->setText(content);
+    textWidget->contentText->setPlainText(content);
 
     playerWidget->openFile(filename);
 }
@@ -155,7 +155,7 @@ void MainWindow::openFile(const QString &filename) {
 void MainWindow::saveFile(const QString &filename) {
     QString labFile = audioFileToLabFile(filename);
 
-    QString content = textWidget->text();
+    QString content = textWidget->contentText->toPlainText();
     if (content.isEmpty()) {
         return;
     }
@@ -288,6 +288,7 @@ void MainWindow::_q_treeCurrentChanged(const QModelIndex &current, const QModelI
             saveFile(lastFile);
         }
         lastFile = info.absoluteFilePath();
+        textWidget->wordsText->clear();
         openFile(lastFile);
     }
 }

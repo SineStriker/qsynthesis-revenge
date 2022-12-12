@@ -1,6 +1,7 @@
 #ifndef TEXTWIDGET_H
 #define TEXTWIDGET_H
 
+#include <QAction>
 #include <QLineEdit>
 #include <QPlainTextEdit>
 #include <QProcess>
@@ -14,16 +15,17 @@ public:
     explicit TextWidget(QWidget *parent = nullptr);
     ~TextWidget();
 
-    void setText(const QString &text);
-    QString text() const;
-
-protected:
     QLineEdit *wordsText;
     QPlainTextEdit *contentText;
 
+protected:
     QPushButton *replaceButton;
     QPushButton *appendButton;
+    QPushButton *pasteButton;
 
+    QAction *replaceAction;
+
+    QHBoxLayout *lineLayout;
     QHBoxLayout *buttonsLayout;
     QVBoxLayout *mainLayout;
 
@@ -48,6 +50,7 @@ private:
     void handleReadOutput();
     void handleReadError();
 
+    void _q_pasteButtonClicked();
     void _q_replaceButtonClicked();
     void _q_appendButtonClicked();
 

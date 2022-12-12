@@ -5,5 +5,6 @@
         <file>res/stop.svg</file>
         <file>res/app.qss</file>
         <file>res/audio.svg</file>
+        <file>res/clipboard.svg</file>
     </qresource>
 </RCC>

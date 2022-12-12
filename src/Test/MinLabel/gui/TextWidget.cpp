@@ -1,6 +1,7 @@
 #include "TextWidget.h"
 
 #include <QApplication>
+#include <QClipboard>
 #include <QDebug>
 #include <QMessageBox>
 
@@ -12,10 +13,28 @@ TextWidget::TextWidget(QWidget *parent) : QWidget(parent) {
 
     wordsText = new QLineEdit();
     wordsText->setPlaceholderText("Enter mandarin here...");
+
+    pasteButton = new QPushButton();
+    pasteButton->setProperty("type", "user");
+    pasteButton->setObjectName("paste-button");
+    pasteButton->setIcon(QIcon(":/res/clipboard.svg"));
+
+    lineLayout = new QHBoxLayout();
+    lineLayout->setMargin(0);
+    lineLayout->addWidget(wordsText);
+    lineLayout->addWidget(pasteButton);
+
     contentText = new QPlainTextEdit();
 
     replaceButton = new QPushButton("Replace");
+    replaceButton->setProperty("type", "user");
+
+    replaceAction = new QAction();
+    replaceAction->setShortcuts({QKeySequence(Qt::Key_Enter), QKeySequence(Qt::Key_Return)});
+    replaceButton->addAction(replaceAction);
+
     appendButton = new QPushButton("Append");
+    appendButton->setProperty("type", "user");
 
     buttonsLayout = new QHBoxLayout();
     buttonsLayout->setMargin(0);
@@ -23,14 +42,17 @@ TextWidget::TextWidget(QWidget *parent) : QWidget(parent) {
     buttonsLayout->addWidget(appendButton);
 
     mainLayout = new QVBoxLayout();
-    mainLayout->addWidget(wordsText);
+    mainLayout->addLayout(lineLayout);
     mainLayout->addLayout(buttonsLayout);
     mainLayout->addWidget(contentText);
 
     setLayout(mainLayout);
 
+    connect(pasteButton, &QPushButton::clicked, this, &TextWidget::_q_pasteButtonClicked);
     connect(replaceButton, &QPushButton::clicked, this, &TextWidget::_q_replaceButtonClicked);
     connect(appendButton, &QPushButton::clicked, this, &TextWidget::_q_appendButtonClicked);
+
+    connect(replaceAction, &QAction::triggered, this, &TextWidget::_q_replaceButtonClicked);
 
     // Init pinyin helper
     pinyin = new QProcess(this);
@@ -47,14 +69,6 @@ TextWidget::TextWidget(QWidget *parent) : QWidget(parent) {
 TextWidget::~TextWidget() {
     finished = true;
     terminateTool();
-}
-
-void TextWidget::setText(const QString &text) {
-    contentText->setPlainText(text);
-}
-
-QString TextWidget::text() const {
-    return contentText->toPlainText();
 }
 
 void TextWidget::startTool() {
@@ -109,6 +123,14 @@ void TextWidget::handleReadOutput() {
 }
 
 void TextWidget::handleReadError() {
+}
+
+void TextWidget::_q_pasteButtonClicked() {
+    auto board = QApplication::clipboard();
+    QString text = board->text();
+    if (!text.isEmpty()) {
+        wordsText->setText(text);
+    }
 }
 
 void TextWidget::_q_replaceButtonClicked() {
