@@ -78,9 +78,9 @@ protected:
 
         // HALT flag. If the flag is present when entering the render thread main loop,
         // means the thread has not finished previously assigned task (it has been halted)
-        RENDER_HALT_CURRENT = 1 << 31
     };
-    int mRenderRoutineCommand;
+    std::atomic_int mRenderRoutineCommand;
+    volatile int mRenderRoutineHaltFlag;
 
     std::condition_variable mRenderRoutineNotifyCond;
     std::mutex mRenderRoutineNotifyMutex;

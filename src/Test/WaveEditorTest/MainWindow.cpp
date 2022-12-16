@@ -33,7 +33,7 @@ MainWindow::MainWindow(QWidget *parent)
 
 MainWindow::~MainWindow()
 {
-    mRenderRoutineCommand = RENDER_HALT_CURRENT | RENDER_THREAD_EXIT;
+    mRenderRoutineCommand = RENDER_THREAD_EXIT;
     mRenderRoutineNotifyCond.notify_all();
     if (mRenderThread) {
         mRenderThread->join();
@@ -53,7 +53,8 @@ void MainWindow::SetAudio(const QString &filename)
 
     qInfo() << "Samples: " << decoder->Length();
 
-    mRenderRoutineCommand = RENDER_COARSE_PKPK | RENDER_HALT_CURRENT;
+    mRenderRoutineCommand = RENDER_COARSE_PKPK;
+    mRenderRoutineHaltFlag = 1;
     mRenderRoutineNotifyCond.notify_all();
 }
 
@@ -67,13 +68,13 @@ void MainWindow::renderRoutine()
         // When there's HALT flag, means the loop isn't returning in a clean state
         // (i.e. previous command wasn't finished, otherwise halt flag is cleared)
         // so we have to skip the wait
-        if(!(mRenderRoutineCommand & RENDER_HALT_CURRENT)) {
+        if(!mRenderRoutineHaltFlag) {
             std::unique_lock<std::mutex> uniqueLock(mRenderRoutineNotifyMutex);
             mRenderRoutineNotifyCond.wait(uniqueLock);
         }
 
         // Clear halt flag
-        mRenderRoutineCommand &= ~RENDER_HALT_CURRENT;
+        mRenderRoutineHaltFlag = 0;
 
         switch(mRenderRoutineCommand) {
             case RENDER_COARSE_PKPK:
@@ -91,18 +92,7 @@ void MainWindow::renderRoutine()
                 double accumReadTime = 0.0, accumProcessTime = 0.0;
 
                 do {
-                    std::cerr << std::fixed << std::setprecision(9) << std::left;
-                    // std::cerr << "Pass " << pass++ << '\n';
-                    auto start = std::chrono::high_resolution_clock::now();
-                    std::chrono::duration<double> diff;
-
                     read = decoder->Read(buffer, 0, 100);
-
-                    auto end = std::chrono::high_resolution_clock::now();
-                    diff = end - start;
-                    // std::cerr << "        Read time: " << diff.count() << "s\n";
-                    accumReadTime += diff.count();
-                    start = end;
 
                     saMin = saMax = 0.0f;
                     for(int i = 0; i < read; i += 1) {
@@ -113,23 +103,14 @@ void MainWindow::renderRoutine()
                     }
                     mCoarsePkpk.push_back({saMax, saMin});
 
-                    end = std::chrono::high_resolution_clock::now();
-                    diff = end - start;
-                    // std::cerr << std::setw(9) << "        Process time: " << diff.count() << "ms\n";
-                    accumProcessTime += diff.count();
-
-                    if(mRenderRoutineCommand & RENDER_HALT_CURRENT) {
+                    if(mRenderRoutineHaltFlag) {
                         delete[] buffer;
                         goto Exit_Switch;
                     }
                 } while (read > 0);
 
-                std::cerr << "Total pass count: " << pass   << '\n';
-                std::cerr << "Read time: " << accumReadTime << "s\n";
-                std::cerr << "Process time: " << accumProcessTime << "s\n";
-
                 delete[] buffer;
-                mRenderRoutineCommand &= ~RENDER_HALT_CURRENT;
+                mRenderRoutineHaltFlag = 0;
                 emit renderRoutineFinishSignal();
                 break;
             }
@@ -162,7 +143,7 @@ void MainWindow::renderRoutine()
                     }
                     painter.drawLine(i, 150 - saMax * 150, i, 150 - saMin * 150);
 
-                    if(mRenderRoutineCommand & RENDER_HALT_CURRENT) {
+                    if(mRenderRoutineHaltFlag) {
                         delete[] buffer;
                         goto Exit_Switch;
                     }
@@ -171,14 +152,13 @@ void MainWindow::renderRoutine()
 
                 delete[] buffer;
                 mOverviewThumbnail = pixmap;
-                mRenderRoutineCommand &= ~RENDER_HALT_CURRENT;
+                mRenderRoutineHaltFlag = 0;
                 emit renderRoutineFinishSignal();
                 break;
             }
             case RENDER_VISIBLE_WAVEFORM:
             case RENDER_CACHE_WAVEFORM:
             case RENDER_WAVEFORM_DIRECT:
-            case RENDER_HALT_CURRENT:
             case RENDER_IDLE:
                 break;
 
@@ -203,7 +183,7 @@ void MainWindow::renderRoutineBackwardNotify() {
             mOverviewThumbnailItem.setPixmap(mOverviewThumbnail);
             mView->resize(mOverviewThumbnail.width(), mOverviewThumbnail.height());
             mView->setSceneRect(mOverviewThumbnail.rect());
-            this->resize(mOverviewThumbnail.width(), mOverviewThumbnail.height());
+            this->resize(mOverviewThumbnail.width() + 2, mOverviewThumbnail.height() + 2);
             qInfo() << "Overview thumbnail rendered";
             break;
     }
@@ -223,9 +203,9 @@ void MainWindow::resizeEvent(QResizeEvent *event)
 void MainWindow::initPlugins()
 {
 #ifdef Q_OS_LINUX
-    decoderLoader.setFileName("resources/modules/audiodecoders/libFFmpegDecoder");
+    decoderLoader.setFileName("audiodecoders/libFFmpegDecoder");
 #else
-    decoderLoader.setFileName("resources/modules/audiodecoders/FFmpegDecoder");
+    decoderLoader.setFileName("audiodecoders/FFmpegDecoder");
 #endif
 
     decoder = qobject_cast<IAudioDecoder *>(decoderLoader.instance());
