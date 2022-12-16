@@ -14,6 +14,8 @@ if(NOT BUILD_SVS_PLUGINS_ONLY)
     add_subdirectory(PlayWindow)
     add_subdirectory(SpekTest)
     add_subdirectory(MrqTest)
+    add_subdirectory(WaveEditorTest)
+    add_subdirectory(ReadAudioBenchmark)
 
     # add_subdirectory(PipeTest)
     # add_subdirectory(DecodeTest)
