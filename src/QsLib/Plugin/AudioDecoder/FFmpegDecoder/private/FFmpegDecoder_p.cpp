@@ -25,6 +25,7 @@ void FFmpegDecoderPrivate::clear() {
     _pos = 0;
     _audioIndex = -1;
     _remainSamples = 0;
+    _cachedBufferPos = 0;
 
     _cachedBuffer.clear();
 }
@@ -237,7 +238,17 @@ int FFmpegDecoderPrivate::decode(char *buf, int size) {
         _remainSamples = 0;
     }
 
-    while (_cachedBuffer.size() < (size_t) size) {
+    size_t bufferWriteOffset = 0;
+
+    // 采取边解码边写到输出缓冲区的方式。策略是先把cache全部写出，然后边解码边写，写到最后剩下的再存入cache
+    auto cacheTransferSize = std::min(int(_cachedBuffer.size()) - _cachedBufferPos, size);
+    if(cacheTransferSize > 0) {
+        ::memcpy(buf, _cachedBuffer.data() + _cachedBufferPos, cacheTransferSize);
+        _cachedBufferPos += cacheTransferSize;
+        bufferWriteOffset = cacheTransferSize;
+    }
+
+    while (bufferWriteOffset < size) {
         int ret = av_read_frame(fmt_ctx, pkt);
 
         // 判断是否结束
@@ -313,13 +324,21 @@ int FFmpegDecoderPrivate::decode(char *buf, int size) {
                                                             remained, _arguments.SampleFormat, 1);
 
                 auto arr = resampled_frame->data[0];
-                for (int i = 0; i < sz; ++i) {
-                    if (skip > 0) {
-                        skip--;
-                        continue;
-                    }
+                
+                // 写到输出缓冲区，写满了就存入cache
+                if (bufferWriteOffset + sz - skip > size) {
+                    // 写输出缓冲区
+                    ::memcpy(buf + bufferWriteOffset, arr + skip, size - bufferWriteOffset);
 
-                    _cachedBuffer.push_back(arr[i]);
+                    // 存入cache
+                    _cachedBuffer.resize(sz - skip - (size - bufferWriteOffset));
+                    ::memcpy(_cachedBuffer.data(), arr + skip + (size - bufferWriteOffset), sz - skip - (size - bufferWriteOffset));
+                    _cachedBufferPos = 0;
+
+                    bufferWriteOffset = size;
+                } else {
+                    ::memcpy(buf + bufferWriteOffset, arr + skip, sz - skip);
+                    bufferWriteOffset += sz - skip;
                 }
             } else {
                 // 忽略
@@ -353,18 +372,8 @@ int FFmpegDecoderPrivate::decode(char *buf, int size) {
         }
     }
 
-    int cnt = 0;
-    while (!_cachedBuffer.empty() && cnt < size) {
-        if (buf) {
-            *((char *) buf + cnt) = _cachedBuffer.front();
-        }
-
-        _cachedBuffer.pop_front();
-        cnt++;
-    }
-
     av_channel_layout_uninit(&out_ch_layout);
-    return cnt;
+    return bufferWriteOffset;
 }
 
 void FFmpegDecoderPrivate::seek() {

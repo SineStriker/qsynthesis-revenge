@@ -10,6 +10,7 @@ extern "C" {
 #include "../FFmpegDecoder.h"
 
 #include <mutex>
+#include <vector>
 
 class FFmpegDecoderPrivate {
     Q_DECLARE_PUBLIC(FFmpegDecoder);
@@ -87,7 +88,9 @@ public:
     AVChannelLayout _channelLayout; // 输出声道布局
 
     // 类内数据结构
-    std::list<char> _cachedBuffer; // 内部缓冲区
+    std::vector<char> _cachedBuffer; // 内部缓冲区
+
+    int _cachedBufferPos; // 内部缓冲区读取位置
 
     int _remainSamples; // 重采样器余量
 
