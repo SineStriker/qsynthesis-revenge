@@ -86,7 +86,11 @@ void TextWidget::terminateTool() {
 }
 
 void TextWidget::enterSentence() {
-    QByteArray data = wordsText->text().toUtf8() + "\n";
+    QString words = wordsText->text();
+    words.replace("\r\n", " ");
+    words.replace("\n", " ");
+
+    QByteArray data = words.toUtf8() + "\n";
     pinyin->write(data);
     pinyin->waitForBytesWritten();
 }

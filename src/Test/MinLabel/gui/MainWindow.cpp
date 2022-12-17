@@ -25,8 +25,9 @@
 static QString audioFileToLabFile(const QString &filename) {
     QFileInfo info(filename);
     QString suffix = info.suffix().toLower();
-    return info.absolutePath() + "/" + info.baseName() + (suffix != "wav" ? "_" + suffix : "") +
-           ".lab";
+    QString name = info.fileName();
+    return info.absolutePath() + "/" + name.mid(0, name.size() - suffix.size() - 1) +
+           (suffix != "wav" ? "_" + suffix : "") + ".lab";
 }
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
@@ -156,7 +157,7 @@ void MainWindow::saveFile(const QString &filename) {
     QString labFile = audioFileToLabFile(filename);
 
     QString content = textWidget->contentText->toPlainText();
-    if (content.isEmpty()) {
+    if (content.isEmpty() && !Sys::isFileExist(labFile)) {
         return;
     }
 
