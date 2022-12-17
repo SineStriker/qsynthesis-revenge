@@ -79,9 +79,9 @@ public:
     WaveArguments _arguments;
 
     // 音频信息
-    long _length; // 不包括声道
+    qint64 _length; // 不包括声道
 
-    long _pos; // 不包括声道
+    qint64 _pos; // 不包括声道
 
     int _audioIndex; // 音频流序号
 

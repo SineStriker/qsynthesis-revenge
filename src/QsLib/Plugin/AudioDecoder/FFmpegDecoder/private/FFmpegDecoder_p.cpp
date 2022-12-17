@@ -94,7 +94,7 @@ bool FFmpegDecoderPrivate::initDecoder() {
     int srcChannels = codec_ctx->ch_layout.nb_channels;
 
     // 记录音频信息
-    _length = (stream->duration * (stream->time_base.num / (float) stream->time_base.den) *
+    _length = (stream->duration * (stream->time_base.num / (double) stream->time_base.den) *
                codec_ctx->sample_rate * srcBytesPerSample);
 
     _waveFormat = WaveFormat(codec_ctx->sample_rate, srcBytesPerSample * 8, srcChannels);
@@ -398,7 +398,7 @@ void FFmpegDecoderPrivate::seek() {
     avcodec_flush_buffers(codec_ctx);
 
     auto stream = fmt_ctx->streams[_audioIndex];
-    qint64 timestamp = _pos / (float) _length * stream->duration;
+    qint64 timestamp = _pos / (double) _length * stream->duration;
 
     int ret = av_seek_frame(fmt_ctx, _audioIndex, timestamp, AVSEEK_FLAG_FRAME);
     if (ret < 0) {
