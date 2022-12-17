@@ -19,7 +19,6 @@ int main(int argc, char *argv[])
     qApp->addLibraryPath(qApp->applicationDirPath() + "/" + TEST_APP_DIR + "/resources/plugins");
 
     MainWindow w;
-    w.SetAudio("D:/tmp/song.mp3");
     w.show();
 
     return a.exec();
