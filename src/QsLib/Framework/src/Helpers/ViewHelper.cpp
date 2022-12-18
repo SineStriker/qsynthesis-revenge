@@ -4,6 +4,7 @@
 #include <QDebug>
 #include <QDesktopWidget>
 #include <QPainter>
+#include <QScreen>
 #include <QSvgRenderer>
 #include <QWidget>
 
@@ -142,12 +143,15 @@ void View::waitToShow(QWidget *w) {
 }
 
 void View::centralizeWindow(QWidget *w, QSizeF ratio) {
-    QWidget *desktop = qApp->desktop();
+    QSize desktopSize;
     if (w->parentWidget()) {
-        desktop = w->parentWidget();
+        desktopSize = w->parentWidget()->size();
+    } else {
+        desktopSize = w->screen()->size();
     }
-    int dw = desktop->width();
-    int dh = desktop->height();
+
+    int dw = desktopSize.width();
+    int dh = desktopSize.height();
 
     double rw = ratio.width();
     double rh = ratio.height();
@@ -160,8 +164,7 @@ void View::centralizeWindow(QWidget *w, QSizeF ratio) {
         size.setHeight(dh * rh);
     }
 
-    w->setGeometry(desktop->x() + (dw - size.width()) / 2, desktop->y() + (dh - size.height()) / 2,
-                   size.width(), size.height());
+    w->setGeometry((dw - size.width()) / 2, (dh - size.height()) / 2, size.width(), size.height());
 }
 
 QStringList View::extractFunctionToStringList(const QString &str, bool *ok) {
