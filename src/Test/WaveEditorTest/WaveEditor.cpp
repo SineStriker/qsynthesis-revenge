@@ -150,6 +150,7 @@ void WaveEditor::renderRoutine()
 
                 int from = 0, to = 0;
                 painter.setPen(QPen(Qt::red, 1));
+                pixmap.fill(Qt::black);
                 for(int i = 0; i < width; i++) {
                     // Draw waveform from the coarse pkpk data
                     float saMax = 0.0f, saMin = 0.0f;

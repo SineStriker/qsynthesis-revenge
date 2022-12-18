@@ -78,6 +78,7 @@ void TimeAxisItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *opti
         m %= 60;
         s %= 60;
         ms %= 1000;
+        ms /= 10;
 
         painter->drawLine(left, 0.4 * h, left, h);
 
