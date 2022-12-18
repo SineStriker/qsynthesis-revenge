@@ -13,7 +13,7 @@ This project use Microsoft vcpkg to manage its dependencies, you should finish t
     + Edit `scripts/vcpkg/triplets/paths/path_qt.cmake`
     + Change the value of `_qt_dir` to your Qt Configuration path
 
-+ Run `python setup-vcpkg.py` at repository root path. The script simply pulls `vcpkg` from GitHub and run a series of `vcpkg install` commands.
++ Run `python setup-vcpkg.py` at repository root path. The script will simply pull `vcpkg` from GitHub and run a series of `vcpkg install` commands.
 
 + Use `git update-index --no-skip-worktree <file>`to untrack `path_qt.cmake` without deleting it。
 
