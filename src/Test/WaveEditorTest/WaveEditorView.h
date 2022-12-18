@@ -12,5 +12,8 @@ public:
     ~WaveEditorView();
 
 protected:
+    void resizeEvent(QResizeEvent *event) override;
 
+signals:
+    void Resized();
 };

@@ -21,6 +21,8 @@ WaveEditor::WaveEditor(QWidget *parent)
     mRenderRoutineCommand = RENDER_IDLE;
     
     mRenderThread = new std::thread(&WaveEditor::renderRoutine, this);
+
+    connect(mView, &WaveEditorView::Resized, this, &WaveEditor::WaveformViewResized);
 }
 
 WaveEditor::~WaveEditor()
@@ -34,6 +36,21 @@ WaveEditor::~WaveEditor()
     }
 
     uninitPlugins();
+}
+
+void WaveEditor::WaveformViewResized()
+{
+    // Get view size
+    auto viewSize = mView->viewport()->size();
+
+    // Stretch thumbnail item if view is larger than thumbnail
+    auto rectStretchThumbnail = mOverviewThumbnailItem.rect();
+    if(viewSize.width() > mOverviewThumbnail.width())
+        rectStretchThumbnail.setWidth(viewSize.width());
+
+    rectStretchThumbnail.setHeight(viewSize.height());
+
+    mOverviewThumbnailItem.setRect(rectStretchThumbnail);
 }
 
 void WaveEditor::SetAudio(const QString &filename)
@@ -173,7 +190,7 @@ void WaveEditor::renderRoutineBackwardNotify() {
 
         case RENDER_OVERVIEW_THUMBNAIL:
             mRenderRoutineCommand = RENDER_IDLE;
-            mOverviewThumbnailItem.setPixmap(mOverviewThumbnail);
+            mOverviewThumbnailItem.SetPixmap(mOverviewThumbnail);
             mView->resize(mOverviewThumbnail.width(), mOverviewThumbnail.height());
             mView->setSceneRect(mOverviewThumbnail.rect());
             qInfo() << "Overview thumbnail rendered";

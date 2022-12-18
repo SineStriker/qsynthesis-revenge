@@ -13,3 +13,8 @@ WaveEditorView::~WaveEditorView()
 {
 }
 
+void WaveEditorView::resizeEvent(QResizeEvent *event)
+{
+    QGraphicsView::resizeEvent(event);
+    emit Resized();
+}

@@ -9,6 +9,7 @@
 #include "Api/IAudioDecoder.h"
 #include "WaveEditorScene.h"
 #include "WaveEditorView.h"
+#include "StretchingPixmapItem.h"
 
 class WaveEditor : public QObject {
     Q_OBJECT
@@ -27,7 +28,15 @@ private:
     QPluginLoader decoderLoader;
     IAudioDecoder *decoder;
 
-    QGraphicsPixmapItem mOverviewThumbnailItem;
+    // There are multiple pixmap items that are displayed on the scene so let me introduce the
+    // designs here first.
+    // 1. Overview thumbnail. First rendered for entire audio and is always there as fallback.
+    // 2. Coarse waveform. Rendered when zoomed in enough and are cached in 0.5s slices.
+    //    Note that the thumbnail is still used when zoomed out.
+    //    This LOD level of waveform is cached in background once triggered the first render.
+    // 3. Fine waveform, Rendered when zoomed in further and samples are directly taken from decoder.
+    //    This one is only one single pixmap item and is not cached.
+    StretchingPixmapItem mOverviewThumbnailItem;
 
 // Waveform rendering related members
     // The min-max pairs in each 100 samples range
@@ -59,15 +68,15 @@ private:
         RENDER_WAVEFORM_DIRECT,
 
         RENDER_THREAD_EXIT,
-
-        // HALT flag. If the flag is present when entering the render thread main loop,
-        // means the thread has not finished previously assigned task (it has been halted)
     };
     std::atomic_int mRenderRoutineCommand;
+    // HALT flag. If the flag is present when entering the render thread main loop,
+    // means the thread has not finished previously assigned task (it has been halted)
     volatile int mRenderRoutineHaltFlag;
 
     std::condition_variable mRenderRoutineNotifyCond;
     std::mutex mRenderRoutineNotifyMutex;
+// End of waveform rendering related members
 
 // Waveform rendering routines
     void renderRoutine();
@@ -77,6 +86,10 @@ private slots:
 
 signals:
     void renderRoutineFinishSignal();
+// End of waveform rendering related members
+
+private slots:
+    void WaveformViewResized();
 
 private:
     void initPlugins();
