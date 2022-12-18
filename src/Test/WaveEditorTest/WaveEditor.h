@@ -10,6 +10,7 @@
 #include "WaveEditorScene.h"
 #include "WaveEditorView.h"
 #include "StretchingPixmapItem.h"
+#include "TimeAxisItem.h"
 
 class WaveEditor : public QObject {
     Q_OBJECT
@@ -28,6 +29,8 @@ private:
     QPluginLoader decoderLoader;
     IAudioDecoder *decoder;
 
+    uint64_t mSampleCount;
+
     // There are multiple pixmap items that are displayed on the scene so let me introduce the
     // designs here first.
     // 1. Overview thumbnail. First rendered for entire audio and is always there as fallback.
@@ -37,6 +40,8 @@ private:
     // 3. Fine waveform, Rendered when zoomed in further and samples are directly taken from decoder.
     //    This one is only one single pixmap item and is not cached.
     StretchingPixmapItem mOverviewThumbnailItem;
+
+    TimeAxisItem mTimeAxisItem;
 
 // Waveform rendering related members
     // The min-max pairs in each 100 samples range
@@ -87,6 +92,15 @@ private slots:
 signals:
     void renderRoutineFinishSignal();
 // End of waveform rendering related members
+
+public:
+    enum ItemZValue {
+        ZValue_OverviewThumbnail = 0,
+        ZValue_CoarseWaveform,
+        ZValue_FineWaveform,
+        ZValue_TimeAxis,
+        ZValue_Playhead,
+    };
 
 private slots:
     void WaveformViewResized();

@@ -7,7 +7,7 @@ MainWindow::MainWindow(QWidget *parent)
 {
     mWaveEditor = new WaveEditor(this);
     setCentralWidget(*mWaveEditor);
-    mWaveEditor->SetAudio("D:/tmp/song.wav");
+    mWaveEditor->SetAudio("D:/tmp/wave.wav");
 }
 
 MainWindow::~MainWindow()

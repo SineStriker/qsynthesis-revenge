@@ -9,11 +9,18 @@
 WaveEditor::WaveEditor(QWidget *parent)
     : QObject(parent)
 {
+    mSampleCount = 0;
+
     mScene = new WaveEditorScene(this);
     mView = new WaveEditorView(parent);
     mView->setScene(mScene);
     mScene->addItem(&mOverviewThumbnailItem);
+    mScene->addItem(&mTimeAxisItem);
+
     mOverviewThumbnailItem.setPos(0, 0);
+    mOverviewThumbnailItem.setZValue(ZValue_OverviewThumbnail);
+
+    mTimeAxisItem.setZValue(ZValue_TimeAxis);
 
     initPlugins();
 
@@ -51,17 +58,18 @@ void WaveEditor::WaveformViewResized()
     rectStretchThumbnail.setHeight(viewSize.height());
 
     mOverviewThumbnailItem.setRect(rectStretchThumbnail);
+    mTimeAxisItem.setRect(0, 0, rectStretchThumbnail.width(), 40);
+    mTimeAxisItem.SetThumbnailWidth(rectStretchThumbnail.width());
 }
 
 void WaveEditor::SetAudio(const QString &filename)
 {
     if (!decoder->open({{QsMedia::KEY_NAME_FILE_NAME, filename},
-                              {QsMedia::KEY_NAME_SAMPLE_FORMAT, QsMedia::AV_SAMPLE_FMT_FLT}})) {
+                              {QsMedia::KEY_NAME_SAMPLE_FORMAT, QsMedia::AV_SAMPLE_FMT_FLT},
+                              {QsMedia::KEY_NAME_CHANNELS, 1}})) {
         QMessageBox::critical(mView, qAppName(), "Failed to open audio file!");
         return;
     }
-
-    qInfo() << "Samples: " << decoder->Length();
 
     mRenderRoutineCommand = RENDER_COARSE_PKPK;
     mRenderRoutineHaltFlag = 1;
@@ -103,6 +111,7 @@ void WaveEditor::renderRoutine()
 
                 do {
                     read = decoder->Read(buffer, 0, 100);
+                    mSampleCount += read;
 
                     saMin = saMax = 0.0f;
                     for(int i = 0; i < read; i += 1) {
@@ -118,6 +127,7 @@ void WaveEditor::renderRoutine()
                         goto Exit_Switch;
                     }
                 } while (read > 0);
+                read++; // Last read returns -1
 
                 delete[] buffer;
                 mRenderRoutineHaltFlag = 0;
@@ -193,6 +203,9 @@ void WaveEditor::renderRoutineBackwardNotify() {
             mOverviewThumbnailItem.SetPixmap(mOverviewThumbnail);
             mView->resize(mOverviewThumbnail.width(), mOverviewThumbnail.height());
             mView->setSceneRect(mOverviewThumbnail.rect());
+
+            mTimeAxisItem.SetTimeScale(mSampleCount, decoder->outFormat().SampleRate(), mOverviewThumbnail.width());
+            mTimeAxisItem.setRect(0, 0, mOverviewThumbnail.width(), 40);
             qInfo() << "Overview thumbnail rendered";
             break;
     }
