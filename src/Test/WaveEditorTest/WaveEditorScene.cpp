@@ -10,4 +10,3 @@ WaveEditorScene::WaveEditorScene(QObject *parent)
 WaveEditorScene::~WaveEditorScene()
 {
 }
-
