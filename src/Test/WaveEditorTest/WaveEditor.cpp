@@ -2,6 +2,7 @@
 #include <QGuiApplication>
 #include <QScreen>
 #include <QMessageBox>
+#include <QScrollBar>
 #include "Common/CodecArguments.h"
 #include "Common/SampleFormat.h"
 #include "WaveEditor.h"
@@ -14,6 +15,7 @@ WaveEditor::WaveEditor(QWidget *parent)
     mScene = new WaveEditorScene(this);
     mView = new WaveEditorView(parent);
     mView->setScene(mScene);
+    mView->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
     mScene->addItem(&mOverviewThumbnailItem);
     mScene->addItem(&mTimeAxisItem);
 
@@ -30,6 +32,7 @@ WaveEditor::WaveEditor(QWidget *parent)
     mRenderThread = new std::thread(&WaveEditor::renderRoutine, this);
 
     connect(mView, &WaveEditorView::Resized, this, &WaveEditor::WaveformViewResized);
+    connect(mView, &WaveEditorView::RequestZoom, this, &WaveEditor::WaveformViewZoomRequested);
 }
 
 WaveEditor::~WaveEditor()
@@ -60,6 +63,26 @@ void WaveEditor::WaveformViewResized()
     mOverviewThumbnailItem.setRect(rectStretchThumbnail);
     mTimeAxisItem.setRect(0, 0, rectStretchThumbnail.width(), 40);
     mTimeAxisItem.SetThumbnailWidth(rectStretchThumbnail.width());
+}
+
+void WaveEditor::WaveformViewZoomRequested(double delta, uint64_t zoomCenterSample, int zoomCenterPxX)
+{
+    mViewZoomLevel *= delta;
+
+    if (mViewZoomLevel < 1)
+        mViewZoomLevel = 1;
+
+    auto totalWidth = mOverviewThumbnail.width() * mViewZoomLevel;
+    auto viewWidth = mView->viewport()->width();
+    if (totalWidth < viewWidth)
+        totalWidth = viewWidth;
+
+    // Actually changing size here
+    mOverviewThumbnailItem.setRect(0, 0, totalWidth, mOverviewThumbnailItem.rect().height());
+    mTimeAxisItem.setRect(0, 0, totalWidth, mTimeAxisItem.rect().height());
+    mView->setSceneRect(0, 0, totalWidth, mOverviewThumbnailItem.rect().height());
+
+    mView->update();
 }
 
 void WaveEditor::SetAudio(const QString &filename)
@@ -203,7 +226,9 @@ void WaveEditor::renderRoutineBackwardNotify() {
             mRenderRoutineCommand = RENDER_IDLE;
             mOverviewThumbnailItem.SetPixmap(mOverviewThumbnail);
             mView->resize(mOverviewThumbnail.width(), mOverviewThumbnail.height());
-            mView->setSceneRect(mOverviewThumbnail.rect());
+            auto sceneRect = mOverviewThumbnailItem.rect();
+            sceneRect.setHeight(1);
+            mView->setSceneRect(sceneRect);
 
             mTimeAxisItem.SetTimeScale(mSampleCount, decoder->outFormat().SampleRate(), mOverviewThumbnail.width());
             mTimeAxisItem.setRect(0, 0, mOverviewThumbnail.width(), 40);

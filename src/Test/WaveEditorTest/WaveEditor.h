@@ -104,6 +104,11 @@ public:
 
 private slots:
     void WaveformViewResized();
+    void WaveformViewZoomRequested(double zoomDelta, uint64_t zoomCenterSample, int zoomCenterPxX);
+
+private:
+    double mViewZoomLevel;
+    uint64_t mViewStartSample;
 
 private:
     void initPlugins();

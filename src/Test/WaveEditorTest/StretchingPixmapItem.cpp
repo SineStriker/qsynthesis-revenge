@@ -3,7 +3,7 @@
 #include "StretchingPixmapItem.h"
 
 StretchingPixmapItem::StretchingPixmapItem(QGraphicsItem *parent)
-    : QGraphicsRectItem(parent)
+    : EventCaptureRectItem(parent)
 {
 }
 
@@ -26,4 +26,8 @@ void StretchingPixmapItem::SetPixmap(const QImage &image)
 void StretchingPixmapItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
     painter->drawPixmap(rect().toRect(), mPixmap);
+}
+
+void StretchingPixmapItem::eventSlot(QEvent *e, QPointF itemPos)
+{
 }

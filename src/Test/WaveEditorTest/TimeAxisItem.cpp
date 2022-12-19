@@ -1,10 +1,12 @@
 
 #include <QPainter>
 #include <QDebug>
+#include <QWheelEvent>
+#include "WaveEditorView.h"
 #include "TimeAxisItem.h"
 
 TimeAxisItem::TimeAxisItem(QGraphicsItem *parent)
-    : QGraphicsRectItem(parent),
+    : EventCaptureRectItem(parent),
     mTimecodeFont("sansserif", 10)
 {
     QFontMetrics fm(mTimecodeFont);
@@ -22,6 +24,22 @@ void TimeAxisItem::SetTimeScale(uint64_t sampleCount, int sampleRate, int thumbn
     mSampleCount = sampleCount;
     mSampleRate = sampleRate;
     mThumbnailWidth = thumbnailWidth;
+}
+
+void TimeAxisItem::eventSlot(QEvent *e, QPointF scenePos)
+{
+    switch(e->type()) {
+    case QEvent::Wheel: {
+        auto *event = static_cast<QWheelEvent*>(e);
+        auto d = event->angleDelta().y();;
+        auto hCenter = scenePos.x() / double(rect().width()) * mSampleCount;
+        qDebug() << "ePos" << scenePos << "hCenter" << hCenter;
+        static_cast<WaveEditorView*>(scene()->views()[0])->RequestZoom(pow(2, d / 240.0), hCenter, scenePos.x());
+        break;
+    }
+    default:
+        break;
+    }
 }
 
 void TimeAxisItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
@@ -98,6 +116,5 @@ void TimeAxisItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *opti
             break;
         }
         left += msAdvancement * pxPerSecond / 1000.0;
-        qInfo() << "msAdvancement: " << msAdvancement << "pxPerSecond: " << pxPerSecond << "left: " << left;
     }
 }

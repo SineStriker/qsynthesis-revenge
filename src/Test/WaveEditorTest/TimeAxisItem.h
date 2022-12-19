@@ -3,8 +3,9 @@
 
 #include <QGraphicsRectItem>
 #include <QFont>
+#include "EventCapture.h"
 
-class TimeAxisItem : public QGraphicsRectItem
+class TimeAxisItem : public EventCaptureRectItem
 {
 public:
     TimeAxisItem(QGraphicsItem *parent = nullptr);
@@ -17,6 +18,8 @@ public:
     void SetThumbnailWidth(int thumbnailWidth) { mThumbnailWidth = thumbnailWidth; }
 
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = nullptr) override;
+
+    virtual void eventSlot(QEvent* e, QPointF itemPos) override;
 
 private:
     uint64_t mSampleCount;

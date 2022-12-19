@@ -13,7 +13,10 @@ public:
 
 protected:
     void resizeEvent(QResizeEvent *event) override;
+    bool event(QEvent *event) override;
 
 signals:
     void Resized();
+
+    void RequestZoom(double zoomDelta, uint64_t zoomCenterSample, int zoomCenterPxX);
 };

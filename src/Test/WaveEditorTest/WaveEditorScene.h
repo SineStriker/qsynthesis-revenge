@@ -10,6 +10,7 @@ public:
     explicit WaveEditorScene(QObject *parent = nullptr);
     ~WaveEditorScene();
 
-
+protected:
+    // bool event(QEvent *event) override;
 
 };
