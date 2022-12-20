@@ -1,4 +1,3 @@
-
 add_files(_src
     CURRENT
     PATTERNS *.h *.cpp

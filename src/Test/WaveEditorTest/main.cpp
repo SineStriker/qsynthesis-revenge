@@ -1,12 +1,15 @@
-
-#include <QApplication>
 #include "MainWindow.h"
+#include <QApplication>
 #ifdef Q_OS_WINDOWS
-    #include <windows.h>
+#include <windows.h>
 #endif
 
-int main(int argc, char *argv[])
-{
+int main(int argc, char *argv[]) {
+    if (argc < 2) {
+        qDebug() << "No audio file argument.";
+        return 0;
+    }
+
     QApplication a(argc, argv);
 
     // Set library loading info

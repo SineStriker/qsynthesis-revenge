@@ -2,26 +2,20 @@
 #include "MainWindow.h"
 #include <QApplication>
 
-MainWindow::MainWindow(QWidget *parent)
-    : QMainWindow(parent)
-{
+MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
     mWaveEditor = new WaveEditor(this);
-    setCentralWidget(*mWaveEditor);
-    mWaveEditor->SetAudio("D:/tmp/wave.wav");
+    setCentralWidget(mWaveEditor->view());
+    mWaveEditor->SetAudio(qApp->arguments().at(1));
 }
 
-MainWindow::~MainWindow()
-{
-
+MainWindow::~MainWindow() {
 }
 
-void MainWindow::paintEvent(QPaintEvent *event)
-{
+void MainWindow::paintEvent(QPaintEvent *event) {
     QMainWindow::paintEvent(event);
 }
 
-void MainWindow::resizeEvent(QResizeEvent *event)
-{
+void MainWindow::resizeEvent(QResizeEvent *event) {
     QMainWindow::resizeEvent(event);
     // mView->fitInView(mOverviewThumbnail.rect());
 }

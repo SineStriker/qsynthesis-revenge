@@ -1,11 +1,12 @@
+#include "WaveEditor.h"
+
+#include "Common/CodecArguments.h"
+#include "Common/SampleFormat.h"
 
 #include <QGuiApplication>
 #include <QScreen>
 #include <QMessageBox>
 #include <QScrollBar>
-#include "Common/CodecArguments.h"
-#include "Common/SampleFormat.h"
-#include "WaveEditor.h"
 
 WaveEditor::WaveEditor(QWidget *parent)
     : QObject(parent)

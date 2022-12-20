@@ -1,16 +1,17 @@
-
 #pragma once
 
-#include <QPluginLoader>
 #include <QGraphicsPixmapItem>
-#include <thread>
-#include <mutex>
+#include <QPluginLoader>
+
 #include <condition_variable>
+#include <mutex>
+#include <thread>
+
 #include "Api/IAudioDecoder.h"
-#include "WaveEditorScene.h"
-#include "WaveEditorView.h"
 #include "StretchingPixmapItem.h"
 #include "TimeAxisItem.h"
+#include "WaveEditorScene.h"
+#include "WaveEditorView.h"
 
 class WaveEditor : public QObject {
     Q_OBJECT
@@ -20,7 +21,9 @@ public:
 
     void SetAudio(const QString &filename);
 
-    operator QWidget*() { return mView; }
+    inline QWidget *view() const {
+        return mView;
+    }
 
 private:
     WaveEditorScene *mScene;
@@ -37,13 +40,14 @@ private:
     // 2. Coarse waveform. Rendered when zoomed in enough and are cached in 0.5s slices.
     //    Note that the thumbnail is still used when zoomed out.
     //    This LOD level of waveform is cached in background once triggered the first render.
-    // 3. Fine waveform, Rendered when zoomed in further and samples are directly taken from decoder.
+    // 3. Fine waveform, Rendered when zoomed in further and samples are directly taken from
+    // decoder.
     //    This one is only one single pixmap item and is not cached.
     StretchingPixmapItem mOverviewThumbnailItem;
 
     TimeAxisItem mTimeAxisItem;
 
-// Waveform rendering related members
+    // Waveform rendering related members
     // The min-max pairs in each 100 samples range
     QVector<QPair<float, float>> mCoarsePkpk;
 
@@ -81,9 +85,9 @@ private:
 
     std::condition_variable mRenderRoutineNotifyCond;
     std::mutex mRenderRoutineNotifyMutex;
-// End of waveform rendering related members
+    // End of waveform rendering related members
 
-// Waveform rendering routines
+    // Waveform rendering routines
     void renderRoutine();
 
 private slots:
@@ -91,7 +95,7 @@ private slots:
 
 signals:
     void renderRoutineFinishSignal();
-// End of waveform rendering related members
+    // End of waveform rendering related members
 
 public:
     enum ItemZValue {
