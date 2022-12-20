@@ -34,7 +34,8 @@ void TimeAxisItem::eventSlot(QEvent *e, QPointF scenePos)
         auto d = event->angleDelta().y();;
         auto hCenter = scenePos.x() / double(rect().width()) * mSampleCount;
         qDebug() << "ePos" << scenePos << "hCenter" << hCenter;
-        static_cast<WaveEditorView*>(scene()->views()[0])->RequestZoom(pow(2, d / 240.0), hCenter, scenePos.x());
+        static_cast<WaveEditorView *>(scene()->views()[0])
+            ->RequestZoom(pow(2, d / 240.0), event->globalPos());
         break;
     }
     default:

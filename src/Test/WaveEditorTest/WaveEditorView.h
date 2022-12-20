@@ -18,5 +18,5 @@ protected:
 signals:
     void Resized();
 
-    void RequestZoom(double zoomDelta, uint64_t zoomCenterSample, int zoomCenterPxX);
+    void RequestZoom(double zoomDelta, QPoint zoomAnchorGlobal);
 };

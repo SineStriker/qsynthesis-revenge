@@ -19,6 +19,7 @@ WaveEditor::WaveEditor(QWidget *parent)
     mView->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
     mScene->addItem(&mOverviewThumbnailItem);
     mScene->addItem(&mTimeAxisItem);
+    mViewZoomLevel = 1;
 
     mOverviewThumbnailItem.setPos(0, 0);
     mOverviewThumbnailItem.setZValue(ZValue_OverviewThumbnail);
@@ -66,8 +67,19 @@ void WaveEditor::WaveformViewResized()
     mTimeAxisItem.SetThumbnailWidth(rectStretchThumbnail.width());
 }
 
-void WaveEditor::WaveformViewZoomRequested(double delta, uint64_t zoomCenterSample, int zoomCenterPxX)
+void WaveEditor::WaveformViewZoomRequested(double delta, QPoint zoomAnchorGlobal)
 {
+    // Zoom the view, resize elements, and the most complicated thing is to ensure the point on the
+    // waveform where the mouse hovered over when the zoom happened still stayed
+    // where the cursor is.
+
+    QPoint anchorViewPos = mView->mapFromGlobal(zoomAnchorGlobal);
+    QPointF anchorScenePos = mView->mapToScene(anchorViewPos);
+
+    int fromX = anchorViewPos.x();
+
+    auto origWidth = mOverviewThumbnail.width() * mViewZoomLevel;
+
     mViewZoomLevel *= delta;
 
     if (mViewZoomLevel < 1)
@@ -78,10 +90,19 @@ void WaveEditor::WaveformViewZoomRequested(double delta, uint64_t zoomCenterSamp
     if (totalWidth < viewWidth)
         totalWidth = viewWidth;
 
+    // Calculate new left-end
+    int fromAbs = anchorScenePos.x() - (anchorViewPos.x() - fromX);
+    int toX = fromX - fromAbs * totalWidth / origWidth;
+    if (toX > 0)
+        toX = 0;
+
     // Actually changing size here
     mOverviewThumbnailItem.setRect(0, 0, totalWidth, mOverviewThumbnailItem.rect().height());
     mTimeAxisItem.setRect(0, 0, totalWidth, mTimeAxisItem.rect().height());
     mView->setSceneRect(0, 0, totalWidth, mOverviewThumbnailItem.rect().height());
+
+    mView->horizontalScrollBar()->setValue(-toX);
+    qDebug() << toX;
 
     mView->update();
 }

@@ -41,8 +41,8 @@ private:
     //    Note that the thumbnail is still used when zoomed out.
     //    This LOD level of waveform is cached in background once triggered the first render.
     // 3. Fine waveform, Rendered when zoomed in further and samples are directly taken from
-    // decoder.
-    //    This one is only one single pixmap item and is not cached.
+    //    decoder. This one is only one single pixmap item and is not cached.
+    //    **Rendering synchronously may be favorable at this point!**
     StretchingPixmapItem mOverviewThumbnailItem;
 
     TimeAxisItem mTimeAxisItem;
@@ -108,7 +108,7 @@ public:
 
 private slots:
     void WaveformViewResized();
-    void WaveformViewZoomRequested(double zoomDelta, uint64_t zoomCenterSample, int zoomCenterPxX);
+    void WaveformViewZoomRequested(double zoomDelta, QPoint zoomAnchorGlobal);
 
 private:
     double mViewZoomLevel;
