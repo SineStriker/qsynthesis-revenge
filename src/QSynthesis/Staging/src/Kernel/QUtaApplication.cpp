@@ -29,19 +29,19 @@ void QUtaApplication::reloadStrings(int locale) {
             d->ll->eliminate();
             d->ll->translate(qAppConf->appDir(QUtaDistConfig::Locales) + "/qt_zh_CN.qm");
             d->ll->translate(qAppConf->appDir(QUtaDistConfig::Locales) + "/qtbase_zh_CN.qm");
-            d->ll->translate(":/translations/LvStaging_zh_CN.qm");
+            d->ll->translate(":/translations/QUtaStaging_zh_CN.qm");
             break;
         case MultimodeHandle::HongKong:
             d->ll->eliminate();
             d->ll->translate(qAppConf->appDir(QUtaDistConfig::Locales) + "/qt_zh_TW.qm");
             d->ll->translate(qAppConf->appDir(QUtaDistConfig::Locales) + "/qtbase_zh_TW.qm");
-            d->ll->translate(":/translations/LvStaging_zh_HK.qm");
+            d->ll->translate(":/translations/QUtaStaging_zh_HK.qm");
             break;
         case MultimodeHandle::Japan:
             d->ll->eliminate();
             d->ll->translate(qAppConf->appDir(QUtaDistConfig::Locales) + "/qt_zh_ja.qm");
             d->ll->translate(qAppConf->appDir(QUtaDistConfig::Locales) + "/qtbase_ja.qm");
-            d->ll->translate(":/translations/LvStaging_ja_JP.qm");
+            d->ll->translate(":/translations/QUtaStaging_ja_JP.qm");
             break;
         default:
             break;

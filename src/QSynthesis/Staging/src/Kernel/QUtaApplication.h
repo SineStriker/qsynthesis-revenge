@@ -1,5 +1,5 @@
-#ifndef QUtaApplication_H
-#define QUtaApplication_H
+#ifndef QUTAAPPLICATION_H
+#define QUTAAPPLICATION_H
 
 #include "Kernel/QUtaElemApplication.h"
 
@@ -27,4 +27,4 @@ protected:
     QUtaApplication(QUtaApplicationPrivate &d, int &argc, char **argv);
 };
 
-#endif // QUtaApplication_H
+#endif // QUTAAPPLICATION_H

@@ -1,16 +1,16 @@
-#include "qutastaging.h"
+#include "dsstaging.h"
 
-#include "Kernel/QUtaApplication.h"
-#include "Kernel/QUtaStartupInfo.h"
+#include "Kernel/DsApplication.h"
+#include "Kernel/DsStartupInfo.h"
 
 #include <QMainWindow>
 
 int main_entry(int argc, char *argv[]) {
     // Configure startup info
-    QUtaStartupInfo info;
+    DsStartupInfo info;
     
     // Qt Application
-    QUtaApplication a(argc, argv);
+    DsApplication a(argc, argv);
 
     QMainWindow w;
     w.show();
