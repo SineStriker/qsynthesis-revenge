@@ -338,6 +338,7 @@ void MainWindow::_q_stopButtonClicked() {
 void MainWindow::_q_sliderReleased() {
     if (!decoder->isOpen()) {
         slider->setValue(0);
+        __debugbreak();
         return;
     }
 

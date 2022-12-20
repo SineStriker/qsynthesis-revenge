@@ -10,6 +10,7 @@ extern "C" {
 #include "../FFmpegDecoder.h"
 
 #include <mutex>
+#include <vector>
 
 class FFmpegDecoderPrivate {
     Q_DECLARE_PUBLIC(FFmpegDecoder);
@@ -78,16 +79,18 @@ public:
     WaveArguments _arguments;
 
     // 音频信息
-    long _length; // 不包括声道
+    qint64 _length; // 不包括声道
 
-    long _pos; // 不包括声道
+    qint64 _pos; // 不包括声道
 
     int _audioIndex; // 音频流序号
 
     AVChannelLayout _channelLayout; // 输出声道布局
 
     // 类内数据结构
-    std::list<char> _cachedBuffer; // 内部缓冲区
+    std::vector<char> _cachedBuffer; // 内部缓冲区
+
+    int _cachedBufferPos; // 内部缓冲区读取位置
 
     int _remainSamples; // 重采样器余量
 
