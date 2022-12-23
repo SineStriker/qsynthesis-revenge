@@ -143,6 +143,10 @@ if __name__ == "__main__":
     vcpkg_cmd = dot_slash + vcpkg_exe
     bootstrap_cmd = dot_slash + bootstrap_bat
 
+    # vcpkg calls macOS as osx, change it on the fly
+    if os_name == "darwin":
+        os_name = "osx"
+
     # Configure tasks
     library_task.vcpkg = vcpkg_cmd
     library_task.triplet = f"{arch_name}-{os_name}"
