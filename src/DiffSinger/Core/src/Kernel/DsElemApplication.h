@@ -10,9 +10,9 @@
 
 class DsElemApplicationPrivate;
 
-#include "dselem_global.h"
+#include "dscore_global.h"
 
-class DSELEM_API DsElemApplication : public QsApplication {
+class DSCORE_API DsElemApplication : public QsApplication {
     Q_OBJECT
     Q_DECLARE_PRIVATE(DsElemApplication)
 public:

@@ -12,7 +12,7 @@
 
 #include "../DsDistConfig.h"
 
-class DSELEM_API DsElemApplicationPrivate : public QsApplicationPrivate {
+class DSCORE_API DsElemApplicationPrivate : public QsApplicationPrivate {
     Q_DECLARE_PUBLIC(DsElemApplication)
 public:
     DsElemApplicationPrivate();

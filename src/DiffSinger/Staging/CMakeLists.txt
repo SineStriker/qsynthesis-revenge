@@ -14,7 +14,7 @@ configure_library(
     ENABLE_SHARED
     QT_LIBRARIES Widgets Svg
     QT_PRIVATE_INCLUDES Gui Widgets
-    LINKS DsElem
+    LINKS DsCore
     INCLUDES include src
     WIN32_FILE_DESC "DiffSinger Main Module"
     WIN32_PRODUCT_NAME "DiffSinger.Staging"
