@@ -118,6 +118,8 @@ if __name__ == "__main__":
         arch_name = "x86"
     elif arch_name == "amd64" or arch_name == "x86_64":
         arch_name = "x64"
+    elif arch_name == "arm64":
+        pass
     else:
         print(f"Unsupported architecture {arch_name}!")
         sys.exit(-1)
