@@ -114,6 +114,10 @@ if __name__ == "__main__":
     os_name = platform.system().lower()
     arch_name = platform.machine().lower()
 
+    # vcpkg calls macOS as osx, change it on the fly
+    if os_name == "darwin":
+        os_name = "osx"
+
     if arch_name == "i386" or arch_name == "x86":
         arch_name = "x86"
     elif arch_name == "amd64" or arch_name == "x86_64":
@@ -142,10 +146,6 @@ if __name__ == "__main__":
 
     vcpkg_cmd = dot_slash + vcpkg_exe
     bootstrap_cmd = dot_slash + bootstrap_bat
-
-    # vcpkg calls macOS as osx, change it on the fly
-    if os_name == "darwin":
-        os_name = "osx"
 
     # Configure tasks
     library_task.vcpkg = vcpkg_cmd
