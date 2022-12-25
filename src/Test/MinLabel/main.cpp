@@ -3,6 +3,7 @@
 #include "SystemHelper.h"
 
 #include <QApplication>
+#include <QMessageBox>
 
 #ifdef Q_OS_WINDOWS
 #include <Windows.h>

@@ -15,7 +15,7 @@ vcpkg_copy_pdbs()
 if(VCPKG_TARGET_IS_WINDOWS)
     file(REMOVE_RECURSE "${CURRENT_PACKAGES_DIR}/lib/pkgconfig" "${CURRENT_PACKAGES_DIR}/debug/lib/pkgconfig")
 else()
-    vcpkg_fixup_pkgconfig()
+    # vcpkg_fixup_pkgconfig()
 endif()
 
 file(REMOVE_RECURSE "${CURRENT_PACKAGES_DIR}/debug/include")
