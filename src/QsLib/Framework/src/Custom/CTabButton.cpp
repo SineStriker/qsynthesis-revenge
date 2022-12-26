@@ -5,6 +5,8 @@
 #include <QStyleOptionButton>
 #include <QStylePainter>
 
+#include "ViewHelper.h"
+
 CTabButton::CTabButton(QWidget *parent) : CPushButton(parent) {
     init();
 }
@@ -58,11 +60,11 @@ void CTabButton::paintEvent(QPaintEvent *event) {
 
     sz.rwidth() *= 1 + m_spaceRatio; // Multiply width
 
-    QPixmap exp(sz); // Expended
+    QPixmap exp = View::createDeviceRenderPixmap(nullptr, sz); // Expended
     exp.fill(Qt::transparent);
 
     QPainter painter(&exp);
-    painter.drawPixmap(QRect(QPoint(), tmp.size()), tmp);
+    painter.drawPixmap(QRect(QPoint(), iconSize()), tmp);
 
     QStylePainter p(this);
     QStyleOptionButton option;

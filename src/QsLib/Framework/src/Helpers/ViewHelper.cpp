@@ -42,8 +42,10 @@ QPixmap View::createDeviceRenderPixmap(QWindow *refWindow, QSize logicalPixelSiz
         targetDPR = qApp->devicePixelRatio();
     QPixmap ret(logicalPixelSize * targetDPR);
     ret.setDevicePixelRatio(targetDPR);
-#endif
+    return ret;
+#else
     return QPixmap(logicalPixelSize);
+#endif
 }
 
 void View::drawBorderShadow(QPainter &painter, const QMargins &margin, const QSize &size,

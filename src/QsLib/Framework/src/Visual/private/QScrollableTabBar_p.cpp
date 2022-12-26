@@ -10,6 +10,8 @@
 #include <QMimeData>
 #include <QPainter>
 
+#include "ViewHelper.h"
+
 static inline QString id_format() {
     return QString("application/%1.pid%2.data")
         .arg(qAppName(), QString::number(qApp->applicationPid()));
@@ -127,7 +129,7 @@ void QScrollableTabBarPrivate::startDrag(QScrollableTabBarTab *tab) {
     }
     mime->setData(id_format(), tabs->metaObject()->className());
 
-    QPixmap pixmap(tab->size());
+    QPixmap pixmap = View::createDeviceRenderPixmap(nullptr, tab->size());
     pixmap.fill(Qt::transparent);
     tab->render(&pixmap);
 

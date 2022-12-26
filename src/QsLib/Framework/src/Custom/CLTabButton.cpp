@@ -1,9 +1,12 @@
 #include "CLTabButton.h"
+#include "CTabButton.h"
 
 #include <QPainter>
 #include <QResizeEvent>
 #include <QStyleOptionButton>
 #include <QStylePainter>
+
+#include "ViewHelper.h"
 
 CLTabButton::CLTabButton(QWidget *parent) : CTabButton(parent) {
     init();
@@ -70,7 +73,7 @@ void CLTabButton::paintEvent(QPaintEvent *event) {
     painter.drawPixmap(QRect(QPoint(), tmp.size()), tmp);
 
     QRect rect = this->rect();
-    QPixmap tvPix(QSize(rect.height(), rect.width()));
+    QPixmap tvPix = View::createDeviceRenderPixmap(nullptr, rect.size().transposed());
     tvPix.fill(Qt::transparent);
 
     QStylePainter pp(&tvPix, this);

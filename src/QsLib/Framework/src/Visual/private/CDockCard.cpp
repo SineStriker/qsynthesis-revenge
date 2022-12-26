@@ -8,6 +8,8 @@
 #include <QResizeEvent>
 #include <QStyle>
 
+#include "ViewHelper.h"
+
 CDockCard::CDockCard(QWidget *parent) : CLTabButton(parent) {
     init();
 }
@@ -72,7 +74,7 @@ void CDockCard::setDragOffset(const QSize &dragOffset) {
 }
 
 QPixmap CDockCard::cardShot() const {
-    QPixmap pixmap(size());
+    QPixmap pixmap = View::createDeviceRenderPixmap(nullptr, size());
     pixmap.fill(Qt::transparent);
     const_cast<CDockCard *>(this)->render(&pixmap);
     return pixmap;
