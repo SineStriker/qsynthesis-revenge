@@ -60,7 +60,7 @@ void CTabButton::paintEvent(QPaintEvent *event) {
 
     sz.rwidth() *= 1 + m_spaceRatio; // Multiply width
 
-    QPixmap exp = View::createDeviceRenderPixmap(nullptr, sz); // Expended
+    QPixmap exp = View::createDeviceRenderPixmap(window()->windowHandle(), sz); // Expended
     exp.fill(Qt::transparent);
 
     QPainter painter(&exp);

@@ -74,7 +74,7 @@ void CDockCard::setDragOffset(const QSize &dragOffset) {
 }
 
 QPixmap CDockCard::cardShot() const {
-    QPixmap pixmap = View::createDeviceRenderPixmap(nullptr, size());
+    QPixmap pixmap = View::createDeviceRenderPixmap(window()->windowHandle(), size());
     pixmap.fill(Qt::transparent);
     const_cast<CDockCard *>(this)->render(&pixmap);
     return pixmap;

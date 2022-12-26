@@ -36,7 +36,7 @@ QPixmap View::createBitmapFromSVG(QString fullpath, QSize size) {
 QPixmap View::createDeviceRenderPixmap(QWindow *refWindow, QSize logicalPixelSize) {
 #ifdef Q_OS_MACOS
     qreal targetDPR;
-    if(refWindow)
+    if (refWindow)
         targetDPR = refWindow->devicePixelRatio();
     else
         targetDPR = qApp->devicePixelRatio();
@@ -44,6 +44,7 @@ QPixmap View::createDeviceRenderPixmap(QWindow *refWindow, QSize logicalPixelSiz
     ret.setDevicePixelRatio(targetDPR);
     return ret;
 #else
+    Q_UNUSED(refWindow);
     return QPixmap(logicalPixelSize);
 #endif
 }

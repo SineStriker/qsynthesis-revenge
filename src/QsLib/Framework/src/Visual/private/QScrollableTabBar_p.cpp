@@ -129,7 +129,7 @@ void QScrollableTabBarPrivate::startDrag(QScrollableTabBarTab *tab) {
     }
     mime->setData(id_format(), tabs->metaObject()->className());
 
-    QPixmap pixmap = View::createDeviceRenderPixmap(nullptr, tab->size());
+    QPixmap pixmap = View::createDeviceRenderPixmap(q->window()->windowHandle(), tab->size());
     pixmap.fill(Qt::transparent);
     tab->render(&pixmap);
 

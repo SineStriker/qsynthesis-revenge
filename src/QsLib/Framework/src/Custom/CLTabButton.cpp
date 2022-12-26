@@ -73,7 +73,8 @@ void CLTabButton::paintEvent(QPaintEvent *event) {
     painter.drawPixmap(QRect(QPoint(), tmp.size()), tmp);
 
     QRect rect = this->rect();
-    QPixmap tvPix = View::createDeviceRenderPixmap(nullptr, rect.size().transposed());
+    QPixmap tvPix =
+        View::createDeviceRenderPixmap(window()->windowHandle(), rect.size().transposed());
     tvPix.fill(Qt::transparent);
 
     QStylePainter pp(&tvPix, this);

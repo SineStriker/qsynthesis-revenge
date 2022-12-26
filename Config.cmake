@@ -7,7 +7,7 @@ endmacro()
 
 # Project Configurations
 option_ex(APP_TOOLSET_NAME          ChorusKit)
-option_ex(APP_TOOLSET_LIST          DiffSinger)
+option_ex(APP_TOOLSET_LIST          DiffSinger LabelVoice)
 option_ex(APP_VERSION_VERBOSE       0.0.1.5)
 option_ex(APP_DEPLOY                off)
 option_ex(APP_LIB_DIR               lib)

@@ -2,6 +2,7 @@
 #include "private/QsApplication_p.h"
 
 #include "Styles/QCssAnalyzer.h"
+#include "SystemHelper.h"
 
 #include <QScreen>
 #include <QStandardPaths>
@@ -42,8 +43,8 @@ void QsApplication::reloadScreen(int theme) {
 }
 
 void QsApplication::applyTheme(QWidget *w, const QStringList &stylesheets) {
-    w->setStyleSheet(QCssAnalyzer().apply(stylesheets.join("\n\n"),
-                                          primaryScreen()->logicalDotsPerInch() / 96.0 * 0.8));
+    w->setStyleSheet(QCssAnalyzer().apply(
+        stylesheets.join("\n\n"), primaryScreen()->logicalDotsPerInch() / Sys::osUnitDpi() * 0.8));
 }
 
 QString QsApplication::untitledFileName() {

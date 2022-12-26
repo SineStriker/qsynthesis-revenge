@@ -38,7 +38,7 @@ void DsApplicationPrivate::init() {
     QString fontName = loadAppleFont();
     QFont f(fontName.isEmpty() ? "Microsoft YaHei" : fontName);
     f.setStyleStrategy(QFont::PreferAntialias);
-    f.setPixelSize(12 * (qApp->primaryScreen()->logicalDotsPerInch() / 96.0));
+    f.setPixelSize(12 * (qApp->primaryScreen()->logicalDotsPerInch() / Sys::osUnitDpi()));
     q->setFont(f);
 #endif
 
