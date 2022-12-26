@@ -1,7 +1,7 @@
 #ifndef DSAPPLICATION_H
 #define DSAPPLICATION_H
 
-#include "Kernel/DsElemApplication.h"
+#include "Kernel/QsApplication.h"
 
 #ifdef qApp
 #undef qApp
@@ -10,7 +10,7 @@
 
 class DsApplicationPrivate;
 
-class DsApplication : public DsElemApplication {
+class DsApplication : public QsApplication {
     Q_OBJECT
     Q_DECLARE_PRIVATE(DsApplication)
 public:

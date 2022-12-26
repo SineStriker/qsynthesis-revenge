@@ -14,6 +14,8 @@
 #include <QPluginLoader>
 #include <QTime>
 
+#include <QJsonObject>
+
 #include "Common/CodecArguments.h"
 #include "Common/SampleFormat.h"
 
@@ -126,6 +128,56 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
 
     reloadWindowTitle();
     resize(1280, 720);
+
+    QString keyConfPath = qApp->applicationDirPath() + "/keys.json";
+    if (qApp->arguments().contains("--reset-keys")) {
+        QFile file(keyConfPath);
+        if (file.open(QIODevice::WriteOnly)) {
+            QJsonDocument doc;
+            doc.setObject(QJsonObject({{"open", browseAction->shortcut().toString()},
+                                       {"next", nextAction->shortcut().toString()},
+                                       {"prev", prevAction->shortcut().toString()},
+                                       {"play", playAction->shortcut().toString()}}));
+            file.write(doc.toJson());
+            file.close();
+        }
+    } else {
+        // Read actions
+        do {
+            QFile file(keyConfPath);
+            if (!file.open(QIODevice::ReadOnly)) {
+                break;
+            }
+            QJsonParseError err;
+            QJsonDocument doc = QJsonDocument::fromJson(file.readAll(), &err);
+
+            file.close();
+
+            if (err.error != QJsonParseError::NoError || !doc.isObject()) {
+                break;
+            }
+
+            QJsonObject obj = doc.object();
+            {
+                auto it = obj.find("open");
+                if (it != obj.end()) {
+                    browseAction->setShortcut(QKeySequence(it.value().toString()));
+                }
+                it = obj.find("next");
+                if (it != obj.end()) {
+                    nextAction->setShortcut(QKeySequence(it.value().toString()));
+                }
+                it = obj.find("prev");
+                if (it != obj.end()) {
+                    prevAction->setShortcut(QKeySequence(it.value().toString()));
+                }
+                it = obj.find("play");
+                if (it != obj.end()) {
+                    playAction->setShortcut(QKeySequence(it.value().toString()));
+                }
+            }
+        } while (0);
+    }
 }
 
 MainWindow::~MainWindow() {

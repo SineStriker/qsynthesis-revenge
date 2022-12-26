@@ -12,7 +12,7 @@
 int main(int argc, char *argv[]) {
     QApplication a(argc, argv);
 
-    if (Sys::isUserRoot()) {
+    if (Sys::isUserRoot() && !a.arguments().contains("--allow-root")) {
         QString title = qAppName();
         QString msg = QString("You're trying to start %1 as the %2, which may cause "
                               "security problem and isn't recommended.")

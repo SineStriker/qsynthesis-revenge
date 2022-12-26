@@ -18,6 +18,8 @@ QCssAnalyzer::~QCssAnalyzer() {
 QString QCssAnalyzer::apply(const QString &stylesheet, double ratio) const {
     QString data = stylesheet;
 
+    qDebug() << "ratio" << ratio;
+
     // Fix fixed size
     {
         QString res;

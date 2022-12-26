@@ -14,5 +14,5 @@ configure_plugin(
     LINKS DsCore
     INCLUDE_CURRENT
     WIN32_AUTHOR_NAME "OpenVPI"
-    WIN32_FILE_DESC "DiffSinger Host"
+    WIN32_FILE_DESC "DiffSinger Synthesis Host"
 )

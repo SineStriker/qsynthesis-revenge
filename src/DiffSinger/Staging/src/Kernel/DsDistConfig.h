@@ -6,8 +6,6 @@
 
 #include "Kernel/QsDistConfig.h"
 
-#include "dscore_global.h"
-
 #ifdef qAppConf
 #undef qAppConf
 #endif
@@ -15,7 +13,7 @@
 
 class DsDistConfigPrivate;
 
-class DSCORE_API DsDistConfig : public QsDistConfig {
+class DsDistConfig : public QsDistConfig {
     Q_DECLARE_PRIVATE(DsDistConfig)
 public:
     DsDistConfig();

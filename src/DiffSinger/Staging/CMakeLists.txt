@@ -1,7 +1,4 @@
-project(DsStaging
-    LANGUAGES CXX
-    VERSION ${SUB_VERSION}
-)
+project(DsStaging LANGUAGES CXX VERSION ${SUB_VERSION})
 
 add_files(_src
     CURRENT
@@ -14,10 +11,19 @@ configure_library(
     ENABLE_SHARED
     QT_LIBRARIES Widgets Svg
     QT_PRIVATE_INCLUDES Gui Widgets
-    LINKS DsCore
+    LINKS DsMedium
     INCLUDES include src
     WIN32_FILE_DESC "DiffSinger Main Module"
     WIN32_PRODUCT_NAME "DiffSinger.Staging"
+)
+
+target_compile_definitions(${PROJECT_NAME} PUBLIC
+    APP_PLUGINS_DIR="${APP_PLUGINS_DIR}"
+    APP_TOOLS_DIR="${APP_TOOLS_DIR}"
+    APP_LOCALES_DIR="${APP_LOCALES_DIR}"
+    APP_RES_DIR="${APP_RES_DIR}"
+    APP_RES_BUILTIN_DIR="${APP_RES_BUILTIN_DIR}"
+    APP_RES_PLUGINS_DIR="${APP_RES_PLUGINS_DIR}"
 )
 
 target_compile_definitions(${PROJECT_NAME} PUBLIC
