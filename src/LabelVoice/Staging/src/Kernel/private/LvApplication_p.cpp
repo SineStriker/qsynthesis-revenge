@@ -8,6 +8,7 @@
 #include <QMessageBox>
 
 LvApplicationPrivate::LvApplicationPrivate() {
+    QCoreApplication::setAttribute(Qt::AA_UseHighDpiPixmaps); // HiDPI pixmaps
 }
 
 LvApplicationPrivate::~LvApplicationPrivate() {

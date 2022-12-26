@@ -86,6 +86,14 @@ namespace Sys {
 
     QSUTILS_API QString invalidFileNameChars();
 
+    inline int osUnitDpi() {
+#ifdef Q_OS_MACOS
+        return 72;
+#else
+        return 96;
+#endif
+    }
+
 } // namespace Sys
 
 #endif // SYSTEMHELPER_H

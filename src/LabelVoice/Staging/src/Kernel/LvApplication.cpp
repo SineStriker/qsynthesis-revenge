@@ -4,6 +4,7 @@
 
 #include "Styles/QCssAnalyzer.h"
 #include "ViewHelper.h"
+#include "SystemHelper.h"
 
 #include "Kernel/LvStartupInfo.h"
 
@@ -57,7 +58,7 @@ void LvApplication::reloadScreen(int theme) {
 
     setStyleSheet(styleSheet() + "\n\n" +
                   QCssAnalyzer().apply(d->ld->stylesheets(),
-                                       primaryScreen()->logicalDotsPerInch() / 96.0 * 0.8));
+                                       primaryScreen()->logicalDotsPerInch() / Sys::osUnitDpi() * 0.8));
 }
 
 void LvApplication::receiveMessage(quint32 instanceId, const QByteArray &message) {
