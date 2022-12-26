@@ -1,8 +1,11 @@
 #include "QsApplication.h"
 #include "private/QsApplication_p.h"
 
+#include "Styles/QCssAnalyzer.h"
+
 #include <QScreen>
 #include <QStandardPaths>
+#include <QWidget>
 
 QsApplication::QsApplication(int &argc, char **argv)
     : QsApplication(*new QsApplicationPrivate(), argc, argv) {
@@ -36,6 +39,11 @@ void QsApplication::reloadStrings(int locale) {
 
 void QsApplication::reloadScreen(int theme) {
     Q_UNUSED(theme);
+}
+
+void QsApplication::applyTheme(QWidget *w, const QStringList &stylesheets) {
+    w->setStyleSheet(QCssAnalyzer().apply(stylesheets.join("\n\n"),
+                                          primaryScreen()->logicalDotsPerInch() / 96.0 * 0.8));
 }
 
 QString QsApplication::untitledFileName() {

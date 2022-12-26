@@ -3,14 +3,13 @@
 
 #include "../DsApplication.h"
 
-#include "Kernel/private/DsElemApplication_p.h"
-
-// #include "Managers/WindowManager.h"
+#include "Kernel/private/QsApplication_p.h"
+#include "Managers/WindowManager.h"
 
 #include "Kernel/LocalDecorator.h"
 #include "Kernel/LocalLinguist.h"
 
-class DsApplicationPrivate : public DsElemApplicationPrivate {
+class DsApplicationPrivate : public QsApplicationPrivate {
     Q_DECLARE_PUBLIC(DsApplication)
 public:
     DsApplicationPrivate();
@@ -19,7 +18,7 @@ public:
     void init();
     void deinit();
 
-    // WindowManager *windowMgr;
+    WindowManager *windowMgr;
 
 private:
     LocalLinguist *ll;

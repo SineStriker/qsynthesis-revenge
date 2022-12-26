@@ -22,6 +22,8 @@ public:
     void reloadStrings(int locale);
     void reloadScreen(int theme);
 
+    void applyTheme(QWidget *w, const QStringList &stylesheets) override;
+
 public:
     static QString untitledFileName();
     static QString unsavedPrefix();

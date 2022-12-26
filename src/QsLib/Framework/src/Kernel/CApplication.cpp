@@ -22,6 +22,10 @@ QWidget *CApplication::implicitMouseGrabber() const {
     return qt_button_down;
 }
 
+void CApplication::applyTheme(QWidget *w, const QStringList &stylesheets) {
+    w->setStyleSheet(stylesheets.join("\n\n"));
+}
+
 void CApplication::reloadStrings(int locale) {
     Q_D(CApplication);
 

@@ -37,6 +37,8 @@ public:
 public:
     QWidget *implicitMouseGrabber() const;
 
+    virtual void applyTheme(QWidget *w, const QStringList &stylesheets);
+
 protected:
     CApplication(CApplicationPrivate &d, int &argc, char **argv);
 

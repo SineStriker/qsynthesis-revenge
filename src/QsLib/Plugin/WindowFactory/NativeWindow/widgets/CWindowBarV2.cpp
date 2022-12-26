@@ -5,11 +5,14 @@
 #include <QPainter>
 #include <QRandomGenerator>
 
+#include "CApplication.h"
 #include "Kernel/MultistyleHandle.h"
 
 CWindowBarV2::CWindowBarV2(QMenuBar *menuBar, QWidget *parent) : CBaseTitleBarV2(parent) {
     m_titleMargin = 20;
     m_titleVisible = true;
+
+    ld = new LocalDecorator(this);
 
     m_titleLabel = new QLabel();
     m_titleLabel->setObjectName("win-title-label");
@@ -52,6 +55,7 @@ CWindowBarV2::CWindowBarV2(QMenuBar *menuBar, QWidget *parent) : CBaseTitleBarV2
 #endif
 
     Q_TR_NOTIFY(CWindowBarV2)
+    Q_SS_NOTIFY(CWindowBarV2)
 }
 
 CWindowBarV2::~CWindowBarV2() {
@@ -66,6 +70,21 @@ void CWindowBarV2::reloadStrings(int locale) {
 
     reloadMaxButtonState();
 #endif
+}
+
+void CWindowBarV2::reloadScreen(int theme) {
+    ld->removeThemes();
+    switch (theme) {
+        case MultistyleHandle::Light:
+            ld->addTheme(":/themes/light/window-bar-light.qss");
+            break;
+        case MultistyleHandle::Dark:
+            ld->addTheme(":/themes/dark/window-bar-dark.qss");
+            break;
+        default:
+            break;
+    }
+    qApp->applyTheme(this, ld->stylesheetList);
 }
 
 void CWindowBarV2::reloadMaxButtonState(bool checked) {

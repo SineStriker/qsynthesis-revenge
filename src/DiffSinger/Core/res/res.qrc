@@ -1,7 +1,0 @@
-<RCC>
-    <qresource prefix="/">
-        <file>translations/DsCore_ja_JP.qm</file>
-        <file>translations/DsCore_zh_CN.qm</file>
-        <file>translations/DsCore_zh_HK.qm</file>
-    </qresource>
-</RCC>

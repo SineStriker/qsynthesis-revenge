@@ -3,6 +3,8 @@
 #include "Kernel/DsApplication.h"
 #include "Kernel/DsStartupInfo.h"
 
+#include "Managers/WindowManager.h"
+
 #include <QMainWindow>
 
 int main_entry(int argc, char *argv[]) {
@@ -12,8 +14,8 @@ int main_entry(int argc, char *argv[]) {
     // Qt Application
     DsApplication a(argc, argv);
 
-    QMainWindow w;
-    w.show();
+    // Show window
+    WindowManager::instance()->showHome();
 
     return a.exec();
 }

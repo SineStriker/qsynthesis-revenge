@@ -14,7 +14,7 @@ public:
 public:
 };
 
-#define IDiffHost_IID "DiffSinger.Plugin.SVS.DiffHost"
+#define IDiffHost_IID "DiffSinger.Plugin.DiffHost"
 
 QT_BEGIN_NAMESPACE
 Q_DECLARE_INTERFACE(IDiffHost, IDiffHost_IID)

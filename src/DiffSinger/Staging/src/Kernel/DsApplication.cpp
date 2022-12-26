@@ -1,5 +1,6 @@
 #include "DsApplication.h"
 
+#include "DsDistConfig.h"
 #include "private/DsApplication_p.h"
 
 #include "Styles/QCssAnalyzer.h"
@@ -50,14 +51,6 @@ void DsApplication::reloadStrings(int locale) {
 
 void DsApplication::reloadScreen(int theme) {
     Q_UNUSED(theme);
-
-    Q_D(DsApplication);
-    d->ld->addTheme(":/themes/light/home-light.qss");
-    d->ld->addTheme(":/themes/light/piano-light.qss");
-
-    setStyleSheet(styleSheet() + "\n\n" +
-                  QCssAnalyzer().apply(d->ld->stylesheets(),
-                                       primaryScreen()->logicalDotsPerInch() / 96.0 * 0.8));
 }
 
 void DsApplication::receiveMessage(quint32 instanceId, const QByteArray &message) {
@@ -65,10 +58,10 @@ void DsApplication::receiveMessage(quint32 instanceId, const QByteArray &message
     Q_UNUSED(message);
 
     Q_D(DsApplication);
-    // View::bringWindowToForeground(d->windowMgr->firstWindow());
+    View::bringWindowToForeground(d->windowMgr->firstWindow());
 }
 
 DsApplication::DsApplication(DsApplicationPrivate &d, int &argc, char **argv)
-    : DsElemApplication(d, argc, argv) {
+    : QsApplication(d, argc, argv) {
     d.init();
 }
