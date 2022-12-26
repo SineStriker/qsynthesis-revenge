@@ -7,6 +7,7 @@
 #include <QScreen>
 #include <QSvgRenderer>
 #include <QWidget>
+#include <QWindow>
 
 #include "MathHelper.h"
 
@@ -24,6 +25,25 @@ QPixmap View::createBitmapFromSVG(QString fullpath, QSize size) {
     painter.setRenderHint(QPainter::Antialiasing);
     svgRender.render(&painter);
     return bmp;
+}
+
+/**
+ * @brief Create a pixmap whose resolution and pixel ratio is suitable for rendering to screen.
+ * @param refWindow pointer to QWindow whose DPR is taken. If it's nullptr, use qApp's DPR instead
+ * @param logicalPixelSize Desired size of pixmap, in OS logical pixels
+ * @return created pixmap object
+ */
+QPixmap View::createDeviceRenderPixmap(QWindow *refWindow, QSize logicalPixelSize) {
+#ifdef Q_OS_MACOS
+    qreal targetDPR;
+    if(refWindow)
+        targetDPR = refWindow->devicePixelRatio();
+    else
+        targetDPR = qApp->devicePixelRatio();
+    QPixmap ret(logicalPixelSize * targetDPR);
+    ret.setDevicePixelRatio(targetDPR);
+#endif
+    return QPixmap(logicalPixelSize);
 }
 
 void View::drawBorderShadow(QPainter &painter, const QMargins &margin, const QSize &size,

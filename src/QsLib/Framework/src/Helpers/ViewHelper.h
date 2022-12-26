@@ -10,6 +10,8 @@ namespace View {
 
     QSFRAMEWORK_API QPixmap createBitmapFromSVG(QString fullpath, QSize size);
 
+    QSFRAMEWORK_API QPixmap createDeviceRenderPixmap(QWindow *refWindow, QSize logicalPixelSize);
+
     QSFRAMEWORK_API void drawBorderShadow(QPainter &painter, const QMargins &margin,
                                           const QSize &size, const QColor &color = Qt::black);
 
