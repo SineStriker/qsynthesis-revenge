@@ -97,7 +97,7 @@ void WaveEditor::WaveformViewZoomRequested(double delta, QPoint zoomAnchorGlobal
         toX = 0;
 
     // Actually changing size here
-    mOverviewThumbnailItem.setRect(0, 0, totalWidth, mOverviewThumbnailItem.rect().height());
+    //mOverviewThumbnailItem.setRect(0, 0, totalWidth, mOverviewThumbnailItem.rect().height());
     mTimeAxisItem.setRect(0, 0, totalWidth, mTimeAxisItem.rect().height());
     mView->setSceneRect(0, 0, totalWidth, mOverviewThumbnailItem.rect().height());
 
@@ -143,7 +143,7 @@ void WaveEditor::renderRoutine()
             case RENDER_COARSE_PKPK:
             {
                 decoder->Seek(0, WaveStream::Begin);
-                mCoarsePkpk.clear();
+                mCoarse1Pkpk.clear();
 
                 // Read data from decoder and find max-min values of each 100 sample slice
                 float *buffer = new float[100];
@@ -165,7 +165,7 @@ void WaveEditor::renderRoutine()
                         if (buffer[i] < saMin)
                             saMin = buffer[i];
                     }
-                    mCoarsePkpk.push_back({saMax, saMin});
+                    mCoarse1Pkpk.push_back({saMax, saMin});
 
                     if(mRenderRoutineHaltFlag) {
                         delete[] buffer;
@@ -173,6 +173,28 @@ void WaveEditor::renderRoutine()
                     }
                 } while (read > 0);
                 read++; // Last read returns -1
+
+                // Coarser pkpk for long audio
+                if (mSampleCount / decoder->Format().SampleRate() > 3600) {
+                    auto coarse2pkpkSize = mSampleCount / (decoder->Format().SampleRate() * 10);
+                    mCoarse2Pkpk.reserve(coarse2pkpkSize);
+                    double stepSize = (double) mCoarse1Pkpk.size() / coarse2pkpkSize;
+                    for (auto i = 0; i < coarse2pkpkSize; i++) {
+                        auto start = (int) (i * stepSize);
+                        auto end = (int) ((i + 1) * stepSize);
+                        if (end > mCoarse1Pkpk.size())
+                            end = mCoarse1Pkpk.size();
+
+                        saMin = saMax = 0.0f;
+                        for (auto j = start; j < end; j++) {
+                            if (mCoarse1Pkpk[j].first > saMax)
+                                saMax = mCoarse1Pkpk[j].first;
+                            if (mCoarse1Pkpk[j].second < saMin)
+                                saMin = mCoarse1Pkpk[j].second;
+                        }
+                        mCoarse2Pkpk.push_back({saMax, saMin});
+                    }
+                }
 
                 delete[] buffer;
                 mRenderRoutineHaltFlag = 0;
@@ -187,7 +209,7 @@ void WaveEditor::renderRoutine()
 
                 // Active screen resolution / 2
                 int width = QGuiApplication::primaryScreen()->geometry().width() / 2;
-                float readSize = (float)mCoarsePkpk.size() / width;
+                float readSize = (float)mCoarse1Pkpk.size() / width;
                 float *buffer = new float[readSize];
 
                 QPixmap pixmap(width, 301);
@@ -200,12 +222,12 @@ void WaveEditor::renderRoutine()
                     // Draw waveform from the coarse pkpk data
                     float saMax = 0.0f, saMin = 0.0f;
                     from = round(i * readSize);
-                    to = std::min((int)round((i + 1) * readSize), mCoarsePkpk.size());;
+                    to = std::min((int)round((i + 1) * readSize), mCoarse1Pkpk.size());;
                     for(int j = from; j < to; j++) {
-                        if (mCoarsePkpk[j].first > saMax)
-                            saMax = mCoarsePkpk[j].first;
-                        if (mCoarsePkpk[j].second < saMin)
-                            saMin = mCoarsePkpk[j].second;
+                        if (mCoarse1Pkpk[j].first > saMax)
+                            saMax = mCoarse1Pkpk[j].first;
+                        if (mCoarse1Pkpk[j].second < saMin)
+                            saMin = mCoarse1Pkpk[j].second;
                     }
                     painter.drawLine(i, 150 - saMax * 150, i, 150 - saMin * 150);
 

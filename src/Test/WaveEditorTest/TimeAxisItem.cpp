@@ -2,6 +2,7 @@
 #include <QPainter>
 #include <QDebug>
 #include <QWheelEvent>
+#include <chrono>
 #include "WaveEditorView.h"
 #include "TimeAxisItem.h"
 
@@ -49,6 +50,10 @@ void TimeAxisItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *opti
     // Find the highest viable detail level and use that.
     enum { UseMMSSFF, UseMMSS } timecodeKind = UseMMSSFF;
 
+    // Measure render time
+    auto t1 = std::chrono::high_resolution_clock::now();
+    uint32_t timecodeCount = 0;
+
     double pxPerSecond = rect().width() / (mSampleCount / (double)mSampleRate);
 
     auto h = rect().height();
@@ -87,6 +92,8 @@ void TimeAxisItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *opti
     if(msAdvancement == 0)
         return;
 
+    qDebug() << pos() << rect() << painter->clipBoundingRect();
+
     // Draw timecode
     float left = 0;
     for(int i = 0; left < rect().width(); i++) {
@@ -117,5 +124,12 @@ void TimeAxisItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *opti
             break;
         }
         left += msAdvancement * pxPerSecond / 1000.0;
+        timecodeCount++;
     }
+
+    qInfo() << "Rendered TimeAxis in"
+            << std::chrono::duration_cast<std::chrono::milliseconds>(
+                   std::chrono::high_resolution_clock::now() - t1)
+                   .count()
+            << "ms" << "with" << timecodeCount << "timecodes";
 }

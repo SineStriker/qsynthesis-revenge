@@ -49,7 +49,9 @@ private:
 
     // Waveform rendering related members
     // The min-max pairs in each 100 samples range
-    QVector<QPair<float, float>> mCoarsePkpk;
+    QVector<QPair<float, float>> mCoarse1Pkpk;
+    // In each 0.1s, for long audio >= 10min
+    QVector<QPair<float, float>> mCoarse2Pkpk;
 
     // Overview thumbnail generated based on user's monitor resolution.
     // I say we use (horizontal res / 2) as the horizontal resolution for now
