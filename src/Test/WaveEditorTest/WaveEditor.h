@@ -10,6 +10,7 @@
 #include "Api/IAudioDecoder.h"
 #include "StretchingPixmapItem.h"
 #include "TimeAxisItem.h"
+#include "WaveformItem.h"
 #include "WaveEditorScene.h"
 #include "WaveEditorView.h"
 
@@ -34,24 +35,30 @@ private:
 
     uint64_t mSampleCount;
 
-    // There are multiple pixmap items that are displayed on the scene so let me introduce the
-    // designs here first.
-    // 1. Overview thumbnail. First rendered for entire audio and is always there as fallback.
-    // 2. Coarse waveform. Rendered when zoomed in enough and are cached in 0.5s slices.
-    //    Note that the thumbnail is still used when zoomed out.
-    //    This LOD level of waveform is cached in background once triggered the first render.
-    // 3. Fine waveform, Rendered when zoomed in further and samples are directly taken from
-    //    decoder. This one is only one single pixmap item and is not cached.
-    //    **Rendering synchronously may be favorable at this point!**
+    // TODO: New documentation on this LOD system
     StretchingPixmapItem mOverviewThumbnailItem;
-
     TimeAxisItem mTimeAxisItem;
+    WaveformItem *mWaveItemCoarse1, *mWaveItemDirect;
+
+    /*
+        -3: 1sa/pt (direct)
+        -2: 4sa/pt (skip)
+        -1: 20sa/pt (skip)
+        0: 100sa/pt (cache)
+        1: 500sa/pt (cache)
+        2: 2500sa/pt
+        and so on
+    */
+    int mCurrentLod;
 
     // Waveform rendering related members
     // The min-max pairs in each 100 samples range
     QVector<QPair<float, float>> mCoarse1Pkpk;
     // In each 0.1s, for long audio >= 10min
     QVector<QPair<float, float>> mCoarse2Pkpk;
+
+    // 0: 100sa/pt 1: 500sa/pt 2:2500sa/pt on and on...
+    QVector<QVector<QPair<float, float>>> mCachedLodPkpks;
 
     // Overview thumbnail generated based on user's monitor resolution.
     // I say we use (horizontal res / 2) as the horizontal resolution for now
@@ -119,4 +126,7 @@ private:
 private:
     void initPlugins();
     void uninitPlugins();
+
+    void DetermineLod();
+    void SetLod(int);
 };

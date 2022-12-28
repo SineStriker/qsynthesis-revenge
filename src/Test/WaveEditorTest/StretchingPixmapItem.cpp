@@ -25,6 +25,7 @@ void StretchingPixmapItem::SetPixmap(const QImage &image)
 
 void StretchingPixmapItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
+    return QGraphicsRectItem::paint(painter, option, widget);
     painter->drawPixmap(rect().toRect(), mPixmap);
 }
 

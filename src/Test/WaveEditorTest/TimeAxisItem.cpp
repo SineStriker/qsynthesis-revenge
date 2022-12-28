@@ -2,6 +2,7 @@
 #include <QPainter>
 #include <QDebug>
 #include <QWheelEvent>
+#include <QStyleOptionGraphicsItem>
 #include <chrono>
 #include "WaveEditorView.h"
 #include "TimeAxisItem.h"
@@ -14,6 +15,7 @@ TimeAxisItem::TimeAxisItem(QGraphicsItem *parent)
     constexpr int rightMargin = 10;
     mTimecodeWidthMMSS = fm.horizontalAdvance("00:00") + rightMargin;
     mTimecodeWidthMMSSFF = fm.horizontalAdvance("00:00.00") + rightMargin;
+    setFlag(QGraphicsItem::ItemUsesExtendedStyleOption, true);
 }
 
 TimeAxisItem::~TimeAxisItem()
@@ -34,7 +36,6 @@ void TimeAxisItem::eventSlot(QEvent *e, QPointF scenePos)
         auto *event = static_cast<QWheelEvent*>(e);
         auto d = event->angleDelta().y();;
         auto hCenter = scenePos.x() / double(rect().width()) * mSampleCount;
-        qDebug() << "ePos" << scenePos << "hCenter" << hCenter;
         static_cast<WaveEditorView *>(scene()->views()[0])
             ->RequestZoom(pow(2, d / 240.0), event->globalPos());
         break;
@@ -49,10 +50,6 @@ void TimeAxisItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *opti
     // Three LOD here. Advance the timecode on the base of 10, 5 or 2.
     // Find the highest viable detail level and use that.
     enum { UseMMSSFF, UseMMSS } timecodeKind = UseMMSSFF;
-
-    // Measure render time
-    auto t1 = std::chrono::high_resolution_clock::now();
-    uint32_t timecodeCount = 0;
 
     double pxPerSecond = rect().width() / (mSampleCount / (double)mSampleRate);
 
@@ -80,23 +77,28 @@ void TimeAxisItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *opti
     else
         msAdvancement *= 10;
 
+    auto expRect = option->exposedRect;
+
     painter->setFont(mTimecodeFont);
     painter->setPen(Qt::NoPen);
     painter->setBrush(Qt::gray);
 
     // Draw background
-    painter->drawRect(rect());
+    painter->drawRect(expRect);
     painter->setPen(Qt::black);
-    painter->drawLine(rect().bottomLeft(), rect().bottomRight());
+    painter->drawLine(expRect.bottomLeft(), expRect.bottomRight());
 
     if(msAdvancement == 0)
         return;
 
-    qDebug() << pos() << rect() << painter->clipBoundingRect();
-
     // Draw timecode
-    float left = 0;
-    for(int i = 0; left < rect().width(); i++) {
+    float leftAdvancement = msAdvancement * pxPerSecond / 1000.0;
+    int beginItr = ::floorf(expRect.x() / leftAdvancement);
+    float left = beginItr * leftAdvancement;
+    // An extra leftAdvancement to ensure the part exceeds right side is also painted
+    const float leftUbound = expRect.width() + left + leftAdvancement;
+
+    for(int i = beginItr; left < leftUbound; i++) {
         QString timecode;
         uint32_t ms = i * msAdvancement;
         uint32_t s = ms / 1000;
@@ -123,13 +125,6 @@ void TimeAxisItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *opti
                               .arg(s, 2, 10, QChar('0')));
             break;
         }
-        left += msAdvancement * pxPerSecond / 1000.0;
-        timecodeCount++;
+        left += leftAdvancement;
     }
-
-    qInfo() << "Rendered TimeAxis in"
-            << std::chrono::duration_cast<std::chrono::milliseconds>(
-                   std::chrono::high_resolution_clock::now() - t1)
-                   .count()
-            << "ms" << "with" << timecodeCount << "timecodes";
 }
