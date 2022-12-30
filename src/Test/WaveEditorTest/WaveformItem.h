@@ -17,6 +17,7 @@ public:
 
     void SetFeatureVector(QVector<QPair<float, float>> featureVec);
     void SetDecoder(IAudioDecoder *decoder, uint64_t totalSamples);
+    void SetSkipLevel(int skipLevel);
 
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
                QWidget *widget = nullptr) override;
@@ -29,6 +30,7 @@ private:
     IAudioDecoder *mDecoder;
 
     uint64_t mTotalSize;
+    int mSkip;
 
     enum { UseFeatureVector, UseDecoder } mRunningMode;
 };

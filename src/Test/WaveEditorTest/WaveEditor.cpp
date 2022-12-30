@@ -104,6 +104,7 @@ void WaveEditor::SetLod(int level) {
         } else {
             mWaveItemCoarse1->setVisible(false);
             mWaveItemDirect->setVisible(true);
+            mWaveItemDirect->SetSkipLevel(level);
             // TODO
         }
         mCurrentLod = level;
@@ -241,7 +242,7 @@ void WaveEditor::renderRoutine() {
 
                 for (int i = 1; i < 6; i++) {
                     int capacity = ceil(mCachedLodPkpks[i - 1].size() / 5.0);
-                    if (capacity < qApp->screens()[0]->size().width() / 2)
+                    if (capacity < qApp->screens()[0]->size().width() / 10)
                         break; // No less points than half the primary screen resolution
 
                     QVector<QPair<float, float>> cachedPkpk(capacity);
@@ -290,6 +291,7 @@ void WaveEditor::renderRoutine() {
 
                 mWaveItemCoarse1->SetFeatureVector(mCachedLodPkpks.back());
                 mWaveItemDirect->SetDecoder(decoder, mSampleCount);
+                
 
                 delete[] buffer;
                 mRenderRoutineHaltFlag = 0;
