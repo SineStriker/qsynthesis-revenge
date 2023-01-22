@@ -1,5 +1,5 @@
-#ifndef __QUTASTAGING_GLOBAL_H__
-#define __QUTASTAGING_GLOBAL_H__
+#ifndef QUTASTAGING_GLOBAL_H
+#define QUTASTAGING_GLOBAL_H
 
 #include <QtGlobal>
 
@@ -15,4 +15,4 @@
 #  endif
 #endif
 
-#endif // __QUTASTAGING_GLOBAL_H__
+#endif // QUTASTAGING_GLOBAL_H

@@ -19,12 +19,12 @@ void QUtaDistConfigPrivate::init() {
 }
 
 void QUtaDistConfigPrivate::initByApp() {
-    setDefaultDir(QUtaDistConfig::Plugins,                          //
-                  QString("${APPPATH}") + Slash + APP_PLUGINS_DIR //
+    setDefaultDir(QUtaDistConfig::Plugins,                                //
+                  QString("${APPPATH}") + Slash + APP_PRIVATE_PLUGINS_DIR //
     );
 
     setDefaultDir(QUtaDistConfig::BuiltIn,
-                  QString("${APPPATH}") + Slash + APP_RES_DIR + Slash + APP_RES_BUILTIN_DIR //
+                  QString("${APPPATH}") + Slash + APP_PUBLIC_PLUGINS_DIR //
     );
 
     setDefaultDir(QUtaDistConfig::BinTool,

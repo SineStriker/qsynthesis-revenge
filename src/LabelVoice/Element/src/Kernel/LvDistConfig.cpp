@@ -1,5 +1,5 @@
 #include "LvDistConfig.h"
-#include "SystemHelper.h"
+#include "QsSystem.h"
 #include "private/LvDistConfig_p.h"
 
 #include <QDebug>

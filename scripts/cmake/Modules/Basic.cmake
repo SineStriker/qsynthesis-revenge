@@ -1,3 +1,4 @@
+include_guard(DIRECTORY)
 include(${CMAKE_CURRENT_LIST_DIR}/StringUtil.cmake)
 
 # Check if a variable is Defined, throw error if not

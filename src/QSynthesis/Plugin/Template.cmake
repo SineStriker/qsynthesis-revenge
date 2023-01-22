@@ -98,7 +98,8 @@ macro(configure_plugin)
         ${_target}
         PROPERTIES
         TC_TARGET_TYPE PLUGIN
-        TC_PLUGIN_TYPE ${SUB_PROJECT}
+        TC_PLUGIN_PARENT ${SUB_PROJECT}
+        TC_PLUGIN_SUBDIR ${SUB_PLUGIN_DIR}
         TC_PLUGIN_CATEGORY ${CURRENT_PLUGIN_CATEGORY}
     )
 

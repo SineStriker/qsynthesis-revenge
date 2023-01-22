@@ -2,7 +2,7 @@
 
 // #include "Kernel/Events.h"
 
-#include "SystemHelper.h"
+#include "QsSystem.h"
 #include "ViewHelper.h"
 
 #include <QMessageBox>

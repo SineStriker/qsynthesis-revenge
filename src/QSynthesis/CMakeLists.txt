@@ -12,15 +12,11 @@ set(SUB_VERSION_SHORT ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}.${PROJEC
 set(SUB_DESCRIPTION "Remake of Vocal Synthesis UTAU.")
 set(SUB_IDENTIFIER "com.SineStr.QSynthesis")
 
-set(SUB_PLUGIN_DIR ${APP_RES_DIR}/${APP_RES_PLUGINS_DIR})
+set(SUB_PLUGIN_DIR ${APP_RES_DIR}/qsynthesis)
 
 # Add subdirectories
 add_subdirectory(Core)
 add_subdirectory(Element)
 add_subdirectory(Staging)
-
-if (ENABLE_APP_PLUGINS)
-    add_subdirectory(Plugin)
-endif()
-
+add_subdirectory(Plugin)
 add_subdirectory(WinMain)

@@ -4,7 +4,7 @@
 #include "Kernel/Events.h"
 #include "Kernel/LvApplication.h"
 
-#include "SystemHelper.h"
+#include "QsSystem.h"
 #include "ViewHelper.h"
 
 #include "Windows/Piano/PianoWindow.h"

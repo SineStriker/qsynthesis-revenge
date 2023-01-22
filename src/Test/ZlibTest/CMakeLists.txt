@@ -6,6 +6,6 @@ add_files(_src
 add_test_target(ZlibTest
     SOURCES ${_src}
     QT_LIBRARIES Core
-    LINKS QsUtils
+    LINKS QsBase
     INCLUDE_CURRENT
 )

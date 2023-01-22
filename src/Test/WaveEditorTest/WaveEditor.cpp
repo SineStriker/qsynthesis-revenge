@@ -1,7 +1,6 @@
 #include "WaveEditor.h"
 
-#include "Common/CodecArguments.h"
-#include "Common/SampleFormat.h"
+#include "QsMediaNamespace.h"
 
 #include <QGuiApplication>
 #include <QMessageBox>

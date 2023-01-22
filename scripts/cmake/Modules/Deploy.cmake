@@ -1,3 +1,5 @@
+include_guard(DIRECTORY)
+
 #[[
     get_all_targets <var>
 

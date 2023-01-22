@@ -4,7 +4,7 @@
 
 #include "Styles/QCssAnalyzer.h"
 #include "ViewHelper.h"
-#include "SystemHelper.h"
+#include "QsSystem.h"
 
 #include "Kernel/LvStartupInfo.h"
 

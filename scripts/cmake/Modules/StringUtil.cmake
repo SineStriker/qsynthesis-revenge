@@ -1,3 +1,5 @@
+include_guard(DIRECTORY)
+
 #[[
     string_split <var> <string> <separator>
 

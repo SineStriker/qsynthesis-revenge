@@ -1,3 +1,5 @@
+include_guard(DIRECTORY)
+
 function(delay_link_libraries _target _scope)
     foreach(_dll ${ARGN})
         get_target_property(_path ${_dll} IMPORTED_LOCATION_RELEASE)

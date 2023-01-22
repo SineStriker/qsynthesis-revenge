@@ -1,0 +1,13 @@
+<RCC>
+    <qresource prefix="/">
+        <file>translations/DsIntern_ja_JP.qm</file>
+        <file>translations/DsIntern_zh_CN.qm</file>
+        <file>translations/DsIntern_zh_HK.qm</file>
+        <file>themes/home.qss.in</file>
+        <file>themes/piano.qss.in</file>
+        <file>themes/home-dark.json</file>
+        <file>themes/home-light.json</file>
+        <file>themes/piano-dark.json</file>
+        <file>themes/piano-light.json</file>
+    </qresource>
+</RCC>

@@ -1,27 +1,24 @@
-
-#include "Common/CodecArguments.h"
-#include "Common/SampleFormat.h"
-#include "Api/IAudioDecoder.h"
-
-#include <QPluginLoader>
 #include <QCoreApplication>
+#include <QPluginLoader>
+
+#include "Api/IAudioDecoder.h"
+#include "QsMediaNamespace.h"
 
 #include <chrono>
 #include <iostream>
 
-int main(int argc, char *argv[])
-{
+int main(int argc, char *argv[]) {
     QCoreApplication a(argc, argv);
 
     QPluginLoader loader;
-    
+
     loader.setFileName("resources/modules/audiodecoders/FFmpegDecoder");
     auto decoder = qobject_cast<IAudioDecoder *>(loader.instance());
 
     assert(decoder);
 
-        if (!decoder->open({{QsMedia::KEY_NAME_FILE_NAME, "D:/tmp/wave.wav"},
-                              {QsMedia::KEY_NAME_SAMPLE_FORMAT, QsMedia::AV_SAMPLE_FMT_FLT}})) {
+    if (!decoder->open({{QsMedia::KEY_NAME_FILE_NAME, "D:/tmp/wave.wav"},
+                        {QsMedia::KEY_NAME_SAMPLE_FORMAT, QsMedia::AV_SAMPLE_FMT_FLT}})) {
         return -1;
     }
 
@@ -37,7 +34,7 @@ int main(int argc, char *argv[])
     do {
         samplesRead = decoder->Read(buffer, 0, samplesToRead);
     } while (samplesRead > 0);
-    
+
     auto end = std::chrono::high_resolution_clock::now();
 
     std::chrono::duration<double> diff = end - start;

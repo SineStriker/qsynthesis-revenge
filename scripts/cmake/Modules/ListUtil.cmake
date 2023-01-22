@@ -1,3 +1,5 @@
+include_guard(DIRECTORY)
+
 #[[
     add_files <var> PATTERNS patterns... [CURRENT] [CURRENT_RECURSE] [DIRECTORIES dirs...] [CLEAR]
 

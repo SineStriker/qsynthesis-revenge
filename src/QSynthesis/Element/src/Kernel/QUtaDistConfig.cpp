@@ -1,5 +1,5 @@
 #include "QUtaDistConfig.h"
-#include "SystemHelper.h"
+#include "QsSystem.h"
 #include "private/QUtaDistConfig_p.h"
 
 #include <QDebug>

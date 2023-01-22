@@ -1,3 +1,5 @@
+include_guard(DIRECTORY)
+
 #[[
     find_qt_module modules...
 

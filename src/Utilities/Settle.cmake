@@ -1,5 +1,3 @@
-include(${PROJECT_MODULES_DIR}/Deploy.cmake)
-
 set(_tool_exes)
 
 # Target Collector

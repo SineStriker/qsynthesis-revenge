@@ -3,20 +3,29 @@ project(QsIntegrate
     LANGUAGES CXX
 )
 
+set(_dirs Editor Global Kernel Managers Widgets)
+set(_extra_includes)
+
 add_files(_src
-    DIRECTORIES include src
+    DIRECTORIES ${_dirs}
     PATTERNS *.h *.hpp *.cpp *.cc
 )
 
-configure_library(
-    SOURCES ${_src} res/res.qrc
+qs_add_library(${PROJECT_NAME}
     ENABLE_SHARED
-    QT_LIBRARIES Widgets
-    QT_PRIVATE_INCLUDES Core Widgets
+    AUTHOR_NAME ${SUB_AUTHOR_NAME}
+    FILE_DESC ${SUB_FILE_DESC}
+    PRODUCT_NAME "QSynthesis.Library.Integrate"
+    LIBRARY_TYPE ${SUB_PROJECT}
+)
+
+target_components(${PROJECT_NAME}
+    INCLUDE_CURRENT
+    SOURCES ${_src} Res/res.qrc
+    QT_LIBRARIES Widgets Svg Network
+    QT_PRIVATE_INCLUDES Widgets
     LINKS QsFramework QsMedia QsSVS
-    INCLUDES include src
-    WIN32_FILE_DESC "QSynthesis Common Utilities"
-    WIN32_PRODUCT_NAME "QSynthesis.Library.Integrate"
+    INCLUDES ${_dirs} ${_extra_includes}
 )
 
 target_create_translations(${PROJECT_NAME} SOURCES ${_src}

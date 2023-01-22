@@ -22,7 +22,7 @@ def println_twice():
         print()
 
 
-def rmir(dir: str):
+def rmdir(dir: str):
     if os.path.isdir(dir):
         shutil.rmtree(dir)
 
@@ -182,7 +182,7 @@ if __name__ == "__main__":
     # Remove dir if .git doesn't esist
     if os.path.isdir(vcpkg_dir) and not os.path.isdir(vcpkg_dir + "/.git"):
         print("Vcpkg repository is not valid, auto remove")
-        rmir(vcpkg_dir)
+        rmdir(vcpkg_dir)
 
     if not os.path.isdir(vcpkg_dir):
         print(f"Clone {vcpkg_repo}")
@@ -225,17 +225,17 @@ if __name__ == "__main__":
 
     if args.clean or args.distclean:
         print("Remove build trees")
-        rmir("buildtrees")
+        rmdir("buildtrees")
 
         print("Remove downloads")
-        rmir("downloads")
+        rmdir("downloads")
 
         print("Remove packages")
-        rmir("packages")
+        rmdir("packages")
 
         if args.distclean:
             print("Remove caches")
-            rmir(vcpkg_cache_dir)
+            rmdir(vcpkg_cache_dir)
     else:
         print("Skip.")
 

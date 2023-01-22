@@ -3,32 +3,34 @@ project(QsFramework
     LANGUAGES CXX
 )
 
-add_subdirectory(tools)
+set(_dirs Api Global Kernel Widgets)
+set(_extra_includes
+    Widgets/Custom
+    Widgets/Extended
+    Widgets/Metatypes
+)
 
 add_files(_src
-    DIRECTORIES include src
+    DIRECTORIES ${_dirs}
     PATTERNS *.h *.hpp *.cpp *.cc
 )
 
-configure_library(
-    SOURCES ${_src} res/res.qrc
+qs_add_library(${PROJECT_NAME}
     ENABLE_SHARED
-    QT_LIBRARIES Widgets Svg Network
-    QT_PRIVATE_INCLUDES Widgets
-    LINKS QsUtils
-    INCLUDES include src
-    WIN32_FILE_DESC "QSynthesis Common Utilities"
-    WIN32_PRODUCT_NAME "QSynthesis.Library.Framework"
+    AUTHOR_NAME ${SUB_AUTHOR_NAME}
+    FILE_DESC ${SUB_FILE_DESC}
+    PRODUCT_NAME "QSynthesis.Library.Framework"
+    LIBRARY_TYPE ${SUB_PROJECT}
 )
 
-target_link_libraries(${PROJECT_NAME} PRIVATE SingleApplication)
-
-target_include_directories(${PROJECT_NAME} PUBLIC
-    src/Custom
-    src/Helpers
-    src/Kernel
-    src/Metatypes
-    src/Visual
+target_components(${PROJECT_NAME}
+    INCLUDE_CURRENT
+    SOURCES ${_src} Res/res.qrc
+    QT_LIBRARIES Widgets Svg Network
+    QT_PRIVATE_INCLUDES Widgets
+    LINKS QsBase
+    LINKS_PRIVATE SingleApplication
+    INCLUDES ${_dirs} ${_extra_includes}
 )
 
 target_create_translations(${PROJECT_NAME} SOURCES ${_src}

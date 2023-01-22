@@ -1,0 +1,85 @@
+{
+    "colors": {
+        "nativeWindow": {
+            "background": "transparent",
+            "minButton": {
+                "foreground": {
+                    "up": "#FFFFFF",
+                    "over": "#FFFFFF",
+                    "down": "#FFFFFF"
+                },
+                "background": {
+                    "up": "transparent",
+                    "over": "rgba(0, 0, 0, 15%)",
+                    "down": "rgba(0, 0, 0, 15%)"
+                }
+            },
+            "maxButton": {
+                "foreground": {
+                    "up": "#FFFFFF",
+                    "over": "#FFFFFF",
+                    "down": "#FFFFFF"
+                },
+                "foreground.checked": {
+                    "up": "#FFFFFF",
+                    "over": "#FFFFFF",
+                    "down": "#FFFFFF"
+                },
+                "background": {
+                    "up": "transparent",
+                    "over": "rgba(0, 0, 0, 15%)",
+                    "down": "rgba(0, 0, 0, 15%)"
+                }
+            },
+            "closeButton": {
+                "foreground": {
+                    "up": "#FFFFFF",
+                    "over": "#FFFFFF",
+                    "down": "#FFFFFF"
+                },
+                "background": {
+                    "up": "transparent",
+                    "over": "#E81123",
+                    "down": "#E81123"
+                }
+            },
+            "iconButton": {
+                "background": "transparent"
+            }
+        }
+    },
+    "sizes": {
+        "nativeWindow": {
+            "titleMargin": 20,
+            "minHeight": 20
+        },
+        "minButton": {
+            "icon": {
+                "width": 12,
+                "height": 12
+            },
+            "minWidth": 50
+        },
+        "maxButton": {
+            "icon": {
+                "width": 12,
+                "height": 12
+            },
+            "minWidth": 50
+        },
+        "closeButton": {
+            "icon": {
+                "width": 12,
+                "height": 12
+            },
+            "minWidth": 50
+        },
+        "iconButton": {
+            "icon": {
+                "width": 20,
+                "height": 20
+            },
+            "minWidth": 40
+        }
+    }
+}

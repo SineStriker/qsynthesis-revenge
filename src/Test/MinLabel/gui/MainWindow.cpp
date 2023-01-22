@@ -16,11 +16,9 @@
 
 #include <QJsonObject>
 
-#include "Common/CodecArguments.h"
-#include "Common/SampleFormat.h"
-
-#include "MathHelper.h"
-#include "SystemHelper.h"
+#include "QsMath.h"
+#include "QsMediaNamespace.h"
+#include "QsSystem.h"
 
 // https://iconduck.com/icons
 
@@ -181,7 +179,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
 }
 
 MainWindow::~MainWindow() {
-    if (Sys::isFileExist(lastFile)) {
+    if (QsSys::isFileExist(lastFile)) {
         saveFile(lastFile);
     }
 }
@@ -209,7 +207,7 @@ void MainWindow::saveFile(const QString &filename) {
     QString labFile = audioFileToLabFile(filename);
 
     QString content = textWidget->contentText->toPlainText();
-    if (content.isEmpty() && !Sys::isFileExist(labFile)) {
+    if (content.isEmpty() && !QsSys::isFileExist(labFile)) {
         return;
     }
 
@@ -217,7 +215,7 @@ void MainWindow::saveFile(const QString &filename) {
     if (!file.open(QIODevice::WriteOnly | QIODevice::Text)) {
         QMessageBox::critical(
             this, qAppName(),
-            QString("Failed to write to file %1").arg(Sys::PathFindFileName(labFile)));
+            QString("Failed to write to file %1").arg(QsSys::PathFindFileName(labFile)));
         ::exit(-1);
     }
 
@@ -231,8 +229,8 @@ void MainWindow::saveFile(const QString &filename) {
 void MainWindow::reloadWindowTitle() {
     setWindowTitle(dirname.isEmpty()
                        ? qAppName()
-                       : QString("%1 - %2").arg(
-                             qAppName(), QDir::toNativeSeparators(Sys::PathFindFileName(dirname))));
+                       : QString("%1 - %2").arg(qAppName(), QDir::toNativeSeparators(
+                                                                QsSys::PathFindFileName(dirname))));
 }
 
 void MainWindow::dragEnterEvent(QDragEnterEvent *event) {
@@ -243,13 +241,13 @@ void MainWindow::dragEnterEvent(QDragEnterEvent *event) {
         QStringList filenames;
         for (auto it = urls.begin(); it != urls.end(); ++it) {
             if (it->isLocalFile()) {
-                filenames.append(Sys::removeTailSlashes(it->toLocalFile()));
+                filenames.append(QsSys::removeTailSlashes(it->toLocalFile()));
             }
         }
         bool ok = false;
         if (filenames.size() == 1) {
             QString filename = filenames.front();
-            if (Sys::isDirExist(filename)) {
+            if (QsSys::isDirExist(filename)) {
                 ok = true;
             }
         }
@@ -267,13 +265,13 @@ void MainWindow::dropEvent(QDropEvent *event) {
         QStringList filenames;
         for (auto it = urls.begin(); it != urls.end(); ++it) {
             if (it->isLocalFile()) {
-                filenames.append(Sys::removeTailSlashes(it->toLocalFile()));
+                filenames.append(QsSys::removeTailSlashes(it->toLocalFile()));
             }
         }
         bool ok = false;
         if (filenames.size() == 1) {
             QString filename = filenames.front();
-            if (Sys::isDirExist(filename)) {
+            if (QsSys::isDirExist(filename)) {
                 ok = true;
                 openDirectory(filename);
             }
@@ -337,7 +335,7 @@ void MainWindow::_q_treeCurrentChanged(const QModelIndex &current, const QModelI
 
     QFileInfo info = fsModel->fileInfo(current);
     if (info.isFile()) {
-        if (Sys::isFileExist(lastFile)) {
+        if (QsSys::isFileExist(lastFile)) {
             saveFile(lastFile);
         }
         lastFile = info.absoluteFilePath();

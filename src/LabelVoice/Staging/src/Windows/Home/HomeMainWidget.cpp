@@ -5,7 +5,7 @@
 
 #include "Kernel/LvApplication.h"
 #include "Managers/QsFileManager.h"
-#include "SystemHelper.h"
+#include "QsSystem.h"
 
 #define DECODE_STYLE(VAR, VARIANT, TYPE)                                                           \
     {                                                                                              \

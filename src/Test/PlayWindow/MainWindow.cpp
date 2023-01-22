@@ -17,7 +17,7 @@
 #include "Common/SampleFormat.h"
 
 #include "MathHelper.h"
-#include "SystemHelper.h"
+#include "QsSystem.h"
 
 // https://iconduck.com/icons
 

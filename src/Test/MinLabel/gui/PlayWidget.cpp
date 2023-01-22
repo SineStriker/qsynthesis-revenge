@@ -13,11 +13,10 @@
 #include <QPluginLoader>
 #include <QTime>
 
-#include "Common/CodecArguments.h"
-#include "Common/SampleFormat.h"
+#include "QsMediaNamespace.h"
 
-#include "MathHelper.h"
-#include "SystemHelper.h"
+#include "QsMath.h"
+#include "QsSystem.h"
 
 // https://iconduck.com/icons
 

@@ -1,0 +1,94 @@
+/* Configuration */
+
+Config {
+    namespace: "nativeWindow";
+    pattern: "\\\"\\{\\{.*\\}\\}\\\"";
+    pattern-left: 3;
+    pattern-right: 3;
+    separator: "|";
+}
+
+
+/* Stylesheet Content */
+
+CWindowBarV2 {
+    background-color: "{{background|color}}";
+    qproperty-titleMargin: "{{titleMargin|size}}"px;
+}
+
+CWindowBarV2>QLabel#win-title-label {
+    padding: 0;
+    border: none;
+    color: transparent;
+    background-color: transparent;
+    /* Limit window bar height */
+    min-height: "{{minHeight|size}}"px;
+}
+
+CWindowBarV2>CToolButton#min-button {
+    qproperty-iconUp: svg(":/svg/window-bar/minimize.svg", "{{minButton.foreground.up|color}}");
+    qproperty-iconOver: svg(":/svg/window-bar/minimize.svg", "{{minButton.foreground.over|color}}");
+    qproperty-iconDown: svg(":/svg/window-bar/minimize.svg", "{{minButton.foreground.down|color}}");
+    qproperty-iconSize: "{{minButton.icon.width|size}}"px "{{minButton.icon.height|size}}"px;
+    min-width: "{{minButton.minWidth|size}}"px;
+    border: none;
+    padding: 0;
+    background-color: "{{minButton.background.up|color}}";
+}
+
+CWindowBarV2>CToolButton#min-button:hover {
+    background-color: "{{minButton.background.over|color}}";
+}
+
+CWindowBarV2>CToolButton#min-button:pressed {
+    background-color: "{{minButton.background.down|color}}";
+}
+
+CWindowBarV2>CToolButton#max-button {
+    qproperty-iconUp: svg(":/svg/window-bar/maximize.svg", "{{maxButton.foreground.up|color}}");
+    qproperty-iconOver: svg(":/svg/window-bar/maximize.svg", "{{maxButton.foreground.over|color}}");
+    qproperty-iconDown: svg(":/svg/window-bar/maximize.svg", "{{maxButton.foreground.down|color}}");
+    qproperty-iconUpChecked: svg(":/svg/window-bar/maximize2.svg", "{{maxButton.foreground.checked.up|color}}");
+    qproperty-iconOverChecked: svg(":/svg/window-bar/maximize2.svg", "{{maxButton.foreground.checked.over|color}}");
+    qproperty-iconDownChecked: svg(":/svg/window-bar/maximize2.svg", "{{maxButton.foreground.checked.down|color}}");
+    qproperty-iconSize: "{{maxButton.icon.width|size}}"px "{{maxButton.icon.height|size}}"px;
+    min-width: "{{maxButton.minWidth|size}}"px;
+    border: none;
+    padding: 0;
+    background-color: transparent;
+}
+
+CWindowBarV2>CToolButton#max-button:hover {
+    background-color: "{{maxButton.background.over|color}}";
+}
+
+CWindowBarV2>CToolButton#max-button:pressed {
+    background-color: "{{maxButton.background.down|color}}";
+}
+
+CWindowBarV2>CToolButton#win-close-button {
+    qproperty-iconUp: svg(":/svg/window-bar/close.svg", "{{closeButton.foreground.up|color}}");
+    qproperty-iconOver: svg(":/svg/window-bar/close.svg", "{{closeButton.foreground.over|color}}");
+    qproperty-iconDown: svg(":/svg/window-bar/close.svg", "{{closeButton.foreground.down|color}}");
+    qproperty-iconSize: "{{closeButton.icon.width|size}}"px "{{closeButton.icon.height|size}}"px;
+    min-width: "{{closeButton.minWidth|size}}"px;
+    border: none;
+    padding: 0;
+    background-color: transparent;
+}
+
+CWindowBarV2>CToolButton#win-close-button:hover {
+    background-color: "{{closeButton.background.over|color}}";
+}
+
+CWindowBarV2>CToolButton#win-close-button:pressed {
+    background-color: "{{closeButton.background.down|color}}";
+}
+
+CWindowBarV2>CToolButton#icon-button {
+    qproperty-iconSize: "{{iconButton.icon.width|size}}"px "{{iconButton.icon.height|size}}"px;
+    min-width: "{{iconButton.minWidth|size}}"px;
+    border: none;
+    padding: 0;
+    background-color: "{{iconButton.background|color}}";
+}
