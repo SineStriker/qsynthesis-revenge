@@ -22,6 +22,10 @@ public:
     void setBottomWidget(QWidget *w);
     QWidget *takeBottomWidget();
 
+    /**
+     * @brief Button which will control the widget visibility, set text or icon after call
+     *
+     */
     QAbstractButton *addWidget(QWidget *w);
     QAbstractButton *insertWidget(int index, QWidget *w);
     void removeWidget(QWidget *w);

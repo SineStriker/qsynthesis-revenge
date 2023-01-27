@@ -1,4 +1,10 @@
 {
+    "config": {
+        "priority": 10,
+        "namespaces": [
+            "nativeWindow"
+        ]
+    },
     "colors": {
         "nativeWindow": {
             "background": "transparent",
@@ -51,35 +57,35 @@
     "sizes": {
         "nativeWindow": {
             "titleMargin": 20,
-            "minHeight": 20
-        },
-        "minButton": {
-            "icon": {
-                "width": 12,
-                "height": 12
+            "minHeight": 20,
+            "minButton": {
+                "icon": {
+                    "width": 12,
+                    "height": 12
+                },
+                "minWidth": 50
             },
-            "minWidth": 50
-        },
-        "maxButton": {
-            "icon": {
-                "width": 12,
-                "height": 12
+            "maxButton": {
+                "icon": {
+                    "width": 12,
+                    "height": 12
+                },
+                "minWidth": 50
             },
-            "minWidth": 50
-        },
-        "closeButton": {
-            "icon": {
-                "width": 12,
-                "height": 12
+            "closeButton": {
+                "icon": {
+                    "width": 12,
+                    "height": 12
+                },
+                "minWidth": 50
             },
-            "minWidth": 50
-        },
-        "iconButton": {
-            "icon": {
-                "width": 20,
-                "height": 20
-            },
-            "minWidth": 40
+            "iconButton": {
+                "icon": {
+                    "width": 20,
+                    "height": 20
+                },
+                "minWidth": 40
+            }
         }
     }
 }

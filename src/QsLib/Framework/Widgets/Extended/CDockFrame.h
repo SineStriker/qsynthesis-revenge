@@ -21,6 +21,10 @@ public:
     void setWidget(QWidget *w);
     QWidget *takeWidget();
 
+    /**
+     * @brief Button which will control the widget visibility, set text or icon after call
+     *
+     */
     QAbstractButton *addWidget(Qt::Edge edge, Qs::Priority number, QWidget *w);
     void removeWidget(QAbstractButton *card);
 

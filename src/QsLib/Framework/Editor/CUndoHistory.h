@@ -4,13 +4,13 @@
 #include <QObject>
 #include <QSet>
 
-#include "QsCommand.h"
+#include "CUndoCommand.h"
 
-class QSINTEGRATE_API QsEditorHistory : public QObject {
+class QSFRAMEWORK_API CUndoHistory : public QObject {
     Q_OBJECT
 public:
-    explicit QsEditorHistory(QObject *parent = nullptr);
-    ~QsEditorHistory();
+    explicit CUndoHistory(QObject *parent = nullptr);
+    ~CUndoHistory();
 
 public:
     void saveNow();
@@ -22,24 +22,24 @@ public:
     void undo();
     void redo();
 
-    void execute(const QsUndoCommandRef &cmd, bool isUndo);
-    void execute(const QsUndoCommandList &cmds, bool isUndo);
+    void execute(const CUndoCommandRef &cmd, bool isUndo);
+    void execute(const CUndoCommandList &cmds, bool isUndo);
 
     void startRecord();
     void stopRecord(const QString &desc);
 
-    void addSubscriber(QsCommandSubscriber *subscriber);
-    void removeSubscriber(QsCommandSubscriber *subscriber);
+    void addSubscriber(CUndoSubscriber *subscriber);
+    void removeSubscriber(CUndoSubscriber *subscriber);
 
 protected:
-    QList<QsUndoCommandList> historyStack;
+    QList<CUndoCommandList> historyStack;
     int historyIndex;
     int savedHistoryIndex;
-    QSet<QsCommandSubscriber *> subscribers;
+    QSet<CUndoSubscriber *> subscribers;
 
     // temp
     bool recording;
-    QsUndoCommandList recordList;
+    CUndoCommandList recordList;
 
     bool edited;
 

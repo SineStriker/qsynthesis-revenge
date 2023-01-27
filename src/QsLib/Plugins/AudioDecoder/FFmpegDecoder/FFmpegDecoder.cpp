@@ -6,6 +6,8 @@
 
 #include <QDebug>
 
+NAUDIO_USE_NAMESPACE
+
 static int extractInt(const QVariant &var, int defaultValue) {
     int res = defaultValue;
     switch (var.type()) {

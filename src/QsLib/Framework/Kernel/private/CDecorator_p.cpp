@@ -7,76 +7,53 @@
 #include <QWidget>
 #include <QWindow>
 
-static const char Theme_Variable_Hint_Size[] = "size";
-static const char Theme_Variable_Hint_Color[] = "color";
-
-static const char Theme_Config_Key_Sizes[] = "sizes";
-static const char Theme_Config_Key_Colors[] = "colors";
-static const char Theme_Config_Key_Separator[] = ".";
-
-static const char Theme_RegExp_Pattern[] = "\\\"\\{\\{.*\\}\\}\\\"";
-static const char Theme_RegExp_Separator[] = "|";
-static const int Theme_RegExp_Pattern_Left_Length = 3;
-static const int Theme_RegExp_Pattern_Right_Length = 3;
-
-CDecoratorFilter::CDecoratorFilter(QWidget *w, CDecorator *dec, CDecoratorPrivate *decp)
-    : QObject(dec), dec(dec), decp(decp), w(w) {
-    winHandle = w->windowHandle();
-    w->installEventFilter(this);
-
-    connect(dec, &CDecorator::deviceRatioChanged, this, &CDecoratorFilter::_q_deviceRatioChanged);
-    connect(dec, &CDecorator::logicalRatioChanged, this, &CDecoratorFilter::_q_logicalRatioChanged);
+// LocaleData
+static QTranslator *qmLoad(const QString &path) {
+    auto t = new QTranslator();
+    if (t->load(path)) {
+        return t;
+    }
+    delete t;
+    return nullptr;
 }
 
-CDecoratorFilter::~CDecoratorFilter() {
+LocaleData::LocaleData() {
 }
 
-bool CDecoratorFilter::eventFilter(QObject *obj, QEvent *event) {
-    if (obj == w) {
-        switch (event->type()) {
-            case QEvent::Show: {
-                if (!winHandle) {
-                    winHandle = w->window()->windowHandle();
-                    connect(winHandle, &QWindow::screenChanged, this,
-                            &CDecoratorFilter::_q_screenChanged);
-                    // reloadScreen(qIDec->theme());
-                }
-                break;
+LocaleData::~LocaleData() {
+    uninstall();
+}
+
+void LocaleData::install(int loc) {
+    uninstall();
+
+    auto it = qmFiles.find(loc);
+    if (it != qmFiles.end()) {
+        for (const auto &path : it.value()) {
+            auto t = qmLoad(path);
+            if (t) {
+                qApp->installTranslator(t);
+                translators.append(t);
             }
-            default:
-                break;
         }
     }
-    return QObject::eventFilter(obj, event);
 }
 
-void CDecoratorFilter::_q_screenChanged(QScreen *screen) {
-}
-
-void CDecoratorFilter::_q_deviceRatioChanged(QScreen *screen, double dpi) {
-    if (screen == w->screen()) {
-        // reloadScreen(qIDec->theme());
+void LocaleData::uninstall() {
+    if (translators.isEmpty() || qApp->isQuitLockEnabled()) {
+        return;
     }
+
+    for (auto it = translators.begin(); it != translators.end(); ++it) {
+        auto t = *it;
+        qApp->removeTranslator(t);
+        delete t;
+    }
+    translators.clear();
 }
 
-void CDecoratorFilter::_q_logicalRatioChanged(QScreen *screen, double dpi) {
-    if (screen == w->screen()) {
-        // reloadScreen(qIDec->theme());
-    }
-}
 
-static void dfs_extract(const QJsonObject &obj, const QStringList &levels,
-                        void(fun)(const QStringList &, const QJsonValue &, void *), void *udata) {
-    for (auto it = obj.begin(); it != obj.end(); ++it) {
-        QStringList nextLevels = QStringList(levels) << it.key();
-        const auto &val = it.value();
-        if (val.isObject()) {
-            dfs_extract(val.toObject(), nextLevels, fun, udata);
-        } else {
-            fun(nextLevels, val, udata);
-        }
-    }
-};
+// CDecoratorPrivate
 
 CDecoratorPrivate::CDecoratorPrivate() {
 }

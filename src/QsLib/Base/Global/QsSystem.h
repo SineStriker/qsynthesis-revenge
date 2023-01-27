@@ -66,7 +66,7 @@ namespace QsSys {
     }
 
     QSBASE_API bool combine(const QString &fileName1, const QString &fileName2,
-                                 const QString &newName);
+                            const QString &newName);
 
     QSBASE_API void reveal(const QString &filename);
 
@@ -86,10 +86,21 @@ namespace QsSys {
 
     QSBASE_API QString invalidFileNameChars();
 
+    /**
+     * @brief Display error without QtWidgets module
+     *
+     * @param title Title if message box is available
+     * @param text Text
+     */
     QSBASE_API void osMessageStderr(const QString &title, const QString &text);
 
+    /**
+     * @brief System Dpi base, 96 on Windows/Linux, 72 on Mac
+     *
+     * @return QSBASE_API
+     */
     QSBASE_API int osUnitDpi();
 
-} // namespace Sys
+} // namespace QsSys
 
 #endif // QSSYSTEMHELPER_H

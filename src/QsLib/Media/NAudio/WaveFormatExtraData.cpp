@@ -1,5 +1,7 @@
 #include "WaveFormatExtraData.h"
 
+NAUDIO_BEGIN_NAMESPACE
+
 WaveFormatExtraData::WaveFormatExtraData() {
     memset(extraData, 0, sizeof(extraData));
 }
@@ -20,3 +22,5 @@ void WaveFormatExtraData::Serialize(QIODevice *writer) {
         return;
     writer->write(this->extraData, this->extraSize);
 }
+
+NAUDIO_END_NAMESPACE

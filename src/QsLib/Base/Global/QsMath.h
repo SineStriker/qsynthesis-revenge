@@ -8,23 +8,57 @@
 
 namespace QsMath {
 
+    /**
+     * @brief Convert a list of string to a list of int, skip if fail
+     *
+     * @param list String list
+     * @return
+     */
     QSBASE_API QList<int> toIntList(const QStringList &list);
 
+    /**
+     * @brief Convert a list of string to a list of double, skip if fail
+     *
+     * @param list String list
+     * @return
+     */
     QSBASE_API QList<double> toDoubleList(const QStringList &list);
 
+    /**
+     * @brief Determine if a string is all of number(dot, minus)
+     *
+     * @param s String
+     * @param considerDot Consider . as number
+     * @param considerNeg Consider - as number
+     */
     QSBASE_API bool isNumber(const QString &s, bool considerDot, bool considerNeg);
 
+    /**
+     * @brief Determine if A starts with B and not equals to B
+     *
+     */
     inline bool isPrefixedWith(const QString &A, const QString &B) {
         return A.startsWith(B) && (A != B);
     }
 
+    /**
+     * @brief Calculate Euclidean distance of 2 points
+     *
+     */
     QSBASE_API double euclideanDistance(const QPoint &p1, const QPoint &p2);
 
     QSBASE_API QStringList splitAll(const QString &str, const QChar &delim);
 
+    /**
+     * @brief Adjust file system name if there's a file with same name
+     *
+     */
     QSBASE_API QString adjustRepeatedName(const QSet<QString> &set, const QString &name);
 
-    // Template Functions
+    /**
+     * @brief Insert sort an array
+     *
+     */
     template <class T>
     inline void insertSort(QList<T> &array) {
         int i, j;
@@ -57,6 +91,10 @@ namespace QsMath {
         }
     }
 
+    /**
+     * @brief Batch functions
+     *
+     */
     template <class T>
     inline bool batchCheck(const QList<T> &list, bool fun(const T &)) {
         QList<T> res;
@@ -128,6 +166,6 @@ namespace QsMath {
         return res;
     }
 
-}; // namespace Math
+}; // namespace QsMath
 
 #endif // QSMATHHELPER_H

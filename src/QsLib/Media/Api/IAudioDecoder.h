@@ -5,7 +5,7 @@
 
 #include "NAudio/WaveStream.h"
 
-class QSMEDIA_API IAudioDecoder : public QObject, public WaveStream {
+class QSMEDIA_API IAudioDecoder : public QObject, public NAudio::WaveStream {
     Q_OBJECT
 public:
     IAudioDecoder(QObject *parent = nullptr);
@@ -13,10 +13,10 @@ public:
 
 public:
     /**
-    * @brief Open audio with common and specific arguments
-    * 
-    * @param args Key-value pairs as open arguments
-    */
+     * @brief Open audio with common and specific arguments
+     *
+     * @param args Key-value pairs as open arguments
+     */
     virtual bool open(const QVariantMap &args = {}) = 0;
     virtual void close() = 0;
 
@@ -24,10 +24,10 @@ public:
 
     /**
      * @brief The original format of the processed audio
-     * 
-     * @return WaveFormat
+     *
+     * @return NAudio::WaveFormat
      */
-    virtual WaveFormat inFormat() const = 0;
+    virtual NAudio::WaveFormat inFormat() const = 0;
 };
 
 #define IAudioDecoder_IID "QSynthesis.Plugin.Media.AudioDecoder"

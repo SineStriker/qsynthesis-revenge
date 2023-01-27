@@ -1,10 +1,16 @@
 #ifndef QSMACROS_H
 #define QSMACROS_H
 
-// Concat string
+/**
+ * @brief Concat string
+ * 
+ */
 #define Q_STRCAT(A, B) A##B
 
-// Traverse Directory
+/**
+ * @brief Traverse directory, create local "d" var
+ * 
+ */
 #define Q_D_EXPLORE(str)                                                                           \
     QFileInfoList d;                                                                               \
     {                                                                                              \
@@ -14,7 +20,10 @@
         d = dir.entryInfoList();                                                                   \
     }
 
-// Singleton
+/**
+ * @brief Define singleton members
+ * 
+ */
 #define Q_SINGLETON(T)                                                                             \
 private:                                                                                           \
     static T *self;                                                                                \
@@ -31,9 +40,16 @@ public:                                                                         
         return self;                                                                               \
     }
 
+/**
+ * @brief Declare static singleton members
+ * 
+ */
 #define Q_SINGLETON_DECLARE(T) T *T::self = nullptr;
 
-// Default Codec
+/**
+ * @brief Define codec members
+ * 
+ */
 #define Q_CHARSET_INSTANCE                                                                         \
 protected:                                                                                         \
     QTextCodec *m_codec;                                                                           \
@@ -45,6 +61,10 @@ public:                                                                         
                                                                                                    \
     bool charsetDetermined() const;
 
+/**
+ * @brief Define static codec members
+ * 
+ */
 #define Q_CHARSET_STATIC                                                                           \
 private:                                                                                           \
     static QTextCodec *s_codeForDefault;                                                           \
@@ -53,6 +73,10 @@ public:                                                                         
     static QTextCodec *codeForDefault();                                                           \
     static void setCodeForDefault(QTextCodec *codec);
 
+/**
+ * @brief Declare codec members
+ * 
+ */
 #define Q_CHARSET_INSTANCE_DECLARE(T)                                                              \
     QTextCodec *T::codec() const {                                                                 \
         return m_codec;                                                                            \
@@ -66,6 +90,10 @@ public:                                                                         
         return m_charsetDetermined;                                                                \
     }
 
+/**
+ * @brief Declare static codec members
+ * 
+ */
 #define Q_CHARSET_STATIC_DECLARE(T)                                                                \
     QTextCodec *T::s_codeForDefault = nullptr;                                                     \
                                                                                                    \
@@ -85,6 +113,10 @@ public:                                                                         
     Q_CHARSET_INSTANCE_DECLARE(T)                                                                  \
     Q_CHARSET_STATIC_DECLARE(T)
 
+/**
+ * @brief Define unique id members
+ * 
+ */
 #define Q_UNIQUE_ID(T)                                                                             \
 public:                                                                                            \
     void initId() {                                                                                \
@@ -108,6 +140,10 @@ protected:                                                                      
     static int s_idMax;                                                                            \
     static QMap<int, T *> s_idMap;
 
+/**
+ * @brief Declare static unique id members
+ * 
+ */
 #define Q_UNIQUE_ID_DECLARE(T)                                                                     \
     int T::s_idMax = 0;                                                                            \
     QMap<int, T *> T::s_idMap;                                                                     \

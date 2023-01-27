@@ -5,6 +5,8 @@
 
 #include "WaveFormat.h"
 
+NAUDIO_BEGIN_NAMESPACE
+
 class QSMEDIA_API WaveStream {
 public:
     WaveStream();
@@ -50,5 +52,7 @@ public:
 
     virtual bool HasData(int count) const;
 };
+
+NAUDIO_END_NAMESPACE
 
 #endif // WAVESTREAM_H

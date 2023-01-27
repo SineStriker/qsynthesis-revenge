@@ -28,10 +28,10 @@ public:
 
     bool isOpen() const override;
 
-    WaveFormat inFormat() const override;
+    NAudio::WaveFormat inFormat() const override;
 
 public:
-    WaveFormat Format() const override;
+    NAudio::WaveFormat Format() const override;
 
     void SetPosition(qint64 pos) override;
 

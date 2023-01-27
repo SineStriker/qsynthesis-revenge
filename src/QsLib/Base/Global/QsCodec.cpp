@@ -25,3 +25,27 @@ QTextCodec *QsCodec::GetUtfCodec(const QByteArray &data, bool *determined) {
     determined ? (*determined = false) : 0; // Not certain
     return autoCodec;
 }
+
+QString QsCodec::unescape(const QString &s) {
+    QString res;
+    auto p = s.data();
+    while (p) {
+        if (*p == '\\') {
+            auto pNext = p + 1;
+            if (pNext) {
+                if (*pNext == '\\') {
+                    res += '\\';
+                } else {
+                    res += *pNext;
+                }
+                p += 2;
+            } else {
+                break;
+            }
+        } else {
+            res += *p;
+            p += 1;
+        }
+    }
+    return res;
+}

@@ -21,56 +21,83 @@ public:
     ~CDecorator();
 
     enum Locale {
-        China = QLocale::China,
-        HongKong = QLocale::HongKong,
-        Japan = QLocale::Japan,
-        UnitedStates = QLocale::UnitedStates,
+        China = QLocale::China,               // 简体中文
+        HongKong = QLocale::HongKong,         // 繁體中文
+        Japan = QLocale::Japan,               // 日本語
+        UnitedStates = QLocale::UnitedStates, // English (US)
     };
 
     enum Theme {
         Light,
         Dark,
         MultiColor,
+
+        // User
         UserTheme = 100,
     };
 
-    // Locale related
+    /**
+     * @brief Current locale
+     *
+     * @return Locale enumeration
+     */
     int locale() const;
     void setLocale(int locale);
 
+    /**
+     * @brief Add a translation configuration
+     *
+     * @param key Unique token
+     * @param qm Locale and related qm file path
+     */
     void addLocale(const QString &key, const QMap<int, QStringList> &qm);
     void removeLocale(const QString &key);
 
-    // Theme Related
+    /**
+     * @brief Install translation corresponding to the tokens to a widget, call at constructor
+     *
+     * @param w Widget pointer
+     * @param keys Tokens of locales
+     * @param updater Member function or global function to update texts
+     */
+    void installLocale(QWidget *w, const QStringList &keys,
+                       const std::function<void()> updater = nullptr);
+    void uninstallLocale(QWidget *w);
+
+    /**
+     * @brief Current theme
+     *
+     * @return Theme enumeration
+     */
     int theme() const;
     void setTheme(int theme);
 
-    void addTheme(const QString &key, const QStringList &qss, const QMap<int, QStringList> &conf);
-    void removeTheme(const QString &key);
-
     /**
-     * @brief Call at constructor
+     * @brief Add a stylesheet template file (Persistent)
      *
-     * @tparam T Derived from QWidget
-     * @param w Widget pointer
-     * @param key Unique key of locale
+     * @param key Unique token
+     * @param path qss.in file path
      */
-    template <class T>
-    void installLocale(T *w) {
-        static_assert(std::is_base_of<QWidget, T>::value, "T must derive from QWidget");
-        // First translation
-        w->reloadStrings(locale(), QString());
-        // Listen to global manager
-        connect(qIDec, &CDecorator::localeChanged, this, &T::reloadStrings);
-    }
+    void addThemeTemplate(const QString &key, const QString &path);
+    void removeThemeTemplate(const QString &key);
 
     /**
-     * @brief Call at constructor
+     * @brief Add a theme configuration
+     *
+     * @param key Unique token
+     * @param conf Theme and related json file path
+     */
+    void addThemeConfig(const QString &key, const QMap<int, QStringList> &conf);
+    void removeThemeConfig(const QString &key);
+
+    /**
+     * @brief Install themes corresponding to the namespaces to a widget, call at constructor
      *
      * @param w Widget pointer
      * @param namespaces Namespaces defined in qss.in file
      */
-    void installTheme(QWidget *w, const QStringList &namespaces);
+    void installTheme(QWidget *w, const QStringList &keys);
+    void uninstallTheme(QWidget *w);
 
     /**
      * @brief Register a new style type
@@ -90,10 +117,10 @@ private:
     void _q_deviceRatioChanged(double dpi);
     void _q_logicalRatioChanged(double dpi);
 
-signals:
-    void themeChanged(int theme, const QString &key);
-    void localeChanged(int locale, const QString &key);
+    void _q_localeSubscriberDestroyed();
+    void _q_themeSubscriberDestroyed();
 
+signals:
     void deviceRatioChanged(QScreen *screen, double dpi);
     void logicalRatioChanged(QScreen *screen, double dpi);
 };

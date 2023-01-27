@@ -1,7 +1,6 @@
 /* Configuration */
 
 Config {
-    namespace: "nativeWindow";
     pattern: "\\\"\\{\\{.*\\}\\}\\\"";
     pattern-left: 3;
     pattern-right: 3;

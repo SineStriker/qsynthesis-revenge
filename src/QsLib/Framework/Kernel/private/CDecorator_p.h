@@ -3,27 +3,41 @@
 
 #include "../CDecorator.h"
 
+#include "ThemeSubscriber.h"
+#include "ThemeTemplate.h"
+
 #include <QHash>
+#include <QSet>
+#include <QTranslator>
 
-class CDecoratorFilter : public QObject {
-    Q_OBJECT
-public:
-    CDecoratorFilter(QWidget *w, CDecorator *dec, CDecoratorPrivate *decp);
-    ~CDecoratorFilter();
+struct LocaleData {
+    // QM file paths
+    QMap<int, QStringList> qmFiles;
 
-    CDecorator *dec;
-    CDecoratorPrivate *decp;
+    // Installed translators
+    QList<QTranslator *> translators;
 
-    QWidget *w;
-    QWindow *winHandle;
+    // Subscribers
+    QSet<QWidget *> subscribers;
 
-protected:
-    bool eventFilter(QObject *obj, QEvent *event) override;
+    LocaleData();
+    ~LocaleData();
 
-private:
-    void _q_screenChanged(QScreen *screen);
-    void _q_deviceRatioChanged(QScreen *screen, double dpi);
-    void _q_logicalRatioChanged(QScreen *screen, double dpi);
+    // Apply translation
+    void install(int loc);
+
+    // Remove translation
+    void uninstall();
+};
+
+struct LocaleSubscriber {
+    QStringList keys;
+    std::function<void()> updater;
+};
+
+struct ThemeData {
+    // Json config paths
+    QMap<int, QStringList> configs;
 };
 
 class CDecoratorPrivate {
@@ -36,19 +50,17 @@ public:
 
     CDecorator *q_ptr;
 
-    int theme;
+    // Locale related
     int loc;
-
-    struct ThemeData {
-        CDecoratorFilter *filter;
-    };
-
-    struct LocaleData {};
-
-    QHash<QString, ThemeData> themes;
     QHash<QString, LocaleData> locales;
+    QHash<QWidget *, LocaleSubscriber> localeSubscribers;
 
+    // Theme related
+    int theme;
     int themeMax;
+    QHash<QString, ThemeData> themeConfigs;
+    QHash<QString, QSharedPointer<ThemeTemplate>> themeTemplates;
+    QHash<QWidget *, ThemeSubscriber *> themeSubscribers;
 };
 
 #endif // CDECORATORPRIVATE_H

@@ -4,9 +4,10 @@
 #include <QIODevice>
 #include <QString>
 
+#include "QsMediaGlobal.h"
 #include "WaveFormatEncoding.h"
 
-#include "QsMediaGlobal.h"
+NAUDIO_BEGIN_NAMESPACE
 
 class QSMEDIA_API WaveFormat {
 protected:
@@ -81,5 +82,7 @@ public:
         return extraSize;
     }
 };
+
+NAUDIO_END_NAMESPACE
 
 #endif // WAVEFORMAT_H

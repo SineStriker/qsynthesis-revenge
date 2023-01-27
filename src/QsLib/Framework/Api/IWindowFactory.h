@@ -3,14 +3,17 @@
 
 #include "IWindowHandle.h"
 
-#include "QsFrameworkGlobal.h"
-
 class QSFRAMEWORK_API IWindowFactory : public QObject {
     Q_OBJECT
 public:
     IWindowFactory(QObject *parent = nullptr);
     ~IWindowFactory();
 
+    /**
+     * @brief Create a new window handle instance
+     *
+     * @param win Window pointer
+     */
     virtual IWindowHandle *create(QMainWindow *win);
 };
 

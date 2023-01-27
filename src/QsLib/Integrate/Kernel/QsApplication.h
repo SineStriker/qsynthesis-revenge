@@ -1,5 +1,5 @@
-#ifndef QSELEMAPPLICATION_H
-#define QSELEMAPPLICATION_H
+#ifndef QSAPPLICATION_H
+#define QSAPPLICATION_H
 
 #include "CApplication.h"
 
@@ -30,4 +30,4 @@ protected:
     QScopedPointer<QsApplicationPrivate> d_ptr;
 };
 
-#endif // QSELEMAPPLICATION_H
+#endif // QSAPPLICATION_H

@@ -15,4 +15,7 @@
 #  endif
 #endif
 
+#define QSMEDIA_BEGIN_NAMESPACE namespace QsMedia {
+#define QSMEDIA_END_NAMESPACE }
+
 #endif // CODECARGUMENTS_H

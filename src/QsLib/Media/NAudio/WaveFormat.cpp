@@ -2,6 +2,8 @@
 
 #include "WaveFormatExtraData.h"
 
+NAUDIO_BEGIN_NAMESPACE
+
 template <class T>
 static QByteArray toBytes(T val) {
     return QByteArray((char *) (&val), sizeof(T));
@@ -145,3 +147,5 @@ void WaveFormat::Serialize(QIODevice *writer) {
     writer->write(toBytes<short>(this->BitsPerSample()));
     writer->write(toBytes<short>(this->extraSize));
 }
+
+NAUDIO_END_NAMESPACE

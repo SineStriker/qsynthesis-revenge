@@ -1,5 +1,7 @@
 #include "WaveStream.h"
 
+NAUDIO_BEGIN_NAMESPACE
+
 static void set_pos_bounded(WaveStream *stream, qint64 pos) {
     if (pos > stream->Length())
         stream->SetPosition(stream->Length());
@@ -81,3 +83,5 @@ bool WaveStream::HasData(int count) const {
     Q_UNUSED(count);
     return Position() < Length();
 }
+
+NAUDIO_END_NAMESPACE

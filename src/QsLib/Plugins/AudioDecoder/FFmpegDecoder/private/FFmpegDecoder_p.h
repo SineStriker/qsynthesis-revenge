@@ -67,10 +67,10 @@ public:
     AVFrame *_frame;
 
     // 输入音频信息
-    WaveFormat _waveFormat;
+    NAudio::WaveFormat _waveFormat;
 
     // 输出音频信息
-    WaveFormat _resampledFormat;
+    NAudio::WaveFormat _resampledFormat;
 
     // 文件名参数
     QString _fileName;

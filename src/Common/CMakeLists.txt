@@ -1,26 +1,29 @@
-
-# ----------------- Pre-process -----------------
 set(_templates_dir ${CMAKE_CURRENT_LIST_DIR}/templates)
-string(TIMESTAMP _current_year %Y)
+set(_vcpkg_installed_dir ${REPOSITORY_VCPKG_DIR}/installed)
 
 if(${CMAKE_BUILD_TYPE} STREQUAL Debug)
-    set(_suffix "/debug")
+    set(_vcpkg_triplet_suffix "/debug")
 else()
-    set(_suffix)
+    set(_vcpkg_triplet_suffix)
 endif()
 
+string(TIMESTAMP _current_year %Y)
+
+# VCPKG_TARGET_TRIPLET is defined inside vcpkg scripts
 if(WIN32)
-    set(_bin_dir "${ROOT_SOURCE_DIR}/../vcpkg/installed/${VCPKG_TARGET_TRIPLET}${_suffix}/bin")
+    set(_bin_dir ${_vcpkg_installed_dir}/${VCPKG_TARGET_TRIPLET}${_vcpkg_triplet_suffix}/bin)
     set(_bin_pat "*.dll")
 elseif(APPLE)
-    set(_bin_dir "${ROOT_SOURCE_DIR}/../vcpkg/installed/${VCPKG_TARGET_TRIPLET}${_suffix}/lib")
+    set(_bin_dir ${_vcpkg_installed_dir}/${VCPKG_TARGET_TRIPLET}${_vcpkg_triplet_suffix}/lib)
     set(_bin_pat "*.dylib")
 else()
-    set(_bin_dir "${ROOT_SOURCE_DIR}/../vcpkg/installed/${VCPKG_TARGET_TRIPLET}${_suffix}/lib")
+    set(_bin_dir ${_vcpkg_installed_dir}/${VCPKG_TARGET_TRIPLET}${_vcpkg_triplet_suffix}/lib)
     set(_bin_pat "*.so*")
 endif()
 
-# ----------------- Global variables -----------------
+# ----------------------------------
+# Set global variables
+# ----------------------------------
 # Time
 set(TIME_PROJECT_START_YEAR     2020                                                CACHE STRING INTERNAL)
 set(TIME_CURRENT_YEAR           ${_current_year}                                    CACHE STRING INTERNAL)
@@ -31,24 +34,27 @@ set(WIN32_EXE_RC                ${_templates_dir}/Win32ExeRes.rc.in             
 set(WIN32_EXE_MANIFEST          ${_templates_dir}/Win32ExeManifest.manifest.in      CACHE STRING INTERNAL)
 set(QT_CONF_SETTING             ${_templates_dir}/qt.conf.in                        CACHE STRING INTERNAL)
 
-# Set project files or dirs
-set(PROJECT_ARCHIVE_DIR         ${CMAKE_BINARY_DIR}/etc                             CACHE STRING INTERNAL) # Etc
-set(PROJECT_MODULES_DIR         ${ROOT_SOURCE_DIR}/../scripts/cmake/Modules         CACHE STRING INTERNAL) # Scripts
-set(PROJECT_RELEASE_DIR         ${CMAKE_BINARY_DIR}                                 CACHE STRING INTERNAL) # Release
-set(PROJECT_DOCUMENT_DIR        ${ROOT_SOURCE_DIR}/../docs/redist                   CACHE STRING INTERNAL) # Docs
-set(PROJECT_LICENSE_FILE        ${ROOT_SOURCE_DIR}/../LICENSE                       CACHE STRING INTERNAL) # License
-
 # Vcpkg
 set(VCPKG_BINARY_DIR            ${_bin_dir}                                         CACHE STRING INTERNAL)
 set(VCPKG_BINARY_PAT            ${_bin_pat}                                         CACHE STRING INTERNAL)
 
-# ----------------- Initialization -----------------
+
+# ----------------------------------
+# Initialization
+# ----------------------------------
 # Include all scripts
 file(GLOB_RECURSE _scripts ${CMAKE_CURRENT_SOURCE_DIR}/cmake/*.cmake)
 
 foreach(_script ${_scripts})
     include(${_script})
 endforeach()
+
+# Include common utils
+include(${PROJECT_MODULES_DIR}/Deploy.cmake)
+include(${PROJECT_MODULES_DIR}/FindUtil.cmake)
+include(${PROJECT_MODULES_DIR}/Link.cmake)
+include(${PROJECT_MODULES_DIR}/ListUtil.cmake)
+include(${PROJECT_MODULES_DIR}/Target.cmake)
 
 # Add sub dirs
 add_subdirectory(src)
