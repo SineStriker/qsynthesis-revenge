@@ -15,18 +15,19 @@ This project use Microsoft vcpkg to manage its dependencies, you should finish t
 
 + Run `python setup-vcpkg.py` at repository root path. The script will simply pull `vcpkg` from GitHub and run a series of `vcpkg install` commands.
 
-+ Use `git update-index --no-skip-worktree <file>`to untrack `path_qt.cmake` without deleting it。
++ Use `git update-index --no-skip-worktree <file>`to untrack `path_qt.cmake` without deleting it.
+    + Don't commit `path_qt.cmake`!!!
 
-## Project Configuration
+<!-- ## Project Configuration
 
 + The LabelVoice Application uses a lot of QSynthesis Modules and the restare disbled(e.g. Utaplugin).
-+ See `Config.cmake` for details.
++ See `Config.cmake` for details. -->
 
 ## Notification
 
 + This project is heavily nested with the particular compiler and specified edition of Qt libraries. As a result, we recommend using exactly Qt 5.15.2 and MSVC, GCC, Clang on each platform.
 
-## Dependencies (No need to build)
+<!-- ## Dependencies (No need to build)
 
 ### FFmpeg
 
@@ -44,7 +45,7 @@ You can either build FFmpeg yourself or download pre-built libraries. The config
     + https://blog.csdn.net/dss875914213/article/details/120897704
 
 + Pre-built Binaries
-    + https://github.com/wang-bin/avbuild
+    + https://github.com/wang-bin/avbuild -->
 
 ### Other Libraries
 + SDL2

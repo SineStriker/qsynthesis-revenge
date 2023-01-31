@@ -3,42 +3,89 @@
 
 #include "../CDecorator.h"
 
-#include "ThemeSubscriber.h"
 #include "ThemeTemplate.h"
+
+#include <set>
 
 #include <QHash>
 #include <QSet>
 #include <QTranslator>
 
-struct LocaleData {
-    // QM file paths
-    QMap<int, QStringList> qmFiles;
-
-    // Installed translators
-    QList<QTranslator *> translators;
-
-    // Subscribers
-    QSet<QWidget *> subscribers;
-
-    LocaleData();
-    ~LocaleData();
-
-    // Apply translation
-    void install(int loc);
-
-    // Remove translation
-    void uninstall();
-};
-
+/**
+ * @brief Locale related
+ *
+ */
 struct LocaleSubscriber {
     QStringList keys;
     std::function<void()> updater;
 };
 
-struct ThemeData {
-    // Json config paths
-    QMap<int, QStringList> configs;
+struct LocaleData {
+    // QM file paths
+    QMap<QLocale, QStringList> qmFiles;
+
+    // Installed translators
+    QList<QTranslator *> translators;
+
+    LocaleData();
+    ~LocaleData();
+
+    // Apply translation
+    void install(const QLocale &loc);
+
+    void install(const QStringList &paths);
+
+    // Remove translation
+    void uninstall();
 };
+
+struct LocalePlaceholder {
+    QSet<LocaleSubscriber *> subscribers;
+    QSharedPointer<LocaleData> data;
+};
+
+
+/**
+ * @brief Theme related
+ *
+ */
+class ThemeGuard;
+struct ThemePlaceholder;
+
+struct ThemeSubscriber {
+    bool dirty;
+
+    QHash<QWidget *, ThemeGuard *> widgets;
+    QHash<QString, ThemePlaceholder *> templates;
+
+    ThemeSubscriber();
+    void notifyAll();
+};
+
+struct ThemePlaceholder {
+    QString ns;
+    QSet<ThemeSubscriber *> subscribers;
+
+    struct ConfigSet {
+        QMap<int, QHash<QString, QSharedPointer<ThemeConfig>>>
+            data; // priority - (config_key - config)
+    };
+    QHash<QString, ConfigSet> configs; // theme_key - config_set
+
+    QSharedPointer<ThemeTemplate> data;
+
+    // Incremental update
+    QSet<QString> dirtyThemeKeys;
+    QHash<QString, QString> stylesheetCaches;
+
+    bool isEmpty() const;
+    void invalidate();
+};
+
+struct ThemeConfigPack {
+    QHash<QString, QSharedPointer<ThemeConfig>> data; // theme_key - config
+};
+
 
 class CDecoratorPrivate {
     Q_DECLARE_PUBLIC(CDecorator)
@@ -51,16 +98,16 @@ public:
     CDecorator *q_ptr;
 
     // Locale related
-    int loc;
-    QHash<QString, LocaleData> locales;
-    QHash<QWidget *, LocaleSubscriber> localeSubscribers;
+    QLocale loc;
+    QHash<QLocale, LocalePlaceholder *> localeConfigs;
+    QHash<QWidget *, LocaleSubscriber *> localeSubscribers;
 
     // Theme related
-    int theme;
-    int themeMax;
-    QHash<QString, ThemeData> themeConfigs;
-    QHash<QString, QSharedPointer<ThemeTemplate>> themeTemplates;
-    QHash<QWidget *, ThemeSubscriber *> themeSubscribers;
+    QString theme;
+    QHash<QString, ThemeConfigPack> themeConfigs;                  // configKey
+    QHash<QString, ThemePlaceholder *> themeTemplates;             // templateKey
+    QHash<QSet<QString>, ThemeSubscriber *> themeSubscriberGroups; // templateKeys
+    QHash<QWidget *, ThemeSubscriber *> themeSubscribers;          // w
 };
 
 #endif // CDECORATORPRIVATE_H

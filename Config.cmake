@@ -15,7 +15,7 @@ set(PROJECT_LICENSE_FILE ${REPOSITORY_ROOT_DIR}/LICENSE CACHE STRING INTERNAL) #
 
 
 # ----------------------------------
-# Check environment
+# Initialization
 # ----------------------------------
 include(${PROJECT_MODULES_DIR}/Basic.cmake)
 

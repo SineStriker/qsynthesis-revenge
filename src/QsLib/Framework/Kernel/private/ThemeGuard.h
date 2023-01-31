@@ -1,5 +1,5 @@
-#ifndef THEMESUBSCRIBER_H
-#define THEMESUBSCRIBER_H
+#ifndef THEMEGUARD_H
+#define THEMEGUARD_H
 
 #include <QScreen>
 #include <QWidget>
@@ -7,20 +7,24 @@
 #include "../CDecorator.h"
 #include "ThemeTemplate.h"
 
-class ThemeSubscriber : public QObject {
+struct ThemeSubscriber;
+
+class ThemeGuard : public QObject {
     Q_OBJECT
 public:
-    ThemeSubscriber(QWidget *w, CDecorator *dec, CDecoratorPrivate *decp);
-    ~ThemeSubscriber();
+    ThemeGuard(QWidget *w, CDecorator *dec, CDecoratorPrivate *decp, ThemeSubscriber *g);
+    ~ThemeGuard();
 
+    // Object pointers
     CDecorator *dec;
     CDecoratorPrivate *decp;
+
+    ThemeSubscriber *group;
 
     QWidget *w;
     QWindow *winHandle;
 
-    QHash<QString, QSharedPointer<ThemeTemplate>> templates;
-
+    bool needUpdate;
     void updateScreen();
 
 protected:
@@ -32,4 +36,4 @@ private:
     void _q_logicalRatioChanged(QScreen *screen, double dpi);
 };
 
-#endif // THEMESUBSCRIBER_H
+#endif // THEMEGUARD_H

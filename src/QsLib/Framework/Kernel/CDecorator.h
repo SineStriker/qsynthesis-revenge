@@ -17,40 +17,24 @@ class CDecorator : public QObject {
     Q_DECLARE_PRIVATE(CDecorator)
     Q_SINGLETON(CDecorator)
 public:
-    CDecorator(QObject *parent = nullptr);
+    explicit CDecorator(QObject *parent = nullptr);
     ~CDecorator();
-
-    enum Locale {
-        China = QLocale::China,               // 简体中文
-        HongKong = QLocale::HongKong,         // 繁體中文
-        Japan = QLocale::Japan,               // 日本語
-        UnitedStates = QLocale::UnitedStates, // English (US)
-    };
-
-    enum Theme {
-        Light,
-        Dark,
-        MultiColor,
-
-        // User
-        UserTheme = 100,
-    };
 
     /**
      * @brief Current locale
      *
-     * @return Locale enumeration
+     * @return QLocale (No impact to framework locale)
      */
-    int locale() const;
-    void setLocale(int locale);
+    QLocale locale() const;
+    void setLocale(const QLocale &locale);
 
     /**
      * @brief Add a translation configuration
      *
      * @param key Unique token
-     * @param qm Locale and related qm file path
+     * @param paths Locale and related qm file path
      */
-    void addLocale(const QString &key, const QMap<int, QStringList> &qm);
+    void addLocale(const QString &key, const QMap<QLocale, QStringList> &paths);
     void removeLocale(const QString &key);
 
     /**
@@ -67,10 +51,10 @@ public:
     /**
      * @brief Current theme
      *
-     * @return Theme enumeration
+     * @return Theme string
      */
-    int theme() const;
-    void setTheme(int theme);
+    QString theme() const;
+    void setTheme(const QString &theme);
 
     /**
      * @brief Add a stylesheet template file (Persistent)
@@ -85,27 +69,20 @@ public:
      * @brief Add a theme configuration
      *
      * @param key Unique token
-     * @param conf Theme and related json file path
+     * @param paths Theme and related json file path
      */
-    void addThemeConfig(const QString &key, const QMap<int, QStringList> &conf);
+    void addThemeConfig(const QString &key, const QMap<QString, QStringList> &paths);
     void removeThemeConfig(const QString &key);
 
     /**
-     * @brief Install themes corresponding to the namespaces to a widget, call at constructor
+     * @brief Install themes corresponding to the templates to a widget, call at constructor
      *
      * @param w Widget pointer
-     * @param namespaces Namespaces defined in qss.in file
+     * @param keys Template defined in qss.in file
      */
-    void installTheme(QWidget *w, const QStringList &keys);
+    void installTheme(QWidget *w, const QStringList &templateKeys);
     void uninstallTheme(QWidget *w);
-
-    /**
-     * @brief Register a new style type
-     *
-     * @return New theme enumeration >= Theme::UserTheme
-     */
-    int registerNewTheme();
-
+    
 protected:
     CDecorator(CDecoratorPrivate &d, QObject *parent = nullptr);
 

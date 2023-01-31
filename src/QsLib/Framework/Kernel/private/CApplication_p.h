@@ -20,7 +20,7 @@ public:
 
     CApplication *q_ptr;
 
-    QsDecorator *hDecorator;
+    CDecorator *hDecorator;
     SingleApplication *hSingleApp;
 
 private:

@@ -2,6 +2,8 @@
 
 #include "QsCss.h"
 
+#include "QsLinq.h"
+
 #include <QFile>
 #include <QJsonArray>
 #include <QJsonDocument>
@@ -13,7 +15,6 @@ static const char Theme_Config_Key_Colors[] = "colors";
 static const char Theme_Config_Key_Separator[] = ".";
 
 static const char Theme_Config_Key_Config_Priority[] = "priority";
-static const char Theme_Config_Key_Config_Namespaces[] = "namespaces";
 
 ThemeConfig::ThemeConfig() {
     priority = 1;
@@ -22,7 +23,11 @@ ThemeConfig::ThemeConfig() {
 ThemeConfig::~ThemeConfig() {
 }
 
-bool ThemeConfig::load(const QString &filename, bool configOnly) {
+bool ThemeConfig::load(const QStringList &filenames) {
+    return !QsLinq::Any(filenames, [this](const QString &filename) { return !loadOne(filename); });
+}
+
+bool ThemeConfig::loadOne(const QString &filename) {
     QFile file(filename);
 
     // Open file
@@ -61,24 +66,6 @@ bool ThemeConfig::load(const QString &filename, bool configOnly) {
         if (it != objDoc.end() && it.value().isDouble()) {
             priority = it.value().toDouble();
         }
-
-        it = obj.find(Theme_Config_Key_Config_Namespaces);
-        if (it == objDoc.end() || !it.value().isArray()) {
-            qDebug().noquote() << "ThemeConfig: Missing namespace";
-            return false;
-        }
-
-        // Get namespaces
-        {
-            auto arr = it.value().toArray();
-            for (const auto &item : qAsConst(arr)) {
-                namespaces.append(item.toString());
-            }
-        }
-    }
-
-    if (configOnly) {
-        return true;
     }
 
     // Get colors
@@ -102,8 +89,15 @@ bool ThemeConfig::load(const QString &filename, bool configOnly) {
                 QStringList newKeys = QStringList(keys) << it.key();
                 const auto &val = it.value();
                 if (val.isString()) {
-                    colors.insert(newKeys.join(Theme_Config_Key_Separator),
-                                  QsCss::CssStringToColor(val.toString()));
+                    QString newKeyStr = newKeys.join(Theme_Config_Key_Separator);
+                    int idx = newKeyStr.indexOf(Theme_Config_Key_Separator);
+                    if (idx <= 0 || idx == newKeyStr.size() - 1) {
+                        continue;
+                    }
+                    QString ns = newKeyStr.left(idx);
+                    namespaces.insert(ns);
+                    colors[ns].insert(newKeyStr.mid(idx + 1),
+                                      QsCss::CssStringToColor(val.toString()));
                 } else if (val.isObject()) {
                     stack.push_back(qMakePair(newKeys, it.value().toObject()));
                 }
@@ -132,7 +126,14 @@ bool ThemeConfig::load(const QString &filename, bool configOnly) {
                 QStringList newKeys = QStringList(keys) << it.key();
                 const auto &val = it.value();
                 if (val.isDouble()) {
-                    sizes.insert(newKeys.join(Theme_Config_Key_Separator), val.toInt());
+                    QString newKeyStr = newKeys.join(Theme_Config_Key_Separator);
+                    int idx = newKeyStr.indexOf(Theme_Config_Key_Separator);
+                    if (idx <= 0 || idx == newKeyStr.size() - 1) {
+                        continue;
+                    }
+                    QString ns = newKeyStr.left(idx);
+                    namespaces.insert(ns);
+                    sizes[ns].insert(newKeyStr.mid(idx + 1), val.toInt());
                 } else if (val.isObject()) {
                     stack.push_back(qMakePair(newKeys, it.value().toObject()));
                 }

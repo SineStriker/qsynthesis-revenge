@@ -3,6 +3,7 @@
 
 #include <QColor>
 #include <QMap>
+#include <QSet>
 
 // Parse theme json file
 
@@ -12,13 +13,18 @@ public:
     ~ThemeConfig();
 
 public:
-    QMap<QString, QColor> colors;
-    QMap<QString, int> sizes;
+    // Variables -> namespace - values
+    QMap<QString, QMap<QString, QColor>> colors;
+    QMap<QString, QMap<QString, int>> sizes;
 
-    int priority;           // The lower the prior
-    QStringList namespaces; // Namespaces from config
+    QSet<QString> namespaces;
 
-    bool load(const QString &filename, bool configOnly);
+    int priority; // The lower the prior
+
+    bool load(const QStringList &filenames);
+
+protected:
+    bool loadOne(const QString &filename);
 };
 
 #endif // THEMECONFIG_H

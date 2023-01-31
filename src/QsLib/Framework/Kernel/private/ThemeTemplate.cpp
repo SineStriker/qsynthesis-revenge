@@ -107,7 +107,8 @@ bool ThemeTemplate::load(const QString &filename) {
     return true;
 }
 
-QString ThemeTemplate::parse(const ThemeConfig &conf) const {
+QString ThemeTemplate::parse(const QMap<QString, QColor> &colors,
+                             const QMap<QString, int> &sizes) const {
     QString stylesheet;
 
     QRegularExpression re(pattern);
@@ -127,13 +128,13 @@ QString ThemeTemplate::parse(const ThemeConfig &conf) const {
             QString r = TemplateVariable.mid(idx + 1).toString().simplified();
 
             if (r == Theme_Variable_Hint_Color) {
-                auto it = conf.colors.find(l);
-                if (it != conf.colors.end()) {
+                auto it = colors.find(l);
+                if (it != colors.end()) {
                     ValueString = '#' + it->name();
                 }
             } else if (r == Theme_Variable_Hint_Size) {
-                auto it = conf.sizes.find(l);
-                if (it != conf.sizes.end()) {
+                auto it = sizes.find(l);
+                if (it != sizes.end()) {
                     ValueString = QString::number(toRealPixelSize(it.value()));
                 }
             }
@@ -142,16 +143,16 @@ QString ThemeTemplate::parse(const ThemeConfig &conf) const {
                 auto l = TemplateVariable.toString();
                 // Find color
                 {
-                    auto it = conf.colors.find(l);
-                    if (it != conf.colors.end()) {
+                    auto it = colors.find(l);
+                    if (it != colors.end()) {
                         ValueString = '#' + it->name();
                         break;
                     }
                 }
                 // Find size
                 {
-                    auto it = conf.sizes.find(l);
-                    if (it != conf.sizes.end()) {
+                    auto it = sizes.find(l);
+                    if (it != sizes.end()) {
                         ValueString = QString::number(toRealPixelSize(it.value()));
                         break;
                     }

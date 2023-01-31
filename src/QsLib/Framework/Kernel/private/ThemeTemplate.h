@@ -2,6 +2,7 @@
 #define __THEMETEMPLATE_H__
 
 #include <QColor>
+#include <QSharedPointer>
 #include <QString>
 
 #include "ThemeConfig.h"
@@ -22,7 +23,7 @@ public:
 
     bool load(const QString &filename);
 
-    QString parse(const ThemeConfig &conf) const;
+    QString parse(const QMap<QString, QColor> &colors, const QMap<QString, int> &sizes) const;
 };
 
 #endif // __THEMETEMPLATE_H__
