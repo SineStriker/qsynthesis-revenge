@@ -54,7 +54,7 @@ bool QOtoIni::load(const QString &filename) {
             continue;
         }
         QOtoItem genon = QUtaUtils::StringToGenon(line);
-        QString filename = QsSys::PathFildDirPath(filename) + Slash + genon.FileName;
+        QString filename = QsSys::PathFindDirPath(filename) + Slash + genon.FileName;
 
         auto it = OtoSamples.find(filename);
         if (it == OtoSamples.end()) {

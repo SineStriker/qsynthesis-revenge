@@ -12,7 +12,7 @@
 
 class CDecoratorPrivate;
 
-class CDecorator : public QObject {
+class QSFRAMEWORK_API CDecorator : public QObject {
     Q_OBJECT
     Q_DECLARE_PRIVATE(CDecorator)
     Q_SINGLETON(CDecorator)
@@ -26,6 +26,7 @@ public:
      * @return QLocale (No impact to framework locale)
      */
     QLocale locale() const;
+    QList<QLocale> locales() const;
     void setLocale(const QLocale &locale);
 
     /**
@@ -34,7 +35,7 @@ public:
      * @param key Unique token
      * @param paths Locale and related qm file path
      */
-    void addLocale(const QString &key, const QMap<QLocale, QStringList> &paths);
+    void addLocale(const QString &key, const QHash<QLocale, QStringList> &paths);
     void removeLocale(const QString &key);
 
     /**
@@ -54,6 +55,7 @@ public:
      * @return Theme string
      */
     QString theme() const;
+    QStringList themes() const;
     void setTheme(const QString &theme);
 
     /**

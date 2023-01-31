@@ -7,7 +7,7 @@
 #include "Managers/QsFileManager.h"
 #include "Managers/QsPluginManager.h"
 
-#include "Tools/LocalLinguist.h"
+#include "CDecreateDir.h"
 
 #include "../QsDistConfig.h"
 
@@ -35,7 +35,7 @@ public:
     QsFileManager *fileMgr;
 
 private:
-    LocalLinguist *ll;
+    CDecreateDir dd;
 };
 
 #endif // QSELEMAPPLICATIONPRIVATE_H

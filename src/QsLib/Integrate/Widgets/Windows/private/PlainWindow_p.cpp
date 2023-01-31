@@ -3,6 +3,8 @@
 #include "Api/IWindowFactory.h"
 #include "Managers/QsPluginManager.h"
 
+#include "QsSystem.h"
+
 PlainWindowPrivate::PlainWindowPrivate() {
 }
 
@@ -23,7 +25,11 @@ void PlainWindowPrivate::init() {
     // loader = nullptr;
     loader = QsPluginManager::loadInternalPlugin(QsDistConfig::WindowFactory);
     if (loader) {
-        winHandle = qobject_cast<IWindowFactory *>(loader->instance())->create(q);
+        auto fac = qobject_cast<IWindowFactory *>(loader->instance());
+        Q_ASSERT(fac);
+        fac->setupPath(QsSys::PathFindDirPath(loader->fileName()));
+
+        winHandle = fac->create(q);
         winHandle->setup();
     }
 }

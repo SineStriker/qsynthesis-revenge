@@ -13,9 +13,6 @@ PianoWindow::PianoWindow(PianoWindowPrivate &d, QWidget *parent) : ProjectWindow
     d.init();
 }
 
-void PianoWindow::reloadStrings(int locale, const QString &key) {
-}
-
 QString PianoWindow::filename() const {
     Q_D(const PianoWindow);
     return d->filename;

@@ -12,8 +12,6 @@
 #include "CToolButton.h"
 #include "QPixelSize.h"
 
-#include "Tools/LocalDecorator.h"
-
 class Q_DECL_EXPORT CWindowBarV2 : public CBaseTitleBarV2 {
     Q_OBJECT
     Q_PROPERTY(
@@ -22,8 +20,7 @@ public:
     explicit CWindowBarV2(QMenuBar *menuBar, QWidget *parent = nullptr);
     ~CWindowBarV2();
 
-    void reloadStrings(int locale, const QString &key);
-    void reloadScreen(int theme);
+    void reloadStrings();
 
 public:
     void reloadMaxButtonState(bool checked = false);
@@ -46,8 +43,6 @@ private:
     bool m_titleVisible;
 
     QMenuBar *m_menuBar;
-
-    LocalDecorator *ld;
 
     void drawCentralTitle(QPainter &painter);
 

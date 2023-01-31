@@ -38,22 +38,6 @@ static const char DEFAULT_WINDOW_FACTORY[] = "NativeWindow";
 
 static const char Slash = '/';
 
-static QString GetAppDataPath() {
-    QString path;
-#ifdef Q_OS_WINDOWS
-    path = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation);
-#elif defined(Q_OS_MAC)
-    path = QStandardPaths::writableLocation(QStandardPaths::HomeLocation) + "/.config";
-#else
-    path = QStandardPaths::writableLocation(QStandardPaths::AppConfigLocation);
-#endif
-    QString slashName = Slash + qAppName();
-    if (path.endsWith(slashName)) {
-        path.chop(slashName.size());
-    }
-    return path;
-}
-
 QsDistConfigPrivate::QsDistConfigPrivate() {
 }
 
@@ -66,24 +50,14 @@ void QsDistConfigPrivate::init() {
 
 void QsDistConfigPrivate::initByApp() {
     /* Set basic environments */
-    vars = {
-        {"DESKTOP", QStandardPaths::writableLocation(QStandardPaths::DesktopLocation)},
-        {"DOCUMENTS", QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation)},
-        {"APPLICATIONS", QStandardPaths::writableLocation(QStandardPaths::ApplicationsLocation)},
-        {"HOME", QStandardPaths::writableLocation(QStandardPaths::HomeLocation)},
-        {"APPDATA", GetAppDataPath()},
-        {"TEMP", QDir::tempPath()},
-        {"ROOT", QDir::rootPath()},
-        {"APPPATH", qApp->applicationDirPath()},
-        {"APPNAME", qAppName()},
-    };
+    vars.addHash(QSimpleVarExp::SystemValues());
 
     /* Set default directories */
     auto wrapDirInfo = [this](const QString &key, const QString &dir, const QString &errorMsg,
                               DirInitArgs::CheckLevel level, bool addLibrary) {
         Q_UNUSED(errorMsg);
         return DirInfo{
-            key, parse(dir), dir,
+            key, vars.parse(dir), dir,
             DirInitArgs{
                 level,
                 addLibrary
@@ -104,8 +78,8 @@ void QsDistConfigPrivate::initByApp() {
          wrapDirInfo(KEY_NAME_QT_TRANSLATIONS_DIR, QString("${APPPATH}") + Slash + "translations",
                      "translations", DirInitArgs::OnlyCheck, true)},
         {QsDistConfig::QsPlugins, //
-         wrapDirInfo(KEY_NAME_QS_PLUGINS_DIR, QString("${APPPATH}") + Slash + "built-in", "built-in",
-                     DirInitArgs::OnlyCheck, true)},
+         wrapDirInfo(KEY_NAME_QS_PLUGINS_DIR, QString("${APPPATH}") + Slash + "built-in",
+                     "built-in", DirInitArgs::OnlyCheck, true)},
         {QsDistConfig::BinTool, //
          wrapDirInfo(KEY_NAME_BINTOOL_DIR, QString("${APPPATH}") + Slash + "tools", "tools",
                      DirInitArgs::OnlyCheck, true)},
@@ -160,7 +134,7 @@ bool QsDistConfigPrivate::load_helper(const QString &filename) {
             if (it3 == obj.end() || !it3.value().isString()) {
                 continue;
             }
-            info.dir = parse(QDir::fromNativeSeparators(it3.value().toString()));
+            info.dir = vars.parse(QDir::fromNativeSeparators(it3.value().toString()));
         }
     }
 
@@ -248,7 +222,7 @@ bool QsDistConfigPrivate::save_default(const QString &filename) {
 void QsDistConfigPrivate::setDefault() {
     for (auto it = dirMap.begin(); it != dirMap.end(); ++it) {
         auto &info = it.value();
-        info.dir = parse(info.defaultDir);
+        info.dir = vars.parse(info.defaultDir);
     }
     for (auto it = pluginMap.begin(); it != pluginMap.end(); ++it) {
         auto &info = it.value();
@@ -256,40 +230,14 @@ void QsDistConfigPrivate::setDefault() {
     }
 }
 
-QString QsDistConfigPrivate::parse(const QString &str) const {
-    struct Result {
-        QString key;
-        QString val;
-        QString full;
-    };
-    QList<Result> tempList;
-
-    QRegularExpression reg("\\$\\{(\\w+)\\}");
-    auto it = reg.globalMatch(str);
-    while (it.hasNext()) {
-        auto match = it.next();
-        QString var = match.captured(1);
-        auto it2 = vars.find(var);
-        if (it2 != vars.end()) {
-            tempList.append(Result{var, it2.value(), match.captured()});
-        }
-    }
-
-    QString str2 = str;
-    for (const Result &res : qAsConst(tempList)) {
-        str2.replace(res.full, res.val);
-    }
-    return str2;
-}
-
 void QsDistConfigPrivate::registerEscapeVar(const QString &key, const QString &val, bool replace) {
-    auto it = vars.find(key);
-    if (it != vars.end()) {
+    auto it = vars.Variables.find(key);
+    if (it != vars.Variables.end()) {
         if (replace) {
             it.value() = val;
         }
     } else {
-        vars.insert(key, val);
+        vars.Variables.insert(key, val);
     }
 }
 

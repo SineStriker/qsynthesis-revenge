@@ -1,8 +1,9 @@
 #include "NativeWindowFactory.h"
 #include "NativeHandle.h"
 
+#include "CDecreateDir.h"
+
 #include "CDecorator.h"
-#include "Tools/LocalLinguist.h"
 
 #include <QTranslator>
 
@@ -10,19 +11,12 @@ class NativeWindowFactoryPrivate {
 public:
     void init();
 
+    CDecreateDir dd;
     NativeWindowFactory *q_ptr;
-
-    LocalLinguist *ll;
 };
 
 void NativeWindowFactoryPrivate::init() {
-    ll = new LocalLinguist(q_ptr);
-    ll->addLocale(QsDecorator::UnitedStates, {});
-    ll->addLocale(QsDecorator::China, {":/translations/NativeWindow_zh_CN.qm"});
-    ll->addLocale(QsDecorator::HongKong, {":/translations/NativeWindow_zh_HK.qm"});
-    ll->addLocale(QsDecorator::Japan, {":/translations/NativeWindow_ja_JP.qm"});
-    ll->reloadStrings(qIDec->locale());
-    qIDec->addThemes({":/themes/window-bar.qss.in"});
+    qIDec->addThemeTemplate("NativeWindow", ":/themes/window-bar.qss.in");
 }
 
 // ----------------------------------------------------------------------------
@@ -34,6 +28,13 @@ NativeWindowFactory::NativeWindowFactory(QObject *parent)
 }
 
 NativeWindowFactory::~NativeWindowFactory() {
+}
+
+void NativeWindowFactory::setupPath(const QString &path) {
+    IWindowFactory::setupPath(path);
+
+    d_ptr->dd.setDir(path);
+    d_ptr->dd.loadDefault("NativeWindow");
 }
 
 IWindowHandle *NativeWindowFactory::create(QMainWindow *win) {

@@ -1,6 +1,6 @@
 #include "IWindowFactory.h"
 
-IWindowFactory::IWindowFactory(QObject *parent) : QObject(parent) {
+IWindowFactory::IWindowFactory(QObject *parent) : INamePlugin(parent) {
 }
 
 IWindowFactory::~IWindowFactory() {

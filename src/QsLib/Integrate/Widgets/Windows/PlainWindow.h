@@ -11,7 +11,7 @@ class QSINTEGRATE_API PlainWindow : public QMainWindow {
     Q_OBJECT
     Q_DECLARE_PRIVATE(PlainWindow)
 public:
-    PlainWindow(QWidget *parent = nullptr);
+    explicit PlainWindow(QWidget *parent = nullptr);
     ~PlainWindow();
 
 public:

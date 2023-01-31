@@ -1,0 +1,29 @@
+{
+    "locales": {
+        "key": "NativeWindow",
+        "dir": "${FILEPATH}/NativeWindow.res/translations",
+        "files": {
+            "zh_CN": [
+                "NativeWindow_zh_CN.qm"
+            ],
+            "zh_HK": [
+                "NativeWindow_zh_HK.qm"
+            ],
+            "ja_JP": [
+                "NativeWindow_ja_JP.qm"
+            ]
+        }
+    },
+    "themes": {
+        "key": "NativeWindow",
+        "dir": "${FILEPATH}/NativeWindow.res/themes",
+        "files": {
+            "Zhibin - Dark": [
+                "dark.json"
+            ],
+            "Zhibin - Light": [
+                "light.json"
+            ]
+        }
+    }
+}

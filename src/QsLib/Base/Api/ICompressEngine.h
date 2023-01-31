@@ -1,11 +1,9 @@
 #ifndef ICOMPRESSENGINE_H
 #define ICOMPRESSENGINE_H
 
-#include <QObject>
+#include "INamePlugin.h"
 
-#include "QsGlobal.h"
-
-class QSBASE_API ICompressEngine : public QObject {
+class QSBASE_API ICompressEngine : public INamePlugin {
     Q_OBJECT
 public:
     ICompressEngine(QObject *parent = nullptr);

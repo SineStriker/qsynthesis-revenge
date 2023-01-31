@@ -5,6 +5,7 @@
 #include <QCoreApplication>
 #include <QDirIterator>
 #include <QProcess>
+#include <QStandardPaths>
 
 #ifdef Q_OS_WINDOWS
 #include <ShlObj.h>
@@ -160,6 +161,22 @@ QString QsSys::removeTailSlashes(const QString &dirname) {
 
 QString QsSys::appPath() {
     return qApp->applicationDirPath();
+}
+
+QString QsSys::appDataPath() {
+    QString path;
+#ifdef Q_OS_WINDOWS
+    path = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation);
+#elif defined(Q_OS_MAC)
+    path = QStandardPaths::writableLocation(QStandardPaths::HomeLocation) + "/.config";
+#else
+    path = QStandardPaths::writableLocation(QStandardPaths::AppConfigLocation);
+#endif
+    QString slashName = Slash + qAppName();
+    if (path.endsWith(slashName)) {
+        path.chop(slashName.size());
+    }
+    return path;
 }
 
 QStringList QsSys::FindRecursiveDirs(const QString &base, int max) {

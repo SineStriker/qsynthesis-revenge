@@ -24,3 +24,16 @@ target_create_translations(${PROJECT_NAME} SOURCES ${_src}
     DESTINATION res/translations
     CREATE_ONCE
 )
+
+# Copy resources
+qs_add_res(${PROJECT_NAME}
+    FILES res/NativeWindow.res.json
+)
+qs_add_res(${PROJECT_NAME}
+    FILES res/translations/*.qm
+    RELATIVE_PATH NativeWindow.res/translations
+)
+qs_add_res(${PROJECT_NAME}
+    FILES res/themes/*.json
+    RELATIVE_PATH NativeWindow.res/themes
+)

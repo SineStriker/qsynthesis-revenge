@@ -1,5 +1,5 @@
-#ifndef QSBASICSTARTUPINFO_H
-#define QSBASICSTARTUPINFO_H
+#ifndef CStartupInfo_H
+#define CStartupInfo_H
 
 #include <QCommandLineParser>
 #include <QString>
@@ -8,19 +8,21 @@
 #include "QsMacros.h"
 
 #ifndef qIStup
-#define qIStup QsBasicStartupInfo::instance()
+#define qIStup CStartupInfo::instance()
 #endif
 
-class QSFRAMEWORK_API QsBasicStartupInfo {
-    Q_SINGLETON(QsBasicStartupInfo)
+class QSFRAMEWORK_API CStartupInfo {
+    Q_SINGLETON(CStartupInfo)
 public:
-    QsBasicStartupInfo();
-    virtual ~QsBasicStartupInfo();
+    CStartupInfo();
+    virtual ~CStartupInfo();
 
     /* Properties can be append in each app's constructor */
     QCommandLineParser parser;
 
     /* Properties setup in main functions */
+    QString qsLibPath;
+
     QString appName;
 
     QString appVersion;
@@ -40,4 +42,4 @@ public:
     virtual QString errorTitle() const;
 };
 
-#endif // QSBASICSTARTUPINFO_H
+#endif // CStartupInfo_H

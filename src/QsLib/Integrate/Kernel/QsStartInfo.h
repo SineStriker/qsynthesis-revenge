@@ -5,7 +5,7 @@
 
 #include "QsIntegrateGlobal.h"
 
-class QSINTEGRATE_API QsStartInfo : public QsBasicStartupInfo {
+class QSINTEGRATE_API QsStartInfo : public CStartupInfo {
 public:
     QsStartInfo();
     ~QsStartInfo();

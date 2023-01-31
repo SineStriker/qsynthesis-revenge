@@ -2,6 +2,7 @@
 #define QSDISTCONFIGPRIVATE_H
 
 #include "../QsDistConfig.h"
+#include "QSimpleVarExp.h"
 
 #include <QHash>
 
@@ -26,7 +27,7 @@ public:
     void setDefault();
 
     /* Escape variables */
-    QHash<QString, QString> vars;
+    QSimpleVarExp vars;
 
     /* Default dirs */
     struct DirInitArgs {
@@ -56,8 +57,6 @@ public:
     };
     QHash<int, PluginInfo> pluginMap;
     int pluginTypeMax;
-
-    QString parse(const QString &str) const;
 
     /* User registry */
     void registerEscapeVar(const QString &key, const QString &val, bool replace = true);

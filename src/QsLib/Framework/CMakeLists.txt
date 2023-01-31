@@ -38,3 +38,12 @@ target_create_translations(${PROJECT_NAME} SOURCES ${_src}
     DESTINATION res/translations
     CREATE_ONCE
 )
+
+# Copy resources
+qs_add_res(${PROJECT_NAME}
+    FILES Res/QsFramework.res.json
+)
+qs_add_res(${PROJECT_NAME}
+    FILES Res/translations/*.qm
+    RELATIVE_PATH QsFramework.res/translations
+)

@@ -3,9 +3,9 @@
 #include <QCoreApplication>
 #include <QMetaType>
 
-Q_SINGLETON_DECLARE(QsBasicStartupInfo)
+Q_SINGLETON_DECLARE(CStartupInfo)
 
-QsBasicStartupInfo::QsBasicStartupInfo() {
+CStartupInfo::CStartupInfo() {
     construct();
 
     allowRootUser = false;
@@ -15,17 +15,17 @@ QsBasicStartupInfo::QsBasicStartupInfo() {
     parser.addVersionOption();
 }
 
-QsBasicStartupInfo::~QsBasicStartupInfo() {
+CStartupInfo::~CStartupInfo() {
 }
 
-QString QsBasicStartupInfo::mainTitle() const {
+QString CStartupInfo::mainTitle() const {
     return qApp->applicationName();
 }
 
-QString QsBasicStartupInfo::windowTitle() const {
+QString CStartupInfo::windowTitle() const {
     return mainTitle() + QString(" %1").arg(qApp->applicationVersion());
 }
 
-QString QsBasicStartupInfo::errorTitle() const {
+QString CStartupInfo::errorTitle() const {
     return QObject::tr("Error");
 }

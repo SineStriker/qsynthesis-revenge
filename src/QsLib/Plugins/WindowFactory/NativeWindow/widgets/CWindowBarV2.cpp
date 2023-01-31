@@ -52,20 +52,14 @@ CWindowBarV2::CWindowBarV2(QMenuBar *menuBar, QWidget *parent) : CBaseTitleBarV2
     setCloseButton(m_closeButton);
 #endif
 
-    ld = new LocalDecorator(this);
-    ld->addTheme(QsDecorator::Dark, {":/themes/dark.json"});
-    ld->addTheme(QsDecorator::Light, {":/themes/light.json"});
-    ld->reloadScreen(qIDec->theme());
-
-    Q_TR_NOTIFY(CWindowBarV2)
+    qIDec->installLocale(this, {"NativeWindow"});
+    qIDec->installTheme(this, {"NativeWindow"});
 }
 
 CWindowBarV2::~CWindowBarV2() {
 }
 
-void CWindowBarV2::reloadStrings(int locale, const QString &key) {
-    Q_UNUSED(locale);
-
+void CWindowBarV2::reloadStrings() {
 #ifndef Q_OS_MAC
     m_minButton->setToolTip(tr("Minimize"));
     m_closeButton->setToolTip(tr("Close"));

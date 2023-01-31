@@ -11,6 +11,8 @@
 
 #include "QsSystem.h"
 
+#include "CStartupInfo.h"
+
 static const char Slash = '/';
 
 static QString GetAppConfig() {
@@ -36,12 +38,8 @@ QsApplicationPrivate::~QsApplicationPrivate() {
 void QsApplicationPrivate::init() {
     Q_Q(QsApplication);
 
-    ll = new LocalLinguist(q);
-    ll->addLocale(QsDecorator::UnitedStates, {});
-    ll->addLocale(QsDecorator::China, {":/translations/QsIntegrate_zh_CN.qm"});
-    ll->addLocale(QsDecorator::HongKong, {":/translations/QsIntegrate_zh_HK.qm"});
-    ll->addLocale(QsDecorator::Japan, {":/translations/QsIntegrate_ja_JP.qm"});
-    ll->reloadStrings(qIDec->locale());
+    dd.setDir(qIStup->qsLibPath);
+    dd.loadDefault("QsIntegrate");
 
     // Load or create app config
     if (conf.isNull()) {

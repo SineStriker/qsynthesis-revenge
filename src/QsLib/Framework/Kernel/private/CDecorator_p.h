@@ -22,7 +22,7 @@ struct LocaleSubscriber {
 
 struct LocaleData {
     // QM file paths
-    QMap<QLocale, QStringList> qmFiles;
+    QHash<QLocale, QStringList> qmFiles;
 
     // Installed translators
     QList<QTranslator *> translators;
@@ -99,11 +99,13 @@ public:
 
     // Locale related
     QLocale loc;
-    QHash<QLocale, LocalePlaceholder *> localeConfigs;
+    QHash<QLocale, int> localeNames;
+    QHash<QString, LocalePlaceholder *> localeConfigs;
     QHash<QWidget *, LocaleSubscriber *> localeSubscribers;
 
     // Theme related
     QString theme;
+    QHash<QString, int> themeNames;                                // themeKey - refCount
     QHash<QString, ThemeConfigPack> themeConfigs;                  // configKey
     QHash<QString, ThemePlaceholder *> themeTemplates;             // templateKey
     QHash<QSet<QString>, ThemeSubscriber *> themeSubscriberGroups; // templateKeys

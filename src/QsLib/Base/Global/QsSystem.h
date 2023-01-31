@@ -36,7 +36,7 @@ namespace QsSys {
         return QFileInfo(path).suffix();
     }
 
-    inline QString PathFildDirPath(const QString &path) {
+    inline QString PathFindDirPath(const QString &path) {
         return QFileInfo(path).absolutePath();
     }
 
@@ -77,6 +77,8 @@ namespace QsSys {
     QSBASE_API QString removeTailSlashes(const QString &dirname);
 
     QSBASE_API QString appPath();
+
+    QSBASE_API QString appDataPath();
 
     QSBASE_API QStringList FindRecursiveDirs(const QString &base, int max = -1);
 

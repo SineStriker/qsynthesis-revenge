@@ -4,8 +4,9 @@
 #include <QObject>
 
 #include "DsCoreGlobal.h"
+#include "INamePlugin.h"
 
-class DSCORE_API IDiffHost : public QObject {
+class DSCORE_API IDiffHost : public INamePlugin {
     Q_OBJECT
 public:
     IDiffHost(QObject *parent = nullptr);

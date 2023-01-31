@@ -127,7 +127,7 @@ void SDLPlaybackPrivate::stop() {
 void SDLPlaybackPrivate::switchState(IAudioPlayback::PlaybackState newState) {
     Q_Q(SDLPlayback);
 
-    auto orgState = state.load();
+    auto orgState = state;
     state = newState;
 
     // 通知播放状态已更改

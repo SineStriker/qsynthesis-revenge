@@ -1,16 +1,11 @@
 <RCC>
     <qresource prefix="/">
-        <file>translations/NativeWindow_ja_JP.qm</file>
-        <file>translations/NativeWindow_zh_CN.qm</file>
-        <file>translations/NativeWindow_zh_HK.qm</file>
         <file>svg/window-bar/close.svg</file>
         <file>svg/window-bar/fullscreen.svg</file>
         <file>svg/window-bar/icon.svg</file>
         <file>svg/window-bar/maximize.svg</file>
         <file>svg/window-bar/maximize2.svg</file>
         <file>svg/window-bar/minimize.svg</file>
-        <file>themes/dark.json</file>
-        <file>themes/light.json</file>
         <file>themes/window-bar.qss.in</file>
     </qresource>
 </RCC>

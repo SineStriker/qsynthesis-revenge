@@ -8,6 +8,7 @@
 #include "CDecorator.h"
 
 #include "../DsDistConfig.h"
+#include "../DsStartupInfo.h"
 
 #include <QFontDatabase>
 #include <QMessageBox>
@@ -47,13 +48,11 @@ void DsApplicationPrivate::init() {
     // Register user types
     Register_Events();
 
-    ll = new LocalLinguist(q);
-    ll->addLocale(QsDecorator::UnitedStates, {});
-    ll->addLocale(QsDecorator::China, {":/translations/DsIntern_zh_CN.qm"});
-    ll->addLocale(QsDecorator::HongKong, {":/translations/DsIntern_zh_HK.qm"});
-    ll->addLocale(QsDecorator::Japan, {":/translations/DsIntern_ja_JP.qm"});
-    ll->reloadStrings(qIDec->locale());
-    qIDec->addThemes({":/themes/home.qss.in", ":/themes/piano.qss.in"});
+    qIDec->addThemeTemplate("HomeWindow", ":/themes/home.qss.in");
+    qIDec->addThemeTemplate("PianoWindow", ":/themes/piano.qss.in");
+
+    dd.setDir(qIStup->qsLibPath);
+    dd.loadDefault("DsIntern");
 
     windowMgr = new WindowManager(q);
 }

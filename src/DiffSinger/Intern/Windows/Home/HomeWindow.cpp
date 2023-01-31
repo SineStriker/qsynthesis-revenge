@@ -9,9 +9,6 @@ HomeWindow::HomeWindow(QWidget *parent) : HomeWindow(*new HomeWindowPrivate(), p
 HomeWindow::~HomeWindow() {
 }
 
-void HomeWindow::reloadStrings(int locale, const QString &key) {
-}
-
 HomeWindow::HomeWindow(HomeWindowPrivate &d, QWidget *parent) : PlainWindow(d, parent) {
     d.init();
 }

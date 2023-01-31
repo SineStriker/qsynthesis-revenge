@@ -1,9 +1,10 @@
 #ifndef IWINDOWFACTORY_H
 #define IWINDOWFACTORY_H
 
+#include "INamePlugin.h"
 #include "IWindowHandle.h"
 
-class QSFRAMEWORK_API IWindowFactory : public QObject {
+class QSFRAMEWORK_API IWindowFactory : public INamePlugin {
     Q_OBJECT
 public:
     IWindowFactory(QObject *parent = nullptr);

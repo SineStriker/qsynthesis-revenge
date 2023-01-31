@@ -3,7 +3,8 @@
 
 #include "../CApplication.h"
 #include "CDecorator.h"
-#include "Tools/LocalLinguist.h"
+
+#include "CDecreateDir.h"
 
 #include "QsFrameworkGlobal.h"
 
@@ -24,7 +25,7 @@ public:
     SingleApplication *hSingleApp;
 
 private:
-    LocalLinguist *ll;
+    CDecreateDir dd;
 };
 
 #endif // CAPPLICATIONPRIVATE_H

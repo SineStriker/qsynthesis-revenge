@@ -3,9 +3,10 @@
 
 #include <QObject>
 
+#include "INamePlugin.h"
 #include "QsMediaGlobal.h"
 
-class QSMEDIA_API IAudioEncoder : public QObject {
+class QSMEDIA_API IAudioEncoder : public INamePlugin {
     Q_OBJECT
 public:
     IAudioEncoder(QObject *parent = nullptr);

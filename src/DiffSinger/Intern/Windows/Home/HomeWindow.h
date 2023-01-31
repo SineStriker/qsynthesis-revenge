@@ -12,8 +12,6 @@ public:
     HomeWindow(QWidget *parent = nullptr);
     ~HomeWindow();
 
-    void reloadStrings(int locale, const QString &key);
-
 protected:
     HomeWindow(HomeWindowPrivate &d, QWidget *parent = nullptr);
 };

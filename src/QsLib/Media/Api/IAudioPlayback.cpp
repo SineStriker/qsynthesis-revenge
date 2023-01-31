@@ -77,7 +77,7 @@ void IAudioPlayback::stop() {
 
 IAudioPlayback::PlaybackState IAudioPlayback::state() const {
     Q_D(const IAudioPlayback);
-    return static_cast<IAudioPlayback::PlaybackState>(d->state.load());
+    return static_cast<IAudioPlayback::PlaybackState>(d->state);
 }
 
 bool IAudioPlayback::isPlaying() const {
@@ -126,7 +126,7 @@ int IAudioPlayback::channels() const {
 }
 
 IAudioPlayback::IAudioPlayback(IAudioPlaybackPrivate &d, QObject *parent)
-    : QObject(parent), d_ptr(&d) {
+    : INamePlugin(parent), d_ptr(&d) {
     d.q_ptr = this;
 
     d.init();

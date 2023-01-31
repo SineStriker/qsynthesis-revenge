@@ -12,8 +12,6 @@ public:
     PianoWindow(QWidget *parent = nullptr);
     ~PianoWindow();
 
-    void reloadStrings(int locale, const QString &key);
-
 public:
     QString filename() const;
     void setFilename(const QString &filename);

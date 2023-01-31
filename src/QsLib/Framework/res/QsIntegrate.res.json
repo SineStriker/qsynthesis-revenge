@@ -1,0 +1,17 @@
+{
+    "locales": {
+        "key": "QsFramework",
+        "dir": "${FILEPATH}/QsFramework.res/translations",
+        "files": {
+            "zh_CN": [
+                "QsFramework_zh_CN.qm"
+            ],
+            "zh_HK": [
+                "QsFramework_zh_HK.qm"
+            ],
+            "ja_JP": [
+                "QsFramework_ja_JP.qm"
+            ]
+        }
+    }
+}

@@ -1,7 +1,6 @@
 #ifndef HOMEWINDOWPRIVATE_H
 #define HOMEWINDOWPRIVATE_H
 
-#include "Tools/LocalDecorator.h"
 #include "Windows/private/PlainWindow_p.h"
 
 #include "HomeWindow.h"
@@ -13,8 +12,6 @@ public:
     ~HomeWindowPrivate();
 
     void init();
-
-    LocalDecorator *ld;
 };
 
 #endif // HOMEWINDOWPRIVATE_H

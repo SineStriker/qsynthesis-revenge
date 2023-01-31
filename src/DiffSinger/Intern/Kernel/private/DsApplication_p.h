@@ -18,7 +18,7 @@ public:
     WindowManager *windowMgr;
 
 private:
-    LocalLinguist *ll;
+    CDecreateDir dd;
 };
 
 #endif // DSAPPLICATIONPRIVATE_H

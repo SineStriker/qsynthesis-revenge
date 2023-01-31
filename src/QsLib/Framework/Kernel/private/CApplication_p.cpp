@@ -34,18 +34,15 @@ void CApplicationPrivate::init() {
     Register_QsNamespace();
     Register_QMetaTypeImpl();
 
-    hDecorator = new QsDecorator(q);
-
-    // Complete other registration
-    ll = new LocalLinguist(q);
-    ll->addLocale(QsDecorator::UnitedStates, {});
-    ll->addLocale(QsDecorator::China, {":/translations/QsFramework_zh_CN.qm"});
-    ll->addLocale(QsDecorator::HongKong, {":/translations/QsFramework_zh_HK.qm"});
-    ll->addLocale(QsDecorator::Japan, {":/translations/QsFramework_ja_JP.qm"});
-    ll->reloadStrings(qIDec->locale());
-
     // Analyze startup info
     Q_ASSERT(qIStup);
+
+    if (QDir(qIStup->qsLibPath).isRelative()) {
+        qIStup->qsLibPath = q->applicationDirPath() + '/' + qIStup->qsLibPath;
+    }
+
+    dd.setDir(qIStup->qsLibPath);
+    dd.loadDefault("QsFramework");
 
     auto &parser = qIStup->parser;
     parser.setApplicationDescription(qIStup->appDescription);

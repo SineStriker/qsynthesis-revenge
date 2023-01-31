@@ -1,0 +1,31 @@
+{
+    "locales": {
+        "key": "DsIntern",
+        "dir": "${FILEPATH}/../translations",
+        "files": {
+            "zh_CN": [
+                "DsIntern_zh_CN.qm"
+            ],
+            "zh_HK": [
+                "DsIntern_zh_HK.qm"
+            ],
+            "ja_JP": [
+                "DsIntern_ja_JP.qm"
+            ]
+        }
+    },
+    "themes": {
+        "key": "DsIntern",
+        "dir": "${FILEPATH}/../themes",
+        "files": {
+            "Zhibin - Dark": [
+                "home-dark.json",
+                "piano-dark.json"
+            ],
+            "Zhibin - Light": [
+                "home-light.json",
+                "piano-light.json"
+            ]
+        }
+    }
+}

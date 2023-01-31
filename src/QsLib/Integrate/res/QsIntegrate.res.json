@@ -1,0 +1,17 @@
+{
+    "locales": {
+        "key": "QsIntegrate",
+        "dir": "${FILEPATH}/QsIntegrate.res/translations",
+        "files": {
+            "zh_CN": [
+                "QsIntegrate_zh_CN.qm"
+            ],
+            "zh_HK": [
+                "QsIntegrate_zh_HK.qm"
+            ],
+            "ja_JP": [
+                "QsIntegrate_ja_JP.qm"
+            ]
+        }
+    }
+}

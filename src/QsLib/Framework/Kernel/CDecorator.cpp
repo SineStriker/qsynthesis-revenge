@@ -19,6 +19,11 @@ QLocale CDecorator::locale() const {
     return d->loc;
 }
 
+QList<QLocale> CDecorator::locales() const {
+    Q_D(const CDecorator);
+    return d->localeNames.keys();
+}
+
 void CDecorator::setLocale(const QLocale &locale) {
     Q_D(CDecorator);
     if (d->loc == locale) {
@@ -41,7 +46,7 @@ void CDecorator::setLocale(const QLocale &locale) {
     }
 }
 
-void CDecorator::addLocale(const QString &key, const QMap<QLocale, QStringList> &paths) {
+void CDecorator::addLocale(const QString &key, const QHash<QLocale, QStringList> &paths) {
     Q_D(CDecorator);
 
     /*
@@ -60,6 +65,11 @@ void CDecorator::addLocale(const QString &key, const QMap<QLocale, QStringList> 
     auto setup = [&](LocalePlaceholder &lp) {
         lp.data = QSharedPointer<LocaleData>::create();
         lp.data->qmFiles = paths;
+
+        // Inc ref count
+        for (auto it = paths.begin(); it != paths.end(); ++it) {
+            d->localeNames[it.key()]++;
+        }
 
         auto it = paths.find(d->loc);
         if (it != paths.end()) {
@@ -114,6 +124,17 @@ void CDecorator::removeLocale(const QString &key) {
     auto &lp = *it.value();
 
     if (!lp.data.isNull()) {
+        const auto &paths = lp.data->qmFiles;
+
+        // Dec ref count
+        for (auto it = paths.begin(); it != paths.end(); ++it) {
+            auto it2 = d->localeNames.find(it.key());
+            it2.value()--;
+            if (it2.value() == 0) {
+                d->localeNames.erase(it2);
+            }
+        }
+
         if (!lp.data->translators.isEmpty()) {
             // Uninstall
             lp.data->uninstall();
@@ -231,6 +252,11 @@ void CDecorator::uninstallLocale(QWidget *w) {
 QString CDecorator::theme() const {
     Q_D(const CDecorator);
     return d->theme;
+}
+
+QStringList CDecorator::themes() const {
+    Q_D(const CDecorator);
+    return d->themeNames.keys();
 }
 
 void CDecorator::setTheme(const QString &theme) {
@@ -369,6 +395,9 @@ void CDecorator::addThemeConfig(const QString &key, const QMap<QString, QStringL
             continue;
         }
 
+        // Inc ref count
+        d->themeNames[themeKey]++;
+
         // Add to configs
         pack.data.insert(themeKey, conf);
 
@@ -444,6 +473,15 @@ void CDecorator::removeThemeConfig(const QString &key) {
     for (auto it1 = pack.data.begin(); it1 != pack.data.end(); ++it1) {
         const auto &themeKey = it1.key();
         const auto &conf = it1.value();
+
+        // Dec ref count
+        {
+            auto it2 = d->themeNames.find(themeKey);
+            it2.value()--;
+            if (it2.value() == 0) {
+                d->themeNames.erase(it2);
+            }
+        }
 
         // Remove reference from templates
         for (const auto &ns : conf->namespaces) {

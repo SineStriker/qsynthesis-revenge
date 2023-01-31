@@ -117,5 +117,5 @@ QString QsFileManagerPrivate::getLastOpenPath(const QString &type) {
 }
 
 void QsFileManagerPrivate::saveLastOpenDir(const QString &type, const QString &path, bool upper) {
-    lastOpenPaths.insert(type, upper ? QsSys::PathFildDirPath(path) : path);
+    lastOpenPaths.insert(type, upper ? QsSys::PathFindDirPath(path) : path);
 }

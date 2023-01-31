@@ -1,6 +1,6 @@
 #include "IDiffHost.h"
 
-IDiffHost::IDiffHost(QObject *parent) : QObject(parent) {
+IDiffHost::IDiffHost(QObject *parent) : INamePlugin(parent) {
 }
 
 IDiffHost::~IDiffHost() {

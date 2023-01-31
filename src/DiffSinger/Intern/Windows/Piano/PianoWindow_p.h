@@ -2,7 +2,6 @@
 #define PIANOWINDOWPRIVATE_H
 
 #include "../Basic/ProjectWindow_p.h"
-#include "Tools/LocalDecorator.h"
 
 #include "PianoWindow.h"
 
@@ -13,8 +12,6 @@ public:
     ~PianoWindowPrivate();
 
     void init();
-
-    LocalDecorator *ld;
 
     QString filename;
 };
