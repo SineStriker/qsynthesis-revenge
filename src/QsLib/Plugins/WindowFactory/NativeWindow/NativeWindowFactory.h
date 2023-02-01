@@ -13,8 +13,6 @@ public:
     explicit NativeWindowFactory(QObject *parent = nullptr);
     ~NativeWindowFactory();
 
-    void setupPath(const QString &path) override;
-
 public:
     IWindowHandle *create(QMainWindow *win) override;
 

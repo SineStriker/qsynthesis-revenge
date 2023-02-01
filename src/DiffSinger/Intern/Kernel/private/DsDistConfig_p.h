@@ -2,11 +2,11 @@
 #define __DSDISTCONFIG_P_H__
 
 #include "../DsDistConfig.h"
-#include "Kernel/private/QsDistConfig_p.h"
+#include "Kernel/private/QsCoreConfig_p.h"
 
 #include <QHash>
 
-class DsDistConfigPrivate : public QsDistConfigPrivate {
+class DsDistConfigPrivate : public QsCoreConfigPrivate {
     Q_DECLARE_PUBLIC(DsDistConfig)
 public:
     DsDistConfigPrivate();

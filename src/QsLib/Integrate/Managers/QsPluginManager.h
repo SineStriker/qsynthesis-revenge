@@ -6,7 +6,7 @@
 #include "Api/ISVSConverter.h"
 
 #include "QsAbstractManager.h"
-#include "QsDistConfig.h"
+#include "QsCoreConfig.h"
 
 #include "QsMacros.h"
 
@@ -27,7 +27,7 @@ public:
     QString converterFilters() const;
     ISVSConverter *searchConverter(const QString &suffix) const;
 
-    static QPluginLoader *loadInternalPlugin(QsDistConfig::InternalPlugins id);
+    static QPluginLoader *loadInternalPlugin(QsCoreConfig::InternalPlugins id);
 
 protected:
     QsPluginManager(QsPluginManagerPrivate &d, QObject *parent = nullptr);

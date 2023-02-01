@@ -4,7 +4,7 @@
 #include <QScopedPointer>
 #include <QStringList>
 
-#include "Kernel/QsDistConfig.h"
+#include "Kernel/QsCoreConfig.h"
 
 #include "qutaelem_global.h"
 
@@ -15,7 +15,7 @@
 
 class QUtaDistConfigPrivate;
 
-class QUTAELEM_API QUtaDistConfig : public QsDistConfig {
+class QUTAELEM_API QUtaDistConfig : public QsCoreConfig {
     Q_DECLARE_PRIVATE(QUtaDistConfig)
 public:
     QUtaDistConfig();

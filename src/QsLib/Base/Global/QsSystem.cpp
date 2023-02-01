@@ -246,3 +246,29 @@ int QsSys::osUnitDpi() {
     return 96;
 #endif
 }
+
+QString QsSys::osFileManagerName() {
+#ifdef Q_OS_WINDOWS
+    return QCoreApplication::tr("Explorer");
+#elif defined(Q_OS_MAC)
+    return QCoreApplication::tr("Finder");
+#else
+    return QCoreApplication::tr("File Manager");
+#endif
+}
+
+QString QsSys::osRootUserName() {
+#if defined(Q_OS_WINDOWS)
+    return QCoreApplication::tr("Administrator");
+#else
+    return QCoreApplication::tr("Root User");
+#endif
+}
+
+QString QsSys::osAllFilesFilter() {
+#if defined(Q_OS_WINDOWS)
+    return "*.*";
+#else
+    return "*";
+#endif
+}

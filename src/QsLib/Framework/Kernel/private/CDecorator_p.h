@@ -2,6 +2,7 @@
 #define CDECORATORPRIVATE_H
 
 #include "../CDecorator.h"
+#include "private/QsCoreDecorator_p.h"
 
 #include "ThemeTemplate.h"
 
@@ -10,40 +11,6 @@
 #include <QHash>
 #include <QSet>
 #include <QTranslator>
-
-/**
- * @brief Locale related
- *
- */
-struct LocaleSubscriber {
-    QStringList keys;
-    std::function<void()> updater;
-};
-
-struct LocaleData {
-    // QM file paths
-    QHash<QLocale, QStringList> qmFiles;
-
-    // Installed translators
-    QList<QTranslator *> translators;
-
-    LocaleData();
-    ~LocaleData();
-
-    // Apply translation
-    void install(const QLocale &loc);
-
-    void install(const QStringList &paths);
-
-    // Remove translation
-    void uninstall();
-};
-
-struct LocalePlaceholder {
-    QSet<LocaleSubscriber *> subscribers;
-    QSharedPointer<LocaleData> data;
-};
-
 
 /**
  * @brief Theme related
@@ -87,21 +54,13 @@ struct ThemeConfigPack {
 };
 
 
-class CDecoratorPrivate {
+class CDecoratorPrivate : public QsCoreDecoratorPrivate {
     Q_DECLARE_PUBLIC(CDecorator)
 public:
     CDecoratorPrivate();
     virtual ~CDecoratorPrivate();
 
     void init();
-
-    CDecorator *q_ptr;
-
-    // Locale related
-    QLocale loc;
-    QHash<QLocale, int> localeNames;
-    QHash<QString, LocalePlaceholder *> localeConfigs;
-    QHash<QWidget *, LocaleSubscriber *> localeSubscribers;
 
     // Theme related
     QString theme;

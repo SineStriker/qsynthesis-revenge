@@ -1,16 +1,15 @@
-#include "QsDistConfig_p.h"
+#include "QsCoreConfig_p.h"
 
 #include <QCoreApplication>
 #include <QDebug>
 #include <QDir>
-#include <QMessageBox>
 #include <QRegularExpression>
 #include <QStandardPaths>
 
 #include <QJsonDocument>
 #include <QJsonObject>
 
-#include "../QsApplication.h"
+#include "../QsCoreStartInfo.h"
 #include "QsSystem.h"
 
 #include "Serialization/QJsonFormatter.h"
@@ -18,6 +17,7 @@
 static const char SECTION_NAME_DIR[] = "dir";
 static const char KEY_NAME_DATA_DIR[] = "data";
 static const char KEY_NAME_TEMP_DIR[] = "temp";
+static const char KEY_NAME_SHARE_DIR[] = "share";
 static const char KEY_NAME_QT_PLUGINS_DIR[] = "qtplugins";
 static const char KEY_NAME_QT_TRANSLATIONS_DIR[] = "translations";
 static const char KEY_NAME_QS_PLUGINS_DIR[] = "qsplugins";
@@ -38,17 +38,17 @@ static const char DEFAULT_WINDOW_FACTORY[] = "NativeWindow";
 
 static const char Slash = '/';
 
-QsDistConfigPrivate::QsDistConfigPrivate() {
+QsCoreConfigPrivate::QsCoreConfigPrivate() {
 }
 
-QsDistConfigPrivate::~QsDistConfigPrivate() {
+QsCoreConfigPrivate::~QsCoreConfigPrivate() {
 }
 
-void QsDistConfigPrivate::init() {
-    addInitializer(std::bind(&QsDistConfigPrivate::initByApp, this));
+void QsCoreConfigPrivate::init() {
+    addInitializer(std::bind(&QsCoreConfigPrivate::initByApp, this));
 }
 
-void QsDistConfigPrivate::initByApp() {
+void QsCoreConfigPrivate::initByApp() {
     /* Set basic environments */
     vars.addHash(QSimpleVarExp::SystemValues());
 
@@ -61,51 +61,54 @@ void QsDistConfigPrivate::initByApp() {
             DirInitArgs{
                 level,
                 addLibrary
-                    ? QList<std::function<void(const QString &)>>{QApplication::addLibraryPath}
+                    ? QList<std::function<void(const QString &)>>{QCoreApplication::addLibraryPath}
                     : QList<std::function<void(const QString &)>>{}}};
     };
     dirMap = {
-        {QsDistConfig::AppData, //
+        {QsCoreConfig::AppData, //
          wrapDirInfo(KEY_NAME_DATA_DIR, QString("${APPDATA}") + Slash + qAppName(), "data",
                      DirInitArgs::CreateIfNotExist, false)},
-        {QsDistConfig::AppTemp, //
+        {QsCoreConfig::AppTemp, //
          wrapDirInfo(KEY_NAME_TEMP_DIR, QString("${TEMP}") + Slash + qAppName(), "temp",
                      DirInitArgs::CreateIfNotExist, false)},
-        {QsDistConfig::QtPlugins, //
+        {QsCoreConfig::AppShare, //
+         wrapDirInfo(KEY_NAME_SHARE_DIR, QString("${APPPATH}") + Slash + "share",
+                     "share", DirInitArgs::OnlyCheck, true)},
+        {QsCoreConfig::QtPlugins, //
          wrapDirInfo(KEY_NAME_QT_PLUGINS_DIR, QString("${APPPATH}") + Slash + "plugins", "plugins",
                      DirInitArgs::OnlyCheck, true)},
-        {QsDistConfig::QtTranslations, //
+        {QsCoreConfig::QtTranslations, //
          wrapDirInfo(KEY_NAME_QT_TRANSLATIONS_DIR, QString("${APPPATH}") + Slash + "translations",
                      "translations", DirInitArgs::OnlyCheck, true)},
-        {QsDistConfig::QsPlugins, //
+        {QsCoreConfig::QsPlugins, //
          wrapDirInfo(KEY_NAME_QS_PLUGINS_DIR, QString("${APPPATH}") + Slash + "built-in",
                      "built-in", DirInitArgs::OnlyCheck, true)},
-        {QsDistConfig::BinTool, //
+        {QsCoreConfig::BinTool, //
          wrapDirInfo(KEY_NAME_BINTOOL_DIR, QString("${APPPATH}") + Slash + "tools", "tools",
                      DirInitArgs::OnlyCheck, true)},
     };
-    dirTypeMax = QsDistConfig::UserDir;
+    dirTypeMax = QsCoreConfig::UserDir;
 
     /* Set default plugins */
     auto wrapPluginInfo = [](const QString &key, const QString &catagory, const QString &name) {
         return PluginInfo{key, catagory, name, name};
     };
     pluginMap = {
-        {QsDistConfig::AudioDecoder, //
+        {QsCoreConfig::AudioDecoder, //
          wrapPluginInfo(KEY_NAME_AUDIO_DECODER, "audiodecoders", DEFAULT_AUDIO_DECODER)},
-        {QsDistConfig::AudioEncoder, //
+        {QsCoreConfig::AudioEncoder, //
          wrapPluginInfo(KEY_NAME_AUDIO_ENCODER, "audioencoders", DEFAULT_AUDIO_DECODER)},
-        {QsDistConfig::AudioPlayback, //
+        {QsCoreConfig::AudioPlayback, //
          wrapPluginInfo(KEY_NAME_PLAYBACK, "audioplaybacks", DEFAULT_PLAYBACK)},
-        {QsDistConfig::CompressEngine, //
+        {QsCoreConfig::CompressEngine, //
          wrapPluginInfo(KEY_NAME_COMPRESS_ENGINE, "compressengines", DEFAULT_COMPRESS_ENGINE)},
-        {QsDistConfig::WindowFactory, //
+        {QsCoreConfig::WindowFactory, //
          wrapPluginInfo(KEY_NAME_WINDOW_FACTORY, "windowfactories", DEFAULT_WINDOW_FACTORY)},
     };
-    pluginTypeMax = QsDistConfig::UserPlugin;
+    pluginTypeMax = QsCoreConfig::UserPlugin;
 }
 
-bool QsDistConfigPrivate::load_helper(const QString &filename) {
+bool QsCoreConfigPrivate::load_helper(const QString &filename) {
     QFile file(filename);
     if (!file.open(QIODevice::ReadOnly)) {
         return false;
@@ -138,7 +141,7 @@ bool QsDistConfigPrivate::load_helper(const QString &filename) {
         }
     }
 
-    // Get plgins
+    // Get plugins
     it = objDoc.find(SECTION_NAME_PLUGINS);
     if (it != objDoc.end() && it.value().isObject()) {
         QJsonObject obj = it.value().toObject();
@@ -155,7 +158,7 @@ bool QsDistConfigPrivate::load_helper(const QString &filename) {
     return true;
 }
 
-bool QsDistConfigPrivate::apply_helper() {
+bool QsCoreConfigPrivate::apply_helper() {
     for (auto it = dirMap.begin(); it != dirMap.end(); ++it) {
         const auto &info = it.value();
         const auto &args = info.initArgs;
@@ -163,16 +166,16 @@ bool QsDistConfigPrivate::apply_helper() {
         switch (args.level) {
             case DirInitArgs::CreateIfNotExist:
                 if (!QsSys::mkDir(path)) {
-                    QMessageBox::critical(nullptr, qApp->errorTitle(),
-                                          QString("Failed to create %1 directory!")
-                                              .arg(QsSys::PathFindFileName(path)));
+                    QsSys::osMessageStderr(qIStup->errorTitle(),
+                                           QString("Failed to create %1 directory!")
+                                               .arg(QsSys::PathFindFileName(path)));
                     return false;
                 }
                 break;
             case DirInitArgs::ErrorIfNotExist:
                 if (!QsSys::isDirExist(path)) {
-                    QMessageBox::critical(
-                        nullptr, qApp->errorTitle(),
+                    QsSys::osMessageStderr(
+                        qIStup->errorTitle(),
                         QString("Failed to find %1 directory!").arg(QsSys::PathFindFileName(path)));
                     return false;
                 }
@@ -188,7 +191,7 @@ bool QsDistConfigPrivate::apply_helper() {
     return true;
 }
 
-bool QsDistConfigPrivate::save_default(const QString &filename) {
+bool QsCoreConfigPrivate::save_default(const QString &filename) {
     QFile file(filename);
     if (!file.open(QIODevice::WriteOnly | QIODevice::Truncate | QIODevice::Text)) {
         return false;
@@ -219,7 +222,7 @@ bool QsDistConfigPrivate::save_default(const QString &filename) {
     return true;
 }
 
-void QsDistConfigPrivate::setDefault() {
+void QsCoreConfigPrivate::setDefault() {
     for (auto it = dirMap.begin(); it != dirMap.end(); ++it) {
         auto &info = it.value();
         info.dir = vars.parse(info.defaultDir);
@@ -230,7 +233,7 @@ void QsDistConfigPrivate::setDefault() {
     }
 }
 
-void QsDistConfigPrivate::registerEscapeVar(const QString &key, const QString &val, bool replace) {
+void QsCoreConfigPrivate::registerEscapeVar(const QString &key, const QString &val, bool replace) {
     auto it = vars.Variables.find(key);
     if (it != vars.Variables.end()) {
         if (replace) {
@@ -241,21 +244,21 @@ void QsDistConfigPrivate::registerEscapeVar(const QString &key, const QString &v
     }
 }
 
-int QsDistConfigPrivate::registerUserDir(const QString &key, const QString &dir,
+int QsCoreConfigPrivate::registerUserDir(const QString &key, const QString &dir,
                                          const DirInitArgs &args, int hint) {
     dirTypeMax = (hint > dirTypeMax) ? hint : (dirTypeMax + 1);
     dirMap.insert(dirTypeMax, DirInfo{key, dir, dir, args});
     return dirTypeMax;
 }
 
-int QsDistConfigPrivate::registerUserPlugin(const QString &key, const QString &catagory,
+int QsCoreConfigPrivate::registerUserPlugin(const QString &key, const QString &catagory,
                                             const QString &name, int hint) {
     pluginTypeMax = (hint > pluginTypeMax) ? hint : (pluginTypeMax + 1);
     pluginMap.insert(pluginTypeMax, PluginInfo{key, catagory, name, name});
     return pluginTypeMax;
 }
 
-void QsDistConfigPrivate::setDefaultDir(int type, const QString &dir) {
+void QsCoreConfigPrivate::setDefaultDir(int type, const QString &dir) {
     auto it = dirMap.find(type);
     if (it == dirMap.end()) {
         return;
@@ -264,7 +267,7 @@ void QsDistConfigPrivate::setDefaultDir(int type, const QString &dir) {
     info.defaultDir = dir;
 }
 
-void QsDistConfigPrivate::setDefaultPluginName(int type, const QString &dir) {
+void QsCoreConfigPrivate::setDefaultPluginName(int type, const QString &dir) {
     auto it = pluginMap.find(type);
     if (it == pluginMap.end()) {
         return;
@@ -273,6 +276,6 @@ void QsDistConfigPrivate::setDefaultPluginName(int type, const QString &dir) {
     info.defaultName = dir;
 }
 
-void QsDistConfigPrivate::addInitializer(const std::function<void()> &fun) {
+void QsCoreConfigPrivate::addInitializer(const std::function<void()> &fun) {
     this->initializers.append(fun);
 }

@@ -23,7 +23,7 @@ void PlainWindowPrivate::init() {
     Q_Q(PlainWindow);
     winHandle = nullptr;
     // loader = nullptr;
-    loader = QsPluginManager::loadInternalPlugin(QsDistConfig::WindowFactory);
+    loader = QsPluginManager::loadInternalPlugin(QsCoreConfig::WindowFactory);
     if (loader) {
         auto fac = qobject_cast<IWindowFactory *>(loader->instance());
         Q_ASSERT(fac);

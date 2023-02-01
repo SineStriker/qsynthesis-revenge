@@ -10,6 +10,6 @@ LvDistConfig::LvDistConfig() : LvDistConfig(*new LvDistConfigPrivate()) {
 LvDistConfig::~LvDistConfig() {
 }
 
-LvDistConfig::LvDistConfig(LvDistConfigPrivate &d) : QsDistConfig(d) {
+LvDistConfig::LvDistConfig(LvDistConfigPrivate &d) : QsCoreConfig(d) {
      d.init();
 }

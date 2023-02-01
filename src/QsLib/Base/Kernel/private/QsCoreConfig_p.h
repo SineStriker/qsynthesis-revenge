@@ -1,22 +1,22 @@
-#ifndef QSDISTCONFIGPRIVATE_H
-#define QSDISTCONFIGPRIVATE_H
+#ifndef QSCORECONFIG_P_H
+#define QSCORECONFIG_P_H
 
-#include "../QsDistConfig.h"
+#include "../QsCoreConfig.h"
 #include "QSimpleVarExp.h"
 
 #include <QHash>
 
-class QSINTEGRATE_API QsDistConfigPrivate {
-    Q_DECLARE_PUBLIC(QsDistConfig)
+class QSBASE_API QsCoreConfigPrivate {
+    Q_DECLARE_PUBLIC(QsCoreConfig)
 public:
-    QsDistConfigPrivate();
-    virtual ~QsDistConfigPrivate();
+    QsCoreConfigPrivate();
+    virtual ~QsCoreConfigPrivate();
 
     void init();
 
     void initByApp();
 
-    QsDistConfig *q_ptr;
+    QsCoreConfig *q_ptr;
 
     bool load_helper(const QString &filename);
 
@@ -77,4 +77,4 @@ private:
     QList<std::function<void()>> initializers;
 };
 
-#endif // QSDISTCONFIGPRIVATE_H
+#endif // QSCORECONFIG_P_H

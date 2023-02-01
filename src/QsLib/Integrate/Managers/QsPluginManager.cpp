@@ -75,15 +75,15 @@ ISVSConverter *QsPluginManager::searchConverter(const QString &suffix) const {
     return qobject_cast<ISVSConverter *>(d->converters.at(it.value()).loader->instance());
 }
 
-QPluginLoader *QsPluginManager::loadInternalPlugin(QsDistConfig::InternalPlugins id) {
+QPluginLoader *QsPluginManager::loadInternalPlugin(QsCoreConfig::InternalPlugins id) {
     QPluginLoader *loader = nullptr;
 
     switch (id) {
-        case QsDistConfig::AudioDecoder:
-        case QsDistConfig::AudioEncoder:
-        case QsDistConfig::AudioPlayback:
+        case QsCoreConfig::AudioDecoder:
+        case QsCoreConfig::AudioEncoder:
+        case QsCoreConfig::AudioPlayback:
             break;
-        case QsDistConfig::CompressEngine: {
+        case QsCoreConfig::CompressEngine: {
             QString name = qAppConf->internalPlugin(id);
             loader = new QPluginLoader(toLibFile("compressengines", name));
             if (!(loader->load() && qobject_cast<ICompressEngine *>(loader->instance()))) {
@@ -95,7 +95,7 @@ QPluginLoader *QsPluginManager::loadInternalPlugin(QsDistConfig::InternalPlugins
             }
             break;
         }
-        case QsDistConfig::WindowFactory: {
+        case QsCoreConfig::WindowFactory: {
             QString name = qAppConf->internalPlugin(id);
             loader = new QPluginLoader(toLibFile("windowfactories", name));
             if (!(loader->load() && qobject_cast<IWindowFactory *>(loader->instance()))) {

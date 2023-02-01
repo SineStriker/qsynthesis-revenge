@@ -10,6 +10,6 @@ DsDistConfig::DsDistConfig() : DsDistConfig(*new DsDistConfigPrivate()) {
 DsDistConfig::~DsDistConfig() {
 }
 
-DsDistConfig::DsDistConfig(DsDistConfigPrivate &d) : QsDistConfig(d) {
+DsDistConfig::DsDistConfig(DsDistConfigPrivate &d) : QsCoreConfig(d) {
      d.init();
 }

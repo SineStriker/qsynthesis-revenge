@@ -27,7 +27,7 @@ target_compile_definitions(${PROJECT_NAME} PUBLIC
     APP_NAME="${SUB_PROJECT}"
     APP_VERSION="${SUB_VERSION_SHORT}"
     APP_DESCRIPTION="${SUB_DESCRIPTION}"
-    APP_LIB_DIR="${APP_LIB_DIR}"
+    APP_SHARE_DIR="${APP_SHARE_DIR}"
     APP_PLUGINS_DIR="${APP_PLUGINS_DIR}"
     APP_LOCALES_DIR="${APP_LOCALES_DIR}"
     APP_TOOLS_DIR="${APP_TOOLS_DIR}"
@@ -45,8 +45,9 @@ target_create_translations(${PROJECT_NAME} SOURCES ${_src}
 # Copy resources
 qs_add_res(${PROJECT_NAME}
     FILES res/DsIntern.res.json
+    RELATIVE_PATH ${APP_SHARE_DIR}
 )
 qs_add_res(${PROJECT_NAME}
     FILES res/translations/*.qm
-    RELATIVE_PATH ../translations
+    RELATIVE_PATH ${APP_SHARE_DIR}/translations
 )

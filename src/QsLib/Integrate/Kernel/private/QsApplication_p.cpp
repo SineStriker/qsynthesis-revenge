@@ -12,6 +12,7 @@
 #include "QsSystem.h"
 
 #include "CStartupInfo.h"
+#include "QsCoreConfig.h"
 
 static const char Slash = '/';
 
@@ -29,7 +30,7 @@ static QString GetAppConfig() {
 //     return fonts.front();
 // }
 
-QsApplicationPrivate::QsApplicationPrivate(QsDistConfig *conf) : conf(conf) {
+QsApplicationPrivate::QsApplicationPrivate() {
 }
 
 QsApplicationPrivate::~QsApplicationPrivate() {
@@ -38,23 +39,12 @@ QsApplicationPrivate::~QsApplicationPrivate() {
 void QsApplicationPrivate::init() {
     Q_Q(QsApplication);
 
-    dd.setDir(qIStup->qsLibPath);
+    dd.setDir(qAppConf->appDir(QsCoreConfig::AppShare));
     dd.loadDefault("QsIntegrate");
-
-    // Load or create app config
-    if (conf.isNull()) {
-        conf.reset(new QsDistConfig());
-    }
-    conf->initAll();
 
     // Init managers
     pluginMgr = new QsPluginManager(q);
     fileMgr = new QsFileManager(q);
-
-    conf->load(q->applicationDirPath() + Slash + GetAppConfig());
-    if (!conf->apply()) {
-        ::exit(-1);
-    }
 
     fileMgr->load();
     pluginMgr->load();

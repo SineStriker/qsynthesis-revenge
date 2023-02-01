@@ -18,9 +18,6 @@ public:
     ~DsApplication();
 
 protected:
-    void receiveMessage(quint32 instanceId, const QByteArray &message) override;
-
-protected:
     DsApplication(DsApplicationPrivate &d, int &argc, char **argv);
 };
 

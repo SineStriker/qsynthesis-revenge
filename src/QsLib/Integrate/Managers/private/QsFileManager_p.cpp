@@ -6,7 +6,7 @@
 #include <QJsonParseError>
 #include <QStandardPaths>
 
-#include "Kernel/QsDistConfig.h"
+#include "Kernel/QsCoreConfig.h"
 #include "QsSystem.h"
 
 static const char SECTION_NAME_FILE_SYSTEM[] = "filesystem";

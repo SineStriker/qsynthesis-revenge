@@ -3,22 +3,34 @@
         <target>
         FILES           <files>
         DIRS            <dirs>
+        [TARGET         <target2>]
         [RELATIVE_PATH  <rel_path>]
+        [RELATIVE_PATH  <abs_path>]
     )
 
     usage:
-        copy files and dirs to destination relative to target after build
+        copy files and dirs to destination relative to target2(default to ${_target}) after build
 ]] #
 function(qs_add_res _target)
     set(options)
-    set(oneValueArgs RELATIVE_PATH)
+    set(oneValueArgs RELATIVE_PATH ABSOLUTE_PATH TARGET)
     set(multiValueArgs FILES DIRS)
     cmake_parse_arguments(FUNC "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
 
-    if(FUNC_RELATIVE_PATH)
-        set(_dest $<TARGET_FILE_DIR:${_target}>/${FUNC_RELATIVE_PATH})
+    if(FUNC_TARGET)
+        set(_path_target ${FUNC_TARGET})
     else()
-        set(_dest $<TARGET_FILE_DIR:${_target}>)
+        set(_path_target ${_target})
+    endif()
+
+    if(FUNC_ABSOLUTE_PATH)
+        set(_dest ${FUNC_ABSOLUTE_PATH})
+    else()
+        if(FUNC_RELATIVE_PATH)
+            set(_dest $<TARGET_FILE_DIR:${_path_target}>/${FUNC_RELATIVE_PATH})
+        else()
+            set(_dest $<TARGET_FILE_DIR:${_path_target}>)
+        endif()
     endif()
 
     # Make dir

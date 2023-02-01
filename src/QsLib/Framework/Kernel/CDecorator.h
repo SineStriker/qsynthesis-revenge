@@ -1,53 +1,24 @@
 #ifndef CDECORATOR_H
 #define CDECORATOR_H
 
-#include <QLocale>
-#include <QObject>
 #include <QScreen>
 
+#include "QsCoreDecorator.h"
 #include "QsFrameworkGlobal.h"
-#include "QsMacros.h"
 
-#define qIDec CDecorator::instance()
+#ifdef qIDec
+#undef qIDec
+#define qIDec qobject_cast<CDecorator *>(QsCoreDecorator::instance())
+#endif
 
 class CDecoratorPrivate;
 
-class QSFRAMEWORK_API CDecorator : public QObject {
+class QSFRAMEWORK_API CDecorator : public QsCoreDecorator {
     Q_OBJECT
     Q_DECLARE_PRIVATE(CDecorator)
-    Q_SINGLETON(CDecorator)
 public:
     explicit CDecorator(QObject *parent = nullptr);
     ~CDecorator();
-
-    /**
-     * @brief Current locale
-     *
-     * @return QLocale (No impact to framework locale)
-     */
-    QLocale locale() const;
-    QList<QLocale> locales() const;
-    void setLocale(const QLocale &locale);
-
-    /**
-     * @brief Add a translation configuration
-     *
-     * @param key Unique token
-     * @param paths Locale and related qm file path
-     */
-    void addLocale(const QString &key, const QHash<QLocale, QStringList> &paths);
-    void removeLocale(const QString &key);
-
-    /**
-     * @brief Install translation corresponding to the tokens to a widget, call at constructor
-     *
-     * @param w Widget pointer
-     * @param keys Tokens of locales
-     * @param updater Member function or global function to update texts
-     */
-    void installLocale(QWidget *w, const QStringList &keys,
-                       const std::function<void()> updater = nullptr);
-    void uninstallLocale(QWidget *w);
 
     /**
      * @brief Current theme
@@ -84,11 +55,9 @@ public:
      */
     void installTheme(QWidget *w, const QStringList &templateKeys);
     void uninstallTheme(QWidget *w);
-    
+
 protected:
     CDecorator(CDecoratorPrivate &d, QObject *parent = nullptr);
-
-    QScopedPointer<CDecoratorPrivate> d_ptr;
 
 private:
     void _q_screenAdded(QScreen *screen);
@@ -96,7 +65,6 @@ private:
     void _q_deviceRatioChanged(double dpi);
     void _q_logicalRatioChanged(double dpi);
 
-    void _q_localeSubscriberDestroyed();
     void _q_themeSubscriberDestroyed();
 
 signals:

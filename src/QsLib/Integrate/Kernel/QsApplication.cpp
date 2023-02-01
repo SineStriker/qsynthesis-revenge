@@ -29,7 +29,7 @@ QString QsApplication::deletedPrefix() {
 }
 
 QsApplication::QsApplication(QsApplicationPrivate &d, int &argc, char **argv)
-    : CApplication(argc, argv), d_ptr(&d) {
+    : QApplication(argc, argv), d_ptr(&d) {
     d.q_ptr = this;
 
     d.init();

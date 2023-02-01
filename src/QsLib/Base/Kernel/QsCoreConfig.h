@@ -1,18 +1,18 @@
-#ifndef QSDISTCONFIG_H
-#define QSDISTCONFIG_H
+#ifndef QSCORECONFIG_H
+#define QSCORECONFIG_H
 
 #include <QScopedPointer>
 #include <QStringList>
 
-#include "QsIntegrateGlobal.h"
+#include "QsGlobal.h"
 #include "QsMacros.h"
 
 #ifdef qAppConf
 #undef qAppConf
 #endif
-#define qAppConf QsDistConfig::instance()
+#define qAppConf QsCoreConfig::instance()
 
-class QsDistConfigPrivate;
+class QsCoreConfigPrivate;
 
 /*
  * Configuration of the following:
@@ -22,24 +22,27 @@ class QsDistConfigPrivate;
  * Ways to instantialize:
  *   - Create in `init` of LvApplicationPrivate (Default)
  *   - Inherit LvApplicationPrivate, create and pass to the constructor
- *     of base LvApplicationPrivate, the QsDistConfig can also be inherited
+ *     of base LvApplicationPrivate, the QsCoreConfig can also be inherited
  *
  */
 
-class QSINTEGRATE_API QsDistConfig {
-    Q_DECLARE_PRIVATE(QsDistConfig)
-    Q_SINGLETON(QsDistConfig)
+class QSBASE_API QsCoreConfig {
+    Q_DECLARE_PRIVATE(QsCoreConfig)
+    Q_SINGLETON(QsCoreConfig)
 public:
-    QsDistConfig();
-    virtual ~QsDistConfig();
+    QsCoreConfig();
+    virtual ~QsCoreConfig();
 
     virtual bool load(const QString &filename);
     virtual bool apply();
+
+    void saveDefault(const QString &filename);
 
 public:
     enum DirType {
         AppData,
         AppTemp,
+        AppShare,
         QtPlugins,
         QtTranslations,
         QsPlugins,
@@ -64,12 +67,12 @@ public:
     QString internalPlugin(InternalPlugins id) const;
 
 protected:
-    QsDistConfig(QsDistConfigPrivate &d);
+    QsCoreConfig(QsCoreConfigPrivate &d);
 
-    QScopedPointer<QsDistConfigPrivate> d_ptr;
+    QScopedPointer<QsCoreConfigPrivate> d_ptr;
 
 public:
     void initAll(); // Call by QsApplication at constructor, don't call manually
 };
 
-#endif // QSDISTCONFIG_H
+#endif // QSCORECONFIG_H

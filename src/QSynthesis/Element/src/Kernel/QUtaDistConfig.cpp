@@ -10,6 +10,6 @@ QUtaDistConfig::QUtaDistConfig() : QUtaDistConfig(*new QUtaDistConfigPrivate()) 
 QUtaDistConfig::~QUtaDistConfig() {
 }
 
-QUtaDistConfig::QUtaDistConfig(QUtaDistConfigPrivate &d) : QsDistConfig(d) {
+QUtaDistConfig::QUtaDistConfig(QUtaDistConfigPrivate &d) : QsCoreConfig(d) {
      d.init();
 }

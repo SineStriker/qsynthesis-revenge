@@ -1,0 +1,17 @@
+{
+    "locales": {
+        "key": "QsBase",
+        "dir": "${FILEPATH}/QsBase.res/translations",
+        "files": {
+            "zh_CN": [
+                "QsBase_zh_CN.qm"
+            ],
+            "zh_HK": [
+                "QsBase_zh_HK.qm"
+            ],
+            "ja_JP": [
+                "QsBase_ja_JP.qm"
+            ]
+        }
+    }
+}

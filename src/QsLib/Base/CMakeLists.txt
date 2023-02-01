@@ -3,7 +3,7 @@ project(QsBase
     LANGUAGES CXX
 )
 
-set(_dirs Api Global Serialization Tools)
+set(_dirs Api Global Kernel Serialization Tools)
 
 add_files(_src
     DIRECTORIES ${_dirs}
@@ -23,5 +23,22 @@ target_components(${PROJECT_NAME}
     SOURCES ${_src}
     QT_LIBRARIES Core
     QT_PRIVATE_INCLUDES Core
+    LINKS_PRIVATE SingleApplication
     INCLUDES ${_dirs}
+)
+
+target_create_translations(${PROJECT_NAME} SOURCES ${_src}
+    LOCALES zh_CN zh_HK ja_JP
+    DESTINATION res/translations
+    CREATE_ONCE
+)
+
+# Copy resources
+qs_add_res(${PROJECT_NAME}
+    FILES Res/QsBase.res.json
+    ABSOLUTE_PATH ${RES_OUTPUT_DIR}
+)
+qs_add_res(${PROJECT_NAME}
+    FILES Res/translations/*.qm
+    ABSOLUTE_PATH ${RES_OUTPUT_DIR}/QsBase.res/translations
 )

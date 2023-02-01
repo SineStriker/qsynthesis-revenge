@@ -1,7 +1,7 @@
 #include "DsInternalMain.h"
 
 #include "Kernel/DsApplication.h"
-#include "Kernel/DsStartupInfo.h"
+#include "Kernel/DsStartInfo.h"
 
 #include "Managers/WindowManager.h"
 
@@ -9,7 +9,7 @@
 
 int main_entry(int argc, char *argv[]) {
     // Configure startup info
-    DsStartupInfo info;
+    DsStartInfo info;
     
     // Qt Application
     DsApplication a(argc, argv);

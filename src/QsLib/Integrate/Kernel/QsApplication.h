@@ -1,7 +1,7 @@
 #ifndef QSAPPLICATION_H
 #define QSAPPLICATION_H
 
-#include "CApplication.h"
+#include <QApplication>
 
 #ifdef qApp
 #undef qApp
@@ -12,7 +12,7 @@ class QsApplicationPrivate;
 
 #include "QsIntegrateGlobal.h"
 
-class QSINTEGRATE_API QsApplication : public CApplication {
+class QSINTEGRATE_API QsApplication : public QApplication {
     Q_OBJECT
     Q_DECLARE_PRIVATE(QsApplication)
 public:

@@ -19,6 +19,10 @@ void DsDistConfigPrivate::init() {
 }
 
 void DsDistConfigPrivate::initByApp() {
+    setDefaultDir(DsDistConfig::AppShare,
+                  QString("${APPPATH}") + Slash + APP_SHARE_DIR //
+    );
+
     setDefaultDir(DsDistConfig::QtPlugins,
                   QString("${APPPATH}") + Slash + APP_PLUGINS_DIR //
     );

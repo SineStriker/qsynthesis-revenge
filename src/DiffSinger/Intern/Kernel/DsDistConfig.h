@@ -4,7 +4,7 @@
 #include <QScopedPointer>
 #include <QStringList>
 
-#include "Kernel/QsDistConfig.h"
+#include "Kernel/QsCoreConfig.h"
 
 #ifdef qAppConf
 #undef qAppConf
@@ -13,7 +13,7 @@
 
 class DsDistConfigPrivate;
 
-class DsDistConfig : public QsDistConfig {
+class DsDistConfig : public QsCoreConfig {
     Q_DECLARE_PRIVATE(DsDistConfig)
 public:
     DsDistConfig();

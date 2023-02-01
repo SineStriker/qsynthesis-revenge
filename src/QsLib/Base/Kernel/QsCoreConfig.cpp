@@ -1,46 +1,48 @@
-#include "QsDistConfig.h"
+#include "QsCoreConfig.h"
 #include "QsSystem.h"
-#include "private/QsDistConfig_p.h"
+#include "private/QsCoreConfig_p.h"
 
-#include "QsStartInfo.h"
+#include "QsCoreStartInfo.h"
 
 #include <QDebug>
 
 static bool hasInit = false;
 
-Q_SINGLETON_DECLARE(QsDistConfig)
+Q_SINGLETON_DECLARE(QsCoreConfig)
 
-QsDistConfig::QsDistConfig() : QsDistConfig(*new QsDistConfigPrivate()) {
+QsCoreConfig::QsCoreConfig() : QsCoreConfig(*new QsCoreConfigPrivate()) {
 }
 
-QsDistConfig::~QsDistConfig() {
+QsCoreConfig::~QsCoreConfig() {
 }
 
-bool QsDistConfig::load(const QString &filename) {
-    Q_D(QsDistConfig);
+bool QsCoreConfig::load(const QString &filename) {
+    Q_D(QsCoreConfig);
     bool res = true;
     if (!d->load_helper(filename)) {
         qDebug() << QString("load_config: configuration file %1 not found.")
                         .arg(QsSys::PathFindFileName(filename));
         res = false;
     }
-    if (qIStup->parser.isSet("reset-config")) {
-        d->save_default(filename);
-    }
     return res;
 }
 
-bool QsDistConfig::apply() {
-    Q_D(QsDistConfig);
+bool QsCoreConfig::apply() {
+    Q_D(QsCoreConfig);
     return d->apply_helper();
 }
 
-QString QsDistConfig::appDir(QsDistConfig::DirType type) const {
-    Q_D(const QsDistConfig);
+void QsCoreConfig::saveDefault(const QString &filename) {
+    Q_D(QsCoreConfig);
+    d->save_default(filename);
+}
+
+QString QsCoreConfig::appDir(QsCoreConfig::DirType type) const {
+    Q_D(const QsCoreConfig);
     return d->dirMap.value(type).dir;
 }
 
-QString QsDistConfig::locateBinTool(const QString &name) const {
+QString QsCoreConfig::locateBinTool(const QString &name) const {
 #ifdef Q_OS_WINDOWS
     const char _suffix[] = ".exe";
 #else
@@ -53,26 +55,25 @@ QString QsDistConfig::locateBinTool(const QString &name) const {
     return QString();
 }
 
-QString QsDistConfig::internalPlugin(QsDistConfig::InternalPlugins id) const {
-    Q_D(const QsDistConfig);
+QString QsCoreConfig::internalPlugin(QsCoreConfig::InternalPlugins id) const {
+    Q_D(const QsCoreConfig);
     return d->pluginMap.value(id).name;
 }
 
-QsDistConfig::QsDistConfig(QsDistConfigPrivate &d) : d_ptr(&d) {
+QsCoreConfig::QsCoreConfig(QsCoreConfigPrivate &d) : d_ptr(&d) {
     construct();
 
     d.q_ptr = this;
-
     d.init();
 }
 
-void QsDistConfig::initAll() {
+void QsCoreConfig::initAll() {
     if (hasInit) {
         return;
     }
     hasInit = true;
 
-    Q_D(QsDistConfig);
+    Q_D(QsCoreConfig);
     for (const auto &fun : qAsConst(d->initializers)) {
         fun();
     }

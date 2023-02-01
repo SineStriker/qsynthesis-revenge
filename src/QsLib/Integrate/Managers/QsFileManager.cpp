@@ -1,7 +1,7 @@
 #include "QsFileManager.h"
 #include "private/QsFileManager_p.h"
 
-#include "Kernel/QsDistConfig.h"
+#include "Kernel/QsCoreConfig.h"
 #include "Serialization/QJsonFormatter.h"
 
 #include "QsSystem.h"
@@ -22,13 +22,13 @@ QsFileManager::~QsFileManager() {
 
 bool QsFileManager::load() {
     Q_D(QsFileManager);
-    d->load_helper(qAppConf->appDir(QsDistConfig::AppData) + Slash + FILE_NAME_RECENT_JSON);
+    d->load_helper(qAppConf->appDir(QsCoreConfig::AppData) + Slash + FILE_NAME_RECENT_JSON);
     return true;
 }
 
 bool QsFileManager::save() {
     Q_D(QsFileManager);
-    d->save_helper(qAppConf->appDir(QsDistConfig::AppData) + Slash + FILE_NAME_RECENT_JSON);
+    d->save_helper(qAppConf->appDir(QsCoreConfig::AppData) + Slash + FILE_NAME_RECENT_JSON);
     return true;
 }
 

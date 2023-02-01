@@ -1,45 +1,17 @@
-#ifndef CStartupInfo_H
-#define CStartupInfo_H
+#ifndef CSTARTUPINFO_H
+#define CSTARTUPINFO_H
 
-#include <QCommandLineParser>
-#include <QString>
-
+#include "QsCoreStartInfo.h"
 #include "QsFrameworkGlobal.h"
-#include "QsMacros.h"
 
-#ifndef qIStup
-#define qIStup CStartupInfo::instance()
-#endif
-
-class QSFRAMEWORK_API CStartupInfo {
-    Q_SINGLETON(CStartupInfo)
+class QSFRAMEWORK_API CStartupInfo : public QsCoreStartInfo {
+    Q_OBJECT
 public:
-    CStartupInfo();
-    virtual ~CStartupInfo();
+    explicit CStartupInfo(QObject *parent = nullptr);
+    ~CStartupInfo();
 
-    /* Properties can be append in each app's constructor */
-    QCommandLineParser parser;
-
-    /* Properties setup in main functions */
-    QString qsLibPath;
-
-    QString appName;
-
-    QString appVersion;
-
-    QString appDisplayName;
-
-    QString appDescription;
-
-    bool allowRootUser; // Default: false
-
-    bool allowSecondary; // Default: false
-
-    virtual QString mainTitle() const;
-
-    virtual QString windowTitle() const;
-
-    virtual QString errorTitle() const;
+protected:
+    QsCoreDecorator *createDecorator(QObject *parent = nullptr) override;
 };
 
-#endif // CStartupInfo_H
+#endif // CSTARTUPINFO_H

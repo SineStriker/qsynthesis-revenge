@@ -29,7 +29,6 @@ target_components(${PROJECT_NAME}
     QT_LIBRARIES Widgets Svg Network
     QT_PRIVATE_INCLUDES Widgets
     LINKS QsBase
-    LINKS_PRIVATE SingleApplication
     INCLUDES ${_dirs} ${_extra_includes}
 )
 
@@ -42,8 +41,9 @@ target_create_translations(${PROJECT_NAME} SOURCES ${_src}
 # Copy resources
 qs_add_res(${PROJECT_NAME}
     FILES Res/QsFramework.res.json
+    ABSOLUTE_PATH ${RES_OUTPUT_DIR}
 )
 qs_add_res(${PROJECT_NAME}
     FILES Res/translations/*.qm
-    RELATIVE_PATH QsFramework.res/translations
+    ABSOLUTE_PATH ${RES_OUTPUT_DIR}/QsFramework.res/translations
 )

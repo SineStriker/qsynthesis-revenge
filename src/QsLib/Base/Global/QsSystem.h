@@ -103,6 +103,12 @@ namespace QsSys {
      */
     QSBASE_API int osUnitDpi();
 
+    QSBASE_API QString osFileManagerName();
+
+    QSBASE_API QString osRootUserName();
+    
+    QSBASE_API QString osAllFilesFilter();
+
 } // namespace QsSys
 
 #endif // QSSYSTEMHELPER_H

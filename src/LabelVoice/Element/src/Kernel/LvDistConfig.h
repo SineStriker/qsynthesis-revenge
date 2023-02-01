@@ -4,7 +4,7 @@
 #include <QScopedPointer>
 #include <QStringList>
 
-#include "Kernel/QsDistConfig.h"
+#include "Kernel/QsCoreConfig.h"
 
 #include "lvelem_global.h"
 
@@ -15,7 +15,7 @@
 
 class LvDistConfigPrivate;
 
-class LVELEM_API LvDistConfig : public QsDistConfig {
+class LVELEM_API LvDistConfig : public QsCoreConfig {
     Q_DECLARE_PRIVATE(LvDistConfig)
 public:
     LvDistConfig();

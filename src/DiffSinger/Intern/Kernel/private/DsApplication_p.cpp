@@ -8,7 +8,7 @@
 #include "CDecorator.h"
 
 #include "../DsDistConfig.h"
-#include "../DsStartupInfo.h"
+#include "../DsStartInfo.h"
 
 #include <QFontDatabase>
 #include <QMessageBox>
@@ -24,7 +24,7 @@ static QString loadAppleFont() {
     return fonts.front();
 }
 
-DsApplicationPrivate::DsApplicationPrivate() : QsApplicationPrivate(new DsDistConfig()) {
+DsApplicationPrivate::DsApplicationPrivate() : QsApplicationPrivate() {
 }
 
 DsApplicationPrivate::~DsApplicationPrivate() {
@@ -51,7 +51,7 @@ void DsApplicationPrivate::init() {
     qIDec->addThemeTemplate("HomeWindow", ":/themes/home.qss.in");
     qIDec->addThemeTemplate("PianoWindow", ":/themes/piano.qss.in");
 
-    dd.setDir(qIStup->qsLibPath);
+    dd.setDir(qAppConf->appDir(QsCoreConfig::AppShare));
     dd.loadDefault("DsIntern");
 
     windowMgr = new WindowManager(q);

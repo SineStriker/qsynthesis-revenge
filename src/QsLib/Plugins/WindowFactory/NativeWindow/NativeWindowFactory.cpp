@@ -4,6 +4,7 @@
 #include "CDecreateDir.h"
 
 #include "CDecorator.h"
+#include "QsSystem.h"
 
 #include <QTranslator>
 
@@ -17,6 +18,9 @@ public:
 
 void NativeWindowFactoryPrivate::init() {
     qIDec->addThemeTemplate("NativeWindow", ":/themes/window-bar.qss.in");
+    
+    dd.setDir(QsSys::PathFindDirPath(q_ptr->path));
+    dd.loadDefault("NativeWindow");
 }
 
 // ----------------------------------------------------------------------------
@@ -28,13 +32,6 @@ NativeWindowFactory::NativeWindowFactory(QObject *parent)
 }
 
 NativeWindowFactory::~NativeWindowFactory() {
-}
-
-void NativeWindowFactory::setupPath(const QString &path) {
-    IWindowFactory::setupPath(path);
-
-    d_ptr->dd.setDir(path);
-    d_ptr->dd.loadDefault("NativeWindow");
 }
 
 IWindowHandle *NativeWindowFactory::create(QMainWindow *win) {

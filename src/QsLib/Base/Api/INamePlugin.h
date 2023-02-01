@@ -2,6 +2,7 @@
 #define INAMEPLUGIN_H
 
 #include <QObject>
+#include <QPluginLoader>
 
 #include "QsGlobal.h"
 
@@ -16,7 +17,14 @@ public:
      */
     QString path;
 
-    virtual void setupPath(const QString &path);
+    static void setLastPluginPath(const QString &path);
+
+    template <class T>
+    static T *fromFileSystem(QPluginLoader &ld, const QString &path) {
+        ld.setFileName(path);
+        setLastPluginPath(path);
+        return qobject_cast<T *>(ld.instance());
+    }
 };
 
 #endif // INAMEPLUGIN_H
