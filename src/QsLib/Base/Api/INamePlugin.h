@@ -20,10 +20,12 @@ public:
     static void setLastPluginPath(const QString &path);
 
     template <class T>
-    static T *fromFileSystem(QPluginLoader &ld, const QString &path) {
-        ld.setFileName(path);
-        setLastPluginPath(path);
-        return qobject_cast<T *>(ld.instance());
+    static T load(QPluginLoader *ld) {
+        if (!ld->load()) {
+            return nullptr;
+        }
+        setLastPluginPath(ld->fileName());
+        return qobject_cast<T>(ld->instance());
     }
 };
 

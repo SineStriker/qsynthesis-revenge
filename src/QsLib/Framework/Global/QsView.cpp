@@ -46,7 +46,7 @@ QPixmap QsView::createDeviceRenderPixmap(QWindow *refWindow, QSize logicalPixelS
 }
 
 void QsView::drawBorderShadow(QPainter &painter, const QMargins &margin, const QSize &size,
-                            const QColor &color) {
+                              const QColor &color) {
     int w = size.width();
     int h = size.height();
 
@@ -124,7 +124,7 @@ void QsView::drawBorderShadow(QPainter &painter, const QMargins &margin, const Q
 }
 
 void QsView::drawBorderLine(QPainter &painter, const QMargins &margin, const QSize &size,
-                          const QPen &pen) {
+                            const QPen &pen) {
     painter.setPen(pen);
     painter.setBrush(Qt::NoBrush);
 
@@ -239,4 +239,10 @@ void QsView::bringWindowToForeground(QWidget *w) {
                             GetCurrentThreadId(), FALSE);
     }
 #endif
+}
+
+extern Q_DECL_IMPORT QWidget *qt_button_down;
+
+QWidget *QsView::implicitMouseGrabber() {
+    return qt_button_down;
 }

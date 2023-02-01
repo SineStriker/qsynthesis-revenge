@@ -28,6 +28,7 @@ QsLocaleDir::~QsLocaleDir() {
 }
 
 void QsLocaleDir::setDir(const QString &dir) {
+    this->dir = dir;
     vars.add("FILEPATH", dir);
 }
 
@@ -72,8 +73,9 @@ bool QsLocaleDir::load(const QString &filename) {
             break;
         }
 
-        localeKey = key;
         qIDec->addLocale(key, paths);
+        localeKey = key;
+        unloaders.append(std::bind(&QsLocaleDir::unloadLocale, this));
         break;
     }
 
@@ -81,11 +83,10 @@ bool QsLocaleDir::load(const QString &filename) {
 }
 
 void QsLocaleDir::unload() {
-    // Remove locale
-    if (!localeKey.isEmpty()) {
-        qIDec->removeLocale(localeKey);
-        localeKey.clear();
+    for (const auto &unloader : qAsConst(unloaders)) {
+        unloader();
     }
+    unloaders.clear();
 }
 
 bool QsLocaleDir::loadRootItems(const QString &filename) {
@@ -157,4 +158,12 @@ bool QsLocaleDir::loadRootItems(const QString &filename) {
         rootItems.insert(it.key(), cur);
     }
     return true;
+}
+
+void QsLocaleDir::unloadLocale() {
+    // Remove locale
+    if (!localeKey.isEmpty()) {
+        qIDec->removeLocale(localeKey);
+        localeKey.clear();
+    }
 }

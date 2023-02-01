@@ -4,6 +4,7 @@
 #include <QSplitter>
 #include <QStackedWidget>
 
+#include "QsFrameworkGlobal.h"
 #include "QsNamespace.h"
 
 class QSFRAMEWORK_API CDockPanel : public QSplitter {

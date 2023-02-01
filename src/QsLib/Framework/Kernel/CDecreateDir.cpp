@@ -24,7 +24,7 @@ bool CDecreateDir::load(const QString &filename) {
     if (!QsLocaleDir::load(filename)) {
         return false;
     }
-    
+
     // Parse themes
     auto it = rootItems.find(KEY_NAME_THEMES);
     while (it != rootItems.end()) {
@@ -57,17 +57,16 @@ bool CDecreateDir::load(const QString &filename) {
             break;
         }
 
-        themeKey = key;
         qIDec->addThemeConfig(key, paths);
+        themeKey = key;
+        unloaders.append(std::bind(&CDecreateDir::unloadTheme, this));
         break;
     }
 
     return true;
 }
 
-void CDecreateDir::unload() {
-    QsLocaleDir::unload();
-
+void CDecreateDir::unloadTheme() {
     if (!themeKey.isEmpty()) {
         qIDec->removeThemeConfig(themeKey);
         themeKey.clear();

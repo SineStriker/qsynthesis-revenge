@@ -1,9 +1,7 @@
 /* Configuration */
 
 Config {
-    pattern: "\\\"\\{\\{.*\\}\\}\\\"";
-    pattern-left: 3;
-    pattern-right: 3;
+    pattern: "\"\\{\\{(.*?)\\}\\}\"";
     separator: "|";
 }
 

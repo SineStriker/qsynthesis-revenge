@@ -23,7 +23,7 @@ public:
 
     bool load(const QString &filename);
 
-    QString parse(const QMap<QString, QColor> &colors, const QMap<QString, int> &sizes) const;
+    QString parse(const QMap<QString, QString> &colors, const QMap<QString, int> &sizes) const;
 };
 
 #endif // __THEMETEMPLATE_H__

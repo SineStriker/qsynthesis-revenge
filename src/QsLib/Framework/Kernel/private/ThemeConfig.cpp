@@ -66,6 +66,7 @@ bool ThemeConfig::loadOne(const QString &filename) {
         if (it != objDoc.end() && it.value().isDouble()) {
             priority = it.value().toDouble();
         }
+        break;
     }
 
     // Get colors
@@ -96,8 +97,7 @@ bool ThemeConfig::loadOne(const QString &filename) {
                     }
                     QString ns = newKeyStr.left(idx);
                     namespaces.insert(ns);
-                    colors[ns].insert(newKeyStr.mid(idx + 1),
-                                      QsCss::CssStringToColor(val.toString()));
+                    colors[ns].insert(newKeyStr.mid(idx + 1), val.toString());
                 } else if (val.isObject()) {
                     stack.push_back(qMakePair(newKeys, it.value().toObject()));
                 }

@@ -1,8 +1,6 @@
 #include "PianoWindow.h"
 #include "PianoWindow_p.h"
 
-#include "Kernel/DsApplication.h"
-
 PianoWindow::PianoWindow(QWidget *parent) : PianoWindow(*new PianoWindowPrivate(), parent) {
 }
 

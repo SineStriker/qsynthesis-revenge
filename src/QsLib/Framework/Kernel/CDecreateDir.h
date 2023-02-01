@@ -14,7 +14,9 @@ public:
     QString themeKey;
 
     bool load(const QString &filename) override;
-    void unload() override;
+
+private:
+    void unloadTheme();
 };
 
 #endif // CDECREATEDIR_H

@@ -34,6 +34,8 @@ namespace QsView {
 
     QSFRAMEWORK_API void bringWindowToForeground(QWidget *w);
 
+    QSFRAMEWORK_API QWidget *implicitMouseGrabber();
+
 } // namespace View
 
 #endif // QSVIEWHELPER_H

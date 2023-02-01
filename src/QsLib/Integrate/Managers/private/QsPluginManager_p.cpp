@@ -27,7 +27,7 @@ void QsPluginManagerPrivate::loadConverters() {
         QFileInfo entry = files.at(k);
         QString filePath = entry.canonicalFilePath();
         QPluginLoader *loader = new QPluginLoader(filePath);
-        if (loader->load() && qobject_cast<ISVSConverter *>(loader->instance())) {
+        if (INamePlugin::load<ISVSConverter *>(loader)) {
             QJsonObject meta = loader->metaData().value("MetaData").toObject();
             QJsonValue target = meta.value("target");
             QJsonValue filters = meta.value("filters");

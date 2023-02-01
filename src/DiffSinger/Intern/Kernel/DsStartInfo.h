@@ -1,15 +1,24 @@
 #ifndef DSSTARTINFO_H
 #define DSSTARTINFO_H
 
-#include "QsCoreStartInfo.h"
+#include "QsStartInfo.h"
 
-class DsStartInfo : public QsCoreStartInfo {
+class DsStartInfoPrivate;
+
+class DsStartInfo : public QsStartInfo {
+    Q_OBJECT
+    Q_DECLARE_PRIVATE(DsStartInfo)
 public:
-    DsStartInfo();
+    explicit DsStartInfo(QObject *parent = nullptr);
     ~DsStartInfo();
 
+    void parse() override;
+
 protected:
-    void receiveMessage(quint32 instanceId, const QByteArray &message) override;
+    QsCoreConfig *creatDistConfig() override;
+
+protected:
+    DsStartInfo(DsStartInfoPrivate &d, QObject *parent = nullptr);
 };
 
 #endif // DSSTARTINFO_H

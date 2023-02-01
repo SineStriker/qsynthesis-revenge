@@ -2,11 +2,11 @@
     "config": {
         "priority": 10,
         "namespaces": [
-            "nativeWindow"
+            "NativeWindow"
         ]
     },
     "colors": {
-        "nativeWindow": {
+        "NativeWindow": {
             "background": "transparent",
             "minButton": {
                 "foreground": {
@@ -16,8 +16,8 @@
                 },
                 "background": {
                     "up": "transparent",
-                    "over": "rgba(0, 0, 0, 15%)",
-                    "down": "rgba(0, 0, 0, 15%)"
+                    "over": "rgba(255, 255, 255, 15%)",
+                    "down": "rgba(255, 255, 255, 15%)"
                 }
             },
             "maxButton": {
@@ -33,8 +33,8 @@
                 },
                 "background": {
                     "up": "transparent",
-                    "over": "rgba(0, 0, 0, 15%)",
-                    "down": "rgba(0, 0, 0, 15%)"
+                    "over": "rgba(255, 255, 255, 15%)",
+                    "down": "rgba(255, 255, 255, 15%)"
                 }
             },
             "closeButton": {
@@ -55,7 +55,7 @@
         }
     },
     "sizes": {
-        "nativeWindow": {
+        "NativeWindow": {
             "titleMargin": 20,
             "minHeight": 20,
             "minButton": {

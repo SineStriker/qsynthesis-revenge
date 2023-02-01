@@ -2,6 +2,7 @@
 #include "NativeHandle.h"
 
 #include "CDecreateDir.h"
+#include "QsCoreConfig.h"
 
 #include "CDecorator.h"
 #include "QsSystem.h"
@@ -18,8 +19,8 @@ public:
 
 void NativeWindowFactoryPrivate::init() {
     qIDec->addThemeTemplate("NativeWindow", ":/themes/window-bar.qss.in");
-    
-    dd.setDir(QsSys::PathFindDirPath(q_ptr->path));
+
+    dd.setDir(qAppConf->appDir(QsCoreConfig::AppShare));
     dd.loadDefault("NativeWindow");
 }
 

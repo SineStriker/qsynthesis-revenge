@@ -1,7 +1,7 @@
 {
     "locales": {
         "key": "DsIntern",
-        "dir": "${FILEPATH}/../translations",
+        "dir": "${FILEPATH}/DsIntern.res/translations",
         "files": {
             "zh_CN": [
                 "DsIntern_zh_CN.qm"
@@ -16,7 +16,7 @@
     },
     "themes": {
         "key": "DsIntern",
-        "dir": "${FILEPATH}/../themes",
+        "dir": "${FILEPATH}/DsIntern.res/themes",
         "files": {
             "Zhibin - Dark": [
                 "home-dark.json",

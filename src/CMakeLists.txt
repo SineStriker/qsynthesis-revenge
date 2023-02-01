@@ -12,13 +12,17 @@ project(${APP_TOOLSET_NAME} VERSION ${APP_VERSION_VERBOSE} LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+# ----------------------------------
+# Import vcpkg and libraries
+# ----------------------------------
+set(VCPKG_APPLOCAL_DEPS off) # Tell vcpkg not to copy dlls automatically on Windows
+include(${REPOSITORY_VCPKG_DIR}/scripts/buildsystems/vcpkg.cmake)
 
 # ----------------------------------
 # Import base configuration
 # ----------------------------------
-set(ROOT_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR} CACHE STRING INTERNAL)
+set(ROOT_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR} CACHE STRING "Root source directory")
 add_subdirectory(Common)
-
 
 # ----------------------------------
 # Build configuration
@@ -33,13 +37,6 @@ if(WIN32)
     set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} /manifest:no")
 endif()
 
-
-# ----------------------------------
-# Import vcpkg and libraries
-# ----------------------------------
-set(VCPKG_APPLOCAL_DEPS off) # Tell vcpkg not to copy dlls automatically on Windows
-include(${REPOSITORY_VCPKG_DIR}/scripts/buildsystems/vcpkg.cmake)
-
 # Find pre-built libraries
 find_package(SDL2 REQUIRED)
 find_package(yaml-cpp REQUIRED)
@@ -50,6 +47,9 @@ if(NOT APPLE)
     find_package(FramelessHelper REQUIRED COMPONENTS Core Widgets)
 endif()
 
+if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+    add_compile_definitions(CONFIG_ENABLE_DEBUG)
+endif()
 
 # ----------------------------------
 # Add sub-projects
@@ -69,7 +69,6 @@ endforeach()
 if(BUILD_TEST)
     add_subdirectory(Test)
 endif()
-
 
 # ----------------------------------
 # Add dependencies and deployment

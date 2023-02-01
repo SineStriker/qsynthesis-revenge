@@ -31,5 +31,5 @@ function(check_pc_os)
     endif()
     message(STATUS "[INFO] Current System is ${_name}")
 
-    set(LINUX ${_linux} CACHE BOOL INTERNAL FORCE)
+    set(LINUX ${_linux} CACHE BOOL "If the current OS is Linux" FORCE)
 endfunction()

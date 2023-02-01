@@ -3,16 +3,15 @@ include_guard(GLOBAL)
 # ----------------------------------
 # Project directory configuration
 # ----------------------------------
-set(REPOSITORY_ROOT_DIR ${CMAKE_CURRENT_LIST_DIR} CACHE STRING INTERNAL) # Root dir
-set(REPOSITORY_VCPKG_DIR ${REPOSITORY_ROOT_DIR}/vcpkg CACHE STRING INTERNAL) # Vcpkg dir
+set(REPOSITORY_ROOT_DIR ${CMAKE_CURRENT_LIST_DIR} CACHE STRING "Repository root directory") # Root dir
+set(REPOSITORY_VCPKG_DIR ${REPOSITORY_ROOT_DIR}/vcpkg CACHE STRING "Vcpkg directory") # Vcpkg dir
 
-set(PROJECT_ARCHIVE_DIR ${CMAKE_BINARY_DIR}/etc CACHE STRING INTERNAL) # Etc
-set(PROJECT_RELEASE_DIR ${CMAKE_BINARY_DIR} CACHE STRING INTERNAL) # Release
+set(PROJECT_ARCHIVE_DIR ${CMAKE_BINARY_DIR}/etc CACHE STRING "Archives output directory") # Etc
+set(PROJECT_RELEASE_DIR ${CMAKE_BINARY_DIR} CACHE STRING "Release output directory") # Release
 
-set(PROJECT_MODULES_DIR ${REPOSITORY_ROOT_DIR}/scripts/cmake/Modules CACHE STRING INTERNAL) # Scripts
-set(PROJECT_DOCUMENT_DIR ${REPOSITORY_ROOT_DIR}/docs/redist CACHE STRING INTERNAL) # Docs
-set(PROJECT_LICENSE_FILE ${REPOSITORY_ROOT_DIR}/LICENSE CACHE STRING INTERNAL) # License
-
+set(PROJECT_MODULES_DIR ${REPOSITORY_ROOT_DIR}/scripts/cmake/Modules CACHE STRING "Custom CMake scripts") # Scripts
+set(PROJECT_DOCUMENT_DIR ${REPOSITORY_ROOT_DIR}/docs/redist CACHE STRING "Repository documents directory") # Docs
+set(PROJECT_LICENSE_FILE ${REPOSITORY_ROOT_DIR}/LICENSE CACHE STRING "License file") # License
 
 # ----------------------------------
 # Initialization
@@ -20,7 +19,6 @@ set(PROJECT_LICENSE_FILE ${REPOSITORY_ROOT_DIR}/LICENSE CACHE STRING INTERNAL) #
 include(${PROJECT_MODULES_DIR}/Basic.cmake)
 
 check_pc_os()
-
 
 # ----------------------------------
 # Build system configuration

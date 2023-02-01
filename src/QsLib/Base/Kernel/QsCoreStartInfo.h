@@ -23,7 +23,7 @@ public:
     explicit QsCoreStartInfo(QObject *parent = nullptr);
     ~QsCoreStartInfo();
 
-    void parse();
+    virtual void parse();
 
     /* Properties can be append in each app's constructor */
     QCommandLineParser parser;
@@ -44,7 +44,7 @@ public:
     /* Factory */
 protected:
     virtual QsCoreDecorator *createDecorator(QObject *parent = nullptr);
-    
+
     virtual QsCoreConfig *creatDistConfig();
 
 protected:

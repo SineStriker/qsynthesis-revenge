@@ -1,6 +1,8 @@
 #include "QsCoreDecorator.h"
 #include "private/QsCoreDecorator_p.h"
 
+#include <QDebug>
+
 Q_SINGLETON_DECLARE(QsCoreDecorator)
 
 QsCoreDecorator::QsCoreDecorator(QObject *parent)

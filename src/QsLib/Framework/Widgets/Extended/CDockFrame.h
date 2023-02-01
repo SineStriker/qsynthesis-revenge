@@ -4,6 +4,7 @@
 #include <QAbstractButton>
 #include <QFrame>
 
+#include "QsFrameworkGlobal.h"
 #include "QsNamespace.h"
 
 class CDockFramePrivate;

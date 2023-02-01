@@ -4,8 +4,8 @@
 #include <QLocale>
 #include <QObject>
 
-#include "QsMacros.h"
 #include "QsGlobal.h"
+#include "QsMacros.h"
 
 #define qIDec QsCoreDecorator::instance()
 
@@ -45,8 +45,7 @@ public:
      * @param keys Tokens of locales
      * @param updater Member function or global function to update texts
      */
-    void installLocale(QObject *obj, const QStringList &keys,
-                       const std::function<void()> updater = nullptr);
+    void installLocale(QObject *obj, const QStringList &keys, const std::function<void()> updater);
     void uninstallLocale(QObject *obj);
 
 protected:

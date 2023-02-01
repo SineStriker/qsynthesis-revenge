@@ -36,11 +36,11 @@ void QsCoreStartInfoPrivate::parse_helper() {
     // Load or generate distconfig
     QString configPath = qApp->applicationDirPath() + Slash + GetAppConfig();
     coreConfig = q->creatDistConfig();
+    coreConfig->initAll();
     coreConfig->load(configPath);
 
     // Install QsBase translation
-    QString sharePath = coreConfig->appDir(QsCoreConfig::AppShare);
-    ld.setDir(sharePath);
+    ld.setDir(coreConfig->appDir(QsCoreConfig::AppShare));
     ld.loadDefault("QsBase");
 
     // Parse commandline arguments

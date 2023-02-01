@@ -1,5 +1,4 @@
 #include "CMenu.h"
-#include "CApplication.h"
 
 #include <private/qkeysequence_p.h>
 #include <private/qmenu_p.h>

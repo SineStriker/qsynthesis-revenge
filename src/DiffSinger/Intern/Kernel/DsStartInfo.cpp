@@ -1,20 +1,24 @@
 #include "DsStartInfo.h"
+#include "private/DsStartInfo_p.h"
 
-#include <QApplication>
+#include "DsDistConfig.h"
 
-#include "Managers/WindowManager.h"
-#include "QsView.h"
-
-
-DsStartInfo::DsStartInfo() {
-    parser.addPositionalArgument("files", "Project files to open.", "files");
+DsStartInfo::DsStartInfo(QObject *parent) : DsStartInfo(*new DsStartInfoPrivate(), parent) {
 }
 
 DsStartInfo::~DsStartInfo() {
 }
 
-void DsStartInfo::receiveMessage(quint32 instanceId, const QByteArray &message) {
-    Q_UNUSED(instanceId);
-    Q_UNUSED(message);
-    QsView::bringWindowToForeground(qWindows->firstWindow());
+void DsStartInfo::parse() {
+    Q_D(DsStartInfo);
+    QsStartInfo::parse();
+    d->parse_helper();
+}
+
+QsCoreConfig *DsStartInfo::creatDistConfig() {
+    return new DsDistConfig();
+}
+
+DsStartInfo::DsStartInfo(DsStartInfoPrivate &d, QObject *parent) : QsStartInfo(d, parent) {
+    d.init();
 }

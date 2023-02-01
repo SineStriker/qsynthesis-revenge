@@ -1,5 +1,4 @@
 #include "CMenuBar.h"
-#include "CApplication.h"
 #include "CMenu.h"
 
 #include "private/qmenubar_p.h"

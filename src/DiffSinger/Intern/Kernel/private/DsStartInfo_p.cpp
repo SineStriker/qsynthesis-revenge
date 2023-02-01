@@ -1,18 +1,14 @@
-#include "DsApplication_p.h"
+#include "DsStartInfo_p.h"
+#include "CDecorator.h"
+#include "QsSystem.h"
 
 #include "Events_p.h"
 
-#include "QsSystem.h"
-#include "QsView.h"
-
-#include "CDecorator.h"
-
-#include "../DsDistConfig.h"
-#include "../DsStartInfo.h"
-
+#include <QApplication>
 #include <QFontDatabase>
 #include <QMessageBox>
 #include <QScreen>
+#include <QTextCodec>
 
 static QString loadAppleFont() {
     QString fontDir = qApp->applicationDirPath() + "/resources/fonts";
@@ -24,14 +20,16 @@ static QString loadAppleFont() {
     return fonts.front();
 }
 
-DsApplicationPrivate::DsApplicationPrivate() : QsApplicationPrivate() {
+DsStartInfoPrivate::DsStartInfoPrivate() {
 }
 
-DsApplicationPrivate::~DsApplicationPrivate() {
+DsStartInfoPrivate::~DsStartInfoPrivate() {
+    deinit();
 }
 
-void DsApplicationPrivate::init() {
-    Q_Q(DsApplication);
+void DsStartInfoPrivate::init() {
+    // Register user types
+    Register_Events();
 
     // Load codec and fonts
 #if defined(Q_OS_WINDOWS)
@@ -42,12 +40,12 @@ void DsApplicationPrivate::init() {
     QFont f(fontName.isEmpty() ? "Microsoft YaHei" : fontName);
     f.setStyleStrategy(QFont::PreferAntialias);
     f.setPixelSize(12 * (qApp->primaryScreen()->logicalDotsPerInch() / QsSys::osUnitDpi()));
-    q->setFont(f);
+    qApp->setFont(f);
 #endif
+}
 
-    // Register user types
-    Register_Events();
-
+void DsStartInfoPrivate::parse_helper() {
+    Q_Q(DsStartInfo);
     qIDec->addThemeTemplate("HomeWindow", ":/themes/home.qss.in");
     qIDec->addThemeTemplate("PianoWindow", ":/themes/piano.qss.in");
 
@@ -57,6 +55,6 @@ void DsApplicationPrivate::init() {
     windowMgr = new WindowManager(q);
 }
 
-void DsApplicationPrivate::deinit() {
+void DsStartInfoPrivate::deinit() {
     delete windowMgr;
 }

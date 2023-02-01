@@ -25,11 +25,7 @@ void PlainWindowPrivate::init() {
     // loader = nullptr;
     loader = QsPluginManager::loadInternalPlugin(QsCoreConfig::WindowFactory);
     if (loader) {
-        auto fac = qobject_cast<IWindowFactory *>(loader->instance());
-        Q_ASSERT(fac);
-        fac->setupPath(QsSys::PathFindDirPath(loader->fileName()));
-
-        winHandle = fac->create(q);
+        winHandle = qobject_cast<IWindowFactory *>(loader->instance())->create(q);
         winHandle->setup();
     }
 }

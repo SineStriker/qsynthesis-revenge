@@ -2,12 +2,13 @@
 #include "private/WindowManager_p.h"
 
 #include "Kernel/Events.h"
-#include "Kernel/DsApplication.h"
 
 #include "QsSystem.h"
 #include "QsView.h"
 
+#include "DsStartInfo.h"
 #include "Windows/Piano/PianoWindow.h"
+
 
 #include <QEvent>
 #include <QMessageBox>
@@ -71,7 +72,7 @@ PianoWindow *WindowManager::openProject(const QString &filename) {
     w->setFilename(filename);
     if (!w->load()) {
         QMessageBox::critical(
-            firstWindow(), qApp->errorTitle(),
+            firstWindow(), qIStup->errorTitle(),
             tr("Failed to load project %1").arg(QDir::toNativeSeparators(filename)));
         w->deleteLater();
         return nullptr;

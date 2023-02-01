@@ -19,12 +19,12 @@ public:
     CDecorator *dec;
     CDecoratorPrivate *decp;
 
+    bool needUpdate;
     ThemeSubscriber *group;
 
     QWidget *w;
     QWindow *winHandle;
 
-    bool needUpdate;
     void updateScreen();
 
 protected:

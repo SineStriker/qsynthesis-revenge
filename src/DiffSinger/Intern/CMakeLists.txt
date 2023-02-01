@@ -49,5 +49,5 @@ qs_add_res(${PROJECT_NAME}
 )
 qs_add_res(${PROJECT_NAME}
     FILES res/translations/*.qm
-    RELATIVE_PATH ${APP_SHARE_DIR}/translations
+    RELATIVE_PATH ${APP_SHARE_DIR}/DsIntern.res/translations
 )

@@ -2,11 +2,11 @@
     "config": {
         "priority": 10,
         "namespaces": [
-            "nativeWindow"
+            "NativeWindow"
         ]
     },
     "colors": {
-        "nativeWindow": {
+        "NativeWindow": {
             "background": "transparent",
             "minButton": {
                 "foreground": {
@@ -55,7 +55,7 @@
         }
     },
     "sizes": {
-        "nativeWindow": {
+        "NativeWindow": {
             "titleMargin": 20,
             "minHeight": 20,
             "minButton": {

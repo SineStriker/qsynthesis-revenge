@@ -1,5 +1,4 @@
 #include "CPushButton.h"
-#include "CApplication.h"
 
 #include <QDateTime>
 #include <QPaintEvent>

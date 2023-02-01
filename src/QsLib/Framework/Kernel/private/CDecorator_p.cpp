@@ -40,7 +40,7 @@ void ThemePlaceholder::invalidate() {
         auto &map0 = it.value().data;
         auto &map = map0.begin().value();
 
-        QMap<QString, QColor> colors;
+        QMap<QString, QString> colors;
         QMap<QString, int> sizes;
         for (const auto &conf : qAsConst(map)) {
             auto it2 = conf->colors.find(ns);
@@ -59,6 +59,7 @@ void ThemePlaceholder::invalidate() {
             }
         }
         stylesheetCaches[key] = data->parse(colors, sizes);
+        qDebug().noquote() << stylesheetCaches[key];
     }
     dirtyThemeKeys.clear();
 }

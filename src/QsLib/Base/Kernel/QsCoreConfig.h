@@ -7,9 +7,6 @@
 #include "QsGlobal.h"
 #include "QsMacros.h"
 
-#ifdef qAppConf
-#undef qAppConf
-#endif
 #define qAppConf QsCoreConfig::instance()
 
 class QsCoreConfigPrivate;

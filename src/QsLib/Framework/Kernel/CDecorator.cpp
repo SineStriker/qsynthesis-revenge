@@ -3,6 +3,7 @@
 #include "private/ThemeGuard.h"
 
 #include <QApplication>
+#include <QDebug>
 #include <QWidget>
 
 CDecorator::CDecorator(QObject *parent) : CDecorator(*new CDecoratorPrivate(), parent) {

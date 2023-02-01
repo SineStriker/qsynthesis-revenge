@@ -1,5 +1,4 @@
 #include "CToolButton.h"
-#include "CApplication.h"
 
 #include <QEvent>
 

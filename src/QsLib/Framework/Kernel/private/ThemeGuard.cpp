@@ -1,6 +1,7 @@
 #include "ThemeGuard.h"
 #include "CDecorator_p.h"
 
+#include <QDebug>
 #include <QEvent>
 #include <QWindow>
 

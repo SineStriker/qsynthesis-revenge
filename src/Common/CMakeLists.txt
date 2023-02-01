@@ -25,19 +25,18 @@ endif()
 # Set global variables
 # ----------------------------------
 # Time
-set(TIME_PROJECT_START_YEAR     2020                                                CACHE STRING INTERNAL)
-set(TIME_CURRENT_YEAR           ${_current_year}                                    CACHE STRING INTERNAL)
+set(TIME_PROJECT_START_YEAR     2020                                                CACHE STRING "" FORCE)
+set(TIME_CURRENT_YEAR           ${_current_year}                                    CACHE STRING "" FORCE)
 
 # Resource files
-set(WIN32_DLL_RC                ${_templates_dir}/Win32DllRes.rc.in                 CACHE STRING INTERNAL)
-set(WIN32_EXE_RC                ${_templates_dir}/Win32ExeRes.rc.in                 CACHE STRING INTERNAL)
-set(WIN32_EXE_MANIFEST          ${_templates_dir}/Win32ExeManifest.manifest.in      CACHE STRING INTERNAL)
-set(QT_CONF_SETTING             ${_templates_dir}/qt.conf.in                        CACHE STRING INTERNAL)
+set(WIN32_DLL_RC                ${_templates_dir}/Win32DllRes.rc.in                 CACHE STRING "" FORCE)
+set(WIN32_EXE_RC                ${_templates_dir}/Win32ExeRes.rc.in                 CACHE STRING "" FORCE)
+set(WIN32_EXE_MANIFEST          ${_templates_dir}/Win32ExeManifest.manifest.in      CACHE STRING "" FORCE)
+set(QT_CONF_SETTING             ${_templates_dir}/qt.conf.in                        CACHE STRING "" FORCE)
 
 # Vcpkg
-set(VCPKG_BINARY_DIR            ${_bin_dir}                                         CACHE STRING INTERNAL)
-set(VCPKG_BINARY_PAT            ${_bin_pat}                                         CACHE STRING INTERNAL)
-
+set(VCPKG_BINARY_DIR            "${_bin_dir}"                                       CACHE STRING "" FORCE)
+set(VCPKG_BINARY_PAT            "${_bin_pat}"                                       CACHE STRING "" FORCE)
 
 # ----------------------------------
 # Initialization

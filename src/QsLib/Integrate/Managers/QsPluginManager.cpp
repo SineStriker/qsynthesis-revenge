@@ -86,10 +86,11 @@ QPluginLoader *QsPluginManager::loadInternalPlugin(QsCoreConfig::InternalPlugins
         case QsCoreConfig::CompressEngine: {
             QString name = qAppConf->internalPlugin(id);
             loader = new QPluginLoader(toLibFile("compressengines", name));
-            if (!(loader->load() && qobject_cast<ICompressEngine *>(loader->instance()))) {
+            if (!INamePlugin::load<ICompressEngine *>(loader)) {
                 qDebug() << QString("QsPluginManager: Failed to load %1.").arg(name)
                          << loader->errorString();
                 loader->unload();
+
                 delete loader;
                 loader = nullptr;
             }
@@ -98,10 +99,11 @@ QPluginLoader *QsPluginManager::loadInternalPlugin(QsCoreConfig::InternalPlugins
         case QsCoreConfig::WindowFactory: {
             QString name = qAppConf->internalPlugin(id);
             loader = new QPluginLoader(toLibFile("windowfactories", name));
-            if (!(loader->load() && qobject_cast<IWindowFactory *>(loader->instance()))) {
+            if (!INamePlugin::load<IWindowFactory *>(loader)) {
                 qDebug() << QString("QsPluginManager: Failed to load %1.").arg(name)
                          << loader->errorString();
                 loader->unload();
+                
                 delete loader;
                 loader = nullptr;
             }

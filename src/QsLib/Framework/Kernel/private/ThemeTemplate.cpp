@@ -8,10 +8,8 @@
 #include <QTextStream>
 
 static const char First_Section_Name[] = "Config";
-static const char Default_RegExp_Pattern[] = "\\{\\{.*\\}\\}";
+static const char Default_RegExp_Pattern[] = "\\{\\{(.*?)\\}\\}";
 static const char Default_RegExp_Separator[] = "|";
-static const int Default_RegExp_Pattern_Left_Length = 3;
-static const int Default_RegExp_Pattern_Right_Length = 3;
 
 static const char Theme_Variable_Hint_Size[] = "size";
 static const char Theme_Variable_Hint_Color[] = "color";
@@ -19,7 +17,8 @@ static const char Theme_Variable_Hint_Color[] = "color";
 static QString removeSideQuote(QString token) {
     if (token.front() == '\"') {
         token.remove(0, 1);
-    } else if (token.back() == '\"') {
+    }
+    if (token.back() == '\"') {
         token.remove(token.size() - 1, 1);
     }
     return token;
@@ -46,6 +45,29 @@ bool ThemeTemplate::load(const QString &filename) {
     QString data = QTextStream(&file).readAll();
     file.close();
 
+    // Remove all comments
+    {
+        QRegularExpression reg("/\\*(.*?)\\*/", QRegularExpression::MultilineOption |
+                                                    QRegularExpression::DotMatchesEverythingOption);
+        QRegularExpressionMatch match;
+        int index = 0;
+        while ((index = data.indexOf(reg, index, &match)) != -1) {
+            data.remove(index, match.captured(0).size());
+        }
+    }
+
+    // Remove all multi-lines
+    {
+        QRegularExpression reg("\\n(\\s*)\\n", QRegularExpression::MultilineOption |
+                                                   QRegularExpression::DotMatchesEverythingOption);
+        QRegularExpressionMatch match;
+        int index = 0;
+        while ((index = data.indexOf(reg, index, &match)) != -1) {
+            data.replace(index, match.captured(0).size(), "\n");
+            index++;
+        }
+    }
+
     // Find "Config" token
     int leftIdx = data.indexOf('{');
     if (leftIdx < 0 ||
@@ -56,39 +78,34 @@ bool ThemeTemplate::load(const QString &filename) {
         return false;
     }
 
-    int rightIdx = data.indexOf('}');
+    QRegularExpression rbReg(";\\s*(\\})", QRegularExpression::MultilineOption);
+    QRegularExpressionMatch match;
+
+    int rightIdx = data.indexOf(rbReg, leftIdx, &match);
     if (rightIdx <= leftIdx) {
         qDebug().noquote() << "ThemeTemplate: Missing end bracket";
         return false;
     }
+    rightIdx = match.capturedStart(1);
 
     // Get config content
-    QString configContent = data.mid(leftIdx + 1, rightIdx - leftIdx - 1);
-    QStringList configList = configContent.replace('\n', ';').split(';');
-    for (const auto &item : qAsConst(configList)) {
-        int idx = item.indexOf(':');
-        if (idx < 0) {
-            continue;
-        }
-
-        QString left = item.left(idx).simplified();
-        QString right = item.mid(idx + 1).simplified();
+    QRegularExpression lineReg("(\\w*)\\s*:\\s*(.*);\n");
+    QString configContent = data.mid(leftIdx + 1, rightIdx - leftIdx - 1) + "\n";
+    int idx = 0;
+    while ((idx = configContent.indexOf(lineReg, idx, &match)) != -1) {
+        QString left = match.captured(1);
+        QString right = match.captured(2);
         if (left == "pattern") {
             pattern = QsCodec::unescape(removeSideQuote(right));
-        } else if (left == "pattern-left") {
-            left = removeSideQuote(right).toInt();
-        } else if (left == "pattern-right") {
-            right = removeSideQuote(right).toInt();
         } else if (left == "separator") {
             separator = removeSideQuote(right);
         }
+        idx += match.captured().size();
     }
 
     // Use default if not specified
     if (pattern.isEmpty()) {
         pattern = Default_RegExp_Pattern;
-        left = Default_RegExp_Pattern_Left_Length;
-        right = Default_RegExp_Pattern_Right_Length;
     }
 
     if (separator.isEmpty()) {
@@ -98,19 +115,13 @@ bool ThemeTemplate::load(const QString &filename) {
     QString content = data.mid(rightIdx + 1);
 
     // Remove white spaces
-    while (content.front().isSpace()) {
-        content.remove(0, 1);
-    }
-
-    this->content = content;
+    this->content = content.simplified();
 
     return true;
 }
 
-QString ThemeTemplate::parse(const QMap<QString, QColor> &colors,
+QString ThemeTemplate::parse(const QMap<QString, QString> &colors,
                              const QMap<QString, int> &sizes) const {
-    QString stylesheet;
-
     QRegularExpression re(pattern);
     QRegularExpressionMatch match;
     int index = 0;
@@ -119,18 +130,22 @@ QString ThemeTemplate::parse(const QMap<QString, QColor> &colors,
     while ((index = Content.indexOf(re, index, &match)) != -1) {
         QString ValueString;
         QString MatchString = match.captured();
+
         // Use only the value inside of the brackets {{ }} without the brackets
-        auto TemplateVariable = MatchString.midRef(left, MatchString.size() - left - right);
+        auto TemplateVariable = match.captured(1);
+        if (TemplateVariable.isEmpty()) {
+            continue;
+        }
 
         int idx = TemplateVariable.indexOf(separator);
         if (idx >= 0) {
-            QString l = TemplateVariable.left(idx).toString().simplified();
-            QString r = TemplateVariable.mid(idx + 1).toString().simplified();
+            QString l = TemplateVariable.left(idx).simplified();
+            QString r = TemplateVariable.mid(idx + 1).simplified();
 
             if (r == Theme_Variable_Hint_Color) {
                 auto it = colors.find(l);
                 if (it != colors.end()) {
-                    ValueString = '#' + it->name();
+                    ValueString = it.value();
                 }
             } else if (r == Theme_Variable_Hint_Size) {
                 auto it = sizes.find(l);
@@ -140,12 +155,12 @@ QString ThemeTemplate::parse(const QMap<QString, QColor> &colors,
             }
         } else {
             while (true) {
-                auto l = TemplateVariable.toString();
+                auto &l = TemplateVariable;
                 // Find color
                 {
                     auto it = colors.find(l);
                     if (it != colors.end()) {
-                        ValueString = '#' + it->name();
+                        ValueString = it.value();
                         break;
                     }
                 }
@@ -163,5 +178,6 @@ QString ThemeTemplate::parse(const QMap<QString, QColor> &colors,
         Content.replace(index, MatchString.size(), ValueString);
         index += ValueString.size();
     }
+
     return Content;
 }
