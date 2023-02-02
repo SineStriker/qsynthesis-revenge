@@ -1,22 +1,21 @@
 #ifndef QSLOCALEDIR_H
 #define QSLOCALEDIR_H
 
-#include "QSimpleVarExp.h"
-#include "QsGlobal.h"
+#include <QScopedPointer>
 
-#include <QJsonObject>
+#include "QSimpleVarExp.h"
+
+class QsLocaleDirPrivate;
 
 class QSBASE_API QsLocaleDir {
+    Q_DECLARE_PRIVATE(QsLocaleDir)
 public:
     QsLocaleDir();
     explicit QsLocaleDir(const QString &dir);
     virtual ~QsLocaleDir();
 
 public:
-    QString dir;
     QSimpleVarExp vars;
-
-    QString localeKey;
     bool autoRemove;
 
     void setDir(const QString &dir);
@@ -26,16 +25,9 @@ public:
     virtual void unload();
 
 protected:
-    struct RootItem {
-        QString key;
-        QString dir;
-        QMap<QString, QStringList> files;
-    };
+    QsLocaleDir(QsLocaleDirPrivate &d);
 
-    QMap<QString, RootItem> rootItems;
-    bool loadRootItems(const QString &filename);
-    
-    void unloadLocale();
+    QScopedPointer<QsLocaleDirPrivate> d_ptr;
 };
 
 #endif // QSLOCALEDIR_H

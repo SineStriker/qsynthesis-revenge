@@ -7,7 +7,7 @@
 #include "Managers/QsFileManager.h"
 #include "Managers/QsPluginManager.h"
 
-#include "CDecreateDir.h"
+#include "CDecorateDir.h"
 
 class QSINTEGRATE_API QsStartInfoPrivate : public CStartInfoPrivate {
     Q_DECLARE_PUBLIC(QsStartInfo)
@@ -24,7 +24,7 @@ public:
     QsFileManager *fileMgr;
 
 private:
-    CDecreateDir dd;
+    CDecorateDir dd;
 };
 
 #endif // QSSTARTINFOPRIVATE_H

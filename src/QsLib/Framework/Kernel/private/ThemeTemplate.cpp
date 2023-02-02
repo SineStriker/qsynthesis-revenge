@@ -3,6 +3,7 @@
 #include "QsSystem.h"
 
 #include "QsCodec.h"
+#include "QsLinq.h"
 
 #include <QDebug>
 #include <QFile>
@@ -30,7 +31,7 @@ static int toRealPixelSize(int size, double dpi) {
     return double(size) * dpi / QsOs::unitDpi() * 0.8;
 }
 
-ThemeTemplate::ThemeTemplate()  {
+ThemeTemplate::ThemeTemplate() {
 }
 
 ThemeTemplate::~ThemeTemplate() {
@@ -122,8 +123,8 @@ bool ThemeTemplate::load(const QString &filename) {
     return true;
 }
 
-QString ThemeTemplate::parse(const QMap<QString, QString> &strs, const QMap<QString, int> &sizes,
-                             double dpi) const {
+QString ThemeTemplate::parse(const QMap<QString, QString> &strs,
+                             const QMap<QString, QList<int>> &sizes, double dpi) const {
     QRegularExpression re(pattern);
     QRegularExpressionMatch match;
     int index = 0;
@@ -152,7 +153,13 @@ QString ThemeTemplate::parse(const QMap<QString, QString> &strs, const QMap<QStr
             } else if (r == Theme_Variable_Hint_Size) {
                 auto it = sizes.find(l);
                 if (it != sizes.end()) {
-                    ValueString = QString::number(toRealPixelSize(it.value(), dpi));
+                    ValueString =
+                        QsLinq::Select<int, QString>(
+                            it.value(), //
+                            [&](int digit) -> QString {
+                                return QString::number(toRealPixelSize(digit, dpi)) + "px";
+                            })
+                            .join(' ');
                 }
             }
         } else {
@@ -170,7 +177,13 @@ QString ThemeTemplate::parse(const QMap<QString, QString> &strs, const QMap<QStr
                 {
                     auto it = sizes.find(l);
                     if (it != sizes.end()) {
-                        ValueString = QString::number(toRealPixelSize(it.value(), dpi));
+                        ValueString =
+                            QsLinq::Select<int, QString>(
+                                it.value(), //
+                                [&](int digit) -> QString {
+                                    return QString::number(toRealPixelSize(digit, dpi)) + "px";
+                                })
+                                .join(' ');
                         break;
                     }
                 }

@@ -26,9 +26,9 @@ namespace QsLinq {
      * @brief C# IEnumerable.Select
      *
      */
-    template <class T, class Mapper>
-    QList<T> Select(const QList<T> &list, Mapper mapper) {
-        QList<T> res;
+    template <class T, class V, class Mapper>
+    QList<V> Select(const QList<T> &list, Mapper mapper) {
+        QList<V> res;
         res.reserve(list.size());
         for (const auto &item : qAsConst(list)) {
             res.append(mapper(item));

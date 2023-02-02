@@ -125,7 +125,7 @@ bool ThemeConfig::loadOne(const QString &filename) {
             for (auto it = obj.begin(); it != obj.end(); ++it) {
                 QStringList newKeys = QStringList(keys) << it.key();
                 const auto &val = it.value();
-                if (val.isDouble()) {
+                if (val.isDouble() || val.isArray()) {
                     QString newKeyStr = newKeys.join(Theme_Config_Key_Separator);
                     int idx = newKeyStr.indexOf(Theme_Config_Key_Separator);
                     if (idx <= 0 || idx == newKeyStr.size() - 1) {
@@ -133,7 +133,20 @@ bool ThemeConfig::loadOne(const QString &filename) {
                     }
                     QString ns = newKeyStr.left(idx);
                     namespaces.insert(ns);
-                    sizes[ns].insert(newKeyStr.mid(idx + 1), val.toInt());
+
+                    QList<int> digits;
+                    if (val.isDouble()) {
+                        digits.append(val.toInt());
+                    } else {
+                        QJsonArray arr = val.toArray();
+                        for (const auto &item : qAsConst(arr)) {
+                            if (item.isDouble()) {
+                                digits.append(item.toInt());
+                            }
+                        }
+                    }
+
+                    sizes[ns].insert(newKeyStr.mid(idx + 1), digits);
                 } else if (val.isObject()) {
                     stack.push_back(qMakePair(newKeys, it.value().toObject()));
                 }

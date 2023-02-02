@@ -1,9 +1,5 @@
-#include "CDecreateDir.h"
-
-#include <QFile>
-#include <QJsonArray>
-#include <QJsonDocument>
-#include <QJsonParseError>
+#include "CDecorateDir.h"
+#include "private/CDecorateDir_p.h"
 
 #include "CDecorator.h"
 
@@ -11,25 +7,26 @@ static const char KEY_NAME_THEMES[] = "themes";
 
 static const char Slash = '/';
 
-CDecreateDir::CDecreateDir() : QsLocaleDir() {
+CDecorateDir::CDecorateDir() : CDecorateDir(*new CDecorateDirPrivate()) {
 }
 
-CDecreateDir::CDecreateDir(const QString &dir) : QsLocaleDir(dir) {
+CDecorateDir::CDecorateDir(const QString &dir) : CDecorateDir() {
+    setDir(dir);
 }
 
-CDecreateDir::~CDecreateDir() {
-    if (autoRemove)
-        unloadTheme();
+CDecorateDir::~CDecorateDir() {
 }
 
-bool CDecreateDir::load(const QString &filename) {
+bool CDecorateDir::load(const QString &filename) {
     if (!QsLocaleDir::load(filename)) {
         return false;
     }
 
+    Q_D(CDecorateDir);
+
     // Parse themes
-    auto it = rootItems.find(KEY_NAME_THEMES);
-    while (it != rootItems.end()) {
+    auto it = d->rootItems.find(KEY_NAME_THEMES);
+    while (it != d->rootItems.end()) {
         const auto &item = it.value();
         QString key = item.key;
         if (key.isEmpty()) {
@@ -39,7 +36,7 @@ bool CDecreateDir::load(const QString &filename) {
         // Find dir and parsedir;
         QString subdir = vars.parse(item.dir);
         if (subdir.isEmpty()) {
-            subdir = dir;
+            subdir = d->dir;
         }
 
         // Add files
@@ -60,21 +57,19 @@ bool CDecreateDir::load(const QString &filename) {
         }
 
         qIDec->addThemeConfig(key, paths);
-        themeKey = key;
+        d->themeKey = key;
         break;
     }
 
     return true;
 }
 
-void CDecreateDir::unload() {
+void CDecorateDir::unload() {
+    Q_D(CDecorateDir);
     QsLocaleDir::unload();
-    unloadTheme();
+    d->unloadTheme();
 }
 
-void CDecreateDir::unloadTheme() {
-    if (!themeKey.isEmpty()) {
-        qIDec->removeThemeConfig(themeKey);
-        themeKey.clear();
-    }
+CDecorateDir::CDecorateDir(CDecorateDirPrivate &d) : QsLocaleDir(d) {
+    d.init();
 }

@@ -60,31 +60,31 @@
             "titleMargin": 20,
             "minHeight": 40,
             "minButton": {
-                "icon": {
-                    "width": 12,
-                    "height": 12
-                },
+                "icon.size": [
+                    12,
+                    12
+                ],
                 "minWidth": 50
             },
             "maxButton": {
-                "icon": {
-                    "width": 12,
-                    "height": 12
-                },
+                "icon.size": [
+                    12,
+                    12
+                ],
                 "minWidth": 50
             },
             "closeButton": {
-                "icon": {
-                    "width": 12,
-                    "height": 12
-                },
+                "icon.size": [
+                    12,
+                    12
+                ],
                 "minWidth": 50
             },
             "iconButton": {
-                "icon": {
-                    "width": 20,
-                    "height": 20
-                },
+                "icon.size": [
+                    20,
+                    20
+                ],
                 "minWidth": 40
             }
         }

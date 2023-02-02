@@ -19,7 +19,7 @@ public:
     WindowManager *windowMgr;
 
 private:
-    CDecreateDir dd;
+    CDecorateDir dd;
 };
 
 #endif // DSSTARTINFOPRIVATE_H

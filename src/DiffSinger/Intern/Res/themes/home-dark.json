@@ -9,7 +9,7 @@
         "HomeWindow": {
             "background": "#1E1E1E",
             "windowIcon": {
-                "foreground": "#FFFFFF"
+                "foreground": "transparent"
             }
         }
     },

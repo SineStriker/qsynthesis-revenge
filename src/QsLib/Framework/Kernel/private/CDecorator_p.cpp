@@ -130,7 +130,7 @@ QString ThemePlaceholder::getAndCache(QScreen *screen) {
     }
 
     QMap<QString, QString> strs;
-    QMap<QString, int> sizes;
+    QMap<QString, QList<int>> sizes;
 
     auto &map0 = it.value().data;
 #if !ENABLE_PARTIAL_OVERRIDE
@@ -175,7 +175,7 @@ QString ThemePlaceholder::getAndCache(QScreen *screen) {
 
     QString stylesheet = data->parse(strs, sizes, screen->logicalDotsPerInch());
     stylesheetCaches[screen] = stylesheet;
-    // qDebug() << stylesheet;
+    // qDebug().noquote() << stylesheet;
     return stylesheet;
 }
 

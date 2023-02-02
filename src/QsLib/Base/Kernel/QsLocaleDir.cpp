@@ -1,50 +1,43 @@
 #include "QsLocaleDir.h"
+#include "private/QsLocaleDir_p.h"
 
 #include "QsCoreDecorator.h"
 
-#include <QFile>
-#include <QJsonArray>
-#include <QJsonDocument>
-#include <QJsonParseError>
-
 static const char KEY_NAME_LOCALES[] = "locales";
-
-static const char KEY_NAME_SUBSECTION_KEY[] = "key";
-static const char KEY_NAME_SUBSECTION_DIR[] = "dir";
-static const char KEY_NAME_SUBSECTION_FILES[] = "files";
 
 static const char Slash = '/';
 
-QsLocaleDir::QsLocaleDir() : autoRemove(false) {
-    vars.addHash(QSimpleVarExp::SystemValues());
+QsLocaleDir::QsLocaleDir() : QsLocaleDir(*new QsLocaleDirPrivate()) {
+}
+
+QsLocaleDir::~QsLocaleDir() {
 }
 
 QsLocaleDir::QsLocaleDir(const QString &dir) : QsLocaleDir() {
     setDir(dir);
 }
 
-QsLocaleDir::~QsLocaleDir() {
-    if (autoRemove)
-        unloadLocale();
-}
-
 void QsLocaleDir::setDir(const QString &dir) {
-    this->dir = dir;
+    Q_D(QsLocaleDir);
+    d->dir = dir;
     vars.add("FILEPATH", dir);
 }
 
 bool QsLocaleDir::loadDefault(const QString &binName) {
-    return load(dir + Slash + binName + ".res.json");
+    Q_D(QsLocaleDir);
+    return load(d->dir + Slash + binName + ".res.json");
 }
 
 bool QsLocaleDir::load(const QString &filename) {
-    if (!loadRootItems(filename)) {
+    Q_D(QsLocaleDir);
+
+    if (!d->loadRootItems(filename)) {
         return false;
     }
 
     // Parse locales
-    auto it = rootItems.find(KEY_NAME_LOCALES);
-    while (it != rootItems.end()) {
+    auto it = d->rootItems.find(KEY_NAME_LOCALES);
+    while (it != d->rootItems.end()) {
         const auto &item = it.value();
         QString key = item.key;
         if (key.isEmpty()) {
@@ -54,7 +47,7 @@ bool QsLocaleDir::load(const QString &filename) {
         // Find dir and parsedir;
         QString subdir = vars.parse(item.dir);
         if (subdir.isEmpty()) {
-            subdir = dir;
+            subdir = d->dir;
         }
 
         // Add files
@@ -75,7 +68,7 @@ bool QsLocaleDir::load(const QString &filename) {
         }
 
         qIDec->addLocale(key, paths);
-        localeKey = key;
+        d->localeKey = key;
         break;
     }
 
@@ -83,84 +76,12 @@ bool QsLocaleDir::load(const QString &filename) {
 }
 
 void QsLocaleDir::unload() {
-    unloadLocale();
+    Q_D(QsLocaleDir);
+    d->unloadLocale();
 }
 
-void QsLocaleDir::unloadLocale() {
-    // Remove locale
-    if (!localeKey.isEmpty()) {
-        qIDec->removeLocale(localeKey);
-        localeKey.clear();
-    }
-}
+QsLocaleDir::QsLocaleDir(QsLocaleDirPrivate &d) : d_ptr(&d) {
+    d.q_ptr = this;
 
-bool QsLocaleDir::loadRootItems(const QString &filename) {
-    QFile file(filename);
-    if (!file.open(QIODevice::ReadOnly)) {
-        return false;
-    }
-
-    QByteArray data(file.readAll());
-    file.close();
-
-    QJsonParseError err;
-    QJsonDocument doc = QJsonDocument::fromJson(data, &err);
-    if (err.error != QJsonParseError::NoError || !doc.isObject()) {
-        return false;
-    }
-
-    QJsonObject objDoc = doc.object();
-
-    for (auto it = objDoc.begin(); it != objDoc.end(); ++it) {
-        if (!it->isObject()) {
-            continue;
-        }
-
-        RootItem cur;
-
-        auto obj = it->toObject();
-
-        // Find key
-        auto it2 = obj.find(KEY_NAME_SUBSECTION_KEY);
-        if (it2 == obj.end() || !it2->isString()) {
-            continue;
-        }
-        cur.key = it2->toString();
-
-        // Find dir
-        it2 = obj.find(KEY_NAME_SUBSECTION_DIR);
-        if (it2 != obj.end() || !it2->isString()) {
-            cur.dir = it2->toString();
-        }
-
-        // Add files
-        it2 = obj.find(KEY_NAME_SUBSECTION_FILES);
-        if (it2 == obj.end() || !it2->isObject()) {
-            continue;
-        }
-        auto objFiles = it2->toObject();
-
-        for (auto it3 = objFiles.begin(); it3 != objFiles.end(); ++it3) {
-            const auto &itemKey = it3.key();
-            if (!it3->isArray()) {
-                continue;
-            }
-            auto arr = it3->toArray();
-
-            QStringList files;
-            for (const auto &item : qAsConst(arr)) {
-                if (item.isString()) {
-                    files.append(item.toString());
-                }
-            }
-            if (files.isEmpty()) {
-                continue;
-            }
-
-            cur.files.insert(itemKey, files);
-        }
-
-        rootItems.insert(it.key(), cur);
-    }
-    return true;
+    d.init();
 }

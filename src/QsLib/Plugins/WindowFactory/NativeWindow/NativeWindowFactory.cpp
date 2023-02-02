@@ -1,7 +1,7 @@
 #include "NativeWindowFactory.h"
 #include "NativeHandle.h"
 
-#include "CDecreateDir.h"
+#include "CDecorateDir.h"
 #include "QsCoreConfig.h"
 
 #include "CDecorator.h"
@@ -13,7 +13,7 @@ class NativeWindowFactoryPrivate {
 public:
     void init();
 
-    CDecreateDir dd;
+    CDecorateDir dd;
     NativeWindowFactory *q_ptr;
 };
 

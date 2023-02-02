@@ -10,7 +10,7 @@ Config {
 
 CWindowBarV2 {
     background-color: "{{background|str}}";
-    qproperty-titleMargin: "{{titleMargin|size}}"px;
+    qproperty-titleMargin: "{{titleMargin|size}}";
 }
 
 CWindowBarV2>QLabel#win-title-label {
@@ -19,15 +19,15 @@ CWindowBarV2>QLabel#win-title-label {
     color: "{{color|str}}";
     background-color: transparent;
     /* Limit window bar height */
-    min-height: "{{minHeight|size}}"px;
+    min-height: "{{minHeight|size}}";
 }
 
 CWindowBarV2>CToolButton#min-button {
     qproperty-iconUp: svg(":/svg/window-bar/minimize.svg", "{{minButton.foreground.up|str}}");
     qproperty-iconOver: svg(":/svg/window-bar/minimize.svg", "{{minButton.foreground.over|str}}");
     qproperty-iconDown: svg(":/svg/window-bar/minimize.svg", "{{minButton.foreground.down|str}}");
-    qproperty-iconSize: "{{minButton.icon.width|size}}"px "{{minButton.icon.height|size}}"px;
-    min-width: "{{minButton.minWidth|size}}"px;
+    qproperty-iconSize: "{{minButton.icon.size|size}}";
+    min-width: "{{minButton.minWidth|size}}";
     border: none;
     padding: 0;
     background-color: "{{minButton.background.up|str}}";
@@ -48,8 +48,8 @@ CWindowBarV2>CToolButton#max-button {
     qproperty-iconUpChecked: svg(":/svg/window-bar/maximize2.svg", "{{maxButton.foreground.checked.up|str}}");
     qproperty-iconOverChecked: svg(":/svg/window-bar/maximize2.svg", "{{maxButton.foreground.checked.over|str}}");
     qproperty-iconDownChecked: svg(":/svg/window-bar/maximize2.svg", "{{maxButton.foreground.checked.down|str}}");
-    qproperty-iconSize: "{{maxButton.icon.width|size}}"px "{{maxButton.icon.height|size}}"px;
-    min-width: "{{maxButton.minWidth|size}}"px;
+    qproperty-iconSize: "{{maxButton.icon.size|size}}";
+    min-width: "{{maxButton.minWidth|size}}";
     border: none;
     padding: 0;
     background-color: transparent;
@@ -67,8 +67,8 @@ CWindowBarV2>CToolButton#win-close-button {
     qproperty-iconUp: svg(":/svg/window-bar/close.svg", "{{closeButton.foreground.up|str}}");
     qproperty-iconOver: svg(":/svg/window-bar/close.svg", "{{closeButton.foreground.over|str}}");
     qproperty-iconDown: svg(":/svg/window-bar/close.svg", "{{closeButton.foreground.down|str}}");
-    qproperty-iconSize: "{{closeButton.icon.width|size}}"px "{{closeButton.icon.height|size}}"px;
-    min-width: "{{closeButton.minWidth|size}}"px;
+    qproperty-iconSize: "{{closeButton.icon.size|size}}";
+    min-width: "{{closeButton.minWidth|size}}";
     border: none;
     padding: 0;
     background-color: transparent;
@@ -83,8 +83,8 @@ CWindowBarV2>CToolButton#win-close-button:pressed {
 }
 
 CWindowBarV2>CToolButton#icon-button {
-    qproperty-iconSize: "{{iconButton.icon.width|size}}"px "{{iconButton.icon.height|size}}"px;
-    min-width: "{{iconButton.minWidth|size}}"px;
+    qproperty-iconSize: "{{iconButton.icon.size|size}}";
+    min-width: "{{iconButton.minWidth|size}}";
     border: none;
     padding: 0;
     background-color: "{{iconButton.background|str}}";

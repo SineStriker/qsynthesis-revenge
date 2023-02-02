@@ -7,9 +7,9 @@
     },
     "strs": {
         "HomeWindow": {
-            "windowBar": {
-                "background": "#E0E0E0",
-                "foreground": "#111111"
+            "background": "#FFFFFF",
+            "windowIcon": {
+                "foreground": "transparent"
             }
         }
     },
