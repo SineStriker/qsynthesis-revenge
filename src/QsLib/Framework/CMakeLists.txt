@@ -41,9 +41,9 @@ target_create_translations(${PROJECT_NAME} SOURCES ${_src}
 # Copy resources
 qs_add_res(${PROJECT_NAME}
     FILES Res/QsFramework.res.json
-    ABSOLUTE_PATH ${SUB_RES_OUTPUT_DIR}
+    ABSOLUTE_PATH ${SHARE_OUTPUT_DIR}
 )
 qs_add_res(${PROJECT_NAME}
     FILES Res/translations/*.qm
-    ABSOLUTE_PATH ${SUB_RES_OUTPUT_DIR}/QsFramework.res/translations
+    ABSOLUTE_PATH ${SHARE_OUTPUT_DIR}/QsFramework.res/translations
 )

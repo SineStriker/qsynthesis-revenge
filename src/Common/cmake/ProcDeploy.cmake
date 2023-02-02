@@ -13,7 +13,7 @@ function(proc_deploy _all_targets)
 
     set(_qt_binaries)
 
-    # Target Collector
+    # Collector all targets' properties
     foreach(_target ${_all_targets})
         get_target_property(_target_type ${_target} TC_TARGET_TYPE)
         get_target_property(_is_qt_bin ${_target} TC_QT_BINARY)
@@ -74,8 +74,9 @@ function(proc_deploy _all_targets)
     set(_libs_dir ${_deploy_dir}/${APP_LIB_DIR})
     set(_plugins_dir ${_deploy_dir}/${APP_PLUGINS_DIR})
     set(_tools_dir ${_deploy_dir}/${APP_TOOLS_DIR})
-    set(_res_dir ${_deploy_dir}/${APP_EXT_DIR})
-    set(_res_docs_dir ${_res_dir}/docs)
+    set(_ext_dir ${_deploy_dir}/${APP_EXT_DIR})
+    set(_share_dir ${_deploy_dir}/${APP_SHARE_DIR})
+    set(_res_docs_dir ${_deploy_dir}/docs)
 
     # Find Qt tools
     get_filename_component(QT_BIN_DIRECTORY "${QT_QMAKE_EXECUTABLE}" DIRECTORY)
@@ -106,7 +107,7 @@ function(proc_deploy _all_targets)
         COMMAND ${CMAKE_COMMAND} -E make_directory ${_libs_dir}
         COMMAND ${CMAKE_COMMAND} -E make_directory ${_plugins_dir}
         COMMAND ${CMAKE_COMMAND} -E make_directory ${_tools_dir}
-        COMMAND ${CMAKE_COMMAND} -E make_directory ${_res_dir}
+        COMMAND ${CMAKE_COMMAND} -E make_directory ${_ext_dir}
         COMMAND ${CMAKE_COMMAND} -E make_directory ${_res_docs_dir}
     )
 
@@ -119,34 +120,22 @@ function(proc_deploy _all_targets)
         COMMAND ${CMAKE_COMMAND} -E rename ${_res_docs_dir}/${_license} ${_res_docs_dir}/license.txt
     )
 
-    # Deploy lv plugins
-    foreach(_plugin ${_app_plugins})
+    # Copy share dir
+    add_custom_command(
+        TARGET deploy
+        COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${APP_SHARE_DIR} ${_share_dir}
+    )
+
+    # Deploy plugins
+    foreach(_plugin ${_app_plugins} ${_qs_plugins})
         get_target_property(_category ${_plugin} TC_PLUGIN_CATEGORY)
         get_target_property(_subdir ${_plugin} TC_PLUGIN_SUBDIR)
-
+        
         if(NOT _category)
             continue()
         endif()
 
-        set(_category_dir ${_subdir}/${_category})
-        add_custom_command(
-            TARGET deploy
-            COMMAND ${CMAKE_COMMAND} -E make_directory ${_category_dir}
-            COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:${_plugin}> ${_category_dir}
-        )
-        unset(_category_dir)
-    endforeach()
-
-    # Deploy qs plugins
-    foreach(_plugin ${_qs_plugins})
-        get_target_property(_category ${_plugin} TC_PLUGIN_CATEGORY)
-        get_target_property(_subdir ${_plugin} TC_PLUGIN_SUBDIR)
-
-        if(NOT _category)
-            continue()
-        endif()
-
-        set(_category_dir ${_subdir}/${_category})
+        set(_category_dir ${_deploy_dir}/${_subdir}/${_category})
         add_custom_command(
             TARGET deploy
             COMMAND ${CMAKE_COMMAND} -E make_directory ${_category_dir}

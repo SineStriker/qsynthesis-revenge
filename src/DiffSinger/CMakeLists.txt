@@ -13,8 +13,6 @@ set(SUB_AUTHOR_NAME "OpenVPI Team")
 set(SUB_FILE_DESC "DiffSinger Client")
 set(SUB_APP_NAME "DiffScope")
 
-set(SUB_RES_OUTPUT_DIR ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${APP_SHARE_DIR})
-
 # Add subdirectories
 add_subdirectory(Core)
 add_subdirectory(Medium)

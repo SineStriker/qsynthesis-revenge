@@ -37,6 +37,8 @@ if(WIN32)
     set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} /manifest:no")
 endif()
 
+set(SHARE_OUTPUT_DIR ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${APP_SHARE_DIR})
+
 # Find pre-built libraries
 find_package(SDL2 REQUIRED)
 find_package(yaml-cpp REQUIRED)
@@ -76,9 +78,9 @@ endif()
 if(TRUE)
     get_all_targets(_all_targets)
 
-    proc_deps(${_all_targets})
+    proc_deps("${_all_targets}")
 
     if(APP_DEPLOY)
-        proc_deploy(${_all_targets})
+        proc_deploy("${_all_targets}")
     endif()
 endif()

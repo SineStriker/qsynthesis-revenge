@@ -26,7 +26,7 @@ check_pc_os()
 option_ex(APP_TOOLSET_NAME ChorusKit)
 option_ex(APP_TOOLSET_LIST DiffSinger)
 option_ex(APP_VERSION_VERBOSE 0.0.1.7)
-option_ex(APP_DEPLOY off)
+option_ex(APP_DEPLOY on)
 option_ex(APP_LIB_DIR lib)
 option_ex(APP_TOOLS_DIR bin)
 option_ex(APP_PLUGINS_DIR plugins) # Do not change

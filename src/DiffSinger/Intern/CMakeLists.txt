@@ -45,13 +45,13 @@ target_create_translations(${PROJECT_NAME} SOURCES ${_src}
 # Copy resources
 qs_add_res(${PROJECT_NAME}
     FILES res/DsIntern.res.json
-    ABSOLUTE_PATH ${SUB_RES_OUTPUT_DIR}
+    ABSOLUTE_PATH ${SHARE_OUTPUT_DIR}
 )
 qs_add_res(${PROJECT_NAME}
     FILES res/translations/*.qm
-    ABSOLUTE_PATH ${SUB_RES_OUTPUT_DIR}/DsIntern.res/translations
+    ABSOLUTE_PATH ${SHARE_OUTPUT_DIR}/DsIntern.res/translations
 )
 qs_add_res(${PROJECT_NAME}
     FILES res/themes/*.json
-    ABSOLUTE_PATH ${SUB_RES_OUTPUT_DIR}/DsIntern.res/themes
+    ABSOLUTE_PATH ${SHARE_OUTPUT_DIR}/DsIntern.res/themes
 )

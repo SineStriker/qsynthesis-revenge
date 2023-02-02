@@ -12,8 +12,6 @@ set(SUB_PLUGIN_DIR ${APP_EXT_DIR}/${APP_PUBLIC_PLUGINS_DIR})
 set(SUB_AUTHOR_NAME "QSynthesis Team")
 set(SUB_FILE_DESC "QSynthesis Library")
 
-set(SUB_RES_OUTPUT_DIR ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${APP_SHARE_DIR})
-
 add_subdirectory(3rdparty)
 add_subdirectory(Base)
 add_subdirectory(SVS)
