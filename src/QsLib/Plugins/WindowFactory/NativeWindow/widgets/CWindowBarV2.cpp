@@ -125,7 +125,7 @@ void CWindowBarV2::drawCentralTitle(QPainter &painter) {
     }
 
     QRect rect(expectLeft, m_titleLabel->y(), textWidth, m_titleLabel->height());
-    painter.setPen(QPen(palette().windowText().color()));
+    painter.setPen(QPen(m_titleLabel->palette().windowText().color()));
     painter.setFont(m_titleLabel->font());
     painter.drawText(rect, Qt::AlignCenter, title);
 }

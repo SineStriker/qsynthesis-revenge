@@ -1,0 +1,14 @@
+{
+    "config": {
+        "priority": 1,
+        "namespaces": [
+            "NativeWindow"
+        ]
+    },
+    "strs": {
+        "NativeWindow": {
+            "background": "#E0E0E0",
+            "color": "#111111"
+        }
+    }
+}

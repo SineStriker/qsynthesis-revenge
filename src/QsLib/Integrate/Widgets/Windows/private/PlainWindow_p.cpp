@@ -3,6 +3,7 @@
 #include "Api/IWindowFactory.h"
 #include "Managers/QsPluginManager.h"
 
+#include "QsStartInfo.h"
 #include "QsSystem.h"
 
 PlainWindowPrivate::PlainWindowPrivate() {
@@ -28,4 +29,5 @@ void PlainWindowPrivate::init() {
         winHandle = qobject_cast<IWindowFactory *>(loader->instance())->create(q);
         winHandle->setup();
     }
+    q->setWindowTitle(qIStup->windowTitle());
 }

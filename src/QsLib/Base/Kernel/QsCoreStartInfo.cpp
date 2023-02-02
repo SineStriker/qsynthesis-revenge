@@ -4,12 +4,14 @@
 #include <QCoreApplication>
 #include <QMetaType>
 
-#include "QsCoreDecorator.h"
 #include "QsCoreConfig.h"
+#include "QsCoreDecorator.h"
+
 
 Q_SINGLETON_DECLARE(QsCoreStartInfo)
 
-QsCoreStartInfo::QsCoreStartInfo(QObject *parent) : QsCoreStartInfo(*new QsCoreStartInfoPrivate(), parent) {
+QsCoreStartInfo::QsCoreStartInfo(QObject *parent)
+    : QsCoreStartInfo(*new QsCoreStartInfoPrivate(), parent) {
 }
 
 QsCoreStartInfo::~QsCoreStartInfo() {
@@ -18,6 +20,11 @@ QsCoreStartInfo::~QsCoreStartInfo() {
 void QsCoreStartInfo::parse() {
     Q_D(QsCoreStartInfo);
     d->parse_helper();
+}
+
+bool QsCoreStartInfo::isAboutToQuit() const {
+    Q_D(const QsCoreStartInfo);
+    return d->isAboutToQuit;
 }
 
 QString QsCoreStartInfo::mainTitle() const {
@@ -66,4 +73,9 @@ void QsCoreStartInfo::_q_instanceStarted() {
 
 void QsCoreStartInfo::_q_messageReceived(quint32 instanceId, QByteArray message) {
     receiveMessage(instanceId, message);
+}
+
+void QsCoreStartInfo::_q_aboutToQuit() {
+    Q_D(QsCoreStartInfo);
+    d->isAboutToQuit = true;
 }

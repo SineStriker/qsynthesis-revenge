@@ -25,6 +25,8 @@ public:
 
     virtual void parse();
 
+    bool isAboutToQuit() const;
+
     /* Properties can be append in each app's constructor */
     QCommandLineParser parser;
 
@@ -58,6 +60,7 @@ protected:
 private:
     void _q_instanceStarted();
     void _q_messageReceived(quint32 instanceId, QByteArray message);
+    void _q_aboutToQuit();
 };
 
 #endif // QSCORESTARTINFO_H

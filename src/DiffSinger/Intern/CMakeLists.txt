@@ -24,15 +24,15 @@ target_components(${PROJECT_NAME}
 )
 
 target_compile_definitions(${PROJECT_NAME} PUBLIC
-    APP_NAME="${SUB_PROJECT}"
+    APP_NAME="${SUB_APP_NAME}"
     APP_VERSION="${SUB_VERSION_SHORT}"
     APP_DESCRIPTION="${SUB_DESCRIPTION}"
     APP_SHARE_DIR="${APP_SHARE_DIR}"
     APP_PLUGINS_DIR="${APP_PLUGINS_DIR}"
     APP_LOCALES_DIR="${APP_LOCALES_DIR}"
     APP_TOOLS_DIR="${APP_TOOLS_DIR}"
-    APP_RES_DIR="${APP_RES_DIR}"
-    APP_PUBLIC_PLUGINS_DIR="${APP_RES_DIR}/${APP_PUBLIC_PLUGINS_DIR}"
+    APP_EXT_DIR="${APP_EXT_DIR}"
+    APP_PUBLIC_PLUGINS_DIR="${APP_EXT_DIR}/${APP_PUBLIC_PLUGINS_DIR}"
     APP_PRIVATE_PLUGINS_DIR="${SUB_PLUGIN_DIR}"
 )
 
@@ -45,9 +45,13 @@ target_create_translations(${PROJECT_NAME} SOURCES ${_src}
 # Copy resources
 qs_add_res(${PROJECT_NAME}
     FILES res/DsIntern.res.json
-    RELATIVE_PATH ${APP_SHARE_DIR}
+    ABSOLUTE_PATH ${SUB_RES_OUTPUT_DIR}
 )
 qs_add_res(${PROJECT_NAME}
     FILES res/translations/*.qm
-    RELATIVE_PATH ${APP_SHARE_DIR}/DsIntern.res/translations
+    ABSOLUTE_PATH ${SUB_RES_OUTPUT_DIR}/DsIntern.res/translations
+)
+qs_add_res(${PROJECT_NAME}
+    FILES res/themes/*.json
+    ABSOLUTE_PATH ${SUB_RES_OUTPUT_DIR}/DsIntern.res/themes
 )

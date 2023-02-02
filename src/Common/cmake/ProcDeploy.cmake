@@ -74,7 +74,7 @@ function(proc_deploy _all_targets)
     set(_libs_dir ${_deploy_dir}/${APP_LIB_DIR})
     set(_plugins_dir ${_deploy_dir}/${APP_PLUGINS_DIR})
     set(_tools_dir ${_deploy_dir}/${APP_TOOLS_DIR})
-    set(_res_dir ${_deploy_dir}/${APP_RES_DIR})
+    set(_res_dir ${_deploy_dir}/${APP_EXT_DIR})
     set(_res_docs_dir ${_res_dir}/docs)
 
     # Find Qt tools

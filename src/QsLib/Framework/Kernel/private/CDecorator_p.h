@@ -12,6 +12,8 @@
 #include <QSet>
 #include <QTranslator>
 
+#define ENABLE_PARTIAL_OVERRIDE 1
+
 /**
  * @brief Theme related
  *
@@ -28,6 +30,7 @@ struct ScreenSet {
 };
 
 struct ThemeSubscriber {
+    QStringList keySeq;
     QHash<QScreen *, ScreenSet *> screens;
     QHash<QWidget *, ThemeGuard *> widgets;
     QHash<QString, ThemePlaceholder *> templates;
@@ -49,7 +52,7 @@ struct ThemePlaceholder {
     QSet<ThemeSubscriber *> subscribers;
 
     struct ConfigSet {
-        QMap<int, QHash<QString, QSharedPointer<ThemeConfig>>>
+        std::map<int, QHash<QString, QSharedPointer<ThemeConfig>>>
             data; // priority - (config_key - config)
     };
     QHash<QString, ConfigSet> configs; // theme_key - config_set
@@ -81,11 +84,15 @@ public:
 
     // Theme related
     QString theme;
-    QHash<QString, int> themeNames;                                // themeKey - refCount
-    QHash<QString, ThemeConfigPack> themeConfigs;                  // configKey
-    QHash<QString, ThemePlaceholder *> themeTemplates;             // templateKey
-    QHash<QSet<QString>, ThemeSubscriber *> themeSubscriberGroups; // templateKeys
-    QHash<QWidget *, ThemeSubscriber *> themeSubscribers;          // w
+    QHash<QString, int> themeNames;                              // themeKey - refCount
+    QHash<QString, ThemeConfigPack> themeConfigs;                // configKey
+    QHash<QString, ThemePlaceholder *> themeTemplates;           // templateKey
+    QHash<QStringList, ThemeSubscriber *> themeSubscriberGroups; // templateKeys
+    QHash<QWidget *, ThemeSubscriber *> themeSubscribers;        // w
+
+    static std::list<ThemeGuard *> subscriberUpdateQueue;
+
+    static void subscriberUpdateEnqueue(ThemeGuard *tg);
 
     // Internal use
     static CDecoratorPrivate *self;

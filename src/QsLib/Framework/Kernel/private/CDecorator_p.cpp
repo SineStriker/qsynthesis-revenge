@@ -1,6 +1,8 @@
 #include "CDecorator_p.h"
 #include "ThemeGuard.h"
 
+#include "../CStartInfo.h"
+
 #include <QJsonDocument>
 #include <QJsonObject>
 
@@ -26,7 +28,7 @@ void ThemeSubscriber::notifyAll() {
     // Update all
     for (auto it = screens.begin(); it != screens.end(); ++it) {
         for (const auto &tg : qAsConst(it.value()->widgets)) {
-            tg->updateScreen();
+            CDecoratorPrivate::subscriberUpdateEnqueue(tg);
         }
     }
 }
@@ -81,7 +83,7 @@ void ThemeSubscriber::addWidget(QWidget *w) {
     installScreen(tg);
 
     // Notify forcefully
-    tg->updateScreen();
+    CDecoratorPrivate::subscriberUpdateEnqueue(tg);
 }
 
 void ThemeSubscriber::removeWidget(QWidget *w) {
@@ -111,6 +113,10 @@ void ThemePlaceholder::invalidate() {
 }
 
 QString ThemePlaceholder::getAndCache(QScreen *screen) {
+    if (qIStup->isAboutToQuit()) {
+        return QString();
+    }
+
     {
         auto it = stylesheetCaches.find(screen);
         if (it != stylesheetCaches.end()) {
@@ -119,15 +125,16 @@ QString ThemePlaceholder::getAndCache(QScreen *screen) {
     }
 
     auto it = configs.find(qIDec->theme());
-    if (it == configs.end() || it.value().data.isEmpty() || data.isNull()) {
+    if (it == configs.end() || it.value().data.empty() || data.isNull()) {
         return QString();
     }
 
-    auto &map0 = it.value().data;
-    auto &map = map0.begin().value();
-
     QMap<QString, QString> strs;
     QMap<QString, int> sizes;
+
+    auto &map0 = it.value().data;
+#if !ENABLE_PARTIAL_OVERRIDE
+    auto &map = map0.begin().value();
     for (const auto &conf : qAsConst(map)) {
         auto it2 = conf->strs.find(ns);
         if (it2 != conf->strs.end()) {
@@ -144,9 +151,31 @@ QString ThemePlaceholder::getAndCache(QScreen *screen) {
             }
         }
     }
+#else
+    for (auto it = map0.rbegin(); it != map0.rend(); it++) {
+        const auto &map = it->second;
+        for (const auto &conf : qAsConst(map)) {
+            auto it2 = conf->strs.find(ns);
+            if (it2 != conf->strs.end()) {
+                const auto &map3 = it2.value();
+                for (auto it4 = map3.begin(); it4 != map3.end(); ++it4) {
+                    strs.insert(it4.key(), it4.value());
+                }
+            }
+            auto it3 = conf->sizes.find(ns);
+            if (it3 != conf->sizes.end()) {
+                const auto &map3 = it3.value();
+                for (auto it4 = map3.begin(); it4 != map3.end(); ++it4) {
+                    sizes.insert(it4.key(), it4.value());
+                }
+            }
+        }
+    }
+#endif
 
     QString stylesheet = data->parse(strs, sizes, screen->logicalDotsPerInch());
     stylesheetCaches[screen] = stylesheet;
+    // qDebug() << stylesheet;
     return stylesheet;
 }
 
@@ -192,9 +221,27 @@ void CDecoratorPrivate::screenChange_helper(QScreen *screen) {
 
         // Notify all
         for (auto tg : qAsConst(it.value()->widgets)) {
-            tg->updateScreen();
+            CDecoratorPrivate::subscriberUpdateEnqueue(tg);
+        }
+    }
+}
+
+void CDecoratorPrivate::subscriberUpdateEnqueue(ThemeGuard *tg) {
+    // Update waiting subscribers
+    while (!subscriberUpdateQueue.empty()) {
+        auto first = subscriberUpdateQueue.front();
+        if (!first->updateScreen()) {
+            break;
+        }
+        subscriberUpdateQueue.pop_front();
+    }
+    if (tg) {
+        if (!subscriberUpdateQueue.empty() || !tg->updateScreen()) {
+            subscriberUpdateQueue.push_back(tg);
         }
     }
 }
 
 CDecoratorPrivate *CDecoratorPrivate::self = nullptr;
+
+std::list<ThemeGuard *> CDecoratorPrivate::subscriberUpdateQueue;

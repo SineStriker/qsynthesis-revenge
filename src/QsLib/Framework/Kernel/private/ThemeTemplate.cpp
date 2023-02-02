@@ -14,7 +14,7 @@ static const char Default_RegExp_Pattern[] = "\\{\\{(.*?)\\}\\}";
 static const char Default_RegExp_Separator[] = "|";
 
 static const char Theme_Variable_Hint_Size[] = "size";
-static const char Theme_Variable_Hint_Color[] = "color";
+static const char Theme_Variable_Hint_String[] = "str";
 
 static QString removeSideQuote(QString token) {
     if (token.front() == '\"') {
@@ -144,7 +144,7 @@ QString ThemeTemplate::parse(const QMap<QString, QString> &strs, const QMap<QStr
             QString l = TemplateVariable.left(idx).simplified();
             QString r = TemplateVariable.mid(idx + 1).simplified();
 
-            if (r == Theme_Variable_Hint_Color) {
+            if (r == Theme_Variable_Hint_String) {
                 auto it = strs.find(l);
                 if (it != strs.end()) {
                     ValueString = it.value();

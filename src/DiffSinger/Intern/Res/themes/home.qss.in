@@ -1,4 +1,17 @@
+/* Configuration */
+
 Config {
     pattern: "\\\"\\{\\{(.*?)\\}\\}\\\"";
     separator: "|";
+}
+
+
+/* Stylesheet Content */
+
+CWindowBarV2>CToolButton#icon-button {
+    qproperty-iconUp: svg(":/svg/app/diffsinger.svg", "{{windowIcon.foreground}}");
+}
+
+HomeWindow {
+    background-color: "{{background|str}}";
 }

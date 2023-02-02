@@ -4,6 +4,8 @@
 #include "QsSystem.h"
 #include "private/QsNamespace_p.h"
 
+#include "../QsCoreDecorator.h"
+
 #include <QDataStream>
 #include <QDir>
 
@@ -18,11 +20,17 @@ static QString GetAppConfig() {
 }
 
 void QsCoreStartInfoPrivate::init() {
+    Q_Q(QsCoreStartInfo);
+
     dec = nullptr;
     coreConfig = nullptr;
     hSingleApp = nullptr;
 
+    isAboutToQuit = false;
+
     Register_QsNamespace();
+
+    q->connect(qApp, &QCoreApplication::aboutToQuit, q, &QsCoreStartInfo::_q_aboutToQuit);
 }
 
 void QsCoreStartInfoPrivate::parse_helper() {
@@ -33,6 +41,7 @@ void QsCoreStartInfoPrivate::parse_helper() {
 
     // Create global decrator
     dec = q->createDecorator(q);
+    dec->addLocale("English Default", {{"en_US", {}}});
 
     // Load or generate distconfig
     QString configPath = qApp->applicationDirPath() + Slash + GetAppConfig();

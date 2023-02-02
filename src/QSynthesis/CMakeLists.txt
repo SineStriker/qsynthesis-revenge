@@ -12,7 +12,7 @@ set(SUB_VERSION_SHORT ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}.${PROJEC
 set(SUB_DESCRIPTION "Remake of Vocal Synthesis UTAU.")
 set(SUB_IDENTIFIER "com.SineStr.QSynthesis")
 
-set(SUB_PLUGIN_DIR ${APP_RES_DIR}/qsynthesis)
+set(SUB_PLUGIN_DIR ${APP_EXT_DIR}/qsynthesis)
 
 # Add subdirectories
 add_subdirectory(Core)

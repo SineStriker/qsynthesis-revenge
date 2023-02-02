@@ -18,7 +18,8 @@ CDecreateDir::CDecreateDir(const QString &dir) : QsLocaleDir(dir) {
 }
 
 CDecreateDir::~CDecreateDir() {
-    unloadTheme();
+    if (autoRemove)
+        unloadTheme();
 }
 
 bool CDecreateDir::load(const QString &filename) {

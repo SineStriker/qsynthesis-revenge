@@ -5,6 +5,13 @@
             "HomeWindow"
         ]
     },
-    "strs": {},
+    "strs": {
+        "HomeWindow": {
+            "windowBar": {
+                "background": "#E0E0E0",
+                "foreground": "#111111"
+            }
+        }
+    },
     "sizes": {}
 }

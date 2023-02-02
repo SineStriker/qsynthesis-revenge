@@ -185,7 +185,11 @@ void CDecorator::addThemeConfig(const QString &key, const QMap<QString, QStringL
             auto it = map.insert(key, conf);
 
             // Dirty if first
-            if (it == map.begin() && themeKey == d->theme) {
+            if (
+#if !ENABLE_PARTIAL_OVERRIDE
+                it == map.begin() &&
+#endif
+                themeKey == d->theme) {
                 templatesToUpdate.insert(&tp);
             }
         };
@@ -269,11 +273,14 @@ void CDecorator::removeThemeConfig(const QString &key) {
             auto it3 = map0.find(conf->priority);
             Q_ASSERT(it3 != map0.end());
 
-            auto &map = it3.value();
+            auto &map = it3->second;
             auto it4 = map.find(key);
 
+#if !ENABLE_PARTIAL_OVERRIDE
             // Save status
             bool beg = it4 == map.begin();
+#endif
+
             map.erase(it4);
             if (map.isEmpty()) {
                 map0.erase(it3);
@@ -283,7 +290,11 @@ void CDecorator::removeThemeConfig(const QString &key) {
             if (tp.isEmpty()) {
                 delete it2.value();
                 d->themeTemplates.erase(it2);
-            } else if (beg && themeKey == d->theme) {
+            } else if (
+#if !ENABLE_PARTIAL_OVERRIDE
+                beg &&
+#endif
+                themeKey == d->theme) {
                 // Dirty if first
                 templatesToUpdate.insert(&tp);
             }
@@ -316,17 +327,19 @@ void CDecorator::installTheme(QWidget *w, const QStringList &templateKeys) {
     }
 
     ThemeSubscriber *ts;
-    auto keySet = QSet<QString>(templateKeys.begin(), templateKeys.end());
+    auto &keySeq = templateKeys;
 
     // Find group by key set
-    auto it = d->themeSubscriberGroups.find(keySet);
+    auto it = d->themeSubscriberGroups.find(keySeq);
     if (it == d->themeSubscriberGroups.end()) {
+
         // Add new
         ts = new ThemeSubscriber();
-        d->themeSubscriberGroups.insert(keySet, ts);
+        ts->keySeq = keySeq;
+        d->themeSubscriberGroups.insert(keySeq, ts);
 
         // Add to theme cache
-        for (const auto &key : qAsConst(keySet)) {
+        for (const auto &key : qAsConst(keySeq)) {
             auto setup = [&](ThemePlaceholder &tp) {
                 tp.subscribers.insert(ts);
                 ts->templates.insert(key, &tp);
@@ -377,10 +390,10 @@ void CDecorator::uninstallTheme(QWidget *w) {
     // Remove group if no widgets
     if (ts->isEmpty()) {
         auto keys = ts->templates.keys();
-        auto keySet = QSet<QString>(keys.begin(), keys.end());
+        auto &keySeq = keys;
 
         // Remove from theme cache
-        for (const auto &key : qAsConst(keySet)) {
+        for (const auto &key : qAsConst(keySeq)) {
             auto it2 = d->themeTemplates.find(key);
             if (it2 == d->themeTemplates.end()) {
                 continue;
@@ -396,7 +409,7 @@ void CDecorator::uninstallTheme(QWidget *w) {
         }
 
         delete ts;                               // Remove subscriber
-        d->themeSubscriberGroups.remove(keySet); // Remove group
+        d->themeSubscriberGroups.remove(keySeq); // Remove group
     }
 
     disconnect(w, &QObject::destroyed, this, &CDecorator::_q_themeSubscriberDestroyed);

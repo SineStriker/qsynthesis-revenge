@@ -8,6 +8,7 @@
     "strs": {
         "NativeWindow": {
             "background": "transparent",
+            "color": "transparent",
             "minButton": {
                 "foreground": {
                     "up": "#111111",
@@ -57,7 +58,7 @@
     "sizes": {
         "NativeWindow": {
             "titleMargin": 20,
-            "minHeight": 20,
+            "minHeight": 40,
             "minButton": {
                 "icon": {
                     "width": 12,

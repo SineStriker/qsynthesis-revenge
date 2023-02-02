@@ -83,8 +83,8 @@ QSvgUri QSvgUri::fromStringList(const QStringList &stringList) {
         !stringList.front().compare(MetaFunctionName(), Qt::CaseInsensitive)) {
         QStringList content = stringList.back().split(',');
         if (!content.isEmpty()) {
-            QString strFile = content.front().simplified();
-            strFile.replace("\"", "");
+            QString strFile = content.front();
+            strFile = strFile.replace("\"", "").simplified();
 
             QSvgUri uri;
             uri.setFilename(strFile);

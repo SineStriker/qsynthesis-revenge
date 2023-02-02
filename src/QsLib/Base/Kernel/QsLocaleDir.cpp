@@ -15,7 +15,7 @@ static const char KEY_NAME_SUBSECTION_FILES[] = "files";
 
 static const char Slash = '/';
 
-QsLocaleDir::QsLocaleDir() {
+QsLocaleDir::QsLocaleDir() : autoRemove(false) {
     vars.addHash(QSimpleVarExp::SystemValues());
 }
 
@@ -24,7 +24,8 @@ QsLocaleDir::QsLocaleDir(const QString &dir) : QsLocaleDir() {
 }
 
 QsLocaleDir::~QsLocaleDir() {
-    unloadLocale();
+    if (autoRemove)
+        unloadLocale();
 }
 
 void QsLocaleDir::setDir(const QString &dir) {

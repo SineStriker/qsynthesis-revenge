@@ -17,6 +17,7 @@ public:
     QSimpleVarExp vars;
 
     QString localeKey;
+    bool autoRemove;
 
     void setDir(const QString &dir);
     bool loadDefault(const QString &binName);

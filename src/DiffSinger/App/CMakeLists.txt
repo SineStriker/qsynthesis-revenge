@@ -11,3 +11,7 @@ qs_add_executable(${PROJECT_NAME} DsIntern
     ICO_FILE ${CMAKE_CURRENT_SOURCE_DIR}/win32/app.ico
     ICNS_FILE ${CMAKE_CURRENT_SOURCE_DIR}/mac/app.icns
 )
+
+set_target_properties(${PROJECT_NAME} PROPERTIES
+    OUTPUT_NAME ${SUB_APP_NAME}
+)

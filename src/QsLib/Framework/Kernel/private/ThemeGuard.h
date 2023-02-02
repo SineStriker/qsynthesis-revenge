@@ -23,8 +23,8 @@ public:
 
     QWidget *w;
     QWindow *winHandle;
-    
-    void updateScreen();
+
+    bool updateScreen();
 
 protected:
     bool eventFilter(QObject *obj, QEvent *event) override;

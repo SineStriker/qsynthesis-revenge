@@ -2,5 +2,6 @@
     <qresource prefix="/">
         <file>themes/home.qss.in</file>
         <file>themes/piano.qss.in</file>
+        <file>svg/app/diffsinger.svg</file>
     </qresource>
 </RCC>

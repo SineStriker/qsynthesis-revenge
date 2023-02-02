@@ -42,7 +42,7 @@ void LocaleData::install(const QStringList &paths) {
 }
 
 void LocaleData::uninstall() {
-    if (translators.isEmpty() || qApp->isQuitLockEnabled()) {
+    if (translators.isEmpty() || qApp->closingDown()) {
         return;
     }
 

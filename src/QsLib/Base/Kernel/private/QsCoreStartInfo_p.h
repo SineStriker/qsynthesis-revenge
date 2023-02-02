@@ -19,6 +19,8 @@ public:
     // SingleApplication hook
     SingleApplication *hSingleApp;
 
+    bool isAboutToQuit;
+
     void init();
 
     void parse_helper();

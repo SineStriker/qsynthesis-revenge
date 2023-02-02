@@ -32,8 +32,8 @@ option_ex(APP_TOOLS_DIR bin)
 option_ex(APP_PLUGINS_DIR plugins) # Do not change
 option_ex(APP_LOCALES_DIR translations) # Do not change
 option_ex(APP_SHARE_DIR share) # Do not change
-option_ex(APP_RES_DIR resources)
-option_ex(APP_PUBLIC_PLUGINS_DIR qsplugins)
+option_ex(APP_EXT_DIR plugins)
+option_ex(APP_PUBLIC_PLUGINS_DIR qslib)
 
 option_ex(BUILD_TEST off)
 

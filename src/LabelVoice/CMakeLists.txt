@@ -12,7 +12,7 @@ set(SUB_VERSION_SHORT ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}.${PROJEC
 set(SUB_DESCRIPTION "Vocal synthesis annotation tool.")
 set(SUB_IDENTIFIER "com.OpenVPI.LabelVoice")
 
-set(SUB_PLUGIN_DIR ${APP_RES_DIR}/labelvoice)
+set(SUB_PLUGIN_DIR ${APP_EXT_DIR}/labelvoice)
 
 # Add subdirectories
 add_subdirectory(Core)

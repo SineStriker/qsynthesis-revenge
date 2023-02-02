@@ -113,6 +113,8 @@ namespace QsOs {
 
     QSBASE_API QString allFilesFilter();
 
+    QSBASE_API bool isInExec();
+
 } // namespace QsOs
 
 #endif // QSSYSTEMHELPER_H

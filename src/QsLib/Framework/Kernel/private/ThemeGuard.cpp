@@ -1,6 +1,8 @@
 #include "ThemeGuard.h"
 #include "CDecorator_p.h"
 
+#include "../CStartInfo.h"
+
 #include <QDebug>
 #include <QEvent>
 #include <QWindow>
@@ -14,10 +16,10 @@ ThemeGuard::ThemeGuard(QWidget *w, ThemeSubscriber *g)
 ThemeGuard::~ThemeGuard() {
 }
 
-void ThemeGuard::updateScreen() {
-    if (!winHandle) {
+bool ThemeGuard::updateScreen() {
+    if (!winHandle || qIStup->isAboutToQuit()) {
         needUpdate = true;
-        return;
+        return false;
     }
 
     if (!screenSet->dirty) {
@@ -28,13 +30,14 @@ void ThemeGuard::updateScreen() {
         }
         if (it != ws.end()) {
             w->setStyle(it.key()->style());
-            return;
+            return true;
         }
     }
     screenSet->dirty = false;
 
     QString stylesheet;
-    for (const auto &tp : qAsConst(group->templates)) {
+    for (const auto &key : qAsConst(group->keySeq)) {
+        auto &tp = group->templates[key];
         if (tp->data.isNull()) {
             continue;
         }
@@ -47,6 +50,7 @@ void ThemeGuard::updateScreen() {
     }
 
     w->setStyleSheet(stylesheet);
+    return true;
 }
 
 bool ThemeGuard::eventFilter(QObject *obj, QEvent *event) {
@@ -59,7 +63,7 @@ bool ThemeGuard::eventFilter(QObject *obj, QEvent *event) {
                             &ThemeGuard::_q_screenChanged);
                     if (needUpdate) {
                         needUpdate = false;
-                        updateScreen();
+                        CDecoratorPrivate::subscriberUpdateEnqueue(nullptr);
                     }
                 }
                 break;
@@ -73,5 +77,5 @@ bool ThemeGuard::eventFilter(QObject *obj, QEvent *event) {
 
 void ThemeGuard::_q_screenChanged(QScreen *screen) {
     group->switchScreen(this);
-    updateScreen();
+    CDecoratorPrivate::subscriberUpdateEnqueue(this);
 }
