@@ -10,7 +10,7 @@ QsStartInfoPrivate::~QsStartInfoPrivate() {
 void QsStartInfoPrivate::init() {
 }
 
-void QsStartInfoPrivate::parse_helper() {
+void QsStartInfoPrivate::load_helper() {
     Q_Q(QsStartInfo);
     dd.setDir(qAppConf->appDir(QsCoreConfig::AppShare));
     dd.loadDefault("QsIntegrate");

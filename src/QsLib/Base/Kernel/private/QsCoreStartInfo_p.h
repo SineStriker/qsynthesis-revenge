@@ -23,7 +23,7 @@ public:
 
     void init();
 
-    void parse_helper();
+    void load_helper();
 
 private:
     QsLocaleDir ld;

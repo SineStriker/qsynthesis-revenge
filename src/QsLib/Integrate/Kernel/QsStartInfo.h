@@ -13,11 +13,13 @@ public:
     explicit QsStartInfo(QObject *parent = nullptr);
     ~QsStartInfo();
     
-    void parse() override;
+    void load() override;
 
 public:
     static QString untitledFileName();
+
     static QString unsavedPrefix();
+    
     static QString deletedPrefix();
 
 protected:

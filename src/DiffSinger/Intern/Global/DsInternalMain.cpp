@@ -15,7 +15,7 @@ int main_entry(int argc, char *argv[]) {
 
     // Configure startup info
     DsStartInfo info;
-    info.parse();
+    info.load();
 
     // Show window
     WindowManager::instance()->showHome();

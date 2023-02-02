@@ -20,8 +20,8 @@ bool QsCoreConfig::load(const QString &filename) {
     Q_D(QsCoreConfig);
     bool res = true;
     if (!d->load_helper(filename)) {
-        qDebug() << QString("load_config: configuration file %1 not found.")
-                        .arg(QsFs::PathFindFileName(filename));
+        qDebug().noquote() << QString("load_config: configuration file %1 not found.")
+                                  .arg(QsFs::PathFindFileName(filename));
         res = false;
     }
     return res;

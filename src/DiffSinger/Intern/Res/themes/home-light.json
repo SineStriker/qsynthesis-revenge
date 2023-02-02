@@ -7,11 +7,16 @@
     },
     "strs": {
         "HomeWindow": {
+            "font.family": "Microsoft YaHei",
             "background": "#FFFFFF",
             "windowIcon": {
                 "foreground": "transparent"
             }
         }
     },
-    "sizes": {}
+    "sizes": {
+        "HomeWindow": {
+            "font.size": 15
+        }
+    }
 }

@@ -12,16 +12,16 @@ DsStartInfo::DsStartInfo(QObject *parent) : DsStartInfo(*new DsStartInfoPrivate(
 DsStartInfo::~DsStartInfo() {
 }
 
-void DsStartInfo::parse() {
+void DsStartInfo::load() {
     Q_D(DsStartInfo);
 
     qApp->setApplicationName(APP_NAME);
     qApp->setApplicationVersion(APP_VERSION);
     qApp->setApplicationDisplayName(APP_NAME);
 
-    QsStartInfo::parse();
+    QsStartInfo::load();
 
-    d->parse_helper();
+    d->load_helper();
 }
 
 QsCoreConfig *DsStartInfo::creatDistConfig() {

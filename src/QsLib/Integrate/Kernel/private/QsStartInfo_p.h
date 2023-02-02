@@ -16,7 +16,7 @@ public:
     ~QsStartInfoPrivate();
 
     void init();
-    void parse_helper();
+    void load_helper();
     void deinit();
 
     // Managers

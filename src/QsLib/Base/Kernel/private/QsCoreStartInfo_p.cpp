@@ -33,7 +33,7 @@ void QsCoreStartInfoPrivate::init() {
     q->connect(qApp, &QCoreApplication::aboutToQuit, q, &QsCoreStartInfo::_q_aboutToQuit);
 }
 
-void QsCoreStartInfoPrivate::parse_helper() {
+void QsCoreStartInfoPrivate::load_helper() {
     Q_Q(QsCoreStartInfo);
 
     // Maybe no return

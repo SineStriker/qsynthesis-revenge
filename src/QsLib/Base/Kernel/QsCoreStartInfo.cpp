@@ -17,9 +17,9 @@ QsCoreStartInfo::QsCoreStartInfo(QObject *parent)
 QsCoreStartInfo::~QsCoreStartInfo() {
 }
 
-void QsCoreStartInfo::parse() {
+void QsCoreStartInfo::load() {
     Q_D(QsCoreStartInfo);
-    d->parse_helper();
+    d->load_helper();
 }
 
 bool QsCoreStartInfo::isAboutToQuit() const {

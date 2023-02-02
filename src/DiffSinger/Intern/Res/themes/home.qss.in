@@ -8,8 +8,13 @@ Config {
 
 /* Stylesheet Content */
 
+QWidget {
+    font-family: '"{{font.family|str}}"';
+    font-size: "{{font.size|size}}";
+}
+
 CWindowBarV2>CToolButton#icon-button {
-    qproperty-iconUp: svg(":/svg/app/diffsinger.svg", "{{windowIcon.foreground}}");
+    qproperty-iconUp: svg(":/svg/app/diffsinger.svg", "{{windowIcon.foreground|str}}");
 }
 
 HomeWindow {

@@ -77,5 +77,8 @@ bool ThemeGuard::eventFilter(QObject *obj, QEvent *event) {
 
 void ThemeGuard::_q_screenChanged(QScreen *screen) {
     group->switchScreen(this);
+
+    qDebug() << "Window" << this << "screen changed to" << screen;
+
     CDecoratorPrivate::subscriberUpdateEnqueue(this);
 }

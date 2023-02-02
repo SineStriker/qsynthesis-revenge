@@ -7,10 +7,10 @@ QsStartInfo::QsStartInfo(QObject *parent) : QsStartInfo(*new QsStartInfoPrivate(
 QsStartInfo::~QsStartInfo() {
 }
 
-void QsStartInfo::parse() {
+void QsStartInfo::load() {
     Q_D(QsStartInfo);
-    CStartInfo::parse();
-    d->parse_helper();
+    CStartInfo::load();
+    d->load_helper();
 }
 
 QString QsStartInfo::untitledFileName() {

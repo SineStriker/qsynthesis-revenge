@@ -44,7 +44,7 @@ void DsStartInfoPrivate::init() {
 #endif
 }
 
-void DsStartInfoPrivate::parse_helper() {
+void DsStartInfoPrivate::load_helper() {
     Q_Q(DsStartInfo);
     qIDec->addThemeTemplate("HomeWindow", ":/themes/home.qss.in");
     qIDec->addThemeTemplate("PianoWindow", ":/themes/piano.qss.in");

@@ -9,9 +9,15 @@
 #include "Kernel/QsCoreConfig.h"
 #include "QsSystem.h"
 
+#include "CDecorator.h"
+
 static const char SECTION_NAME_FILE_SYSTEM[] = "filesystem";
 static const char KEY_NAME_RECENT_FILES[] = "files";
 static const char KEY_NAME_RECENT_DIRS[] = "dirs";
+
+static const char SECTION_NAME_DECORATOR[] = "decorator";
+static const char KEY_NAME_LAST_LOCALE[] = "locale";
+static const char KEY_NAME_LAST_THEME[] = "theme";
 
 QsFileManagerPrivate::QsFileManagerPrivate() {
 }
@@ -76,6 +82,20 @@ bool QsFileManagerPrivate::load_helper(const QString &filename) {
         }
     }
 
+    // Get saved locale and theme
+    it = objDoc.find(SECTION_NAME_DECORATOR);
+    if (it != objDoc.end() && it.value().isObject()) {
+        QJsonObject obj = it.value().toObject();
+        auto it2 = obj.find(KEY_NAME_LAST_LOCALE);
+        if (it2 != obj.end() && it2->isString()) {
+            qIDec->setLocale(it2->toString());
+        }
+        it2 = obj.find(KEY_NAME_LAST_THEME);
+        if (it2 != obj.end() && it2->isString()) {
+            qIDec->setTheme(it2->toString());
+        }
+    }
+
     return true;
 }
 
@@ -96,6 +116,13 @@ bool QsFileManagerPrivate::save_helper(const QString &filename) {
         {
             SECTION_NAME_FILE_SYSTEM,
             recentObj,
+        },
+        {
+            SECTION_NAME_DECORATOR,
+            QJsonObject{
+                {KEY_NAME_LAST_LOCALE, qIDec->locale()},
+                {KEY_NAME_LAST_THEME, qIDec->theme()},
+            },
         },
     };
     doc.setObject(obj);

@@ -13,7 +13,7 @@ public:
     ~DsStartInfoPrivate();
 
     void init();
-    void parse_helper();
+    void load_helper();
     void deinit();
 
     WindowManager *windowMgr;

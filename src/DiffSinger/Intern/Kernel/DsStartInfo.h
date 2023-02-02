@@ -12,7 +12,7 @@ public:
     explicit DsStartInfo(QObject *parent = nullptr);
     ~DsStartInfo();
 
-    void parse() override;
+    void load() override;
 
 protected:
     QsCoreConfig *creatDistConfig() override;

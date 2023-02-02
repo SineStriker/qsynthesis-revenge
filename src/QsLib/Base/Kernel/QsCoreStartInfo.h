@@ -23,7 +23,7 @@ public:
     explicit QsCoreStartInfo(QObject *parent = nullptr);
     ~QsCoreStartInfo();
 
-    virtual void parse();
+    virtual void load();
 
     bool isAboutToQuit() const;
 
