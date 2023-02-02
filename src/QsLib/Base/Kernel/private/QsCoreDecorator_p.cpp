@@ -1,6 +1,8 @@
 #include "QsCoreDecorator_p.h"
 
 #include <QCoreApplication>
+#include <QDebug>
+#include <QLocale>
 
 // LocaleData
 static QTranslator *qmLoad(const QString &path) {
@@ -19,7 +21,7 @@ LocaleData::~LocaleData() {
     uninstall();
 }
 
-void LocaleData::install(const QLocale &loc) {
+void LocaleData::install(const QString &loc) {
     auto it = qmFiles.find(loc);
     if (it != qmFiles.end()) {
         install(it.value());
@@ -59,5 +61,5 @@ QsCoreDecoratorPrivate::~QsCoreDecoratorPrivate() {
 }
 
 void QsCoreDecoratorPrivate::init() {
-    loc = QLocale::system();
+    loc = QLocale::system().name();
 }

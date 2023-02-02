@@ -1,4 +1,5 @@
 #include "QsCoreDecorator.h"
+#include "QsLinq.h"
 #include "private/QsCoreDecorator_p.h"
 
 #include <QDebug>
@@ -14,17 +15,17 @@ QsCoreDecorator::~QsCoreDecorator() {
 
 
 // Locale related
-QLocale QsCoreDecorator::locale() const {
+QString QsCoreDecorator::locale() const {
     Q_D(const QsCoreDecorator);
     return d->loc;
 }
 
-QList<QLocale> QsCoreDecorator::locales() const {
+QStringList QsCoreDecorator::locales() const {
     Q_D(const QsCoreDecorator);
     return d->localeNames.keys();
 }
 
-void QsCoreDecorator::setLocale(const QLocale &locale) {
+void QsCoreDecorator::setLocale(const QString &locale) {
     Q_D(QsCoreDecorator);
     if (d->loc == locale) {
         return;
@@ -46,7 +47,7 @@ void QsCoreDecorator::setLocale(const QLocale &locale) {
     }
 }
 
-void QsCoreDecorator::addLocale(const QString &key, const QHash<QLocale, QStringList> &paths) {
+void QsCoreDecorator::addLocale(const QString &key, const QMap<QString, QStringList> &paths) {
     Q_D(QsCoreDecorator);
 
     /*
@@ -64,7 +65,7 @@ void QsCoreDecorator::addLocale(const QString &key, const QHash<QLocale, QString
 
     auto setup = [&](LocalePlaceholder &lp) {
         lp.data = QSharedPointer<LocaleData>::create();
-        lp.data->qmFiles = paths;
+        lp.data->qmFiles = QsLinq::MapToHash(paths);
 
         // Inc ref count
         for (auto it = paths.begin(); it != paths.end(); ++it) {
@@ -156,7 +157,7 @@ void QsCoreDecorator::removeLocale(const QString &key) {
 }
 
 void QsCoreDecorator::installLocale(QObject *obj, const QStringList &keys,
-                               const std::function<void()> updater) {
+                                    const std::function<void()> updater) {
     Q_D(QsCoreDecorator);
 
     /*

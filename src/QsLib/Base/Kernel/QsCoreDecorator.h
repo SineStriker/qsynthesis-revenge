@@ -1,7 +1,6 @@
 #ifndef QSCOREDECORATOR_H
 #define QSCOREDECORATOR_H
 
-#include <QLocale>
 #include <QObject>
 
 #include "QsGlobal.h"
@@ -23,11 +22,11 @@ public:
     /**
      * @brief Current locale
      *
-     * @return QLocale (No impact to framework locale)
+     * @return Locale name (No impact to framework locale)
      */
-    QLocale locale() const;
-    QList<QLocale> locales() const;
-    void setLocale(const QLocale &locale);
+    QString locale() const;
+    QStringList locales() const;
+    void setLocale(const QString &locale);
 
     /**
      * @brief Add a translation configuration
@@ -35,7 +34,7 @@ public:
      * @param key Unique token
      * @param paths Locale and related qm file path
      */
-    void addLocale(const QString &key, const QHash<QLocale, QStringList> &paths);
+    void addLocale(const QString &key, const QMap<QString, QStringList> &paths);
     void removeLocale(const QString &key);
 
     /**

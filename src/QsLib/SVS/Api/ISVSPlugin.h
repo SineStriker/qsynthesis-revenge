@@ -1,7 +1,6 @@
 #ifndef ISVSPLUGIN_H
 #define ISVSPLUGIN_H
 
-#include <QLocale>
 #include <QObject>
 
 #include "INamePlugin.h"

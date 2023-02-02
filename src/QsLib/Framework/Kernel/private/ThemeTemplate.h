@@ -18,8 +18,6 @@ public:
     QString content;
     QString pattern;
     QString separator;
-    int left;
-    int right;
 
     bool load(const QString &filename);
 

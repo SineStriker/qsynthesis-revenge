@@ -18,7 +18,7 @@ struct LocaleSubscriber {
 
 struct QSBASE_API LocaleData {
     // QM file paths
-    QHash<QLocale, QStringList> qmFiles;
+    QHash<QString, QStringList> qmFiles;
 
     // Installed translators
     QList<QTranslator *> translators;
@@ -27,7 +27,7 @@ struct QSBASE_API LocaleData {
     ~LocaleData();
 
     // Apply translation
-    void install(const QLocale &loc);
+    void install(const QString &loc);
 
     void install(const QStringList &paths);
 
@@ -51,8 +51,8 @@ public:
     QsCoreDecorator *q_ptr;
 
     // Locale related
-    QLocale loc;
-    QHash<QLocale, int> localeNames;
+    QString loc;
+    QHash<QString, int> localeNames;
     QHash<QString, LocalePlaceholder *> localeConfigs;
     QHash<QObject *, LocaleSubscriber *> localeSubscribers;
 };

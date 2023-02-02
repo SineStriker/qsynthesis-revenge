@@ -57,7 +57,7 @@ bool QsLocaleDir::load(const QString &filename) {
         }
 
         // Add files
-        QHash<QLocale, QStringList> paths;
+        QMap<QString, QStringList> paths;
         for (auto it3 = item.files.begin(); it3 != item.files.end(); ++it3) {
             QStringList files = it3.value();
             if (files.isEmpty()) {
@@ -66,7 +66,7 @@ bool QsLocaleDir::load(const QString &filename) {
             for (auto &file : files) {
                 file = subdir + Slash + file;
             }
-            paths.insert(QLocale(it3.key()), files);
+            paths.insert(it3.key(), files);
         }
 
         if (paths.isEmpty()) {

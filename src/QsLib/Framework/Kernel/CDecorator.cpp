@@ -37,7 +37,6 @@ void CDecorator::setTheme(const QString &theme) {
         auto &tp = *p;
         tp.invalidate();
 
-        // Notify related objects
         for (const auto &sub : qAsConst(tp.subscribers)) {
             subscribersToUpdate.insert(sub);
         }
@@ -418,6 +417,8 @@ void CDecorator::_q_screenRemoved(QScreen *screen) {
                &CDecorator::_q_deviceRatioChanged);
     disconnect(screen, &QScreen::logicalDotsPerInchChanged, this,
                &CDecorator::_q_logicalRatioChanged);
+
+    // How to deal with windows on the removed screen?
 }
 
 void CDecorator::_q_deviceRatioChanged(double dpi) {

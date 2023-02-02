@@ -30,7 +30,7 @@ static int toRealPixelSize(int size, double dpi) {
     return double(size) * dpi / QsOs::unitDpi() * 0.8;
 }
 
-ThemeTemplate::ThemeTemplate() : left(0), right(0) {
+ThemeTemplate::ThemeTemplate()  {
 }
 
 ThemeTemplate::~ThemeTemplate() {
