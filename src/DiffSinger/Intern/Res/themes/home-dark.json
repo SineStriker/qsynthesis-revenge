@@ -1,4 +1,10 @@
 {
-    "colors": {},
+    "config": {
+        "priority": 1,
+        "namespaces": [
+            "HomeWindow"
+        ]
+    },
+    "strs": {},
     "sizes": {}
 }

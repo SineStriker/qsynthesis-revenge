@@ -7,24 +7,23 @@
 #include "../CDecorator.h"
 #include "ThemeTemplate.h"
 
+struct ScreenSet;
 struct ThemeSubscriber;
 
 class ThemeGuard : public QObject {
     Q_OBJECT
 public:
-    ThemeGuard(QWidget *w, CDecorator *dec, CDecoratorPrivate *decp, ThemeSubscriber *g);
+    ThemeGuard(QWidget *w, ThemeSubscriber *g);
     ~ThemeGuard();
 
     // Object pointers
-    CDecorator *dec;
-    CDecoratorPrivate *decp;
-
     bool needUpdate;
     ThemeSubscriber *group;
+    ScreenSet *screenSet;
 
     QWidget *w;
     QWindow *winHandle;
-
+    
     void updateScreen();
 
 protected:
@@ -32,8 +31,6 @@ protected:
 
 private:
     void _q_screenChanged(QScreen *screen);
-    void _q_deviceRatioChanged(QScreen *screen, double dpi);
-    void _q_logicalRatioChanged(QScreen *screen, double dpi);
 };
 
 #endif // THEMEGUARD_H

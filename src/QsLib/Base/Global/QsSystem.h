@@ -10,7 +10,7 @@
 
 #include "QsGlobal.h"
 
-namespace QsSys {
+namespace QsFs {
 
     inline bool isPathRelative(const QString &path) {
         return QDir::isRelativePath(path);
@@ -82,11 +82,13 @@ namespace QsSys {
 
     QSBASE_API QStringList FindRecursiveDirs(const QString &base, int max = -1);
 
-    QSBASE_API bool isUserRoot();
-
     QSBASE_API void exitApp(int code);
 
     QSBASE_API QString invalidFileNameChars();
+
+} // namespace QsFs
+
+namespace QsOs {
 
     /**
      * @brief Display error without QtWidgets module
@@ -94,21 +96,23 @@ namespace QsSys {
      * @param title Title if message box is available
      * @param text Text
      */
-    QSBASE_API void osMessageStderr(const QString &title, const QString &text);
+    QSBASE_API void messageStderr(const QString &title, const QString &text);
 
     /**
      * @brief System Dpi base, 96 on Windows/Linux, 72 on Mac
      *
      * @return QSBASE_API
      */
-    QSBASE_API int osUnitDpi();
+    QSBASE_API int unitDpi();
 
-    QSBASE_API QString osFileManagerName();
+    QSBASE_API bool isUserRoot();
 
-    QSBASE_API QString osRootUserName();
-    
-    QSBASE_API QString osAllFilesFilter();
+    QSBASE_API QString fileManagerName();
 
-} // namespace QsSys
+    QSBASE_API QString rootUserName();
+
+    QSBASE_API QString allFilesFilter();
+
+} // namespace QsOs
 
 #endif // QSSYSTEMHELPER_H

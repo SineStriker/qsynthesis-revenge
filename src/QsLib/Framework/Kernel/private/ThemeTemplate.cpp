@@ -1,5 +1,7 @@
 #include "ThemeTemplate.h"
 
+#include "QsSystem.h"
+
 #include "QsCodec.h"
 
 #include <QDebug>
@@ -24,8 +26,8 @@ static QString removeSideQuote(QString token) {
     return token;
 }
 
-static int toRealPixelSize(int size) {
-    return size;
+static int toRealPixelSize(int size, double dpi) {
+    return double(size) * dpi / QsOs::unitDpi() * 0.8;
 }
 
 ThemeTemplate::ThemeTemplate() : left(0), right(0) {
@@ -120,8 +122,8 @@ bool ThemeTemplate::load(const QString &filename) {
     return true;
 }
 
-QString ThemeTemplate::parse(const QMap<QString, QString> &colors,
-                             const QMap<QString, int> &sizes) const {
+QString ThemeTemplate::parse(const QMap<QString, QString> &strs, const QMap<QString, int> &sizes,
+                             double dpi) const {
     QRegularExpression re(pattern);
     QRegularExpressionMatch match;
     int index = 0;
@@ -143,14 +145,14 @@ QString ThemeTemplate::parse(const QMap<QString, QString> &colors,
             QString r = TemplateVariable.mid(idx + 1).simplified();
 
             if (r == Theme_Variable_Hint_Color) {
-                auto it = colors.find(l);
-                if (it != colors.end()) {
+                auto it = strs.find(l);
+                if (it != strs.end()) {
                     ValueString = it.value();
                 }
             } else if (r == Theme_Variable_Hint_Size) {
                 auto it = sizes.find(l);
                 if (it != sizes.end()) {
-                    ValueString = QString::number(toRealPixelSize(it.value()));
+                    ValueString = QString::number(toRealPixelSize(it.value(), dpi));
                 }
             }
         } else {
@@ -158,8 +160,8 @@ QString ThemeTemplate::parse(const QMap<QString, QString> &colors,
                 auto &l = TemplateVariable;
                 // Find color
                 {
-                    auto it = colors.find(l);
-                    if (it != colors.end()) {
+                    auto it = strs.find(l);
+                    if (it != strs.end()) {
                         ValueString = it.value();
                         break;
                     }
@@ -168,7 +170,7 @@ QString ThemeTemplate::parse(const QMap<QString, QString> &colors,
                 {
                     auto it = sizes.find(l);
                     if (it != sizes.end()) {
-                        ValueString = QString::number(toRealPixelSize(it.value()));
+                        ValueString = QString::number(toRealPixelSize(it.value(), dpi));
                         break;
                     }
                 }

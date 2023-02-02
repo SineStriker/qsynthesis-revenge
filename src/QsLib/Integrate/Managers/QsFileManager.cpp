@@ -119,7 +119,7 @@ QString QsFileManager::saveFile(const QString &title, const QString &filename,
                                 const QString &filter, const QString &flag, QWidget *parent) {
     Q_D(QsFileManager);
     QFileInfo info(filename);
-    if (info.isRelative() || !QsSys::isDirExist(info.absolutePath())) {
+    if (info.isRelative() || !QsFs::isDirExist(info.absolutePath())) {
         info.setFile(d->getLastOpenPath(flag) + Slash + info.fileName());
     }
     QString path =

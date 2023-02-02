@@ -11,7 +11,7 @@
 
 static const char Theme_Config_Key_Config[] = "config";
 static const char Theme_Config_Key_Sizes[] = "sizes";
-static const char Theme_Config_Key_Colors[] = "colors";
+static const char Theme_Config_Key_Strings[] = "strs";
 static const char Theme_Config_Key_Separator[] = ".";
 
 static const char Theme_Config_Key_Config_Priority[] = "priority";
@@ -69,11 +69,11 @@ bool ThemeConfig::loadOne(const QString &filename) {
         break;
     }
 
-    // Get colors
+    // Get strings
     {
         std::list<QPair<QStringList, QJsonObject>> stack;
         {
-            auto it = objDoc.find(Theme_Config_Key_Colors);
+            auto it = objDoc.find(Theme_Config_Key_Strings);
             if (it != objDoc.end() && it.value().isObject()) {
                 stack.push_back(qMakePair(QStringList(), it.value().toObject()));
             }
@@ -97,7 +97,7 @@ bool ThemeConfig::loadOne(const QString &filename) {
                     }
                     QString ns = newKeyStr.left(idx);
                     namespaces.insert(ns);
-                    colors[ns].insert(newKeyStr.mid(idx + 1), val.toString());
+                    strs[ns].insert(newKeyStr.mid(idx + 1), val.toString());
                 } else if (val.isObject()) {
                     stack.push_back(qMakePair(newKeys, it.value().toObject()));
                 }

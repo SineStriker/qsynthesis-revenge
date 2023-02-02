@@ -72,8 +72,8 @@ void QsCoreConfigPrivate::initByApp() {
          wrapDirInfo(KEY_NAME_TEMP_DIR, QString("${TEMP}") + Slash + qAppName(), "temp",
                      DirInitArgs::CreateIfNotExist, false)},
         {QsCoreConfig::AppShare, //
-         wrapDirInfo(KEY_NAME_SHARE_DIR, QString("${APPPATH}") + Slash + "share",
-                     "share", DirInitArgs::OnlyCheck, true)},
+         wrapDirInfo(KEY_NAME_SHARE_DIR, QString("${APPPATH}") + Slash + "share", "share",
+                     DirInitArgs::OnlyCheck, true)},
         {QsCoreConfig::QtPlugins, //
          wrapDirInfo(KEY_NAME_QT_PLUGINS_DIR, QString("${APPPATH}") + Slash + "plugins", "plugins",
                      DirInitArgs::OnlyCheck, true)},
@@ -165,18 +165,18 @@ bool QsCoreConfigPrivate::apply_helper() {
         QString path = info.dir;
         switch (args.level) {
             case DirInitArgs::CreateIfNotExist:
-                if (!QsSys::mkDir(path)) {
-                    QsSys::osMessageStderr(qIStup->errorTitle(),
-                                           QString("Failed to create %1 directory!")
-                                               .arg(QsSys::PathFindFileName(path)));
+                if (!QsFs::mkDir(path)) {
+                    QsOs::messageStderr(qIStup->errorTitle(),
+                                        QString("Failed to create %1 directory!")
+                                            .arg(QsFs::PathFindFileName(path)));
                     return false;
                 }
                 break;
             case DirInitArgs::ErrorIfNotExist:
-                if (!QsSys::isDirExist(path)) {
-                    QsSys::osMessageStderr(
+                if (!QsFs::isDirExist(path)) {
+                    QsOs::messageStderr(
                         qIStup->errorTitle(),
-                        QString("Failed to find %1 directory!").arg(QsSys::PathFindFileName(path)));
+                        QString("Failed to find %1 directory!").arg(QsFs::PathFindFileName(path)));
                     return false;
                 }
                 break;
@@ -278,4 +278,10 @@ void QsCoreConfigPrivate::setDefaultPluginName(int type, const QString &dir) {
 
 void QsCoreConfigPrivate::addInitializer(const std::function<void()> &fun) {
     this->initializers.append(fun);
+}
+
+void QsCoreConfigPrivate::initAll() {
+    for (const auto &fun : qAsConst(initializers)) {
+        fun();
+    }
 }

@@ -5,7 +5,7 @@
             "NativeWindow"
         ]
     },
-    "colors": {
+    "strs": {
         "NativeWindow": {
             "background": "transparent",
             "minButton": {

@@ -18,6 +18,7 @@ CDecreateDir::CDecreateDir(const QString &dir) : QsLocaleDir(dir) {
 }
 
 CDecreateDir::~CDecreateDir() {
+    unloadTheme();
 }
 
 bool CDecreateDir::load(const QString &filename) {
@@ -59,11 +60,15 @@ bool CDecreateDir::load(const QString &filename) {
 
         qIDec->addThemeConfig(key, paths);
         themeKey = key;
-        unloaders.append(std::bind(&CDecreateDir::unloadTheme, this));
         break;
     }
 
     return true;
+}
+
+void CDecreateDir::unload() {
+    QsLocaleDir::unload();
+    unloadTheme();
 }
 
 void CDecreateDir::unloadTheme() {

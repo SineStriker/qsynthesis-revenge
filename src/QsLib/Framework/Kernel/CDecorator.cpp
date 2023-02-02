@@ -31,7 +31,22 @@ void CDecorator::setTheme(const QString &theme) {
     }
     d->theme = theme;
 
+    // Invalid all
+    QSet<ThemeSubscriber *> subscribersToUpdate;
+    for (auto p : qAsConst(d->themeTemplates)) {
+        auto &tp = *p;
+        tp.invalidate();
+
+        // Notify related objects
+        for (const auto &sub : qAsConst(tp.subscribers)) {
+            subscribersToUpdate.insert(sub);
+        }
+    }
+
     // Notify all
+    for (const auto &sub : qAsConst(subscribersToUpdate)) {
+        sub->notifyAll();
+    }
 }
 
 void CDecorator::addThemeTemplate(const QString &key, const QString &path) {
@@ -55,10 +70,9 @@ void CDecorator::addThemeTemplate(const QString &key, const QString &path) {
         }
 
         const auto &keys = tp.configs.keys();
-        tp.dirtyThemeKeys = QSet<QString>(keys.begin(), keys.end());
-        tp.invalidate();
-
         if (keys.contains(d->theme)) {
+            tp.invalidate();
+
             // Notify related objects
             for (const auto &sub : qAsConst(tp.subscribers)) {
                 sub->notifyAll();
@@ -114,9 +128,11 @@ void CDecorator::removeThemeTemplate(const QString &key) {
     if (!tp.data.isNull()) {
         tp.data.clear();
 
-        // Notify related objects
-        for (const auto &sub : qAsConst(tp.subscribers)) {
-            sub->notifyAll();
+        if (tp.configs.contains(d->theme)) {
+            // Notify related objects
+            for (const auto &sub : qAsConst(tp.subscribers)) {
+                sub->notifyAll();
+            }
         }
     }
 
@@ -170,8 +186,7 @@ void CDecorator::addThemeConfig(const QString &key, const QMap<QString, QStringL
             auto it = map.insert(key, conf);
 
             // Dirty if first
-            if (it == map.begin()) {
-                tp.dirtyThemeKeys.insert(themeKey);
+            if (it == map.begin() && themeKey == d->theme) {
                 templatesToUpdate.insert(&tp);
             }
         };
@@ -196,15 +211,11 @@ void CDecorator::addThemeConfig(const QString &key, const QMap<QString, QStringL
     QSet<ThemeSubscriber *> subscribersToUpdate;
     for (auto p : qAsConst(templatesToUpdate)) {
         auto &tp = *p;
-
-        const auto &keys = tp.dirtyThemeKeys;
         tp.invalidate();
 
-        if (keys.contains(d->theme)) {
-            // Notify related objects
-            for (const auto &sub : qAsConst(tp.subscribers)) {
-                subscribersToUpdate.insert(sub);
-            }
+        // Notify related objects
+        for (const auto &sub : qAsConst(tp.subscribers)) {
+            subscribersToUpdate.insert(sub);
         }
     }
 
@@ -273,9 +284,8 @@ void CDecorator::removeThemeConfig(const QString &key) {
             if (tp.isEmpty()) {
                 delete it2.value();
                 d->themeTemplates.erase(it2);
-            } else if (beg) {
+            } else if (beg && themeKey == d->theme) {
                 // Dirty if first
-                tp.dirtyThemeKeys.insert(themeKey);
                 templatesToUpdate.insert(&tp);
             }
         }
@@ -286,15 +296,11 @@ void CDecorator::removeThemeConfig(const QString &key) {
     QSet<ThemeSubscriber *> subscribersToUpdate;
     for (auto p : qAsConst(templatesToUpdate)) {
         auto &tp = *p;
-
-        const auto &keys = tp.dirtyThemeKeys;
         tp.invalidate();
 
-        if (keys.contains(d->theme)) {
-            // Notify related objects
-            for (const auto &sub : qAsConst(tp.subscribers)) {
-                subscribersToUpdate.insert(sub);
-            }
+        // Notify related objects
+        for (const auto &sub : qAsConst(tp.subscribers)) {
+            subscribersToUpdate.insert(sub);
         }
     }
 
@@ -346,15 +352,11 @@ void CDecorator::installTheme(QWidget *w, const QStringList &templateKeys) {
     // Add to global set
     d->themeSubscribers.insert(w, ts);
 
-    // Add guard to group
-    auto tg = new ThemeGuard(w, this, d, ts);
-    ts->widgets.insert(w, tg);
+    // Add guard to group and notify
+    ts->addWidget(w);
 
     // Detect destruction
     connect(w, &QObject::destroyed, this, &CDecorator::_q_themeSubscriberDestroyed);
-
-    // Notify one forcefully
-    tg->updateScreen();
 }
 
 void CDecorator::uninstallTheme(QWidget *w) {
@@ -366,21 +368,15 @@ void CDecorator::uninstallTheme(QWidget *w) {
     }
 
     auto ts = it.value();
-    {
-        auto it1 = ts->widgets.find(w);
-        Q_ASSERT(it1 != ts->widgets.end());
 
-        // Remove guard from group
-        auto tg = it1.value();
-        delete tg;
-        ts->widgets.erase(it1);
+    // Remove guard from group
+    ts->removeWidget(w);
 
-        // Remove from global set
-        d->themeSubscribers.erase(it);
-    }
+    // Remove from global set
+    d->themeSubscribers.erase(it);
 
     // Remove group if no widgets
-    if (ts->widgets.isEmpty()) {
+    if (ts->isEmpty()) {
         auto keys = ts->templates.keys();
         auto keySet = QSet<QString>(keys.begin(), keys.end());
 
@@ -425,11 +421,17 @@ void CDecorator::_q_screenRemoved(QScreen *screen) {
 }
 
 void CDecorator::_q_deviceRatioChanged(double dpi) {
-    emit deviceRatioChanged(qobject_cast<QScreen *>(sender()), dpi);
+    Q_D(CDecorator);
+    auto screen = qobject_cast<QScreen *>(sender());
+    d->screenChange_helper(screen);
+    emit deviceRatioChanged(screen, dpi);
 }
 
 void CDecorator::_q_logicalRatioChanged(double dpi) {
-    emit logicalRatioChanged(qobject_cast<QScreen *>(sender()), dpi);
+    Q_D(CDecorator);
+    auto screen = qobject_cast<QScreen *>(sender());
+    d->screenChange_helper(screen);
+    emit logicalRatioChanged(screen, dpi);
 }
 
 void CDecorator::_q_themeSubscriberDestroyed() {

@@ -62,7 +62,7 @@ PianoWindow *WindowManager::newProject() {
 }
 
 PianoWindow *WindowManager::openProject(const QString &filename) {
-    if (!QsSys::isFileExist(filename)) {
+    if (!QsFs::isFileExist(filename)) {
         return nullptr;
     }
 

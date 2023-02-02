@@ -75,6 +75,10 @@ public:
 
 private:
     QList<std::function<void()>> initializers;
+
+    void initAll();
+
+    friend class QsCoreStartInfoPrivate;
 };
 
 #endif // QSCORECONFIG_P_H

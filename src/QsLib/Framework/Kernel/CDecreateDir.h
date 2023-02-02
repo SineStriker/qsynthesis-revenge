@@ -14,8 +14,9 @@ public:
     QString themeKey;
 
     bool load(const QString &filename) override;
+    void unload() override;
 
-private:
+protected:
     void unloadTheme();
 };
 

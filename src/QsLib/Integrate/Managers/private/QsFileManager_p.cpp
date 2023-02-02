@@ -110,12 +110,12 @@ QString QsFileManagerPrivate::getLastOpenPath(const QString &type) {
     if (it == lastOpenPaths.end()) {
         it = lastOpenPaths.insert(
             type, QStandardPaths::writableLocation(QStandardPaths::DesktopLocation));
-    } else if (!QsSys::isDirExist(it.value())) {
+    } else if (!QsFs::isDirExist(it.value())) {
         it.value() = QStandardPaths::writableLocation(QStandardPaths::DesktopLocation);
     }
     return it.value();
 }
 
 void QsFileManagerPrivate::saveLastOpenDir(const QString &type, const QString &path, bool upper) {
-    lastOpenPaths.insert(type, upper ? QsSys::PathFindDirPath(path) : path);
+    lastOpenPaths.insert(type, upper ? QsFs::PathFindDirPath(path) : path);
 }

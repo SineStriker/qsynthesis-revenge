@@ -86,7 +86,7 @@ QHash<QString, QString> QSimpleVarExp::SystemValues() {
         {"DOCUMENTS", QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation)},
         {"APPLICATIONS", QStandardPaths::writableLocation(QStandardPaths::ApplicationsLocation)},
         {"HOME", QStandardPaths::writableLocation(QStandardPaths::HomeLocation)},
-        {"APPDATA", QsSys::appDataPath()},
+        {"APPDATA", QsFs::appDataPath()},
         {"TEMP", QDir::tempPath()},
         {"ROOT", QDir::rootPath()},
         {"APPPATH", qApp->applicationDirPath()},

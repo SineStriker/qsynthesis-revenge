@@ -21,7 +21,7 @@ bool QsCoreConfig::load(const QString &filename) {
     bool res = true;
     if (!d->load_helper(filename)) {
         qDebug() << QString("load_config: configuration file %1 not found.")
-                        .arg(QsSys::PathFindFileName(filename));
+                        .arg(QsFs::PathFindFileName(filename));
         res = false;
     }
     return res;
@@ -65,16 +65,4 @@ QsCoreConfig::QsCoreConfig(QsCoreConfigPrivate &d) : d_ptr(&d) {
 
     d.q_ptr = this;
     d.init();
-}
-
-void QsCoreConfig::initAll() {
-    if (hasInit) {
-        return;
-    }
-    hasInit = true;
-
-    Q_D(QsCoreConfig);
-    for (const auto &fun : qAsConst(d->initializers)) {
-        fun();
-    }
 }

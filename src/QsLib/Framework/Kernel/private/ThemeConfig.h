@@ -14,7 +14,7 @@ public:
 
 public:
     // Variables -> namespace - values
-    QMap<QString, QMap<QString, QString>> colors;
+    QMap<QString, QMap<QString, QString>> strs;
     QMap<QString, QMap<QString, int>> sizes;
 
     QSet<QString> namespaces;

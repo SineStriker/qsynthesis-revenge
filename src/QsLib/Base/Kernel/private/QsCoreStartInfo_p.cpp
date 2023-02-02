@@ -1,5 +1,6 @@
 #include "QsCoreStartInfo_p.h"
 
+#include "QsCoreConfig_p.h"
 #include "QsSystem.h"
 #include "private/QsNamespace_p.h"
 
@@ -36,7 +37,7 @@ void QsCoreStartInfoPrivate::parse_helper() {
     // Load or generate distconfig
     QString configPath = qApp->applicationDirPath() + Slash + GetAppConfig();
     coreConfig = q->creatDistConfig();
-    coreConfig->initAll();
+    coreConfig->d_func()->initAll();
     coreConfig->load(configPath);
 
     // Install QsBase translation
@@ -56,18 +57,18 @@ void QsCoreStartInfoPrivate::parse_helper() {
     parser.process(*qApp);
 
     // Root privilege detection
-    if (QsSys::isUserRoot() && !parser.isSet(option_allowRoot)) {
+    if (QsOs::isUserRoot() && !parser.isSet(option_allowRoot)) {
         QString msg = QCoreApplication::tr("You're trying to start %1 as the %2, which may cause "
                                            "security problem and isn't recommended.")
-                          .arg(qAppName(), QsSys::osRootUserName());
-        QsSys::osMessageStderr(qIStup->mainTitle(), msg);
-        QsSys::exitApp(0);
+                          .arg(qAppName(), QsOs::rootUserName());
+        QsOs::messageStderr(qIStup->mainTitle(), msg);
+        QsFs::exitApp(0);
     }
 
     // Reset configuration, exit
     if (parser.isSet(option_resetConfig)) {
         coreConfig->saveDefault(configPath);
-        QsSys::exitApp(0);
+        QsFs::exitApp(0);
     }
 
     // Init Single Structures

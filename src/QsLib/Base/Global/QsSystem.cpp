@@ -15,7 +15,7 @@
 
 static const char Slash = '/';
 
-QString QsSys::PathFindFileName(const QString &path) {
+QString QsFs::PathFindFileName(const QString &path) {
     QFileInfo info(path);
     if (info.isRoot()) {
         return path;
@@ -23,7 +23,7 @@ QString QsSys::PathFindFileName(const QString &path) {
     return info.fileName();
 }
 
-QString QsSys::PathFindNextDir(const QString &path, const QString &dir) {
+QString QsFs::PathFindNextDir(const QString &path, const QString &dir) {
     if (!path.startsWith(dir)) {
         return "";
     }
@@ -39,7 +39,7 @@ QString QsSys::PathFindNextDir(const QString &path, const QString &dir) {
 }
 
 
-bool QsSys::combine(const QString &fileName1, const QString &fileName2, const QString &newName) {
+bool QsFs::combine(const QString &fileName1, const QString &fileName2, const QString &newName) {
     QFile file1(fileName1);
     QFile file2(fileName2);
     QFile file3(newName);
@@ -63,7 +63,7 @@ bool QsSys::combine(const QString &fileName1, const QString &fileName2, const QS
     return true;
 }
 
-void QsSys::reveal(const QString &filename) {
+void QsFs::reveal(const QString &filename) {
     QFileInfo info(filename);
 #if defined(Q_OS_WINDOWS)
     if (info.isFile()) {
@@ -105,7 +105,7 @@ void QsSys::reveal(const QString &filename) {
 #endif
 }
 
-int QsSys::rmPreStr(const QString &dirname, const QString &prefix) {
+int QsFs::rmPreStr(const QString &dirname, const QString &prefix) {
     if (!isDirExist(dirname)) {
         return 0;
     }
@@ -126,7 +126,7 @@ int QsSys::rmPreStr(const QString &dirname, const QString &prefix) {
     return cnt;
 }
 
-int QsSys::rmPreNum(const QString &dirname, int prefix) {
+int QsFs::rmPreNum(const QString &dirname, int prefix) {
     if (!isDirExist(dirname)) {
         return 0;
     }
@@ -151,7 +151,7 @@ int QsSys::rmPreNum(const QString &dirname, int prefix) {
     return cnt;
 }
 
-QString QsSys::removeTailSlashes(const QString &dirname) {
+QString QsFs::removeTailSlashes(const QString &dirname) {
     QString path = dirname;
     while (!path.isEmpty() && (path.endsWith('/') || path.endsWith('\\'))) {
         path = path.mid(0, path.size() - 1);
@@ -159,11 +159,11 @@ QString QsSys::removeTailSlashes(const QString &dirname) {
     return path;
 }
 
-QString QsSys::appPath() {
+QString QsFs::appPath() {
     return qApp->applicationDirPath();
 }
 
-QString QsSys::appDataPath() {
+QString QsFs::appDataPath() {
     QString path;
 #ifdef Q_OS_WINDOWS
     path = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation);
@@ -179,7 +179,7 @@ QString QsSys::appDataPath() {
     return path;
 }
 
-QStringList QsSys::FindRecursiveDirs(const QString &base, int max) {
+QStringList QsFs::FindRecursiveDirs(const QString &base, int max) {
     QDir dir(base);
     dir.setFilter(QDir::Dirs | QDir::NoDotAndDotDot);
 
@@ -202,11 +202,40 @@ QStringList QsSys::FindRecursiveDirs(const QString &base, int max) {
     return res;
 }
 
-void QsSys::exitApp(int code) {
+void QsFs::exitApp(int code) {
     ::exit(code);
 }
 
-bool QsSys::isUserRoot() {
+QString QsFs::invalidFileNameChars() {
+    QChar ch[] = {'\"',      '<',       '>',       '|',       '\0',      (char) 1,  (char) 2,
+                  (char) 3,  (char) 4,  (char) 5,  (char) 6,  (char) 7,  (char) 8,  (char) 9,
+                  (char) 10, (char) 11, (char) 12, (char) 13, (char) 14, (char) 15, (char) 16,
+                  (char) 17, (char) 18, (char) 19, (char) 20, (char) 21, (char) 22, (char) 23,
+                  (char) 24, (char) 25, (char) 26, (char) 27, (char) 28, (char) 29, (char) 30,
+                  (char) 31, ':',       '*',       '?',       '\\',      '/'};
+    return QString(ch, sizeof(ch));
+}
+
+void QsOs::messageStderr(const QString &title, const QString &text) {
+#ifdef Q_OS_WINDOWS
+    ::MessageBoxW(0, text.toStdWString().data(), title.toStdWString().data(),
+                  MB_OK | MB_TOPMOST | MB_SETFOREGROUND | MB_ICONWARNING);
+#elif Q_OS_LINUX
+    fputs(qPrintable(msg), stdout);
+#else
+    fputs(qPrintable(msg), stdout);
+#endif
+}
+
+int QsOs::unitDpi() {
+#ifdef Q_OS_MACOS
+    return 72;
+#else
+    return 96;
+#endif
+}
+
+bool QsOs::isUserRoot() {
     //    QString name = qgetenv("USER");
     //    if (name.isEmpty())
     //        name = qgetenv("USERNAME");
@@ -218,36 +247,7 @@ bool QsSys::isUserRoot() {
 #endif
 }
 
-QString QsSys::invalidFileNameChars() {
-    QChar ch[] = {'\"',      '<',       '>',       '|',       '\0',      (char) 1,  (char) 2,
-                  (char) 3,  (char) 4,  (char) 5,  (char) 6,  (char) 7,  (char) 8,  (char) 9,
-                  (char) 10, (char) 11, (char) 12, (char) 13, (char) 14, (char) 15, (char) 16,
-                  (char) 17, (char) 18, (char) 19, (char) 20, (char) 21, (char) 22, (char) 23,
-                  (char) 24, (char) 25, (char) 26, (char) 27, (char) 28, (char) 29, (char) 30,
-                  (char) 31, ':',       '*',       '?',       '\\',      '/'};
-    return QString(ch, sizeof(ch));
-}
-
-void QsSys::osMessageStderr(const QString &title, const QString &text) {
-#ifdef Q_OS_WINDOWS
-    ::MessageBoxW(0, text.toStdWString().data(), title.toStdWString().data(),
-                  MB_OK | MB_TOPMOST | MB_SETFOREGROUND | MB_ICONWARNING);
-#elif Q_OS_LINUX
-    fputs(qPrintable(msg), stdout);
-#else
-    fputs(qPrintable(msg), stdout);
-#endif
-}
-
-int QsSys::osUnitDpi() {
-#ifdef Q_OS_MACOS
-    return 72;
-#else
-    return 96;
-#endif
-}
-
-QString QsSys::osFileManagerName() {
+QString QsOs::fileManagerName() {
 #ifdef Q_OS_WINDOWS
     return QCoreApplication::tr("Explorer");
 #elif defined(Q_OS_MAC)
@@ -257,7 +257,7 @@ QString QsSys::osFileManagerName() {
 #endif
 }
 
-QString QsSys::osRootUserName() {
+QString QsOs::rootUserName() {
 #if defined(Q_OS_WINDOWS)
     return QCoreApplication::tr("Administrator");
 #else
@@ -265,7 +265,7 @@ QString QsSys::osRootUserName() {
 #endif
 }
 
-QString QsSys::osAllFilesFilter() {
+QString QsOs::allFilesFilter() {
 #if defined(Q_OS_WINDOWS)
     return "*.*";
 #else

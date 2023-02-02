@@ -68,8 +68,8 @@ protected:
 
     QScopedPointer<QsCoreConfigPrivate> d_ptr;
 
-public:
-    void initAll(); // Call by QsApplication at constructor, don't call manually
+    friend class QsCoreStartInfo;
+    friend class QsCoreStartInfoPrivate;;
 };
 
 #endif // QSCORECONFIG_H

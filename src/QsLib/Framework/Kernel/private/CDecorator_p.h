@@ -19,14 +19,29 @@
 class ThemeGuard;
 struct ThemePlaceholder;
 
-struct ThemeSubscriber {
+struct ScreenSet {
     bool dirty;
+    QScreen *screen;
+    QHash<QWidget *, ThemeGuard *> widgets;
 
+    ScreenSet(QScreen *screen);
+};
+
+struct ThemeSubscriber {
+    QHash<QScreen *, ScreenSet *> screens;
     QHash<QWidget *, ThemeGuard *> widgets;
     QHash<QString, ThemePlaceholder *> templates;
 
     ThemeSubscriber();
     void notifyAll();
+
+    void installScreen(ThemeGuard *tg);
+    void uninstallScreen(ThemeGuard *tg);
+    void switchScreen(ThemeGuard *tg);
+
+    bool isEmpty() const;
+    void addWidget(QWidget *w);
+    void removeWidget(QWidget *w);
 };
 
 struct ThemePlaceholder {
@@ -42,11 +57,11 @@ struct ThemePlaceholder {
     QSharedPointer<ThemeTemplate> data;
 
     // Incremental update
-    QSet<QString> dirtyThemeKeys;
-    QHash<QString, QString> stylesheetCaches;
+    QHash<QScreen *, QString> stylesheetCaches;
 
     bool isEmpty() const;
     void invalidate();
+    QString getAndCache(QScreen *screen);
 };
 
 struct ThemeConfigPack {
@@ -62,6 +77,8 @@ public:
 
     void init();
 
+    void screenChange_helper(QScreen *screen);
+
     // Theme related
     QString theme;
     QHash<QString, int> themeNames;                                // themeKey - refCount
@@ -69,6 +86,9 @@ public:
     QHash<QString, ThemePlaceholder *> themeTemplates;             // templateKey
     QHash<QSet<QString>, ThemeSubscriber *> themeSubscriberGroups; // templateKeys
     QHash<QWidget *, ThemeSubscriber *> themeSubscribers;          // w
+
+    // Internal use
+    static CDecoratorPrivate *self;
 };
 
 #endif // CDECORATORPRIVATE_H

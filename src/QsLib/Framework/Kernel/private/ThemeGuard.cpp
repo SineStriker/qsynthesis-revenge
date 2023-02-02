@@ -5,13 +5,10 @@
 #include <QEvent>
 #include <QWindow>
 
-ThemeGuard::ThemeGuard(QWidget *w, CDecorator *dec, CDecoratorPrivate *decp, ThemeSubscriber *g)
-    : QObject(dec), dec(dec), decp(decp), w(w), needUpdate(false), group(g) {
+ThemeGuard::ThemeGuard(QWidget *w, ThemeSubscriber *g)
+    : QObject(qIDec), w(w), needUpdate(false), group(g), screenSet(nullptr) {
     winHandle = w->windowHandle();
     w->installEventFilter(this);
-
-    connect(dec, &CDecorator::deviceRatioChanged, this, &ThemeGuard::_q_deviceRatioChanged);
-    connect(dec, &CDecorator::logicalRatioChanged, this, &ThemeGuard::_q_logicalRatioChanged);
 }
 
 ThemeGuard::~ThemeGuard() {
@@ -23,27 +20,25 @@ void ThemeGuard::updateScreen() {
         return;
     }
 
-    if (!group->dirty) {
-        auto it = group->widgets.begin();
-        while (it.value() == this) {
+    if (!screenSet->dirty) {
+        const auto &ws = screenSet->widgets;
+        auto it = ws.begin();
+        while (it != ws.end() && it.value() == this) {
             it++;
         }
-        w->setStyle(it.key()->style());
-        return;
+        if (it != ws.end()) {
+            w->setStyle(it.key()->style());
+            return;
+        }
     }
-    group->dirty = false;
+    screenSet->dirty = false;
 
     QString stylesheet;
-    for (const auto &ref : qAsConst(group->templates)) {
-        if (ref->data.isNull()) {
+    for (const auto &tp : qAsConst(group->templates)) {
+        if (tp->data.isNull()) {
             continue;
         }
-        auto it = ref->stylesheetCaches.find(decp->theme);
-        if (it == ref->stylesheetCaches.end()) {
-            continue;
-        }
-
-        const QString &s = it.value();
+        const QString &s = tp->getAndCache(screenSet->screen);
         if (s.isEmpty()) {
             continue;
         }
@@ -77,17 +72,6 @@ bool ThemeGuard::eventFilter(QObject *obj, QEvent *event) {
 }
 
 void ThemeGuard::_q_screenChanged(QScreen *screen) {
+    group->switchScreen(this);
     updateScreen();
-}
-
-void ThemeGuard::_q_deviceRatioChanged(QScreen *screen, double dpi) {
-    if (screen == w->screen()) {
-        updateScreen();
-    }
-}
-
-void ThemeGuard::_q_logicalRatioChanged(QScreen *screen, double dpi) {
-    if (screen == w->screen()) {
-        updateScreen();
-    }
 }
