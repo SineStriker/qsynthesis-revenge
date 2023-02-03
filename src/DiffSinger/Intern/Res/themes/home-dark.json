@@ -1,9 +1,7 @@
 {
     "config": {
         "priority": 1,
-        "namespaces": [
-            "HomeWindow"
-        ]
+        "ratio": 0.8
     },
     "strs": {
         "HomeWindow": {
@@ -11,12 +9,28 @@
             "background": "#1E1E1E",
             "windowIcon": {
                 "foreground": "transparent"
+            },
+            "nav": {
+                "background": "#252526"
+            },
+            "main": {
+                "background": "transparent"
             }
         }
     },
     "sizes": {
         "HomeWindow": {
-            "font.size": 15
+            "font.size": 15,
+            "nav": {
+                "padding": [
+                    20
+                ]
+            },
+            "main": {
+                "padding": [
+                    20
+                ]
+            }
         }
     }
 }

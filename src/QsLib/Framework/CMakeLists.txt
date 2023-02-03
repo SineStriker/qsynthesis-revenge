@@ -3,7 +3,7 @@ project(QsFramework
     LANGUAGES CXX
 )
 
-set(_dirs Api Global Kernel Widgets)
+set(_dirs Api Editor Global Kernel Widgets)
 set(_extra_includes
     Widgets/Custom
     Widgets/Extended

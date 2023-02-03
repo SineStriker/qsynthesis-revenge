@@ -1,9 +1,7 @@
 {
     "config": {
         "priority": 10,
-        "namespaces": [
-            "NativeWindow"
-        ]
+        "ratio": 0.8
     },
     "strs": {
         "NativeWindow": {
@@ -58,7 +56,7 @@
     "sizes": {
         "NativeWindow": {
             "titleMargin": 20,
-            "minHeight": 40,
+            "minHeight": 36,
             "minButton": {
                 "icon.size": [
                     12,

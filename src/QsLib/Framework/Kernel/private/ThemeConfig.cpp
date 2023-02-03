@@ -15,9 +15,11 @@ static const char Theme_Config_Key_Strings[] = "strs";
 static const char Theme_Config_Key_Separator[] = ".";
 
 static const char Theme_Config_Key_Config_Priority[] = "priority";
+static const char Theme_Config_Key_Config_Ratio[] = "ratio";
 
 ThemeConfig::ThemeConfig() {
     priority = 1;
+    ratio = 1;
 }
 
 ThemeConfig::~ThemeConfig() {
@@ -66,6 +68,12 @@ bool ThemeConfig::loadOne(const QString &filename) {
         if (it != objDoc.end() && it.value().isDouble()) {
             priority = it.value().toDouble();
         }
+
+        it = obj.find(Theme_Config_Key_Config_Ratio);
+        if (it != objDoc.end() && it.value().isDouble()) {
+            ratio = it.value().toDouble();
+        }
+
         break;
     }
 
@@ -134,14 +142,14 @@ bool ThemeConfig::loadOne(const QString &filename) {
                     QString ns = newKeyStr.left(idx);
                     namespaces.insert(ns);
 
-                    QList<int> digits;
+                    QList<double> digits;
                     if (val.isDouble()) {
-                        digits.append(val.toInt());
+                        digits.append(val.toDouble() * ratio);
                     } else {
                         QJsonArray arr = val.toArray();
                         for (const auto &item : qAsConst(arr)) {
                             if (item.isDouble()) {
-                                digits.append(item.toInt());
+                                digits.append(item.toDouble() * ratio);
                             }
                         }
                     }

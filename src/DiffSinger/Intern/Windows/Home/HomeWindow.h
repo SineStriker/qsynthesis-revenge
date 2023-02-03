@@ -12,6 +12,8 @@ public:
     HomeWindow(QWidget *parent = nullptr);
     ~HomeWindow();
 
+    void reloadStrings();
+
 protected:
     HomeWindow(HomeWindowPrivate &d, QWidget *parent = nullptr);
 };

@@ -130,7 +130,7 @@ QString ThemePlaceholder::getAndCache(QScreen *screen) {
     }
 
     QMap<QString, QString> strs;
-    QMap<QString, QList<int>> sizes;
+    QMap<QString, QList<double>> sizes;
 
     auto &map0 = it.value().data;
 #if !ENABLE_PARTIAL_OVERRIDE

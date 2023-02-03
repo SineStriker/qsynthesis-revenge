@@ -1,9 +1,7 @@
 {
     "config": {
         "priority": 1,
-        "namespaces": [
-            "NativeWindow"
-        ]
+        "ratio": 0.8
     },
     "strs": {
         "NativeWindow": {

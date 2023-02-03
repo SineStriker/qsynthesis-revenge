@@ -15,11 +15,12 @@ public:
 public:
     // Variables -> namespace - values
     QMap<QString, QMap<QString, QString>> strs;
-    QMap<QString, QMap<QString, QList<int>>> sizes;
+    QMap<QString, QMap<QString, QList<double>>> sizes;
 
     QSet<QString> namespaces;
 
     int priority; // The lower the prior
+    double ratio;
 
     bool load(const QStringList &filenames);
 

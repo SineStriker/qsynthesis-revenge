@@ -1,9 +1,7 @@
 {
     "config": {
         "priority": 1,
-        "namespaces": [
-            "PianoWindow"
-        ]
+        "ratio": 0.8
     },
     "strs": {},
     "sizes": {}

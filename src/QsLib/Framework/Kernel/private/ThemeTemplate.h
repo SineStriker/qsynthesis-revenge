@@ -21,7 +21,7 @@ public:
 
     bool load(const QString &filename);
 
-    QString parse(const QMap<QString, QString> &strs, const QMap<QString, QList<int>> &sizes,
+    QString parse(const QMap<QString, QString> &strs, const QMap<QString, QList<double>> &sizes,
                   double dpi) const;
 };
 

@@ -3,6 +3,7 @@
 
 #include <QAbstractButton>
 #include <QFrame>
+#include <QSplitter>
 
 #include "QsFrameworkGlobal.h"
 
@@ -21,6 +22,8 @@ public:
     QWidget *bottomWidget() const;
     void setBottomWidget(QWidget *w);
     QWidget *takeBottomWidget();
+
+    QSplitter *splitter()const;
 
     /**
      * @brief Button which will control the widget visibility, set text or icon after call

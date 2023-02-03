@@ -20,3 +20,43 @@ CWindowBarV2>CToolButton#icon-button {
 HomeWindow {
     background-color: "{{background|str}}";
 }
+
+CNavFrame#home-frame>QSplitter::handle {
+    width: 0;
+}
+
+CNavFrame#home-frame>QSplitter>QFrame#left-frame {
+    background-color: "{{nav.background|str}}";
+    padding: "{{nav.padding|size}}";
+}
+
+CNavFrame#home-frame>QSplitter>QFrame#right-frame {
+    background-color: "{{main.background|str}}";
+    padding: "{{main.padding|size}}";
+}
+
+CTabButton[type=home-nav-button] {
+    background-color: transparent;
+    border: none;
+    padding: 10px;
+    color: white;
+    text-align: left;
+}
+
+CTabButton[type=home-nav-button]:hover {
+    background-color: rgba(255, 255, 255, 15%);
+}
+
+CTabButton#home-about-button {
+    qproperty-iconUp: svg(":/svg/home/info.svg", #FFFFFF);
+    qproperty-spaceRatio: 0.2;
+    background-color: transparent;
+    border: none;
+    padding: 20px;
+    color: white;
+    text-align: left;
+}
+
+CTabButton#home-about-button:hover {
+    background-color: rgba(255, 255, 255, 15%);
+}

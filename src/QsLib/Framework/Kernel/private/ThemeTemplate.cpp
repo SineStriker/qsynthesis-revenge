@@ -27,8 +27,8 @@ static QString removeSideQuote(QString token) {
     return token;
 }
 
-static int toRealPixelSize(int size, double dpi) {
-    return double(size) * dpi / QsOs::unitDpi() * 0.8;
+static int toRealPixelSize(double size, double dpi) {
+    return qRound(size * dpi / QsOs::unitDpi());
 }
 
 ThemeTemplate::ThemeTemplate() {
@@ -124,7 +124,7 @@ bool ThemeTemplate::load(const QString &filename) {
 }
 
 QString ThemeTemplate::parse(const QMap<QString, QString> &strs,
-                             const QMap<QString, QList<int>> &sizes, double dpi) const {
+                             const QMap<QString, QList<double>> &sizes, double dpi) const {
     QRegularExpression re(pattern);
     QRegularExpressionMatch match;
     int index = 0;
@@ -154,9 +154,9 @@ QString ThemeTemplate::parse(const QMap<QString, QString> &strs,
                 auto it = sizes.find(l);
                 if (it != sizes.end()) {
                     ValueString =
-                        QsLinq::Select<int, QString>(
+                        QsLinq::Select<double, QString>(
                             it.value(), //
-                            [&](int digit) -> QString {
+                            [&](double digit) -> QString {
                                 return QString::number(toRealPixelSize(digit, dpi)) + "px";
                             })
                             .join(' ');
@@ -178,9 +178,9 @@ QString ThemeTemplate::parse(const QMap<QString, QString> &strs,
                     auto it = sizes.find(l);
                     if (it != sizes.end()) {
                         ValueString =
-                            QsLinq::Select<int, QString>(
+                            QsLinq::Select<double, QString>(
                                 it.value(), //
-                                [&](int digit) -> QString {
+                                [&](double digit) -> QString {
                                     return QString::number(toRealPixelSize(digit, dpi)) + "px";
                                 })
                                 .join(' ');

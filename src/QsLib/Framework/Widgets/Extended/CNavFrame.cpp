@@ -2,8 +2,10 @@
 
 #include <QButtonGroup>
 #include <QHBoxLayout>
-#include <QPushButton>
+#include <QSplitter>
 #include <QStackedLayout>
+
+#include "CTabButton.h"
 
 class CNavFramePrivate {
 public:
@@ -17,6 +19,12 @@ public:
     QWidget *bottomWidget;
 
     QStackedLayout *stack;
+
+    QFrame *leftFrame;
+    QFrame *rightFrame;
+
+    QSplitter *splitter;
+
     QButtonGroup *btnGroup;
 };
 
@@ -24,12 +32,10 @@ CNavFrame::CNavFrame(QWidget *parent) : QFrame(parent), d_ptr(new CNavFramePriva
     auto &d = *d_ptr.data();
     d.q_ptr = this;
 
-    // Sub layouts
+    // Left
     d.buttonLayout = new QVBoxLayout();
     d.buttonLayout->setMargin(0);
     d.buttonLayout->setSpacing(0);
-
-    d.stack = new QStackedLayout();
 
     d.leftLayout = new QVBoxLayout();
     d.leftLayout->setMargin(0);
@@ -38,14 +44,30 @@ CNavFrame::CNavFrame(QWidget *parent) : QFrame(parent), d_ptr(new CNavFramePriva
     d.leftLayout->addLayout(d.buttonLayout);
     d.leftLayout->addStretch();
 
-    // Main layout
+    d.leftFrame = new QFrame();
+    d.leftFrame->setObjectName("left-frame");
+    d.leftFrame->setLayout(d.leftLayout);
+
+    // Right
+    d.stack = new QStackedLayout();
+    d.stack->setMargin(0);
+
+    d.rightFrame = new QFrame();
+    d.rightFrame->setObjectName("right-frame");
+    d.rightFrame->setLayout(d.stack);
+
+    // Main
+    d.splitter = new QSplitter();
+    d.splitter->setObjectName("splitter");
+    d.splitter->setChildrenCollapsible(false);
+    d.splitter->addWidget(d.leftFrame);
+    d.splitter->addWidget(d.rightFrame);
+
     d.layout = new QHBoxLayout();
     d.layout->setMargin(0);
     d.layout->setSpacing(0);
 
-    d.layout->addLayout(d.leftLayout);
-    d.layout->addLayout(d.stack);
-
+    d.layout->addWidget(d.splitter);
     setLayout(d.layout);
 
     d.btnGroup = new QButtonGroup(this);
@@ -107,6 +129,10 @@ QWidget *CNavFrame::takeBottomWidget() {
     return w;
 }
 
+QSplitter *CNavFrame::splitter() const {
+    return d_ptr->splitter;
+}
+
 QAbstractButton *CNavFrame::addWidget(QWidget *w) {
     return insertWidget(count(), w);
 }
@@ -117,7 +143,7 @@ QAbstractButton *CNavFrame::insertWidget(int index, QWidget *w) {
     auto &d = *d_ptr.data();
 
     // New button
-    auto btn = new QPushButton();
+    auto btn = new CTabButton();
     btn->setCheckable(true);
     d.btnGroup->addButton(btn);
 
