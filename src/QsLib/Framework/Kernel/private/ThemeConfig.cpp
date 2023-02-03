@@ -102,11 +102,14 @@ bool ThemeConfig::loadOne(const QString &filename) {
                     stack.push_back(qMakePair(newKeys, it.value().toObject()));
                     continue;
                 }
-                QString newKeyStr = newKeys.join(Theme_Config_Key_Separator);
+
+                QString newKeyStr =
+                    (newKeys.back().isEmpty() ? keys : newKeys).join(Theme_Config_Key_Separator);
                 int idx = newKeyStr.indexOf(Theme_Config_Key_Separator);
                 if (idx <= 0 || idx == newKeyStr.size() - 1) {
                     continue;
                 }
+
                 QString ns = newKeyStr.left(idx);
                 namespaces.insert(ns);
                 values[ns].insert(newKeyStr.mid(idx + 1), Value{ratio, val});

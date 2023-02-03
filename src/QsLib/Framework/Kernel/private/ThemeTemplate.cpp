@@ -113,7 +113,8 @@ static QString ValueToString(const ThemeConfig::Value &val, const Arguments &arg
     if (args.hint == Theme_Variable_Hint_Size) {
         res = extractNumListValue(jsonVal, //
                                   [&](double digit) {
-                                      return toPixelStr(toRealPixelSize(digit, args.dpi * val.ratio)); //
+                                      return toPixelStr(
+                                          toRealPixelSize(digit, args.dpi * val.ratio)); //
                                   });
     } else if (args.hint == Theme_Variable_Hint_Num) {
         res = extractNumListValue(jsonVal, //

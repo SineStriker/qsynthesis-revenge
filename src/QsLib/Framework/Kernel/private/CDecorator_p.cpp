@@ -167,7 +167,7 @@ QString ThemePlaceholder::getAndCache(QScreen *screen) {
 
     QString stylesheet = data->parse(values, screen->logicalDotsPerInch());
     stylesheetCaches[screen] = stylesheet;
-    // qDebug().noquote() << stylesheet;
+     qDebug().noquote() << stylesheet;
     return stylesheet;
 }
 

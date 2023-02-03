@@ -1,6 +1,6 @@
 {
     "config": {
-        "priority": 1,
+        "priority": 5,
         "ratio": 0.8
     },
     "values": {
@@ -15,7 +15,33 @@
                 "background": "#252526",
                 "padding": [
                     20
-                ]
+                ],
+                "bottomButton": {
+                    "icon": {
+                        "up": "#FFFFFF",
+                        "size": [
+                            20,
+                            20
+                        ]
+                    },
+                    "color": {
+                        "up": "#FFFFFF"
+                    },
+                    "spacing": 0.2,
+                    "background": {
+                        "up": "transparent",
+                        "over": "rgba(255, 255, 255, 15%)"
+                    },
+                    "border": {
+                        "size": {
+                            "up": 2
+                        },
+                        "color": {
+                            "up": "transparent"
+                        }
+                    },
+                    "padding": 20
+                }
             },
             "main": {
                 "background": "transparent",

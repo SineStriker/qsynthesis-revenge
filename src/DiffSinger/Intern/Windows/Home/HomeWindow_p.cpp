@@ -32,6 +32,7 @@ void HomeWindowPrivate::init() {
     recoverButton->setObjectName("home-recover-button");
 
     aboutButton = new CTabButton();
+    aboutButton->setProperty("type", "home-bottom-button");
     aboutButton->setObjectName("home-about-button");
     frame->setBottomWidget(aboutButton);
 

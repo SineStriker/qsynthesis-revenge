@@ -3,10 +3,6 @@
 
 #include "CDecorator.h"
 
-static const char KEY_NAME_THEMES[] = "themes";
-
-static const char Slash = '/';
-
 CDecorateDir::CDecorateDir() : CDecorateDir(*new CDecorateDirPrivate()) {
 }
 

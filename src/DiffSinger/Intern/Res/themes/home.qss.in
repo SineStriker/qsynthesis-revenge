@@ -47,16 +47,31 @@ CTabButton[type=home-nav-button]:hover {
     background-color: rgba(255, 255, 255, 15%);
 }
 
-CTabButton#home-about-button {
-    qproperty-iconUp: svg(":/svg/home/info.svg", #FFFFFF);
-    qproperty-spaceRatio: 0.2;
-    background-color: transparent;
-    border: none;
-    padding: 20px;
-    color: white;
-    text-align: left;
+CTabButton[type=home-bottom-button] {
+    qproperty-iconUp: svg(":/svg/home/info.svg", "{{nav.bottomButton.icon.up|str}}");
+    qproperty-iconOver: svg(":/svg/home/info.svg", "{{nav.bottomButton.icon.over|str}}");
+    qproperty-iconDown: svg(":/svg/home/info.svg", "{{nav.bottomButton.icon.down|str}}");
+    qproperty-iconSize: "{{nav.bottomButton.icon.size|size}}";
+    qproperty-spaceRatio: "{{nav.bottomButton.spacing|num|0.2}}";
+    background-color: "{{nav.bottomButton.background.up|str}}";
+    border-color: "{{nav.bottomButton.border.color.up|str}}";
+    color: "{{nav.bottomButton.color.up|str}}";
+    border: "{{nav.bottomButton.border.size.up|size}}";
+    padding: "{{nav.bottomButton.padding|size|0}}";
+    margin: "{{nav.bottomButton.margin|size|0}}";
+    text-align: "{{nav.bottomButton.color|str|left}}";
 }
 
-CTabButton#home-about-button:hover {
-    background-color: rgba(255, 255, 255, 15%);
+CTabButton[type=home-bottom-button]:hover {
+    background-color: "{{nav.bottomButton.background.over|str}}";
+    border-color: "{{nav.bottomButton.border.color.over|str}}";
+    color: "{{nav.bottomButton.color.over|str}}";
+    border: "{{nav.bottomButton.border.size.over|size}}";
+}
+
+CTabButton[type=home-bottom-button]:pressed {
+    background-color: "{{nav.bottomButton.background.down|str}}";
+    border-color: "{{nav.bottomButton.border.color.down|str}}";
+    color: "{{nav.bottomButton.color.down|str}}";
+    border: "{{nav.bottomButton.border.size.down|size}}";
 }

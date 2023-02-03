@@ -1,6 +1,7 @@
 #include "QSvgUri.h"
 #include "private/QMetaTypeUtils.h"
 
+#include "QsSystem.h"
 #include "private/CSvgIconEngine.h"
 
 #include <QFileInfo>
@@ -85,11 +86,16 @@ QSvgUri QSvgUri::fromStringList(const QStringList &stringList) {
         if (!content.isEmpty()) {
             QString strFile = content.front();
             strFile = strFile.replace("\"", "").simplified();
-
+            if (!QsFs::isFileExist(strFile)) {
+                return QSvgUri();
+            }
             QSvgUri uri;
             uri.setFilename(strFile);
             if (content.size() > 1) {
                 QString strData = content.at(1).simplified();
+                if (strData.isEmpty()) {
+                    return QSvgUri();
+                }
                 QLatin1String prefix(QCssCustomValue_Svg_CurrentColor_Prefix);
                 if (strData.startsWith(prefix, Qt::CaseInsensitive)) {
                     strData.remove(0, prefix.size());

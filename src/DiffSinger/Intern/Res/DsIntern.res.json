@@ -23,7 +23,7 @@
     "themes": [
         {
             "key": "${PARENT}",
-            "dir": "${FILEPATH}/${PARENT}.res/themes",
+            "dir": "${FILEPATH}/${CURRENT_KEY}.res/themes",
             "files": {
                 "Zhibin - Dark": [
                     "home-dark.json",
