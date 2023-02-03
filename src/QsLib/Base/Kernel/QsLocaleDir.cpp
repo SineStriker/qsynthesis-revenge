@@ -3,7 +3,16 @@
 
 #include "QsCoreDecorator.h"
 
-static const char KEY_NAME_LOCALES[] = "locales";
+#include <QFile>
+#include <QJsonArray>
+#include <QJsonDocument>
+#include <QJsonParseError>
+
+static const char KEY_NAME_CONFIG[] = "config";
+
+static const char KEY_NAME_CONFIG_VERSION[] = "config";
+static const char KEY_NAME_CONFIG_PARENT[] = "parent";
+static const char KEY_NAME_CONFIG_VALUES[] = "vars";
 
 static const char Slash = '/';
 
@@ -31,53 +40,51 @@ bool QsLocaleDir::loadDefault(const QString &binName) {
 bool QsLocaleDir::load(const QString &filename) {
     Q_D(QsLocaleDir);
 
-    if (!d->loadRootItems(filename)) {
+    QFile file(filename);
+    if (!file.open(QIODevice::ReadOnly)) {
         return false;
     }
 
-    // Parse locales
-    auto it = d->rootItems.find(KEY_NAME_LOCALES);
-    while (it != d->rootItems.end()) {
-        const auto &item = it.value();
-        QString key = item.key;
-        if (key.isEmpty()) {
-            break;
-        }
+    QByteArray data(file.readAll());
+    file.close();
 
-        // Find dir and parsedir;
-        QString subdir = vars.parse(item.dir);
-        if (subdir.isEmpty()) {
-            subdir = d->dir;
-        }
-
-        // Add files
-        QMap<QString, QStringList> paths;
-        for (auto it3 = item.files.begin(); it3 != item.files.end(); ++it3) {
-            QStringList files = it3.value();
-            if (files.isEmpty()) {
-                continue;
-            }
-            for (auto &file : files) {
-                file = subdir + Slash + file;
-            }
-            paths.insert(it3.key(), files);
-        }
-
-        if (paths.isEmpty()) {
-            break;
-        }
-
-        qIDec->addLocale(key, paths);
-        d->localeKey = key;
-        break;
+    QJsonParseError err;
+    QJsonDocument doc = QJsonDocument::fromJson(data, &err);
+    if (err.error != QJsonParseError::NoError || !doc.isObject()) {
+        return false;
     }
 
-    return true;
+    auto objDoc = doc.object();
+    auto it = objDoc.find(KEY_NAME_CONFIG);
+    if (it != objDoc.end() && it->isObject()) {
+        auto objConfig = it->toObject();
+        auto it2 = objConfig.find(KEY_NAME_CONFIG_VERSION);
+        if (it2 != objConfig.end() && it2->isString()) {
+            d->version = it2->toString();
+            vars.add("VERSION", d->parent);
+        }
+        it2 = objConfig.find(KEY_NAME_CONFIG_PARENT);
+        if (it2 != objConfig.end() && it2->isString()) {
+            d->parent = it2->toString();
+            vars.add("PARENT", d->parent);
+        }
+        it2 = objConfig.find(KEY_NAME_CONFIG_VALUES);
+        if (it2 != objConfig.end() && it2->isObject()) {
+            auto obj = it2->toObject();
+            for (auto it = obj.begin(); it != obj.end(); ++it) {
+                if (it->isString()) {
+                    vars.add(it.key(), it->toString());
+                }
+            }
+        }
+    }
+
+    return d->loadNext(objDoc);
 }
 
 void QsLocaleDir::unload() {
     Q_D(QsLocaleDir);
-    d->unloadLocale();
+    d->unloadNext();
 }
 
 QsLocaleDir::QsLocaleDir(QsLocaleDirPrivate &d) : d_ptr(&d) {

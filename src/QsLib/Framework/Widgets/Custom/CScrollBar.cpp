@@ -49,6 +49,8 @@ int CScrollBar::pixelPosToRangeValue(int pos) const {
 
 #ifndef QT_NO_CONTEXTMENU
 void CScrollBar::contextMenuEvent(QContextMenuEvent *event) {
+    return QScrollBar::contextMenuEvent(event);
+
     if (!style()->styleHint(QStyle::SH_ScrollBar_ContextMenu, nullptr, this)) {
         QAbstractSlider::contextMenuEvent(event);
         return;

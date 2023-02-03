@@ -36,6 +36,16 @@ namespace QsLinq {
         return res;
     }
 
+    template <class K, class V, class V2, class Mapper>
+    QList<V2> Select(const QMap<K, V> &map, Mapper mapper) {
+        QList<V2> res;
+        res.reserve(map.size());
+        for (auto it = map.begin(); it != map.end(); ++it) {
+            res.append(mapper(it.key(), it.value()));
+        }
+        return res;
+    }
+
     /**
      * @brief C# IEnumerable.Any
      *

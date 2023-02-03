@@ -21,8 +21,8 @@ public:
     void setDir(const QString &dir);
     bool loadDefault(const QString &binName);
 
-    virtual bool load(const QString &filename);
-    virtual void unload();
+    bool load(const QString &filename);
+    void unload();
 
 protected:
     QsLocaleDir(QsLocaleDirPrivate &d);

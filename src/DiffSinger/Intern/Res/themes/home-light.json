@@ -3,30 +3,22 @@
         "priority": 1,
         "ratio": 0.8
     },
-    "strs": {
+    "values": {
         "HomeWindow": {
             "font.family": "Microsoft YaHei",
+            "font.size": 15,
             "background": "#FFFFFF",
             "windowIcon": {
                 "foreground": "transparent"
             },
             "nav": {
-                "background": "#252526"
-            },
-            "main": {
-                "background": "transparent"
-            }
-        }
-    },
-    "sizes": {
-        "HomeWindow": {
-            "font.size": 15,
-            "nav": {
+                "background": "#252526",
                 "padding": [
                     20
                 ]
             },
             "main": {
+                "background": "transparent",
                 "padding": [
                     20
                 ]

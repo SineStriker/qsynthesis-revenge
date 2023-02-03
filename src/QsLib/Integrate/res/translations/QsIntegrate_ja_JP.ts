@@ -2,23 +2,23 @@
 <!DOCTYPE TS>
 <TS version="2.1" language="ja_JP">
 <context>
-    <name>QsApplication</name>
+    <name>QsPluginManager</name>
     <message>
-        <location filename="../../src/Kernel/QsApplication.cpp" line="42"/>
-        <source>Untitled</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../src/Kernel/QsApplication.cpp" line="50"/>
-        <source>(Deleted)</source>
+        <location filename="../../Managers/QsPluginManager.cpp" line="64"/>
+        <source>All Files</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
-    <name>QsPluginManager</name>
+    <name>QsStartInfo</name>
     <message>
-        <location filename="../../src/Managers/QsPluginManager.cpp" line="63"/>
-        <source>All Files</source>
+        <location filename="../../Kernel/QsStartInfo.cpp" line="17"/>
+        <source>Untitled</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../Kernel/QsStartInfo.cpp" line="25"/>
+        <source>(Deleted)</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

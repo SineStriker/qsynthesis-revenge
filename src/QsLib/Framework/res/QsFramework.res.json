@@ -1,17 +1,23 @@
 {
-    "locales": {
-        "key": "QsFramework",
-        "dir": "${FILEPATH}/QsFramework.res/translations",
-        "files": {
-            "zh_CN": [
-                "QsFramework_zh_CN.qm"
-            ],
-            "zh_HK": [
-                "QsFramework_zh_HK.qm"
-            ],
-            "ja_JP": [
-                "QsFramework_ja_JP.qm"
-            ]
+    "config": {
+        "version": "0.0.1",
+        "parent": "QsFramework"
+    },
+    "locales": [
+        {
+            "key": "${PARENT}",
+            "dir": "${FILEPATH}/${CURRENT_KEY}.res/translations",
+            "files": {
+                "zh_CN": [
+                    "${CURRENT_KEY}_zh_CN.qm"
+                ],
+                "zh_HK": [
+                    "${CURRENT_KEY}_zh_HK.qm"
+                ],
+                "ja_JP": [
+                    "${CURRENT_KEY}_ja_JP.qm"
+                ]
+            }
         }
-    }
+    ]
 }

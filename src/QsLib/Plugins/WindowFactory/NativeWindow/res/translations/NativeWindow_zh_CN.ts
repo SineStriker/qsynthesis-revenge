@@ -4,24 +4,24 @@
 <context>
     <name>CWindowBarV2</name>
     <message>
-        <location filename="../../widgets/CWindowBarV2.cpp" line="64"/>
+        <location filename="../../widgets/CWindowBarV2.cpp" line="63"/>
         <source>Minimize</source>
-        <translation type="unfinished">最小化</translation>
+        <translation>最小化</translation>
     </message>
     <message>
-        <location filename="../../widgets/CWindowBarV2.cpp" line="65"/>
+        <location filename="../../widgets/CWindowBarV2.cpp" line="64"/>
         <source>Close</source>
-        <translation type="unfinished">关闭</translation>
+        <translation>关闭</translation>
     </message>
     <message>
-        <location filename="../../widgets/CWindowBarV2.cpp" line="76"/>
+        <location filename="../../widgets/CWindowBarV2.cpp" line="75"/>
         <source>Restore%1</source>
-        <translation type="unfinished">还原%1</translation>
+        <translation>还原%1</translation>
     </message>
     <message>
-        <location filename="../../widgets/CWindowBarV2.cpp" line="79"/>
+        <location filename="../../widgets/CWindowBarV2.cpp" line="78"/>
         <source>Maximize</source>
-        <translation type="unfinished">最大化</translation>
+        <translation>最大化</translation>
     </message>
 </context>
 </TS>

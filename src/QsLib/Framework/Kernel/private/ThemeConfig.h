@@ -5,6 +5,8 @@
 #include <QMap>
 #include <QSet>
 
+#include <QJsonValue>
+
 // Parse theme json file
 
 class ThemeConfig {
@@ -13,10 +15,13 @@ public:
     ~ThemeConfig();
 
 public:
-    // Variables -> namespace - values
-    QMap<QString, QMap<QString, QString>> strs;
-    QMap<QString, QMap<QString, QList<double>>> sizes;
+    struct Value {
+        double ratio;
+        QJsonValue val;
+    };
 
+    // Variables -> namespace - values
+    QMap<QString, QMap<QString, Value>> values;
     QSet<QString> namespaces;
 
     int priority; // The lower the prior

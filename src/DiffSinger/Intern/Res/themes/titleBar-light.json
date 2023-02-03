@@ -3,7 +3,7 @@
         "priority": 1,
         "ratio": 0.8
     },
-    "strs": {
+    "values": {
         "NativeWindow": {
             "background": "#E0E0E0",
             "color": "#111111"

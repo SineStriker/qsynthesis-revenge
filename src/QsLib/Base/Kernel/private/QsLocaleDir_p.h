@@ -13,19 +13,25 @@ public:
 
     QsLocaleDir *q_ptr;
 
-    QString dir;
-    QString localeKey;
-    
     struct RootItem {
         QString key;
         QString dir;
         QMap<QString, QStringList> files;
     };
 
-    QMap<QString, RootItem> rootItems;
-    bool loadRootItems(const QString &filename);
+    QString dir;
     
+    QString version;
+    QString parent;
+    
+    QList<RootItem> locales;
+
+    virtual bool loadNext(const QJsonObject &objDoc);
+    virtual void unloadNext();
+
     void unloadLocale();
+
+    static bool loadRootItems(const QJsonObject &obj, RootItem *out);
 };
 
 #endif // QSLOCALEDIRPRIVATE_H

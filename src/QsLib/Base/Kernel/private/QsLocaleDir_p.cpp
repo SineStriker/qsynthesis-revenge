@@ -2,6 +2,14 @@
 
 #include "../QsCoreDecorator.h"
 
+#define _CURRENT_MAP QHash
+#define _CURRENT_TRASACTION QHashTransaction
+
+#include "QMapTransaction.h"
+
+#undef _CURRENT_MAP
+#undef _CURRENT_TRASACTION
+
 #include <QFile>
 #include <QJsonArray>
 #include <QJsonDocument>
@@ -10,6 +18,8 @@
 static const char KEY_NAME_SUBSECTION_KEY[] = "key";
 static const char KEY_NAME_SUBSECTION_DIR[] = "dir";
 static const char KEY_NAME_SUBSECTION_FILES[] = "files";
+
+static const char KEY_NAME_LOCALES[] = "locales";
 
 static const char Slash = '/';
 
@@ -28,81 +38,127 @@ void QsLocaleDirPrivate::init() {
     q->vars.addHash(QSimpleVarExp::SystemValues());
 }
 
-bool QsLocaleDirPrivate::loadRootItems(const QString &filename) {
-    QFile file(filename);
-    if (!file.open(QIODevice::ReadOnly)) {
-        return false;
-    }
+bool QsLocaleDirPrivate::loadNext(const QJsonObject &objDoc) {
+    Q_Q(QsLocaleDir);
 
-    QByteArray data(file.readAll());
-    file.close();
-
-    QJsonParseError err;
-    QJsonDocument doc = QJsonDocument::fromJson(data, &err);
-    if (err.error != QJsonParseError::NoError || !doc.isObject()) {
-        return false;
-    }
-
-    QJsonObject objDoc = doc.object();
-
-    for (auto it = objDoc.begin(); it != objDoc.end(); ++it) {
-        if (!it->isObject()) {
-            continue;
+    auto parse = [&](const QJsonObject &obj) {
+        QsLocaleDirPrivate::RootItem cur;
+        if (!loadRootItems(obj, &cur)) {
+            return;
         }
 
-        RootItem cur;
-
-        auto obj = it->toObject();
-
-        // Find key
-        auto it2 = obj.find(KEY_NAME_SUBSECTION_KEY);
-        if (it2 == obj.end() || !it2->isString()) {
-            continue;
-        }
-        cur.key = it2->toString();
-
-        // Find dir
-        it2 = obj.find(KEY_NAME_SUBSECTION_DIR);
-        if (it2 != obj.end() || !it2->isString()) {
-            cur.dir = it2->toString();
+        cur.key = q->vars.parse(cur.key);
+        if (cur.key.isEmpty()) {
+            return;
         }
 
-        // Add files
-        it2 = obj.find(KEY_NAME_SUBSECTION_FILES);
-        if (it2 == obj.end() || !it2->isObject()) {
-            continue;
-        }
-        auto objFiles = it2->toObject();
+        // Start transaction
+        {
+            QMapTransaction<QString, QString> tx1(&q->vars.Variables);
+            tx1.insert("CURRENT_KEY", cur.key);
 
-        for (auto it3 = objFiles.begin(); it3 != objFiles.end(); ++it3) {
-            const auto &itemKey = it3.key();
-            if (!it3->isArray()) {
-                continue;
+            // Find dir and parse dir;
+            cur.dir = q->vars.parse(cur.dir);
+            if (cur.dir.isEmpty()) {
+                cur.dir = dir;
             }
-            auto arr = it3->toArray();
 
-            QStringList files;
+            tx1.insert("CURRENT_DIR", cur.dir);
+
+            // Add files
+            QMap<QString, QStringList> paths;
+            for (auto it3 = cur.files.begin(); it3 != cur.files.end(); ++it3) {
+                QStringList files = it3.value();
+                if (files.isEmpty()) {
+                    continue;
+                }
+                for (auto &file : files) {
+                    file = q->vars.parse(cur.dir + Slash + file);
+                }
+                paths.insert(it3.key(), files);
+            }
+            if (!paths.isEmpty()) {
+                qIDec->addLocale(cur.key, paths);
+                locales.append(cur);
+            }
+        }
+    };
+
+    // Parse locales
+    auto it = objDoc.find(KEY_NAME_LOCALES);
+    if (it != objDoc.end()) {
+        if (it->isArray()) {
+            QJsonArray arr = it->toArray();
             for (const auto &item : qAsConst(arr)) {
-                if (item.isString()) {
-                    files.append(item.toString());
+                if (item.isObject()) {
+                    parse(item.toObject());
                 }
             }
-            if (files.isEmpty()) {
-                continue;
-            }
-
-            cur.files.insert(itemKey, files);
+        } else if (it->isObject()) {
+            parse(it->toObject());
         }
-
-        rootItems.insert(it.key(), cur);
     }
+
     return true;
 }
 
+void QsLocaleDirPrivate::unloadNext() {
+    unloadLocale();
+}
+
 void QsLocaleDirPrivate::unloadLocale() {
-    // Remove locale
-    if (!localeKey.isEmpty()) {
-        qIDec->removeLocale(localeKey);
-        localeKey.clear();
+    // Remove locales
+    if (!locales.isEmpty()) {
+        for (const auto &item : qAsConst(locales)) {
+            qIDec->removeLocale(item.key);
+        }
+        locales.clear();
     }
+}
+
+bool QsLocaleDirPrivate::loadRootItems(const QJsonObject &obj, RootItem *out) {
+    RootItem cur;
+
+    // Find key
+    auto it2 = obj.find(KEY_NAME_SUBSECTION_KEY);
+    if (it2 == obj.end() || !it2->isString()) {
+        return false;
+    }
+    cur.key = it2->toString();
+
+    // Find dir
+    it2 = obj.find(KEY_NAME_SUBSECTION_DIR);
+    if (it2 != obj.end() || !it2->isString()) {
+        cur.dir = it2->toString();
+    }
+
+    // Add files
+    it2 = obj.find(KEY_NAME_SUBSECTION_FILES);
+    if (it2 == obj.end() || !it2->isObject()) {
+        return false;
+    }
+    auto objFiles = it2->toObject();
+
+    for (auto it3 = objFiles.begin(); it3 != objFiles.end(); ++it3) {
+        const auto &itemKey = it3.key();
+        if (!it3->isArray()) {
+            continue;
+        }
+        auto arr = it3->toArray();
+
+        QStringList files;
+        for (const auto &item : qAsConst(arr)) {
+            if (item.isString()) {
+                files.append(item.toString());
+            }
+        }
+        if (files.isEmpty()) {
+            continue;
+        }
+
+        cur.files.insert(itemKey, files);
+    }
+
+    *out = std::move(cur);
+    return true;
 }

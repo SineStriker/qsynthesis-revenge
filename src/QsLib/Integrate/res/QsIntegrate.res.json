@@ -1,17 +1,23 @@
 {
-    "locales": {
-        "key": "QsIntegrate",
-        "dir": "${FILEPATH}/QsIntegrate.res/translations",
-        "files": {
-            "zh_CN": [
-                "QsIntegrate_zh_CN.qm"
-            ],
-            "zh_HK": [
-                "QsIntegrate_zh_HK.qm"
-            ],
-            "ja_JP": [
-                "QsIntegrate_ja_JP.qm"
-            ]
+    "config": {
+        "version": "0.0.1",
+        "parent": "QsIntegrate"
+    },
+    "locales": [
+        {
+            "key": "${PARENT}",
+            "dir": "${FILEPATH}/${CURRENT_KEY}.res/translations",
+            "files": {
+                "zh_CN": [
+                    "${CURRENT_KEY}_zh_CN.qm"
+                ],
+                "zh_HK": [
+                    "${CURRENT_KEY}_zh_HK.qm"
+                ],
+                "ja_JP": [
+                    "${CURRENT_KEY}_ja_JP.qm"
+                ]
+            }
         }
-    }
+    ]
 }

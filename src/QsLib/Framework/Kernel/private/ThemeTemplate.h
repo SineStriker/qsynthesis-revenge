@@ -21,8 +21,7 @@ public:
 
     bool load(const QString &filename);
 
-    QString parse(const QMap<QString, QString> &strs, const QMap<QString, QList<double>> &sizes,
-                  double dpi) const;
+    QString parse(const QMap<QString, ThemeConfig::Value> &vals, double dpi) const;
 };
 
 #endif // __THEMETEMPLATE_H__

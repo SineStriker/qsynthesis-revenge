@@ -12,9 +12,12 @@ public:
 
     void init();
 
+    bool loadNext(const QJsonObject &objDoc) override;
+    void unloadNext() override;
+
     void unloadTheme();
-    
-    QString themeKey;
+
+    QList<RootItem> themes;
 };
 
 #endif // CDECORATEDIRPRIVATE_H

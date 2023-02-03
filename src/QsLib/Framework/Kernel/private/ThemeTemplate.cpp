@@ -7,6 +7,7 @@
 
 #include <QDebug>
 #include <QFile>
+#include <QJsonArray>
 #include <QJsonObject>
 #include <QTextStream>
 
@@ -15,7 +16,12 @@ static const char Default_RegExp_Pattern[] = "\\{\\{(.*?)\\}\\}";
 static const char Default_RegExp_Separator[] = "|";
 
 static const char Theme_Variable_Hint_Size[] = "size";
+static const char Theme_Variable_Hint_Num[] = "num";
 static const char Theme_Variable_Hint_String[] = "str";
+
+static const char Theme_Values_Object_Delimiter[] = "_delimiter";
+static const char Theme_Values_Object_Array[] = "_array";
+static const char Theme_Values_Object_Object[] = "_object";
 
 static QString removeSideQuote(QString token) {
     if (token.front() == '\"') {
@@ -27,8 +33,100 @@ static QString removeSideQuote(QString token) {
     return token;
 }
 
-static int toRealPixelSize(double size, double dpi) {
+static inline int toRealPixelSize(double size, double dpi) {
     return qRound(size * dpi / QsOs::unitDpi());
+}
+
+static inline QString toPixelStr(int size) {
+    return QString::number(size) + QString(size == 0 ? "" : "px");
+}
+
+struct Arguments {
+    QString hint;
+    QString defaultValue;
+    double dpi;
+};
+
+template <class Mapper>
+static QString extractNumListValue(const QJsonValue &val, Mapper mapper) {
+    QString res;
+    QString delim = " ";
+
+    auto extractArr = [&](const QJsonArray &arr) {
+        QList<double> digits;
+        for (const auto &item : qAsConst(arr)) {
+            if (item.isDouble()) {
+                digits.append(item.toDouble());
+            }
+        }
+        return QsLinq::Select<double, QString>(
+                   digits, //
+                   [&](double digit) -> QString { return mapper(digit); })
+            .join(delim);
+    };
+
+    auto extractMap = [&](const QJsonObject &obj) {
+        QMap<QString, double> digitMap;
+        for (auto it = obj.begin(); it != obj.end(); ++it) {
+            if (it->isDouble()) {
+                digitMap.insert(it.key(), it->toDouble());
+            }
+        }
+        return QsLinq::Select<QString, double, QString>(
+                   digitMap,
+                   [&](const QString &key, double digit) -> QString {
+                       return key + ":" + mapper(digit);
+                   })
+            .join(delim);
+    };
+
+    if (val.isArray()) {
+        res = extractArr(val.toArray());
+    } else if (val.isDouble()) {
+        res = mapper(val.toDouble());
+    } else if (val.isObject()) {
+        QJsonObject obj = val.toObject();
+        auto it = obj.find(Theme_Values_Object_Delimiter);
+        if (it != obj.end() && it->isString()) {
+            delim = it->toString();
+        }
+        while (true) {
+            it = obj.find(Theme_Values_Object_Array);
+            if (it != obj.end() && it->isArray()) {
+                res = extractArr(it->toArray());
+                break;
+            }
+            it = obj.find(Theme_Values_Object_Object);
+            if (it != obj.end() && it->isObject()) {
+                res = extractMap(it->toObject());
+                break;
+            }
+            break;
+        }
+    }
+    return res;
+}
+
+static QString ValueToString(const ThemeConfig::Value &val, const Arguments &args) {
+    const auto &jsonVal = val.val;
+    QString res;
+    if (args.hint == Theme_Variable_Hint_Size) {
+        res = extractNumListValue(jsonVal, //
+                                  [&](double digit) {
+                                      return toPixelStr(toRealPixelSize(digit, args.dpi * val.ratio)); //
+                                  });
+    } else if (args.hint == Theme_Variable_Hint_Num) {
+        res = extractNumListValue(jsonVal, //
+                                  [](double digit) {
+                                      return QString::number(digit); //
+                                  });
+    } else if (args.hint == Theme_Variable_Hint_String ||
+               args.hint.isEmpty() && !jsonVal.isNull()) {
+        res = jsonVal.toString();
+    } else {
+        res = args.defaultValue;
+    }
+    return res;
 }
 
 ThemeTemplate::ThemeTemplate() {
@@ -123,8 +221,7 @@ bool ThemeTemplate::load(const QString &filename) {
     return true;
 }
 
-QString ThemeTemplate::parse(const QMap<QString, QString> &strs,
-                             const QMap<QString, QList<double>> &sizes, double dpi) const {
+QString ThemeTemplate::parse(const QMap<QString, ThemeConfig::Value> &vars, double dpi) const {
     QRegularExpression re(pattern);
     QRegularExpressionMatch match;
     int index = 0;
@@ -140,54 +237,16 @@ QString ThemeTemplate::parse(const QMap<QString, QString> &strs,
             continue;
         }
 
-        int idx = TemplateVariable.indexOf(separator);
-        if (idx >= 0) {
-            QString l = TemplateVariable.left(idx).simplified();
-            QString r = TemplateVariable.mid(idx + 1).simplified();
-
-            if (r == Theme_Variable_Hint_String) {
-                auto it = strs.find(l);
-                if (it != strs.end()) {
-                    ValueString = it.value();
-                }
-            } else if (r == Theme_Variable_Hint_Size) {
-                auto it = sizes.find(l);
-                if (it != sizes.end()) {
-                    ValueString =
-                        QsLinq::Select<double, QString>(
-                            it.value(), //
-                            [&](double digit) -> QString {
-                                return QString::number(toRealPixelSize(digit, dpi)) + "px";
-                            })
-                            .join(' ');
-                }
-            }
-        } else {
-            while (true) {
-                auto &l = TemplateVariable;
-                // Find color
-                {
-                    auto it = strs.find(l);
-                    if (it != strs.end()) {
-                        ValueString = it.value();
-                        break;
-                    }
-                }
-                // Find size
-                {
-                    auto it = sizes.find(l);
-                    if (it != sizes.end()) {
-                        ValueString =
-                            QsLinq::Select<double, QString>(
-                                it.value(), //
-                                [&](double digit) -> QString {
-                                    return QString::number(toRealPixelSize(digit, dpi)) + "px";
-                                })
-                                .join(' ');
-                        break;
-                    }
-                }
-                break;
+        QStringList list = TemplateVariable.split(separator);
+        if (!list.isEmpty()) {
+            QString key = list.front();
+            QString hint = list.size() == 1 ? QString() : list.at(1);
+            QString defaultValue = list.size() <= 2 ? QString() : list.at(2);
+            auto it = vars.find(key);
+            if (it != vars.end()) {
+                ValueString = ValueToString(it.value(), Arguments{hint, defaultValue, dpi});
+            } else {
+                ValueString = defaultValue;
             }
         }
         Content.replace(index, MatchString.size(), ValueString);

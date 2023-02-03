@@ -3,10 +3,12 @@
         "priority": 10,
         "ratio": 0.8
     },
-    "strs": {
+    "values": {
         "NativeWindow": {
             "background": "transparent",
             "color": "transparent",
+            "titleMargin": 20,
+            "minHeight": 36,
             "minButton": {
                 "foreground": {
                     "up": "#FFFFFF",
@@ -17,7 +19,12 @@
                     "up": "transparent",
                     "over": "rgba(255, 255, 255, 15%)",
                     "down": "rgba(255, 255, 255, 15%)"
-                }
+                },
+                "icon.size": [
+                    12,
+                    12
+                ],
+                "minWidth": 50
             },
             "maxButton": {
                 "foreground": {
@@ -34,7 +41,12 @@
                     "up": "transparent",
                     "over": "rgba(255, 255, 255, 15%)",
                     "down": "rgba(255, 255, 255, 15%)"
-                }
+                },
+                "icon.size": [
+                    12,
+                    12
+                ],
+                "minWidth": 50
             },
             "closeButton": {
                 "foreground": {
@@ -46,32 +58,7 @@
                     "up": "transparent",
                     "over": "#E81123",
                     "down": "#E81123"
-                }
-            },
-            "iconButton": {
-                "background": "transparent"
-            }
-        }
-    },
-    "sizes": {
-        "NativeWindow": {
-            "titleMargin": 20,
-            "minHeight": 36,
-            "minButton": {
-                "icon.size": [
-                    12,
-                    12
-                ],
-                "minWidth": 50
-            },
-            "maxButton": {
-                "icon.size": [
-                    12,
-                    12
-                ],
-                "minWidth": 50
-            },
-            "closeButton": {
+                },
                 "icon.size": [
                     12,
                     12
@@ -79,6 +66,7 @@
                 "minWidth": 50
             },
             "iconButton": {
+                "background": "transparent",
                 "icon.size": [
                     20,
                     20

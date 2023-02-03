@@ -4,22 +4,22 @@
 <context>
     <name>CWindowBarV2</name>
     <message>
-        <location filename="../../widgets/CWindowBarV2.cpp" line="64"/>
+        <location filename="../../widgets/CWindowBarV2.cpp" line="63"/>
         <source>Minimize</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../widgets/CWindowBarV2.cpp" line="65"/>
+        <location filename="../../widgets/CWindowBarV2.cpp" line="64"/>
         <source>Close</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../widgets/CWindowBarV2.cpp" line="76"/>
+        <location filename="../../widgets/CWindowBarV2.cpp" line="75"/>
         <source>Restore%1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../widgets/CWindowBarV2.cpp" line="79"/>
+        <location filename="../../widgets/CWindowBarV2.cpp" line="78"/>
         <source>Maximize</source>
         <translation type="unfinished"></translation>
     </message>

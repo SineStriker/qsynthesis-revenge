@@ -13,10 +13,6 @@ public:
     explicit CDecorateDir(const QString &dir);
     ~CDecorateDir();
 
-public:
-    bool load(const QString &filename) override;
-    void unload() override;
-
 protected:
     CDecorateDir(CDecorateDirPrivate &d);
 };

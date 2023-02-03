@@ -28,5 +28,15 @@
         <source>Root User</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <location filename="../../Kernel/private/QsCoreStartInfo_p.cpp" line="70"/>
+        <source>You&apos;re trying to start %1 as the %2, which may cause security problem and isn&apos;t recommended.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../Kernel/QsCoreStartInfo.cpp" line="39"/>
+        <source>Error</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 </TS>

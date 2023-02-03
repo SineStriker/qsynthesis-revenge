@@ -10,12 +10,13 @@
 #include <QJsonObject>
 
 static const char Theme_Config_Key_Config[] = "config";
-static const char Theme_Config_Key_Sizes[] = "sizes";
-static const char Theme_Config_Key_Strings[] = "strs";
+static const char Theme_Config_Key_Values[] = "values";
 static const char Theme_Config_Key_Separator[] = ".";
 
 static const char Theme_Config_Key_Config_Priority[] = "priority";
 static const char Theme_Config_Key_Config_Ratio[] = "ratio";
+
+static const char Theme_Values_Object_Final[] = "_final";
 
 ThemeConfig::ThemeConfig() {
     priority = 1;
@@ -81,7 +82,7 @@ bool ThemeConfig::loadOne(const QString &filename) {
     {
         std::list<QPair<QStringList, QJsonObject>> stack;
         {
-            auto it = objDoc.find(Theme_Config_Key_Strings);
+            auto it = objDoc.find(Theme_Config_Key_Values);
             if (it != objDoc.end() && it.value().isObject()) {
                 stack.push_back(qMakePair(QStringList(), it.value().toObject()));
             }
@@ -97,67 +98,18 @@ bool ThemeConfig::loadOne(const QString &filename) {
             for (auto it = obj.begin(); it != obj.end(); ++it) {
                 QStringList newKeys = QStringList(keys) << it.key();
                 const auto &val = it.value();
-                if (val.isString()) {
-                    QString newKeyStr = newKeys.join(Theme_Config_Key_Separator);
-                    int idx = newKeyStr.indexOf(Theme_Config_Key_Separator);
-                    if (idx <= 0 || idx == newKeyStr.size() - 1) {
-                        continue;
-                    }
-                    QString ns = newKeyStr.left(idx);
-                    namespaces.insert(ns);
-                    strs[ns].insert(newKeyStr.mid(idx + 1), val.toString());
-                } else if (val.isObject()) {
+                if (val.isObject() && !val.toObject().contains(Theme_Values_Object_Final)) {
                     stack.push_back(qMakePair(newKeys, it.value().toObject()));
+                    continue;
                 }
-            }
-        }
-    }
-
-    // Get sizes
-    {
-        std::list<QPair<QStringList, QJsonObject>> stack;
-        {
-            auto it = objDoc.find(Theme_Config_Key_Sizes);
-            if (it != objDoc.end() && it.value().isObject()) {
-                stack.push_back(qMakePair(QStringList(), it.value().toObject()));
-            }
-        }
-
-        while (!stack.empty()) {
-            auto pair = stack.front();
-            stack.pop_front();
-
-            const auto &keys = pair.first;
-            const auto &obj = pair.second;
-
-            for (auto it = obj.begin(); it != obj.end(); ++it) {
-                QStringList newKeys = QStringList(keys) << it.key();
-                const auto &val = it.value();
-                if (val.isDouble() || val.isArray()) {
-                    QString newKeyStr = newKeys.join(Theme_Config_Key_Separator);
-                    int idx = newKeyStr.indexOf(Theme_Config_Key_Separator);
-                    if (idx <= 0 || idx == newKeyStr.size() - 1) {
-                        continue;
-                    }
-                    QString ns = newKeyStr.left(idx);
-                    namespaces.insert(ns);
-
-                    QList<double> digits;
-                    if (val.isDouble()) {
-                        digits.append(val.toDouble() * ratio);
-                    } else {
-                        QJsonArray arr = val.toArray();
-                        for (const auto &item : qAsConst(arr)) {
-                            if (item.isDouble()) {
-                                digits.append(item.toDouble() * ratio);
-                            }
-                        }
-                    }
-
-                    sizes[ns].insert(newKeyStr.mid(idx + 1), digits);
-                } else if (val.isObject()) {
-                    stack.push_back(qMakePair(newKeys, it.value().toObject()));
+                QString newKeyStr = newKeys.join(Theme_Config_Key_Separator);
+                int idx = newKeyStr.indexOf(Theme_Config_Key_Separator);
+                if (idx <= 0 || idx == newKeyStr.size() - 1) {
+                    continue;
                 }
+                QString ns = newKeyStr.left(idx);
+                namespaces.insert(ns);
+                values[ns].insert(newKeyStr.mid(idx + 1), Value{ratio, val});
             }
         }
     }

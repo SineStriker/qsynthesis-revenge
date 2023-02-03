@@ -1,33 +1,41 @@
 {
-    "locales": {
-        "key": "DsIntern",
-        "dir": "${FILEPATH}/DsIntern.res/translations",
-        "files": {
-            "zh_CN": [
-                "DsIntern_zh_CN.qm"
-            ],
-            "zh_HK": [
-                "DsIntern_zh_HK.qm"
-            ],
-            "ja_JP": [
-                "DsIntern_ja_JP.qm"
-            ]
-        }
+    "config": {
+        "version": "0.0.1",
+        "parent": "DsIntern"
     },
-    "themes": {
-        "key": "DsIntern",
-        "dir": "${FILEPATH}/DsIntern.res/themes",
-        "files": {
-            "Zhibin - Dark": [
-                "home-dark.json",
-                "piano-dark.json",
-                "titleBar-dark.json"
-            ],
-            "Zhibin - Light": [
-                "home-light.json",
-                "piano-light.json",
-                "titleBar-light.json"
-            ]
+    "locales": [
+        {
+            "key": "${PARENT}",
+            "dir": "${FILEPATH}/${CURRENT_KEY}.res/translations",
+            "files": {
+                "zh_CN": [
+                    "${CURRENT_KEY}_zh_CN.qm"
+                ],
+                "zh_HK": [
+                    "${CURRENT_KEY}_zh_HK.qm"
+                ],
+                "ja_JP": [
+                    "${CURRENT_KEY}_ja_JP.qm"
+                ]
+            }
         }
-    }
+    ],
+    "themes": [
+        {
+            "key": "${PARENT}",
+            "dir": "${FILEPATH}/${PARENT}.res/themes",
+            "files": {
+                "Zhibin - Dark": [
+                    "home-dark.json",
+                    "piano-dark.json",
+                    "titleBar-dark.json"
+                ],
+                "Zhibin - Light": [
+                    "home-light.json",
+                    "piano-light.json",
+                    "titleBar-light.json"
+                ]
+            }
+        }
+    ]
 }

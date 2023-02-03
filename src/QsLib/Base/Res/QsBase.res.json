@@ -1,17 +1,23 @@
 {
-    "locales": {
-        "key": "QsBase",
-        "dir": "${FILEPATH}/QsBase.res/translations",
-        "files": {
-            "zh_CN": [
-                "QsBase_zh_CN.qm"
-            ],
-            "zh_HK": [
-                "QsBase_zh_HK.qm"
-            ],
-            "ja_JP": [
-                "QsBase_ja_JP.qm"
-            ]
+    "config": {
+        "version": "0.0.1",
+        "parent": "QsBase"
+    },
+    "locales": [
+        {
+            "key": "${PARENT}",
+            "dir": "${FILEPATH}/${CURRENT_KEY}.res/translations",
+            "files": {
+                "zh_CN": [
+                    "${CURRENT_KEY}_zh_CN.qm"
+                ],
+                "zh_HK": [
+                    "${CURRENT_KEY}_zh_HK.qm"
+                ],
+                "ja_JP": [
+                    "${CURRENT_KEY}_ja_JP.qm"
+                ]
+            }
         }
-    }
+    ]
 }

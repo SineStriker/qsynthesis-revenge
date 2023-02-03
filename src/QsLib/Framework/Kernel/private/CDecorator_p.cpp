@@ -129,8 +129,7 @@ QString ThemePlaceholder::getAndCache(QScreen *screen) {
         return QString();
     }
 
-    QMap<QString, QString> strs;
-    QMap<QString, QList<double>> sizes;
+    QMap<QString, ThemeConfig::Value> values;
 
     auto &map0 = it.value().data;
 #if !ENABLE_PARTIAL_OVERRIDE
@@ -155,25 +154,18 @@ QString ThemePlaceholder::getAndCache(QScreen *screen) {
     for (auto it = map0.rbegin(); it != map0.rend(); it++) {
         const auto &map = it->second;
         for (const auto &conf : qAsConst(map)) {
-            auto it2 = conf->strs.find(ns);
-            if (it2 != conf->strs.end()) {
+            auto it2 = conf->values.find(ns);
+            if (it2 != conf->values.end()) {
                 const auto &map3 = it2.value();
                 for (auto it4 = map3.begin(); it4 != map3.end(); ++it4) {
-                    strs.insert(it4.key(), it4.value());
-                }
-            }
-            auto it3 = conf->sizes.find(ns);
-            if (it3 != conf->sizes.end()) {
-                const auto &map3 = it3.value();
-                for (auto it4 = map3.begin(); it4 != map3.end(); ++it4) {
-                    sizes.insert(it4.key(), it4.value());
+                    values.insert(it4.key(), it4.value());
                 }
             }
         }
     }
 #endif
 
-    QString stylesheet = data->parse(strs, sizes, screen->logicalDotsPerInch());
+    QString stylesheet = data->parse(values, screen->logicalDotsPerInch());
     stylesheetCaches[screen] = stylesheet;
     // qDebug().noquote() << stylesheet;
     return stylesheet;
