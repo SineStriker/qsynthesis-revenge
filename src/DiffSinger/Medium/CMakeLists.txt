@@ -19,6 +19,6 @@ target_components(${PROJECT_NAME}
     INCLUDE_CURRENT
     SOURCES ${_src}
     QT_LIBRARIES Widgets
-    LINKS QsIntegrate
+    LINKS DsCore QsIntegrate
     INCLUDES ${_dirs}
 )
