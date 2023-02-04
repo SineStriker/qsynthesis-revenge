@@ -202,10 +202,6 @@ QStringList QsFs::FindRecursiveDirs(const QString &base, int max) {
     return res;
 }
 
-void QsFs::exitApp(int code) {
-    ::exit(code);
-}
-
 QString QsFs::invalidFileNameChars() {
     QChar ch[] = {'\"',      '<',       '>',       '|',       '\0',      (char) 1,  (char) 2,
                   (char) 3,  (char) 4,  (char) 5,  (char) 6,  (char) 7,  (char) 8,  (char) 9,
@@ -214,6 +210,10 @@ QString QsFs::invalidFileNameChars() {
                   (char) 24, (char) 25, (char) 26, (char) 27, (char) 28, (char) 29, (char) 30,
                   (char) 31, ':',       '*',       '?',       '\\',      '/'};
     return QString(ch, sizeof(ch));
+}
+
+void QsOs::exitApp(int code) {
+    ::exit(code);
 }
 
 void QsOs::messageStderr(const QString &title, const QString &text) {

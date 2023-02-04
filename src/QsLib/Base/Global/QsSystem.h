@@ -82,13 +82,13 @@ namespace QsFs {
 
     QSBASE_API QStringList FindRecursiveDirs(const QString &base, int max = -1);
 
-    QSBASE_API void exitApp(int code);
-
     QSBASE_API QString invalidFileNameChars();
 
 } // namespace QsFs
 
 namespace QsOs {
+
+    QSBASE_API void exitApp(int code);
 
     /**
      * @brief Display error without QtWidgets module

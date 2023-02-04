@@ -5,8 +5,8 @@
 #include <QMetaType>
 
 #include "QsCoreConfig.h"
+#include "QsCoreConsole.h"
 #include "QsCoreDecorator.h"
-
 
 Q_SINGLETON_DECLARE(QsCoreStartInfo)
 
@@ -37,6 +37,10 @@ QString QsCoreStartInfo::windowTitle() const {
 
 QString QsCoreStartInfo::errorTitle() const {
     return QCoreApplication::tr("Error");
+}
+
+QsCoreConsole *QsCoreStartInfo::createConsole(QObject *parent) {
+    return new QsCoreConsole(parent);
 }
 
 QsCoreDecorator *QsCoreStartInfo::createDecorator(QObject *parent) {

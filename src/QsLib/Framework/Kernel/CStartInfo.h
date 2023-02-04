@@ -14,6 +14,8 @@ public:
     ~CStartInfo();
 
 protected:
+    QsCoreConsole *createConsole(QObject *parent = nullptr) override;
+
     QsCoreDecorator *createDecorator(QObject *parent = nullptr) override;
 
 protected:

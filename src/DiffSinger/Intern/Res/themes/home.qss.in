@@ -35,28 +35,82 @@ CNavFrame#home-frame>QSplitter>QFrame#right-frame {
     padding: "{{main.padding|size}}";
 }
 
+
+/* Nav Buttons */
+
 CTabButton[type=home-nav-button] {
-    background-color: transparent;
-    border: none;
-    padding: 10px;
-    color: white;
-    text-align: left;
+    qproperty-iconSize: "{{nav.navButton.icon.size|size}}";
+    qproperty-spaceRatio: "{{nav.navButton.spacing|num|0.2}}";
+    background-color: "{{nav.navButton.background.up|str}}";
+    color: "{{nav.navButton.color.up|str}}";
+    border-color: "{{nav.navButton.border.color.up|str}}";
+    border-width: "{{nav.navButton.border.size.up|size}}";
+    border-style: "{{nav.navButton.border.style.up|str}}";
+    padding: "{{nav.navButton.padding|size}}";
+    margin: "{{nav.navButton.margin|size}}";
+    text-align: "{{nav.navButton.color|str|left}}";
 }
 
 CTabButton[type=home-nav-button]:hover {
-    background-color: rgba(255, 255, 255, 15%);
+    background-color: "{{nav.navButton.background.over|str}}";
+    color: "{{nav.navButton.color.over|str}}";
+    border-color: "{{nav.navButton.border.color.over|str}}";
+    border-width: "{{nav.navButton.border.size.over|size}}";
+    border-style: "{{nav.navButton.border.style.over|str}}";
 }
 
-CTabButton[type=home-bottom-button] {
+CTabButton[type=home-nav-button]:pressed {
+    background-color: "{{nav.navButton.background.down|str}}";
+    color: "{{nav.navButton.color.down|str}}";
+    border-color: "{{nav.navButton.border.color.down|str}}";
+    border-width: "{{nav.navButton.border.size.down|size}}";
+    border-style: "{{nav.navButton.border.style.down|str}}";
+}
+
+CTabButton[type=home-nav-button]:checked {
+    background-color: "{{nav.navButton.checked.background.up|str}}";
+    color: "{{nav.navButton.checked.color.up|str}}";
+    border-color: "{{nav.navButton.checked.border.color.up|str}}";
+    border-width: "{{nav.navButton.checked.border.size.up|size}}";
+    border-style: "{{nav.navButton.checked.border.style.up|str}}";
+}
+
+CTabButton[type=home-nav-button]:checked:hover {
+    background-color: "{{nav.navButton.checked.background.over|str}}";
+    color: "{{nav.navButton.checked.color.over|str}}";
+    border-color: "{{nav.navButton.checked.border.color.over|str}}";
+    border-width: "{{nav.navButton.checked.border.size.over|size}}";
+    border-style: "{{nav.navButton.checked.border.style.over|str}}";
+}
+
+CTabButton[type=home-nav-button]:checked:pressed {
+    background-color: "{{nav.navButton.checked.background.down|str}}";
+    color: "{{nav.navButton.checked.color.down|str}}";
+    border-color: "{{nav.navButton.checked.border.color.down|str}}";
+    border-width: "{{nav.navButton.checked.border.size.down|size}}";
+    border-style: "{{nav.navButton.checked.border.style.down|str}}";
+}
+
+
+/* Bottom Buttons */
+
+CTabButton#home-about-button {
     qproperty-iconUp: svg(":/svg/home/info.svg", "{{nav.bottomButton.icon.up|str}}");
     qproperty-iconOver: svg(":/svg/home/info.svg", "{{nav.bottomButton.icon.over|str}}");
     qproperty-iconDown: svg(":/svg/home/info.svg", "{{nav.bottomButton.icon.down|str}}");
+    qproperty-iconUpChecked: svg(":/svg/home/info.svg", "{{nav.bottomButton.icon.up.checked|str}}");
+    qproperty-iconOverChecked: svg(":/svg/home/info.svg", "{{nav.bottomButton.icon.over.checked|str}}");
+    qproperty-iconDownChecked: svg(":/svg/home/info.svg", "{{nav.bottomButton.icon.down.checked|str}}");
+}
+
+CTabButton[type=home-bottom-button] {
     qproperty-iconSize: "{{nav.bottomButton.icon.size|size}}";
     qproperty-spaceRatio: "{{nav.bottomButton.spacing|num|0.2}}";
     background-color: "{{nav.bottomButton.background.up|str}}";
-    border-color: "{{nav.bottomButton.border.color.up|str}}";
     color: "{{nav.bottomButton.color.up|str}}";
-    border: "{{nav.bottomButton.border.size.up|size}}";
+    border-color: "{{nav.bottomButton.border.color.up|str}}";
+    border-width: "{{nav.bottomButton.border.size.up|size}}";
+    border-style: "{{nav.bottomButton.border.style.up|str}}";
     padding: "{{nav.bottomButton.padding|size|0}}";
     margin: "{{nav.bottomButton.margin|size|0}}";
     text-align: "{{nav.bottomButton.color|str|left}}";
@@ -64,14 +118,16 @@ CTabButton[type=home-bottom-button] {
 
 CTabButton[type=home-bottom-button]:hover {
     background-color: "{{nav.bottomButton.background.over|str}}";
-    border-color: "{{nav.bottomButton.border.color.over|str}}";
     color: "{{nav.bottomButton.color.over|str}}";
-    border: "{{nav.bottomButton.border.size.over|size}}";
+    border-color: "{{nav.bottomButton.border.color.over|str}}";
+    border-width: "{{nav.bottomButton.border.size.over|size}}";
+    border-style: "{{nav.bottomButton.border.style.over|str}}";
 }
 
 CTabButton[type=home-bottom-button]:pressed {
     background-color: "{{nav.bottomButton.background.down|str}}";
-    border-color: "{{nav.bottomButton.border.color.down|str}}";
     color: "{{nav.bottomButton.color.down|str}}";
-    border: "{{nav.bottomButton.border.size.down|size}}";
+    border-color: "{{nav.bottomButton.border.color.down|str}}";
+    border-width: "{{nav.bottomButton.border.size.down|size}}";
+    border-style: "{{nav.bottomButton.border.style.down|str}}";
 }

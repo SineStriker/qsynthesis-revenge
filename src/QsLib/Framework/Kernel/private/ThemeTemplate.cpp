@@ -191,7 +191,7 @@ bool ThemeTemplate::load(const QString &filename) {
     rightIdx = match.capturedStart(1);
 
     // Get config content
-    QRegularExpression lineReg("(\\w*)\\s*:\\s*(.*);\n");
+    QRegularExpression lineReg("([-\\w]+)\\s*:\\s*(.*);\n");
     QString configContent = data.mid(leftIdx + 1, rightIdx - leftIdx - 1) + "\n";
     int idx = 0;
     while ((idx = configContent.indexOf(lineReg, idx, &match)) != -1) {
@@ -228,6 +228,7 @@ QString ThemeTemplate::parse(const QMap<QString, ThemeConfig::Value> &vars, doub
     int index = 0;
 
     QString Content = content;
+
     while ((index = Content.indexOf(re, index, &match)) != -1) {
         QString ValueString;
         QString MatchString = match.captured();
@@ -252,6 +253,16 @@ QString ThemeTemplate::parse(const QMap<QString, ThemeConfig::Value> &vars, doub
         }
         Content.replace(index, MatchString.size(), ValueString);
         index += ValueString.size();
+    }
+
+    // Remove all empty properties
+    {
+        QRegularExpression reg("([-\\w]+)\\s*:\\s*;");
+        QRegularExpressionMatch match;
+        int index = 0;
+        while ((index = Content.indexOf(reg, index, &match)) != -1) {
+            Content.remove(index, match.captured(0).size());
+        }
     }
 
     return Content;

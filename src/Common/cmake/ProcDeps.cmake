@@ -37,6 +37,7 @@ function(proc_deps _all_targets)
     # Collect translation targets
     set(_lupdate_targets)
     set(_lrelease_targets)
+    set(_res_update_targets)
 
     foreach(_target ${_all_targets})
         if(_target MATCHES ".+_lupdate")
@@ -45,6 +46,10 @@ function(proc_deps _all_targets)
 
         if(_target MATCHES ".+_lrelease")
             list(APPEND _lrelease_targets ${_target})
+        endif()
+
+        if(_target MATCHES ".+_res_update_.+")
+            list(APPEND _res_update_targets ${_target})
         endif()
     endforeach()
 
@@ -56,6 +61,11 @@ function(proc_deps _all_targets)
     add_custom_target(
         lrelease_all
         DEPENDS ${_lrelease_targets}
+    )
+
+    add_custom_target(
+        res_update_all
+        DEPENDS ${_res_update_targets}
     )
 
     add_custom_target(lrelease_clear)

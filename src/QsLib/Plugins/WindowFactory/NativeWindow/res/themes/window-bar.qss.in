@@ -27,18 +27,27 @@ CWindowBarV2>CToolButton#min-button {
     qproperty-iconOver: svg(":/svg/window-bar/minimize.svg", "{{minButton.foreground.over|str}}");
     qproperty-iconDown: svg(":/svg/window-bar/minimize.svg", "{{minButton.foreground.down|str}}");
     qproperty-iconSize: "{{minButton.icon.size|size}}";
-    min-width: "{{minButton.minWidth|size}}";
-    border: none;
-    padding: 0;
     background-color: "{{minButton.background.up|str}}";
+    min-width: "{{minButton.minWidth|size}}";
+    border-color: "{{minButton.border.color.up|str}}";
+    border-width: "{{minButton.border.size.up|size}}";
+    border-style: "{{minButton.border.style.up|str}}";
+    padding: "{{minButton.padding|size|0}}";
+    margin: "{{minButton.margin|size|0}}";
 }
 
 CWindowBarV2>CToolButton#min-button:hover {
     background-color: "{{minButton.background.over|str}}";
+    border-color: "{{minButton.border.color.over|str}}";
+    border-width: "{{minButton.border.size.over|size}}";
+    border-style: "{{minButton.border.style.over|str}}";
 }
 
 CWindowBarV2>CToolButton#min-button:pressed {
     background-color: "{{minButton.background.down|str}}";
+    border-color: "{{minButton.border.color.down|str}}";
+    border-width: "{{minButton.border.size.down|size}}";
+    border-style: "{{minButton.border.style.down|str}}";
 }
 
 CWindowBarV2>CToolButton#max-button {

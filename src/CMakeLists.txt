@@ -56,6 +56,7 @@ endif()
 # ----------------------------------
 # Add sub-projects
 # ----------------------------------
+
 # Add qslib
 add_subdirectory(QsLib)
 

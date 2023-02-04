@@ -4,6 +4,7 @@
 #include "QsSystem.h"
 #include "private/QsNamespace_p.h"
 
+#include "../QsCoreConsole.h"
 #include "../QsCoreDecorator.h"
 
 #include <QDataStream>
@@ -39,6 +40,9 @@ void QsCoreStartInfoPrivate::load_helper() {
     // Maybe no return
     // ...
 
+    // Create global console
+    console = q->createConsole(q);
+
     // Create global decrator
     dec = q->createDecorator(q);
     dec->addLocale("English Default", {{"en_US", {}}});
@@ -70,14 +74,14 @@ void QsCoreStartInfoPrivate::load_helper() {
         QString msg = QCoreApplication::tr("You're trying to start %1 as the %2, which may cause "
                                            "security problem and isn't recommended.")
                           .arg(qAppName(), QsOs::rootUserName());
-        QsOs::messageStderr(qIStup->mainTitle(), msg);
-        QsFs::exitApp(0);
+        qCs->MsgBox(nullptr, QsCoreConsole::Warning, qIStup->mainTitle(), msg);
+        QsOs::exitApp(0);
     }
 
     // Reset configuration, exit
     if (parser.isSet(option_resetConfig)) {
         coreConfig->saveDefault(configPath);
-        QsFs::exitApp(0);
+        QsOs::exitApp(0);
     }
 
     // Init Single Structures

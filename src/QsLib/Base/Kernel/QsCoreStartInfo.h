@@ -11,6 +11,7 @@
 #define qIStup QsCoreStartInfo::instance()
 #endif
 
+class QsCoreConsole;
 class QsCoreDecorator;
 class QsCoreConfig;
 class QsCoreStartInfoPrivate;
@@ -45,6 +46,8 @@ public:
 
     /* Factory */
 protected:
+    virtual QsCoreConsole *createConsole(QObject *parent = nullptr);
+
     virtual QsCoreDecorator *createDecorator(QObject *parent = nullptr);
 
     virtual QsCoreConfig *creatDistConfig();

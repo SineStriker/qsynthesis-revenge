@@ -33,12 +33,11 @@ function(qs_add_res _target)
         endif()
     endif()
 
-    # Make dir
-    add_custom_command(
-        TARGET ${_target}
-        POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E make_directory ${_dest}
-    )
+    # Generate uuid
+    string(RANDOM LENGTH 8 _rand)
+    set(_res_update_target ${_target}_res_update_${_rand})
+
+    add_custom_target(${_res_update_target})
 
     # Copy files
     if(FUNC_FILES)
@@ -48,6 +47,13 @@ function(qs_add_res _target)
             add_custom_command(
                 TARGET ${_target}
                 POST_BUILD
+                COMMAND ${CMAKE_COMMAND} -E make_directory ${_dest}
+                COMMAND ${CMAKE_COMMAND} -E copy ${_file} ${_dest}
+            )
+            add_custom_command(
+                TARGET ${_res_update_target}
+                POST_BUILD
+                COMMAND ${CMAKE_COMMAND} -E make_directory ${_dest}
                 COMMAND ${CMAKE_COMMAND} -E copy ${_file} ${_dest}
             )
         endforeach()
@@ -60,6 +66,11 @@ function(qs_add_res _target)
             get_filename_component(_name ${_file} NAME)
             add_custom_command(
                 TARGET ${_target}
+                POST_BUILD
+                COMMAND ${CMAKE_COMMAND} -E copy ${dir}/${_name} ${_dest}
+            )
+            add_custom_command(
+                TARGET ${_res_update_target}
                 POST_BUILD
                 COMMAND ${CMAKE_COMMAND} -E copy ${dir}/${_name} ${_dest}
             )

@@ -2,6 +2,7 @@
 #define QSCORECONFIG_P_H
 
 #include "../QsCoreConfig.h"
+
 #include "QSimpleVarExp.h"
 
 #include <QHash>

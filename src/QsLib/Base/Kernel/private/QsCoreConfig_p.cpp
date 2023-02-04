@@ -9,6 +9,7 @@
 #include <QJsonDocument>
 #include <QJsonObject>
 
+#include "../QsCoreConsole.h"
 #include "../QsCoreStartInfo.h"
 #include "QsSystem.h"
 
@@ -166,17 +167,17 @@ bool QsCoreConfigPrivate::apply_helper() {
         switch (args.level) {
             case DirInitArgs::CreateIfNotExist:
                 if (!QsFs::mkDir(path)) {
-                    QsOs::messageStderr(qIStup->errorTitle(),
-                                        QString("Failed to create %1 directory!")
-                                            .arg(QsFs::PathFindFileName(path)));
+                    qCs->MsgBox(nullptr, QsCoreConsole::Critical, qIStup->errorTitle(),
+                                QString("Failed to create %1 directory!")
+                                    .arg(QsFs::PathFindFileName(path)));
                     return false;
                 }
                 break;
             case DirInitArgs::ErrorIfNotExist:
                 if (!QsFs::isDirExist(path)) {
-                    QsOs::messageStderr(
-                        qIStup->errorTitle(),
-                        QString("Failed to find %1 directory!").arg(QsFs::PathFindFileName(path)));
+                    qCs->MsgBox(nullptr, QsCoreConsole::Critical, qIStup->errorTitle(),
+                                QString("Failed to create %1 directory!")
+                                    .arg(QsFs::PathFindFileName(path)));
                     return false;
                 }
                 break;
