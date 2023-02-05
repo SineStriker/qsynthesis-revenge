@@ -1,5 +1,5 @@
 #include "QDspxModel.h"
-#include "QMidiFile.h"
+#include "../3rdparty/QMidi/src/QMidiFile.h"
 
 #include <QDebug>
 #include <QFile>
@@ -11,23 +11,116 @@ QDspxModel::QDspxModel() {
 QDspxModel::~QDspxModel() {
 }
 
+QString Pitch2Name(qint8 pitch) {
+    QStringList head = QString::fromLocal8Bit("C,C#,D,D#,E,F,F#,G,G#,A,A#,B").split(",");
+    QString str = QString(head[int(pitch % 12)]);
+    str += QString(int(pitch / 12) - 1);
+    qDebug() << head;
+    return  str;
+}
+
 bool QDspxModel::fromMidi(const QString &filename, QDspxModel *out) {
     QMidiFile midi;
 
-    QMap<int, int> a;
-    QHash<int, int> b;
-    a[1] = 1;
-
-    a[60] = 114514;
-
-    // for (auto it = a.begin(); it != a.end(); ++it) {
-    //     auto key = it.key();
-    //     auto val = it.value();
-    // }
-
-    for (auto key : a.keys()) {
-        auto val = a[key];
+    if (!midi.load(filename)) {
+        qDebug() << "Failed to read MIDI file!";
+        return 0;
     }
 
+    //midi种类、四分音符ticks数、轨道数、时间类型
+    qint8 midiFormat = midi.fileFormat();
+    qint16 Resolution = midi.resolution();
+    qint16 tracksCount = midi.tracks().size();
+    QString divType = midi.divisionType();
+
+    //校验tracks数量、midi种类
+    if (tracksCount == 0) {
+        qDebug() << "The midi is empty!";
+        return false;
+    } else if (midiFormat == 0 && tracksCount > 1) {
+        qDebug() << "The number of midi tracks is illegal!";
+        return false;
+    } else if (midiFormat == 2 || divType != QMidiFile::PPQ) {
+        qDebug() << "MidiFormat:" << midiFormat;
+        qDebug() << "DivType:" << divType << midi.divisionType();
+        qDebug() << "The midi file is illegal!";
+        return false;
+    }
+
+    // 解析Tempo Map
+    QList<QPair<int, double>> tempos;
+    QList<QMidiEvent *> tempMap = midi.eventsForTrack(0);
+    for (int j = 0; j < tempMap.size(); ++j) {
+        QMidiEvent *e = tempMap.at(j);
+        if (e->type() == QMidiEvent::Meta) {
+            qDebug() << "Cmd:" << hex << e->number();
+            if (e->number() == QMidiEvent::Tempo) {
+                qDebug() << "Tempo:" << e->tempo();
+            } else if (e->number() == QMidiEvent::TimeSignature) {
+                qDebug() << "TimeSignature:" << e->tick() << e->number()
+                         << e->data();
+            } else {
+                qDebug() << "Else:" << e->number();
+            }
+        }
+    }
+
+    //单轨数据：轨道名、起止tick、音高、歌词
+    struct TrackInfo {
+        QString Name;
+        QList<qint32> NotePos;
+        QList<qint32> NoteEnd;
+        QList<qint8> NoteKeyNum;
+        QList<QString> NoteLyric;
+        QString pitchRange;
+    };
+    QList<TrackInfo> Tracks;
+
+    //解析元数据
+    for (int i = midiFormat; i < tracksCount; ++i) {
+        QList<QMidiEvent *> list = midi.eventsForTrack(i);
+        QString name = "";
+        TrackInfo trackInfo;
+        for (int j = 0; j < list.size(); ++j) {
+            QMidiEvent *e = list.at(j);           
+            //midi元事件
+            switch (e->type()) {
+                case QMidiEvent::Meta: {
+                    if (e->number() == QMidiEvent::TrackName) {
+                        name = QString::fromLocal8Bit(e->data());
+                        trackInfo.Name.append(name);
+                    } else if (e->number() == QMidiEvent::Lyric) {
+                        trackInfo.NoteLyric.append(QString::fromLocal8Bit(e->data()));
+                    }
+                    break;
+                }
+                case QMidiEvent::NoteOn: {
+                    trackInfo.NotePos.append(e->tick());
+                    trackInfo.NoteKeyNum.append(e->note());
+                    break;
+                }
+                case QMidiEvent::NoteOff: {
+                    trackInfo.NoteEnd.append(e->tick());
+                    break;
+                }
+            }
+        }
+        qint8 keyLow = 48;
+        qint8 keyHigh = 60;
+        QString low = Pitch2Name(keyLow);
+        QString high = Pitch2Name(keyHigh);
+        trackInfo.pitchRange = QString(low + "-" + high);
+        Tracks.append(trackInfo);
+    }
+    
+    for (int i = 0; i < Tracks.size(); ++i) {
+        qDebug() << Tracks.at(i).Name <<  Tracks.at(i).pitchRange;
+        for (int j = 0; j < Tracks.at(i).NotePos.size(); ++j) {
+            qDebug() << Tracks.at(i).NotePos.at(j) 
+                     << Tracks.at(i).NoteEnd.at(j)
+                     << Tracks.at(i).NoteKeyNum.at(j)
+                     << Tracks.at(i).NoteLyric.at(j);
+        }
+    }
     return false;
 }
