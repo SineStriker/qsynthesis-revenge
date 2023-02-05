@@ -67,7 +67,8 @@ void QsCoreConfigPrivate::initByApp() {
     };
     dirMap = {
         {QsCoreConfig::AppData, //
-         wrapDirInfo(KEY_NAME_DATA_DIR, QString("${APPDATA}") + Slash + qAppName(), "data",
+         wrapDirInfo(KEY_NAME_DATA_DIR,
+                     QString("${APPDATA}") + Slash + "ChorusKit" + Slash + qAppName(), "data",
                      DirInitArgs::CreateIfNotExist, false)},
         {QsCoreConfig::AppTemp, //
          wrapDirInfo(KEY_NAME_TEMP_DIR, QString("${TEMP}") + Slash + qAppName(), "temp",

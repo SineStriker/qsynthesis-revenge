@@ -45,7 +45,7 @@ CTabButton[type=home-nav-button] {
     color: "{{nav.navButton.color.up|str}}";
     border-color: "{{nav.navButton.border.color.up|str}}";
     border-width: "{{nav.navButton.border.size.up|size}}";
-    border-style: "{{nav.navButton.border.style.up|str}}";
+    border-style: "{{nav.navButton.border.style.up|str|none}}";
     padding: "{{nav.navButton.padding|size}}";
     margin: "{{nav.navButton.margin|size}}";
     text-align: "{{nav.navButton.color|str|left}}";
@@ -110,7 +110,7 @@ CTabButton[type=home-bottom-button] {
     color: "{{nav.bottomButton.color.up|str}}";
     border-color: "{{nav.bottomButton.border.color.up|str}}";
     border-width: "{{nav.bottomButton.border.size.up|size}}";
-    border-style: "{{nav.bottomButton.border.style.up|str}}";
+    border-style: "{{nav.bottomButton.border.style.up|str|none}}";
     padding: "{{nav.bottomButton.padding|size|0}}";
     margin: "{{nav.bottomButton.margin|size|0}}";
     text-align: "{{nav.bottomButton.color|str|left}}";

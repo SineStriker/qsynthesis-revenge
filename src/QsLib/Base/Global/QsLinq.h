@@ -60,6 +60,16 @@ namespace QsLinq {
         return false;
     }
 
+    template <class T, class Validator>
+    bool All(const QList<T> &list, Validator validator) {
+        for (const auto &item : qAsConst(list)) {
+            if (!validator(item)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
     /**
      * @brief C# IEnumerable.ForEach
      *

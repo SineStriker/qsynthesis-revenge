@@ -3,8 +3,6 @@ project(qmidi
     LANGUAGES CXX
 )
 
-add_subdirectory(QMidi)
-
 add_files(_src
     CURRENT
     PATTERNS *.h *.hpp *.cpp *.cc

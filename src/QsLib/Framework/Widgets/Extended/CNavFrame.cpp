@@ -63,6 +63,9 @@ CNavFrame::CNavFrame(QWidget *parent) : QFrame(parent), d_ptr(new CNavFramePriva
     d.splitter->addWidget(d.leftFrame);
     d.splitter->addWidget(d.rightFrame);
 
+    d.splitter->setStretchFactor(0, 0);
+    d.splitter->setStretchFactor(1, 1);
+
     d.layout = new QHBoxLayout();
     d.layout->setMargin(0);
     d.layout->setSpacing(0);

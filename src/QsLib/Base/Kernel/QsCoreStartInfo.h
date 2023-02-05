@@ -25,6 +25,7 @@ public:
     ~QsCoreStartInfo();
 
     virtual void load();
+    virtual void save();
 
     bool isAboutToQuit() const;
 

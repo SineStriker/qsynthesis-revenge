@@ -1,7 +1,8 @@
 #ifndef DSAPPLICATIONPRIVATE_H
 #define DSAPPLICATIONPRIVATE_H
 
-#include "../DsApplication.h"
+#include "DsApplication.h"
+#include "DsLocalData.h"
 #include "DsStartInfo.h"
 
 class DsApplicationPrivate {
@@ -16,6 +17,7 @@ public:
     DsApplication *q_ptr;
 
     DsStartInfo *startInfo; // QsCoreStartInfo instance
+    DsLocalData *localData;
 };
 
 #endif // DSAPPLICATIONPRIVATE_H

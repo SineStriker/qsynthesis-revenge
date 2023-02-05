@@ -24,6 +24,9 @@ void DsStartInfo::load() {
     d->load_helper();
 }
 
+void DsStartInfo::save() {
+}
+
 QsCoreConfig *DsStartInfo::creatDistConfig() {
     return new DsDistConfig();
 }

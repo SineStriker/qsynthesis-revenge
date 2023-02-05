@@ -13,6 +13,7 @@ public:
     ~DsStartInfo();
 
     void load() override;
+    void save() override;
 
 protected:
     QsCoreConfig *creatDistConfig() override;

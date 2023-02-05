@@ -2,6 +2,12 @@
 
 #include <QDebug>
 
+#include "DsDistConfig.h"
+
+static const char Slash = '/';
+
+static const char LocalDataFile[] = "local.json";
+
 DsApplicationPrivate::DsApplicationPrivate() {
 }
 
@@ -13,8 +19,15 @@ void DsApplicationPrivate::init() {
     Q_Q(DsApplication);
     startInfo = new DsStartInfo(q);
     startInfo->load();
+
+    localData = new DsLocalData();
+    localData->load(qAppConf->appDir(DsDistConfig::AppData) + Slash + LocalDataFile);
 }
 
 void DsApplicationPrivate::deinit() {
+    localData->save(qAppConf->appDir(DsDistConfig::AppData) + Slash + LocalDataFile);
+    delete localData;
+
+    startInfo->save();
     delete startInfo;
 }

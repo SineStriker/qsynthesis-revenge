@@ -18,6 +18,7 @@ public:
     ~HomeWindowPrivate();
 
     void init();
+    void deinit();
 
     CNavFrame *frame;
 
