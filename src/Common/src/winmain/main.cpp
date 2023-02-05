@@ -1,12 +1,14 @@
-#include "global.h"
+#include "com_global.h"
 
 #if defined(_WIN32)
 #include "utils_win.h"
 #endif
 
 #ifdef APP_ENABLE_ENTRY
-extern "C" MY_DECL_IMPORT int main_entry(int, char *[]);
+MY_EXTERN_C_IMPORT int main_entry(int, char *[]);
 #endif
+
+#include <iostream>
 
 int main(int argc, char *argv[]) {
 #ifdef _WIN32

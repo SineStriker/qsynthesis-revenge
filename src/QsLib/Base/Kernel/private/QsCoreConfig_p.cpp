@@ -71,7 +71,8 @@ void QsCoreConfigPrivate::initByApp() {
                      QString("${APPDATA}") + Slash + "ChorusKit" + Slash + qAppName(), "data",
                      DirInitArgs::CreateIfNotExist, false)},
         {QsCoreConfig::AppTemp, //
-         wrapDirInfo(KEY_NAME_TEMP_DIR, QString("${TEMP}") + Slash + qAppName(), "temp",
+         wrapDirInfo(KEY_NAME_TEMP_DIR,
+                     QString("${TEMP}") + Slash + "ChorusKit" + Slash + qAppName(), "temp",
                      DirInitArgs::CreateIfNotExist, false)},
         {QsCoreConfig::AppShare, //
          wrapDirInfo(KEY_NAME_SHARE_DIR, QString("${APPPATH}") + Slash + "share", "share",

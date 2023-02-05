@@ -150,12 +150,12 @@ function(proc_deploy _all_targets)
         if(WIN32)
             set_target_properties(
                 ${_lib} PROPERTIES RUNTIME_OUTPUT_DIRECTORY
-                ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${APP_LIB_DIR}
+                ${LIBRARY_OUTPUT_DIR}
             )
         else()
             set_target_properties(
                 ${_lib} PROPERTIES LIBRARY_OUTPUT_DIRECTORY
-                ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${APP_LIB_DIR}
+                ${LIBRARY_OUTPUT_DIR}
             )
         endif()
 
@@ -177,8 +177,7 @@ function(proc_deploy _all_targets)
     foreach(_exe ${_test_exes})
         # Set output dir to APP_LIB_DIR
         set_target_properties(
-            ${_exe} PROPERTIES RUNTIME_OUTPUT_DIRECTORY
-            ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${APP_LIB_DIR}
+            ${_exe} PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${LIBRARY_OUTPUT_DIR}
         )
     endforeach()
 

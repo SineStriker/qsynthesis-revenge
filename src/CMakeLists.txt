@@ -38,6 +38,7 @@ if(WIN32)
 endif()
 
 set(SHARE_OUTPUT_DIR ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${APP_SHARE_DIR})
+set(LIBRARY_OUTPUT_DIR ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${APP_LIB_DIR})
 
 # Find pre-built libraries
 find_package(SDL2 REQUIRED)
@@ -70,7 +71,8 @@ endforeach()
 
 # Add tests
 if(BUILD_TEST)
-    add_subdirectory(Test)
+    # add_subdirectory(Test)
+    add_subdirectory(TestNew)
 endif()
 
 # ----------------------------------

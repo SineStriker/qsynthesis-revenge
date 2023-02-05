@@ -35,6 +35,6 @@ option_ex(APP_SHARE_DIR share) # Do not change
 option_ex(APP_EXT_DIR plugins)
 option_ex(APP_PUBLIC_PLUGINS_DIR qslib)
 
-option_ex(BUILD_TEST off)
+option_ex(BUILD_TEST on)
 
 option_ex(CONFIG_WIN32_DEBUG on)

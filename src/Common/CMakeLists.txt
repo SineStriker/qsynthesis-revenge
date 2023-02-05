@@ -38,6 +38,9 @@ set(QT_CONF_SETTING             ${_templates_dir}/qt.conf.in                    
 set(VCPKG_BINARY_DIR            "${_bin_dir}"                                       CACHE STRING "" FORCE)
 set(VCPKG_BINARY_PAT            "${_bin_pat}"                                       CACHE STRING "" FORCE)
 
+# Include
+set(COMMON_INCLUDE_DIR          ${CMAKE_CURRENT_SOURCE_DIR}/include                 CACHE STRING "" FORCE)
+
 # ----------------------------------
 # Initialization
 # ----------------------------------
@@ -56,4 +59,5 @@ include(${PROJECT_MODULES_DIR}/ListUtil.cmake)
 include(${PROJECT_MODULES_DIR}/Target.cmake)
 
 # Add sub dirs
+
 add_subdirectory(src)

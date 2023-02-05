@@ -16,7 +16,7 @@ extern int main(int, char *[]);
 extern "C" int APIENTRY WinMain(HINSTANCE, HINSTANCE, LPSTR /*cmdParamarg*/, int /*cmdShow*/);
 
 // Returns the last Win32 error, in string format. Returns an empty string if there is no error.
-std::wstring WinGetLastErrorString();
+std::wstring WinGetLastErrorString(int *errNum = nullptr);
 
 std::wstring WinGetExeDir();
 

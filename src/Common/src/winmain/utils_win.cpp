@@ -1,6 +1,6 @@
 #include "utils_win.h"
 
-#include "global.h"
+#include "com_global.h"
 
 static wchar_t Error_Title[] = TO_UNICODE("Fatal Error");
 
@@ -30,11 +30,15 @@ int WinMain(HINSTANCE, HINSTANCE, LPSTR /*cmdParamarg*/, int /*cmdShow*/) {
     return exitCode;
 }
 
-std::wstring WinGetLastErrorString() {
+std::wstring WinGetLastErrorString(int *errNum) {
     // Get the error message ID, if any.
     DWORD errorMessageID = ::GetLastError();
     if (errorMessageID == 0) {
         return std::wstring(); // No error message has been recorded
+    }
+
+    if (errNum) {
+        *errNum = errorMessageID;
     }
 
     LPWSTR messageBuffer = nullptr;
@@ -82,9 +86,11 @@ std::wstring WinGetExeDir() {
 class WinLibrary::Impl {
 public:
     Impl() {
+        errNum = 0;
         hDll = nullptr;
     }
 
+    int errNum;
     HMODULE hDll;
 };
 
@@ -99,7 +105,7 @@ WinLibrary::~WinLibrary() {
 bool WinLibrary::Load(const std::wstring &path) {
     HINSTANCE hDLL = ::LoadLibraryW(path.data());
     if (!hDLL) {
-        std::wstring msg = WinGetLastErrorString();
+        std::wstring msg = WinGetLastErrorString(&_impl->errNum);
         ::MessageBoxW(nullptr, msg.data(), Error_Title,
                       MB_OK | MB_TOPMOST | MB_SETFOREGROUND | MB_ICONERROR);
         return false;
@@ -118,7 +124,7 @@ void WinLibrary::Free() {
 FARPROC WinLibrary::GetEntry(const char *entry) const {
     auto fun = ::GetProcAddress(_impl->hDll, entry);
     if (!fun) {
-        std::wstring msg = WinGetLastErrorString();
+        std::wstring msg = WinGetLastErrorString(&_impl->errNum);
         ::MessageBoxW(nullptr, msg.data(), Error_Title,
                       MB_OK | MB_TOPMOST | MB_SETFOREGROUND | MB_ICONERROR);
         return nullptr;
@@ -127,7 +133,7 @@ FARPROC WinLibrary::GetEntry(const char *entry) const {
 }
 
 int WinLibrary::ErrorCode() const {
-    return ::GetLastError();
+    return _impl->errNum;
 }
 
 void WinLibrary::AddLibDir(const std::wstring &path) {
