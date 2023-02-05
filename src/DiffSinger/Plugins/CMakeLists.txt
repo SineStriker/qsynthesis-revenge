@@ -12,4 +12,4 @@ function(configure_plugin _author)
     )
 endfunction()
 
-add_subdirectory(DiffHost)
+add_subdirectory(DsEngine)
