@@ -1,5 +1,5 @@
-#ifndef DSINTERNALMAIN_H
-#define DSINTERNALMAIN_H
+#ifndef DSHOSTALMAIN_H
+#define DSHOSTALMAIN_H
 
 #include "DsHostGlobal.h"
 
@@ -7,10 +7,10 @@
 extern "C" {
 #endif
 
-DSINTERN_API int main_entry(int argc, char *argv[]);
+DSHOST_API int main_entry(int argc, char *argv[]);
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif // DSINTERNALMAIN_H
+#endif // DSHOSTALMAIN_H

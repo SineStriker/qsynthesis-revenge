@@ -34,7 +34,7 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Kernel/QsCoreStartInfo.cpp" line="39"/>
+        <location filename="../../Kernel/QsCoreStartInfo.cpp" line="42"/>
         <source>Error</source>
         <translation type="unfinished"></translation>
     </message>

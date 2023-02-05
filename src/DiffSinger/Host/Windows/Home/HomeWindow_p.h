@@ -1,15 +1,15 @@
 #ifndef HOMEWINDOWPRIVATE_H
 #define HOMEWINDOWPRIVATE_H
 
+#include <QBoxLayout>
+#include <QSplitter>
+
 #include "Windows/private/PlainWindow_p.h"
 
+#include "HomeRecentWidget.h"
 #include "HomeWindow.h"
 
 #include "CNavFrame.h"
-#include "CTabButton.h"
-
-#include <QSplitter>
-#include <QBoxLayout>
 
 class HomeWindowPrivate : public PlainWindowPrivate {
     Q_DECLARE_PUBLIC(HomeWindow)
@@ -26,7 +26,7 @@ public:
     QAbstractButton *recoverButton;
     CTabButton *aboutButton;
 
-    QWidget *recentWidget;
+    HomeRecentWidget *recentWidget;
     QWidget *recoveryWidget;
 };
 

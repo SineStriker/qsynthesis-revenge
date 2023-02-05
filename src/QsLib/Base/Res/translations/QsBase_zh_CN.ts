@@ -34,7 +34,7 @@
         <translation>你正在尝试以%2身份运行%1，这可能存在安全问题。请使用低权限启动。</translation>
     </message>
     <message>
-        <location filename="../../Kernel/QsCoreStartInfo.cpp" line="39"/>
+        <location filename="../../Kernel/QsCoreStartInfo.cpp" line="42"/>
         <source>Error</source>
         <translation>错误</translation>
     </message>

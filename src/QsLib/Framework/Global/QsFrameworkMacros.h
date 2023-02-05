@@ -36,23 +36,23 @@ private:                                                                        
         QPixelSize layoutSpacing READ layoutSpacing WRITE setLayoutSpacing NOTIFY layoutChanged)   \
 public:                                                                                            \
     inline QMargins layoutMargins() const {                                                        \
-        auto m = this->layout();                                                                   \
+        auto m = QWidget::layout();                                                                \
         return m ? m->contentsMargins() : QMargins();                                              \
     }                                                                                              \
                                                                                                    \
     inline void setLayoutMargins(const QMargins &margins) {                                        \
-        auto m = this->layout();                                                                   \
+        auto m = QWidget::layout();                                                                \
         m ? m->setContentsMargins(margins) : void(0);                                              \
         emit layoutChanged();                                                                      \
     }                                                                                              \
                                                                                                    \
     inline QPixelSize layoutSpacing() const {                                                      \
-        auto m = this->layout();                                                                   \
+        auto m = QWidget::layout();                                                                \
         return QPixelSize(m ? m->spacing() : 0);                                                   \
     }                                                                                              \
                                                                                                    \
     inline void setLayoutSpacing(const QPixelSize &spacing) {                                      \
-        auto m = this->layout();                                                                   \
+        auto m = QWidget::layout();                                                                \
         m ? m->setSpacing(spacing.value()) : void(0);                                              \
         emit layoutChanged();                                                                      \
     }                                                                                              \

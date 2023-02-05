@@ -56,4 +56,8 @@ private:
     void _q_localeSubscriberDestroyed();
 };
 
+#ifndef _LOC
+#define _LOC(T, P) std::bind(&T::reloadStrings, P)
+#endif
+
 #endif // QSCOREDECORATOR_H

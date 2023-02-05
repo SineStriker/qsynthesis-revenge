@@ -14,7 +14,7 @@
             "nav": {
                 "background": "#252526",
                 "padding": 0,
-                "navButton": {
+                "navButtons": {
                     "icon": {
                         "up": "#FFFFFF",
                         "size": [
@@ -60,7 +60,7 @@
                     },
                     "padding": 11
                 },
-                "bottomButton": {
+                "bottomButtons": {
                     "icon": {
                         "up": "#FFFFFF",
                         "size": [
@@ -81,7 +81,69 @@
             },
             "main": {
                 "background": "transparent",
-                "padding": 20
+                "recent": {
+                    "handle": {
+                        "color": "#666666",
+                        "width": 1
+                    },
+                    "top": {
+                        "spacing": 10,
+                        "buttons": {
+                            "icon": {
+                                "up": "#FFFFFF",
+                                "size": [
+                                    20,
+                                    20
+                                ]
+                            },
+                            "color": {
+                                "up": "#FFFFFF"
+                            },
+                            "spacing": 0.2,
+                            "background": {
+                                "up": "rgba(0, 181, 120, 30%)",
+                                "over": "rgba(0, 181, 120, 50%)"
+                            },
+                            "border": {
+                                "radius": {
+                                    "up": 5
+                                }
+                            },
+                            "padding": [
+                                10,
+                                25
+                            ]
+                        },
+                        "textBox": {
+                            "background": {
+                                "up": "transparent"
+                            },
+                            "color": {
+                                "up": "#CCCCCC"
+                            },
+                            "border": {
+                                "style": {
+                                    "up": "solid"
+                                },
+                                "size": {
+                                    "up": 2
+                                },
+                                "radius": {
+                                    "up": 5
+                                },
+                                "color": {
+                                    "up": "#333333",
+                                    "focus": "#666666"
+                                }
+                            },
+                            "padding": 10
+                        },
+                        "padding": 15
+                    },
+                    "bottom": {
+                        "padding": 10
+                    }
+                }
             }
         }
     }

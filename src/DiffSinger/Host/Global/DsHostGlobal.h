@@ -1,18 +1,18 @@
-#ifndef DSINTERNGLOBAL_H
-#define DSINTERNGLOBAL_H
+#ifndef DSHOSTGLOBAL_H
+#define DSHOSTGLOBAL_H
 
 #include <QtGlobal>
 
-#ifndef DSINTERN_API
-#  ifdef DSINTERN_STATIC
-#    define DSINTERN_API
+#ifndef DSHOST_API
+#  ifdef DSHOST_STATIC
+#    define DSHOST_API
 #  else
-#    ifdef DSINTERN_LIBRARY
-#      define DSINTERN_API Q_DECL_EXPORT
+#    ifdef DSHOST_LIBRARY
+#      define DSHOST_API Q_DECL_EXPORT
 #    else
-#      define DSINTERN_API Q_DECL_IMPORT
+#      define DSHOST_API Q_DECL_IMPORT
 #    endif
 #  endif
 #endif
 
-#endif // DSINTERNGLOBAL_H
+#endif // DSHOSTGLOBAL_H

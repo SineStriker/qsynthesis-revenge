@@ -6,7 +6,7 @@
 
 #include "QDspxModel.h"
 
-MY_EXTERN_C_EXPORT int main_entry(int argc, char *argv[]) {
+COM_EXTERN_C_EXPORT int main_entry(int argc, char *argv[]) {
     QCoreApplication a(argc, argv);
 
     if (argc < 2) {

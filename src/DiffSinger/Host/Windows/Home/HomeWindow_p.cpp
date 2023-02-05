@@ -22,7 +22,7 @@ void HomeWindowPrivate::init() {
     frame->setObjectName("home-frame");
     q->setCentralWidget(frame);
 
-    recentWidget = new QLabel("Recent");
+    recentWidget = new HomeRecentWidget();
     recentWidget->setObjectName("home-recent-widget");
 
     recoveryWidget = new QLabel("Recovery");
@@ -41,7 +41,7 @@ void HomeWindowPrivate::init() {
     aboutButton->setObjectName("home-about-button");
     frame->setBottomWidget(aboutButton);
 
-    qIDec->installLocale(q, {"DsHost"}, std::bind(&HomeWindow::reloadStrings, q));
+    qIDec->installLocale(q, {"DsHost"}, _LOC(HomeWindow, q));
     qIDec->installTheme(q, {"HomeWindow"});
 
     // Init window size and width ratio
