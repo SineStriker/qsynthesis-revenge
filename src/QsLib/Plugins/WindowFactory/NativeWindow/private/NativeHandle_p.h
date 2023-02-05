@@ -7,6 +7,7 @@
 
 #include <FramelessWidgetsHelper>
 #include <private/widgetssharedhelper_p.h>
+#include <private/framelessconfig_p.h>
 
 FRAMELESSHELPER_USE_NAMESPACE
 
