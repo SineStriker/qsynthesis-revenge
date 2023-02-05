@@ -5,6 +5,7 @@ function(proc_deploy _all_targets)
     set(_qs_plugins)
     set(_app_libs)
     set(_qs_libs)
+    set(_test_libs)
     set(_other_libs)
     set(_main_exes)
     set(_tool_exes)
@@ -34,6 +35,8 @@ function(proc_deploy _all_targets)
                 list(APPEND _app_libs ${_target})
             elseif(${_lib_type} STREQUAL QsLib)
                 list(APPEND _qs_libs ${_target})
+            elseif(${_lib_type} STREQUAL Test)
+                list(APPEND _test_libs ${_target})
             else()
                 list(APPEND _other_libs ${_target})
             endif()
@@ -165,6 +168,22 @@ function(proc_deploy _all_targets)
         )
     endforeach()
 
+    # Deploy libraries
+    foreach(_lib ${_test_libs})
+        # Set output dir to APP_LIB_DIR
+        if(WIN32)
+            set_target_properties(
+                ${_lib} PROPERTIES RUNTIME_OUTPUT_DIRECTORY
+                ${LIBRARY_OUTPUT_DIR}
+            )
+        else()
+            set_target_properties(
+                ${_lib} PROPERTIES LIBRARY_OUTPUT_DIRECTORY
+                ${LIBRARY_OUTPUT_DIR}
+            )
+        endif()
+    endforeach()
+
     # Deploy executables
     foreach(_exe ${_tool_exes})
         add_custom_command(
@@ -174,12 +193,12 @@ function(proc_deploy _all_targets)
     endforeach()
 
     # Settle test executables
-    foreach(_exe ${_test_exes})
-        # Set output dir to APP_LIB_DIR
-        set_target_properties(
-            ${_exe} PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${LIBRARY_OUTPUT_DIR}
-        )
-    endforeach()
+    # foreach(_exe ${_test_exes})
+    #     # Set output dir to APP_LIB_DIR
+    #     set_target_properties(
+    #         ${_exe} PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${LIBRARY_OUTPUT_DIR}
+    #     )
+    # endforeach()
 
     foreach(_exe ${_main_exes} ${_other_exes})
         add_custom_command(

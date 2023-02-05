@@ -13,13 +13,13 @@ include_guard(DIRECTORY)
 
     flags:
         ENABLE_SHARED:   build shared library
-        NO_DEPLOY:       ignore metadata and skip it when deploying
+        AS_TEST:         ignore metadata and skip it when deploying
 
     usage:
         add a library with metadata
 #]]
 function(qs_add_library _target)
-    set(options ENABLE_SHARED NO_DEPLOY)
+    set(options ENABLE_SHARED AS_TEST)
     set(oneValueArgs AUTHOR_NAME FILE_DESC PRODUCT_NAME LIBRARY_TYPE MACRO_PREFIX)
     set(multiValueArgs)
     cmake_parse_arguments(FUNC "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
@@ -60,7 +60,7 @@ function(qs_add_library _target)
 
     target_compile_definitions(${_target} PRIVATE ${_prefix}_LIBRARY)
 
-    if(FUNC_ENABLE_SHARED AND NOT FUNC_NO_DEPLOY)
+    if(FUNC_ENABLE_SHARED AND NOT FUNC_AS_TEST)
         # Add embedded resources
         if(WIN32)
             # configure rc
@@ -93,6 +93,15 @@ function(qs_add_library _target)
             TC_TARGET_TYPE LIBRARY
             TC_LIBRARY_TYPE ${FUNC_LIBRARY_TYPE}
             TC_QT_BINARY true
+        )
+
+    endif()
+
+    if (FUNC_AS_TEST)
+        set_target_properties(${_target}
+            PROPERTIES
+            TC_TARGET_TYPE LIBRARY
+            TC_LIBRARY_TYPE Test
         )
     endif()
 

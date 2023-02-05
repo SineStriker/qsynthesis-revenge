@@ -10,7 +10,7 @@ add_files(_src
     PATTERNS *.h *.hpp *.cpp *.cc
 )
 
-qs_add_library(${PROJECT_NAME} ENABLE_SHARED NO_DEPLOY)
+qs_add_library(${PROJECT_NAME} ENABLE_SHARED AS_TEST)
 
 target_components(${PROJECT_NAME}
     INCLUDE_CURRENT
@@ -20,8 +20,4 @@ target_components(${PROJECT_NAME}
     INCLUDES ${COMMON_INCLUDE_DIR} ${_dirs}
 )
 
-qs_add_executable(${PROJECT_NAME}_Main ${PROJECT_NAME} NO_DEPLOY)
-
-if(APP_DEPLOY)
-    set_target_properties(${PROJECT_NAME} PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${LIBRARY_OUTPUT_DIR})
-endif()
+qs_add_executable(${PROJECT_NAME}_Main ${PROJECT_NAME} FORCE_CONSOLE AS_TEST)

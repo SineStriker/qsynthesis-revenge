@@ -13,7 +13,7 @@ include_guard(DIRECTORY)
     )
 
     flags:
-        NO_DEPLOY:       ignore metadata and skip it when deploying
+        AS_TEST:         ignore metadata and skip it when deploying
         FORCE_LINK:      implicitly link the dll forcefully
         FORCE_CONSOLE:   build as a console application forcefully
 
@@ -24,7 +24,7 @@ include_guard(DIRECTORY)
 
 ]] #
 function(qs_add_executable _target _dll)
-    set(options NO_DEPLOY FORCE_LINK FORCE_CONSOLE)
+    set(options AS_TEST FORCE_LINK FORCE_CONSOLE)
     set(oneValueArgs AUTHOR_NAME FILE_DESC PRODUCT_NAME EXECUTABLE_TYPE ICO_FILE ICNS_FILE)
     set(multiValueArgs)
 
@@ -54,7 +54,7 @@ function(qs_add_executable _target _dll)
     # # https://blog.csdn.net/qq_58286297/article/details/119611363
     # target_link_libraries(${_winmain_target} PRIVATE ComCtl32)
     # endif()
-    if(NOT FUNC_NO_DEPLOY)
+    if(NOT FUNC_AS_TEST)
         if(NOT FUNC_PRODUCT_NAME)
             set(_product_name ${_target})
         else()
@@ -131,11 +131,18 @@ function(qs_add_executable _target _dll)
             )
         endif()
 
-        set_target_properties(
-            ${PROJECT_NAME}
+        set_target_properties(${_target}
             PROPERTIES
             TC_TARGET_TYPE EXECUTABLE
             TC_EXECUTABLE_TYPE ${FUNC_EXECUTABLE_TYPE}
+        )
+    endif()
+
+    if(FUNC_AS_TEST)
+        set_target_properties(${_target}
+            PROPERTIES
+            TC_TARGET_TYPE EXECUTABLE
+            TC_EXECUTABLE_TYPE Test
         )
     endif()
 
