@@ -11,13 +11,15 @@ CConsole::~CConsole() {
 
 void CConsole::MsgBox(QObject *parent, QsCoreConsole::MessageBoxFlag flag, const QString &title,
                       const QString &text) {
-#ifdef Q_OS_WINDOWS
-    return QsCoreConsole::MsgBox(parent, flag, title, text);
-#else
+    Q_D(CConsole);
+
     QWidget *w = nullptr;
     if (parent && parent->isWidgetType()) {
         w = qobject_cast<QWidget *>(parent);
     }
+#ifdef Q_OS_WINDOWS
+    d->windowsMessageBox_helper(w ? (HWND) w->winId() : nullptr, flag, title, text);
+#else
     switch (flag) {
         case Critical:
             QMessageBox::critical(w, title, text);

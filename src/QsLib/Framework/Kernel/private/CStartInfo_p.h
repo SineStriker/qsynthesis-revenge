@@ -3,6 +3,8 @@
 
 #include "../CStartInfo.h"
 
+#include "CDecorateDir.h"
+
 class QSFRAMEWORK_API CStartInfoPrivate {
     Q_DECLARE_PUBLIC(CStartInfo)
 public:
@@ -10,8 +12,13 @@ public:
     virtual ~CStartInfoPrivate();
 
     void init();
+    void load_helper();
+    void deinit();
 
     CStartInfo *q_ptr;
+
+private:
+    CDecorateDir dd;
 };
 
 #endif // CSTARTINFOPRIVATE_H

@@ -1,6 +1,7 @@
 #include "HomeRecentWidget.h"
 
 #include "CDecorator.h"
+#include "DsConsole.h"
 
 /**
  * @brief Recent widget top frame
@@ -28,6 +29,9 @@ HomeRecentTopFrame::HomeRecentTopFrame(QWidget *parent) : QFrame(parent) {
     setLayout(topLayout);
 
     qIDec->installLocale(this, {"DsHost"}, _LOC(HomeRecentTopFrame, this));
+
+    connect(newButton, &QPushButton::clicked, this, &HomeRecentTopFrame::_q_newButtonClicked);
+    connect(importButton, &QPushButton::clicked, this, &HomeRecentTopFrame::_q_importButtonClicked);
 }
 
 HomeRecentTopFrame::~HomeRecentTopFrame() {
@@ -37,6 +41,16 @@ void HomeRecentTopFrame::reloadStrings() {
     newButton->setText(tr("New"));
     importButton->setText(tr("Import"));
     searchBox->setPlaceholderText(tr("Search for files"));
+}
+
+void HomeRecentTopFrame::_q_newButtonClicked() {
+    QDspxModel dspx;
+    qCs->openFile(&dspx, this);
+}
+
+void HomeRecentTopFrame::_q_importButtonClicked() {
+    QDspxModel dspx;
+    qCs->importFile(&dspx, this);
 }
 
 /**
@@ -60,10 +74,17 @@ HomeRecentWidget::HomeRecentWidget(QWidget *parent) : QSplitter(Qt::Vertical, pa
     setStretchFactor(1, 1);
 
     qIDec->installLocale(this, {"DsHost"}, _LOC(HomeRecentWidget, this));
+
+    connect(topWidget->searchBox, &QLineEdit::textChanged, this,
+            &HomeRecentWidget::_q_searchTextChanged);
 }
 
 HomeRecentWidget::~HomeRecentWidget() {
 }
 
 void HomeRecentWidget::reloadStrings() {
+}
+
+void HomeRecentWidget::_q_searchTextChanged(const QString &text) {
+    qDebug() << text;
 }

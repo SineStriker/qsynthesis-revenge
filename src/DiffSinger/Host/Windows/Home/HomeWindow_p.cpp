@@ -3,6 +3,7 @@
 #include "Kernel/CDecorator.h"
 #include "Kernel/DsLocalData.h"
 
+#include "DsConsole.h"
 #include "QsSystem.h"
 #include "QsView.h"
 
@@ -47,13 +48,17 @@ void HomeWindowPrivate::init() {
     // Init window size and width ratio
     double r = dsLocal->home.navWidthRatio;
     QRect rect(dsLocal->home.windowRect);
+
     if (rect.width() * rect.height() != 0) {
-        q->setGeometry(rect);
+        // q->setGeometry(rect);
+        QsView::centralizeWindow(q, {0.75, 0.75});
     } else {
         QsView::centralizeWindow(q, {0.75, 0.75});
         r = (225 * q->screen()->logicalDotsPerInch() / QsOs::unitDpi()) / q->width();
     }
     frame->splitter()->setSizes({int(q->width() * r), int(q->width() * (1 - r))});
+
+    q->connect(aboutButton, &QPushButton::clicked, q, &HomeWindow::_q_aboutButtonClicked);
 }
 
 void HomeWindowPrivate::deinit() {

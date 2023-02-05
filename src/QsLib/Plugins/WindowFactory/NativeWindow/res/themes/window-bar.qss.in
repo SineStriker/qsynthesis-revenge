@@ -17,9 +17,14 @@ CWindowBarV2>QLabel#win-title-label {
     padding: 0;
     border: none;
     color: "{{color|str}}";
+    font-size: "{{font.size|size}}";
     background-color: transparent;
     /* Limit window bar height */
     min-height: "{{minHeight|size}}";
+}
+
+CWindowBarV2>CToolButton {
+    outline: none;
 }
 
 CWindowBarV2>CToolButton#min-button {
@@ -31,10 +36,11 @@ CWindowBarV2>CToolButton#min-button {
     background-color: "{{minButton.background.up|str}}";
     border-color: "{{minButton.border.color.up|str}}";
     border-width: "{{minButton.border.size.up|size}}";
-    border-style: "{{minButton.border.style.up|str}}";
+    /* border-style: "{{minButton.border.style.up|str|none}}"; */
     border-radius: "{{minButton.border.radius.up|size}}";
     padding: "{{minButton.padding|size}}";
     margin: "{{minButton.margin|size}}";
+    border: none;
 }
 
 CWindowBarV2>CToolButton#min-button:hover {
@@ -65,7 +71,7 @@ CWindowBarV2>CToolButton#max-button {
     background-color: "{{maxButton.background.up|str}}";
     border-color: "{{maxButton.border.color.up|str}}";
     border-width: "{{maxButton.border.size.up|size}}";
-    border-style: "{{maxButton.border.style.up|str}}";
+    border-style: "{{maxButton.border.style.up|str|none}}";
     border-radius: "{{maxButton.border.radius.up|size}}";
     padding: "{{maxButton.padding|size}}";
     margin: "{{maxButton.margin|size}}";
@@ -96,7 +102,7 @@ CWindowBarV2>CToolButton#win-close-button {
     background-color: "{{closeButton.background.up|str}}";
     border-color: "{{closeButton.border.color.up|str}}";
     border-width: "{{closeButton.border.size.up|size}}";
-    border-style: "{{closeButton.border.style.up|str}}";
+    border-style: "{{closeButton.border.style.up|str|none}}";
     border-radius: "{{closeButton.border.radius.up|size}}";
     padding: "{{closeButton.padding|size}}";
     margin: "{{closeButton.margin|size}}";
@@ -124,7 +130,7 @@ CWindowBarV2>CToolButton#icon-button {
     background-color: "{{iconButton.background|str}}";
     border-color: "{{iconButton.border.color|str}}";
     border-width: "{{iconButton.border.size|size}}";
-    border-style: "{{iconButton.border.style|str}}";
+    border-style: "{{iconButton.border.style|str|none}}";
     border-radius: "{{iconButton.border.radius|size}}";
     padding: "{{iconButton.padding|size}}";
     margin: "{{iconButton.margin|size}}";

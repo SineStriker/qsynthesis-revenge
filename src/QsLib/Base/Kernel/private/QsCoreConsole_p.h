@@ -11,6 +11,11 @@ public:
 
     void init();
 
+#ifdef Q_OS_WINDOWS
+    void windowsMessageBox_helper(void *winHandle, QsCoreConsole::MessageBoxFlag flag,
+                                  const QString &title, const QString &text);
+#endif
+
     QsCoreConsole *q_ptr;
 };
 

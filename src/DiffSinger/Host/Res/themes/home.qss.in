@@ -51,6 +51,7 @@ CTabButton[type=home-nav-button] {
     padding: "{{nav.navButtons.padding|size}}";
     margin: "{{nav.navButtons.margin|size}}";
     text-align: "{{nav.navButtons.color|str|left}}";
+    font-size: "{{nav.navButtons.font.size|size}}";
 }
 
 CTabButton[type=home-nav-button]:hover {
@@ -122,6 +123,7 @@ CTabButton[type=home-bottom-button] {
     padding: "{{nav.bottomButtons.padding|size|0}}";
     margin: "{{nav.bottomButtons.margin|size|0}}";
     text-align: "{{nav.bottomButtons.color|str|left}}";
+    font-size: "{{nav.bottomButtons.font.size|size}}";
 }
 
 CTabButton[type=home-bottom-button]:hover {
@@ -210,6 +212,7 @@ HomeRecentTopFrame>CTabButton[type=top-button] {
     padding: "{{main.recent.top.buttons.padding|size|0}}";
     margin: "{{main.recent.top.buttons.margin|size|0}}";
     text-align: "{{main.recent.top.buttons.color|str|left}}";
+    font-size: "{{main.recent.top.buttons.font.size|size}}";
 }
 
 HomeRecentTopFrame>CTabButton[type=top-button]:hover {
@@ -239,6 +242,7 @@ HomeRecentTopFrame>QLineEdit#search-box {
     border-radius: "{{main.recent.top.textBox.border.radius.up|size}}";
     padding: "{{main.recent.top.textBox.padding|size|0}}";
     margin: "{{main.recent.top.textBox.margin|size|0}}";
+    font-size: "{{main.recent.top.textBox.font.size|size}}";
 }
 
 HomeRecentTopFrame>QLineEdit#search-box:focus {

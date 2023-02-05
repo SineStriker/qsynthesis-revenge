@@ -7,6 +7,7 @@
 #include <QStandardPaths>
 
 #include "Kernel/QsCoreConfig.h"
+#include "QsLinq.h"
 #include "QsSystem.h"
 
 #include "CDecorator.h"
@@ -14,6 +15,8 @@
 static const char SECTION_NAME_FILE_SYSTEM[] = "filesystem";
 static const char KEY_NAME_RECENT_FILES[] = "files";
 static const char KEY_NAME_RECENT_DIRS[] = "dirs";
+
+static const char SECTION_NAME_FILE_DIALOG[] = "fileDialog";
 
 static const char SECTION_NAME_DECORATOR[] = "decorator";
 static const char KEY_NAME_LAST_LOCALE[] = "locale";
@@ -82,6 +85,17 @@ bool QsFileManagerPrivate::load_helper(const QString &filename) {
         }
     }
 
+    // Get file dialog history
+    it = objDoc.find(SECTION_NAME_FILE_DIALOG);
+    if (it != objDoc.end() && it.value().isObject()) {
+        QJsonObject obj = it.value().toObject();
+        for (auto it2 = obj.begin(); it2 != obj.end(); ++it2) {
+            if (it2->isString()) {
+                lastOpenPaths.insert(it2.key(), it2.value().toString());
+            }
+        }
+    }
+
     // Get saved locale and theme
     it = objDoc.find(SECTION_NAME_DECORATOR);
     if (it != objDoc.end() && it.value().isObject()) {
@@ -111,11 +125,20 @@ bool QsFileManagerPrivate::save_helper(const QString &filename) {
         recentObj.insert(info.key, QJsonArray::fromStringList(info.set.valid()));
     }
 
+    QJsonObject fdObj;
+    for (auto it = lastOpenPaths.begin(); it != lastOpenPaths.end(); ++it) {
+        fdObj.insert(it.key(), it.value());
+    }
+
     QJsonDocument doc;
     QJsonObject obj{
         {
             SECTION_NAME_FILE_SYSTEM,
             recentObj,
+        },
+        {
+            SECTION_NAME_FILE_DIALOG,
+            fdObj,
         },
         {
             SECTION_NAME_DECORATOR,

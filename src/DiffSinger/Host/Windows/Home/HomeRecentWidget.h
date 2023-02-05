@@ -28,7 +28,12 @@ public:
     QLineEdit *searchBox;
 
     QHBoxLayout *topLayout;
+
 signals:
+
+private:
+    void _q_newButtonClicked();
+    void _q_importButtonClicked();
 };
 
 /**
@@ -44,7 +49,11 @@ public:
 
     HomeRecentTopFrame *topWidget;
     LinearScrollArea *bottomWidget;
+
 signals:
+
+private:
+    void _q_searchTextChanged(const QString &text);
 };
 
 #endif // HOMERECENTWIDGET_H

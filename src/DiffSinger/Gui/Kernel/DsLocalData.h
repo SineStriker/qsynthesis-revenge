@@ -4,11 +4,12 @@
 #include <QRect>
 #include <QString>
 
+#include "DsGuiGlobal.h"
 #include "QsMacros.h"
 
 #define dsLocal DsLocalData::instance()
 
-class DsLocalData {
+class DSGUI_API DsLocalData {
     Q_SINGLETON(DsLocalData)
 public:
     DsLocalData();

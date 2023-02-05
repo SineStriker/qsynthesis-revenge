@@ -30,7 +30,7 @@ HomeWindow *WindowManager::showHome() {
 
     auto w = d->createHomeWin();
     w->show();
-    QsView::centralizeWindow(w, QSizeF(0.75, 0.75));
+    // QsView::centralizeWindow(w, QSizeF(0.75, 0.75));
 
     d->homeWin = w;
 

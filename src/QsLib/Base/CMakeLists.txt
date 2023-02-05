@@ -4,6 +4,7 @@ project(QsBase
 )
 
 set(_dirs Api Global Kernel Serialization Tools)
+set(_res_dir Res)
 
 add_files(_src
     DIRECTORIES ${_dirs}
@@ -29,16 +30,16 @@ target_components(${PROJECT_NAME}
 
 target_create_translations(${PROJECT_NAME} SOURCES ${_src}
     LOCALES zh_CN zh_HK ja_JP
-    DESTINATION res/translations
+    DESTINATION ${_res_dir}/translations
     CREATE_ONCE
 )
 
 # Copy resources
 qs_add_res(${PROJECT_NAME}
-    FILES Res/QsBase.res.json
+    FILES ${_res_dir}/QsBase.res.json
     ABSOLUTE_PATH ${SHARE_OUTPUT_DIR}
 )
 qs_add_res(${PROJECT_NAME}
-    FILES Res/translations/*.qm
+    FILES ${_res_dir}/translations/*.qm
     ABSOLUTE_PATH ${SHARE_OUTPUT_DIR}/QsBase.res/translations
 )

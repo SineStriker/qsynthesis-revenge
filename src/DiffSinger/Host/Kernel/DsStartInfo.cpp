@@ -1,6 +1,7 @@
 #include "DsStartInfo.h"
 #include "private/DsStartInfo_p.h"
 
+#include "DsConsole.h"
 #include "DsDistConfig.h"
 
 #include <QApplication>
@@ -25,6 +26,10 @@ void DsStartInfo::load() {
 }
 
 void DsStartInfo::save() {
+}
+
+QsCoreConsole *DsStartInfo::createConsole(QObject *parent) {
+    return new DsConsole(parent);
 }
 
 QsCoreConfig *DsStartInfo::creatDistConfig() {

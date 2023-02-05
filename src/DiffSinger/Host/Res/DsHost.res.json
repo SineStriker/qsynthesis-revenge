@@ -6,18 +6,7 @@
     "locales": [
         {
             "key": "${PARENT}",
-            "dir": "${FILEPATH}/${CURRENT_KEY}.res/translations",
-            "files": {
-                "zh_CN": [
-                    "${CURRENT_KEY}_zh_CN.qm"
-                ],
-                "zh_HK": [
-                    "${CURRENT_KEY}_zh_HK.qm"
-                ],
-                "ja_JP": [
-                    "${CURRENT_KEY}_ja_JP.qm"
-                ]
-            }
+            "dir": "${FILEPATH}/${CURRENT_KEY}.res/translations"
         }
     ],
     "themes": [

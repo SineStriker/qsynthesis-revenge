@@ -3,6 +3,11 @@
 
 #include <QApplication>
 
+#if defined(qApp)
+#undef qApp
+#endif
+#define qApp (static_cast<DsApplication *>(QCoreApplication::instance()))
+
 class DsApplicationPrivate;
 
 class DsApplication : public QApplication {

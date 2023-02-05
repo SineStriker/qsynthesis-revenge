@@ -4,17 +4,17 @@
 <context>
     <name>HomeRecentTopFrame</name>
     <message>
-        <location filename="../../Windows/Home/HomeRecentWidget.cpp" line="37"/>
+        <location filename="../../Windows/Home/HomeRecentWidget.cpp" line="41"/>
         <source>New</source>
         <translation>新建</translation>
     </message>
     <message>
-        <location filename="../../Windows/Home/HomeRecentWidget.cpp" line="38"/>
+        <location filename="../../Windows/Home/HomeRecentWidget.cpp" line="42"/>
         <source>Import</source>
         <translation>导入</translation>
     </message>
     <message>
-        <location filename="../../Windows/Home/HomeRecentWidget.cpp" line="39"/>
+        <location filename="../../Windows/Home/HomeRecentWidget.cpp" line="43"/>
         <source>Search for files</source>
         <translation>搜索文件</translation>
     </message>
@@ -22,17 +22,17 @@
 <context>
     <name>HomeWindow</name>
     <message>
-        <location filename="../../Windows/Home/HomeWindow.cpp" line="14"/>
+        <location filename="../../Windows/Home/HomeWindow.cpp" line="16"/>
         <source>Recent</source>
         <translation>最近</translation>
     </message>
     <message>
-        <location filename="../../Windows/Home/HomeWindow.cpp" line="15"/>
+        <location filename="../../Windows/Home/HomeWindow.cpp" line="17"/>
         <source>Recovery</source>
         <translation>恢复</translation>
     </message>
     <message>
-        <location filename="../../Windows/Home/HomeWindow.cpp" line="16"/>
+        <location filename="../../Windows/Home/HomeWindow.cpp" line="18"/>
         <source>About %1</source>
         <translation>关于 %1</translation>
     </message>

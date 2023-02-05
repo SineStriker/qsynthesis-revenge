@@ -3,10 +3,6 @@
 
 #include "QsSystem.h"
 
-#ifdef Q_OS_WINDOWS
-#include <Windows.h>
-#endif
-
 Q_SINGLETON_DECLARE(QsCoreConsole);
 
 QsCoreConsole::QsCoreConsole(QObject *parent) : QsCoreConsole(*new QsCoreConsolePrivate(), parent) {
@@ -19,24 +15,8 @@ void QsCoreConsole::MsgBox(QObject *parent, QsCoreConsole::MessageBoxFlag flag,
                            const QString &title, const QString &text) {
     Q_UNUSED(parent);
 #ifdef Q_OS_WINDOWS
-    int winFlag;
-    switch (flag) {
-        case Critical:
-            winFlag = MB_ICONERROR;
-            break;
-        case Warning:
-            winFlag = MB_ICONWARNING;
-            break;
-        case Question:
-            winFlag = MB_ICONQUESTION;
-            break;
-        case Information:
-            winFlag = MB_ICONINFORMATION;
-            break;
-    };
-
-    ::MessageBoxW(0, text.toStdWString().data(), title.toStdWString().data(),
-                  MB_OK | MB_TOPMOST | MB_SETFOREGROUND | winFlag);
+    Q_D(QsCoreConsole);
+    d->windowsMessageBox_helper(nullptr, flag, title, text);
 #else
     switch (flag) {
         case Critical:
@@ -49,6 +29,11 @@ void QsCoreConsole::MsgBox(QObject *parent, QsCoreConsole::MessageBoxFlag flag,
             break;
     };
 #endif
+}
+
+void QsCoreConsole::SelectBox(QObject *parent, bool supportPreview, int max, const QString &title,
+                              const QString &caption,
+                              const QList<QsCoreConsole::SelectOption> &arguments) {
 }
 
 QsCoreConsole::QsCoreConsole(QsCoreConsolePrivate &d, QObject *parent)

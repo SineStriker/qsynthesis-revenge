@@ -5,15 +5,16 @@
 #include <QStringList>
 
 #include "Kernel/QsCoreConfig.h"
+#include "DsGuiGlobal.h"
 
 #ifdef qAppConf
 #undef qAppConf
 #endif
-#define qAppConf DsDistConfig::instance()
+#define qAppConf static_cast<DsDistConfig *>(QsCoreConfig::instance())
 
 class DsDistConfigPrivate;
 
-class DsDistConfig : public QsCoreConfig {
+class DSGUI_API DsDistConfig : public QsCoreConfig {
     Q_DECLARE_PRIVATE(DsDistConfig)
 public:
     DsDistConfig();

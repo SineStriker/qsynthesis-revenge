@@ -3,6 +3,11 @@
 
 #include "QsStartInfo.h"
 
+#ifdef qIStup
+#undef qIStup
+#endif
+#define qIStup qobject_cast<DsStartInfo *>(QsCoreStartInfo::instance())
+
 class DsStartInfoPrivate;
 
 class DsStartInfo : public QsStartInfo {
@@ -16,6 +21,8 @@ public:
     void save() override;
 
 protected:
+    QsCoreConsole *createConsole(QObject *parent = nullptr) override;
+
     QsCoreConfig *creatDistConfig() override;
 
 protected:

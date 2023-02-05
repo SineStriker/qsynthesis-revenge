@@ -76,7 +76,8 @@ bool QDspxModel::fromMidi(const QString &filename, QDspxModel *out) {
         QList<QString> noteLyric;
         QString pitchRange;
     };
-    QList<TrackInfo> trackInfos;
+
+    QVector<TrackInfo> trackInfos;
 
     //解析元数据
     for (int i = midiFormat; i < tracksCount; ++i) {
@@ -109,6 +110,12 @@ bool QDspxModel::fromMidi(const QString &filename, QDspxModel *out) {
                     break;
             }
         }
+
+        if (trackInfo.notePos.size() != trackInfo.noteEnd.size()) {
+            qDebug() << "The number of note-on and note-off are not match";
+            return false;
+        }
+
         qint8 keyLow = 48;
         qint8 keyHigh = 60;
         QString low = QUtaUtils::ToneNumToToneName(keyLow);
@@ -118,11 +125,13 @@ bool QDspxModel::fromMidi(const QString &filename, QDspxModel *out) {
     }
 
     for (int i = 0; i < trackInfos.size(); ++i) {
-        qDebug() << trackInfos.at(i).name << trackInfos.at(i).pitchRange;
-        for (int j = 0; j < trackInfos.at(i).notePos.size(); ++j) {
-            qDebug() << trackInfos.at(i).notePos.at(j) << trackInfos.at(i).noteEnd.at(j)
-                     << trackInfos.at(i).noteKeyNum.at(j) << trackInfos.at(i).noteLyric.at(j);
+        const auto &info = trackInfos.at(i);
+        qDebug() << info.name << info.pitchRange;
+
+        for (int j = 0; j < info.notePos.size(); ++j) {
+            qDebug() << info.notePos.at(j) << info.noteEnd.at(j) << info.noteKeyNum.at(j)
+                     << (info.noteLyric.size() > j ? info.noteLyric.at(j) : "");
         }
     }
-    return false;
+    return true;
 }

@@ -16,6 +16,9 @@ public:
 
 protected:
     HomeWindow(HomeWindowPrivate &d, QWidget *parent = nullptr);
+
+private:
+    void _q_aboutButtonClicked();
 };
 
 #endif // HOMEWINDOW_H

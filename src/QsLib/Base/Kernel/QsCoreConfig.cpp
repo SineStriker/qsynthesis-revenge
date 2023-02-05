@@ -6,8 +6,6 @@
 
 #include <QDebug>
 
-static bool hasInit = false;
-
 Q_SINGLETON_DECLARE(QsCoreConfig)
 
 QsCoreConfig::QsCoreConfig() : QsCoreConfig(*new QsCoreConfigPrivate()) {

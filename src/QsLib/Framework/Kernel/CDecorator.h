@@ -8,8 +8,8 @@
 
 #ifdef qIDec
 #undef qIDec
-#define qIDec qobject_cast<CDecorator *>(QsCoreDecorator::instance())
 #endif
+#define qIDec qobject_cast<CDecorator *>(QsCoreDecorator::instance())
 
 class CDecoratorPrivate;
 

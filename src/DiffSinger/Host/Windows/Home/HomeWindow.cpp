@@ -1,6 +1,8 @@
 #include "HomeWindow.h"
 #include "HomeWindow_p.h"
 
+#include "DsConsole.h"
+
 #include <QApplication>
 
 HomeWindow::HomeWindow(QWidget *parent) : HomeWindow(*new HomeWindowPrivate(), parent) {
@@ -18,4 +20,8 @@ void HomeWindow::reloadStrings() {
 
 HomeWindow::HomeWindow(HomeWindowPrivate &d, QWidget *parent) : PlainWindow(d, parent) {
     d.init();
+}
+
+void HomeWindow::_q_aboutButtonClicked() {
+    qCs->aboutApp(this);
 }

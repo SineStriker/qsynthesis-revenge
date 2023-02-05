@@ -20,6 +20,7 @@ public:
 
 private:
     CDecorateDir dd;
+    CDecorateDir dd_gui;
 };
 
 #endif // DSSTARTINFOPRIVATE_H
