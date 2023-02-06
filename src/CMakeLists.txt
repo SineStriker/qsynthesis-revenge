@@ -35,6 +35,7 @@ if(WIN32)
     set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /manifest:no")
     set(CMAKE_MODULE_LINKER_FLAGS "${CMAKE_MODULE_LINKER_FLAGS} /manifest:no")
     set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} /manifest:no")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /utf-8")
 endif()
 
 set(SHARE_OUTPUT_DIR ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${APP_SHARE_DIR})
@@ -81,7 +82,7 @@ endif()
 # ----------------------------------
 if(TRUE)
     get_all_targets(_all_targets)
-
+        
     proc_deps("${_all_targets}")
 
     if(APP_DEPLOY)
