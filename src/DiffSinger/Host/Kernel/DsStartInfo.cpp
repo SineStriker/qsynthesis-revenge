@@ -15,13 +15,7 @@ DsStartInfo::~DsStartInfo() {
 
 void DsStartInfo::load() {
     Q_D(DsStartInfo);
-
-    qApp->setApplicationName(APP_NAME);
-    qApp->setApplicationVersion(APP_VERSION);
-    qApp->setApplicationDisplayName(APP_NAME);
-
     QsStartInfo::load();
-
     d->load_helper();
 }
 

@@ -137,5 +137,9 @@ int WinLibrary::ErrorCode() const {
 }
 
 void WinLibrary::AddLibDir(const std::wstring &path) {
+//    ::SetDefaultDllDirectories(LOAD_LIBRARY_SEARCH_APPLICATION_DIR |
+//                               LOAD_LIBRARY_SEARCH_DEFAULT_DIRS | LOAD_LIBRARY_SEARCH_SYSTEM32 |
+//                               LOAD_LIBRARY_SEARCH_USER_DIRS);
+//    ::AddDllDirectory(path.data());
     ::SetDllDirectoryW(path.data());
 }

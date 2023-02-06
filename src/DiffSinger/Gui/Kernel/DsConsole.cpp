@@ -46,8 +46,11 @@ void DsConsole::aboutApp(QWidget *parent) {
     QString title = tr("About %1").arg(qAppName());
     QString text =
         tr("%1 %2, Copyright OpenVPI.").arg(qAppName(), QApplication::applicationVersion());
+#ifdef Q_OS_WINDOWS
     CConsole::MsgBox(parent, Information, title, text);
-    // QMessageBox::information(parent, title,text);
+#else
+    QMessageBox::information(parent, title, text);
+#endif
 }
 
 bool DsConsole::openFile(QDspxModel *dspx, QWidget *parent) {

@@ -11,11 +11,8 @@ public:
 
     void init();
 
-#ifdef Q_OS_WINDOWS
-    void windowsMessageBox_helper(void *winHandle, QsCoreConsole::MessageBoxFlag flag,
-                                  const QString &title, const QString &text);
-#elif defined (Q_OS_MACOS)
-    void macosNSAlert_helper(QsCoreConsole::MessageBoxFlag flag,
+#if defined(Q_OS_WINDOWS) || defined(Q_OS_MAC)
+    void osMessageBox_helper(void *winHandle, QsCoreConsole::MessageBoxFlag flag,
                              const QString &title, const QString &text);
 #endif
 

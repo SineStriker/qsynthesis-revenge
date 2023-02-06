@@ -17,6 +17,11 @@ DsApplicationPrivate::~DsApplicationPrivate() {
 
 void DsApplicationPrivate::init() {
     Q_Q(DsApplication);
+
+    q->setApplicationName(APP_NAME);
+    q->setApplicationVersion(APP_VERSION);
+    q->setApplicationDisplayName(APP_NAME);
+
     startInfo = new DsStartInfo(q);
     startInfo->load();
 

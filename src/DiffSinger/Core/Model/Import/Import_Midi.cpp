@@ -38,23 +38,24 @@ bool QDspx::fromMidi(const QString &filename, QDspxModel *out) {
     }
 
     // 解析Tempo Map
-    QList<QPair<int, double>> tempos;
-    QList<QPair<int, QString>> label;
+    QVector<QPair<int, double>> tempos;
+    QVector<QPair<int, QString>> label;
     QMap<qint32, QPoint> timeSign;
     timeSign[0] = QPoint(4, 4);
     QList<QMidiEvent *> tempMap = midi.eventsForTrack(0);
 
     for (auto e : qAsConst(tempMap)) {
+        const auto &data = e->data();
         if (e->type() == QMidiEvent::Meta) {
             qDebug() << "Cmd:" << Qt::hex << e->number();
             if (e->number() == QMidiEvent::Tempo) {
                 tempos.append(qMakePair(e->tick(), e->tempo()));
                 qDebug() << "Tempo:" << e->tick() << e->tempo();
             } else if (e->number() == QMidiEvent::Marker) {
-                label.append(qMakePair(e->tick(), QString(e->data())));
-                qDebug() << "Marker:" << e->tick() << QString(e->data());
+                label.append(qMakePair(e->tick(), QString(data)));
+                qDebug() << "Marker:" << e->tick() << QString(data);
             } else if (e->number() == QMidiEvent::TimeSignature) {
-                timeSign[e->tick()] = QPoint(e->data()[0], 2 * e->data()[1]);
+                timeSign[e->tick()] = QPoint(data[0], 2 * data[1]);
                 qDebug() << "TimeSignature:" << e->tick() << timeSign[e->tick()];
             } else {
                 qDebug() << "Else:" << e->number();
@@ -78,7 +79,7 @@ bool QDspx::fromMidi(const QString &filename, QDspxModel *out) {
     //解析元数据
     for (int i = midiFormat; i < tracksCount; ++i) {
         QList<QMidiEvent *> list = midi.eventsForTrack(i);
-        QString name = "";
+        QString name;
         TrackInfo trackInfo;
         for (int j = 0; j < list.size(); ++j) {
             QMidiEvent *e = list.at(j);

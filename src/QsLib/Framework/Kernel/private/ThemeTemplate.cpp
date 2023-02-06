@@ -134,7 +134,7 @@ static QString ValueToString(const ThemeConfig::Value &val, const Arguments &arg
                                       return QString::number(digit); //
                                   });
     } else if (args.hint == Theme_Variable_Hint_String ||
-               args.hint.isEmpty() && !jsonVal.isNull()) {
+               (args.hint.isEmpty() && !jsonVal.isNull())) {
         res = jsonVal.toString();
     } else {
         res = args.defaultValue;
@@ -161,8 +161,9 @@ bool ThemeTemplate::load(const QString &filename) {
 
     // Remove all comments
     {
-        QRegularExpression reg("/\\*(.*?)\\*/", QRegularExpression::MultilineOption |
-                                                    QRegularExpression::DotMatchesEverythingOption);
+        QRegularExpression reg("\\/\\*(.*?)\\*\\/",
+                               QRegularExpression::MultilineOption |
+                                   QRegularExpression::DotMatchesEverythingOption);
         QRegularExpressionMatch match;
         int index = 0;
         while ((index = data.indexOf(reg, index, &match)) != -1) {
@@ -220,7 +221,7 @@ bool ThemeTemplate::load(const QString &filename) {
     QString content = data.mid(rightIdx + 1);
 
     // Remove white spaces
-    this->content = content.trimmed();
+    this->content = content.simplified();
 
     return true;
 }
@@ -266,10 +267,9 @@ QString ThemeTemplate::parse(const QMap<QString, ThemeConfig::Value> &vars, doub
         Content.replace(index, MatchString.size(), ValueString);
         index += ValueString.size();
     }
-
     // Remove all properties containing unparsed variables
     {
-        QRegularExpression reg("([-\\w]+)\\s*:(.*?)(/\\*\\*/)(.*?);");
+        QRegularExpression reg(R"((?<=({|;))\s*[-\w]+?\s*?:[^;]*?\/\*\*\/.*?;)");
         QRegularExpressionMatch match;
         int index = 0;
         while ((index = Content.indexOf(reg, index, &match)) != -1) {

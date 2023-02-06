@@ -2,22 +2,22 @@
 
 #ifdef Q_OS_WINDOWS
 #include <Windows.h>
-#elif defined (Q_OS_MACOS)
-#include <objc/runtime.h>
-#include <objc/message.h>
+#elif defined(Q_OS_MACOS)
 #include <CoreFoundation/CoreFoundation.h>
+#include <objc/message.h>
+#include <objc/runtime.h>
 #define cls objc_getClass
 #define sel sel_getUid
 
 typedef id (*_object_message_send)(id, SEL, ...);
 typedef id (*_class_message_send)(Class, SEL, ...);
 
-#define _msg ((_object_message_send)objc_msgSend)
-#define _cls_msg ((_class_message_send)objc_msgSend)
+#define _msg ((_object_message_send) objc_msgSend)
+#define _cls_msg ((_class_message_send) objc_msgSend)
 
 typedef id (*_MethodImp)(id, SEL, ...);
 typedef _MethodImp (*_get_method_imp)(Class, SEL);
-#define _method ((_get_method_imp)class_getMethodImplementation)
+#define _method ((_get_method_imp) class_getMethodImplementation)
 #endif
 
 QsCoreConsolePrivate::QsCoreConsolePrivate() {
@@ -29,11 +29,11 @@ QsCoreConsolePrivate::~QsCoreConsolePrivate() {
 void QsCoreConsolePrivate::init() {
 }
 
-#ifdef Q_OS_WINDOWS
+#if defined(Q_OS_WINDOWS) || defined(Q_OS_MAC)
 
-void QsCoreConsolePrivate::windowsMessageBox_helper(void *winHandle,
-                                                    QsCoreConsole::MessageBoxFlag flag,
-                                                    const QString &title, const QString &text) {
+void QsCoreConsolePrivate::osMessageBox_helper(void *winHandle, QsCoreConsole::MessageBoxFlag flag,
+                                               const QString &title, const QString &text) {
+#ifdef Q_OS_WINDOWS
     int winFlag;
     switch (flag) {
         case QsCoreConsole::Critical:
@@ -52,14 +52,8 @@ void QsCoreConsolePrivate::windowsMessageBox_helper(void *winHandle,
 
     ::MessageBoxW(static_cast<HWND>(winHandle), text.toStdWString().data(),
                   title.toStdWString().data(), MB_OK | MB_TOPMOST | MB_SETFOREGROUND | winFlag);
-}
-
-#elif defined (Q_OS_MACOS)
-
-void QsCoreConsolePrivate::macosNSAlert_helper(QsCoreConsole::MessageBoxFlag flag,
-                                               const QString &title,
-                                               const QString &text) {
-                                                    Class alert = cls("NSAlert");
+#else
+    Class alert = cls("NSAlert");
     id alertObj = _cls_msg(alert, sel("alloc"));
     alertObj = _msg(alertObj, sel("init"));
     switch (flag) {
@@ -79,6 +73,7 @@ void QsCoreConsolePrivate::macosNSAlert_helper(QsCoreConsole::MessageBoxFlag fla
     _msg(alertObj, sel("setMessageText:"), text.toCFString());
     _msg(alertObj, sel("setInformativeText:"), title.toCFString());
     _msg(alertObj, sel("runModal"), 0);
+#endif
 }
 
 #endif

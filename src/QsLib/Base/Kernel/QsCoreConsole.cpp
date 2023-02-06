@@ -14,12 +14,9 @@ QsCoreConsole::~QsCoreConsole() {
 void QsCoreConsole::MsgBox(QObject *parent, QsCoreConsole::MessageBoxFlag flag,
                            const QString &title, const QString &text) {
     Q_UNUSED(parent);
-#ifdef Q_OS_WINDOWS
+#if defined(Q_OS_WINDOWS) || defined(Q_OS_MAC)
     Q_D(QsCoreConsole);
-    d->windowsMessageBox_helper(nullptr, flag, title, text);
-#elif defined (Q_OS_MACOS)
-    Q_D(QsCoreConsole);
-    d->macosNSAlert_helper(flag, title, text);
+    d->osMessageBox_helper(nullptr, flag, title, text);
 #else
     switch (flag) {
         case Critical:
