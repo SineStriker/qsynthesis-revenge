@@ -51,8 +51,10 @@ namespace QDspx {
         Workspace workspace;
     };
 
-    static bool fromMidi(const QString &filename, Model *out);
+    DSCORE_API bool fromMidi(const QString &filename, Model *out);
 
 } // namespace QDspx
+
+using QDspxModel = QDspx::Model;
 
 #endif // QDSPXMODEL_H
