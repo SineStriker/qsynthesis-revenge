@@ -45,6 +45,7 @@ find_package(SDL2 REQUIRED)
 find_package(yaml-cpp REQUIRED)
 find_package(ffmpeg-fake REQUIRED NAMES FFmpeg)
 find_package(QuaZip NAMES quazip QuaZip-Qt5 QuaZip-Qt6 REQUIRED)
+find_package(QNrbf REQUIRED)
 
 if(NOT APPLE)
     find_package(FramelessHelper REQUIRED COMPONENTS Core Widgets)

@@ -1,4 +1,4 @@
-#include "QDspxParam.h"
+#include "../QDspxParam.h"
 
 QString QDspx::ParamCurve::TypeToString(Type type) {
     QString res;

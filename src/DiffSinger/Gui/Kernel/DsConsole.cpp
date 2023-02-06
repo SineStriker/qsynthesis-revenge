@@ -1,14 +1,15 @@
 #include "DsConsole.h"
 #include "private/DsConsole_p.h"
 
+#include <QApplication>
+#include <QDebug>
+#include <QMessageBox>
+
 #include "QsFileManager.h"
 #include "QsSystem.h"
 
 #include "CStartInfo.h"
-
-#include <QApplication>
-#include <QDebug>
-#include <QMessageBox>
+#include "QDspxModel.h"
 
 static const char FILE_EXTENSIONS_DELIMITER[] = ";;";
 
@@ -25,17 +26,17 @@ void DsConsole::reloadStrings() {
     Q_D(DsConsole);
     d->fileDlgFilter_project =
         QStringList{
-            tr("DiffScope Files(*.dspx)"),                                  //
+            tr("DiffScope Files(*.dspx)"),                                 //
             QString("%1(%2)").arg(tr("All Files"), QsOs::allFilesFilter()) //
         }
             .join(FILE_EXTENSIONS_DELIMITER);
 
     d->fileDlgFilter_import =
         QStringList{
-            tr("Standard MIDI Files(*.mid)"),                               //
-            tr("UTAU Sequence Texts(*.ust)"),                               //
-            tr("OpenSVIP Model Files(*.json)"),                             //
-            tr("XStudio SVIP Files(*.svip)"),                               //
+            tr("Standard MIDI Files(*.mid)"),                              //
+            tr("UTAU Sequence Texts(*.ust)"),                              //
+            tr("OpenSVIP Model Files(*.json)"),                            //
+            tr("XStudio SVIP Files(*.svip)"),                              //
             QString("%1(%2)").arg(tr("All Files"), QsOs::allFilesFilter()) //
         }
             .join(FILE_EXTENSIONS_DELIMITER);
@@ -46,6 +47,7 @@ void DsConsole::aboutApp(QWidget *parent) {
     QString text =
         tr("%1 %2, Copyright OpenVPI.").arg(qAppName(), QApplication::applicationVersion());
     CConsole::MsgBox(parent, Information, title, text);
+    // QMessageBox::information(parent, title,text);
 }
 
 bool DsConsole::openFile(QDspxModel *dspx, QWidget *parent) {
@@ -66,7 +68,21 @@ bool DsConsole::importFile(QDspxModel *dspx, QWidget *parent) {
     if (path.isEmpty()) {
         return false;
     }
-    qDebug() << path;
+
+    auto ext = QsFs::PathFindSuffix(path).toLower();
+    if (ext == "mid") {
+        return QDspx::fromMidi(path, dspx);
+    }
+    if (ext == "ust") {
+        return QDspx::fromUst(path, dspx, parent);
+    }
+    if (ext == "json") {
+        return QDspx::fromOpenSVIP(path, dspx, parent);
+    }
+    if (ext == "svip") {
+        return QDspx::fromSvip(path, dspx, parent);
+    }
+
     return true;
 }
 

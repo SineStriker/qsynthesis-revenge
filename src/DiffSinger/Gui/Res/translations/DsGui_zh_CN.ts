@@ -45,12 +45,12 @@
         <translation>%1 %2，版权所有 OpenVPI。</translation>
     </message>
     <message>
-        <location filename="../../Kernel/DsConsole.cpp" line="54"/>
+        <location filename="../../Kernel/DsConsole.cpp" line="55"/>
         <source>Open file</source>
         <translation>打开文件</translation>
     </message>
     <message>
-        <location filename="../../Kernel/DsConsole.cpp" line="65"/>
+        <location filename="../../Kernel/DsConsole.cpp" line="66"/>
         <source>Import file</source>
         <translation>导入文件</translation>
     </message>

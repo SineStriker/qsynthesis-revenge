@@ -1,4 +1,4 @@
-#include "QDspxTrack.h"
+#include "../QDspxTrack.h"
 
 QString QDspx::Clip::TypeToString(QDspx::Clip::Type type) {
     QString res;

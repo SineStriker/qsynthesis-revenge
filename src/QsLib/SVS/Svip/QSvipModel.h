@@ -85,6 +85,9 @@ public:
         virtual ~Track() {
         }
 
+    protected:
+        int t;
+
     public:
         inline int type() const {
             return t;
@@ -95,9 +98,6 @@ public:
         bool Solo;
         double Volume;
         double Pan;
-
-    protected:
-        int t;
     };
 
     class QSSVS_API SingingTrack : public Track {
@@ -154,7 +154,7 @@ public:
 
 public:
     QJsonObject toJsonObject() const;
-    static QSvipModel fromJsonObject(const QJsonObject &obj);
+    static QSvipModel fromJsonObject(const QJsonObject &obj, bool *ok = nullptr);
 
     void reset();
 };

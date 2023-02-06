@@ -1,6 +1,6 @@
 {
   "name": "framelesshelper",
-  "version": "2.3.0",
+  "version": "2.3.2",
   "port-version": 1,
   "description": "Cross-platform window customization framework for Qt Widgets and Qt Quick. Supports Windows, Linux and macOS.",
   "homepage": "https://github.com/wangwenx190/framelesshelper",

@@ -6,5 +6,6 @@
         <file>svg/home/info.svg</file>
         <file>svg/home/import-file.svg</file>
         <file>svg/home/new-file.svg</file>
+        <file>svg/home/open-file.svg</file>
     </qresource>
 </RCC>

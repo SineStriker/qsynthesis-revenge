@@ -94,6 +94,7 @@ vcpkg_tasks: list[library_task] = [
     library_task("quazip", True),
     library_task("framelesshelper", True, os_flags=OSFlags.EXCLUDE_MAC),
     library_task("ffmpeg-fake", True),
+    library_task("qnrbf", True),
 ]
 
 

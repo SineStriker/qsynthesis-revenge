@@ -14,21 +14,20 @@ namespace QDspx {
     };
 
     // 循环区间
-    struct LoopRange {
-        bool enabled;
-        int start;
-        int length;
+    // struct LoopRange {
+    //     bool enabled;
+    //     int start;
+    //     int length;
 
-        // 构造器
-        LoopRange() : LoopRange(false, 0, 0){};
-        LoopRange(bool enabled, int start, int length)
-            : enabled(enabled), start(start), length(length){};
-    };
+    //     // 构造器
+    //     LoopRange() : LoopRange(false, 0, 0){};
+    //     LoopRange(bool enabled, int start, int length)
+    //         : enabled(enabled), start(start), length(length){};
+    // };
 
     // 总线控制
     struct Master {
         Control control;
-        LoopRange loop;
     };
 
     // 工程可编辑区域
@@ -51,7 +50,14 @@ namespace QDspx {
         Workspace workspace;
     };
 
+    // 导入函数
     DSCORE_API bool fromMidi(const QString &filename, Model *out);
+
+    DSCORE_API bool fromSvip(const QString &filename, Model *out, QObject *parent = nullptr);
+
+    DSCORE_API bool fromOpenSVIP(const QString &filename, Model *out, QObject *parent = nullptr);
+
+    DSCORE_API bool fromUst(const QString &filename, Model *out, QObject *parent = nullptr);
 
 } // namespace QDspx
 

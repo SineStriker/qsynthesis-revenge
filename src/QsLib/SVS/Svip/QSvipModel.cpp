@@ -114,7 +114,7 @@ QJsonObject QSvipModel::toJsonObject() const {
     return objDoc;
 }
 
-QSvipModel QSvipModel::fromJsonObject(const QJsonObject &obj) {
+QSvipModel QSvipModel::fromJsonObject(const QJsonObject &obj, bool *ok) {
     Q_UNUSED(obj);
     return {};
 }

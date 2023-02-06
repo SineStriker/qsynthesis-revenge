@@ -14,6 +14,10 @@ HomeRecentTopFrame::HomeRecentTopFrame(QWidget *parent) : QFrame(parent) {
     newButton->setProperty("type", "top-button");
     newButton->setObjectName("new-button");
 
+    openButton = new CTabButton();
+    openButton->setProperty("type", "top-button");
+    openButton->setObjectName("open-button");
+
     importButton = new CTabButton();
     importButton->setProperty("type", "top-button");
     importButton->setObjectName("import-button");
@@ -24,6 +28,7 @@ HomeRecentTopFrame::HomeRecentTopFrame(QWidget *parent) : QFrame(parent) {
 
     topLayout->addWidget(searchBox);
     topLayout->addWidget(newButton);
+    topLayout->addWidget(openButton);
     topLayout->addWidget(importButton);
 
     setLayout(topLayout);
@@ -31,6 +36,7 @@ HomeRecentTopFrame::HomeRecentTopFrame(QWidget *parent) : QFrame(parent) {
     qIDec->installLocale(this, {"DsHost"}, _LOC(HomeRecentTopFrame, this));
 
     connect(newButton, &QPushButton::clicked, this, &HomeRecentTopFrame::_q_newButtonClicked);
+    connect(openButton, &QPushButton::clicked, this, &HomeRecentTopFrame::_q_openButtonClicked);
     connect(importButton, &QPushButton::clicked, this, &HomeRecentTopFrame::_q_importButtonClicked);
 }
 
@@ -39,11 +45,15 @@ HomeRecentTopFrame::~HomeRecentTopFrame() {
 
 void HomeRecentTopFrame::reloadStrings() {
     newButton->setText(tr("New"));
+    openButton->setText(tr("Open"));
     importButton->setText(tr("Import"));
     searchBox->setPlaceholderText(tr("Search for files"));
 }
 
 void HomeRecentTopFrame::_q_newButtonClicked() {
+}
+
+void HomeRecentTopFrame::_q_openButtonClicked() {
     QDspxModel dspx;
     qCs->openFile(&dspx, this);
 }

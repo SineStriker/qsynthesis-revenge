@@ -191,6 +191,15 @@ HomeRecentTopFrame>CTabButton#new-button {
     qproperty-iconDownChecked: svg(":/svg/home/new-file.svg", "{{main.recent.top.buttons.icon.down.checked|str}}");
 }
 
+HomeRecentTopFrame>CTabButton#open-button {
+    qproperty-iconUp: svg(":/svg/home/open-file.svg", "{{main.recent.top.buttons.icon.up|str}}");
+    qproperty-iconOver: svg(":/svg/home/open-file.svg", "{{main.recent.top.buttons.icon.over|str}}");
+    qproperty-iconDown: svg(":/svg/home/open-file.svg", "{{main.recent.top.buttons.icon.down|str}}");
+    qproperty-iconUpChecked: svg(":/svg/home/open-file.svg", "{{main.recent.top.buttons.icon.up.checked|str}}");
+    qproperty-iconOverChecked: svg(":/svg/home/open-file.svg", "{{main.recent.top.buttons.icon.over.checked|str}}");
+    qproperty-iconDownChecked: svg(":/svg/home/open-file.svg", "{{main.recent.top.buttons.icon.down.checked|str}}");
+}
+
 HomeRecentTopFrame>CTabButton#import-button {
     qproperty-iconUp: svg(":/svg/home/import-file.svg", "{{main.recent.top.buttons.icon.up|str}}");
     qproperty-iconOver: svg(":/svg/home/import-file.svg", "{{main.recent.top.buttons.icon.over|str}}");

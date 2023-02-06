@@ -45,12 +45,12 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Kernel/DsConsole.cpp" line="54"/>
+        <location filename="../../Kernel/DsConsole.cpp" line="55"/>
         <source>Open file</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Kernel/DsConsole.cpp" line="65"/>
+        <location filename="../../Kernel/DsConsole.cpp" line="66"/>
         <source>Import file</source>
         <translation type="unfinished"></translation>
     </message>

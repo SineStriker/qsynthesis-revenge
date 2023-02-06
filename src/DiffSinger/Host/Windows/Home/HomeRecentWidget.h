@@ -24,7 +24,9 @@ public:
     void reloadStrings();
 
     CTabButton *newButton;
+    CTabButton *openButton;
     CTabButton *importButton;
+
     QLineEdit *searchBox;
 
     QHBoxLayout *topLayout;
@@ -33,6 +35,7 @@ signals:
 
 private:
     void _q_newButtonClicked();
+    void _q_openButtonClicked();
     void _q_importButtonClicked();
 };
 

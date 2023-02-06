@@ -1,4 +1,5 @@
-#include "QDspxModel.h"
+#include "../QDspxModel.h"
+
 #include "QMidiFile.h"
 #include "Utau/Utils/QUtaUtils.h"
 
@@ -6,8 +7,6 @@
 #include <QDebug>
 #include <QFile>
 #include <QTextCodec>
-
-
 
 bool QDspx::fromMidi(const QString &filename, QDspxModel *out) {
     QMidiFile midi;
@@ -41,11 +40,11 @@ bool QDspx::fromMidi(const QString &filename, QDspxModel *out) {
     // 解析Tempo Map
     QList<QPair<int, double>> tempos;
     QList<QPair<int, QString>> label;
-    QMap<qint32,QPoint> timeSign;
+    QMap<qint32, QPoint> timeSign;
     timeSign[0] = QPoint(4, 4);
     QList<QMidiEvent *> tempMap = midi.eventsForTrack(0);
 
-    for (auto e:qAsConst(tempMap)) {
+    for (auto e : qAsConst(tempMap)) {
         if (e->type() == QMidiEvent::Meta) {
             qDebug() << "Cmd:" << Qt::hex << e->number();
             if (e->number() == QMidiEvent::Tempo) {
@@ -57,8 +56,7 @@ bool QDspx::fromMidi(const QString &filename, QDspxModel *out) {
             } else if (e->number() == QMidiEvent::TimeSignature) {
                 timeSign[e->tick()] = QPoint(e->data()[0], 2 * e->data()[1]);
                 qDebug() << "TimeSignature:" << e->tick() << timeSign[e->tick()];
-            }
-            else {
+            } else {
                 qDebug() << "Else:" << e->number();
             }
         }
@@ -114,22 +112,25 @@ bool QDspx::fromMidi(const QString &filename, QDspxModel *out) {
         }
 
         if (trackInfo.noteKeyNum.size()) {
-            qint8 keyLow = *std::min_element(trackInfo.noteKeyNum.begin(), trackInfo.noteKeyNum.end());
-            qint8 keyHigh = *std::max_element(trackInfo.noteKeyNum.begin(), trackInfo.noteKeyNum.end());
+            qint8 keyLow =
+                *std::min_element(trackInfo.noteKeyNum.begin(), trackInfo.noteKeyNum.end());
+            qint8 keyHigh =
+                *std::max_element(trackInfo.noteKeyNum.begin(), trackInfo.noteKeyNum.end());
             QString low = QUtaUtils::ToneNumToToneName(keyLow);
             QString high = QUtaUtils::ToneNumToToneName(keyHigh);
             trackInfo.pitchRange = QString(low + "-" + high);
         } else {
             trackInfo.pitchRange = "";
         }
-        trackInfo.name = QObject::tr("Track %1").arg(name.isEmpty() ? QString::number(i - midiFormat + 1):name);
+        trackInfo.name = QObject::tr("Track %1")
+                             .arg(name.isEmpty() ? QString::number(i - midiFormat + 1) : name);
         trackInfo.title = QObject::tr("%1: (%2 notes, %3)")
                               .arg(trackInfo.name, QString::number(trackInfo.noteKeyNum.size()),
                                    trackInfo.pitchRange);
         trackInfos.append(trackInfo);
     }
 
-    qDebug() << timeSign; 
+    qDebug() << timeSign;
     for (int i = 0; i < trackInfos.size(); ++i) {
         const auto &info = trackInfos.at(i);
         qDebug() << info.title;
@@ -145,7 +146,7 @@ bool QDspx::fromMidi(const QString &filename, QDspxModel *out) {
     QDspx::Timeline timeLine;
 
     TimeSignature timeSignature;
-    QMapIterator<qint32,QPoint> i(timeSign);
+    QMapIterator<qint32, QPoint> i(timeSign);
     while (i.hasNext()) {
         i.next();
         timeSignature.pos = i.key() * scaleFactor;
@@ -153,12 +154,11 @@ bool QDspx::fromMidi(const QString &filename, QDspxModel *out) {
         timeSignature.den = i.value().y();
         timeLine.timeSignatures.append(timeSignature);
     }
-    
 
     QDspx::Track track;
-    
+
     auto clip = SingingClipRef::create();
-    //clip->notes.append("x");
+    // clip->notes.append("x");
     track.clips.append(clip);
 
     return true;

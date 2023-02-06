@@ -4,17 +4,22 @@
 <context>
     <name>HomeRecentTopFrame</name>
     <message>
-        <location filename="../../Windows/Home/HomeRecentWidget.cpp" line="41"/>
+        <location filename="../../Windows/Home/HomeRecentWidget.cpp" line="47"/>
         <source>New</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Windows/Home/HomeRecentWidget.cpp" line="42"/>
+        <location filename="../../Windows/Home/HomeRecentWidget.cpp" line="48"/>
+        <source>Open</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../Windows/Home/HomeRecentWidget.cpp" line="49"/>
         <source>Import</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Windows/Home/HomeRecentWidget.cpp" line="43"/>
+        <location filename="../../Windows/Home/HomeRecentWidget.cpp" line="50"/>
         <source>Search for files</source>
         <translation type="unfinished"></translation>
     </message>
