@@ -1,5 +1,5 @@
 #include "QDspxModel.h"
-#include "../3rdparty/QMidi/src/QMidiFile.h"
+#include "QMidiFile.h"
 #include "Utau/Utils/QUtaUtils.h"
 
 #include <QChar>
@@ -24,10 +24,10 @@ bool QDspxModel::fromMidi(const QString &filename, QDspxModel *out) {
     }
 
     // midi种类、四分音符ticks数、轨道数、时间类型
-    qint8 midiFormat = midi.fileFormat();
-    qint16 resolution = midi.resolution();
+    int midiFormat = midi.fileFormat();
+    int resolution = midi.resolution();
     qDebug() << "resolution:" << resolution;
-    qint16 tracksCount = midi.tracks().size();
+    int tracksCount = midi.tracks().size();
     int divType = midi.divisionType();
 
     //校验tracks数量、midi种类
@@ -50,8 +50,7 @@ bool QDspxModel::fromMidi(const QString &filename, QDspxModel *out) {
     timeSign[0] = QPoint(4, 4);
     QList<QMidiEvent *> tempMap = midi.eventsForTrack(0);
 
-    for (int j = 0; j < tempMap.size(); ++j) {
-        QMidiEvent *e = tempMap.at(j);
+    for (auto e:qAsConst(tempMap)) {
         if (e->type() == QMidiEvent::Meta) {
             qDebug() << "Cmd:" << Qt::hex << e->number();
             if (e->number() == QMidiEvent::Tempo) {
@@ -124,10 +123,10 @@ bool QDspxModel::fromMidi(const QString &filename, QDspxModel *out) {
         } else {
             trackInfo.pitchRange = "";
         }
-        trackInfo.name = name.isEmpty() ? "Track " + QString::number(i - midiFormat + 1) : name;
-        trackInfo.title =
-            QString(trackInfo.name + ": (" + QString::number(trackInfo.noteKeyNum.size()) + " notes, " +
-                                  trackInfo.pitchRange + ")");
+        trackInfo.name = QObject::tr("Track %1").arg(name.isEmpty() ? QString::number(i - midiFormat + 1):name);
+        trackInfo.title = QObject::tr("%1: (%2 notes, %3)")
+                              .arg(trackInfo.name, QString::number(trackInfo.noteKeyNum.size()),
+                                   trackInfo.pitchRange);
         trackInfos.append(trackInfo);
     }
 
@@ -142,7 +141,7 @@ bool QDspxModel::fromMidi(const QString &filename, QDspxModel *out) {
     }
 
     //缩放系数
-    float scaleFactor = 480 / resolution;
+    float scaleFactor = resolution / 480;
 
     return true;
 }
