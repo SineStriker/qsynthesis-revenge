@@ -8,14 +8,8 @@
 #include <QTextCodec>
 
 
-QDspxModel::QDspxModel() {
-}
 
-QDspxModel::~QDspxModel() {
-}
-
-
-bool QDspx::fromMidi(const QString &filename, QDspx::Model *out) {
+bool QDspx::fromMidi(const QString &filename, QDspxModel *out) {
     QMidiFile midi;
 
     if (!midi.load(filename)) {
