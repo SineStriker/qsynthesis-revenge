@@ -221,9 +221,9 @@ void QsOs::messageStderr(const QString &title, const QString &text) {
     ::MessageBoxW(0, text.toStdWString().data(), title.toStdWString().data(),
                   MB_OK | MB_TOPMOST | MB_SETFOREGROUND | MB_ICONWARNING);
 #elif Q_OS_LINUX
-    fputs(qPrintable(msg), stdout);
+    fputs(qPrintable(text), stdout);
 #else
-    fputs(qPrintable(msg), stdout);
+    fputs(qPrintable(text), stdout);
 #endif
 }
 

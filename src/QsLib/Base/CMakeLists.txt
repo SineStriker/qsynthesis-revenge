@@ -6,6 +6,10 @@ project(QsBase
 set(_dirs Api Global Kernel Serialization Tools)
 set(_res_dir Res)
 
+if(APPLE)
+    set(_platform_lib ObjC)
+endif()
+
 add_files(_src
     DIRECTORIES ${_dirs}
     PATTERNS *.h *.hpp *.cpp *.cc
@@ -24,7 +28,7 @@ target_components(${PROJECT_NAME}
     SOURCES ${_src}
     QT_LIBRARIES Core
     QT_PRIVATE_INCLUDES Core
-    LINKS_PRIVATE SingleApplication
+    LINKS_PRIVATE SingleApplication ${_platform_lib}
     INCLUDES ${_dirs}
 )
 

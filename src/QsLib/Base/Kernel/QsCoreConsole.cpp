@@ -17,15 +17,18 @@ void QsCoreConsole::MsgBox(QObject *parent, QsCoreConsole::MessageBoxFlag flag,
 #ifdef Q_OS_WINDOWS
     Q_D(QsCoreConsole);
     d->windowsMessageBox_helper(nullptr, flag, title, text);
+#elif defined (Q_OS_MACOS)
+    Q_D(QsCoreConsole);
+    d->macosNSAlert_helper(flag, title, text);
 #else
     switch (flag) {
         case Critical:
         case Warning:
-            fputs(qPrintable(msg), stderr);
+            fputs(qPrintable(text), stderr);
             break;
         case Question:
         case Information:
-            fputs(qPrintable(msg), stdout);
+            fputs(qPrintable(text), stdout);
             break;
     };
 #endif
