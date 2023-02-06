@@ -1,5 +1,7 @@
 #include "QsLocaleDir_p.h"
 
+#include "QsSystem.h"
+
 #include "../QsCoreDecorator.h"
 
 #define _CURRENT_MAP QHash
@@ -22,6 +24,31 @@ static const char KEY_NAME_SUBSECTION_FILES[] = "files";
 static const char KEY_NAME_LOCALES[] = "locales";
 
 static const char Slash = '/';
+
+static QMap<QString, QStringList> findLocales(const QString &prefix, const QString &dirname) {
+    QDir dir(dirname);
+    if (!dir.exists()) {
+        return {};
+    }
+
+    QRegularExpression reg("(\\w+?)_(\\w{2})(_\\w+|)");
+    auto files = dir.entryInfoList(QDir::Files | QDir::NoDotAndDotDot);
+    QMap<QString, QStringList> res;
+
+    for (auto it = files.begin(); it != files.end(); ++it) {
+        if (it->suffix().compare("qm", Qt::CaseInsensitive) != 0) {
+            continue;
+        }
+
+        auto match = reg.match(it->fileName());
+        if (!match.hasMatch() || (!prefix.isEmpty() && match.captured() != prefix)) {
+            continue;
+        }
+        res[match.captured(2) + match.captured(3)].append(it->absoluteFilePath());
+    }
+
+    return res;
+}
 
 QsLocaleDirPrivate::QsLocaleDirPrivate() {
 }
@@ -77,6 +104,12 @@ bool QsLocaleDirPrivate::loadNext(const QJsonObject &objDoc) {
                 }
                 paths.insert(it3.key(), files);
             }
+
+            // Auto detect locales if empty
+            if (paths.isEmpty() && q->AutoDetectLocales) {
+                paths = findLocales(QString(), cur.dir);
+            }
+
             if (!paths.isEmpty()) {
                 qIDec->addLocale(cur.key, paths);
                 locales.append(cur);
@@ -128,35 +161,37 @@ bool QsLocaleDirPrivate::loadRootItems(const QJsonObject &obj, RootItem *out) {
 
     // Find dir
     it2 = obj.find(KEY_NAME_SUBSECTION_DIR);
-    if (it2 != obj.end() || !it2->isString()) {
+    if (it2 != obj.end() && it2->isString()) {
         cur.dir = it2->toString();
     }
 
     // Add files
     it2 = obj.find(KEY_NAME_SUBSECTION_FILES);
-    if (it2 == obj.end() || !it2->isObject()) {
+    if (it2 != obj.end() && !it2->isObject()) {
         return false;
     }
-    auto objFiles = it2->toObject();
 
-    for (auto it3 = objFiles.begin(); it3 != objFiles.end(); ++it3) {
-        const auto &itemKey = it3.key();
-        if (!it3->isArray()) {
-            continue;
-        }
-        auto arr = it3->toArray();
-
-        QStringList files;
-        for (const auto &item : qAsConst(arr)) {
-            if (item.isString()) {
-                files.append(item.toString());
+    if (it2 != obj.end()) {
+        auto objFiles = it2->toObject();
+        for (auto it3 = objFiles.begin(); it3 != objFiles.end(); ++it3) {
+            const auto &itemKey = it3.key();
+            if (!it3->isArray()) {
+                continue;
             }
-        }
-        if (files.isEmpty()) {
-            continue;
-        }
+            auto arr = it3->toArray();
 
-        cur.files.insert(itemKey, files);
+            QStringList files;
+            for (const auto &item : qAsConst(arr)) {
+                if (item.isString()) {
+                    files.append(item.toString());
+                }
+            }
+            if (files.isEmpty()) {
+                continue;
+            }
+
+            cur.files.insert(itemKey, files);
+        }
     }
 
     *out = std::move(cur);

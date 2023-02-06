@@ -5,6 +5,8 @@
 
 #include "QsMacros.h"
 
+#define qsFileMgr QsFileManager::instance()
+
 class QsFileManagerPrivate;
 
 class QSINTEGRATE_API QsFileManager : public QsAbstractManager {

@@ -10,7 +10,7 @@ add_files(_src
 )
 
 configure_library(
-    SOURCES ${_src} res/res.qrc
+    SOURCES ${_src} ${_res_dir}/res.qrc
     ENABLE_SHARED
     QT_LIBRARIES Widgets Svg
     QT_PRIVATE_INCLUDES Gui Widgets
@@ -31,6 +31,6 @@ target_compile_definitions(${PROJECT_NAME} PUBLIC
 
 target_create_translations(${PROJECT_NAME} SOURCES ${_src}
     LOCALES zh_CN zh_HK ja_JP
-    DESTINATION res/translations
+    DESTINATION ${_res_dir}/translations
     CREATE_ONCE
 )

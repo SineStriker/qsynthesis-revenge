@@ -33,6 +33,18 @@ static QString removeSideQuote(QString token) {
     return token;
 }
 
+static QString removeMultiLines(QString s) {
+    QRegularExpression reg("\\n(\\s*)\\n", QRegularExpression::MultilineOption |
+                                               QRegularExpression::DotMatchesEverythingOption);
+    QRegularExpressionMatch match;
+    int index = 0;
+    while ((index = s.indexOf(reg, index, &match)) != -1) {
+        s.replace(index, match.captured(0).size(), "\n");
+        index++;
+    }
+    return s;
+}
+
 static inline int toRealPixelSize(double size, double dpi) {
     return qRound(size * dpi / QsOs::unitDpi());
 }
@@ -114,7 +126,7 @@ static QString ValueToString(const ThemeConfig::Value &val, const Arguments &arg
         res = extractNumListValue(jsonVal, //
                                   [&](double digit) {
                                       return toPixelStr(
-                                          toRealPixelSize(digit, args.dpi * val.ratio)); //
+                                          toRealPixelSize(digit * val.ratio, args.dpi)); //
                                   });
     } else if (args.hint == Theme_Variable_Hint_Num) {
         res = extractNumListValue(jsonVal, //
@@ -158,17 +170,8 @@ bool ThemeTemplate::load(const QString &filename) {
         }
     }
 
-    // Remove all multi-lines
-    {
-        QRegularExpression reg("\\n(\\s*)\\n", QRegularExpression::MultilineOption |
-                                                   QRegularExpression::DotMatchesEverythingOption);
-        QRegularExpressionMatch match;
-        int index = 0;
-        while ((index = data.indexOf(reg, index, &match)) != -1) {
-            data.replace(index, match.captured(0).size(), "\n");
-            index++;
-        }
-    }
+    // Remove all multilines
+    data = removeMultiLines(data);
 
     // Find "Config" token
     int leftIdx = data.indexOf('{');
@@ -217,7 +220,7 @@ bool ThemeTemplate::load(const QString &filename) {
     QString content = data.mid(rightIdx + 1);
 
     // Remove white spaces
-    this->content = content.simplified();
+    this->content = content.trimmed();
 
     return true;
 }
@@ -247,23 +250,35 @@ QString ThemeTemplate::parse(const QMap<QString, ThemeConfig::Value> &vars, doub
             auto it = vars.find(key);
             if (it != vars.end()) {
                 ValueString = ValueToString(it.value(), Arguments{hint, defaultValue, dpi});
-            } else {
-                ValueString = defaultValue;
+            } else if (!defaultValue.isEmpty()) {
+                if (hint == Theme_Variable_Hint_Size) {
+                    ValueString = toPixelStr(toRealPixelSize(defaultValue.toDouble(), dpi));
+                } else {
+                    ValueString = defaultValue;
+                }
             }
         }
+
+        if (ValueString.isEmpty()) {
+            ValueString = "/**/";
+        }
+
         Content.replace(index, MatchString.size(), ValueString);
         index += ValueString.size();
     }
 
-    // Remove all empty properties
+    // Remove all properties containing unparsed variables
     {
-        QRegularExpression reg("([-\\w]+)\\s*:\\s*;");
+        QRegularExpression reg("([-\\w]+)\\s*:(.*?)(/\\*\\*/)(.*?);");
         QRegularExpressionMatch match;
         int index = 0;
         while ((index = Content.indexOf(reg, index, &match)) != -1) {
             Content.remove(index, match.captured(0).size());
         }
     }
+
+    // Content = removeMultiLines(Content);
+    Content = Content.simplified();
 
     return Content;
 }

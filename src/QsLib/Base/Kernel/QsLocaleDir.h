@@ -24,6 +24,8 @@ public:
     bool load(const QString &filename);
     void unload();
 
+    static bool AutoDetectLocales;
+
 protected:
     QsLocaleDir(QsLocaleDirPrivate &d);
 

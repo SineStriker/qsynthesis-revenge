@@ -15,7 +15,7 @@ set(SUB_APP_NAME "DiffScope")
 
 # Add subdirectories
 add_subdirectory(Core)
-add_subdirectory(Medium)
-add_subdirectory(Intern)
+add_subdirectory(Gui)
+add_subdirectory(Host)
 add_subdirectory(Plugins)
 add_subdirectory(App)

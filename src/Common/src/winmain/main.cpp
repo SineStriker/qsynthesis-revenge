@@ -5,7 +5,7 @@
 #endif
 
 #ifdef APP_ENABLE_ENTRY
-MY_EXTERN_C_IMPORT int main_entry(int, char *[]);
+COM_EXTERN_C_IMPORT int main_entry(int, char *[]);
 #endif
 
 #include <iostream>

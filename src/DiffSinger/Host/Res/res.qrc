@@ -1,0 +1,10 @@
+<RCC>
+    <qresource prefix="/">
+        <file>themes/home.qss.in</file>
+        <file>themes/piano.qss.in</file>
+        <file>svg/app/diffsinger.svg</file>
+        <file>svg/home/info.svg</file>
+        <file>svg/home/import-file.svg</file>
+        <file>svg/home/new-file.svg</file>
+    </qresource>
+</RCC>

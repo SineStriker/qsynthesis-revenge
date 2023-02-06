@@ -4,7 +4,7 @@
 #include "../CConsole.h"
 #include "private/QsCoreConsole_p.h"
 
-class CConsolePrivate : public QsCoreConsolePrivate {
+class QSFRAMEWORK_API CConsolePrivate : public QsCoreConsolePrivate {
     Q_DECLARE_PUBLIC(CConsole)
 public:
     CConsolePrivate();

@@ -1,0 +1,150 @@
+{
+    "config": {
+        "priority": 5,
+        "ratio": 0.8
+    },
+    "values": {
+        "HomeWindow": {
+            "font.family": "Microsoft YaHei",
+            "font.size": 15,
+            "background": "#1E1E1E",
+            "windowIcon": {
+                "foreground": "transparent"
+            },
+            "nav": {
+                "background": "#252526",
+                "padding": 0,
+                "navButtons": {
+                    "icon": {
+                        "up": "#FFFFFF",
+                        "size": [
+                            20,
+                            20
+                        ]
+                    },
+                    "spacing": 0.2,
+                    "color": {
+                        "up": "#FFFFFF"
+                    },
+                    "background": {
+                        "up": "transparent",
+                        "over": "rgba(255, 255, 255, 15%)"
+                    },
+                    "border": {
+                        "size": {
+                            "up": 4
+                        },
+                        "style": {
+                            "up": "solid"
+                        },
+                        "color": {
+                            "up": "transparent"
+                        }
+                    },
+                    "checked": {
+                        "background": {
+                            "up": "rgba(255, 255, 255, 5%)",
+                            "over": "rgba(255, 255, 255, 15%)"
+                        },
+                        "border": {
+                            "size": {
+                                "up": 4
+                            },
+                            "style": {
+                                "up": "solid"
+                            },
+                            "color": {
+                                "up": "transparent transparent transparent #00B578"
+                            }
+                        }
+                    },
+                    "padding": 11
+                },
+                "bottomButtons": {
+                    "icon": {
+                        "up": "#FFFFFF",
+                        "size": [
+                            20,
+                            20
+                        ]
+                    },
+                    "color": {
+                        "up": "#FFFFFF"
+                    },
+                    "spacing": 0.2,
+                    "background": {
+                        "up": "transparent",
+                        "over": "rgba(255, 255, 255, 15%)"
+                    },
+                    "padding": 15
+                }
+            },
+            "main": {
+                "background": "transparent",
+                "recent": {
+                    "handle": {
+                        "color": "#666666",
+                        "width": 1
+                    },
+                    "top": {
+                        "spacing": 10,
+                        "buttons": {
+                            "icon": {
+                                "up": "#FFFFFF",
+                                "size": [
+                                    20,
+                                    20
+                                ]
+                            },
+                            "color": {
+                                "up": "#FFFFFF"
+                            },
+                            "spacing": 0.2,
+                            "background": {
+                                "up": "rgba(0, 181, 120, 30%)",
+                                "over": "rgba(0, 181, 120, 50%)"
+                            },
+                            "border": {
+                                "radius": {
+                                    "up": 5
+                                }
+                            },
+                            "padding": [
+                                10,
+                                25
+                            ]
+                        },
+                        "textBox": {
+                            "background": {
+                                "up": "transparent"
+                            },
+                            "color": {
+                                "up": "#CCCCCC"
+                            },
+                            "border": {
+                                "style": {
+                                    "up": "solid"
+                                },
+                                "size": {
+                                    "up": 2
+                                },
+                                "radius": {
+                                    "up": 5
+                                },
+                                "color": {
+                                    "up": "#333333",
+                                    "focus": "#666666"
+                                }
+                            },
+                            "padding": 10
+                        },
+                        "padding": 15
+                    },
+                    "bottom": {
+                        "padding": 10
+                    }
+                }
+            }
+        }
+    }
+}

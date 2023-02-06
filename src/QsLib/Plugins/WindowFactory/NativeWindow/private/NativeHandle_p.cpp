@@ -29,6 +29,7 @@ void NativeHandlePrivate::setup_helper() {
     // of any Q(Core|Gui)Application instances.
     // FramelessHelper::Widgets::initialize();
 
+    FramelessConfig::instance()->set(Option::WindowUseRoundCorners, true);
     FramelessWidgetsHelper::get(w)->extendsContentIntoTitleBar();
     m_helper.reset(new WidgetsSharedHelper(q));
     m_helper->setup(w);

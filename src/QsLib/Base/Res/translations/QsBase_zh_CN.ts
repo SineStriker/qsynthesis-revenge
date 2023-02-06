@@ -29,12 +29,12 @@
         <translation>Root 账户</translation>
     </message>
     <message>
-        <location filename="../../Kernel/private/QsCoreStartInfo_p.cpp" line="74"/>
+        <location filename="../../Kernel/private/QsCoreStartInfo_p.cpp" line="82"/>
         <source>You&apos;re trying to start %1 as the %2, which may cause security problem and isn&apos;t recommended.</source>
         <translation>你正在尝试以%2身份运行%1，这可能存在安全问题。请使用低权限启动。</translation>
     </message>
     <message>
-        <location filename="../../Kernel/QsCoreStartInfo.cpp" line="39"/>
+        <location filename="../../Kernel/QsCoreStartInfo.cpp" line="42"/>
         <source>Error</source>
         <translation>错误</translation>
     </message>

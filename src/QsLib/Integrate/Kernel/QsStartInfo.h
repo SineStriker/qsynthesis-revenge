@@ -4,6 +4,11 @@
 #include "CStartInfo.h"
 #include "QsIntegrateGlobal.h"
 
+#ifdef qIStup
+#undef qIStup
+#endif
+#define qIStup qobject_cast<QsStartInfo *>(QsCoreStartInfo::instance())
+
 class QsStartInfoPrivate;
 
 class QSINTEGRATE_API QsStartInfo : public CStartInfo {

@@ -31,4 +31,6 @@ public:
 
 private:
     QsLocaleDir ld;
+    QsLocaleDir ld_svs;
+    QsLocaleDir ld_media;
 };

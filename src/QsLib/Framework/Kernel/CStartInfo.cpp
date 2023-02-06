@@ -10,6 +10,12 @@ CStartInfo::CStartInfo(QObject *parent) : CStartInfo(*new CStartInfoPrivate(), p
 CStartInfo::~CStartInfo() {
 }
 
+void CStartInfo::load() {
+    Q_D(CStartInfo);
+    QsCoreStartInfo::load();
+    d->load_helper();
+}
+
 QsCoreConsole *CStartInfo::createConsole(QObject *parent) {
     return new CConsole(parent);
 }

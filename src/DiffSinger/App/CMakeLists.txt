@@ -3,7 +3,7 @@ project(${SUB_PROJECT}
     VERSION ${SUB_VERSION}
 )
 
-qs_add_executable(${PROJECT_NAME} DsIntern
+qs_add_executable(${PROJECT_NAME} DsHost
     AUTHOR_NAME ${SUB_AUTHOR_NAME}
     FILE_DESC ${SUB_FILE_DESC}
     PRODUCT_NAME "DiffSinger"

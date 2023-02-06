@@ -17,9 +17,14 @@ CWindowBarV2>QLabel#win-title-label {
     padding: 0;
     border: none;
     color: "{{color|str}}";
+    font-size: "{{font.size|size}}";
     background-color: transparent;
     /* Limit window bar height */
     min-height: "{{minHeight|size}}";
+}
+
+CWindowBarV2>CToolButton {
+    outline: none;
 }
 
 CWindowBarV2>CToolButton#min-button {
@@ -27,13 +32,15 @@ CWindowBarV2>CToolButton#min-button {
     qproperty-iconOver: svg(":/svg/window-bar/minimize.svg", "{{minButton.foreground.over|str}}");
     qproperty-iconDown: svg(":/svg/window-bar/minimize.svg", "{{minButton.foreground.down|str}}");
     qproperty-iconSize: "{{minButton.icon.size|size}}";
-    background-color: "{{minButton.background.up|str}}";
     min-width: "{{minButton.minWidth|size}}";
+    background-color: "{{minButton.background.up|str}}";
     border-color: "{{minButton.border.color.up|str}}";
     border-width: "{{minButton.border.size.up|size}}";
-    border-style: "{{minButton.border.style.up|str}}";
-    padding: "{{minButton.padding|size|0}}";
-    margin: "{{minButton.margin|size|0}}";
+    /* border-style: "{{minButton.border.style.up|str|none}}"; */
+    border-radius: "{{minButton.border.radius.up|size}}";
+    padding: "{{minButton.padding|size}}";
+    margin: "{{minButton.margin|size}}";
+    border: none;
 }
 
 CWindowBarV2>CToolButton#min-button:hover {
@@ -41,6 +48,7 @@ CWindowBarV2>CToolButton#min-button:hover {
     border-color: "{{minButton.border.color.over|str}}";
     border-width: "{{minButton.border.size.over|size}}";
     border-style: "{{minButton.border.style.over|str}}";
+    border-radius: "{{minButton.border.radius.over|size}}";
 }
 
 CWindowBarV2>CToolButton#min-button:pressed {
@@ -48,6 +56,7 @@ CWindowBarV2>CToolButton#min-button:pressed {
     border-color: "{{minButton.border.color.down|str}}";
     border-width: "{{minButton.border.size.down|size}}";
     border-style: "{{minButton.border.style.down|str}}";
+    border-radius: "{{minButton.border.radius.down|size}}";
 }
 
 CWindowBarV2>CToolButton#max-button {
@@ -59,17 +68,29 @@ CWindowBarV2>CToolButton#max-button {
     qproperty-iconDownChecked: svg(":/svg/window-bar/maximize2.svg", "{{maxButton.foreground.checked.down|str}}");
     qproperty-iconSize: "{{maxButton.icon.size|size}}";
     min-width: "{{maxButton.minWidth|size}}";
-    border: none;
-    padding: 0;
-    background-color: transparent;
+    background-color: "{{maxButton.background.up|str}}";
+    border-color: "{{maxButton.border.color.up|str}}";
+    border-width: "{{maxButton.border.size.up|size}}";
+    border-style: "{{maxButton.border.style.up|str|none}}";
+    border-radius: "{{maxButton.border.radius.up|size}}";
+    padding: "{{maxButton.padding|size}}";
+    margin: "{{maxButton.margin|size}}";
 }
 
 CWindowBarV2>CToolButton#max-button:hover {
     background-color: "{{maxButton.background.over|str}}";
+    border-color: "{{maxButton.border.color.over|str}}";
+    border-width: "{{maxButton.border.size.over|size}}";
+    border-style: "{{maxButton.border.style.over|str}}";
+    border-radius: "{{maxButton.border.radius.over|size}}";
 }
 
 CWindowBarV2>CToolButton#max-button:pressed {
     background-color: "{{maxButton.background.down|str}}";
+    border-color: "{{maxButton.border.color.down|str}}";
+    border-width: "{{maxButton.border.size.down|size}}";
+    border-style: "{{maxButton.border.style.down|str}}";
+    border-radius: "{{maxButton.border.radius.down|size}}";
 }
 
 CWindowBarV2>CToolButton#win-close-button {
@@ -78,23 +99,39 @@ CWindowBarV2>CToolButton#win-close-button {
     qproperty-iconDown: svg(":/svg/window-bar/close.svg", "{{closeButton.foreground.down|str}}");
     qproperty-iconSize: "{{closeButton.icon.size|size}}";
     min-width: "{{closeButton.minWidth|size}}";
-    border: none;
-    padding: 0;
-    background-color: transparent;
+    background-color: "{{closeButton.background.up|str}}";
+    border-color: "{{closeButton.border.color.up|str}}";
+    border-width: "{{closeButton.border.size.up|size}}";
+    border-style: "{{closeButton.border.style.up|str|none}}";
+    border-radius: "{{closeButton.border.radius.up|size}}";
+    padding: "{{closeButton.padding|size}}";
+    margin: "{{closeButton.margin|size}}";
 }
 
 CWindowBarV2>CToolButton#win-close-button:hover {
     background-color: "{{closeButton.background.over|str}}";
+    border-color: "{{closeButton.border.color.over|str}}";
+    border-width: "{{closeButton.border.size.over|size}}";
+    border-style: "{{closeButton.border.style.over|str}}";
+    border-radius: "{{closeButton.border.radius.over|size}}";
 }
 
 CWindowBarV2>CToolButton#win-close-button:pressed {
     background-color: "{{closeButton.background.down|str}}";
+    border-color: "{{closeButton.border.color.down|str}}";
+    border-width: "{{closeButton.border.size.down|size}}";
+    border-style: "{{closeButton.border.style.down|str}}";
+    border-radius: "{{closeButton.border.radius.down|size}}";
 }
 
 CWindowBarV2>CToolButton#icon-button {
     qproperty-iconSize: "{{iconButton.icon.size|size}}";
     min-width: "{{iconButton.minWidth|size}}";
-    border: none;
-    padding: 0;
     background-color: "{{iconButton.background|str}}";
+    border-color: "{{iconButton.border.color|str}}";
+    border-width: "{{iconButton.border.size|size}}";
+    border-style: "{{iconButton.border.style|str|none}}";
+    border-radius: "{{iconButton.border.radius|size}}";
+    padding: "{{iconButton.padding|size}}";
+    margin: "{{iconButton.margin|size}}";
 }

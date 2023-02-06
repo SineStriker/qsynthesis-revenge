@@ -2,6 +2,7 @@
 #include "private/QsLocaleDir_p.h"
 
 #include "QsCoreDecorator.h"
+#include "QsSystem.h"
 
 #include <QFile>
 #include <QJsonArray>
@@ -15,6 +16,8 @@ static const char KEY_NAME_CONFIG_PARENT[] = "parent";
 static const char KEY_NAME_CONFIG_VALUES[] = "vars";
 
 static const char Slash = '/';
+
+bool QsLocaleDir::AutoDetectLocales = true;
 
 QsLocaleDir::QsLocaleDir() : QsLocaleDir(*new QsLocaleDirPrivate()) {
 }
@@ -42,6 +45,8 @@ bool QsLocaleDir::load(const QString &filename) {
 
     QFile file(filename);
     if (!file.open(QIODevice::ReadOnly)) {
+        qDebug().noquote() << QString("load_locale: failed to open dir-desc file %1")
+                                  .arg(QsFs::PathFindFileName(filename));
         return false;
     }
 
@@ -51,6 +56,8 @@ bool QsLocaleDir::load(const QString &filename) {
     QJsonParseError err;
     QJsonDocument doc = QJsonDocument::fromJson(data, &err);
     if (err.error != QJsonParseError::NoError || !doc.isObject()) {
+        qDebug().noquote() << QString("load_locale: invalid dir-desc file %1")
+                                  .arg(QsFs::PathFindFileName(filename));
         return false;
     }
 

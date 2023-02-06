@@ -4,6 +4,11 @@
 #include "QsCoreConsole.h"
 #include "QsFrameworkGlobal.h"
 
+#ifdef qCs
+#undef qCs
+#endif
+#define qCs qobject_cast<CConsole *>(QsCoreConsole::instance())
+
 class CConsolePrivate;
 
 class QSFRAMEWORK_API CConsole : public QsCoreConsole {
