@@ -140,7 +140,7 @@ bool QDspx::fromMidi(const QString &filename, QDspxModel *out) {
     }
 
     //缩放系数
-    float scaleFactor = resolution / 480;
+    float scaleFactor = 480 / resolution;
 
     QDspx::Timeline timeLine;
 
