@@ -15,7 +15,7 @@ QDspxModel::~QDspxModel() {
 }
 
 
-bool QDspxModel::fromMidi(const QString &filename, QDspxModel *out) {
+bool QDspx::fromMidi(const QString &filename, QDspx::Model *out) {
     QMidiFile midi;
 
     if (!midi.load(filename)) {

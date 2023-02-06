@@ -23,7 +23,7 @@ COM_EXTERN_C_EXPORT int main_entry(int argc, char *argv[]) {
     qDebug().noquote() << QString("Midi: %1").arg(midi);
 
     QDspxModel dspx;
-    bool res = QDspxModel::fromMidi(midi, &dspx);
+    bool res = QDspx::fromMidi(midi, &dspx);
     if (!res) {
         qDebug() << "Parse midi failed.";
         return -1;

@@ -9,10 +9,11 @@
 class DSGUI_API IDsEditWidget : public INamePlugin {
     Q_OBJECT
 public:
-    IDsEditWidget(QObject *parent = nullptr);
+    explicit IDsEditWidget(QObject *parent = nullptr);
     ~IDsEditWidget();
 
 public:
+    virtual QWidget *createWidget() = 0;
 };
 
 #define IDsEditWidget_IID "DiffSinger.Plugin.DsEditWidget"
