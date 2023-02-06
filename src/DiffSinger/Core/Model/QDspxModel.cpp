@@ -40,6 +40,7 @@ bool QDspx::fromMidi(const QString &filename, QDspxModel *out) {
 
     // 解析Tempo Map
     QList<QPair<int, double>> tempos;
+    QList<QPair<int, QString>> label;
     QMap<qint32,QPoint> timeSign;
     timeSign[0] = QPoint(4, 4);
     QList<QMidiEvent *> tempMap = midi.eventsForTrack(0);
@@ -50,10 +51,14 @@ bool QDspx::fromMidi(const QString &filename, QDspxModel *out) {
             if (e->number() == QMidiEvent::Tempo) {
                 tempos.append(qMakePair(e->tick(), e->tempo()));
                 qDebug() << "Tempo:" << e->tick() << e->tempo();
+            } else if (e->number() == QMidiEvent::Marker) {
+                label.append(qMakePair(e->tick(), QString(e->data())));
+                qDebug() << "Marker:" << e->tick() << QString(e->data());
             } else if (e->number() == QMidiEvent::TimeSignature) {
                 timeSign[e->tick()] = QPoint(e->data()[0], 2 * e->data()[1]);
                 qDebug() << "TimeSignature:" << e->tick() << timeSign[e->tick()];
-            } else {
+            }
+            else {
                 qDebug() << "Else:" << e->number();
             }
         }
@@ -85,7 +90,7 @@ bool QDspx::fromMidi(const QString &filename, QDspxModel *out) {
                     if (e->number() == QMidiEvent::TrackName) {
                         name = QString::fromLocal8Bit(e->data());
                     } else if (e->number() == QMidiEvent::Lyric) {
-                        trackInfo.noteLyric.append(QString::fromLocal8Bit(e->data()));
+                        trackInfo.noteLyric.append(QString(e->data()));
                     }
                     break;
                 }
@@ -136,6 +141,25 @@ bool QDspx::fromMidi(const QString &filename, QDspxModel *out) {
 
     //缩放系数
     float scaleFactor = resolution / 480;
+
+    QDspx::Timeline timeLine;
+
+    TimeSignature timeSignature;
+    QMapIterator<qint32,QPoint> i(timeSign);
+    while (i.hasNext()) {
+        i.next();
+        timeSignature.pos = i.key() * scaleFactor;
+        timeSignature.num = i.value().x();
+        timeSignature.den = i.value().y();
+        timeLine.timeSignatures.append(timeSignature);
+    }
+    
+
+    QDspx::Track track;
+    
+    auto clip = SingingClipRef::create();
+    //clip->notes.append("x");
+    track.clips.append(clip);
 
     return true;
 }
