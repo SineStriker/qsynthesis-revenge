@@ -1,34 +1,58 @@
 #ifndef QDSPXMODEL_H
 #define QDSPXMODEL_H
 
-#include "DsCoreGlobal.h"
+#include "QDspxTimeline.h"
+#include "QDspxTrack.h"
 
-#include <QString>
+namespace QDspx {
 
-class DSCORE_API QDspxModel {
-public:
-    QDspxModel();
-    ~QDspxModel();
+    // 文件的元信息，包括版本号、工程名、作者等
+    struct Metadata {
+        QString version;
+        QString name;
+        QString author;
+    };
 
-    QString version;
+    // 循环区间
+    struct LoopRange {
+        bool enabled;
+        int start;
+        int length;
 
-    // public static QDspxModel FromMidi(string filename);
+        // 构造器
+        LoopRange() : LoopRange(false, 0, 0){};
+        LoopRange(bool enabled, int start, int length)
+            : enabled(enabled), start(start), length(length){};
+    };
 
-    static bool fromMidi(const QString &filename, QDspxModel *out);
-};
+    // 总线控制
+    struct Master {
+        Control control;
+        LoopRange loop;
+    };
 
-// int main1() {
-//     QDspxModel dspx;
-//     if (!QDspxModel::fromMidi("C:\\a.mid", &dspx)) {
-//         printf("Failed\n");
-//         return -1;
-//     }
+    // 工程可编辑区域
+    struct Content {
+        Master master;
+        Timeline timeline;
+        QList<Track> tracks;
 
-//     printf("Success\n");
+        // 不定长信息
+        Extra extra;
+        Workspace workspace;
+    };
 
-//     //
+    // 工程
+    struct Model {
+        Metadata metadata;
+        Content content;
 
-//     return 0;
-// }
+        // 不定长信息
+        Workspace workspace;
+    };
+
+    static bool fromMidi(const QString &filename, Model *out);
+
+} // namespace QDspx
 
 #endif // QDSPXMODEL_H

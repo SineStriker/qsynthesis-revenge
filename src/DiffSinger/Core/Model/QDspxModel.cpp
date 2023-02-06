@@ -1,18 +1,12 @@
 #include "QDspxModel.h"
-#include "../3rdparty/QMidi/src/QMidiFile.h"
+
+#include "QMidiFile.h"
 #include "Utau/Utils/QUtaUtils.h"
 
 #include <QChar>
 #include <QDebug>
 #include <QFile>
 #include <QTextCodec>
-
-
-QDspxModel::QDspxModel() {
-}
-
-QDspxModel::~QDspxModel() {
-}
 
 // QString Pitch2Name(qint8 pitch) {
 //     QStringList head = QString::fromLocal8Bit("C,C#,D,D#,E,F,F#,G,G#,A,A#,B").split(",");
@@ -22,7 +16,7 @@ QDspxModel::~QDspxModel() {
 //     return  str;
 // }
 
-bool QDspxModel::fromMidi(const QString &filename, QDspxModel *out) {
+bool QDspx::fromMidi(const QString &filename, QDspx::Model *out) {
     QMidiFile midi;
 
     if (!midi.load(filename)) {
