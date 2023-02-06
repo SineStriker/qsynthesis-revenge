@@ -14,13 +14,6 @@ QDspxModel::QDspxModel() {
 QDspxModel::~QDspxModel() {
 }
 
-// QString Pitch2Name(qint8 pitch) {
-//     QStringList head = QString::fromLocal8Bit("C,C#,D,D#,E,F,F#,G,G#,A,A#,B").split(",");
-//     QString str = QString(head[int(pitch % 12)]);
-//     str += QString(int(pitch / 12) - 1);
-//     qDebug() << head;
-//     return  str;
-// }
 
 bool QDspxModel::fromMidi(const QString &filename, QDspxModel *out) {
     QMidiFile midi;
@@ -33,6 +26,7 @@ bool QDspxModel::fromMidi(const QString &filename, QDspxModel *out) {
     // midi种类、四分音符ticks数、轨道数、时间类型
     qint8 midiFormat = midi.fileFormat();
     qint16 resolution = midi.resolution();
+    qDebug() << "resolution:" << resolution;
     qint16 tracksCount = midi.tracks().size();
     int divType = midi.divisionType();
 
@@ -52,15 +46,20 @@ bool QDspxModel::fromMidi(const QString &filename, QDspxModel *out) {
 
     // 解析Tempo Map
     QList<QPair<int, double>> tempos;
+    QMap<qint32,QPoint> timeSign;
+    timeSign[0] = QPoint(4, 4);
     QList<QMidiEvent *> tempMap = midi.eventsForTrack(0);
+
     for (int j = 0; j < tempMap.size(); ++j) {
         QMidiEvent *e = tempMap.at(j);
         if (e->type() == QMidiEvent::Meta) {
             qDebug() << "Cmd:" << Qt::hex << e->number();
             if (e->number() == QMidiEvent::Tempo) {
-                qDebug() << "Tempo:" << e->tempo();
+                tempos.append(qMakePair(e->tick(), e->tempo()));
+                qDebug() << "Tempo:" << e->tick() << e->tempo();
             } else if (e->number() == QMidiEvent::TimeSignature) {
-                qDebug() << "TimeSignature:" << e->tick() << e->number() << e->data();
+                timeSign[e->tick()] = QPoint(e->data()[0], 2 * e->data()[1]);
+                qDebug() << "TimeSignature:" << e->tick() << timeSign[e->tick()];
             } else {
                 qDebug() << "Else:" << e->number();
             }
@@ -70,6 +69,7 @@ bool QDspxModel::fromMidi(const QString &filename, QDspxModel *out) {
     //单轨数据：轨道名、起止tick、音高、歌词
     struct TrackInfo {
         QString name;
+        QString title;
         QList<qint32> notePos;
         QList<qint32> noteEnd;
         QList<qint8> noteKeyNum;
@@ -91,7 +91,6 @@ bool QDspxModel::fromMidi(const QString &filename, QDspxModel *out) {
                 case QMidiEvent::Meta: {
                     if (e->number() == QMidiEvent::TrackName) {
                         name = QString::fromLocal8Bit(e->data());
-                        trackInfo.name.append(name);
                     } else if (e->number() == QMidiEvent::Lyric) {
                         trackInfo.noteLyric.append(QString::fromLocal8Bit(e->data()));
                     }
@@ -116,22 +115,34 @@ bool QDspxModel::fromMidi(const QString &filename, QDspxModel *out) {
             return false;
         }
 
-        qint8 keyLow = 48;
-        qint8 keyHigh = 60;
-        QString low = QUtaUtils::ToneNumToToneName(keyLow);
-        QString high = QUtaUtils::ToneNumToToneName(keyHigh);
-        trackInfo.pitchRange = QString(low + "-" + high);
+        if (trackInfo.noteKeyNum.size()) {
+            qint8 keyLow = *std::min_element(trackInfo.noteKeyNum.begin(), trackInfo.noteKeyNum.end());
+            qint8 keyHigh = *std::max_element(trackInfo.noteKeyNum.begin(), trackInfo.noteKeyNum.end());
+            QString low = QUtaUtils::ToneNumToToneName(keyLow);
+            QString high = QUtaUtils::ToneNumToToneName(keyHigh);
+            trackInfo.pitchRange = QString(low + "-" + high);
+        } else {
+            trackInfo.pitchRange = "";
+        }
+        trackInfo.name = name.isEmpty() ? "Track " + QString::number(i - midiFormat + 1) : name;
+        trackInfo.title =
+            QString(trackInfo.name + ": (" + QString::number(trackInfo.noteKeyNum.size()) + " notes, " +
+                                  trackInfo.pitchRange + ")");
         trackInfos.append(trackInfo);
     }
 
+    qDebug() << timeSign; 
     for (int i = 0; i < trackInfos.size(); ++i) {
         const auto &info = trackInfos.at(i);
-        qDebug() << info.name << info.pitchRange;
-
+        qDebug() << info.title;
         for (int j = 0; j < info.notePos.size(); ++j) {
             qDebug() << info.notePos.at(j) << info.noteEnd.at(j) << info.noteKeyNum.at(j)
                      << (info.noteLyric.size() > j ? info.noteLyric.at(j) : "");
         }
     }
+
+    //缩放系数
+    float scaleFactor = 480 / resolution;
+
     return true;
 }
