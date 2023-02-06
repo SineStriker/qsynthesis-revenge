@@ -165,6 +165,12 @@ if __name__ == "__main__":
     if not os.path.isdir("scripts/vcpkg"):
         print("Vcpkg scripts not found")
         sys.exit(-1)
+    
+    # Vcpkg path configuration file
+    paths_txt_path = "scripts/vcpkg/triplets/paths/path_qt.txt"
+    if not os.path.isfile(paths_txt_path):
+        print(f"{paths_txt_path} not found")
+        sys.exit(-1)
 
     # -- Detect system proxy
     print_begin("Setup context proxy")
@@ -213,7 +219,7 @@ if __name__ == "__main__":
 
     println_twice()
 
-    if args.skip is False:
+    if not args.skip:
         # -- Build libraries
         for task in vcpkg_tasks:
             print_begin(f"Build {task.name}")

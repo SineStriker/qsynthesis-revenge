@@ -7,6 +7,7 @@
 #include <QVBoxLayout>
 
 #include "CTabButton.h"
+#include "Display/FileListWidget.h"
 #include "Frames/LinearScrollArea.h"
 #include "QPixelSize.h"
 #include "QsFrameworkMacros.h"
@@ -52,6 +53,8 @@ public:
 
     HomeRecentTopFrame *topWidget;
     LinearScrollArea *bottomWidget;
+
+    FileListWidget *fileWidget;
 
 signals:
 
