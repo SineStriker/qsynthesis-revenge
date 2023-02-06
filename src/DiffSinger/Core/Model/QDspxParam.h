@@ -34,6 +34,8 @@ namespace QDspx {
         explicit ParamFree(int start = 0) : ParamCurve(Free), start(start), step(5){};
     };
 
+    using ParamFreeRef = QSharedPointer<ParamFree>;
+
     // 锚点参数
     struct ParamAnchor : public ParamCurve {
         QList<AnchorPoint> nodes;
@@ -41,6 +43,8 @@ namespace QDspx {
         // 构造器
         ParamAnchor() : ParamCurve(Anchor){};
     };
+
+    using ParamAnchorRef = QSharedPointer<ParamAnchor>;
 
     // 参数结构
     struct ParamInfo {

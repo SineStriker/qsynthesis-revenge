@@ -1,5 +1,4 @@
 #include "QDspxModel.h"
-
 #include "QMidiFile.h"
 #include "Utau/Utils/QUtaUtils.h"
 
@@ -8,15 +7,9 @@
 #include <QFile>
 #include <QTextCodec>
 
-// QString Pitch2Name(qint8 pitch) {
-//     QStringList head = QString::fromLocal8Bit("C,C#,D,D#,E,F,F#,G,G#,A,A#,B").split(",");
-//     QString str = QString(head[int(pitch % 12)]);
-//     str += QString(int(pitch / 12) - 1);
-//     qDebug() << head;
-//     return  str;
-// }
 
-bool QDspx::fromMidi(const QString &filename, QDspx::Model *out) {
+
+bool QDspx::fromMidi(const QString &filename, QDspxModel *out) {
     QMidiFile midi;
 
     if (!midi.load(filename)) {
@@ -25,9 +18,10 @@ bool QDspx::fromMidi(const QString &filename, QDspx::Model *out) {
     }
 
     // midi种类、四分音符ticks数、轨道数、时间类型
-    qint8 midiFormat = midi.fileFormat();
-    qint16 resolution = midi.resolution();
-    qint16 tracksCount = midi.tracks().size();
+    int midiFormat = midi.fileFormat();
+    int resolution = midi.resolution();
+    qDebug() << "resolution:" << resolution;
+    int tracksCount = midi.tracks().size();
     int divType = midi.divisionType();
 
     //校验tracks数量、midi种类
@@ -46,16 +40,25 @@ bool QDspx::fromMidi(const QString &filename, QDspx::Model *out) {
 
     // 解析Tempo Map
     QList<QPair<int, double>> tempos;
+    QList<QPair<int, QString>> label;
+    QMap<qint32,QPoint> timeSign;
+    timeSign[0] = QPoint(4, 4);
     QList<QMidiEvent *> tempMap = midi.eventsForTrack(0);
-    for (int j = 0; j < tempMap.size(); ++j) {
-        QMidiEvent *e = tempMap.at(j);
+
+    for (auto e:qAsConst(tempMap)) {
         if (e->type() == QMidiEvent::Meta) {
             qDebug() << "Cmd:" << Qt::hex << e->number();
             if (e->number() == QMidiEvent::Tempo) {
-                qDebug() << "Tempo:" << e->tempo();
+                tempos.append(qMakePair(e->tick(), e->tempo()));
+                qDebug() << "Tempo:" << e->tick() << e->tempo();
+            } else if (e->number() == QMidiEvent::Marker) {
+                label.append(qMakePair(e->tick(), QString(e->data())));
+                qDebug() << "Marker:" << e->tick() << QString(e->data());
             } else if (e->number() == QMidiEvent::TimeSignature) {
-                qDebug() << "TimeSignature:" << e->tick() << e->number() << e->data();
-            } else {
+                timeSign[e->tick()] = QPoint(e->data()[0], 2 * e->data()[1]);
+                qDebug() << "TimeSignature:" << e->tick() << timeSign[e->tick()];
+            }
+            else {
                 qDebug() << "Else:" << e->number();
             }
         }
@@ -64,6 +67,7 @@ bool QDspx::fromMidi(const QString &filename, QDspx::Model *out) {
     //单轨数据：轨道名、起止tick、音高、歌词
     struct TrackInfo {
         QString name;
+        QString title;
         QList<qint32> notePos;
         QList<qint32> noteEnd;
         QList<qint8> noteKeyNum;
@@ -85,9 +89,8 @@ bool QDspx::fromMidi(const QString &filename, QDspx::Model *out) {
                 case QMidiEvent::Meta: {
                     if (e->number() == QMidiEvent::TrackName) {
                         name = QString::fromLocal8Bit(e->data());
-                        trackInfo.name.append(name);
                     } else if (e->number() == QMidiEvent::Lyric) {
-                        trackInfo.noteLyric.append(QString::fromLocal8Bit(e->data()));
+                        trackInfo.noteLyric.append(QString(e->data()));
                     }
                     break;
                 }
@@ -110,22 +113,53 @@ bool QDspx::fromMidi(const QString &filename, QDspx::Model *out) {
             return false;
         }
 
-        qint8 keyLow = 48;
-        qint8 keyHigh = 60;
-        QString low = QUtaUtils::ToneNumToToneName(keyLow);
-        QString high = QUtaUtils::ToneNumToToneName(keyHigh);
-        trackInfo.pitchRange = QString(low + "-" + high);
+        if (trackInfo.noteKeyNum.size()) {
+            qint8 keyLow = *std::min_element(trackInfo.noteKeyNum.begin(), trackInfo.noteKeyNum.end());
+            qint8 keyHigh = *std::max_element(trackInfo.noteKeyNum.begin(), trackInfo.noteKeyNum.end());
+            QString low = QUtaUtils::ToneNumToToneName(keyLow);
+            QString high = QUtaUtils::ToneNumToToneName(keyHigh);
+            trackInfo.pitchRange = QString(low + "-" + high);
+        } else {
+            trackInfo.pitchRange = "";
+        }
+        trackInfo.name = QObject::tr("Track %1").arg(name.isEmpty() ? QString::number(i - midiFormat + 1):name);
+        trackInfo.title = QObject::tr("%1: (%2 notes, %3)")
+                              .arg(trackInfo.name, QString::number(trackInfo.noteKeyNum.size()),
+                                   trackInfo.pitchRange);
         trackInfos.append(trackInfo);
     }
 
+    qDebug() << timeSign; 
     for (int i = 0; i < trackInfos.size(); ++i) {
         const auto &info = trackInfos.at(i);
-        qDebug() << info.name << info.pitchRange;
-
+        qDebug() << info.title;
         for (int j = 0; j < info.notePos.size(); ++j) {
             qDebug() << info.notePos.at(j) << info.noteEnd.at(j) << info.noteKeyNum.at(j)
                      << (info.noteLyric.size() > j ? info.noteLyric.at(j) : "");
         }
     }
+
+    //缩放系数
+    float scaleFactor = 480 / resolution;
+
+    QDspx::Timeline timeLine;
+
+    TimeSignature timeSignature;
+    QMapIterator<qint32,QPoint> i(timeSign);
+    while (i.hasNext()) {
+        i.next();
+        timeSignature.pos = i.key() * scaleFactor;
+        timeSignature.num = i.value().x();
+        timeSignature.den = i.value().y();
+        timeLine.timeSignatures.append(timeSignature);
+    }
+    
+
+    QDspx::Track track;
+    
+    auto clip = SingingClipRef::create();
+    //clip->notes.append("x");
+    track.clips.append(clip);
+
     return true;
 }

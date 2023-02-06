@@ -54,6 +54,8 @@ namespace QDspx {
         AudioClip() : Clip(Audio){};
     };
 
+    using AudioClipRef = QSharedPointer<AudioClip>;
+
     // 人声区间
     struct SingingClip : public Clip {
         QList<Note> notes;
@@ -65,6 +67,8 @@ namespace QDspx {
         // 构造器
         SingingClip() : Clip(Singing){};
     };
+
+    using SingingClipRef = QSharedPointer<SingingClip>;
 
     // 音轨
     struct Track {
