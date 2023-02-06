@@ -60,6 +60,7 @@ class library_task:
     use_overlay_triplets : use your own build settings (Always on)
     os_flags             : specify operating systems the library supports
     """
+
     def __init__(self, name: str,
                  use_overlay_ports: bool = False,
                  use_overlay_triplets: bool = True,
@@ -109,6 +110,8 @@ if __name__ == "__main__":
                         "--clean", help="Clean local caches after build.", action="store_true")
     parser.add_argument(
         "--distclean", help="Clean all caches after build.", action="store_true")
+    parser.add_argument(
+        "--skip", help="Skip build.", action="store_true")
     args = parser.parse_args()
 
     # Determine os and arch
@@ -187,7 +190,7 @@ if __name__ == "__main__":
 
     if not os.path.isdir(vcpkg_dir):
         print(f"Clone {vcpkg_repo}")
-        code = os.system(f"git clone {vcpkg_repo}") # git clone vcpkg.git
+        code = os.system(f"git clone {vcpkg_repo}")  # git clone vcpkg.git
         if code != 0:
             print("Clone failed")
             sys.exit(code)
@@ -201,7 +204,7 @@ if __name__ == "__main__":
 
     os.chdir(vcpkg_dir)  # cd vcpkg
     if not os.path.isfile(vcpkg_exe):
-        code = os.system(f"{bootstrap_cmd}") # ./bootstrap
+        code = os.system(f"{bootstrap_cmd}")  # ./bootstrap
         if code != 0:
             print("Bootstrap failed")
             sys.exit(code)
@@ -210,16 +213,17 @@ if __name__ == "__main__":
 
     println_twice()
 
-    # -- Build libraries
-    for task in vcpkg_tasks:
-        print_begin(f"Build {task.name}")
+    if args.skip is False:
+        # -- Build libraries
+        for task in vcpkg_tasks:
+            print_begin(f"Build {task.name}")
 
-        code = task.install()               # ./vcpkg install ...
-        if code != 0:
-            print(f"Build {task.name} failed")
-            sys.exit(code)
+            code = task.install()               # ./vcpkg install ...
+            if code != 0:
+                print(f"Build {task.name} failed")
+                sys.exit(code)
 
-        println_twice()
+            println_twice()
 
     # -- Clean up
     print_begin("Clean up")
