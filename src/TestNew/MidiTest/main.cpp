@@ -5,12 +5,16 @@
 #include "com_global.h"
 
 #include "ProjectImport.h"
+#include "QsStartInfo.h"
 
 #include <QLabel>
 #include <QMainWindow>
 
 COM_EXTERN_C_EXPORT int main_entry(int argc, char *argv[]) {
     QApplication a(argc, argv);
+
+    QsStartInfo info;
+    info.load();
 
     if (argc < 2) {
         qDebug() << "Missing midi file name.";
