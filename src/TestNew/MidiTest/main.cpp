@@ -1,18 +1,25 @@
-#include <QCoreApplication>
+#include <QApplication>
 #include <QDebug>
 #include <QFile>
 
 #include "com_global.h"
 
-#include "QDspxModel.h"
+#include "ProjectImport.h"
+
+#include <QLabel>
+#include <QMainWindow>
 
 COM_EXTERN_C_EXPORT int main_entry(int argc, char *argv[]) {
-    QCoreApplication a(argc, argv);
+    QApplication a(argc, argv);
 
     if (argc < 2) {
         qDebug() << "Missing midi file name.";
         return -1;
     }
+
+    QMainWindow w;
+    w.setCentralWidget(new QLabel("Hello World!"));
+    w.show();
 
     QString midi = QString::fromLocal8Bit(argv[1]);
     if (!QFile::exists(midi)) {
@@ -23,12 +30,13 @@ COM_EXTERN_C_EXPORT int main_entry(int argc, char *argv[]) {
     qDebug().noquote() << QString("Midi: %1").arg(midi);
 
     QDspxModel dspx;
-    bool res = QDspx::fromMidi(midi, &dspx);
+    bool res = Import::loadMidi(midi, &dspx);
     if (!res) {
         qDebug() << "Parse midi failed.";
         return -1;
     }
 
     qDebug() << "Parse midi successfully.";
-    return 0;
+
+    return a.exec();
 }

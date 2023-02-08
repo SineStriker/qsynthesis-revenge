@@ -20,6 +20,5 @@ target_components(${PROJECT_NAME}
     SOURCES ${_src}
     QT_LIBRARIES Core
     LINKS QsSVS
-    LINKS_PRIVATE QMidi QNrbfFormat
     INCLUDES ${_dirs}
 )

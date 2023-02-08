@@ -1,14 +1,18 @@
-#include "../QDspxModel.h"
+#include "../ProjectImport.h"
 
 #include "QMidiFile.h"
 #include "Utau/Utils/QUtaUtils.h"
+
+#include "Dialogs/ImportDialog.h"
 
 #include <QChar>
 #include <QDebug>
 #include <QFile>
 #include <QTextCodec>
 
-bool QDspx::fromMidi(const QString &filename, QDspxModel *out, QObject *parent) {
+using namespace QDspx;
+
+bool Import::loadMidi(const QString &filename, QDspxModel *out, QObject *parent) {
     QMidiFile midi;
 
     if (!midi.load(filename)) {
@@ -95,7 +99,8 @@ bool QDspx::fromMidi(const QString &filename, QDspxModel *out, QObject *parent) 
                     if (e->number() == QMidiEvent::TrackName) {
                         name = QString::fromLocal8Bit(e->data());
                     } else if (e->number() == QMidiEvent::Lyric) {
-                        trackInfo.noteLyric.append(qMakePair(e->tick(), QString::fromLocal8Bit(e->data())));
+                        trackInfo.noteLyric.append(
+                            qMakePair(e->tick(), QString::fromLocal8Bit(e->data())));
                     }
                     break;
                 }
@@ -144,7 +149,7 @@ bool QDspx::fromMidi(const QString &filename, QDspxModel *out, QObject *parent) 
         for (int j = 0; j < info.notePos.size(); ++j) {
             qDebug() << info.notePos.at(j) << info.noteEnd.at(j) << info.noteKeyNum.at(j)
                      << info.noteChannel.at(j);
-                     //<< (info.noteLyric.size() > j ? info.noteLyric.at(j) : "");
+            //<< (info.noteLyric.size() > j ? info.noteLyric.at(j) : "");
         }
     }
 
@@ -191,11 +196,26 @@ bool QDspx::fromMidi(const QString &filename, QDspxModel *out, QObject *parent) 
         for (int i = 0; i < trackInfo.notePos.size(); ++i) {
             Note note;
             note.pos = trackInfo.notePos[i];
-            //clip->notes.append();
+            // clip->notes.append();
         }
 
         track.clips.append(clip);
         out->content.tracks.append(track);
+    }
+
+    if (false) {
+        ImportDialog dlg(qobject_cast<QWidget *>(parent));
+        dlg.setWindowTitle("Import");
+
+        ImportDialog::ImportOptions opt;
+        opt.caption = "Select tracks";
+        opt.maxTracks = 2;
+        for (int i = 0; i < 5; ++i) {
+            opt.tracks.append(ImportDialog::TrackInfo{QString::number(i), "", true});
+        }
+        dlg.setImportOptions(opt);
+
+        qDebug() << dlg.exec();
     }
 
     return true;

@@ -1,6 +1,6 @@
 project(DsGui LANGUAGES CXX VERSION ${SUB_VERSION})
 
-set(_dirs Api Global Kernel)
+set(_dirs Api Global Kernel Transactions)
 set(_res_dir Res)
 
 add_files(_src
@@ -21,6 +21,7 @@ target_components(${PROJECT_NAME}
     SOURCES ${_src} ${_res_dir}/res.qrc
     QT_LIBRARIES Widgets
     LINKS DsCore QsIntegrate
+    LINKS_PRIVATE QMidi QNrbfFormat
     INCLUDES ${_dirs}
 )
 

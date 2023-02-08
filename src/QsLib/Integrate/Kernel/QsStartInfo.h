@@ -17,15 +17,18 @@ class QSINTEGRATE_API QsStartInfo : public CStartInfo {
 public:
     explicit QsStartInfo(QObject *parent = nullptr);
     ~QsStartInfo();
-    
+
     void load() override;
 
 public:
     static QString untitledFileName();
 
     static QString unsavedPrefix();
-    
+
     static QString deletedPrefix();
+
+protected:
+    QsCoreConsole *createConsole(QObject *parent = nullptr) override;
 
 protected:
     QsStartInfo(QsStartInfoPrivate &d, QObject *parent = nullptr);

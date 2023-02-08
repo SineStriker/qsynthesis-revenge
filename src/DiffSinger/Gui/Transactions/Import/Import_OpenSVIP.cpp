@@ -1,4 +1,4 @@
-#include "../QDspxModel.h"
+#include "../ProjectImport.h"
 
 #include <QFile>
 #include <QJsonObject>
@@ -6,7 +6,7 @@
 
 #include "QSvipModel.h"
 
-bool QDspx::fromOpenSVIP(const QString &filename, QDspx::Model *out, QObject *parent) {
+bool Import::loadOpenSVIP(const QString &filename, QDspx::Model *out, QObject *parent) {
     QFile file(filename);
     if (!file.open(QIODevice::ReadOnly)) {
         return false;

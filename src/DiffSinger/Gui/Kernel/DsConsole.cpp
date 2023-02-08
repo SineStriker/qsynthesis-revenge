@@ -7,9 +7,10 @@
 
 #include "QsFileManager.h"
 #include "QsSystem.h"
+#include "QsView.h"
 
 #include "CStartInfo.h"
-#include "QDspxModel.h"
+#include "ProjectImport.h"
 
 static const char FILE_EXTENSIONS_DELIMITER[] = ";;";
 
@@ -74,21 +75,21 @@ bool DsConsole::importFile(QDspxModel *dspx, QWidget *parent) {
 
     auto ext = QsFs::PathFindSuffix(path).toLower();
     if (ext == "mid") {
-        return QDspx::fromMidi(path, dspx);
+        return Import::loadMidi(path, dspx);
     }
     if (ext == "ust") {
-        return QDspx::fromUst(path, dspx, parent);
+        return Import::loadUst(path, dspx, parent);
     }
     if (ext == "json") {
-        return QDspx::fromOpenSVIP(path, dspx, parent);
+        return Import::loadOpenSVIP(path, dspx, parent);
     }
     if (ext == "svip") {
-        return QDspx::fromSvip(path, dspx, parent);
+        return Import::loadSvip(path, dspx, parent);
     }
 
     return true;
 }
 
-DsConsole::DsConsole(DsConsolePrivate &d, QObject *parent) : CConsole(d, parent) {
+DsConsole::DsConsole(DsConsolePrivate &d, QObject *parent) : QsConsole(d, parent) {
     d.init();
 }

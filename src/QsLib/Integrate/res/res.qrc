@@ -1,3 +1,5 @@
 <RCC>
-    <qresource prefix="/"/>
+    <qresource prefix="/">
+        <file>themes/import-dialog.qss.in</file>
+    </qresource>
 </RCC>

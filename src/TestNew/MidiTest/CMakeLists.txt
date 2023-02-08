@@ -16,7 +16,7 @@ target_components(${PROJECT_NAME}
     INCLUDE_CURRENT
     SOURCES ${_src}
     QT_LIBRARIES Core
-    LINKS DsCore
+    LINKS DsGui
     INCLUDES ${COMMON_INCLUDE_DIR} ${_dirs}
 )
 

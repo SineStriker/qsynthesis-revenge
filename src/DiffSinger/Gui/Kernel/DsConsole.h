@@ -1,7 +1,7 @@
 #ifndef DSCONSOLE_H
 #define DSCONSOLE_H
 
-#include "CConsole.h"
+#include "QsConsole.h"
 #include "DsGuiGlobal.h"
 #include "QDspxModel.h"
 
@@ -12,7 +12,7 @@
 
 class DsConsolePrivate;
 
-class DSGUI_API DsConsole : public CConsole {
+class DSGUI_API DsConsole : public QsConsole {
     Q_OBJECT
     Q_DECLARE_PRIVATE(DsConsole)
 public:

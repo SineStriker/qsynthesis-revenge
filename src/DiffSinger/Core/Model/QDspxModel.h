@@ -50,15 +50,6 @@ namespace QDspx {
         Workspace workspace;
     };
 
-    // 导入函数
-    DSCORE_API bool fromMidi(const QString &filename, Model *out, QObject *parent = nullptr);
-
-    DSCORE_API bool fromSvip(const QString &filename, Model *out, QObject *parent = nullptr);
-
-    DSCORE_API bool fromOpenSVIP(const QString &filename, Model *out, QObject *parent = nullptr);
-
-    DSCORE_API bool fromUst(const QString &filename, Model *out, QObject *parent = nullptr);
-
 } // namespace QDspx
 
 using QDspxModel = QDspx::Model;

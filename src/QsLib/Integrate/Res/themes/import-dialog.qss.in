@@ -1,0 +1,36 @@
+/* Configuration */
+
+Config {
+    pattern: "\"\\{\\{(.*?)\\}\\}\"";
+    separator: "|";
+}
+
+
+/* Stylesheet Content */
+
+ImportDialog {
+    min-width: "{{minWidth|size}}";
+    qproperty-layoutMargins: qmargins("{{content.margins|size}}");
+    qproperty-boxesLayoutMargins: qmargins("{{boxes.margins|size}}");
+    qproperty-boxesLayoutSpacing: "{{boxes.spacing|size}}";
+    qproperty-buttonsLayoutMargins: qmargins("{{buttons.margins|size}}");
+    qproperty-buttonsLayoutSpacing: "{{buttons.spacing|size}}";
+}
+
+ImportDialog>QLabel#caption-label {
+    font-size: "{{caption.font.size|size}}";
+    color: "{{caption.color|str}}";
+    padding: "{{caption.padding|size}}";
+    margin: "{{caption.margin|size}}";
+}
+
+ImportDialog>CCheckBox {
+    padding: "{{box.padding|size}}";
+    margin: "{{box.margin|size}}";
+    qproperty-layoutSpacing: "{{box.spacing|size}}";
+}
+
+ImportDialog>CCheckBox>QLabel {
+    font-size: "{{box.font.size|size}}";
+    color: "{{box.color|str}}";
+}

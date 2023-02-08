@@ -1,11 +1,11 @@
 #ifndef DSCONSOLEPRIVATE_H
 #define DSCONSOLEPRIVATE_H
 
-#include "private/CConsole_p.h"
+#include "private/QsConsole_p.h"
 
 #include "../DsConsole.h"
 
-class DsConsolePrivate : public CConsolePrivate {
+class DsConsolePrivate : public QsConsolePrivate {
     Q_DECLARE_PUBLIC(DsConsole)
 public:
     DsConsolePrivate();

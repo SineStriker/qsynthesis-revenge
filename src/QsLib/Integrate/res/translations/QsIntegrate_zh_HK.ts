@@ -2,6 +2,19 @@
 <!DOCTYPE TS>
 <TS version="2.1" language="zh_HK">
 <context>
+    <name>ImportDialog</name>
+    <message>
+        <location filename="../../Widgets/Dialogs/ImportDialog.cpp" line="17"/>
+        <source>OK</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../Widgets/Dialogs/ImportDialog.cpp" line="18"/>
+        <source>Cancel</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>QsPluginManager</name>
     <message>
         <location filename="../../Managers/QsPluginManager.cpp" line="64"/>
@@ -12,12 +25,12 @@
 <context>
     <name>QsStartInfo</name>
     <message>
-        <location filename="../../Kernel/QsStartInfo.cpp" line="17"/>
+        <location filename="../../Kernel/QsStartInfo.cpp" line="19"/>
         <source>Untitled</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Kernel/QsStartInfo.cpp" line="25"/>
+        <location filename="../../Kernel/QsStartInfo.cpp" line="27"/>
         <source>(Deleted)</source>
         <translation type="unfinished"></translation>
     </message>

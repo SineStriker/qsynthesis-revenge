@@ -1,10 +1,10 @@
-#include "../QDspxModel.h"
+#include "../ProjectImport.h"
 
 #include <QFile>
 
 #include "QNrbfStream.h"
 
-bool QDspx::fromSvip(const QString &filename, QDspxModel *out, QObject *parent) {
+bool Import::loadSvip(const QString &filename, QDspxModel *out, QObject *parent) {
     QByteArray data;
 
     // Read file
@@ -12,7 +12,7 @@ bool QDspx::fromSvip(const QString &filename, QDspxModel *out, QObject *parent) 
         QFile file(filename);
         if (!file.open(QIODevice::ReadOnly)) {
             qDebug() << "Failed to load SVIP file.";
-            return -1;
+            return false;
         }
 
         data = file.readAll();

@@ -1,0 +1,23 @@
+{
+    "config": {
+        "priority": 10,
+        "ratio": 0.8
+    },
+    "values": {
+        "ImportDialog": {
+            "minWidth": 400,
+            "content.margins": 20,
+            "caption": {
+                "padding": 5
+            },
+            "boxes": {
+                "margins": 5,
+                "spacing": 5
+            },
+            "buttons": {
+                "margins": 5,
+                "spacing": 5
+            }
+        }
+    }
+}

@@ -44,3 +44,7 @@ qs_add_res(${PROJECT_NAME}
     FILES ${_res_dir}/translations/*.qm
     ABSOLUTE_PATH ${SHARE_OUTPUT_DIR}/QsIntegrate.res/translations
 )
+qs_add_res(${PROJECT_NAME}
+    FILES ${_res_dir}/themes/*.json
+    ABSOLUTE_PATH ${SHARE_OUTPUT_DIR}/QsIntegrate.res/themes
+)

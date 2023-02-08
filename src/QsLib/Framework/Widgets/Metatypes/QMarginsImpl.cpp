@@ -16,7 +16,13 @@ QMargins QMarginsImpl::fromStringList(const QStringList &stringList) {
     QMargins res;
     if (stringList.size() == 2 &&
         !stringList.front().compare(MetaFunctionName(), Qt::CaseInsensitive)) {
-        QStringList valueList = stringList.back().split(",");
+        QString content = stringList.back().simplified();
+        QStringList valueList;
+        if (content.contains(',')) {
+            valueList = content.split(',');
+        } else {
+            valueList = content.split(' ');
+        }
         QVector<int> x;
         for (int i = 0; i < valueList.size(); ++i) {
             QString str = valueList.at(i).simplified();

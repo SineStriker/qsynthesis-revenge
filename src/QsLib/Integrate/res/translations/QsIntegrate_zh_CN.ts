@@ -2,6 +2,19 @@
 <!DOCTYPE TS>
 <TS version="2.1" language="zh_CN">
 <context>
+    <name>ImportDialog</name>
+    <message>
+        <location filename="../../Widgets/Dialogs/ImportDialog.cpp" line="17"/>
+        <source>OK</source>
+        <translation>确定</translation>
+    </message>
+    <message>
+        <location filename="../../Widgets/Dialogs/ImportDialog.cpp" line="18"/>
+        <source>Cancel</source>
+        <translation>取消</translation>
+    </message>
+</context>
+<context>
     <name>QsApplication</name>
     <message>
         <source>Untitled</source>
@@ -23,12 +36,12 @@
 <context>
     <name>QsStartInfo</name>
     <message>
-        <location filename="../../Kernel/QsStartInfo.cpp" line="17"/>
+        <location filename="../../Kernel/QsStartInfo.cpp" line="19"/>
         <source>Untitled</source>
         <translation>未命名</translation>
     </message>
     <message>
-        <location filename="../../Kernel/QsStartInfo.cpp" line="25"/>
+        <location filename="../../Kernel/QsStartInfo.cpp" line="27"/>
         <source>(Deleted)</source>
         <translation>(已删除)</translation>
     </message>

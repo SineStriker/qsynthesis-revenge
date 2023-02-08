@@ -1,8 +1,8 @@
-#include "../QDspxModel.h"
+#include "../ProjectImport.h"
 
 #include "QUstFile.h"
 
-bool QDspx::fromUst(const QString &filename, QDspx::Model *out, QObject *parent) {
+bool Import::loadUst(const QString &filename, QDspx::Model *out, QObject *parent) {
     QUstFile ust;
     if (!ust.load(filename)) {
         qDebug() << "Failed to parse UTAU file.";
