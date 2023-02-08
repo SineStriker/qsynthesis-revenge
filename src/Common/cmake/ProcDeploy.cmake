@@ -64,7 +64,7 @@ function(proc_deploy _all_targets)
     message(STATUS "[INFO] Deployment mode, virtual target is added")
 
     if(NOT WIN32)
-        message(FATAL_ERROR "Deployment mode is only implemented on Windows!")
+        #message(FATAL_ERROR "Deployment mode is only implemented on Windows!")
     endif()
 
     string(TOLOWER ${PROJECT_NAME} PROJECT_NAME_LOWER)
@@ -82,20 +82,22 @@ function(proc_deploy _all_targets)
     set(_res_docs_dir ${_deploy_dir}/docs)
 
     # Find Qt tools
+    
+    if(NOT DEFINED QT_QMAKE_EXECUTABLE)
+        get_target_property(QT_QMAKE_EXECUTABLE Qt::qmake IMPORTED_LOCATION)
+    endif()
+    
+    if(NOT EXISTS "${QT_QMAKE_EXECUTABLE}")
+        message("Cannot find the QMake executable.")
+        return()
+    endif()
+    
     get_filename_component(QT_BIN_DIRECTORY "${QT_QMAKE_EXECUTABLE}" DIRECTORY)
+    
     find_program(QT_DEPLOY_EXECUTABLE NAMES windeployqt macdeployqt HINTS "${QT_BIN_DIRECTORY}")
 
     if(NOT EXISTS "${QT_DEPLOY_EXECUTABLE}")
         message("Cannot find the deployqt tool.")
-        return()
-    endif()
-
-    if(NOT DEFINED QT_QMAKE_EXECUTABLE)
-        get_target_property(QT_QMAKE_EXECUTABLE Qt::qmake IMPORTED_LOCATION)
-    endif()
-
-    if(NOT EXISTS "${QT_QMAKE_EXECUTABLE}")
-        message("Cannot find the QMake executable.")
         return()
     endif()
 
