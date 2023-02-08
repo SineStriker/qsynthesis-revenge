@@ -9,11 +9,13 @@ This project use Microsoft vcpkg to manage its dependencies, you should finish t
 + Find Qt Configuration path (The directory should contain `Qt5Config.cmake`)
     + For example, `C:\Qt\5.15.2\msvc2019\lib\cmake\Qt5`
 
-+ Tell vcpkg the overrided `triplet`
+<!-- + Tell vcpkg the overrided `triplet`
     + Create `scripts/vcpkg/triplets/paths/path_qt.txt`
-    + Fill in the Qt Configuration path as single line, the `path_qt.cmake` will read it
+    + Fill in the Qt Configuration path as single line, the `path_qt.cmake` will read it -->
 
-+ Run `python setup-vcpkg.py` at repository root path. The script will simply pull `vcpkg` from GitHub and run a series of `vcpkg install` commands.
++ Run `python setup-vcpkg.py` at repository root path.
+    + The first run must failed and a configuration file will be generated, you need to fill each `value` with the help of `intro`, then run again.
+    + The script will simply pull `vcpkg` from GitHub and run a series of `vcpkg install` commands.
 
 <!-- ## Project Configuration
 

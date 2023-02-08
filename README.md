@@ -12,14 +12,17 @@ The application is able to run on **Windows, MacOS and Linux**.
 
 ## Toolset
 
-+ LabelVoice
++ LabelVoice (Suspended)
     + Annnotation tool for vocal synthesis database.
 
-+ QSynthesis
++ DiffScope
+    + DiffSinger graphical editing tool maintained by OpenVPI.
+
+<!-- + QSynthesis
     + Remade edition of UTAU in second iteration.
 
 + QVogenClient
-    + Third-party edition of [Vogen.Client](https://github.com/aqtq314/Vogen.Client).
+    + Third-party edition of [Vogen.Client](https://github.com/aqtq314/Vogen.Client). -->
 
 ## Build from source
 

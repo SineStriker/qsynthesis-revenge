@@ -93,3 +93,4 @@ CMakeSettings.json
 /vcpkg
 
 *.sublime-*
+setup-vcpkg.json

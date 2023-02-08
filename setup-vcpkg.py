@@ -101,7 +101,7 @@ vcpkg_tasks: list[library_task] = [
 
 # Usage: python setup_vcpkg.py [--clean] [--distclean]
 
-if __name__ == "__main__":
+def main():
 
     # Parse args
     parser = argparse.ArgumentParser(
@@ -112,6 +112,8 @@ if __name__ == "__main__":
         "--distclean", help="Clean all caches after build.", action="store_true")
     parser.add_argument(
         "--skip", help="Skip build.", action="store_true")
+    parser.add_argument(
+        "--init", help="Generate configuration file.", action="store_true")
     args = parser.parse_args()
 
     # Determine os and arch
@@ -165,12 +167,17 @@ if __name__ == "__main__":
     if not os.path.isdir("scripts/vcpkg"):
         print("Vcpkg scripts not found")
         sys.exit(-1)
-    
-    # Vcpkg path configuration file
-    paths_txt_path = "scripts/vcpkg/triplets/paths/path_qt.txt"
-    if not os.path.isfile(paths_txt_path):
-        print(f"{paths_txt_path} not found")
-        sys.exit(-1)
+
+    # Check Qt5Config.cmake path
+    if True:
+        import scripts.python.vcpkg_init as tmp
+        if args.init:
+            tmp.generate()
+            print(f"Generate {tmp.config_path} successfully.")
+            return
+
+        if not tmp.load():
+            return
 
     # -- Detect system proxy
     print_begin("Setup context proxy")
@@ -254,3 +261,7 @@ if __name__ == "__main__":
 
     # -- End
     print("Pre-build tasks finished")
+
+
+if __name__ == "__main__":
+    main()
