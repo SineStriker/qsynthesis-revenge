@@ -8,12 +8,12 @@
 #include <QFile>
 #include <QTextCodec>
 
-bool QDspx::fromMidi(const QString &filename, QDspxModel *out) {
+bool QDspx::fromMidi(const QString &filename, QDspxModel *out, QObject *parent) {
     QMidiFile midi;
 
     if (!midi.load(filename)) {
         qDebug() << "Failed to read MIDI file!";
-        return 0;
+        return false;
     }
 
     // midi种类、四分音符ticks数、轨道数、时间类型
@@ -23,7 +23,7 @@ bool QDspx::fromMidi(const QString &filename, QDspxModel *out) {
     int tracksCount = midi.tracks().size();
     int divType = midi.divisionType();
 
-    //校验tracks数量、midi种类
+    // 校验tracks数量、midi种类
     if (tracksCount == 0) {
         qDebug() << "The midi is empty!";
         return false;
@@ -39,8 +39,8 @@ bool QDspx::fromMidi(const QString &filename, QDspxModel *out) {
 
     // 解析Tempo Map
     QVector<QPair<int, double>> tempos;
-    QVector<QPair<int, QString>> label;
-    QMap<qint32, QPoint> timeSign;
+    QVector<QPair<int, QString>> marker;
+    QMap<int, QPoint> timeSign;
     timeSign[0] = QPoint(4, 4);
     QList<QMidiEvent *> tempMap = midi.eventsForTrack(0);
 
@@ -48,54 +48,61 @@ bool QDspx::fromMidi(const QString &filename, QDspxModel *out) {
         const auto &data = e->data();
         if (e->type() == QMidiEvent::Meta) {
             qDebug() << "Cmd:" << Qt::hex << e->number();
-            if (e->number() == QMidiEvent::Tempo) {
-                tempos.append(qMakePair(e->tick(), e->tempo()));
-                qDebug() << "Tempo:" << e->tick() << e->tempo();
-            } else if (e->number() == QMidiEvent::Marker) {
-                label.append(qMakePair(e->tick(), QString(data)));
-                qDebug() << "Marker:" << e->tick() << QString(data);
-            } else if (e->number() == QMidiEvent::TimeSignature) {
-                timeSign[e->tick()] = QPoint(data[0], 2 * data[1]);
-                qDebug() << "TimeSignature:" << e->tick() << timeSign[e->tick()];
-            } else {
-                qDebug() << "Else:" << e->number();
+            switch (e->number()) {
+                case QMidiEvent::Tempo:
+                    tempos.append(qMakePair(e->tick(), e->tempo()));
+                    qDebug() << "Tempo:" << e->tick() << e->tempo();
+                    break;
+                case QMidiEvent::Marker:
+                    marker.append(qMakePair(e->tick(), QString(data)));
+                    qDebug() << "Marker:" << e->tick() << QString(data);
+                    break;
+                case QMidiEvent::TimeSignature:
+                    timeSign[e->tick()] = QPoint(data[0], 2 * data[1]);
+                    qDebug() << "TimeSignature:" << e->tick() << timeSign[e->tick()];
+                    break;
+                default:
+                    qDebug() << "Else:" << e->number();
+                    break;
             }
         }
     }
 
-    //单轨数据：轨道名、起止tick、音高、歌词
+    // 单轨数据：轨道名、起止tick、音高、歌词
     struct TrackInfo {
         QString name;
-        QString title;
         QList<qint32> notePos;
         QList<qint32> noteEnd;
-        QList<qint8> noteKeyNum;
-        QList<QString> noteLyric;
+        QList<qint32> noteKeyNum;
+        QList<qint32> noteChannel;
+        QList<QPair<qint32, QString>> noteLyric;
         QString pitchRange;
     };
 
-    QVector<TrackInfo> trackInfos;
+    QMap<qint32, TrackInfo> trackInfos;
+    QMap<qint32, QString> trackTitles;
 
-    //解析元数据
+    // 解析元数据
     for (int i = midiFormat; i < tracksCount; ++i) {
         QList<QMidiEvent *> list = midi.eventsForTrack(i);
         QString name;
         TrackInfo trackInfo;
-        for (int j = 0; j < list.size(); ++j) {
-            QMidiEvent *e = list.at(j);
+        qint32 trackID = i - midiFormat + 1;
+        for (auto e : list) {
             // midi元事件
             switch (e->type()) {
                 case QMidiEvent::Meta: {
                     if (e->number() == QMidiEvent::TrackName) {
                         name = QString::fromLocal8Bit(e->data());
                     } else if (e->number() == QMidiEvent::Lyric) {
-                        trackInfo.noteLyric.append(QString(e->data()));
+                        trackInfo.noteLyric.append(qMakePair(e->tick(), QString::fromLocal8Bit(e->data())));
                     }
                     break;
                 }
                 case QMidiEvent::NoteOn: {
                     trackInfo.notePos.append(e->tick());
                     trackInfo.noteKeyNum.append(e->note());
+                    trackInfo.noteChannel.append(e->voice());
                     break;
                 }
                 case QMidiEvent::NoteOff: {
@@ -112,55 +119,84 @@ bool QDspx::fromMidi(const QString &filename, QDspxModel *out) {
             return false;
         }
 
-        if (trackInfo.noteKeyNum.size()) {
-            qint8 keyLow =
+        if (!trackInfo.noteKeyNum.empty()) {
+            qint32 keyLow =
                 *std::min_element(trackInfo.noteKeyNum.begin(), trackInfo.noteKeyNum.end());
-            qint8 keyHigh =
+            qint32 keyHigh =
                 *std::max_element(trackInfo.noteKeyNum.begin(), trackInfo.noteKeyNum.end());
             QString low = QUtaUtils::ToneNumToToneName(keyLow);
             QString high = QUtaUtils::ToneNumToToneName(keyHigh);
-            trackInfo.pitchRange = QString(low + "-" + high);
+            trackInfo.pitchRange = low + "-" + high;
         } else {
-            trackInfo.pitchRange = "";
+            trackInfo.pitchRange.clear();
         }
-        trackInfo.name = QObject::tr("Track %1")
-                             .arg(name.isEmpty() ? QString::number(i - midiFormat + 1) : name);
-        trackInfo.title = QObject::tr("%1: (%2 notes, %3)")
-                              .arg(trackInfo.name, QString::number(trackInfo.noteKeyNum.size()),
-                                   trackInfo.pitchRange);
-        trackInfos.append(trackInfo);
+        trackInfo.name =
+            QObject::tr("Track %1").arg(name.isEmpty() ? QString::number(trackID) : name);
+        trackTitles[trackID] =
+            QObject::tr("%1: (%2 notes, %3)")
+                .arg(trackInfo.name, QString::number(trackInfo.noteKeyNum.size()),
+                     trackInfo.pitchRange);
+        trackInfos[trackID] = trackInfo;
     }
 
-    qDebug() << timeSign;
-    for (int i = 0; i < trackInfos.size(); ++i) {
-        const auto &info = trackInfos.at(i);
-        qDebug() << info.title;
+    qDebug() << timeSign << trackTitles;
+    for (const auto &info : trackInfos) {
         for (int j = 0; j < info.notePos.size(); ++j) {
             qDebug() << info.notePos.at(j) << info.noteEnd.at(j) << info.noteKeyNum.at(j)
-                     << (info.noteLyric.size() > j ? info.noteLyric.at(j) : "");
+                     << info.noteChannel.at(j);
+                     //<< (info.noteLyric.size() > j ? info.noteLyric.at(j) : "");
         }
     }
 
-    //缩放系数
-    float scaleFactor = 480 / resolution;
+    // 缩放系数
+    double scaleFactor = 480.0 / resolution;
 
+    // TempoMap轨道数据
     QDspx::Timeline timeLine;
 
     TimeSignature timeSignature;
-    QMapIterator<qint32, QPoint> i(timeSign);
-    while (i.hasNext()) {
-        i.next();
-        timeSignature.pos = i.key() * scaleFactor;
-        timeSignature.num = i.value().x();
-        timeSignature.den = i.value().y();
+    for (auto it = timeSign.begin(); it != timeSign.end(); ++it) {
+        timeSignature.pos = int(it.key() * scaleFactor);
+        timeSignature.num = it->x();
+        timeSignature.den = it->y();
         timeLine.timeSignatures.append(timeSignature);
     }
 
+    QDspx::Tempo tempo;
+    for (auto &it : tempos) {
+        tempo.pos = int(it.first * scaleFactor);
+        tempo.value = it.second;
+        timeLine.tempos.append(tempo);
+    }
+
+    QDspx::Label label;
+    for (auto &it : marker) {
+        label.pos = int(it.first * scaleFactor);
+        label.text = it.second;
+        timeLine.labels.append(label);
+    }
+
+    out->content.timeline = timeLine;
+
+    // 获取选中轨道
+    QVector<qint32> selectID;
+    selectID.append(1);
+
+    // Track数据
     QDspx::Track track;
 
-    auto clip = SingingClipRef::create();
-    // clip->notes.append("x");
-    track.clips.append(clip);
+    for (auto &trackID : selectID) {
+        auto clip = SingingClipRef::create();
+        TrackInfo trackInfo = trackInfos[trackID];
+        for (int i = 0; i < trackInfo.notePos.size(); ++i) {
+            Note note;
+            note.pos = trackInfo.notePos[i];
+            //clip->notes.append();
+        }
+
+        track.clips.append(clip);
+        out->content.tracks.append(track);
+    }
 
     return true;
 }

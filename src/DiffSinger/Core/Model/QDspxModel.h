@@ -51,7 +51,7 @@ namespace QDspx {
     };
 
     // 导入函数
-    DSCORE_API bool fromMidi(const QString &filename, Model *out);
+    DSCORE_API bool fromMidi(const QString &filename, Model *out, QObject *parent = nullptr);
 
     DSCORE_API bool fromSvip(const QString &filename, Model *out, QObject *parent = nullptr);
 
