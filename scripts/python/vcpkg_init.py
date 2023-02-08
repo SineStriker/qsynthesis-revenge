@@ -13,7 +13,7 @@ config_dict = {
     "title": "This is a configuration file the content of which varies with each user",
     "values": {
         "Qt5ConfigDir": {
-            "intro": "The absolute path where Qt5Config.cmake exists",
+            "intro": "The absolute path of the directory where Qt5Config.cmake exists",
             "value": "<edit here>"
         }
     }
@@ -50,3 +50,4 @@ def load() -> bool:
 def generate():
     with open(config_path, "w") as f:
         f.write(json.dumps(config_dict, indent=4, ensure_ascii=False))
+    print(f"Generate {config_path} successfully, edit it as it requires.")

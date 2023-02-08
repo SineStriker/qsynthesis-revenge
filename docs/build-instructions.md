@@ -14,7 +14,7 @@ This project use Microsoft vcpkg to manage its dependencies, you should finish t
     + Fill in the Qt Configuration path as single line, the `path_qt.cmake` will read it -->
 
 + Run `python setup-vcpkg.py` at repository root path.
-    + The first run must failed and a configuration file will be generated, you need to fill each `value` with the help of `intro`, then run again.
+    + The first run must failed and a default configuration file `setup-vcpkg.json` will be generated, you need to edit each `value` correctly with the help of `intro`, then run again.
     + The script will simply pull `vcpkg` from GitHub and run a series of `vcpkg install` commands.
 
 <!-- ## Project Configuration

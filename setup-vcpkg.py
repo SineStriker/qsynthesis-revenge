@@ -173,7 +173,6 @@ def main():
         import scripts.python.vcpkg_init as tmp
         if args.init:
             tmp.generate()
-            print(f"Generate {tmp.config_path} successfully.")
             return
 
         if not tmp.load():
