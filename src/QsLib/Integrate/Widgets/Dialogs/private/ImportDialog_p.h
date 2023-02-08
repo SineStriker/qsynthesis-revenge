@@ -9,6 +9,9 @@
 #include <QAction>
 #include <QButtonGroup>
 #include <QLabel>
+#include <QListWidget>
+#include <QPlainTextEdit>
+#include <QSplitter>
 #include <QTableWidget>
 #include <QVBoxLayout>
 
@@ -32,21 +35,25 @@ public:
     QList<int> trackIndexs;
     QTextCodec *codec;
 
-    // UI
-    QTabWidget *tabWidget;
-
-    QVBoxLayout *layout;
+    // Tab - Track
+    QButtonGroup *boxGroup;
+    QWidget *boxesWidget;
     QVBoxLayout *boxesLayout;
+    QScrollArea *tracksScroll;
+
+    // Tab - Codec
+    QSplitter *codecWidget;
+    QListWidget *codecListWidget;
+    QListWidget *nameListWidget;
+    QPlainTextEdit *lyricsWidget;
+
+    // Main
+    QTabWidget *tabWidget;
+    CTabButton *btnCancel, *btnOK;
     QHBoxLayout *buttonsLayout;
 
-    QWidget *boxesWidget;
-    QScrollArea *boxesScroll;
-
-    QLabel *lbCaption;
-    CTabButton *btnCancel, *btnOK;
-
+    QVBoxLayout *layout;
     QAction *okAction;
-    QButtonGroup *boxGroup;
 
     std::list<QAbstractButton *> queue;
     QHash<QAbstractButton *, std::list<QAbstractButton *>::iterator> queueMap;
@@ -54,11 +61,21 @@ public:
     bool firstShow;
     int maxInitHeight;
 
+    const QStringList SupportEncodings = {
+        "System", "UTF-8", "UTF-16", "UTF-32", "GBK", "Shift-JIS", "Big5",
+    };
+
+    void updateEncoding();
+    void updateNameList();
+
 private:
     void _q_boxToggled(bool checked);
     void _q_okButtonClicked();
     void _q_cancelButtonClicked();
     void _q_scrollRangeChanged(int min, int max);
+
+    void _q_currentCodecChanged(QListWidgetItem *cur, QListWidgetItem *prev);
+    void _q_currentNameChanged(QListWidgetItem *cur, QListWidgetItem *prev);
 };
 
 

@@ -13,112 +13,132 @@ ImportDialog {
     background-color: "{{background|str}}";
     qproperty-maxInitHeight: "{{maxInitHeight|size}}";
     qproperty-layoutMargins: qmargins("{{content.margins|size}}");
-    qproperty-boxesLayoutMargins: qmargins("{{boxes.margins|size}}");
-    qproperty-boxesLayoutSpacing: "{{boxes.spacing|size}}";
+    qproperty-boxesLayoutMargins: qmargins("{{tracks.boxes.margins|size}}");
+    qproperty-boxesLayoutSpacing: "{{tracks.boxes.spacing|size}}";
     qproperty-buttonsLayoutMargins: qmargins("{{buttons.margins|size}}");
     qproperty-buttonsLayoutSpacing: "{{buttons.spacing|size}}";
 }
 
 
-/* Caption Label */
+/* Tracks Widgets */
 
-ImportDialog>QLabel#caption-label {
-    font-size: "{{caption.font.size|size}}";
-    color: "{{caption.color|str}}";
-    padding: "{{caption.padding|size}}";
-    margin: "{{caption.margin|size}}";
+QScrollArea#tracks-scroll {
+    background-color:"{{tracks.scroll.background|str|transparent}}";
+    padding: "{{tracks.scroll.padding|size}}";
+    margin: "{{tracks.scroll.margin|size}}";
+    border-color: "{{tracks.scroll.border.color|str}}";
+    border-width: "{{tracks.scroll.border.size|size}}";
+    border-style: "{{tracks.scroll.border.style|str|none}}";
 }
 
-
-/* Scroll */
-
-QScrollArea#boxes-scroll {
-    background-color:"{{boxes.scroll.background|str|transparent}}";
-    padding: "{{boxes.scroll.padding|size}}";
-    margin: "{{boxes.scroll.margin|size}}";
-    border-color: "{{boxes.scroll.border.color|str}}";
-    border-width: "{{boxes.scroll.border.size|size}}";
-    border-style: "{{boxes.scroll.border.style|str|none}}";
-}
-
-QWidget#boxes-widget {
+QWidget#tracks-widget {
     background-color: transparent;
 }
 
 
 /* CheckBox */
 
-QWidget#boxes-widget>CCheckBox {
-    padding: "{{box.padding|size}}";
-    margin: "{{box.margin|size}}";
-    qproperty-layoutSpacing: "{{box.spacing|size}}";
+QWidget#tracks-widget>CCheckBox {
+    padding: "{{tracks.boxes.item.padding|size}}";
+    margin: "{{tracks.boxes.item.margin|size}}";
+    qproperty-layoutSpacing: "{{tracks.boxes.item.spacing|size}}";
 }
 
-QWidget#boxes-widget>CCheckBox>CToolButton#box {
+QWidget#tracks-widget>CCheckBox>CToolButton#box {
     qproperty-iconUpChecked: svg(":/svg/checkbox/check-line.svg", #111111);
-    qproperty-iconSize: "{{box.box.icon.size|size}}";
-    background-color: "{{box.box.background.up|str}}";
-    border-color: "{{box.box.border.color.up|str}}";
-    border-width: "{{box.box.border.size.up|size}}";
-    border-style: "{{box.box.border.style.up|str}}";
-    border-radius: "{{box.box.border.radius.up|size}}";
-    padding: "{{box.box.padding|size}}";
-    margin: "{{box.box.margin|size}}";
+    qproperty-iconSize: "{{tracks.boxes.item.icon.size|size}}";
+    background-color: "{{tracks.boxes.item.box.background.up|str}}";
+    border-color: "{{tracks.boxes.item.box.border.color.up|str}}";
+    border-width: "{{tracks.boxes.item.box.border.size.up|size}}";
+    border-style: "{{tracks.boxes.item.box.border.style.up|str}}";
+    border-radius: "{{tracks.boxes.item.box.border.radius.up|size}}";
+    padding: "{{tracks.boxes.item.box.padding|size}}";
+    margin: "{{tracks.boxes.item.box.margin|size}}";
 }
 
-QWidget#boxes-widget>CCheckBox>CToolButton#box:hover {
-    background-color: "{{box.box.background.over|str}}";
-    border-color: "{{box.box.border.color.over|str}}";
-    border-width: "{{box.box.border.size.over|size}}";
-    border-style: "{{box.box.border.style.over|str}}";
-    border-radius: "{{box.box.border.radius.over|size}}";
+QWidget#tracks-widget>CCheckBox>CToolButton#box:hover {
+    background-color: "{{tracks.boxes.item.box.background.over|str}}";
+    border-color: "{{tracks.boxes.item.box.border.color.over|str}}";
+    border-width: "{{tracks.boxes.item.box.border.size.over|size}}";
+    border-style: "{{tracks.boxes.item.box.border.style.over|str}}";
+    border-radius: "{{tracks.boxes.item.box.border.radius.over|size}}";
 }
 
-QWidget#boxes-widget>CCheckBox>CToolButton#box:pressed {
-    background-color: "{{box.box.background.down|str}}";
-    border-color: "{{box.box.border.color.down|str}}";
-    border-width: "{{box.box.border.size.down|size}}";
-    border-style: "{{box.box.border.style.down|str}}";
-    border-radius: "{{box.box.border.radius.down|size}}";
+QWidget#tracks-widget>CCheckBox>CToolButton#box:pressed {
+    background-color: "{{tracks.boxes.item.box.background.down|str}}";
+    border-color: "{{tracks.boxes.item.box.border.color.down|str}}";
+    border-width: "{{tracks.boxes.item.box.border.size.down|size}}";
+    border-style: "{{tracks.boxes.item.box.border.style.down|str}}";
+    border-radius: "{{tracks.boxes.item.box.border.radius.down|size}}";
 }
 
-QWidget#boxes-widget>CCheckBox>QLabel {
-    font-size: "{{box.font.size|size}}";
-    color: "{{box.color|str}}";
-    padding: "{{box.label.padding|size}}";
-    margin: "{{box.label.margin|size}}";
+QWidget#tracks-widget>CCheckBox>QLabel {
+    font-size: "{{tracks.boxes.item.font.size|size}}";
+    color: "{{tracks.boxes.item.color|str}}";
+    padding: "{{tracks.boxes.item.label.padding|size}}";
+    margin: "{{tracks.boxes.item.label.margin|size}}";
+}
+
+
+/* Codec Widget */
+
+QSplitter#codec-widget {
+    background-color:"{{codec.background|str}}";
+    padding: "{{codec.padding|size}}";
+    margin: "{{codec.margin|size}}";
+    border-color: "{{codec.border.color|str}}";
+    border-width: "{{codec.border.size|size}}";
+    border-style: "{{codec.border.style|str}}";
+}
+
+QSplitter#codec-widget::handle {
+    background-color: "{{codec.handle.color|str}}";
+    width: "{{codec.handle.width|size}}";
+}
+
+
+/* Tab Widget */
+
+QTabWidget#tab-widget {
+    background-color: "{{tabs.background|str}}";
+    padding: "{{tabs.padding|size}}";
+    margin: "{{tabs.margin|size}}";
+    border-color: "{{tabs.border.color|str}}";
+    border-width: "{{tabs.border.size|size}}";
+    border-style: "{{tabs.border.style|str}}";
 }
 
 
 /* Button */
 
 ImportDialog>CTabButton[type=done-button] {
-    background-color: "{{doneButtons.background.up|str}}";
-    color: "{{doneButtons.color.up|str}}";
-    border-color: "{{doneButtons.border.color.up|str}}";
-    border-width: "{{doneButtons.border.size.up|size}}";
-    border-style: "{{doneButtons.border.style.up|str}}";
-    border-radius: "{{doneButtons.border.radius.up|size}}";
-    padding: "{{doneButtons.padding|size}}";
-    margin: "{{doneButtons.margin|size}}";
-    text-align: "{{doneButtons.color|str}}";
-    font-size: "{{doneButtons.font.size|size}}";
+    background-color: "{{buttons.item.background.up|str}}";
+    color: "{{buttons.item.color.up|str}}";
+    border-color: "{{buttons.item.border.color.up|str}}";
+    border-width: "{{buttons.item.border.size.up|size}}";
+    border-style: "{{buttons.item.border.style.up|str}}";
+    border-radius: "{{buttons.item.border.radius.up|size}}";
+    padding: "{{buttons.item.padding|size}}";
+    margin: "{{buttons.item.margin|size}}";
+    text-align: "{{buttons.item.color|str}}";
+    font-size: "{{buttons.item.font.size|size}}";
+    min-width: "{{buttons.item.minWidth|size}}";
 }
 
 ImportDialog>CTabButton[type=done-button]:hover {
-    background-color: "{{doneButtons.background.over|str}}";
-    color: "{{doneButtons.color.over|str}}";
-    border-color: "{{doneButtons.border.color.over|str}}";
-    border-width: "{{doneButtons.border.size.over|size}}";
-    border-style: "{{doneButtons.border.style.over|str}}";
-    border-radius: "{{doneButtons.border.radius.over|size}}";
+    background-color: "{{buttons.item.background.over|str}}";
+    color: "{{buttons.item.color.over|str}}";
+    border-color: "{{buttons.item.border.color.over|str}}";
+    border-width: "{{buttons.item.border.size.over|size}}";
+    border-style: "{{buttons.item.border.style.over|str}}";
+    border-radius: "{{buttons.item.border.radius.over|size}}";
 }
 
 ImportDialog>CTabButton[type=done-button]:pressed {
-    background-color: "{{doneButtons.background.down|str}}";
-    color: "{{doneButtons.color.down|str}}";
-    border-color: "{{doneButtons.border.color.down|str}}";
-    border-width: "{{doneButtons.border.size.down|size}}";
-    border-style: "{{doneButtons.border.style.down|str}}";
-    border-radius: "{{doneButtons.border.radius.down|size}}";
+    background-color: "{{buttons.item.background.down|str}}";
+    color: "{{buttons.item.color.down|str}}";
+    border-color: "{{buttons.item.border.color.down|str}}";
+    border-width: "{{buttons.item.border.size.down|size}}";
+    border-style: "{{buttons.item.border.style.down|str}}";
+    border-radius: "{{buttons.item.border.radius.down|size}}";
 }

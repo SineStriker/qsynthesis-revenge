@@ -4,13 +4,31 @@
 <context>
     <name>ImportDialog</name>
     <message>
-        <location filename="../../Widgets/Dialogs/ImportDialog.cpp" line="17"/>
+        <location filename="../../Widgets/Dialogs/ImportDialog.cpp" line="20"/>
         <source>OK</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Widgets/Dialogs/ImportDialog.cpp" line="18"/>
+        <location filename="../../Widgets/Dialogs/ImportDialog.cpp" line="21"/>
         <source>Cancel</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../Widgets/Dialogs/private/ImportDialog_p.cpp" line="11"/>
+        <source>(Decoding failure)</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>ImportDialogPrivate</name>
+    <message>
+        <location filename="../../Widgets/Dialogs/private/ImportDialog_p.cpp" line="77"/>
+        <source>Select tracks</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../Widgets/Dialogs/private/ImportDialog_p.cpp" line="78"/>
+        <source>Select encoding</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

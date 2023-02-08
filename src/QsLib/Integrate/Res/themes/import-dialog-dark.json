@@ -9,61 +9,69 @@
             "background": "white",
             "maxInitHeight": 500,
             "content.margins": 20,
-            "caption": {
-                "padding": 5
+            "tabs": {
+                "background": "transparent"
             },
-            "boxes": {
-                "margins": 5,
-                "spacing": 5,
-                "scroll": {
-                    "padding": [
-                        5,
-                        0,
-                        10,
-                        0
-                    ]
-                }
-            },
-            "box": {
-                "spacing": 5,
-                "color": "#111111",
-                "box": {
-                    "icon.size": [
-                        12,
-                        12
-                    ],
-                    "background": {
-                        "up": "transparent",
-                        "over": "#CCCCCC"
-                    },
-                    "border": {
-                        "color": {
-                            "up": "#111111"
+            "tracks": {
+                "boxes": {
+                    "margins": 5,
+                    "spacing": 5,
+                    "item": {
+                        "spacing": 5,
+                        "color": "#111111",
+                        "icon.size": [
+                            12,
+                            12
+                        ],
+                        "box": {
+                            "background": {
+                                "up": "transparent",
+                                "over": "#CCCCCC"
+                            },
+                            "border": {
+                                "color": {
+                                    "up": "#111111"
+                                },
+                                "size": {
+                                    "up": 1
+                                },
+                                "style": {
+                                    "up": "solid"
+                                }
+                            }
                         },
-                        "size": {
-                            "up": 1
-                        },
-                        "style": {
-                            "up": "solid"
+                        "label": {
+                            "padding": [
+                                0,
+                                0,
+                                2,
+                                0
+                            ]
                         }
                     }
-                },
-                "label.padding": [
-                    0,
-                    0,
-                    1,
-                    0
-                ]
+                }
+            },
+            "codec": {
+                "background": "transparent",
+                "handle": {
+                    "color": "transparent"
+                }
             },
             "buttons": {
-                "margins": 5,
-                "spacing": 5
-            },
-            "doneButtons": {
-                "padding": [
-                    6,
-                    30
-                ]
+                "margins": [
+                    0,
+                    20,
+                    0,
+                    0
+                ],
+                "spacing": 5,
+                "item": {
+                    "padding": [
+                        6,
+                        30
+                    ],
+                    "minWidth": 50
+                }
             }
         }
     }

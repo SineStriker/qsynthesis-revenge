@@ -29,7 +29,6 @@ ImportDialog::ImportOptions ImportDialog::options() const {
 void ImportDialog::setImportOptions(const ImportDialog::ImportOptions &options) {
     Q_D(ImportDialog);
     d->opt = options;
-    d->lbCaption->setText(options.caption);
 
     auto bg = d->boxGroup;
     auto bl = d->boxesLayout;
@@ -56,6 +55,7 @@ void ImportDialog::setImportOptions(const ImportDialog::ImportOptions &options) 
         connect(box, &QAbstractButton::toggled, d, &ImportDialogPrivate::_q_boxToggled);
     }
 
+    d->updateNameList();
     bl->parentWidget()->adjustSize();
 }
 

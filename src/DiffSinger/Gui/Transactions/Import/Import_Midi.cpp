@@ -208,10 +208,9 @@ bool Import::loadMidi(const QString &filename, QDspxModel *out, QObject *parent)
         dlg.setWindowTitle("Import");
 
         ImportDialog::ImportOptions opt;
-        opt.caption = "Select tracks";
         opt.maxTracks = 2;
-        for (int i = 0; i < 20; ++i) {
-            opt.tracks.append(ImportDialog::TrackInfo{"Track " + QString::number(i), "", true});
+        for (int i = 0; i < 10; ++i) {
+            opt.tracks.append(ImportDialog::TrackInfo{"Track " + QByteArray::number(i), "222", true});
         }
         dlg.setImportOptions(opt);
 

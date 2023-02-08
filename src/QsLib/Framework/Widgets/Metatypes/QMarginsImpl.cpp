@@ -1,6 +1,8 @@
 #include "QMarginsImpl.h"
 #include "private/QMetaTypeUtils.h"
 
+#include <QDebug>
+
 QLatin1String QMarginsImpl::MetaFunctionName() {
     return QLatin1String(QCssCustomValue_Margins);
 }

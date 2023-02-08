@@ -4,14 +4,32 @@
 <context>
     <name>ImportDialog</name>
     <message>
-        <location filename="../../Widgets/Dialogs/ImportDialog.cpp" line="17"/>
+        <location filename="../../Widgets/Dialogs/ImportDialog.cpp" line="20"/>
         <source>OK</source>
         <translation>确定</translation>
     </message>
     <message>
-        <location filename="../../Widgets/Dialogs/ImportDialog.cpp" line="18"/>
+        <location filename="../../Widgets/Dialogs/ImportDialog.cpp" line="21"/>
         <source>Cancel</source>
         <translation>取消</translation>
+    </message>
+    <message>
+        <location filename="../../Widgets/Dialogs/private/ImportDialog_p.cpp" line="11"/>
+        <source>(Decoding failure)</source>
+        <translation type="unfinished">（解码失败）</translation>
+    </message>
+</context>
+<context>
+    <name>ImportDialogPrivate</name>
+    <message>
+        <location filename="../../Widgets/Dialogs/private/ImportDialog_p.cpp" line="77"/>
+        <source>Select tracks</source>
+        <translation type="unfinished">选择轨道</translation>
+    </message>
+    <message>
+        <location filename="../../Widgets/Dialogs/private/ImportDialog_p.cpp" line="78"/>
+        <source>Select encoding</source>
+        <translation type="unfinished">选择编码</translation>
     </message>
 </context>
 <context>

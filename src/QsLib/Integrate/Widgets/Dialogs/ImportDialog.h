@@ -26,16 +26,17 @@ public:
 
 public:
     struct TrackInfo {
-        QString title;
-        QString subtitle;
+        QByteArray title;
+        QByteArray lyrics;
         bool selectable;
     };
 
     struct ImportOptions {
-        QString caption;
-        std::function<QString(QTextCodec *)> previewer;
         int maxTracks;
+        QString format; // Display as format.arg(title)
         QList<TrackInfo> tracks;
+
+        ImportOptions() : format("%1"){};
     };
 
     ImportOptions options() const;
