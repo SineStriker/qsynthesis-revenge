@@ -186,6 +186,10 @@ CDecoratorPrivate::~CDecoratorPrivate() {
 void CDecoratorPrivate::init() {
     Q_Q(CDecorator);
 
+    // This is necessary for MacOS platforms, so that QIcon will return a
+    // pixmap with correct devicePixelRatio when using QIcon::pixmap().
+    QCoreApplication::setAttribute(Qt::AA_UseHighDpiPixmaps);
+
     theme = "Zhibin - Dark";
 
     // Notify screen add or remove
