@@ -78,14 +78,14 @@ function(qs_add_library _target)
             target_sources(${_target} PRIVATE ${CMAKE_CURRENT_BINARY_DIR}/res.rc)
         elseif(APPLE)
             # configure mac plist
-            set_target_properties(${_target} PROPERTIES
-                FRAMEWORK TRUE
-                FRAMEWORK_VERSION CXX
-                MACOSX_FRAMEWORK_NAME ${_target}
-                MACOSX_FRAMEWORK_IDENTIFIER ${_product_name}
-                MACOSX_FRAMEWORK_BUNDLE_VERSION ${PROJECT_VERSION}
-                MACOSX_FRAMEWORK_SHORT_VERSION_STRING ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}
-            )
+            # set_target_properties(${_target} PROPERTIES
+            #     FRAMEWORK TRUE
+            #     FRAMEWORK_VERSION CXX
+            #     MACOSX_FRAMEWORK_NAME ${_target}
+            #     MACOSX_FRAMEWORK_IDENTIFIER ${_product_name}
+            #     MACOSX_FRAMEWORK_BUNDLE_VERSION ${PROJECT_VERSION}
+            #     MACOSX_FRAMEWORK_SHORT_VERSION_STRING ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}
+            # )
         endif()
 
         set_target_properties(${_target}
