@@ -129,6 +129,10 @@ function(qs_add_executable _target _dll)
                 MACOSX_BUNDLE_SHORT_VERSION_STRING ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}
                 MACOSX_BUNDLE_COPYRIGHT "Copyright (c) ${FUNC_AUTHOR_NAME}"
             )
+
+            # ICNS icon MUST be added to executable's sources list, for some reason
+            # Only apple can do
+            target_sources(${_target} PRIVATE ${_icns_file})
         endif()
 
         set_target_properties(${_target}

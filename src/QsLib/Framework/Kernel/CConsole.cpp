@@ -18,8 +18,10 @@ void CConsole::MsgBox(QObject *parent, QsCoreConsole::MessageBoxFlag flag, const
         w = qobject_cast<QWidget *>(parent);
     }
 
-#if defined(Q_OS_WINDOWS) || defined(Q_OS_MAC)
+#if defined(Q_OS_WINDOWS)
     d->osMessageBox_helper(w ? (HWND) w->winId() : nullptr, flag, title, text);
+#elif defined(Q_OS_MAC)
+    d->osMessageBox_helper(nullptr, flag, title, text);
 #else
     switch (flag) {
         case Critical:
