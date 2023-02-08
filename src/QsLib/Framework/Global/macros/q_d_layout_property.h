@@ -17,7 +17,7 @@ Q_SIGNALS:                                                                      
                                                                                                    \
 private:
 
-// Declare
+// Declaration
 #define Q_D_LAYOUT_PROPERTY_DECLARE(LL, CC, NAME, Class)                                           \
     QMargins Class::LL##LayoutMargins() const {                                                    \
         Q_D(const Class);                                                                          \

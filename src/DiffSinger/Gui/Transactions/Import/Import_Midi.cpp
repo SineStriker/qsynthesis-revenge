@@ -203,20 +203,38 @@ bool Import::loadMidi(const QString &filename, QDspxModel *out, QObject *parent)
         out->content.tracks.append(track);
     }
 
-    if (false) {
+    if (true) {
         ImportDialog dlg(qobject_cast<QWidget *>(parent));
         dlg.setWindowTitle("Import");
 
         ImportDialog::ImportOptions opt;
         opt.caption = "Select tracks";
         opt.maxTracks = 2;
-        for (int i = 0; i < 5; ++i) {
-            opt.tracks.append(ImportDialog::TrackInfo{QString::number(i), "", true});
+        for (int i = 0; i < 20; ++i) {
+            opt.tracks.append(ImportDialog::TrackInfo{"Track " + QString::number(i), "", true});
         }
         dlg.setImportOptions(opt);
 
         qDebug() << dlg.exec();
     }
+
+#pragma pack(1)
+    struct LogicalTrack {
+        quint16 track;  // 0~16
+        quint8 channel; // 16~24
+        quint8 key;     // 24~32
+
+        qint32 toInt() const {
+            return *reinterpret_cast<const qint32 *>(this);
+        }
+
+        static LogicalTrack fromInt(qint32 n) {
+            return *reinterpret_cast<LogicalTrack *>(&n);
+        }
+    };
+#pragma pack()
+
+    Q_STATIC_ASSERT(sizeof(LogicalTrack) == sizeof(qint32));
 
     return true;
 }

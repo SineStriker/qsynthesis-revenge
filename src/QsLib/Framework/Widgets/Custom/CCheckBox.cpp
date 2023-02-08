@@ -34,9 +34,7 @@ void CCheckBox::init() {
 }
 
 void CCheckBox::handleBoxToggled(bool checked) {
-    if (checked != isChecked()) {
-        setChecked(checked);
-    }
+    setChecked(checked);
 }
 
 void CCheckBox::paintEvent(QPaintEvent *event) {

@@ -15,6 +15,8 @@ namespace Import {
 
     DSGUI_API bool loadUst(const QString &filename, QDspx::Model *out, QObject *parent = nullptr);
 
+    DSGUI_API bool loadUstx(const QString &filename, QDspx::Model *out, QObject *parent = nullptr);
+
 } // namespace Import
 
 #endif // PROJECTIMPORT_H

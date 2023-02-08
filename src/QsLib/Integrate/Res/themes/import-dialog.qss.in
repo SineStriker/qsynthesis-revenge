@@ -10,12 +10,17 @@ Config {
 
 ImportDialog {
     min-width: "{{minWidth|size}}";
+    background-color: "{{background|str}}";
+    qproperty-maxInitHeight: "{{maxInitHeight|size}}";
     qproperty-layoutMargins: qmargins("{{content.margins|size}}");
     qproperty-boxesLayoutMargins: qmargins("{{boxes.margins|size}}");
     qproperty-boxesLayoutSpacing: "{{boxes.spacing|size}}";
     qproperty-buttonsLayoutMargins: qmargins("{{buttons.margins|size}}");
     qproperty-buttonsLayoutSpacing: "{{buttons.spacing|size}}";
 }
+
+
+/* Caption Label */
 
 ImportDialog>QLabel#caption-label {
     font-size: "{{caption.font.size|size}}";
@@ -24,13 +29,96 @@ ImportDialog>QLabel#caption-label {
     margin: "{{caption.margin|size}}";
 }
 
-ImportDialog>CCheckBox {
+
+/* Scroll */
+
+QScrollArea#boxes-scroll {
+    background-color:"{{boxes.scroll.background|str|transparent}}";
+    padding: "{{boxes.scroll.padding|size}}";
+    margin: "{{boxes.scroll.margin|size}}";
+    border-color: "{{boxes.scroll.border.color|str}}";
+    border-width: "{{boxes.scroll.border.size|size}}";
+    border-style: "{{boxes.scroll.border.style|str|none}}";
+}
+
+QWidget#boxes-widget {
+    background-color: transparent;
+}
+
+
+/* CheckBox */
+
+QWidget#boxes-widget>CCheckBox {
     padding: "{{box.padding|size}}";
     margin: "{{box.margin|size}}";
     qproperty-layoutSpacing: "{{box.spacing|size}}";
 }
 
-ImportDialog>CCheckBox>QLabel {
+QWidget#boxes-widget>CCheckBox>CToolButton#box {
+    qproperty-iconUpChecked: svg(":/svg/checkbox/check-line.svg", #111111);
+    qproperty-iconSize: "{{box.box.icon.size|size}}";
+    background-color: "{{box.box.background.up|str}}";
+    border-color: "{{box.box.border.color.up|str}}";
+    border-width: "{{box.box.border.size.up|size}}";
+    border-style: "{{box.box.border.style.up|str}}";
+    border-radius: "{{box.box.border.radius.up|size}}";
+    padding: "{{box.box.padding|size}}";
+    margin: "{{box.box.margin|size}}";
+}
+
+QWidget#boxes-widget>CCheckBox>CToolButton#box:hover {
+    background-color: "{{box.box.background.over|str}}";
+    border-color: "{{box.box.border.color.over|str}}";
+    border-width: "{{box.box.border.size.over|size}}";
+    border-style: "{{box.box.border.style.over|str}}";
+    border-radius: "{{box.box.border.radius.over|size}}";
+}
+
+QWidget#boxes-widget>CCheckBox>CToolButton#box:pressed {
+    background-color: "{{box.box.background.down|str}}";
+    border-color: "{{box.box.border.color.down|str}}";
+    border-width: "{{box.box.border.size.down|size}}";
+    border-style: "{{box.box.border.style.down|str}}";
+    border-radius: "{{box.box.border.radius.down|size}}";
+}
+
+QWidget#boxes-widget>CCheckBox>QLabel {
     font-size: "{{box.font.size|size}}";
     color: "{{box.color|str}}";
+    padding: "{{box.label.padding|size}}";
+    margin: "{{box.label.margin|size}}";
+}
+
+
+/* Button */
+
+ImportDialog>CTabButton[type=done-button] {
+    background-color: "{{doneButtons.background.up|str}}";
+    color: "{{doneButtons.color.up|str}}";
+    border-color: "{{doneButtons.border.color.up|str}}";
+    border-width: "{{doneButtons.border.size.up|size}}";
+    border-style: "{{doneButtons.border.style.up|str}}";
+    border-radius: "{{doneButtons.border.radius.up|size}}";
+    padding: "{{doneButtons.padding|size}}";
+    margin: "{{doneButtons.margin|size}}";
+    text-align: "{{doneButtons.color|str}}";
+    font-size: "{{doneButtons.font.size|size}}";
+}
+
+ImportDialog>CTabButton[type=done-button]:hover {
+    background-color: "{{doneButtons.background.over|str}}";
+    color: "{{doneButtons.color.over|str}}";
+    border-color: "{{doneButtons.border.color.over|str}}";
+    border-width: "{{doneButtons.border.size.over|size}}";
+    border-style: "{{doneButtons.border.style.over|str}}";
+    border-radius: "{{doneButtons.border.radius.over|size}}";
+}
+
+ImportDialog>CTabButton[type=done-button]:pressed {
+    background-color: "{{doneButtons.background.down|str}}";
+    color: "{{doneButtons.color.down|str}}";
+    border-color: "{{doneButtons.border.color.down|str}}";
+    border-width: "{{doneButtons.border.size.down|size}}";
+    border-style: "{{doneButtons.border.style.down|str}}";
+    border-radius: "{{doneButtons.border.radius.down|size}}";
 }

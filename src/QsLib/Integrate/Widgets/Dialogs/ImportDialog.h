@@ -16,6 +16,7 @@ class QSINTEGRATE_API ImportDialog : public QDialog {
     Q_LAYOUT_PROPERTY_DELCARE
     Q_D_LAYOUT_PROPERTY(buttons, Buttons)
     Q_D_LAYOUT_PROPERTY(boxes, Boxes)
+    Q_D_PROPERTY(QPixelSize, maxInitHeight, MaxInitHeight)
     Q_DECLARE_PRIVATE(ImportDialog)
 public:
     explicit ImportDialog(QWidget *parent = nullptr);
@@ -47,11 +48,6 @@ protected:
     ImportDialog(ImportDialogPrivate &d, QWidget *parent = nullptr);
 
     QScopedPointer<ImportDialogPrivate> d_ptr;
-
-private:
-    void _q_boxToggled(bool checked);
-    void _q_okButtonClicked();
-    void _q_cancelButtonClicked();
 };
 
 #endif // IMPORTDIALOG_H

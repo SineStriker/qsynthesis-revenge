@@ -6,17 +6,64 @@
     "values": {
         "ImportDialog": {
             "minWidth": 400,
+            "background": "white",
+            "maxInitHeight": 500,
             "content.margins": 20,
             "caption": {
                 "padding": 5
             },
             "boxes": {
                 "margins": 5,
-                "spacing": 5
+                "spacing": 5,
+                "scroll": {
+                    "padding": [
+                        5,
+                        0,
+                        10,
+                        0
+                    ]
+                }
+            },
+            "box": {
+                "spacing": 5,
+                "color": "#111111",
+                "box": {
+                    "icon.size": [
+                        12,
+                        12
+                    ],
+                    "background": {
+                        "up": "transparent",
+                        "over": "#CCCCCC"
+                    },
+                    "border": {
+                        "color": {
+                            "up": "#111111"
+                        },
+                        "size": {
+                            "up": 1
+                        },
+                        "style": {
+                            "up": "solid"
+                        }
+                    }
+                },
+                "label.padding": [
+                    0,
+                    0,
+                    1,
+                    0
+                ]
             },
             "buttons": {
                 "margins": 5,
                 "spacing": 5
+            },
+            "doneButtons": {
+                "padding": [
+                    6,
+                    30
+                ]
             }
         }
     }

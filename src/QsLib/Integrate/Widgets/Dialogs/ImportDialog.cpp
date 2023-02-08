@@ -1,10 +1,13 @@
 #include "ImportDialog.h"
 #include "private/ImportDialog_p.h"
 
+#include <QScrollBar>
+
 #include "CCheckBox.h"
 
 Q_D_LAYOUT_PROPERTY_DECLARE(buttons, Buttons, buttonsLayout, ImportDialog)
 Q_D_LAYOUT_PROPERTY_DECLARE(boxes, Boxes, boxesLayout, ImportDialog)
+Q_D_PROPERTY_DECLARE(QPixelSize, maxInitHeight, MaxInitHeight, ImportDialog)
 
 ImportDialog::ImportDialog(QWidget *parent) : ImportDialog(*new ImportDialogPrivate(), parent) {
 }
@@ -50,8 +53,10 @@ void ImportDialog::setImportOptions(const ImportDialog::ImportOptions &options) 
         bg->addButton(box, i++);
         bl->addWidget(box);
 
-        connect(box, &QAbstractButton::toggled, this, &ImportDialog::_q_boxToggled);
+        connect(box, &QAbstractButton::toggled, d, &ImportDialogPrivate::_q_boxToggled);
     }
+
+    bl->parentWidget()->adjustSize();
 }
 
 QList<int> ImportDialog::selectResult() const {
@@ -68,47 +73,4 @@ ImportDialog::ImportDialog(ImportDialogPrivate &d, QWidget *parent) : QDialog(pa
     d.q_ptr = this;
 
     d.init();
-}
-
-void ImportDialog::_q_boxToggled(bool checked) {
-    Q_D(ImportDialog);
-    auto btn = qobject_cast<QAbstractButton *>(sender());
-    if (checked) {
-        // Add
-        {
-            auto it = d->queue.pushBack(btn);
-            d->queueMap.insert(btn, it);
-        }
-
-        // Remove earliest
-        if (d->queue.size() > d->opt.maxTracks) {
-            auto it = d->queue.begin();
-            auto btn2 = it.value();
-            d->queueMap.remove(btn2);
-            d->queue.erase(it);
-            btn2->setChecked(false);
-        }
-    } else {
-        auto it = d->queueMap.find(btn);
-        if (it != d->queueMap.end()) {
-            d->queue.erase(it.value());
-            d->queueMap.erase(it);
-        }
-    }
-}
-
-void ImportDialog::_q_okButtonClicked() {
-    Q_D(ImportDialog);
-
-    auto bl = d->boxesLayout;
-    for (int i = 0; i < bl->count(); ++i) {
-        if (qobject_cast<QAbstractButton *>(bl->itemAt(i)->widget())->isChecked()) {
-            d->trackIndexs.append(i);
-        }
-    }
-    accept();
-}
-
-void ImportDialog::_q_cancelButtonClicked() {
-    reject();
 }

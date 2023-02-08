@@ -1,14 +1,14 @@
-#define Q_PROPERTY_DECLARE(Class, prop, Prop)                                                      \
+#define Q_PROPERTY_DECLARE(TYPE, prop, Prop)                                                       \
 private:                                                                                           \
-    Q_PROPERTY(Class prop READ prop WRITE set##Prop NOTIFY prop##Changed)                          \
-    Class m_##prop;                                                                                \
+    Q_PROPERTY(TYPE prop READ prop WRITE set##Prop NOTIFY prop##Changed)                           \
+    TYPE m_##prop;                                                                                 \
                                                                                                    \
 public:                                                                                            \
-    inline Class prop() const {                                                                    \
+    inline TYPE prop() const {                                                                     \
         return m_##prop;                                                                           \
     }                                                                                              \
                                                                                                    \
-    inline void set##Prop(const Class &prop) {                                                     \
+    inline void set##Prop(const TYPE &prop) {                                                      \
         m_##prop = prop;                                                                           \
         update();                                                                                  \
         emit prop##Changed();                                                                      \
@@ -18,3 +18,30 @@ Q_SIGNALS:                                                                      
     void prop##Changed();                                                                          \
                                                                                                    \
 private:
+
+// Definition
+#define Q_D_PROPERTY(TYPE, prop, Prop)                                                             \
+private:                                                                                           \
+    Q_PROPERTY(TYPE prop READ prop WRITE set##Prop NOTIFY prop##Changed)                           \
+                                                                                                   \
+public:                                                                                            \
+    TYPE prop() const;                                                                             \
+    void set##Prop(const TYPE &prop);                                                              \
+                                                                                                   \
+Q_SIGNALS:                                                                                         \
+    void prop##Changed();                                                                          \
+                                                                                                   \
+private:
+
+// Declaration
+#define Q_D_PROPERTY_DECLARE(TYPE, prop, Prop, Class)                                              \
+    TYPE Class::prop() const {                                                                     \
+        Q_D(const Class);                                                                          \
+        return d->prop;                                                                            \
+    }                                                                                              \
+                                                                                                   \
+    void Class::set##Prop(const TYPE &prop) {                                                      \
+        Q_D(Class);                                                                                \
+        d->prop = prop;                                                                            \
+        emit prop##Changed();                                                                      \
+    }

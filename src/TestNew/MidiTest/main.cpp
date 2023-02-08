@@ -12,6 +12,9 @@
 
 COM_EXTERN_C_EXPORT int main_entry(int argc, char *argv[]) {
     QApplication a(argc, argv);
+    QFont f("Microsoft YaHei UI");
+    f.setPixelSize(15);
+    a.setFont(f);
 
     QsStartInfo info;
     info.load();

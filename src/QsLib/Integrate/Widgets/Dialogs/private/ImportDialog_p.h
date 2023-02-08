@@ -3,15 +3,19 @@
 
 #include "../ImportDialog.h"
 
-#include "CPushButton.h"
-#include "QLinkList.h"
+#include "CTabButton.h"
+#include "Frames/LinearScrollArea.h"
 
 #include <QAction>
 #include <QButtonGroup>
 #include <QLabel>
+#include <QTableWidget>
 #include <QVBoxLayout>
 
-class ImportDialogPrivate {
+#include <list>
+
+class ImportDialogPrivate : public QObject {
+    Q_OBJECT
     Q_DECLARE_PUBLIC(ImportDialog)
 public:
     ImportDialogPrivate();
@@ -29,18 +33,33 @@ public:
     QTextCodec *codec;
 
     // UI
+    QTabWidget *tabWidget;
+
     QVBoxLayout *layout;
     QVBoxLayout *boxesLayout;
     QHBoxLayout *buttonsLayout;
 
+    QWidget *boxesWidget;
+    QScrollArea *boxesScroll;
+
     QLabel *lbCaption;
-    CPushButton *btnCancel, *btnOK;
+    CTabButton *btnCancel, *btnOK;
 
     QAction *okAction;
     QButtonGroup *boxGroup;
 
-    QLinkList<QAbstractButton *> queue;
-    QHash<QAbstractButton *, QLinkList<QAbstractButton *>::Iterator> queueMap;
+    std::list<QAbstractButton *> queue;
+    QHash<QAbstractButton *, std::list<QAbstractButton *>::iterator> queueMap;
+
+    bool firstShow;
+    int maxInitHeight;
+
+private:
+    void _q_boxToggled(bool checked);
+    void _q_okButtonClicked();
+    void _q_cancelButtonClicked();
+    void _q_scrollRangeChanged(int min, int max);
 };
+
 
 #endif // IMPORTDIALOGPRIVATE_H

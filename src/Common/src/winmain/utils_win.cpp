@@ -2,7 +2,11 @@
 
 #include "com_global.h"
 
+#include <cstring>
+
 static wchar_t Error_Title[] = TO_UNICODE("Fatal Error");
+
+static wchar_t Module_Name[MAX_PATH] = {0};
 
 // Convert a wchar_t to char string, equivalent to QString::toLocal8Bit()
 // when passed CP_ACP.
@@ -78,9 +82,22 @@ std::wstring WinGetExeDir() {
         ::MessageBoxW(nullptr, TO_UNICODE("Bad file path!"), Error_Title, MB_OK | MB_ICONERROR);
         ::exit(-1);
     }
-    wstr.resize(idx);
+    std::wstring dir = wstr.substr(0, idx);
 
-    return wstr;
+    // Get executable
+    std::wstring name = wstr.substr(idx + 1);
+    idx = name.find_last_of(L".");
+    if (idx != std::wstring::npos && idx > 0) {
+        name = name.substr(0, idx);
+    }
+
+#ifdef _MSC_VER
+    ::wcscpy_s(Module_Name, name.data());
+#else
+    ::wcscpy(Module_Name, name.data());
+#endif
+
+    return dir;
 }
 
 class WinLibrary::Impl {
@@ -106,7 +123,7 @@ bool WinLibrary::Load(const std::wstring &path) {
     HINSTANCE hDLL = ::LoadLibraryW(path.data());
     if (!hDLL) {
         std::wstring msg = WinGetLastErrorString(&_impl->errNum);
-        ::MessageBoxW(nullptr, msg.data(), Error_Title,
+        ::MessageBoxW(nullptr, msg.data(), (*Module_Name) ? Module_Name : Error_Title,
                       MB_OK | MB_TOPMOST | MB_SETFOREGROUND | MB_ICONERROR);
         return false;
     }
@@ -125,7 +142,7 @@ FARPROC WinLibrary::GetEntry(const char *entry) const {
     auto fun = ::GetProcAddress(_impl->hDll, entry);
     if (!fun) {
         std::wstring msg = WinGetLastErrorString(&_impl->errNum);
-        ::MessageBoxW(nullptr, msg.data(), Error_Title,
+        ::MessageBoxW(nullptr, msg.data(), (*Module_Name) ? Module_Name : Error_Title,
                       MB_OK | MB_TOPMOST | MB_SETFOREGROUND | MB_ICONERROR);
         return nullptr;
     }
@@ -137,9 +154,9 @@ int WinLibrary::ErrorCode() const {
 }
 
 void WinLibrary::AddLibDir(const std::wstring &path) {
-//    ::SetDefaultDllDirectories(LOAD_LIBRARY_SEARCH_APPLICATION_DIR |
-//                               LOAD_LIBRARY_SEARCH_DEFAULT_DIRS | LOAD_LIBRARY_SEARCH_SYSTEM32 |
-//                               LOAD_LIBRARY_SEARCH_USER_DIRS);
-//    ::AddDllDirectory(path.data());
+    //    ::SetDefaultDllDirectories(LOAD_LIBRARY_SEARCH_APPLICATION_DIR |
+    //                               LOAD_LIBRARY_SEARCH_DEFAULT_DIRS | LOAD_LIBRARY_SEARCH_SYSTEM32
+    //                               | LOAD_LIBRARY_SEARCH_USER_DIRS);
+    //    ::AddDllDirectory(path.data());
     ::SetDllDirectoryW(path.data());
 }
