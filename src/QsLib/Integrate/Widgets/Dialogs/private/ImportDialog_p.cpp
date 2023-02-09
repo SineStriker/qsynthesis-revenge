@@ -134,8 +134,9 @@ void ImportDialogPrivate::updateEncoding() {
     }
     auto codec = QTextCodec::codecForName(cur->text().toLatin1());
     for (int i = 0; i < nameListWidget->count(); ++i) {
+        const auto &fmt = opt.tracks.at(i).format;
         auto item = nameListWidget->item(i);
-        item->setText(opt.format.arg(convertString(codec, item->data(NameRole).toByteArray())));
+        item->setText(fmt.arg(convertString(codec, item->data(NameRole).toByteArray())));
         if (nameListWidget->currentRow() == i) {
             lyricsWidget->setPlainText(convertString(codec, item->data(ContentRole).toByteArray()));
         }
