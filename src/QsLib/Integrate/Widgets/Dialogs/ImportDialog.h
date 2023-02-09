@@ -27,17 +27,18 @@ public:
 public:
     struct TrackInfo {
         QByteArray title;
-        QByteArray lyrics;
+        QList<QByteArray> lyrics;
         QString format; // Display as format.arg(title)
         bool selectable;
         TrackInfo() : TrackInfo({}, {}){};
-        TrackInfo(const QByteArray &title, const QByteArray &lyrics)
+        TrackInfo(const QByteArray &title, const QList<QByteArray> &lyrics)
             : title(title), lyrics(lyrics), format("%1"), selectable(true){};
     };
 
     struct ImportOptions {
         int maxTracks;
         QList<TrackInfo> tracks;
+        ImportOptions() : maxTracks(1){};
     };
 
     ImportOptions options() const;

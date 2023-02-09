@@ -10,6 +10,8 @@
 #include <QFile>
 #include <QTextCodec>
 
+#include <set>
+
 using namespace QDspx;
 
 bool Import::loadMidi(const QString &filename, QDspxModel *out, QObject *parent) {
@@ -43,9 +45,11 @@ bool Import::loadMidi(const QString &filename, QDspxModel *out, QObject *parent)
 
     // 解析Tempo Map
     QVector<QPair<int, double>> tempos;
-    QVector<QPair<int, QString>> marker;
+    QVector<QPair<int, QByteArray>> marker;
+
     QMap<int, QPoint> timeSign;
     timeSign[0] = QPoint(4, 4);
+
     QList<QMidiEvent *> tempMap = midi.eventsForTrack(0);
 
     for (auto e : qAsConst(tempMap)) {
@@ -58,7 +62,7 @@ bool Import::loadMidi(const QString &filename, QDspxModel *out, QObject *parent)
                     qDebug() << "Tempo:" << e->tick() << e->tempo();
                     break;
                 case QMidiEvent::Marker:
-                    marker.append(qMakePair(e->tick(), QString(data)));
+                    marker.append(qMakePair(e->tick(), data));
                     qDebug() << "Marker:" << e->tick() << QString(data);
                     break;
                 case QMidiEvent::TimeSignature:
@@ -72,46 +76,83 @@ bool Import::loadMidi(const QString &filename, QDspxModel *out, QObject *parent)
         }
     }
 
-    // 单轨数据：轨道名、起止tick、音高、歌词
-    struct TrackInfo {
-        QString name;
-        QList<qint32> notePos;
-        QList<qint32> noteEnd;
-        QList<qint32> noteKeyNum;
-        QList<qint32> noteChannel;
-        QList<QPair<qint32, QString>> noteLyric;
-        QString pitchRange;
+#pragma pack(1)
+    struct LogicTrack {
+        quint8 key;     // 0~16
+        quint8 channel; // 16~24
+        quint16 track;  // 24~32
+
+        LogicTrack() : LogicTrack(0, 0, 0){};
+        LogicTrack(quint16 track, quint8 channel, quint8 key)
+            : track(track), channel(channel), key(key){};
+
+        [[nodiscard]] qint32 toInt() const {
+            return *reinterpret_cast<const qint32 *>(this);
+        }
+
+        static LogicTrack fromInt(qint32 n) {
+            return *reinterpret_cast<LogicTrack *>(&n);
+        }
+    };
+#pragma pack()
+
+    Q_STATIC_ASSERT(sizeof(LogicTrack) == sizeof(qint32));
+
+    struct TrackNameAndLyrics {
+        QByteArray name;
+        QMap<qint32, QByteArray> lyrics; // key: pos; value: lyric;
     };
 
-    QMap<qint32, TrackInfo> trackInfos;
-    QMap<qint32, QString> trackTitles;
+    // key: pack(track, channel, 0); ordered
+    std::set<qint32> trackAndChannelIndexSet;
+
+    // key: track index; value: track name;
+    QHash<qint32, TrackNameAndLyrics> trackNameAndLyrics;
+
+    // key: pack(track, channel, key);  value: ...;
+    QHash<qint32, QPair<QList<qint32>, QList<qint32>>> noteMap;
 
     // 解析元数据
     for (int i = midiFormat; i < tracksCount; ++i) {
         QList<QMidiEvent *> list = midi.eventsForTrack(i);
-        QString name;
-        TrackInfo trackInfo;
-        qint32 trackID = i - midiFormat + 1;
+        qint32 trackIndex = i - midiFormat + 1;
+
+        TrackNameAndLyrics cur;
+
+        // 以track、channel、note为索引打包数据
         for (auto e : list) {
             // midi元事件
             switch (e->type()) {
                 case QMidiEvent::Meta: {
-                    if (e->number() == QMidiEvent::TrackName) {
-                        name = QString::fromLocal8Bit(e->data());
-                    } else if (e->number() == QMidiEvent::Lyric) {
-                        trackInfo.noteLyric.append(
-                            qMakePair(e->tick(), QString::fromLocal8Bit(e->data())));
+                    switch (e->number()) {
+                        case QMidiEvent::TrackName:
+                            cur.name = e->data();
+                            break;
+                            //                        case (QMidiEvent::MetaNumbers) 0x4:
+                            //                            qDebug() << "##################" <<
+                            //                            QString::fromLocal8Bit(e->data());
+                            //                            cur.instrument = e->data();
+                            //                            break;
+                        case QMidiEvent::Lyric:
+                            cur.lyrics.insert(e->tick(), e->data());
+                            break;
+                        default:
+                            break;
                     }
                     break;
                 }
                 case QMidiEvent::NoteOn: {
-                    trackInfo.notePos.append(e->tick());
-                    trackInfo.noteKeyNum.append(e->note());
-                    trackInfo.noteChannel.append(e->voice());
+                    // Add packed(track, channel, 0)
+                    trackAndChannelIndexSet.insert(LogicTrack(trackIndex, e->voice(), 0).toInt());
+                    // Add packed(track, channel, key)
+                    noteMap[LogicTrack(trackIndex, e->voice(), e->note()).toInt()].first.append(
+                        e->tick());
                     break;
                 }
                 case QMidiEvent::NoteOff: {
-                    trackInfo.noteEnd.append(e->tick());
+                    // Add packed(track, channel, key)
+                    noteMap[LogicTrack(trackIndex, e->voice(), e->note()).toInt()].second.append(
+                        e->tick());
                     break;
                 }
                 default:
@@ -119,38 +160,149 @@ bool Import::loadMidi(const QString &filename, QDspxModel *out, QObject *parent)
             }
         }
 
-        if (trackInfo.notePos.size() != trackInfo.noteEnd.size()) {
-            qDebug() << "The number of note-on and note-off are not match";
-            return false;
-        }
-
-        if (!trackInfo.noteKeyNum.empty()) {
-            qint32 keyLow =
-                *std::min_element(trackInfo.noteKeyNum.begin(), trackInfo.noteKeyNum.end());
-            qint32 keyHigh =
-                *std::max_element(trackInfo.noteKeyNum.begin(), trackInfo.noteKeyNum.end());
-            QString low = QUtaUtils::ToneNumToToneName(keyLow);
-            QString high = QUtaUtils::ToneNumToToneName(keyHigh);
-            trackInfo.pitchRange = low + "-" + high;
-        } else {
-            trackInfo.pitchRange.clear();
-        }
-        trackInfo.name =
-            QObject::tr("Track %1").arg(name.isEmpty() ? QString::number(trackID) : name);
-        trackTitles[trackID] =
-            QObject::tr("%1: (%2 notes, %3)")
-                .arg(trackInfo.name, QString::number(trackInfo.noteKeyNum.size()),
-                     trackInfo.pitchRange);
-        trackInfos[trackID] = trackInfo;
+        // Add
+        trackNameAndLyrics.insert(trackIndex, cur);
     }
 
-    qDebug() << timeSign << trackTitles;
-    for (const auto &info : trackInfos) {
-        for (int j = 0; j < info.notePos.size(); ++j) {
-            qDebug() << info.notePos.at(j) << info.noteEnd.at(j) << info.noteKeyNum.at(j)
-                     << info.noteChannel.at(j);
-            //<< (info.noteLyric.size() > j ? info.noteLyric.at(j) : "");
+    struct LogicTrackInfo {
+        ImportDialog::TrackInfo option;
+    };
+
+    // 解析轨道
+    // key: pack(track, channel, 0); value: ...;
+    QMap<qint32, LogicTrackInfo> logicTrackInfos;
+
+    struct LogicNote {
+        int pos;
+        int len;
+        int key;
+        QByteArray lyric;
+
+        LogicNote() : LogicNote(0, 0, 0){};
+        LogicNote(int pos, int len, int key) : pos(pos), len(len), key(key) {
         }
+
+        bool operator<(const LogicNote &other) const {
+            if (pos == other.pos) {
+                return key < other.key;
+            }
+            return pos < other.pos;
+        }
+    };
+
+    // key: pack(track, channel, 0); value: (pos, LogicNote)
+    QMap<qint32, std::set<LogicNote>> logicTrackNotes;
+
+    // 现存逻辑轨道
+    for (const auto &packData : qAsConst(trackAndChannelIndexSet)) {
+        LogicTrack trackAndChannelIndex = LogicTrack::fromInt(packData);
+
+        qint32 noteCount = 0;
+        std::set<qint32> staticKeyNum;
+
+        auto &currentNoteSet = logicTrackNotes[packData];
+
+        // 遍历keyNum
+        for (int key = 0; key < 128; ++key) {
+            LogicTrack tempIndex(trackAndChannelIndex.track, trackAndChannelIndex.channel, key);
+
+            auto it = noteMap.find(tempIndex.toInt());
+            if (it == noteMap.end()) {
+                // 当前trackAndChannelIndex的当前key没有音符
+                continue;
+            }
+
+            // 以track,channel,note为索引，取出noteMap
+            const auto &noteListPair = it.value();
+
+            // 校验各keyNum的NoteOn/Off事件配对
+            if (noteListPair.first.size() != noteListPair.second.size()) {
+                qDebug() << "The number of note-on and note-off are not match";
+                return false;
+            }
+
+            // 存储出现的key
+            staticKeyNum.insert(key);
+
+            // 逻辑轨道封装乱序Note
+            for (int i = 0; i < noteListPair.first.size(); ++i) {
+                noteCount++;
+
+                LogicNote note;
+                note.pos = noteListPair.first[i];
+                note.len = noteListPair.second[i] - note.pos;
+                note.key = key;
+
+                {
+                    const auto &lyricsMap = trackNameAndLyrics[trackAndChannelIndex.track].lyrics;
+                    auto it2 = lyricsMap.find(note.pos);
+                    if (it2 != lyricsMap.end()) {
+                        note.lyric = it2.value();
+                    }
+                }
+
+                currentNoteSet.insert(note);
+            }
+        }
+
+        // 获取逻辑轨道音域
+        QString logicTrackPitchRange;
+        if (!staticKeyNum.empty()) {
+            logicTrackPitchRange = QUtaUtils::ToneNumToToneName(*staticKeyNum.begin()) + "-" +
+                                   QUtaUtils::ToneNumToToneName(*staticKeyNum.rbegin());
+        }
+
+
+        // 逻辑轨道名称
+        auto nameBytes = trackNameAndLyrics[trackAndChannelIndex.track].name;
+        ImportDialog::TrackInfo info(
+            nameBytes, trackNameAndLyrics[trackAndChannelIndex.track].lyrics.values());
+
+        info.format =
+            QObject::tr("%1(%2): (%3 notes, %4)")
+                .arg("%1", QString::number(trackAndChannelIndex.channel),
+                     QString::number(noteCount),
+                     logicTrackPitchRange.isEmpty() ? QObject::tr("None") : logicTrackPitchRange);
+
+        logicTrackInfos.insert(packData, LogicTrackInfo{info});
+
+        qDebug() << trackAndChannelIndex.track << trackAndChannelIndex.channel;
+    }
+
+
+    QList<qint32> selectID;
+    QTextCodec *codec = nullptr;
+
+    // 获取选中轨道
+    {
+        ImportDialog dlg(qobject_cast<QWidget *>(parent));
+        dlg.setWindowTitle(QObject::tr("Import MIDI file"));
+
+        ImportDialog::ImportOptions opt;
+        opt.maxTracks = 32;
+
+        QList<qint32> logicIndexList;
+        for (auto it = logicTrackInfos.begin(); it != logicTrackInfos.end(); ++it) {
+            logicIndexList.append(it.key());
+            opt.tracks.append(it.value().option);
+        }
+        dlg.setImportOptions(opt);
+        if (dlg.exec() == 0) {
+            return false;
+        }
+        codec = dlg.codecResult();
+
+        auto selectResult = dlg.selectResult();
+        qDebug() << "select res" << selectResult;
+
+        for (auto index : qAsConst(selectResult)) {
+            selectID.append(logicIndexList[index]);
+        }
+        for (const auto &id : qAsConst(selectID)) {
+            auto info = LogicTrack::fromInt(id);
+            qDebug() << info.track << info.channel << info.key;
+        }
+
     }
 
     // 缩放系数
@@ -183,57 +335,26 @@ bool Import::loadMidi(const QString &filename, QDspxModel *out, QObject *parent)
 
     out->content.timeline = timeLine;
 
-    // 获取选中轨道
-    QVector<qint32> selectID;
-    selectID.append(1);
-
     // Track数据
-    QDspx::Track track;
+    // QHash<qint32, QHash<qint32, QDspx::Track>> logicTracks;
+    //    QDspx::Track track;
+    //
+    //    for (auto &trackID : selectID) {
+    //        auto clip = SingingClipRef::create();
+    //        TrackInfo trackInfo = trackInfos[trackID];
+    //        for (int i = 0; i < trackInfo.notePos.size(); ++i) {
+    //            Note note;
+    //            note.pos = trackInfo.notePos[i];
+    //            // clip->notes.append();
+    //        }
+    //
+    //        track.clips.append(clip);
+    //        out->content.tracks.append(track);
+    //    }
 
-    for (auto &trackID : selectID) {
-        auto clip = SingingClipRef::create();
-        TrackInfo trackInfo = trackInfos[trackID];
-        for (int i = 0; i < trackInfo.notePos.size(); ++i) {
-            Note note;
-            note.pos = trackInfo.notePos[i];
-            // clip->notes.append();
-        }
 
-        track.clips.append(clip);
-        out->content.tracks.append(track);
-    }
 
-    if (true) {
-        ImportDialog dlg(qobject_cast<QWidget *>(parent));
-        dlg.setWindowTitle("Import");
 
-        ImportDialog::ImportOptions opt;
-        opt.maxTracks = 2;
-        for (int i = 0; i < 10; ++i) {
-            opt.tracks.append(ImportDialog::TrackInfo("Track " + QByteArray::number(i), "222"));
-        }
-        dlg.setImportOptions(opt);
-
-        qDebug() << dlg.exec();
-    }
-
-#pragma pack(1)
-    struct LogicalTrack {
-        quint16 track;  // 0~16
-        quint8 channel; // 16~24
-        quint8 key;     // 24~32
-
-        qint32 toInt() const {
-            return *reinterpret_cast<const qint32 *>(this);
-        }
-
-        static LogicalTrack fromInt(qint32 n) {
-            return *reinterpret_cast<LogicalTrack *>(&n);
-        }
-    };
-#pragma pack()
-
-    Q_STATIC_ASSERT(sizeof(LogicalTrack) == sizeof(qint32));
 
     return true;
 }
