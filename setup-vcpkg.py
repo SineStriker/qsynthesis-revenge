@@ -36,6 +36,7 @@ class OSFlags(enum.Flag):
     EXCLUDE_LINUX = WINDOWS | MAC
     ALL = WINDOWS | MAC | LINUX
 
+    @staticmethod
     def Validate(os_flags: OSFlags) -> bool:
         os_name = platform.system().lower()
         if os_name == "windows":

@@ -4,6 +4,8 @@
 
 #include "CDecorator.h"
 
+#define SYSTEM_CODEC QTextCodec::codecForName("System")
+
 static QString convertString(QTextCodec *codec, const QByteArray &data) {
     QTextCodec::ConverterState state;
     QString res = codec->toUnicode(data.constData(), data.size(), &state);
@@ -29,7 +31,7 @@ void ImportDialogPrivate::init() {
 
     firstShow = true;
     maxInitHeight = 0;
-    codec = nullptr;
+    codec = SYSTEM_CODEC;
 
     q->setWindowFlags(q->windowFlags() & ~Qt::WindowContextHelpButtonHint);
 
@@ -128,15 +130,22 @@ void ImportDialogPrivate::init() {
 }
 
 void ImportDialogPrivate::updateEncoding() {
-    auto cur = codecListWidget->currentItem();
-    if (!cur) {
-        return;
-    }
-    auto codec = QTextCodec::codecForName(cur->text().toLatin1());
+    auto codecItem = codecListWidget->currentItem();
+    codec = codecItem ? QTextCodec::codecForName(codecItem->text().toLatin1()) : SYSTEM_CODEC;
     for (int i = 0; i < nameListWidget->count(); ++i) {
-        const auto &fmt = opt.tracks.at(i).format;
         auto item = nameListWidget->item(i);
-        item->setText(fmt.arg(convertString(codec, item->data(NameRole).toByteArray())));
+
+        QByteArray nameBytes = item->data(NameRole).toByteArray();
+        QString name = nameBytes.isEmpty() ? ImportDialog::tr("Track %1").arg(QString::number(i))
+                                           : convertString(codec, nameBytes);
+
+        // Update check box
+        boxGroup->button(i)->setText(name);
+
+        // Update name list widget item
+        item->setText(opt.tracks.at(i).format.arg(name));
+
+        // Update lyrics
         if (nameListWidget->currentRow() == i) {
             lyricsWidget->setPlainText(convertString(codec, item->data(ContentRole).toByteArray()));
         }
@@ -218,11 +227,5 @@ void ImportDialogPrivate::_q_currentCodecChanged(QListWidgetItem *cur, QListWidg
 
 void ImportDialogPrivate::_q_currentNameChanged(QListWidgetItem *cur, QListWidgetItem *prev) {
     Q_UNUSED(prev);
-    auto codecItem = codecListWidget->currentItem();
-    if (!codecItem) {
-        lyricsWidget->clear();
-        return;
-    }
-    auto codec = QTextCodec::codecForName(codecItem->text().toLatin1());
     lyricsWidget->setPlainText(convertString(codec, cur->data(ContentRole).toByteArray()));
 }

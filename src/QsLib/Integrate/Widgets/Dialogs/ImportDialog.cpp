@@ -46,7 +46,7 @@ void ImportDialog::setImportOptions(const ImportDialog::ImportOptions &options) 
     // Add new buttons
     int i = 0;
     for (auto it = options.tracks.begin(); it != options.tracks.end(); ++it) {
-        auto box = new CCheckBox(it->title);
+        auto box = new CCheckBox();
         box->setObjectName("check-box");
         box->setEnabled(it->selectable);
         bg->addButton(box, i++);
