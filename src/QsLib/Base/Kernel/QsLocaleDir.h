@@ -19,7 +19,7 @@ public:
     bool autoRemove;
 
     void setDir(const QString &dir);
-    bool loadDefault(const QString &binName);
+    bool loadDefault(const QString &name);
 
     bool load(const QString &filename);
     void unload();

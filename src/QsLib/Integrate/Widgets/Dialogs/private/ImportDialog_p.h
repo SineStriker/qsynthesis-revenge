@@ -5,6 +5,7 @@
 
 #include "CTabButton.h"
 #include "Frames/LinearScrollArea.h"
+#include "Attaches/CAutoResizer.h"
 
 #include <QAction>
 #include <QButtonGroup>
@@ -38,12 +39,14 @@ public:
     // Tab - Track
     QButtonGroup *boxGroup;
     QWidget *boxesWidget;
+    CAutoResizer *boxesWidgetResizer;
     QVBoxLayout *boxesLayout;
     QScrollArea *tracksScroll;
 
     // Tab - Codec
     QSplitter *codecWidget;
     QListWidget *codecListWidget;
+    QPlainTextEdit *labelsWidget;
     QListWidget *nameListWidget;
     QPlainTextEdit *lyricsWidget;
 
@@ -67,6 +70,9 @@ public:
 
     void updateEncoding();
     void updateNameList();
+
+    bool codecVisible;
+    void setCodecTabVisible(bool visible);
 
 private:
     void _q_boxToggled(bool checked);

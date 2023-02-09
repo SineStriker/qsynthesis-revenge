@@ -38,6 +38,7 @@ public:
     struct ImportOptions {
         int maxTracks;
         QList<TrackInfo> tracks;
+        QList<QByteArray> labels;
         ImportOptions() : maxTracks(1){};
     };
 

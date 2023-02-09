@@ -56,10 +56,10 @@ void QsCoreStartInfoPrivate::load_helper() {
     // Install QsBase translation
     ld.setDir(coreConfig->appDir(QsCoreConfig::AppShare));
     ld.loadDefault("QsBase");
-    
+
     ld_svs.setDir(coreConfig->appDir(QsCoreConfig::AppShare));
     ld_svs.loadDefault("QsSvs");
-    
+
     ld_media.setDir(coreConfig->appDir(QsCoreConfig::AppShare));
     ld_media.loadDefault("QsMedia");
 
@@ -75,7 +75,7 @@ void QsCoreStartInfoPrivate::load_helper() {
 
     parser.process(*qApp);
 
-    qDebug()<< "start_info: check user permissions";
+    qDebug() << "start_info: check user permissions";
 
     // Root privilege detection
     if (QsOs::isUserRoot() && !parser.isSet(option_allowRoot)) {
@@ -97,7 +97,8 @@ void QsCoreStartInfoPrivate::load_helper() {
 
     if (!q->allowSecondary) {
         if (!hSingleApp->isPrimary()) {
-            qInfo() << "start_info: primary instance already running. PID:" << hSingleApp->primaryPid();
+            qInfo() << "start_info: primary instance already running. PID:"
+                    << hSingleApp->primaryPid();
 
             // This eventually needs moved into the NotepadNextApplication to keep
             // sending/receiving logic in the same place

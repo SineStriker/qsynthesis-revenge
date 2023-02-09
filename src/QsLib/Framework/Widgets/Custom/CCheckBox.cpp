@@ -16,10 +16,12 @@ void CCheckBox::init() {
     m_box = new CToolButton();
     m_box->setObjectName("box");
     m_box->setFocusPolicy(Qt::StrongFocus);
+    m_box->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 
     m_label = new QLabel();
     m_label->setObjectName("label");
     m_label->setAlignment(Qt::AlignLeft | Qt::AlignVCenter);
+    m_label->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Minimum);
 
     m_layout = new QHBoxLayout();
     m_layout->setMargin(0);

@@ -16,13 +16,13 @@ public:
     ThemeGuard(QWidget *w, ThemeSubscriber *g);
     ~ThemeGuard();
 
+    QWidget *w;
+    QWindow *winHandle;
+
     // Object pointers
     bool needUpdate;
     ThemeSubscriber *group;
     ScreenSet *screenSet;
-
-    QWidget *w;
-    QWindow *winHandle;
 
     bool updateScreen();
 

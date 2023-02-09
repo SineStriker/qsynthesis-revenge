@@ -1,8 +1,6 @@
 #ifndef IDSEDITWIDGET_H
 #define IDSEDITWIDGET_H
 
-#include <QObject>
-
 #include "DsGuiGlobal.h"
 #include "INamePlugin.h"
 

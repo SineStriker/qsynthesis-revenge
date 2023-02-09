@@ -13,3 +13,5 @@ function(configure_plugin _author)
 endfunction()
 
 add_subdirectory(DsEngine)
+
+add_subdirectory(DsPorter)

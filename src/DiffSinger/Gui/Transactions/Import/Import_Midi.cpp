@@ -302,7 +302,6 @@ bool Import::loadMidi(const QString &filename, QDspxModel *out, QObject *parent)
             auto info = LogicTrack::fromInt(id);
             qDebug() << info.track << info.channel << info.key;
         }
-
     }
 
     // 缩放系数

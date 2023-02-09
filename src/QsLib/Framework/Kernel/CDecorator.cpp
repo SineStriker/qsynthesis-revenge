@@ -332,7 +332,6 @@ void CDecorator::installTheme(QWidget *w, const QStringList &templateKeys) {
     // Find group by key set
     auto it = d->themeSubscriberGroups.find(keySeq);
     if (it == d->themeSubscriberGroups.end()) {
-
         // Add new
         ts = new ThemeSubscriber();
         ts->keySeq = keySeq;

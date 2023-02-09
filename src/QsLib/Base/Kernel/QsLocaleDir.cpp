@@ -35,9 +35,9 @@ void QsLocaleDir::setDir(const QString &dir) {
     vars.add("FILEPATH", dir);
 }
 
-bool QsLocaleDir::loadDefault(const QString &binName) {
+bool QsLocaleDir::loadDefault(const QString &name) {
     Q_D(QsLocaleDir);
-    return load(d->dir + Slash + binName + ".res.json");
+    return load(QString("%1/%2.res.json").arg(d->dir, name));
 }
 
 bool QsLocaleDir::load(const QString &filename) {

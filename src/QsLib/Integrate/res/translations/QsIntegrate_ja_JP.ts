@@ -4,37 +4,42 @@
 <context>
     <name>ImportDialog</name>
     <message>
-        <location filename="../../Widgets/Dialogs/ImportDialog.cpp" line="20"/>
+        <location filename="../../Widgets/Dialogs/ImportDialog.cpp" line="23"/>
         <source>OK</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Widgets/Dialogs/ImportDialog.cpp" line="21"/>
+        <location filename="../../Widgets/Dialogs/ImportDialog.cpp" line="24"/>
         <source>Cancel</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../Widgets/Dialogs/private/ImportDialog_p.cpp" line="13"/>
-        <location filename="../../Widgets/Dialogs/private/ImportDialog_p.cpp" line="24"/>
-        <source>(Decoding failure)</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../Widgets/Dialogs/private/ImportDialog_p.cpp" line="153"/>
-        <source>Track %1</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
     <name>ImportDialogPrivate</name>
     <message>
-        <location filename="../../Widgets/Dialogs/private/ImportDialog_p.cpp" line="92"/>
+        <location filename="../../Widgets/Dialogs/private/ImportDialog_p.cpp" line="17"/>
+        <location filename="../../Widgets/Dialogs/private/ImportDialog_p.cpp" line="28"/>
+        <source>(Decoding failure)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../Widgets/Dialogs/private/ImportDialog_p.cpp" line="108"/>
         <source>Select tracks</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Widgets/Dialogs/private/ImportDialog_p.cpp" line="93"/>
+        <location filename="../../Widgets/Dialogs/private/ImportDialog_p.cpp" line="168"/>
+        <source>Track %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../Widgets/Dialogs/private/ImportDialog_p.cpp" line="212"/>
         <source>Select encoding</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../Widgets/Dialogs/private/ImportDialog_p.cpp" line="250"/>
+        <source>Please select at least one track!</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

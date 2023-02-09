@@ -1,6 +1,8 @@
 #include "ImportDialog.h"
 #include "private/ImportDialog_p.h"
 
+#include <QCheckBox>
+#include <QPushButton>
 #include <QScrollBar>
 
 #include "CCheckBox.h"
@@ -45,18 +47,35 @@ void ImportDialog::setImportOptions(const ImportDialog::ImportOptions &options) 
 
     // Add new buttons
     int i = 0;
+    bool noTitle = true;
+    bool noLyrics = true;
     for (auto it = options.tracks.begin(); it != options.tracks.end(); ++it) {
         auto box = new CCheckBox();
         box->setObjectName("check-box");
         box->setEnabled(it->selectable);
         bg->addButton(box, i++);
         bl->addWidget(box);
-
+        if (!it->title.isEmpty()) {
+            noTitle = false;
+        }
+        if (!it->lyrics.isEmpty()) {
+            noLyrics = false;
+        }
         connect(box, &QAbstractButton::toggled, d, &ImportDialogPrivate::_q_boxToggled);
     }
 
+    if (noTitle) {
+        d->nameListWidget->hide();
+    }
+    bool noLabel = options.labels.isEmpty();
+    bool noBytes = noTitle && noLyrics && noTitle;
+
+    d->labelsWidget->setVisible(!noLabel);
+    d->nameListWidget->setVisible(!noTitle);
+    d->lyricsWidget->setVisible(!noLyrics);
+    d->setCodecTabVisible(!noBytes);
+
     d->updateNameList();
-    bl->parentWidget()->adjustSize();
 }
 
 QList<int> ImportDialog::selectResult() const {

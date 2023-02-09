@@ -2,7 +2,11 @@
 
 #include <QScrollBar>
 
+#include "CCheckBox.h"
 #include "CDecorator.h"
+
+#include "QsConsole.h"
+#include "QsStartInfo.h"
 
 #define SYSTEM_CODEC QTextCodec::codecForName("System")
 
@@ -10,7 +14,7 @@ static QString convertBytes(QTextCodec *codec, const QByteArray &data) {
     QTextCodec::ConverterState state;
     QString res = codec->toUnicode(data.constData(), data.size(), &state);
     if (state.invalidChars > 0) {
-        res = ImportDialog::tr("(Decoding failure)");
+        res = ImportDialogPrivate::tr("(Decoding failure)");
     }
     return res;
 }
@@ -21,7 +25,7 @@ static QString convertBytesList(QTextCodec *codec, const QList<QByteArray> &data
     for (const auto &data : dataList) {
         QString res = codec->toUnicode(data.constData(), data.size(), &state);
         if (state.invalidChars > 0) {
-            return ImportDialog::tr("(Decoding failure)");
+            return ImportDialogPrivate::tr("(Decoding failure)");
         }
         resList.append(res);
     }
@@ -36,6 +40,10 @@ ImportDialogPrivate::ImportDialogPrivate() {
 }
 
 ImportDialogPrivate::~ImportDialogPrivate() {
+    // No parent, need to delete manually
+    if (!codecVisible) {
+        codecListWidget->deleteLater();
+    }
 }
 
 void ImportDialogPrivate::init() {
@@ -44,6 +52,8 @@ void ImportDialogPrivate::init() {
     firstShow = true;
     maxInitHeight = 0;
     codec = SYSTEM_CODEC;
+
+    codecVisible = false;
 
     q->setWindowFlags(q->windowFlags() & ~Qt::WindowContextHelpButtonHint);
 
@@ -60,8 +70,9 @@ void ImportDialogPrivate::init() {
     boxesWidget->setObjectName("tracks-widget");
     boxesWidget->setLayout(boxesLayout);
 
+    boxesWidgetResizer = new CAutoResizer(boxesWidget);
+
     tracksScroll = new LinearScrollArea(Qt::Vertical);
-    // tracksScroll->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
     tracksScroll->setObjectName("tracks-scroll");
     tracksScroll->setWidget(boxesWidget);
 
@@ -75,6 +86,10 @@ void ImportDialogPrivate::init() {
         codecListWidget->addItem(s);
     }
 
+    labelsWidget = new QPlainTextEdit();
+    labelsWidget->setObjectName("labels-widget");
+    labelsWidget->setReadOnly(true);
+
     nameListWidget = new QListWidget();
     nameListWidget->setObjectName("name-list-widget");
 
@@ -83,6 +98,7 @@ void ImportDialogPrivate::init() {
     lyricsWidget->setReadOnly(true);
 
     codecWidget->addWidget(codecListWidget);
+    codecWidget->addWidget(labelsWidget);
     codecWidget->addWidget(nameListWidget);
     codecWidget->addWidget(lyricsWidget);
 
@@ -90,7 +106,6 @@ void ImportDialogPrivate::init() {
     tabWidget = new QTabWidget();
     tabWidget->setObjectName("tab-widget");
     tabWidget->addTab(tracksScroll, tr("Select tracks"));
-    tabWidget->addTab(codecWidget, tr("Select encoding"));
 
     // Bottom buttons
     btnCancel = new CTabButton();
@@ -150,7 +165,7 @@ void ImportDialogPrivate::updateEncoding() {
         const auto &track = opt.tracks.at(i);
 
         QByteArray nameBytes = track.title;
-        QString name = nameBytes.isEmpty() ? ImportDialog::tr("Track %1").arg(QString::number(i))
+        QString name = nameBytes.isEmpty() ? tr("Track %1").arg(QString::number(i))
                                            : convertBytes(codec, nameBytes);
 
         // Update check box
@@ -160,9 +175,12 @@ void ImportDialogPrivate::updateEncoding() {
         item->setText(name);
 
         // Update lyrics
-        if (nameListWidget->currentRow() == i) {
+        if (lyricsWidget->isVisible() && nameListWidget->currentRow() == i) {
             lyricsWidget->setPlainText(convertBytesList(codec, track.lyrics));
         }
+    }
+    if (labelsWidget->isVisible()) {
+        labelsWidget->setPlainText(convertBytesList(codec, opt.labels));
     }
 }
 
@@ -171,6 +189,8 @@ void ImportDialogPrivate::updateNameList() {
     nameListWidget->clear();
     int index = 0;
     for (const auto &info : qAsConst(opt.tracks)) {
+        Q_UNUSED(info);
+
         auto item = new QListWidgetItem();
         item->setData(IndexRole, index++);
         nameListWidget->addItem(item);
@@ -180,6 +200,20 @@ void ImportDialogPrivate::updateNameList() {
     }
     nameListWidget->blockSignals(false);
     updateEncoding();
+}
+
+void ImportDialogPrivate::setCodecTabVisible(bool visible) {
+    if (codecVisible == visible) {
+        return;
+    }
+    codecVisible = visible;
+
+    if (visible) {
+        tabWidget->addTab(codecWidget, tr("Select encoding"));
+    } else {
+        tabWidget->removeTab(1);
+        codecWidget->hide();
+    }
 }
 
 void ImportDialogPrivate::_q_boxToggled(bool checked) {
@@ -210,6 +244,12 @@ void ImportDialogPrivate::_q_boxToggled(bool checked) {
 
 void ImportDialogPrivate::_q_okButtonClicked() {
     Q_Q(ImportDialog);
+
+    if (!boxGroup->checkedButton()) {
+        qCs->MsgBox(q, QsConsole::Warning, qIStup->mainTitle(),
+                    tr("Please select at least one track!"));
+        return;
+    }
 
     auto bl = boxesLayout;
     for (int i = 0; i < bl->count(); ++i) {
@@ -242,5 +282,7 @@ void ImportDialogPrivate::_q_currentCodecChanged(QListWidgetItem *cur, QListWidg
 void ImportDialogPrivate::_q_currentNameChanged(QListWidgetItem *cur, QListWidgetItem *prev) {
     Q_UNUSED(prev);
     int index = cur->data(IndexRole).toInt();
-    lyricsWidget->setPlainText(convertBytesList(codec, opt.tracks.at(index).lyrics));
+    if (lyricsWidget->isVisible()) {
+        lyricsWidget->setPlainText(convertBytesList(codec, opt.tracks.at(index).lyrics));
+    }
 }

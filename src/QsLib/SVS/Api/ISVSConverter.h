@@ -15,7 +15,7 @@ public:
     QString err;
 
     /**
-     * @brief Convert a SVS project file to an OpenSVIP model
+     * @brief Convert an SVS project file to an OpenSVIP model
      *
      * @param filename Absolute path of input file
      * @param out Output model reference
@@ -27,7 +27,7 @@ public:
                       const QMap<QString, QVariant> &args = {}) = 0;
 
     /**
-     * @brief Convert an OpenSVIP model to a SVS project file
+     * @brief Convert an OpenSVIP model to an SVS project file
      *
      * @param filename Absolute path of output file
      * @param in Input model

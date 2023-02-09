@@ -75,7 +75,7 @@ bool DsConsole::importFile(QDspxModel *dspx, QWidget *parent) {
 
     auto ext = QsFs::PathFindSuffix(path).toLower();
     if (ext == "mid") {
-        return Import::loadMidi(path, dspx);
+        return Import::loadMidi(path, dspx, parent);
     }
     if (ext == "ust") {
         return Import::loadUst(path, dspx, parent);

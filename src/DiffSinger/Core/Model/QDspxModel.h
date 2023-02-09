@@ -13,18 +13,6 @@ namespace QDspx {
         QString author;
     };
 
-    // 循环区间
-    // struct LoopRange {
-    //     bool enabled;
-    //     int start;
-    //     int length;
-
-    //     // 构造器
-    //     LoopRange() : LoopRange(false, 0, 0){};
-    //     LoopRange(bool enabled, int start, int length)
-    //         : enabled(enabled), start(start), length(length){};
-    // };
-
     // 总线控制
     struct Master {
         Control control;
@@ -48,6 +36,9 @@ namespace QDspx {
 
         // 不定长信息
         Workspace workspace;
+
+        bool load(const QString &filename);
+        bool save(const QString &filename);
     };
 
 } // namespace QDspx

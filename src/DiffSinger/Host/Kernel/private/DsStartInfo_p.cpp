@@ -48,7 +48,7 @@ void DsStartInfoPrivate::load_helper() {
     Q_Q(DsStartInfo);
     qIDec->addThemeTemplate("HomeWindow", ":/themes/home.qss.in");
     qIDec->addThemeTemplate("PianoWindow", ":/themes/piano.qss.in");
-    
+
     dd_gui.setDir(qAppConf->appDir(QsCoreConfig::AppShare));
     dd_gui.loadDefault("DsGui");
 
