@@ -6,7 +6,7 @@
 
 #define SYSTEM_CODEC QTextCodec::codecForName("System")
 
-static QString convertString(QTextCodec *codec, const QByteArray &data) {
+static QString convertBytes(QTextCodec *codec, const QByteArray &data) {
     QTextCodec::ConverterState state;
     QString res = codec->toUnicode(data.constData(), data.size(), &state);
     if (state.invalidChars > 0) {
@@ -15,9 +15,21 @@ static QString convertString(QTextCodec *codec, const QByteArray &data) {
     return res;
 }
 
+static QString convertBytesList(QTextCodec *codec, const QList<QByteArray> &dataList) {
+    QTextCodec::ConverterState state;
+    QStringList resList;
+    for (const auto &data : dataList) {
+        QString res = codec->toUnicode(data.constData(), data.size(), &state);
+        if (state.invalidChars > 0) {
+            return ImportDialog::tr("(Decoding failure)");
+        }
+        resList.append(res);
+    }
+    return resList.join(' ');
+}
+
 enum Role {
-    NameRole = Qt::UserRole + 1,
-    ContentRole,
+    IndexRole = Qt::UserRole + 1,
 };
 
 ImportDialogPrivate::ImportDialogPrivate() {
@@ -68,6 +80,7 @@ void ImportDialogPrivate::init() {
 
     lyricsWidget = new QPlainTextEdit();
     lyricsWidget->setObjectName("lyrics-widget");
+    lyricsWidget->setReadOnly(true);
 
     codecWidget->addWidget(codecListWidget);
     codecWidget->addWidget(nameListWidget);
@@ -134,20 +147,21 @@ void ImportDialogPrivate::updateEncoding() {
     codec = codecItem ? QTextCodec::codecForName(codecItem->text().toLatin1()) : SYSTEM_CODEC;
     for (int i = 0; i < nameListWidget->count(); ++i) {
         auto item = nameListWidget->item(i);
+        const auto &track = opt.tracks.at(i);
 
-        QByteArray nameBytes = item->data(NameRole).toByteArray();
+        QByteArray nameBytes = track.title;
         QString name = nameBytes.isEmpty() ? ImportDialog::tr("Track %1").arg(QString::number(i))
-                                           : convertString(codec, nameBytes);
+                                           : convertBytes(codec, nameBytes);
 
         // Update check box
-        boxGroup->button(i)->setText(name);
+        boxGroup->button(i)->setText(track.format.arg(name));
 
         // Update name list widget item
-        item->setText(opt.tracks.at(i).format.arg(name));
+        item->setText(name);
 
         // Update lyrics
         if (nameListWidget->currentRow() == i) {
-            lyricsWidget->setPlainText(convertString(codec, item->data(ContentRole).toByteArray()));
+            lyricsWidget->setPlainText(convertBytesList(codec, track.lyrics));
         }
     }
 }
@@ -155,10 +169,10 @@ void ImportDialogPrivate::updateEncoding() {
 void ImportDialogPrivate::updateNameList() {
     nameListWidget->blockSignals(true);
     nameListWidget->clear();
+    int index = 0;
     for (const auto &info : qAsConst(opt.tracks)) {
         auto item = new QListWidgetItem();
-        item->setData(NameRole, info.title);
-        item->setData(ContentRole, info.lyrics);
+        item->setData(IndexRole, index++);
         nameListWidget->addItem(item);
     }
     if (nameListWidget->count() > 0) {
@@ -227,5 +241,6 @@ void ImportDialogPrivate::_q_currentCodecChanged(QListWidgetItem *cur, QListWidg
 
 void ImportDialogPrivate::_q_currentNameChanged(QListWidgetItem *cur, QListWidgetItem *prev) {
     Q_UNUSED(prev);
-    lyricsWidget->setPlainText(convertString(codec, cur->data(ContentRole).toByteArray()));
+    int index = cur->data(IndexRole).toInt();
+    lyricsWidget->setPlainText(convertBytesList(codec, opt.tracks.at(index).lyrics));
 }

@@ -14,22 +14,28 @@
         <translation>取消</translation>
     </message>
     <message>
-        <location filename="../../Widgets/Dialogs/private/ImportDialog_p.cpp" line="11"/>
+        <location filename="../../Widgets/Dialogs/private/ImportDialog_p.cpp" line="13"/>
+        <location filename="../../Widgets/Dialogs/private/ImportDialog_p.cpp" line="24"/>
         <source>(Decoding failure)</source>
-        <translation type="unfinished">（解码失败）</translation>
+        <translation>（解码失败）</translation>
+    </message>
+    <message>
+        <location filename="../../Widgets/Dialogs/private/ImportDialog_p.cpp" line="153"/>
+        <source>Track %1</source>
+        <translation>音轨 %1</translation>
     </message>
 </context>
 <context>
     <name>ImportDialogPrivate</name>
     <message>
-        <location filename="../../Widgets/Dialogs/private/ImportDialog_p.cpp" line="77"/>
+        <location filename="../../Widgets/Dialogs/private/ImportDialog_p.cpp" line="92"/>
         <source>Select tracks</source>
-        <translation type="unfinished">选择轨道</translation>
+        <translation>选择轨道</translation>
     </message>
     <message>
-        <location filename="../../Widgets/Dialogs/private/ImportDialog_p.cpp" line="78"/>
+        <location filename="../../Widgets/Dialogs/private/ImportDialog_p.cpp" line="93"/>
         <source>Select encoding</source>
-        <translation type="unfinished">选择编码</translation>
+        <translation>选择编码</translation>
     </message>
 </context>
 <context>

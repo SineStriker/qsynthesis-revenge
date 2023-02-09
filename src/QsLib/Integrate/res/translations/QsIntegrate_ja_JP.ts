@@ -14,20 +14,26 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Widgets/Dialogs/private/ImportDialog_p.cpp" line="11"/>
+        <location filename="../../Widgets/Dialogs/private/ImportDialog_p.cpp" line="13"/>
+        <location filename="../../Widgets/Dialogs/private/ImportDialog_p.cpp" line="24"/>
         <source>(Decoding failure)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../Widgets/Dialogs/private/ImportDialog_p.cpp" line="153"/>
+        <source>Track %1</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
     <name>ImportDialogPrivate</name>
     <message>
-        <location filename="../../Widgets/Dialogs/private/ImportDialog_p.cpp" line="77"/>
+        <location filename="../../Widgets/Dialogs/private/ImportDialog_p.cpp" line="92"/>
         <source>Select tracks</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Widgets/Dialogs/private/ImportDialog_p.cpp" line="78"/>
+        <location filename="../../Widgets/Dialogs/private/ImportDialog_p.cpp" line="93"/>
         <source>Select encoding</source>
         <translation type="unfinished"></translation>
     </message>
