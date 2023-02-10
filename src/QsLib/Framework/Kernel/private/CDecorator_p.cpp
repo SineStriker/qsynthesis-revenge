@@ -93,6 +93,12 @@ void ThemeSubscriber::removeWidget(QWidget *w) {
     }
     auto tg = it.value();
     uninstallScreen(tg);
+    if (tg->queueIterator != CDecoratorPrivate::subscriberUpdateQueue.end()) {
+        qDebug() << "ThemeSubscriber: subscriber" << tg
+                 << "has been removed when it's in update queue";
+        CDecoratorPrivate::subscriberUpdateQueue.erase(tg->queueIterator);
+        tg->queueIterator = CDecoratorPrivate::subscriberUpdateQueue.end();
+    }
     delete tg;
 
     widgets.erase(it);
@@ -231,11 +237,12 @@ void CDecoratorPrivate::subscriberUpdateEnqueue(ThemeGuard *tg) {
         if (!first->updateScreen()) {
             break;
         }
+        first->queueIterator = subscriberUpdateQueue.end();
         subscriberUpdateQueue.pop_front();
     }
     if (tg) {
         if (!subscriberUpdateQueue.empty() || !tg->updateScreen()) {
-            subscriberUpdateQueue.push_back(tg);
+            tg->queueIterator = subscriberUpdateQueue.insert(subscriberUpdateQueue.end(), tg);
         }
     }
 }

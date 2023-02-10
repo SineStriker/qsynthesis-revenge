@@ -24,6 +24,8 @@ public:
     ThemeSubscriber *group;
     ScreenSet *screenSet;
 
+    std::list<ThemeGuard *>::iterator queueIterator;
+
     bool updateScreen();
 
 protected:

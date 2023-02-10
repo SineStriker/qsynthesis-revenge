@@ -55,7 +55,8 @@ void StyleSheetHacker::polish(QWidget *w, QWidget *styledWidget) {
 // ThemeGuard
 
 ThemeGuard::ThemeGuard(QWidget *w, ThemeSubscriber *g)
-    : QObject(qIDec), w(w), needUpdate(false), group(g), screenSet(nullptr) {
+    : QObject(qIDec), w(w), needUpdate(false), group(g), screenSet(nullptr),
+      queueIterator(CDecoratorPrivate::subscriberUpdateQueue.end()) {
     winHandle = w->windowHandle();
     w->installEventFilter(this);
 }

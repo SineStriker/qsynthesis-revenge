@@ -175,13 +175,11 @@ void ImportDialogPrivate::updateEncoding() {
         item->setText(name);
 
         // Update lyrics
-        if (lyricsWidget->isVisible() && nameListWidget->currentRow() == i) {
+        if (nameListWidget->currentRow() == i) {
             lyricsWidget->setPlainText(convertBytesList(codec, track.lyrics));
         }
     }
-    if (labelsWidget->isVisible()) {
-        labelsWidget->setPlainText(convertBytesList(codec, opt.labels));
-    }
+    labelsWidget->setPlainText(convertBytesList(codec, opt.labels));
 }
 
 void ImportDialogPrivate::updateNameList() {
@@ -241,22 +239,23 @@ void ImportDialogPrivate::_q_boxToggled(bool checked) {
         }
     }
 }
-
 void ImportDialogPrivate::_q_okButtonClicked() {
     Q_Q(ImportDialog);
 
-    if (!boxGroup->checkedButton()) {
+    auto bl = boxesLayout;
+    QList<int> idxes;
+    for (int i = 0; i < bl->count(); ++i) {
+        if (qobject_cast<QAbstractButton *>(bl->itemAt(i)->widget())->isChecked()) {
+            idxes.append(i);
+        }
+    }
+
+    if (idxes.size() < opt.minTracks) {
         qCs->MsgBox(q, QsConsole::Warning, qIStup->mainTitle(),
                     tr("Please select at least one track!"));
         return;
     }
-
-    auto bl = boxesLayout;
-    for (int i = 0; i < bl->count(); ++i) {
-        if (qobject_cast<QAbstractButton *>(bl->itemAt(i)->widget())->isChecked()) {
-            trackIndexs.append(i);
-        }
-    }
+    trackIndexs = std::move(idxes);
     q->accept();
 }
 
@@ -282,7 +281,5 @@ void ImportDialogPrivate::_q_currentCodecChanged(QListWidgetItem *cur, QListWidg
 void ImportDialogPrivate::_q_currentNameChanged(QListWidgetItem *cur, QListWidgetItem *prev) {
     Q_UNUSED(prev);
     int index = cur->data(IndexRole).toInt();
-    if (lyricsWidget->isVisible()) {
-        lyricsWidget->setPlainText(convertBytesList(codec, opt.tracks.at(index).lyrics));
-    }
+    lyricsWidget->setPlainText(convertBytesList(codec, opt.tracks.at(index).lyrics));
 }

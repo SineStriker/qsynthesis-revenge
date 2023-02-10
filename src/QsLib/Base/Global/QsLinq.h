@@ -36,6 +36,16 @@ namespace QsLinq {
         return res;
     }
 
+    template <class T, class V, class Mapper>
+    QList<V> Select(const QVector<T> &list, Mapper mapper) {
+        QList<V> res;
+        res.reserve(list.size());
+        for (const auto &item : qAsConst(list)) {
+            res.append(mapper(item));
+        }
+        return res;
+    }
+
     template <class K, class V, class V2, class Mapper>
     QList<V2> Select(const QMap<K, V> &map, Mapper mapper) {
         QList<V2> res;

@@ -58,17 +58,17 @@
 <context>
     <name>QObject</name>
     <message>
-        <location filename="../../Transactions/Import/Import_Midi.cpp" line="262"/>
+        <location filename="../../Transactions/Import/Import_Midi.cpp" line="271"/>
         <source>%1(%2): (%3 notes, %4)</source>
         <translation>%1(%2)：（%3 个音符，%4）</translation>
     </message>
     <message>
-        <location filename="../../Transactions/Import/Import_Midi.cpp" line="265"/>
+        <location filename="../../Transactions/Import/Import_Midi.cpp" line="274"/>
         <source>None</source>
         <translation>无</translation>
     </message>
     <message>
-        <location filename="../../Transactions/Import/Import_Midi.cpp" line="279"/>
+        <location filename="../../Transactions/Import/Import_Midi.cpp" line="288"/>
         <source>Import MIDI file</source>
         <translation>导入MIDI文件</translation>
     </message>
