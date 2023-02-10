@@ -18,7 +18,7 @@ namespace QDspx {
     using SourceInfo = QMap<QString, QJsonObject>;
 
     // 主控
-    struct Control {
+    struct DSCORE_API Control {
         double gain;
         bool mute;
 
@@ -28,7 +28,7 @@ namespace QDspx {
     };
 
     // 音轨主控
-    struct TrackControl : public Control {
+    struct DSCORE_API TrackControl : public Control {
         double pan;
         bool solo;
 
@@ -41,7 +41,7 @@ namespace QDspx {
 
     // 泛型点
     template <class T>
-    struct Point {
+    struct DSCORE_API Point {
         T x;
         T y;
 
@@ -53,7 +53,7 @@ namespace QDspx {
     using IntPoint = Point<int>;
 
     // 控制点
-    struct AnchorPoint : public IntPoint {
+    struct DSCORE_API AnchorPoint : public IntPoint {
         enum Interpolation {
             None,
             Linear,

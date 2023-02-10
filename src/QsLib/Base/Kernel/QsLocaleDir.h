@@ -18,7 +18,9 @@ public:
     QSimpleVarExp vars;
     bool autoRemove;
 
+    QString dir() const;
     void setDir(const QString &dir);
+    
     bool loadDefault(const QString &name);
 
     bool load(const QString &filename);

@@ -13,14 +13,6 @@
         <source>Cancel</source>
         <translation>取消</translation>
     </message>
-    <message>
-        <source>(Decoding failure)</source>
-        <translation type="vanished">（解码失败）</translation>
-    </message>
-    <message>
-        <source>Track %1</source>
-        <translation type="vanished">音轨 %1</translation>
-    </message>
 </context>
 <context>
     <name>ImportDialogPrivate</name>
@@ -46,7 +38,7 @@
         <translation>选择编码</translation>
     </message>
     <message>
-        <location filename="../../Widgets/Dialogs/private/ImportDialog_p.cpp" line="248"/>
+        <location filename="../../Widgets/Dialogs/private/ImportDialog_p.cpp" line="255"/>
         <source>Please select at least one track!</source>
         <translation>请至少选择一个轨道！</translation>
     </message>
@@ -60,14 +52,6 @@
     <message>
         <source>(Deleted)</source>
         <translation type="obsolete">(已删除)</translation>
-    </message>
-</context>
-<context>
-    <name>QsPluginManager</name>
-    <message>
-        <location filename="../../Managers/QsPluginManager.cpp" line="64"/>
-        <source>All Files</source>
-        <translation>所有文件</translation>
     </message>
 </context>
 <context>

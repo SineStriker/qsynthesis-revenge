@@ -35,7 +35,7 @@ void QsCoreConfig::saveDefault(const QString &filename) {
     d->save_default(filename);
 }
 
-QString QsCoreConfig::appDir(QsCoreConfig::DirType type) const {
+QString QsCoreConfig::appDir(int type) const {
     Q_D(const QsCoreConfig);
     return d->dirMap.value(type).dir;
 }

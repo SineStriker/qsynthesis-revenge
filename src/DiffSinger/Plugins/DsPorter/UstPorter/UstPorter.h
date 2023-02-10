@@ -14,13 +14,11 @@ public:
 public:
     SupportedPorts ports() const override;
 
-    QString filterString() const override;
+    SupportedFormat format() const override;
 
-    bool load(const QString &filename, QDspxModel *out,
-              const QMap<QString, QVariant> &args = {}) override;
+    bool load(const QString &filename, QDspxModel *out, QObject *parent = nullptr) override;
 
-    bool save(const QString &filename, const QDspxModel &in,
-              const QMap<QString, QVariant> &args = {}) override;
+    bool save(const QString &filename, const QDspxModel &in, QObject *parent = nullptr) override;
 };
 
 #endif // USTPORTER_H

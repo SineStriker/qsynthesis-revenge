@@ -38,16 +38,8 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Widgets/Dialogs/private/ImportDialog_p.cpp" line="248"/>
+        <location filename="../../Widgets/Dialogs/private/ImportDialog_p.cpp" line="255"/>
         <source>Please select at least one track!</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>QsPluginManager</name>
-    <message>
-        <location filename="../../Managers/QsPluginManager.cpp" line="64"/>
-        <source>All Files</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

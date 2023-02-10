@@ -23,38 +23,37 @@ MidiPorter::MidiPorter(QObject *parent) : IDsPorter(parent) {
 MidiPorter::~MidiPorter() {
 }
 
-QString MidiPorter::filterString() const {
-    return tr("Standard MIDI Files(*.mid)");
+IDsPorter::SupportedFormat MidiPorter::format() const {
+    return {tr("Standard MIDI Files"), "mid"};
 };
 
-bool MidiPorter::load(const QString &filename, QDspxModel *out,
-                      const QMap<QString, QVariant> &args) {
+bool MidiPorter::load(const QString &filename, QDspxModel *out, QObject *parent) {
     QMidiFile midi;
 
     if (!midi.load(filename)) {
-        qCs->MsgBox(parent(), QsConsole::Critical, qIStup->mainTitle(),
-                    QObject::tr("Fail to open MIDI file"));
+        qCs->MsgBox(parent, QsConsole::Critical, qIStup->mainTitle(),
+                    QObject::tr("Fail to open MIDI file!"));
         return false;
     }
 
     // midi种类、四分音符ticks数、轨道数、时间类型
     int midiFormat = midi.fileFormat();
     int resolution = midi.resolution();
-    qDebug() << "resolution:" << resolution;
     int tracksCount = midi.tracks().size();
     int divType = midi.divisionType();
 
     // 校验tracks数量、midi种类
     if (tracksCount == 0) {
-        qDebug() << "The midi is empty!";
+        qCs->MsgBox(parent, QsConsole::Critical, qIStup->mainTitle(),
+                    QObject::tr("No track found!"));
         return false;
     } else if (midiFormat == 0 && tracksCount > 1) {
-        qDebug() << "The number of midi tracks is illegal!";
+        qCs->MsgBox(parent, QsConsole::Critical, qIStup->mainTitle(),
+                    QObject::tr("The number of MIDI tracks is illegal!"));
         return false;
     } else if (midiFormat == 2 || divType != QMidiFile::PPQ) {
-        qDebug() << "MidiFormat:" << midiFormat;
-        qDebug() << "DivType:" << divType << midi.divisionType();
-        qDebug() << "The midi file is illegal!";
+        qCs->MsgBox(parent, QsConsole::Critical, qIStup->mainTitle(),
+                    QObject::tr("Unsupported MIDI file type!"));
         return false;
     }
 
@@ -70,25 +69,18 @@ bool MidiPorter::load(const QString &filename, QDspxModel *out,
     for (auto e : qAsConst(tempMap)) {
         const auto &data = e->data();
         if (e->type() == QMidiEvent::Meta) {
-            qDebug() << "Cmd:" << Qt::hex << e->number();
             switch (e->number()) {
                 case QMidiEvent::Tempo:
                     tempos.append(qMakePair(e->tick(), e->tempo()));
-                    qDebug() << "Tempo:" << e->tick() << e->tempo();
                     break;
                 case QMidiEvent::Marker:
                     markers.append(qMakePair(e->tick(), data));
-                    qDebug() << "Marker:" << e->tick() << QString(data);
                     break;
                 case QMidiEvent::TimeSignature:
                     timeSign[e->tick()] = QPoint(data[0], 2 * data[1]);
-                    qDebug() << "TimeSignature:" << e->tick() << timeSign[e->tick()];
                     break;
-                case 0x04:
-                    qDebug() << e->tick() << QString::fromLocal8Bit(e->data());
                     break;
                 default:
-                    qDebug() << "Else:" << Qt::hex << e->number();
                     break;
             }
         }
@@ -101,8 +93,11 @@ bool MidiPorter::load(const QString &filename, QDspxModel *out,
         quint16 track;  // 24~32
 
         LogicTrack() : LogicTrack(0, 0, 0){};
-        LogicTrack(quint16 track, quint8 channel, quint8 key)
-            : track(track), channel(channel), key(key){};
+        LogicTrack(quint16 track, quint8 channel, quint8 key) {
+            this->track = track;
+            this->channel = channel;
+            this->key = key;
+        };
 
         [[nodiscard]] qint32 toInt() const {
             return *reinterpret_cast<const qint32 *>(this);
@@ -148,11 +143,6 @@ bool MidiPorter::load(const QString &filename, QDspxModel *out,
                         case QMidiEvent::TrackName:
                             cur.name = e->data();
                             break;
-                            //                        case (QMidiEvent::MetaNumbers) 0x4:
-                            //                            qDebug() << "##################" <<
-                            //                            QString::fromLocal8Bit(e->data());
-                            //                            cur.instrument = e->data();
-                            //                            break;
                         case QMidiEvent::Lyric:
                             cur.lyrics.insert(e->tick(), e->data());
                             break;
@@ -241,7 +231,8 @@ bool MidiPorter::load(const QString &filename, QDspxModel *out,
 
             // 校验各keyNum的NoteOn/Off事件配对
             if (noteListPair.first.size() != noteListPair.second.size()) {
-                qDebug() << "The number of note-on and note-off are not match";
+                qCs->MsgBox(parent, QsConsole::Critical, qIStup->mainTitle(),
+                            QObject::tr("The number of note-on and note-off are not match!"));
                 return false;
             }
 
@@ -289,8 +280,6 @@ bool MidiPorter::load(const QString &filename, QDspxModel *out,
                      logicTrackPitchRange.isEmpty() ? QObject::tr("None") : logicTrackPitchRange);
 
         logicTrackInfos.insert(packData, LogicTrackInfo{info});
-
-        qDebug() << trackAndChannelIndex.track << trackAndChannelIndex.channel;
     }
 
 
@@ -299,7 +288,7 @@ bool MidiPorter::load(const QString &filename, QDspxModel *out,
 
     // 获取选中轨道
     {
-        ImportDialog dlg(qobject_cast<QWidget *>(parent()));
+        ImportDialog dlg(qobject_cast<QWidget *>(parent));
         dlg.setWindowTitle(QObject::tr("Import MIDI file"));
 
         ImportDialog::ImportOptions opt;
@@ -314,7 +303,7 @@ bool MidiPorter::load(const QString &filename, QDspxModel *out,
             opt.tracks.append(it.value().option);
         }
         if (logicIndexList.empty()) {
-            qCs->MsgBox(parent(), QsConsole::Warning, qIStup->mainTitle(),
+            qCs->MsgBox(parent, QsConsole::Warning, qIStup->mainTitle(),
                         QObject::tr("This file doesn't contain any notes."));
         }
 
@@ -325,14 +314,9 @@ bool MidiPorter::load(const QString &filename, QDspxModel *out,
         codec = dlg.codecResult();
 
         auto selectResult = dlg.selectResult();
-        qDebug() << "select res" << selectResult;
 
         for (auto index : qAsConst(selectResult)) {
             selectID.append(logicIndexList[index]);
-        }
-        for (const auto &id : qAsConst(selectID)) {
-            auto info = LogicTrack::fromInt(id);
-            qDebug() << info.track << info.channel << info.key;
         }
     }
 
@@ -387,8 +371,6 @@ bool MidiPorter::load(const QString &filename, QDspxModel *out,
             note.length = int(logicNote.len * scaleFactor);
             note.keyNum = logicNote.key;
             note.lyric = codec->toUnicode(logicNote.lyric);
-
-            qDebug() << note.pos << note.length << note.keyNum << note.lyric;
             clip->notes.append(note);
         }
 
@@ -403,7 +385,6 @@ bool MidiPorter::load(const QString &filename, QDspxModel *out,
     return true;
 }
 
-bool MidiPorter::save(const QString &filename, const QDspxModel &in,
-                      const QMap<QString, QVariant> &args) {
+bool MidiPorter::save(const QString &filename, const QDspxModel &in, QObject *parent) {
     return false;
 }

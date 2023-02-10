@@ -3,11 +3,11 @@
 
 #include <QObject>
 
-#include "QsIntegrateGlobal.h"
+#include "QsGlobal.h"
 
 class QsAbstractManagerPrivate;
 
-class QSINTEGRATE_API QsAbstractManager : public QObject {
+class QSBASE_API QsAbstractManager : public QObject {
     Q_OBJECT
     Q_DECLARE_PRIVATE(QsAbstractManager)
 public:

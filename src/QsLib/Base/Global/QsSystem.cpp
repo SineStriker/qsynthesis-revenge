@@ -272,3 +272,13 @@ QString QsOs::allFilesFilter() {
     return "*";
 #endif
 }
+
+QString QsOs::toLibFile(const QString &dir, const QString &name) {
+#if defined(Q_OS_LINUX) || defined(__MINGW32__)
+    return dir + "/lib" + name;
+#elif defined(Q_OS_WINDOWS)
+    return dir + "/" + name;
+#else
+    return dir + "/" + name;
+#endif
+}

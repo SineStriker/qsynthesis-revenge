@@ -1,9 +1,9 @@
 #ifndef QSCOREDECORATOR_P_H
 #define QSCOREDECORATOR_P_H
 
-#include <QTranslator>
 #include <QSet>
 #include <QSharedPointer>
+#include <QTranslator>
 
 #include "../QsCoreDecorator.h"
 
@@ -35,7 +35,7 @@ struct QSBASE_API LocaleData {
     void uninstall();
 };
 
-struct  LocalePlaceholder {
+struct LocalePlaceholder {
     QSet<LocaleSubscriber *> subscribers;
     QSharedPointer<LocaleData> data;
 };
@@ -49,6 +49,10 @@ public:
     void init();
 
     QsCoreDecorator *q_ptr;
+
+    // Theme related
+    QString theme;
+    QHash<QString, int> themeNames; // themeKey - refCount
 
     // Locale related
     QString loc;

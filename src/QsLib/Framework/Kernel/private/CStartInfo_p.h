@@ -13,7 +13,6 @@ public:
 
     void init();
     void load_helper();
-    void deinit();
 
     CStartInfo *q_ptr;
 

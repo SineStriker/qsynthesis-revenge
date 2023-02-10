@@ -24,6 +24,7 @@ public:
     explicit QsCoreStartInfo(QObject *parent = nullptr);
     ~QsCoreStartInfo();
 
+public:
     virtual void load();
     virtual void save();
 

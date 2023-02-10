@@ -10,12 +10,40 @@
 #include "QsView.h"
 
 #include "CStartInfo.h"
-#include "ProjectImport.h"
+#include "QsLinq.h"
+
+#include "IDsPorter.h"
+#include "QsPluginManager.h"
 
 static const char FILE_EXTENSIONS_DELIMITER[] = ";;";
 
 static const char OPEN_FLAG[] = "%PROJ%";
 static const char IMPORT_FLAG[] = "%IMPORT%";
+
+struct PluginsAndFilter {
+    QMap<QString, IDsPorter *> plugins;
+    QString filters;
+};
+
+static auto GetPlugins() {
+    // Get all plugins
+    auto porters = qsPluginMgr->pluginSet("dsporters")->plugins<IDsPorter>();
+    QMap<QString, IDsPorter *> plugins;
+    for (const auto &porter : qAsConst(porters)) {
+        const auto &fmt = porter->format();
+        plugins.insert(fmt.suffix.toLower(), porter);
+    }
+
+    return PluginsAndFilter{
+        plugins, (QsLinq::Select<IDsPorter *, QString>(
+                      porters,
+                      [&](const IDsPorter *val) {
+                          const auto &fmt = val->format();
+                          return QString("%1(*.%2)").arg(fmt.name, fmt.suffix);
+                      })
+                  << QString("%1(%2)").arg(DsConsole::tr("All Files"), QsOs::allFilesFilter()))
+                     .join(FILE_EXTENSIONS_DELIMITER)};
+}
 
 DsConsole::DsConsole(QObject *parent) : DsConsole(*new DsConsolePrivate(), parent) {
 }
@@ -24,23 +52,6 @@ DsConsole::~DsConsole() {
 }
 
 void DsConsole::reloadStrings() {
-    Q_D(DsConsole);
-    d->fileDlgFilter_project =
-        QStringList{
-            tr("DiffScope Files(*.dspx)"),                                 //
-            QString("%1(%2)").arg(tr("All Files"), QsOs::allFilesFilter()) //
-        }
-            .join(FILE_EXTENSIONS_DELIMITER);
-
-    d->fileDlgFilter_import =
-        QStringList{
-            tr("Standard MIDI Files(*.mid)"),                              //
-            tr("UTAU Sequence Texts(*.ust)"),                              //
-            tr("OpenSVIP Model Files(*.json)"),                            //
-            tr("XStudio SVIP Files(*.svip)"),                              //
-            QString("%1(%2)").arg(tr("All Files"), QsOs::allFilesFilter()) //
-        }
-            .join(FILE_EXTENSIONS_DELIMITER);
 }
 
 void DsConsole::aboutApp(QWidget *parent) {
@@ -55,39 +66,40 @@ void DsConsole::aboutApp(QWidget *parent) {
 }
 
 bool DsConsole::openFile(QDspxModel *dspx, QWidget *parent) {
-    Q_D(DsConsole);
-    QString path =
-        qsFileMgr->openFile(tr("Open file"), d->fileDlgFilter_project, OPEN_FLAG, parent);
+    QString filter =
+        QStringList{
+            tr("DiffScope Files(*.dspx)"),                                 //
+            QString("%1(%2)").arg(tr("All Files"), QsOs::allFilesFilter()) //
+        }
+            .join(FILE_EXTENSIONS_DELIMITER);
+
+    QString path = qsFileMgr->openFile(tr("Open file"), filter, OPEN_FLAG, parent);
     if (path.isEmpty()) {
         return false;
     }
-    qDebug() << path;
-    return true;
+    return dspx->load(path);
 }
 
 bool DsConsole::importFile(QDspxModel *dspx, QWidget *parent) {
-    Q_D(DsConsole);
-    QString path =
-        qsFileMgr->openFile(tr("Import file"), d->fileDlgFilter_import, IMPORT_FLAG, parent);
+    auto pf = GetPlugins();
+    if (pf.plugins.isEmpty()) {
+        qCs->MsgBox(parent, QsConsole::Critical, qIStup->mainTitle(),
+                    tr("No plugins found for importing files!"));
+        return false;
+    }
+
+    QString path = qsFileMgr->openFile(tr("Import file"), pf.filters, IMPORT_FLAG, parent);
     if (path.isEmpty()) {
         return false;
     }
 
     auto ext = QsFs::PathFindSuffix(path).toLower();
-    if (ext == "mid") {
-        return Import::loadMidi(path, dspx, parent);
-    }
-    if (ext == "ust") {
-        return Import::loadUst(path, dspx, parent);
-    }
-    if (ext == "json") {
-        return Import::loadOpenSVIP(path, dspx, parent);
-    }
-    if (ext == "svip") {
-        return Import::loadSvip(path, dspx, parent);
+    auto it = pf.plugins.find(ext);
+    if (it == pf.plugins.end()) {
+        return false;
     }
 
-    return true;
+    return it.value()->load(path, dspx, parent);
 }
 
 DsConsole::DsConsole(DsConsolePrivate &d, QObject *parent) : QsConsole(d, parent) {

@@ -1,10 +1,10 @@
 #include "DsDistConfig_p.h"
 
-#include <QApplication>
+#include <QCoreApplication>
 #include <QDebug>
 #include <QStandardPaths>
 
-static const char KEY_NAME_EXTENSIONS_DIR[] = "extensions";
+static const char KEY_NAME_APP_PLUGINS_DIR[] = "appplugins";
 
 static const char Slash = '/';
 
@@ -39,9 +39,10 @@ void DsDistConfigPrivate::initByApp() {
                   QString("${APPPATH}") + Slash + APP_TOOLS_DIR //
     );
 
-    registerUserDir(KEY_NAME_EXTENSIONS_DIR,
+    registerUserDir(KEY_NAME_APP_PLUGINS_DIR,
                     QString("${APPPATH}") + Slash + APP_PRIVATE_PLUGINS_DIR,
-                    DirInitArgs{DirInitArgs::OnlyCheck, {QApplication::addLibraryPath}} //
+                    DirInitArgs{DirInitArgs::OnlyCheck, {QCoreApplication::addLibraryPath}},
+                    DsDistConfig::AppPlugins //
     );
 
     setDefault();

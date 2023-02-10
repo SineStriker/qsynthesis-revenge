@@ -1,6 +1,9 @@
 #include "QsCoreConsole.h"
 #include "private/QsCoreConsole_p.h"
 
+#include "QsFileManager.h"
+#include "QsPluginManager.h"
+
 #include "QsSystem.h"
 
 Q_SINGLETON_DECLARE(QsCoreConsole);
@@ -9,6 +12,16 @@ QsCoreConsole::QsCoreConsole(QObject *parent) : QsCoreConsole(*new QsCoreConsole
 }
 
 QsCoreConsole::~QsCoreConsole() {
+}
+
+void QsCoreConsole::load() {
+    Q_D(QsCoreConsole);
+    d->load_helper();
+}
+
+void QsCoreConsole::save() {
+    Q_D(QsCoreConsole);
+    d->save_helper();
 }
 
 void QsCoreConsole::MsgBox(QObject *parent, QsCoreConsole::MessageBoxFlag flag,
@@ -34,6 +47,14 @@ void QsCoreConsole::MsgBox(QObject *parent, QsCoreConsole::MessageBoxFlag flag,
 void QsCoreConsole::SelectBox(QObject *parent, bool supportPreview, int max, const QString &title,
                               const QString &caption,
                               const QList<QsCoreConsole::SelectOption> &arguments) {
+}
+QsPluginManager *QsCoreConsole::createPluginManager(QObject *parent) {
+    return new QsPluginManager(parent);
+}
+
+
+QsFileManager *QsCoreConsole::createFileManager(QObject *parent) {
+    return new QsFileManager(parent);
 }
 
 QsCoreConsole::QsCoreConsole(QsCoreConsolePrivate &d, QObject *parent)

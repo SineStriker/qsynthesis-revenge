@@ -4,7 +4,6 @@
 
 #include "com_global.h"
 
-#include "ProjectImport.h"
 #include "QsStartInfo.h"
 
 #include <QLabel>

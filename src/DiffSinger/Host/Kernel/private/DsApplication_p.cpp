@@ -3,6 +3,7 @@
 #include <QDebug>
 
 #include "DsDistConfig.h"
+#include "QsPluginManager.h"
 
 static const char Slash = '/';
 
@@ -27,6 +28,9 @@ void DsApplicationPrivate::init() {
 
     localData = new DsLocalData();
     localData->load(qAppConf->appDir(DsDistConfig::AppData) + Slash + LocalDataFile);
+
+    qsPluginMgr->addPluginSet("dsporters",
+                              qAppConf->appDir(DsDistConfig::AppPlugins) + "/dsporters");
 }
 
 void DsApplicationPrivate::deinit() {

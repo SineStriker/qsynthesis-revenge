@@ -47,7 +47,7 @@ public:
         UserDir = 1000,
     };
 
-    QString appDir(DirType type) const;
+    QString appDir(int type) const;
     QString locateBinTool(const QString &name) const;
 
     enum PluginType {

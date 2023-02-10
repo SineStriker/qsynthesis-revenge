@@ -9,7 +9,7 @@
 
 class QsFileManagerPrivate;
 
-class QSINTEGRATE_API QsFileManager : public QsAbstractManager {
+class QSBASE_API QsFileManager : public QsAbstractManager {
     Q_OBJECT
     Q_DECLARE_PRIVATE(QsFileManager)
     Q_SINGLETON(QsFileManager)
@@ -43,13 +43,13 @@ public:
     QStringList fetchRecent(int rType) const;
 
 public:
-    QString openFile(const QString &title, const QString &filter, const QString &flag,
-                     QWidget *parent = nullptr);
-    QStringList openFiles(const QString &title, const QString &filter, const QString &flag,
-                          QWidget *parent = nullptr);
-    QString openDir(const QString &title, const QString &flag, QWidget *parent = nullptr);
-    QString saveFile(const QString &title, const QString &filename, const QString &filter,
-                     const QString &flag, QWidget *parent = nullptr);
+    virtual QString openFile(const QString &title, const QString &filter, const QString &flag,
+                             QObject *parent = nullptr);
+    virtual QStringList openFiles(const QString &title, const QString &filter, const QString &flag,
+                                  QObject *parent = nullptr);
+    virtual QString openDir(const QString &title, const QString &flag, QObject *parent = nullptr);
+    virtual QString saveFile(const QString &title, const QString &filename, const QString &filter,
+                             const QString &flag, QObject *parent = nullptr);
 
 protected:
     QsFileManager(QsFileManagerPrivate &d, QObject *parent = nullptr);

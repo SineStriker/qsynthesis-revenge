@@ -3,9 +3,7 @@
 
 #include "../QsAbstractManager.h"
 
-#include "QsIntegrateGlobal.h"
-
-class QSINTEGRATE_API QsAbstractManagerPrivate {
+class QSBASE_API QsAbstractManagerPrivate {
     Q_DECLARE_PUBLIC(QsAbstractManager)
 public:
     QsAbstractManagerPrivate();

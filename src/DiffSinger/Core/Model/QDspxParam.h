@@ -6,7 +6,7 @@
 namespace QDspx {
 
     // 参数曲线基类
-    struct ParamCurve {
+    struct DSCORE_API ParamCurve {
         enum Type {
             Anchor,
             Free,
@@ -18,14 +18,14 @@ namespace QDspx {
         explicit ParamCurve(Type type) : type(type){};
 
         // 转换函数
-        DSCORE_API static QString TypeToString(Type type);
-        DSCORE_API static Type StringToType(const QString &s);
+        static QString TypeToString(Type type);
+        static Type StringToType(const QString &s);
     };
 
     using ParamCurveRef = QSharedPointer<ParamCurve>;
 
     // 手绘参数
-    struct ParamFree : public ParamCurve {
+    struct DSCORE_API ParamFree : public ParamCurve {
         int start;
         int step;
         QList<int> values;
@@ -37,7 +37,7 @@ namespace QDspx {
     using ParamFreeRef = QSharedPointer<ParamFree>;
 
     // 锚点参数
-    struct ParamAnchor : public ParamCurve {
+    struct DSCORE_API ParamAnchor : public ParamCurve {
         QList<AnchorPoint> nodes;
 
         // 构造器
@@ -47,14 +47,14 @@ namespace QDspx {
     using ParamAnchorRef = QSharedPointer<ParamAnchor>;
 
     // 参数结构
-    struct ParamInfo {
+    struct DSCORE_API ParamInfo {
         QList<ParamCurveRef> org;
         QList<ParamCurveRef> edited;
         QList<ParamCurveRef> envelope;
     };
 
     // 单线条参数
-    struct SingleParam {
+    struct DSCORE_API SingleParam {
         ParamInfo pitch;
         ParamInfo energy;
     };

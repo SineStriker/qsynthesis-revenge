@@ -3,7 +3,7 @@ project(QsBase
     LANGUAGES CXX
 )
 
-set(_dirs Api Global Kernel Serialization Tools)
+set(_dirs Api Global Kernel Managers Serialization Tools)
 set(_res_dir Res)
 
 if(APPLE)

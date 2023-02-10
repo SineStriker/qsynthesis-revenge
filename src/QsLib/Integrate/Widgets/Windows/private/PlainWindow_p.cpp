@@ -22,12 +22,13 @@ PlainWindowPrivate::~PlainWindowPrivate() {
 
 void PlainWindowPrivate::init() {
     Q_Q(PlainWindow);
+#ifndef Q_OS_MAC
     winHandle = nullptr;
-    // loader = nullptr;
-    loader = QsPluginManager::loadInternalPlugin(QsCoreConfig::WindowFactory);
+    loader = QsPluginManager::instance()->loadInternalPlugin(QsCoreConfig::WindowFactory);
     if (loader) {
         winHandle = qobject_cast<IWindowFactory *>(loader->instance())->create(q);
         winHandle->setup();
     }
+#endif
     q->setWindowTitle(qIStup->windowTitle());
 }

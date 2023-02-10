@@ -13,6 +13,21 @@ QsCoreDecorator::QsCoreDecorator(QObject *parent)
 QsCoreDecorator::~QsCoreDecorator() {
 }
 
+// Theme related
+QString QsCoreDecorator::theme() const {
+    Q_D(const QsCoreDecorator);
+    return d->theme;
+}
+
+QStringList QsCoreDecorator::themes() const {
+    Q_D(const QsCoreDecorator);
+    return d->themeNames.keys();
+}
+
+void QsCoreDecorator::setTheme(const QString &theme) {
+    Q_UNUSED(theme)
+}
+
 
 // Locale related
 QString QsCoreDecorator::locale() const {

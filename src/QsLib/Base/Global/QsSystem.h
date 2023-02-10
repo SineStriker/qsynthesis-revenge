@@ -113,6 +113,8 @@ namespace QsOs {
 
     QSBASE_API QString allFilesFilter();
 
+    QSBASE_API QString toLibFile(const QString &dir, const QString &name);
+
 } // namespace QsOs
 
 #endif // QSSYSTEMHELPER_H

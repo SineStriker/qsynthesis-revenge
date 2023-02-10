@@ -23,6 +23,8 @@ void QsCoreStartInfo::load() {
 }
 
 void QsCoreStartInfo::save() {
+    Q_D(QsCoreStartInfo);
+    d->save_helper();
 }
 
 bool QsCoreStartInfo::isAboutToQuit() const {

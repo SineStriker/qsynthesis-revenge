@@ -4,72 +4,39 @@
 <context>
     <name>DsConsole</name>
     <message>
-        <location filename="../../Kernel/DsConsole.cpp" line="30"/>
+        <location filename="../../Kernel/DsConsole.cpp" line="58"/>
         <source>DiffScope Files(*.dspx)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Kernel/DsConsole.cpp" line="31"/>
-        <location filename="../../Kernel/DsConsole.cpp" line="41"/>
+        <location filename="../../Kernel/DsConsole.cpp" line="59"/>
+        <location filename="../../Kernel/DsConsole.cpp" line="84"/>
         <source>All Files</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Kernel/DsConsole.cpp" line="37"/>
-        <source>Standard MIDI Files(*.mid)</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../Kernel/DsConsole.cpp" line="38"/>
-        <source>UTAU Sequence Texts(*.ust)</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../Kernel/DsConsole.cpp" line="39"/>
-        <source>OpenSVIP Model Files(*.json)</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../Kernel/DsConsole.cpp" line="40"/>
-        <source>XStudio SVIP Files(*.svip)</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../Kernel/DsConsole.cpp" line="47"/>
+        <location filename="../../Kernel/DsConsole.cpp" line="44"/>
         <source>About %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Kernel/DsConsole.cpp" line="49"/>
+        <location filename="../../Kernel/DsConsole.cpp" line="46"/>
         <source>%1 %2, Copyright OpenVPI.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Kernel/DsConsole.cpp" line="60"/>
+        <location filename="../../Kernel/DsConsole.cpp" line="63"/>
         <source>Open file</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Kernel/DsConsole.cpp" line="71"/>
+        <location filename="../../Kernel/DsConsole.cpp" line="75"/>
+        <source>No plugins found for importing files!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../Kernel/DsConsole.cpp" line="87"/>
         <source>Import file</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>QObject</name>
-    <message>
-        <location filename="../../Transactions/Import/Import_Midi.cpp" line="271"/>
-        <source>%1(%2): (%3 notes, %4)</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../Transactions/Import/Import_Midi.cpp" line="274"/>
-        <source>None</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../Transactions/Import/Import_Midi.cpp" line="288"/>
-        <source>Import MIDI file</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

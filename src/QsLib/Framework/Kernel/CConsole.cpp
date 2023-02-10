@@ -1,6 +1,9 @@
 #include "CConsole.h"
 #include "private/CConsole_p.h"
 
+#include "QsGuiFileManager.h"
+#include "QsGuiPluginManager.h"
+
 #include <QMessageBox>
 
 CConsole::CConsole(QObject *parent) : CConsole(*new CConsolePrivate(), parent) {
@@ -38,6 +41,14 @@ void CConsole::MsgBox(QObject *parent, QsCoreConsole::MessageBoxFlag flag, const
             break;
     };
 #endif
+}
+
+QsFileManager *CConsole::createFileManager(QObject *parent) {
+    return new QsGuiFileManager(parent);
+}
+
+QsPluginManager *CConsole::createPluginManager(QObject *parent) {
+    return new QsGuiPluginManager(parent);
 }
 
 CConsole::CConsole(CConsolePrivate &d, QObject *parent) : QsCoreConsole(d, parent) {

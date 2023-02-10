@@ -28,6 +28,7 @@ public:
     void init();
 
     void load_helper();
+    void save_helper();
 
 private:
     QsLocaleDir ld;

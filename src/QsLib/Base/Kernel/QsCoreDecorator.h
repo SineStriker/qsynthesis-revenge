@@ -20,13 +20,22 @@ public:
 
 public:
     /**
+     * @brief Current theme
+     *
+     * @return Theme string
+     */
+    QString theme() const;
+    QStringList themes() const;
+    virtual void setTheme(const QString &theme);
+
+    /**
      * @brief Current locale
      *
      * @return Locale name (No impact to framework locale)
      */
     QString locale() const;
     QStringList locales() const;
-    void setLocale(const QString &locale);
+    virtual void setLocale(const QString &locale);
 
     /**
      * @brief Add a translation configuration

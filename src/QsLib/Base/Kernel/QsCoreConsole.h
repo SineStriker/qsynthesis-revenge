@@ -8,6 +8,8 @@
 
 #define qCs QsCoreConsole::instance()
 
+class QsFileManager;
+class QsPluginManager;
 class QsCoreConsolePrivate;
 
 class QSBASE_API QsCoreConsole : public QObject {
@@ -17,6 +19,10 @@ class QSBASE_API QsCoreConsole : public QObject {
 public:
     explicit QsCoreConsole(QObject *parent = nullptr);
     ~QsCoreConsole();
+
+public:
+    virtual void load();
+    virtual void save();
 
     enum MessageBoxFlag {
         Critical,
@@ -54,6 +60,11 @@ public:
      */
     virtual void SelectBox(QObject *parent, bool supportPreview, int max, const QString &title,
                            const QString &caption, const QList<SelectOption> &arguments);
+
+protected:
+    virtual QsFileManager *createFileManager(QObject *parent = nullptr);
+
+    virtual QsPluginManager *createPluginManager(QObject *parent = nullptr);
 
 protected:
     QsCoreConsole(QsCoreConsolePrivate &d, QObject *parent = nullptr);

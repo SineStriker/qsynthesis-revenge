@@ -10,6 +10,10 @@ DsDistConfig::DsDistConfig() : DsDistConfig(*new DsDistConfigPrivate()) {
 DsDistConfig::~DsDistConfig() {
 }
 
+QString DsDistConfig::appPluginDir() const {
+    return appDir(AppPlugins);
+}
+
 DsDistConfig::DsDistConfig(DsDistConfigPrivate &d) : QsCoreConfig(d) {
-     d.init();
+    d.init();
 }

@@ -22,6 +22,11 @@ public:
                 const QString &text) override;
 
 protected:
+    QsFileManager *createFileManager(QObject *parent = nullptr) override;
+
+    QsPluginManager *createPluginManager(QObject *parent = nullptr) override;
+
+protected:
     CConsole(CConsolePrivate &d, QObject *parent = nullptr);
 };
 

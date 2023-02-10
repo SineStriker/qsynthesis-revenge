@@ -6,7 +6,7 @@
 namespace QDspx {
 
     // 拍号
-    struct TimeSignature {
+    struct DSCORE_API TimeSignature {
         int pos;
         int num;
         int den;
@@ -17,7 +17,7 @@ namespace QDspx {
     };
 
     // 曲速
-    struct Tempo {
+    struct DSCORE_API Tempo {
         int pos;
         double value;
 
@@ -27,7 +27,7 @@ namespace QDspx {
     };
 
     // 曲速
-    struct Label {
+    struct DSCORE_API Label {
         int pos;
         QString text;
 
@@ -37,7 +37,7 @@ namespace QDspx {
     };
 
     // 时间线
-    struct Timeline {
+    struct DSCORE_API Timeline {
         QList<TimeSignature> timeSignatures;
         QList<Tempo> tempos;
         QList<Label> labels;

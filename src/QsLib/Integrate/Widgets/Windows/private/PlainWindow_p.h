@@ -18,8 +18,10 @@ public:
 
     PlainWindow *q_ptr;
 
+#ifndef Q_OS_MAC
     QPluginLoader *loader;
     IWindowHandle *winHandle;
+#endif
 };
 
 #endif // PLAINWINDOWPRIVATE_H

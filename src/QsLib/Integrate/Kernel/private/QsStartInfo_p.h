@@ -17,11 +17,6 @@ public:
 
     void init();
     void load_helper();
-    void deinit();
-
-    // Managers
-    QsPluginManager *pluginMgr;
-    QsFileManager *fileMgr;
 
 private:
     CDecorateDir dd;

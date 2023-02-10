@@ -5,9 +5,9 @@
 #include "QDspxParam.h"
 
 namespace QDspx {
-    
+
     // 音轨区间时间信息
-    struct ClipTime {
+    struct DSCORE_API ClipTime {
         int start;
         int length;
         int clipStart;
@@ -21,7 +21,7 @@ namespace QDspx {
     };
 
     // 音轨区间
-    struct Clip {
+    struct DSCORE_API Clip {
         enum Type {
             Singing,
             Audio,
@@ -40,14 +40,14 @@ namespace QDspx {
         explicit Clip(Type type) : type(type){};
 
         // 转换函数
-        DSCORE_API static QString TypeToString(Type type);
-        DSCORE_API static Type StringToType(const QString &s);
+        static QString TypeToString(Type type);
+        static Type StringToType(const QString &s);
     };
 
     using ClipRef = QSharedPointer<Clip>;
 
     // 波形区间
-    struct AudioClip : public Clip {
+    struct DSCORE_API AudioClip : public Clip {
         QString path;
 
         // 构造器
@@ -57,7 +57,7 @@ namespace QDspx {
     using AudioClipRef = QSharedPointer<AudioClip>;
 
     // 人声区间
-    struct SingingClip : public Clip {
+    struct DSCORE_API SingingClip : public Clip {
         QList<Note> notes;
         SingleParam params;
 
@@ -71,11 +71,11 @@ namespace QDspx {
     using SingingClipRef = QSharedPointer<SingingClip>;
 
     // 音轨
-    struct Track {
+    struct DSCORE_API Track {
         QString name;
         TrackControl control;
         QList<ClipRef> clips;
-        
+
         // 不定长信息
         Extra extra;
         Workspace workspace;

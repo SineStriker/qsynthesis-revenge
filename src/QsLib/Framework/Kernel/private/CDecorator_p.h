@@ -82,9 +82,6 @@ public:
 
     void screenChange_helper(QScreen *screen);
 
-    // Theme related
-    QString theme;
-    QHash<QString, int> themeNames;                              // themeKey - refCount
     QHash<QString, ThemeConfigPack> themeConfigs;                // configKey
     QHash<QString, ThemePlaceholder *> themeTemplates;           // templateKey
     QHash<QStringList, ThemeSubscriber *> themeSubscriberGroups; // templateKeys

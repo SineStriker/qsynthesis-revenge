@@ -2,5 +2,8 @@
     "name": "UstPorter",
     "version": "0.0.0.1",
     "author": "IceKyrin",
-    "license": "Apache 2.0"
+    "license": "Apache 2.0",
+    "extra": {
+        "priority": 2
+    }
 }

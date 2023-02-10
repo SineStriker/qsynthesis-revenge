@@ -8,7 +8,7 @@
 #include <QHash>
 #include <QMap>
 
-class QSINTEGRATE_API QsFileManagerPrivate : public QsAbstractManagerPrivate {
+class QSBASE_API QsFileManagerPrivate : public QsAbstractManagerPrivate {
     Q_DECLARE_PUBLIC(QsFileManager)
 public:
     QsFileManagerPrivate();

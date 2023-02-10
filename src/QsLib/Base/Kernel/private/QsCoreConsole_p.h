@@ -10,11 +10,18 @@ public:
     virtual ~QsCoreConsolePrivate();
 
     void init();
+    void load_helper();
+    void save_helper();
+    void deinit();
 
 #if defined(Q_OS_WINDOWS) || defined(Q_OS_MAC)
     void osMessageBox_helper(void *winHandle, QsCoreConsole::MessageBoxFlag flag,
                              const QString &title, const QString &text);
 #endif
+
+    // Managers
+    QsPluginManager *pluginMgr;
+    QsFileManager *fileMgr;
 
     QsCoreConsole *q_ptr;
 };

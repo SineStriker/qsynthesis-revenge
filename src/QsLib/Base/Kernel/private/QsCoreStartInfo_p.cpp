@@ -51,7 +51,10 @@ void QsCoreStartInfoPrivate::load_helper() {
     QString configPath = qApp->applicationDirPath() + Slash + GetAppConfig();
     coreConfig = q->creatDistConfig();
     coreConfig->d_func()->initAll();
-    coreConfig->load(configPath);
+    coreConfig->load(configPath); // Need console instance's message box
+
+    // Load managers
+    console->load();
 
     // Install QsBase translation
     ld.setDir(coreConfig->appDir(QsCoreConfig::AppShare));
@@ -122,4 +125,8 @@ void QsCoreStartInfoPrivate::load_helper() {
     if (!coreConfig->apply()) {
         ::exit(-1);
     }
+}
+
+void QsCoreStartInfoPrivate::save_helper() {
+    console->save();
 }

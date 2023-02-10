@@ -6,7 +6,7 @@
 namespace QDspx {
 
     // 音素
-    class Phoneme {
+    struct DSCORE_API Phoneme {
         enum Type {
             Ahead,
             Normal,
@@ -26,13 +26,13 @@ namespace QDspx {
     };
 
     // 音素信息
-    struct PhonemeInfo {
+    struct DSCORE_API PhonemeInfo {
         QList<Phoneme> org;
         QList<Phoneme> edited;
     };
 
     // 颤音信息
-    struct VibratoInfo {
+    struct DSCORE_API VibratoInfo {
         double start;
         double end;
         double freq;
@@ -46,7 +46,7 @@ namespace QDspx {
     };
 
     // 音符
-    struct Note {
+    struct DSCORE_API Note {
         int pos;
         int length;
         int keyNum;

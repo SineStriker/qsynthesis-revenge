@@ -7,19 +7,19 @@
 namespace QDspx {
 
     // 文件的元信息，包括版本号、工程名、作者等
-    struct Metadata {
+    struct DSCORE_API Metadata {
         QString version;
         QString name;
         QString author;
     };
 
     // 总线控制
-    struct Master {
+    struct DSCORE_API Master {
         Control control;
     };
 
     // 工程可编辑区域
-    struct Content {
+    struct DSCORE_API Content {
         Master master;
         Timeline timeline;
         QList<Track> tracks;
@@ -30,7 +30,7 @@ namespace QDspx {
     };
 
     // 工程
-    struct Model {
+    struct DSCORE_API Model {
         Metadata metadata;
         Content content;
 

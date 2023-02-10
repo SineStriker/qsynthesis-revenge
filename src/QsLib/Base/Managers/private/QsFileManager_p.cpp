@@ -10,7 +10,7 @@
 #include "QsLinq.h"
 #include "QsSystem.h"
 
-#include "CDecorator.h"
+#include "QsCoreDecorator.h"
 
 static const char SECTION_NAME_FILE_SYSTEM[] = "filesystem";
 static const char KEY_NAME_RECENT_FILES[] = "files";

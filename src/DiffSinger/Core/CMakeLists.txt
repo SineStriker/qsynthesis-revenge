@@ -1,6 +1,6 @@
 project(DsCore LANGUAGES CXX VERSION ${SUB_VERSION})
 
-set(_dirs Api Global Model)
+set(_dirs Api Global Kernel Model)
 
 add_files(_src
     DIRECTORIES ${_dirs}
@@ -21,4 +21,14 @@ target_components(${PROJECT_NAME}
     QT_LIBRARIES Core
     LINKS QsSVS
     INCLUDES ${_dirs}
+)
+
+target_compile_definitions(${PROJECT_NAME} PRIVATE
+    APP_SHARE_DIR="${APP_SHARE_DIR}"
+    APP_PLUGINS_DIR="${APP_PLUGINS_DIR}"
+    APP_LOCALES_DIR="${APP_LOCALES_DIR}"
+    APP_TOOLS_DIR="${APP_TOOLS_DIR}"
+    APP_EXT_DIR="${APP_EXT_DIR}"
+    APP_PUBLIC_PLUGINS_DIR="${APP_EXT_DIR}/${APP_PUBLIC_PLUGINS_DIR}"
+    APP_PRIVATE_PLUGINS_DIR="${SUB_PLUGIN_DIR}"
 )

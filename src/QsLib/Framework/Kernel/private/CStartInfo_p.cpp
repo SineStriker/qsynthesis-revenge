@@ -7,7 +7,6 @@ CStartInfoPrivate::CStartInfoPrivate() {
 }
 
 CStartInfoPrivate::~CStartInfoPrivate() {
-    deinit();
 }
 
 void CStartInfoPrivate::init() {
@@ -19,7 +18,4 @@ void CStartInfoPrivate::load_helper() {
 
     dd.setDir(qAppConf->appDir(QsCoreConfig::AppShare));
     dd.loadDefault("QsFramework");
-}
-
-void CStartInfoPrivate::deinit() {
 }

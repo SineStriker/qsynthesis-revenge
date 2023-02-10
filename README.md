@@ -49,9 +49,9 @@ For detailed information, see [Related Tools](./docs/related-tools.md).
 ## Open-source softwares used
 
 + [Qt 5.15.2](https://www.qt.io/) (Core, Widgets, Svg, Network)
-    + GNU LGPL v3
+    + GNU LGPL v2.1 or later
 + [FFmpeg](https://github.com/FFmpeg/FFmpeg) (libavcodec libavformat libavutil libswresample)
-    + GNU LGPL v3
+    + GNU LGPL v2.1 or later
 + [SDL](https://github.com/libsdl-org/SDL) (Audio)
     + Zlib License
 + [vcpkg](https://github.com/microsoft/vcpkg)
@@ -71,7 +71,7 @@ For detailed information, see [Related Tools](./docs/related-tools.md).
 + [yaml-cpp](https://github.com/jbeder/yaml-cpp)
     + MIT License
 + [QNrbf](https://github.com/SineStriker/QNrbf)
-    + GNU LGPL v2.1
+    + GNU LGPL v2.1 or later
 
 See [Related Tools](./docs/related-tools.md) for dependencies for each plugin.
 
@@ -87,4 +87,4 @@ Welcome to commit pull requests.
 
 ## License
 
-QSynthesis Toolset is licensed under Apache 2.0 License.
+ChorusKit is licensed under Apache 2.0 License.

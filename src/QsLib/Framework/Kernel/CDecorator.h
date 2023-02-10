@@ -20,14 +20,7 @@ public:
     explicit CDecorator(QObject *parent = nullptr);
     ~CDecorator();
 
-    /**
-     * @brief Current theme
-     *
-     * @return Theme string
-     */
-    QString theme() const;
-    QStringList themes() const;
-    void setTheme(const QString &theme);
+    void setTheme(const QString &theme) override;
 
     /**
      * @brief Add a stylesheet template file (Persistent)

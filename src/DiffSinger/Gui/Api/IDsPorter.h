@@ -22,42 +22,45 @@ public:
     };
     Q_DECLARE_FLAGS(SupportedPorts, SupportedPort)
 
+    struct SupportedFormat {
+        QString name;
+        QString suffix;
+    };
+
 public:
     /**
-     * @brief ports Supported importing or exporting scenes
+     * @brief Supported importing or exporting scenes
      * @return Flags, default to SupportedPort::All
      */
     virtual SupportedPorts ports() const;
 
     /**
-     * @brief filterString A translated filter string used in file dialog
+     * @brief A translated filter string used in file dialog
      * @return A string that matches this format: Sample Format(*.abc)
      */
-    virtual QString filterString() const = 0;
+    virtual SupportedFormat format() const = 0;
 
     /**
      * @brief Convert an SVS project file to a dspx model
      *
      * @param filename Absolute path of input file
      * @param out Output model reference
-     * @param args Other key-value arguments
+     * @param parent Widget/Object parent for inner objects
      * @return true Success
      * @return false Failed
      */
-    virtual bool load(const QString &filename, QDspxModel *out,
-                      const QMap<QString, QVariant> &args = {}) = 0;
+    virtual bool load(const QString &filename, QDspxModel *out, QObject *parent = nullptr) = 0;
 
     /**
      * @brief Convert a dspx model to an SVS project file
      *
      * @param filename Absolute path of output file
      * @param in Input model
-     * @param args Other key-value arguments
+     * @param parent Widget/Object parent for inner objects
      * @return true Success
      * @return false Failed
      */
-    virtual bool save(const QString &filename, const QDspxModel &in,
-                      const QMap<QString, QVariant> &args = {}) = 0;
+    virtual bool save(const QString &filename, const QDspxModel &in, QObject *parent = nullptr) = 0;
 };
 
 Q_DECLARE_OPERATORS_FOR_FLAGS(IDsPorter::SupportedPorts)

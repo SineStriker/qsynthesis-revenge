@@ -18,7 +18,6 @@ public:
     ~DsStartInfo();
 
     void load() override;
-    void save() override;
 
 protected:
     QsCoreConsole *createConsole(QObject *parent = nullptr) override;

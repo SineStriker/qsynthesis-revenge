@@ -6,8 +6,6 @@
 
 #include "QsSystem.h"
 
-#include <QFileDialog>
-
 Q_SINGLETON_DECLARE(QsFileManager)
 
 static const char Slash = '/';
@@ -86,48 +84,22 @@ QStringList QsFileManager::fetchRecent(int rType) const {
 }
 
 QString QsFileManager::openFile(const QString &title, const QString &filter, const QString &flag,
-                                QWidget *parent) {
-    Q_D(QsFileManager);
-    QString path = QFileDialog::getOpenFileName(parent, title, d->getLastOpenPath(flag), filter);
-    if (!path.isEmpty()) {
-        d->saveLastOpenDir(flag, path);
-    }
-    return path;
+                                QObject *parent) {
+    return {};
 }
 
 QStringList QsFileManager::openFiles(const QString &title, const QString &filter,
-                                     const QString &flag, QWidget *parent) {
-    Q_D(QsFileManager);
-    QStringList paths =
-        QFileDialog::getOpenFileNames(parent, title, d->getLastOpenPath(flag), filter);
-    if (!paths.isEmpty()) {
-        d->saveLastOpenDir(flag, paths.back());
-    }
-    return paths;
+                                     const QString &flag, QObject *parent) {
+    return {};
 }
 
-QString QsFileManager::openDir(const QString &title, const QString &flag, QWidget *parent) {
-    Q_D(QsFileManager);
-    QString path = QFileDialog::getExistingDirectory(parent, title, d->getLastOpenPath(flag));
-    if (!path.isEmpty()) {
-        d->saveLastOpenDir(flag, path, false);
-    }
-    return path;
+QString QsFileManager::openDir(const QString &title, const QString &flag, QObject *parent) {
+    return {};
 }
 
 QString QsFileManager::saveFile(const QString &title, const QString &filename,
-                                const QString &filter, const QString &flag, QWidget *parent) {
-    Q_D(QsFileManager);
-    QFileInfo info(filename);
-    if (info.isRelative() || !QsFs::isDirExist(info.absolutePath())) {
-        info.setFile(d->getLastOpenPath(flag) + Slash + info.fileName());
-    }
-    QString path =
-        QFileDialog::getSaveFileName(parent, title, info.absoluteFilePath(), filter, nullptr);
-    if (!path.isEmpty()) {
-        d->saveLastOpenDir(flag, path);
-    }
-    return path;
+                                const QString &filter, const QString &flag, QObject *parent) {
+    return {};
 }
 
 QsFileManager::QsFileManager(QsFileManagerPrivate &d, QObject *parent)

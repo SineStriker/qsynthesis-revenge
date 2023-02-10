@@ -12,17 +12,6 @@ CDecorator::CDecorator(QObject *parent) : CDecorator(*new CDecoratorPrivate(), p
 CDecorator::~CDecorator() {
 }
 
-// Theme related
-QString CDecorator::theme() const {
-    Q_D(const CDecorator);
-    return d->theme;
-}
-
-QStringList CDecorator::themes() const {
-    Q_D(const CDecorator);
-    return d->themeNames.keys();
-}
-
 void CDecorator::setTheme(const QString &theme) {
     Q_D(CDecorator);
 

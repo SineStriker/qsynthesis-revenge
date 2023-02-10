@@ -15,14 +15,17 @@ static const char KEY_NAME_CONFIG_VERSION[] = "config";
 static const char KEY_NAME_CONFIG_PARENT[] = "parent";
 static const char KEY_NAME_CONFIG_VALUES[] = "vars";
 
-static const char Slash = '/';
-
 bool QsLocaleDir::AutoDetectLocales = true;
 
 QsLocaleDir::QsLocaleDir() : QsLocaleDir(*new QsLocaleDirPrivate()) {
 }
 
 QsLocaleDir::~QsLocaleDir() {
+}
+
+QString QsLocaleDir::dir() const {
+    Q_D(const QsLocaleDir);
+    return d->dir;
 }
 
 QsLocaleDir::QsLocaleDir(const QString &dir) : QsLocaleDir() {

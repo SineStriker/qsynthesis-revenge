@@ -1,5 +1,5 @@
-#ifndef __DSDISTCONFIG_P_H__
-#define __DSDISTCONFIG_P_H__
+#ifndef DSDISTCONFIG_P_H
+#define DSDISTCONFIG_P_H
 
 #include "../DsDistConfig.h"
 #include "Kernel/private/QsCoreConfig_p.h"
@@ -17,4 +17,4 @@ public:
     void initByApp();
 };
 
-#endif // __DSDISTCONFIG_P_H__
+#endif // DSDISTCONFIG_P_H

@@ -12,9 +12,6 @@ public:
     ~DsConsolePrivate();
 
     void init();
-
-    QString fileDlgFilter_project;
-    QString fileDlgFilter_import;
 };
 
 #endif // DSCONSOLEPRIVATE_H

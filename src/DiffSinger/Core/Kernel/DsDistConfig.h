@@ -4,8 +4,9 @@
 #include <QScopedPointer>
 #include <QStringList>
 
+#include "DsCoreGlobal.h"
 #include "Kernel/QsCoreConfig.h"
-#include "DsGuiGlobal.h"
+
 
 #ifdef qAppConf
 #undef qAppConf
@@ -14,15 +15,21 @@
 
 class DsDistConfigPrivate;
 
-class DSGUI_API DsDistConfig : public QsCoreConfig {
+class DSCORE_API DsDistConfig : public QsCoreConfig {
     Q_DECLARE_PRIVATE(DsDistConfig)
 public:
     DsDistConfig();
     ~DsDistConfig();
 
+    enum AppDirType {
+        AppPlugins = DirType::UserDir + 1,
+    };
+
     enum ExtendedPlugins {
         DsEngine,
     };
+
+    QString appPluginDir() const;
 
 protected:
     DsDistConfig(DsDistConfigPrivate &d);

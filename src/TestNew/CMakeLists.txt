@@ -1,1 +1,1 @@
-add_subdirectory(MidiTest)
+# add_subdirectory(MidiTest)
