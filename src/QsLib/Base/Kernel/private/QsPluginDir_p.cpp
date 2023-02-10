@@ -52,9 +52,6 @@ void QsPluginDirPrivate::loadPlugins(const QString &dirname) {
                 pp.priority = it->toDouble();
                 pp.loader = loader;
 
-                qDebug() << "found prior" << pp.priority
-                         << loader->instance()->metaObject()->className();
-
                 // Has plugin with same priority
                 if (priorPlugins.find(pp) != priorPlugins.end()) {
                     goto out;

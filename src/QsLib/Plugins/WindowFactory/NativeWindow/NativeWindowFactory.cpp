@@ -20,7 +20,7 @@ public:
 void NativeWindowFactoryPrivate::init() {
     qIDec->addThemeTemplate("NativeWindow", ":/themes/window-bar.qss.in");
 
-    dd.setDir(qAppConf->appDir(QsCoreConfig::AppShare));
+    dd.setDir(QsFs::PathFindDirPath(q_ptr->path));
     dd.loadDefault("NativeWindow");
 }
 

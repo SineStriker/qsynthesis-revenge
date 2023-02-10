@@ -1,5 +1,26 @@
 include_guard(DIRECTORY)
 
+function(qs_copy_res _target _dest)
+    get_target_property(_temp ${_target} TC_RES_FILES)
+    if(_temp STREQUAL _temp-NOTFOUND)
+        return()
+    endif()
+
+    foreach(_file ${_temp})
+        set(_list)
+        list(APPEND _list "$<TARGET_FILE_DIR:${_target}>/$<TARGET_FILE_NAME:${_target}>")
+        list(APPEND _list "${_dest}/$<TARGET_FILE_NAME:${_target}>")
+        list(APPEND _list "${_file}")
+
+        add_custom_command(
+            TARGET deploy
+            COMMAND ${CMAKE_COMMAND}
+            -D "arg=${_list}"
+            -P "${PROJECT_MODULES_DIR}/../RelativeCopy.cmake"
+        )
+    endforeach()
+endfunction()
+
 function(proc_deploy _all_targets)
     set(_app_plugins)
     set(_qs_plugins)
@@ -64,7 +85,7 @@ function(proc_deploy _all_targets)
     message(STATUS "[INFO] Deployment mode, virtual target is added")
 
     if(NOT WIN32)
-        #message(FATAL_ERROR "Deployment mode is only implemented on Windows!")
+        # message(FATAL_ERROR "Deployment mode is only implemented on Windows!")
     endif()
 
     string(TOLOWER ${PROJECT_NAME} PROJECT_NAME_LOWER)
@@ -82,18 +103,17 @@ function(proc_deploy _all_targets)
     set(_res_docs_dir ${_deploy_dir}/docs)
 
     # Find Qt tools
-    
     if(NOT DEFINED QT_QMAKE_EXECUTABLE)
         get_target_property(QT_QMAKE_EXECUTABLE Qt::qmake IMPORTED_LOCATION)
     endif()
-    
+
     if(NOT EXISTS "${QT_QMAKE_EXECUTABLE}")
         message("Cannot find the QMake executable.")
         return()
     endif()
-    
+
     get_filename_component(QT_BIN_DIRECTORY "${QT_QMAKE_EXECUTABLE}" DIRECTORY)
-    
+
     find_program(QT_DEPLOY_EXECUTABLE NAMES windeployqt macdeployqt HINTS "${QT_BIN_DIRECTORY}")
 
     if(NOT EXISTS "${QT_DEPLOY_EXECUTABLE}")
@@ -135,7 +155,7 @@ function(proc_deploy _all_targets)
     foreach(_plugin ${_app_plugins} ${_qs_plugins})
         get_target_property(_category ${_plugin} TC_PLUGIN_CATEGORY)
         get_target_property(_subdir ${_plugin} TC_PLUGIN_SUBDIR)
-        
+
         if(NOT _category)
             continue()
         endif()
@@ -146,6 +166,7 @@ function(proc_deploy _all_targets)
             COMMAND ${CMAKE_COMMAND} -E make_directory ${_category_dir}
             COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:${_plugin}> ${_category_dir}
         )
+        qs_copy_res(${_plugin} ${_category_dir})
         unset(_category_dir)
     endforeach()
 
@@ -168,9 +189,10 @@ function(proc_deploy _all_targets)
             TARGET deploy
             COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:${_lib}> ${_libs_dir}
         )
+        qs_copy_res(${_lib} ${_libs_dir})
     endforeach()
 
-    # Deploy libraries
+    # Test libraries
     foreach(_lib ${_test_libs})
         # Set output dir to APP_LIB_DIR
         if(WIN32)
@@ -192,16 +214,16 @@ function(proc_deploy _all_targets)
             TARGET deploy
             COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:${_exe}> ${_tools_dir}
         )
+        qs_copy_res(${_exe} ${_tools_dir})
     endforeach()
 
     # Settle test executables
     # foreach(_exe ${_test_exes})
-    #     # Set output dir to APP_LIB_DIR
-    #     set_target_properties(
-    #         ${_exe} PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${LIBRARY_OUTPUT_DIR}
-    #     )
+    # # Set output dir to APP_LIB_DIR
+    # set_target_properties(
+    # ${_exe} PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${LIBRARY_OUTPUT_DIR}
+    # )
     # endforeach()
-
     foreach(_exe ${_main_exes} ${_other_exes})
         add_custom_command(
             TARGET deploy
@@ -217,7 +239,7 @@ function(proc_deploy _all_targets)
             get_filename_component(_name ${_dll} NAME)
             add_custom_command(
                 TARGET deploy
-                COMMAND echo "Deploy ${_name}"
+                COMMAND echo Deploy ${_name}
                 COMMAND ${CMAKE_COMMAND} -E copy ${_dll} ${_libs_dir}
             )
         endforeach()
@@ -227,7 +249,7 @@ function(proc_deploy _all_targets)
     foreach(_bin ${_qt_binaries})
         add_custom_command(
             TARGET deploy
-            COMMAND echo "Deploy $<TARGET_FILE_NAME:${_bin}>"
+            COMMAND echo Deploy $<TARGET_FILE_NAME:${_bin}>
             COMMAND ${QT_DEPLOY_EXECUTABLE}
             --libdir ${_libs_dir}
             --plugindir ${_plugins_dir}

@@ -3,7 +3,7 @@ project(NativeWindow
     LANGUAGES CXX
 )
 
-set(_dirs widgets private)
+set(_dirs Widgets private)
 set(_res_dir Res)
 
 add_files(_src
@@ -30,14 +30,14 @@ target_create_translations(${PROJECT_NAME} SOURCES ${_src}
 
 # Copy resources
 qs_add_res(${PROJECT_NAME}
-    FILES ${_res_dir}/NativeWindow.res.json
-    ABSOLUTE_PATH ${SHARE_OUTPUT_DIR}
+    FILES ${_res_dir}/${PROJECT_NAME}.res.json
+    RELATIVE_PATH .
 )
 qs_add_res(${PROJECT_NAME}
     FILES ${_res_dir}/translations/*.qm
-    ABSOLUTE_PATH ${SHARE_OUTPUT_DIR}/NativeWindow.res/translations
+    RELATIVE_PATH ${PROJECT_NAME}.res/translations
 )
 qs_add_res(${PROJECT_NAME}
     FILES ${_res_dir}/themes/*.json
-    ABSOLUTE_PATH ${SHARE_OUTPUT_DIR}/NativeWindow.res/themes
+    RELATIVE_PATH ${PROJECT_NAME}.res/themes
 )

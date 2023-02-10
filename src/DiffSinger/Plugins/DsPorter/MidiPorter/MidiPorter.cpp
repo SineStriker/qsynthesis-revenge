@@ -7,6 +7,7 @@
 #include "QsConsole.h"
 #include "QsLinq.h"
 #include "QsStartInfo.h"
+#include "QsSystem.h"
 
 #include <QChar>
 #include <QDebug>
@@ -18,6 +19,8 @@
 using namespace QDspx;
 
 MidiPorter::MidiPorter(QObject *parent) : IDsPorter(parent) {
+    dd.setDir(QsFs::PathFindDirPath(path));
+    dd.loadDefault("MidiPorter");
 }
 
 MidiPorter::~MidiPorter() {

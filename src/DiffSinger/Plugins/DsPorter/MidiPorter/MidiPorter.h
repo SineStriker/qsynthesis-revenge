@@ -2,6 +2,7 @@
 #define MIDIPORTER_H
 
 #include "Api/IDsPorter.h"
+#include "CDecorateDir.h"
 
 class Q_DECL_EXPORT MidiPorter : public IDsPorter {
     Q_OBJECT
@@ -17,6 +18,9 @@ public:
     bool load(const QString &filename, QDspxModel *out, QObject *parent = nullptr) override;
 
     bool save(const QString &filename, const QDspxModel &in, QObject *parent = nullptr) override;
+
+protected:
+    CDecorateDir dd;
 };
 
 #endif // MIDIPORTER_H

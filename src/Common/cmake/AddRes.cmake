@@ -56,24 +56,53 @@ function(qs_add_res _target)
                 COMMAND ${CMAKE_COMMAND} -E make_directory ${_dest}
                 COMMAND ${CMAKE_COMMAND} -E copy ${_file} ${_dest}
             )
+
+            if(FUNC_RELATIVE_PATH)
+                get_filename_component(_name ${_file} NAME)
+                get_target_property(_temp ${_target} TC_RES_FILES)
+
+                if(_temp STREQUAL _temp-NOTFOUND)
+                    set(_temp)
+                endif()
+
+                list(APPEND _temp ${_dest}/${_name})
+                set_target_properties(${_target} PROPERTIES TC_RES_FILES "${_temp}")
+            endif()
         endforeach()
     endif()
 
     # Copy dirs
     if(FUNC_DIRS)
-        foreach(_file ${FUNC_DIRS})
-            get_filename_component(_dir ${_file} DIRECTORY)
-            get_filename_component(_name ${_file} NAME)
-            add_custom_command(
-                TARGET ${_target}
-                POST_BUILD
-                COMMAND ${CMAKE_COMMAND} -E copy ${dir}/${_name} ${_dest}
-            )
-            add_custom_command(
-                TARGET ${_res_update_target}
-                POST_BUILD
-                COMMAND ${CMAKE_COMMAND} -E copy ${dir}/${_name} ${_dest}
-            )
+        foreach(_dir ${FUNC_DIRS})
+            file(GLOB_RECURSE _files ${_dir}/*)
+
+            foreach(_file ${_files})
+                file(RELATIVE_PATH _rel_path ${_dir} ${_file})
+                add_custom_command(
+                    TARGET ${_target}
+                    POST_BUILD
+                    COMMAND ${CMAKE_COMMAND} -E make_directory ${_dest}/${_rel_path}
+                    COMMAND ${CMAKE_COMMAND} -E copy ${_file} ${_dest}/${_rel_path}
+                )
+                add_custom_command(
+                    TARGET ${_res_update_target}
+                    POST_BUILD
+                    COMMAND ${CMAKE_COMMAND} -E make_directory ${_dest}/${_rel_path}
+                    COMMAND ${CMAKE_COMMAND} -E copy ${_file} ${_dest}/${_rel_path}
+                )
+
+                if(FUNC_RELATIVE_PATH)
+                    get_filename_component(_name ${_file} NAME)
+                    get_target_property(_temp ${_target} TC_RES_FILES)
+
+                    if(_temp STREQUAL _temp-NOTFOUND)
+                        set(_temp)
+                    endif()
+
+                    list(APPEND _temp ${_dest}/${_name})
+                    set_target_properties(${_target} PROPERTIES TC_RES_FILES "${_temp}")
+                endif()
+            endforeach()
         endforeach()
     endif()
 endfunction()
