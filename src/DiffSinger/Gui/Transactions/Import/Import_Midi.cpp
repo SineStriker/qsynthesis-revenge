@@ -4,6 +4,9 @@
 #include "Utau/Utils/QUtaUtils.h"
 
 #include "Dialogs/ImportDialog.h"
+#include "QsConsole.h"
+#include "QsLinq.h"
+#include "QsStartInfo.h"
 
 #include <QChar>
 #include <QDebug>
@@ -18,7 +21,8 @@ bool Import::loadMidi(const QString &filename, QDspxModel *out, QObject *parent)
     QMidiFile midi;
 
     if (!midi.load(filename)) {
-        qDebug() << "Failed to read MIDI file!";
+        qCs->MsgBox(parent, QsConsole::Critical, qIStup->mainTitle(),
+                    QObject::tr("Fail to open MIDI file"));
         return false;
     }
 
@@ -45,7 +49,7 @@ bool Import::loadMidi(const QString &filename, QDspxModel *out, QObject *parent)
 
     // 解析Tempo Map
     QVector<QPair<int, double>> tempos;
-    QVector<QPair<int, QByteArray>> marker;
+    QVector<QPair<int, QByteArray>> markers;
 
     QMap<int, QPoint> timeSign;
     timeSign[0] = QPoint(4, 4);
@@ -62,15 +66,18 @@ bool Import::loadMidi(const QString &filename, QDspxModel *out, QObject *parent)
                     qDebug() << "Tempo:" << e->tick() << e->tempo();
                     break;
                 case QMidiEvent::Marker:
-                    marker.append(qMakePair(e->tick(), data));
+                    markers.append(qMakePair(e->tick(), data));
                     qDebug() << "Marker:" << e->tick() << QString(data);
                     break;
                 case QMidiEvent::TimeSignature:
                     timeSign[e->tick()] = QPoint(data[0], 2 * data[1]);
                     qDebug() << "TimeSignature:" << e->tick() << timeSign[e->tick()];
                     break;
+                case 0x04:
+                    qDebug() << e->tick() << QString::fromLocal8Bit(e->data());
+                    break;
                 default:
-                    qDebug() << "Else:" << e->number();
+                    qDebug() << "Else:" << Qt::hex << e->number();
                     break;
             }
         }
@@ -100,7 +107,9 @@ bool Import::loadMidi(const QString &filename, QDspxModel *out, QObject *parent)
 
     struct TrackNameAndLyrics {
         QByteArray name;
+        qint32 trackEnd;
         QMap<qint32, QByteArray> lyrics; // key: pos; value: lyric;
+        TrackNameAndLyrics() : trackEnd(0){};
     };
 
     // key: pack(track, channel, 0); ordered
@@ -135,6 +144,10 @@ bool Import::loadMidi(const QString &filename, QDspxModel *out, QObject *parent)
                             //                            break;
                         case QMidiEvent::Lyric:
                             cur.lyrics.insert(e->tick(), e->data());
+                            break;
+                        // End of Track
+                        case 0x2F:
+                            cur.trackEnd = e->tick();
                             break;
                         default:
                             break;
@@ -224,7 +237,7 @@ bool Import::loadMidi(const QString &filename, QDspxModel *out, QObject *parent)
             // 存储出现的key
             staticKeyNum.insert(key);
 
-            // 逻辑轨道封装乱序Note
+            // 逻辑轨道封装Note
             for (int i = 0; i < noteListPair.first.size(); ++i) {
                 noteCount++;
 
@@ -279,13 +292,21 @@ bool Import::loadMidi(const QString &filename, QDspxModel *out, QObject *parent)
         dlg.setWindowTitle(QObject::tr("Import MIDI file"));
 
         ImportDialog::ImportOptions opt;
+        opt.minTracks = markers.isEmpty() ? 1 : 0;
         opt.maxTracks = 32;
+        opt.labels = QsLinq::Select<QPair<qint32, QByteArray>, QByteArray>(
+            markers, [&](const QPair<qint32, QByteArray> &pair) { return pair.second; });
 
         QList<qint32> logicIndexList;
         for (auto it = logicTrackInfos.begin(); it != logicTrackInfos.end(); ++it) {
             logicIndexList.append(it.key());
             opt.tracks.append(it.value().option);
         }
+        if (logicIndexList.empty()) {
+            qCs->MsgBox(parent, QsConsole::Warning, qIStup->mainTitle(),
+                        QObject::tr("This file doesn't contain any notes."));
+        }
+
         dlg.setImportOptions(opt);
         if (dlg.exec() == 0) {
             return false;
@@ -326,34 +347,47 @@ bool Import::loadMidi(const QString &filename, QDspxModel *out, QObject *parent)
     }
 
     QDspx::Label label;
-    for (auto &it : marker) {
+    for (auto &it : markers) {
         label.pos = int(it.first * scaleFactor);
-        label.text = it.second;
+        label.text = codec->toUnicode(it.second);
         timeLine.labels.append(label);
     }
 
-    out->content.timeline = timeLine;
+    QDspxModel model;
+    model.content.timeline = timeLine;
 
     // Track数据
-    // QHash<qint32, QHash<qint32, QDspx::Track>> logicTracks;
-    //    QDspx::Track track;
-    //
-    //    for (auto &trackID : selectID) {
-    //        auto clip = SingingClipRef::create();
-    //        TrackInfo trackInfo = trackInfos[trackID];
-    //        for (int i = 0; i < trackInfo.notePos.size(); ++i) {
-    //            Note note;
-    //            note.pos = trackInfo.notePos[i];
-    //            // clip->notes.append();
-    //        }
-    //
-    //        track.clips.append(clip);
-    //        out->content.tracks.append(track);
-    //    }
+    for (auto &logicID : selectID) {
+        LogicTrack tempIndex = LogicTrack::fromInt(logicID);
+        QDspx::Track track;
+        auto clip = SingingClipRef::create();
+        auto logicNotes = logicTrackNotes[logicID];
 
+        int clipEnd = int(trackNameAndLyrics[tempIndex.track].trackEnd * scaleFactor);
+        ClipTime clipTime(0, clipEnd);
+        clip->time = clipTime;
+        clip->name = codec->toUnicode(logicTrackInfos[logicID].option.title);
 
+        // 填充音符
+        for (const auto &logicNote : qAsConst(logicNotes)) {
+            Note note;
 
+            note.pos = int(logicNote.pos * scaleFactor);
+            note.length = int(logicNote.len * scaleFactor);
+            note.keyNum = logicNote.key;
+            note.lyric = codec->toUnicode(logicNote.lyric);
 
+            qDebug() << note.pos << note.length << note.keyNum << note.lyric;
+            clip->notes.append(note);
+        }
+
+        // 填充track信息
+        track.name = clip->name;
+        track.clips.append(clip);
+        model.content.tracks.append(track);
+    }
+
+    *out = std::move(model);
 
     return true;
 }

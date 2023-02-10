@@ -4,12 +4,12 @@
 <context>
     <name>ImportDialog</name>
     <message>
-        <location filename="../../Widgets/Dialogs/ImportDialog.cpp" line="23"/>
+        <location filename="../../Widgets/Dialogs/ImportDialog.cpp" line="22"/>
         <source>OK</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Widgets/Dialogs/ImportDialog.cpp" line="24"/>
+        <location filename="../../Widgets/Dialogs/ImportDialog.cpp" line="23"/>
         <source>Cancel</source>
         <translation type="unfinished"></translation>
     </message>
@@ -33,12 +33,12 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Widgets/Dialogs/private/ImportDialog_p.cpp" line="212"/>
+        <location filename="../../Widgets/Dialogs/private/ImportDialog_p.cpp" line="210"/>
         <source>Select encoding</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Widgets/Dialogs/private/ImportDialog_p.cpp" line="250"/>
+        <location filename="../../Widgets/Dialogs/private/ImportDialog_p.cpp" line="248"/>
         <source>Please select at least one track!</source>
         <translation type="unfinished"></translation>
     </message>

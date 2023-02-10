@@ -49,31 +49,27 @@ void ImportDialog::setImportOptions(const ImportDialog::ImportOptions &options) 
     int i = 0;
     bool noTitle = true;
     bool noLyrics = true;
-    for (auto it = options.tracks.begin(); it != options.tracks.end(); ++it) {
+    for (const auto &track : options.tracks) {
         auto box = new CCheckBox();
         box->setObjectName("check-box");
-        box->setEnabled(it->selectable);
+        box->setEnabled(track.selectable);
         bg->addButton(box, i++);
         bl->addWidget(box);
-        if (!it->title.isEmpty()) {
+        if (!track.title.isEmpty()) {
             noTitle = false;
         }
-        if (!it->lyrics.isEmpty()) {
+        if (!track.lyrics.isEmpty()) {
             noLyrics = false;
         }
         connect(box, &QAbstractButton::toggled, d, &ImportDialogPrivate::_q_boxToggled);
     }
 
-    if (noTitle) {
-        d->nameListWidget->hide();
-    }
     bool noLabel = options.labels.isEmpty();
-    bool noBytes = noTitle && noLyrics && noTitle;
 
     d->labelsWidget->setVisible(!noLabel);
-    d->nameListWidget->setVisible(!noTitle);
+    d->nameListWidget->setVisible(!(noTitle && noLyrics));
     d->lyricsWidget->setVisible(!noLyrics);
-    d->setCodecTabVisible(!noBytes);
+    d->setCodecTabVisible(!(noTitle && noLyrics && noLabel));
 
     d->updateNameList();
 }

@@ -5,8 +5,6 @@
 #include "DsGuiGlobal.h"
 #include "QDspxModel.h"
 
-#include <qnamespace.h>
-
 class DSGUI_API IDsPorter : public INamePlugin {
     Q_OBJECT
 public:
@@ -19,7 +17,7 @@ public:
         ExportClip = 0x4,
         ExportTrack = 0x8,
         ExportFile = 0x16,
-        Export = ExportClip | ExportClip | ExportTrack,
+        Export = ExportClip | ExportTrack | ExportFile,
         All = Import | DragIn | Export,
     };
     Q_DECLARE_FLAGS(SupportedPorts, SupportedPort)

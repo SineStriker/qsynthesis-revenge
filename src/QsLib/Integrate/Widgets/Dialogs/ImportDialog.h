@@ -36,10 +36,11 @@ public:
     };
 
     struct ImportOptions {
+        int minTracks;
         int maxTracks;
         QList<TrackInfo> tracks;
         QList<QByteArray> labels;
-        ImportOptions() : maxTracks(1){};
+        ImportOptions() : minTracks(0), maxTracks(1){};
     };
 
     ImportOptions options() const;

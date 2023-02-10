@@ -4,12 +4,12 @@
 <context>
     <name>ImportDialog</name>
     <message>
-        <location filename="../../Widgets/Dialogs/ImportDialog.cpp" line="23"/>
+        <location filename="../../Widgets/Dialogs/ImportDialog.cpp" line="22"/>
         <source>OK</source>
         <translation>确定</translation>
     </message>
     <message>
-        <location filename="../../Widgets/Dialogs/ImportDialog.cpp" line="24"/>
+        <location filename="../../Widgets/Dialogs/ImportDialog.cpp" line="23"/>
         <source>Cancel</source>
         <translation>取消</translation>
     </message>
@@ -41,12 +41,12 @@
         <translation>音轨 %1</translation>
     </message>
     <message>
-        <location filename="../../Widgets/Dialogs/private/ImportDialog_p.cpp" line="212"/>
+        <location filename="../../Widgets/Dialogs/private/ImportDialog_p.cpp" line="210"/>
         <source>Select encoding</source>
         <translation>选择编码</translation>
     </message>
     <message>
-        <location filename="../../Widgets/Dialogs/private/ImportDialog_p.cpp" line="250"/>
+        <location filename="../../Widgets/Dialogs/private/ImportDialog_p.cpp" line="248"/>
         <source>Please select at least one track!</source>
         <translation>请至少选择一个轨道！</translation>
     </message>
