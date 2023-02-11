@@ -8,53 +8,89 @@
         <source>Standard MIDI Files</source>
         <translation>标准MIDI文件</translation>
     </message>
+    <message>
+        <location filename="../../MidiPorter.cpp" line="38"/>
+        <source>Fail to open MIDI file!</source>
+        <translation type="unfinished">无法打开MIDI文件！</translation>
+    </message>
+    <message>
+        <location filename="../../MidiPorter.cpp" line="50"/>
+        <source>No track found!</source>
+        <translation type="unfinished">没有找到轨道!</translation>
+    </message>
+    <message>
+        <location filename="../../MidiPorter.cpp" line="54"/>
+        <source>The number of MIDI tracks is illegal!</source>
+        <translation type="unfinished">非法的MIDI轨道数!</translation>
+    </message>
+    <message>
+        <location filename="../../MidiPorter.cpp" line="58"/>
+        <source>Unsupported MIDI file type!</source>
+        <translation type="unfinished">不支持的MIDI文件格式！</translation>
+    </message>
+    <message>
+        <location filename="../../MidiPorter.cpp" line="237"/>
+        <source>The number of note-on and note-off are not match!</source>
+        <translation type="unfinished">音符起始数量不匹配！</translation>
+    </message>
+    <message>
+        <location filename="../../MidiPorter.cpp" line="278"/>
+        <source>%1(%2): (%3 notes, %4)</source>
+        <translation type="unfinished">%1(%2): (%3 个音符，%4)</translation>
+    </message>
+    <message>
+        <location filename="../../MidiPorter.cpp" line="281"/>
+        <source>None</source>
+        <translation type="unfinished">无</translation>
+    </message>
+    <message>
+        <location filename="../../MidiPorter.cpp" line="293"/>
+        <source>Import MIDI file</source>
+        <translation type="unfinished">导入MIDI文件</translation>
+    </message>
+    <message>
+        <location filename="../../MidiPorter.cpp" line="308"/>
+        <source>This file doesn&apos;t contain any notes.</source>
+        <translation type="unfinished">此文件中不存在音符。</translation>
+    </message>
 </context>
 <context>
     <name>QObject</name>
     <message>
-        <location filename="../../MidiPorter.cpp" line="38"/>
         <source>Fail to open MIDI file!</source>
-        <translation>无法打开MIDI文件！</translation>
+        <translation type="vanished">无法打开MIDI文件！</translation>
     </message>
     <message>
-        <location filename="../../MidiPorter.cpp" line="51"/>
         <source>No track found!</source>
-        <translation>没有找到轨道!</translation>
+        <translation type="vanished">没有找到轨道!</translation>
     </message>
     <message>
-        <location filename="../../MidiPorter.cpp" line="55"/>
         <source>The number of MIDI tracks is illegal!</source>
-        <translation>非法的MIDI轨道数!</translation>
+        <translation type="vanished">非法的MIDI轨道数!</translation>
     </message>
     <message>
-        <location filename="../../MidiPorter.cpp" line="59"/>
         <source>Unsupported MIDI file type!</source>
-        <translation>不支持的MIDI文件格式！</translation>
+        <translation type="vanished">不支持的MIDI文件格式！</translation>
     </message>
     <message>
-        <location filename="../../MidiPorter.cpp" line="238"/>
         <source>The number of note-on and note-off are not match!</source>
-        <translation>音符起始数量不匹配！</translation>
+        <translation type="vanished">音符起始数量不匹配！</translation>
     </message>
     <message>
-        <location filename="../../MidiPorter.cpp" line="280"/>
         <source>%1(%2): (%3 notes, %4)</source>
-        <translation>%1(%2): (%3 个音符，%4)</translation>
+        <translation type="vanished">%1(%2): (%3 个音符，%4)</translation>
     </message>
     <message>
-        <location filename="../../MidiPorter.cpp" line="283"/>
         <source>None</source>
-        <translation>无</translation>
+        <translation type="vanished">无</translation>
     </message>
     <message>
-        <location filename="../../MidiPorter.cpp" line="295"/>
         <source>Import MIDI file</source>
-        <translation>导入MIDI文件</translation>
+        <translation type="vanished">导入MIDI文件</translation>
     </message>
     <message>
-        <location filename="../../MidiPorter.cpp" line="310"/>
         <source>This file doesn&apos;t contain any notes.</source>
-        <translation>此文件中不存在音符。</translation>
+        <translation type="vanished">此文件中不存在音符。</translation>
     </message>
 </context>
 </TS>
