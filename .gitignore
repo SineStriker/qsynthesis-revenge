@@ -94,4 +94,5 @@ CMakeSettings.json
 
 *.sublime-*
 setup-vcpkg.json
+setup-vcpkg-temp*
 *.natvis

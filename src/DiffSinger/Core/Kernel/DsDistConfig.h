@@ -27,6 +27,8 @@ public:
 
     enum ExtendedPlugins {
         SynthHost,
+        DspxPorter,
+        EditWidget,
     };
 
     QString appPluginDir() const;

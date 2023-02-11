@@ -4,27 +4,13 @@ from __future__ import annotations
 
 import os
 import sys
-import shutil
 import platform
 
 import enum
 import argparse
 import urllib.request
 
-
-def print_begin(s: str):
-    sz: int = (60 - len(s))//2
-    print(f"{ '-' * sz } {s} { '-' * sz }")
-
-
-def println_twice():
-    for _ in range(2):
-        print()
-
-
-def rmdir(dir: str):
-    if os.path.isdir(dir):
-        shutil.rmtree(dir)
+from scripts.python.utils import *
 
 
 class OSFlags(enum.Flag):
@@ -100,7 +86,7 @@ vcpkg_tasks: list[library_task] = [
 ]
 
 
-# Usage: python setup_vcpkg.py [--clean] [--distclean] [--skip] [--init]
+# Usage: python setup_vcpkg.py [--clean] [--distclean] [--skip] [--init] [--deploy]
 
 def main():
 
@@ -108,13 +94,15 @@ def main():
     parser = argparse.ArgumentParser(
         description="Setup vcpkg for this project.")
     parser.add_argument("-c",
-                        "--clean", help="Clean local caches after build.", action="store_true")
+                        "--clean", help="Clean local caches after install.", action="store_true")
     parser.add_argument(
-        "--distclean", help="Clean all caches after build.", action="store_true")
+        "--distclean", help="Clean all caches after install.", action="store_true")
     parser.add_argument(
-        "--skip", help="Skip build.", action="store_true")
+        "--skip", help="Skip vcpkg install.", action="store_true")
     parser.add_argument(
         "--init", help="Generate configuration file.", action="store_true")
+    parser.add_argument(
+        "--deploy", help="Build and deploy the project.", type=str, default="", metavar="<out dir>")
     args = parser.parse_args()
 
     # Determine os and arch
@@ -174,10 +162,10 @@ def main():
         import scripts.python.vcpkg_init as tmp
         if args.init:
             tmp.generate()
-            return
+            sys.exit(-1)
 
         if not tmp.load():
-            return
+            sys.exit(-1)
 
     # -- Detect system proxy
     print_begin("Setup context proxy")
@@ -257,10 +245,17 @@ def main():
     else:
         print("Skip.")
 
+    os.chdir(app_path)
     println_twice()
 
     # -- End
     print("Pre-build tasks finished")
+
+    if args.deploy != "":
+        println_twice()
+
+        import scripts.python.deploy as tmp
+        tmp.deploy(args.deploy)
 
 
 if __name__ == "__main__":
