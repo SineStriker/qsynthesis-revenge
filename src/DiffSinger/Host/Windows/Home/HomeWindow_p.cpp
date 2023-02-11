@@ -43,7 +43,7 @@ void HomeWindowPrivate::init() {
     frame->setBottomWidget(aboutButton);
 
     qIDec->installLocale(q, {"DsHost"}, _LOC(HomeWindow, q));
-    qIDec->installTheme(q, {"HomeWindow"});
+    qIDec->installTheme(q, {"Global", "HomeWindow"});
 
     // Init window size and width ratio
     double r = dsLocal->home.navWidthRatio;

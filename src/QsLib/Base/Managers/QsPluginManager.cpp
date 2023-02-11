@@ -22,11 +22,17 @@ bool QsPluginManager::save() {
     return true;
 }
 
-QsPluginDir *QsPluginManager::addPluginSet(const QString &key, const QString &dir) {
+QsPluginDir *QsPluginManager::addPluginSet(const QString &key, const PluginSetOptions &opt) {
     Q_D(QsPluginManager);
     auto pd = QSharedPointer<QsPluginDir>::create();
-    pd->load(dir);
-    d->pluginSets.insert(key, pd);
+    pd->load(opt.dir);
+
+    QsPluginManagerPrivate::PluginSetInfo info;
+    info.dir = opt.dir;
+    info.categoryNameFunc = opt.categoryNameFunc;
+    info.d_ptr = pd;
+
+    d->pluginSets.insert(key, info);
     return pd.data();
 }
 
@@ -39,7 +45,7 @@ QsPluginDir *QsPluginManager::pluginSet(const QString &key) {
     Q_D(QsPluginManager);
     auto it = d->pluginSets.find(key);
     if (it != d->pluginSets.end()) {
-        return it.value().data();
+        return it.value().d_ptr.data();
     }
     return nullptr;
 }

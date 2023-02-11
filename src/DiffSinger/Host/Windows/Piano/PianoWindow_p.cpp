@@ -11,5 +11,5 @@ PianoWindowPrivate::~PianoWindowPrivate() {
 void PianoWindowPrivate::init() {
     Q_Q(PianoWindow);
 
-    qIDec->installTheme(q, {"PianoWindow"});
+    qIDec->installTheme(q, {"Global", "PianoWindow"});
 }

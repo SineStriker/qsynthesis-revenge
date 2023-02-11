@@ -1,6 +1,10 @@
 #include "UstPorter.h"
 
+#include "QsSystem.h"
+
 UstPorter::UstPorter(QObject *parent) : IDspxPorter(parent) {
+    dd.setDir(QsFs::PathFindDirPath(path));
+    dd.loadDefault("UstPorter");
 }
 
 UstPorter::~UstPorter() {

@@ -1,7 +1,7 @@
 #include "QsPluginDir.h"
 #include "private/QsPluginDir_p.h"
 
-QsPluginDir::QsPluginDir() : QsPluginDir(*new QsPluginDirPrivate()) {
+QsPluginDir::QsPluginDir(QObject *parent) : QsPluginDir(*new QsPluginDirPrivate(), parent) {
 }
 
 QsPluginDir::~QsPluginDir() {
@@ -38,7 +38,7 @@ QObjectList QsPluginDir::instances() const {
     return res;
 }
 
-QsPluginDir::QsPluginDir(QsPluginDirPrivate &d) : d_ptr(&d) {
+QsPluginDir::QsPluginDir(QsPluginDirPrivate &d, QObject *parent) : QObject(parent), d_ptr(&d) {
     d.q_ptr = this;
 
     d.init();

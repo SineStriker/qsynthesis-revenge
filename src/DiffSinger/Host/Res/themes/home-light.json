@@ -5,8 +5,6 @@
     },
     "values": {
         "HomeWindow": {
-            "font.family": "Microsoft YaHei",
-            "font.size": 15,
             "background": "#FFFFFF",
             "windowIcon": {
                 "foreground": "transparent"

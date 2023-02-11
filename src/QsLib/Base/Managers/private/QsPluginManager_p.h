@@ -14,7 +14,11 @@ public:
 
     void init();
 
-    QHash<QString, QSharedPointer<QsPluginDir>> pluginSets;
+    struct PluginSetInfo : public QsPluginManager::PluginSetOptions {
+        QSharedPointer<QsPluginDir> d_ptr;
+    };
+
+    QHash<QString, PluginSetInfo> pluginSets;
 };
 
 #endif // QSPLUGINMANAGERPRIVATE_H

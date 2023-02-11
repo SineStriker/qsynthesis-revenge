@@ -27,6 +27,8 @@ public:
         QStringList suffixes;
     };
 
+    static QString categoryName();
+
 public:
     /**
      * @brief Supported importing or exporting scenes

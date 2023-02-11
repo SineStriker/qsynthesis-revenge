@@ -25,9 +25,14 @@ public:
     bool load() override;
     bool save() override;
 
-    QsPluginDir *addPluginSet(const QString &key, const QString &dir);
+    struct PluginSetOptions {
+        QString dir;
+        std::function<QString()> categoryNameFunc;
+    };
+
+    QsPluginDir *addPluginSet(const QString &key, const PluginSetOptions &opt);
     void removePluginSet(const QString &key);
-    
+
     QsPluginDir *pluginSet(const QString &key);
 
     virtual QPluginLoader *loadInternalPlugin(QsCoreConfig::InternalPlugins id);

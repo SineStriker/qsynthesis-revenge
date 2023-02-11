@@ -2,6 +2,7 @@
 #define USTPORTER_H
 
 #include "Api/IDspxPorter.h"
+#include "CDecorateDir.h"
 
 class Q_DECL_EXPORT UstPorter : public IDspxPorter {
     Q_OBJECT
@@ -19,6 +20,9 @@ public:
     bool load(const QString &filename, QDspxModel *out, QObject *parent = nullptr) override;
 
     bool save(const QString &filename, const QDspxModel &in, QObject *parent = nullptr) override;
+
+protected:
+    CDecorateDir dd;
 };
 
 #endif // USTPORTER_H

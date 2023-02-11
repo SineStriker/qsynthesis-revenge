@@ -1,9 +1,9 @@
 #ifndef DSCONSOLE_H
 #define DSCONSOLE_H
 
-#include "QsConsole.h"
 #include "DsGuiGlobal.h"
 #include "QDspxModel.h"
+#include "QsConsole.h"
 
 #ifdef qCs
 #undef qCs
@@ -27,6 +27,12 @@ public:
      * @param parent    QWidget parent
      */
     void aboutApp(QWidget *parent = nullptr);
+
+    /**
+     * @brief viewPlugins   Show plugin settings
+     * @param parent        QWidget parent
+     */
+    void viewPlugins(QWidget *parent = nullptr);
 
     /**
      * @brief openFile Open a file dialog and parse selected DSPX file

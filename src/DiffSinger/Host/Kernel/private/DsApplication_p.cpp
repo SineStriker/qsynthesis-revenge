@@ -3,6 +3,7 @@
 #include <QDebug>
 
 #include "DsDistConfig.h"
+#include "IDspxPorter.h"
 #include "QsPluginManager.h"
 
 static const char Slash = '/';
@@ -30,7 +31,10 @@ void DsApplicationPrivate::init() {
     localData->load(qAppConf->appDir(DsDistConfig::AppData) + Slash + LocalDataFile);
 
     qsPluginMgr->addPluginSet("dspxporters",
-                              qAppConf->appDir(DsDistConfig::AppPlugins) + "/dspxporters");
+                              {
+                                  qAppConf->appDir(DsDistConfig::AppPlugins) + "/dspxporters",
+                                  std::bind(IDspxPorter::categoryName),
+                              });
 }
 
 void DsApplicationPrivate::deinit() {

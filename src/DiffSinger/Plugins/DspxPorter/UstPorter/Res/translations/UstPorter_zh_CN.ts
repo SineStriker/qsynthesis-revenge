@@ -4,7 +4,7 @@
 <context>
     <name>UstPorter</name>
     <message>
-        <location filename="../../UstPorter.cpp" line="14"/>
+        <location filename="../../UstPorter.cpp" line="18"/>
         <source>UTAU Sequence Texts</source>
         <translation>UTAU工程文件</translation>
     </message>

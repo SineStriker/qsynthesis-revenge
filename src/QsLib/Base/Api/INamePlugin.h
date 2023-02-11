@@ -17,8 +17,10 @@ public:
      */
     QString path;
 
+protected:
     static void setLastPluginPath(const QString &path);
 
+public:
     template <class T>
     static T *load(QPluginLoader *ld);
 };

@@ -8,9 +8,10 @@ Config {
 
 /* Stylesheet Content */
 
-QWidget {
+HomeWindow {
     font-family: '"{{font.family|str}}"';
     font-size: "{{font.size|size}}";
+    color: "{{color|size}}";
 }
 
 CWindowBarV2>CToolButton#icon-button {

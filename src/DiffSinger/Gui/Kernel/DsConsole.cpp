@@ -12,6 +12,7 @@
 #include "CStartInfo.h"
 #include "QsLinq.h"
 
+#include "Dialogs/PluginSetDialog.h"
 #include "IDspxPorter.h"
 #include "QsPluginManager.h"
 
@@ -70,6 +71,11 @@ void DsConsole::aboutApp(QWidget *parent) {
 #else
     QMessageBox::information(parent, title, text);
 #endif
+}
+
+void DsConsole::viewPlugins(QWidget *parent) {
+    PluginSetDialog dlg(parent);
+    dlg.exec();
 }
 
 bool DsConsole::openFile(QDspxModel *dspx, QWidget *parent) {

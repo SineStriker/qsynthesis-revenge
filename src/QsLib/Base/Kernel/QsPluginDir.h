@@ -9,10 +9,11 @@
 
 class QsPluginDirPrivate;
 
-class QSBASE_API QsPluginDir {
+class QSBASE_API QsPluginDir : public QObject {
+    Q_OBJECT
     Q_DECLARE_PRIVATE(QsPluginDir)
 public:
-    QsPluginDir();
+    explicit QsPluginDir(QObject *parent = nullptr);
     virtual ~QsPluginDir();
 
 public:
@@ -29,7 +30,7 @@ public:
     QList<T *> plugins() const;
 
 protected:
-    QsPluginDir(QsPluginDirPrivate &d);
+    QsPluginDir(QsPluginDirPrivate &d, QObject *parent = nullptr);
 
     QScopedPointer<QsPluginDirPrivate> d_ptr;
 };

@@ -40,4 +40,12 @@
         <translation type="unfinished"></translation>
     </message>
 </context>
+<context>
+    <name>IDspxPorter</name>
+    <message>
+        <location filename="../../Api/IDspxPorter.cpp" line="10"/>
+        <source>Dspx format converter</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
 </TS>
