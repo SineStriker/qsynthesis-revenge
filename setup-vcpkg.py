@@ -86,7 +86,7 @@ vcpkg_tasks: list[library_task] = [
 ]
 
 
-# Usage: python setup_vcpkg.py [--clean] [--distclean] [--skip] [--init] [--deploy]
+# Usage: python setup_vcpkg.py [--clean] [--distclean] [--skip] [--init] [--deploy <out dir>]
 
 def main():
 

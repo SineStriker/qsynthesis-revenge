@@ -49,7 +49,7 @@ def deploy(out_dir : str):
     # Config
     print_begin("CMake Config")
     ret = os.system(
-        f"cmake -S . -B {build_dir} -DCMAKE_PREFIX_PATH:STRING={config_inst.Qt5ConfigDir} -DDCMAKE_BUILD_TYPE:STRING=Release -DCONFIG_WIN32_DEBUG:BOOL=off -G Ninja --no-warn-unused-cli")
+        f"cmake -S . -B {build_dir} -DCMAKE_PREFIX_PATH:STRING={config_inst.Qt5ConfigDir} -DCMAKE_BUILD_TYPE:STRING=Release -DCONFIG_WIN32_DEBUG:BOOL=off -G Ninja --no-warn-unused-cli")
     if ret != 0:
         sys.exit(ret)
     println_twice()
