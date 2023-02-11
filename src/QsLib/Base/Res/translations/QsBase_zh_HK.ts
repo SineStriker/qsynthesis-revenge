@@ -4,27 +4,27 @@
 <context>
     <name>QCoreApplication</name>
     <message>
-        <location filename="../../Global/QsSystem.cpp" line="252"/>
+        <location filename="../../Global/QsSystem.cpp" line="256"/>
         <source>Explorer</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Global/QsSystem.cpp" line="254"/>
+        <location filename="../../Global/QsSystem.cpp" line="258"/>
         <source>Finder</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Global/QsSystem.cpp" line="256"/>
+        <location filename="../../Global/QsSystem.cpp" line="260"/>
         <source>File Manager</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Global/QsSystem.cpp" line="262"/>
+        <location filename="../../Global/QsSystem.cpp" line="266"/>
         <source>Administrator</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Global/QsSystem.cpp" line="264"/>
+        <location filename="../../Global/QsSystem.cpp" line="268"/>
         <source>Root User</source>
         <translation type="unfinished"></translation>
     </message>

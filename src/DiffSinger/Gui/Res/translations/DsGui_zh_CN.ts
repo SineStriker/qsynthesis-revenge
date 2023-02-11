@@ -32,7 +32,7 @@
     <message>
         <location filename="../../Kernel/DsConsole.cpp" line="94"/>
         <source>No plugins found for importing files!</source>
-        <translation type="unfinished"></translation>
+        <translation>找不到适用于文件导入的插件！</translation>
     </message>
     <message>
         <location filename="../../Kernel/DsConsole.cpp" line="98"/>

@@ -18,7 +18,7 @@
 
 using namespace QDspx;
 
-MidiPorter::MidiPorter(QObject *parent) : IDsPorter(parent) {
+MidiPorter::MidiPorter(QObject *parent) : IDspxPorter(parent) {
     dd.setDir(QsFs::PathFindDirPath(path));
     dd.loadDefault("MidiPorter");
 }
@@ -26,7 +26,7 @@ MidiPorter::MidiPorter(QObject *parent) : IDsPorter(parent) {
 MidiPorter::~MidiPorter() {
 }
 
-IDsPorter::SupportedFormat MidiPorter::format() const {
+IDspxPorter::SupportedFormat MidiPorter::format() const {
     return {tr("Standard MIDI Files"), {"mid", "midi"}};
 };
 

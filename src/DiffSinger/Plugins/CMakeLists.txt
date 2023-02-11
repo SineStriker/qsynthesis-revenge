@@ -12,6 +12,6 @@ function(configure_plugin _author)
     )
 endfunction()
 
-add_subdirectory(DsEngine)
+add_subdirectory(DspxPorter)
 
-add_subdirectory(DsPorter)
+add_subdirectory(SynthHost)

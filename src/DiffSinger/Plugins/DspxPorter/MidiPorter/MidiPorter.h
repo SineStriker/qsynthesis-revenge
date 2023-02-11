@@ -1,13 +1,13 @@
 #ifndef MIDIPORTER_H
 #define MIDIPORTER_H
 
-#include "Api/IDsPorter.h"
+#include "Api/IDspxPorter.h"
 #include "CDecorateDir.h"
 
-class Q_DECL_EXPORT MidiPorter : public IDsPorter {
+class Q_DECL_EXPORT MidiPorter : public IDspxPorter {
     Q_OBJECT
-    Q_INTERFACES(IDsPorter)
-    Q_PLUGIN_METADATA(IID IDsPorter_IID FILE "plugin.json")
+    Q_INTERFACES(IDspxPorter)
+    Q_PLUGIN_METADATA(IID IDspxPorter_IID FILE "plugin.json")
 public:
     explicit MidiPorter(QObject *parent = nullptr);
     ~MidiPorter();

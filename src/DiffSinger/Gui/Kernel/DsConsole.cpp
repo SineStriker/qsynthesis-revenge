@@ -12,7 +12,7 @@
 #include "CStartInfo.h"
 #include "QsLinq.h"
 
-#include "IDsPorter.h"
+#include "IDspxPorter.h"
 #include "QsPluginManager.h"
 
 static const char FILE_EXTENSIONS_DELIMITER[] = ";;";
@@ -21,14 +21,14 @@ static const char OPEN_FLAG[] = "%PROJ%";
 static const char IMPORT_FLAG[] = "%IMPORT%";
 
 struct PluginsAndFilter {
-    QMap<QString, IDsPorter *> plugins;
+    QMap<QString, IDspxPorter *> plugins;
     QString filters;
 };
 
 static auto GetPlugins() {
     // Get all plugins
-    auto porters = qsPluginMgr->pluginSet("dsporters")->plugins<IDsPorter>();
-    QMap<QString, IDsPorter *> plugins;
+    auto porters = qsPluginMgr->pluginSet("dspxporters")->plugins<IDspxPorter>();
+    QMap<QString, IDspxPorter *> plugins;
     for (const auto &porter : qAsConst(porters)) {
         const auto &fmt = porter->format();
         for (const auto &suffix : fmt.suffixes) {
@@ -37,9 +37,9 @@ static auto GetPlugins() {
     }
 
     return PluginsAndFilter{
-        plugins, (QsLinq::Select<IDsPorter *, QString>(
+        plugins, (QsLinq::Select<IDspxPorter *, QString>(
                       porters,
-                      [&](const IDsPorter *val) {
+                      [&](const IDspxPorter *val) {
                           const auto &fmt = val->format();
                           return QString("%1(%2)").arg(
                               fmt.name, QsLinq::Select<QString, QString>(

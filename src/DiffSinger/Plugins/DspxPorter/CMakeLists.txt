@@ -1,4 +1,4 @@
-set(CURRENT_PLUGIN_CATEGORY dsporters)
+set(CURRENT_PLUGIN_CATEGORY dspxporters)
 
 add_subdirectory(MidiPorter)
 

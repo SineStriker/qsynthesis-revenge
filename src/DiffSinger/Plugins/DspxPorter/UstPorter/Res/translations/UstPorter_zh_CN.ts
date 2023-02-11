@@ -6,7 +6,7 @@
     <message>
         <location filename="../../UstPorter.cpp" line="14"/>
         <source>UTAU Sequence Texts</source>
-        <translation type="unfinished"></translation>
+        <translation>UTAU工程文件</translation>
     </message>
 </context>
 </TS>

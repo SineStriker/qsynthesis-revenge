@@ -1,16 +1,16 @@
 #include "UstPorter.h"
 
-UstPorter::UstPorter(QObject *parent) : IDsPorter(parent) {
+UstPorter::UstPorter(QObject *parent) : IDspxPorter(parent) {
 }
 
 UstPorter::~UstPorter() {
 }
 
-IDsPorter::SupportedPorts UstPorter::ports() const {
+IDspxPorter::SupportedPorts UstPorter::ports() const {
     return Import | DragIn | ExportClip | ExportTrack;
 }
 
-IDsPorter::SupportedFormat UstPorter::format() const {
+IDspxPorter::SupportedFormat UstPorter::format() const {
     return {tr("UTAU Sequence Texts"), {"ust"}};
 }
 

@@ -169,7 +169,7 @@ bool QsCoreConfigPrivate::apply_helper() {
         switch (args.level) {
             case DirInitArgs::CreateIfNotExist:
                 if (!QsFs::mkDir(path)) {
-                    qCs->MsgBox(nullptr, QsCoreConsole::Critical, qIStup->errorTitle(),
+                    qCs->MsgBox(nullptr, QsCoreConsole::Critical, qIStup->mainTitle(),
                                 QString("Failed to create %1 directory!")
                                     .arg(QsFs::PathFindFileName(path)));
                     return false;
@@ -177,7 +177,7 @@ bool QsCoreConfigPrivate::apply_helper() {
                 break;
             case DirInitArgs::ErrorIfNotExist:
                 if (!QsFs::isDirExist(path)) {
-                    qCs->MsgBox(nullptr, QsCoreConsole::Critical, qIStup->errorTitle(),
+                    qCs->MsgBox(nullptr, QsCoreConsole::Critical, qIStup->mainTitle(),
                                 QString("Failed to create %1 directory!")
                                     .arg(QsFs::PathFindFileName(path)));
                     return false;

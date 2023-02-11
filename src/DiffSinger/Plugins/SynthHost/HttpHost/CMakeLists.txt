@@ -1,4 +1,4 @@
-project(HttpEngine
+project(HttpHost
     VERSION 0.0.0.1
     LANGUAGES CXX
 )

@@ -1,12 +1,12 @@
 #ifndef USTPORTER_H
 #define USTPORTER_H
 
-#include "Api/IDsPorter.h"
+#include "Api/IDspxPorter.h"
 
-class Q_DECL_EXPORT UstPorter : public IDsPorter {
+class Q_DECL_EXPORT UstPorter : public IDspxPorter {
     Q_OBJECT
-    Q_INTERFACES(IDsPorter)
-    Q_PLUGIN_METADATA(IID IDsPorter_IID FILE "plugin.json")
+    Q_INTERFACES(IDspxPorter)
+    Q_PLUGIN_METADATA(IID IDspxPorter_IID FILE "plugin.json")
 public:
     explicit UstPorter(QObject *parent = nullptr);
     ~UstPorter();

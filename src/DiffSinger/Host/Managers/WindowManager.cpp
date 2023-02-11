@@ -72,7 +72,7 @@ PianoWindow *WindowManager::openProject(const QString &filename) {
     w->setFilename(filename);
     if (!w->load()) {
         QMessageBox::critical(
-            firstWindow(), qIStup->errorTitle(),
+            firstWindow(), qIStup->mainTitle(),
             tr("Failed to load project %1").arg(QDir::toNativeSeparators(filename)));
         w->deleteLater();
         return nullptr;

@@ -26,7 +26,7 @@ public:
     };
 
     enum ExtendedPlugins {
-        DsEngine,
+        SynthHost,
     };
 
     QString appPluginDir() const;
