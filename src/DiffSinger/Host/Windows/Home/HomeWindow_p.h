@@ -1,7 +1,6 @@
 #ifndef HOMEWINDOWPRIVATE_H
 #define HOMEWINDOWPRIVATE_H
 
-#include <QBoxLayout>
 #include <QSplitter>
 
 #include "Windows/private/PlainWindow_p.h"

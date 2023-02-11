@@ -27,7 +27,7 @@ MidiPorter::~MidiPorter() {
 }
 
 IDsPorter::SupportedFormat MidiPorter::format() const {
-    return {tr("Standard MIDI Files"), "mid"};
+    return {tr("Standard MIDI Files"), {"mid", "midi"}};
 };
 
 bool MidiPorter::load(const QString &filename, QDspxModel *out, QObject *parent) {

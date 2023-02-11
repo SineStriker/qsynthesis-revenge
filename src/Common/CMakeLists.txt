@@ -1,7 +1,7 @@
 set(_templates_dir ${CMAKE_CURRENT_LIST_DIR}/templates)
 set(_vcpkg_installed_dir ${REPOSITORY_VCPKG_DIR}/installed)
 
-if(${CMAKE_BUILD_TYPE} STREQUAL Debug)
+if("${CMAKE_BUILD_TYPE}" STREQUAL Debug)
     set(_vcpkg_triplet_suffix "/debug")
 else()
     set(_vcpkg_triplet_suffix)

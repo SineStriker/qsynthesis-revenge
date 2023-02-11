@@ -3,9 +3,10 @@
 
 #include "../ImportDialog.h"
 
+#include "CAutoResizer.h"
 #include "CTabButton.h"
 #include "Frames/LinearScrollArea.h"
-#include "Attaches/CAutoResizer.h"
+#include "Layouts/CEqualBoxLayout.h"
 
 #include <QAction>
 #include <QButtonGroup>
@@ -53,7 +54,7 @@ public:
     // Main
     QTabWidget *tabWidget;
     CTabButton *btnCancel, *btnOK;
-    QHBoxLayout *buttonsLayout;
+    CEqualBoxLayout *buttonsLayout;
 
     QVBoxLayout *layout;
     QAction *okAction;
@@ -63,10 +64,6 @@ public:
 
     bool firstShow;
     int maxInitHeight;
-
-    const QStringList SupportEncodings = {
-        "System", "UTF-8", "UTF-16", "UTF-32", "GBK", "Shift-JIS", "Big5",
-    };
 
     void updateEncoding();
     void updateNameList();

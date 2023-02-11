@@ -61,6 +61,7 @@ protected:
 
     virtual void newStartedInstance();
     virtual void receiveMessage(quint32 instanceId, const QByteArray &message);
+    virtual void clean();
 
 private:
     void _q_instanceStarted();

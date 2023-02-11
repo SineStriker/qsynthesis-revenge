@@ -24,7 +24,7 @@ public:
 
     struct SupportedFormat {
         QString name;
-        QString suffix;
+        QStringList suffixes;
     };
 
 public:

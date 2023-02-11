@@ -31,7 +31,9 @@ static auto GetPlugins() {
     QMap<QString, IDsPorter *> plugins;
     for (const auto &porter : qAsConst(porters)) {
         const auto &fmt = porter->format();
-        plugins.insert(fmt.suffix.toLower(), porter);
+        for (const auto &suffix : fmt.suffixes) {
+            plugins.insert(suffix.toLower(), porter);
+        }
     }
 
     return PluginsAndFilter{
@@ -39,7 +41,12 @@ static auto GetPlugins() {
                       porters,
                       [&](const IDsPorter *val) {
                           const auto &fmt = val->format();
-                          return QString("%1(*.%2)").arg(fmt.name, fmt.suffix);
+                          return QString("%1(%2)").arg(
+                              fmt.name, QsLinq::Select<QString, QString>(
+                                            fmt.suffixes, [](const QString &s) { return "*." + s; })
+                                            .join(" ")
+
+                          );
                       })
                   << QString("%1(%2)").arg(DsConsole::tr("All Files"), QsOs::allFilesFilter()))
                      .join(FILE_EXTENSIONS_DELIMITER)};

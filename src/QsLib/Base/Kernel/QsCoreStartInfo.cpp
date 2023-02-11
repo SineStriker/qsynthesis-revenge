@@ -76,6 +76,9 @@ void QsCoreStartInfo::newStartedInstance() {
 void QsCoreStartInfo::receiveMessage(quint32 instanceId, const QByteArray &message) {
 }
 
+void QsCoreStartInfo::clean() {
+}
+
 void QsCoreStartInfo::_q_instanceStarted() {
     newStartedInstance();
 }
@@ -87,4 +90,5 @@ void QsCoreStartInfo::_q_messageReceived(quint32 instanceId, QByteArray message)
 void QsCoreStartInfo::_q_aboutToQuit() {
     Q_D(QsCoreStartInfo);
     d->isAboutToQuit = true;
+    clean();
 }

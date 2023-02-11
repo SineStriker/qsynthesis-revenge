@@ -8,7 +8,15 @@
 #include "QsConsole.h"
 #include "QsStartInfo.h"
 
-#define SYSTEM_CODEC QTextCodec::codecForName("System")
+static const char *SupportedEncodings[] = {
+    "System", "UTF-8", "UTF-16", "UTF-32", "GBK", "Shift-JIS", "Big5",
+};
+
+static const int EncodingDefaultIndex = 1;
+
+static const int SupportedEncodingsCount = sizeof(SupportedEncodings) / sizeof(const char *);
+
+#define DEFAULT_CODEC QTextCodec::codecForName(SupportedEncodings[EncodingDefaultIndex])
 
 static QString convertBytes(QTextCodec *codec, const QByteArray &data) {
     QTextCodec::ConverterState state;
@@ -51,7 +59,7 @@ void ImportDialogPrivate::init() {
 
     firstShow = true;
     maxInitHeight = 0;
-    codec = SYSTEM_CODEC;
+    codec = DEFAULT_CODEC;
 
     codecVisible = false;
 
@@ -82,8 +90,8 @@ void ImportDialogPrivate::init() {
 
     codecListWidget = new QListWidget();
     codecListWidget->setObjectName("codec-list-widget");
-    for (const auto &s : SupportEncodings) {
-        codecListWidget->addItem(s);
+    for (int i = 0; i < SupportedEncodingsCount; ++i) {
+        codecListWidget->addItem(SupportedEncodings[i]);
     }
 
     labelsWidget = new QPlainTextEdit();
@@ -122,13 +130,13 @@ void ImportDialogPrivate::init() {
     okAction->setShortcuts({QKeySequence(Qt::Key_Enter), QKeySequence(Qt::Key_Return)});
     btnOK->addAction(okAction);
 
-    buttonsLayout = new QHBoxLayout();
+    buttonsLayout = new CEqualBoxLayout(QBoxLayout::LeftToRight);
     buttonsLayout->setSpacing(0);
     buttonsLayout->setMargin(0);
 
     buttonsLayout->addStretch();
-    buttonsLayout->addWidget(btnOK);
-    buttonsLayout->addWidget(btnCancel);
+    buttonsLayout->addWidgetE(btnOK);
+    buttonsLayout->addWidgetE(btnCancel);
 
     // Main
     layout = new QVBoxLayout();
@@ -154,12 +162,12 @@ void ImportDialogPrivate::init() {
     qIDec->installLocale(q, {"QsIntegrate"}, _LOC(ImportDialog, q));
     qIDec->installTheme(q, {"ImportDialog"});
 
-    codecListWidget->setCurrentRow(0);
+    codecListWidget->setCurrentRow(1);
 }
 
 void ImportDialogPrivate::updateEncoding() {
     auto codecItem = codecListWidget->currentItem();
-    codec = codecItem ? QTextCodec::codecForName(codecItem->text().toLatin1()) : SYSTEM_CODEC;
+    codec = codecItem ? QTextCodec::codecForName(codecItem->text().toLatin1()) : DEFAULT_CODEC;
     for (int i = 0; i < nameListWidget->count(); ++i) {
         auto item = nameListWidget->item(i);
         const auto &track = opt.tracks.at(i);

@@ -141,7 +141,7 @@
                         "padding": 15
                     },
                     "bottom": {
-                        "padding": 10
+                        "padding": 0
                     }
                 }
             }

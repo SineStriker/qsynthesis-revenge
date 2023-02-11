@@ -6,8 +6,10 @@ project(QsFramework
 set(_dirs Api Editor Global Kernel Managers Widgets)
 set(_res_dir Res)
 set(_extra_includes
+    Widgets/Attaches
     Widgets/Custom
     Widgets/Extended
+    Widgets/Layouts
     Widgets/Metatypes
 )
 

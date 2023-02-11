@@ -262,3 +262,33 @@ HomeRecentTopFrame>QLineEdit#search-box:focus {
     border-style: "{{main.recent.top.textBox.border.style.focus|str}}";
     border-radius: "{{main.recent.top.textBox.border.radius.focus|size}}";
 }
+
+
+/* FileListWidget */
+
+QFrame#home-recent-list-container {
+    padding: 20px;
+    background-color: transparent;
+}
+
+QFrame#home-recent-list-container>QLabel {
+    color: #CCCCCC;
+}
+
+QFrame#home-recent-list-container>FileListWidget {
+    border: none;
+    background-color: transparent;
+    qproperty-styleData: qvariants(/* styleData */
+    qtypeface(transparent, 1), /* idleType */
+    qtypeface(rgba(255, 255, 255, 5%), 1), /* selectType */
+    qtypeface(transparent, 1), /* underline */
+    qtypeface(#E0E0E0, 17px), /* fileType */
+    qtypeface(#909090, 15px), /* locType */
+    qtypeface(#909090, 15px), /* dateType */
+    qmargins(10px, 10px, 10px, 1px), /* fileMargins */
+    qmargins(10px, 1px, 10px, 10px), /* locMargins */
+    qmargins(10px, 10px, 20px, 10px), /* dateMargins */
+    qmargins(20px, 10px, 10px, 10px), /* iconMargins */
+    qmargins(3px, 10px, 3px, 10px), /* margins */
+    );
+}

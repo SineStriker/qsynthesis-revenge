@@ -11,7 +11,7 @@ IDsPorter::SupportedPorts UstPorter::ports() const {
 }
 
 IDsPorter::SupportedFormat UstPorter::format() const {
-    return {tr("UTAU Sequence Texts"), "ust"};
+    return {tr("UTAU Sequence Texts"), {"ust"}};
 }
 
 bool UstPorter::load(const QString &filename, QDspxModel *out, QObject *parent) {
