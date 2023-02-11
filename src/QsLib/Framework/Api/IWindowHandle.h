@@ -11,9 +11,9 @@ class QSFRAMEWORK_API IWindowHandle : public QObject {
     Q_OBJECT
     Q_DECLARE_PRIVATE(IWindowHandle)
 public:
-    IWindowHandle(QMainWindow *parent);
+    explicit IWindowHandle(QMainWindow *parent);
     ~IWindowHandle();
-    
+
     void setParent(QObject *) = delete;
 
 public:
@@ -62,7 +62,7 @@ public:
 
     /**
      * @brief Similar to QWidget::windowFlags
-     * 
+     *
      */
     TitleBarFlags titleBarFlags();
 

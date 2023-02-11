@@ -3,8 +3,8 @@
 
 #include <QObject>
 
-#include "INamePlugin.h"
 #include "IAudioDecoder.h"
+#include "INamePlugin.h"
 
 class IAudioPlaybackPrivate;
 
@@ -12,7 +12,7 @@ class QSMEDIA_API IAudioPlayback : public INamePlugin {
     Q_OBJECT
     Q_DECLARE_PRIVATE(IAudioPlayback)
 public:
-    IAudioPlayback(QObject *parent = nullptr);
+    explicit IAudioPlayback(QObject *parent = nullptr);
     ~IAudioPlayback();
 
     enum PlaybackState {

@@ -2,6 +2,7 @@
 #define PIANOWINDOW_H
 
 #include "../Basic/ProjectWindow.h"
+#include "QDspxModel.h"
 
 class PianoWindowPrivate;
 
@@ -9,15 +10,15 @@ class PianoWindow : public ProjectWindow {
     Q_OBJECT
     Q_DECLARE_PRIVATE(PianoWindow)
 public:
-    PianoWindow(QWidget *parent = nullptr);
+    explicit PianoWindow(QWidget *parent = nullptr);
     ~PianoWindow();
 
 public:
-    QString filename() const;
-    void setFilename(const QString &filename);
+    void load(const QDspxModel &model);
 
-    bool load();
-    bool save();
+    QDspxModel currentProject() const;
+    QDspxModel currentTrack() const;
+    QDspxModel currentClip() const;
 
 protected:
     PianoWindow(PianoWindowPrivate &d, QWidget *parent = nullptr);

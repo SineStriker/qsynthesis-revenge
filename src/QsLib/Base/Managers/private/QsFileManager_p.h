@@ -20,7 +20,7 @@ public:
         QString key;
         QFileSet set;
     };
-    QHash<int, RecentDesc> recentMap;
+    QHash<int, RecentDesc> recentFileMap;
     int fileRegMax;
     int dirRegMax;
 

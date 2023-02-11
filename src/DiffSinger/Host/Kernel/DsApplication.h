@@ -3,6 +3,8 @@
 
 #include <QApplication>
 
+#include "QDspxModel.h"
+
 #if defined(qApp)
 #undef qApp
 #endif
@@ -16,6 +18,8 @@ class DsApplication : public QApplication {
 public:
     DsApplication(int &argc, char **argv);
     ~DsApplication();
+
+public:
 
 protected:
     DsApplication(DsApplicationPrivate &d, int &argc, char **argv);

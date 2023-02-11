@@ -11,7 +11,7 @@ class Q_DECL_EXPORT SDLPlayback : public IAudioPlayback {
     Q_INTERFACES(IAudioPlayback)
     Q_PLUGIN_METADATA(IID IAudioPlayback_IID FILE "plugin.json")
 public:
-    SDLPlayback(QObject *parent = nullptr);
+    explicit SDLPlayback(QObject *parent = nullptr);
     ~SDLPlayback();
 
 public:

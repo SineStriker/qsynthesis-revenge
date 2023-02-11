@@ -42,6 +42,20 @@ public:
      */
     bool openFile(QDspxModel *dspx, QWidget *parent = nullptr);
 
+    // Load from filename and commit information to file manager
+    bool openFile(QDspxModel *model, const QString &filename, QWidget *parent = nullptr);
+
+    /**
+     * @brief saveAsFile Open a file dialog and save DSPX file
+     * @param dspx     Input file
+     * @param parent   QWidget parent
+     * @return true: success, false: failed/canceled
+     */
+    bool saveAsFile(const QDspxModel &dspx, const QString &nameHint, QWidget *parent = nullptr);
+
+    // Save to filename and commit information to file manager
+    bool saveFile(const QDspxModel &model, const QString &filename, QWidget *parent = nullptr);
+
     /**
      * @brief importFile Open a file dialog and parse selected XXX file
      * @param dspx     Output ref

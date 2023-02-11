@@ -9,8 +9,15 @@ class ProjectWindow : public PlainWindow {
     Q_OBJECT
     Q_DECLARE_PRIVATE(ProjectWindow)
 public:
-    ProjectWindow(QWidget *parent = nullptr);
+    explicit ProjectWindow(QWidget *parent = nullptr);
     ~ProjectWindow();
+
+public:
+    QString filename() const;
+    void setFilename(const QString &filename);
+
+    bool untitled() const;
+    void setUntitled(bool untitled);
 
 protected:
     ProjectWindow(ProjectWindowPrivate &d, QWidget *parent = nullptr);

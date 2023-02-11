@@ -4,6 +4,7 @@
 #include "DsConsole.h"
 
 #include "QsFileManager.h"
+#include "WindowManager.h"
 
 #include <QDir>
 #include <QFileInfoList>
@@ -77,16 +78,21 @@ void HomeRecentTopFrame::reloadStrings() {
 }
 
 void HomeRecentTopFrame::_q_newButtonClicked() {
+    qWindows->newProject();
 }
 
 void HomeRecentTopFrame::_q_openButtonClicked() {
     QDspxModel dspx;
-    qCs->openFile(&dspx, this);
+    if (qCs->openFile(&dspx, this)) {
+        qWindows->openProject(dspx);
+    }
 }
 
 void HomeRecentTopFrame::_q_importButtonClicked() {
     QDspxModel dspx;
-    qCs->importFile(&dspx, this);
+    if (qCs->importFile(&dspx, this)) {
+        qWindows->openProject(dspx);
+    }
 }
 
 /**
@@ -146,7 +152,7 @@ HomeRecentWidget::~HomeRecentWidget() {
 }
 
 void HomeRecentWidget::reloadStrings() {
-    recentEmptyLabel->setText(tr("No data"));
+    recentEmptyLabel->setText(tr("No data."));
 }
 
 QTypeList HomeRecentWidget::styleData() const {
@@ -186,7 +192,10 @@ void HomeRecentWidget::_q_recentItemClicked(const QModelIndex &index, int button
     QString filename = index.data(FileListWidget::Location).toString();
     if (button == Qt::LeftButton) {
         if (type == QsFileManager::Project) {
-            // emit openRequested(filename);
+            QDspxModel dspx;
+            if (qCs->openFile(&dspx, filename, this)) {
+                qWindows->openProject(dspx);
+            }
         } else {
             // Dir handle
         }

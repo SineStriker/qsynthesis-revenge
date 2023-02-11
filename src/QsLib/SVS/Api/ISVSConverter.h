@@ -9,7 +9,7 @@
 class QSSVS_API ISVSConverter : public ISVSPlugin {
     Q_OBJECT
 public:
-    ISVSConverter(QObject *parent = nullptr);
+    explicit ISVSConverter(QObject *parent = nullptr);
     ~ISVSConverter();
 
     QString err;

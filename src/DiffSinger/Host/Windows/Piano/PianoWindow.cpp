@@ -11,20 +11,18 @@ PianoWindow::PianoWindow(PianoWindowPrivate &d, QWidget *parent) : ProjectWindow
     d.init();
 }
 
-QString PianoWindow::filename() const {
-    Q_D(const PianoWindow);
-    return d->filename;
+void PianoWindow::load(const QDspxModel &model) {
+    qDebug() << model.metadata.version;
 }
 
-void PianoWindow::setFilename(const QString &filename) {
-    Q_D(PianoWindow);
-    d->filename = filename;
+QDspxModel PianoWindow::currentProject() const {
+    return {};
 }
 
-bool PianoWindow::load() {
-    return false;
+QDspxModel PianoWindow::currentTrack() const {
+    return {};
 }
 
-bool PianoWindow::save() {
-    return false;
+QDspxModel PianoWindow::currentClip() const {
+    return {};
 }

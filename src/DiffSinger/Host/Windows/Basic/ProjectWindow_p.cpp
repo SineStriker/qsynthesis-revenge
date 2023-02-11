@@ -8,4 +8,5 @@ ProjectWindowPrivate::~ProjectWindowPrivate() {
 
 void ProjectWindowPrivate::init() {
     closeFlag = false;
+    untitled = false;
 }

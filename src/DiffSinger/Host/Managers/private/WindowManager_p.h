@@ -7,7 +7,7 @@
 #include "Windows/Basic/ProjectWindow.h"
 #include "Windows/Home/HomeWindow.h"
 
-#include <QSet>
+#include <set>
 
 class WindowManagerPrivate : public QsAbstractManagerPrivate {
     Q_DECLARE_PUBLIC(WindowManager)
@@ -21,7 +21,7 @@ public:
     PianoWindow *createPianoWin();
 
     HomeWindow *homeWin;
-    QSet<ProjectWindow *> projWins;
+    std::set<ProjectWindow *> projWins;
 };
 
 #endif // WINDOWMANAGERPRIVATE_H

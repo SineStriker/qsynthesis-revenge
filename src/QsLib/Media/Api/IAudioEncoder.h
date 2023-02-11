@@ -9,7 +9,7 @@
 class QSMEDIA_API IAudioEncoder : public INamePlugin {
     Q_OBJECT
 public:
-    IAudioEncoder(QObject *parent = nullptr);
+    explicit IAudioEncoder(QObject *parent = nullptr);
     ~IAudioEncoder();
 };
 

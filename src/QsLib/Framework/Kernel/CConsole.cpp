@@ -18,7 +18,7 @@ void CConsole::MsgBox(QObject *parent, QsCoreConsole::MessageBoxFlag flag, const
 
     QWidget *w = nullptr;
     if (parent && parent->isWidgetType()) {
-        w = qobject_cast<QWidget *>(parent);
+        w = qobject_cast<QWidget *>(parent)->window();
     }
 
 #if defined(Q_OS_WINDOWS)

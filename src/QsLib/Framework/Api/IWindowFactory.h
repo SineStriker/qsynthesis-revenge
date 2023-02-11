@@ -7,7 +7,7 @@
 class QSFRAMEWORK_API IWindowFactory : public INamePlugin {
     Q_OBJECT
 public:
-    IWindowFactory(QObject *parent = nullptr);
+    explicit IWindowFactory(QObject *parent = nullptr);
     ~IWindowFactory();
 
     /**

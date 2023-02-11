@@ -15,7 +15,7 @@ class QSBASE_API QsCoreDecorator : public QObject {
     Q_DECLARE_PRIVATE(QsCoreDecorator)
     Q_SINGLETON(QsCoreDecorator)
 public:
-    QsCoreDecorator(QObject *parent = nullptr);
+    explicit QsCoreDecorator(QObject *parent = nullptr);
     ~QsCoreDecorator();
 
 public:

@@ -9,7 +9,7 @@
 class QSMEDIA_API IAudioDecoder : public INamePlugin, public NAudio::WaveStream {
     Q_OBJECT
 public:
-    IAudioDecoder(QObject *parent = nullptr);
+    explicit IAudioDecoder(QObject *parent = nullptr);
     ~IAudioDecoder();
 
 public:

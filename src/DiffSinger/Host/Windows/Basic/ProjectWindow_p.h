@@ -13,6 +13,9 @@ public:
 
     void init();
 
+    QString filename;
+    bool untitled;
+
     bool closeFlag;
 };
 

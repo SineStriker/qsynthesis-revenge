@@ -9,7 +9,7 @@ class QsGuiFileManager : public QsFileManager {
     Q_OBJECT
     Q_DECLARE_PRIVATE(QsGuiFileManager)
 public:
-    QsGuiFileManager(QObject *parent = nullptr);
+    explicit QsGuiFileManager(QObject *parent = nullptr);
     ~QsGuiFileManager();
 
 public:

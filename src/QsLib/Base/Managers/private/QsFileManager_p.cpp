@@ -31,7 +31,7 @@ QsFileManagerPrivate::~QsFileManagerPrivate() {
 void QsFileManagerPrivate::init() {
     fileRegMax = QsFileManager::Project;
     dirRegMax = QsFileManager::Folder;
-    recentMap = {
+    recentFileMap = {
         {
             fileRegMax,
             RecentDesc{KEY_NAME_RECENT_FILES, QFileSet(QFileSet::File)},
@@ -65,7 +65,7 @@ bool QsFileManagerPrivate::load_helper(const QString &filename) {
     it = objDoc.find(SECTION_NAME_FILE_SYSTEM);
     if (it != objDoc.end() && it.value().isObject()) {
         QJsonObject obj = it.value().toObject();
-        for (auto it2 = recentMap.begin(); it2 != recentMap.end(); ++it2) {
+        for (auto it2 = recentFileMap.begin(); it2 != recentFileMap.end(); ++it2) {
             RecentDesc &info = it2.value();
             auto it3 = obj.find(info.key);
             if (it3 == obj.end() || !it3.value().isArray()) {
@@ -120,7 +120,7 @@ bool QsFileManagerPrivate::save_helper(const QString &filename) {
     }
 
     QJsonObject recentObj;
-    for (auto it = recentMap.begin(); it != recentMap.end(); ++it) {
+    for (auto it = recentFileMap.begin(); it != recentFileMap.end(); ++it) {
         const auto &info = it.value();
         recentObj.insert(info.key, QJsonArray::fromStringList(info.set.valid()));
     }

@@ -18,7 +18,7 @@
 class PlayWidget : public QWidget {
     Q_OBJECT
 public:
-    PlayWidget(QWidget *parent = nullptr);
+    explicit PlayWidget(QWidget *parent = nullptr);
     ~PlayWidget();
 
     void openFile(const QString &filename);

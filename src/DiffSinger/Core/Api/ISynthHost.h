@@ -9,7 +9,7 @@
 class DSCORE_API ISynthHost : public INamePlugin {
     Q_OBJECT
 public:
-    ISynthHost(QObject *parent = nullptr);
+    explicit ISynthHost(QObject *parent = nullptr);
     ~ISynthHost();
 
 public:

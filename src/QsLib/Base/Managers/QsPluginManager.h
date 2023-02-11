@@ -18,7 +18,7 @@ class QSBASE_API QsPluginManager : public QsAbstractManager {
     Q_DECLARE_PRIVATE(QsPluginManager)
     Q_SINGLETON(QsPluginManager)
 public:
-    QsPluginManager(QObject *parent = nullptr);
+    explicit QsPluginManager(QObject *parent = nullptr);
     ~QsPluginManager();
 
 public:

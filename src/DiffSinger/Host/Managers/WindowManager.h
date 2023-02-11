@@ -4,6 +4,7 @@
 #include <QMainWindow>
 
 #include "Managers/QsAbstractManager.h"
+#include "QDspxModel.h"
 
 #include "QsMacros.h"
 
@@ -19,7 +20,7 @@ class WindowManager : public QsAbstractManager {
 
     Q_SINGLETON(WindowManager)
 public:
-    WindowManager(QObject *parent = nullptr);
+    explicit WindowManager(QObject *parent = nullptr);
     ~WindowManager();
 
 public:
@@ -27,7 +28,7 @@ public:
     void hideHome();
 
     PianoWindow *newProject();
-    PianoWindow *openProject(const QString &filename);
+    PianoWindow *openProject(const QDspxModel &model);
 
     QMainWindow *firstWindow() const;
 

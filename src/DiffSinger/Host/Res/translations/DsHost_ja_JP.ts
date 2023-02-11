@@ -4,22 +4,22 @@
 <context>
     <name>HomeRecentTopFrame</name>
     <message>
-        <location filename="../../Windows/Home/HomeRecentWidget.cpp" line="73"/>
+        <location filename="../../Windows/Home/HomeRecentWidget.cpp" line="74"/>
         <source>New</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Windows/Home/HomeRecentWidget.cpp" line="74"/>
+        <location filename="../../Windows/Home/HomeRecentWidget.cpp" line="75"/>
         <source>Open</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Windows/Home/HomeRecentWidget.cpp" line="75"/>
+        <location filename="../../Windows/Home/HomeRecentWidget.cpp" line="76"/>
         <source>Import</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Windows/Home/HomeRecentWidget.cpp" line="76"/>
+        <location filename="../../Windows/Home/HomeRecentWidget.cpp" line="77"/>
         <source>Search for files</source>
         <translation type="unfinished"></translation>
     </message>
@@ -27,8 +27,8 @@
 <context>
     <name>HomeRecentWidget</name>
     <message>
-        <location filename="../../Windows/Home/HomeRecentWidget.cpp" line="149"/>
-        <source>No data</source>
+        <location filename="../../Windows/Home/HomeRecentWidget.cpp" line="155"/>
+        <source>No data.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -47,14 +47,6 @@
     <message>
         <location filename="../../Windows/Home/HomeWindow.cpp" line="18"/>
         <source>About %1</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>WindowManager</name>
-    <message>
-        <location filename="../../Managers/WindowManager.cpp" line="76"/>
-        <source>Failed to load project %1</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

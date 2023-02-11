@@ -53,6 +53,14 @@ static auto GetPlugins() {
                      .join(FILE_EXTENSIONS_DELIMITER)};
 }
 
+static auto GetDspxFilter() {
+    return QStringList{
+        DsConsole::tr("DiffScope Files(*.dspx)"),                                 //
+        QString("%1(%2)").arg(DsConsole::tr("All Files"), QsOs::allFilesFilter()) //
+    }
+        .join(FILE_EXTENSIONS_DELIMITER);
+}
+
 DsConsole::DsConsole(QObject *parent) : DsConsole(*new DsConsolePrivate(), parent) {
 }
 
@@ -79,18 +87,44 @@ void DsConsole::viewPlugins(QWidget *parent) {
 }
 
 bool DsConsole::openFile(QDspxModel *dspx, QWidget *parent) {
-    QString filter =
-        QStringList{
-            tr("DiffScope Files(*.dspx)"),                                 //
-            QString("%1(%2)").arg(tr("All Files"), QsOs::allFilesFilter()) //
-        }
-            .join(FILE_EXTENSIONS_DELIMITER);
-
-    QString path = qsFileMgr->openFile(tr("Open file"), filter, OPEN_FLAG, parent);
+    QString path = qsFileMgr->openFile(tr("Open file"), GetDspxFilter(), OPEN_FLAG, parent);
     if (path.isEmpty()) {
         return false;
     }
-    return dspx->load(path);
+    if (QsFs::PathFindSuffix(path).toLower() != "dspx") {
+        return false;
+    }
+    return openFile(dspx, path, parent);
+}
+
+bool DsConsole::openFile(QDspxModel *model, const QString &filename, QWidget *parent) {
+    if (!model->load(filename)) {
+        qCs->MsgBox(parent, DsConsole::Critical, qIStup->mainTitle(),
+                    tr("Fail to load file \"%1\"!").arg(filename));
+        qsFileMgr->commitRecent(QsFileManager::Project, QsFileManager::Remove, filename);
+        return false;
+    }
+    qsFileMgr->commitRecent(QsFileManager::Project, QsFileManager::Advance, filename);
+    return true;
+}
+
+bool DsConsole::saveAsFile(const QDspxModel &dspx, const QString &nameHint, QWidget *parent) {
+    QString path =
+        qsFileMgr->saveFile(tr("Open file"), nameHint, GetDspxFilter(), OPEN_FLAG, parent);
+    if (path.isEmpty()) {
+        return false;
+    }
+    return saveFile(dspx, path, parent);
+}
+
+bool DsConsole::saveFile(const QDspxModel &model, const QString &filename, QWidget *parent) {
+    if (!model.save(filename)) {
+        qCs->MsgBox(parent, DsConsole::Critical, qIStup->mainTitle(),
+                    tr("Fail to save file \"%1\"!").arg(filename));
+        return false;
+    }
+    qsFileMgr->commitRecent(QsFileManager::Project, QsFileManager::Remove, filename);
+    return true;
 }
 
 bool DsConsole::importFile(QDspxModel *dspx, QWidget *parent) {

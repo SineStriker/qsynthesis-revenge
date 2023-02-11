@@ -1,6 +1,12 @@
 #include "DsApplication.h"
 #include "private/DsApplication_p.h"
 
+#include "DsConsole.h"
+#include "DsStartInfo.h"
+#include "QsGuiFileManager.h"
+
+#include <QWidget>
+
 DsApplication::DsApplication(int &argc, char **argv)
     : DsApplication(*new DsApplicationPrivate(), argc, argv) {
 }

@@ -6,6 +6,6 @@ bool Model::load(const QString &filename) {
     return false;
 }
 
-bool Model::save(const QString &filename) {
+bool Model::save(const QString &filename) const {
     return false;
 }

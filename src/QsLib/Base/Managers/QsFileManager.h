@@ -14,7 +14,7 @@ class QSBASE_API QsFileManager : public QsAbstractManager {
     Q_DECLARE_PRIVATE(QsFileManager)
     Q_SINGLETON(QsFileManager)
 public:
-    QsFileManager(QObject *parent = nullptr);
+    explicit QsFileManager(QObject *parent = nullptr);
     ~QsFileManager();
 
 public:
@@ -22,7 +22,7 @@ public:
     bool save() override;
 
 public:
-    enum RecentType {
+    enum FileType {
         Project = 0,
         // User file types
 
@@ -39,8 +39,8 @@ public:
         Remove,
         Clear,
     };
-    void commitRecent(int rType, int cType, const QString &filename = QString());
-    QStringList fetchRecent(int rType) const;
+    void commitRecent(int fType, int cType, const QString &filename = QString());
+    QStringList fetchRecent(int fType) const;
 
 public:
     virtual QString openFile(const QString &title, const QString &filter, const QString &flag,
@@ -55,7 +55,7 @@ protected:
     QsFileManager(QsFileManagerPrivate &d, QObject *parent = nullptr);
 
 signals:
-    void recentCommited(int rType);
+    void recentCommited(int fType);
 };
 
 #endif // QSFILEMANAGER_H

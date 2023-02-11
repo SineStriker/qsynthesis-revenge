@@ -9,7 +9,7 @@ class QsGuiPluginManager : public QsPluginManager {
     Q_OBJECT
     Q_DECLARE_PRIVATE(QsGuiPluginManager)
 public:
-    QsGuiPluginManager(QObject *parent = nullptr);
+    explicit QsGuiPluginManager(QObject *parent = nullptr);
     ~QsGuiPluginManager();
 
 public:

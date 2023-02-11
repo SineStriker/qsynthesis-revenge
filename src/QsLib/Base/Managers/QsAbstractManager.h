@@ -11,7 +11,7 @@ class QSBASE_API QsAbstractManager : public QObject {
     Q_OBJECT
     Q_DECLARE_PRIVATE(QsAbstractManager)
 public:
-    QsAbstractManager(QObject *parent = nullptr);
+    explicit QsAbstractManager(QObject *parent = nullptr);
     ~QsAbstractManager();
 
     virtual bool load();

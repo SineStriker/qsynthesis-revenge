@@ -6,7 +6,7 @@
 class QSBASE_API ICompressEngine : public INamePlugin {
     Q_OBJECT
 public:
-    ICompressEngine(QObject *parent = nullptr);
+    explicit ICompressEngine(QObject *parent = nullptr);
     ~ICompressEngine();
 
     /**

@@ -33,7 +33,7 @@ bool QsFileManager::save() {
 int QsFileManager::registerFileType(const QString &key, int hint) {
     Q_D(QsFileManager);
     d->fileRegMax = (hint > d->fileRegMax) ? hint : (d->fileRegMax + 1);
-    d->recentMap.insert(d->fileRegMax,
+    d->recentFileMap.insert(d->fileRegMax,
                         QsFileManagerPrivate::RecentDesc{key, QFileSet(QFileSet::File)});
     return d->fileRegMax;
 }
@@ -41,16 +41,16 @@ int QsFileManager::registerFileType(const QString &key, int hint) {
 int QsFileManager::registerDirType(const QString &key, int hint) {
     Q_D(QsFileManager);
     d->dirRegMax = (hint > d->dirRegMax) ? hint : (d->dirRegMax + 1);
-    d->recentMap.insert(d->dirRegMax,
+    d->recentFileMap.insert(d->dirRegMax,
                         QsFileManagerPrivate::RecentDesc{key, QFileSet(QFileSet::Directory)});
     return d->fileRegMax;
 }
 
-void QsFileManager::commitRecent(int rType, int cType, const QString &filename) {
+void QsFileManager::commitRecent(int fType, int cType, const QString &filename) {
     Q_D(QsFileManager);
     QFileSet *fs;
-    auto it = d->recentMap.find(rType);
-    if (it == d->recentMap.end()) {
+    auto it = d->recentFileMap.find(fType);
+    if (it == d->recentFileMap.end()) {
         return;
     }
     fs = &it.value().set;
@@ -67,17 +67,19 @@ void QsFileManager::commitRecent(int rType, int cType, const QString &filename) 
         case Remove:
             fs->remove(filename);
             break;
-        default:
+        case Clear:
             fs->clear();
             break;
+        default:
+            break;
     }
-    emit recentCommited(rType);
+    emit recentCommited(fType);
 }
 
-QStringList QsFileManager::fetchRecent(int rType) const {
+QStringList QsFileManager::fetchRecent(int fType) const {
     Q_D(const QsFileManager);
-    auto it = d->recentMap.find(rType);
-    if (it == d->recentMap.end()) {
+    auto it = d->recentFileMap.find(fType);
+    if (it == d->recentFileMap.end()) {
         return {};
     }
     return it.value().set.valid();

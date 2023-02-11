@@ -4,22 +4,22 @@
 <context>
     <name>HomeRecentTopFrame</name>
     <message>
-        <location filename="../../Windows/Home/HomeRecentWidget.cpp" line="73"/>
+        <location filename="../../Windows/Home/HomeRecentWidget.cpp" line="74"/>
         <source>New</source>
         <translation>新建</translation>
     </message>
     <message>
-        <location filename="../../Windows/Home/HomeRecentWidget.cpp" line="74"/>
+        <location filename="../../Windows/Home/HomeRecentWidget.cpp" line="75"/>
         <source>Open</source>
         <translation>打开</translation>
     </message>
     <message>
-        <location filename="../../Windows/Home/HomeRecentWidget.cpp" line="75"/>
+        <location filename="../../Windows/Home/HomeRecentWidget.cpp" line="76"/>
         <source>Import</source>
         <translation>导入</translation>
     </message>
     <message>
-        <location filename="../../Windows/Home/HomeRecentWidget.cpp" line="76"/>
+        <location filename="../../Windows/Home/HomeRecentWidget.cpp" line="77"/>
         <source>Search for files</source>
         <translation>搜索文件</translation>
     </message>
@@ -27,9 +27,9 @@
 <context>
     <name>HomeRecentWidget</name>
     <message>
-        <location filename="../../Windows/Home/HomeRecentWidget.cpp" line="149"/>
-        <source>No data</source>
-        <translation type="unfinished"></translation>
+        <location filename="../../Windows/Home/HomeRecentWidget.cpp" line="155"/>
+        <source>No data.</source>
+        <translation>没有数据。</translation>
     </message>
 </context>
 <context>
@@ -53,9 +53,8 @@
 <context>
     <name>WindowManager</name>
     <message>
-        <location filename="../../Managers/WindowManager.cpp" line="76"/>
         <source>Failed to load project %1</source>
-        <translation>无法加载工程%1</translation>
+        <translation type="vanished">无法加载工程%1</translation>
     </message>
 </context>
 </TS>

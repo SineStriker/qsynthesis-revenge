@@ -61,23 +61,11 @@ PianoWindow *WindowManager::newProject() {
     return w;
 }
 
-PianoWindow *WindowManager::openProject(const QString &filename) {
-    if (!QsFs::isFileExist(filename)) {
-        return nullptr;
-    }
-
+PianoWindow *WindowManager::openProject(const QDspxModel &model) {
     Q_D(WindowManager);
 
     auto w = d->createPianoWin();
-    w->setFilename(filename);
-    if (!w->load()) {
-        QMessageBox::critical(
-            firstWindow(), qIStup->mainTitle(),
-            tr("Failed to load project %1").arg(QDir::toNativeSeparators(filename)));
-        w->deleteLater();
-        return nullptr;
-    }
-
+    w->load(model);
     w->show();
     QsView::centralizeWindow(w, QSizeF(0.75, 0.75));
     hideHome();
@@ -91,7 +79,7 @@ QMainWindow *WindowManager::firstWindow() const {
     if (d->homeWin) {
         return d->homeWin;
     }
-    if (!d->projWins.isEmpty()) {
+    if (!d->projWins.empty()) {
         return *d->projWins.begin();
     }
     return nullptr;
@@ -101,7 +89,7 @@ bool WindowManager::exit() {
     Q_D(WindowManager);
 
     bool ok = true;
-    auto windows = d->projWins.values();
+    auto windows = QList<ProjectWindow *>(d->projWins.begin(), d->projWins.end());
     for (auto it = windows.rbegin(); it != windows.rend(); ++it) {
         auto win = *it;
         win->close();
@@ -128,11 +116,14 @@ bool WindowManager::WindowManager::eventFilter(QObject *obj, QEvent *event) {
     if ((w = qobject_cast<ProjectWindow *>(obj)) != nullptr) {
         switch (static_cast<int>(event->type())) {
             case QEventImpl::WindowClose: {
-                // Detach Window
-                // qDebug() << "?";
                 auto e = static_cast<QEventImpl::WindowCloseEvent *>(event);
-                d->projWins.remove(w);
-                if (e->closeOnly() && d->projWins.isEmpty()) {
+                {
+                    auto it = d->projWins.find(w);
+                    if (it != d->projWins.end()) {
+                        d->projWins.erase(it);
+                    }
+                }
+                if (e->closeOnly() && d->projWins.empty()) {
                     showHome();
                 }
                 break;

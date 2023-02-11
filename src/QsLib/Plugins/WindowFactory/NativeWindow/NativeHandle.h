@@ -9,7 +9,7 @@ class Q_DECL_EXPORT NativeHandle : public IWindowHandle {
     Q_OBJECT
     Q_DECLARE_PRIVATE(NativeHandle)
 public:
-    NativeHandle(QMainWindow *parent);
+    explicit NativeHandle(QMainWindow *parent);
     ~NativeHandle();
 
 public:

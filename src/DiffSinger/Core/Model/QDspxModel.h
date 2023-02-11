@@ -38,7 +38,7 @@ namespace QDspx {
         Workspace workspace;
 
         bool load(const QString &filename);
-        bool save(const QString &filename);
+        bool save(const QString &filename) const;
     };
 
 } // namespace QDspx

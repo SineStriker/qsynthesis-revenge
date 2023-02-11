@@ -12,8 +12,6 @@ public:
     ~PianoWindowPrivate();
 
     void init();
-
-    QString filename;
 };
 
 #endif // PIANOWINDOWPRIVATE_H

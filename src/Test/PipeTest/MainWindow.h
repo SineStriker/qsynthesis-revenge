@@ -3,21 +3,21 @@
 
 #include <QMainWindow>
 
+#include <QHBoxLayout>
 #include <QLabel>
 #include <QLineEdit>
+#include <QLocalServer>
 #include <QLocalSocket>
 #include <QPushButton>
-#include <QHBoxLayout>
-#include <QVBoxLayout>
 #include <QThread>
-#include <QLocalServer>
+#include <QVBoxLayout>
 
 #include "WaveObject.h"
 
 class MainWindow : public QMainWindow {
     Q_OBJECT
 public:
-    MainWindow(QWidget *parent = nullptr);
+    explicit MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
 
 protected:
