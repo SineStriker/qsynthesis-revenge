@@ -1,7 +1,7 @@
 project(DsHost LANGUAGES CXX VERSION ${SUB_VERSION})
 
-set(_dirs Global Kernel Managers Windows)
 set(_res_dir Res)
+get_subdirs(_dirs EXCLUDE ${_res_dir})
 
 add_files(_src
     DIRECTORIES ${_dirs}
@@ -12,7 +12,7 @@ qs_add_library(${PROJECT_NAME}
     ENABLE_SHARED
     AUTHOR_NAME ${SUB_AUTHOR_NAME}
     FILE_DESC ${SUB_FILE_DESC}
-    PRODUCT_NAME "DiffSinger.Intern"
+    PRODUCT_NAME "DiffScope.Intern"
     LIBRARY_TYPE ${SUB_PROJECT}
 )
 

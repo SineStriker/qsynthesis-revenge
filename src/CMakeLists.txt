@@ -56,6 +56,10 @@ if(CMAKE_BUILD_TYPE STREQUAL "Debug")
     add_compile_definitions(CONFIG_ENABLE_DEBUG)
 endif()
 
+if(CONFIG_WIN32_MB_TOPMOST)
+    add_compile_definitions(CONFIG_WIN32_MB_TOPMOST)
+endif()
+
 # ----------------------------------
 # Add sub-projects
 # ----------------------------------

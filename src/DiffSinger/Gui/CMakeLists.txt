@@ -1,7 +1,7 @@
 project(DsGui LANGUAGES CXX VERSION ${SUB_VERSION})
 
-set(_dirs Api Global Kernel Transactions)
 set(_res_dir Res)
+get_subdirs(_dirs EXCLUDE ${_res_dir})
 
 add_files(_src
     DIRECTORIES ${_dirs}
@@ -12,7 +12,7 @@ qs_add_library(${PROJECT_NAME}
     ENABLE_SHARED
     AUTHOR_NAME ${SUB_AUTHOR_NAME}
     FILE_DESC ${SUB_FILE_DESC}
-    PRODUCT_NAME "DiffSinger.Medium"
+    PRODUCT_NAME "DiffScope.Medium"
     LIBRARY_TYPE ${SUB_PROJECT}
 )
 

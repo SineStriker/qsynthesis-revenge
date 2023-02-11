@@ -3,7 +3,7 @@ project(QsMedia
     LANGUAGES CXX
 )
 
-set(_dirs Api Global NAudio)
+get_subdirs(_dirs)
 
 add_files(_src
     DIRECTORIES ${_dirs}

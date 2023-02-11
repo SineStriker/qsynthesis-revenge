@@ -65,7 +65,7 @@ public:
 
 Q_DECLARE_OPERATORS_FOR_FLAGS(IDsPorter::SupportedPorts)
 
-#define IDsPorter_IID "DiffSinger.Plugin.DsPorter"
+#define IDsPorter_IID "DiffScope.Plugin.DsPorter"
 
 QT_BEGIN_NAMESPACE
 Q_DECLARE_INTERFACE(IDsPorter, IDsPorter_IID)

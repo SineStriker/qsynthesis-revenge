@@ -6,7 +6,7 @@ project(${SUB_PROJECT}
 qs_add_executable(${PROJECT_NAME} DsHost
     AUTHOR_NAME ${SUB_AUTHOR_NAME}
     FILE_DESC ${SUB_FILE_DESC}
-    PRODUCT_NAME "DiffSinger"
+    PRODUCT_NAME "DiffScope"
     EXECUTABLE_TYPE Main
     ICO_FILE ${CMAKE_CURRENT_SOURCE_DIR}/win32/app.ico
     ICNS_FILE ${CMAKE_CURRENT_SOURCE_DIR}/mac/app.icns

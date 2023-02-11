@@ -77,7 +77,12 @@ void QsCoreConsolePrivate::osMessageBox_helper(void *winHandle, QsCoreConsole::M
     };
 
     ::MessageBoxW(static_cast<HWND>(winHandle), text.toStdWString().data(),
-                  title.toStdWString().data(), MB_OK | MB_TOPMOST | MB_SETFOREGROUND | winFlag);
+                  title.toStdWString().data(),
+                  MB_OK
+#ifdef CONFIG_WIN32_MB_TOPMOST
+                      | MB_TOPMOST
+#endif
+                      | MB_SETFOREGROUND | winFlag);
 #else
     Class alert = cls("NSAlert");
     id alertObj = _cls_msg(alert, sel("alloc"));

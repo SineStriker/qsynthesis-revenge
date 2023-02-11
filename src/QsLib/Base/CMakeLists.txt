@@ -3,8 +3,8 @@ project(QsBase
     LANGUAGES CXX
 )
 
-set(_dirs Api Global Kernel Managers Serialization Tools)
 set(_res_dir Res)
+get_subdirs(_dirs EXCLUDE ${_res_dir})
 
 if(APPLE)
     set(_platform_lib ObjC)

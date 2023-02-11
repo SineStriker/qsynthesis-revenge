@@ -14,7 +14,7 @@ public:
     virtual QWidget *createWidget() = 0;
 };
 
-#define IDsEditWidget_IID "DiffSinger.Plugin.DsEditWidget"
+#define IDsEditWidget_IID "DiffScope.Plugin.DsEditWidget"
 
 QT_BEGIN_NAMESPACE
 Q_DECLARE_INTERFACE(IDsEditWidget, IDsEditWidget_IID)

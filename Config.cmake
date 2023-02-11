@@ -37,4 +37,5 @@ option_ex(APP_PUBLIC_PLUGINS_DIR qslib)
 
 option_ex(BUILD_TEST on)
 
+option_ex(CONFIG_WIN32_MB_TOPMOST off)
 option_ex(CONFIG_WIN32_DEBUG on)

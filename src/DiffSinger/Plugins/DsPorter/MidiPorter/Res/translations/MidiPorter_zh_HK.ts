@@ -29,27 +29,27 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../MidiPorter.cpp" line="237"/>
+        <location filename="../../MidiPorter.cpp" line="236"/>
         <source>The number of note-on and note-off are not match!</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../MidiPorter.cpp" line="278"/>
+        <location filename="../../MidiPorter.cpp" line="277"/>
         <source>%1(%2): (%3 notes, %4)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../MidiPorter.cpp" line="281"/>
+        <location filename="../../MidiPorter.cpp" line="280"/>
         <source>None</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../MidiPorter.cpp" line="293"/>
+        <location filename="../../MidiPorter.cpp" line="292"/>
         <source>Import MIDI file</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../MidiPorter.cpp" line="308"/>
+        <location filename="../../MidiPorter.cpp" line="307"/>
         <source>This file doesn&apos;t contain any notes.</source>
         <translation type="unfinished"></translation>
     </message>

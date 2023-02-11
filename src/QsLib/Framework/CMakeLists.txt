@@ -3,15 +3,9 @@ project(QsFramework
     LANGUAGES CXX
 )
 
-set(_dirs Api Editor Global Kernel Managers Widgets)
 set(_res_dir Res)
-set(_extra_includes
-    Widgets/Attaches
-    Widgets/Custom
-    Widgets/Extended
-    Widgets/Layouts
-    Widgets/Metatypes
-)
+get_subdirs(_dirs EXCLUDE ${_res_dir})
+get_subdirs(_extra_includes DIRECTORY Widgets RELATIVE .)
 
 add_files(_src
     DIRECTORIES ${_dirs}

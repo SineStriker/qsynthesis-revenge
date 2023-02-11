@@ -219,7 +219,11 @@ void QsOs::exitApp(int code) {
 void QsOs::messageStderr(const QString &title, const QString &text) {
 #ifdef Q_OS_WINDOWS
     ::MessageBoxW(0, text.toStdWString().data(), title.toStdWString().data(),
-                  MB_OK | MB_TOPMOST | MB_SETFOREGROUND | MB_ICONWARNING);
+                  MB_OK
+#ifdef CONFIG_WIN32_MB_TOPMOST
+                      | MB_TOPMOST
+#endif
+                      | MB_SETFOREGROUND | MB_ICONWARNING);
 #elif Q_OS_LINUX
     fputs(qPrintable(text), stdout);
 #else

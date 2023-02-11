@@ -3,7 +3,7 @@ project(QsSVS
     LANGUAGES C CXX
 )
 
-set(_dirs Api Global Svip Utau)
+get_subdirs(_dirs)
 
 add_files(_src
     DIRECTORIES ${_dirs}

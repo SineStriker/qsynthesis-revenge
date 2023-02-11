@@ -17,28 +17,28 @@
 <context>
     <name>ImportDialogPrivate</name>
     <message>
-        <location filename="../../Widgets/Dialogs/private/ImportDialog_p.cpp" line="17"/>
-        <location filename="../../Widgets/Dialogs/private/ImportDialog_p.cpp" line="28"/>
+        <location filename="../../Widgets/Dialogs/private/ImportDialog_p.cpp" line="25"/>
+        <location filename="../../Widgets/Dialogs/private/ImportDialog_p.cpp" line="36"/>
         <source>(Decoding failure)</source>
         <translation>（解码失败）</translation>
     </message>
     <message>
-        <location filename="../../Widgets/Dialogs/private/ImportDialog_p.cpp" line="108"/>
+        <location filename="../../Widgets/Dialogs/private/ImportDialog_p.cpp" line="116"/>
         <source>Select tracks</source>
         <translation>选择轨道</translation>
     </message>
     <message>
-        <location filename="../../Widgets/Dialogs/private/ImportDialog_p.cpp" line="168"/>
+        <location filename="../../Widgets/Dialogs/private/ImportDialog_p.cpp" line="176"/>
         <source>Track %1</source>
         <translation>音轨 %1</translation>
     </message>
     <message>
-        <location filename="../../Widgets/Dialogs/private/ImportDialog_p.cpp" line="210"/>
+        <location filename="../../Widgets/Dialogs/private/ImportDialog_p.cpp" line="218"/>
         <source>Select encoding</source>
         <translation>选择编码</translation>
     </message>
     <message>
-        <location filename="../../Widgets/Dialogs/private/ImportDialog_p.cpp" line="255"/>
+        <location filename="../../Widgets/Dialogs/private/ImportDialog_p.cpp" line="263"/>
         <source>Please select at least one track!</source>
         <translation>请至少选择一个轨道！</translation>
     </message>

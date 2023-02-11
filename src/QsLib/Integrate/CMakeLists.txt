@@ -3,8 +3,8 @@ project(QsIntegrate
     LANGUAGES CXX
 )
 
-set(_dirs Editor Global Kernel Managers Widgets)
 set(_res_dir Res)
+get_subdirs(_dirs EXCLUDE ${_res_dir})
 set(_extra_includes)
 
 add_files(_src

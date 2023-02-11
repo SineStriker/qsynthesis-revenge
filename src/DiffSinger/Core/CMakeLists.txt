@@ -1,6 +1,6 @@
 project(DsCore LANGUAGES CXX VERSION ${SUB_VERSION})
 
-set(_dirs Api Global Kernel Model)
+get_subdirs(_dirs)
 
 add_files(_src
     DIRECTORIES ${_dirs}
@@ -11,7 +11,7 @@ qs_add_library(${PROJECT_NAME}
     ENABLE_SHARED
     AUTHOR_NAME ${SUB_AUTHOR_NAME}
     FILE_DESC ${SUB_FILE_DESC}
-    PRODUCT_NAME "DiffSinger.Core"
+    PRODUCT_NAME "DiffScope.Core"
     LIBRARY_TYPE ${SUB_PROJECT}
 )
 

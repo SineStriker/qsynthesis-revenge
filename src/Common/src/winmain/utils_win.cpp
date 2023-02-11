@@ -124,7 +124,11 @@ bool WinLibrary::Load(const std::wstring &path) {
     if (!hDLL) {
         std::wstring msg = WinGetLastErrorString(&_impl->errNum);
         ::MessageBoxW(nullptr, msg.data(), (*Module_Name) ? Module_Name : Error_Title,
-                      MB_OK | MB_TOPMOST | MB_SETFOREGROUND | MB_ICONERROR);
+                      MB_OK
+#ifdef CONFIG_WIN32_MB_TOPMOST
+                          | MB_TOPMOST
+#endif
+                          | MB_SETFOREGROUND | MB_ICONERROR);
         return false;
     }
     _impl->hDll = hDLL;
@@ -143,7 +147,11 @@ FARPROC WinLibrary::GetEntry(const char *entry) const {
     if (!fun) {
         std::wstring msg = WinGetLastErrorString(&_impl->errNum);
         ::MessageBoxW(nullptr, msg.data(), (*Module_Name) ? Module_Name : Error_Title,
-                      MB_OK | MB_TOPMOST | MB_SETFOREGROUND | MB_ICONERROR);
+                      MB_OK
+#ifdef CONFIG_WIN32_MB_TOPMOST
+                          | MB_TOPMOST
+#endif
+                          | MB_SETFOREGROUND | MB_ICONERROR);
         return nullptr;
     }
     return fun;

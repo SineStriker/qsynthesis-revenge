@@ -15,7 +15,7 @@ public:
 public:
 };
 
-#define IDsEngine_IID "DiffSinger.Plugin.DsEngine"
+#define IDsEngine_IID "DiffScope.Plugin.DsEngine"
 
 QT_BEGIN_NAMESPACE
 Q_DECLARE_INTERFACE(IDsEngine, IDsEngine_IID)
