@@ -8,51 +8,48 @@
         <source>Standard MIDI Files</source>
         <translation type="unfinished"></translation>
     </message>
-</context>
-<context>
-    <name>QObject</name>
     <message>
         <location filename="../../MidiPorter.cpp" line="38"/>
         <source>Fail to open MIDI file!</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../MidiPorter.cpp" line="51"/>
+        <location filename="../../MidiPorter.cpp" line="50"/>
         <source>No track found!</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../MidiPorter.cpp" line="55"/>
+        <location filename="../../MidiPorter.cpp" line="54"/>
         <source>The number of MIDI tracks is illegal!</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../MidiPorter.cpp" line="59"/>
+        <location filename="../../MidiPorter.cpp" line="58"/>
         <source>Unsupported MIDI file type!</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../MidiPorter.cpp" line="238"/>
+        <location filename="../../MidiPorter.cpp" line="237"/>
         <source>The number of note-on and note-off are not match!</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../MidiPorter.cpp" line="280"/>
+        <location filename="../../MidiPorter.cpp" line="278"/>
         <source>%1(%2): (%3 notes, %4)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../MidiPorter.cpp" line="283"/>
+        <location filename="../../MidiPorter.cpp" line="281"/>
         <source>None</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../MidiPorter.cpp" line="295"/>
+        <location filename="../../MidiPorter.cpp" line="293"/>
         <source>Import MIDI file</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../MidiPorter.cpp" line="310"/>
+        <location filename="../../MidiPorter.cpp" line="308"/>
         <source>This file doesn&apos;t contain any notes.</source>
         <translation type="unfinished"></translation>
     </message>
