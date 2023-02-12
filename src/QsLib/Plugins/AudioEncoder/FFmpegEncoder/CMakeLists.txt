@@ -8,13 +8,13 @@ add_files(_src
     PATTERNS *.h *.hpp *.cpp *.cc
 )
 
-configure_plugin("Sine Striker")
+configure_plugin("Sine Striker" _plugin)
 
-target_components(${PROJECT_NAME}
+target_components(${_plugin}
     INCLUDE_CURRENT
     SOURCES ${_src}
     QT_LIBRARIES Core
     LINKS QsMedia
 )
 
-ffmpeg_link_libraries(${PROJECT_NAME} PRIVATE avcodec avformat avutil swresample)
+ffmpeg_link_libraries(${_plugin} PRIVATE avcodec avformat avutil swresample)

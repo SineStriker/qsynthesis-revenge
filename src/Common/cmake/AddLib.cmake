@@ -8,6 +8,7 @@ include_guard(DIRECTORY)
         PRODUCT_NAME     <var>
         LIBRARY_TYPE     <var>
 
+        [OUTPUT_NAME     <var>]
         [MACRO_PREFIX    <var>]
     )
 
@@ -20,7 +21,7 @@ include_guard(DIRECTORY)
 #]]
 function(qs_add_library _target)
     set(options ENABLE_SHARED AS_TEST)
-    set(oneValueArgs AUTHOR_NAME FILE_DESC PRODUCT_NAME LIBRARY_TYPE MACRO_PREFIX)
+    set(oneValueArgs AUTHOR_NAME FILE_DESC PRODUCT_NAME LIBRARY_TYPE MACRO_PREFIX OUTPUT_NAME)
     set(multiValueArgs)
     cmake_parse_arguments(FUNC "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
 
@@ -28,12 +29,6 @@ function(qs_add_library _target)
         string(TOUPPER ${_target} _prefix)
     else()
         set(_prefix ${FUNC_MACRO_PREFIX})
-    endif()
-
-    if(NOT FUNC_PRODUCT_NAME)
-        set(_product_name ${_target})
-    else()
-        set(_product_name ${FUNC_PRODUCT_NAME})
     endif()
 
     # ----------------- Template Begin -----------------
@@ -61,10 +56,23 @@ function(qs_add_library _target)
     target_compile_definitions(${_target} PRIVATE ${_prefix}_LIBRARY)
 
     if(FUNC_ENABLE_SHARED AND NOT FUNC_AS_TEST)
+        if(NOT FUNC_PRODUCT_NAME)
+            set(_product_name ${_target})
+        else()
+            set(_product_name ${FUNC_PRODUCT_NAME})
+        endif()
+
+        if(FUNC_OUTPUT_NAME)
+            set(_output_name ${FUNC_OUTPUT_NAME})
+            set_target_properties(${_target} PROPERTIES OUTPUT_NAME ${_output_name})
+        else()
+            set(_output_name ${_target})
+        endif()
+        
         # Add embedded resources
         if(WIN32)
             # configure rc
-            set(WIN32_EXPORT_NAME ${_target})
+            set(WIN32_EXPORT_NAME ${_output_name})
             set(WIN32_COPYRIGHT_START_YEAR "${TIME_PROJECT_START_YEAR}")
             set(WIN32_COPYRIGHT_END_YEAR "${TIME_CURRENT_YEAR}")
             set(WIN32_AUTHOR_NAME "${FUNC_AUTHOR_NAME}")
@@ -81,7 +89,7 @@ function(qs_add_library _target)
             # set_target_properties(${_target} PROPERTIES
             #     FRAMEWORK TRUE
             #     FRAMEWORK_VERSION CXX
-            #     MACOSX_FRAMEWORK_NAME ${_target}
+            #     MACOSX_FRAMEWORK_NAME ${_output_name}
             #     MACOSX_FRAMEWORK_IDENTIFIER ${_product_name}
             #     MACOSX_FRAMEWORK_BUNDLE_VERSION ${PROJECT_VERSION}
             #     MACOSX_FRAMEWORK_SHORT_VERSION_STRING ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}

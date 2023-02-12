@@ -8,9 +8,9 @@ add_files(_src
     PATTERNS *.h *.hpp *.cpp *.cc
 )
 
-configure_plugin("Sine Striker")
+configure_plugin("Sine Striker" _plugin)
 
-target_components(${PROJECT_NAME}
+target_components(${_plugin}
     INCLUDE_CURRENT
     SOURCES ${_src}
     QT_LIBRARIES Core

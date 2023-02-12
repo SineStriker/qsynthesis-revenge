@@ -40,7 +40,6 @@ function(target_components _target)
     set(_qt_incs)
 
     # ----------------- Template Begin -----------------
-
     target_sources(${_target} PRIVATE ${FUNC_SOURCES})
 
     add_qt_module(_qt_libs ${FUNC_QT_LIBRARIES})
@@ -64,15 +63,18 @@ function(target_components _target)
     unset(_qt_incs)
 endfunction()
 
-
 #[[
-    target_create_translations <target> SOURCES files... LOCALES langs... [DESTINATION <dir>] [CREATE_ONCE]
+    target_create_translations  <target> SOURCES files... LOCALES langs... 
+                                [DESTINATION <dir>]
+                                [PREFIX <prefix>]
+                                [CREATE_ONCE]
 
     args:
         target:      related target name
         files:       source file list
         langs:       language names, e.g. zh_CN en_US
         dir:         output dir of .ts and. qm files, default to CMAKE_CURRENT_SOURCE_DIR
+        prefix:      translation file prefix
 
     flags:
         CREATE_ONCE: generate .ts and .qm file if not exists at configure
@@ -82,7 +84,7 @@ endfunction()
 #]]
 function(target_create_translations _target)
     set(options CREATE_ONCE)
-    set(oneValueArgs DESTINATION)
+    set(oneValueArgs DESTINATION PREFIX)
     set(multiValueArgs SOURCES LOCALES)
     cmake_parse_arguments(FUNC "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
 
@@ -95,8 +97,14 @@ function(target_create_translations _target)
         set(_ts_dest ${CMAKE_CURRENT_SOURCE_DIR})
     endif()
 
+    if(FUNC_PREFIX)
+        set(_prefix ${FUNC_PREFIX})
+    else()
+        set(_prefix ${_target})
+    endif()
+
     foreach(_loc ${FUNC_LOCALES})
-        list(APPEND _ts_files ${_ts_dest}/${_target}_${_loc}.ts)
+        list(APPEND _ts_files ${_ts_dest}/${_prefix}_${_loc}.ts)
     endforeach()
 
     find_qt_module(LinguistTools)
@@ -120,7 +128,6 @@ function(target_create_translations _target)
         ${_create_once}
     )
 endfunction()
-
 
 # Input: cxx source files
 # Output: target ts files

@@ -12,9 +12,9 @@ add_files(_src
     PATTERNS *.h *.hpp *.cpp *.cc
 )
 
-configure_plugin("Sine Striker")
+configure_plugin("Sine Striker" _plugin)
 
-target_components(${PROJECT_NAME}
+target_components(${_plugin}
     INCLUDE_CURRENT
     SOURCES ${_src} ${_res_dir}/res.qrc
     QT_LIBRARIES Widgets
@@ -22,22 +22,23 @@ target_components(${PROJECT_NAME}
     LINKS_PRIVATE FramelessHelper::FramelessHelperWidgets
 )
 
-target_create_translations(${PROJECT_NAME} SOURCES ${_src}
+target_create_translations(${_plugin} SOURCES ${_src}
     LOCALES zh_CN zh_HK ja_JP
     DESTINATION ${_res_dir}/translations
+    PREFIX ${PROJECT_NAME}
     CREATE_ONCE
 )
 
 # Copy resources
-qs_add_res(${PROJECT_NAME}
+qs_add_res(${_plugin}
     FILES ${_res_dir}/${PROJECT_NAME}.res.json
     RELATIVE_PATH .
 )
-qs_add_res(${PROJECT_NAME}
+qs_add_res(${_plugin}
     FILES ${_res_dir}/translations/*.qm
     RELATIVE_PATH ${PROJECT_NAME}.res/translations
 )
-qs_add_res(${PROJECT_NAME}
+qs_add_res(${_plugin}
     FILES ${_res_dir}/themes/*.json
     RELATIVE_PATH ${PROJECT_NAME}.res/themes
 )

@@ -10,6 +10,8 @@ include_guard(DIRECTORY)
         EXECUTABLE_TYPE     <var>
         ICO_FILE            <var>
         ICNS_FILE           <var>
+
+        [OUTPUT_NAME        <var>]
     )
 
     flags:
@@ -25,7 +27,7 @@ include_guard(DIRECTORY)
 ]] #
 function(qs_add_executable _target _dll)
     set(options AS_TEST FORCE_LINK FORCE_CONSOLE)
-    set(oneValueArgs AUTHOR_NAME FILE_DESC PRODUCT_NAME EXECUTABLE_TYPE ICO_FILE ICNS_FILE)
+    set(oneValueArgs AUTHOR_NAME FILE_DESC PRODUCT_NAME EXECUTABLE_TYPE ICO_FILE ICNS_FILE OUTPUT_NAME)
     set(multiValueArgs)
 
     cmake_parse_arguments(FUNC "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
@@ -61,6 +63,13 @@ function(qs_add_executable _target _dll)
             set(_product_name ${FUNC_PRODUCT_NAME})
         endif()
 
+        if(FUNC_OUTPUT_NAME)
+            set(_output_name ${FUNC_OUTPUT_NAME})
+            set_target_properties(${_target} PROPERTIES OUTPUT_NAME ${_output_name})
+        else()
+            set(_output_name ${_target})
+        endif()
+
         set(_icns_file ${FUNC_ICNS_FILE})
         set(_ico_file ${FUNC_ICO_FILE})
 
@@ -90,7 +99,7 @@ function(qs_add_executable _target _dll)
 
             # configure rc
             set(WIN32_ICON_NAME ${_ico_name})
-            set(WIN32_EXPORT_NAME ${_target})
+            set(WIN32_EXPORT_NAME ${_output_name})
             set(WIN32_COPYRIGHT_START_YEAR "${TIME_PROJECT_START_YEAR}")
             set(WIN32_COPYRIGHT_END_YEAR "${TIME_CURRENT_YEAR}")
             set(WIN32_AUTHOR_NAME "${FUNC_AUTHOR_NAME}")
@@ -120,8 +129,8 @@ function(qs_add_executable _target _dll)
             # configure mac plist
             set_target_properties(${_target} PROPERTIES
                 MACOSX_BUNDLE TRUE
-                MACOSX_BUNDLE_BUNDLE_NAME ${_target}
-                MACOSX_BUNDLE_EXECUTABLE_NAME ${_target}
+                MACOSX_BUNDLE_BUNDLE_NAME ${_output_name}
+                MACOSX_BUNDLE_EXECUTABLE_NAME ${_output_name}
                 MACOSX_BUNDLE_ICON_FILE ${_icns_name}
                 MACOSX_BUNDLE_INFO_STRING ${FUNC_FILE_DESC}
                 MACOSX_BUNDLE_GUI_IDENTIFIER "${_product_name}"

@@ -8,6 +8,8 @@ include_guard(DIRECTORY)
         PARENT           <var>
         SUBDIR           <var>
         CATEGORY         <var>
+        
+        [OUTPUT_NAME     <var>]
     )
 
     usage:
@@ -15,16 +17,9 @@ include_guard(DIRECTORY)
 ]] #
 function(qs_add_plugin _target)
     set(options)
-    set(oneValueArgs AUTHOR_NAME FILE_DESC PRODUCT_NAME PARENT SUBDIR CATEGORY)
+    set(oneValueArgs AUTHOR_NAME FILE_DESC PRODUCT_NAME PARENT SUBDIR CATEGORY OUTPUT_NAME)
     set(multiValueArgs)
     cmake_parse_arguments(FUNC "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
-
-    # Parse vars
-    if(NOT FUNC_PRODUCT_NAME)
-        set(_product_name ${_target})
-    else()
-        set(_product_name ${FUNC_PRODUCT_NAME})
-    endif()
 
     # ----------------- Template Begin -----------------
     set(CMAKE_AUTOUIC ON)
@@ -34,10 +29,23 @@ function(qs_add_plugin _target)
     # Add library
     add_library(${_target} SHARED)
 
+    if(NOT FUNC_PRODUCT_NAME)
+        set(_product_name ${_target})
+    else()
+        set(_product_name ${FUNC_PRODUCT_NAME})
+    endif()
+
+    if(FUNC_OUTPUT_NAME)
+        set(_output_name ${FUNC_OUTPUT_NAME})
+        set_target_properties(${_target} PROPERTIES OUTPUT_NAME ${_output_name})
+    else()
+        set(_output_name ${_target})
+    endif()
+
     # Add embedded resources
     if(WIN32)
         # configure rc
-        set(WIN32_EXPORT_NAME ${_target})
+        set(WIN32_EXPORT_NAME ${_output_name})
         set(WIN32_COPYRIGHT_START_YEAR "${TIME_PROJECT_START_YEAR}")
         set(WIN32_COPYRIGHT_END_YEAR "${TIME_CURRENT_YEAR}")
         set(WIN32_AUTHOR_NAME "${FUNC_AUTHOR_NAME}")
@@ -51,14 +59,14 @@ function(qs_add_plugin _target)
         target_sources(${_target} PRIVATE ${CMAKE_CURRENT_BINARY_DIR}/res.rc)
     elseif(APPLE)
         # configure mac plist
-        set_target_properties(${_target} PROPERTIES
-            FRAMEWORK TRUE
-            FRAMEWORK_VERSION CXX
-            MACOSX_FRAMEWORK_NAME ${_target}
-            MACOSX_FRAMEWORK_IDENTIFIER ${_product_name}
-            MACOSX_FRAMEWORK_BUNDLE_VERSION ${PROJECT_VERSION}
-            MACOSX_FRAMEWORK_SHORT_VERSION_STRING ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}
-        )
+        # set_target_properties(${_target} PROPERTIES
+        #     FRAMEWORK TRUE
+        #     FRAMEWORK_VERSION CXX
+        #     MACOSX_FRAMEWORK_NAME ${_output_name}
+        #     MACOSX_FRAMEWORK_IDENTIFIER ${_product_name}
+        #     MACOSX_FRAMEWORK_BUNDLE_VERSION ${PROJECT_VERSION}
+        #     MACOSX_FRAMEWORK_SHORT_VERSION_STRING ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}
+        # )
     endif()
 
     set(_out_dir ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${FUNC_SUBDIR}/${FUNC_CATEGORY})
