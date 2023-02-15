@@ -14,16 +14,21 @@ namespace QDspx {
         int clipLen;
 
         // 构造器
-        ClipTime() : ClipTime(0, 4800){};
-        ClipTime(int start, int length) : ClipTime(start, length, 0, length){};
+        ClipTime() : ClipTime(0, 4800) {};
+
+        ClipTime(int start, int length) : ClipTime(start, length, 0, length) {};
+
         ClipTime(int start, int length, int clipStart, int clipLen)
-            : start(start), length(length), clipStart(clipStart), clipLen(clipLen){};
+                : start(start), length(length), clipStart(clipStart), clipLen(clipLen) {};
     };
 
     // 音轨区间
     struct DSCORE_API Clip {
         enum Type {
+            QAS_ATTRIBUTE("singing")
             Singing,
+
+            QAS_ATTRIBUTE("audio")
             Audio,
         };
 
@@ -37,11 +42,11 @@ namespace QDspx {
         Workspace workspace;
 
         // 构造器
-        explicit Clip(Type type) : type(type){};
+        Clip() : type(Singing) {};
 
-        // 转换函数
-        static QString TypeToString(Type type);
-        static Type StringToType(const QString &s);
+        explicit Clip(Type type) : type(type) {};
+
+        virtual ~Clip() = default;
     };
 
     using ClipRef = QSharedPointer<Clip>;
@@ -51,7 +56,7 @@ namespace QDspx {
         QString path;
 
         // 构造器
-        AudioClip() : Clip(Audio){};
+        AudioClip() : Clip(Audio) {};
     };
 
     using AudioClipRef = QSharedPointer<AudioClip>;
@@ -65,7 +70,7 @@ namespace QDspx {
         SourceInfo sources;
 
         // 构造器
-        SingingClip() : Clip(Singing){};
+        SingingClip() : Clip(Singing) {};
     };
 
     using SingingClipRef = QSharedPointer<SingingClip>;
@@ -82,5 +87,19 @@ namespace QDspx {
     };
 
 } // namespace QDspx
+
+QAS_JSON_DECLARE(QDspx::ClipTime)
+
+QAS_JSON_DECLARE(QDspx::Clip)
+
+QAS_JSON_DECLARE(QDspx::AudioClip)
+
+QAS_JSON_DECLARE(QDspx::SingingClip)
+
+QAS_JSON_DECLARE(QDspx::Track)
+
+QAS_ENUM_DECLARE(QDspx::Clip::Type)
+
+QAS_JSON_DECLARE_IMPL(QDspx::ClipRef)
 
 #endif // QDSPXTRACK_H

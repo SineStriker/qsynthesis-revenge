@@ -19,7 +19,7 @@ def deploy(out_dir : str):
     # Check requirements
     print_begin("Check requirements")
     if platform.system().lower() == 'windows':
-        ret = os.system("cl /? | findstr x64")
+        ret = os.system("cl")
         if ret != 0:
             print("Microsoft Visual C++ Compiler not found")
             sys.exit(ret)

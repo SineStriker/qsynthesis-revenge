@@ -8,7 +8,11 @@ namespace QDspx {
     // 拍号
     struct DSCORE_API TimeSignature {
         int pos;
+
+        QAS_ATTRIBUTE("numerator")
         int num;
+
+        QAS_ATTRIBUTE("denominator")
         int den;
 
         // 构造器
@@ -44,5 +48,13 @@ namespace QDspx {
     };
 
 } // namespace QDspx
+
+QAS_JSON_DECLARE(QDspx::TimeSignature)
+
+QAS_JSON_DECLARE(QDspx::Tempo)
+
+QAS_JSON_DECLARE(QDspx::Label)
+
+QAS_JSON_DECLARE(QDspx::Timeline)
 
 #endif // QDSPXTIMELINE_H

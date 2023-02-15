@@ -8,18 +8,19 @@ namespace QDspx {
     // 参数曲线基类
     struct DSCORE_API ParamCurve {
         enum Type {
+            QAS_ATTRIBUTE("anchor")
             Anchor,
+
+            QAS_ATTRIBUTE("free")
             Free,
         };
 
         Type type;
 
         // 构造器
+        ParamCurve() : ParamCurve(Anchor){};
         explicit ParamCurve(Type type) : type(type){};
-
-        // 转换函数
-        static QString TypeToString(Type type);
-        static Type StringToType(const QString &s);
+        virtual ~ParamCurve() = default;
     };
 
     using ParamCurveRef = QSharedPointer<ParamCurve>;
@@ -31,7 +32,8 @@ namespace QDspx {
         QList<int> values;
 
         // 构造器
-        explicit ParamFree(int start = 0) : ParamCurve(Free), start(start), step(5){};
+        ParamFree() : ParamFree(0){};
+        explicit ParamFree(int start) : ParamCurve(Free), start(start), step(5){};
     };
 
     using ParamFreeRef = QSharedPointer<ParamFree>;
@@ -48,8 +50,11 @@ namespace QDspx {
 
     // 参数结构
     struct DSCORE_API ParamInfo {
+        QAS_ATTRIBUTE("original")
         QList<ParamCurveRef> org;
+
         QList<ParamCurveRef> edited;
+
         QList<ParamCurveRef> envelope;
     };
 
@@ -60,5 +65,19 @@ namespace QDspx {
     };
 
 } // namespace QDspx
+
+QAS_JSON_DECLARE(QDspx::ParamCurve)
+
+QAS_JSON_DECLARE(QDspx::ParamFree)
+
+QAS_JSON_DECLARE(QDspx::ParamAnchor)
+
+QAS_JSON_DECLARE(QDspx::ParamInfo)
+
+QAS_JSON_DECLARE(QDspx::SingleParam)
+
+QAS_ENUM_DECLARE(QDspx::ParamCurve::Type)
+
+QAS_JSON_DECLARE_IMPL(QDspx::ParamCurveRef)
 
 #endif // QDSPXPARAM_H

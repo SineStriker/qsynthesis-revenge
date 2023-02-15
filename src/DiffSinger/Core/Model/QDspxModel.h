@@ -45,4 +45,12 @@ namespace QDspx {
 
 using QDspxModel = QDspx::Model;
 
+QAS_JSON_DECLARE(QDspx::Metadata)
+
+QAS_JSON_DECLARE(QDspx::Master)
+
+QAS_JSON_DECLARE(QDspx::Content)
+
+QAS_JSON_DECLARE(QDspx::Model)
+
 #endif // QDSPXMODEL_H
