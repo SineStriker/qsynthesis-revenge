@@ -60,7 +60,7 @@ bool MidiPorter::load(const QString &filename, QDspxModel *out, QObject *parent)
     }
 
     // 解析Tempo Map
-    QVector<QPair<int, double>> tempos;
+    QList<QPair<int, double>> tempos;
     QVector<QPair<int, QByteArray>> markers;
 
     QMap<int, QPoint> timeSign;

@@ -41,16 +41,13 @@ namespace QDspx {
         bool save(const QString &filename) const;
     };
 
+    QAS_JSON_NS(Metadata)
+    QAS_JSON_NS(Master)
+    QAS_JSON_NS(Content)
+    QAS_JSON_NS(Model)
+
 } // namespace QDspx
 
 using QDspxModel = QDspx::Model;
-
-QAS_JSON_DECLARE(QDspx::Metadata)
-
-QAS_JSON_DECLARE(QDspx::Master)
-
-QAS_JSON_DECLARE(QDspx::Content)
-
-QAS_JSON_DECLARE(QDspx::Model)
 
 #endif // QDSPXMODEL_H

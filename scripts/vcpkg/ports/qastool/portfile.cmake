@@ -1,18 +1,28 @@
 vcpkg_from_github(
     OUT_SOURCE_PATH SOURCE_PATH
-    REPO SineStriker/qt-auto-serialization
-    REF 0.0.1.2
-    SHA512 b83fc0d304d9681c9f3dcd0f5970e7eb6b638ed00ffbfeb4a251d1772d46a3afc6b726c853ce75e49b4fadcc8d491f9d750465ca79cdee944b98378cc65c0d2a
+    REPO SineStriker/qt-json-autogen
+    REF 0.0.2.1
+    SHA512 2130139b0593dd21bff2a2726d7d0e39e8d26cd22c49af814e3dd20c51058c2cd2d0d878020b62d276c171bd9cccbdae5bb37de0b2e1a7a8611026862e650272
 )
 
 vcpkg_cmake_configure(
     SOURCE_PATH "${SOURCE_PATH}"
+    OPTIONS
+        -DQAS_BUILD_EXAMPLES=OFF
+        -DQAS_BUILD_MOC_EXE=OFF
 )
 
 vcpkg_cmake_install()
+
 vcpkg_cmake_config_fixup(PACKAGE_NAME qastool
     CONFIG_PATH lib/cmake/${PORT}
 )
+
+file(REMOVE_RECURSE "${CURRENT_PACKAGES_DIR}/debug")
+file(REMOVE_RECURSE "${CURRENT_PACKAGES_DIR}/lib")
+file(MAKE_DIRECTORY "${CURRENT_PACKAGES_DIR}/debug")
+file(COPY "${CURRENT_PACKAGES_DIR}/tools" DESTINATION "${CURRENT_PACKAGES_DIR}/debug")
+
 vcpkg_copy_pdbs()
 
 file(REMOVE_RECURSE "${CURRENT_PACKAGES_DIR}/debug/include")

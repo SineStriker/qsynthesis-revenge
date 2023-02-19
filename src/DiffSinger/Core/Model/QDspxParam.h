@@ -4,16 +4,16 @@
 #include "QDspxBase.h"
 
 namespace QDspx {
-
     // 参数曲线基类
     struct DSCORE_API ParamCurve {
         enum Type {
-            QAS_ATTRIBUTE("anchor")
+            __qas_attr__("anchor") //
             Anchor,
-
-            QAS_ATTRIBUTE("free")
+            __qas_attr__("free")   //
             Free,
         };
+        QAS_JSON(Type)
+
 
         Type type;
 
@@ -50,11 +50,11 @@ namespace QDspx {
 
     // 参数结构
     struct DSCORE_API ParamInfo {
-        QAS_ATTRIBUTE("original")
+        __qas_attr__("original")
         QList<ParamCurveRef> org;
 
         QList<ParamCurveRef> edited;
-
+        
         QList<ParamCurveRef> envelope;
     };
 
@@ -64,20 +64,13 @@ namespace QDspx {
         ParamInfo energy;
     };
 
+    QAS_JSON_NS(ParamCurve)
+    QAS_JSON_NS(ParamFree)
+    QAS_JSON_NS(ParamAnchor)
+    QAS_JSON_NS(ParamInfo)
+    QAS_JSON_NS(SingleParam)
+    QAS_JSON_NS_IMPL(ParamCurveRef)
+
 } // namespace QDspx
-
-QAS_JSON_DECLARE(QDspx::ParamCurve)
-
-QAS_JSON_DECLARE(QDspx::ParamFree)
-
-QAS_JSON_DECLARE(QDspx::ParamAnchor)
-
-QAS_JSON_DECLARE(QDspx::ParamInfo)
-
-QAS_JSON_DECLARE(QDspx::SingleParam)
-
-QAS_ENUM_DECLARE(QDspx::ParamCurve::Type)
-
-QAS_JSON_DECLARE_IMPL(QDspx::ParamCurveRef)
 
 #endif // QDSPXPARAM_H

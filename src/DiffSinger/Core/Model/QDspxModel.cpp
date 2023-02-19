@@ -5,6 +5,8 @@
 
 using namespace QDspx;
 
+QAS_USING_NAMESPACE
+
 bool Model::load(const QString &filename) {
     // Read file
     QFile file(filename);
@@ -22,9 +24,7 @@ bool Model::load(const QString &filename) {
     }
 
     // Deserialize
-    bool ok;
-    *this = QASJsonType<QDspxModel>::fromObject(doc.object(), &ok);
-    return ok;
+    return qAsJsonTryGetClass(doc.object(), this);
 }
 
 bool Model::save(const QString &filename) const {
@@ -35,8 +35,8 @@ bool Model::save(const QString &filename) const {
     }
 
     // Serialize and write
-    file.write(QJsonDocument(QASJsonType<QDspxModel>::toObject(*this)).toJson());
+    file.write(QJsonDocument(qAsClassToJson(*this)).toJson());
     file.close();
-    
+
     return true;
 }

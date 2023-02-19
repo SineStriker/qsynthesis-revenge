@@ -1,31 +1,40 @@
 #include "QDspxTrack.h"
 
-QDspx::ClipRef QASJsonType<QDspx::ClipRef>::fromObject(const QJsonObject &obj, bool *ok) {
-    auto it = obj.find("type");
-    if (it == obj.end()) {
-        return {};
+QAS::JsonStream &QDspx::operator>>(QAS::JsonStream &_stream, QDspx::ClipRef &_var) {
+    QJsonObject _obj;
+    if (!QAS::JsonStreamUtils::parseAsObject(_stream, typeid(_var).name(), &_obj).good()) {
+        return _stream;
     }
 
-    bool ok2;
-    auto type = QASJsonType<QDspx::Clip::Type>::fromValue(it.value(), &ok2);
-    if (!ok2) {
-        return {};
+    QDspx::Clip _tmpVar{};
+    QAS::JsonStream _tmpStream;
+    if (!(_tmpStream = QAS::JsonStreamUtils::parseObjectMember(_obj, "type", typeid(_tmpVar).name(),
+                                                               &_tmpVar.type)).good()) {
+        _stream.setStatus(_tmpStream.status());
+        return _stream;
     }
 
-    if (type == QDspx::Clip::Singing) {
-        return QDspx::SingingClipRef::create(QASJsonType<QDspx::SingingClip>::fromObject(obj, ok));
-    } else if (type == QDspx::Clip::Audio) {
-        return QDspx::AudioClipRef::create(QASJsonType<QDspx::AudioClip>::fromObject(obj, ok));
+    switch (_tmpVar.type) {
+        case QDspx::Clip::Singing: {
+            auto _realVar = QDspx::SingingClipRef::create();
+            _var = _realVar;
+            return _stream >> *_realVar.data();
+        }
+        case QDspx::Clip::Audio: {
+            auto _realVar = QDspx::AudioClipRef::create();
+            _var = _realVar;
+            return _stream >> *_realVar.data();
+        }
     }
 
-    return {};
+    return _stream;
 }
 
-QJsonObject QASJsonType<QDspx::ClipRef>::toObject(const QDspx::ClipRef &cls) {
-    if (cls.isNull()) {
-        return {};
+QAS::JsonStream &QDspx::operator<<(QAS::JsonStream &_stream, const QDspx::ClipRef &_var) {
+    if (_var.isNull()) {
+        return _stream;
     }
-    return cls->type == QDspx::Clip::Singing
-               ? QASJsonType<QDspx::SingingClip>::toObject(*cls.dynamicCast<QDspx::SingingClip>())
-               : QASJsonType<QDspx::AudioClip>::toObject(*cls.dynamicCast<QDspx::AudioClip>());
+
+    return _var->type == QDspx::Clip::Singing ? (_stream << *_var.dynamicCast<QDspx::SingingClip>()) :
+           (_stream << *_var.dynamicCast<QDspx::AudioClip>());
 }

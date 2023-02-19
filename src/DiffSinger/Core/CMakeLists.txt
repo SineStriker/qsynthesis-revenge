@@ -43,4 +43,6 @@ add_files(_json_headers
 
 qas_wrap_cpp(_qasc_src ${_json_headers} TARGET ${PROJECT_NAME})
 target_sources(${PROJECT_NAME} PRIVATE ${_qasc_src})
-target_link_libraries(${PROJECT_NAME} PUBLIC qastool::qasstream)
+target_include_directories(${PROJECT_NAME} PUBLIC ${QASTOOL_INCLUDE_DIRS})
+
+message(${QASTOOL_INCLUDE_DIRS})

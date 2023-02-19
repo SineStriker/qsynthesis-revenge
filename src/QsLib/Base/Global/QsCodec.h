@@ -24,6 +24,10 @@ namespace QsCodec {
      */
     QSBASE_API QString unescape(const QString &s);
 
+    QSBASE_API QByteArray toNativePath(const QByteArray &s);
+
+    QSBASE_API QByteArray fromNativePath(const QByteArray &s);
+
 } // namespace QsCodec
 
 #endif // QSTEXTHELPER_H

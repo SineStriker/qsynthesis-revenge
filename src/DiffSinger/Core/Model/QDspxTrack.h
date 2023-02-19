@@ -14,23 +14,25 @@ namespace QDspx {
         int clipLen;
 
         // 构造器
-        ClipTime() : ClipTime(0, 4800) {};
+        ClipTime() : ClipTime(0, 4800){};
 
-        ClipTime(int start, int length) : ClipTime(start, length, 0, length) {};
+        ClipTime(int start, int length) : ClipTime(start, length, 0, length){};
 
         ClipTime(int start, int length, int clipStart, int clipLen)
-                : start(start), length(length), clipStart(clipStart), clipLen(clipLen) {};
+            : start(start), length(length), clipStart(clipStart), clipLen(clipLen){};
     };
 
     // 音轨区间
     struct DSCORE_API Clip {
         enum Type {
-            QAS_ATTRIBUTE("singing")
+            __qas_attr__("singing") //
             Singing,
 
-            QAS_ATTRIBUTE("audio")
+            __qas_attr__("audio") //
             Audio,
         };
+
+        QAS_JSON(Type)
 
         Type type;
         ClipTime time;
@@ -42,10 +44,8 @@ namespace QDspx {
         Workspace workspace;
 
         // 构造器
-        Clip() : type(Singing) {};
-
-        explicit Clip(Type type) : type(type) {};
-
+        Clip() : type(Singing){};
+        explicit Clip(Type type) : type(type){};
         virtual ~Clip() = default;
     };
 
@@ -56,7 +56,7 @@ namespace QDspx {
         QString path;
 
         // 构造器
-        AudioClip() : Clip(Audio) {};
+        AudioClip() : Clip(Audio){};
     };
 
     using AudioClipRef = QSharedPointer<AudioClip>;
@@ -70,7 +70,7 @@ namespace QDspx {
         SourceInfo sources;
 
         // 构造器
-        SingingClip() : Clip(Singing) {};
+        SingingClip() : Clip(Singing){};
     };
 
     using SingingClipRef = QSharedPointer<SingingClip>;
@@ -86,20 +86,13 @@ namespace QDspx {
         Workspace workspace;
     };
 
+    QAS_JSON_NS(ClipTime)
+    QAS_JSON_NS(Clip)
+    QAS_JSON_NS(AudioClip)
+    QAS_JSON_NS(SingingClip)
+    QAS_JSON_NS(Track)
+    QAS_JSON_NS_IMPL(ClipRef)
+
 } // namespace QDspx
-
-QAS_JSON_DECLARE(QDspx::ClipTime)
-
-QAS_JSON_DECLARE(QDspx::Clip)
-
-QAS_JSON_DECLARE(QDspx::AudioClip)
-
-QAS_JSON_DECLARE(QDspx::SingingClip)
-
-QAS_JSON_DECLARE(QDspx::Track)
-
-QAS_ENUM_DECLARE(QDspx::Clip::Type)
-
-QAS_JSON_DECLARE_IMPL(QDspx::ClipRef)
 
 #endif // QDSPXTRACK_H

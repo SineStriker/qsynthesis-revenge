@@ -8,15 +8,14 @@ namespace QDspx {
     // 音素
     struct DSCORE_API Phoneme {
         enum Type {
-            QAS_ATTRIBUTE("ahead")
+            __qas_attr__("ahead")  //
             Ahead,
-
-            QAS_ATTRIBUTE("normal")
+            __qas_attr__("normal") //
             Normal,
-
-            QAS_ATTRIBUTE("final")
+            __qas_attr__("final")  //
             Final,
         };
+        QAS_JSON(Type)
 
         Type type;
         QString token;
@@ -32,9 +31,9 @@ namespace QDspx {
 
     // 音素信息
     struct DSCORE_API PhonemeInfo {
-        QAS_ATTRIBUTE("original")
+        __qas_attr__("original")
         QList<Phoneme> org;
-
+        
         QList<Phoneme> edited;
     };
 
@@ -70,16 +69,11 @@ namespace QDspx {
         Note(int pos, int length, int keyNum) : pos(pos), length(length), keyNum(keyNum){};
     };
 
+    QAS_JSON_NS(Phoneme)
+    QAS_JSON_NS(PhonemeInfo)
+    QAS_JSON_NS(VibratoInfo)
+    QAS_JSON_NS(Note)
+
 } // namespace QDspx
-
-QAS_JSON_DECLARE(QDspx::Phoneme)
-
-QAS_JSON_DECLARE(QDspx::PhonemeInfo)
-
-QAS_JSON_DECLARE(QDspx::VibratoInfo)
-
-QAS_JSON_DECLARE(QDspx::Note)
-
-QAS_ENUM_DECLARE(QDspx::Phoneme::Type)
 
 #endif // QDSPXNOTE_H

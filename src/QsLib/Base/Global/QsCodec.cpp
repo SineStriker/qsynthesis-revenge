@@ -45,3 +45,17 @@ QString QsCodec::unescape(const QString &s) {
     }
     return res;
 }
+
+QByteArray QsCodec::toNativePath(const QByteArray &s) {
+    QByteArray s2 = s;
+#ifdef Q_OS_WINDOWS
+    return s2.replace('/', '\\');
+#else
+    return fromNativePath(s);
+#endif
+}
+
+QByteArray QsCodec::fromNativePath(const QByteArray &s) {
+    QByteArray s2 = s;
+    return s2.replace('\\', '/');
+}

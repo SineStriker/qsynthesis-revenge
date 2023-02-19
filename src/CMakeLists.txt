@@ -47,7 +47,7 @@ find_package(yaml-cpp REQUIRED)
 find_package(ffmpeg-fake REQUIRED NAMES FFmpeg)
 find_package(QuaZip NAMES quazip QuaZip-Qt5 QuaZip-Qt6 REQUIRED)
 find_package(QNrbf REQUIRED)
-find_package(qastool REQUIRED COMPONENTS qasstream qasc)
+find_package(qastool REQUIRED)
 
 if(NOT APPLE)
     find_package(FramelessHelper REQUIRED COMPONENTS Core Widgets)
@@ -87,7 +87,7 @@ endif()
 # ----------------------------------
 if(TRUE)
     get_all_targets(_all_targets)
-        
+
     proc_deps("${_all_targets}")
 
     if(APP_DEPLOY)
