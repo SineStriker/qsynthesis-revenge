@@ -3,6 +3,8 @@
 
 #include "INamePlugin.h"
 
+QSAPI_BEGIN_NAMESPACE
+
 class QSBASE_API ICompressEngine : public INamePlugin {
     Q_OBJECT
 public:
@@ -30,10 +32,12 @@ public:
     virtual bool extractToDirectory(const QString &filename, const QString &dir) = 0;
 };
 
-#define ICompressEngine_IID "QSynthesis.Plugin.Utils.CompressEngine"
+QSAPI_END_NAMESPACE
+
+#define QsApi_ICompressEngine_IID "QSynthesis.Plugin.Utils.CompressEngine"
 
 QT_BEGIN_NAMESPACE
-Q_DECLARE_INTERFACE(ICompressEngine, ICompressEngine_IID)
+Q_DECLARE_INTERFACE(QsApi::ICompressEngine, QsApi_ICompressEngine_IID)
 QT_END_NAMESPACE
 
 #endif // ICOMPRESSENGINE_H

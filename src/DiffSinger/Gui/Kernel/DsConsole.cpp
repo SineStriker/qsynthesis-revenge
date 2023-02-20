@@ -16,6 +16,8 @@
 #include "IDspxPorter.h"
 #include "QsPluginManager.h"
 
+DSAPI_USING_NAMESPACE
+
 static const char FILE_EXTENSIONS_DELIMITER[] = ";;";
 
 static const char OPEN_FLAG[] = "%PROJ%";

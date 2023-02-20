@@ -3,6 +3,8 @@
 
 #include "IWindowHandle.h"
 
+QSAPI_BEGIN_NAMESPACE
+
 class QSFRAMEWORK_API IWindowHandlePrivate {
     Q_DECLARE_PUBLIC(IWindowHandle)
 public:
@@ -19,5 +21,7 @@ public:
 
     IWindowHandle::TitleBarFlags titleBarFlags;
 };
+
+QSAPI_END_NAMESPACE
 
 #endif // IWINDOWHANDLEPRIVATE_H

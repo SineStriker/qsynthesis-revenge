@@ -4,10 +4,12 @@
 #include "Api/IDspxPorter.h"
 #include "CDecorateDir.h"
 
+DSAPI_USING_NAMESPACE
+
 class Q_DECL_EXPORT MidiPorter : public IDspxPorter {
     Q_OBJECT
-    Q_INTERFACES(IDspxPorter)
-    Q_PLUGIN_METADATA(IID IDspxPorter_IID FILE "plugin.json")
+    Q_INTERFACES(DsApi::IDspxPorter)
+    Q_PLUGIN_METADATA(IID DsApi_IDspxPorter_IID FILE "plugin.json")
 public:
     explicit MidiPorter(QObject *parent = nullptr);
     ~MidiPorter();

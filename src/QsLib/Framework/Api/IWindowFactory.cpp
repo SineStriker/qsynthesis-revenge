@@ -1,5 +1,7 @@
 #include "IWindowFactory.h"
 
+QSAPI_USING_NAMESPACE
+
 IWindowFactory::IWindowFactory(QObject *parent) : INamePlugin(parent) {
 }
 

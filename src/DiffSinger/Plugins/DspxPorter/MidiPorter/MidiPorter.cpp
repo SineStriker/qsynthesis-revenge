@@ -16,8 +16,6 @@
 
 #include <set>
 
-using namespace QDspx;
-
 MidiPorter::MidiPorter(QObject *parent) : IDspxPorter(parent) {
     dd.setDir(QsFs::PathFindDirPath(path));
     dd.loadDefault("MidiPorter");
@@ -326,7 +324,7 @@ bool MidiPorter::load(const QString &filename, QDspxModel *out, QObject *parent)
     // TempoMap轨道数据
     QDspx::Timeline timeLine;
 
-    TimeSignature timeSignature;
+    QDspx::TimeSignature timeSignature;
     for (auto it = timeSign.begin(); it != timeSign.end(); ++it) {
         timeSignature.pos = int(it.key() * scaleFactor);
         timeSignature.num = it->x();
@@ -355,17 +353,17 @@ bool MidiPorter::load(const QString &filename, QDspxModel *out, QObject *parent)
     for (auto &logicID : selectID) {
         LogicTrack tempIndex = LogicTrack::fromInt(logicID);
         QDspx::Track track;
-        auto clip = SingingClipRef::create();
+        auto clip = QDspx::SingingClipRef::create();
         auto logicNotes = logicTrackNotes[logicID];
 
         int clipEnd = int(trackNameAndLyrics[tempIndex.track].trackEnd * scaleFactor);
-        ClipTime clipTime(0, clipEnd);
+        QDspx::ClipTime clipTime(0, clipEnd);
         clip->time = clipTime;
         clip->name = codec->toUnicode(logicTrackInfos[logicID].option.title);
 
         // 填充音符
         for (const auto &logicNote : qAsConst(logicNotes)) {
-            Note note;
+            QDspx::Note note;
 
             note.pos = int(logicNote.pos * scaleFactor);
             note.length = int(logicNote.len * scaleFactor);

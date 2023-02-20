@@ -15,4 +15,8 @@
 #  endif
 #endif
 
+#define QSAPI_BEGIN_NAMESPACE namespace QsApi {
+#define QSAPI_END_NAMESPACE }
+#define QSAPI_USING_NAMESPACE using namespace QsApi;
+
 #endif // QSGLOBAL_H

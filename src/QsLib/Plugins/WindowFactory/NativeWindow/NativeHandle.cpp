@@ -1,6 +1,8 @@
 #include "NativeHandle.h"
 #include "private/NativeHandle_p.h"
 
+QSAPI_USING_NAMESPACE
+
 NativeHandle::NativeHandle(QMainWindow *parent) : NativeHandle(*new NativeHandlePrivate(), parent) {
 }
 

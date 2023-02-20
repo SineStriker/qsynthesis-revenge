@@ -2,7 +2,7 @@
 
 #include <QDebug>
 
-NAUDIO_USE_NAMESPACE
+NAUDIO_USING_NAMESPACE
 
 FFmpegDecoderPrivate::FFmpegDecoderPrivate() {
 }

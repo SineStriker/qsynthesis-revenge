@@ -6,7 +6,10 @@
 
 #include "QsMath.h"
 
+QSAPI_USING_NAMESPACE
+
 Q_SINGLETON_DECLARE(QsPluginManager)
+
 QsPluginManager::QsPluginManager(QObject *parent)
     : QsPluginManager(*new QsPluginManagerPrivate(), parent) {
 }

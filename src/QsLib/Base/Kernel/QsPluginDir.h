@@ -37,7 +37,7 @@ protected:
 
 template <class T>
 QList<T *> QsPluginDir::plugins() const {
-    static_assert(std::is_base_of<INamePlugin, T>::value, "T should inherit from INamePlugin");
+    static_assert(std::is_base_of<QsApi::INamePlugin, T>::value, "T should inherit from QsApi::INamePlugin");
     QList<T *> res;
     auto insts = instances();
     for (const auto &item : qAsConst(insts)) {

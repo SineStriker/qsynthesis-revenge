@@ -7,6 +7,8 @@
 #include "INamePlugin.h"
 #include "QsCoreConfig.h"
 
+QSAPI_USING_NAMESPACE
+
 QsPluginDirPrivate::QsPluginDirPrivate() {
 }
 

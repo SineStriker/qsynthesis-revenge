@@ -1,6 +1,8 @@
 #include "IWindowHandle.h"
 #include "private/IWindowHandle_p.h"
 
+QSAPI_USING_NAMESPACE
+
 IWindowHandle::IWindowHandle(QMainWindow *parent)
     : IWindowHandle(*new IWindowHandlePrivate(), parent) {
 }

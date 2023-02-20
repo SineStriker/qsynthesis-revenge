@@ -1,6 +1,8 @@
 #include "PlainWindow.h"
 #include "private/PlainWindow_p.h"
 
+QSAPI_USING_NAMESPACE
+
 PlainWindow::PlainWindow(QWidget *parent) : PlainWindow(*new PlainWindowPrivate(), parent) {
 }
 

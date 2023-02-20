@@ -3,7 +3,10 @@
 
 #include <QMainWindow>
 
+#include "INamePlugin.h"
 #include "QsFrameworkGlobal.h"
+
+QSAPI_BEGIN_NAMESPACE
 
 class IWindowHandlePrivate;
 
@@ -71,5 +74,7 @@ protected:
 
     QScopedPointer<IWindowHandlePrivate> d_ptr;
 };
+
+QSAPI_END_NAMESPACE
 
 #endif // IWINDOWHANDLE_H

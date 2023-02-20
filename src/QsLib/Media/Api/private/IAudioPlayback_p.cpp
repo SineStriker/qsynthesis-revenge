@@ -1,5 +1,7 @@
 #include "IAudioPlayback_p.h"
 
+QSAPI_USING_NAMESPACE
+
 IAudioPlaybackPrivate::IAudioPlaybackPrivate() {
 }
 

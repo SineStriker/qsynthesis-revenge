@@ -6,6 +6,8 @@
 
 #include "QsGlobal.h"
 
+QSAPI_BEGIN_NAMESPACE
+
 class QSBASE_API INamePlugin : public QObject {
     Q_OBJECT
 public:
@@ -34,5 +36,9 @@ T *INamePlugin::load(QPluginLoader *ld) {
     setLastPluginPath(ld->fileName());
     return qobject_cast<T *>(ld->instance());
 }
+
+QSAPI_END_NAMESPACE
+
+#define QsApiPlugin QsApi::INamePlugin
 
 #endif // INAMEPLUGIN_H

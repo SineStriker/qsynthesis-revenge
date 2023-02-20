@@ -3,12 +3,14 @@
 
 #include "Api/IAudioDecoder.h"
 
+QSAPI_USING_NAMESPACE
+
 class FFmpegDecoderPrivate;
 
 class Q_DECL_EXPORT FFmpegDecoder : public IAudioDecoder {
     Q_OBJECT
-    Q_INTERFACES(IAudioDecoder)
-    Q_PLUGIN_METADATA(IID IAudioDecoder_IID FILE "plugin.json")
+    Q_INTERFACES(QsApi::IAudioDecoder)
+    Q_PLUGIN_METADATA(IID QsApi_IAudioDecoder_IID FILE "plugin.json")
 
     Q_DECLARE_PRIVATE(FFmpegDecoder)
 public:
@@ -48,5 +50,6 @@ protected:
 
 signals:
 };
+
 
 #endif // FFMPEGDECODER_H

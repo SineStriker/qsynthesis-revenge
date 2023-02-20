@@ -3,10 +3,12 @@
 
 #include "Api/ICompressEngine.h"
 
+QSAPI_USING_NAMESPACE
+
 class QZlibEngine : public ICompressEngine {
     Q_OBJECT
-    Q_INTERFACES(ICompressEngine)
-    Q_PLUGIN_METADATA(IID ICompressEngine_IID FILE "plugin.json")
+    Q_INTERFACES(QsApi::ICompressEngine)
+    Q_PLUGIN_METADATA(IID QsApi_ICompressEngine_IID FILE "plugin.json")
 public:
     explicit QZlibEngine(QObject *parent = nullptr);
     ~QZlibEngine();

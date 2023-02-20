@@ -10,6 +10,8 @@ static const char Slash = '/';
 
 static const char LocalDataFile[] = "local.json";
 
+DSAPI_USING_NAMESPACE
+
 DsApplicationPrivate::DsApplicationPrivate() {
 }
 

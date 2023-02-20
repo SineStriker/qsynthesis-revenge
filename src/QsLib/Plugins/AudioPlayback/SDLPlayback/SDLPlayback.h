@@ -3,13 +3,15 @@
 
 #include "Api/IAudioPlayback.h"
 
+QSAPI_USING_NAMESPACE
+
 class SDLPlaybackPrivate;
 
 class Q_DECL_EXPORT SDLPlayback : public IAudioPlayback {
     Q_OBJECT
     Q_DECLARE_PRIVATE(SDLPlayback)
-    Q_INTERFACES(IAudioPlayback)
-    Q_PLUGIN_METADATA(IID IAudioPlayback_IID FILE "plugin.json")
+    Q_INTERFACES(QsApi::IAudioPlayback)
+    Q_PLUGIN_METADATA(IID QsApi_IAudioPlayback_IID FILE "plugin.json")
 public:
     explicit SDLPlayback(QObject *parent = nullptr);
     ~SDLPlayback();

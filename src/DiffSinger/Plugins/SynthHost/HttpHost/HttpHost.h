@@ -3,10 +3,12 @@
 
 #include "Api/ISynthHost.h"
 
+DSAPI_USING_NAMESPACE
+
 class Q_DECL_EXPORT HttpHost : public ISynthHost {
     Q_OBJECT
-    Q_INTERFACES(ISynthHost)
-    Q_PLUGIN_METADATA(IID ISynthHost_IID FILE "plugin.json")
+    Q_INTERFACES(DsApi::ISynthHost)
+    Q_PLUGIN_METADATA(IID DsApi_ISynthHost_IID FILE "plugin.json")
 public:
     explicit HttpHost(QObject *parent = nullptr);
     ~HttpHost();

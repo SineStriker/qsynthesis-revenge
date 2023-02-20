@@ -6,6 +6,8 @@
 #include "QsStartInfo.h"
 #include "QsSystem.h"
 
+QSAPI_USING_NAMESPACE
+
 PlainWindowPrivate::PlainWindowPrivate() {
 }
 

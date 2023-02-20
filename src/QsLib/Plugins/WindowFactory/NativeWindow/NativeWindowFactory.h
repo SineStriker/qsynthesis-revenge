@@ -3,12 +3,14 @@
 
 #include "Api/IWindowFactory.h"
 
+QSAPI_USING_NAMESPACE
+
 class NativeWindowFactoryPrivate;
 
 class Q_DECL_EXPORT NativeWindowFactory : public IWindowFactory {
     Q_OBJECT
-    Q_INTERFACES(IWindowFactory)
-    Q_PLUGIN_METADATA(IID IWindowFactory_IID FILE "plugin.json")
+    Q_INTERFACES(QsApi::IWindowFactory)
+    Q_PLUGIN_METADATA(IID QsApi_IWindowFactory_IID FILE "plugin.json")
 public:
     explicit NativeWindowFactory(QObject *parent = nullptr);
     ~NativeWindowFactory();

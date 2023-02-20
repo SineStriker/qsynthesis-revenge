@@ -5,6 +5,8 @@
 
 #include "IWindowFactory.h"
 
+QSAPI_USING_NAMESPACE
+
 QsGuiPluginManager::QsGuiPluginManager(QObject *parent)
     : QsGuiPluginManager(*new QsGuiPluginManagerPrivate(), parent) {
 }

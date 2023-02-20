@@ -3,6 +3,8 @@
 
 #include "Api/IWindowHandle.h"
 
+QSAPI_USING_NAMESPACE
+
 class NativeHandlePrivate;
 
 class Q_DECL_EXPORT NativeHandle : public IWindowHandle {

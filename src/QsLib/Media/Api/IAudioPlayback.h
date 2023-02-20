@@ -6,6 +6,8 @@
 #include "IAudioDecoder.h"
 #include "INamePlugin.h"
 
+QSAPI_BEGIN_NAMESPACE
+
 class IAudioPlaybackPrivate;
 
 class QSMEDIA_API IAudioPlayback : public INamePlugin {
@@ -84,10 +86,12 @@ signals:
     void deviceRemoved();
 };
 
-#define IAudioPlayback_IID "QSynthesis.Plugin.Media.AudioPlayback"
+QSAPI_END_NAMESPACE
+
+#define QsApi_IAudioPlayback_IID "QSynthesis.Plugin.Media.AudioPlayback"
 
 QT_BEGIN_NAMESPACE
-Q_DECLARE_INTERFACE(IAudioPlayback, IAudioPlayback_IID)
+Q_DECLARE_INTERFACE(QsApi::IAudioPlayback, QsApi_IAudioPlayback_IID)
 QT_END_NAMESPACE
 
 #endif // IAUDIOPLAYBACK_H

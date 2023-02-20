@@ -6,6 +6,8 @@
 #include "ISVSPlugin.h"
 #include "Svip/QSvipModel.h"
 
+QSAPI_BEGIN_NAMESPACE
+
 class QSSVS_API ISVSConverter : public ISVSPlugin {
     Q_OBJECT
 public:
@@ -39,10 +41,12 @@ public:
                       const QMap<QString, QVariant> &args = {}) = 0;
 };
 
-#define ISVSConverter_IID "QSynthesis.Plugin.SVS.SVSConverter"
+QSAPI_END_NAMESPACE
+
+#define QsApi_ISVSConverter_IID "QSynthesis.Plugin.SVS.SVSConverter"
 
 QT_BEGIN_NAMESPACE
-Q_DECLARE_INTERFACE(ISVSConverter, ISVSConverter_IID)
+Q_DECLARE_INTERFACE(QsApi::ISVSConverter, QsApi_ISVSConverter_IID)
 QT_END_NAMESPACE
 
 #endif // ISVSCONVERTER_H

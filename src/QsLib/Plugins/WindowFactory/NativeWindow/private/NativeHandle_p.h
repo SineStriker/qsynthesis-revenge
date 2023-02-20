@@ -1,5 +1,5 @@
-#ifndef NATIVEHANDLEPRIVATE_H
-#define NATIVEHANDLEPRIVATE_H
+#ifndef NATIVEHANDLE_P_H
+#define NATIVEHANDLE_P_H
 
 #include "../NativeHandle.h"
 #include "Api/private/IWindowHandle_p.h"
@@ -30,4 +30,4 @@ public:
     CWindowBarV2 *titleBar;
 };
 
-#endif // NATIVEHANDLEPRIVATE_H
+#endif // NATIVEHANDLE_P_H

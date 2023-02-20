@@ -5,7 +5,9 @@
 #include "DsGuiGlobal.h"
 #include "QDspxModel.h"
 
-class DSGUI_API IDspxPorter : public INamePlugin {
+DSAPI_BEGIN_NAMESPACE
+
+class DSGUI_API IDspxPorter : public QsApi::INamePlugin {
     Q_OBJECT
 public:
     explicit IDspxPorter(QObject *parent = nullptr);
@@ -65,12 +67,14 @@ public:
     virtual bool save(const QString &filename, const QDspxModel &in, QObject *parent = nullptr) = 0;
 };
 
-Q_DECLARE_OPERATORS_FOR_FLAGS(IDspxPorter::SupportedPorts)
+DSAPI_END_NAMESPACE
 
-#define IDspxPorter_IID "DiffScope.Plugin.DspxPorter"
+Q_DECLARE_OPERATORS_FOR_FLAGS(DsApi::IDspxPorter::SupportedPorts)
+
+#define DsApi_IDspxPorter_IID "DiffScope.Plugin.DspxPorter"
 
 QT_BEGIN_NAMESPACE
-Q_DECLARE_INTERFACE(IDspxPorter, IDspxPorter_IID)
+Q_DECLARE_INTERFACE(DsApi::IDspxPorter, DsApi_IDspxPorter_IID)
 QT_END_NAMESPACE
 
 #endif // IDSPXPORTER_H

@@ -1,5 +1,7 @@
 #include "IWindowHandle_p.h"
 
+QSAPI_USING_NAMESPACE
+
 IWindowHandlePrivate::IWindowHandlePrivate() {
 }
 

@@ -20,7 +20,7 @@ public:
 
 #ifndef Q_OS_MAC
     QPluginLoader *loader;
-    IWindowHandle *winHandle;
+    QsApi::IWindowHandle *winHandle;
 #endif
 };
 

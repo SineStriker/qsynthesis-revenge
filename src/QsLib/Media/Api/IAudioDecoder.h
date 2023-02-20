@@ -6,6 +6,8 @@
 #include "INamePlugin.h"
 #include "NAudio/WaveStream.h"
 
+QSAPI_BEGIN_NAMESPACE
+
 class QSMEDIA_API IAudioDecoder : public INamePlugin, public NAudio::WaveStream {
     Q_OBJECT
 public:
@@ -31,10 +33,12 @@ public:
     virtual NAudio::WaveFormat inFormat() const = 0;
 };
 
-#define IAudioDecoder_IID "QSynthesis.Plugin.Media.AudioDecoder"
+QSAPI_END_NAMESPACE
+
+#define QsApi_IAudioDecoder_IID "QSynthesis.Plugin.Media.AudioDecoder"
 
 QT_BEGIN_NAMESPACE
-Q_DECLARE_INTERFACE(IAudioDecoder, IAudioDecoder_IID)
+Q_DECLARE_INTERFACE(QsApi::IAudioDecoder, QsApi_IAudioDecoder_IID)
 QT_END_NAMESPACE
 
 #endif // IAUDIODECODER_H

@@ -1,6 +1,8 @@
 #include "IAudioPlayback.h"
 #include "private/IAudioPlayback_p.h"
 
+QSAPI_USING_NAMESPACE
+
 IAudioPlayback::IAudioPlayback(QObject *parent)
     : IAudioPlayback(*new IAudioPlaybackPrivate(), parent) {
 }

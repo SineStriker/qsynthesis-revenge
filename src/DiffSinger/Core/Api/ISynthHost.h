@@ -6,7 +6,9 @@
 #include "DsCoreGlobal.h"
 #include "INamePlugin.h"
 
-class DSCORE_API ISynthHost : public INamePlugin {
+DSAPI_BEGIN_NAMESPACE
+
+class DSCORE_API ISynthHost : public QsApi::INamePlugin {
     Q_OBJECT
 public:
     explicit ISynthHost(QObject *parent = nullptr);
@@ -15,10 +17,12 @@ public:
 public:
 };
 
-#define ISynthHost_IID "DiffScope.Plugin.SynthHost"
+DSAPI_END_NAMESPACE
+
+#define DsApi_ISynthHost_IID "DiffScope.Plugin.SynthHost"
 
 QT_BEGIN_NAMESPACE
-Q_DECLARE_INTERFACE(ISynthHost, ISynthHost_IID)
+Q_DECLARE_INTERFACE(DsApi::ISynthHost, DsApi_ISynthHost_IID)
 QT_END_NAMESPACE
 
 

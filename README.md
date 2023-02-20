@@ -15,7 +15,7 @@ The application is able to run on **Windows, MacOS and Linux**.
 + LabelVoice (Suspended)
     + Annnotation tool for vocal synthesis database.
 
-+ DiffScope
++ DiffScope (Developing)
     + DiffSinger graphical editing tool maintained by OpenVPI.
 
 <!-- + QSynthesis

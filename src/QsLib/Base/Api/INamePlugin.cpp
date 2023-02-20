@@ -4,6 +4,8 @@
 #include <QMutex>
 #include <QThread>
 
+QSAPI_USING_NAMESPACE
+
 static QHash<QThread *, QString> lastPluginPaths;
 
 static QMutex mutex;

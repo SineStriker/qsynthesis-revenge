@@ -3,6 +3,8 @@
 
 #include "../IAudioPlayback.h"
 
+QSAPI_BEGIN_NAMESPACE
+
 class QSMEDIA_API IAudioPlaybackPrivate {
     Q_DECLARE_PUBLIC(IAudioPlayback)
 public:
@@ -30,5 +32,7 @@ public:
     int sampleRate;
     int channels;
 };
+
+QSAPI_END_NAMESPACE
 
 #endif // IAUDIOPLAYBACKPRIVATE_H
