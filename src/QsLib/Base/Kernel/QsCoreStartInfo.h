@@ -4,11 +4,11 @@
 #include <QCommandLineParser>
 #include <QString>
 
-#include "QsGlobal.h"
+#include "QDisposable.h"
 #include "QsMacros.h"
 
 #ifndef qIStup
-#define qIStup QsCoreStartInfo::instance()
+#    define qIStup QsCoreStartInfo::instance()
 #endif
 
 class QsCoreConsole;
@@ -16,7 +16,7 @@ class QsCoreDecorator;
 class QsCoreConfig;
 class QsCoreStartInfoPrivate;
 
-class QSBASE_API QsCoreStartInfo : public QObject {
+class QSBASE_API QsCoreStartInfo : public QDisposable {
     Q_OBJECT
     Q_DECLARE_PRIVATE(QsCoreStartInfo)
     Q_SINGLETON(QsCoreStartInfo)
@@ -24,10 +24,11 @@ public:
     explicit QsCoreStartInfo(QObject *parent = nullptr);
     ~QsCoreStartInfo();
 
-public:
-    virtual void load();
-    virtual void save();
+protected:
+    void loadImpl() override;
+    void saveImpl() override;
 
+public:
     bool isAboutToQuit() const;
 
     /* Properties can be append in each app's constructor */
@@ -36,7 +37,7 @@ public:
     /* Properties setup in main functions */
     QString appDescription;
 
-    bool allowRootUser; // Default: false
+    bool allowRootUser;  // Default: false
 
     bool allowSecondary; // Default: false
 

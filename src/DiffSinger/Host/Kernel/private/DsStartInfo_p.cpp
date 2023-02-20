@@ -24,7 +24,6 @@ DsStartInfoPrivate::DsStartInfoPrivate() {
 }
 
 DsStartInfoPrivate::~DsStartInfoPrivate() {
-    deinit();
 }
 
 void DsStartInfoPrivate::init() {
@@ -57,8 +56,4 @@ void DsStartInfoPrivate::load_helper() {
     dd.loadDefault("DsHost");
 
     windowMgr = new WindowManager(q);
-}
-
-void DsStartInfoPrivate::deinit() {
-    delete windowMgr;
 }

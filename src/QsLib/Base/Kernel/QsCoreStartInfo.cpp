@@ -10,19 +10,18 @@
 
 Q_SINGLETON_DECLARE(QsCoreStartInfo)
 
-QsCoreStartInfo::QsCoreStartInfo(QObject *parent)
-    : QsCoreStartInfo(*new QsCoreStartInfoPrivate(), parent) {
+QsCoreStartInfo::QsCoreStartInfo(QObject *parent) : QsCoreStartInfo(*new QsCoreStartInfoPrivate(), parent) {
 }
 
 QsCoreStartInfo::~QsCoreStartInfo() {
 }
 
-void QsCoreStartInfo::load() {
+void QsCoreStartInfo::loadImpl() {
     Q_D(QsCoreStartInfo);
     d->load_helper();
 }
 
-void QsCoreStartInfo::save() {
+void QsCoreStartInfo::saveImpl() {
     Q_D(QsCoreStartInfo);
     d->save_helper();
 }
@@ -56,8 +55,7 @@ QsCoreConfig *QsCoreStartInfo::creatDistConfig() {
     return new QsCoreConfig();
 }
 
-QsCoreStartInfo::QsCoreStartInfo(QsCoreStartInfoPrivate &d, QObject *parent)
-    : QObject(parent), d_ptr(&d) {
+QsCoreStartInfo::QsCoreStartInfo(QsCoreStartInfoPrivate &d, QObject *parent) : QDisposable(parent), d_ptr(&d) {
     construct();
 
     d.q_ptr = this;

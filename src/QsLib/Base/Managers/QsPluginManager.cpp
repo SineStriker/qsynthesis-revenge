@@ -17,14 +17,6 @@ QsPluginManager::QsPluginManager(QObject *parent)
 QsPluginManager::~QsPluginManager() {
 }
 
-bool QsPluginManager::load() {
-    return true;
-}
-
-bool QsPluginManager::save() {
-    return true;
-}
-
 QsPluginDir *QsPluginManager::addPluginSet(const QString &key, const PluginSetOptions &opt) {
     Q_D(QsPluginManager);
     auto pd = QSharedPointer<QsPluginDir>::create();

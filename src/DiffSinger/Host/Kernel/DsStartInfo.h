@@ -4,7 +4,7 @@
 #include "QsStartInfo.h"
 
 #ifdef qIStup
-#undef qIStup
+#    undef qIStup
 #endif
 #define qIStup qobject_cast<DsStartInfo *>(QsCoreStartInfo::instance())
 
@@ -17,7 +17,8 @@ public:
     explicit DsStartInfo(QObject *parent = nullptr);
     ~DsStartInfo();
 
-    void load() override;
+protected:
+    void loadImpl() override;
 
 protected:
     QsCoreConsole *createConsole(QObject *parent = nullptr) override;

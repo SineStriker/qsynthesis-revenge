@@ -3,7 +3,7 @@
 
 #include <QObject>
 
-#include "QsGlobal.h"
+#include "QDisposable.h"
 #include "QsMacros.h"
 
 #define qCs QsCoreConsole::instance()
@@ -12,7 +12,7 @@ class QsFileManager;
 class QsPluginManager;
 class QsCoreConsolePrivate;
 
-class QSBASE_API QsCoreConsole : public QObject {
+class QSBASE_API QsCoreConsole : public QDisposable {
     Q_OBJECT
     Q_DECLARE_PRIVATE(QsCoreConsole)
     Q_SINGLETON(QsCoreConsole)
@@ -20,10 +20,11 @@ public:
     explicit QsCoreConsole(QObject *parent = nullptr);
     ~QsCoreConsole();
 
-public:
-    virtual void load();
-    virtual void save();
+protected:
+    void loadImpl() override;
+    void saveImpl() override;
 
+public:
     enum MessageBoxFlag {
         Critical,
         Warning,
@@ -38,8 +39,7 @@ public:
      * @param title             Message box title
      * @param text              Message box text
      */
-    virtual void MsgBox(QObject *parent, MessageBoxFlag flag, const QString &title,
-                        const QString &text);
+    virtual void MsgBox(QObject *parent, MessageBoxFlag flag, const QString &title, const QString &text);
 
     struct SelectOption {
         std::function<QString()> previewr; // A function returning a string to display
@@ -58,8 +58,8 @@ public:
      * @param caption           Select box caption
      * @param arguments         Items to select
      */
-    virtual void SelectBox(QObject *parent, bool supportPreview, int max, const QString &title,
-                           const QString &caption, const QList<SelectOption> &arguments);
+    virtual void SelectBox(QObject *parent, bool supportPreview, int max, const QString &title, const QString &caption,
+                           const QList<SelectOption> &arguments);
 
 protected:
     virtual QsFileManager *createFileManager(QObject *parent = nullptr);

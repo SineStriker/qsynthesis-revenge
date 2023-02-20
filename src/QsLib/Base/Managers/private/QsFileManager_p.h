@@ -1,9 +1,9 @@
-#ifndef QSFILENAMAGERPRIVATE_H
-#define QSFILENAMAGERPRIVATE_H
+#ifndef QSFILEMANAGER_P_H
+#define QSFILEMANAGER_P_H
 
 #include "../QsFileManager.h"
 #include "QsAbstractManager_p.h"
-#include "Tools/QFileSet.h"
+#include "QFileSet.h"
 
 #include <QHash>
 #include <QMap>
@@ -33,4 +33,4 @@ public:
     void saveLastOpenDir(const QString &type, const QString &path, bool upper = true);
 };
 
-#endif // QSFILENAMAGERPRIVATE_H
+#endif // QSFILEMANAGER_P_H

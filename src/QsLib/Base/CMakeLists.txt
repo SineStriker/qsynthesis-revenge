@@ -5,6 +5,7 @@ project(QsBase
 
 set(_res_dir Res)
 get_subdirs(_dirs EXCLUDE ${_res_dir})
+get_subdirs(_tools_dirs DIRECTORY Tools RELATIVE .)
 
 if(APPLE)
     set(_platform_lib ObjC)
@@ -29,7 +30,7 @@ target_components(${PROJECT_NAME}
     QT_LIBRARIES Core
     QT_PRIVATE_INCLUDES Core
     LINKS_PRIVATE SingleApplication ${_platform_lib}
-    INCLUDES ${_dirs}
+    INCLUDES ${_dirs} ${_tools_dirs}
 )
 
 target_create_translations(${PROJECT_NAME} SOURCES ${_src}

@@ -9,9 +9,9 @@ QsStartInfo::QsStartInfo(QObject *parent) : QsStartInfo(*new QsStartInfoPrivate(
 QsStartInfo::~QsStartInfo() {
 }
 
-void QsStartInfo::load() {
+void QsStartInfo::loadImpl() {
     Q_D(QsStartInfo);
-    CStartInfo::load();
+    CStartInfo::loadImpl();
     d->load_helper();
 }
 

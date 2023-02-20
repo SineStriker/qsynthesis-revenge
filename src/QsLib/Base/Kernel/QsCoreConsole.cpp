@@ -14,18 +14,22 @@ QsCoreConsole::QsCoreConsole(QObject *parent) : QsCoreConsole(*new QsCoreConsole
 QsCoreConsole::~QsCoreConsole() {
 }
 
-void QsCoreConsole::load() {
+void QsCoreConsole::loadImpl() {
     Q_D(QsCoreConsole);
-    d->load_helper();
+
+    d->mgrs.push(createFileManager(this));   // File Manager
+    d->mgrs.push(createPluginManager(this)); // Plugin Manager
+    d->mgrs.load();
 }
 
-void QsCoreConsole::save() {
+void QsCoreConsole::saveImpl() {
     Q_D(QsCoreConsole);
-    d->save_helper();
+
+    d->mgrs.save();
 }
 
-void QsCoreConsole::MsgBox(QObject *parent, QsCoreConsole::MessageBoxFlag flag,
-                           const QString &title, const QString &text) {
+void QsCoreConsole::MsgBox(QObject *parent, QsCoreConsole::MessageBoxFlag flag, const QString &title,
+                           const QString &text) {
     Q_UNUSED(parent);
 #if defined(Q_OS_WINDOWS) || defined(Q_OS_MAC)
     Q_D(QsCoreConsole);
@@ -45,8 +49,7 @@ void QsCoreConsole::MsgBox(QObject *parent, QsCoreConsole::MessageBoxFlag flag,
 }
 
 void QsCoreConsole::SelectBox(QObject *parent, bool supportPreview, int max, const QString &title,
-                              const QString &caption,
-                              const QList<QsCoreConsole::SelectOption> &arguments) {
+                              const QString &caption, const QList<QsCoreConsole::SelectOption> &arguments) {
 }
 QsPluginManager *QsCoreConsole::createPluginManager(QObject *parent) {
     return new QsPluginManager(parent);
@@ -57,8 +60,7 @@ QsFileManager *QsCoreConsole::createFileManager(QObject *parent) {
     return new QsFileManager(parent);
 }
 
-QsCoreConsole::QsCoreConsole(QsCoreConsolePrivate &d, QObject *parent)
-    : QObject(parent), d_ptr(&d) {
+QsCoreConsole::QsCoreConsole(QsCoreConsolePrivate &d, QObject *parent) : QDisposable(parent), d_ptr(&d) {
     construct();
 
     d.q_ptr = this;

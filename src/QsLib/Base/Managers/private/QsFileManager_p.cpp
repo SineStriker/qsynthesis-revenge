@@ -44,6 +44,8 @@ void QsFileManagerPrivate::init() {
 }
 
 bool QsFileManagerPrivate::load_helper(const QString &filename) {
+    qDebug() << "filemanager: load recent" << filename;
+
     QFile file(filename);
     if (!file.open(QIODevice::ReadOnly)) {
         return false;
@@ -114,6 +116,8 @@ bool QsFileManagerPrivate::load_helper(const QString &filename) {
 }
 
 bool QsFileManagerPrivate::save_helper(const QString &filename) {
+    qDebug() << "filemanager: save recent" << filename;
+
     QFile file(filename);
     if (!file.open(QIODevice::WriteOnly | QIODevice::Truncate | QIODevice::Text)) {
         return false;

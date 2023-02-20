@@ -5,8 +5,6 @@
 
 using namespace QDspx;
 
-QAS_USING_NAMESPACE
-
 bool Model::load(const QString &filename) {
     // Read file
     QFile file(filename);

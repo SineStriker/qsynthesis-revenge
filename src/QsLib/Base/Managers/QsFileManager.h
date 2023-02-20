@@ -17,9 +17,9 @@ public:
     explicit QsFileManager(QObject *parent = nullptr);
     ~QsFileManager();
 
-public:
-    bool load() override;
-    bool save() override;
+protected:
+    void loadImpl() override;
+    void saveImpl() override;
 
 public:
     enum FileType {
@@ -48,8 +48,8 @@ public:
     virtual QStringList openFiles(const QString &title, const QString &filter, const QString &flag,
                                   QObject *parent = nullptr);
     virtual QString openDir(const QString &title, const QString &flag, QObject *parent = nullptr);
-    virtual QString saveFile(const QString &title, const QString &filename, const QString &filter,
-                             const QString &flag, QObject *parent = nullptr);
+    virtual QString saveFile(const QString &title, const QString &filename, const QString &filter, const QString &flag,
+                             QObject *parent = nullptr);
 
 protected:
     QsFileManager(QsFileManagerPrivate &d, QObject *parent = nullptr);

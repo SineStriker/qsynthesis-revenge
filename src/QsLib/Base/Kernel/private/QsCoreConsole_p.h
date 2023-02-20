@@ -2,6 +2,7 @@
 #define QSCORECONSOLEPRIVATE_H
 
 #include "../QsCoreConsole.h"
+#include "QDisposableQueue.h"
 
 class QSBASE_API QsCoreConsolePrivate {
     Q_DECLARE_PUBLIC(QsCoreConsole)
@@ -10,20 +11,15 @@ public:
     virtual ~QsCoreConsolePrivate();
 
     void init();
-    void load_helper();
-    void save_helper();
-    void deinit();
 
 #if defined(Q_OS_WINDOWS) || defined(Q_OS_MAC)
     void osMessageBox_helper(void *winHandle, QsCoreConsole::MessageBoxFlag flag,
                              const QString &title, const QString &text);
 #endif
 
-    // Managers
-    QsPluginManager *pluginMgr;
-    QsFileManager *fileMgr;
-
     QsCoreConsole *q_ptr;
+
+    QDisposableQueue mgrs;
 };
 
 #endif // QSCORECONSOLEPRIVATE_H

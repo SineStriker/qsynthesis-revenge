@@ -5,7 +5,7 @@
 #include "QsFrameworkGlobal.h"
 
 #ifdef qIStup
-#undef qIStup
+#    undef qIStup
 #endif
 #define qIStup qobject_cast<CStartInfo *>(QsCoreStartInfo::instance())
 
@@ -17,8 +17,9 @@ class QSFRAMEWORK_API CStartInfo : public QsCoreStartInfo {
 public:
     explicit CStartInfo(QObject *parent = nullptr);
     ~CStartInfo();
-    
-    void load() override;
+
+protected:
+    void loadImpl() override;
 
 protected:
     QsCoreConsole *createConsole(QObject *parent = nullptr) override;

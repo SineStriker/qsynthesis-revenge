@@ -10,9 +10,9 @@ CStartInfo::CStartInfo(QObject *parent) : CStartInfo(*new CStartInfoPrivate(), p
 CStartInfo::~CStartInfo() {
 }
 
-void CStartInfo::load() {
+void CStartInfo::loadImpl() {
     Q_D(CStartInfo);
-    QsCoreStartInfo::load();
+    QsCoreStartInfo::loadImpl();
     d->load_helper();
 }
 

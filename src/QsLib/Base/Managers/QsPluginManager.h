@@ -22,9 +22,6 @@ public:
     ~QsPluginManager();
 
 public:
-    bool load() override;
-    bool save() override;
-
     struct PluginSetOptions {
         QString dir;
         std::function<QString()> categoryNameFunc;

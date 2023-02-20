@@ -18,7 +18,8 @@ public:
     explicit QsStartInfo(QObject *parent = nullptr);
     ~QsStartInfo();
 
-    void load() override;
+protected:
+    void loadImpl() override;
 
 public:
     static QString untitledFileName();

@@ -3,19 +3,16 @@
 
 #include <QObject>
 
-#include "QsGlobal.h"
+#include "QDisposable.h"
 
 class QsAbstractManagerPrivate;
 
-class QSBASE_API QsAbstractManager : public QObject {
+class QSBASE_API QsAbstractManager : public QDisposable {
     Q_OBJECT
     Q_DECLARE_PRIVATE(QsAbstractManager)
 public:
     explicit QsAbstractManager(QObject *parent = nullptr);
     ~QsAbstractManager();
-
-    virtual bool load();
-    virtual bool save();
 
 protected:
     QsAbstractManager(QsAbstractManagerPrivate &d, QObject *parent = nullptr);

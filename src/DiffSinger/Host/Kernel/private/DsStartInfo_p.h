@@ -14,7 +14,6 @@ public:
 
     void init();
     void load_helper();
-    void deinit();
 
     WindowManager *windowMgr;
 

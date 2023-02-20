@@ -18,31 +18,27 @@ QsFileManager::QsFileManager(QObject *parent) : QsFileManager(*new QsFileManager
 QsFileManager::~QsFileManager() {
 }
 
-bool QsFileManager::load() {
+void QsFileManager::loadImpl() {
     Q_D(QsFileManager);
     d->load_helper(qAppConf->appDir(QsCoreConfig::AppData) + Slash + FILE_NAME_RECENT_JSON);
-    return true;
 }
 
-bool QsFileManager::save() {
+void QsFileManager::saveImpl() {
     Q_D(QsFileManager);
     d->save_helper(qAppConf->appDir(QsCoreConfig::AppData) + Slash + FILE_NAME_RECENT_JSON);
-    return true;
 }
 
 int QsFileManager::registerFileType(const QString &key, int hint) {
     Q_D(QsFileManager);
     d->fileRegMax = (hint > d->fileRegMax) ? hint : (d->fileRegMax + 1);
-    d->recentFileMap.insert(d->fileRegMax,
-                        QsFileManagerPrivate::RecentDesc{key, QFileSet(QFileSet::File)});
+    d->recentFileMap.insert(d->fileRegMax, QsFileManagerPrivate::RecentDesc{key, QFileSet(QFileSet::File)});
     return d->fileRegMax;
 }
 
 int QsFileManager::registerDirType(const QString &key, int hint) {
     Q_D(QsFileManager);
     d->dirRegMax = (hint > d->dirRegMax) ? hint : (d->dirRegMax + 1);
-    d->recentFileMap.insert(d->dirRegMax,
-                        QsFileManagerPrivate::RecentDesc{key, QFileSet(QFileSet::Directory)});
+    d->recentFileMap.insert(d->dirRegMax, QsFileManagerPrivate::RecentDesc{key, QFileSet(QFileSet::Directory)});
     return d->fileRegMax;
 }
 
@@ -85,13 +81,12 @@ QStringList QsFileManager::fetchRecent(int fType) const {
     return it.value().set.valid();
 }
 
-QString QsFileManager::openFile(const QString &title, const QString &filter, const QString &flag,
-                                QObject *parent) {
+QString QsFileManager::openFile(const QString &title, const QString &filter, const QString &flag, QObject *parent) {
     return {};
 }
 
-QStringList QsFileManager::openFiles(const QString &title, const QString &filter,
-                                     const QString &flag, QObject *parent) {
+QStringList QsFileManager::openFiles(const QString &title, const QString &filter, const QString &flag,
+                                     QObject *parent) {
     return {};
 }
 
@@ -99,13 +94,12 @@ QString QsFileManager::openDir(const QString &title, const QString &flag, QObjec
     return {};
 }
 
-QString QsFileManager::saveFile(const QString &title, const QString &filename,
-                                const QString &filter, const QString &flag, QObject *parent) {
+QString QsFileManager::saveFile(const QString &title, const QString &filename, const QString &filter,
+                                const QString &flag, QObject *parent) {
     return {};
 }
 
-QsFileManager::QsFileManager(QsFileManagerPrivate &d, QObject *parent)
-    : QsAbstractManager(d, parent) {
+QsFileManager::QsFileManager(QsFileManagerPrivate &d, QObject *parent) : QsAbstractManager(d, parent) {
     construct();
     d.init();
 }

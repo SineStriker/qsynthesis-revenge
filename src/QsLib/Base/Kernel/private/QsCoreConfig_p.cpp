@@ -97,15 +97,15 @@ void QsCoreConfigPrivate::initByApp() {
         return PluginInfo{key, catagory, name, name};
     };
     pluginMap = {
-        {QsCoreConfig::AudioDecoder, //
+        {QsCoreConfig::AudioDecoder,   //
          wrapPluginInfo(KEY_NAME_AUDIO_DECODER, "audiodecoders", DEFAULT_AUDIO_DECODER)},
-        {QsCoreConfig::AudioEncoder, //
+        {QsCoreConfig::AudioEncoder,   //
          wrapPluginInfo(KEY_NAME_AUDIO_ENCODER, "audioencoders", DEFAULT_AUDIO_DECODER)},
-        {QsCoreConfig::AudioPlayback, //
+        {QsCoreConfig::AudioPlayback,  //
          wrapPluginInfo(KEY_NAME_PLAYBACK, "audioplaybacks", DEFAULT_PLAYBACK)},
         {QsCoreConfig::CompressEngine, //
          wrapPluginInfo(KEY_NAME_COMPRESS_ENGINE, "compressengines", DEFAULT_COMPRESS_ENGINE)},
-        {QsCoreConfig::WindowFactory, //
+        {QsCoreConfig::WindowFactory,  //
          wrapPluginInfo(KEY_NAME_WINDOW_FACTORY, "windowfactories", DEFAULT_WINDOW_FACTORY)},
     };
     pluginTypeMax = QsCoreConfig::UserPlugin;
@@ -168,6 +168,7 @@ bool QsCoreConfigPrivate::apply_helper() {
         QString path = info.dir;
         switch (args.level) {
             case DirInitArgs::CreateIfNotExist:
+                qDebug() << "coreconfig: create directory" << path;
                 if (!QsFs::mkDir(path)) {
                     qCs->MsgBox(nullptr, QsCoreConsole::Critical, qIStup->mainTitle(),
                                 QString("Failed to create %1 directory!")
@@ -176,10 +177,11 @@ bool QsCoreConfigPrivate::apply_helper() {
                 }
                 break;
             case DirInitArgs::ErrorIfNotExist:
+                qDebug() << "coreconfig: check directory" << path;
                 if (!QsFs::isDirExist(path)) {
-                    qCs->MsgBox(nullptr, QsCoreConsole::Critical, qIStup->mainTitle(),
-                                QString("Failed to create %1 directory!")
-                                    .arg(QsFs::PathFindFileName(path)));
+                    qCs->MsgBox(
+                        nullptr, QsCoreConsole::Critical, qIStup->mainTitle(),
+                        QString("Directory %1 doesn't exist!").arg(QsFs::PathFindFileName(path)));
                     return false;
                 }
                 break;

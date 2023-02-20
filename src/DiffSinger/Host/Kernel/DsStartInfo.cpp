@@ -13,9 +13,9 @@ DsStartInfo::DsStartInfo(QObject *parent) : DsStartInfo(*new DsStartInfoPrivate(
 DsStartInfo::~DsStartInfo() {
 }
 
-void DsStartInfo::load() {
+void DsStartInfo::loadImpl() {
     Q_D(DsStartInfo);
-    QsStartInfo::load();
+    QsStartInfo::loadImpl();
     d->load_helper();
 }
 

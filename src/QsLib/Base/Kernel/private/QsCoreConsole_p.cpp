@@ -27,32 +27,9 @@ QsCoreConsolePrivate::QsCoreConsolePrivate() {
 }
 
 QsCoreConsolePrivate::~QsCoreConsolePrivate() {
-    deinit();
 }
 
 void QsCoreConsolePrivate::init() {
-    fileMgr = nullptr;
-    pluginMgr = nullptr;
-}
-
-void QsCoreConsolePrivate::load_helper() {
-    Q_Q(QsCoreConsole);
-
-    fileMgr = q->createFileManager(q);
-    pluginMgr = q->createPluginManager(q);
-
-    fileMgr->load();
-    pluginMgr->load();
-}
-
-void QsCoreConsolePrivate::save_helper() {
-    pluginMgr->save();
-    fileMgr->save();
-}
-
-void QsCoreConsolePrivate::deinit() {
-    delete pluginMgr;
-    delete fileMgr;
 }
 
 #if defined(Q_OS_WINDOWS) || defined(Q_OS_MAC)

@@ -72,6 +72,8 @@ For detailed information, see [Related Tools](./docs/related-tools.md).
     + MIT License
 + [QNrbf](https://github.com/SineStriker/QNrbf)
     + GNU LGPL v2.1 or later
++ [qastool](https://github.com/SineStriker/qt-json-autogen)
+    + Apache 2.0 License
 
 See [Related Tools](./docs/related-tools.md) for dependencies for each plugin.
 

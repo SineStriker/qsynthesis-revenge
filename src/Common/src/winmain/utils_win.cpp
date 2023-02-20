@@ -50,10 +50,9 @@ std::wstring WinGetLastErrorString(int *errNum) {
     // Ask Win32 to give us the string version of that message ID.
     // The parameters we pass in, tell Win32 to create the buffer that holds the message for us
     // (because we don't yet know how long the message string will be).
-    size_t size = ::FormatMessageW(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM |
-                                       FORMAT_MESSAGE_IGNORE_INSERTS,
-                                   NULL, errorMessageID, MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
-                                   (LPWSTR) &messageBuffer, 0, NULL);
+    size_t size = ::FormatMessageW(
+        FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS, NULL,
+        errorMessageID, MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), (LPWSTR) &messageBuffer, 0, NULL);
 
     // Copy the error message into a std::string.
     std::wstring message(messageBuffer, size);
@@ -71,8 +70,7 @@ std::wstring WinGetExeDir() {
     if (::GetModuleFileNameW(NULL, buf, MAX_PATH) != 0) {
         wstr = buf;
     } else {
-        ::MessageBoxW(nullptr, TO_UNICODE("Failed to get module path!"), Error_Title,
-                      MB_OK | MB_ICONERROR);
+        ::MessageBoxW(nullptr, TO_UNICODE("Failed to get module path!"), Error_Title, MB_OK | MB_ICONERROR);
         ::exit(-1);
     }
 
@@ -120,6 +118,9 @@ WinLibrary::~WinLibrary() {
 }
 
 bool WinLibrary::Load(const std::wstring &path) {
+    wprintf(L"winmain: load library \"%s\"\n", path.data());
+    fflush(stdout);
+
     HINSTANCE hDLL = ::LoadLibraryW(path.data());
     if (!hDLL) {
         std::wstring msg = WinGetLastErrorString(&_impl->errNum);
