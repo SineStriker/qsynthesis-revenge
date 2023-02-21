@@ -1,7 +1,7 @@
 #include "VirtualPathValidator.h"
 
 #include "MathHelper.h"
-#include "QsSystem.h"
+#include "QMSystem.h"
 
 QRegExp VirtualPathValidator::_noSurroundingWhitespaces(R"(^(?!\s).*(?!\s)$)");
 

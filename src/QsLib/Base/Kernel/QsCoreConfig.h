@@ -5,7 +5,6 @@
 #include <QStringList>
 
 #include "QsGlobal.h"
-#include "QsMacros.h"
 
 #define qAppConf QsCoreConfig::instance()
 

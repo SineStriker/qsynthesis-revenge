@@ -7,7 +7,6 @@
 #include "QsCoreConfig.h"
 #include "QsPluginDir.h"
 
-#include "QsMacros.h"
 
 #define qsPluginMgr QsPluginManager::instance()
 

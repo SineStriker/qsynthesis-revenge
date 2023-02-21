@@ -5,7 +5,8 @@
 #include <QScopedPointer>
 #include <QString>
 
-#include "INamePlugin.h"
+#include "QsGlobal.h"
+#include "QMNamePlugin.h"
 
 class QsPluginDirPrivate;
 
@@ -37,7 +38,7 @@ protected:
 
 template <class T>
 QList<T *> QsPluginDir::plugins() const {
-    static_assert(std::is_base_of<QsApi::INamePlugin, T>::value, "T should inherit from QsApi::INamePlugin");
+    static_assert(std::is_base_of<QMNamePlugin, T>::value, "T should inherit from QMNamePlugin");
     QList<T *> res;
     auto insts = instances();
     for (const auto &item : qAsConst(insts)) {

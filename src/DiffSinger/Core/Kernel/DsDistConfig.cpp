@@ -1,5 +1,5 @@
 #include "DsDistConfig.h"
-#include "QsSystem.h"
+#include "QMSystem.h"
 #include "private/DsDistConfig_p.h"
 
 #include <QDebug>

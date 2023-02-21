@@ -128,7 +128,7 @@ int IAudioPlayback::channels() const {
 }
 
 IAudioPlayback::IAudioPlayback(IAudioPlaybackPrivate &d, QObject *parent)
-    : INamePlugin(parent), d_ptr(&d) {
+    : QMNamePlugin(parent), d_ptr(&d) {
     d.q_ptr = this;
 
     d.init();

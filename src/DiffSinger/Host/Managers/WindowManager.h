@@ -6,7 +6,6 @@
 #include "Managers/QsAbstractManager.h"
 #include "QDspxModel.h"
 
-#include "QsMacros.h"
 
 class HomeWindow;
 class PianoWindow;

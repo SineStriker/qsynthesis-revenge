@@ -2,7 +2,7 @@
 
 QSAPI_USING_NAMESPACE
 
-ISVSPlugin::ISVSPlugin(QObject *parent) : INamePlugin(parent) {
+ISVSPlugin::ISVSPlugin(QObject *parent) : QMNamePlugin(parent) {
 }
 
 ISVSPlugin::~ISVSPlugin() {

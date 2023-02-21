@@ -1,7 +1,7 @@
 #include "UCharTxt.h"
 
-#include "QsCodec.h"
-#include "Serialization/QSettingFile.h"
+#include "QMCodec.h"
+#include "Serialization/QMSettingFile.h"
 
 #include "Config/UtaCharText.h"
 
@@ -32,7 +32,7 @@ bool UCharTxt::load(const QString &filename) {
 
     QTextStream in(&data);
     // Detect Code
-    QTextCodec *codec = QsCodec::GetUtfCodec(data, &m_charsetDetermined);
+    QTextCodec *codec = QMCodec::GetUtfCodec(data, &m_charsetDetermined);
     if (codec) {
         m_codec = codec;
     } else if (!m_codec) {
@@ -45,7 +45,7 @@ bool UCharTxt::load(const QString &filename) {
         lines.append(in.readLine());
     }
 
-    QSettingSection section;
+    QMSettingSection section;
     section.fromLines(lines);
     QString *nameValue = section.valueOf(KEY_NAME_CHAR_NAME);
     if (nameValue) {
@@ -80,7 +80,7 @@ bool UCharTxt::save(const QString &filename) {
     }
     out.setCodec(m_codec);
 
-    QSettingSection section;
+    QMSettingSection section;
     if (!name.isEmpty()) {
         section.addPair(KEY_NAME_CHAR_NAME, name);
     }

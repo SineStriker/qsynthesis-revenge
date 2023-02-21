@@ -3,12 +3,12 @@
 
 #include <QObject>
 
-#include "INamePlugin.h"
+#include "QMNamePlugin.h"
 #include "QsMediaGlobal.h"
 
 QSAPI_BEGIN_NAMESPACE
 
-class QSMEDIA_API IAudioEncoder : public INamePlugin {
+class QSMEDIA_API IAudioEncoder : public QMNamePlugin {
     Q_OBJECT
 public:
     explicit IAudioEncoder(QObject *parent = nullptr);

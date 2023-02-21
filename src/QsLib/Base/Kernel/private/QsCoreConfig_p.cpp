@@ -11,9 +11,9 @@
 
 #include "../QsCoreConsole.h"
 #include "../QsCoreStartInfo.h"
-#include "QsSystem.h"
+#include "QMSystem.h"
 
-#include "Serialization/QJsonFormatter.h"
+#include "QMJsonFormatter.h"
 
 static const char SECTION_NAME_DIR[] = "dir";
 static const char KEY_NAME_DATA_DIR[] = "data";
@@ -51,7 +51,7 @@ void QsCoreConfigPrivate::init() {
 
 void QsCoreConfigPrivate::initByApp() {
     /* Set basic environments */
-    vars.addHash(QSimpleVarExp::SystemValues());
+    vars.addHash(QMSimpleVarExp::SystemValues());
 
     /* Set default directories */
     auto wrapDirInfo = [this](const QString &key, const QString &dir, const QString &errorMsg,
@@ -169,19 +169,19 @@ bool QsCoreConfigPrivate::apply_helper() {
         switch (args.level) {
             case DirInitArgs::CreateIfNotExist:
                 qDebug() << "coreconfig: create directory" << path;
-                if (!QsFs::mkDir(path)) {
+                if (!QMFs::mkDir(path)) {
                     qCs->MsgBox(nullptr, QsCoreConsole::Critical, qIStup->mainTitle(),
                                 QString("Failed to create %1 directory!")
-                                    .arg(QsFs::PathFindFileName(path)));
+                                    .arg(QMFs::PathFindFileName(path)));
                     return false;
                 }
                 break;
             case DirInitArgs::ErrorIfNotExist:
                 qDebug() << "coreconfig: check directory" << path;
-                if (!QsFs::isDirExist(path)) {
+                if (!QMFs::isDirExist(path)) {
                     qCs->MsgBox(
                         nullptr, QsCoreConsole::Critical, qIStup->mainTitle(),
-                        QString("Directory %1 doesn't exist!").arg(QsFs::PathFindFileName(path)));
+                        QString("Directory %1 doesn't exist!").arg(QMFs::PathFindFileName(path)));
                     return false;
                 }
                 break;

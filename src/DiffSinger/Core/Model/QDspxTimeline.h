@@ -52,6 +52,6 @@ namespace QDspx {
     QAS_JSON_NS(Label)
     QAS_JSON_NS(Timeline)
 
-} // namespace QDspx
+}
 
 #endif // QDSPXTIMELINE_H

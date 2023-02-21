@@ -3,8 +3,8 @@
 
 #include <QObject>
 
-#include "QDisposable.h"
-#include "QsMacros.h"
+#include "QMDisposable.h"
+#include "QsGlobal.h"
 
 #define qCs QsCoreConsole::instance()
 
@@ -12,7 +12,7 @@ class QsFileManager;
 class QsPluginManager;
 class QsCoreConsolePrivate;
 
-class QSBASE_API QsCoreConsole : public QDisposable {
+class QSBASE_API QsCoreConsole : public QMDisposable {
     Q_OBJECT
     Q_DECLARE_PRIVATE(QsCoreConsole)
     Q_SINGLETON(QsCoreConsole)

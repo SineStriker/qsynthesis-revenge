@@ -6,7 +6,6 @@
 #include <QTextCodec>
 
 #include "QPixelSize.h"
-#include "QsFrameworkMacros.h"
 #include "QsIntegrateGlobal.h"
 
 class ImportDialogPrivate;

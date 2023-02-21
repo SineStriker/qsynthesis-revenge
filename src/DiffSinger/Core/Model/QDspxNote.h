@@ -74,6 +74,6 @@ namespace QDspx {
     QAS_JSON_NS(VibratoInfo)
     QAS_JSON_NS(Note)
 
-} // namespace QDspx
+}
 
 #endif // QDSPXNOTE_H

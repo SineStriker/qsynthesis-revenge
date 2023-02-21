@@ -1,8 +1,8 @@
 #include "ThemeConfig.h"
 
-#include "QsCss.h"
+#include "QMCss.h"
 
-#include "QsLinq.h"
+#include "QMLinq.h"
 
 #include <QFile>
 #include <QJsonArray>
@@ -27,7 +27,7 @@ ThemeConfig::~ThemeConfig() {
 }
 
 bool ThemeConfig::load(const QStringList &filenames) {
-    return !QsLinq::Any(filenames, [this](const QString &filename) { return !loadOne(filename); });
+    return !QMLinq::Any(filenames, [this](const QString &filename) { return !loadOne(filename); });
 }
 
 bool ThemeConfig::loadOne(const QString &filename) {

@@ -4,8 +4,8 @@
 #include "Kernel/DsLocalData.h"
 
 #include "DsConsole.h"
-#include "QsSystem.h"
-#include "QsView.h"
+#include "QMSystem.h"
+#include "QMView.h"
 
 #include <QLabel>
 
@@ -51,10 +51,10 @@ void HomeWindowPrivate::init() {
 
     if (rect.width() * rect.height() != 0) {
         // q->setGeometry(rect);
-        QsView::centralizeWindow(q, {0.75, 0.75});
+        QMView::centralizeWindow(q, {0.75, 0.75});
     } else {
-        QsView::centralizeWindow(q, {0.75, 0.75});
-        r = (225 * q->screen()->logicalDotsPerInch() / QsOs::unitDpi()) / q->width();
+        QMView::centralizeWindow(q, {0.75, 0.75});
+        r = (225 * q->screen()->logicalDotsPerInch() / QMOs::unitDpi()) / q->width();
     }
     frame->splitter()->setSizes({int(q->width() * r), int(q->width() * (1 - r))});
 

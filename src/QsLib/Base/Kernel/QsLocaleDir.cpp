@@ -2,7 +2,7 @@
 #include "private/QsLocaleDir_p.h"
 
 #include "QsCoreDecorator.h"
-#include "QsSystem.h"
+#include "QMSystem.h"
 
 #include <QFile>
 #include <QJsonArray>
@@ -48,8 +48,8 @@ bool QsLocaleDir::load(const QString &filename) {
 
     QFile file(filename);
     if (!file.open(QIODevice::ReadOnly)) {
-        qDebug().noquote() << QString("load_locale: failed to open dir-desc file %1")
-                                  .arg(QsFs::PathFindFileName(filename));
+        qDebug().noquote()
+            << QString("load_locale: failed to open decoration config %1").arg(QMFs::PathFindFileName(filename));
         return false;
     }
 
@@ -59,10 +59,11 @@ bool QsLocaleDir::load(const QString &filename) {
     QJsonParseError err;
     QJsonDocument doc = QJsonDocument::fromJson(data, &err);
     if (err.error != QJsonParseError::NoError || !doc.isObject()) {
-        qDebug().noquote() << QString("load_locale: invalid dir-desc file %1")
-                                  .arg(QsFs::PathFindFileName(filename));
+        qDebug().noquote() << QString("load_locale: invalid decoration config %1").arg(QMFs::PathFindFileName(filename));
         return false;
     }
+
+    qDebug().noquote() << QString("load_locale: register decoration config %1").arg(QMFs::PathFindFileName(filename));
 
     auto objDoc = doc.object();
     auto it = objDoc.find(KEY_NAME_CONFIG);

@@ -3,11 +3,11 @@
 
 #include "DsCoreGlobal.h"
 #include "DsGuiGlobal.h"
-#include "INamePlugin.h"
+#include "QMNamePlugin.h"
 
 DSAPI_BEGIN_NAMESPACE
 
-class DSGUI_API IEditWidget : public QsApi::INamePlugin {
+class DSGUI_API IEditWidget : public QMNamePlugin {
     Q_OBJECT
 public:
     explicit IEditWidget(QObject *parent = nullptr);

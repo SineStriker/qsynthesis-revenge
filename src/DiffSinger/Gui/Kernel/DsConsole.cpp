@@ -6,11 +6,11 @@
 #include <QMessageBox>
 
 #include "QsFileManager.h"
-#include "QsSystem.h"
-#include "QsView.h"
+#include "QMSystem.h"
+#include "QMView.h"
 
 #include "CStartInfo.h"
-#include "QsLinq.h"
+#include "QMLinq.h"
 
 #include "Dialogs/PluginSetDialog.h"
 #include "IDspxPorter.h"
@@ -40,25 +40,25 @@ static auto GetPlugins() {
     }
 
     return PluginsAndFilter{
-        plugins, (QsLinq::Select<IDspxPorter *, QString>(
+        plugins, (QMLinq::Select<IDspxPorter *, QString>(
                       porters,
                       [&](const IDspxPorter *val) {
                           const auto &fmt = val->format();
                           return QString("%1(%2)").arg(
-                              fmt.name, QsLinq::Select<QString, QString>(
+                              fmt.name, QMLinq::Select<QString, QString>(
                                             fmt.suffixes, [](const QString &s) { return "*." + s; })
                                             .join(" ")
 
                           );
                       })
-                  << QString("%1(%2)").arg(DsConsole::tr("All Files"), QsOs::allFilesFilter()))
+                  << QString("%1(%2)").arg(DsConsole::tr("All Files"), QMOs::allFilesFilter()))
                      .join(FILE_EXTENSIONS_DELIMITER)};
 }
 
 static auto GetDspxFilter() {
     return QStringList{
         DsConsole::tr("DiffScope Files(*.dspx)"),                                 //
-        QString("%1(%2)").arg(DsConsole::tr("All Files"), QsOs::allFilesFilter()) //
+        QString("%1(%2)").arg(DsConsole::tr("All Files"), QMOs::allFilesFilter()) //
     }
         .join(FILE_EXTENSIONS_DELIMITER);
 }
@@ -93,7 +93,7 @@ bool DsConsole::openFile(QDspxModel *dspx, QWidget *parent) {
     if (path.isEmpty()) {
         return false;
     }
-    if (QsFs::PathFindSuffix(path).toLower() != "dspx") {
+    if (QMFs::PathFindSuffix(path).toLower() != "dspx") {
         return false;
     }
     return openFile(dspx, path, parent);
@@ -142,7 +142,7 @@ bool DsConsole::importFile(QDspxModel *dspx, QWidget *parent) {
         return false;
     }
 
-    auto ext = QsFs::PathFindSuffix(path).toLower();
+    auto ext = QMFs::PathFindSuffix(path).toLower();
     auto it = pf.plugins.find(ext);
     if (it == pf.plugins.end()) {
         return false;

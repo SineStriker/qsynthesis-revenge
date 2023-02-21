@@ -7,7 +7,7 @@ QsAbstractManager::QsAbstractManager(QObject *parent) : QsAbstractManager(*new Q
 QsAbstractManager::~QsAbstractManager() {
 }
 
-QsAbstractManager::QsAbstractManager(QsAbstractManagerPrivate &d, QObject *parent) : QDisposable(parent), d_ptr(&d) {
+QsAbstractManager::QsAbstractManager(QsAbstractManagerPrivate &d, QObject *parent) : QMDisposable(parent), d_ptr(&d) {
     d.q_ptr = this;
 
     d.init();

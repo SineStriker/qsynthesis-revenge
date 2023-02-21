@@ -1,8 +1,8 @@
-#ifndef QSCORECONSOLEPRIVATE_H
-#define QSCORECONSOLEPRIVATE_H
+#ifndef QSCORECONSOLE_P_H
+#define QSCORECONSOLE_P_H
 
 #include "../QsCoreConsole.h"
-#include "QDisposableQueue.h"
+#include "QMDisposableQueue.h"
 
 class QSBASE_API QsCoreConsolePrivate {
     Q_DECLARE_PUBLIC(QsCoreConsole)
@@ -19,7 +19,7 @@ public:
 
     QsCoreConsole *q_ptr;
 
-    QDisposableQueue mgrs;
+    QMDisposableQueue mgrs;
 };
 
-#endif // QSCORECONSOLEPRIVATE_H
+#endif // QSCORECONSOLE_P_H

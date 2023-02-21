@@ -42,6 +42,6 @@ namespace ActionImpl {
         Special_Recent,
     };
 
-}; // namespace ActionImpl
+};
 
 #endif // ACTIONS_H

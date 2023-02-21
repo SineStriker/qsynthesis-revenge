@@ -46,7 +46,7 @@ namespace QDspx {
     QAS_JSON_NS(Content)
     QAS_JSON_NS(Model)
 
-} // namespace QDspx
+}
 
 using QDspxModel = QDspx::Model;
 

@@ -2,7 +2,7 @@
 
 DSAPI_USING_NAMESPACE
 
-IEditWidget::IEditWidget(QObject *parent) : INamePlugin(parent) {
+IEditWidget::IEditWidget(QObject *parent) : QMNamePlugin(parent) {
 }
 
 IEditWidget::~IEditWidget() {

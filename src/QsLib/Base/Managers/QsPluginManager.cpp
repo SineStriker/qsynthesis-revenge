@@ -2,9 +2,9 @@
 #include "private/QsPluginManager_p.h"
 
 #include "Api/ICompressEngine.h"
-#include "QsSystem.h"
+#include "QMSystem.h"
 
-#include "QsMath.h"
+#include "QMMath.h"
 
 QSAPI_USING_NAMESPACE
 
@@ -55,8 +55,8 @@ QPluginLoader *QsPluginManager::loadInternalPlugin(QsCoreConfig::InternalPlugins
             break;
         case QsCoreConfig::CompressEngine: {
             QString name = qAppConf->internalPlugin(id);
-            loader = new QPluginLoader(QsOs::toLibFile("compressengines", name));
-            if (!INamePlugin::load<ICompressEngine>(loader)) {
+            loader = new QPluginLoader(QMOs::toLibFile("compressengines", name));
+            if (!QMNamePlugin::load<ICompressEngine>(loader)) {
                 qDebug() << QString("QsPluginManager: Failed to load %1.").arg(name)
                          << loader->errorString();
                 loader->unload();

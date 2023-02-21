@@ -1,12 +1,12 @@
 #ifndef IWINDOWFACTORY_H
 #define IWINDOWFACTORY_H
 
-#include "INamePlugin.h"
+#include "QMNamePlugin.h"
 #include "IWindowHandle.h"
 
 QSAPI_BEGIN_NAMESPACE
 
-class QSFRAMEWORK_API IWindowFactory : public INamePlugin {
+class QSFRAMEWORK_API IWindowFactory : public QMNamePlugin {
     Q_OBJECT
 public:
     explicit IWindowFactory(QObject *parent = nullptr);

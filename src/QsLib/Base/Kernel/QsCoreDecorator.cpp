@@ -1,5 +1,5 @@
 #include "QsCoreDecorator.h"
-#include "QsLinq.h"
+#include "QMLinq.h"
 #include "private/QsCoreDecorator_p.h"
 
 #include <QDebug>
@@ -80,7 +80,7 @@ void QsCoreDecorator::addLocale(const QString &key, const QMap<QString, QStringL
 
     auto setup = [&](LocalePlaceholder &lp) {
         lp.data = QSharedPointer<LocaleData>::create();
-        lp.data->qmFiles = QsLinq::MapToHash(paths);
+        lp.data->qmFiles = QMLinq::MapToHash(paths);
 
         // Inc ref count
         for (auto it = paths.begin(); it != paths.end(); ++it) {

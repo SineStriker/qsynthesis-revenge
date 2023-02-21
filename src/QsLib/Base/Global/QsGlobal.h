@@ -1,7 +1,7 @@
 #ifndef QSGLOBAL_H
 #define QSGLOBAL_H
 
-#include <QtGlobal>
+#include "QMGlobal.h"
 
 #ifndef QSBASE_API
 #  ifdef QSBASE_STATIC

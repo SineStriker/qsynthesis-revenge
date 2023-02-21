@@ -3,7 +3,7 @@
 
 #include "../QsFileManager.h"
 #include "QsAbstractManager_p.h"
-#include "QFileSet.h"
+#include "QMFileSet.h"
 
 #include <QHash>
 #include <QMap>
@@ -18,7 +18,7 @@ public:
 
     struct RecentDesc {
         QString key;
-        QFileSet set;
+        QMFileSet set;
     };
     QHash<int, RecentDesc> recentFileMap;
     int fileRegMax;

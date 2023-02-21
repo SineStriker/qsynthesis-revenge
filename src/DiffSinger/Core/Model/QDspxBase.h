@@ -70,6 +70,6 @@ namespace QDspx {
     QAS_JSON_NS(DoublePoint)
     QAS_JSON_NS(AnchorPoint)
 
-} // namespace QDspx
+}
 
 #endif // QDSPXBASE_H

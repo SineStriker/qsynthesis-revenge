@@ -15,8 +15,8 @@
 
 #include "QsMediaNamespace.h"
 
-#include "QsMath.h"
-#include "QsSystem.h"
+#include "QMMath.h"
+#include "QMSystem.h"
 
 // https://iconduck.com/icons
 

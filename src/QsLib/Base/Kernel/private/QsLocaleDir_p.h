@@ -1,5 +1,5 @@
-#ifndef QSLOCALEDIRPRIVATE_H
-#define QSLOCALEDIRPRIVATE_H
+#ifndef QSLOCALEDIR_P_H
+#define QSLOCALEDIR_P_H
 
 #include "../QsLocaleDir.h"
 
@@ -34,4 +34,4 @@ public:
     static bool loadRootItems(const QJsonObject &obj, RootItem *out);
 };
 
-#endif // QSLOCALEDIRPRIVATE_H
+#endif // QSLOCALEDIR_P_H

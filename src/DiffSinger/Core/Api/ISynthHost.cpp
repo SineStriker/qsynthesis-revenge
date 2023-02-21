@@ -2,7 +2,7 @@
 
 DSAPI_USING_NAMESPACE
 
-ISynthHost::ISynthHost(QObject *parent) : INamePlugin(parent) {
+ISynthHost::ISynthHost(QObject *parent) : QMNamePlugin(parent) {
 }
 
 ISynthHost::~ISynthHost() {

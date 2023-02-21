@@ -10,7 +10,7 @@
 #include <QTextCodec>
 #include <QTranslator>
 
-#include "QsSystem.h"
+#include "QMSystem.h"
 #include "ViewHelper.h"
 
 static QString loadAppleFont() {

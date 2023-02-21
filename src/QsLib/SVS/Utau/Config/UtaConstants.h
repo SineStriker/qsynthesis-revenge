@@ -35,6 +35,6 @@ namespace Utau {
     // Escape
     const char DIR_VOICE_BASE[] = "%VOICE%";
 
-}; // namespace UtaConstants
+};
 
 #endif // UTACONSTANTS_H

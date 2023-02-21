@@ -16,6 +16,6 @@ namespace Utau {
     const char VALUE_NAME_PLUGIN_SHELL[] = "use";
     const char VALUE_NAME_PLUGIN_NOTE[] = "all";
 
-} // namespace Utau
+}
 
 #endif // UTAPLUGINTEXT_H

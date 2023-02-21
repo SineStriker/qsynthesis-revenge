@@ -3,7 +3,7 @@
 
 #include "../QsCoreConfig.h"
 
-#include "QSimpleVarExp.h"
+#include "QMSimpleVarExp.h"
 
 #include <QHash>
 
@@ -28,7 +28,7 @@ public:
     void setDefault();
 
     /* Escape variables */
-    QSimpleVarExp vars;
+    QMSimpleVarExp vars;
 
     /* Default dirs */
     struct DirInitArgs {

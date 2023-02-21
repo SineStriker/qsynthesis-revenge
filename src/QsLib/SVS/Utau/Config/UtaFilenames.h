@@ -28,6 +28,6 @@ namespace Utau {
     const char DIR_NAME_VOICE[] = "voice";
     const char DIR_NAME_PLUGIN[] = "plugins";
 
-} // namespace Utau
+}
 
 #endif // UTAFILENAMES_H

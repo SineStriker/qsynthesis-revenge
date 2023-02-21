@@ -73,6 +73,6 @@ namespace Utau {
     const char UST_VERSION_PREFIX[] = "UST Version ";
     const char UST_VERSION_PREFIX_NOSPACE[] = "UST Version";
 
-} // namespace Utau
+}
 
 #endif // UTAPROJECTTEXT_H

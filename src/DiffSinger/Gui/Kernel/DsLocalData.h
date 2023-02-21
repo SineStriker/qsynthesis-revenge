@@ -5,7 +5,6 @@
 #include <QString>
 
 #include "DsGuiGlobal.h"
-#include "QsMacros.h"
 
 #define dsLocal DsLocalData::instance()
 

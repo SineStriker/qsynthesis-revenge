@@ -4,7 +4,6 @@
 #include <QObject>
 
 #include "QsGlobal.h"
-#include "QsMacros.h"
 
 #define qIDec QsCoreDecorator::instance()
 

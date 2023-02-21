@@ -62,7 +62,7 @@ namespace JBFileWatcherUtils {
 
         Qt::CaseSensitivity FileSystemCaseSensitivity();
 
-    } // namespace SystemInfo
+    }
 
     namespace StringUtil {
 
@@ -70,13 +70,13 @@ namespace JBFileWatcherUtils {
 
         int lastIndexOf(const QString &s, QChar c, int start, int end);
 
-    } // namespace StringUtil
+    }
 
     namespace Integer {
 
         int compare(int x, int y);
 
-    } // namespace Integer
+    }
 
     namespace PathUtil {
 
@@ -86,7 +86,7 @@ namespace JBFileWatcherUtils {
 
         bool isWindowsUNCRoot(const QString &path, int lastPathSeparatorPosition);
 
-    } // namespace PathUtil
+    }
 
     namespace FileUtil {
 
@@ -102,7 +102,7 @@ namespace JBFileWatcherUtils {
 
         bool processDots(QString &result, int dots, int start);
 
-    } // namespace FileUtil
+    }
 
     namespace OSAgnosticPathUtil {
 
@@ -114,7 +114,7 @@ namespace JBFileWatcherUtils {
 
         int COMPARATOR_compare(const QString &path1, const QString &path2);
 
-    } // namespace OSAgnosticPathUtil
+    }
 
     namespace WatchRootsUtil {
 
@@ -175,9 +175,9 @@ namespace JBFileWatcherUtils {
             consumer(path);
         }
 
-    } // namespace WatchRootsUtil
+    }
 
-}; // namespace JBFileWatcherUtils
+};
 
 #define jbDebug qDebug
 #define jbWarning qDebug

@@ -3,8 +3,6 @@
 
 #include "QUtaItem.h"
 
-#include "QsMacros.h"
-
 class QSSVS_API QUtaFile : public QUtaItem {
 public:
     QUtaFile();

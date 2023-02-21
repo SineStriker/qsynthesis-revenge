@@ -1,6 +1,6 @@
 #include "DsLocalData.h"
 
-#include "QJsonFormatter.h"
+#include "QMJsonFormatter.h"
 
 #include <QFile>
 #include <QJsonDocument>
@@ -43,7 +43,7 @@ bool DsLocalData::load(const QString &filename) {
     QList<double> winRectTmp;
 
     {
-        QJsonFormatter f;
+        QMJsonFormatter f;
         bool res = f.parse(objDoc,
                            f.OT({{
                                SECTION_NAME_HOME, //

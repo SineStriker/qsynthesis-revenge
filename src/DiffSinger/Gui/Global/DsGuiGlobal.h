@@ -1,7 +1,7 @@
 #ifndef DSGUIGLOBAL_H
 #define DSGUIGLOBAL_H
 
-#include <QtGlobal>
+#include "QsIntegrateGlobal.h"
 
 #ifndef DSGUI_API
 #  ifdef DSGUI_STATIC

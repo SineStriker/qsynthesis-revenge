@@ -88,6 +88,6 @@ namespace QUtaUtils {
     QSSVS_API QString prop(const QString &val, NoteProperty prop,
                            const QString &def = NODEF_STRING);
 
-} // namespace QUtaUtils
+}
 
 #endif // QUSTUTILS_H

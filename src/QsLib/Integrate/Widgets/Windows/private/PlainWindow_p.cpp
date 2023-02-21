@@ -4,7 +4,7 @@
 #include "Managers/QsPluginManager.h"
 
 #include "QsStartInfo.h"
-#include "QsSystem.h"
+#include "QMSystem.h"
 
 QSAPI_USING_NAMESPACE
 

@@ -1,5 +1,5 @@
 #include "QsCoreConfig.h"
-#include "QsSystem.h"
+#include "QMSystem.h"
 #include "private/QsCoreConfig_p.h"
 
 #include "QsCoreStartInfo.h"
@@ -19,7 +19,7 @@ bool QsCoreConfig::load(const QString &filename) {
     bool res = true;
     if (!d->load_helper(filename)) {
         qDebug().noquote() << QString("load_config: configuration file %1 not found.")
-                                  .arg(QsFs::PathFindFileName(filename));
+                                  .arg(QMFs::PathFindFileName(filename));
         res = false;
     }
     return res;

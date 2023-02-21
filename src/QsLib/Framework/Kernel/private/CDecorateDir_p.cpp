@@ -5,7 +5,7 @@
 #define _CURRENT_MAP QHash
 #define _CURRENT_TRASACTION QHashTransaction
 
-#include "QMapTransaction.h"
+#include "QMMapTransaction.h"
 
 #undef _CURRENT_MAP
 #undef _CURRENT_TRASACTION

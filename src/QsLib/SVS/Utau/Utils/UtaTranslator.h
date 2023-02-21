@@ -24,6 +24,6 @@ namespace UtaTranslator {
 
     QSSVS_API QString fixFilename(const QString &filename);
 
-}; // namespace UtaTranslator
+};
 
 #endif // UTATRANSLATOR_H

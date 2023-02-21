@@ -3,12 +3,12 @@
 
 #include <QVariantMap>
 
-#include "INamePlugin.h"
+#include "QMNamePlugin.h"
 #include "NAudio/WaveStream.h"
 
 QSAPI_BEGIN_NAMESPACE
 
-class QSMEDIA_API IAudioDecoder : public INamePlugin, public NAudio::WaveStream {
+class QSMEDIA_API IAudioDecoder : public QMNamePlugin, public NAudio::WaveStream {
     Q_OBJECT
 public:
     explicit IAudioDecoder(QObject *parent = nullptr);

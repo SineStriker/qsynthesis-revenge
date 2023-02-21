@@ -1,5 +1,4 @@
 #include "CStartInfo_p.h"
-#include "private/QMetaTypeImpl_p.h"
 
 #include "QsCoreConfig.h"
 
@@ -10,7 +9,7 @@ CStartInfoPrivate::~CStartInfoPrivate() {
 }
 
 void CStartInfoPrivate::init() {
-    Register_QMetaTypeImpl();
+    QMWidgets_Init();
 }
 
 void CStartInfoPrivate::load_helper() {

@@ -4,7 +4,6 @@
 #include <QFrame>
 #include <QWidget>
 
-#include "QsFrameworkMacros.h"
 #include "QsIntegrateGlobal.h"
 
 class QSINTEGRATE_API BaseContainer : public QFrame {

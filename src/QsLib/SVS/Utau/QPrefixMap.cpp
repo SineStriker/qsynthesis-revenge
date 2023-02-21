@@ -3,7 +3,7 @@
 #include "Config/UtaConstants.h"
 #include "Utils/QUtaUtils.h"
 
-#include "QsCodec.h"
+#include "QMCodec.h"
 
 using namespace Utau;
 
@@ -48,7 +48,7 @@ bool QPrefixMap::load(const QString &filename) {
     QTextStream in(&data);
     if (!m_codec) {
         // Detect Code
-        QTextCodec *codec = QsCodec::GetUtfCodec(data, &m_charsetDetermined);
+        QTextCodec *codec = QMCodec::GetUtfCodec(data, &m_charsetDetermined);
         if (codec) {
             m_codec = codec;
         } else {

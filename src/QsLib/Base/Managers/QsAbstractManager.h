@@ -3,11 +3,12 @@
 
 #include <QObject>
 
-#include "QDisposable.h"
+#include "QsGlobal.h"
+#include "QMDisposable.h"
 
 class QsAbstractManagerPrivate;
 
-class QSBASE_API QsAbstractManager : public QDisposable {
+class QSBASE_API QsAbstractManager : public QMDisposable {
     Q_OBJECT
     Q_DECLARE_PRIVATE(QsAbstractManager)
 public:

@@ -3,8 +3,8 @@
 
 #include "Kernel/Events.h"
 
-#include "QsSystem.h"
-#include "QsView.h"
+#include "QMSystem.h"
+#include "QMView.h"
 
 #include "DsStartInfo.h"
 #include "Windows/Piano/PianoWindow.h"
@@ -30,7 +30,7 @@ HomeWindow *WindowManager::showHome() {
 
     auto w = d->createHomeWin();
     w->show();
-    // QsView::centralizeWindow(w, QSizeF(0.75, 0.75));
+    // QMView::centralizeWindow(w, QSizeF(0.75, 0.75));
 
     d->homeWin = w;
 
@@ -53,7 +53,7 @@ PianoWindow *WindowManager::newProject() {
 
     auto w = d->createPianoWin();
     w->show();
-    QsView::centralizeWindow(w, QSizeF(0.75, 0.75));
+    QMView::centralizeWindow(w, QSizeF(0.75, 0.75));
 
     hideHome();
 
@@ -67,7 +67,7 @@ PianoWindow *WindowManager::openProject(const QDspxModel &model) {
     auto w = d->createPianoWin();
     w->load(model);
     w->show();
-    QsView::centralizeWindow(w, QSizeF(0.75, 0.75));
+    QMView::centralizeWindow(w, QSizeF(0.75, 0.75));
     hideHome();
     d->projWins.insert(w);
 

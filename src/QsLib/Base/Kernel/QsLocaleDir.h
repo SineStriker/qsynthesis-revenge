@@ -3,7 +3,8 @@
 
 #include <QScopedPointer>
 
-#include "QSimpleVarExp.h"
+#include "QsGlobal.h"
+#include "QMSimpleVarExp.h"
 
 class QsLocaleDirPrivate;
 
@@ -15,7 +16,7 @@ public:
     virtual ~QsLocaleDir();
 
 public:
-    QSimpleVarExp vars;
+    QMSimpleVarExp vars;
     bool autoRemove;
 
     QString dir() const;

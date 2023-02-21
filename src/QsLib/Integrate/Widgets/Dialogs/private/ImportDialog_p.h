@@ -1,12 +1,12 @@
-#ifndef IMPORTDIALOGPRIVATE_H
-#define IMPORTDIALOGPRIVATE_H
+#ifndef IMPORTDIALOG_P_H
+#define IMPORTDIALOG_P_H
 
 #include "../ImportDialog.h"
 
 #include "CAutoResizer.h"
 #include "CTabButton.h"
 #include "Frames/LinearScrollArea.h"
-#include "Layouts/CEqualBoxLayout.h"
+#include "CEqualBoxLayout.h"
 
 #include <QAction>
 #include <QButtonGroup>
@@ -82,4 +82,4 @@ private:
 };
 
 
-#endif // IMPORTDIALOGPRIVATE_H
+#endif // IMPORTDIALOG_P_H

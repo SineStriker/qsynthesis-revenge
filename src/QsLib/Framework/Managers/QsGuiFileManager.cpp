@@ -1,7 +1,7 @@
 #include "QsGuiFileManager.h"
 #include "private/QsGuiFileManager_p.h"
 
-#include "QsSystem.h"
+#include "QMSystem.h"
 
 #include <QFileDialog>
 
@@ -50,7 +50,7 @@ QString QsGuiFileManager::saveFile(const QString &title, const QString &filename
                                    const QString &filter, const QString &flag, QObject *parent) {
     Q_D(QsGuiFileManager);
     QFileInfo info(filename);
-    if (info.isRelative() || !QsFs::isDirExist(info.absolutePath())) {
+    if (info.isRelative() || !QMFs::isDirExist(info.absolutePath())) {
         info.setFile(d->getLastOpenPath(flag) + Slash + info.fileName());
     }
     QString path = QFileDialog::getSaveFileName(qobject_cast<QWidget *>(parent), title,

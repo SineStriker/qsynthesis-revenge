@@ -7,8 +7,8 @@
 #include <QStandardPaths>
 
 #include "Kernel/QsCoreConfig.h"
-#include "QsLinq.h"
-#include "QsSystem.h"
+#include "QMLinq.h"
+#include "QMSystem.h"
 
 #include "QsCoreDecorator.h"
 
@@ -34,11 +34,11 @@ void QsFileManagerPrivate::init() {
     recentFileMap = {
         {
             fileRegMax,
-            RecentDesc{KEY_NAME_RECENT_FILES, QFileSet(QFileSet::File)},
+            RecentDesc{KEY_NAME_RECENT_FILES, QMFileSet(QMFileSet::File)},
         },
         {
             dirRegMax,
-            RecentDesc{KEY_NAME_RECENT_DIRS, QFileSet(QFileSet::Directory)},
+            RecentDesc{KEY_NAME_RECENT_DIRS, QMFileSet(QMFileSet::Directory)},
         },
     };
 }
@@ -164,12 +164,12 @@ QString QsFileManagerPrivate::getLastOpenPath(const QString &type) {
     if (it == lastOpenPaths.end()) {
         it = lastOpenPaths.insert(
             type, QStandardPaths::writableLocation(QStandardPaths::DesktopLocation));
-    } else if (!QsFs::isDirExist(it.value())) {
+    } else if (!QMFs::isDirExist(it.value())) {
         it.value() = QStandardPaths::writableLocation(QStandardPaths::DesktopLocation);
     }
     return it.value();
 }
 
 void QsFileManagerPrivate::saveLastOpenDir(const QString &type, const QString &path, bool upper) {
-    lastOpenPaths.insert(type, upper ? QsFs::PathFindDirPath(path) : path);
+    lastOpenPaths.insert(type, upper ? QMFs::PathFindDirPath(path) : path);
 }

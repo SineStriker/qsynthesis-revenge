@@ -34,9 +34,9 @@ void PianoWindowPrivate::init() {
     langPanel = new QWidget();
     langPanel->setObjectName("languages-panel");
 
-    expCard = frame->addWidget(Qt::LeftEdge, Qs::Primary, expPanel);
-    spkCard = frame->addWidget(Qt::LeftEdge, Qs::Primary, spkPanel);
-    langCard = frame->addWidget(Qt::LeftEdge, Qs::Primary, langPanel);
+    expCard = frame->addWidget(Qt::LeftEdge, QM::Primary, expPanel);
+    spkCard = frame->addWidget(Qt::LeftEdge, QM::Primary, spkPanel);
+    langCard = frame->addWidget(Qt::LeftEdge, QM::Primary, langPanel);
 
     expCard->setProperty("parent", frame->objectName());
     expCard->setObjectName("explorer-card");

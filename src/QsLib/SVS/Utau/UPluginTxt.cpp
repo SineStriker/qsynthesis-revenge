@@ -1,7 +1,7 @@
 #include "UPluginTxt.h"
 
-#include "QsCodec.h"
-#include "Serialization/QSettingFile.h"
+#include "QMCodec.h"
+#include "QMSettingFile.h"
 
 #include "Config/UtaPluginText.h"
 
@@ -32,7 +32,7 @@ bool UPluginTxt::load(const QString &filename) {
 
     QTextStream in(&data);
     // Detect Code
-    QTextCodec *codec = QsCodec::GetUtfCodec(data, &m_charsetDetermined);
+    QTextCodec *codec = QMCodec::GetUtfCodec(data, &m_charsetDetermined);
     if (codec) {
         m_codec = codec;
     } else if (!m_codec) {
@@ -45,7 +45,7 @@ bool UPluginTxt::load(const QString &filename) {
         lines.append(in.readLine());
     }
 
-    QSettingSection section;
+    QMSettingSection section;
     section.fromLines(lines);
 
     QString *nameValue = section.valueOf(KEY_NAME_PLUGIN_NAME);
@@ -83,7 +83,7 @@ bool UPluginTxt::save(const QString &filename) {
         return false;
     }
 
-    QSettingSection section;
+    QMSettingSection section;
     section.addPair(KEY_NAME_PLUGIN_NAME, name);
     section.addPair(KEY_NAME_PLUGIN_EXECUTABLE, QDir::toNativeSeparators(execute));
     if (useShell) {

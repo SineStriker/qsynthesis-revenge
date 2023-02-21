@@ -3,7 +3,7 @@
 
 #include <QMainWindow>
 
-#include "INamePlugin.h"
+#include "QMNamePlugin.h"
 #include "QsFrameworkGlobal.h"
 
 QSAPI_BEGIN_NAMESPACE

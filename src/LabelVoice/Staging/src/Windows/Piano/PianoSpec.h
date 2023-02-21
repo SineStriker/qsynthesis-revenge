@@ -24,6 +24,6 @@ namespace PianoSpec {
         LanguageSpec lang;
     };
 
-} // namespace PianoSpec
+}
 
 #endif // PIANOSPEC_H

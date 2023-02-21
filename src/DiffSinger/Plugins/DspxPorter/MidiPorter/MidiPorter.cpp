@@ -5,9 +5,9 @@
 
 #include "Dialogs/ImportDialog.h"
 #include "QsConsole.h"
-#include "QsLinq.h"
+#include "QMLinq.h"
 #include "QsStartInfo.h"
-#include "QsSystem.h"
+#include "QMSystem.h"
 
 #include <QChar>
 #include <QDebug>
@@ -17,7 +17,7 @@
 #include <set>
 
 MidiPorter::MidiPorter(QObject *parent) : IDspxPorter(parent) {
-    dd.setDir(QsFs::PathFindDirPath(path));
+    dd.setDir(QMFs::PathFindDirPath(path));
     dd.loadDefault("MidiPorter");
 }
 
@@ -292,7 +292,7 @@ bool MidiPorter::load(const QString &filename, QDspxModel *out, QObject *parent)
         ImportDialog::ImportOptions opt;
         opt.minTracks = markers.isEmpty() ? 1 : 0;
         opt.maxTracks = 32;
-        opt.labels = QsLinq::Select<QPair<qint32, QByteArray>, QByteArray>(
+        opt.labels = QMLinq::Select<QPair<qint32, QByteArray>, QByteArray>(
             markers, [&](const QPair<qint32, QByteArray> &pair) { return pair.second; });
 
         QList<qint32> logicIndexList;

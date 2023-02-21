@@ -40,6 +40,6 @@ namespace UtaPitchCurves {
                               const double &PositiveTempo, double NegativeTempo = 0,
                               const QList<double> &vibrato = {}, const int &length = 0);
 
-}; // namespace UtaPitchCurves
+};
 
 #endif // UTAPITCHCURVES_H

@@ -2,7 +2,7 @@
 
 DSAPI_USING_NAMESPACE
 
-IDspxPorter::IDspxPorter(QObject *parent) : INamePlugin(parent) {
+IDspxPorter::IDspxPorter(QObject *parent) : QMNamePlugin(parent) {
 }
 
 IDspxPorter::~IDspxPorter() {

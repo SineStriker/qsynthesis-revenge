@@ -4,10 +4,8 @@
 #include <QFileInfo>
 #include <QPluginLoader>
 
-#include "INamePlugin.h"
+#include "QMNamePlugin.h"
 #include "QsCoreConfig.h"
-
-QSAPI_USING_NAMESPACE
 
 QsPluginDirPrivate::QsPluginDirPrivate() {
 }
@@ -35,7 +33,7 @@ void QsPluginDirPrivate::loadPlugins(const QString &dirname) {
         QFileInfo entry = files.at(k);
         QString filePath = entry.canonicalFilePath();
         auto loader = new QPluginLoader(filePath);
-        if (INamePlugin::load<INamePlugin>(loader)) {
+        if (QMNamePlugin::load(loader)) {
             QJsonObject meta = loader->metaData().value("MetaData").toObject();
 
             {

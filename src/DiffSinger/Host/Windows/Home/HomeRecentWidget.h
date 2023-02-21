@@ -13,7 +13,6 @@
 #include "Display/FileListWidget.h"
 #include "Frames/LinearScrollArea.h"
 #include "QPixelSize.h"
-#include "QsFrameworkMacros.h"
 
 /**
  * @brief Recent widget top frame

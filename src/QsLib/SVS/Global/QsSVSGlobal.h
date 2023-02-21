@@ -1,7 +1,7 @@
 #ifndef QSSVSGLOBAL_H
 #define QSSVSGLOBAL_H
 
-#include <QtGlobal>
+#include "QsGlobal.h"
 
 #ifndef QSSVS_API
 #  ifdef QSSVS_STATIC

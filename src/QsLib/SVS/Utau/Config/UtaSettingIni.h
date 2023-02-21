@@ -20,6 +20,6 @@ namespace Utau {
 
     const char KEY_NAME_MAINWINDOW[] = "MainWindow";
 
-} // namespace Utau
+}
 
 #endif // UTASETTINGINI_H

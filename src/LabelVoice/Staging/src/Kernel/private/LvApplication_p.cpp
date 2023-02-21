@@ -2,7 +2,7 @@
 
 #include "Events_p.h"
 
-#include "QsSystem.h"
+#include "QMSystem.h"
 #include "ViewHelper.h"
 
 #include <QMessageBox>

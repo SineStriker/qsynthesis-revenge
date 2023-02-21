@@ -93,6 +93,6 @@ namespace QDspx {
     QAS_JSON_NS(Track)
     QAS_JSON_NS_IMPL(ClipRef)
 
-} // namespace QDspx
+}
 
 #endif // QDSPXTRACK_H

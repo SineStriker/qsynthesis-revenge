@@ -5,7 +5,7 @@
 
 #include "Kernel/LvApplication.h"
 
-#include "QsSystem.h"
+#include "QMSystem.h"
 #include "Utils/VirtualPathValidator.h"
 
 #include "Serialization/QLVProject.h"

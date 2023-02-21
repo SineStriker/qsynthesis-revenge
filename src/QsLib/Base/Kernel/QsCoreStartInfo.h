@@ -4,8 +4,8 @@
 #include <QCommandLineParser>
 #include <QString>
 
-#include "QDisposable.h"
-#include "QsMacros.h"
+#include "QsGlobal.h"
+#include "QMDisposable.h"
 
 #ifndef qIStup
 #    define qIStup QsCoreStartInfo::instance()
@@ -16,7 +16,7 @@ class QsCoreDecorator;
 class QsCoreConfig;
 class QsCoreStartInfoPrivate;
 
-class QSBASE_API QsCoreStartInfo : public QDisposable {
+class QSBASE_API QsCoreStartInfo : public QMDisposable {
     Q_OBJECT
     Q_DECLARE_PRIVATE(QsCoreStartInfo)
     Q_SINGLETON(QsCoreStartInfo)

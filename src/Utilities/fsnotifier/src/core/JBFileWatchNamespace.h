@@ -23,6 +23,6 @@ namespace JB {
 
     namespace Utils = JBFileWatcherUtils;
 
-} // namespace JB
+}
 
 #endif // JBFILEWATCHNAMESPACE_H

@@ -73,6 +73,6 @@ namespace LVModel {
         int _maxId;
     };
 
-} // namespace LVModel
+}
 
 #endif // QLVTEXT_H

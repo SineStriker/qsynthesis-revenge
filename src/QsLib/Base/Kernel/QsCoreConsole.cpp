@@ -4,7 +4,7 @@
 #include "QsFileManager.h"
 #include "QsPluginManager.h"
 
-#include "QsSystem.h"
+#include "QMSystem.h"
 
 Q_SINGLETON_DECLARE(QsCoreConsole);
 
@@ -60,7 +60,7 @@ QsFileManager *QsCoreConsole::createFileManager(QObject *parent) {
     return new QsFileManager(parent);
 }
 
-QsCoreConsole::QsCoreConsole(QsCoreConsolePrivate &d, QObject *parent) : QDisposable(parent), d_ptr(&d) {
+QsCoreConsole::QsCoreConsole(QsCoreConsolePrivate &d, QObject *parent) : QMDisposable(parent), d_ptr(&d) {
     construct();
 
     d.q_ptr = this;

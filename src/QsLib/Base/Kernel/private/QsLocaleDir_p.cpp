@@ -1,13 +1,13 @@
 #include "QsLocaleDir_p.h"
 
-#include "QsSystem.h"
+#include "QMSystem.h"
 
 #include "../QsCoreDecorator.h"
 
 #define _CURRENT_MAP QHash
 #define _CURRENT_TRASACTION QHashTransaction
 
-#include "QMapTransaction.h"
+#include "QMMapTransaction.h"
 
 #undef _CURRENT_MAP
 #undef _CURRENT_TRASACTION
@@ -62,7 +62,7 @@ QsLocaleDirPrivate::~QsLocaleDirPrivate() {
 void QsLocaleDirPrivate::init() {
     Q_Q(QsLocaleDir);
     q->autoRemove = false;
-    q->vars.addHash(QSimpleVarExp::SystemValues());
+    q->vars.addHash(QMSimpleVarExp::SystemValues());
 }
 
 bool QsLocaleDirPrivate::loadNext(const QJsonObject &objDoc) {

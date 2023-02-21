@@ -96,6 +96,6 @@ namespace LVModel {
         HexGenerator hexIdPublisher;
     };
 
-} // namespace LVModel
+}
 
 #endif // QLVPROJECT_H

@@ -1,7 +1,7 @@
 #include "QsPluginManager_p.h"
 
 #include "Kernel/QsCoreConfig.h"
-#include "Serialization/QJsonFormatter.h"
+#include "Serialization/QMJsonFormatter.h"
 
 #include <QDir>
 

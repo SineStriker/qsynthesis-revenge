@@ -3,8 +3,8 @@
 #include "Config/UtaConstants.h"
 #include "Utils/QUtaUtils.h"
 
-#include "QsCodec.h"
-#include "QsSystem.h"
+#include "QMCodec.h"
+#include "QMSystem.h"
 
 using namespace Utau;
 
@@ -37,7 +37,7 @@ bool QOtoIni::load(const QString &filename) {
     QTextStream in(&data);
     if (!m_codec) {
         // Detect Code
-        QTextCodec *codec = QsCodec::GetUtfCodec(data, &m_charsetDetermined);
+        QTextCodec *codec = QMCodec::GetUtfCodec(data, &m_charsetDetermined);
         if (codec) {
             m_codec = codec;
         } else {
@@ -54,7 +54,7 @@ bool QOtoIni::load(const QString &filename) {
             continue;
         }
         QOtoItem genon = QUtaUtils::StringToGenon(line);
-        QString filename = QsFs::PathFindDirPath(filename) + Slash + genon.FileName;
+        QString filename = QMFs::PathFindDirPath(filename) + Slash + genon.FileName;
 
         auto it = OtoSamples.find(filename);
         if (it == OtoSamples.end()) {

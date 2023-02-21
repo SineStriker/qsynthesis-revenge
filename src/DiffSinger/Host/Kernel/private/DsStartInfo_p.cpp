@@ -1,6 +1,6 @@
 #include "DsStartInfo_p.h"
 #include "CDecorator.h"
-#include "QsSystem.h"
+#include "QMSystem.h"
 
 #include "Events_p.h"
 
@@ -38,7 +38,7 @@ void DsStartInfoPrivate::init() {
     QString fontName = loadAppleFont();
     QFont f(fontName.isEmpty() ? "Microsoft YaHei" : fontName);
     f.setStyleStrategy(QFont::PreferAntialias);
-    f.setPixelSize(12 * (qApp->primaryScreen()->logicalDotsPerInch() / QsOs::unitDpi()));
+    f.setPixelSize(12 * (qApp->primaryScreen()->logicalDotsPerInch() / QMOs::unitDpi()));
     qApp->setFont(f);
 #endif
 }

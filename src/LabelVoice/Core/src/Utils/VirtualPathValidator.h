@@ -16,6 +16,6 @@ namespace VirtualPathValidator {
 
     LVCORE_API bool IsValidPath(const QString &path);
 
-}; // namespace VirtualPathValidator
+};
 
 #endif // VIRTUALPATHVALIDATOR_H

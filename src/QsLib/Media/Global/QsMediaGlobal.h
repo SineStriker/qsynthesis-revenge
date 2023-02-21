@@ -1,7 +1,7 @@
 #ifndef CODECARGUMENTS_H
 #define CODECARGUMENTS_H
 
-#include <QtGlobal>
+#include "QsGlobal.h"
 
 #ifndef QSMEDIA_API
 #  ifdef QSMEDIA_STATIC

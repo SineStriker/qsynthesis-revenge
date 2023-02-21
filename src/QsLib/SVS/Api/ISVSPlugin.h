@@ -1,14 +1,12 @@
 #ifndef ISVSPLUGIN_H
 #define ISVSPLUGIN_H
 
-#include <QObject>
-
-#include "INamePlugin.h"
+#include "QMNamePlugin.h"
 #include "QsSVSGlobal.h"
 
 QSAPI_BEGIN_NAMESPACE
 
-class QSSVS_API ISVSPlugin : public INamePlugin {
+class QSSVS_API ISVSPlugin : public QMNamePlugin {
     Q_OBJECT
 public:
     explicit ISVSPlugin(QObject *parent = nullptr);

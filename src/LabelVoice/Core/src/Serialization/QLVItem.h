@@ -47,6 +47,6 @@ namespace LVModel {
         HexGenerator &registry;
     };
 
-} // namespace LVModel
+}
 
 #endif // QLVITEM_H

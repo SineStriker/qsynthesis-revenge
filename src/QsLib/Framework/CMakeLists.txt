@@ -5,7 +5,7 @@ project(QsFramework
 
 set(_res_dir Res)
 get_subdirs(_dirs EXCLUDE ${_res_dir})
-get_subdirs(_extra_includes DIRECTORY Widgets RELATIVE .)
+get_subdirs(_extra_includes)
 
 add_files(_src
     DIRECTORIES ${_dirs}
@@ -23,9 +23,9 @@ qs_add_library(${PROJECT_NAME}
 target_components(${PROJECT_NAME}
     INCLUDE_CURRENT
     SOURCES ${_src} ${_res_dir}/res.qrc
-    QT_LIBRARIES Widgets Svg Network
-    QT_PRIVATE_INCLUDES Widgets
-    LINKS QsBase
+    QT_LIBRARIES Widgets Network
+    QT_PRIVATE_INCLUDES Core Widgets
+    LINKS QsBase QMWidgets
     INCLUDES ${_dirs} ${_extra_includes}
 )
 

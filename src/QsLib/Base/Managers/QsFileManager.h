@@ -3,7 +3,6 @@
 
 #include "QsAbstractManager.h"
 
-#include "QsMacros.h"
 
 #define qsFileMgr QsFileManager::instance()
 

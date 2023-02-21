@@ -1,7 +1,7 @@
 #include "QsGuiPluginManager.h"
 #include "private/QsGuiPluginManager_p.h"
 
-#include "QsSystem.h"
+#include "QMSystem.h"
 
 #include "IWindowFactory.h"
 
@@ -24,8 +24,8 @@ QPluginLoader *QsGuiPluginManager::loadInternalPlugin(QsCoreConfig::InternalPlug
     switch (id) {
         case QsCoreConfig::WindowFactory: {
             QString name = qAppConf->internalPlugin(id);
-            loader = new QPluginLoader(QsOs::toLibFile("windowfactories", name));
-            if (!INamePlugin::load<IWindowFactory>(loader)) {
+            loader = new QPluginLoader(QMOs::toLibFile("windowfactories", name));
+            if (!QMNamePlugin::load<IWindowFactory>(loader)) {
                 qDebug() << QString("QsPluginManager: Failed to load %1.").arg(name)
                          << loader->errorString();
                 loader->unload();

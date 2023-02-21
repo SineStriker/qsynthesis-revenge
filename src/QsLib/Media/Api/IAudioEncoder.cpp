@@ -2,7 +2,7 @@
 
 QSAPI_USING_NAMESPACE
 
-IAudioEncoder::IAudioEncoder(QObject *parent) : INamePlugin(parent) {
+IAudioEncoder::IAudioEncoder(QObject *parent) : QMNamePlugin(parent) {
 }
 
 IAudioEncoder::~IAudioEncoder() {

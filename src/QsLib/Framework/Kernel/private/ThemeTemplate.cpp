@@ -1,9 +1,9 @@
 #include "ThemeTemplate.h"
 
-#include "QsSystem.h"
+#include "QMSystem.h"
 
-#include "QsCodec.h"
-#include "QsLinq.h"
+#include "QMCodec.h"
+#include "QMLinq.h"
 
 #include <QDebug>
 #include <QFile>
@@ -46,7 +46,7 @@ static QString removeMultiLines(QString s) {
 }
 
 static inline int toRealPixelSize(double size, double dpi) {
-    return qRound(size * dpi / QsOs::unitDpi());
+    return qRound(size * dpi / QMOs::unitDpi());
 }
 
 static inline QString toPixelStr(int size) {
@@ -71,7 +71,7 @@ static QString extractNumListValue(const QJsonValue &val, Mapper mapper) {
                 digits.append(item.toDouble());
             }
         }
-        return QsLinq::Select<double, QString>(
+        return QMLinq::Select<double, QString>(
                    digits, //
                    [&](double digit) -> QString { return mapper(digit); })
             .join(delim);
@@ -84,7 +84,7 @@ static QString extractNumListValue(const QJsonValue &val, Mapper mapper) {
                 digitMap.insert(it.key(), it->toDouble());
             }
         }
-        return QsLinq::Select<QString, double, QString>(
+        return QMLinq::Select<QString, double, QString>(
                    digitMap,
                    [&](const QString &key, double digit) -> QString {
                        return key + ":" + mapper(digit);
@@ -202,7 +202,7 @@ bool ThemeTemplate::load(const QString &filename) {
         QString left = match.captured(1);
         QString right = match.captured(2);
         if (left == "pattern") {
-            pattern = QsCodec::unescape(removeSideQuote(right));
+            pattern = QMCodec::unescape(removeSideQuote(right));
         } else if (left == "separator") {
             separator = removeSideQuote(right);
         }

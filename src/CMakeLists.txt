@@ -65,11 +65,14 @@ endif()
 # Add sub-projects
 # ----------------------------------
 
-# Add qslib
-add_subdirectory(QsLib)
+# Add qt medium
+add_subdirectory(QtMedium)
 
 # Add other libraries
 add_subdirectory(Utilities)
+
+# Add qslib
+add_subdirectory(QsLib)
 
 # Add applications
 foreach(_app ${APP_TOOLSET_LIST})

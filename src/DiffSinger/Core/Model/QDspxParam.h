@@ -71,6 +71,6 @@ namespace QDspx {
     QAS_JSON_NS(SingleParam)
     QAS_JSON_NS_IMPL(ParamCurveRef)
 
-} // namespace QDspx
+}
 
 #endif // QDSPXPARAM_H

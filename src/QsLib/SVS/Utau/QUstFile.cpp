@@ -4,7 +4,7 @@
 #include "Config/UtaProjectText.h"
 #include "Utils/QUtaUtils.h"
 
-#include "QsCodec.h"
+#include "QMCodec.h"
 
 #include <QFile>
 #include <QTextCodec>
@@ -39,7 +39,7 @@ bool QUstFile::load(const QString &filename) {
     QTextStream in(&data);
 
     // Detect Code
-    QTextCodec *codec = QsCodec::GetUtfCodec(data, &m_charsetDetermined);
+    QTextCodec *codec = QMCodec::GetUtfCodec(data, &m_charsetDetermined);
     if (codec) {
         m_codec = codec;
     } else if (!m_codec) {

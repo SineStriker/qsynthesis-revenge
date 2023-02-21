@@ -10,6 +10,6 @@ namespace Utau {
     const char KEY_NAME_CHAR_AUTHOR[] = "author";
     const char KEY_NAME_CHAR_FOREGROUND[] = "foreground";
 
-} // namespace Utau
+}
 
 #endif // UTACHARTEXT_H

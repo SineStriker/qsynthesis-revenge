@@ -1,8 +1,7 @@
 #include "QsCoreStartInfo_p.h"
 
 #include "QsCoreConfig_p.h"
-#include "QsSystem.h"
-#include "private/QsNamespace_p.h"
+#include "QMSystem.h"
 
 #include "../QsCoreConsole.h"
 #include "../QsCoreDecorator.h"
@@ -29,7 +28,7 @@ void QsCoreStartInfoPrivate::init() {
 
     isAboutToQuit = false;
 
-    Register_QsNamespace();
+    QMCoreLib_Init();
 
     q->connect(qApp, &QCoreApplication::aboutToQuit, q, &QsCoreStartInfo::_q_aboutToQuit);
 }
@@ -81,18 +80,18 @@ void QsCoreStartInfoPrivate::load_helper() {
     qDebug() << "start_info: check user permissions";
 
     // Root privilege detection
-    if (QsOs::isUserRoot() && !parser.isSet(option_allowRoot)) {
+    if (QMOs::isUserRoot() && !parser.isSet(option_allowRoot)) {
         QString msg = QCoreApplication::tr("You're trying to start %1 as the %2, which may cause "
                                            "security problem and isn't recommended.")
-                          .arg(qAppName(), QsOs::rootUserName());
+                          .arg(qAppName(), QMOs::rootUserName());
         qCs->MsgBox(nullptr, QsCoreConsole::Warning, qIStup->mainTitle(), msg);
-        QsOs::exitApp(0);
+        QMOs::exitApp(0);
     }
 
     // Reset configuration, exit
     if (parser.isSet(option_resetConfig)) {
         coreConfig->saveDefault(configPath);
-        QsOs::exitApp(0);
+        QMOs::exitApp(0);
     }
 
     // Init Single Structures

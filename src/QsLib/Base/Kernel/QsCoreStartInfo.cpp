@@ -55,7 +55,7 @@ QsCoreConfig *QsCoreStartInfo::creatDistConfig() {
     return new QsCoreConfig();
 }
 
-QsCoreStartInfo::QsCoreStartInfo(QsCoreStartInfoPrivate &d, QObject *parent) : QDisposable(parent), d_ptr(&d) {
+QsCoreStartInfo::QsCoreStartInfo(QsCoreStartInfoPrivate &d, QObject *parent) : QMDisposable(parent), d_ptr(&d) {
     construct();
 
     d.q_ptr = this;

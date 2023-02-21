@@ -1,13 +1,13 @@
 #ifndef IDSPXPORTER_H
 #define IDSPXPORTER_H
 
-#include "Api/INamePlugin.h"
+#include "QMNamePlugin.h"
 #include "DsGuiGlobal.h"
 #include "QDspxModel.h"
 
 DSAPI_BEGIN_NAMESPACE
 
-class DSGUI_API IDspxPorter : public QsApi::INamePlugin {
+class DSGUI_API IDspxPorter : public QMNamePlugin {
     Q_OBJECT
 public:
     explicit IDspxPorter(QObject *parent = nullptr);

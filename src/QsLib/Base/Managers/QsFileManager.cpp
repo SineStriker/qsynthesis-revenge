@@ -2,9 +2,9 @@
 #include "private/QsFileManager_p.h"
 
 #include "Kernel/QsCoreConfig.h"
-#include "Serialization/QJsonFormatter.h"
+#include "Serialization/QMJsonFormatter.h"
 
-#include "QsSystem.h"
+#include "QMSystem.h"
 
 Q_SINGLETON_DECLARE(QsFileManager)
 
@@ -31,20 +31,20 @@ void QsFileManager::saveImpl() {
 int QsFileManager::registerFileType(const QString &key, int hint) {
     Q_D(QsFileManager);
     d->fileRegMax = (hint > d->fileRegMax) ? hint : (d->fileRegMax + 1);
-    d->recentFileMap.insert(d->fileRegMax, QsFileManagerPrivate::RecentDesc{key, QFileSet(QFileSet::File)});
+    d->recentFileMap.insert(d->fileRegMax, QsFileManagerPrivate::RecentDesc{key, QMFileSet(QMFileSet::File)});
     return d->fileRegMax;
 }
 
 int QsFileManager::registerDirType(const QString &key, int hint) {
     Q_D(QsFileManager);
     d->dirRegMax = (hint > d->dirRegMax) ? hint : (d->dirRegMax + 1);
-    d->recentFileMap.insert(d->dirRegMax, QsFileManagerPrivate::RecentDesc{key, QFileSet(QFileSet::Directory)});
+    d->recentFileMap.insert(d->dirRegMax, QsFileManagerPrivate::RecentDesc{key, QMFileSet(QMFileSet::Directory)});
     return d->fileRegMax;
 }
 
 void QsFileManager::commitRecent(int fType, int cType, const QString &filename) {
     Q_D(QsFileManager);
-    QFileSet *fs;
+    QMFileSet *fs;
     auto it = d->recentFileMap.find(fType);
     if (it == d->recentFileMap.end()) {
         return;

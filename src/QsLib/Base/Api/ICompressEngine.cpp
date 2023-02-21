@@ -2,7 +2,7 @@
 
 QSAPI_USING_NAMESPACE
 
-ICompressEngine::ICompressEngine(QObject *parent) : INamePlugin(parent) {
+ICompressEngine::ICompressEngine(QObject *parent) : QMNamePlugin(parent) {
 }
 
 ICompressEngine::~ICompressEngine() {

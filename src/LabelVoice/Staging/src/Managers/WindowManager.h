@@ -5,7 +5,6 @@
 
 #include <QMainWindow>
 
-#include "QsMacros.h"
 
 class HomeWindow;
 class PianoWindow;

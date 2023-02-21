@@ -4,11 +4,11 @@
 #include <QObject>
 
 #include "DsCoreGlobal.h"
-#include "INamePlugin.h"
+#include "QMNamePlugin.h"
 
 DSAPI_BEGIN_NAMESPACE
 
-class DSCORE_API ISynthHost : public QsApi::INamePlugin {
+class DSCORE_API ISynthHost : public QMNamePlugin {
     Q_OBJECT
 public:
     explicit ISynthHost(QObject *parent = nullptr);

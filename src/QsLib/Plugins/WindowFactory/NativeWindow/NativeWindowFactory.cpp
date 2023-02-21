@@ -5,7 +5,7 @@
 #include "QsCoreConfig.h"
 
 #include "CDecorator.h"
-#include "QsSystem.h"
+#include "QMSystem.h"
 
 #include <QTranslator>
 
@@ -20,7 +20,7 @@ public:
 void NativeWindowFactoryPrivate::init() {
     qIDec->addThemeTemplate("NativeWindow", ":/themes/window-bar.qss.in");
 
-    dd.setDir(QsFs::PathFindDirPath(q_ptr->path));
+    dd.setDir(QMFs::PathFindDirPath(q_ptr->path));
     dd.loadDefault("NativeWindow");
 }
 

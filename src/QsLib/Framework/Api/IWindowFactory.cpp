@@ -2,7 +2,7 @@
 
 QSAPI_USING_NAMESPACE
 
-IWindowFactory::IWindowFactory(QObject *parent) : INamePlugin(parent) {
+IWindowFactory::IWindowFactory(QObject *parent) : QMNamePlugin(parent) {
 }
 
 IWindowFactory::~IWindowFactory() {
