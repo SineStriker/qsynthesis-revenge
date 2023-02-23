@@ -64,21 +64,21 @@ function(qs_add_executable _target _dll)
         set_target_properties(_winmain_target PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CONFIG_OUTPUT_DIRECTORY})
     endif()
 
+    if(FUNC_OUTPUT_NAME)
+        set(_output_name ${FUNC_OUTPUT_NAME})
+
+        foreach(_item ${_target_list})
+            set_target_properties(${_item} PROPERTIES OUTPUT_NAME ${_output_name})
+        endforeach()
+    else()
+        set(_output_name ${_target})
+    endif()
+
     if(NOT FUNC_AS_TEST)
         if(NOT FUNC_PRODUCT_NAME)
             set(_product_name ${_target})
         else()
             set(_product_name ${FUNC_PRODUCT_NAME})
-        endif()
-
-        if(FUNC_OUTPUT_NAME)
-            set(_output_name ${FUNC_OUTPUT_NAME})
-
-            foreach(_item ${_target_list})
-                set_target_properties(${_item} PROPERTIES OUTPUT_NAME ${_output_name})
-            endforeach()
-        else()
-            set(_output_name ${_target})
         endif()
 
         if(FUNC_COPYRIGHT_YEAR)

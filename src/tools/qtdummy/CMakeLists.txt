@@ -7,7 +7,7 @@ set(CMAKE_AUTORCC ON)
 # ----------------------------------
 # Add modules
 # ----------------------------------
-add_qt_module(_qt_libs Core Gui Widgets Network)
+add_qt_module(_qt_libs Core Gui Widgets Network Concurrent)
 
 # ----------------------------------
 # Add target

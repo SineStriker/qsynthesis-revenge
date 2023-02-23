@@ -13,4 +13,4 @@ set(SUB_FILE_DESC "Qt With Advanced Implementations")
 
 add_subdirectory(CoreLib)
 add_subdirectory(Widgets)
-add_subdirectory(ControlCenter)
+# add_subdirectory(ControlCenter)

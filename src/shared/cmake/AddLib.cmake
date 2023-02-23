@@ -56,18 +56,18 @@ function(qs_add_library _target)
 
     target_compile_definitions(${_target} PRIVATE ${_prefix}_LIBRARY)
 
+    if(FUNC_OUTPUT_NAME)
+        set(_output_name ${FUNC_OUTPUT_NAME})
+        set_target_properties(${_target} PROPERTIES OUTPUT_NAME ${_output_name})
+    else()
+        set(_output_name ${_target})
+    endif()
+
     if(FUNC_ENABLE_SHARED AND NOT FUNC_AS_TEST)
         if(NOT FUNC_PRODUCT_NAME)
             set(_product_name ${_target})
         else()
             set(_product_name ${FUNC_PRODUCT_NAME})
-        endif()
-
-        if(FUNC_OUTPUT_NAME)
-            set(_output_name ${FUNC_OUTPUT_NAME})
-            set_target_properties(${_target} PROPERTIES OUTPUT_NAME ${_output_name})
-        else()
-            set(_output_name ${_target})
         endif()
 
         if(FUNC_COPYRIGHT_YEAR)

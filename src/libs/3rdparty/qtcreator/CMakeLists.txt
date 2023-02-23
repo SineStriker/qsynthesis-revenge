@@ -1,22 +1,19 @@
-set(QT_CREATOR_VERSION 0.3.16.1)
-
-include_directories(${CMAKE_CURRENT_SOURCE_DIR})
-
-if(WIN32)
-    add_compile_definitions(_UNICODE)
-    add_compile_definitions(UNICODE)
-endif()
+set(QT_CREATOR_VERSION 0.3.6.1)
+set(QT_CREATOR_LIB_DIR ${CMAKE_CURRENT_SOURCE_DIR})
 
 function(configure_qtc_library _name)
     qs_add_library(${_name}
         ENABLE_SHARED
         AUTHOR_NAME "The Qt Company Ltd."
-        FILE_DESC "Qt Creator 3.16"
+        FILE_DESC "Qt Creator 3.6"
         PRODUCT_NAME "${_name}"
         COPYRIGHT_YEAR "(C) 2015"
-        OUTPUT_NAME QTC3.6-${_name}
+        OUTPUT_NAME QTC${_name}3.6
         LIBRARY_TYPE qtcreator
     )
+    target_compile_definitions(${_name} PRIVATE _UNICODE)
+    target_compile_definitions(${_name} PRIVATE UNICODE)
+    target_include_directories(${PROJECT_NAME} PUBLIC ${QT_CREATOR_LIB_DIR})
 endfunction()
 
 add_subdirectory(aggregation)

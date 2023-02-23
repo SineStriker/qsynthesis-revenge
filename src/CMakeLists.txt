@@ -64,6 +64,7 @@ endif()
 # ----------------------------------
 add_subdirectory(libs)
 add_subdirectory(tools)
+add_subdirectory(plugins)
 
 # add_subdirectory(apps)
 

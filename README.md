@@ -76,6 +76,8 @@ For detailed information, see [Related Tools](./docs/related-tools.md).
     + Apache 2.0 License
 + [qBreakpad](https://github.com/buzzySmile/qBreakpad)
     + LGPL-3.0 license
++ [QtCreator 3.6](https://github.com/qt-creator/qt-creator/tree/3.6) (ExtensionSystem, Aggregation, Utils)
+    + GNU LGPL v2.1 or later
 
 See [Related Tools](./docs/related-tools.md) for dependencies for each plugin.
 

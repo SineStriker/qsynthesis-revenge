@@ -4,7 +4,11 @@ set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTORCC ON)
 
-add_files(_src CURRENT_RECURSE PATTERNS *.h *.cpp *.ui *.qrc)
+add_files(_src
+    CURRENT
+    DIRECTORIES mimetypes theme tooltip
+    PATTERNS *.h *.cpp *.ui *.qrc
+)
 
 if(WIN32)
     list(FILTER _src EXCLUDE REGEX ".*_(Unix|unix|Mac|mac|Linux|linux)\\.(h|cpp|hpp|cc)")
@@ -29,7 +33,7 @@ configure_qtc_library(${PROJECT_NAME})
 target_components(${PROJECT_NAME}
     INCLUDE_CURRENT
     SOURCES ${_src}
-    QT_LIBRARIES Core Widgets Network Qml Concurrent
+    QT_LIBRARIES Core Widgets Network Concurrent
     LINKS
 )
 

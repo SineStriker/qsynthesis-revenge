@@ -151,6 +151,24 @@ bool PluginDependency::operator==(const PluginDependency &other) const
     return name == other.name && version == other.version && type == other.type;
 }
 
+static QString typeString(PluginDependency::Type type)
+{
+    switch (type) {
+    case PluginDependency::Optional:
+        return QString(", optional");
+    case PluginDependency::Test:
+        return QString(", test");
+    case PluginDependency::Required:
+    default:
+        return QString();
+    }
+}
+
+QString PluginDependency::toString() const
+{
+    return name + " (" + version + typeString(type) + ")";
+}
+
 /*!
     \internal
 */
@@ -633,7 +651,7 @@ static inline bool readMultiLineString(const QJsonValue &value, QString *out)
 */
 bool PluginSpecPrivate::readMetaData(const QJsonObject &metaData)
 {
-    qCDebug(pluginLog) << "MetaData:" << QJsonDocument(metaData).toJson();
+    qCDebug(pluginLog) << "MetaData:" << QJsonDocument(metaData).toJson().data();
     QJsonValue value;
     value = metaData.value(QLatin1String("IID"));
     if (!value.isString()) {
