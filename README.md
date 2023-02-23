@@ -74,6 +74,8 @@ For detailed information, see [Related Tools](./docs/related-tools.md).
     + GNU LGPL v2.1 or later
 + [qastool](https://github.com/SineStriker/qt-json-autogen)
     + Apache 2.0 License
++ [qBreakpad](https://github.com/buzzySmile/qBreakpad)
+    + LGPL-3.0 license
 
 See [Related Tools](./docs/related-tools.md) for dependencies for each plugin.
 

@@ -22,14 +22,14 @@ include(${REPOSITORY_VCPKG_DIR}/scripts/buildsystems/vcpkg.cmake)
 # Import base configuration
 # ----------------------------------
 set(ROOT_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR} CACHE STRING "Root source directory")
-add_subdirectory(Common)
+add_subdirectory(shared)
 
 # ----------------------------------
 # Build configuration
 # ----------------------------------
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
-set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
-set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CONFIG_OUTPUT_DIRECTORY}/bin)
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CONFIG_OUTPUT_DIRECTORY}/lib)
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CONFIG_OUTPUT_DIRECTORY}/lib)
 
 if(WIN32)
     set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /manifest:no")
@@ -37,9 +37,6 @@ if(WIN32)
     set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} /manifest:no")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /utf-8")
 endif()
-
-set(SHARE_OUTPUT_DIR ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${APP_SHARE_DIR})
-set(LIBRARY_OUTPUT_DIR ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${APP_LIB_DIR})
 
 # Find pre-built libraries
 find_package(SDL2 REQUIRED)
@@ -53,36 +50,29 @@ if(NOT APPLE)
     find_package(FramelessHelper REQUIRED COMPONENTS Core Widgets)
 endif()
 
+# Add config macros
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
     add_compile_definitions(CONFIG_ENABLE_DEBUG)
 endif()
 
-if(CONFIG_WIN32_MB_TOPMOST)
-    add_compile_definitions(CONFIG_WIN32_MB_TOPMOST)
+if(CONFIG_WIN32_MSGBOX_TOPMOST)
+    add_compile_definitions(CONFIG_WIN32_MSGBOX_TOPMOST)
 endif()
 
 # ----------------------------------
-# Add sub-projects
+# Add projects
 # ----------------------------------
+add_subdirectory(libs)
+add_subdirectory(tools)
 
-# Add qt medium
-add_subdirectory(QtMedium)
-
-# Add other libraries
-add_subdirectory(Utilities)
-
-# Add qslib
-add_subdirectory(QsLib)
-
-# Add applications
-foreach(_app ${APP_TOOLSET_LIST})
-    add_subdirectory(${_app})
-endforeach()
+# add_subdirectory(apps)
 
 # Add tests
-if(BUILD_TEST)
+if(CONFIG_BUILD_TEST)
+    add_subdirectory(tests)
+
     # add_subdirectory(Test)
-    add_subdirectory(TestNew)
+    # add_subdirectory(TestNew)
 endif()
 
 # ----------------------------------
@@ -90,10 +80,5 @@ endif()
 # ----------------------------------
 if(TRUE)
     get_all_targets(_all_targets)
-
     proc_deps("${_all_targets}")
-
-    if(APP_DEPLOY)
-        proc_deploy("${_all_targets}")
-    endif()
 endif()

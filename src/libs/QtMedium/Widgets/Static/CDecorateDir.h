@@ -1,0 +1,20 @@
+#ifndef CDECORATEDIR_H
+#define CDECORATEDIR_H
+
+#include "QMWidgetsGlobal.h"
+#include "QsLocaleDir.h"
+
+class CDecorateDirPrivate;
+
+class QMWIDGETS_API CDecorateDir : public QsLocaleDir {
+    Q_DECLARE_PRIVATE(CDecorateDir)
+public:
+    CDecorateDir();
+    explicit CDecorateDir(const QString &dir);
+    ~CDecorateDir();
+
+protected:
+    CDecorateDir(CDecorateDirPrivate &d);
+};
+
+#endif // CDECORATEDIR_H

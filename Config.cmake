@@ -24,18 +24,10 @@ check_pc_os()
 # Build system configuration
 # ----------------------------------
 option_ex(APP_TOOLSET_NAME ChorusKit)
-option_ex(APP_TOOLSET_LIST DiffSinger)
 option_ex(APP_VERSION_VERBOSE 0.0.1.8)
-option_ex(APP_DEPLOY on)
-option_ex(APP_LIB_DIR lib)
-option_ex(APP_TOOLS_DIR bin)
-option_ex(APP_PLUGINS_DIR plugins) # Do not change
-option_ex(APP_LOCALES_DIR translations) # Do not change
-option_ex(APP_SHARE_DIR share) # Do not change
-option_ex(APP_EXT_DIR plugins)
-option_ex(APP_PUBLIC_PLUGINS_DIR qslib)
 
-option_ex(BUILD_TEST on)
-
-option_ex(CONFIG_WIN32_MB_TOPMOST off)
+option_ex(CONFIG_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/${APP_TOOLSET_NAME})
+option_ex(CONFIG_INSTALL_DIRECTORY ${CMAKE_INSTALL_PREFIX})
+option_ex(CONFIG_BUILD_TEST on)
+option_ex(CONFIG_WIN32_MSGBOX_TOPMOST off)
 option_ex(CONFIG_WIN32_DEBUG on)
