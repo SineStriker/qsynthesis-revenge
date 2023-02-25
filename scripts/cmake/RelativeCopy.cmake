@@ -11,7 +11,7 @@ check_defined(arg)
 
 # Message
 get_filename_component(SCRIPT_NAME ${CMAKE_CURRENT_LIST_FILE} NAME)
-message("Run ${SCRIPT_NAME} Script")
+message(STATUS "Run ${SCRIPT_NAME} Script")
 
 # Get arguments
 list(LENGTH arg _len)

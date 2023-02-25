@@ -41,7 +41,7 @@ QsStartInfo::QsStartInfo(QObject *parent) : QObject(parent), AllowSecondary(fals
     d.pluginMgr = new QsPluginManager(this);
 
     // Load core config
-    d.coreConfig.load(qApp->applicationDirPath() + Slash + GetAppConfig());
+    d.coreConfig.load(QMFs::binaryPath() + Slash + GetAppConfig());
 
     // Load qslib resources
     d.dd.setDir(d.coreConfig.appDir(QsCoreConfig::AppShare) + Slash + "QsLib");

@@ -11,7 +11,7 @@ function(configure_qtc_library _name)
         FILE_DESC "Qt Creator 3.6"
         PRODUCT_NAME "${_name}"
         COPYRIGHT_YEAR "(C) 2015"
-        OUTPUT_NAME QTC${_name}3.6
+        OUTPUT_NAME QTC${_name}36
         LIBRARY_TYPE qtcreator
     )
     target_compile_definitions(${_name} PRIVATE _UNICODE)

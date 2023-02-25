@@ -35,7 +35,7 @@ public:
 
 QSAPI_END_NAMESPACE
 
-#define QsApi_IAudioDecoder_IID "QSynthesis.Plugin.Media.AudioDecoder"
+#define QsApi_IAudioDecoder_IID "org.ChorusKit.QsLib.IAudioDecoder"
 
 QT_BEGIN_NAMESPACE
 Q_DECLARE_INTERFACE(QsApi::IAudioDecoder, QsApi_IAudioDecoder_IID)

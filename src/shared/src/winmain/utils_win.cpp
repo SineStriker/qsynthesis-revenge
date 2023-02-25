@@ -169,3 +169,8 @@ void WinLibrary::AddLibDir(const std::wstring &path) {
     //    ::AddDllDirectory(path.data());
     ::SetDllDirectoryW(path.data());
 }
+
+void WinLibrary::SetEnv(const std::wstring &key, const std::wstring &val) {
+    wprintf(L"winmain: set env %s=%s\n", key.data(), val.data());
+    ::SetEnvironmentVariableW(key.data(), val.data());
+}

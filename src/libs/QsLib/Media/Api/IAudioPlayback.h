@@ -88,7 +88,7 @@ signals:
 
 QSAPI_END_NAMESPACE
 
-#define QsApi_IAudioPlayback_IID "QSynthesis.Plugin.Media.AudioPlayback"
+#define QsApi_IAudioPlayback_IID "org.ChorusKit.QsLib.IAudioPlayback"
 
 QT_BEGIN_NAMESPACE
 Q_DECLARE_INTERFACE(QsApi::IAudioPlayback, QsApi_IAudioPlayback_IID)

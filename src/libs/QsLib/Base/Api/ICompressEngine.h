@@ -35,7 +35,7 @@ public:
 
 QSAPI_END_NAMESPACE
 
-#define QsApi_ICompressEngine_IID "QSynthesis.Plugin.Utils.CompressEngine"
+#define QsApi_ICompressEngine_IID "org.ChorusKit.QsLib.ICompressEngine"
 
 QT_BEGIN_NAMESPACE
 Q_DECLARE_INTERFACE(QsApi::ICompressEngine, QsApi_ICompressEngine_IID)

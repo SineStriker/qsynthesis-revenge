@@ -22,7 +22,7 @@ public:
 
 QSAPI_END_NAMESPACE
 
-#define QsApi_IWindowFactory_IID "QSynthesis.Plugin.Framework.WindowFactory"
+#define QsApi_IWindowFactory_IID "org.ChorusKit.QsLib.IWindowFactory"
 
 QT_BEGIN_NAMESPACE
 Q_DECLARE_INTERFACE(QsApi::IWindowFactory, QsApi_IWindowFactory_IID)

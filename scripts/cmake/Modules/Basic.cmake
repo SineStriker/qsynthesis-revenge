@@ -19,7 +19,7 @@ function(check_pc_os)
     set(_linux OFF)
     set(_name)
 
-    if(CMAKE_SYSTEM_NAME MATCHES "Linux")
+    if(CMAKE_HOST_SYSTEM_NAME MATCHES "Linux")
         set(_linux ON)
         set(_name Linux)
     elseif(WIN32)
