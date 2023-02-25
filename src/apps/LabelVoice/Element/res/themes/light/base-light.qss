@@ -1,8 +1,0 @@
-/* Global */
-
-QWidget {
-    font-size: 15px;
-    outline: none;
-}
-
-
