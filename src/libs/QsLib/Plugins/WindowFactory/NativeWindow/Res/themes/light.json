@@ -1,0 +1,78 @@
+{
+    "config": {
+        "priority": 10,
+        "ratio": 0.8
+    },
+    "values": {
+        "NativeWindow": {
+            "background": "transparent",
+            "color": "transparent",
+            "titleMargin": 20,
+            "minHeight": 36,
+            "minButton": {
+                "foreground": {
+                    "up": "#111111",
+                    "over": "#111111",
+                    "down": "#111111"
+                },
+                "background": {
+                    "up": "transparent",
+                    "over": "rgba(0, 0, 0, 10%)",
+                    "down": "rgba(0, 0, 0, 10%)"
+                },
+                "icon.size": [
+                    12,
+                    12
+                ],
+                "minWidth": 50
+            },
+            "maxButton": {
+                "foreground": {
+                    "up": "#111111",
+                    "over": "#111111",
+                    "down": "#111111"
+                },
+                "foreground.checked": {
+                    "up": "#111111",
+                    "over": "#111111",
+                    "down": "#111111"
+                },
+                "background": {
+                    "up": "transparent",
+                    "over": "rgba(0, 0, 0, 10%)",
+                    "down": "rgba(0, 0, 0, 10%)"
+                },
+                "icon.size": [
+                    12,
+                    12
+                ],
+                "minWidth": 50
+            },
+            "closeButton": {
+                "foreground": {
+                    "up": "#111111",
+                    "over": "#FFFFFF",
+                    "down": "#FFFFFF"
+                },
+                "background": {
+                    "up": "transparent",
+                    "over": "#E81123",
+                    "down": "#E81123"
+                },
+                "icon.size": [
+                    12,
+                    12
+                ],
+                "minWidth": 50
+            },
+            "iconButton": {
+                "background": "transparent",
+                "icon.size": [
+                    20,
+                    20
+                ],
+                "minWidth": 40
+            }
+        }
+    }
+}

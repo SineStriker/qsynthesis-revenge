@@ -1,0 +1,26 @@
+{
+    "config": {
+        "version": "0.0.1",
+        "parent": "NativeWindow"
+    },
+    "locales": [
+        {
+            "key": "${PARENT}",
+            "dir": "${FILEPATH}/${CURRENT_KEY}.res/translations"
+        }
+    ],
+    "themes": [
+        {
+            "key": "${PARENT}",
+            "dir": "${FILEPATH}/${CURRENT_KEY}.res/themes",
+            "files": {
+                "Zhibin - Dark": [
+                    "dark.json"
+                ],
+                "Zhibin - Light": [
+                    "light.json"
+                ]
+            }
+        }
+    ]
+}
