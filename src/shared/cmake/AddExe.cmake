@@ -42,6 +42,7 @@ function(qs_add_executable _target _dll)
         add_executable(${_target} ${_winmain_src})
         list(APPEND _target_list ${_target})
 
+        target_include_directories(${_target} PRIVATE ${SHARED_INCLUDE_DIR})
         target_compile_definitions(${_target} PRIVATE APP_ENABLE_ENTRY)
         target_link_libraries(${_target} PRIVATE ${_dll})
     endif()
@@ -60,8 +61,8 @@ function(qs_add_executable _target _dll)
 
         # https://blog.csdn.net/qq_58286297/article/details/119611363
         # target_link_libraries(${_winmain_target} PRIVATE ComCtl32)
-        set_target_properties(_winmain_target PROPERTIES OUTPUT_NAME ${_target})
-        set_target_properties(_winmain_target PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CONFIG_OUTPUT_DIRECTORY})
+        set_target_properties(${_winmain_target} PROPERTIES OUTPUT_NAME ${_target})
+        set_target_properties(${_winmain_target} PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CONFIG_OUTPUT_DIRECTORY})
     endif()
 
     if(FUNC_OUTPUT_NAME)
@@ -72,6 +73,15 @@ function(qs_add_executable _target _dll)
         endforeach()
     else()
         set(_output_name ${_target})
+    endif()
+
+    # Set windows/console application
+    if((NOT CONFIG_WIN32_DEBUG AND NOT FUNC_FORCE_CONSOLE) OR NOT DEFINED NOT_QT_CREATOR)
+        foreach(_item ${_target_list})
+            set_target_properties(${_item} PROPERTIES
+                WIN32_EXECUTABLE TRUE
+            )
+        endforeach()
     endif()
 
     if(NOT FUNC_AS_TEST)
@@ -92,21 +102,16 @@ function(qs_add_executable _target _dll)
 
         # Add embedded resources
         if(WIN32)
-            # Set windows/console application
-            if((NOT CONFIG_WIN32_DEBUG AND NOT FUNC_FORCE_CONSOLE) OR NOT DEFINED NOT_QT_CREATOR)
-                foreach(_item ${_target_list})
-                    set_target_properties(${_item} PROPERTIES
-                        WIN32_EXECUTABLE TRUE
-                    )
-                endforeach()
-            endif()
+            string(RANDOM LENGTH 8 _rand)
+            set(manifest_name ${CMAKE_CURRENT_BINARY_DIR}/app_${_rand}.manifest)
+            set(rc_name ${CMAKE_CURRENT_BINARY_DIR}/res_${_rand}.rc)
 
             # configure manifest
             set(WIN32_MANIFEST_IDENTIFIER "${_product_name}")
             set(WIN32_MANIFEST_DESC "${FUNC_FILE_DESC}")
             configure_file(
                 ${WIN32_EXE_MANIFEST}
-                ${CMAKE_CURRENT_BINARY_DIR}/app.manifest
+                ${manifest_name}
                 @ONLY
             )
 
@@ -121,7 +126,7 @@ function(qs_add_executable _target _dll)
             set(WIN32_PRODUCT_NAME "${_product_name}")
             configure_file(
                 ${WIN32_EXE_RC}
-                ${CMAKE_CURRENT_BINARY_DIR}/res.rc
+                ${rc_name}
                 @ONLY
             )
 
@@ -131,8 +136,8 @@ function(qs_add_executable _target _dll)
             # add files
             foreach(_item ${_target_list})
                 target_sources(${_item} PRIVATE
-                    ${CMAKE_CURRENT_BINARY_DIR}/app.manifest
-                    ${CMAKE_CURRENT_BINARY_DIR}/res.rc
+                    ${manifest_name}
+                    ${rc_name}
                 )
             endforeach()
         elseif(APPLE)

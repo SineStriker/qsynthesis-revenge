@@ -13,8 +13,8 @@ set(SUB_AUTHOR_NAME "OpenVPI Team")
 set(SUB_FILE_DESC "DiffSinger Client")
 
 # Add subdirectories
-add_subdirectory(Core)
-add_subdirectory(Gui)
-add_subdirectory(Host)
-add_subdirectory(Plugins)
+# add_subdirectory(Core)
+# add_subdirectory(Gui)
+# add_subdirectory(Host)
+# add_subdirectory(Plugins)
 add_subdirectory(App)

@@ -1,7 +1,7 @@
 #include "com_global.h"
 
 #if defined(_WIN32)
-#    include "utils_win.h"
+#include "utils_win.h"
 #endif
 
 #ifdef APP_ENABLE_ENTRY
@@ -14,6 +14,9 @@ int main(int argc, char *argv[]) {
 #ifdef APP_ENABLE_ENTRY
     return main_entry(argc, argv);
 #else
+    // Tell the library it's an external executable
+    ::putenv("CHORUSKIT_EXTERN_WINMAIN=1");
+
     std::wstring path = WinGetExeDir() + TO_UNICODE("\\") + TO_UNICODE(APP_LIB_DIR);
     WinLibrary::AddLibDir(path); // Append subdirectory
 

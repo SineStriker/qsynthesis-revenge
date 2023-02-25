@@ -78,6 +78,9 @@ function(qs_add_library _target)
 
         # Add embedded resources
         if(WIN32)
+            string(RANDOM LENGTH 8 _rand)
+            set(rc_name ${CMAKE_CURRENT_BINARY_DIR}/res_${_rand}.rc)
+
             # configure rc
             set(WIN32_EXPORT_NAME ${_output_name})
             set(WIN32_COPYRIGHT_YEAR "${_copyright_year}")
@@ -86,10 +89,10 @@ function(qs_add_library _target)
             set(WIN32_PRODUCT_NAME "${_product_name}")
             configure_file(
                 ${WIN32_DLL_RC}
-                ${CMAKE_CURRENT_BINARY_DIR}/res.rc
+                ${rc_name}
                 @ONLY
             )
-            target_sources(${_target} PRIVATE ${CMAKE_CURRENT_BINARY_DIR}/res.rc)
+            target_sources(${_target} PRIVATE ${rc_name})
         elseif(APPLE)
             # configure mac plist
             # set_target_properties(${_target} PROPERTIES
