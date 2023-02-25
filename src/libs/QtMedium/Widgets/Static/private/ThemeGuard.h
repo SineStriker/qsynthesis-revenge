@@ -4,7 +4,7 @@
 #include <QScreen>
 #include <QWidget>
 
-#include "../CDecorator.h"
+#include "../QMDecorator.h"
 #include "ThemeTemplate.h"
 
 struct ScreenSet;

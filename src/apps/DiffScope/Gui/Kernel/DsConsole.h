@@ -8,7 +8,7 @@
 #ifdef qCs
 #undef qCs
 #endif
-#define qCs qobject_cast<DsConsole *>(QsCoreConsole::instance())
+#define qCs qobject_cast<DsConsole *>(QMCoreConsole::instance())
 
 class DsConsolePrivate;
 

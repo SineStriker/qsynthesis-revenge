@@ -22,23 +22,23 @@ target_components(${_plugin}
     LINKS_PRIVATE FramelessHelper::FramelessHelperWidgets
 )
 
-target_create_translations(${_plugin} SOURCES ${_src}
-    LOCALES zh_CN zh_HK ja_JP
-    DESTINATION ${_res_dir}/translations
-    PREFIX ${PROJECT_NAME}
-    CREATE_ONCE
-)
+# target_create_translations(${_plugin} SOURCES ${_src}
+#     LOCALES zh_CN zh_HK ja_JP
+#     DESTINATION ${_res_dir}/translations
+#     PREFIX ${PROJECT_NAME}
+#     CREATE_ONCE
+# )
 
 # Copy resources
-qs_add_res(${_plugin}
-    FILES ${_res_dir}/${PROJECT_NAME}.res.json
-    RELATIVE_PATH .
-)
-qs_add_res(${_plugin}
-    FILES ${_res_dir}/translations/*.qm
-    RELATIVE_PATH ${PROJECT_NAME}.res/translations
-)
-qs_add_res(${_plugin}
-    FILES ${_res_dir}/themes/*.json
-    RELATIVE_PATH ${PROJECT_NAME}.res/themes
-)
+# qs_add_res(${_plugin}
+#     FILES ${_res_dir}/${PROJECT_NAME}.res.json
+#     RELATIVE_PATH .
+# )
+# qs_add_res(${_plugin}
+#     FILES ${_res_dir}/translations/*.qm
+#     RELATIVE_PATH ${PROJECT_NAME}.res/translations
+# )
+# qs_add_res(${_plugin}
+#     FILES ${_res_dir}/themes/*.json
+#     RELATIVE_PATH ${PROJECT_NAME}.res/themes
+# )

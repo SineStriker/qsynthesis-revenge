@@ -1,6 +1,6 @@
 #include "DsConsole_p.h"
 
-#include "CDecorator.h"
+#include "QMDecorator.h"
 
 DsConsolePrivate::DsConsolePrivate() {
 }

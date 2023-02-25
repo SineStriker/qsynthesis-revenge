@@ -1,9 +1,10 @@
 project(QsMedia
-    VERSION 0.0.1.0
+    VERSION ${SUB_VERSION}
     LANGUAGES CXX
 )
 
 get_subdirs(_dirs)
+set(_extra_includes)
 
 add_files(_src
     DIRECTORIES ${_dirs}
@@ -24,5 +25,5 @@ target_components(${PROJECT_NAME}
     QT_LIBRARIES Core
     QT_PRIVATE_INCLUDES Core
     LINKS QsBase
-    INCLUDES ${_dirs}
+    INCLUDES ${_dirs} ${_extra_includes}
 )

@@ -1,6 +1,0 @@
-<RCC>
-    <qresource prefix="/">
-        <file>themes/import-dialog.qss.in</file>
-        <file>svg/checkbox/check-line.svg</file>
-    </qresource>
-</RCC>

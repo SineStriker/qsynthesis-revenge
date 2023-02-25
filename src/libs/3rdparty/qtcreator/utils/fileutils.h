@@ -105,16 +105,18 @@ private:
 
 QTCREATOR_UTILS_EXPORT QTextStream &operator<<(QTextStream &s, const FileName &fn);
 
-// class QTCREATOR_UTILS_EXPORT FileNameList : public QList<FileName>
-// {
-// public:
-//     inline FileNameList() { }
-//     inline explicit FileNameList(const FileName &i) { append(i); }
-//     inline FileNameList(const FileNameList &l) : QList<FileName>(l) { }
-//     inline FileNameList(const QList<FileName> &l) : QList<FileName>(l) { }
+#ifndef QT_CREATOR_NO_FILENAME_LIST
+class QTCREATOR_UTILS_EXPORT FileNameList : public QList<FileName>
+{
+public:
+    inline FileNameList() { }
+    inline explicit FileNameList(const FileName &i) { append(i); }
+    inline FileNameList(const FileNameList &l) : QList<FileName>(l) { }
+    inline FileNameList(const QList<FileName> &l) : QList<FileName>(l) { }
 
-//     int removeDuplicates();
-// };
+    int removeDuplicates();
+};
+#endif
 
 class QTCREATOR_UTILS_EXPORT FileUtils {
 public:

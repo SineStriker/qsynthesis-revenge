@@ -1,11 +1,10 @@
 project(QsFramework
-    VERSION 0.2.17.0
+    VERSION ${SUB_VERSION}
     LANGUAGES CXX
 )
 
-set(_res_dir Res)
-get_subdirs(_dirs EXCLUDE ${_res_dir})
-get_subdirs(_extra_includes)
+get_subdirs(_dirs)
+set(_extra_includes)
 
 add_files(_src
     DIRECTORIES ${_dirs}
@@ -22,25 +21,26 @@ qs_add_library(${PROJECT_NAME}
 
 target_components(${PROJECT_NAME}
     INCLUDE_CURRENT
-    SOURCES ${_src} ${_res_dir}/res.qrc
-    QT_LIBRARIES Widgets Network
+    SOURCES ${_src}
+    QT_LIBRARIES Widgets
     QT_PRIVATE_INCLUDES Core Widgets
-    LINKS QsBase QMWidgets
+    LINKS QMWidgets QsMedia QsSVS
+    LINKS_PRIVATE SingleApplication
     INCLUDES ${_dirs} ${_extra_includes}
 )
 
-target_create_translations(${PROJECT_NAME} SOURCES ${_src}
-    LOCALES zh_CN zh_HK ja_JP
-    DESTINATION ${_res_dir}/translations
-    CREATE_ONCE
-)
+# target_create_translations(${PROJECT_NAME} SOURCES ${_src}
+#     LOCALES zh_CN zh_HK ja_JP
+#     DESTINATION ${_res_dir}/translations
+#     CREATE_ONCE
+# )
 
 # Copy resources
-qs_add_res(${PROJECT_NAME}
-    FILES ${_res_dir}/QsFramework.res.json
-    ABSOLUTE_PATH ${SHARE_OUTPUT_DIR}
-)
-qs_add_res(${PROJECT_NAME}
-    FILES ${_res_dir}/translations/*.qm
-    ABSOLUTE_PATH ${SHARE_OUTPUT_DIR}/QsFramework.res/translations
-)
+# qs_add_res(${PROJECT_NAME}
+#     FILES ${_res_dir}/QsFramework.res.json
+#     ABSOLUTE_PATH ${SHARE_OUTPUT_DIR}
+# )
+# qs_add_res(${PROJECT_NAME}
+#     FILES ${_res_dir}/translations/*.qm
+#     ABSOLUTE_PATH ${SHARE_OUTPUT_DIR}/QsFramework.res/translations
+# )

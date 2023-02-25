@@ -39,10 +39,7 @@ public:
         AppData,
         AppTemp,
         AppShare,
-        QtPlugins,
-        QtTranslations,
         QsPlugins,
-        BinTool,
         UserDir = 1000,
     };
 
@@ -68,7 +65,7 @@ protected:
     QScopedPointer<QsCoreConfigPrivate> d_ptr;
 
     friend class QsCoreStartInfo;
-    friend class QsCoreStartInfoPrivate;;
+    friend class QsCoreStartInfoPrivate;
 };
 
 #endif // QSCORECONFIG_H

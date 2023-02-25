@@ -19,7 +19,7 @@ void DsStartInfo::loadImpl() {
     d->load_helper();
 }
 
-QsCoreConsole *DsStartInfo::createConsole(QObject *parent) {
+QMCoreConsole *DsStartInfo::createConsole(QObject *parent) {
     return new DsConsole(parent);
 }
 

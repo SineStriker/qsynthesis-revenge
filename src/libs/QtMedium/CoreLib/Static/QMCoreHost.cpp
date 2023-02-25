@@ -14,6 +14,11 @@ bool QMCoreHost::isAboutToQuit() const {
     return d->isAboutToQuit;
 }
 
+QSettings::Format QMCoreHost::settingsJsonFormat() const {
+    Q_D(const QMCoreHost);
+    return d->settingsJsonFormat;
+}
+
 QMCoreHost::QMCoreHost(QMCoreHostPrivate &d, QObject *parent) : QObject(parent), d_ptr(&d) {
     construct();
 

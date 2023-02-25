@@ -16,14 +16,15 @@ public:
     QMCoreHost *q_ptr;
     
     bool isAboutToQuit;
+    QSettings::Format settingsJsonFormat;
 
     virtual QMCoreFactory *createFactory();
 
 private:
     QScopedPointer<QMCoreFactory> fac;
 
-    QsCoreDecorator *s_dec;
-    QsCoreConsole *s_cs;
+    QMCoreDecorator *s_dec;
+    QMCoreConsole *s_cs;
 };
 
 #endif // QMCOREHOST_P_H

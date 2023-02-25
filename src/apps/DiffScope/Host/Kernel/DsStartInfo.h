@@ -21,7 +21,7 @@ protected:
     void loadImpl() override;
 
 protected:
-    QsCoreConsole *createConsole(QObject *parent = nullptr) override;
+    QMCoreConsole *createConsole(QObject *parent = nullptr) override;
 
     QsCoreConfig *creatDistConfig() override;
 

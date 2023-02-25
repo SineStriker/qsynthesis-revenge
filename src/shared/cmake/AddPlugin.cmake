@@ -88,16 +88,22 @@ function(qs_add_plugin _target)
     endif()
 
     # Settle plugin
-    if(WIN32)
-        set_target_properties(${_target} PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${_out_dir})
-        set_target_properties(${_target}
-            PROPERTIES
-            LIBRARY_OUTPUT_DIRECTORY ${_parent_dir}
-            ARCHIVE_OUTPUT_DIRECTORY ${_parent_dir}
-        )
-    else()
-        set_target_properties(${_target} PROPERTIES LIBRARY_OUTPUT_DIRECTORY ${_out_dir})
-    endif()
+    set_target_properties(${_target} PROPERTIES
+        RUNTIME_OUTPUT_DIRECTORY ${_out_dir}
+        LIBRARY_OUTPUT_DIRECTORY ${_out_dir}
+        ARCHIVE_OUTPUT_DIRECTORY ${_out_dir}
+    )
+
+    # if(WIN32)
+    # set_target_properties(${_target} PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${_out_dir})
+    # set_target_properties(${_target}
+    # PROPERTIES
+    # LIBRARY_OUTPUT_DIRECTORY ${_parent_dir}
+    # ARCHIVE_OUTPUT_DIRECTORY ${_parent_dir}
+    # )
+    # else()
+    # set_target_properties(${_target} PROPERTIES LIBRARY_OUTPUT_DIRECTORY ${_out_dir})
+    # endif()
 
     # ----------------- Template End -----------------
 endfunction()

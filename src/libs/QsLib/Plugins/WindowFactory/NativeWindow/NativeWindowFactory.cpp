@@ -1,10 +1,9 @@
 #include "NativeWindowFactory.h"
 #include "NativeHandle.h"
 
-#include "CDecorateDir.h"
-#include "QsCoreConfig.h"
+#include "QMDecorateDir.h"
 
-#include "CDecorator.h"
+#include "QMDecorator.h"
 #include "QMSystem.h"
 
 #include <QTranslator>
@@ -13,7 +12,7 @@ class NativeWindowFactoryPrivate {
 public:
     void init();
 
-    CDecorateDir dd;
+    QMDecorateDir dd;
     NativeWindowFactory *q_ptr;
 };
 

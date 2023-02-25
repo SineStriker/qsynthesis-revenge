@@ -1,5 +1,5 @@
 #include "DsStartInfo_p.h"
-#include "CDecorator.h"
+#include "QMDecorator.h"
 #include "QMSystem.h"
 
 #include "Events_p.h"

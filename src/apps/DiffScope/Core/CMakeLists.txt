@@ -32,15 +32,3 @@ target_compile_definitions(${PROJECT_NAME} PRIVATE
     APP_PUBLIC_PLUGINS_DIR="${APP_EXT_DIR}/${APP_PUBLIC_PLUGINS_DIR}"
     APP_PRIVATE_PLUGINS_DIR="${SUB_PLUGIN_DIR}"
 )
-
-# ----------------------------------
-# Json serializations
-# ----------------------------------
-add_files(_json_headers
-    DIRECTORIES Model
-    PATTERNS *.h *.hpp
-)
-
-qas_wrap_cpp(_qasc_src ${_json_headers} TARGET ${PROJECT_NAME})
-target_sources(${PROJECT_NAME} PRIVATE ${_qasc_src})
-target_include_directories(${PROJECT_NAME} PUBLIC ${QASTOOL_INCLUDE_DIRS})

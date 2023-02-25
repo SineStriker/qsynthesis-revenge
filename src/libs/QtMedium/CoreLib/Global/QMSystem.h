@@ -75,9 +75,9 @@ namespace QMFs {
 
     QMCORELIB_API QString removeTailSlashes(const QString &dirname);
 
-    QMCORELIB_API QString appPath();
-
     QMCORELIB_API QString appDataPath();
+
+    QMCORELIB_API QString binaryPath();
 
     QMCORELIB_API QStringList FindRecursiveDirs(const QString &base, int max = -1);
 

@@ -1,6 +1,6 @@
 #include "HomeWindow_p.h"
 
-#include "Kernel/CDecorator.h"
+#include "Kernel/QMDecorator.h"
 #include "Kernel/DsLocalData.h"
 
 #include "DsConsole.h"

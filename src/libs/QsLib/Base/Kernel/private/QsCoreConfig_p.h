@@ -38,7 +38,8 @@ public:
             ErrorIfNotExist,
         };
         CheckLevel level;
-        QList<std::function<void(const QString &)>> initializers;
+        QList<std::function<void(const QString &)>> loadInits;
+        QList<std::function<void(const QString &)>> applyInits;
     };
     struct DirInfo {
         QString key; // Json key

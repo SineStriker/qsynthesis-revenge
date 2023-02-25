@@ -6,9 +6,9 @@
 
 class QMWIDGETS_API QMWidgetsFactory : public QMCoreFactory {
 public:
-    QsCoreDecorator *createDecorator(QObject *parent = nullptr) override;
+    QMCoreDecorator *createDecorator(QObject *parent = nullptr) override;
 
-    QsCoreConsole *createConsole(QObject *parent = nullptr) override;
+    QMCoreConsole *createConsole(QObject *parent = nullptr) override;
 };
 
 #endif // QMWIDGETSFACTORY_H

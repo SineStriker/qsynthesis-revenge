@@ -1,5 +1,5 @@
 #include "ThemeGuard.h"
-#include "CDecorator_p.h"
+#include "QMDecorator_p.h"
 
 #include "QMWidgetsHost.h"
 
@@ -56,7 +56,7 @@ void StyleSheetHacker::polish(QWidget *w, QWidget *styledWidget) {
 
 ThemeGuard::ThemeGuard(QWidget *w, ThemeSubscriber *g)
     : QObject(qIDec), w(w), needUpdate(false), group(g), screenSet(nullptr),
-      queueIterator(CDecoratorPrivate::subscriberUpdateQueue.end()) {
+      queueIterator(QMDecoratorPrivate::subscriberUpdateQueue.end()) {
     winHandle = w->windowHandle();
     w->installEventFilter(this);
 }
@@ -115,7 +115,7 @@ bool ThemeGuard::eventFilter(QObject *obj, QEvent *event) {
                             &ThemeGuard::_q_screenChanged);
                     if (needUpdate) {
                         needUpdate = false;
-                        CDecoratorPrivate::subscriberUpdateEnqueue(nullptr);
+                        QMDecoratorPrivate::subscriberUpdateEnqueue(nullptr);
                     }
                 }
                 break;
@@ -132,5 +132,5 @@ void ThemeGuard::_q_screenChanged(QScreen *screen) {
 
     qDebug() << "Window" << this << "screen changed to" << screen;
 
-    CDecoratorPrivate::subscriberUpdateEnqueue(this);
+    QMDecoratorPrivate::subscriberUpdateEnqueue(this);
 }

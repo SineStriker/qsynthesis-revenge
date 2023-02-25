@@ -18,8 +18,8 @@ public:
     WindowManager *windowMgr;
 
 private:
-    CDecorateDir dd;
-    CDecorateDir dd_gui;
+    QMDecorateDir dd;
+    QMDecorateDir dd_gui;
 };
 
 #endif // DSSTARTINFOPRIVATE_H

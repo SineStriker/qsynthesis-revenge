@@ -1,9 +1,10 @@
 project(QsSVS
-    VERSION 0.2.17.0
+    VERSION ${SUB_VERSION}
     LANGUAGES C CXX
 )
 
 get_subdirs(_dirs)
+set(_extra_includes)
 
 add_files(_src
     DIRECTORIES ${_dirs}
@@ -25,5 +26,7 @@ target_components(${PROJECT_NAME}
     QT_PRIVATE_INCLUDES Core
     LINKS QsBase
     LINKS_PRIVATE mrq
-    INCLUDES ${_dirs}
+    INCLUDES ${_dirs} ${_extra_includes}
 )
+
+include(Dspx/qasc.cmake)

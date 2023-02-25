@@ -1,5 +1,6 @@
 #include "QMCoreHost_p.h"
 
+#include "QSettingsJsonFormat.h"
 #include "private/QMNamespace_p.h"
 
 #include <QCoreApplication>
@@ -13,6 +14,8 @@ QMCoreHostPrivate::QMCoreHostPrivate() {
     QCoreApplication::setAttribute(Qt::AA_UseHighDpiPixmaps);
 
     Register_QMNamespace();
+
+    settingsJsonFormat = QSettings::registerFormat("json", readJsonFile, writeJsonFile);
 }
 
 QMCoreHostPrivate::~QMCoreHostPrivate() {
@@ -20,8 +23,6 @@ QMCoreHostPrivate::~QMCoreHostPrivate() {
 
 void QMCoreHostPrivate::init() {
     Q_Q(QMCoreHost);
-
-    qmDebug() << "qtmedium: " << q->metaObject()->className() << " initializing.";
 
     // Init factory
     fac.reset(createFactory());

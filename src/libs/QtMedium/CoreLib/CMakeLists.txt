@@ -3,6 +3,10 @@ project(QMCoreLib
     LANGUAGES CXX
 )
 
+if(APPLE)
+    set(_platform_lib ObjC)
+endif()
+
 get_subdirs(_dirs)
 
 add_files(_src
@@ -24,5 +28,6 @@ target_components(${PROJECT_NAME}
     QT_LIBRARIES Core
     QT_PRIVATE_INCLUDES Core
     LINKS
+    LINKS_PRIVATE ${_platform_lib}
     INCLUDES ${_dirs}
 )

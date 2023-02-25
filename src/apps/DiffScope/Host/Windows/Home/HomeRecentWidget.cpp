@@ -1,6 +1,6 @@
 #include "HomeRecentWidget.h"
 
-#include "CDecorator.h"
+#include "QMDecorator.h"
 #include "DsConsole.h"
 
 #include "QsFileManager.h"

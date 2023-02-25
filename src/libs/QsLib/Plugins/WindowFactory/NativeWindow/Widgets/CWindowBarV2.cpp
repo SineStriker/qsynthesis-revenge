@@ -5,7 +5,7 @@
 #include <QPainter>
 #include <QRandomGenerator>
 
-#include "CDecorator.h"
+#include "QMDecorator.h"
 
 CWindowBarV2::CWindowBarV2(QMenuBar *menuBar, QWidget *parent) : CBaseTitleBarV2(parent) {
     m_titleMargin = 20;

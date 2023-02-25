@@ -1,6 +1,6 @@
 #include "PianoWindow_p.h"
 
-#include "CDecorator.h"
+#include "QMDecorator.h"
 
 PianoWindowPrivate::PianoWindowPrivate() {
 }

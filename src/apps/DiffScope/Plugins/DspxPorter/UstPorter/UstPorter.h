@@ -2,7 +2,7 @@
 #define USTPORTER_H
 
 #include "Api/IDspxPorter.h"
-#include "CDecorateDir.h"
+#include "QMDecorateDir.h"
 
 DSAPI_USING_NAMESPACE
 
@@ -24,7 +24,7 @@ public:
     bool save(const QString &filename, const QDspxModel &in, QObject *parent = nullptr) override;
 
 protected:
-    CDecorateDir dd;
+    QMDecorateDir dd;
 };
 
 #endif // USTPORTER_H

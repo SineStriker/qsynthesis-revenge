@@ -102,7 +102,7 @@ bool SaveFile::commit()
         return false;
     }
 #ifdef Q_OS_WIN
-    FlushFileBuffers(reinterpret_cast<HANDLE>(handle()));
+    FlushFileBuffers(reinterpret_cast<HANDLE>(intptr_t(handle())));
 #elif _POSIX_SYNCHRONIZED_IO > 0
     fdatasync(handle());
 #else

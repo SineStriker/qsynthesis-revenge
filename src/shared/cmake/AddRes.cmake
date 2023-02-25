@@ -5,7 +5,7 @@
         DIRS            <dirs>
         [TARGET         <target2>]
         [RELATIVE_PATH  <rel_path>]
-        [RELATIVE_PATH  <abs_path>]
+        [ABSOLUTE_PATH  <abs_path>]
     )
 
     usage:

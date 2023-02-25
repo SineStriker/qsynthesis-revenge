@@ -8,7 +8,7 @@ function(configure_plugin _author _out)
         FILE_DESC ${CURRENT_PLUGIN_DESC}
         PRODUCT_NAME ${PROJECT_NAME}
         PARENT ${SUB_PROJECT}
-        SUBDIR ${SUB_PLUGIN_DIR}/${CURRENT_PLUGIN_CATEGORY}
+        SUBDIR plugins/${CURRENT_PLUGIN_CATEGORY}
         OUTPUT_NAME ${PROJECT_NAME}
     )
     set(${_out} ${_target} PARENT_SCOPE)

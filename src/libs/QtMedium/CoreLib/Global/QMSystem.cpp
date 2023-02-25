@@ -1,16 +1,14 @@
 #include "QMSystem.h"
 
-
-
 #include <QCoreApplication>
 #include <QDirIterator>
 #include <QProcess>
 #include <QStandardPaths>
 
 #ifdef Q_OS_WINDOWS
-#include <ShlObj.h>
+#    include <ShlObj.h>
 #else
-#include <unistd.h>
+#    include <unistd.h>
 #endif
 
 static const char Slash = '/';
@@ -44,8 +42,7 @@ bool QMFs::combine(const QString &fileName1, const QString &fileName2, const QSt
     QFile file2(fileName2);
     QFile file3(newName);
 
-    if (file1.open(QIODevice::ReadOnly) && file2.open(QIODevice::ReadOnly) &&
-        file3.open(QIODevice::WriteOnly)) {
+    if (file1.open(QIODevice::ReadOnly) && file2.open(QIODevice::ReadOnly) && file3.open(QIODevice::WriteOnly)) {
     } else {
         return false;
     }
@@ -87,12 +84,10 @@ void QMFs::reveal(const QString &filename) {
     } else if (info.isFile()) {
         QStringList scriptArgs;
         scriptArgs << QLatin1String("-e")
-                   << QString::fromLatin1("tell application \"Finder\" to reveal POSIX file \"%1\"")
-                          .arg(filename);
+                   << QString::fromLatin1("tell application \"Finder\" to reveal POSIX file \"%1\"").arg(filename);
         QProcess::execute(QLatin1String("/usr/bin/osascript"), scriptArgs);
         scriptArgs.clear();
-        scriptArgs << QLatin1String("-e")
-                   << QLatin1String("tell application \"Finder\" to activate");
+        scriptArgs << QLatin1String("-e") << QLatin1String("tell application \"Finder\" to activate");
         QProcess::execute("/usr/bin/osascript", scriptArgs);
     }
 #else
@@ -139,8 +134,7 @@ int QMFs::rmPreNum(const QString &dirname, int prefix) {
         cur = *it;
         QString num = QString::number(prefix);
         QString filename = cur.fileName();
-        if (filename.startsWith(num) &&
-            (filename.size() == num.size() || !filename.at(num.size()).isNumber())) {
+        if (filename.startsWith(num) && (filename.size() == num.size() || !filename.at(num.size()).isNumber())) {
             QFile file(cur.filePath());
             if (file.remove()) {
                 cnt++;
@@ -159,10 +153,6 @@ QString QMFs::removeTailSlashes(const QString &dirname) {
     return path;
 }
 
-QString QMFs::appPath() {
-    return qApp->applicationDirPath();
-}
-
 QString QMFs::appDataPath() {
     QString path;
 #ifdef Q_OS_WINDOWS
@@ -177,6 +167,26 @@ QString QMFs::appDataPath() {
         path.chop(slashName.size());
     }
     return path;
+}
+
+static char __bin_path[512] = {0};
+
+QString QMFs::binaryPath() {
+    static bool __bin_path_init = false;
+    if (!__bin_path_init) {
+        __bin_path_init = true;
+
+        QByteArray val = qgetenv("QTMEDIUM_BINARY_PATH");
+        if (!val.isEmpty()) {
+            qstrcpy(__bin_path, val.constData());
+        }
+    }
+
+    if (qstrlen(__bin_path) == 0) {
+        return qApp->applicationDirPath();
+    }
+
+    return qApp->applicationDirPath() + "/" + __bin_path;
 }
 
 QStringList QMFs::FindRecursiveDirs(const QString &base, int max) {
@@ -203,12 +213,11 @@ QStringList QMFs::FindRecursiveDirs(const QString &base, int max) {
 }
 
 QString QMFs::invalidFileNameChars() {
-    QChar ch[] = {'\"',      '<',       '>',       '|',       '\0',      (char) 1,  (char) 2,
-                  (char) 3,  (char) 4,  (char) 5,  (char) 6,  (char) 7,  (char) 8,  (char) 9,
-                  (char) 10, (char) 11, (char) 12, (char) 13, (char) 14, (char) 15, (char) 16,
-                  (char) 17, (char) 18, (char) 19, (char) 20, (char) 21, (char) 22, (char) 23,
-                  (char) 24, (char) 25, (char) 26, (char) 27, (char) 28, (char) 29, (char) 30,
-                  (char) 31, ':',       '*',       '?',       '\\',      '/'};
+    QChar ch[] = {'\"',      '<',       '>',       '|',       '\0',      (char) 1,  (char) 2,  (char) 3,  (char) 4,
+                  (char) 5,  (char) 6,  (char) 7,  (char) 8,  (char) 9,  (char) 10, (char) 11, (char) 12, (char) 13,
+                  (char) 14, (char) 15, (char) 16, (char) 17, (char) 18, (char) 19, (char) 20, (char) 21, (char) 22,
+                  (char) 23, (char) 24, (char) 25, (char) 26, (char) 27, (char) 28, (char) 29, (char) 30, (char) 31,
+                  ':',       '*',       '?',       '\\',      '/'};
     return QString(ch, sizeof(ch));
 }
 
@@ -220,9 +229,9 @@ void QMOs::messageStderr(const QString &title, const QString &text) {
 #ifdef Q_OS_WINDOWS
     ::MessageBoxW(0, text.toStdWString().data(), title.toStdWString().data(),
                   MB_OK
-#ifdef CONFIG_WIN32_MSGBOX_TOPMOST
+#    ifdef CONFIG_WIN32_MSGBOX_TOPMOST
                       | MB_TOPMOST
-#endif
+#    endif
                       | MB_SETFOREGROUND | MB_ICONWARNING);
 #elif Q_OS_LINUX
     fputs(qPrintable(text), stdout);

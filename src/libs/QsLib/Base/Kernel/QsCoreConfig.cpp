@@ -2,8 +2,6 @@
 #include "QMSystem.h"
 #include "private/QsCoreConfig_p.h"
 
-#include "QsCoreStartInfo.h"
-
 #include <QDebug>
 
 Q_SINGLETON_DECLARE(QsCoreConfig)
@@ -17,9 +15,10 @@ QsCoreConfig::~QsCoreConfig() {
 bool QsCoreConfig::load(const QString &filename) {
     Q_D(QsCoreConfig);
     bool res = true;
+    d->initAll();
     if (!d->load_helper(filename)) {
-        qDebug().noquote() << QString("load_config: configuration file %1 not found.")
-                                  .arg(QMFs::PathFindFileName(filename));
+        qDebug().noquote()
+            << QString("load_config: configuration file %1 not found.").arg(QMFs::PathFindFileName(filename));
         res = false;
     }
     return res;
@@ -46,7 +45,7 @@ QString QsCoreConfig::locateBinTool(const QString &name) const {
 #else
     const char _suffix[] = "";
 #endif
-    QString filename = appDir(BinTool) + '/' + name + _suffix;
+    QString filename = QMFs::binaryPath() + '/' + name + _suffix;
     if (QFileInfo(filename).isExecutable()) {
         return filename;
     }

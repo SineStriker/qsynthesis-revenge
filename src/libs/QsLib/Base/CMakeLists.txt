@@ -3,13 +3,8 @@ project(QsBase
     LANGUAGES CXX
 )
 
-set(_res_dir Res)
-get_subdirs(_dirs EXCLUDE ${_res_dir})
-get_subdirs(_extra_includes)
-
-if(APPLE)
-    set(_platform_lib ObjC)
-endif()
+get_subdirs(_dirs)
+set(_extra_includes ${QASTOOL_INCLUDE_DIRS})
 
 add_files(_src
     DIRECTORIES ${_dirs}
@@ -30,22 +25,6 @@ target_components(${PROJECT_NAME}
     QT_LIBRARIES Core
     QT_PRIVATE_INCLUDES Core
     LINKS QMCoreLib
-    LINKS_PRIVATE SingleApplication ${_platform_lib}
+    LINKS_PRIVATE SingleApplication
     INCLUDES ${_dirs} ${_extra_includes}
-)
-
-target_create_translations(${PROJECT_NAME} SOURCES ${_src}
-    LOCALES zh_CN zh_HK ja_JP
-    DESTINATION ${_res_dir}/translations
-    CREATE_ONCE
-)
-
-# Copy resources
-qs_add_res(${PROJECT_NAME}
-    FILES ${_res_dir}/QsBase.res.json
-    ABSOLUTE_PATH ${SHARE_OUTPUT_DIR}
-)
-qs_add_res(${PROJECT_NAME}
-    FILES ${_res_dir}/translations/*.qm
-    ABSOLUTE_PATH ${SHARE_OUTPUT_DIR}/QsBase.res/translations
 )

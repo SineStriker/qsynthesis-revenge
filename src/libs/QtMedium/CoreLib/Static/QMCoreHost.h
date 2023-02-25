@@ -2,6 +2,7 @@
 #define QMCOREHOST_H
 
 #include <QObject>
+#include <QSettings>
 
 #include "QMGlobal.h"
 
@@ -19,6 +20,8 @@ public:
 
 public:
     bool isAboutToQuit() const;
+
+    QSettings::Format settingsJsonFormat() const;
 
 protected:
     QMCoreHost(QMCoreHostPrivate &d, QObject *parent = nullptr);

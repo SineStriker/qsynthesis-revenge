@@ -82,14 +82,15 @@ QString QMSimpleVarExp::parse(const QString &exp) const {
 
 QHash<QString, QString> QMSimpleVarExp::SystemValues() {
     return {
-        {"DESKTOP", QStandardPaths::writableLocation(QStandardPaths::DesktopLocation)},
-        {"DOCUMENTS", QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation)},
+        {"DESKTOP",      QStandardPaths::writableLocation(QStandardPaths::DesktopLocation)     },
+        {"DOCUMENTS",    QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation)   },
         {"APPLICATIONS", QStandardPaths::writableLocation(QStandardPaths::ApplicationsLocation)},
-        {"HOME", QStandardPaths::writableLocation(QStandardPaths::HomeLocation)},
-        {"APPDATA", QMFs::appDataPath()},
-        {"TEMP", QDir::tempPath()},
-        {"ROOT", QDir::rootPath()},
-        {"APPPATH", qApp->applicationDirPath()},
-        {"APPNAME", qAppName()},
+        {"HOME",         QStandardPaths::writableLocation(QStandardPaths::HomeLocation)        },
+        {"APPDATA",      QMFs::appDataPath()                                                   },
+        {"TEMP",         QDir::tempPath()                                                      },
+        {"ROOT",         QDir::rootPath()                                                      },
+        {"APPPATH",      qApp->applicationDirPath()                                            },
+        {"BINPATH",      QMFs::binaryPath()                                                    },
+        {"APPNAME",      qAppName()                                                            },
     };
 }

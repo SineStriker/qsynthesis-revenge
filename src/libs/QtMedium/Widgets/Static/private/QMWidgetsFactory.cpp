@@ -1,12 +1,12 @@
 #include "QMWidgetsFactory.h"
 
-#include "../CConsole.h"
-#include "../CDecorator.h"
+#include "../QMConsole.h"
+#include "../QMDecorator.h"
 
-QsCoreDecorator *QMWidgetsFactory::createDecorator(QObject *parent) {
-    return new CDecorator(parent);
+QMCoreDecorator *QMWidgetsFactory::createDecorator(QObject *parent) {
+    return new QMDecorator(parent);
 }
 
-QsCoreConsole *QMWidgetsFactory::createConsole(QObject *parent) {
-    return new CConsole(parent);
+QMCoreConsole *QMWidgetsFactory::createConsole(QObject *parent) {
+    return new QMConsole(parent);
 }

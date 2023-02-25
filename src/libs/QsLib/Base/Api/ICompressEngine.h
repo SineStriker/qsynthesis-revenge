@@ -1,8 +1,8 @@
 #ifndef ICOMPRESSENGINE_H
 #define ICOMPRESSENGINE_H
 
-#include "QsGlobal.h"
 #include "QMNamePlugin.h"
+#include "QsGlobal.h"
 
 QSAPI_BEGIN_NAMESPACE
 

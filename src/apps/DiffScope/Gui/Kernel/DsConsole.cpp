@@ -77,7 +77,7 @@ void DsConsole::aboutApp(QWidget *parent) {
     QString text =
         tr("%1 %2, Copyright OpenVPI.").arg(qAppName(), QApplication::applicationVersion());
 #ifdef Q_OS_WINDOWS
-    CConsole::MsgBox(parent, Information, title, text);
+    QMConsole::MsgBox(parent, Information, title, text);
 #else
     QMessageBox::information(parent, title, text);
 #endif

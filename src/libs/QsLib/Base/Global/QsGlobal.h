@@ -4,15 +4,15 @@
 #include "QMGlobal.h"
 
 #ifndef QSBASE_API
-#  ifdef QSBASE_STATIC
-#    define QSBASE_API
-#  else
-#    ifdef QSBASE_LIBRARY
-#      define QSBASE_API Q_DECL_EXPORT
+#    ifdef QSBASE_STATIC
+#        define QSBASE_API
 #    else
-#      define QSBASE_API Q_DECL_IMPORT
+#        ifdef QSBASE_LIBRARY
+#            define QSBASE_API Q_DECL_EXPORT
+#        else
+#            define QSBASE_API Q_DECL_IMPORT
+#        endif
 #    endif
-#  endif
 #endif
 
 #define QSAPI_BEGIN_NAMESPACE namespace QsApi {
