@@ -78,8 +78,12 @@ function(qs_add_library _target)
 
         # Add embedded resources
         if(WIN32)
-            string(RANDOM LENGTH 8 _rand)
-            set(rc_name ${CMAKE_CURRENT_BINARY_DIR}/res_${_rand}.rc)
+            if(CONFIG_CMAKE_RANDOM_CONFIGURE_FILE)
+                string(RANDOM LENGTH 8 _rand)
+                set(rc_name ${CMAKE_CURRENT_BINARY_DIR}/res_${_rand}.rc)
+            else()
+                set(rc_name ${CMAKE_CURRENT_BINARY_DIR}/res.rc)
+            endif()
 
             # configure rc
             set(WIN32_EXPORT_NAME ${_output_name})

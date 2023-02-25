@@ -102,9 +102,14 @@ function(qs_add_executable _target _dll)
 
         # Add embedded resources
         if(WIN32)
-            string(RANDOM LENGTH 8 _rand)
-            set(manifest_name ${CMAKE_CURRENT_BINARY_DIR}/app_${_rand}.manifest)
-            set(rc_name ${CMAKE_CURRENT_BINARY_DIR}/res_${_rand}.rc)
+            if(CONFIG_CMAKE_RANDOM_CONFIGURE_FILE)
+                string(RANDOM LENGTH 8 _rand)
+                set(manifest_name ${CMAKE_CURRENT_BINARY_DIR}/app_${_rand}.manifest)
+                set(rc_name ${CMAKE_CURRENT_BINARY_DIR}/res_${_rand}.rc)
+            else()
+                set(manifest_name ${CMAKE_CURRENT_BINARY_DIR}/app.manifest)
+                set(rc_name ${CMAKE_CURRENT_BINARY_DIR}/res.rc)
+            endif()
 
             # configure manifest
             set(WIN32_MANIFEST_IDENTIFIER "${_product_name}")
