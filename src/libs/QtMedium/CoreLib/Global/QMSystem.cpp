@@ -13,6 +13,12 @@
 
 static const char Slash = '/';
 
+struct QMFsData {
+    QString binPath;
+};
+
+Q_GLOBAL_STATIC(QMFsData, fsData);
+
 QString QMFs::PathFindFileName(const QString &path) {
     QFileInfo info(path);
     if (info.isRoot()) {
@@ -169,24 +175,20 @@ QString QMFs::appDataPath() {
     return path;
 }
 
-static char __bin_path[512] = {0};
+static const char __bin_path_env_name[] = "QTMEDIUM_BINARY_PATH";
 
 QString QMFs::binaryPath() {
-    static bool __bin_path_init = false;
-    if (!__bin_path_init) {
-        __bin_path_init = true;
-
-        QByteArray val = qgetenv("QTMEDIUM_BINARY_PATH");
-        if (!val.isEmpty()) {
-            qstrcpy(__bin_path, val.constData());
+    if (fsData->binPath.isEmpty()) {
+        QString tmp;
+        if (!(tmp = qEnvironmentVariable(__bin_path_env_name)).isEmpty()) {
+            QFileInfo info(tmp);
+            if (info.isDir()) {
+                return fsData->binPath = info.absoluteFilePath();
+            }
         }
+        return fsData->binPath = qApp->applicationDirPath();
     }
-
-    if (qstrlen(__bin_path) == 0) {
-        return qApp->applicationDirPath();
-    }
-
-    return qApp->applicationDirPath() + "/" + __bin_path;
+    return fsData->binPath;
 }
 
 QStringList QMFs::FindRecursiveDirs(const QString &base, int max) {

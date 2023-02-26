@@ -1,10 +1,12 @@
 #include "utils_win.h"
 
-#include "com_global.h"
+#include "shared_global.h"
 
 #include <cstring>
 
 static wchar_t Error_Title[] = TO_UNICODE("Fatal Error");
+
+static wchar_t Module_Dir[MAX_PATH] = {0};
 
 static wchar_t Module_Name[MAX_PATH] = {0};
 
@@ -50,9 +52,10 @@ std::wstring WinGetLastErrorString(int *errNum) {
     // Ask Win32 to give us the string version of that message ID.
     // The parameters we pass in, tell Win32 to create the buffer that holds the message for us
     // (because we don't yet know how long the message string will be).
-    size_t size = ::FormatMessageW(
-        FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS, NULL,
-        errorMessageID, MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), (LPWSTR) &messageBuffer, 0, NULL);
+    size_t size = ::FormatMessageW(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM |
+                                       FORMAT_MESSAGE_IGNORE_INSERTS,
+                                   NULL, errorMessageID, MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
+                                   (LPWSTR) &messageBuffer, 0, NULL);
 
     // Copy the error message into a std::string.
     std::wstring message(messageBuffer, size);
@@ -64,13 +67,20 @@ std::wstring WinGetLastErrorString(int *errNum) {
 }
 
 std::wstring WinGetExeDir() {
+    static bool first = true;
+    if (!first) {
+        return Module_Dir;
+    }
+    first = true;
+
     // Get executable full path
     std::wstring wstr;
     wchar_t buf[MAX_PATH + 1] = {0};
     if (::GetModuleFileNameW(NULL, buf, MAX_PATH) != 0) {
         wstr = buf;
     } else {
-        ::MessageBoxW(nullptr, TO_UNICODE("Failed to get module path!"), Error_Title, MB_OK | MB_ICONERROR);
+        ::MessageBoxW(nullptr, TO_UNICODE("Failed to get module path!"), Error_Title,
+                      MB_OK | MB_ICONERROR);
         ::exit(-1);
     }
 
@@ -81,6 +91,11 @@ std::wstring WinGetExeDir() {
         ::exit(-1);
     }
     std::wstring dir = wstr.substr(0, idx);
+#ifdef _MSC_VER
+    ::wcscpy_s(Module_Dir, dir.data());
+#else
+    ::wcscpy(Module_Dir, dir.data());
+#endif
 
     // Get executable
     std::wstring name = wstr.substr(idx + 1);

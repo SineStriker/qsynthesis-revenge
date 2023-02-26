@@ -54,6 +54,7 @@ function(qs_add_executable _target _dll)
         list(APPEND _target_list ${_winmain_target})
 
         target_include_directories(${_winmain_target} PRIVATE ${SHARED_INCLUDE_DIR})
+        target_link_libraries(${_winmain_target} PRIVATE shared_winutil)
         target_compile_definitions(${_winmain_target} PRIVATE APP_LIB_DIR="bin")
         target_compile_definitions(${_winmain_target} PRIVATE APP_DLL="$<TARGET_FILE_NAME:${_dll}>")
 

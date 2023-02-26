@@ -1,10 +1,8 @@
-#include "com_global.h"
+#include "shared_global.h"
 
-#if defined(_WIN32)
-#    include "utils_win.h"
-#endif
-
-#ifdef APP_ENABLE_ENTRY
+#ifndef APP_ENABLE_ENTRY
+#include "utils_win.h"
+#else
 COM_EXTERN_C_IMPORT int main_entry(int, char *[]);
 #endif
 
@@ -16,12 +14,10 @@ int main(int argc, char *argv[]) {
 #else
     std::wstring path = WinGetExeDir() + TO_UNICODE("\\") + TO_UNICODE(APP_LIB_DIR);
     WinLibrary::AddLibDir(path); // Append subdirectory
-    
-    // Tell the library it's an external executable
-    WinLibrary::SetEnv(TO_UNICODE("CHORUSKIT_EXTERN_WINMAIN"), TO_UNICODE("1"));
-    
-    // Tell QApplication another plugin path
-    WinLibrary::SetEnv(TO_UNICODE("QT_PLUGIN_PATH"), path + TO_UNICODE("\\") + TO_UNICODE("plugins"));
+
+    // Directory hints
+    WinLibrary::SetEnv(L"QT_PLUGIN_PATH", path + L"\\" + L"plugins");
+    WinLibrary::SetEnv(L"QTMEDIUM_BINARY_PATH", WinGetExeDir() + L"\\" + L"bin");
 
     // Load library
     WinLibrary winLib;

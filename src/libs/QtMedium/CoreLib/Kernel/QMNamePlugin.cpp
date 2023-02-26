@@ -1,19 +1,23 @@
 #include "QMNamePlugin.h"
 
 #include <QHash>
+#include <QMessageLogger>
 #include <QMutex>
 #include <QThread>
 
-static QHash<QThread *, QString> lastPluginPaths;
+struct QMNamePluginData {
+    QHash<QThread *, QString> lastPluginPaths;
+    QMutex mutex;
+};
 
-static QMutex mutex;
+Q_GLOBAL_STATIC(QMNamePluginData, global);
 
 QMNamePlugin::QMNamePlugin(QObject *parent) : QObject(parent) {
-    QMutexLocker locker(&mutex);
-    auto it = lastPluginPaths.find(QThread::currentThread());
-    if (it != lastPluginPaths.end()) {
+    QMutexLocker locker(&global->mutex);
+    auto it = global->lastPluginPaths.find(QThread::currentThread());
+    if (it != global->lastPluginPaths.end()) {
         this->path = it.value();
-        lastPluginPaths.erase(it);
+        global->lastPluginPaths.erase(it);
     }
 }
 
@@ -21,6 +25,6 @@ QMNamePlugin::~QMNamePlugin() {
 }
 
 void QMNamePlugin::setLastPluginPath(const QString &path) {
-    QMutexLocker locker(&mutex);
-    lastPluginPaths[QThread::currentThread()] = path;
+    QMutexLocker locker(&global->mutex);
+    global->lastPluginPaths[QThread::currentThread()] = path;
 }
