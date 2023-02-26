@@ -6,7 +6,7 @@
 
 #include "QsGlobal.h"
 
-#define qAppConf QsCoreConfig::instance()
+#define qsConf QsCoreConfig::instance()
 
 class QsCoreConfigPrivate;
 
@@ -44,6 +44,16 @@ public:
     };
 
     QString appDir(int type) const;
+    inline QString appDataDir() const {
+        return appDir(AppData);
+    }
+    inline QString tempDir() const {
+        return appDir(AppTemp);
+    }
+    inline QString shareDir() const {
+        return appDir(AppShare);
+    }
+
     QString locateBinTool(const QString &name) const;
 
     enum PluginType {

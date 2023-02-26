@@ -2,6 +2,10 @@ project(qBreakpad VERSION 0.0.2.1 LANGUAGES CXX)
 
 find_package(unofficial-breakpad CONFIG REQUIRED)
 
+set(CMAKE_AUTOMOC on)
+set(CMAKE_AUTOUIC on)
+set(CMAKE_AUTORCC on)
+
 include(../config.cmake)
 
 add_files(_src CURRENT_RECURSE PATTERNS *.h *.c *.cpp)

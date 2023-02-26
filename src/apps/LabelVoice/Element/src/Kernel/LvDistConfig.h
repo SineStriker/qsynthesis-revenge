@@ -8,10 +8,10 @@
 
 #include "lvelem_global.h"
 
-#ifdef qAppConf
-#undef qAppConf
+#ifdef qsConf
+#undef qsConf
 #endif
-#define qAppConf LvDistConfig::instance()
+#define qsConf LvDistConfig::instance()
 
 class LvDistConfigPrivate;
 

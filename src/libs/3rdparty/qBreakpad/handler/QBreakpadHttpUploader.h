@@ -30,7 +30,9 @@ class QString;
 class QUrl;
 class QFile;
 
-class QBreakpadHttpUploader : public QObject
+#include "QBreakpadGlobal.h"
+
+class QBREAKPAD_API QBreakpadHttpUploader : public QObject
 {
 	Q_OBJECT
 public:

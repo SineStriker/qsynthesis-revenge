@@ -28,20 +28,20 @@ void LvApplication::reloadStrings(int locale) {
             break;
         case MultimodeHandle::China:
             d->ll->eliminate();
-            d->ll->translate(qAppConf->appDir(LvDistConfig::Locales) + "/qt_zh_CN.qm");
-            d->ll->translate(qAppConf->appDir(LvDistConfig::Locales) + "/qtbase_zh_CN.qm");
+            d->ll->translate(qsConf->appDir(LvDistConfig::Locales) + "/qt_zh_CN.qm");
+            d->ll->translate(qsConf->appDir(LvDistConfig::Locales) + "/qtbase_zh_CN.qm");
             d->ll->translate(":/translations/LvStaging_zh_CN.qm");
             break;
         case MultimodeHandle::HongKong:
             d->ll->eliminate();
-            d->ll->translate(qAppConf->appDir(LvDistConfig::Locales) + "/qt_zh_TW.qm");
-            d->ll->translate(qAppConf->appDir(LvDistConfig::Locales) + "/qtbase_zh_TW.qm");
+            d->ll->translate(qsConf->appDir(LvDistConfig::Locales) + "/qt_zh_TW.qm");
+            d->ll->translate(qsConf->appDir(LvDistConfig::Locales) + "/qtbase_zh_TW.qm");
             d->ll->translate(":/translations/LvStaging_zh_HK.qm");
             break;
         case MultimodeHandle::Japan:
             d->ll->eliminate();
-            d->ll->translate(qAppConf->appDir(LvDistConfig::Locales) + "/qt_zh_ja.qm");
-            d->ll->translate(qAppConf->appDir(LvDistConfig::Locales) + "/qtbase_ja.qm");
+            d->ll->translate(qsConf->appDir(LvDistConfig::Locales) + "/qt_zh_ja.qm");
+            d->ll->translate(qsConf->appDir(LvDistConfig::Locales) + "/qtbase_ja.qm");
             d->ll->translate(":/translations/LvStaging_ja_JP.qm");
             break;
         default:

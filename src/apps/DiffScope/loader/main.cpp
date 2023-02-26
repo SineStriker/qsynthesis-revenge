@@ -3,9 +3,14 @@
 #include <QDir>
 #include <QLoggingCategory>
 #include <QMainWindow>
+#include <QPushButton>
 
 #include "QMWidgetsHost.h"
+#include "QsCoreConfig.h"
 #include "QsStartInfo.h"
+
+#include "QBreakpadHandler.h"
+
 #include "Windows/PlainWindow.h"
 
 #include "cmdline.h"
@@ -19,6 +24,8 @@ int main_entry(int argc, char *argv[]) {
     QApplication a(argc, argv);
     a.setApplicationName(appNameC);
     a.setApplicationVersion("0.0.0.0");
+    a.setOrganizationName("ChorusKit");
+    a.setOrganizationDomain("org.ChorusKit");
 
     QFont f("Microsoft YaHei UI");
     f.setPixelSize(15);
@@ -63,9 +70,21 @@ int main_entry(int argc, char *argv[]) {
     info.checkLoadInfo();
 
     // Prepare to load plugins
+    QBreakpadInstance.setDumpPath(qsConf->appDataDir() + "/crashes");
+    QBreakpadHandler::UniqueExtraHandler = []() {
+        qmCon->MsgBox(nullptr, QMConsole::Question, appNameC, "Unexpected exception happens, ready to crash!");
+    };
+
     QLoggingCategory::setFilterRules(QLatin1String("qtc.*.debug=false"));
 
     PlainWindow w;
+
+    {
+        auto btn = new QPushButton("Crash Now!");
+        w.setCentralWidget(btn);
+        QObject::connect(btn, &QPushButton::clicked, []() { qDebug() << reinterpret_cast<QString *>(1)->toInt(); });
+    }
+
     // QMainWindow w;
     w.show();
 

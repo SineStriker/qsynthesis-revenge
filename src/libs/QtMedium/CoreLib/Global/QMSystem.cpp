@@ -161,6 +161,7 @@ QString QMFs::removeTailSlashes(const QString &dirname) {
 
 QString QMFs::appDataPath() {
     QString path;
+    QString slashName;
 #ifdef Q_OS_WINDOWS
     path = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation);
 #elif defined(Q_OS_MAC)
@@ -168,7 +169,11 @@ QString QMFs::appDataPath() {
 #else
     path = QStandardPaths::writableLocation(QStandardPaths::AppConfigLocation);
 #endif
-    QString slashName = Slash + qAppName();
+    slashName = Slash + qAppName();
+    if (path.endsWith(slashName)) {
+        path.chop(slashName.size());
+    }
+    slashName = Slash + qApp->organizationName();
     if (path.endsWith(slashName)) {
         path.chop(slashName.size());
     }

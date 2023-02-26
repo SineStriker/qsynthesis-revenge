@@ -25,7 +25,7 @@ QPluginLoader *QsPluginManager::loadInternalPlugin(QsCoreConfig::InternalPlugins
 
     switch (id) {
         case QsCoreConfig::AudioDecoder: {
-            QString name = qAppConf->internalPlugin(id);
+            QString name = qsConf->internalPlugin(id);
             loader = new QPluginLoader(QMOs::toLibFile("audiodecoders", name));
             if (!QMNamePlugin::load<IAudioDecoder>(loader)) {
                 qDebug() << QString("QsPluginManager: Failed to load %1.").arg(name)
@@ -38,7 +38,7 @@ QPluginLoader *QsPluginManager::loadInternalPlugin(QsCoreConfig::InternalPlugins
             break;
         }
         case QsCoreConfig::AudioEncoder: {
-            QString name = qAppConf->internalPlugin(id);
+            QString name = qsConf->internalPlugin(id);
             loader = new QPluginLoader(QMOs::toLibFile("audioencoders", name));
             if (!QMNamePlugin::load<IAudioEncoder>(loader)) {
                 qDebug() << QString("QsPluginManager: Failed to load %1.").arg(name)
@@ -51,7 +51,7 @@ QPluginLoader *QsPluginManager::loadInternalPlugin(QsCoreConfig::InternalPlugins
             break;
         }
         case QsCoreConfig::AudioPlayback: {
-            QString name = qAppConf->internalPlugin(id);
+            QString name = qsConf->internalPlugin(id);
             loader = new QPluginLoader(QMOs::toLibFile("audioplaybacks", name));
             if (!QMNamePlugin::load<IAudioPlayback>(loader)) {
                 qDebug() << QString("QsPluginManager: Failed to load %1.").arg(name)
@@ -64,7 +64,7 @@ QPluginLoader *QsPluginManager::loadInternalPlugin(QsCoreConfig::InternalPlugins
             break;
         }
         case QsCoreConfig::CompressEngine: {
-            QString name = qAppConf->internalPlugin(id);
+            QString name = qsConf->internalPlugin(id);
             loader = new QPluginLoader(QMOs::toLibFile("compressengines", name));
             if (!QMNamePlugin::load<ICompressEngine>(loader)) {
                 qDebug() << QString("QsPluginManager: Failed to load %1.").arg(name)
@@ -77,7 +77,7 @@ QPluginLoader *QsPluginManager::loadInternalPlugin(QsCoreConfig::InternalPlugins
             break;
         }
         case QsCoreConfig::WindowFactory: {
-            QString name = qAppConf->internalPlugin(id);
+            QString name = qsConf->internalPlugin(id);
             loader = new QPluginLoader(QMOs::toLibFile("windowfactories", name));
             if (!QMNamePlugin::load<IWindowFactory>(loader)) {
                 qDebug() << QString("QsPluginManager: Failed to load %1.").arg(name)

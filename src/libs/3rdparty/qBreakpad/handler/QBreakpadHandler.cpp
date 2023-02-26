@@ -74,8 +74,14 @@ bool DumpCallback(const google_breakpad::MinidumpDescriptor& descriptor,
     qDebug("%s, dump path: %s\n", succeeded ? "Succeed to write minidump" : "Failed to write minidump", descriptor.path());
 #endif
 
+    if (QBreakpadHandler::UniqueExtraHandler){
+        QBreakpadHandler::UniqueExtraHandler();
+    }
+
     return succeeded;
 }
+
+QBreakpadHandler::HandlerFunc QBreakpadHandler::UniqueExtraHandler = nullptr;
 
 class QBreakpadHandlerPrivate
 {
