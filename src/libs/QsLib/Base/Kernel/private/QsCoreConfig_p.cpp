@@ -91,7 +91,7 @@ void QsCoreConfigPrivate::initByApp() {
          wrapPluginInfo(KEY_NAME_AUDIO_PLAYBACK,   "audioplaybacks",  DEFAULT_AUDIO_PLAYBACK) },
         {QsCoreConfig::CompressEngine, //
          wrapPluginInfo(KEY_NAME_COMPRESS_ENGINE, "compressengines", DEFAULT_COMPRESS_ENGINE)},
-        {QsCoreConfig::CompressEngine, //
+        {QsCoreConfig::WindowFactory, //
          wrapPluginInfo(KEY_NAME_WINDOW_FACTORY,  "windowfactories", DEFAULT_WINDOW_FACTORY) },
     };
     pluginTypeMax = QsCoreConfig::UserPlugin;

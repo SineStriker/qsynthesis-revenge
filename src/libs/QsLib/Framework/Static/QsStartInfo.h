@@ -4,7 +4,6 @@
 #include <QObject>
 
 #include "QsFrameworkGlobal.h"
-#include "QsNamespace.h"
 
 class QsStartInfoPrivate;
 
@@ -15,11 +14,12 @@ public:
     explicit QsStartInfo(QObject *parent = nullptr);
     ~QsStartInfo();
 
+    // Commandline options
     bool AllowSecondary;
+    bool AllowRoot;
+    bool ResetConfig;
 
 public:
-    QList<Qs::CommandLineOptions> commandLineOptions() const;
-
     bool checkLoadInfo();
 
 protected:

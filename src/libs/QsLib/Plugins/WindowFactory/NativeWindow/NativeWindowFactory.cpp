@@ -12,15 +12,15 @@ class NativeWindowFactoryPrivate {
 public:
     void init();
 
-    QMDecorateDir dd;
+    // QMDecorateDir dd;
     NativeWindowFactory *q_ptr;
 };
 
 void NativeWindowFactoryPrivate::init() {
     qIDec->addThemeTemplate("NativeWindow", ":/themes/window-bar.qss.in");
 
-    dd.setDir(QMFs::PathFindDirPath(q_ptr->path));
-    dd.loadDefault("NativeWindow");
+    // dd.setDir(QMFs::PathFindDirPath(q_ptr->path));
+    // dd.loadDefault("NativeWindow");
 }
 
 // ----------------------------------------------------------------------------

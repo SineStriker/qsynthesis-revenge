@@ -6,22 +6,22 @@
     <message>
         <location filename="../../Plugins/WindowFactory/NativeWindow/Widgets/CWindowBarV2.cpp" line="63"/>
         <source>Minimize</source>
-        <translation type="unfinished"></translation>
+        <translation>最小化</translation>
     </message>
     <message>
         <location filename="../../Plugins/WindowFactory/NativeWindow/Widgets/CWindowBarV2.cpp" line="64"/>
         <source>Close</source>
-        <translation type="unfinished"></translation>
+        <translation>关闭</translation>
     </message>
     <message>
         <location filename="../../Plugins/WindowFactory/NativeWindow/Widgets/CWindowBarV2.cpp" line="75"/>
         <source>Restore%1</source>
-        <translation type="unfinished"></translation>
+        <translation>还原%1</translation>
     </message>
     <message>
         <location filename="../../Plugins/WindowFactory/NativeWindow/Widgets/CWindowBarV2.cpp" line="78"/>
         <source>Maximize</source>
-        <translation type="unfinished"></translation>
+        <translation>最大化</translation>
     </message>
 </context>
 <context>
@@ -29,12 +29,12 @@
     <message>
         <location filename="../../Framework/Widgets/Dialogs/ImportDialog.cpp" line="22"/>
         <source>OK</source>
-        <translation type="unfinished"></translation>
+        <translation>确定</translation>
     </message>
     <message>
         <location filename="../../Framework/Widgets/Dialogs/ImportDialog.cpp" line="23"/>
         <source>Cancel</source>
-        <translation type="unfinished"></translation>
+        <translation>取消</translation>
     </message>
 </context>
 <context>
@@ -43,27 +43,27 @@
         <location filename="../../Framework/Widgets/Dialogs/private/ImportDialog_p.cpp" line="23"/>
         <location filename="../../Framework/Widgets/Dialogs/private/ImportDialog_p.cpp" line="34"/>
         <source>(Decoding failure)</source>
-        <translation type="unfinished"></translation>
+        <translation>（解码失败）</translation>
     </message>
     <message>
         <location filename="../../Framework/Widgets/Dialogs/private/ImportDialog_p.cpp" line="114"/>
         <source>Select tracks</source>
-        <translation type="unfinished"></translation>
+        <translation>选择轨道</translation>
     </message>
     <message>
         <location filename="../../Framework/Widgets/Dialogs/private/ImportDialog_p.cpp" line="172"/>
         <source>Track %1</source>
-        <translation type="unfinished"></translation>
+        <translation>音轨 %1</translation>
     </message>
     <message>
         <location filename="../../Framework/Widgets/Dialogs/private/ImportDialog_p.cpp" line="213"/>
         <source>Select encoding</source>
-        <translation type="unfinished"></translation>
+        <translation>选择字符集</translation>
     </message>
     <message>
         <location filename="../../Framework/Widgets/Dialogs/private/ImportDialog_p.cpp" line="257"/>
         <source>Please select at least one track!</source>
-        <translation type="unfinished"></translation>
+        <translation>请至少选择一项！</translation>
     </message>
 </context>
 <context>
@@ -71,7 +71,7 @@
     <message>
         <location filename="../../Framework/Static/QsStartInfo.cpp" line="85"/>
         <source>You&apos;re trying to start %1 as the %2, which may cause security problem and isn&apos;t recommended.</source>
-        <translation>你正在尝试以%2身份运行%1，这可能存在安全问题。请使用低权限启动。</translation>
+        <translation>你正在尝试以%2身份运行%1，这可能存在安全问题。请使用普通权限启动。</translation>
     </message>
     <message>
         <location filename="../../../QtMedium/CoreLib/Global/QMSystem.cpp" line="265"/>

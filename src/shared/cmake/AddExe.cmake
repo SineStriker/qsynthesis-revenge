@@ -21,7 +21,7 @@ include_guard(DIRECTORY)
         NO_EXTRA_TARGET: skip building another executable for windows
 
     usage:
-        1. set APP_LIB_DIR by project configuration
+        1. set APP_BIN_DIR by project configuration
         2. set APP_DLL as the target file name of <dll>
         3. add an executable with metadata
 
@@ -55,7 +55,7 @@ function(qs_add_executable _target _dll)
 
         target_include_directories(${_winmain_target} PRIVATE ${SHARED_INCLUDE_DIR})
         target_link_libraries(${_winmain_target} PRIVATE shared_winutil)
-        target_compile_definitions(${_winmain_target} PRIVATE APP_LIB_DIR="bin")
+        target_compile_definitions(${_winmain_target} PRIVATE APP_BIN_DIR="bin")
         target_compile_definitions(${_winmain_target} PRIVATE APP_DLL="$<TARGET_FILE_NAME:${_dll}>")
 
         add_dependencies(${_winmain_target} ${_dll})

@@ -1,7 +1,7 @@
 #include "shared_global.h"
 
 #ifndef APP_ENABLE_ENTRY
-#include "utils_win.h"
+#    include "utils_win.h"
 #else
 COM_EXTERN_C_IMPORT int main_entry(int, char *[]);
 #endif
@@ -12,16 +12,17 @@ int main(int argc, char *argv[]) {
 #ifdef APP_ENABLE_ENTRY
     return main_entry(argc, argv);
 #else
-    std::wstring path = WinGetExeDir() + TO_UNICODE("\\") + TO_UNICODE(APP_LIB_DIR);
-    WinLibrary::AddLibDir(path); // Append subdirectory
+    std::wstring exePath = WinGetExeDir();
+    std::wstring binPath = exePath + TO_UNICODE("\\") + TO_UNICODE(APP_BIN_DIR);
+    WinLibrary::AddLibDir(binPath); // Append subdirectory
 
     // Directory hints
-    WinLibrary::SetEnv(L"QT_PLUGIN_PATH", path + L"\\" + L"plugins");
-    WinLibrary::SetEnv(L"QTMEDIUM_BINARY_PATH", WinGetExeDir() + L"\\" + L"bin");
+    WinLibrary::SetEnv(L"QT_PLUGIN_PATH", binPath + L"\\" + L"plugins");
+    WinLibrary::SetEnv(L"QTMEDIUM_BINARY_PATH", exePath + L"\\" + L"bin");
 
     // Load library
     WinLibrary winLib;
-    if (!winLib.Load(path + TO_UNICODE("\\") + TO_UNICODE(APP_DLL))) {
+    if (!winLib.Load(binPath + TO_UNICODE("\\") + TO_UNICODE(APP_DLL))) {
         return winLib.ErrorCode();
     }
 

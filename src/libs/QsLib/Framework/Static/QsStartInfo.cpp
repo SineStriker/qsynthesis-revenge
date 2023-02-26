@@ -34,7 +34,8 @@ static QString GetAppConfig() {
     return QMFs::binaryPath() + Slash + qApp->applicationName() + "_settings.json";
 }
 
-QsStartInfo::QsStartInfo(QObject *parent) : QObject(parent), AllowSecondary(false), d_ptr(new QsStartInfoPrivate()) {
+QsStartInfo::QsStartInfo(QObject *parent)
+    : QObject(parent), AllowSecondary(false), AllowRoot(false), ResetConfig(false), d_ptr(new QsStartInfoPrivate()) {
     auto &d = *d_ptr;
 
     // Plugin manager
@@ -51,37 +52,30 @@ QsStartInfo::QsStartInfo(QObject *parent) : QObject(parent), AllowSecondary(fals
 QsStartInfo::~QsStartInfo() {
 }
 
-QList<Qs::CommandLineOptions> QsStartInfo::commandLineOptions() const {
-    return {
-        {ALLOW_ROOT_OPTION,   "Allow running with super user privileges."},
-        {RESET_CONFIG_OPTION, "Reset or generate app config file."       },
-    };
-}
-
 bool QsStartInfo::checkLoadInfo() {
     auto &d = *d_ptr;
 
     qDebug() << "start_info: check user permissions";
 
-    QStringList arguments = qApp->arguments(); // adapted arguments list is passed to plugin manager later
-    QMutableStringListIterator it(arguments);
+    // QStringList arguments = qApp->arguments(); // adapted arguments list is passed to plugin manager later
+    // QMutableStringListIterator it(arguments);
 
-    bool allowRoot = false;
-    bool resetConfig = false;
+    // bool allowRoot = false;
+    // bool resetConfig = false;
 
-    while (it.hasNext()) {
-        const QString &arg = it.next();
-        if (arg == QLatin1String(ALLOW_ROOT_OPTION)) {
-            it.remove();
-            allowRoot = true;
-        } else if (arg == QLatin1String(RESET_CONFIG_OPTION)) {
-            it.remove();
-            resetConfig = true;
-        }
-    }
+    // while (it.hasNext()) {
+    //     const QString &arg = it.next();
+    //     if (arg == QLatin1String(ALLOW_ROOT_OPTION)) {
+    //         it.remove();
+    //         allowRoot = true;
+    //     } else if (arg == QLatin1String(RESET_CONFIG_OPTION)) {
+    //         it.remove();
+    //         resetConfig = true;
+    //     }
+    // }
 
     // Root privilege detection
-    if (QMOs::isUserRoot() && !allowRoot) {
+    if (QMOs::isUserRoot() && !AllowRoot) {
         QString msg = QCoreApplication::tr("You're trying to start %1 as the %2, which may cause "
                                            "security problem and isn't recommended.")
                           .arg(qAppName(), QMOs::rootUserName());
@@ -90,7 +84,7 @@ bool QsStartInfo::checkLoadInfo() {
     }
 
     // Reset configuration, exit
-    if (resetConfig) {
+    if (ResetConfig) {
         // coreConfig->saveDefault(configPath);
         QMOs::exitApp(0);
     }
