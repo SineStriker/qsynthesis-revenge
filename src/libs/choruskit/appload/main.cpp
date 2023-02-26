@@ -25,23 +25,28 @@ int main_entry(int argc, char *argv[]) {
     // Get application information from env
     QString hint;
     if (!(hint = qEnvironmentVariable("CHORUSKIT_APP_NAME_HINT")).isEmpty()) {
-        qDebug() << "App Name:" << hint;
+        qDebug() << "loader:"
+                 << "App Name" << hint;
         a.setApplicationName(hint);
     }
     if (!(hint = qEnvironmentVariable("CHORUSKIT_APP_VERSION_HINT")).isEmpty()) {
-        qDebug() << "App Version:" << hint;
+        qDebug() << "loader:"
+                 << "App Version" << hint;
         a.setApplicationVersion(hint);
     }
     if (!(hint = qEnvironmentVariable("CHORUSKIT_APP_ORG_HINT")).isEmpty()) {
-        qDebug() << "App Organization:" << hint;
+        qDebug() << "loader:"
+                 << "App Organization" << hint;
         a.setOrganizationName(hint);
     }
     if (!(hint = qEnvironmentVariable("CHORUSKIT_APP_DOMAIN_HINT")).isEmpty()) {
-        qDebug() << "App Domain:" << hint;
+        qDebug() << "loader:"
+                 << "App Domain" << hint;
         a.setOrganizationDomain(hint);
     }
     if (!(hint = qEnvironmentVariable("CHORUSKIT_APP_CORE_HINT")).isEmpty()) {
-        qDebug() << "App Core:" << hint;
+        qDebug() << "loader:"
+                 << "App Core" << hint;
         coreName = hint;
     }
 

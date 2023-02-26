@@ -70,7 +70,7 @@ std::wstring WinGetExeDir() {
     if (!first) {
         return Module_Dir;
     }
-    first = true;
+    first = false;
 
     // Get executable full path
     std::wstring wstr;

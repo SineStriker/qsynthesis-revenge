@@ -1,4 +1,4 @@
-project(qBreakpad VERSION 0.0.2.1 LANGUAGES CXX)
+project(qBreakpad VERSION 0.2.1.1 LANGUAGES CXX)
 
 find_package(unofficial-breakpad CONFIG REQUIRED)
 

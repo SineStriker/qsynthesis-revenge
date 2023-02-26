@@ -11,7 +11,7 @@ from .vcpkg_init import *
 build_dir = "setup-vcpkg-temp-build"
 
 
-def deploy(out_dir : str):
+def deploy(out_dir: str):
     if not os.path.isdir(out_dir):
         print(f"{out_dir} is not a directory.")
         return
@@ -23,17 +23,17 @@ def deploy(out_dir : str):
         if ret != 0:
             print("Microsoft Visual C++ Compiler not found")
             sys.exit(ret)
-    
+
     ret = os.system("cmake --version")
     if ret != 0:
         print("CMake not found")
         sys.exit(ret)
-    
+
     ret = os.system("ninja --version")
     if ret != 0:
         print("Ninja not found")
         sys.exit(ret)
-    
+
     py_cmd = ""
     ret = os.system("python --version")
     if ret != 0:
@@ -49,7 +49,13 @@ def deploy(out_dir : str):
     # Config
     print_begin("CMake Config")
     ret = os.system(
-        f"cmake -S . -B {build_dir} -DCMAKE_PREFIX_PATH:STRING={config_inst.Qt5ConfigDir} -DCMAKE_BUILD_TYPE:STRING=Release -DCONFIG_WIN32_DEBUG:BOOL=off -G Ninja --no-warn-unused-cli")
+        f"cmake -S . -B {build_dir} \
+            -DCMAKE_PREFIX_PATH:STRING={config_inst.Qt5ConfigDir} \
+            -DCMAKE_BUILD_TYPE:STRING=Release \
+            -DCONFIG_BUILD_TEST:BOOL=off \
+            -DCONFIG_WIN32_DEBUG:BOOL=off \
+            -G Ninja --no-warn-unused-cli"
+    )
     if ret != 0:
         sys.exit(ret)
     println_twice()

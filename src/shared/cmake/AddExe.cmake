@@ -45,10 +45,10 @@ function(ck_add_executable _target _dll)
     set(_target_list)
 
     # ----------------- Template Begin -----------------
-    get_property(_winmain_src GLOBAL PROPERTY WIN_MAIN_SRC)
+    get_property(_appmain_src GLOBAL PROPERTY WIN_MAIN_SRC)
 
     if(TRUE)
-        add_executable(${_target} ${_winmain_src})
+        add_executable(${_target} ${_appmain_src})
         list(APPEND _target_list ${_target})
 
         target_include_directories(${_target} PRIVATE ${SHARED_INCLUDE_DIR})
@@ -58,21 +58,21 @@ function(ck_add_executable _target _dll)
 
     # Add extra target for Windows
     if(WIN32 AND NOT FUNC_NO_EXTRA_TARGET)
-        set(_winmain_target ${_target}_winmain)
-        add_executable(${_winmain_target} ${_winmain_src})
-        list(APPEND _target_list ${_winmain_target})
+        set(_appmain_target ${_target}_appmain)
+        add_executable(${_appmain_target} ${_appmain_src})
+        list(APPEND _target_list ${_appmain_target})
 
-        target_include_directories(${_winmain_target} PRIVATE ${SHARED_INCLUDE_DIR})
-        target_link_libraries(${_winmain_target} PRIVATE shared_winutil)
-        target_compile_definitions(${_winmain_target} PRIVATE APP_BIN_DIR="bin")
-        target_compile_definitions(${_winmain_target} PRIVATE APP_DLL="$<TARGET_FILE_NAME:${_dll}>")
+        target_include_directories(${_appmain_target} PRIVATE ${SHARED_INCLUDE_DIR})
+        target_link_libraries(${_appmain_target} PRIVATE shared_winutil)
+        target_compile_definitions(${_appmain_target} PRIVATE APP_BIN_DIR="bin")
+        target_compile_definitions(${_appmain_target} PRIVATE APP_DLL="$<TARGET_FILE_NAME:${_dll}>")
 
-        add_dependencies(${_winmain_target} ${_dll})
+        add_dependencies(${_appmain_target} ${_dll})
 
         # https://blog.csdn.net/qq_58286297/article/details/119611363
-        # target_link_libraries(${_winmain_target} PRIVATE ComCtl32)
-        set_target_properties(${_winmain_target} PROPERTIES OUTPUT_NAME ${_target})
-        set_target_properties(${_winmain_target} PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CONFIG_OUTPUT_DIRECTORY})
+        # target_link_libraries(${_appmain_target} PRIVATE ComCtl32)
+        set_target_properties(${_appmain_target} PROPERTIES OUTPUT_NAME ${_target})
+        set_target_properties(${_appmain_target} PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CONFIG_OUTPUT_DIRECTORY})
     endif()
 
     # Add compile definitions
