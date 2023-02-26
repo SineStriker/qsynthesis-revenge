@@ -3,8 +3,9 @@
 
 #include <QVariantMap>
 
-#include "QMNamePlugin.h"
 #include "NAudio/WaveStream.h"
+#include "QMNamePlugin.h"
+#include "QsMediaNamespace.h"
 
 QSAPI_BEGIN_NAMESPACE
 
@@ -15,12 +16,7 @@ public:
     ~IAudioDecoder();
 
 public:
-    /**
-     * @brief Open audio with common and specific arguments
-     *
-     * @param args Key-value pairs as open arguments
-     */
-    virtual bool open(const QVariantMap &args = {}) = 0;
+    virtual bool open(const QString &filename, const QsMedia::WaveArguments &args = {}) = 0;
     virtual void close() = 0;
 
     virtual bool isOpen() const = 0;

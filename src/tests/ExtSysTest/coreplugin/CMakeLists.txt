@@ -2,7 +2,7 @@ project(testplugin_coreplugin VERSION 0.0.0.0)
 
 add_files(_src CURRENT PATTERNS *.h *.cpp)
 
-qs_add_plugin(${PROJECT_NAME}
+ck_add_plugin(${PROJECT_NAME}
     PARENT ExtSysTest
     SUBDIR plugins
     OUTPUT_NAME coreplugin

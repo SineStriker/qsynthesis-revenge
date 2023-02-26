@@ -1,7 +1,7 @@
 include_guard(DIRECTORY)
 
 #[[
-    qs_add_plugin(
+    ck_add_plugin(
         AUTHOR_NAME      <var>
         FILE_DESC        <var>
         PRODUCT_NAME     <var>
@@ -18,7 +18,7 @@ include_guard(DIRECTORY)
     usage:
         add a plugin with metadata
 ]] #
-function(qs_add_plugin _target)
+function(ck_add_plugin _target)
     set(options AS_TEST)
     set(oneValueArgs AUTHOR_NAME FILE_DESC PRODUCT_NAME PARENT SUBDIR OUTPUT_NAME COPYRIGHT_YEAR)
     set(multiValueArgs)

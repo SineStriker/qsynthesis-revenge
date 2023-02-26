@@ -3,7 +3,7 @@ set(CURRENT_PLUGIN_DESC "QSynthesis Library Plugin")
 
 function(configure_plugin _author _out)
     set(_target ${SUB_PROJECT}_Plugin_${PROJECT_NAME})
-    qs_add_plugin(${_target}
+    ck_add_plugin(${_target}
         AUTHOR_NAME ${_author}
         FILE_DESC ${CURRENT_PLUGIN_DESC}
         PRODUCT_NAME ${PROJECT_NAME}

@@ -43,12 +43,12 @@ if(TRUE)
 
     add_custom_target(QsLib_res_utility ALL DEPENDS ${_all_src})
 
-    qs_add_res(QsLib_res_utility
+    ck_add_res(QsLib_res_utility
         FILES Res/QsLib.res.json
         ABSOLUTE_PATH ${SHARE_OUTPUT_DIRECTORY}/QsLib
     )
 
-    qs_add_res(QsLib_res_utility
+    ck_add_res(QsLib_res_utility
         FILES Res/translations/*.qm
         ABSOLUTE_PATH ${SHARE_OUTPUT_DIRECTORY}/QsLib/translations
     )

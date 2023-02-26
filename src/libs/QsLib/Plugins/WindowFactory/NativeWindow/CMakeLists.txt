@@ -30,15 +30,15 @@ target_components(${_plugin}
 # )
 
 # Copy resources
-# qs_add_res(${_plugin}
+# ck_add_res(${_plugin}
 #     FILES ${_res_dir}/${PROJECT_NAME}.res.json
 #     RELATIVE_PATH .
 # )
-# qs_add_res(${_plugin}
+# ck_add_res(${_plugin}
 #     FILES ${_res_dir}/translations/*.qm
 #     RELATIVE_PATH ${PROJECT_NAME}.res/translations
 # )
-# qs_add_res(${_plugin}
+# ck_add_res(${_plugin}
 #     FILES ${_res_dir}/themes/*.json
 #     RELATIVE_PATH ${PROJECT_NAME}.res/themes
 # )

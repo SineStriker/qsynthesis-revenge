@@ -2,6 +2,7 @@
 #define CMDLINE_H
 
 #include <QTextStream>
+#include <QCoreApplication>
 
 #include "extensionsystem/pluginmanager.h"
 
@@ -9,9 +10,6 @@
 #include "QMSystem.h"
 
 enum { OptionIndent = 4, DescriptionIndent = 34 };
-
-extern const char appNameC[];
-extern const char corePluginNameC[];
 
 static const char fixedOptionsC[] = " [options]... [files]...\n";
 
@@ -49,19 +47,19 @@ static inline void formatOption(QTextStream &str, const QStringList &opts, const
 }
 
 static inline void displayError(const QString &t) {
-    qmCon->MsgBox(nullptr, QMConsole::Critical, appNameC, t);
+    qmCon->MsgBox(nullptr, QMConsole::Critical, qAppName(), t);
     QMOs::exitApp(0);
 }
 
 static inline void displayHelpText(const QString &t) {
-    qmCon->MsgBox(nullptr, QMConsole::Information, appNameC, t);
+    qmCon->MsgBox(nullptr, QMConsole::Information, qAppName(), t);
     QMOs::exitApp(0);
 }
 
 static inline void printVersion(/*const PluginSpec *coreplugin*/) {
     QString version;
     QTextStream str(&version);
-    str << '\n' << appNameC /*<< ' ' << coreplugin->version()*/ << " based on Qt " << qVersion() << "\n\n";
+    str << '\n' << qAppName() /*<< ' ' << coreplugin->version()*/ << " based on Qt " << qVersion() << "\n\n";
     // PluginManager::formatPluginVersions(str);
     // str << '\n' << coreplugin->copyright() << '\n';
     displayHelpText(version);
@@ -71,7 +69,7 @@ static inline void printHelp() {
     QString help;
     QTextStream str(&help);
 
-    str << "Usage: " << appNameC << fixedOptionsC;
+    str << "Usage: " << qAppName() << fixedOptionsC;
     formatOption(str, {HELP_OPTION1, HELP_OPTION2}, {}, "Display this help");
     formatOption(str, {VERSION_OPTION1, VERSION_OPTION2}, {}, "Display application version");
     formatOption(str,

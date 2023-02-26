@@ -17,15 +17,7 @@ public:
     explicit FFmpegDecoder(QObject *parent = nullptr);
     ~FFmpegDecoder();
 
-    /**
-     * @brief The filename is required, others has default value determined by original audio
-     *
-     * @param FileName       Open audio path
-     * @param SampleRate     Sample rate to resample
-     * @param SampleFormat   Sample format to resample (AV_SAMPLE_FORMAT)
-     * @param Channels       Channel count to resample
-     */
-    bool open(const QVariantMap &args = {}) override;
+    bool open(const QString &filename, const QsMedia::WaveArguments &args = {}) override;
     void close() override;
 
     bool isOpen() const override;

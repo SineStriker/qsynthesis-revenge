@@ -16,3 +16,17 @@
 
 #define _TO_UNICODE(y) L##y
 #define TO_UNICODE(x) _TO_UNICODE(x)
+
+#ifdef _MSC_VER
+#    define _PUT_ENV _putenv
+#else
+#    define _PUT_ENV putenv
+#endif
+
+#define PUT_ENV(KEY, VAL) _PUT_ENV(KEY "=" VAL)
+
+#ifdef _MSC_VER
+#    define WSTRCPY wcscpy_s
+#else
+#    define WSTRCPY wcscpy
+#endif

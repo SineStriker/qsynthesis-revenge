@@ -1,7 +1,7 @@
 include_guard(DIRECTORY)
 
 #[[
-    qs_add_executable(
+    ck_add_executable(
         <target>
         <dll>
         AUTHOR_NAME         <var>
@@ -13,11 +13,17 @@ include_guard(DIRECTORY)
 
         [OUTPUT_NAME        <var>]
         [COPYRIGHT_YEAR     <var>]
+
+        [APP_NAME_HINT]     <var>]
+        [APP_ORG_HINT]      <var>]
+        [APP_DOMAIN_HINT]   <var>]
+        [APP_CORE_HINT]     <var>]
     )
 
     flags:
         AS_TEST:         ignore metadata and skip it when deploying
         FORCE_CONSOLE:   build as a console application forcefully
+        FORCE_WINDOWS:   build as a windows application forcefully
         NO_EXTRA_TARGET: skip building another executable for windows
 
     usage:
@@ -26,9 +32,12 @@ include_guard(DIRECTORY)
         3. add an executable with metadata
 
 ]] #
-function(qs_add_executable _target _dll)
-    set(options AS_TEST FORCE_CONSOLE NO_EXTRA_TARGET)
-    set(oneValueArgs AUTHOR_NAME FILE_DESC PRODUCT_NAME EXECUTABLE_TYPE ICO_FILE ICNS_FILE OUTPUT_NAME COPYRIGHT_YEAR)
+function(ck_add_executable _target _dll)
+    set(options AS_TEST FORCE_CONSOLE FORCE_WINDOWS NO_EXTRA_TARGET)
+    set(oneValueArgs AUTHOR_NAME FILE_DESC PRODUCT_NAME EXECUTABLE_TYPE ICO_FILE ICNS_FILE
+        OUTPUT_NAME COPYRIGHT_YEAR
+        APP_NAME_HINT APP_VERSION_HINT APP_ORG_HINT APP_DOMAIN_HINT APP_CORE_HINT
+    )
     set(multiValueArgs)
 
     cmake_parse_arguments(FUNC "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
@@ -66,6 +75,29 @@ function(qs_add_executable _target _dll)
         set_target_properties(${_winmain_target} PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CONFIG_OUTPUT_DIRECTORY})
     endif()
 
+    # Add compile definitions
+    foreach(_item ${_target_list})
+        if(FUNC_APP_NAME_HINT)
+            target_compile_definitions(${_item} PRIVATE APP_NAME_HINT="${FUNC_APP_NAME_HINT}")
+        endif()
+
+        if(FUNC_APP_VERSION_HINT)
+            target_compile_definitions(${_item} PRIVATE APP_VERSION_HINT="${FUNC_APP_VERSION_HINT}")
+        endif()
+
+        if(FUNC_APP_ORG_HINT)
+            target_compile_definitions(${_item} PRIVATE APP_ORG_HINT="${FUNC_APP_ORG_HINT}")
+        endif()
+
+        if(FUNC_APP_DOMAIN_HINT)
+            target_compile_definitions(${_item} PRIVATE APP_DOMAIN_HINT="${FUNC_APP_DOMAIN_HINT}")
+        endif()
+
+        if(FUNC_APP_CORE_HINT)
+            target_compile_definitions(${_item} PRIVATE APP_CORE_HINT="${FUNC_APP_CORE_HINT}")
+        endif()
+    endforeach()
+
     if(FUNC_OUTPUT_NAME)
         set(_output_name ${FUNC_OUTPUT_NAME})
 
@@ -77,7 +109,7 @@ function(qs_add_executable _target _dll)
     endif()
 
     # Set windows/console application
-    if((NOT CONFIG_WIN32_DEBUG AND NOT FUNC_FORCE_CONSOLE) OR NOT DEFINED NOT_QT_CREATOR)
+    if((NOT CONFIG_WIN32_DEBUG AND NOT FUNC_FORCE_CONSOLE) OR NOT DEFINED NOT_QT_CREATOR OR FUNC_FORCE_WINDOWS)
         foreach(_item ${_target_list})
             set_target_properties(${_item} PROPERTIES
                 WIN32_EXECUTABLE TRUE

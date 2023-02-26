@@ -9,6 +9,26 @@ COM_EXTERN_C_IMPORT int main_entry(int, char *[]);
 #include <iostream>
 
 int main(int argc, char *argv[]) {
+#ifdef APP_NAME_HINT
+    PUT_ENV("CHORUSKIT_APP_NAME_HINT", APP_NAME_HINT);
+#endif
+
+#ifdef APP_ORG_HINT
+    PUT_ENV("CHORUSKIT_APP_ORG_HINT", APP_ORG_HINT);
+#endif
+
+#ifdef APP_VERSION_HINT
+    PUT_ENV("CHORUSKIT_APP_VERSION_HINT", APP_VERSION_HINT);
+#endif
+
+#ifdef APP_DOMAIN_HINT
+    PUT_ENV("CHORUSKIT_APP_DOMAIN_HINT", APP_DOMAIN_HINT);
+#endif
+
+#ifdef APP_CORE_HINT
+    PUT_ENV("CHORUSKIT_APP_CORE_HINT", APP_CORE_HINT);
+#endif
+
 #ifdef APP_ENABLE_ENTRY
     return main_entry(argc, argv);
 #else

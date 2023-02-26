@@ -13,7 +13,7 @@ add_files(_src CURRENT_RECURSE PATTERNS *.h *.c *.cpp)
 # ----------------------------------
 # Build shared as LGPL requires
 # ----------------------------------
-qs_add_library(${PROJECT_NAME}
+ck_add_library(${PROJECT_NAME}
     ENABLE_SHARED
     AUTHOR_NAME "buzzySmile"
     FILE_DESC "Cross-platform Qt crash handler"

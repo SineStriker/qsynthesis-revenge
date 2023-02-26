@@ -3,15 +3,34 @@
 
 #include "QsMediaGlobal.h"
 
+#include <QString>
+#include <QVariantMap>
+
 QSMEDIA_BEGIN_NAMESPACE
+struct WaveArguments {
+    int sampleRate;
+    int sampleFormat; // Format decided by the decoder
+    int channels;
+    QVariantMap custom;
 
-const char KEY_NAME_FILE_NAME[] = "FileName";
+    WaveArguments(int sampleRate = -1, int channels = -1) : WaveArguments(sampleRate, -1, channels) {
+    }
 
-const char KEY_NAME_SAMPLE_RATE[] = "SampleRate";
+    WaveArguments(int sampleRate, int sampleFormat, int channels)
+        : sampleRate(sampleRate), sampleFormat(sampleFormat), channels(channels) {
+    }
+};
 
-const char KEY_NAME_SAMPLE_FORMAT[] = "SampleFormat";
+struct PlaybackArguments {
+    int sampleRate;
+    int channels;
+    int bufferSamples;
+    QVariantMap custom;
 
-const char KEY_NAME_CHANNELS[] = "Channels";
+    PlaybackArguments(int sampleRate = 44100, int channels = 2, int bufferSamples = 1024)
+        : sampleRate(sampleRate), channels(channels), bufferSamples(bufferSamples) {
+    }
+};
 
 enum FFmpeg_AVSampleFormat {
     AV_SAMPLE_FMT_NONE = -1, // 0xFFFFFFFF

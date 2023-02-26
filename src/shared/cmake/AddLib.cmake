@@ -1,7 +1,7 @@
 include_guard(DIRECTORY)
 
 #[[
-    qs_add_library(
+    ck_add_library(
         <target>
         AUTHOR_NAME      <var>
         FILE_DESC        <var>
@@ -20,7 +20,7 @@ include_guard(DIRECTORY)
     usage:
         add a library with metadata
 #]]
-function(qs_add_library _target)
+function(ck_add_library _target)
     set(options ENABLE_SHARED AS_TEST)
     set(oneValueArgs AUTHOR_NAME FILE_DESC PRODUCT_NAME LIBRARY_TYPE MACRO_PREFIX OUTPUT_NAME COPYRIGHT_YEAR)
     set(multiValueArgs)

@@ -6,7 +6,7 @@ project(${SUB_PROJECT}
 # ------------------------------ Configure Target Begin ------------------------------
 
 # Add executable
-qs_add_executable(${PROJECT_NAME} LvStaging EXTERN_C)
+ck_add_executable(${PROJECT_NAME} LvStaging EXTERN_C)
 
 # Set Properties
 if((APP_DEPLOY AND NOT CONFIG_WIN32_DEBUG) OR NOT DEFINED NOT_QT_CREATOR)

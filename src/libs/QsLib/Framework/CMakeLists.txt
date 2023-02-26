@@ -11,7 +11,7 @@ add_files(_src
     PATTERNS *.h *.hpp *.cpp *.cc
 )
 
-qs_add_library(${PROJECT_NAME}
+ck_add_library(${PROJECT_NAME}
     ENABLE_SHARED
     AUTHOR_NAME ${SUB_AUTHOR_NAME}
     FILE_DESC ${SUB_FILE_DESC}
@@ -36,11 +36,11 @@ target_components(${PROJECT_NAME}
 # )
 
 # Copy resources
-# qs_add_res(${PROJECT_NAME}
+# ck_add_res(${PROJECT_NAME}
 #     FILES ${_res_dir}/QsFramework.res.json
 #     ABSOLUTE_PATH ${SHARE_OUTPUT_DIR}
 # )
-# qs_add_res(${PROJECT_NAME}
+# ck_add_res(${PROJECT_NAME}
 #     FILES ${_res_dir}/translations/*.qm
 #     ABSOLUTE_PATH ${SHARE_OUTPUT_DIR}/QsFramework.res/translations
 # )

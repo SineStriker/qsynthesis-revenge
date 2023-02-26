@@ -5,6 +5,7 @@
 
 #include "IAudioDecoder.h"
 #include "QMNamePlugin.h"
+#include "QsMediaNamespace.h"
 
 QSAPI_BEGIN_NAMESPACE
 
@@ -23,19 +24,12 @@ public:
     };
 
 public:
-    struct PlaybackArguments {
-        int bufferSamples;
-        int sampleRate;
-        int channels;
-        QVariantMap custom;
-    };
-
     /**
      * @brief Open audio device and get ready
      *
      * @param args Audio device arguments
      */
-    bool setup(const PlaybackArguments &args);
+    bool setup(const QsMedia::PlaybackArguments &args);
 
     /**
      * @brief Close audio device

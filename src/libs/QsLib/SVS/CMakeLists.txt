@@ -11,7 +11,7 @@ add_files(_src
     PATTERNS *.h *.hpp *.cpp *.cc
 )
 
-qs_add_library(${PROJECT_NAME}
+ck_add_library(${PROJECT_NAME}
     ENABLE_SHARED
     AUTHOR_NAME ${SUB_AUTHOR_NAME}
     FILE_DESC ${SUB_FILE_DESC}

@@ -1,5 +1,5 @@
 #[[
-    qs_add_res(
+    ck_add_res(
         <target>
         FILES           <files>
         DIRS            <dirs>
@@ -11,7 +11,7 @@
     usage:
         copy files and dirs to destination relative to target2(default to ${_target}) after build
 ]] #
-function(qs_add_res _target)
+function(ck_add_res _target)
     set(options)
     set(oneValueArgs RELATIVE_PATH ABSOLUTE_PATH TARGET)
     set(multiValueArgs FILES DIRS)

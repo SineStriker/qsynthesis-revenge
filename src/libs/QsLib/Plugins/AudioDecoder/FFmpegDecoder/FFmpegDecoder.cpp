@@ -39,49 +39,17 @@ FFmpegDecoder::~FFmpegDecoder() {
     FFmpegDecoder::close();
 }
 
-bool FFmpegDecoder::open(const QVariantMap &args) {
+bool FFmpegDecoder::open(const QString &filename, const QsMedia::WaveArguments &args) {
     Q_D(FFmpegDecoder);
 
     if (d->isOpen) {
         close();
     }
 
-    FFmpegDecoderPrivate::WaveArguments wavArgs;
-
-    // Extract Arguments
-    {
-        QVariant var;
-
-        // File name
-        auto it = args.find(QsMedia::KEY_NAME_FILE_NAME);
-        if (it != args.end() && (var = it.value()).type() == QVariant::String) {
-            d->_fileName = var.toString();
-        } else {
-            qDebug() << "FFmpeg: Required argument FileName not specified";
-            return false;
-        }
-
-        // Sample rate
-        it = args.find(QsMedia::KEY_NAME_SAMPLE_RATE);
-        if (it != args.end()) {
-            wavArgs.SampleRate = extractInt(it.value(), wavArgs.SampleRate);
-        }
-
-        // Sample format
-        it = args.find(QsMedia::KEY_NAME_SAMPLE_FORMAT);
-        if (it != args.end()) {
-            wavArgs.SampleFormat =
-                static_cast<AVSampleFormat>(extractInt(it.value(), wavArgs.SampleFormat));
-        }
-
-        // Channels
-        it = args.find(QsMedia::KEY_NAME_CHANNELS);
-        if (it != args.end()) {
-            wavArgs.Channels = extractInt(it.value(), wavArgs.Channels);
-        }
-
-        d->_arguments = wavArgs;
-    }
+    d->_fileName = filename;
+    d->_arguments = FFmpegDecoderPrivate::WaveArguments(                   //
+        args.sampleRate, (AVSampleFormat) args.sampleFormat, args.channels //
+    );
 
     if (!d->initDecoder()) {
         return false;
@@ -180,8 +148,7 @@ int FFmpegDecoder::Read(float *buffer, int offset, int count) {
     return res;
 }
 
-FFmpegDecoder::FFmpegDecoder(FFmpegDecoderPrivate &d, QObject *parent)
-    : IAudioDecoder(parent), d_ptr(&d) {
+FFmpegDecoder::FFmpegDecoder(FFmpegDecoderPrivate &d, QObject *parent) : IAudioDecoder(parent), d_ptr(&d) {
     d.q_ptr = this;
     d.init();
 }

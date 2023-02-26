@@ -3,14 +3,13 @@
 
 QSAPI_USING_NAMESPACE
 
-IAudioPlayback::IAudioPlayback(QObject *parent)
-    : IAudioPlayback(*new IAudioPlaybackPrivate(), parent) {
+IAudioPlayback::IAudioPlayback(QObject *parent) : IAudioPlayback(*new IAudioPlaybackPrivate(), parent) {
 }
 
 IAudioPlayback::~IAudioPlayback() {
 }
 
-bool IAudioPlayback::setup(const PlaybackArguments &args) {
+bool IAudioPlayback::setup(const QsMedia::PlaybackArguments &args) {
     Q_D(IAudioPlayback);
 
     stop();
@@ -127,8 +126,7 @@ int IAudioPlayback::channels() const {
     return d->channels;
 }
 
-IAudioPlayback::IAudioPlayback(IAudioPlaybackPrivate &d, QObject *parent)
-    : QMNamePlugin(parent), d_ptr(&d) {
+IAudioPlayback::IAudioPlayback(IAudioPlaybackPrivate &d, QObject *parent) : QMNamePlugin(parent), d_ptr(&d) {
     d.q_ptr = this;
 
     d.init();

@@ -11,10 +11,21 @@ set(SUB_VERSION_SHORT ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}.${PROJEC
 set(SUB_AUTHOR_NAME "OpenVPI Team")
 set(SUB_FILE_DESC "DiffSinger Client")
 
-# For Application
-set(SUB_APP_LOADER ${PROJECT_NAME}Load)
-set(SUB_PLUGIN_DIR diffscope)
+ck_add_executable(${PROJECT_NAME} CKAppLoad
+    AUTHOR_NAME ${SUB_AUTHOR_NAME}
+    FILE_DESC ${SUB_FILE_DESC}
+    PRODUCT_NAME ${PROJECT_NAME}
+    EXECUTABLE_TYPE Main
+    ICO_FILE ${CMAKE_CURRENT_SOURCE_DIR}/win32/app.ico
+    ICNS_FILE ${CMAKE_CURRENT_SOURCE_DIR}/mac/app.icns
+    OUTPUT_NAME ${PROJECT_NAME}
 
-add_subdirectory(loader)
-add_subdirectory(app)
-add_subdirectory(plugins)
+    APP_NAME_HINT ${PROJECT_NAME}
+    APP_VERSION_HINT ${SUB_VERSION_SHORT}
+    APP_ORG_HINT ChorusKit
+    APP_DOMAIN_HINT org.ChorusKit
+    APP_CORE_HINT coreplugin
+)
+
+# For Application
+set(SUB_PLUGIN_DIR diffscope)

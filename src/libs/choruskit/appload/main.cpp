@@ -1,6 +1,7 @@
 #include <QApplication>
 #include <QDebug>
 #include <QDir>
+#include <QFileDialog>
 #include <QLoggingCategory>
 #include <QMainWindow>
 #include <QPushButton>
@@ -15,17 +16,34 @@
 
 #include "cmdline.h"
 
-static const char appNameC[] = "DiffScope";
-static const char corePluginNameC[] = "Core";
-
 extern "C" Q_DECL_EXPORT int main_entry(int argc, char *argv[]);
 
 int main_entry(int argc, char *argv[]) {
     QApplication a(argc, argv);
-    a.setApplicationName(appNameC);
-    a.setApplicationVersion("0.0.0.0");
-    a.setOrganizationName("ChorusKit");
-    a.setOrganizationDomain("org.ChorusKit");
+    QString coreName = "coreplugin";
+
+    // Get application information from env
+    QString hint;
+    if (!(hint = qEnvironmentVariable("CHORUSKIT_APP_NAME_HINT")).isEmpty()) {
+        qDebug() << "App Name:" << hint;
+        a.setApplicationName(hint);
+    }
+    if (!(hint = qEnvironmentVariable("CHORUSKIT_APP_VERSION_HINT")).isEmpty()) {
+        qDebug() << "App Version:" << hint;
+        a.setApplicationVersion(hint);
+    }
+    if (!(hint = qEnvironmentVariable("CHORUSKIT_APP_ORG_HINT")).isEmpty()) {
+        qDebug() << "App Organization:" << hint;
+        a.setOrganizationName(hint);
+    }
+    if (!(hint = qEnvironmentVariable("CHORUSKIT_APP_DOMAIN_HINT")).isEmpty()) {
+        qDebug() << "App Domain:" << hint;
+        a.setOrganizationDomain(hint);
+    }
+    if (!(hint = qEnvironmentVariable("CHORUSKIT_APP_CORE_HINT")).isEmpty()) {
+        qDebug() << "App Core:" << hint;
+        coreName = hint;
+    }
 
     QFont f("Microsoft YaHei UI");
     f.setPixelSize(15);
@@ -71,21 +89,10 @@ int main_entry(int argc, char *argv[]) {
 
     // Prepare to load plugins
     QBreakpadInstance.setDumpPath(qsConf->appDataDir() + "/crashes");
-    QBreakpadHandler::UniqueExtraHandler = []() {
-        qmCon->MsgBox(nullptr, QMConsole::Question, appNameC, "Unexpected exception happens, ready to crash!");
-    };
 
     QLoggingCategory::setFilterRules(QLatin1String("qtc.*.debug=false"));
 
     PlainWindow w;
-
-    {
-        auto btn = new QPushButton("Crash Now!");
-        w.setCentralWidget(btn);
-        QObject::connect(btn, &QPushButton::clicked, []() { qDebug() << reinterpret_cast<QString *>(1)->toInt(); });
-    }
-
-    // QMainWindow w;
     w.show();
 
     return a.exec();

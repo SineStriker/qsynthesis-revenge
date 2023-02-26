@@ -5,7 +5,7 @@ set(QT_CREATOR_ENABLE_QML off)
 set(QT_CREATOR_NO_FILENAME_LIST on)
 
 function(configure_qtc_library _name)
-    qs_add_library(${_name}
+    ck_add_library(${_name}
         ENABLE_SHARED
         AUTHOR_NAME "The Qt Company Ltd."
         FILE_DESC "Qt Creator 3.6"
