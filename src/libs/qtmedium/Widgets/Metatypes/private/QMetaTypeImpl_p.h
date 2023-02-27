@@ -1,6 +1,0 @@
-#ifndef QMETATYPEIMPLPRIVATE_H
-#define QMETATYPEIMPLPRIVATE_H
-
-void Register_QMetaTypeImpl();
-
-#endif // QMETATYPEIMPLPRIVATE_H
