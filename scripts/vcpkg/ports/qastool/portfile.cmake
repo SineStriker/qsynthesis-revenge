@@ -2,7 +2,7 @@ vcpkg_from_github(
     OUT_SOURCE_PATH SOURCE_PATH
     REPO SineStriker/qt-json-autogen
     REF 0.0.2.1
-    SHA512 2130139b0593dd21bff2a2726d7d0e39e8d26cd22c49af814e3dd20c51058c2cd2d0d878020b62d276c171bd9cccbdae5bb37de0b2e1a7a8611026862e650272
+    SHA512 a30248e0aaf539f78f6baf4dde768cd9563bab0b58e8a12c47b34e52ded8f959598c7d5193249af4194a258de39b9f0a7f9fbf361e8e6a1df156df374159404f
 )
 
 vcpkg_cmake_configure(
