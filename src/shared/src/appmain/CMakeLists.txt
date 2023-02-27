@@ -5,4 +5,4 @@ add_files(_src
     PATTERNS *.h *.hpp *.cpp *.cc
 )
 
-set_property(GLOBAL PROPERTY WIN_MAIN_SRC "${_src}")
+set_property(GLOBAL PROPERTY CHORUSKIT_WINMAIN_SRC "${_src}")

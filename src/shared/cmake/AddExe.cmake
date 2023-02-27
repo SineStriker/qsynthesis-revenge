@@ -45,13 +45,13 @@ function(ck_add_executable _target _dll)
     set(_target_list)
 
     # ----------------- Template Begin -----------------
-    get_property(_appmain_src GLOBAL PROPERTY WIN_MAIN_SRC)
+    get_property(_appmain_src GLOBAL PROPERTY CHORUSKIT_WINMAIN_SRC)
 
     if(TRUE)
         add_executable(${_target} ${_appmain_src})
         list(APPEND _target_list ${_target})
 
-        target_include_directories(${_target} PRIVATE ${SHARED_INCLUDE_DIR})
+        target_include_directories(${_target} PRIVATE ${CHORUSKIT_SHARED_INCDIR})
         target_compile_definitions(${_target} PRIVATE APP_ENABLE_ENTRY)
         target_link_libraries(${_target} PRIVATE ${_dll})
     endif()
@@ -62,8 +62,8 @@ function(ck_add_executable _target _dll)
         add_executable(${_appmain_target} ${_appmain_src})
         list(APPEND _target_list ${_appmain_target})
 
-        target_include_directories(${_appmain_target} PRIVATE ${SHARED_INCLUDE_DIR})
-        target_link_libraries(${_appmain_target} PRIVATE shared_winutil)
+        target_include_directories(${_appmain_target} PRIVATE ${CHORUSKIT_SHARED_INCDIR})
+        target_link_libraries(${_appmain_target} PRIVATE CKWinUtil)
         target_compile_definitions(${_appmain_target} PRIVATE APP_BIN_DIR="bin")
         target_compile_definitions(${_appmain_target} PRIVATE APP_DLL="$<TARGET_FILE_NAME:${_dll}>")
 

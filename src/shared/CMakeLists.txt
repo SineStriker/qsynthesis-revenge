@@ -39,7 +39,7 @@ set(VCPKG_BINARY_DIR            "${_bin_dir}"                                   
 set(VCPKG_BINARY_PAT            "${_bin_pat}"                                       CACHE STRING "" FORCE)
 
 # Include
-set(SHARED_INCLUDE_DIR          ${CMAKE_CURRENT_SOURCE_DIR}/include                 CACHE STRING "" FORCE)
+set(CHORUSKIT_SHARED_INCDIR     ${CMAKE_CURRENT_SOURCE_DIR}/include                 CACHE STRING "" FORCE)
 
 # ----------------------------------
 # Initialization

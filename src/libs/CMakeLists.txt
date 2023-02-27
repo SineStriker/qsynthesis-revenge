@@ -1,7 +1,7 @@
 add_subdirectory(3rdparty)
 
-add_subdirectory(QtMedium)
+add_subdirectory(qtmedium)
 
-add_subdirectory(QsLib)
+add_subdirectory(qslib)
 
-add_subdirectory(ChorusKit)
+add_subdirectory(choruskit)
