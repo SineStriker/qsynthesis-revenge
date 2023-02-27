@@ -17,7 +17,7 @@ ck_add_library(${PROJECT_NAME}
 
 target_components(${PROJECT_NAME}
     INCLUDE_CURRENT
-    SOURCES ${_src}
+    SOURCES ${_src} res.qrc
     QT_LIBRARIES Core Widgets
     LINKS QsFramework ExtensionSystem qBreakpad
     INCLUDES ${COMMON_INCLUDE_DIR}
