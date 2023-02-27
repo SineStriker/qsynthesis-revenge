@@ -1,0 +1,23 @@
+vcpkg_from_github(
+    OUT_SOURCE_PATH SOURCE_PATH
+    REPO wangwenx190/framelesshelper
+    REF 2.3.2
+    SHA512 5045ed575da3133c27af80c8118fc96d5f0d0f7ed40f4783427ad6e44b7ef64984a97d2f75396b4017e972c5d20ac21043d063bbd753782f99e49ad8b517ecd2
+)
+
+vcpkg_cmake_configure(
+    SOURCE_PATH "${SOURCE_PATH}"
+    OPTIONS
+        -DFRAMELESSHELPER_BUILD_STATIC=OFF
+        -DFRAMELESSHELPER_BUILD_WIDGETS=ON
+        -DFRAMELESSHELPER_BUILD_QUICK=OFF
+        -DFRAMELESSHELPER_BUILD_EXAMPLES=OFF
+        -DFRAMELESSHELPER_NO_DEBUG_OUTPUT=ON
+)
+
+vcpkg_cmake_install()
+vcpkg_cmake_config_fixup(CONFIG_PATH lib/cmake/FramelessHelper)
+vcpkg_copy_pdbs()
+
+file(REMOVE_RECURSE "${CURRENT_PACKAGES_DIR}/debug/include")
+file(INSTALL "${SOURCE_PATH}/LICENSE" DESTINATION "${CURRENT_PACKAGES_DIR}/share/${PORT}/" RENAME copyright)

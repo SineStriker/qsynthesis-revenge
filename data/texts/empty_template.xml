@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<Project>
+    <Name>Empty Project</Name>
+    <Version>0.0.1</Version>
+    <Template>
+        <Title>LVProject1</Title>
+        <Location>
+            <Env>UserProfile</Env>/LabelVoice
+        </Location>
+        <FileName>LVProject1</FileName>
+        <LabelSchema></LabelSchema>
+    </Template>
+</Project>
