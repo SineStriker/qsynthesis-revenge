@@ -1,0 +1,60 @@
+#include "CorePlugin.h"
+
+#include <QApplication>
+#include <QMainWindow>
+#include <QSplashScreen>
+
+#include "Windows/PlainWindow.h"
+
+static QSplashScreen *splashScreen = nullptr;
+
+static QWidget *mw = nullptr;
+
+namespace Core {
+
+    namespace Internal {
+
+        CorePlugin::CorePlugin() {
+        }
+
+        CorePlugin::~CorePlugin() {
+        }
+
+        bool CorePlugin::initialize(const QStringList &arguments, QString *errorMessage) {
+            qDebug() << "initialize Core Plugin";
+
+            // Get splash screen handle
+            auto var = qApp->property("__choruskit_init_splash__");
+            auto screen = var.value<QSplashScreen *>();
+            if (screen) {
+                splashScreen = screen;
+            }
+
+            return true;
+        }
+
+        void CorePlugin::extensionsInitialized() {
+            qDebug() << "extensions initialized Core Plugin";
+
+            auto w = new PlainWindow();
+            w->show();
+            mw = w;
+        }
+
+        bool CorePlugin::delayedInitialize() {
+            qDebug() << "delayed initialize Core Plugin";
+
+            if (splashScreen) {
+                if (mw) {
+                    splashScreen->finish(mw);
+                }else{
+                    splashScreen->close();
+                }
+            }
+
+            return true;
+        }
+
+    }
+
+}

@@ -22,9 +22,6 @@ ck_add_executable(${PROJECT_NAME} CKAppLoad
 
     APP_NAME_HINT ${PROJECT_NAME}
     APP_VERSION_HINT ${SUB_VERSION_SHORT}
-    APP_ORG_HINT ChorusKit
-    APP_DOMAIN_HINT org.ChorusKit
-    APP_CORE_HINT coreplugin
 )
 
 # For Application

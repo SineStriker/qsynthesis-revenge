@@ -1,0 +1,16 @@
+{
+    "Name": "Core",
+    "Version": "1.0.1",
+    "CompatVersion": "0.0.0",
+    "DisabledByDefault": false,
+    "HiddenByDefault": false,
+    "Vendor": "Sine Striker",
+    "Copyright": "Copyright (C) 2021 Sine Striker",
+    "License": [
+        "Apache 2.0"
+    ],
+    "Category": "Core",
+    "Description": "The core plugin for DiffScope.",
+    "Url": "https://www.baidu.com/",
+    "Required": true
+}

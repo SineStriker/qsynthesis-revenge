@@ -2,6 +2,32 @@
 <!DOCTYPE TS>
 <TS version="2.1" language="zh_CN">
 <context>
+    <name>Application</name>
+    <message>
+        <source>Failed to load core: %1</source>
+        <translation type="vanished">无法加载内核：%1</translation>
+    </message>
+    <message>
+        <source>Could not find Core plugin in %1</source>
+        <translation type="vanished">无法在%1中找到内核插件！</translation>
+    </message>
+    <message>
+        <location filename="../../../choruskit/appload/main.cpp" line="116"/>
+        <source>Failed to load core: %1!</source>
+        <translation>无法加载内核：%1！</translation>
+    </message>
+    <message>
+        <location filename="../../../choruskit/appload/main.cpp" line="231"/>
+        <source>Could not find Core plugin in %1!</source>
+        <translation>无法在%1中找到内核插件！</translation>
+    </message>
+    <message>
+        <location filename="../../../choruskit/appload/main.cpp" line="237"/>
+        <source>Core plugin is disabled.</source>
+        <translation>内核插件已被禁用。</translation>
+    </message>
+</context>
+<context>
     <name>CWindowBarV2</name>
     <message>
         <location filename="../../Plugins/WindowFactory/NativeWindow/Widgets/CWindowBarV2.cpp" line="63"/>
@@ -69,32 +95,32 @@
 <context>
     <name>QCoreApplication</name>
     <message>
-        <location filename="../../Framework/Static/QsStartInfo.cpp" line="85"/>
+        <location filename="../../Framework/Static/QsStartInfo.cpp" line="62"/>
         <source>You&apos;re trying to start %1 as the %2, which may cause security problem and isn&apos;t recommended.</source>
         <translation>你正在尝试以%2身份运行%1，这可能存在安全问题。请使用普通权限启动。</translation>
     </message>
     <message>
-        <location filename="../../../QtMedium/CoreLib/Global/QMSystem.cpp" line="265"/>
+        <location filename="../../../QtMedium/CoreLib/Global/QMSystem.cpp" line="272"/>
         <source>Explorer</source>
         <translation>文件资源管理器</translation>
     </message>
     <message>
-        <location filename="../../../QtMedium/CoreLib/Global/QMSystem.cpp" line="267"/>
+        <location filename="../../../QtMedium/CoreLib/Global/QMSystem.cpp" line="274"/>
         <source>Finder</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../../../QtMedium/CoreLib/Global/QMSystem.cpp" line="269"/>
+        <location filename="../../../QtMedium/CoreLib/Global/QMSystem.cpp" line="276"/>
         <source>File Manager</source>
         <translation>文件管理器</translation>
     </message>
     <message>
-        <location filename="../../../QtMedium/CoreLib/Global/QMSystem.cpp" line="275"/>
+        <location filename="../../../QtMedium/CoreLib/Global/QMSystem.cpp" line="282"/>
         <source>Administrator</source>
         <translation>管理员</translation>
     </message>
     <message>
-        <location filename="../../../QtMedium/CoreLib/Global/QMSystem.cpp" line="277"/>
+        <location filename="../../../QtMedium/CoreLib/Global/QMSystem.cpp" line="284"/>
         <source>Root User</source>
         <translation>Root用户</translation>
     </message>

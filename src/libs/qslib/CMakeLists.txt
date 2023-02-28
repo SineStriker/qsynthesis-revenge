@@ -34,6 +34,7 @@ if(TRUE)
     list(FILTER _all_src EXCLUDE REGEX "(qasc|moc)_.+")
 
     list(APPEND _all_src "../QtMedium/CoreLib/Global/QMSystem.cpp")
+    list(APPEND _all_src "../choruskit/appload/main.cpp")
 
     target_create_translations(QsLib SOURCES ${_all_src}
         LOCALES zh_CN zh_HK ja_JP

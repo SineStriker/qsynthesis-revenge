@@ -35,8 +35,7 @@ include_guard(DIRECTORY)
 function(ck_add_executable _target _dll)
     set(options AS_TEST FORCE_CONSOLE FORCE_WINDOWS NO_EXTRA_TARGET)
     set(oneValueArgs AUTHOR_NAME FILE_DESC PRODUCT_NAME EXECUTABLE_TYPE ICO_FILE ICNS_FILE
-        OUTPUT_NAME COPYRIGHT_YEAR
-        APP_NAME_HINT APP_VERSION_HINT APP_ORG_HINT APP_DOMAIN_HINT APP_CORE_HINT
+        OUTPUT_NAME COPYRIGHT_YEAR APP_NAME_HINT APP_VERSION_HINT
     )
     set(multiValueArgs)
 
@@ -83,18 +82,6 @@ function(ck_add_executable _target _dll)
 
         if(FUNC_APP_VERSION_HINT)
             target_compile_definitions(${_item} PRIVATE APP_VERSION_HINT="${FUNC_APP_VERSION_HINT}")
-        endif()
-
-        if(FUNC_APP_ORG_HINT)
-            target_compile_definitions(${_item} PRIVATE APP_ORG_HINT="${FUNC_APP_ORG_HINT}")
-        endif()
-
-        if(FUNC_APP_DOMAIN_HINT)
-            target_compile_definitions(${_item} PRIVATE APP_DOMAIN_HINT="${FUNC_APP_DOMAIN_HINT}")
-        endif()
-
-        if(FUNC_APP_CORE_HINT)
-            target_compile_definitions(${_item} PRIVATE APP_CORE_HINT="${FUNC_APP_CORE_HINT}")
         endif()
     endforeach()
 

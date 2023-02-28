@@ -57,23 +57,6 @@ bool QsStartInfo::checkLoadInfo() {
 
     qDebug() << "start_info: check user permissions";
 
-    // QStringList arguments = qApp->arguments(); // adapted arguments list is passed to plugin manager later
-    // QMutableStringListIterator it(arguments);
-
-    // bool allowRoot = false;
-    // bool resetConfig = false;
-
-    // while (it.hasNext()) {
-    //     const QString &arg = it.next();
-    //     if (arg == QLatin1String(ALLOW_ROOT_OPTION)) {
-    //         it.remove();
-    //         allowRoot = true;
-    //     } else if (arg == QLatin1String(RESET_CONFIG_OPTION)) {
-    //         it.remove();
-    //         resetConfig = true;
-    //     }
-    // }
-
     // Root privilege detection
     if (QMOs::isUserRoot() && !AllowRoot) {
         QString msg = QCoreApplication::tr("You're trying to start %1 as the %2, which may cause "
@@ -113,6 +96,10 @@ bool QsStartInfo::checkLoadInfo() {
 
         qInfo() << "start_info: primary instance initializing...";
     }
+
+    // Proxy signals
+    connect(d.hSingleApp, &SingleApplication::instanceStarted, this, &QsStartInfo::instanceStarted);
+    connect(d.hSingleApp, &SingleApplication::receivedMessage, this, &QsStartInfo::receivedMessage);
 
     // Initialize app data and temp dirs
     if (!d.coreConfig.apply()) {

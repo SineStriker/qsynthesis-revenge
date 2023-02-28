@@ -24,6 +24,10 @@ public:
 
 protected:
     QScopedPointer<QsStartInfoPrivate> d_ptr;
+
+signals:
+    void instanceStarted();
+    void receivedMessage(quint32 instanceId, QByteArray message);
 };
 
 #endif // QSSTARTINFO_H
