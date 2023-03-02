@@ -36,6 +36,15 @@ int WinMain(HINSTANCE, HINSTANCE, LPSTR /*cmdParamarg*/, int /*cmdShow*/) {
     return exitCode;
 }
 
+static void MsgBoxError(const wchar_t *text, const wchar_t *title) {
+    ::MessageBoxW(nullptr, text, title,
+                  MB_OK
+#ifdef CONFIG_WIN32_MSGBOX_TOPMOST
+                      | MB_TOPMOST
+#endif
+                      | MB_SETFOREGROUND | MB_ICONERROR);
+}
+
 std::wstring WinGetLastErrorString(int *errNum) {
     // Get the error message ID, if any.
     DWORD errorMessageID = ::GetLastError();
@@ -52,9 +61,10 @@ std::wstring WinGetLastErrorString(int *errNum) {
     // Ask Win32 to give us the string version of that message ID.
     // The parameters we pass in, tell Win32 to create the buffer that holds the message for us
     // (because we don't yet know how long the message string will be).
-    size_t size = ::FormatMessageW(
-        FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS, NULL,
-        errorMessageID, MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), (LPWSTR) &messageBuffer, 0, NULL);
+    size_t size = ::FormatMessageW(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM |
+                                       FORMAT_MESSAGE_IGNORE_INSERTS,
+                                   NULL, errorMessageID, MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
+                                   (LPWSTR) &messageBuffer, 0, NULL);
 
     // Copy the error message into a std::string.
     std::wstring message(messageBuffer, size);
@@ -78,14 +88,14 @@ std::wstring WinGetExeDir() {
     if (::GetModuleFileNameW(NULL, buf, MAX_PATH) != 0) {
         wstr = buf;
     } else {
-        ::MessageBoxW(nullptr, TO_UNICODE("Failed to get module path!"), Error_Title, MB_OK | MB_ICONERROR);
+        MsgBoxError(TO_UNICODE("Failed to get module path!"), Error_Title);
         ::exit(-1);
     }
 
     // Get executable directory
     size_t idx = wstr.find_last_of(L"\\");
     if (idx == std::wstring::npos) {
-        ::MessageBoxW(nullptr, TO_UNICODE("Bad file path!"), Error_Title, MB_OK | MB_ICONERROR);
+        MsgBoxError(TO_UNICODE("Bad file path!"), Error_Title);
         ::exit(-1);
     }
     std::wstring dir = wstr.substr(0, idx);
@@ -130,12 +140,7 @@ bool WinLibrary::Load(const std::wstring &path) {
     HINSTANCE hDLL = ::LoadLibraryW(path.data());
     if (!hDLL) {
         std::wstring msg = WinGetLastErrorString(&_impl->errNum);
-        ::MessageBoxW(nullptr, msg.data(), (*Module_Name) ? Module_Name : Error_Title,
-                      MB_OK
-#ifdef CONFIG_WIN32_MSGBOX_TOPMOST
-                          | MB_TOPMOST
-#endif
-                          | MB_SETFOREGROUND | MB_ICONERROR);
+        MsgBoxError(msg.data(), (*Module_Name) ? Module_Name : Error_Title);
         return false;
     }
     _impl->hDll = hDLL;
@@ -153,12 +158,7 @@ FARPROC WinLibrary::GetEntry(const char *entry) const {
     auto fun = ::GetProcAddress(_impl->hDll, entry);
     if (!fun) {
         std::wstring msg = WinGetLastErrorString(&_impl->errNum);
-        ::MessageBoxW(nullptr, msg.data(), (*Module_Name) ? Module_Name : Error_Title,
-                      MB_OK
-#ifdef CONFIG_WIN32_MSGBOX_TOPMOST
-                          | MB_TOPMOST
-#endif
-                          | MB_SETFOREGROUND | MB_ICONERROR);
+        MsgBoxError(msg.data(), (*Module_Name) ? Module_Name : Error_Title);
         return nullptr;
     }
     return fun;

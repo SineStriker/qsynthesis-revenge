@@ -180,8 +180,6 @@ int main_entry(int argc, char *argv[]) {
     QsStartInfo info;   // QsLib host
 
     // Parse command line
-    bool hasHelp = false;
-    bool hasVersion = false;
     QStringList customPluginPaths;
     QStringList arguments = a.arguments(); // adapted arguments list is passed to plugin manager later
     QMutableStringListIterator it(arguments);
@@ -295,7 +293,9 @@ int main_entry(int argc, char *argv[]) {
     }
 
     // set up opening files
-    QObject::connect(&info, &QsStartInfo::receivedMessage, [&](quint32 instanceId, QByteArray message) {
+    QObject::connect(&info, &QsStartInfo::receivedMessage, [](quint32 instanceId, QByteArray message) {
+        Q_UNUSED(instanceId);
+
         QDataStream stream(&message, QIODevice::ReadOnly);
         QStringList args;
         stream >> args;
@@ -308,7 +308,7 @@ int main_entry(int argc, char *argv[]) {
             }
             if (QMFs::isFileExist(arg)) {
                 QFileOpenEvent e(arg);
-                a.sendEvent(&a, &e);
+                qApp->sendEvent(qApp, &e);
             }
         }
     });
