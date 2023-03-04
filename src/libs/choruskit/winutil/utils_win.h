@@ -31,7 +31,7 @@ public:
     FARPROC GetEntry(const char *entry) const;
     int ErrorCode() const;
 
-    static void AddLibDir(const std::wstring &path);
+    static void SetDllDir(const std::wstring &path);
     static void SetEnv(const std::wstring &key, const std::wstring &val);
 
 private:

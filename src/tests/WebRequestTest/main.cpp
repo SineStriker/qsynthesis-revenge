@@ -18,6 +18,8 @@ int main(int argc, char *argv[]) {
 
     qDebug() << "Send HTTP request to:" << url;
 
+    qDebug() << QByteArray("结果").toHex() << QString::fromUtf8("结果");
+
     QNetworkReply *reply = manager.get(request);
     QObject::connect(reply, &QIODevice::readyRead, [&]() {
         qDebug() << reply->readAll(); //

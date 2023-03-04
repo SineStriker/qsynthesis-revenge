@@ -25,7 +25,7 @@ target_components(${PROJECT_NAME}
     QT_LIBRARIES Widgets
     QT_PRIVATE_INCLUDES Core Widgets
     LINKS QMWidgets QsMedia QsSVS
-    LINKS_PRIVATE SingleApplication
+    LINKS_PRIVATE
     INCLUDES ${_dirs} ${_extra_includes}
 )
 

@@ -5,8 +5,6 @@
 #include "QsCoreConfig.h"
 #include "QsPluginManager.h"
 
-#include "singleapplication.h"
-
 #include "QMDecorateDir.h"
 
 #include <QApplication>
@@ -17,32 +15,25 @@ Q_SINGLETON_DECLARE(QsStartInfo);
 struct QsStartInfoPrivate {
     QsCoreConfig coreConfig;
     QsPluginManager *pluginMgr = nullptr;
-    SingleApplication *hSingleApp = nullptr;
 
     QMDecorateDir dd;
 };
 
 static const char Slash = '/';
 
-static const SingleApplication::Options opts =
-    SingleApplication::ExcludeAppPath | SingleApplication::ExcludeAppVersion | SingleApplication::SecondaryNotification;
-
-static const char ALLOW_ROOT_OPTION[] = "--allow-root";
-static const char RESET_CONFIG_OPTION[] = "--allow-root";
-
 static QString GetAppConfig() {
     return QMFs::binaryPath() + Slash + qApp->applicationName() + "_settings.json";
 }
 
 QsStartInfo::QsStartInfo(QObject *parent)
-    : QObject(parent), AllowSecondary(false), AllowRoot(false), ResetConfig(false), d_ptr(new QsStartInfoPrivate()) {
+    : QObject(parent), AllowRoot(false), ResetConfig(false), d_ptr(new QsStartInfoPrivate()) {
     auto &d = *d_ptr;
 
     // Plugin manager
     d.pluginMgr = new QsPluginManager(this);
 
     // Load core config
-    d.coreConfig.load(QMFs::binaryPath() + Slash + GetAppConfig());
+    d.coreConfig.load(GetAppConfig());
 
     // Load qslib resources
     d.dd.setDir(d.coreConfig.shareDir() + Slash + "QsLib");
@@ -59,8 +50,8 @@ bool QsStartInfo::checkLoadInfo() {
 
     // Root privilege detection
     if (QMOs::isUserRoot() && !AllowRoot) {
-        QString msg = QCoreApplication::tr("You're trying to start %1 as the %2, which may cause "
-                                           "security problem and isn't recommended.")
+        QString msg = QCoreApplication::tr("You're trying to start %1 as the %2, which is "
+                                           "extremely dangerous and isn't recommended.")
                           .arg(qAppName(), QMOs::rootUserName());
         qmCon->MsgBox(nullptr, QMCoreConsole::Warning, qAppName(), msg);
         QMOs::exitApp(0);
@@ -68,38 +59,9 @@ bool QsStartInfo::checkLoadInfo() {
 
     // Reset configuration, exit
     if (ResetConfig) {
-        // coreConfig->saveDefault(configPath);
+        d.coreConfig.saveDefault(GetAppConfig());
         QMOs::exitApp(0);
     }
-
-    // Init Single Structures
-    d.hSingleApp = new SingleApplication(qApp, true, opts);
-
-    if (!AllowSecondary) {
-        if (!d.hSingleApp->isPrimary()) {
-            qInfo() << "start_info: primary instance already running. PID:" << d.hSingleApp->primaryPid();
-
-            // This eventually needs moved into the NotepadNextApplication to keep
-            // sending/receiving logic in the same place
-            QByteArray buffer;
-            QDataStream stream(&buffer, QIODevice::WriteOnly);
-
-            stream << qApp->arguments();
-            d.hSingleApp->sendMessage(buffer);
-
-            qInfo() << "start_info: secondary instance closing...";
-
-            qApp->exit(0);
-
-            ::exit(0);
-        }
-
-        qInfo() << "start_info: primary instance initializing...";
-    }
-
-    // Proxy signals
-    connect(d.hSingleApp, &SingleApplication::instanceStarted, this, &QsStartInfo::instanceStarted);
-    connect(d.hSingleApp, &SingleApplication::receivedMessage, this, &QsStartInfo::receivedMessage);
 
     // Initialize app data and temp dirs
     if (!d.coreConfig.apply()) {

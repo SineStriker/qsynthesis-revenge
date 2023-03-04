@@ -13,22 +13,27 @@
 
 #include <QtTest/QTest>
 
-#include "QMConsole.h"
 #include "QMSystem.h"
 #include "QMWidgetsHost.h"
 #include "QsCoreConfig.h"
 #include "QsStartInfo.h"
 
 #include "QBreakpadHandler.h"
-#include "Windows/PlainWindow.h"
 
 #include "extensionsystem/iplugin.h"
 #include "extensionsystem/pluginmanager.h"
 #include "extensionsystem/pluginspec.h"
 
+#include "singleapplication.h"
+
 using namespace ExtensionSystem;
 
 extern "C" Q_DECL_EXPORT int main_entry(int argc, char *argv[]);
+
+static const SingleApplication::Options opts = SingleApplication::ExcludeAppPath |
+                                               SingleApplication::ExcludeAppVersion |
+                                               SingleApplication::SecondaryNotification;
+
 
 enum { OptionIndent = 4, DescriptionIndent = 34 };
 
@@ -46,8 +51,7 @@ static const char PLUGIN_PATH_OPTION[] = "--plugin-path";
 static QSplashScreen *g_splash = nullptr;
 
 // Format as <pre> HTML
-static inline QString toHtml(const QString &t)
-{
+static inline QString toHtml(const QString &t) {
     QString res = t;
     res.replace(QLatin1Char('&'), QLatin1String("&amp;"));
     res.replace(QLatin1Char('<'), QLatin1String("&lt;"));
@@ -113,7 +117,8 @@ static inline void displayHelpText(const QString &t) {
 static inline void printVersion(const PluginSpec *coreplugin) {
     QString version;
     QTextStream str(&version);
-    str << '\n' << qAppName() << ' ' << coreplugin->version() << " based on Qt " << qVersion() << "\n\n";
+    str << '\n'
+        << qAppName() << ' ' << coreplugin->version() << " based on Qt " << qVersion() << "\n\n";
     PluginManager::formatPluginVersions(str);
     str << '\n' << coreplugin->copyright() << '\n';
     displayHelpText(version);
@@ -181,7 +186,8 @@ int main_entry(int argc, char *argv[]) {
 
     // Parse command line
     QStringList customPluginPaths;
-    QStringList arguments = a.arguments(); // adapted arguments list is passed to plugin manager later
+    QStringList arguments =
+        a.arguments(); // adapted arguments list is passed to plugin manager later
     QMutableStringListIterator it(arguments);
     while (it.hasNext()) {
         const QString &arg = it.next();
@@ -226,9 +232,11 @@ int main_entry(int argc, char *argv[]) {
     QSettings::setPath(QSettings::IniFormat, QSettings::SystemScope, qsConf->appDataDir());
 
     PluginManager pluginManager;
-    pluginManager.setPluginIID("org.ChorusKit." + qAppName() + ".Plugin");
-    pluginManager.setGlobalSettings(
-        new QSettings(QSettings::IniFormat, QSettings::SystemScope, a.organizationDomain(), a.applicationName()));
+    pluginManager.setPluginIID(QString("org.ChorusKit.%1.Plugin").arg(qAppName()));
+
+    auto settings = new QSettings(QSettings::IniFormat, QSettings::SystemScope,
+                                  a.organizationDomain(), a.applicationName());
+    pluginManager.setGlobalSettings(settings);
 
     QStringList pluginPaths = getPluginPaths() + customPluginPaths;
     pluginManager.setPluginPaths(pluginPaths);
@@ -262,13 +270,15 @@ int main_entry(int argc, char *argv[]) {
     if (!coreplugin) {
         QString nativePaths = QDir::toNativeSeparators(pluginPaths.join(QLatin1Char(',')));
         const QString reason =
-            QCoreApplication::translate("Application", "Could not find Core plugin in %1!").arg(nativePaths);
+            QCoreApplication::translate("Application", "Could not find Core plugin in %1!")
+                .arg(nativePaths);
         displayError(msgCoreLoadFailure(reason));
         return 1;
     }
 
     if (!coreplugin->isEffectivelyEnabled()) {
-        const QString reason = QCoreApplication::translate("Application", "Core plugin is disabled.");
+        const QString reason =
+            QCoreApplication::translate("Application", "Core plugin is disabled.");
         displayError(msgCoreLoadFailure(reason));
         return 1;
     }
@@ -276,7 +286,8 @@ int main_entry(int argc, char *argv[]) {
         displayError(msgCoreLoadFailure(coreplugin->errorString()));
         return 1;
     }
-    if (foundAppOptions.contains(QLatin1String(VERSION_OPTION1)) || foundAppOptions.contains(VERSION_OPTION2)) {
+    if (foundAppOptions.contains(QLatin1String(VERSION_OPTION1)) ||
+        foundAppOptions.contains(VERSION_OPTION2)) {
         printVersion(coreplugin);
         return 0;
     }
@@ -286,32 +297,42 @@ int main_entry(int argc, char *argv[]) {
         return 0;
     }
 
+    // Init single handle
+    SingleApplication single(qApp, true, opts);
+    if (!single.isPrimary()) {
+        qInfo() << "apploader: primary instance already running. PID:" << single.primaryPid();
+
+        // This eventually needs moved into the NotepadNextApplication to keep
+        // sending/receiving logic in the same place
+        QByteArray buffer;
+        QDataStream stream(&buffer, QIODevice::WriteOnly);
+
+        stream << PluginManager::serializedArguments();
+        single.sendMessage(buffer);
+
+        qInfo() << "apploader: secondary instance closing...";
+
+        return 0;
+    } else {
+        qInfo() << "apploader: primary instance initializing...";
+    }
+
     PluginManager::loadPlugins();
     if (coreplugin->hasError()) {
         displayError(msgCoreLoadFailure(coreplugin->errorString()));
         return 1;
     }
 
-    // set up opening files
-    QObject::connect(&info, &QsStartInfo::receivedMessage, [](quint32 instanceId, QByteArray message) {
-        Q_UNUSED(instanceId);
-
-        QDataStream stream(&message, QIODevice::ReadOnly);
-        QStringList args;
-        stream >> args;
-        QStringList files;
-        for (auto it = args.begin() + 1; it != args.end(); ++it) {
-            const auto &arg = *it;
-            if (arg.startsWith('-')) {
-                it++;
-                continue;
-            }
-            if (QMFs::isFileExist(arg)) {
-                QFileOpenEvent e(arg);
-                qApp->sendEvent(qApp, &e);
-            }
-        }
-    });
+    // Set up remote arguments.
+    QObject::connect(&single, &SingleApplication::receivedMessage,
+                     [&](quint32 instanceId, QByteArray message) {
+                         QDataStream stream(&message, QIODevice::ReadOnly);
+                         QString msg;
+                         stream >> msg;
+                         qDebug().noquote().nospace()
+                             << "apploader: remote message from " << instanceId << ", " << msg;
+                         pluginManager.remoteArguments(msg, nullptr);
+                     });
 
     // shutdown plugin manager on the exit
     QObject::connect(&a, &QApplication::aboutToQuit, &pluginManager, &PluginManager::shutdown);

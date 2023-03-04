@@ -20,5 +20,6 @@ target_components(${PROJECT_NAME}
     SOURCES ${_src} res.qrc
     QT_LIBRARIES Core Widgets
     LINKS QsFramework ExtensionSystem qBreakpad
+    LINKS_PRIVATE SingleApplication
     INCLUDES ${COMMON_INCLUDE_DIR}
 )

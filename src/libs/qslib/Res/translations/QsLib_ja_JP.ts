@@ -4,17 +4,17 @@
 <context>
     <name>Application</name>
     <message>
-        <location filename="../../../choruskit/appload/main.cpp" line="116"/>
+        <location filename="../../../choruskit/appload/main.cpp" line="155"/>
         <source>Failed to load core: %1!</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../../choruskit/appload/main.cpp" line="231"/>
+        <location filename="../../../choruskit/appload/main.cpp" line="273"/>
         <source>Could not find Core plugin in %1!</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../../choruskit/appload/main.cpp" line="237"/>
+        <location filename="../../../choruskit/appload/main.cpp" line="281"/>
         <source>Core plugin is disabled.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -87,11 +87,6 @@
 <context>
     <name>QCoreApplication</name>
     <message>
-        <location filename="../../Framework/Static/QsStartInfo.cpp" line="62"/>
-        <source>You&apos;re trying to start %1 as the %2, which may cause security problem and isn&apos;t recommended.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <location filename="../../../QtMedium/CoreLib/Global/QMSystem.cpp" line="272"/>
         <source>Explorer</source>
         <translation type="unfinished"></translation>
@@ -114,6 +109,11 @@
     <message>
         <location filename="../../../QtMedium/CoreLib/Global/QMSystem.cpp" line="284"/>
         <source>Root User</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../Framework/Static/QsStartInfo.cpp" line="53"/>
+        <source>You&apos;re trying to start %1 as the %2, which is extremely dangerous and isn&apos;t recommended.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

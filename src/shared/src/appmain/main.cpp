@@ -22,7 +22,7 @@ int main(int argc, char *argv[]) {
 #else
     std::wstring exePath = WinGetExeDir();
     std::wstring binPath = exePath + TO_UNICODE("\\") + TO_UNICODE(APP_BIN_DIR);
-    WinLibrary::AddLibDir(binPath); // Append subdirectory
+    WinLibrary::SetDllDir(binPath); // Append subdirectory
 
     // Directory hints
     WinLibrary::SetEnv(L"QT_PLUGIN_PATH", binPath + L"\\" + L"plugins");

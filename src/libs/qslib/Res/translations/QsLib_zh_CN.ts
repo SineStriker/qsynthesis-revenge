@@ -12,17 +12,17 @@
         <translation type="vanished">无法在%1中找到内核插件！</translation>
     </message>
     <message>
-        <location filename="../../../choruskit/appload/main.cpp" line="116"/>
+        <location filename="../../../choruskit/appload/main.cpp" line="155"/>
         <source>Failed to load core: %1!</source>
         <translation>无法加载内核：%1！</translation>
     </message>
     <message>
-        <location filename="../../../choruskit/appload/main.cpp" line="231"/>
+        <location filename="../../../choruskit/appload/main.cpp" line="273"/>
         <source>Could not find Core plugin in %1!</source>
         <translation>无法在%1中找到内核插件！</translation>
     </message>
     <message>
-        <location filename="../../../choruskit/appload/main.cpp" line="237"/>
+        <location filename="../../../choruskit/appload/main.cpp" line="281"/>
         <source>Core plugin is disabled.</source>
         <translation>内核插件已被禁用。</translation>
     </message>
@@ -95,9 +95,8 @@
 <context>
     <name>QCoreApplication</name>
     <message>
-        <location filename="../../Framework/Static/QsStartInfo.cpp" line="62"/>
         <source>You&apos;re trying to start %1 as the %2, which may cause security problem and isn&apos;t recommended.</source>
-        <translation>你正在尝试以%2身份运行%1，这可能存在安全问题。请使用普通权限启动。</translation>
+        <translation type="vanished">你正在尝试以%2身份运行%1，这可能存在安全问题。请使用普通权限启动。</translation>
     </message>
     <message>
         <location filename="../../../QtMedium/CoreLib/Global/QMSystem.cpp" line="272"/>
@@ -123,6 +122,11 @@
         <location filename="../../../QtMedium/CoreLib/Global/QMSystem.cpp" line="284"/>
         <source>Root User</source>
         <translation>Root用户</translation>
+    </message>
+    <message>
+        <location filename="../../Framework/Static/QsStartInfo.cpp" line="53"/>
+        <source>You&apos;re trying to start %1 as the %2, which is extremely dangerous and isn&apos;t recommended.</source>
+        <translation>你正在尝试以%2身份运行%1，此番操作非常不安全。请使用普通权限启动。</translation>
     </message>
 </context>
 </TS>
