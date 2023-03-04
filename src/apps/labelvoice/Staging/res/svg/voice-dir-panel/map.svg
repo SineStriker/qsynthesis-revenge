@@ -1,0 +1,11 @@
+<svg enable-background="new 0 0 64 64" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+    <circle cx="32" cy="32" fill="#e0995e" r="32" />
+    <g fill="#231f20">
+        <path d="m26 52-12-4v-32l12 4z" opacity=".2" />
+        <path d="m38 48-12 4v-32l12-4z" opacity=".2" />
+        <path d="m50 52-12-4v-32l12 4z" opacity=".2" />
+    </g>
+    <path d="m26 50-12-4v-32l12 4z" fill="#e0e0d1" />
+    <path d="m38 46-12 4v-32l12-4z" fill="#fff" />
+    <path d="m50 50-12-4v-32l12 4z" fill="#e0e0d1" />
+</svg>

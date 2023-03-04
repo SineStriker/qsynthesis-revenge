@@ -1,0 +1,8 @@
+<RCC>
+    <qresource prefix="/">
+        <file>translations/LvElem_ja_JP.qm</file>
+        <file>translations/LvElem_zh_CN.qm</file>
+        <file>translations/LvElem_zh_HK.qm</file>
+        <file>themes/light/base-light.qss</file>
+    </qresource>
+</RCC>
