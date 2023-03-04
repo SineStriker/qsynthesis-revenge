@@ -1,14 +1,7 @@
 #include "QMLocaleDir_p.h"
 
 #include "../QMCoreDecorator.h"
-
-#define _CURRENT_MAP QHash
-#define _CURRENT_TRASACTION QHashTransaction
-
 #include "QMMapTransaction.h"
-
-#undef _CURRENT_MAP
-#undef _CURRENT_TRASACTION
 
 #include <QDir>
 #include <QFile>
@@ -80,7 +73,7 @@ bool QMLocaleDirPrivate::loadNext(const QJsonObject &objDoc) {
 
         // Start transaction
         {
-            QMapTransaction<QString, QString> tx1(&q->vars.Variables);
+            QMapTransaction<QHash, QString, QString> tx1(&q->vars.Variables);
             tx1.insert("CURRENT_KEY", cur.key);
 
             // Find dir and parse dir;

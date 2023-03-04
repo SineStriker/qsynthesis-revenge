@@ -4,23 +4,17 @@
 #include <QDebug>
 #include <QMap>
 
-#ifndef _CURRENT_MAP
-#define _CURRENT_MAP QMap
-#define _CURRENT_MAP_DEFINED
-#endif
-
-#ifndef _CURRENT_TRANSACTION
-#define _CURRENT_TRANSACTION QMapTransaction
-#define _CURRENT_TRANSACTION_DEFINED
-#endif
-
-template <class Key, class T>
-class _CURRENT_TRANSACTION {
+template <template <class K, class V> class _CURRENT_MAP, class Key, class T>
+class QMapTransaction {
 public:
-    _CURRENT_TRANSACTION(_CURRENT_MAP<Key, T> *ref) : ref(ref) {
+    using key_type = typename _CURRENT_MAP<Key, T>::key_type;
+    using mapped_type = typename _CURRENT_MAP<Key, T>::mapped_type;
+    using size_type = typename _CURRENT_MAP<Key, T>::size_type;
+
+    QMapTransaction(_CURRENT_MAP<Key, T> *ref) : ref(ref) {
     }
 
-    ~_CURRENT_TRANSACTION() {
+    ~QMapTransaction() {
         if (!changes.empty()) {
             rollBack();
         }
@@ -119,13 +113,5 @@ private:
         return false;
     }
 };
-
-#ifndef _CURRENT_MAP_DEFINED
-#undef _CURRENT_MAP
-#endif
-
-#ifndef _CURRENT_TRANSACTION_DEFINED
-#undef _CURRENT_TRANSACTION
-#endif
 
 #endif // QMMAPTRANSACTION_H

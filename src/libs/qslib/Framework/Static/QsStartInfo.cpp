@@ -12,7 +12,8 @@
 
 Q_SINGLETON_DECLARE(QsStartInfo);
 
-struct QsStartInfoPrivate {
+class QsStartInfoPrivate {
+public:
     QsCoreConfig coreConfig;
     QsPluginManager *pluginMgr = nullptr;
 
