@@ -1,0 +1,19 @@
+{
+    "Name": "ImportManager",
+    "Version": "1.0.1",
+    "CompatVersion": "0.0.0",
+    "DisabledByDefault": false,
+    "HiddenByDefault": false,
+    "Vendor": "FlutyDeer",
+    "Copyright": "Copyright (C) 2021 FlutyDeer",
+    "License": [
+        "Apache 2.0"
+    ],
+    "Category": "Core",
+    "Description": "The import manager plugin for DiffScope.",
+    "Url": "https://www.baidu.com/",
+    "Required": true,
+    "Dependencies" : [
+        { "Name" : "Core", "Version" : "1.0.0" }
+    ]
+}

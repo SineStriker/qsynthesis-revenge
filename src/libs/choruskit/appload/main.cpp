@@ -177,12 +177,8 @@ int main_entry(int argc, char *argv[]) {
     a.setOrganizationName("ChorusKit");
     a.setOrganizationDomain("org.ChorusKit");
 
-    QFont f("Microsoft YaHei UI");
-    f.setPixelSize(15);
-    a.setFont(f);
-
-    QMWidgetsHost host; // QtMedium host
-    QsStartInfo info;   // QsLib host
+    QMWidgetsHost qmInst; // QtMedium host
+    QsStartInfo qsInst;   // QsLib host
 
     // Parse command line
     QStringList customPluginPaths;
@@ -193,10 +189,10 @@ int main_entry(int argc, char *argv[]) {
         const QString &arg = it.next();
         if (arg == QLatin1String(ALLOW_ROOT_OPTION)) {
             it.remove();
-            info.AllowRoot = true;
+            qsInst.AllowRoot = true;
         } else if (arg == QLatin1String(RESET_CONFIG_OPTION)) {
             it.remove();
-            info.ResetConfig = true;
+            qsInst.ResetConfig = true;
         } else if (arg == QLatin1String(PLUGIN_PATH_OPTION)) {
             it.remove();
             if (it.hasNext()) {
@@ -211,7 +207,7 @@ int main_entry(int argc, char *argv[]) {
     }
 
     // Prepare to start application
-    info.checkLoadInfo();
+    qsInst.checkLoadInfo();
 
     QSplashScreen splash(QPixmap(":/svsplash.png"));
     splash.show();
