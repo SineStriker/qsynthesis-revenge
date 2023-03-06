@@ -3,8 +3,14 @@ project(QMCoreLib
     LANGUAGES CXX
 )
 
+set(_platform_lib)
+
 if(APPLE)
-    set(_platform_lib ObjC)
+    list(APPEND _platform_lib ObjC)
+endif()
+
+if(!WIN32)
+    list(APPEND _platform_lib dl)
 endif()
 
 get_subdirs(_dirs)

@@ -83,6 +83,8 @@ namespace QMFs {
 
     QMCORELIB_API QString invalidFileNameChars();
 
+    QMCORELIB_API QString getSharedLibraryPath(void *func);
+
 }
 
 namespace QMOs {

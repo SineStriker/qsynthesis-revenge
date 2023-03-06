@@ -14,6 +14,6 @@ ck_add_plugin(${PROJECT_NAME}
 target_components(${PROJECT_NAME}
     INCLUDE_CURRENT
     SOURCES ${_src}
-    QT_LIBRARIES Core Widgets
+    QT_LIBRARIES Core Widgets Network
     LINKS QsFramework ExtensionSystem
 )

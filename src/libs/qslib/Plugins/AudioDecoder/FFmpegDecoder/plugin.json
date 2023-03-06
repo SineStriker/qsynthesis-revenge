@@ -1,6 +1,9 @@
 {
-    "name": "FFmpegDecoder",
-    "version": "0.0.0.1",
-    "author": "Sine Striker",
-    "license": "LGPL v2.1"
+    "Name": "FFmpegDecoder",
+    "Version": "0.0.0.1",
+    "Author": "Sine Striker",
+    "License": "MIT License",
+    "Keys": [
+        "FFmpegDecoder"
+    ]
 }

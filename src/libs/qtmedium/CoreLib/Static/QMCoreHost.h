@@ -20,8 +20,21 @@ public:
 
 public:
     bool isAboutToQuit() const;
-
     QSettings::Format settingsJsonFormat() const;
+
+    QString appDataDir() const;
+    void setAppDataDir(const QString &dir);
+
+    QString tempDir() const;
+    void setTempDir(const QString &dir);
+
+    QString libDir() const;
+    void setLibDir(const QString &dir);
+
+    QString shareDir() const;
+    void setShareDir(const QString &dir);
+
+    bool createDataAndTempDirs() const;
 
 protected:
     QMCoreHost(QMCoreHostPrivate &d, QObject *parent = nullptr);

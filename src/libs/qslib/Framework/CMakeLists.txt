@@ -28,19 +28,3 @@ target_components(${PROJECT_NAME}
     LINKS_PRIVATE
     INCLUDES ${_dirs} ${_extra_includes}
 )
-
-# target_create_translations(${PROJECT_NAME} SOURCES ${_src}
-#     LOCALES zh_CN zh_HK ja_JP
-#     DESTINATION ${_res_dir}/translations
-#     CREATE_ONCE
-# )
-
-# Copy resources
-# ck_add_res(${PROJECT_NAME}
-#     FILES ${_res_dir}/QsFramework.res.json
-#     ABSOLUTE_PATH ${SHARE_OUTPUT_DIR}
-# )
-# ck_add_res(${PROJECT_NAME}
-#     FILES ${_res_dir}/translations/*.qm
-#     ABSOLUTE_PATH ${SHARE_OUTPUT_DIR}/QsFramework.res/translations
-# )

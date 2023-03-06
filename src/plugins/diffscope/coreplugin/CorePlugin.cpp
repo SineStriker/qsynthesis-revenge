@@ -21,7 +21,7 @@ namespace Core {
         }
 
         bool CorePlugin::initialize(const QStringList &arguments, QString *errorMessage) {
-            qDebug() << "initialize Core Plugin";
+            qDebug() << "initialize Core Plugin" << arguments;
 
             // Get splash screen handle
             auto var = qApp->property("__choruskit_init_splash__");
@@ -47,12 +47,20 @@ namespace Core {
             if (splashScreen) {
                 if (mw) {
                     splashScreen->finish(mw);
-                }else{
+                } else {
                     splashScreen->close();
                 }
             }
 
             return true;
+        }
+
+        QObject *CorePlugin::remoteCommand(const QStringList &options, const QString &workingDirectory,
+                                           const QStringList &args) {
+            qDebug() << options;
+            qDebug() << workingDirectory;
+            qDebug() << args;
+            return nullptr;
         }
 
     }

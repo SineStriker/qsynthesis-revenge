@@ -24,7 +24,7 @@ include_guard(DIRECTORY)
         AS_TEST:         ignore metadata and skip it when deploying
         FORCE_CONSOLE:   build as a console application forcefully
         FORCE_WINDOWS:   build as a windows application forcefully
-        NO_EXTRA_TARGET: skip building another executable for windows
+        NO_LAUNCHER:     skip building another executable for windows
 
     usage:
         1. set APP_BIN_DIR by project configuration
@@ -33,7 +33,7 @@ include_guard(DIRECTORY)
 
 ]] #
 function(ck_add_executable _target _dll)
-    set(options AS_TEST FORCE_CONSOLE FORCE_WINDOWS NO_EXTRA_TARGET)
+    set(options AS_TEST FORCE_CONSOLE FORCE_WINDOWS NO_LAUNCHER)
     set(oneValueArgs AUTHOR_NAME FILE_DESC PRODUCT_NAME EXECUTABLE_TYPE ICO_FILE ICNS_FILE
         OUTPUT_NAME COPYRIGHT_YEAR APP_NAME_HINT APP_VERSION_HINT
     )
@@ -53,10 +53,14 @@ function(ck_add_executable _target _dll)
         target_include_directories(${_target} PRIVATE ${CHORUSKIT_SHARED_INCDIR})
         target_compile_definitions(${_target} PRIVATE APP_ENABLE_ENTRY)
         target_link_libraries(${_target} PRIVATE ${_dll})
+
+        if(CONFIG_CREATE_WIN_SHORTCUT AND WIN32)
+            ck_create_shortcut(${_target} ${CONFIG_OUTPUT_DIRECTORY})
+        endif()
     endif()
 
     # Add extra target for Windows
-    if(WIN32 AND NOT FUNC_NO_EXTRA_TARGET)
+    if(WIN32 AND NOT FUNC_NO_LAUNCHER AND CONFIG_CREATE_WIN_LAUNCHER)
         set(_appmain_target ${_target}_appmain)
         add_executable(${_appmain_target} ${_appmain_src})
         list(APPEND _target_list ${_appmain_target})
@@ -195,4 +199,32 @@ function(ck_add_executable _target _dll)
     endif()
 
     # ----------------- Template End -----------------
+endfunction()
+
+function(ck_create_shortcut _target _dir)
+    if(NOT WIN32)
+        return()
+    endif()
+
+    string(RANDOM LENGTH 8 _rand)
+    set(_vbs_name ${CMAKE_CURRENT_BINARY_DIR}/${_target}_shortcut.vbs)
+    set(_vbs_temp ${_vbs_name}.in)
+
+    set(SHORTCUT_PATH "${_dir}/$<TARGET_FILE_BASE_NAME:${_target}>.lnk")
+    set(SHORTCUT_TARGET_PATH $<TARGET_FILE:${_target}>)
+    set(SHORTCUT_WORKING_DIRECOTRY $<TARGET_FILE_DIR:${_target}>)
+    set(SHORTCUT_DESCRIPTION $<TARGET_FILE_BASE_NAME:${_target}>)
+    set(SHORTCUT_ICON_LOCATION $<TARGET_FILE:${_target}>)
+
+    configure_file(
+        ${WIN32_SHORTCUT_VBS}
+        ${_vbs_temp}
+        @ONLY
+    )
+    file(GENERATE OUTPUT ${_vbs_name} INPUT ${_vbs_temp})
+
+    add_custom_command(
+        TARGET ${_target} POST_BUILD
+        COMMAND cscript ${_vbs_name}
+    )
 endfunction()

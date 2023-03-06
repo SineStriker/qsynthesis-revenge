@@ -10,13 +10,12 @@
 #include <QSplashScreen>
 #include <QTextStream>
 
-
 #include <QtTest/QTest>
 
+#include "QMConsole.h"
+#include "QMDecorateDir.h"
 #include "QMSystem.h"
 #include "QMWidgetsHost.h"
-#include "QsCoreConfig.h"
-#include "QsStartInfo.h"
 
 #include "QBreakpadHandler.h"
 
@@ -30,9 +29,8 @@ using namespace ExtensionSystem;
 
 extern "C" Q_DECL_EXPORT int main_entry(int argc, char *argv[]);
 
-static const SingleApplication::Options opts = SingleApplication::ExcludeAppPath |
-                                               SingleApplication::ExcludeAppVersion |
-                                               SingleApplication::SecondaryNotification;
+static const SingleApplication::Options opts =
+    SingleApplication::ExcludeAppPath | SingleApplication::ExcludeAppVersion | SingleApplication::SecondaryNotification;
 
 
 enum { OptionIndent = 4, DescriptionIndent = 34 };
@@ -45,7 +43,6 @@ static const char HELP_OPTION2[] = "--help";
 static const char VERSION_OPTION1[] = "-v";
 static const char VERSION_OPTION2[] = "--version";
 static const char ALLOW_ROOT_OPTION[] = "--allow-root";
-static const char RESET_CONFIG_OPTION[] = "--reset-config";
 static const char PLUGIN_PATH_OPTION[] = "--plugin-path";
 
 static QSplashScreen *g_splash = nullptr;
@@ -117,8 +114,7 @@ static inline void displayHelpText(const QString &t) {
 static inline void printVersion(const PluginSpec *coreplugin) {
     QString version;
     QTextStream str(&version);
-    str << '\n'
-        << qAppName() << ' ' << coreplugin->version() << " based on Qt " << qVersion() << "\n\n";
+    str << '\n' << qAppName() << ' ' << coreplugin->version() << " based on Qt " << qVersion() << "\n\n";
     PluginManager::formatPluginVersions(str);
     str << '\n' << coreplugin->copyright() << '\n';
     displayHelpText(version);
@@ -136,11 +132,6 @@ static inline void printHelp() {
                      ALLOW_ROOT_OPTION,
                  },
                  {}, "Allow running with root privilege");
-    formatOption(str,
-                 {
-                     RESET_CONFIG_OPTION,
-                 },
-                 {}, "Generate or reset configuration file");
     formatOption(str,
                  {
                      PLUGIN_PATH_OPTION,
@@ -177,22 +168,22 @@ int main_entry(int argc, char *argv[]) {
     a.setOrganizationName("ChorusKit");
     a.setOrganizationDomain("org.ChorusKit");
 
-    QMWidgetsHost qmInst; // QtMedium host
-    QsStartInfo qsInst;   // QsLib host
+    QMWidgetsHost host;                                                // QtMedium host
+    QApplication::addLibraryPath(qmHost->libDir() + "/QsLib/plugins"); // Add qslib plugin dir
+
+    QMDecorateDir primaryDec;
+    primaryDec.load(host.shareDir() + "/qtdummy/qtdummy.res.json"); // Load qslib resources
 
     // Parse command line
+    bool allowRoot = false;
     QStringList customPluginPaths;
-    QStringList arguments =
-        a.arguments(); // adapted arguments list is passed to plugin manager later
+    QStringList arguments = a.arguments(); // adapted arguments list is passed to plugin manager later
     QMutableStringListIterator it(arguments);
     while (it.hasNext()) {
         const QString &arg = it.next();
         if (arg == QLatin1String(ALLOW_ROOT_OPTION)) {
             it.remove();
-            qsInst.AllowRoot = true;
-        } else if (arg == QLatin1String(RESET_CONFIG_OPTION)) {
-            it.remove();
-            qsInst.ResetConfig = true;
+            allowRoot = true;
         } else if (arg == QLatin1String(PLUGIN_PATH_OPTION)) {
             it.remove();
             if (it.hasNext()) {
@@ -206,8 +197,19 @@ int main_entry(int argc, char *argv[]) {
         }
     }
 
+    // Root privilege detection
+    if (QMOs::isUserRoot() && !allowRoot) {
+        QString msg = QCoreApplication::tr("You're trying to start %1 as the %2, which is "
+                                           "extremely dangerous and therefore strongly not recommended.")
+                          .arg(qAppName(), QMOs::rootUserName());
+        qmCon->MsgBox(nullptr, QMCoreConsole::Warning, qAppName(), msg);
+        return 0;
+    }
+
     // Prepare to start application
-    qsInst.checkLoadInfo();
+    if (!host.createDataAndTempDirs()) {
+        return -1;
+    }
 
     QSplashScreen splash(QPixmap(":/svsplash.png"));
     splash.show();
@@ -216,7 +218,7 @@ int main_entry(int argc, char *argv[]) {
     a.setProperty("__choruskit_init_splash__", QVariant::fromValue(&splash));
 
     // Prepare to load plugins
-    QBreakpadInstance.setDumpPath(qsConf->appDataDir() + "/crashes");
+    QBreakpadInstance.setDumpPath(qmHost->appDataDir() + "/crashes");
 
     // Make sure we honor the system's proxy settings
     QNetworkProxyFactory::setUseSystemConfiguration(true);
@@ -224,14 +226,14 @@ int main_entry(int argc, char *argv[]) {
     // Don't show plugin manager debug info
     QLoggingCategory::setFilterRules(QLatin1String("qtc.*.debug=false"));
 
-    QSettings::setPath(QSettings::IniFormat, QSettings::UserScope, qsConf->appDataDir());
-    QSettings::setPath(QSettings::IniFormat, QSettings::SystemScope, qsConf->appDataDir());
+    QSettings::setPath(QSettings::IniFormat, QSettings::UserScope, qmHost->appDataDir());
+    QSettings::setPath(QSettings::IniFormat, QSettings::SystemScope, qmHost->appDataDir());
 
     PluginManager pluginManager;
     pluginManager.setPluginIID(QString("org.ChorusKit.%1.Plugin").arg(qAppName()));
 
-    auto settings = new QSettings(QSettings::IniFormat, QSettings::SystemScope,
-                                  a.organizationDomain(), a.applicationName());
+    auto settings =
+        new QSettings(QSettings::IniFormat, QSettings::SystemScope, a.organizationDomain(), a.applicationName());
     pluginManager.setGlobalSettings(settings);
 
     QStringList pluginPaths = getPluginPaths() + customPluginPaths;
@@ -266,15 +268,13 @@ int main_entry(int argc, char *argv[]) {
     if (!coreplugin) {
         QString nativePaths = QDir::toNativeSeparators(pluginPaths.join(QLatin1Char(',')));
         const QString reason =
-            QCoreApplication::translate("Application", "Could not find Core plugin in %1!")
-                .arg(nativePaths);
+            QCoreApplication::translate("Application", "Could not find Core plugin in %1!").arg(nativePaths);
         displayError(msgCoreLoadFailure(reason));
         return 1;
     }
 
     if (!coreplugin->isEffectivelyEnabled()) {
-        const QString reason =
-            QCoreApplication::translate("Application", "Core plugin is disabled.");
+        const QString reason = QCoreApplication::translate("Application", "Core plugin is disabled.");
         displayError(msgCoreLoadFailure(reason));
         return 1;
     }
@@ -282,8 +282,7 @@ int main_entry(int argc, char *argv[]) {
         displayError(msgCoreLoadFailure(coreplugin->errorString()));
         return 1;
     }
-    if (foundAppOptions.contains(QLatin1String(VERSION_OPTION1)) ||
-        foundAppOptions.contains(VERSION_OPTION2)) {
+    if (foundAppOptions.contains(QLatin1String(VERSION_OPTION1)) || foundAppOptions.contains(VERSION_OPTION2)) {
         printVersion(coreplugin);
         return 0;
     }
@@ -320,15 +319,13 @@ int main_entry(int argc, char *argv[]) {
     }
 
     // Set up remote arguments.
-    QObject::connect(&single, &SingleApplication::receivedMessage,
-                     [&](quint32 instanceId, QByteArray message) {
-                         QDataStream stream(&message, QIODevice::ReadOnly);
-                         QString msg;
-                         stream >> msg;
-                         qDebug().noquote().nospace()
-                             << "apploader: remote message from " << instanceId << ", " << msg;
-                         pluginManager.remoteArguments(msg, nullptr);
-                     });
+    QObject::connect(&single, &SingleApplication::receivedMessage, [&](quint32 instanceId, QByteArray message) {
+        QDataStream stream(&message, QIODevice::ReadOnly);
+        QString msg;
+        stream >> msg;
+        qDebug().noquote().nospace() << "apploader: remote message from " << instanceId << ", " << msg;
+        pluginManager.remoteArguments(msg, nullptr);
+    });
 
     // shutdown plugin manager on the exit
     QObject::connect(&a, &QApplication::aboutToQuit, &pluginManager, &PluginManager::shutdown);

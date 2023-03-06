@@ -64,37 +64,55 @@ function(target_components _target)
 endfunction()
 
 #[[
-    target_create_translations  <target> SOURCES files... LOCALES langs... 
+    target_create_translations  <target> LOCALES langs...
+                                [SOURCES files...]
                                 [DESTINATION <dir>]
+                                [QM_DIR <qmdir>]
                                 [PREFIX <prefix>]
                                 [CREATE_ONCE]
 
     args:
         target:      related target name
-        files:       source file list
+        files:       source file list, default to all .cpp/.cc files by querying SOURCES property at this point
         langs:       language names, e.g. zh_CN en_US
         dir:         output dir of .ts and. qm files, default to CMAKE_CURRENT_SOURCE_DIR
-        prefix:      translation file prefix
+        qmdir:       generate qm files into <qmdir> instead of <dir> if specified, can be a generated expression
+        prefix:      translation file prefix, default to target name
 
     flags:
-        CREATE_ONCE: generate .ts and .qm file if not exists at configure
+        CREATE_ONCE: generate .ts files if not exists at configure
+        POST_BUILD:  generate .qm files after build
 
     usage:
         add lupdate and lrelease target for a target using Qt linguist framework
 #]]
 function(target_create_translations _target)
-    set(options CREATE_ONCE)
-    set(oneValueArgs DESTINATION PREFIX)
+    set(options CREATE_ONCE POST_BUILD)
+    set(oneValueArgs DESTINATION PREFIX QM_DIR)
     set(multiValueArgs SOURCES LOCALES)
     cmake_parse_arguments(FUNC "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
 
     set(_ts_files)
+
+    if(FUNC_SOURCES)
+        set(_src_files ${FUNC_SOURCES})
+    else()
+        get_target_property(_src_files ${_target} SOURCES)
+        list(FILTER _src_files INCLUDE REGEX ".+\\.(cpp|cc)")
+        list(FILTER _src_files EXCLUDE REGEX "(qasc|moc)_.+")
+    endif()
 
     if(FUNC_DESTINATION)
         file(MAKE_DIRECTORY ${FUNC_DESTINATION})
         set(_ts_dest ${FUNC_DESTINATION})
     else()
         set(_ts_dest ${CMAKE_CURRENT_SOURCE_DIR})
+    endif()
+
+    set(_qm_dest ${_ts_dest})
+
+    if(FUNC_QM_DIR)
+        set(_qm_dest ${FUNC_QM_DIR})
     endif()
 
     if(FUNC_PREFIX)
@@ -115,17 +133,24 @@ function(target_create_translations _target)
         set(_create_once)
     endif()
 
+    if(FUNC_POST_BUILD)
+        set(_post_build POST_BUILD)
+    else()
+        set(_post_build)
+    endif()
+
     add_lupdate_target(${_target}_lupdate
-        INPUT ${FUNC_SOURCES}
+        INPUT ${_src_files}
         OUTPUT ${_ts_files}
         ${_create_once}
     )
 
     add_lrelease_target(${_target}_lrelease
         INPUT ${_ts_files}
-        DESTINATION ${_ts_dest}
+        DESTINATION ${_qm_dest}
         DEPENDS ${_target}_lupdate
-        ${_create_once}
+        RELATED_TARGET ${_target}
+        ${_post_build}
     )
 endfunction()
 
@@ -191,8 +216,8 @@ endfunction()
 # Input: ts files
 # Output: list to append qm files
 function(add_lrelease_target _target)
-    set(options CREATE_ONCE)
-    set(oneValueArgs DESTINATION OUTPUT)
+    set(options CREATE_ONCE POST_BUILD)
+    set(oneValueArgs DESTINATION OUTPUT RELATED_TARGET)
     set(multiValueArgs INPUT OPTIONS DEPENDS)
 
     cmake_parse_arguments(_LRELEASE "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
@@ -202,6 +227,8 @@ function(add_lrelease_target _target)
     add_custom_target(${_target} DEPENDS ${_lrelease_deps})
 
     get_target_property(_lrelease_exe ${Qt5_LRELEASE_EXECUTABLE} IMPORTED_LOCATION)
+
+    set(_qm_files)
 
     foreach(_file ${_lrelease_files})
         get_filename_component(_abs_FILE ${_file} ABSOLUTE)
@@ -240,7 +267,20 @@ function(add_lrelease_target _target)
             DEPENDS ${_lrelease_files}
             VERBATIM
         )
-        list(APPEND ${_qm_files} ${_qm_file})
+
+        if(_LRELEASE_RELATED_TARGET AND _LRELEASE_POST_BUILD)
+            add_custom_command(
+                TARGET ${_LRELEASE_RELATED_TARGET} POST_BUILD
+                COMMAND ${CMAKE_COMMAND} -E make_directory ${_LRELEASE_DESTINATION}
+                COMMAND ${_lrelease_exe}
+                ARGS ${_LRELEASE_OPTIONS} ${_abs_FILE} -qm ${_qm_file}
+                WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+                DEPENDS ${_lrelease_files}
+                VERBATIM
+            )
+        endif()
+
+        list(APPEND _qm_files ${_qm_file})
     endforeach()
 
     if(_LRELEASE_OUTPUT)

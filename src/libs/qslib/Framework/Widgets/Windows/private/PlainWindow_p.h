@@ -1,5 +1,5 @@
-#ifndef PLAINWINDOWPRIVATE_H
-#define PLAINWINDOWPRIVATE_H
+#ifndef PLAINWINDOW_P_H
+#define PLAINWINDOW_P_H
 
 #include <QPluginLoader>
 
@@ -17,11 +17,7 @@ public:
     void init();
 
     PlainWindow *q_ptr;
-
-#ifndef Q_OS_MAC
-    QPluginLoader *loader;
     QsApi::IWindowHandle *winHandle;
-#endif
 };
 
-#endif // PLAINWINDOWPRIVATE_H
+#endif // PLAINWINDOW_P_H

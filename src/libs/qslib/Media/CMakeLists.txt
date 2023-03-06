@@ -24,6 +24,6 @@ target_components(${PROJECT_NAME}
     SOURCES ${_src}
     QT_LIBRARIES Core
     QT_PRIVATE_INCLUDES Core
-    LINKS QsBase
+    LINKS QMCoreLib
     INCLUDES ${_dirs} ${_extra_includes}
 )

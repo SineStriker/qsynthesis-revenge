@@ -4,7 +4,7 @@ project(QsSVS
 )
 
 get_subdirs(_dirs)
-set(_extra_includes)
+set(_extra_includes ${QASTOOL_INCLUDE_DIRS})
 
 add_files(_src
     DIRECTORIES ${_dirs}
@@ -24,7 +24,7 @@ target_components(${PROJECT_NAME}
     SOURCES ${_src}
     QT_LIBRARIES Core
     QT_PRIVATE_INCLUDES Core
-    LINKS QsBase
+    LINKS QMCoreLib
     LINKS_PRIVATE mrq
     INCLUDES ${_dirs} ${_extra_includes}
 )

@@ -67,7 +67,7 @@ foreach(_file ${_new_files})
     get_filename_component(_suffix2 ${_file} EXT)
     string(TOLOWER ${_suffix2} _suffix2_lower)
 
-    if(${_suffix2_lower} MATCHES ".*\\.(lib|exp|pdb|manifest|ilk|a)")
+    if(${_suffix2_lower} MATCHES ".*\\.(lib|exp|pdb|manifest|ilk|a|lnk)")
         file(REMOVE ${_file})
     endif()
 endforeach()

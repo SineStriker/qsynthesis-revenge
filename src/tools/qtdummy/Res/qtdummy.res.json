@@ -1,0 +1,12 @@
+{
+    "config": {
+        "version": "0.0.1",
+        "parent": "qtdummy"
+    },
+    "locales": [
+        {
+            "key": "${PARENT}",
+            "dir": "${FILEPATH}/translations"
+        }
+    ]
+}

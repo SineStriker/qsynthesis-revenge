@@ -11,17 +11,11 @@ class QMCORELIB_API QMLocaleDir {
     Q_DECLARE_PRIVATE(QMLocaleDir)
 public:
     QMLocaleDir();
-    explicit QMLocaleDir(const QString &dir);
     virtual ~QMLocaleDir();
 
 public:
     QMSimpleVarExp vars;
     bool autoRemove;
-
-    QString dir() const;
-    void setDir(const QString &dir);
-    
-    bool loadDefault(const QString &name);
 
     bool load(const QString &filename);
     void unload();

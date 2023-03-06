@@ -10,7 +10,6 @@ class QMWIDGETS_API QMDecorateDir : public QMLocaleDir {
     Q_DECLARE_PRIVATE(QMDecorateDir)
 public:
     QMDecorateDir();
-    explicit QMDecorateDir(const QString &dir);
     ~QMDecorateDir();
 
 protected:

@@ -32,6 +32,7 @@ set(TIME_CURRENT_YEAR           ${_current_year}                                
 set(WIN32_DLL_RC                ${_templates_dir}/Win32DllRes.rc.in                 CACHE STRING "" FORCE)
 set(WIN32_EXE_RC                ${_templates_dir}/Win32ExeRes.rc.in                 CACHE STRING "" FORCE)
 set(WIN32_EXE_MANIFEST          ${_templates_dir}/Win32ExeManifest.manifest.in      CACHE STRING "" FORCE)
+set(WIN32_SHORTCUT_VBS          ${_templates_dir}/WinCreateShortcut.vbs.in          CACHE STRING "" FORCE)
 set(QT_CONF_SETTING             ${_templates_dir}/qt.conf.in                        CACHE STRING "" FORCE)
 
 # Vcpkg

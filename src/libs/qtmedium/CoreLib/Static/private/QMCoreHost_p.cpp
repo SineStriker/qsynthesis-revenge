@@ -1,5 +1,6 @@
 #include "QMCoreHost_p.h"
 
+#include "QMSystem.h"
 #include "QSettingsJsonFormat.h"
 #include "private/QMNamespace_p.h"
 
@@ -23,6 +24,16 @@ QMCoreHostPrivate::~QMCoreHostPrivate() {
 
 void QMCoreHostPrivate::init() {
     Q_Q(QMCoreHost);
+
+    // Init basic directories
+    appDataDir = QMFs::appDataPath() + "/ChorusKit/" + qAppName();
+    tempDir = QDir::tempPath() + "/ChorusKit/" + qAppName();
+
+    QDir binDir(QMFs::binaryPath());
+    binDir.cdUp();
+
+    libDir = binDir.absoluteFilePath("lib");
+    shareDir = binDir.absoluteFilePath("share");
 
     // Init factory
     fac.reset(createFactory());

@@ -22,35 +22,25 @@ QMLocaleDir::QMLocaleDir() : QMLocaleDir(*new QMLocaleDirPrivate()) {
 QMLocaleDir::~QMLocaleDir() {
 }
 
-QString QMLocaleDir::dir() const {
-    Q_D(const QMLocaleDir);
-    return d->dir;
-}
-
-QMLocaleDir::QMLocaleDir(const QString &dir) : QMLocaleDir() {
-    setDir(dir);
-}
-
-void QMLocaleDir::setDir(const QString &dir) {
-    Q_D(QMLocaleDir);
-    d->dir = dir;
-    vars.add("FILEPATH", dir);
-}
-
-bool QMLocaleDir::loadDefault(const QString &name) {
-    Q_D(QMLocaleDir);
-    return load(QString("%1/%2.res.json").arg(d->dir, name));
-}
-
 bool QMLocaleDir::load(const QString &filename) {
     Q_D(QMLocaleDir);
 
     QFile file(filename);
+    if (!file.exists()) {
+        file.setFileName(filename + ".res.json");
+        if (!file.exists()) {
+            return false;
+        }
+    }
     if (!file.open(QIODevice::ReadOnly)) {
         qDebug().noquote()
             << QString("load_locale: failed to open decoration config %1").arg(QMFs::PathFindFileName(filename));
         return false;
     }
+
+    // Set directory
+    d->dir = QMFs::PathFindDirPath(file.fileName());
+    vars.add("FILEPATH", d->dir);
 
     QByteArray data(file.readAll());
     file.close();
@@ -58,7 +48,8 @@ bool QMLocaleDir::load(const QString &filename) {
     QJsonParseError err;
     QJsonDocument doc = QJsonDocument::fromJson(data, &err);
     if (err.error != QJsonParseError::NoError || !doc.isObject()) {
-        qDebug().noquote() << QString("load_locale: invalid decoration config %1").arg(QMFs::PathFindFileName(filename));
+        qDebug().noquote()
+            << QString("load_locale: invalid decoration config %1").arg(QMFs::PathFindFileName(filename));
         return false;
     }
 

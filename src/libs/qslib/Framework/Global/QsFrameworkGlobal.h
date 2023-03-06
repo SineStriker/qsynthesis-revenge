@@ -2,7 +2,6 @@
 #define QSFRAMEWORKGLOBAL_H
 
 #include "QMWidgetsGlobal.h"
-#include "QsGlobal.h"
 
 #ifndef QSFRAMEWORK_API
 #    ifdef QSFRAMEWORK_STATIC
@@ -15,5 +14,9 @@
 #        endif
 #    endif
 #endif
+
+#define QSAPI_BEGIN_NAMESPACE namespace QsApi {
+#define QSAPI_END_NAMESPACE   }
+#define QSAPI_USING_NAMESPACE using namespace QsApi;
 
 #endif // QSFRAMEWORKGLOBAL_H

@@ -4,14 +4,13 @@
 #include <QObject>
 
 #include "IAudioDecoder.h"
-#include "QMNamePlugin.h"
 #include "QsMediaNamespace.h"
 
 QSAPI_BEGIN_NAMESPACE
 
 class IAudioPlaybackPrivate;
 
-class QSMEDIA_API IAudioPlayback : public QMNamePlugin {
+class QSMEDIA_API IAudioPlayback : public QObject {
     Q_OBJECT
     Q_DECLARE_PRIVATE(IAudioPlayback)
 public:

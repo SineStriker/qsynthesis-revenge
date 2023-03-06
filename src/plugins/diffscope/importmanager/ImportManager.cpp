@@ -1,14 +1,6 @@
 #include "ImportManager.h"
 
 #include <QApplication>
-#include <QMainWindow>
-#include <QSplashScreen>
-
-#include "Windows/PlainWindow.h"
-
-static QSplashScreen *splashScreen = nullptr;
-
-static QWidget *mw = nullptr;
 
 namespace Core {
 

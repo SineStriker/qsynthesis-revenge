@@ -1,15 +1,15 @@
 #ifndef IAUDIODECODER_H
 #define IAUDIODECODER_H
 
+#include <QObject>
 #include <QVariantMap>
 
 #include "NAudio/WaveStream.h"
-#include "QMNamePlugin.h"
 #include "QsMediaNamespace.h"
 
 QSAPI_BEGIN_NAMESPACE
 
-class QSMEDIA_API IAudioDecoder : public QMNamePlugin, public NAudio::WaveStream {
+class QSMEDIA_API IAudioDecoder : public QObject, public NAudio::WaveStream {
     Q_OBJECT
 public:
     explicit IAudioDecoder(QObject *parent = nullptr);

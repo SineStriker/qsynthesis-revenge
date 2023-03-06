@@ -18,6 +18,11 @@ public:
     bool isAboutToQuit;
     QSettings::Format settingsJsonFormat;
 
+    QString appDataDir;
+    QString tempDir;
+    QString libDir;
+    QString shareDir;
+
     virtual QMCoreFactory *createFactory();
 
 private:

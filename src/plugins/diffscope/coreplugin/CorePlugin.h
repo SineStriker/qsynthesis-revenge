@@ -17,6 +17,9 @@ namespace Core {
             bool initialize(const QStringList &arguments, QString *errorMessage) override;
             void extensionsInitialized() override;
             bool delayedInitialize() override;
+
+            QObject *remoteCommand(const QStringList &options, const QString &workingDirectory,
+                                   const QStringList &args) override;
         };
 
     } // namespace Internal

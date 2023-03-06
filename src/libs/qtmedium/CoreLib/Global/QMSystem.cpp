@@ -8,6 +8,8 @@
 #ifdef Q_OS_WINDOWS
 #    include <ShlObj.h>
 #else
+#    include <dlfcn.h>
+#    include <limits.h>
 #    include <unistd.h>
 #endif
 
@@ -226,6 +228,24 @@ QString QMFs::invalidFileNameChars() {
                   (char) 23, (char) 24, (char) 25, (char) 26, (char) 27, (char) 28, (char) 29, (char) 30, (char) 31,
                   ':',       '*',       '?',       '\\',      '/'};
     return QString(ch, sizeof(ch));
+}
+
+QString QMFs::getSharedLibraryPath(void *func) {
+#ifdef _WIN32
+    wchar_t buf[MAX_PATH + 1] = {0};
+    HMODULE hm = NULL;
+    if (!GetModuleHandleExW(GET_MODULE_HANDLE_EX_FLAG_FROM_ADDRESS | GET_MODULE_HANDLE_EX_FLAG_UNCHANGED_REFCOUNT,
+                            (LPCWSTR) func, &hm) ||
+        !GetModuleFileNameW(hm, buf, sizeof(buf))) {
+        return {};
+    }
+    return QString::fromStdWString(buf);
+#else
+    Dl_info dl_info;
+    dladdr((void *) GetSelfName, &dl_info);
+    auto buf = dl_info.dli_fname;
+    return QString::fromStdString(buf);
+#endif
 }
 
 void QMOs::exitApp(int code) {
