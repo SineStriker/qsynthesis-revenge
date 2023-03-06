@@ -9,6 +9,7 @@ include_guard(DIRECTORY)
         SUBDIR           <var>
         
         [OUTPUT_NAME     <var>]
+        [MACRO_PREFIX    <var>]
         [COPYRIGHT_YEAR  <var>]
     )
 
@@ -20,7 +21,7 @@ include_guard(DIRECTORY)
 ]] #
 function(ck_add_plugin _target)
     set(options AS_TEST)
-    set(oneValueArgs AUTHOR_NAME FILE_DESC PRODUCT_NAME PARENT SUBDIR OUTPUT_NAME COPYRIGHT_YEAR)
+    set(oneValueArgs AUTHOR_NAME FILE_DESC PRODUCT_NAME MACRO_PREFIX PARENT SUBDIR OUTPUT_NAME COPYRIGHT_YEAR)
     set(multiValueArgs)
     cmake_parse_arguments(FUNC "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
 
@@ -28,9 +29,17 @@ function(ck_add_plugin _target)
     set(CMAKE_AUTOUIC ON)
     set(CMAKE_AUTOMOC ON)
     set(CMAKE_AUTORCC ON)
+    
+    if(NOT FUNC_MACRO_PREFIX)
+        string(TOUPPER ${_target} _prefix)
+    else()
+        set(_prefix ${FUNC_MACRO_PREFIX})
+    endif()
 
     # Add library
     add_library(${_target} SHARED)
+
+    target_compile_definitions(${_target} PRIVATE ${_prefix}_LIBRARY)
 
     if(FUNC_OUTPUT_NAME)
         set(_output_name ${FUNC_OUTPUT_NAME})

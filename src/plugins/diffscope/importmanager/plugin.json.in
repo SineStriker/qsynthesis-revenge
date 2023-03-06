@@ -1,7 +1,7 @@
 {
     "Name": "ImportManager",
-    "Version": "1.0.1",
-    "CompatVersion": "0.0.0",
+    "Version": "@PLUGIN_METADATA_VERSION@",
+    "CompatVersion": "@PLUGIN_METADATA_COMPAT_VERSION@",
     "DisabledByDefault": false,
     "HiddenByDefault": false,
     "Vendor": "FlutyDeer",

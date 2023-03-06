@@ -1,29 +1,29 @@
-#ifndef COREPLUGIN_H
-#define COREPLUGIN_H
+#ifndef IMPORTMANAGER_H
+#define IMPORTMANAGER_H
 
 #include <extensionsystem/iplugin.h>
+
+#include "ImportManagerGlobal.h"
 
 namespace Core {
 
     namespace Internal {
 
-        class Q_DECL_EXPORT CorePlugin : public ExtensionSystem::IPlugin {
+        class IMPORTMANAGER_EXPORT ImportManager : public ExtensionSystem::IPlugin {
             Q_OBJECT
             Q_PLUGIN_METADATA(IID "org.ChorusKit.DiffScope.Plugin" FILE "plugin.json")
         public:
-            CorePlugin();
-            ~CorePlugin();
+            ImportManager();
+            ~ImportManager();
 
             bool initialize(const QStringList &arguments, QString *errorMessage) override;
             void extensionsInitialized() override;
             bool delayedInitialize() override;
-
-            QObject *remoteCommand(const QStringList &options, const QString &workingDirectory,
-                                   const QStringList &args) override;
         };
 
     } // namespace Internal
 
 } // namespace Core
 
-#endif // COREPLUGIN_H
+
+#endif // IMPORTMANAGER_H

@@ -168,11 +168,14 @@ int main_entry(int argc, char *argv[]) {
     a.setOrganizationName("ChorusKit");
     a.setOrganizationDomain("org.ChorusKit");
 
-    QMWidgetsHost host;                                                // QtMedium host
-    QApplication::addLibraryPath(qmHost->libDir() + "/QsLib/plugins"); // Add qslib plugin dir
+    QMWidgetsHost host;
 
-    QMDecorateDir primaryDec;
-    primaryDec.load(host.shareDir() + "/qtdummy/qtdummy.res.json"); // Load qslib resources
+    // Add qslib plugin dir
+    QApplication::addLibraryPath(host.libDir() + "/QsLib/plugins");
+
+    // Load decorators
+    QMDecorateDir dummyDec;
+    dummyDec.load(QString("%1/%2/%2.res.json").arg(host.shareDir(), "qtdummy")); // qtdummy
 
     // Parse command line
     bool allowRoot = false;
@@ -329,6 +332,10 @@ int main_entry(int argc, char *argv[]) {
 
     // shutdown plugin manager on the exit
     QObject::connect(&a, &QApplication::aboutToQuit, &pluginManager, &PluginManager::shutdown);
+
+    // Load app decorator (If exists)
+    QMDecorateDir appDec;
+    appDec.load(QString("%1/%2/%2.res.json").arg(host.shareDir(), qAppName())); // app
 
     return a.exec();
 }
