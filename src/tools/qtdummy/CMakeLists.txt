@@ -33,4 +33,20 @@ if(TRUE)
     ck_add_attaches(${PROJECT_NAME}
         SRC Res/qtdummy.res.json DEST ${ROOT_SHARE_OUTPUT_DIRECTORY}/qtdummy
     )
+
+    if(WIN32 OR APPLE)
+        ck_add_deploy_qt_target(${PROJECT_NAME})
+
+        # if(CMAKE_BUILD_TYPE MATCHES "Release|Rel")
+        # string(TOLOWER ${APP_TOOLSET_NAME} TOOLSET_NAME_LOWER)
+        # string(TOLOWER ${CMAKE_SYSTEM_NAME} SYSTEM_NAME_LOWER)
+        # string(TOLOWER ${CMAKE_SYSTEM_PROCESSOR} SYSTEM_ARCH_LOWER)
+        # set(_release_name ${TOOLSET_NAME_LOWER}-${SYSTEM_NAME_LOWER}-${SYSTEM_ARCH_LOWER}-${APP_VERSION_VERBOSE})
+
+        # install(DIRECTORY ${CONFIG_OUTPUT_DIRECTORY}
+        # DESTINATION ${CMAKE_INSTALL_PREFIX}/${_release_name}
+        # FILES_MATCHING PATTERN "*.h" ${CHORUSKIT_SHARED_LIBRARY_PATTERN}
+        # )
+        # endif()
+    endif()
 endif()

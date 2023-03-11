@@ -1,9 +1,5 @@
 include_guard(DIRECTORY)
 
-if(NOT CHORUSKIT_CMAKE_MODULES_DIR)
-    set(CHORUSKIT_CMAKE_MODULES_DIR ${CMAKE_CURRENT_LIST_DIR})
-endif()
-
 #[[
 Check if a variable is defined, throw error if not.
 

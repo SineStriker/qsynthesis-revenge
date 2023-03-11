@@ -1,4 +1,5 @@
 include_guard(DIRECTORY)
+include(${CMAKE_CURRENT_LIST_DIR}/ChorusKitGlobal.cmake)
 include(${CMAKE_CURRENT_LIST_DIR}/ChorusKitUtils.cmake)
 include(${CMAKE_CURRENT_LIST_DIR}/ChorusKitBuildSystem_p.cmake)
 
@@ -77,13 +78,10 @@ function(ck_init_vcpkg _vcpkg_dir _vcpkg_triplet)
 
     if(WIN32)
         set(_bin_dir ${_vcpkg_installed_dir}/${_vcpkg_triplet}${_vcpkg_triplet_suffix}/bin)
-        set(_bin_pat "*.dll")
     elseif(APPLE)
         set(_bin_dir ${_vcpkg_installed_dir}/${_vcpkg_triplet}${_vcpkg_triplet_suffix}/lib)
-        set(_bin_pat "*.dylib")
     else()
         set(_bin_dir ${_vcpkg_installed_dir}/${_vcpkg_triplet}${_vcpkg_triplet_suffix}/lib)
-        set(_bin_pat "*.so*")
     endif()
 
     if(WIN32)
@@ -93,7 +91,7 @@ function(ck_init_vcpkg _vcpkg_dir _vcpkg_triplet)
     endif()
 
     set(_prebuilt_dlls)
-    file(GLOB _dlls ${_bin_dir}/${_bin_pat})
+    file(GLOB _dlls ${_bin_dir}/${CHORUSKIT_SHARED_LIBRARY_PATTERN})
 
     foreach(_dll ${_dlls})
         get_filename_component(_name ${_dll} NAME)
@@ -460,7 +458,7 @@ Attach embedded resource files to target on Windows, MacOSX.
         COPYRIGHT: Default to `PROJECT_NAME`
 ]] #
 function(ck_target_res _target)
-    set(options)
+    set(options MANIFEST)
     set(oneValueArgs NAME VERSION DESCRIPTION COPYRIGHT ICO ICNS)
     set(multiValueArgs)
     cmake_parse_arguments(FUNC "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
@@ -494,6 +492,7 @@ function(ck_target_res _target)
 
     # Correct output name if empty
     get_target_property(_org_output_name ${_target} OUTPUT_NAME)
+
     if(NOT _org_output_name AND NOT ${_target} STREQUAL ${_app_name})
         set_target_properties(${_target} PROPERTIES OUTPUT_NAME ${_app_name})
     endif()
@@ -863,5 +862,76 @@ function(ck_add_win_shortcut _target _dir)
     add_custom_command(
         TARGET ${_target} POST_BUILD
         COMMAND cscript ${_vbs_name}
+    )
+endfunction()
+
+#[[
+Deploy Qt libraries and plugins.
+
+    ck_add_deploy_qt_target(<target>
+        [LIB_DIR <dir>]
+        [PLUGINS_DIR <dir>]
+    )
+
+    Should specify a target.
+]] #
+function(ck_add_deploy_qt_target _target)
+    set(options)
+    set(oneValueArgs LIB_DIR PLUGINS_DIR)
+    set(multiValueArgs)
+    cmake_parse_arguments(FUNC "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
+
+    # string(TOLOWER ${PROJECT_NAME} PROJECT_NAME_LOWER)
+    # string(TOLOWER ${CMAKE_SYSTEM_NAME} SYSTEM_NAME_LOWER)
+    # string(TOLOWER ${CMAKE_SYSTEM_PROCESSOR} SYSTEM_ARCH_LOWER)
+
+    # set(_release_name ${PROJECT_NAME_LOWER}-${SYSTEM_NAME_LOWER}-${SYSTEM_ARCH_LOWER}-${APP_VERSION_VERBOSE})
+    # set(_deploy_dir ${CMAKE_BINARY_DIR}/${_release_name})
+
+    # Find Qt tools
+    if(NOT DEFINED QT_QMAKE_EXECUTABLE)
+        get_target_property(QT_QMAKE_EXECUTABLE Qt::qmake IMPORTED_LOCATION)
+    endif()
+
+    if(NOT EXISTS "${QT_QMAKE_EXECUTABLE}")
+        message(WARNING "Cannot find the QMake executable.")
+        return()
+    endif()
+
+    get_filename_component(QT_BIN_DIRECTORY "${QT_QMAKE_EXECUTABLE}" DIRECTORY)
+
+    find_program(QT_DEPLOY_EXECUTABLE NAMES windeployqt macdeployqt HINTS "${QT_BIN_DIRECTORY}")
+
+    if(NOT EXISTS "${QT_DEPLOY_EXECUTABLE}")
+        message(WARNING "Cannot find the deployqt tool.")
+        return()
+    endif()
+
+    if(FUNC_LIB_DIR)
+        set(_lib_dir ${FUNC_LIB_DIR})
+    else()
+        set(_lib_dir $<TARGET_FILE_DIR:${_target}>)
+    endif()
+
+    if(FUNC_PLUGINS_DIR)
+        set(_plugins_dir ${FUNC_PLUGINS_DIR})
+    else()
+        set(_plugins_dir $<TARGET_FILE_DIR:${_target}>/plugins)
+    endif()
+
+    add_custom_target(ChorusKit_DeployQt
+        COMMAND ${QT_DEPLOY_EXECUTABLE}
+        --libdir ${_lib_dir}
+        --plugindir ${_plugins_dir}
+        --no-translations
+        --no-system-d3d-compiler
+
+        # --no-virtualkeyboard
+        --no-compiler-runtime
+        --no-opengl-sw
+        --force
+        --verbose 0
+        $<TARGET_FILE:${_target}>
+        WORKING_DIRECTORY $<TARGET_FILE_DIR:${_target}>
     )
 endfunction()
