@@ -47,6 +47,8 @@
 #include <QPluginLoader>
 #include <QRegExp>
 
+#include "newSettings/LibraryLoadGuard.h"
+
 /*!
     \class ExtensionSystem::PluginDependency
     \brief The PluginDependency class contains the name and required compatible
@@ -959,6 +961,11 @@ bool PluginSpecPrivate::loadLibrary()
         hasError = true;
         return false;
     }
+
+    // Begin OpenVPI patch
+    LibraryLoadGuard guard(QFileInfo(loader.fileName()).absolutePath());
+    // End
+    
     if (!loader.load()) {
         hasError = true;
         errorString = QDir::toNativeSeparators(filePath)

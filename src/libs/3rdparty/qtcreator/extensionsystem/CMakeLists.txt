@@ -1,6 +1,6 @@
 project(ExtensionSystem VERSION ${QT_CREATOR_VERSION} LANGUAGES CXX)
 
-ck_add_files(_src CURRENT PATTERNS *.h *.cpp *.ui *.qrc)
+ck_add_files(_src CURRENT DIRS newSettings PATTERNS *.h *.cpp *.ui *.qrc)
 
 ck_add_library(${PROJECT_NAME} SHARED AUTOGEN)
 

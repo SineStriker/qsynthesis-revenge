@@ -25,6 +25,8 @@
 
 #include "singleapplication.h"
 
+#define USE_NATIVE_MESSAGEBOX
+
 using namespace ExtensionSystem;
 
 extern "C" Q_DECL_EXPORT int main_entry(int argc, char *argv[]);
@@ -53,7 +55,7 @@ static inline QString toHtml(const QString &t) {
     res.replace(QLatin1Char('&'), QLatin1String("&amp;"));
     res.replace(QLatin1Char('<'), QLatin1String("&lt;"));
     res.replace(QLatin1Char('>'), QLatin1String("&gt;"));
-    res.insert(0, QLatin1String("<html><pre>"));
+    res.prepend(QLatin1String("<html><pre>"));
     res.append(QLatin1String("</pre></html>"));
     return res;
 }
@@ -84,6 +86,7 @@ static inline void formatOption(QTextStream &str, const QStringList &opts, const
 }
 
 static inline void displayError(const QString &t) {
+#ifndef USE_NATIVE_MESSAGEBOX
     QMessageBox msgbox;
     msgbox.setIcon(QMessageBox::Critical);
     msgbox.setWindowTitle(qAppName());
@@ -93,11 +96,17 @@ static inline void displayError(const QString &t) {
         g_splash->finish(&msgbox);
     }
     msgbox.exec();
-
-    QMOs::exitApp(0);
+#else
+    if (g_splash) {
+        g_splash->close();
+    }
+    qmCon->MsgBox(nullptr, QMConsole::Critical, qAppName(), t);
+#endif
+    QMOs::exitApp(-1);
 }
 
 static inline void displayHelpText(const QString &t) {
+#ifndef USE_NATIVE_MESSAGEBOX
     QMessageBox msgbox;
     msgbox.setIcon(QMessageBox::Information);
     msgbox.setWindowTitle(qAppName());
@@ -107,6 +116,12 @@ static inline void displayHelpText(const QString &t) {
         g_splash->finish(&msgbox);
     }
     msgbox.exec();
+#else
+    if (g_splash) {
+        g_splash->close();
+    }
+    qmCon->MsgBox(nullptr, QMConsole::Information, qAppName(), t);
+#endif
 
     QMOs::exitApp(0);
 }
@@ -212,7 +227,7 @@ int main_entry(int argc, char *argv[]) {
             printHelp();
             return 0;
         }
-        
+
         QString msg = QCoreApplication::tr("You're trying to start %1 as the %2, which is "
                                            "extremely dangerous and therefore strongly not recommended.")
                           .arg(qAppName(), QMOs::rootUserName());
@@ -238,7 +253,7 @@ int main_entry(int argc, char *argv[]) {
     QNetworkProxyFactory::setUseSystemConfiguration(true);
 
     // Don't show plugin manager debug info
-    QLoggingCategory::setFilterRules(QLatin1String("qtc.*.debug=false"));
+    // QLoggingCategory::setFilterRules(QLatin1String("qtc.*.debug=false"));
 
     QSettings::setPath(QSettings::IniFormat, QSettings::UserScope, qmHost->appDataDir());
     QSettings::setPath(QSettings::IniFormat, QSettings::SystemScope, qmHost->appDataDir());
