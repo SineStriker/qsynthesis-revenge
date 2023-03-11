@@ -138,7 +138,9 @@ static inline void printHelp() {
                  },
                  {}, "Add a custom search path for plugins");
     PluginManager::formatOptions(str, OptionIndent, DescriptionIndent);
-    PluginManager::PluginManager::formatPluginOptions(str, OptionIndent, DescriptionIndent);
+    if (PluginManager::instance()) {
+        PluginManager::PluginManager::formatPluginOptions(str, OptionIndent, DescriptionIndent);
+    }
     displayHelpText(help);
 }
 
@@ -157,6 +159,7 @@ static inline QStringList getPluginPaths() {
 
 int main_entry(int argc, char *argv[]) {
     QApplication a(argc, argv);
+
     // Get application information from env
     QString hint;
     if (!(hint = qEnvironmentVariable("CHORUSKIT_APP_NAME_HINT")).isEmpty()) {
@@ -179,6 +182,7 @@ int main_entry(int argc, char *argv[]) {
 
     // Parse command line
     bool allowRoot = false;
+    bool showHelp = false;
     QStringList customPluginPaths;
     QStringList arguments = a.arguments(); // adapted arguments list is passed to plugin manager later
     QMutableStringListIterator it(arguments);
@@ -193,6 +197,8 @@ int main_entry(int argc, char *argv[]) {
                 customPluginPaths << it.next();
                 it.remove();
             }
+        } else if (arg == HELP_OPTION1 || arg == HELP_OPTION2) {
+            showHelp = true;
         } else if (arg.startsWith('-')) {
             if (it.hasNext()) {
                 it.next();
@@ -202,6 +208,11 @@ int main_entry(int argc, char *argv[]) {
 
     // Root privilege detection
     if (QMOs::isUserRoot() && !allowRoot) {
+        if (showHelp) {
+            printHelp();
+            return 0;
+        }
+        
         QString msg = QCoreApplication::tr("You're trying to start %1 as the %2, which is "
                                            "extremely dangerous and therefore strongly not recommended.")
                           .arg(qAppName(), QMOs::rootUserName());

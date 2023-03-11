@@ -8,12 +8,12 @@
         </security>
     </trustInfo>
     <assemblyIdentity
-        version="@PROJECT_VERSION@"
+        version="@MANIFEST_VERSION@"
         processorArchitecture="*"
-        name="@WIN32_MANIFEST_IDENTIFIER@"
+        name="@MANIFEST_IDENTIFIER@"
         type="win32"
     />
-    <description>@WIN32_MANIFEST_DESC@</description>
+    <description>@MANIFEST_DESCRIPTION@</description>
     <dependency>
         <dependentAssembly>
             <assemblyIdentity

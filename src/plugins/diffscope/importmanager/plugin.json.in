@@ -14,6 +14,6 @@
     "Url": "https://www.baidu.com/",
     "Required": true,
     "Dependencies" : [
-        { "Name" : "Core", "Version" : "1.0.0" }
+        { "Name" : "Core", "Version" : "0.1.0" }
     ]
 }

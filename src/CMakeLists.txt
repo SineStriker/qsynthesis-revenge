@@ -15,23 +15,22 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 # ----------------------------------
 # Import vcpkg and libraries
 # ----------------------------------
+ck_init_buildsystem() # Init choruskit buildsystem
+
 set(VCPKG_APPLOCAL_DEPS off) # Tell vcpkg not to copy dlls automatically on Windows
 include(${REPOSITORY_VCPKG_DIR}/scripts/buildsystems/vcpkg.cmake)
+
+ck_init_vcpkg(${REPOSITORY_VCPKG_DIR} ${VCPKG_TARGET_TRIPLET})
 
 # ----------------------------------
 # Import base configuration
 # ----------------------------------
-set(ROOT_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR} CACHE STRING "Root source directory")
-add_subdirectory(shared)
+set(ROOT_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR})
 
 # ----------------------------------
 # Build configuration
 # ----------------------------------
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CONFIG_OUTPUT_DIRECTORY}/bin)
-set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CONFIG_OUTPUT_DIRECTORY}/lib)
-set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CONFIG_OUTPUT_DIRECTORY}/lib)
-
-set(SHARE_OUTPUT_DIRECTORY ${CONFIG_OUTPUT_DIRECTORY}/share)
+set(ROOT_SHARE_OUTPUT_DIRECTORY ${CONFIG_OUTPUT_DIRECTORY}/share)
 
 if(MSVC)
     set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /manifest:no")
@@ -61,6 +60,15 @@ if(CONFIG_WIN32_MSGBOX_TOPMOST)
     add_compile_definitions(CONFIG_WIN32_MSGBOX_TOPMOST)
 endif()
 
+if(CONFIG_WIN32_DEBUG OR NOT_QT_CREATOR)
+    set(ROOT_APPMAIN_TYPE CONSOLE)
+else()
+    set(ROOT_APPMAIN_TYPE WINDOWS)
+endif()
+
+string(TIMESTAMP ROOT_CURRENT_YEAR %Y)
+set(ROOT_OPENVPI_COPYRIGHT "Copyright ${APP_START_YEAR}-${ROOT_CURRENT_YEAR} OpenVPI Team")
+
 # ----------------------------------
 # Add projects
 # ----------------------------------
@@ -72,16 +80,4 @@ add_subdirectory(apps)
 # Add tests
 if(CONFIG_BUILD_TEST)
     add_subdirectory(tests)
-
-    # add_subdirectory(Test)
-    # add_subdirectory(TestNew)
-endif()
-
-# ----------------------------------
-# Add dependencies and deployment
-# ----------------------------------
-if(TRUE)
-    get_all_targets(_all_targets)
-    proc_deps("${_all_targets}")
-    proc_deploy2("${_all_targets}")
 endif()

@@ -1,27 +1,22 @@
 project(Utils VERSION ${QT_CREATOR_VERSION} LANGUAGES CXX)
 
-set(CMAKE_AUTOMOC ON)
-set(CMAKE_AUTOUIC ON)
-set(CMAKE_AUTORCC ON)
-
-add_files(_src
-    CURRENT
-    DIRECTORIES mimetypes theme tooltip
-    PATTERNS *.h *.cpp *.ui *.qrc
-)
+ck_add_files(_src CURRENT PATTERNS *.h *.cpp *.ui *.qrc DIRS mimetypes theme tooltip FILTER_PLATFORM)
 
 if(WIN32)
-    list(FILTER _src EXCLUDE REGEX ".*_(Unix|unix|Mac|mac|Linux|linux)\\.(h|cpp|hpp|cc)")
     list(FILTER _src EXCLUDE REGEX "unixutils.*")
-elseif(APPLE)
-    list(FILTER _src EXCLUDE REGEX ".*_(Win|win|Windows|windows|Linux|linux)\\.(h|cpp|hpp|cc)")
-    list(FILTER _src EXCLUDE REGEX "winutils.*")
-    list(APPEND _src fileutils_mac.mm)
+    set(_platform_libs iphlpapi ws2_32 user32 shell32)
 else()
-    list(FILTER _src EXCLUDE REGEX ".*_(Win|win|Windows|windows|Mac|mac)\\.(h|cpp|hpp|cc)")
     list(FILTER _src EXCLUDE REGEX "winutils.*")
 endif()
 
+if(APPLE)
+    list(APPEND _src fileutils_mac.mm)
+    set(_platform_flags "-framework Foundation")
+endif()
+
+if(QT_CREATOR_NO_FILENAME_LIST)
+    set(_defines QT_CREATOR_NO_FILENAME_LIST)
+endif()
 
 set(_qt_libs Core Widgets Network Concurrent)
 
@@ -30,29 +25,17 @@ if(QT_CREATOR_ENABLE_QML)
     list(APPEND _qt_libs Qml)
 endif()
 
-# ----------------------------------
-# Build shared as LGPL requires
-# ----------------------------------
-configure_qtc_library(${PROJECT_NAME})
-
-# ----------------------------------
-# Add components
-# ----------------------------------
-target_components(${PROJECT_NAME}
-    INCLUDE_CURRENT
-    SOURCES ${_src}
-    QT_LIBRARIES ${_qt_libs}
-    LINKS
+ck_add_library(${PROJECT_NAME} SHARED AUTOGEN
+    LIBRARY_MACRO QTCREATOR_UTILS_LIB
 )
 
-target_compile_definitions(${PROJECT_NAME} PRIVATE QTCREATOR_UTILS_LIB)
+ck_target_components(${PROJECT_NAME}
+    INCLUDE_CURRENT
+    SOURCES ${_src}
+    QT_LINKS ${_qt_libs}
+    DEFINES_PRIVATE ${_defines}
+    CCFLAGS ${_platform_flags}
+    LINKS_PRIVATE ${_platform_libs}
+)
 
-if(WIN32)
-    target_link_libraries(${PROJECT_NAME} PRIVATE iphlpapi ws2_32 user32 shell32)
-elseif(APPLE)
-    target_compile_definitions(${PROJECT_NAME} PRIVATE "-framework Foundation")
-endif()
-
-if(QT_CREATOR_NO_FILENAME_LIST)
-    target_compile_definitions(${PROJECT_NAME} PUBLIC QT_CREATOR_NO_FILENAME_LIST)
-endif()
+configure_qtc_library(${PROJECT_NAME})

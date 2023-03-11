@@ -3,26 +3,21 @@ project(QMWidgets
     LANGUAGES CXX
 )
 
-get_subdirs(_dirs)
+set(_extra_includes)
 
-add_files(_src
-    DIRECTORIES ${_dirs}
+ck_add_files(_src
+    ALLDIRS
     PATTERNS *.h *.hpp *.cpp *.cc
 )
 
-ck_add_library(${PROJECT_NAME}
-    ENABLE_SHARED
-    AUTHOR_NAME ${SUB_AUTHOR_NAME}
-    FILE_DESC ${SUB_FILE_DESC}
-    PRODUCT_NAME "QtMedium"
-    LIBRARY_TYPE ${SUB_PROJECT}
-)
+configure_library()
 
-target_components(${PROJECT_NAME}
-    INCLUDE_CURRENT
+ck_target_components(${PROJECT_NAME}
+    INCLUDE_CURRENT INCLUDE_SUBDIRS
     SOURCES ${_src}
-    QT_LIBRARIES Widgets Svg
-    QT_PRIVATE_INCLUDES Gui Widgets
+    QT_LINKS Widgets Svg
+    QT_INCLUDES_PRIVATE Core Gui Widgets
     LINKS QMCoreLib
-    INCLUDES ${_dirs}
+    LINKS_PRIVATE
+    INCLUDES ${_extra_includes}
 )

@@ -1,5 +1,5 @@
-add_files(_json_headers
-    DIRECTORIES ${CMAKE_CURRENT_LIST_DIR}
+ck_add_files(_json_headers
+    DIRS ${CMAKE_CURRENT_LIST_DIR}
     PATTERNS *.h *.hpp
 )
 

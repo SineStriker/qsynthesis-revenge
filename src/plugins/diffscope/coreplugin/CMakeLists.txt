@@ -1,39 +1,27 @@
-project(diffscope_coreplugin VERSION 0.1.0.0)
+project(coreplugin VERSION 0.1.0.0)
 
-get_subdirs(_dirs)
 set(_extra_includes)
 
-add_files(_src
-    CURRENT_RECURSE
+ck_add_files(_src
+    ALLDIRS
     PATTERNS *.h *.hpp *.cpp *.cc
 )
 
-ck_add_plugin(${PROJECT_NAME}
-    AUTHOR_NAME "Sine Striker"
-    FILE_DESC "DiffScope Core Plugin"
-    PRODUCT_NAME ${PROJECT_NAME}
-    PARENT DiffScope
-    SUBDIR plugins
+configure_plugin_base(_plugin
+    METADATA_IN plugin.json.in
+    PLUGIN_NAME Core
     MACRO_PREFIX CORE
-    OUTPUT_NAME Core
 )
 
-target_components(${PROJECT_NAME}
-    INCLUDE_CURRENT
+ck_target_components(${_plugin}
+    INCLUDE_CURRENT INCLUDE_SUBDIRS
     SOURCES ${_src}
-    QT_LIBRARIES Core Widgets
+    QT_LINKS Core Widgets
     LINKS QsFramework ExtensionSystem
-    INCLUDES ${_dirs} ${_extra_includes}
+    INCLUDES ${_extra_includes}
 )
 
-if(TRUE)
-    set(PLUGIN_METADATA_VERSION
-        ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}.${PROJECT_VERSION_PATCH}_${PROJECT_VERSION_TWEAK})
-    set(PLUGIN_METADATA_COMPAT_VERSION 0.0.0_0)
-    configure_file(
-        plugin.json.in
-        ${CMAKE_CURRENT_BINARY_DIR}/QtPluginMetadata/plugin.json
-        @ONLY
-    )
-    target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_CURRENT_BINARY_DIR}/QtPluginMetadata)
-endif()
+ck_target_res(${_plugin}
+    DESCRIPTION "DiffScope Core Plugin"
+    COPYRIGHT "Sine Striker"
+)

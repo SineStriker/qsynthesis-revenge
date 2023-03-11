@@ -1,3 +1,3 @@
-add_subdirectory(DiffScope)
+add_subdirectory(diffscope)
 
-# add_subdirectory(LabelVoice)
+# add_subdirectory(labelvoice)

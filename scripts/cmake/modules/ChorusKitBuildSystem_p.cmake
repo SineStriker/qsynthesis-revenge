@@ -1,0 +1,153 @@
+include_guard(DIRECTORY)
+
+# ----------------------------------
+# Internal parts
+# ----------------------------------
+macro(_ck_get_targets_recursive _targets _dir)
+    get_property(_subdirs DIRECTORY ${_dir} PROPERTY SUBDIRECTORIES)
+
+    foreach(_subdir ${_subdirs})
+        _ck_get_targets_recursive(${_targets} ${_subdir})
+    endforeach()
+
+    get_property(_current_targets DIRECTORY ${_dir} PROPERTY BUILDSYSTEM_TARGETS)
+    list(APPEND ${_targets} ${_current_targets})
+endmacro()
+
+macro(_ck_list_prepend_prefix _list _prefix)
+    foreach(_item ${ARGN})
+        list(APPEND ${_list} ${_prefix}${_item})
+    endforeach()
+endmacro()
+
+macro(_ck_list_remove_all _list1 _list2)
+    foreach(_item ${${_list2}})
+        list(REMOVE_ITEM ${_list1} ${_item})
+    endforeach()
+endmacro()
+
+macro(_ck_list_add_flatly _list)
+    set(_temp_list)
+    file(GLOB _temp_list ${ARGN})
+    list(APPEND ${_list} ${_temp_list})
+    unset(_temp_list)
+endmacro()
+
+macro(_ck_list_add_recursively _list)
+    set(_temp_list)
+    file(GLOB_RECURSE _temp_list ${ARGN})
+    list(APPEND ${_list} ${_temp_list})
+    unset(_temp_list)
+endmacro()
+
+# Input: cxx source files
+# Output: target ts files
+function(_ck_add_lupdate_target _target)
+    set(options CREATE_ONCE)
+    set(oneValueArgs)
+    set(multiValueArgs INPUT OUTPUT OPTIONS DEPENDS)
+
+    cmake_parse_arguments(_LUPDATE "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
+    set(_lupdate_deps ${_LUPDATE_DEPENDS})
+
+    set(_my_sources ${_LUPDATE_INPUT})
+    set(_my_tsfiles ${_LUPDATE_OUTPUT})
+
+    add_custom_target(${_target} DEPENDS ${_lupdate_deps})
+    get_target_property(_lupdate_exe ${Qt${QT_VERSION_MAJOR}_LUPDATE_EXECUTABLE} IMPORTED_LOCATION)
+
+    foreach(_ts_file ${_my_tsfiles})
+        # make a list file to call lupdate on, so we don't make our commands too
+        # long for some systems
+        get_filename_component(_ts_name ${_ts_file} NAME)
+        set(_ts_lst_file "${CMAKE_CURRENT_BINARY_DIR}${CMAKE_FILES_DIRECTORY}/${_ts_name}_lst_file")
+        set(_lst_file_srcs)
+
+        foreach(_lst_file_src ${_my_sources})
+            set(_lst_file_srcs "${_lst_file_src}\n${_lst_file_srcs}")
+        endforeach()
+
+        get_directory_property(_inc_DIRS INCLUDE_DIRECTORIES)
+
+        foreach(_pro_include ${_inc_DIRS})
+            get_filename_component(_abs_include "${_pro_include}" ABSOLUTE)
+            set(_lst_file_srcs "-I${_pro_include}\n${_lst_file_srcs}")
+        endforeach()
+
+        file(WRITE ${_ts_lst_file} "${_lst_file_srcs}")
+
+        get_filename_component(_ts_abs ${_ts_file} ABSOLUTE)
+
+        if(_LUPDATE_CREATE_ONCE AND NOT EXISTS ${_ts_abs})
+            message(STATUS "[INFO] Linguist update, generate ${_ts_name}")
+            execute_process(
+                COMMAND ${_lupdate_exe} ${_LUPDATE_OPTIONS} "@${_ts_lst_file}" -ts ${_ts_file}
+                WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+                OUTPUT_VARIABLE _null
+            )
+        endif()
+
+        add_custom_command(
+            TARGET ${_target}
+            COMMAND ${_lupdate_exe}
+            ARGS ${_LUPDATE_OPTIONS} "@${_ts_lst_file}" -ts ${_ts_file}
+            WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+            DEPENDS ${_my_sources}
+            BYPRODUCTS ${_ts_lst_file} VERBATIM
+        )
+    endforeach()
+endfunction()
+
+# Input: ts files
+# Output: list to append qm files
+function(_ck_add_lrelease_target _target)
+    set(options)
+    set(oneValueArgs DESTINATION OUTPUT)
+    set(multiValueArgs INPUT OPTIONS DEPENDS)
+
+    cmake_parse_arguments(_LRELEASE "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
+    set(_lrelease_files ${_LRELEASE_INPUT})
+    set(_lrelease_deps ${_LRELEASE_DEPENDS})
+
+    add_custom_target(${_target} DEPENDS ${_lrelease_deps})
+    get_target_property(_lrelease_exe ${Qt${QT_VERSION_MAJOR}_LRELEASE_EXECUTABLE} IMPORTED_LOCATION)
+
+    set(_qm_files)
+
+    foreach(_file ${_lrelease_files})
+        get_filename_component(_abs_FILE ${_file} ABSOLUTE)
+        get_filename_component(_qm_file ${_file} NAME)
+
+        # everything before the last dot has to be considered the file name (including other dots)
+        string(REGEX REPLACE "\\.[^.]*$" "" FILE_NAME ${_qm_file})
+        get_source_file_property(output_location ${_abs_FILE} OUTPUT_LOCATION)
+
+        if(output_location)
+            set(_out_dir ${output_location})
+        elseif(_LRELEASE_DESTINATION)
+            set(_out_dir ${_LRELEASE_DESTINATION})
+        else()
+            set(_out_dir ${CMAKE_CURRENT_BINARY_DIR})
+        endif()
+
+        set(_qm_file "${_out_dir}/${FILE_NAME}.qm")
+
+        get_filename_component(_qm_abs ${_qm_file} ABSOLUTE)
+        get_filename_component(_qm_name ${_qm_file} NAME)
+
+        add_custom_command(
+            TARGET ${_target}
+            COMMAND ${CMAKE_COMMAND} -E make_directory ${_out_dir}
+            COMMAND ${_lrelease_exe} ARGS ${_LRELEASE_OPTIONS} ${_abs_FILE} -qm ${_qm_file}
+            WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+            DEPENDS ${_lrelease_files}
+            VERBATIM
+        )
+
+        list(APPEND _qm_files ${_qm_file})
+    endforeach()
+
+    if(_LRELEASE_OUTPUT)
+        set(${_LRELEASE_OUTPUT} ${_qm_files} PARENT_SCOPE)
+    endif()
+endfunction()

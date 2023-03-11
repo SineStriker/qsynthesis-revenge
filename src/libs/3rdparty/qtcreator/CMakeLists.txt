@@ -5,15 +5,12 @@ set(QT_CREATOR_ENABLE_QML off)
 set(QT_CREATOR_NO_FILENAME_LIST on)
 
 function(configure_qtc_library _name)
-    ck_add_library(${_name}
-        ENABLE_SHARED
-        AUTHOR_NAME "The Qt Company Ltd."
-        FILE_DESC "Qt Creator 3.6"
-        PRODUCT_NAME "${_name}"
-        COPYRIGHT_YEAR "(C) 2015"
-        OUTPUT_NAME QTC${_name}36
-        LIBRARY_TYPE qtcreator
+    ck_target_res(${_name}
+        DESCRIPTION "Qt Creator 3.6"
+        COPYRIGHT "Copyright The Qt Company Ltd."
     )
+    set_target_properties(${_name} PROPERTIES OUTPUT_NAME QTC${_name}36)
+    
     target_compile_definitions(${_name} PRIVATE _UNICODE)
     target_compile_definitions(${_name} PRIVATE UNICODE)
     target_include_directories(${PROJECT_NAME} PUBLIC ${QT_CREATOR_LIB_DIR})

@@ -3,17 +3,17 @@ project(FFmpegEncoder
     LANGUAGES CXX
 )
 
-add_files(_src
+ck_add_files(_src
     CURRENT
     PATTERNS *.h *.hpp *.cpp *.cc
 )
 
 configure_plugin("Sine Striker" _plugin)
 
-target_components(${_plugin}
+ck_target_components(${_plugin}
     INCLUDE_CURRENT
     SOURCES ${_src}
-    QT_LIBRARIES Core
+    QT_LINKS Core
     LINKS QsMedia
 )
 

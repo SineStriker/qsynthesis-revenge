@@ -3,37 +3,31 @@ project(QMCoreLib
     LANGUAGES CXX
 )
 
-set(_platform_lib)
+set(_platform_libs)
 
 if(APPLE)
-    list(APPEND _platform_lib ObjC)
+    list(APPEND _platform_libs ObjC)
 endif()
 
-if(!WIN32)
-    list(APPEND _platform_lib dl)
+if(NOT WIN32)
+    list(APPEND _platform_libs dl)
 endif()
 
-get_subdirs(_dirs)
+set(_extra_includes)
 
-add_files(_src
-    DIRECTORIES ${_dirs}
+ck_add_files(_src
+    ALLDIRS
     PATTERNS *.h *.hpp *.cpp *.cc
 )
 
-ck_add_library(${PROJECT_NAME}
-    ENABLE_SHARED
-    AUTHOR_NAME ${SUB_AUTHOR_NAME}
-    FILE_DESC ${SUB_FILE_DESC}
-    PRODUCT_NAME "QtMedium"
-    LIBRARY_TYPE ${SUB_PROJECT}
-)
+configure_library()
 
-target_components(${PROJECT_NAME}
-    INCLUDE_CURRENT
+ck_target_components(${PROJECT_NAME}
+    INCLUDE_CURRENT INCLUDE_SUBDIRS
     SOURCES ${_src}
-    QT_LIBRARIES Core
-    QT_PRIVATE_INCLUDES Core
+    QT_LINKS Core
+    QT_INCLUDES_PRIVATE Core
     LINKS
-    LINKS_PRIVATE ${_platform_lib}
-    INCLUDES ${_dirs}
+    LINKS_PRIVATE ${_platform_libs}
+    INCLUDES ${_extra_includes}
 )

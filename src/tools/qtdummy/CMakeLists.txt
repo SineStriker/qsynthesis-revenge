@@ -4,49 +4,33 @@ set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 
-# ----------------------------------
-# Add modules
-# ----------------------------------
-add_qt_module(_qt_libs Core Gui Widgets Network Concurrent)
+ck_add_files(_src ALLDIRS PATTERNS *.h *.c *.cpp)
+add_executable(${PROJECT_NAME})
+ck_target_components(${PROJECT_NAME}
+    SOURCES ${_src}
+    QT_LINKS Core Gui Widgets Network Concurrent
+)
 
-# ----------------------------------
-# Add target
-# ----------------------------------
-add_files(_src CURRENT_RECURSE PATTERNS *.h *.c *.cpp)
-add_executable(${PROJECT_NAME} ${_src})
-
-# ----------------------------------
-# Target...
-# ----------------------------------
-target_link_libraries(${PROJECT_NAME} PRIVATE ${_qt_libs})
-
-# ----------------------------------
-# Add translations for libs
-# ----------------------------------
 if(TRUE)
-    get_all_targets_recursive(_all_targets ${ROOT_SOURCE_DIR}/libs)
+    ck_collect_targets(_all_targets DIR ${ROOT_SOURCE_DIR}/libs SHARED)
 
-    set(_all_src)
+    set(_targets)
 
     foreach(_target ${_all_targets})
         if(_target MATCHES "Qs.*|QM.*|NativeWindow|CKAppLoad")
-            get_target_property(_src ${_target} SOURCES)
-            list(APPEND _all_src ${_src})
+            list(APPEND _targets ${_target})
         endif()
     endforeach()
 
-    list(FILTER _all_src INCLUDE REGEX ".+\\.(cpp|cc)")
-    list(FILTER _all_src EXCLUDE REGEX "(qasc|moc)_.+")
-
-    target_create_translations(${PROJECT_NAME} SOURCES ${_all_src}
+    ck_add_translations(qtdummy_translations
+        PREFIX qtdummy
+        TARGETS ${_targets}
         LOCALES zh_CN zh_HK ja_JP
-        DESTINATION Res/translations
-        QM_DIR ${SHARE_OUTPUT_DIRECTORY}/qtdummy/translations
-        CREATE_ONCE POST_BUILD
+        TS_DIR Res/translations
+        QM_DIR ${ROOT_SHARE_OUTPUT_DIRECTORY}/qtdummy/translations
     )
 
-    ck_add_res(${PROJECT_NAME}
-        FILES Res/qtdummy.res.json
-        ABSOLUTE_PATH ${SHARE_OUTPUT_DIRECTORY}/qtdummy
+    ck_add_attaches(${PROJECT_NAME}
+        SRC Res/qtdummy.res.json DEST ${ROOT_SHARE_OUTPUT_DIRECTORY}/qtdummy
     )
 endif()

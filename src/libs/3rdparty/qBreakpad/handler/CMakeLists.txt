@@ -2,33 +2,20 @@ project(qBreakpad VERSION 0.2.1.1 LANGUAGES CXX)
 
 find_package(unofficial-breakpad CONFIG REQUIRED)
 
-set(CMAKE_AUTOMOC on)
-set(CMAKE_AUTOUIC on)
-set(CMAKE_AUTORCC on)
-
 include(../config.cmake)
 
-add_files(_src CURRENT_RECURSE PATTERNS *.h *.c *.cpp)
+ck_add_files(_src ALLDIRS PATTERNS *.h *.cpp)
 
-# ----------------------------------
-# Build shared as LGPL requires
-# ----------------------------------
-ck_add_library(${PROJECT_NAME}
-    ENABLE_SHARED
-    AUTHOR_NAME "buzzySmile"
-    FILE_DESC "Cross-platform Qt crash handler"
-    PRODUCT_NAME "${PEOJECT_NAME}"
-    COPYRIGHT_YEAR "2021"
-    LIBRARY_TYPE 3rdparty
-)
+ck_add_library(${PROJECT_NAME} SHARED AUTOGEN)
 
-# ----------------------------------
-# Add components
-# ----------------------------------
-target_components(${PROJECT_NAME}
+ck_target_components(${PROJECT_NAME}
     INCLUDE_CURRENT
     SOURCES ${_src}
-    QT_LIBRARIES Core Network
-    LINKS   unofficial::breakpad::libbreakpad
-            unofficial::breakpad::libbreakpad_client
+    QT_LINKS Core Network
+    LINKS unofficial::breakpad::libbreakpad unofficial::breakpad::libbreakpad_client
+)
+
+ck_target_res(${PROJECT_NAME}
+    DESCRIPTION "Cross-platform Qt crash handler"
+    COPYRIGHT "Copyright buzzySmile 2021"
 )
