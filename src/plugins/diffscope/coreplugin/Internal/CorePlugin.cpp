@@ -5,6 +5,7 @@
 #include <QSplashScreen>
 
 #include "Windows/PlainWindow.h"
+#include "plugindialog.h"
 
 static QSplashScreen *splashScreen = nullptr;
 
@@ -51,6 +52,9 @@ namespace Core {
                     splashScreen->close();
                 }
             }
+
+            PluginDialog dlg(nullptr);
+            dlg.exec();
 
             return true;
         }

@@ -253,7 +253,7 @@ int main_entry(int argc, char *argv[]) {
     QNetworkProxyFactory::setUseSystemConfiguration(true);
 
     // Don't show plugin manager debug info
-    // QLoggingCategory::setFilterRules(QLatin1String("qtc.*.debug=false"));
+    QLoggingCategory::setFilterRules(QLatin1String("qtc.*.debug=false"));
 
     QSettings::setPath(QSettings::IniFormat, QSettings::UserScope, qmHost->appDataDir());
     QSettings::setPath(QSettings::IniFormat, QSettings::SystemScope, qmHost->appDataDir());
