@@ -1355,7 +1355,7 @@ void PluginManagerPrivate::readPluginPaths() {
     pluginSpecs.clear();
     pluginCategories.clear();
 
-    QStringList pluginFiles;
+    // QStringList pluginFiles;
     // QStringList searchPaths = pluginPaths;
     // while (!searchPaths.isEmpty()) {
     //     const QDir dir(searchPaths.takeFirst());
@@ -1370,20 +1370,22 @@ void PluginManagerPrivate::readPluginPaths() {
     //         searchPaths << subdir.absoluteFilePath();
     // }
 
+    QHash<QString, PluginMetaJson> pluginFiles;
+
     // Begin OpenVPI patch
     for (const auto &path : qAsConst(pluginPaths)) {
         const QDir dir(path);
         const QFileInfoList subdirs = dir.entryInfoList(QDir::Dirs | QDir::NoSymLinks | QDir::NoDotAndDotDot);
         for (const QFileInfo &subdir : subdirs) {
-            PluginMetaJson json(subdir.absoluteFilePath());
-            if (!json.load()) {
+            PluginMetaJson metaJson(subdir.absoluteFilePath());
+            if (!metaJson.load()) {
                 continue;
             }
-            QString path = json.pluginPath();
+            QString path = metaJson.pluginPath();
             if (path.isEmpty() || !QLibrary::isLibrary(path)) {
                 continue;
             }
-            pluginFiles.append(path);
+            pluginFiles.insert(path, metaJson);
         }
     }
     // End
@@ -1391,9 +1393,9 @@ void PluginManagerPrivate::readPluginPaths() {
     defaultCollection = new PluginCollection(QString());
     pluginCategories.insert(QString(), defaultCollection);
 
-    foreach (const QString &pluginFile, pluginFiles) {
+    for (auto it = pluginFiles.begin(); it != pluginFiles.end(); ++it) {
         PluginSpec *spec = new PluginSpec;
-        if (!spec->d->read(pluginFile)) { // not a Qt Creator plugin
+        if (!spec->d->read(it.key())) { // not a Qt Creator plugin
             delete spec;
             continue;
         }

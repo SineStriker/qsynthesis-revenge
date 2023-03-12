@@ -73,6 +73,9 @@ public:
 
     QPluginLoader loader;
 
+    // Begin OpenVPI patch
+    QString displayName;
+
     QString name;
     QString version;
     QString compatVersion;

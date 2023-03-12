@@ -112,7 +112,10 @@ public:
         switch (column) {
         case NameColumn:
             if (role == Qt::DisplayRole || role == SortRole)
-                return m_spec->name();
+                // Begin OpenVPI patch
+                // return m_spec->name();
+                return m_spec->displayName();
+                // End
             if (role == Qt::ToolTipRole) {
                 QString toolTip;
                 if (!m_spec->isAvailableForHostPlatform())

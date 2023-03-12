@@ -30,10 +30,11 @@
 
 #include "pluginspec.h"
 
-#include "pluginspec_p.h"
 #include "iplugin.h"
 #include "iplugin_p.h"
 #include "pluginmanager.h"
+#include "pluginspec_p.h"
+
 
 #include <QCoreApplication>
 #include <QDebug>
@@ -140,107 +141,97 @@ using namespace ExtensionSystem::Internal;
 /*!
     \internal
 */
-uint ExtensionSystem::qHash(const PluginDependency &value)
-{
+uint ExtensionSystem::qHash(const PluginDependency &value) {
     return qHash(value.name);
 }
 
 /*!
     \internal
 */
-bool PluginDependency::operator==(const PluginDependency &other) const
-{
+bool PluginDependency::operator==(const PluginDependency &other) const {
     return name == other.name && version == other.version && type == other.type;
 }
 
-static QString typeString(PluginDependency::Type type)
-{
+static QString typeString(PluginDependency::Type type) {
     switch (type) {
-    case PluginDependency::Optional:
-        return QString(", optional");
-    case PluginDependency::Test:
-        return QString(", test");
-    case PluginDependency::Required:
-    default:
-        return QString();
+        case PluginDependency::Optional:
+            return QString(", optional");
+        case PluginDependency::Test:
+            return QString(", test");
+        case PluginDependency::Required:
+        default:
+            return QString();
     }
 }
 
-QString PluginDependency::toString() const
-{
+QString PluginDependency::toString() const {
     return name + " (" + version + typeString(type) + ")";
 }
 
 /*!
     \internal
 */
-PluginSpec::PluginSpec()
-    : d(new PluginSpecPrivate(this))
-{
+PluginSpec::PluginSpec() : d(new PluginSpecPrivate(this)) {
 }
 
 /*!
     \internal
 */
-PluginSpec::~PluginSpec()
-{
+PluginSpec::~PluginSpec() {
     delete d;
     d = 0;
+}
+
+QString PluginSpec::displayName() const {
+    return d->displayName.isEmpty() ? d->name : d->displayName;
 }
 
 /*!
     The plugin name. This is valid after the PluginSpec::Read state is reached.
 */
-QString PluginSpec::name() const
-{
+QString PluginSpec::name() const {
     return d->name;
 }
 
 /*!
     The plugin version. This is valid after the PluginSpec::Read state is reached.
 */
-QString PluginSpec::version() const
-{
+QString PluginSpec::version() const {
     return d->version;
 }
 
 /*!
     The plugin compatibility version. This is valid after the PluginSpec::Read state is reached.
 */
-QString PluginSpec::compatVersion() const
-{
+QString PluginSpec::compatVersion() const {
     return d->compatVersion;
 }
 
 /*!
     The plugin vendor. This is valid after the PluginSpec::Read state is reached.
 */
-QString PluginSpec::vendor() const
-{
+QString PluginSpec::vendor() const {
     return d->vendor;
 }
 
 /*!
     The plugin copyright. This is valid after the PluginSpec::Read state is reached.
 */
-QString PluginSpec::copyright() const
-{
+QString PluginSpec::copyright() const {
     return d->copyright;
 }
 
 /*!
     The plugin license. This is valid after the PluginSpec::Read state is reached.
 */
-QString PluginSpec::license() const
-{
+QString PluginSpec::license() const {
     return d->license;
 }
 
 /*!
     The plugin description. This is valid after the PluginSpec::Read state is reached.
 */
-QString PluginSpec::description() const
-{
+QString PluginSpec::description() const {
     return d->description;
 }
 
@@ -248,17 +239,15 @@ QString PluginSpec::description() const
     The plugin URL where you can find more information about the plugin.
     This is valid after the PluginSpec::Read state is reached.
 */
-QString PluginSpec::url() const
-{
+QString PluginSpec::url() const {
     return d->url;
 }
 
 /*!
-    The category that the plugin belongs to. Categories are groups of plugins which allow for keeping them together in the UI.
-    Returns an empty string if the plugin does not belong to a category.
+    The category that the plugin belongs to. Categories are groups of plugins which allow for keeping them together in
+   the UI. Returns an empty string if the plugin does not belong to a category.
 */
-QString PluginSpec::category() const
-{
+QString PluginSpec::category() const {
     return d->category;
 }
 
@@ -267,26 +256,22 @@ QString PluginSpec::category() const
     \since 3.0
 */
 
-QRegExp PluginSpec::platformSpecification() const
-{
+QRegExp PluginSpec::platformSpecification() const {
     return d->platformSpecification;
 }
 
-bool PluginSpec::isAvailableForHostPlatform() const
-{
+bool PluginSpec::isAvailableForHostPlatform() const {
     return d->platformSpecification.isEmpty() || d->platformSpecification.exactMatch(PluginManager::platformName());
 }
 
-bool PluginSpec::isRequired() const
-{
+bool PluginSpec::isRequired() const {
     return d->required;
 }
 
 /*!
     Returns whether the plugin has its experimental flag set.
 */
-bool PluginSpec::isExperimental() const
-{
+bool PluginSpec::isExperimental() const {
     return d->experimental;
 }
 
@@ -295,8 +280,7 @@ bool PluginSpec::isExperimental() const
     A plugin might be disabled because the plugin is experimental, or because
     the install settings define it as disabled by default.
 */
-bool PluginSpec::isEnabledByDefault() const
-{
+bool PluginSpec::isEnabledByDefault() const {
     return d->enabledByDefault;
 }
 
@@ -308,8 +292,7 @@ bool PluginSpec::isEnabledByDefault() const
     enabled plugin.
     \sa PluginSpec::isEffectivelyEnabled
 */
-bool PluginSpec::isEnabledBySettings() const
-{
+bool PluginSpec::isEnabledBySettings() const {
     return d->enabledBySettings;
 }
 
@@ -317,8 +300,7 @@ bool PluginSpec::isEnabledBySettings() const
     Returns whether the plugin is loaded at startup.
     \see PluginSpec::isEnabledBySettings
 */
-bool PluginSpec::isEffectivelyEnabled() const
-{
+bool PluginSpec::isEffectivelyEnabled() const {
     if (!isAvailableForHostPlatform())
         return false;
     if (isForceEnabled() || isEnabledIndirectly())
@@ -331,32 +313,28 @@ bool PluginSpec::isEffectivelyEnabled() const
 /*!
     Returns true if loading was not done due to user unselecting this plugin or its dependencies.
 */
-bool PluginSpec::isEnabledIndirectly() const
-{
+bool PluginSpec::isEnabledIndirectly() const {
     return d->enabledIndirectly;
 }
 
 /*!
     Returns whether the plugin is enabled via the -load option on the command line.
 */
-bool PluginSpec::isForceEnabled() const
-{
+bool PluginSpec::isForceEnabled() const {
     return d->forceEnabled;
 }
 
 /*!
     Returns whether the plugin is disabled via the -noload option on the command line.
 */
-bool PluginSpec::isForceDisabled() const
-{
+bool PluginSpec::isForceDisabled() const {
     return d->forceDisabled;
 }
 
 /*!
     The plugin dependencies. This is valid after the PluginSpec::Read state is reached.
 */
-QVector<PluginDependency> PluginSpec::dependencies() const
-{
+QVector<PluginDependency> PluginSpec::dependencies() const {
     return d->dependencies;
 }
 
@@ -364,8 +342,7 @@ QVector<PluginDependency> PluginSpec::dependencies() const
     Returns a list of descriptions of command line arguments the plugin processes.
 */
 
-PluginSpec::PluginArgumentDescriptions PluginSpec::argumentDescriptions() const
-{
+PluginSpec::PluginArgumentDescriptions PluginSpec::argumentDescriptions() const {
     return d->argumentDescriptions;
 }
 
@@ -373,8 +350,7 @@ PluginSpec::PluginArgumentDescriptions PluginSpec::argumentDescriptions() const
     The absolute path to the directory containing the plugin XML description file
     this PluginSpec corresponds to.
 */
-QString PluginSpec::location() const
-{
+QString PluginSpec::location() const {
     return d->location;
 }
 
@@ -382,8 +358,7 @@ QString PluginSpec::location() const
     The absolute path to the plugin XML description file (including the file name)
     this PluginSpec corresponds to.
 */
-QString PluginSpec::filePath() const
-{
+QString PluginSpec::filePath() const {
     return d->filePath;
 }
 
@@ -391,8 +366,7 @@ QString PluginSpec::filePath() const
     Command line arguments specific to the plugin. Set at startup.
 */
 
-QStringList PluginSpec::arguments() const
-{
+QStringList PluginSpec::arguments() const {
     return d->arguments;
 }
 
@@ -400,8 +374,7 @@ QStringList PluginSpec::arguments() const
     Sets the command line arguments specific to the plugin to \a arguments.
 */
 
-void PluginSpec::setArguments(const QStringList &arguments)
-{
+void PluginSpec::setArguments(const QStringList &arguments) {
     d->arguments = arguments;
 }
 
@@ -409,8 +382,7 @@ void PluginSpec::setArguments(const QStringList &arguments)
     Adds \a argument to the command line arguments specific to the plugin.
 */
 
-void PluginSpec::addArgument(const QString &argument)
-{
+void PluginSpec::addArgument(const QString &argument) {
     d->arguments.push_back(argument);
 }
 
@@ -419,24 +391,21 @@ void PluginSpec::addArgument(const QString &argument)
     The state in which the plugin currently is.
     See the description of the PluginSpec::State enum for details.
 */
-PluginSpec::State PluginSpec::state() const
-{
+PluginSpec::State PluginSpec::state() const {
     return d->state;
 }
 
 /*!
     Returns whether an error occurred while reading/starting the plugin.
 */
-bool PluginSpec::hasError() const
-{
+bool PluginSpec::hasError() const {
     return d->hasError;
 }
 
 /*!
     Detailed, possibly multi-line, error description in case of an error.
 */
-QString PluginSpec::errorString() const
-{
+QString PluginSpec::errorString() const {
     return d->errorString;
 }
 
@@ -446,8 +415,7 @@ QString PluginSpec::errorString() const
 
         \sa PluginSpec::dependencies()
 */
-bool PluginSpec::provides(const QString &pluginName, const QString &version) const
-{
+bool PluginSpec::provides(const QString &pluginName, const QString &version) const {
     return d->provides(pluginName, version);
 }
 
@@ -455,8 +423,7 @@ bool PluginSpec::provides(const QString &pluginName, const QString &version) con
     The corresponding IPlugin instance, if the plugin library has already been successfully loaded,
     i.e. the PluginSpec::Loaded state is reached.
 */
-IPlugin *PluginSpec::plugin() const
-{
+IPlugin *PluginSpec::plugin() const {
     return d->plugin;
 }
 
@@ -466,8 +433,7 @@ IPlugin *PluginSpec::plugin() const
 
     \sa PluginSpec::dependencies()
 */
-QHash<PluginDependency, PluginSpec *> PluginSpec::dependencySpecs() const
-{
+QHash<PluginDependency, PluginSpec *> PluginSpec::dependencySpecs() const {
     return d->dependencySpecs;
 }
 
@@ -499,43 +465,26 @@ namespace {
     const char ARGUMENT_NAME[] = "Name";
     const char ARGUMENT_PARAMETER[] = "Parameter";
     const char ARGUMENT_DESCRIPTION[] = "Description";
+
+    // Begin OpenVPI patch
+    const char PLUGIN_DISPLAY_NAME[] = "DisplayName";
+    // End
 }
 /*!
     \internal
 */
 PluginSpecPrivate::PluginSpecPrivate(PluginSpec *spec)
-    : required(false),
-      experimental(false),
-      enabledByDefault(true),
-      enabledBySettings(true),
-      enabledIndirectly(false),
-      forceEnabled(false),
-      forceDisabled(false),
-      plugin(0),
-      state(PluginSpec::Invalid),
-      hasError(false),
-      q(spec)
-{
+    : required(false), experimental(false), enabledByDefault(true), enabledBySettings(true), enabledIndirectly(false),
+      forceEnabled(false), forceDisabled(false), plugin(0), state(PluginSpec::Invalid), hasError(false), q(spec) {
 }
 
 /*!
     \internal
     Returns false if the file does not represent a Qt Creator plugin.
 */
-bool PluginSpecPrivate::read(const QString &fileName)
-{
+bool PluginSpecPrivate::read(const QString &fileName) {
     qCDebug(pluginLog) << "\nReading meta data of" << fileName;
-    name
-        = version
-        = compatVersion
-        = vendor
-        = copyright
-        = license
-        = description
-        = url
-        = category
-        = location
-        = QString();
+    name = version = compatVersion = vendor = copyright = license = description = url = category = location = QString();
     state = PluginSpec::Invalid;
     hasError = false;
     errorString.clear();
@@ -556,25 +505,21 @@ bool PluginSpecPrivate::read(const QString &fileName)
     return true;
 }
 
-void PluginSpecPrivate::setEnabledBySettings(bool value)
-{
+void PluginSpecPrivate::setEnabledBySettings(bool value) {
     enabledBySettings = value;
 }
 
-void PluginSpecPrivate::setEnabledByDefault(bool value)
-{
+void PluginSpecPrivate::setEnabledByDefault(bool value) {
     enabledByDefault = value;
 }
 
-void PluginSpecPrivate::setForceEnabled(bool value)
-{
+void PluginSpecPrivate::setForceEnabled(bool value) {
     forceEnabled = value;
     if (value)
         forceDisabled = false;
 }
 
-void PluginSpecPrivate::setForceDisabled(bool value)
-{
+void PluginSpecPrivate::setForceDisabled(bool value) {
     if (value)
         forceEnabled = false;
     forceDisabled = value;
@@ -583,50 +528,40 @@ void PluginSpecPrivate::setForceDisabled(bool value)
 /*!
     \internal
 */
-bool PluginSpecPrivate::reportError(const QString &err)
-{
+bool PluginSpecPrivate::reportError(const QString &err) {
     errorString = err;
     hasError = true;
     return true;
 }
 
-static inline QString msgValueMissing(const char *key)
-{
+static inline QString msgValueMissing(const char *key) {
     return QCoreApplication::translate("PluginSpec", "\"%1\" is missing").arg(QLatin1String(key));
 }
 
-static inline QString msgValueIsNotAString(const char *key)
-{
-    return QCoreApplication::translate("PluginSpec", "Value for key \"%1\" is not a string")
-            .arg(QLatin1String(key));
+static inline QString msgValueIsNotAString(const char *key) {
+    return QCoreApplication::translate("PluginSpec", "Value for key \"%1\" is not a string").arg(QLatin1String(key));
 }
 
-static inline QString msgValueIsNotABool(const char *key)
-{
-    return QCoreApplication::translate("PluginSpec", "Value for key \"%1\" is not a bool")
-            .arg(QLatin1String(key));
+static inline QString msgValueIsNotABool(const char *key) {
+    return QCoreApplication::translate("PluginSpec", "Value for key \"%1\" is not a bool").arg(QLatin1String(key));
 }
 
-static inline QString msgValueIsNotAObjectArray(const char *key)
-{
+static inline QString msgValueIsNotAObjectArray(const char *key) {
     return QCoreApplication::translate("PluginSpec", "Value for key \"%1\" is not an array of objects")
-            .arg(QLatin1String(key));
+        .arg(QLatin1String(key));
 }
 
-static inline QString msgValueIsNotAMultilineString(const char *key)
-{
+static inline QString msgValueIsNotAMultilineString(const char *key) {
     return QCoreApplication::translate("PluginSpec", "Value for key \"%1\" is not a string and not an array of strings")
-            .arg(QLatin1String(key));
+        .arg(QLatin1String(key));
 }
 
-static inline QString msgInvalidFormat(const char *key, const QString &content)
-{
+static inline QString msgInvalidFormat(const char *key, const QString &content) {
     return QCoreApplication::translate("PluginSpec", "Value \"%2\" for key \"%1\" has invalid format")
-            .arg(QLatin1String(key), content);
+        .arg(QLatin1String(key), content);
 }
 
-static inline bool readMultiLineString(const QJsonValue &value, QString *out)
-{
+static inline bool readMultiLineString(const QJsonValue &value, QString *out) {
     if (!out) {
         qCWarning(pluginLog) << Q_FUNC_INFO << "missing output parameter";
         return false;
@@ -651,8 +586,7 @@ static inline bool readMultiLineString(const QJsonValue &value, QString *out)
 /*!
     \internal
 */
-bool PluginSpecPrivate::readMetaData(const QJsonObject &metaData)
-{
+bool PluginSpecPrivate::readMetaData(const QJsonObject &metaData) {
     qCDebug(pluginLog) << "MetaData:" << QJsonDocument(metaData).toJson().data();
     QJsonValue value;
     value = metaData.value(QLatin1String("IID"));
@@ -669,6 +603,15 @@ bool PluginSpecPrivate::readMetaData(const QJsonObject &metaData)
     if (!value.isObject())
         return reportError(tr("Plugin meta data not found"));
     QJsonObject pluginInfo = value.toObject();
+
+    // Begin OpenVPI patch
+    value = pluginInfo.value(QLatin1String(PLUGIN_DISPLAY_NAME));
+    if (!value.isUndefined() && !value.isString()) {
+        return reportError(msgValueMissing(PLUGIN_DISPLAY_NAME));
+    }
+    displayName = value.toString();
+    qCDebug(pluginLog) << "displayName =" << displayName;
+    // End
 
     value = pluginInfo.value(QLatin1String(PLUGIN_NAME));
     if (value.isUndefined())
@@ -750,8 +693,8 @@ bool PluginSpecPrivate::readMetaData(const QJsonObject &metaData)
     if (!platformSpec.isEmpty()) {
         platformSpecification.setPattern(platformSpec);
         if (!platformSpecification.isValid())
-            return reportError(tr("Invalid platform specification \"%1\": %2")
-                               .arg(platformSpec, platformSpecification.errorString()));
+            return reportError(
+                tr("Invalid platform specification \"%1\": %2").arg(platformSpec, platformSpecification.errorString()));
     }
 
     value = pluginInfo.value(QLatin1String(DEPENDENCIES));
@@ -775,8 +718,7 @@ bool PluginSpecPrivate::readMetaData(const QJsonObject &metaData)
                 return reportError(tr("Dependency: %1").arg(msgValueIsNotAString(DEPENDENCY_VERSION)));
             dep.version = value.toString();
             if (!isValidVersion(dep.version))
-                return reportError(tr("Dependency: %1").arg(msgInvalidFormat(DEPENDENCY_VERSION,
-                                                                             dep.version)));
+                return reportError(tr("Dependency: %1").arg(msgInvalidFormat(DEPENDENCY_VERSION, dep.version)));
             dep.type = PluginDependency::Required;
             value = dependencyObject.value(QLatin1String(DEPENDENCY_TYPE));
             if (!value.isUndefined() && !value.isString())
@@ -791,10 +733,8 @@ bool PluginSpecPrivate::readMetaData(const QJsonObject &metaData)
                     dep.type = PluginDependency::Test;
                 } else {
                     return reportError(tr("Dependency: \"%1\" must be \"%2\" or \"%3\" (is \"%4\")")
-                                       .arg(QLatin1String(DEPENDENCY_TYPE),
-                                            QLatin1String(DEPENDENCY_TYPE_HARD),
-                                            QLatin1String(DEPENDENCY_TYPE_SOFT),
-                                            typeValue));
+                                           .arg(QLatin1String(DEPENDENCY_TYPE), QLatin1String(DEPENDENCY_TYPE_HARD),
+                                                QLatin1String(DEPENDENCY_TYPE_SOFT), typeValue));
                 }
             }
             dependencies.append(dep);
@@ -839,8 +779,7 @@ bool PluginSpecPrivate::readMetaData(const QJsonObject &metaData)
 /*!
     \internal
 */
-bool PluginSpecPrivate::provides(const QString &pluginName, const QString &pluginVersion) const
-{
+bool PluginSpecPrivate::provides(const QString &pluginName, const QString &pluginVersion) const {
     if (QString::compare(pluginName, name, Qt::CaseInsensitive) != 0)
         return false;
     return (versionCompare(version, pluginVersion) >= 0) && (versionCompare(compatVersion, pluginVersion) <= 0);
@@ -849,24 +788,21 @@ bool PluginSpecPrivate::provides(const QString &pluginName, const QString &plugi
 /*!
     \internal
 */
-QRegExp &PluginSpecPrivate::versionRegExp()
-{
+QRegExp &PluginSpecPrivate::versionRegExp() {
     static QRegExp reg(QLatin1String("([0-9]+)(?:[.]([0-9]+))?(?:[.]([0-9]+))?(?:_([0-9]+))?"));
     return reg;
 }
 /*!
     \internal
 */
-bool PluginSpecPrivate::isValidVersion(const QString &version)
-{
+bool PluginSpecPrivate::isValidVersion(const QString &version) {
     return versionRegExp().exactMatch(version);
 }
 
 /*!
     \internal
 */
-int PluginSpecPrivate::versionCompare(const QString &version1, const QString &version2)
-{
+int PluginSpecPrivate::versionCompare(const QString &version1, const QString &version2) {
     QRegExp reg1 = versionRegExp();
     QRegExp reg2 = versionRegExp();
     if (!reg1.exactMatch(version1))
@@ -876,8 +812,8 @@ int PluginSpecPrivate::versionCompare(const QString &version1, const QString &ve
     int number1;
     int number2;
     for (int i = 0; i < 4; ++i) {
-        number1 = reg1.cap(i+1).toInt();
-        number2 = reg2.cap(i+1).toInt();
+        number1 = reg1.cap(i + 1).toInt();
+        number2 = reg2.cap(i + 1).toInt();
         if (number1 < number2)
             return -1;
         if (number1 > number2)
@@ -889,8 +825,7 @@ int PluginSpecPrivate::versionCompare(const QString &version1, const QString &ve
 /*!
     \internal
 */
-bool PluginSpecPrivate::resolveDependencies(const QList<PluginSpec *> &specs)
-{
+bool PluginSpecPrivate::resolveDependencies(const QList<PluginSpec *> &specs) {
     if (hasError)
         return false;
     if (state == PluginSpec::Resolved)
@@ -916,7 +851,8 @@ bool PluginSpecPrivate::resolveDependencies(const QList<PluginSpec *> &specs)
                 if (!errorString.isEmpty())
                     errorString.append(QLatin1Char('\n'));
                 errorString.append(QCoreApplication::translate("PluginSpec", "Could not resolve dependency '%1(%2)'")
-                    .arg(dependency.name).arg(dependency.version));
+                                       .arg(dependency.name)
+                                       .arg(dependency.version));
             }
             continue;
         }
@@ -932,8 +868,7 @@ bool PluginSpecPrivate::resolveDependencies(const QList<PluginSpec *> &specs)
     return true;
 }
 
-void PluginSpecPrivate::enableDependenciesIndirectly()
-{
+void PluginSpecPrivate::enableDependenciesIndirectly() {
     if (!q->isEffectivelyEnabled()) // plugin not enabled, nothing to do
         return;
     QHashIterator<PluginDependency, PluginSpec *> it(dependencySpecs);
@@ -950,8 +885,7 @@ void PluginSpecPrivate::enableDependenciesIndirectly()
 /*!
     \internal
 */
-bool PluginSpecPrivate::loadLibrary()
-{
+bool PluginSpecPrivate::loadLibrary() {
     if (hasError)
         return false;
     if (state != PluginSpec::Resolved) {
@@ -965,14 +899,13 @@ bool PluginSpecPrivate::loadLibrary()
     // Begin OpenVPI patch
     LibraryLoadGuard guard(QFileInfo(loader.fileName()).absolutePath());
     // End
-    
+
     if (!loader.load()) {
         hasError = true;
-        errorString = QDir::toNativeSeparators(filePath)
-            + QString::fromLatin1(": ") + loader.errorString();
+        errorString = QDir::toNativeSeparators(filePath) + QString::fromLatin1(": ") + loader.errorString();
         return false;
     }
-    IPlugin *pluginObject = qobject_cast<IPlugin*>(loader.instance());
+    IPlugin *pluginObject = qobject_cast<IPlugin *>(loader.instance());
     if (!pluginObject) {
         hasError = true;
         errorString = QCoreApplication::translate("PluginSpec", "Plugin is not valid (does not derive from IPlugin)");
@@ -988,19 +921,20 @@ bool PluginSpecPrivate::loadLibrary()
 /*!
     \internal
 */
-bool PluginSpecPrivate::initializePlugin()
-{
+bool PluginSpecPrivate::initializePlugin() {
     if (hasError)
         return false;
     if (state != PluginSpec::Loaded) {
         if (state == PluginSpec::Initialized)
             return true;
-        errorString = QCoreApplication::translate("PluginSpec", "Initializing the plugin failed because state != Loaded");
+        errorString =
+            QCoreApplication::translate("PluginSpec", "Initializing the plugin failed because state != Loaded");
         hasError = true;
         return false;
     }
     if (!plugin) {
-        errorString = QCoreApplication::translate("PluginSpec", "Internal error: have no plugin instance to initialize");
+        errorString =
+            QCoreApplication::translate("PluginSpec", "Internal error: have no plugin instance to initialize");
         hasError = true;
         return false;
     }
@@ -1017,19 +951,20 @@ bool PluginSpecPrivate::initializePlugin()
 /*!
     \internal
 */
-bool PluginSpecPrivate::initializeExtensions()
-{
+bool PluginSpecPrivate::initializeExtensions() {
     if (hasError)
         return false;
     if (state != PluginSpec::Initialized) {
         if (state == PluginSpec::Running)
             return true;
-        errorString = QCoreApplication::translate("PluginSpec", "Cannot perform extensionsInitialized because state != Initialized");
+        errorString = QCoreApplication::translate("PluginSpec",
+                                                  "Cannot perform extensionsInitialized because state != Initialized");
         hasError = true;
         return false;
     }
     if (!plugin) {
-        errorString = QCoreApplication::translate("PluginSpec", "Internal error: have no plugin instance to perform extensionsInitialized");
+        errorString = QCoreApplication::translate(
+            "PluginSpec", "Internal error: have no plugin instance to perform extensionsInitialized");
         hasError = true;
         return false;
     }
@@ -1041,14 +976,14 @@ bool PluginSpecPrivate::initializeExtensions()
 /*!
     \internal
 */
-bool PluginSpecPrivate::delayedInitialize()
-{
+bool PluginSpecPrivate::delayedInitialize() {
     if (hasError)
         return false;
     if (state != PluginSpec::Running)
         return false;
     if (!plugin) {
-        errorString = QCoreApplication::translate("PluginSpec", "Internal error: have no plugin instance to perform delayedInitialize");
+        errorString = QCoreApplication::translate(
+            "PluginSpec", "Internal error: have no plugin instance to perform delayedInitialize");
         hasError = true;
         return false;
     }
@@ -1058,8 +993,7 @@ bool PluginSpecPrivate::delayedInitialize()
 /*!
     \internal
 */
-IPlugin::ShutdownFlag PluginSpecPrivate::stop()
-{
+IPlugin::ShutdownFlag PluginSpecPrivate::stop() {
     if (!plugin)
         return IPlugin::SynchronousShutdown;
     state = PluginSpec::Stopped;
@@ -1069,8 +1003,7 @@ IPlugin::ShutdownFlag PluginSpecPrivate::stop()
 /*!
     \internal
 */
-void PluginSpecPrivate::kill()
-{
+void PluginSpecPrivate::kill() {
     if (!plugin)
         return;
     delete plugin;

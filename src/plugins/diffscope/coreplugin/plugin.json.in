@@ -1,5 +1,6 @@
 {
     "Name": "Core",
+    "DisplayName": "Core",
     "Version": "@PLUGIN_METADATA_VERSION@",
     "CompatVersion": "@PLUGIN_METADATA_COMPAT_VERSION@",
     "DisabledByDefault": false,
