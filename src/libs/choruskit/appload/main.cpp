@@ -19,7 +19,6 @@
 
 #include "QBreakpadHandler.h"
 
-#include "extensionsystem/iplugin.h"
 #include "extensionsystem/pluginmanager.h"
 #include "extensionsystem/pluginspec.h"
 
@@ -177,11 +176,15 @@ int main_entry(int argc, char *argv[]) {
 
     // Get application information from env
     QString hint;
+    QString vstiAddr;
     if (!(hint = qEnvironmentVariable("CHORUSKIT_APP_NAME_HINT")).isEmpty()) {
         a.setApplicationName(hint);
     }
     if (!(hint = qEnvironmentVariable("CHORUSKIT_APP_VERSION_HINT")).isEmpty()) {
         a.setApplicationVersion(hint);
+    }
+    if (!(hint = qEnvironmentVariable("CHORUSKIT_VSTI_BLOCK_ADDRESS")).isEmpty()) {
+        vstiAddr = hint;
     }
     a.setOrganizationName("ChorusKit");
     a.setOrganizationDomain("org.ChorusKit");
@@ -325,6 +328,11 @@ int main_entry(int argc, char *argv[]) {
     SingleApplication single(qApp, true, opts);
     if (!single.isPrimary()) {
         qInfo() << "apploader: primary instance already running. PID:" << single.primaryPid();
+
+        if (!vstiAddr.isEmpty()) {
+            displayError(QCoreApplication::tr("Please close the running application!"));
+            return 0;
+        }
 
         // This eventually needs moved into the NotepadNextApplication to keep
         // sending/receiving logic in the same place

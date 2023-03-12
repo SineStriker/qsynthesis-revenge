@@ -9,7 +9,7 @@ set(REPOSITORY_VCPKG_DIR ${REPOSITORY_ROOT_DIR}/vcpkg CACHE STRING "Vcpkg direct
 set(PROJECT_ARCHIVE_DIR ${CMAKE_BINARY_DIR}/etc CACHE STRING "Archives output directory") # Etc
 set(PROJECT_RELEASE_DIR ${CMAKE_BINARY_DIR} CACHE STRING "Release output directory") # Release
 
-set(PROJECT_MODULES_DIR ${REPOSITORY_ROOT_DIR}/scripts/cmake/Modules CACHE STRING "Custom CMake scripts") # Scripts
+set(PROJECT_MODULES_DIR ${REPOSITORY_ROOT_DIR}/scripts/cmake/modules CACHE STRING "Custom CMake scripts") # Scripts
 set(PROJECT_DOCUMENT_DIR ${REPOSITORY_ROOT_DIR}/docs/redist CACHE STRING "Repository documents directory") # Docs
 set(PROJECT_LICENSE_FILE ${REPOSITORY_ROOT_DIR}/LICENSE CACHE STRING "License file") # License
 

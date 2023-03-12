@@ -17,10 +17,12 @@ if(TRUE)
     set(_targets)
 
     foreach(_target ${_all_targets})
-        if(_target MATCHES "Qs.*|QM.*|NativeWindow|CKAppLoad")
+        if(_target MATCHES "Qs.*|QM.*|CKAppLoad")
             list(APPEND _targets ${_target})
         endif()
     endforeach()
+
+    message(STATUS "Targets: ${_targets}")
 
     ck_add_translations(qtdummy_translations
         PREFIX qtdummy
