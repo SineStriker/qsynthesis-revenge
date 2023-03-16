@@ -14,22 +14,22 @@ namespace Core {
     void ActionItemPrivate::init() {
     }
 
-    ActionItem::ActionItem(const QString &id, QAction *action) : ActionItem(id, *new ActionItemPrivate()) {
+    ActionItem::ActionItem(const QString &id, QAction *action) : ActionItem(*new ActionItemPrivate(), id) {
         d_ptr->type = Action;
         d_ptr->action = action;
     }
 
-    ActionItem::ActionItem(const QString &id, QActionGroup *actionGroup) : ActionItem(id, *new ActionItemPrivate()) {
+    ActionItem::ActionItem(const QString &id, QActionGroup *actionGroup) : ActionItem(*new ActionItemPrivate(), id) {
         d_ptr->type = ActionGroup;
         d_ptr->actionGroup = actionGroup;
     }
 
-    ActionItem::ActionItem(const QString &id, QMenu *menu) : ActionItem(id, *new ActionItemPrivate()) {
+    ActionItem::ActionItem(const QString &id, QMenu *menu) : ActionItem(*new ActionItemPrivate(), id) {
         d_ptr->type = Menu;
         d_ptr->menu = menu;
     }
 
-    ActionItem::ActionItem(const QString &id, QWidget *widget) : ActionItem(id, *new ActionItemPrivate()) {
+    ActionItem::ActionItem(const QString &id, QWidget *widget) : ActionItem(*new ActionItemPrivate(), id) {
         d_ptr->type = Widget;
         d_ptr->widget = widget;
     }
@@ -140,7 +140,7 @@ namespace Core {
         }
     }
 
-    ActionItem::ActionItem(const QString &id, ActionItemPrivate &d) : d_ptr(&d) {
+    ActionItem::ActionItem(ActionItemPrivate &d, const QString &id) : d_ptr(&d) {
         d.q_ptr = this;
         d.init();
 

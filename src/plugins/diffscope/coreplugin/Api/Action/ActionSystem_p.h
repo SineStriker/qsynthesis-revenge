@@ -15,7 +15,7 @@ namespace Core {
 
         ActionSystem *q_ptr;
 
-        QHash<QString, ActionInsertRuleSet> rules;
+        QMap<QString, ActionContext *> contexts;
     };
 }
 

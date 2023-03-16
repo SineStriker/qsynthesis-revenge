@@ -13,8 +13,7 @@ namespace Core {
         actionSystem = new ActionSystem(q_ptr);
     }
 
-
-    ICore *m_instance = nullptr;
+    static ICore *m_instance = nullptr;
 
     ICore *ICore::instance() {
         return m_instance;

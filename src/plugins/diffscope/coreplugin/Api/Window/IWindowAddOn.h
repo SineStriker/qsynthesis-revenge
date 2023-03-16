@@ -30,9 +30,8 @@ namespace Core {
         IWindow *iWin() const;
 
     public:
-        virtual bool initialize() = 0;
+        virtual void initialize() = 0;
         virtual void extensionsInitialized() = 0;
-        virtual bool delayedInitialize() = 0;
 
     protected:
         IWindowAddOn(IWindowAddOnPrivate &d, QObject *parent = nullptr);

@@ -3,24 +3,22 @@
 
 #include <QMenuBar>
 
-#include "ActionInsertRule.h"
-#include "ActionItem.h"
+#include "ActionContext.h"
 
 namespace Core {
-
-    namespace Internal {
-        class ICorePrivate;
-    }
 
     class ActionSystemPrivate;
 
     class CORE_EXPORT ActionSystem : public QObject {
         Q_OBJECT
     public:
-        ActionInsertRuleSet rule(const QString &id);
+        void addContext(ActionContext *context);
+        void removeContext(ActionContext *context);
+        void removeContext(const QString &id);
 
-        static void buildMenuBar(const QString &context, QList<ActionItem *> &actionItems, QMenuBar *menuBar);
-        static void buildMenu(const QString &context, QList<ActionItem *> &actionItems, QMenu *menu);
+        ActionContext *context(const QString &id) const;
+        QList<ActionContext *> contexts() const;
+        QStringList contextIds() const;
 
     private:
         explicit ActionSystem(QObject *parent = nullptr);

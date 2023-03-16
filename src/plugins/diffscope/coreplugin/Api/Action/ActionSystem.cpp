@@ -1,26 +1,61 @@
 #include "ActionSystem.h"
 #include "ActionSystem_p.h"
 
+#include <QDebug>
+
 namespace Core {
 
-        ActionSystemPrivate::ActionSystemPrivate() : q_ptr(nullptr) {
-        }
-
-        void ActionSystemPrivate::init() {
-        }
-
-    ActionSystem *m_instance = nullptr;
-
-    ActionInsertRuleSet ActionSystem::rule(const QString &id) {
-        return d_ptr->rules[id];
+    ActionSystemPrivate::ActionSystemPrivate() : q_ptr(nullptr) {
     }
 
-    void ActionSystem::buildMenuBar(const QString &context, QList<ActionItem *> &actionItems, QMenuBar *menuBar) {
-        menuBar->clear();
+    void ActionSystemPrivate::init() {
     }
 
-    void ActionSystem::buildMenu(const QString &context, QList<ActionItem *> &actionItems, QMenu *menu) {
-        menu->clear();
+    static ActionSystem *m_instance = nullptr;
+
+    void ActionSystem::addContext(ActionContext *context) {
+        if (!context) {
+            qWarning() << "Core::ActionSystem::addContext(): trying to add null context";
+            return;
+        }
+        if (d_ptr->contexts.contains(context->id())) {
+            qWarning() << "Core::ActionSystem::addContext(): trying to add duplicated context";
+            return;
+        }
+        d_ptr->contexts.insert(context->id(), context);
+    }
+
+    void ActionSystem::removeContext(ActionContext *context) {
+        if (context == nullptr) {
+            qWarning() << "Core::ActionSystem::removeContext(): trying to remove null context";
+            return;
+        }
+        removeContext(context->id());
+    }
+
+    void ActionSystem::removeContext(const QString &id) {
+        auto it = d_ptr->contexts.find(id);
+        if (it == d_ptr->contexts.end()) {
+            qWarning() << "Core::ActionSystem::removeContext(): context does not exist" << id;
+            return;
+        }
+        d_ptr->contexts.erase(it);
+    }
+
+    ActionContext *ActionSystem::context(const QString &id) const {
+        auto it = d_ptr->contexts.find(id);
+        if (it != d_ptr->contexts.end()) {
+            return it.value();
+        }
+        return nullptr;
+    }
+
+    QList<ActionContext *> ActionSystem::contexts() const {
+        return d_ptr->contexts.values();
+    }
+
+    QStringList ActionSystem::contextIds() const {
+        return d_ptr->contexts.keys();
     }
 
     ActionSystem::ActionSystem(QObject *parent) : ActionSystem(*new ActionSystemPrivate(), parent) {

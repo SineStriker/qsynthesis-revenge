@@ -1,22 +1,38 @@
 #ifndef IWINDOW_P_H
 #define IWINDOW_P_H
 
+#include <QSet>
+
 #include "IWindow.h"
+#include "IWindowAddOn.h"
 
 namespace Core {
 
-    class IWindowPrivate {
+    class IWindowFactoryPrivate {
+    public:
+        QString id;
+        IWindowFactory::AvailableCreator creator;
+    };
+
+    class IWindowPrivate : public QObject {
+        Q_OBJECT
     public:
         IWindowPrivate();
-        IWindowPrivate(IWindow::Type type);
 
         void init();
 
         IWindow *q_ptr;
 
-        IWindow::Type type;
+        QString id;
+        QMainWindow *window;
 
         QMap<QString, ActionItem *> actionItemMap;
+        std::list<IWindowAddOn *> addOns;
+
+        void initAllAddOns();
+        void deleteAllAddOns();
+
+        void _q_windowDestroyed();
     };
 }
 

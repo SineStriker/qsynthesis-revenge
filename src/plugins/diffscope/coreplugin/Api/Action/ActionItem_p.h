@@ -7,6 +7,8 @@ namespace Core {
 
     class ActionItemPrivate {
     public:
+        ActionItem *q_ptr;
+
         QString id;
         ActionItem::Type type;
 
@@ -14,8 +16,6 @@ namespace Core {
         QActionGroup *actionGroup;
         QMenu *menu;
         QWidget *widget;
-
-        ActionItem *q_ptr;
 
         ActionItemPrivate();
 

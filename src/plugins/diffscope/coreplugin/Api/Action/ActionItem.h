@@ -42,7 +42,7 @@ namespace Core {
         void setText(const QString &text) const;
 
     protected:
-        ActionItem(const QString &id, ActionItemPrivate &d);
+        ActionItem(ActionItemPrivate &d, const QString &id);
 
         QScopedPointer<ActionItemPrivate> d_ptr;
     };
