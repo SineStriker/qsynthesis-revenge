@@ -78,15 +78,9 @@ function(ck_init_vcpkg _vcpkg_dir _vcpkg_triplet)
 
     if(WIN32)
         set(_bin_dir ${_vcpkg_installed_dir}/${_vcpkg_triplet}${_vcpkg_triplet_suffix}/bin)
-    elseif(APPLE)
-        set(_bin_dir ${_vcpkg_installed_dir}/${_vcpkg_triplet}${_vcpkg_triplet_suffix}/lib)
-    else()
-        set(_bin_dir ${_vcpkg_installed_dir}/${_vcpkg_triplet}${_vcpkg_triplet_suffix}/lib)
-    endif()
-
-    if(WIN32)
         set(_runtime_output_dir ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
     else()
+        set(_bin_dir ${_vcpkg_installed_dir}/${_vcpkg_triplet}${_vcpkg_triplet_suffix}/lib)
         set(_runtime_output_dir ${CMAKE_LIBRARY_OUTPUT_DIRECTORY})
     endif()
 
@@ -376,10 +370,13 @@ CMake target commands wrapper to add sources, links, includes.
 
         [INCLUDE_CURRENT]
         [INCLUDE_SUBDIRS]
+
+        [INCLUDE_CURRENT_PRIVATE]
+        [INCLUDE_SUBDIRS_PRIVATE]
     )
 ]] #
 function(ck_target_components _target)
-    set(options INCLUDE_CURRENT INCLUDE_SUBDIRS)
+    set(options INCLUDE_CURRENT INCLUDE_CURRENT_PRIVATE INCLUDE_SUBDIRS INCLUDE_SUBDIRS_PRIVATE)
     set(oneValueArgs)
     set(multiValueArgs SOURCES
         LINKS LINKS_PRIVATE
@@ -428,11 +425,17 @@ function(ck_target_components _target)
 
     if(FUNC_INCLUDE_CURRENT)
         target_include_directories(${_target} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+    elseif(FUNC_INCLUDE_CURRENT_PRIVATE)
+        target_include_directories(${_target} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
     endif()
 
-    if(FUNC_INCLUDE_SUBDIRS)
+    if(FUNC_INCLUDE_SUBDIRS OR FUNC_INCLUDE_SUBDIRS_PRIVATE)
         ck_get_subdirs(_subdirs ABSOLUTE)
-        target_include_directories(${_target} PUBLIC ${_subdirs})
+        if (FUNC_INCLUDE_SUBDIRS)
+            target_include_directories(${_target} PUBLIC ${_subdirs})
+        elseif (FUNC_INCLUDE_SUBDIRS_PRIVATE)
+            target_include_directories(${_target} PRIVATE ${_subdirs})
+        endif()
     endif()
 
     # ----------------- Template End -----------------

@@ -3,13 +3,13 @@
 
 #include <extensionsystem/iplugin.h>
 
-#include "CoreGlobal.h"
+#include "Api/ICore.h"
 
 namespace Core {
 
     namespace Internal {
 
-        class CORE_EXPORT CorePlugin : public ExtensionSystem::IPlugin {
+        class CorePlugin : public ExtensionSystem::IPlugin {
             Q_OBJECT
             Q_PLUGIN_METADATA(IID "org.ChorusKit.DiffScope.Plugin" FILE "plugin.json")
         public:
@@ -22,6 +22,12 @@ namespace Core {
 
             QObject *remoteCommand(const QStringList &options, const QString &workingDirectory,
                                    const QStringList &args) override;
+
+        public:
+            static void waitSplash(QWidget *w);
+
+        private:
+            ICore *icore;
         };
 
     } // namespace Internal

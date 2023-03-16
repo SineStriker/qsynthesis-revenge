@@ -1,6 +1,6 @@
 project(coreplugin VERSION 0.1.0.0)
 
-set(_extra_includes)
+set(_extra_includes ${CURRENT_SUB_PROJECT_MAIN_DIR})
 
 ck_add_files(_src
     ALLDIRS
@@ -14,7 +14,7 @@ configure_plugin_base(_plugin
 )
 
 ck_target_components(${_plugin}
-    INCLUDE_CURRENT INCLUDE_SUBDIRS
+    INCLUDE_CURRENT INCLUDE_SUBDIRS_PRIVATE
     SOURCES ${_src}
     QT_LINKS Core Widgets
     LINKS QsFramework ExtensionSystem

@@ -22,8 +22,6 @@ if(TRUE)
         endif()
     endforeach()
 
-    message(STATUS "Targets: ${_targets}")
-
     ck_add_translations(qtdummy_translations
         PREFIX qtdummy
         TARGETS ${_targets}

@@ -7,7 +7,7 @@ set(_extra_includes)
 
 ck_add_files(_src
     ALLDIRS
-    PATTERNS *.h *.hpp *.cpp *.cc
+    PATTERNS *.h *.hpp *.cpp cc*.
 )
 
 configure_library()
@@ -19,5 +19,5 @@ ck_target_components(${PROJECT_NAME}
     QT_INCLUDES_PRIVATE Core Widgets
     LINKS QMWidgets QsMedia QsSVS
     LINKS_PRIVATE
-    INCLUDES ${_dirs} ${_extra_includes}
+    INCLUDES ${_extra_includes}
 )
