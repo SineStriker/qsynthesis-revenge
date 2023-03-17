@@ -11,6 +11,7 @@ namespace Core {
         ICore *q_ptr;
 
         ActionSystem *actionSystem;
+        WindowSystem *windowSystem;
     };
 
 }

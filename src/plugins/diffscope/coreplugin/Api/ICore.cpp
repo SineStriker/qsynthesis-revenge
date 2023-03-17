@@ -2,15 +2,22 @@
 #include "ICore_p.h"
 
 #include "Action/ActionSystem.h"
+#include "Window/WindowSystem.h"
+
+#include <QApplication>
 
 namespace Core {
 
     ICorePrivate::ICorePrivate() : q_ptr(nullptr) {
         actionSystem = nullptr;
+        windowSystem = nullptr;
     }
 
     void ICorePrivate::init() {
+        qApp->setQuitOnLastWindowClosed(false);
+
         actionSystem = new ActionSystem(q_ptr);
+        windowSystem = new WindowSystem(q_ptr);
     }
 
     static ICore *m_instance = nullptr;
@@ -21,6 +28,10 @@ namespace Core {
 
     ActionSystem *ICore::actionSystem() const {
         return d_ptr->actionSystem;
+    }
+
+    WindowSystem *ICore::windowSystem() const {
+        return d_ptr->windowSystem;
     }
 
     ICore::ICore(QObject *parent) : ICore(*new ICorePrivate(), parent) {

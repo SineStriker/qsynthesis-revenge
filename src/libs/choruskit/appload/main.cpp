@@ -249,8 +249,10 @@ int main_entry(int argc, char *argv[]) {
     g_splash = &splash;
     a.setProperty("__choruskit_init_splash__", QVariant::fromValue(&splash));
 
+#ifdef CONFIG_ENABLE_BREAKPAD
     // Prepare to load plugins
     QBreakpadInstance.setDumpPath(qmHost->appDataDir() + "/crashes");
+#endif
 
     // Make sure we honor the system's proxy settings
     QNetworkProxyFactory::setUseSystemConfiguration(true);

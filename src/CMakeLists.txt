@@ -60,6 +60,10 @@ if(CONFIG_WIN32_MSGBOX_TOPMOST)
     add_compile_definitions(CONFIG_WIN32_MSGBOX_TOPMOST)
 endif()
 
+if(CONFIG_ENABLE_BREAKPAD)
+    add_compile_definitions(CONFIG_ENABLE_BREAKPAD)
+endif()
+
 if(CONFIG_WIN32_DEBUG OR NOT_QT_CREATOR)
     set(ROOT_APPMAIN_TYPE CONSOLE)
 else()

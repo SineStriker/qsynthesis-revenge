@@ -12,6 +12,7 @@ namespace Core {
     }
 
     class ActionSystem;
+    class WindowSystem;
     class ICorePrivate;
 
     class CORE_EXPORT ICore : public QObject {
@@ -20,6 +21,7 @@ namespace Core {
         static ICore *instance();
 
         ActionSystem *actionSystem() const;
+        WindowSystem *windowSystem() const;
 
     private:
         explicit ICore(QObject *parent = nullptr);

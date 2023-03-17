@@ -17,6 +17,8 @@ namespace Core {
 
     class CORE_EXPORT IWindowAddOnFactory {
     public:
+        virtual ~IWindowAddOnFactory();
+
         virtual bool predicate(IWindow *iWindow) const;
         virtual IWindowAddOn *create(QObject *parent) = 0;
     };
@@ -37,6 +39,9 @@ namespace Core {
         IWindowAddOn(IWindowAddOnPrivate &d, QObject *parent = nullptr);
 
         QScopedPointer<IWindowAddOnPrivate> d_ptr;
+
+        friend class WindowSystem;
+        friend class WindowSystemPrivate;
     };
 
 }

@@ -10,6 +10,7 @@ namespace Core {
         class CorePlugin;
 
         class MainWindow : public PlainWindow {
+            Q_OBJECT
         public:
             explicit MainWindow(QWidget *parent = nullptr);
             ~MainWindow();

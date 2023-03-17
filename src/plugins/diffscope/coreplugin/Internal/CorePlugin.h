@@ -25,9 +25,6 @@ namespace Core {
 
         public:
             static void waitSplash(QWidget *w);
-
-        private:
-            ICore *icore;
         };
 
     } // namespace Internal

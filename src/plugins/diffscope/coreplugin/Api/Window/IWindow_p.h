@@ -24,7 +24,7 @@ namespace Core {
         IWindow *q_ptr;
 
         QString id;
-        QMainWindow *window;
+        QWidget *window;
 
         QMap<QString, ActionItem *> actionItemMap;
         std::list<IWindowAddOn *> addOns;
@@ -32,7 +32,7 @@ namespace Core {
         void initAllAddOns();
         void deleteAllAddOns();
 
-        void _q_windowDestroyed();
+        void _q_windowClosed(QWidget *w);
     };
 }
 

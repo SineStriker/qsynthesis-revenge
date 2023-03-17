@@ -29,6 +29,8 @@ namespace Core {
         }
     };
 
+    using ActionInsertRuleList = QList<ActionInsertRule>;
+
     class ActionContextPrivate;
 
     class CORE_EXPORT ActionContext : public QObject {
@@ -40,10 +42,11 @@ namespace Core {
         QString id() const;
         virtual QString title() const;
 
-        int rulesCount() const;
-        QList<ActionInsertRule> rules() const;
-        QList<ActionInsertRule> &rulesRef();
-        void addRule(const ActionInsertRule &rule);
+        void addRule(const QString &id, const ActionInsertRule &rule);
+        void addRules(const QString &id, const ActionInsertRuleList &rules);
+        void clearRules(const QString &id);
+        ActionInsertRuleList rules(const QString &id) const;
+        int rulesCount(const QString &id) const;
 
         void buildMenuBar(QList<ActionItem *> &actionItems, QMenuBar *menuBar) const;
         void buildMenu(QList<ActionItem *> &actionItems, QMenu *menu) const;

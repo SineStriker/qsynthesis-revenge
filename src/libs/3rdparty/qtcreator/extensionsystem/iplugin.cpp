@@ -136,7 +136,7 @@
 */
 
 /*!
-    \fn IPlugin::ShutdownFlag IPlugin::aboutToShutdown()
+    \fn IPlugin::ShutdownFlag IPlugin::aboutToClose()
     \brief Called during a shutdown sequence in the same order as initialization
     before the plugins get deleted in reverse order.
 
@@ -145,7 +145,7 @@
     If a plugin needs to delay the real shutdown for a while, for example if
     it needs to wait for external processes to finish for a clean shutdown,
     the plugin can return IPlugin::AsynchronousShutdown from this function. This
-    will keep the main event loop running after the aboutToShutdown() sequence
+    will keep the main event loop running after the aboutToClose() sequence
     has finished, until all plugins requesting AsynchronousShutdown have sent
     the asynchronousShutdownFinished() signal.
 
@@ -176,7 +176,7 @@
     Sent by the plugin implementation after a asynchronous shutdown
     is ready to proceed with the shutdown sequence.
 
-    \sa aboutToShutdown()
+    \sa aboutToClose()
 */
 
 using namespace ExtensionSystem;

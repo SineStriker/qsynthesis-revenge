@@ -26,7 +26,7 @@ namespace Core {
 
         QSet<IWindow *> iWindows;
 
-        void _q_iWindowDestroyed();
+        void _q_iWindowClosed();
     };
 }
 

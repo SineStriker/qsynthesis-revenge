@@ -16,9 +16,11 @@ namespace Core {
         void addWindow(IWindowFactory *factory);
         void removeWindow(IWindowFactory *factory);
         void removeWindow(const QString &id);
+        QList<IWindowFactory *> takeWindowFactories();
 
         void addAddOn(IWindowAddOnFactory *factory);
         void removeAddOn(IWindowAddOnFactory *factory);
+        QList<IWindowAddOnFactory *> takeAddOnFactories();
 
         IWindow *createWindow(const QString &id, QWidget *parent = nullptr);
 
@@ -35,6 +37,9 @@ namespace Core {
 
         QScopedPointer<WindowSystemPrivate> d_ptr;
         WindowSystem(WindowSystemPrivate &d, QObject *parent = nullptr);
+
+        friend class ICore;
+        friend class ICorePrivate;
     };
 }
 

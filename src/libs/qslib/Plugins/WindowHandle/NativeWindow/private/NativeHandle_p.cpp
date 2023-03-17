@@ -4,6 +4,23 @@
 
 using namespace Global;
 
+#define REPLACE_QMAINWINDOW_MENUBAR 0
+
+#if REPLACE_QMAINWINDOW_MENUBAR
+#    include <private/qlayout_p.h>
+
+#    include <QLayout>
+#    include <QMenuBar>
+
+class HackLayout : public QLayout {
+public:
+    void replaceMenuBar(QMenuBar *menuBar) {
+        auto d = static_cast<QLayoutPrivate *>(d_ptr.data());
+        d->menubar = menuBar;
+    }
+};
+#endif
+
 NativeHandlePrivate::NativeHandlePrivate() {
 }
 
@@ -39,12 +56,16 @@ void NativeHandlePrivate::setup_helper() {
 
 void NativeHandlePrivate::setMenuBar_helper(QMenuBar *menuBar) {
     auto helper = FramelessWidgetsHelper::get(w);
-    auto orgBar = w->menuBar();
+    auto orgBar = q_ptr->menuBar();
     if (orgBar) {
         helper->setHitTestVisible(orgBar, false);
     }
     helper->setHitTestVisible(menuBar);
     titleBar->setMenuBar(menuBar);
+
+#if REPLACE_QMAINWINDOW_MENUBAR
+    reinterpret_cast<HackLayout *>(w->layout())->replaceMenuBar(menuBar);
+#endif
 }
 
 void NativeHandlePrivate::installTitleBar() {
@@ -66,4 +87,8 @@ void NativeHandlePrivate::installTitleBar() {
     helper->setSystemButton(titleBar->maxButton(), SystemButtonType::Maximize);
     helper->setSystemButton(titleBar->closeButton(), SystemButtonType::Close);
     helper->setHitTestVisible(bar); // IMPORTANT!
+
+#if REPLACE_QMAINWINDOW_MENUBAR
+    reinterpret_cast<HackLayout *>(w->layout())->replaceMenuBar(bar);
+#endif
 }
