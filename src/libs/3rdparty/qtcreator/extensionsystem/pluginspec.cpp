@@ -130,7 +130,7 @@
             extensionsInitialized has been called. The loading process is
             complete.
     \value Stopped
-            The plugin has been shut down, i.e. the plugin's IPlugin::aboutToShutdown() function has been called.
+            The plugin has been shut down, i.e. the plugin's IPlugin::aboutToClose() function has been called.
     \value Deleted
             The plugin instance has been deleted.
 */

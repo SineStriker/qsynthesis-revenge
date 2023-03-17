@@ -24,27 +24,43 @@ namespace Core {
         return d_ptr->id;
     }
 
-    int ActionContext::rulesCount() const {
-        return d_ptr->rules.size();
+    void ActionContext::addRule(const QString &id, const ActionInsertRule &rule) {
+        d_ptr->rules[id].append(rule);
     }
 
-    QList<ActionInsertRule> ActionContext::rules() const {
-        return d_ptr->rules;
+    void ActionContext::addRules(const QString &id, const ActionInsertRuleList &rules) {
+        d_ptr->rules[id].append(rules);
     }
 
-    QList<ActionInsertRule> &ActionContext::rulesRef() {
-        return d_ptr->rules;
+    void ActionContext::setRules(const QString &id, const ActionInsertRuleList &rules) {
+        d_ptr->rules[id] = rules;
     }
 
-    void ActionContext::addRule(const ActionInsertRule &rule) {
-        d_ptr->rules.append(rule);
+    void ActionContext::clearRules(const QString &id) {
+        d_ptr->rules.remove(id);
     }
 
-    void ActionContext::buildMenuBar(QList<ActionItem *> &actionItems, QMenuBar *menuBar) const {
+    ActionInsertRuleList ActionContext::rules(const QString &id) const {
+        auto it = d_ptr->rules.find(id);
+        if (it == d_ptr->rules.end()) {
+            return {};
+        }
+        return it.value();
+    }
+
+    int ActionContext::rulesCount(const QString &id) const {
+        auto it = d_ptr->rules.find(id);
+        if (it == d_ptr->rules.end()) {
+            return {};
+        }
+        return it->count();
+    }
+
+    void ActionContext::buildMenuBar(const QList<ActionItem *> &actionItems, QMenuBar *menuBar) const {
         menuBar->clear();
     }
 
-    void ActionContext::buildMenu(QList<ActionItem *> &actionItems, QMenu *menu) const {
+    void ActionContext::buildMenu(const QList<ActionItem *> &actionItems, QMenu *menu) const {
         menu->clear();
     }
 

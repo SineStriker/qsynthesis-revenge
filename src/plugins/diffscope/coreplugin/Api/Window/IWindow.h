@@ -1,10 +1,13 @@
 #ifndef IWINDOW_H
 #define IWINDOW_H
 
-#include <QMainWindow>
+#include <QWidget>
 
 #include "Action/ActionItem.h"
 #include "Global/CoreGlobal.h"
+
+class QMenuBar;
+class QStatusBar;
 
 namespace Core {
 
@@ -23,13 +26,13 @@ namespace Core {
         };
 
         explicit IWindowFactory(const QString &id, AvailableCreator creator);
-        ~IWindowFactory();
+        virtual ~IWindowFactory();
 
         QString id() const;
         AvailableCreator creator() const;
 
-        virtual IWindow *create(QObject *parent = nullptr) = 0;
-        virtual IWindow *create(const QString &id, QObject *parent = nullptr) = 0;
+        virtual IWindow *create(QObject *parent) = 0;
+        virtual IWindow *create(const QString &id, QObject *parent) = 0;
 
     private:
         QScopedPointer<IWindowFactoryPrivate> d_ptr;
@@ -39,12 +42,22 @@ namespace Core {
 
     class CORE_EXPORT IWindow : public QObject {
         Q_OBJECT
-    public:
+    protected:
         explicit IWindow(const QString &id, QObject *parent = nullptr);
         ~IWindow();
 
+    public:
         QString id() const;
-        QMainWindow *window() const;
+        QWidget *window() const;
+
+        virtual QMenuBar *menuBar() const;
+        virtual void setMenuBar(QMenuBar *menuBar);
+
+        virtual QWidget *centralWidget() const;
+        virtual void setCentralWidget(QWidget *widget);
+
+        virtual QStatusBar *statusBar() const;
+        virtual void setStatusBar(QStatusBar *statusBar);
 
         void addActionItem(const QString &id, ActionItem *item);
         void removeActionItem(const QString &id);
@@ -54,10 +67,11 @@ namespace Core {
         void reloadActions();
 
     signals:
-        void aboutToShutdown();
+        void aboutToClose();
+        void closed();
 
     protected:
-        virtual QMainWindow *createWindow(QWidget *parent) const;
+        virtual QWidget *createWindow(QWidget *parent) const = 0;
 
     private:
         IWindow(IWindowPrivate &d, const QString &id, QObject *parent = nullptr);
@@ -68,6 +82,7 @@ namespace Core {
         friend class Internal::CorePlugin;
         friend class WindowSystem;
         friend class WindowSystemPrivate;
+        friend class IWindowFactory;
     };
 
 }

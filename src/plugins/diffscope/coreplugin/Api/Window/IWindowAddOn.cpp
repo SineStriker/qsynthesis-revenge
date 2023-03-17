@@ -9,6 +9,9 @@ namespace Core {
     void IWindowAddOnPrivate::init() {
     }
 
+    IWindowAddOnFactory::~IWindowAddOnFactory() {
+    }
+
     bool IWindowAddOnFactory::predicate(IWindow *iWindow) const {
         return true;
     }

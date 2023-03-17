@@ -13,7 +13,7 @@ namespace Core {
         ActionContext *q_ptr;
 
         QString id;
-        QList<ActionInsertRule> rules;
+        QMap<QString, ActionInsertRuleList> rules;
     };
 
 }

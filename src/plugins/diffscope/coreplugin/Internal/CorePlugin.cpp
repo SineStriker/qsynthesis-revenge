@@ -1,11 +1,12 @@
 #include "CorePlugin.h"
 
 #include <QApplication>
-#include <QMainWindow>
 #include <QSplashScreen>
 
-#include "Windows/PlainWindow.h"
-#include "plugindialog.h"
+#include "Window/WindowSystem.h"
+
+#include "Window/ICoreWindow.h"
+#include "Window/ICoreWindowAddOn.h"
 
 #include <extensionsystem/pluginmanager.h>
 
@@ -13,8 +14,9 @@ namespace Core {
 
     namespace Internal {
 
+        static ICore *icore = nullptr;
+
         CorePlugin::CorePlugin() {
-            icore = nullptr;
         }
 
         CorePlugin::~CorePlugin() {
@@ -24,6 +26,12 @@ namespace Core {
             // Init ICore instance
             icore = new ICore(this);
 
+            // Add basic windows and add-ons
+            auto winMgr = icore->windowSystem();
+            winMgr->addWindow(new ICoreWindowFactory("home"));
+            winMgr->addWindow(new ICoreWindowFactory("project"));
+            winMgr->addAddOn(new ICoreWindowAddOnFactory());
+
             return true;
         }
 
@@ -31,8 +39,12 @@ namespace Core {
         }
 
         bool CorePlugin::delayedInitialize() {
-            PluginDialog dlg(nullptr);
-            dlg.exec();
+            // PluginDialog dlg(nullptr);
+            // dlg.exec();
+
+            auto winMgr = icore->windowSystem();
+            auto handle = winMgr->createWindow("home");
+            waitSplash(handle->window());
             return true;
         }
 
@@ -48,7 +60,7 @@ namespace Core {
             // Get splash screen handle
             auto var = qApp->property("__choruskit_init_splash__");
             auto screen = var.value<QSplashScreen *>();
-            if (screen) {
+            if (screen && screen->isVisible()) {
                 screen->finish(w);
             }
         }

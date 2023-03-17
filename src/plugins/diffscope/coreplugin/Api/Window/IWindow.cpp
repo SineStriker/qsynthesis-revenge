@@ -1,8 +1,6 @@
 #include "IWindow.h"
 #include "IWindow_p.h"
 
-#include "Internal/MainWindow.h"
-
 #include <QDebug>
 
 namespace Core {
@@ -35,9 +33,13 @@ namespace Core {
         }
     }
 
-    void IWindowPrivate::_q_windowDestroyed() {
-        emit q_ptr->aboutToShutdown();
+    void IWindowPrivate::_q_windowClosed(QWidget *w) {
+        Q_UNUSED(w);
+
+        emit q_ptr->aboutToClose();
         deleteAllAddOns();
+
+        emit q_ptr->closed();
 
         q_ptr->deleteLater();
         window = nullptr;
@@ -69,8 +71,32 @@ namespace Core {
         return d_ptr->id;
     }
 
-    QMainWindow *IWindow::window() const {
+    QWidget *IWindow::window() const {
         return d_ptr->window;
+    }
+
+    QMenuBar *IWindow::menuBar() const {
+        return nullptr;
+    }
+
+    void IWindow::setMenuBar(QMenuBar *menuBar) {
+        Q_UNUSED(menuBar);
+    }
+
+    QWidget *IWindow::centralWidget() const {
+        return nullptr;
+    }
+
+    void IWindow::setCentralWidget(QWidget *widget) {
+        Q_UNUSED(widget);
+    }
+
+    QStatusBar *IWindow::statusBar() const {
+        return nullptr;
+    }
+
+    void IWindow::setStatusBar(QStatusBar *statusBar) {
+        Q_UNUSED(statusBar);
     }
 
     void IWindow::addActionItem(const QString &id, ActionItem *item) {
@@ -108,10 +134,6 @@ namespace Core {
     }
 
     void IWindow::reloadActions() {
-    }
-
-    QMainWindow *IWindow::createWindow(QWidget *parent) const {
-        return new Internal::MainWindow(parent);
     }
 
     IWindow::IWindow(IWindowPrivate &d, const QString &id, QObject *parent) : QObject(parent), d_ptr(&d) {
