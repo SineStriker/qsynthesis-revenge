@@ -23,7 +23,7 @@ namespace Core {
 
         ActionContext *q_ptr;
 
-        ActionSystem *system;
+        ActionSystem *system; // Maybe removed later...
         QString id;
 
         std::list<ActionContextDataPrivate> actions;

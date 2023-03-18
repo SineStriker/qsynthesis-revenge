@@ -3,10 +3,11 @@
 #include <QApplication>
 #include <QSplashScreen>
 
+#include "Window/ICoreWindowFactory.h"
 #include "Window/WindowSystem.h"
 
-#include "Window/ICoreWindow.h"
-#include "Window/ICoreWindowAddOn.h"
+#include "AddOn/HomeWindowAddOn.h"
+#include "AddOn/ProjectWindowAddOn.h"
 
 #include <extensionsystem/pluginmanager.h>
 
@@ -28,9 +29,12 @@ namespace Core {
 
             // Add basic windows and add-ons
             auto winMgr = icore->windowSystem();
-            winMgr->addWindow(new ICoreWindowFactory("home"));
-            winMgr->addWindow(new ICoreWindowFactory("project"));
-            winMgr->addAddOn(new ICoreWindowAddOnFactory());
+
+            winMgr->addWindow(new Internal::IHomeWindowFactory());
+            winMgr->addWindow(new Internal::IProjectWindowFactory());
+
+            winMgr->addAddOn(new HomeWindowAddOnFactory());
+            winMgr->addAddOn(new ProjectWindowAddOnFactory());
 
             return true;
         }

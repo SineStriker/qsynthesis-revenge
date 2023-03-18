@@ -24,7 +24,6 @@ namespace Core {
             qWarning() << "Core::ActionSystem::addContext(): trying to add duplicated context";
             return;
         }
-        context->setParent(this);
         context->d_ptr->system = this;
         d_ptr->contexts.insert(context->id(), context);
     }
@@ -45,7 +44,6 @@ namespace Core {
         }
 
         auto context = it.value();
-        context->setParent(nullptr);
         context->d_ptr->system = nullptr;
         d_ptr->contexts.erase(it);
     }
@@ -71,6 +69,12 @@ namespace Core {
 
     ActionSystem::~ActionSystem() {
         m_instance = nullptr;
+
+        // Remove all managed contexts
+        for (auto &item : qAsConst(d_ptr->contexts)) {
+            item->d_ptr->system = nullptr;
+            delete item;
+        }
     }
 
     ActionSystem::ActionSystem(ActionSystemPrivate &d, QObject *parent) : QObject(parent), d_ptr(&d) {

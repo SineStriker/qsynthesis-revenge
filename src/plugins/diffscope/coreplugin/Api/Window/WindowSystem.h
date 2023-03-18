@@ -16,11 +16,13 @@ namespace Core {
         void addWindow(IWindowFactory *factory);
         void removeWindow(IWindowFactory *factory);
         void removeWindow(const QString &id);
-        QList<IWindowFactory *> takeWindowFactories();
+        QList<IWindowFactory *> windowFactories() const;
+        void removeWindowFactories();
 
         void addAddOn(IWindowAddOnFactory *factory);
         void removeAddOn(IWindowAddOnFactory *factory);
-        QList<IWindowAddOnFactory *> takeAddOnFactories();
+        QList<IWindowAddOnFactory *> addOnFactories() const;
+        void removeAddOnFactories();
 
         IWindow *createWindow(const QString &id, QWidget *parent = nullptr);
 

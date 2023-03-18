@@ -32,12 +32,11 @@ namespace Core {
     ActionContextData::ActionContextData(ActionContextDataPrivate *d) : d(d) {
     }
 
-    ActionContext::ActionContext(const QString &id, QObject *parent)
-        : ActionContext(*new ActionContextPrivate(), id, parent) {
+    ActionContext::ActionContext(const QString &id) : ActionContext(*new ActionContextPrivate(), id) {
     }
 
     ActionContext::~ActionContext() {
-        if (d_ptr->system){
+        if (d_ptr->system) {
             d_ptr->system->removeContext(this);
         }
     }
@@ -86,8 +85,7 @@ namespace Core {
         menu->clear();
     }
 
-    ActionContext::ActionContext(ActionContextPrivate &d, const QString &id, QObject *parent)
-        : QObject(parent), d_ptr(&d) {
+    ActionContext::ActionContext(ActionContextPrivate &d, const QString &id) : d_ptr(&d) {
         d_ptr->q_ptr = this;
         d_ptr->init();
 

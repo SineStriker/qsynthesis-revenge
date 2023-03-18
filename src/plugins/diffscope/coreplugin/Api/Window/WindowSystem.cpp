@@ -64,10 +64,12 @@ namespace Core {
         d_ptr->windowFactories.erase(it);
     }
 
-    QList<IWindowFactory *> WindowSystem::takeWindowFactories() {
-        auto res = d_ptr->windowFactories.values();
+    QList<IWindowFactory *> WindowSystem::windowFactories() const {
+        return d_ptr->windowFactories.values();
+    }
+
+    void WindowSystem::removeWindowFactories() {
         d_ptr->windowFactories.clear();
-        return res;
     }
 
     void WindowSystem::addAddOn(IWindowAddOnFactory *factory) {
@@ -94,10 +96,12 @@ namespace Core {
         d_ptr->addOnIndexes.erase(it);
     }
 
-    QList<IWindowAddOnFactory *> WindowSystem::takeAddOnFactories() {
-        auto res = QList<IWindowAddOnFactory *>(d_ptr->addOnFactories.begin(), d_ptr->addOnFactories.end());
+    QList<IWindowAddOnFactory *> WindowSystem::addOnFactories() const {
+        return QList<IWindowAddOnFactory *>(d_ptr->addOnFactories.begin(), d_ptr->addOnFactories.end());
+    }
+
+    void WindowSystem::removeAddOnFactories() {
         d_ptr->addOnFactories.clear();
-        return res;
     }
 
     IWindow *WindowSystem::createWindow(const QString &id, QWidget *parent) {
@@ -160,6 +164,7 @@ namespace Core {
     WindowSystem::~WindowSystem() {
         m_instance = nullptr;
 
+        // Remove all managed factories
         for (auto &item : qAsConst(d_ptr->windowFactories)) {
             delete item;
         }

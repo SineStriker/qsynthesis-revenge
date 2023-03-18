@@ -61,6 +61,14 @@ namespace Core {
         return d_ptr->creator;
     }
 
+    IWindow *IWindowFactory::create(QObject *parent) {
+        return nullptr;
+    }
+
+    IWindow *IWindowFactory::create(const QString &id, QObject *parent) {
+        return nullptr;
+    }
+
     IWindow::IWindow(const QString &id, QObject *parent) : IWindow(*new IWindowPrivate(), id, parent) {
     }
 

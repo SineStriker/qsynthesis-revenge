@@ -50,11 +50,10 @@ namespace Core {
 
     class ActionContextPrivate;
 
-    class CORE_EXPORT ActionContext : public QObject {
-        Q_OBJECT
+    class CORE_EXPORT ActionContext {
     public:
-        explicit ActionContext(const QString &id, QObject *parent = nullptr);
-        ~ActionContext();
+        explicit ActionContext(const QString &id);
+        virtual ~ActionContext();
 
         QString id() const;
         virtual QString title() const;
@@ -67,7 +66,7 @@ namespace Core {
         void buildMenu(const QList<ActionItem *> &actionItems, QMenu *menu) const;
 
     protected:
-        ActionContext(ActionContextPrivate &d, const QString &id, QObject *parent = nullptr);
+        ActionContext(ActionContextPrivate &d, const QString &id);
 
         QScopedPointer<ActionContextPrivate> d_ptr;
 

@@ -31,8 +31,8 @@ namespace Core {
         QString id() const;
         AvailableCreator creator() const;
 
-        virtual IWindow *create(QObject *parent) = 0;
-        virtual IWindow *create(const QString &id, QObject *parent) = 0;
+        virtual IWindow *create(QObject *parent);
+        virtual IWindow *create(const QString &id, QObject *parent);
 
     private:
         QScopedPointer<IWindowFactoryPrivate> d_ptr;

@@ -1,5 +1,5 @@
-#ifndef ICOREWINDOWADDON_H
-#define ICOREWINDOWADDON_H
+#ifndef HOMEWINDOWADDON_H
+#define HOMEWINDOWADDON_H
 
 #include "Window/IWindowAddOn.h"
 
@@ -7,17 +7,17 @@ namespace Core {
 
     namespace Internal {
 
-        class ICoreWindowAddOnFactory : public IWindowAddOnFactory {
+        class HomeWindowAddOnFactory : public IWindowAddOnFactory {
         public:
             bool predicate(IWindow *iWindow) const override;
             IWindowAddOn *create(QObject *parent) override;
         };
 
-        class ICoreWindowAddOn : public IWindowAddOn {
+        class HomeWindowAddOn : public IWindowAddOn {
             Q_OBJECT
         public:
-            explicit ICoreWindowAddOn(QObject *parent = nullptr);
-            ~ICoreWindowAddOn();
+            explicit HomeWindowAddOn(QObject *parent = nullptr);
+            ~HomeWindowAddOn();
 
             void initialize() override;
             void extensionsInitialized() override;
@@ -27,6 +27,4 @@ namespace Core {
 
 }
 
-
-
-#endif // ICOREWINDOWADDON_H
+#endif // HOMEWINDOWADDON_H
