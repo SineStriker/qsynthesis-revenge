@@ -1,10 +1,12 @@
 #include "ActionItem.h"
 #include "ActionItem_p.h"
 
+#include <QDebug>
+
 namespace Core {
 
     ActionItemPrivate::ActionItemPrivate() : q_ptr(nullptr) {
-        type = ActionItem::Action;
+        type = ActionItem::Invalid;
         action = nullptr;
         actionGroup = nullptr;
         menu = nullptr;
@@ -15,21 +17,37 @@ namespace Core {
     }
 
     ActionItem::ActionItem(const QString &id, QAction *action) : ActionItem(*new ActionItemPrivate(), id) {
+        if (!action) {
+            qWarning() << "Core::ActionItem(): trying to wrap null action";
+            return;
+        }
         d_ptr->type = Action;
         d_ptr->action = action;
     }
 
     ActionItem::ActionItem(const QString &id, QActionGroup *actionGroup) : ActionItem(*new ActionItemPrivate(), id) {
+        if (!actionGroup) {
+            qWarning() << "Core::ActionItem(): trying to wrap null action group";
+            return;
+        }
         d_ptr->type = ActionGroup;
         d_ptr->actionGroup = actionGroup;
     }
 
     ActionItem::ActionItem(const QString &id, QMenu *menu) : ActionItem(*new ActionItemPrivate(), id) {
+        if (!menu) {
+            qWarning() << "Core::ActionItem(): trying to wrap null menu";
+            return;
+        }
         d_ptr->type = Menu;
         d_ptr->menu = menu;
     }
 
     ActionItem::ActionItem(const QString &id, QWidget *widget) : ActionItem(*new ActionItemPrivate(), id) {
+        if (!widget) {
+            qWarning() << "Core::ActionItem(): trying to wrap null widget";
+            return;
+        }
         d_ptr->type = Widget;
         d_ptr->widget = widget;
     }

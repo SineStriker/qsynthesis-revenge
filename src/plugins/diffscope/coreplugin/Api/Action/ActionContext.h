@@ -2,6 +2,7 @@
 #define ACTIONCONTEXT_H
 
 #include <QMenuBar>
+#include <QSet>
 
 #include "Global/CoreGlobal.h"
 
@@ -29,7 +30,23 @@ namespace Core {
         }
     };
 
-    using ActionInsertRuleList = QList<ActionInsertRule>;
+    class ActionContextDataPrivate;
+
+    class CORE_EXPORT ActionContextData {
+    public:
+        bool isValid() const;
+
+        QString id() const;
+        QList<ActionInsertRule> &rules();
+        QSet<ActionItem *> instances() const;
+
+    private:
+        explicit ActionContextData(ActionContextDataPrivate *d);
+        ActionContextDataPrivate *d;
+
+        friend class ActionContext;
+        friend class ActionSystem;
+    };
 
     class ActionContextPrivate;
 
@@ -42,12 +59,9 @@ namespace Core {
         QString id() const;
         virtual QString title() const;
 
-        void addRule(const QString &id, const ActionInsertRule &rule);
-        void addRules(const QString &id, const ActionInsertRuleList &rules);
-        void setRules(const QString &id, const ActionInsertRuleList &rules);
-        void clearRules(const QString &id);
-        ActionInsertRuleList rules(const QString &id) const;
-        int rulesCount(const QString &id) const;
+        ActionContextData addAction(const QString &id);
+        void removeAction(const QString &id);
+        ActionContextData action(const QString &id);
 
         void buildMenuBar(const QList<ActionItem *> &actionItems, QMenuBar *menuBar) const;
         void buildMenu(const QList<ActionItem *> &actionItems, QMenu *menu) const;
@@ -56,6 +70,8 @@ namespace Core {
         ActionContext(ActionContextPrivate &d, const QString &id, QObject *parent = nullptr);
 
         QScopedPointer<ActionContextPrivate> d_ptr;
+
+        friend class ActionSystem;
     };
 
 }

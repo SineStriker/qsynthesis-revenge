@@ -15,6 +15,7 @@ namespace Core {
     class CORE_EXPORT ActionItem {
     public:
         enum Type {
+            Invalid,
             Action,
             ActionGroup,
             Menu,

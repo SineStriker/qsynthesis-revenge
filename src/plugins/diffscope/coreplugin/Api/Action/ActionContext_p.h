@@ -1,19 +1,33 @@
 #ifndef ACTIONCONTEXT_P_H
 #define ACTIONCONTEXT_P_H
 
+#include <QHash>
+
 #include "ActionContext.h"
 
 namespace Core {
 
-    class CORE_EXPORT ActionContextPrivate {
+    class ActionSystem;
+
+    class ActionContextDataPrivate {
+    public:
+        QString id;
+        QList<ActionInsertRule> rules;
+        QSet<ActionItem *> instances;
+    };
+
+    class ActionContextPrivate {
     public:
         ActionContextPrivate();
         void init();
 
         ActionContext *q_ptr;
 
+        ActionSystem *system;
         QString id;
-        QMap<QString, ActionInsertRuleList> rules;
+
+        std::list<ActionContextDataPrivate> actions;
+        QHash<QString, decltype(actions)::iterator> actionIndexes;
     };
 
 }

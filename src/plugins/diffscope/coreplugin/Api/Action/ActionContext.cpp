@@ -1,12 +1,35 @@
 #include "ActionContext.h"
 #include "ActionContext_p.h"
 
+#include "ActionSystem.h"
+
+#include <QDebug>
+
 namespace Core {
 
-    ActionContextPrivate::ActionContextPrivate() : q_ptr(nullptr) {
+    ActionContextPrivate::ActionContextPrivate() : q_ptr(nullptr), system(nullptr) {
     }
 
     void ActionContextPrivate::init() {
+    }
+
+    bool ActionContextData::isValid() const {
+        return d != nullptr;
+    }
+
+    QString ActionContextData::id() const {
+        return d ? d->id : QString();
+    }
+    QList<ActionInsertRule> &ActionContextData::rules() {
+        static QList<ActionInsertRule> _list;
+        _list.clear();
+        return d ? d->rules : _list;
+    }
+    QSet<ActionItem *> ActionContextData::instances() const {
+        return d ? d->instances : QSet<ActionItem *>();
+    }
+
+    ActionContextData::ActionContextData(ActionContextDataPrivate *d) : d(d) {
     }
 
     ActionContext::ActionContext(const QString &id, QObject *parent)
@@ -14,6 +37,9 @@ namespace Core {
     }
 
     ActionContext::~ActionContext() {
+        if (d_ptr->system){
+            d_ptr->system->removeContext(this);
+        }
     }
 
     QString ActionContext::id() const {
@@ -24,36 +50,32 @@ namespace Core {
         return d_ptr->id;
     }
 
-    void ActionContext::addRule(const QString &id, const ActionInsertRule &rule) {
-        d_ptr->rules[id].append(rule);
-    }
-
-    void ActionContext::addRules(const QString &id, const ActionInsertRuleList &rules) {
-        d_ptr->rules[id].append(rules);
-    }
-
-    void ActionContext::setRules(const QString &id, const ActionInsertRuleList &rules) {
-        d_ptr->rules[id] = rules;
-    }
-
-    void ActionContext::clearRules(const QString &id) {
-        d_ptr->rules.remove(id);
-    }
-
-    ActionInsertRuleList ActionContext::rules(const QString &id) const {
-        auto it = d_ptr->rules.find(id);
-        if (it == d_ptr->rules.end()) {
-            return {};
+    ActionContextData ActionContext::addAction(const QString &id) {
+        if (d_ptr->actionIndexes.contains(id)) {
+            qWarning() << "Core::ActionContext::addAction(): trying to add duplicated action";
+            return ActionContextData(nullptr);
         }
-        return it.value();
+        auto it = d_ptr->actions.insert(d_ptr->actions.end(), {id, {}, {}});
+        d_ptr->actionIndexes.insert(id, it);
+        return ActionContextData(&(*it));
     }
 
-    int ActionContext::rulesCount(const QString &id) const {
-        auto it = d_ptr->rules.find(id);
-        if (it == d_ptr->rules.end()) {
-            return {};
+    void ActionContext::removeAction(const QString &id) {
+        auto it = d_ptr->actionIndexes.find(id);
+        if (it == d_ptr->actionIndexes.end()) {
+            qWarning() << "Core::ActionContext::removeAction(): action does not exist" << id;
+            return;
         }
-        return it->count();
+        d_ptr->actions.erase(it.value());
+        d_ptr->actionIndexes.erase(it);
+    }
+
+    ActionContextData ActionContext::action(const QString &id) {
+        auto it = d_ptr->actionIndexes.find(id);
+        if (it == d_ptr->actionIndexes.end()) {
+            return ActionContextData(nullptr);
+        }
+        return ActionContextData(&(*it.value()));
     }
 
     void ActionContext::buildMenuBar(const QList<ActionItem *> &actionItems, QMenuBar *menuBar) const {

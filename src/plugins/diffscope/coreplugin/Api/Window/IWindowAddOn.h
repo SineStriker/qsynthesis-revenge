@@ -29,7 +29,7 @@ namespace Core {
         explicit IWindowAddOn(QObject *parent = nullptr);
         ~IWindowAddOn();
 
-        IWindow *iWin() const;
+        IWindow *handle() const;
 
     public:
         virtual void initialize() = 0;

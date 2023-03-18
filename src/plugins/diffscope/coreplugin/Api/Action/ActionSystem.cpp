@@ -1,6 +1,8 @@
 #include "ActionSystem.h"
 #include "ActionSystem_p.h"
 
+#include "ActionContext_p.h"
+
 #include <QDebug>
 
 namespace Core {
@@ -22,6 +24,8 @@ namespace Core {
             qWarning() << "Core::ActionSystem::addContext(): trying to add duplicated context";
             return;
         }
+        context->setParent(this);
+        context->d_ptr->system = this;
         d_ptr->contexts.insert(context->id(), context);
     }
 
@@ -39,6 +43,10 @@ namespace Core {
             qWarning() << "Core::ActionSystem::removeContext(): context does not exist" << id;
             return;
         }
+
+        auto context = it.value();
+        context->setParent(nullptr);
+        context->d_ptr->system = nullptr;
         d_ptr->contexts.erase(it);
     }
 
