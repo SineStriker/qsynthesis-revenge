@@ -12,8 +12,10 @@ namespace Core {
 
     class WindowSystemPrivate : public QObject {
         Q_OBJECT
+        Q_DECLARE_PUBLIC(WindowSystem)
     public:
         WindowSystemPrivate();
+        virtual ~WindowSystemPrivate();
 
         void init();
 

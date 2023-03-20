@@ -42,10 +42,6 @@ namespace Core {
 
     class CORE_EXPORT IWindow : public QObject {
         Q_OBJECT
-    protected:
-        explicit IWindow(const QString &id, QObject *parent = nullptr);
-        ~IWindow();
-
     public:
         QString id() const;
         QWidget *window() const;
@@ -59,6 +55,11 @@ namespace Core {
         virtual QStatusBar *statusBar() const;
         virtual void setStatusBar(QStatusBar *statusBar);
 
+        void addWidget(const QString &id, QWidget *w);
+        void removeWidget(const QString &id);
+        QWidget *widget(const QString &id) const;
+        QList<QWidget *> widgets() const;
+
         void addActionItem(const QString &id, ActionItem *item);
         void removeActionItem(const QString &id);
         ActionItem *actionItem(const QString &id) const;
@@ -71,11 +72,17 @@ namespace Core {
         void closed();
 
     protected:
-        virtual QWidget *createWindow(QWidget *parent) const = 0;
+        explicit IWindow(const QString &id, QObject *parent = nullptr);
+        ~IWindow();
 
-    private:
+        virtual QWidget *createWindow(QWidget *parent) const = 0;
+        virtual void setupWindow();
+
+    protected:
         IWindow(IWindowPrivate &d, const QString &id, QObject *parent = nullptr);
         QScopedPointer<IWindowPrivate> d_ptr;
+
+        Q_DECLARE_PRIVATE(IWindow)
 
         friend class ICore;
         friend class ICorePrivate;

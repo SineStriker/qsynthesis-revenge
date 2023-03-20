@@ -69,12 +69,6 @@ namespace Core {
         return nullptr;
     }
 
-    IWindow::IWindow(const QString &id, QObject *parent) : IWindow(*new IWindowPrivate(), id, parent) {
-    }
-
-    IWindow::~IWindow() {
-    }
-
     QString IWindow::id() const {
         return d_ptr->id;
     }
@@ -107,13 +101,46 @@ namespace Core {
         Q_UNUSED(statusBar);
     }
 
+    void IWindow::addWidget(const QString &id, QWidget *w) {
+        if (!w) {
+            qWarning() << "Core::IWindow::addWidget(): trying to add null widget";
+            return;
+        }
+        if (d_ptr->actionItemMap.contains(id)) {
+            qWarning() << "Core::IWindow::addWidget(): trying to add duplicated widget:" << id;
+            return;
+        }
+        d_ptr->widgetMap.insert(id, w);
+    }
+
+    void IWindow::removeWidget(const QString &id) {
+        auto it = d_ptr->widgetMap.find(id);
+        if (it == d_ptr->widgetMap.end()) {
+            qWarning() << "Core::IWindow::removeWidget(): action item does not exist:" << id;
+            return;
+        }
+        d_ptr->widgetMap.erase(it);
+    }
+
+    QWidget *IWindow::widget(const QString &id) const {
+        auto it = d_ptr->widgetMap.find(id);
+        if (it != d_ptr->widgetMap.end()) {
+            return it.value();
+        }
+        return nullptr;
+    }
+
+    QWidgetList IWindow::widgets() const {
+        return d_ptr->widgetMap.values();
+    }
+
     void IWindow::addActionItem(const QString &id, ActionItem *item) {
         if (!item) {
             qWarning() << "Core::IWindow::addActionItem(): trying to add null action item";
             return;
         }
         if (d_ptr->actionItemMap.contains(id)) {
-            qWarning() << "Core::IWindow::addActionItem(): trying to add duplicated action item";
+            qWarning() << "Core::IWindow::addActionItem(): trying to add duplicated action item:" << id;
             return;
         }
         d_ptr->actionItemMap.insert(id, item);
@@ -125,8 +152,7 @@ namespace Core {
             qWarning() << "Core::IWindow::addActionItem(): action item does not exist:" << id;
             return;
         }
-
-        d_ptr->actionItemMap.remove(id);
+        d_ptr->actionItemMap.erase(it);
     }
 
     ActionItem *IWindow::actionItem(const QString &id) const {
@@ -142,6 +168,16 @@ namespace Core {
     }
 
     void IWindow::reloadActions() {
+    }
+
+    IWindow::IWindow(const QString &id, QObject *parent) : IWindow(*new IWindowPrivate(), id, parent) {
+    }
+
+    IWindow::~IWindow() {
+    }
+
+    void IWindow::setupWindow() {
+        // Do nothing
     }
 
     IWindow::IWindow(IWindowPrivate &d, const QString &id, QObject *parent) : QObject(parent), d_ptr(&d) {

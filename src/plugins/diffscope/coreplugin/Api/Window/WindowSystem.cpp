@@ -14,6 +14,9 @@ namespace Core {
     WindowSystemPrivate::WindowSystemPrivate() : q_ptr(nullptr) {
     }
 
+    WindowSystemPrivate::~WindowSystemPrivate() {
+    }
+
     void WindowSystemPrivate::init() {
     }
 
@@ -41,7 +44,7 @@ namespace Core {
             return;
         }
         if (d_ptr->windowFactories.contains(factory->id())) {
-            qWarning() << "Core::WindowSystem::addWindow(): trying to add duplicated creator";
+            qWarning() << "Core::WindowSystem::addWindow(): trying to add duplicated creator:" << factory->id();
             return;
         }
         d_ptr->windowFactories.insert(factory->id(), factory);
@@ -58,7 +61,7 @@ namespace Core {
     void WindowSystem::removeWindow(const QString &id) {
         auto it = d_ptr->windowFactories.find(id);
         if (it == d_ptr->windowFactories.end()) {
-            qWarning() << "Core::WindowSystem::removeWindow(): creator does not exist" << id;
+            qWarning() << "Core::WindowSystem::removeWindow(): creator does not exist:" << id;
             return;
         }
         d_ptr->windowFactories.erase(it);
@@ -89,7 +92,7 @@ namespace Core {
 
         auto it = d_ptr->addOnIndexes.find(factory);
         if (it == d_ptr->addOnIndexes.end()) {
-            qWarning() << "Core::WindowSystem::removeAddOn(): add-on does not exist" << factory;
+            qWarning() << "Core::WindowSystem::removeAddOn(): add-on does not exist:" << factory;
             return;
         }
         d_ptr->addOnFactories.erase(it.value());
@@ -107,7 +110,7 @@ namespace Core {
     IWindow *WindowSystem::createWindow(const QString &id, QWidget *parent) {
         auto it = d_ptr->windowFactories.find(id);
         if (it == d_ptr->windowFactories.end()) {
-            qWarning() << "Core::WindowSystem::createWindow(): creator does not exist" << id;
+            qWarning() << "Core::WindowSystem::createWindow(): creator does not exist:" << id;
             return nullptr;
         }
 
@@ -117,7 +120,7 @@ namespace Core {
         auto iWin = factory->creator() == IWindowFactory::Create ? factory->create(nullptr)
                                                                  : factory->create(factory->id(), nullptr);
         if (!iWin) {
-            qWarning() << "Core::WindowSystem::createWindow(): creator creates null instance" << id;
+            qWarning() << "Core::WindowSystem::createWindow(): creator creates null instance:" << id;
             return nullptr;
         }
         connect(iWin, &IWindow::closed, d_ptr.data(), &WindowSystemPrivate::_q_iWindowClosed);
@@ -132,6 +135,9 @@ namespace Core {
         connect(filter, &WindowCloseFilter::windowClosed, iWin->d_ptr.data(), &IWindowPrivate::_q_windowClosed);
 
         d_ptr->iWindows.insert(iWin);
+
+        // Setup window
+        iWin->setupWindow();
 
         // Call all add-ons
         for (auto fac : qAsConst(d_ptr->addOnFactories)) {

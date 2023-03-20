@@ -8,8 +8,10 @@
 namespace Core {
 
     class ActionSystemPrivate {
+        Q_DECLARE_PUBLIC(ActionSystem)
     public:
         ActionSystemPrivate();
+        virtual ~ActionSystemPrivate();
 
         void init();
 

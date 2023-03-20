@@ -8,8 +8,11 @@ namespace Core {
     class IWindow;
 
     class CORE_EXPORT IWindowAddOnPrivate {
+        Q_DECLARE_PUBLIC(IWindowAddOn)
     public:
         IWindowAddOnPrivate();
+        virtual ~IWindowAddOnPrivate();
+
         void init();
 
         IWindowAddOn *q_ptr;

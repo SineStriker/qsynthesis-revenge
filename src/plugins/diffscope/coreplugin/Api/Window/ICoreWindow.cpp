@@ -1,13 +1,14 @@
 #include "ICoreWindow.h"
+#include "ICoreWindow_p.h"
 
-#include "coreplugin/Internal/Window/MainWindow.h"
+#include "Internal/Window/MainWindow.h"
 
 namespace Core {
 
-    ICoreWindow::ICoreWindow(const QString &id, QObject *parent) : IWindow(id, parent) {
+    ICoreWindowPrivate::ICoreWindowPrivate() {
     }
 
-    ICoreWindow::~ICoreWindow() {
+    void ICoreWindowPrivate::init() {
     }
 
     QMenuBar *ICoreWindow::menuBar() const {
@@ -34,8 +35,18 @@ namespace Core {
         qobject_cast<Internal::MainWindow *>(window())->setStatusBar(statusBar);
     }
 
+    ICoreWindow::ICoreWindow(const QString &id, QObject *parent) : ICoreWindow(*new ICoreWindowPrivate(), id, parent) {
+    }
+
+    ICoreWindow::~ICoreWindow() {
+    }
+
     QWidget *ICoreWindow::createWindow(QWidget *parent) const {
         return new Internal::MainWindow(parent);
+    }
+
+    ICoreWindow::ICoreWindow(ICoreWindowPrivate &d, const QString &id, QObject *parent) : IWindow(d, id, parent) {
+        d.init();
     }
 
 }

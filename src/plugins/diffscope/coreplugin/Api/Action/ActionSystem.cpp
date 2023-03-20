@@ -10,6 +10,9 @@ namespace Core {
     ActionSystemPrivate::ActionSystemPrivate() : q_ptr(nullptr) {
     }
 
+    ActionSystemPrivate::~ActionSystemPrivate() {
+    }
+
     void ActionSystemPrivate::init() {
     }
 
@@ -21,7 +24,7 @@ namespace Core {
             return;
         }
         if (d_ptr->contexts.contains(context->id())) {
-            qWarning() << "Core::ActionSystem::addContext(): trying to add duplicated context";
+            qWarning() << "Core::ActionSystem::addContext(): trying to add duplicated context:" << context->id();
             return;
         }
         context->d_ptr->system = this;
@@ -39,7 +42,7 @@ namespace Core {
     void ActionSystem::removeContext(const QString &id) {
         auto it = d_ptr->contexts.find(id);
         if (it == d_ptr->contexts.end()) {
-            qWarning() << "Core::ActionSystem::removeContext(): context does not exist" << id;
+            qWarning() << "Core::ActionSystem::removeContext(): context does not exist:" << id;
             return;
         }
 

@@ -51,7 +51,7 @@ namespace Core {
 
     ActionContextData ActionContext::addAction(const QString &id) {
         if (d_ptr->actionIndexes.contains(id)) {
-            qWarning() << "Core::ActionContext::addAction(): trying to add duplicated action";
+            qWarning() << "Core::ActionContext::addAction(): trying to add duplicated action:" << id;
             return ActionContextData(nullptr);
         }
         auto it = d_ptr->actions.insert(d_ptr->actions.end(), {id, {}, {}});
@@ -62,7 +62,7 @@ namespace Core {
     void ActionContext::removeAction(const QString &id) {
         auto it = d_ptr->actionIndexes.find(id);
         if (it == d_ptr->actionIndexes.end()) {
-            qWarning() << "Core::ActionContext::removeAction(): action does not exist" << id;
+            qWarning() << "Core::ActionContext::removeAction(): action does not exist:" << id;
             return;
         }
         d_ptr->actions.erase(it.value());

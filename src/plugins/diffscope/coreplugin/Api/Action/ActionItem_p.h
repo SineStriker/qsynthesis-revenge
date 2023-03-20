@@ -18,6 +18,7 @@ namespace Core {
         QWidget *widget;
 
         ActionItemPrivate();
+        virtual ~ActionItemPrivate();
 
         void init();
     };

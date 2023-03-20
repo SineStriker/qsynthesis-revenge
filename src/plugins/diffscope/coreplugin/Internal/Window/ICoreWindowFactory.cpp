@@ -1,13 +1,13 @@
 #include "ICoreWindowFactory.h"
 
-#include "Window/IHomeWindow.h"
-#include "Window/IProjectWindow.h"
+#include "coreplugin/Api/Home/IHomeWindow.h"
+#include "coreplugin/Api/Project/IProjectWindow.h"
 
 namespace Core {
 
     namespace Internal {
 
-        IHomeWindowFactory::IHomeWindowFactory() : IWindowFactory(HOME_WINDOW_ID, Create) {
+        IHomeWindowFactory::IHomeWindowFactory() : IWindowFactory(IHomeWindow::WindowTypeID(), Create) {
         }
 
         IHomeWindowFactory::~IHomeWindowFactory() {
@@ -17,7 +17,7 @@ namespace Core {
             return new IHomeWindow(parent);
         }
 
-        IProjectWindowFactory::IProjectWindowFactory() : IWindowFactory(PROJECT_WINDOW_ID, Create) {
+        IProjectWindowFactory::IProjectWindowFactory() : IWindowFactory(IProjectWindow::WindowTypeID(), Create) {
         }
 
         IProjectWindowFactory::~IProjectWindowFactory() {

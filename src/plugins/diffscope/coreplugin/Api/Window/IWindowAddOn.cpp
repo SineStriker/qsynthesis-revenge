@@ -6,6 +6,9 @@ namespace Core {
     IWindowAddOnPrivate::IWindowAddOnPrivate() : q_ptr(nullptr) {
     }
 
+    IWindowAddOnPrivate::~IWindowAddOnPrivate() {
+    }
+
     void IWindowAddOnPrivate::init() {
     }
 

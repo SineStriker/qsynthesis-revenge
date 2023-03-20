@@ -4,7 +4,7 @@
 #include <QLabel>
 #include <QMenuBar>
 
-#include "Window/IWindow.h"
+#include "Home/IHomeWindow.h"
 
 namespace Core {
 
@@ -25,12 +25,11 @@ namespace Core {
         }
 
         void HomeWindowAddOn::initialize() {
-            auto iWin = this->handle();
-            auto win = iWin->window();
-
-            auto label = new QLabel("123");
-            iWin->setCentralWidget(label);
+            auto iWin = qobject_cast<IHomeWindow *>(this->handle());
             iWin->menuBar()->addMenu(new QMenu("File(&F)"));
+
+            auto btn = iWin->addNavWidget(new QWidget());
+            btn->setText("123456");
         }
 
         void HomeWindowAddOn::extensionsInitialized() {

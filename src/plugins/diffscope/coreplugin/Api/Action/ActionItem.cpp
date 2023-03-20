@@ -13,6 +13,9 @@ namespace Core {
         widget = nullptr;
     }
 
+    ActionItemPrivate::~ActionItemPrivate() {
+    }
+
     void ActionItemPrivate::init() {
     }
 

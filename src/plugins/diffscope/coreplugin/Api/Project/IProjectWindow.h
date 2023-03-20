@@ -1,7 +1,7 @@
 #ifndef IPROJECTWINDOW_H
 #define IPROJECTWINDOW_H
 
-#include "ICoreWindow.h"
+#include "../Window/ICoreWindow.h"
 
 namespace Core {
 
@@ -9,15 +9,26 @@ namespace Core {
         class IProjectWindowFactory;
     }
 
+    class IProjectWindowPrivate;
+
     class CORE_EXPORT IProjectWindow : public ICoreWindow {
         Q_OBJECT
+    public:
+        static inline QString WindowTypeID() {
+            return "project";
+        }
+
     protected:
         explicit IProjectWindow(QObject *parent = nullptr);
         ~IProjectWindow();
 
-    public:
+        void setupWindow() override;
 
-    private:
+    protected:
+        IProjectWindow(IProjectWindowPrivate &d, QObject *parent = nullptr);
+
+        Q_DECLARE_PRIVATE(IProjectWindow)
+
         friend class Internal::IProjectWindowFactory;
     };
 

@@ -27,6 +27,8 @@ namespace Core {
         QScopedPointer<ActionSystemPrivate> d_ptr;
         ActionSystem(ActionSystemPrivate &d, QObject *parent = nullptr);
 
+        Q_DECLARE_PRIVATE(ActionSystem)
+
         friend class ICore;
         friend class ICorePrivate;
     };

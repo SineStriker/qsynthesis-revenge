@@ -5,15 +5,10 @@
 
 namespace Core {
 
-    const char HOME_WINDOW_ID[] = "home";
-    const char PROJECT_WINDOW_ID[] = "project";
+    class ICoreWindowPrivate;
 
     class CORE_EXPORT ICoreWindow : public IWindow {
         Q_OBJECT
-    protected:
-        explicit ICoreWindow(const QString &id, QObject *parent = nullptr);
-        ~ICoreWindow();
-
     public:
         QMenuBar *menuBar() const override;
         void setMenuBar(QMenuBar *menuBar) override;
@@ -25,7 +20,15 @@ namespace Core {
         void setStatusBar(QStatusBar *statusBar) override;
 
     protected:
+        ICoreWindow(const QString &id, QObject *parent = nullptr);
+        ~ICoreWindow();
+
         QWidget *createWindow(QWidget *parent) const override;
+
+    protected:
+        ICoreWindow(ICoreWindowPrivate &d, const QString &id, QObject *parent = nullptr);
+
+        Q_DECLARE_PRIVATE(ICoreWindow)
     };
 
 }

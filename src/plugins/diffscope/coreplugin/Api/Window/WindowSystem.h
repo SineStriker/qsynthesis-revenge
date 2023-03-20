@@ -40,6 +40,8 @@ namespace Core {
         QScopedPointer<WindowSystemPrivate> d_ptr;
         WindowSystem(WindowSystemPrivate &d, QObject *parent = nullptr);
 
+        Q_DECLARE_PRIVATE(WindowSystem)
+
         friend class ICore;
         friend class ICorePrivate;
     };

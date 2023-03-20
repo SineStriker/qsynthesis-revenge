@@ -14,8 +14,9 @@ namespace Core {
         IWindowFactory::AvailableCreator creator;
     };
 
-    class IWindowPrivate : public QObject {
+    class CORE_EXPORT IWindowPrivate : public QObject {
         Q_OBJECT
+        Q_DECLARE_PUBLIC(IWindow)
     public:
         IWindowPrivate();
 
@@ -28,6 +29,8 @@ namespace Core {
 
         QMap<QString, ActionItem *> actionItemMap;
         std::list<IWindowAddOn *> addOns;
+
+        QMap<QString, QWidget *> widgetMap;
 
         void initAllAddOns();
         void deleteAllAddOns();
