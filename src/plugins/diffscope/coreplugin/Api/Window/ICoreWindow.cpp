@@ -1,6 +1,7 @@
 #include "ICoreWindow.h"
 #include "ICoreWindow_p.h"
 
+#include "ICore.h"
 #include "Internal/Window/MainWindow.h"
 
 namespace Core {
@@ -9,6 +10,7 @@ namespace Core {
     }
 
     void ICoreWindowPrivate::init() {
+        q_ptr->setWindowTitleCorrectionEnabled(true);
     }
 
     QMenuBar *ICoreWindow::menuBar() const {
@@ -33,6 +35,10 @@ namespace Core {
 
     void ICoreWindow::setStatusBar(QStatusBar *statusBar) {
         qobject_cast<Internal::MainWindow *>(window())->setStatusBar(statusBar);
+    }
+
+    QString ICoreWindow::correctWindowTitle(const QString &title) const {
+        return ICore::displayTitle(title);
     }
 
     ICoreWindow::ICoreWindow(const QString &id, QObject *parent) : ICoreWindow(*new ICoreWindowPrivate(), id, parent) {

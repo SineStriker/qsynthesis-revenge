@@ -6,6 +6,7 @@
     "values": {
         "NativeWindow": {
             "background": "#3C3C3C",
+            "background.inactive": "#333333",
             "color": "#ECECEC"
         }
     }

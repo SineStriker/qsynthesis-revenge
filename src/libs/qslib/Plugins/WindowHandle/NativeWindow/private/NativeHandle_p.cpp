@@ -2,6 +2,8 @@
 
 #include "CMenuBar.h"
 
+#include <WindowBorderPainter>
+
 using namespace Global;
 
 #define REPLACE_QMAINWINDOW_MENUBAR 0
@@ -42,17 +44,23 @@ void NativeHandlePrivate::updateTitleBar() {
 void NativeHandlePrivate::setup_helper() {
     Q_Q(NativeHandle);
 
+    w->installEventFilter(q);
+
     // Not necessary, but better call this function, before the construction
     // of any Q(Core|Gui)Application instances.
     // FramelessHelper::Widgets::initialize();
 
     FramelessConfig::instance()->set(Option::WindowUseRoundCorners, true);
-    FramelessWidgetsHelper::get(w)->extendsContentIntoTitleBar();
+
+    auto hFrameless = FramelessWidgetsHelper::get(w);
+    hFrameless->extendsContentIntoTitleBar();
+
     m_helper.reset(new WidgetsSharedHelper(q));
     m_helper->setup(w);
 
-    // Reset content margins to hide the top white line
-    w->setContentsMargins(QMargins());
+    // Avoid displaying the top white line
+    // w->setContentsMargins(QMargins());
+    // hFrameless->windowBorder()->setThickness(0);
 
     installTitleBar();
 }

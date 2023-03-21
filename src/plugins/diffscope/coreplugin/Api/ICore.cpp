@@ -28,6 +28,15 @@ namespace Core {
         return m_instance;
     }
 
+    QString ICore::mainTitle() {
+        // return QString("%1 %2 %3").arg(qApp->organizationName(), qApp->applicationName(), qApp->applicationVersion());
+        return QString("%1 %2").arg(qApp->organizationName(), qApp->applicationName());
+    }
+
+    QString ICore::displayTitle(const QString &text) {
+        return QString("%1 - %2").arg(text, mainTitle());
+    }
+
     void ICore::aboutApp(QWidget *parent) {
         QString title = tr("About %1").arg(qAppName());
         QString text = tr("%1 %2, Copyright OpenVPI.").arg(qAppName(), QApplication::applicationVersion());
@@ -59,4 +68,5 @@ namespace Core {
         d.q_ptr = this;
         d.init();
     }
+
 }

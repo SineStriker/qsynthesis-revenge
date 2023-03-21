@@ -44,6 +44,8 @@ namespace Core {
 
         friend class ICore;
         friend class ICorePrivate;
+        friend class IWindow;
+        friend class IWindowPrivate;
     };
 }
 

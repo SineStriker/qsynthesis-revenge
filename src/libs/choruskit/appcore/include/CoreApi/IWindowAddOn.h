@@ -38,6 +38,8 @@ namespace Core {
 
         Q_DECLARE_PRIVATE(IWindowAddOn)
 
+        friend class IWindow;
+        friend class IWindowPrivate;
         friend class WindowSystem;
         friend class WindowSystemPrivate;
     };

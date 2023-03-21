@@ -14,7 +14,7 @@ bool LoadConfig::load(const QString &filename) {
     QByteArray data(file.readAll());
     file.close();
 
-    QJsonParseError err{};
+    QJsonParseError err;
     QJsonDocument doc = QJsonDocument::fromJson(data, &err);
     if (err.error != QJsonParseError::NoError || !doc.isObject()) {
         return false;

@@ -24,6 +24,8 @@ namespace Core {
 
     void IHomeWindow::reloadStrings() {
         Q_D(IHomeWindow);
+        auto win = window();
+        win->setWindowTitle(tr("Welcome"));
         d->aboutButton->setText(tr("About %1").arg(qAppName()));
     }
 

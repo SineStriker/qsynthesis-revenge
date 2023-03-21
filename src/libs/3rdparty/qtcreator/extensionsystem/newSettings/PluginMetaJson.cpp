@@ -2,14 +2,15 @@
 
 #include <QDir>
 #include <QFile>
+#include <QJsonArray>
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QJsonParseError>
 
-PluginMetaJson::PluginMetaJson() {
+PluginMetaJson::PluginMetaJson() : allFiles(false), allSubdirs(false) {
 }
 
-PluginMetaJson::PluginMetaJson(const QString &dir) : dir(dir) {
+PluginMetaJson::PluginMetaJson(const QString &dir) : dir(dir), allFiles(false), allSubdirs(false) {
 }
 
 PluginMetaJson::~PluginMetaJson() {
@@ -30,16 +31,44 @@ bool PluginMetaJson::load() {
     }
 
     auto objDoc = doc.object();
-    auto it = objDoc.find("name");
-    if (it != objDoc.end() && it->isString()) {
-        name = it->toString();
+    {
+        auto it = objDoc.find("Name");
+        if (it != objDoc.end() && it->isString()) {
+            name = it->toString();
+        }
+    }
+
+    {
+        auto it = objDoc.find("AllFiles");
+        if (it != objDoc.end() && it->toBool()) {
+            allFiles = true;
+        }
+    }
+
+    {
+        auto it = objDoc.find("AllSubdirs");
+        if (it != objDoc.end() && it->toBool()) {
+            allSubdirs = true;
+        }
+    }
+
+    {
+        auto it = objDoc.find("Subdirs");
+        if (it != objDoc.end() && it->isArray()) {
+            auto arr = it->toArray();
+            for (const auto &item : qAsConst(arr)) {
+                if (item.isString()) {
+                    subdirs.append(item.toString());
+                }
+            }
+        }
     }
 
     return true;
 }
 
-bool PluginMetaJson::save() const {
-    return false;
+bool PluginMetaJson::exists() const {
+    return QFileInfo(dir + "/plugin.json").isFile();
 }
 
 QString PluginMetaJson::pluginPath() const {

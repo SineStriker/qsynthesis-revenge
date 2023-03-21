@@ -1,12 +1,19 @@
 #include "IWindow.h"
 #include "IWindow_p.h"
 
+#include "IWindowAddOn_p.h"
+#include "WindowCloseFilter_p.h"
+#include "WindowSystem_p.h"
+
 #include <QDebug>
+#include <QEvent>
 
 namespace Core {
 
     IWindowPrivate::IWindowPrivate() : q_ptr(nullptr) {
         window = nullptr;
+        autoCorrectTitle = false;
+        isCorrectingTitle = false;
     }
 
     IWindowPrivate::~IWindowPrivate() {
@@ -36,6 +43,25 @@ namespace Core {
         }
     }
 
+    bool IWindowPrivate::eventFilter(QObject *obj, QEvent *event) {
+        Q_Q(IWindow);
+        if (obj == window) {
+            switch (event->type()) {
+                case QEvent::WindowTitleChange:
+                    if (!isCorrectingTitle) {
+                        isCorrectingTitle = true;
+                        window->setWindowTitle(q->correctWindowTitle(window->windowTitle()));
+                    } else {
+                        isCorrectingTitle = false;
+                    }
+                    break;
+                default:
+                    break;
+            }
+        }
+        return QObject::eventFilter(obj, event);
+    }
+
     void IWindowPrivate::_q_windowClosed(QWidget *w) {
         Q_Q(IWindow);
 
@@ -48,6 +74,33 @@ namespace Core {
 
         q->deleteLater();
         window = nullptr;
+    }
+
+    void IWindowPrivate::setWindow(QWidget *w, WindowSystemPrivate *d) {
+        Q_Q(IWindow);
+
+        window = w;
+
+        // Filter window title event
+        w->installEventFilter(this);
+
+        auto filter = new WindowCloseFilter(window);
+        connect(filter, &WindowCloseFilter::windowClosed, this, &IWindowPrivate::_q_windowClosed);
+
+        // Setup window
+        q->setupWindow();
+
+        // Call all add-ons
+        for (auto fac : qAsConst(d->addOnFactories)) {
+            if (!fac->predicate(q)) {
+                continue;
+            }
+            auto addOn = fac->create(q);
+            addOn->d_ptr->iWin = q;
+            addOns.push_back(addOn);
+        }
+
+        initAllAddOns();
     }
 
     IWindowFactory::IWindowFactory(const QString &id, AvailableCreator creator) : d_ptr(new IWindowFactoryPrivate()) {
@@ -106,6 +159,20 @@ namespace Core {
 
     void IWindow::setStatusBar(QStatusBar *statusBar) {
         Q_UNUSED(statusBar);
+    }
+
+    bool IWindow::windowTitleCorrectionEnabled() const {
+        Q_D(const IWindow);
+        return d->autoCorrectTitle;
+    }
+
+    void IWindow::setWindowTitleCorrectionEnabled(bool enabled) {
+        Q_D(IWindow);
+        d->autoCorrectTitle = enabled;
+    }
+
+    QString IWindow::correctWindowTitle(const QString &title) const {
+        return title;
     }
 
     void IWindow::addWidget(const QString &id, QWidget *w) {

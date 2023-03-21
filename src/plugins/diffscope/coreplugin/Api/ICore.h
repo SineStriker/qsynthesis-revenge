@@ -21,6 +21,8 @@ namespace Core {
     public:
         static ICore *instance();
 
+        static QString mainTitle();
+        static QString displayTitle(const QString &text);
         static void aboutApp(QWidget *parent = nullptr);
 
         ActionSystem *actionSystem() const;

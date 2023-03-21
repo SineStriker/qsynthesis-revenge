@@ -9,8 +9,15 @@ Config {
 /* Stylesheet Content */
 
 CWindowBarV2 {
-    background-color: "{{background|str}}";
     qproperty-titleMargin: "{{titleMargin|size}}";
+}
+
+CWindowBarV2[bar-active=true] {
+    background-color: "{{background|str}}";
+}
+
+CWindowBarV2[bar-active=false] {
+    background-color: "{{background.inactive|str}}";
 }
 
 CWindowBarV2>QLabel#win-title-label {

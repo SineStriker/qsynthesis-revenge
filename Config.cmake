@@ -36,5 +36,6 @@ ck_option(CONFIG_ENABLE_BREAKPAD off)
 ck_option(CONFIG_CMAKE_RANDOM_CONFIGURE_FILE off)
 
 # Windows
-ck_option(CONFIG_WIN32_DEBUG on)
-ck_option(CONFIG_WIN32_MSGBOX_TOPMOST off)
+ck_option(CONFIG_WIN32_DEBUG on) # Enable debug by default
+ck_option(CONFIG_WIN32_NO_DEBUG on) # Disable debug when build type is release
+ck_option(CONFIG_WIN32_MSGBOX_TOPMOST off) # Set message box topest flag

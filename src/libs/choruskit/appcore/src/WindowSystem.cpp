@@ -135,36 +135,20 @@ namespace Core {
             qWarning() << "Core::WindowSystem::createWindow(): creator creates null instance:" << id;
             return nullptr;
         }
+
+        d->iWindows.insert(iWin);
         connect(iWin, &IWindow::closed, d, &WindowSystemPrivate::_q_iWindowClosed);
 
         // Create window
         auto window = iWin->createWindow(parent);
         window->setAttribute(Qt::WA_DeleteOnClose);
 
-        iWin->d_ptr->window = window;
+        iWin->d_ptr->setWindow(window, d);
 
-        auto filter = new WindowCloseFilter(window);
-        connect(filter, &WindowCloseFilter::windowClosed, iWin->d_ptr.data(), &IWindowPrivate::_q_windowClosed);
-
-        d->iWindows.insert(iWin);
-
-        // Setup window
-        iWin->setupWindow();
-
-        // Call all add-ons
-        for (auto fac : qAsConst(d->addOnFactories)) {
-            if (!fac->predicate(iWin)) {
-                continue;
-            }
-            auto addOn = fac->create(iWin);
-            addOn->d_ptr->iWin = iWin;
-            iWin->d_ptr->addOns.push_back(addOn);
-        }
-
-        iWin->d_ptr->initAllAddOns();
         emit windowCreated(iWin);
 
         window->show();
+
         return iWin;
     }
 

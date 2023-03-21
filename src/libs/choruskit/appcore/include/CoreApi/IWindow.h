@@ -55,6 +55,11 @@ namespace Core {
         virtual QStatusBar *statusBar() const;
         virtual void setStatusBar(QStatusBar *statusBar);
 
+        bool windowTitleCorrectionEnabled() const;
+        void setWindowTitleCorrectionEnabled(bool enabled);
+
+        virtual QString correctWindowTitle(const QString &title) const;
+
         void addWidget(const QString &id, QWidget *w);
         void removeWidget(const QString &id);
         QWidget *widget(const QString &id) const;

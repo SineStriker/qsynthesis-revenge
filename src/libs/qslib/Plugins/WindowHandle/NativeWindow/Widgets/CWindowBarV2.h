@@ -31,6 +31,9 @@ public:
     bool titleVisible() const;
     void setTitleVisible(bool titleVisible);
 
+    bool titleBarActive() const;
+    void setTitleBarActive(bool active);
+
 private:
     CToolButton *m_minButton;
     CToolButton *m_maxButton;
@@ -57,6 +60,7 @@ signals:
 
     void styleChanged();
 
+    friend class NativeHandle;
     friend class NativeHandlePrivate;
 };
 

@@ -20,6 +20,8 @@ namespace Core {
         QStatusBar *statusBar() const override;
         void setStatusBar(QStatusBar *statusBar) override;
 
+        QString correctWindowTitle(const QString &title) const override;
+
     protected:
         ICoreWindow(const QString &id, QObject *parent = nullptr);
         ~ICoreWindow();

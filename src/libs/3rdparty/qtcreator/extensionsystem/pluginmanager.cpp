@@ -1370,27 +1370,65 @@ void PluginManagerPrivate::readPluginPaths() {
     //         searchPaths << subdir.absoluteFilePath();
     // }
 
-    QHash<QString, PluginMetaJson> pluginFiles;
+    struct PluginData {};
+
+    QHash<QString, PluginData> pluginFiles;
 
     // Begin OpenVPI patch
-    for (const auto &path : qAsConst(pluginPaths)) {
-        const QDir dir(path);
+    // QStringList pluginFiles;
+    // QStringList searchPaths = pluginPaths;
+    // while (!searchPaths.isEmpty()) {
+    //     const QDir dir(searchPaths.takeFirst());
+    //     const QFileInfoList files = dir.entryInfoList(QDir::Files | QDir::NoSymLinks);
+    //     foreach (const QFileInfo &file, files) {
+    //         const QString filePath = file.absoluteFilePath();
+    //         if (QLibrary::isLibrary(filePath))
+    //             pluginFiles.append(filePath);
+    //     }
+    //     const QFileInfoList dirs = dir.entryInfoList(QDir::Dirs | QDir::NoDotAndDotDot);
+    //     foreach (const QFileInfo &subdir, dirs)
+    //         searchPaths << subdir.absoluteFilePath();
+    // }
+
+    QStringList searchPaths = pluginPaths;
+    while (!searchPaths.isEmpty()) {
+        const QDir dir(searchPaths.takeFirst());
+
+        PluginMetaJson metaJson(dir.absolutePath());
+        if (!metaJson.load() && dir.dirName().toLower() == "plugins") {
+            metaJson.allFiles = true;
+            metaJson.allSubdirs = true;
+        }
 
         // Collect current
-
+        if (metaJson.allFiles) {
+            const QFileInfoList files = dir.entryInfoList(QDir::Files | QDir::NoSymLinks);
+            foreach (const QFileInfo &file, files) {
+                const QString filePath = file.absoluteFilePath();
+                if (QLibrary::isLibrary(filePath)) {
+                    pluginFiles.insert(filePath, {});
+                }
+            }
+        } else if (!metaJson.name.isEmpty()) {
+            QString filePath = metaJson.pluginPath();
+            if (!filePath.isEmpty() && QLibrary::isLibrary(filePath)) {
+                pluginFiles.insert(filePath, {});
+            }
+        }
 
         // Collect subdirectories
-        const QFileInfoList subdirs = dir.entryInfoList(QDir::Dirs | QDir::NoSymLinks | QDir::NoDotAndDotDot);
-        for (const QFileInfo &subdir : subdirs) {
-            PluginMetaJson metaJson(subdir.absoluteFilePath());
-            if (!metaJson.load()) {
-                continue;
+        if (metaJson.allSubdirs) {
+            const QFileInfoList subdirs = dir.entryInfoList(QDir::Dirs | QDir::NoSymLinks | QDir::NoDotAndDotDot);
+            foreach (const QFileInfo &subdir, subdirs) {
+                searchPaths << subdir.absoluteFilePath();
             }
-            QString path = metaJson.pluginPath();
-            if (path.isEmpty() || !QLibrary::isLibrary(path)) {
-                continue;
+        } else if (!metaJson.subdirs.isEmpty()) {
+            for (const auto &name : qAsConst(metaJson.subdirs)) {
+                QDir subdir(dir.absoluteFilePath(name));
+                if (subdir.exists()) {
+                    searchPaths << subdir.absolutePath();
+                }
             }
-            pluginFiles.insert(path, metaJson);
         }
     }
     // End
@@ -1606,7 +1644,7 @@ static inline QString getPlatformName() {
     if (QSysInfo::WindowsVersion >= QSysInfo::WV_WINDOWS8)
         result += QLatin1String(" 8");
     return result;
-#endif     // Q_OS_WIN
+#endif // Q_OS_WIN
     return QLatin1String("Unknown");
 }
 

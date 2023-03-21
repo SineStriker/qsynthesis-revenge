@@ -4,6 +4,7 @@
 #include <QPaintEvent>
 #include <QPainter>
 #include <QRandomGenerator>
+#include <QStyle>
 
 #include "QMDecorator.h"
 
@@ -51,6 +52,8 @@ CWindowBarV2::CWindowBarV2(QMenuBar *menuBar, QWidget *parent) : CBaseTitleBarV2
     setCloseButton(m_closeButton);
 #endif
 
+    setTitleBarActive(true);
+
     qIDec->installLocale(this, {{}}, std::bind(&CWindowBarV2::reloadStrings, this));
     qIDec->installTheme(this, {"NativeWindow"});
 }
@@ -97,6 +100,15 @@ bool CWindowBarV2::titleVisible() const {
 void CWindowBarV2::setTitleVisible(bool titleVisible) {
     m_titleVisible = titleVisible;
     update();
+}
+
+bool CWindowBarV2::titleBarActive() const {
+    return property("bar-active").toBool();
+}
+
+void CWindowBarV2::setTitleBarActive(bool active) {
+    setProperty("bar-active", active);
+    style()->polish(this);
 }
 
 void CWindowBarV2::drawCentralTitle(QPainter &painter) {

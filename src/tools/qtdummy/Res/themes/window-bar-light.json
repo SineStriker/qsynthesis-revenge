@@ -6,6 +6,7 @@
     "values": {
         "NativeWindow": {
             "background": "transparent",
+            "background.inactive": "transparent",
             "color": "transparent",
             "titleMargin": 20,
             "minHeight": 36,

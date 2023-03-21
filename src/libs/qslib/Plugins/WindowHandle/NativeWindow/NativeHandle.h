@@ -21,6 +21,9 @@ public:
     QMenuBar *menuBar() const override;
 
 protected:
+    bool eventFilter(QObject *obj, QEvent *event) override;
+
+protected:
     NativeHandle(NativeHandlePrivate &d, QMainWindow *parent);
 };
 

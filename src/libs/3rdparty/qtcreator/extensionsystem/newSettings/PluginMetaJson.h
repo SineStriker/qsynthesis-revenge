@@ -11,10 +11,14 @@ public:
     ~PluginMetaJson();
 
     bool load();
-    bool save() const;
+    bool exists() const;
 
     QString dir;
+
     QString name;
+    QStringList subdirs;
+    bool allFiles;
+    bool allSubdirs;
 
     QString pluginPath() const;
 };

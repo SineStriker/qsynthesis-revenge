@@ -53,7 +53,7 @@ function(configure_plugin_base _out)
     )
 
     set(_plugin_json2_path ${CMAKE_CURRENT_BINARY_DIR}/${_name}PluginMetaData/plugin.json)
-    file(GENERATE OUTPUT ${_plugin_json2_path} CONTENT "{\n    \"name\": \"${_name}\"\n}")
+    file(GENERATE OUTPUT ${_plugin_json2_path} CONTENT "{\n    \"Name\": \"${_name}\"\n}")
 
     add_custom_command(
         TARGET ${_target} POST_BUILD
