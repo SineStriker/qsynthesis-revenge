@@ -4,17 +4,17 @@
 <context>
     <name>Application</name>
     <message>
-        <location filename="../../../../libs/choruskit/appload/main.cpp" line="162"/>
+        <location filename="../../../../libs/choruskit/appload/main.cpp" line="163"/>
         <source>Failed to load core: %1!</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../../../libs/choruskit/appload/main.cpp" line="305"/>
-        <source>Could not find Core plugin in %1!</source>
+        <location filename="../../../../libs/choruskit/appload/main.cpp" line="339"/>
+        <source>Could not find Core plugin!</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../../../libs/choruskit/appload/main.cpp" line="311"/>
+        <location filename="../../../../libs/choruskit/appload/main.cpp" line="345"/>
         <source>Core plugin is disabled.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -90,22 +90,22 @@
 <context>
     <name>CWindowBarV2</name>
     <message>
-        <location filename="../../../../libs/qslib/Plugins/WindowHandle/NativeWindow/Widgets/CWindowBarV2.cpp" line="63"/>
+        <location filename="../../../../libs/qslib/Plugins/WindowHandle/NativeWindow/Widgets/CWindowBarV2.cpp" line="66"/>
         <source>Minimize</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../../../libs/qslib/Plugins/WindowHandle/NativeWindow/Widgets/CWindowBarV2.cpp" line="64"/>
+        <location filename="../../../../libs/qslib/Plugins/WindowHandle/NativeWindow/Widgets/CWindowBarV2.cpp" line="67"/>
         <source>Close</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../../../libs/qslib/Plugins/WindowHandle/NativeWindow/Widgets/CWindowBarV2.cpp" line="75"/>
+        <location filename="../../../../libs/qslib/Plugins/WindowHandle/NativeWindow/Widgets/CWindowBarV2.cpp" line="78"/>
         <source>Restore%1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../../../libs/qslib/Plugins/WindowHandle/NativeWindow/Widgets/CWindowBarV2.cpp" line="78"/>
+        <location filename="../../../../libs/qslib/Plugins/WindowHandle/NativeWindow/Widgets/CWindowBarV2.cpp" line="81"/>
         <source>Maximize</source>
         <translation type="unfinished"></translation>
     </message>
@@ -155,16 +155,6 @@
 <context>
     <name>QCoreApplication</name>
     <message>
-        <location filename="../../../../libs/choruskit/appload/main.cpp" line="234"/>
-        <source>You&apos;re trying to start %1 as the %2, which is extremely dangerous and therefore strongly not recommended.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../../../libs/choruskit/appload/main.cpp" line="335"/>
-        <source>Please close the running application!</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <location filename="../../../../libs/qtmedium/CoreLib/Global/QMSystem.cpp" line="292"/>
         <source>Explorer</source>
         <translation type="unfinished"></translation>
@@ -187,6 +177,16 @@
     <message>
         <location filename="../../../../libs/qtmedium/CoreLib/Global/QMSystem.cpp" line="304"/>
         <source>Root User</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../../../libs/choruskit/appload/main.cpp" line="269"/>
+        <source>You&apos;re trying to start %1 as the %2, which is extremely dangerous and therefore strongly not recommended.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../../../libs/choruskit/appload/main.cpp" line="369"/>
+        <source>Please close the running application!</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

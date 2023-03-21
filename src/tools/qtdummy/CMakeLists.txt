@@ -17,7 +17,7 @@ if(TRUE)
     set(_targets)
 
     foreach(_target ${_all_targets})
-        if(_target MATCHES "Qs.*|QM.*|CKAppLoad")
+        if(_target MATCHES "Qs.*|QM.*|Ck.*")
             list(APPEND _targets ${_target})
         endif()
     endforeach()

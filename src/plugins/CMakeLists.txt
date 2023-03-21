@@ -6,6 +6,8 @@ Add plugin metadata of `PROJECT_NAME` and `PROJECT_VERSION`
         [COMPAT_VERSION     <version>]
         [SUBDIR_NAME        <dirname>]
         [PLUGIN_NAME        <name>]
+        [META_SUBDIRS       dirs...]
+        [META_ALL_FILES] [META_ALL_DIRS]
     )
 
     VAR: Return the real target name (Mangled to avoid duplication)
@@ -14,11 +16,15 @@ Add plugin metadata of `PROJECT_NAME` and `PROJECT_VERSION`
         COMPAT_VERSION: compatible version, default to 0.0.0.0
         SUBDIR_NAME: subdirectory name in plugins dir, default to `PROJECT_NAME`
         PLUGIN_NAME: plugin output name, default to `PROJECT_NAME`
+
+        META_SUBDIRS: set "Subdirs" in generated json file
+        META_ALL_FILES: set "AllFiles" in generated json file
+        META_ALL_SUBDIRS: set "AllSubdirs" in generated json file
 ]] #
 function(configure_plugin_base _out)
-    set(options)
+    set(options META_ALL_FILES META_ALL_SUBDIRS)
     set(oneValueArgs METADATA_IN COMPAT_VERSION SUBDIR_NAME PLUGIN_NAME)
-    set(multiValueArgs)
+    set(multiValueArgs META_SUBDIRS)
     cmake_parse_arguments(FUNC "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
 
     set(_target ${CURRENT_SUB_PROJECT}_Plugin_${PROJECT_NAME})
@@ -53,7 +59,25 @@ function(configure_plugin_base _out)
     )
 
     set(_plugin_json2_path ${CMAKE_CURRENT_BINARY_DIR}/${_name}PluginMetaData/plugin.json)
-    file(GENERATE OUTPUT ${_plugin_json2_path} CONTENT "{\n    \"Name\": \"${_name}\"\n}")
+
+    set(_content "{\n    \"Name\": \"${_name}\"")
+
+    if(FUNC_META_ALL_FILES)
+        set(_content "${_content},\n    \"AllFiles\": true")
+    endif()
+
+    if(FUNC_META_ALL_SUBDIRS)
+        set(_content "${_content},\n    \"AllSubdirs\": true")
+    endif()
+
+    if(FUNC_META_SUBDIRS)
+        string(JOIN "\",\n        \"" _json_arr_str ${FUNC_META_SUBDIRS})
+        set(_content "${_content},\n    \"Subdirs\": [\n        \"${_json_arr_str}\"\n    ]")
+    endif()
+
+    set(_content "${_content}\n}")
+
+    file(GENERATE OUTPUT ${_plugin_json2_path} CONTENT ${_content})
 
     add_custom_command(
         TARGET ${_target} POST_BUILD

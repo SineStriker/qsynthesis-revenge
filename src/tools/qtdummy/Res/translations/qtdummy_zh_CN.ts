@@ -12,17 +12,21 @@
         <translation type="vanished">无法在%1中找到内核插件！</translation>
     </message>
     <message>
-        <location filename="../../../../libs/choruskit/appload/main.cpp" line="162"/>
+        <location filename="../../../../libs/choruskit/appload/main.cpp" line="163"/>
         <source>Failed to load core: %1!</source>
         <translation>无法加载内核：%1！</translation>
     </message>
     <message>
-        <location filename="../../../../libs/choruskit/appload/main.cpp" line="305"/>
-        <source>Could not find Core plugin in %1!</source>
-        <translation>无法在%1中找到内核插件！</translation>
+        <location filename="../../../../libs/choruskit/appload/main.cpp" line="339"/>
+        <source>Could not find Core plugin!</source>
+        <translation>无法找到内核插件！</translation>
     </message>
     <message>
-        <location filename="../../../../libs/choruskit/appload/main.cpp" line="311"/>
+        <source>Could not find Core plugin in %1!</source>
+        <translation type="vanished">无法在%1中找到内核插件！</translation>
+    </message>
+    <message>
+        <location filename="../../../../libs/choruskit/appload/main.cpp" line="345"/>
         <source>Core plugin is disabled.</source>
         <translation>内核插件已被禁用。</translation>
     </message>
@@ -98,22 +102,22 @@
 <context>
     <name>CWindowBarV2</name>
     <message>
-        <location filename="../../../../libs/qslib/Plugins/WindowHandle/NativeWindow/Widgets/CWindowBarV2.cpp" line="63"/>
+        <location filename="../../../../libs/qslib/Plugins/WindowHandle/NativeWindow/Widgets/CWindowBarV2.cpp" line="66"/>
         <source>Minimize</source>
         <translation>最小化</translation>
     </message>
     <message>
-        <location filename="../../../../libs/qslib/Plugins/WindowHandle/NativeWindow/Widgets/CWindowBarV2.cpp" line="64"/>
+        <location filename="../../../../libs/qslib/Plugins/WindowHandle/NativeWindow/Widgets/CWindowBarV2.cpp" line="67"/>
         <source>Close</source>
         <translation>关闭</translation>
     </message>
     <message>
-        <location filename="../../../../libs/qslib/Plugins/WindowHandle/NativeWindow/Widgets/CWindowBarV2.cpp" line="75"/>
+        <location filename="../../../../libs/qslib/Plugins/WindowHandle/NativeWindow/Widgets/CWindowBarV2.cpp" line="78"/>
         <source>Restore%1</source>
         <translation>还原%1</translation>
     </message>
     <message>
-        <location filename="../../../../libs/qslib/Plugins/WindowHandle/NativeWindow/Widgets/CWindowBarV2.cpp" line="78"/>
+        <location filename="../../../../libs/qslib/Plugins/WindowHandle/NativeWindow/Widgets/CWindowBarV2.cpp" line="81"/>
         <source>Maximize</source>
         <translation>最大化</translation>
     </message>
@@ -196,12 +200,12 @@
         <translation type="vanished">你正在尝试以%2身份运行%1，此番操作非常不安全。请使用普通权限启动。</translation>
     </message>
     <message>
-        <location filename="../../../../libs/choruskit/appload/main.cpp" line="234"/>
+        <location filename="../../../../libs/choruskit/appload/main.cpp" line="269"/>
         <source>You&apos;re trying to start %1 as the %2, which is extremely dangerous and therefore strongly not recommended.</source>
         <translation>你正在尝试以%2身份运行%1，此操作非常不安全，因此强烈不推荐。</translation>
     </message>
     <message>
-        <location filename="../../../../libs/choruskit/appload/main.cpp" line="335"/>
+        <location filename="../../../../libs/choruskit/appload/main.cpp" line="369"/>
         <source>Please close the running application!</source>
         <translation>请关闭正在运行中的程序！</translation>
     </message>

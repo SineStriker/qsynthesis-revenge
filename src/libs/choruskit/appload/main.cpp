@@ -335,9 +335,8 @@ int main_entry(int argc, char *argv[]) {
     }
 
     if (!coreplugin) {
-        QString nativePaths = QDir::toNativeSeparators(pluginPaths.join(QLatin1Char(',')));
-        const QString reason =
-            QCoreApplication::translate("Application", "Could not find Core plugin in %1!").arg(nativePaths);
+        // QString nativePaths = QDir::toNativeSeparators(pluginPaths.join(QLatin1Char(',')));
+        const QString reason = QCoreApplication::translate("Application", "Could not find Core plugin!");
         displayError(msgCoreLoadFailure(reason));
         return 1;
     }
