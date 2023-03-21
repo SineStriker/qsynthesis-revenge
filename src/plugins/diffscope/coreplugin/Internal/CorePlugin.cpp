@@ -9,13 +9,25 @@
 #include "AddOn/HomeWindowAddOn.h"
 #include "AddOn/ProjectWindowAddOn.h"
 
+#include "QMDecorateDir.h"
+#include "QMDecorator.h"
+#include "QMSystem.h"
+
 #include <extensionsystem/pluginmanager.h>
+#include <extensionsystem/pluginspec.h>
 
 namespace Core {
 
     namespace Internal {
 
+        class CorePluginPrivate {
+        public:
+            QMDecorateDir dec;
+        };
+
         static ICore *icore = nullptr;
+
+        static CorePluginPrivate *d = nullptr;
 
         CorePlugin::CorePlugin() {
         }
@@ -24,6 +36,9 @@ namespace Core {
         }
 
         bool CorePlugin::initialize(const QStringList &arguments, QString *errorMessage) {
+            auto &d = Internal::d;
+            d = new CorePluginPrivate();
+
             // Init ICore instance
             icore = new ICore(this);
 
@@ -35,6 +50,13 @@ namespace Core {
 
             winMgr->addAddOn(new HomeWindowAddOnFactory());
             winMgr->addAddOn(new ProjectWindowAddOnFactory());
+
+            qIDec->addThemeTemplate("Global", ":/themes/global.qss.in");
+            qIDec->addThemeTemplate("HomeWindow", ":/themes/home.qss.in");
+            qIDec->addThemeTemplate("PianoWindow", ":/themes/piano.qss.in");
+
+            QString path = QString("%1/share/%2.res.json").arg(QMFs::PathFindDirPath(pluginSpec()->filePath()), "Core");
+            d->dec.load(path);
 
             return true;
         }

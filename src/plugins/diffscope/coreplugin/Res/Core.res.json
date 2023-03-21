@@ -1,7 +1,7 @@
 {
     "config": {
         "version": "0.0.1",
-        "parent": "qtdummy"
+        "parent": "Core"
     },
     "locales": [
         {
@@ -15,10 +15,16 @@
             "dir": "${FILEPATH}/${CURRENT_KEY}.res/themes",
             "files": {
                 "Zhibin - Dark": [
-                    "window-bar-dark.json"
+                    "global-dark.json",
+                    "home-dark.json",
+                    "piano-dark.json",
+                    "titleBar-dark.json"
                 ],
                 "Zhibin - Light": [
-                    "window-bar-light.json"
+                    "global-light.json",
+                    "home-light.json",
+                    "piano-light.json",
+                    "titleBar-light.json"
                 ]
             }
         }

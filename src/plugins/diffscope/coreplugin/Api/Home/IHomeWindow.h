@@ -20,6 +20,8 @@ namespace Core {
             return "home";
         }
 
+        void reloadStrings();
+
         QAbstractButton *addNavWidget(QWidget *w);
 
     protected:

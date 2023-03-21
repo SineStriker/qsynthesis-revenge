@@ -51,6 +51,9 @@ void NativeHandlePrivate::setup_helper() {
     m_helper.reset(new WidgetsSharedHelper(q));
     m_helper->setup(w);
 
+    // Reset content margins to hide the top white line
+    w->setContentsMargins(QMargins());
+
     installTitleBar();
 }
 

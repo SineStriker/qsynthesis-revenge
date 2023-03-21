@@ -2,6 +2,9 @@
 #include "IHomeWindow_p.h"
 
 #include <QDebug>
+#include <QStyle>
+
+#include "QMDecorator.h"
 
 namespace Core {
 
@@ -10,6 +13,9 @@ namespace Core {
     }
 
     void IHomeWindowPrivate::init() {
+    }
+
+    void IHomeWindow::reloadStrings() {
     }
 
     QAbstractButton *IHomeWindow::addNavWidget(QWidget *w) {
@@ -32,6 +38,9 @@ namespace Core {
         auto frame = new CNavFrame();
         frame->setObjectName("home-frame");
         setCentralWidget(frame);
+
+        qIDec->installLocale(win, {{}}, _LOC(IHomeWindow, this));
+        qIDec->installTheme(win, {"Global", "HomeWindow"});
 
         d->navFrame = frame;
     }

@@ -1,0 +1,26 @@
+{
+    "config": {
+        "priority": 5,
+        "ratio": 0.8
+    },
+    "values": {
+        "HomeWindow": {
+            "background": "#FFFFFF",
+            "windowIcon": {
+                "foreground": "transparent"
+            },
+            "nav": {
+                "background": "#252526",
+                "padding": [
+                    20
+                ]
+            },
+            "main": {
+                "background": "transparent",
+                "padding": [
+                    20
+                ]
+            }
+        }
+    }
+}

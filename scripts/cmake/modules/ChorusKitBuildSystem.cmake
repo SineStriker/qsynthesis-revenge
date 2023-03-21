@@ -698,7 +698,11 @@ function(ck_add_attaches _target)
 
                 set(_status NONE)
 
-                get_filename_component(_path ${_item} ABSOLUTE)
+                if(${_item} MATCHES ".*\$.*")
+                    set(_path ${_item})
+                else()
+                    get_filename_component(_path ${_item} ABSOLUTE)
+                endif()
 
                 foreach(_src_item ${_src})
                     if(IS_DIRECTORY ${_src_item})
@@ -708,9 +712,10 @@ function(ck_add_attaches _target)
                             COMMAND ${CMAKE_COMMAND} -E copy_directory ${_src_item} ${_path}/${_name}
                         )
                     else()
+                        file(GLOB _src_files ${_src_item})
                         add_custom_command(TARGET ${_target} POST_BUILD
                             COMMAND ${CMAKE_COMMAND} -E make_directory ${_path}
-                            COMMAND ${CMAKE_COMMAND} -E copy ${_src_item} ${_path}
+                            COMMAND ${CMAKE_COMMAND} -E copy ${_src_files} ${_path}
                         )
                     endif()
                 endforeach()

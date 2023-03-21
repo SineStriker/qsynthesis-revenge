@@ -1,6 +1,7 @@
 project(coreplugin VERSION 0.1.0.0)
 
 set(_extra_includes ${CURRENT_SUB_PROJECT_MAIN_DIR})
+set(_res_dir Res)
 
 ck_add_files(_src
     ALLDIRS
@@ -15,7 +16,7 @@ configure_plugin_base(_plugin
 
 ck_target_components(${_plugin}
     INCLUDE_CURRENT INCLUDE_SUBDIRS_PRIVATE
-    SOURCES ${_src}
+    SOURCES ${_src} ${_res_dir}/res.qrc
     QT_LINKS Core Widgets
     LINKS QsFramework ExtensionSystem
     INCLUDES ${_extra_includes}
@@ -24,4 +25,9 @@ ck_target_components(${_plugin}
 ck_target_res(${_plugin}
     DESCRIPTION "DiffScope Core Plugin"
     COPYRIGHT "Sine Striker"
+)
+
+ck_add_attaches(${_plugin}
+    SRC Res/Core.res.json DEST $<TARGET_FILE_DIR:${_plugin}>/share
+    SRC Res/themes/*.json DEST $<TARGET_FILE_DIR:${_plugin}>/share/Core.res/themes
 )
