@@ -42,6 +42,13 @@ namespace Core {
         QString text() const;
         void setText(const QString &text) const;
 
+        bool autoDelete() const;
+        void setAutoDelete(bool autoDelete);
+
+    public:
+        static bool autoDeleteGlobal();
+        static void setAutoDeleteGlobal(bool autoDelete);
+
     protected:
         ActionItem(ActionItemPrivate &d, const QString &id);
 

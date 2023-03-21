@@ -17,12 +17,12 @@
         <translation>无法加载内核：%1！</translation>
     </message>
     <message>
-        <location filename="../../../../libs/choruskit/appload/main.cpp" line="303"/>
+        <location filename="../../../../libs/choruskit/appload/main.cpp" line="305"/>
         <source>Could not find Core plugin in %1!</source>
         <translation>无法在%1中找到内核插件！</translation>
     </message>
     <message>
-        <location filename="../../../../libs/choruskit/appload/main.cpp" line="309"/>
+        <location filename="../../../../libs/choruskit/appload/main.cpp" line="311"/>
         <source>Core plugin is disabled.</source>
         <translation>内核插件已被禁用。</translation>
     </message>
@@ -201,7 +201,7 @@
         <translation>你正在尝试以%2身份运行%1，此操作非常不安全，因此强烈不推荐。</translation>
     </message>
     <message>
-        <location filename="../../../../libs/choruskit/appload/main.cpp" line="333"/>
+        <location filename="../../../../libs/choruskit/appload/main.cpp" line="335"/>
         <source>Please close the running application!</source>
         <translation>请关闭正在运行中的程序！</translation>
     </message>

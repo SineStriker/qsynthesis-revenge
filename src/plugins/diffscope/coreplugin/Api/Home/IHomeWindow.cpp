@@ -26,6 +26,9 @@ namespace Core {
     void IHomeWindow::setupWindow() {
         Q_D(IHomeWindow);
 
+        auto win =  window();
+        win->setObjectName("home-window");
+
         auto frame = new CNavFrame();
         frame->setObjectName("home-frame");
         setCentralWidget(frame);

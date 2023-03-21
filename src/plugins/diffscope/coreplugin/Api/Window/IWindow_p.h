@@ -1,6 +1,7 @@
 #ifndef IWINDOW_P_H
 #define IWINDOW_P_H
 
+#include <QHash>
 #include <QSet>
 
 #include "IWindow.h"
@@ -19,6 +20,7 @@ namespace Core {
         Q_DECLARE_PUBLIC(IWindow)
     public:
         IWindowPrivate();
+        ~IWindowPrivate();
 
         void init();
 
@@ -31,6 +33,10 @@ namespace Core {
         std::list<IWindowAddOn *> addOns;
 
         QMap<QString, QWidget *> widgetMap;
+
+        QMap<QString, QSet<QObject *>> objectMap;
+        QHash<QObject *, QString> objectIndexes;
+        mutable QReadWriteLock objectListLock;
 
         void initAllAddOns();
         void deleteAllAddOns();

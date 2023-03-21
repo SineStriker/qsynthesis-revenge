@@ -1,9 +1,10 @@
 #ifndef IWINDOW_H
 #define IWINDOW_H
 
+#include <QReadWriteLock>
 #include <QWidget>
 
-#include "Action/ActionItem.h"
+#include "../Action/ActionItem.h"
 #include "Global/CoreGlobal.h"
 
 class QMenuBar;
@@ -60,6 +61,27 @@ namespace Core {
         QWidget *widget(const QString &id) const;
         QList<QWidget *> widgets() const;
 
+        void addObject(QObject *obj);
+        void addObject(const QString &id, QObject *obj);
+        void addObjects(const QString &id, const QList<QObject *> &objs);
+        void removeObject(QObject *obj);
+        void removeObjects(const QString &id);
+        QList<QObject *> getObjects(const QString &id) const;
+        QList<QObject *> allObjects() const;
+        QReadWriteLock *objectListLock() const;
+
+        template <class T>
+        QList<T *> getObjects() const {
+            QReadLocker lock(objectListLock());
+            QList<QObject *> all = allObjects();
+            QList<QObject *> res;
+            foreach (QObject *obj, all) {
+                if (T *result = qobject_cast<T *>(obj))
+                    res.append(result);
+            }
+            return res;
+        }
+
         void addActionItem(const QString &id, ActionItem *item);
         void removeActionItem(const QString &id);
         ActionItem *actionItem(const QString &id) const;
@@ -68,6 +90,12 @@ namespace Core {
         void reloadActions();
 
     signals:
+        void widgetAdded(const QString &id, QWidget *w);
+        void aboutToRemoveWidget(const QString &id, QWidget *w);
+
+        void objectAdded(const QString &id, QObject *obj);
+        void aboutToRemoveObject(const QString &id, QObject *obj);
+
         void aboutToClose();
         void closed();
 

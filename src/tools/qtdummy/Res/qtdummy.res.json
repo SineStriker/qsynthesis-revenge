@@ -8,5 +8,19 @@
             "key": "${PARENT}",
             "dir": "${FILEPATH}/translations"
         }
+    ],
+    "themes": [
+        {
+            "key": "${PARENT}",
+            "dir": "${FILEPATH}/themes",
+            "files": {
+                "Zhibin - Dark": [
+                    "window-bar-dark.json"
+                ],
+                "Zhibin - Light": [
+                    "window-bar-light.json"
+                ]
+            }
+        }
     ]
 }

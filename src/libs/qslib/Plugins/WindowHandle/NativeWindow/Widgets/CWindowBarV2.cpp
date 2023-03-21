@@ -51,7 +51,7 @@ CWindowBarV2::CWindowBarV2(QMenuBar *menuBar, QWidget *parent) : CBaseTitleBarV2
     setCloseButton(m_closeButton);
 #endif
 
-    qIDec->installLocale(this, {"NativeWindow"}, std::bind(&CWindowBarV2::reloadStrings, this));
+    qIDec->installLocale(this, {{}}, std::bind(&CWindowBarV2::reloadStrings, this));
     qIDec->installTheme(this, {"NativeWindow"});
 }
 

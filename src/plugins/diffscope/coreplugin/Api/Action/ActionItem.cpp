@@ -5,12 +5,11 @@
 
 namespace Core {
 
+    static bool m_autoDelete = false;
+
     ActionItemPrivate::ActionItemPrivate() : q_ptr(nullptr) {
         type = ActionItem::Invalid;
-        action = nullptr;
-        actionGroup = nullptr;
-        menu = nullptr;
-        widget = nullptr;
+        autoDelete = m_autoDelete;
     }
 
     ActionItemPrivate::~ActionItemPrivate() {
@@ -56,6 +55,28 @@ namespace Core {
     }
 
     ActionItem::~ActionItem() {
+        if (d_ptr->autoDelete) {
+            QObject *obj = nullptr;
+            switch (d_ptr->type) {
+                case Action:
+                    obj = d_ptr->action;
+                    break;
+                case ActionGroup:
+                    obj = d_ptr->actionGroup;
+                    break;
+                case Menu:
+                    obj = d_ptr->menu;
+                    break;
+                case Widget:
+                    obj = d_ptr->widget;
+                    break;
+                default:
+                    break;
+            }
+            if (obj && !obj->parent()) {
+                obj->deleteLater();
+            }
+        }
     }
 
     QString ActionItem::id() const {
@@ -159,6 +180,22 @@ namespace Core {
             default:
                 break;
         }
+    }
+
+    bool ActionItem::autoDelete() const {
+        return d_ptr->autoDelete;
+    }
+
+    void ActionItem::setAutoDelete(bool autoDelete) {
+        d_ptr->autoDelete = autoDelete;
+    }
+
+    bool ActionItem::autoDeleteGlobal() {
+        return m_autoDelete;
+    }
+
+    void ActionItem::setAutoDeleteGlobal(bool autoDelete) {
+        m_autoDelete = autoDelete;
     }
 
     ActionItem::ActionItem(ActionItemPrivate &d, const QString &id) : d_ptr(&d) {

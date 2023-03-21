@@ -431,9 +431,10 @@ function(ck_target_components _target)
 
     if(FUNC_INCLUDE_SUBDIRS OR FUNC_INCLUDE_SUBDIRS_PRIVATE)
         ck_get_subdirs(_subdirs ABSOLUTE)
-        if (FUNC_INCLUDE_SUBDIRS)
+
+        if(FUNC_INCLUDE_SUBDIRS)
             target_include_directories(${_target} PUBLIC ${_subdirs})
-        elseif (FUNC_INCLUDE_SUBDIRS_PRIVATE)
+        elseif(FUNC_INCLUDE_SUBDIRS_PRIVATE)
             target_include_directories(${_target} PRIVATE ${_subdirs})
         endif()
     endif()
@@ -672,6 +673,7 @@ function(ck_add_attaches _target)
     foreach(_item ${ARGN})
         if(${_item} STREQUAL SRC)
             if(${_status} STREQUAL NONE)
+                set(_src)
                 set(_status SRC)
             elseif(${_status} STREQUAL DEST)
                 message(FATAL_ERROR "ck_add_attaches: missing directory name after DEST!")
@@ -697,10 +699,21 @@ function(ck_add_attaches _target)
                 set(_status NONE)
 
                 get_filename_component(_path ${_item} ABSOLUTE)
-                add_custom_command(TARGET ${_target} POST_BUILD
-                    COMMAND ${CMAKE_COMMAND} -E make_directory ${_path}
-                    COMMAND ${CMAKE_COMMAND} -E copy ${_src} ${_path}
-                )
+
+                foreach(_src_item ${_src})
+                    if(IS_DIRECTORY ${_src_item})
+                        get_filename_component(_name ${_src_item} NAME)
+                        add_custom_command(TARGET ${_target} POST_BUILD
+                            COMMAND ${CMAKE_COMMAND} -E make_directory ${_path}/${_name}
+                            COMMAND ${CMAKE_COMMAND} -E copy_directory ${_src_item} ${_path}/${_name}
+                        )
+                    else()
+                        add_custom_command(TARGET ${_target} POST_BUILD
+                            COMMAND ${CMAKE_COMMAND} -E make_directory ${_path}
+                            COMMAND ${CMAKE_COMMAND} -E copy ${_src_item} ${_path}
+                        )
+                    endif()
+                endforeach()
             else()
                 get_filename_component(_path ${_item} ABSOLUTE)
                 list(APPEND _src ${_path})

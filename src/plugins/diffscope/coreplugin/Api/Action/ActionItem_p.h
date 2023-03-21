@@ -1,6 +1,8 @@
 #ifndef ACTIONITEM_P_H
 #define ACTIONITEM_P_H
 
+#include <QPointer>
+
 #include "ActionItem.h"
 
 namespace Core {
@@ -12,10 +14,12 @@ namespace Core {
         QString id;
         ActionItem::Type type;
 
-        QAction *action;
-        QActionGroup *actionGroup;
-        QMenu *menu;
-        QWidget *widget;
+        bool autoDelete;
+
+        QPointer<QAction> action;
+        QPointer<QActionGroup> actionGroup;
+        QPointer<QMenu> menu;
+        QPointer<QWidget> widget;
 
         ActionItemPrivate();
         virtual ~ActionItemPrivate();

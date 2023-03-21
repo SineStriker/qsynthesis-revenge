@@ -9,12 +9,12 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../../../libs/choruskit/appload/main.cpp" line="303"/>
+        <location filename="../../../../libs/choruskit/appload/main.cpp" line="305"/>
         <source>Could not find Core plugin in %1!</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../../../libs/choruskit/appload/main.cpp" line="309"/>
+        <location filename="../../../../libs/choruskit/appload/main.cpp" line="311"/>
         <source>Core plugin is disabled.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -160,7 +160,7 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../../../libs/choruskit/appload/main.cpp" line="333"/>
+        <location filename="../../../../libs/choruskit/appload/main.cpp" line="335"/>
         <source>Please close the running application!</source>
         <translation type="unfinished"></translation>
     </message>

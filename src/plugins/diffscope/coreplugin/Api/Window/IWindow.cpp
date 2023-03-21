@@ -9,6 +9,9 @@ namespace Core {
         window = nullptr;
     }
 
+    IWindowPrivate::~IWindowPrivate() {
+    }
+
     void IWindowPrivate::init() {
     }
 
@@ -111,6 +114,7 @@ namespace Core {
             return;
         }
         d_ptr->widgetMap.insert(id, w);
+        emit widgetAdded(id, w);
     }
 
     void IWindow::removeWidget(const QString &id) {
@@ -119,6 +123,8 @@ namespace Core {
             qWarning() << "Core::IWindow::removeWidget(): action item does not exist:" << id;
             return;
         }
+        auto w = it.value();
+        emit aboutToRemoveWidget(id, w);
         d_ptr->widgetMap.erase(it);
     }
 
@@ -132,6 +138,91 @@ namespace Core {
 
     QWidgetList IWindow::widgets() const {
         return d_ptr->widgetMap.values();
+    }
+
+    void IWindow::addObject(QObject *obj) {
+        addObject({}, obj);
+    }
+
+    void IWindow::addObject(const QString &id, QObject *obj) {
+        if (!obj) {
+            qWarning() << "Core::IWindow::addObject(): trying to add null object";
+            return;
+        }
+
+        QWriteLocker locker(&d_ptr->objectListLock);
+        auto &set = d_ptr->objectMap[id];
+        if (set.contains(obj)) {
+            qWarning() << "Core::IWindow::addObject(): trying to add duplicated object:" << id << obj;
+            return;
+        }
+        set.insert(obj);
+        emit objectAdded(id, obj);
+    }
+
+    void IWindow::addObjects(const QString &id, const QList<QObject *> &objs) {
+        for (const auto &obj : objs) {
+            addObject(id, obj);
+        }
+    }
+
+    void IWindow::removeObject(QObject *obj) {
+        QWriteLocker locker(&d_ptr->objectListLock);
+
+        auto it = d_ptr->objectIndexes.find(obj);
+        if (it == d_ptr->objectIndexes.end()) {
+            qWarning() << "Core::IWindow::removeObject(): obj does not exist:" << obj;
+            return;
+        }
+        QString id = it.value();
+        auto it2 = d_ptr->objectMap.find(id);
+        if (it2 != d_ptr->objectMap.end()) {
+            auto &set = it2.value();
+
+            emit aboutToRemoveObject(id, obj);
+            set.remove(obj);
+
+            d_ptr->objectIndexes.remove(obj);
+            if (set.isEmpty()) {
+                d_ptr->objectMap.erase(it2);
+            }
+        }
+    }
+
+    void IWindow::removeObjects(const QString &id) {
+        QWriteLocker locker(&d_ptr->objectListLock);
+
+        auto it2 = d_ptr->objectMap.find(id);
+        if (it2 != d_ptr->objectMap.end()) {
+            auto &set = it2.value();
+
+            for (const auto &obj : qAsConst(set)) {
+                emit aboutToRemoveObject(id, obj);
+                d_ptr->objectIndexes.remove(obj);
+            }
+
+            d_ptr->objectMap.erase(it2);
+        }
+    }
+
+    QList<QObject *> IWindow::getObjects(const QString &id) const {
+        QReadLocker locker(&d_ptr->objectListLock);
+
+        auto it2 = d_ptr->objectMap.find(id);
+        if (it2 != d_ptr->objectMap.end()) {
+            return it2->values();
+        }
+
+        return {};
+    }
+
+    QList<QObject *> IWindow::allObjects() const {
+        QReadLocker locker(&d_ptr->objectListLock);
+        return d_ptr->objectIndexes.keys();
+    }
+
+    QReadWriteLock *IWindow::objectListLock() const {
+        return &d_ptr->objectListLock;
     }
 
     void IWindow::addActionItem(const QString &id, ActionItem *item) {
@@ -174,6 +265,10 @@ namespace Core {
     }
 
     IWindow::~IWindow() {
+        // Remove action items
+        for (auto &item : qAsConst(d_ptr->actionItemMap)) {
+            delete item;
+        }
     }
 
     void IWindow::setupWindow() {

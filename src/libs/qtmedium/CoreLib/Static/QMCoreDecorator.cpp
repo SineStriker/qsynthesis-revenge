@@ -6,8 +6,7 @@
 
 Q_SINGLETON_DECLARE(QMCoreDecorator)
 
-QMCoreDecorator::QMCoreDecorator(QObject *parent)
-    : QMCoreDecorator(*new QMCoreDecoratorPrivate(), parent) {
+QMCoreDecorator::QMCoreDecorator(QObject *parent) : QMCoreDecorator(*new QMCoreDecoratorPrivate(), parent) {
 }
 
 QMCoreDecorator::~QMCoreDecorator() {
@@ -24,9 +23,7 @@ QStringList QMCoreDecorator::themes() const {
     return d->themeNames.keys();
 }
 
-void QMCoreDecorator::setTheme(const QString &theme) {
-    Q_UNUSED(theme)
-}
+void QMCoreDecorator::setTheme(const QString &theme){Q_UNUSED(theme)}
 
 
 // Locale related
@@ -74,7 +71,7 @@ void QMCoreDecorator::addLocale(const QString &key, const QMap<QString, QStringL
                 - If not, implement the empty placeholder
             - If not, insert a placeholder and implement it
         2. If current locale is in the new configuration, the translation
-           should be update immediately
+           should be updated immediately
 
     */
 
@@ -116,6 +113,18 @@ void QMCoreDecorator::addLocale(const QString &key, const QMap<QString, QStringL
         setup(*lp);
 
         d->localeConfigs.insert(key, lp);
+    }
+
+    // Update all global decorators
+    {
+        auto it2 = d->localeConfigs.find({});
+        if (it2 != d->localeConfigs.end()) {
+            auto &lp = *it2.value();
+            // Notify related objects
+            for (const auto &sub : qAsConst(lp.subscribers)) {
+                sub->updater();
+            }
+        }
     }
 }
 
@@ -164,15 +173,26 @@ void QMCoreDecorator::removeLocale(const QString &key) {
         lp.data.clear();
     }
 
-    // Remove placeholder if there're no subscribers
+    // Remove placeholder if there are no subscribers
     if (lp.subscribers.isEmpty()) {
         delete it.value();
         d->localeConfigs.erase(it);
     }
+
+    // Update all global decorators
+    {
+        auto it2 = d->localeConfigs.find({});
+        if (it2 != d->localeConfigs.end()) {
+            auto &lp = *it2.value();
+            // Notify related objects
+            for (const auto &sub : qAsConst(lp.subscribers)) {
+                sub->updater();
+            }
+        }
+    }
 }
 
-void QMCoreDecorator::installLocale(QObject *obj, const QStringList &keys,
-                                    const std::function<void()> updater) {
+void QMCoreDecorator::installLocale(QObject *obj, const QStringList &keys, const std::function<void()> updater) {
     Q_D(QMCoreDecorator);
 
     /*
@@ -263,8 +283,7 @@ void QMCoreDecorator::uninstallLocale(QObject *obj) {
     d->localeSubscribers.erase(it); // Remove subscriber
 }
 
-QMCoreDecorator::QMCoreDecorator(QMCoreDecoratorPrivate &d, QObject *parent)
-    : QObject(parent), d_ptr(&d) {
+QMCoreDecorator::QMCoreDecorator(QMCoreDecoratorPrivate &d, QObject *parent) : QObject(parent), d_ptr(&d) {
     construct();
 
     d.q_ptr = this;

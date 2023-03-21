@@ -32,6 +32,7 @@ if(TRUE)
 
     ck_add_attaches(${PROJECT_NAME}
         SRC Res/qtdummy.res.json DEST ${ROOT_SHARE_OUTPUT_DIRECTORY}/qtdummy
+        SRC Res/themes DEST ${ROOT_SHARE_OUTPUT_DIRECTORY}/qtdummy
     )
 
     if(WIN32 OR APPLE)
