@@ -3,8 +3,8 @@
 #include <QApplication>
 #include <QSplashScreen>
 
+#include "CoreApi/WindowSystem.h"
 #include "Window/ICoreWindowFactory.h"
-#include "Window/WindowSystem.h"
 
 #include "AddOn/HomeWindowAddOn.h"
 #include "AddOn/ProjectWindowAddOn.h"

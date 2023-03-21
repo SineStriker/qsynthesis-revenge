@@ -1,13 +1,13 @@
 #ifndef IWINDOWADDON_P_H
 #define IWINDOWADDON_P_H
 
-#include "Global/CoreGlobal.h"
+#include "CkAppCoreGlobal.h"
 
 namespace Core {
 
     class IWindow;
 
-    class CORE_EXPORT IWindowAddOnPrivate {
+    class CKAPPCORE_API IWindowAddOnPrivate {
         Q_DECLARE_PUBLIC(IWindowAddOn)
     public:
         IWindowAddOnPrivate();

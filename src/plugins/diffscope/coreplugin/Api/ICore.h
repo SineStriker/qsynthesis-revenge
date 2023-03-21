@@ -13,12 +13,15 @@ namespace Core {
 
     class ActionSystem;
     class WindowSystem;
+
     class ICorePrivate;
 
     class CORE_EXPORT ICore : public QObject {
         Q_OBJECT
     public:
         static ICore *instance();
+
+        static void aboutApp(QWidget *parent = nullptr);
 
         ActionSystem *actionSystem() const;
         WindowSystem *windowSystem() const;

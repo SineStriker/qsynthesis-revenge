@@ -10,7 +10,7 @@ namespace Core {
 
     class WindowSystemPrivate;
 
-    class CORE_EXPORT WindowSystem : public QObject {
+    class CKAPPCORE_API WindowSystem : public QObject {
         Q_OBJECT
     public:
         void addWindow(IWindowFactory *factory);

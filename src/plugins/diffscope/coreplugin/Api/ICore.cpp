@@ -1,8 +1,10 @@
 #include "ICore.h"
 #include "ICore_p.h"
 
-#include "Action/ActionSystem.h"
-#include "Window/WindowSystem.h"
+#include "CoreApi/ActionSystem.h"
+#include "CoreApi/WindowSystem.h"
+
+#include "QMConsole.h"
 
 #include <QApplication>
 
@@ -24,6 +26,16 @@ namespace Core {
 
     ICore *ICore::instance() {
         return m_instance;
+    }
+
+    void ICore::aboutApp(QWidget *parent) {
+        QString title = tr("About %1").arg(qAppName());
+        QString text = tr("%1 %2, Copyright OpenVPI.").arg(qAppName(), QApplication::applicationVersion());
+#ifdef Q_OS_WINDOWS
+        QMConsole::instance()->MsgBox(parent, QMConsole::Information, title, text);
+#else
+        QMessageBox::information(parent, title, text);
+#endif
     }
 
     ActionSystem *ICore::actionSystem() const {

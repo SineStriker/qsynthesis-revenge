@@ -3,7 +3,7 @@
 
 #include <QAbstractButton>
 
-#include "../Window/ICoreWindow.h"
+#include "ICoreWindow.h"
 
 namespace Core {
 

@@ -1,7 +1,7 @@
 #ifndef HOMEWINDOWADDON_H
 #define HOMEWINDOWADDON_H
 
-#include "Window/IWindowAddOn.h"
+#include "CoreApi//IWindowAddOn.h"
 
 namespace Core {
 

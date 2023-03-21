@@ -4,8 +4,7 @@
 #include <QReadWriteLock>
 #include <QWidget>
 
-#include "../Action/ActionItem.h"
-#include "Global/CoreGlobal.h"
+#include "ActionItem.h"
 
 class QMenuBar;
 class QStatusBar;
@@ -19,7 +18,7 @@ namespace Core {
     class IWindow;
     class IWindowFactoryPrivate;
 
-    class CORE_EXPORT IWindowFactory {
+    class CKAPPCORE_API IWindowFactory {
     public:
         enum AvailableCreator {
             Create,
@@ -41,7 +40,7 @@ namespace Core {
 
     class IWindowPrivate;
 
-    class CORE_EXPORT IWindow : public QObject {
+    class CKAPPCORE_API IWindow : public QObject {
         Q_OBJECT
     public:
         QString id() const;

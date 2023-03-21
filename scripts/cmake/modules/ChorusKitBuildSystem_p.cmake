@@ -44,7 +44,7 @@ endmacro()
 # Output: target ts files
 function(_ck_add_lupdate_target _target)
     set(options CREATE_ONCE)
-    set(oneValueArgs)
+    set(oneValueArgs PRE_BUILD_TARGET)
     set(multiValueArgs INPUT OUTPUT OPTIONS DEPENDS)
 
     cmake_parse_arguments(_LUPDATE "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
@@ -95,6 +95,17 @@ function(_ck_add_lupdate_target _target)
             DEPENDS ${_my_sources}
             BYPRODUCTS ${_ts_lst_file} VERBATIM
         )
+
+        if (_LUPDATE_PRE_BUILD_TARGET)
+            add_custom_command(
+                TARGET ${_LUPDATE_PRE_BUILD_TARGET} PRE_BUILD
+                COMMAND ${_lupdate_exe}
+                ARGS ${_LUPDATE_OPTIONS} "@${_ts_lst_file}" -ts ${_ts_file}
+                WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+                DEPENDS ${_my_sources}
+                BYPRODUCTS ${_ts_lst_file} VERBATIM
+            )
+        endif()
     endforeach()
 endfunction()
 
@@ -102,7 +113,7 @@ endfunction()
 # Output: list to append qm files
 function(_ck_add_lrelease_target _target)
     set(options)
-    set(oneValueArgs DESTINATION OUTPUT)
+    set(oneValueArgs DESTINATION OUTPUT POST_BUILD_TARGET)
     set(multiValueArgs INPUT OPTIONS DEPENDS)
 
     cmake_parse_arguments(_LRELEASE "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
@@ -143,6 +154,17 @@ function(_ck_add_lrelease_target _target)
             DEPENDS ${_lrelease_files}
             VERBATIM
         )
+
+        if (_LRELEASE_POST_BUILD_TARGET)
+            add_custom_command(
+                TARGET ${_LRELEASE_POST_BUILD_TARGET} POST_BUILD
+                COMMAND ${CMAKE_COMMAND} -E make_directory ${_out_dir}
+                COMMAND ${_lrelease_exe} ARGS ${_LRELEASE_OPTIONS} ${_abs_FILE} -qm ${_qm_file}
+                WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+                DEPENDS ${_lrelease_files}
+                VERBATIM
+            )
+        endif()
 
         list(APPEND _qm_files ${_qm_file})
     endforeach()

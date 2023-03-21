@@ -4,7 +4,7 @@
 #include <QMenuBar>
 #include <QSet>
 
-#include "Global/CoreGlobal.h"
+#include "CkAppCoreGlobal.h"
 
 namespace Core {
 
@@ -32,7 +32,7 @@ namespace Core {
 
     class ActionContextDataPrivate;
 
-    class CORE_EXPORT ActionContextData {
+    class CKAPPCORE_API ActionContextData {
     public:
         bool isValid() const;
 
@@ -50,7 +50,7 @@ namespace Core {
 
     class ActionContextPrivate;
 
-    class CORE_EXPORT ActionContext {
+    class CKAPPCORE_API ActionContext {
     public:
         explicit ActionContext(const QString &id);
         virtual ~ActionContext();

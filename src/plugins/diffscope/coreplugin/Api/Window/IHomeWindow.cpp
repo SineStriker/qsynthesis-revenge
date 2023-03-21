@@ -1,26 +1,37 @@
 #include "IHomeWindow.h"
 #include "IHomeWindow_p.h"
 
+#include <QCoreApplication>
 #include <QDebug>
 #include <QStyle>
 
+#include "ICore.h"
 #include "QMDecorator.h"
 
 namespace Core {
 
     IHomeWindowPrivate::IHomeWindowPrivate() {
-        navFrame = nullptr;
+        // navFrame = nullptr;
     }
 
     void IHomeWindowPrivate::init() {
     }
 
+    void IHomeWindowPrivate::_q_aboutButtonClicked() {
+        Q_Q(IHomeWindow);
+        ICore::aboutApp(q->window());
+    }
+
     void IHomeWindow::reloadStrings() {
+        Q_D(IHomeWindow);
+        d->aboutButton->setText(tr("About %1").arg(qAppName()));
     }
 
     QAbstractButton *IHomeWindow::addNavWidget(QWidget *w) {
         Q_D(IHomeWindow);
-        return d->navFrame->addWidget(w);
+        auto btn = d->navFrame->addWidget(w);
+        btn->setProperty("type", "home-nav-button");
+        return btn;
     }
 
     IHomeWindow::IHomeWindow(QObject *parent) : IHomeWindow(*new IHomeWindowPrivate(), parent) {
@@ -32,17 +43,25 @@ namespace Core {
     void IHomeWindow::setupWindow() {
         Q_D(IHomeWindow);
 
-        auto win =  window();
+        auto win = window();
         win->setObjectName("home-window");
 
         auto frame = new CNavFrame();
         frame->setObjectName("home-frame");
         setCentralWidget(frame);
 
-        qIDec->installLocale(win, {{}}, _LOC(IHomeWindow, this));
-        qIDec->installTheme(win, {"Global", "HomeWindow"});
+        auto aboutButton = new CTabButton();
+        aboutButton->setProperty("type", "home-bottom-button");
+        aboutButton->setObjectName("home-about-button");
+        frame->setBottomWidget(aboutButton);
 
         d->navFrame = frame;
+        d->aboutButton = aboutButton;
+
+        connect(aboutButton, &QAbstractButton::clicked, d, &IHomeWindowPrivate::_q_aboutButtonClicked);
+
+        qIDec->installLocale(win, {{}}, _LOC(IHomeWindow, this));
+        qIDec->installTheme(win, {"Global", "HomeWindow"});
     }
 
     IHomeWindow::IHomeWindow(IHomeWindowPrivate &d, QObject *parent)

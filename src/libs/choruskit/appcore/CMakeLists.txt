@@ -1,18 +1,21 @@
-project(CkAppLoad
-    LANGUAGES CXX
+project(CkAppCore
     VERSION ${CHORUSKIT_VERSION}
+    LANGUAGES CXX
 )
+
+set(_extra_includes)
 
 ck_add_files(_src ALLDIRS PATTERNS *.h *.cpp *.qrc)
 
 ck_add_library(${PROJECT_NAME} SHARED AUTOGEN)
 
 ck_target_components(${PROJECT_NAME}
-    INCLUDE_CURRENT
     SOURCES ${_src}
     QT_LINKS Core Widgets Network
     LINKS QsFramework ExtensionSystem qBreakpad
     LINKS_PRIVATE SingleApplication
+    INCLUDES include ${_extra_includes}
+    INCLUDES_PRIVATE include/CoreApi src
 )
 
 configure_ck_library(${PROJECT_NAME})

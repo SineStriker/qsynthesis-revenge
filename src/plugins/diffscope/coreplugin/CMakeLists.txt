@@ -15,10 +15,10 @@ configure_plugin_base(_plugin
 )
 
 ck_target_components(${_plugin}
-    INCLUDE_CURRENT INCLUDE_SUBDIRS_PRIVATE
+    INCLUDE_CURRENT_PRIVATE INCLUDE_SUBDIRS_PRIVATE
     SOURCES ${_src} ${_res_dir}/res.qrc
     QT_LINKS Core Widgets
-    LINKS QsFramework ExtensionSystem
+    LINKS QsFramework ExtensionSystem CkAppCore
     INCLUDES ${_extra_includes}
 )
 

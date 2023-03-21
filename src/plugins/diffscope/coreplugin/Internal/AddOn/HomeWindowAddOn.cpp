@@ -4,7 +4,7 @@
 #include <QLabel>
 #include <QMenuBar>
 
-#include "Home/IHomeWindow.h"
+#include "Window/IHomeWindow.h"
 
 namespace Core {
 

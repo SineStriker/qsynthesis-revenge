@@ -27,7 +27,8 @@ if(TRUE)
         TARGETS ${_targets}
         LOCALES zh_CN zh_HK ja_JP
         TS_DIR Res/translations
-        QM_DIR ${ROOT_SHARE_OUTPUT_DIRECTORY}/qtdummy/translations
+        QM_DIR ${ROOT_SHARE_OUTPUT_DIRECTORY}/qtdummy/qtdummy.res/translations
+        QM_TARGET ${PROJECT_NAME}
     )
 
     ck_add_attaches(${PROJECT_NAME}

@@ -21,13 +21,15 @@ namespace Core {
     }
 
     void WindowSystemPrivate::_q_iWindowClosed() {
+        Q_Q(WindowSystem);
+
         auto iWin = qobject_cast<IWindow *>(sender());
-        emit q_ptr->windowDestroyed(iWin);
+        emit q->windowDestroyed(iWin);
         iWindows.remove(iWin);
 
         if (iWindows.isEmpty()) {
             QCloseEvent e;
-            qApp->sendEvent(q_ptr, &e);
+            qApp->sendEvent(q, &e);
             if (e.isAccepted()) {
                 // auto e2 = new QEvent(QEvent::Quit);
                 // qApp->postEvent(qApp, e2);
@@ -39,15 +41,16 @@ namespace Core {
     static WindowSystem *m_instance = nullptr;
 
     void WindowSystem::addWindow(IWindowFactory *factory) {
+        Q_D(WindowSystem);
         if (!factory) {
             qWarning() << "Core::WindowSystem::addWindow(): trying to add null creator";
             return;
         }
-        if (d_ptr->windowFactories.contains(factory->id())) {
+        if (d->windowFactories.contains(factory->id())) {
             qWarning() << "Core::WindowSystem::addWindow(): trying to add duplicated creator:" << factory->id();
             return;
         }
-        d_ptr->windowFactories.insert(factory->id(), factory);
+        d->windowFactories.insert(factory->id(), factory);
     }
 
     void WindowSystem::removeWindow(IWindowFactory *factory) {
@@ -59,57 +62,66 @@ namespace Core {
     }
 
     void WindowSystem::removeWindow(const QString &id) {
-        auto it = d_ptr->windowFactories.find(id);
-        if (it == d_ptr->windowFactories.end()) {
+        Q_D(WindowSystem);
+        auto it = d->windowFactories.find(id);
+        if (it == d->windowFactories.end()) {
             qWarning() << "Core::WindowSystem::removeWindow(): creator does not exist:" << id;
             return;
         }
-        d_ptr->windowFactories.erase(it);
+        d->windowFactories.erase(it);
     }
 
     QList<IWindowFactory *> WindowSystem::windowFactories() const {
-        return d_ptr->windowFactories.values();
+        Q_D(const WindowSystem);
+        return d->windowFactories.values();
     }
 
     void WindowSystem::removeWindowFactories() {
-        d_ptr->windowFactories.clear();
+        Q_D(WindowSystem);
+        d->windowFactories.clear();
     }
 
     void WindowSystem::addAddOn(IWindowAddOnFactory *factory) {
+        Q_D(WindowSystem);
         if (!factory) {
             qWarning() << "Core::WindowSystem::addAddOn(): trying to add null add-on";
             return;
         }
-        auto it = d_ptr->addOnFactories.insert(d_ptr->addOnFactories.end(), factory);
-        d_ptr->addOnIndexes.insert(factory, it);
+        auto it = d->addOnFactories.insert(d->addOnFactories.end(), factory);
+        d->addOnIndexes.insert(factory, it);
     }
 
     void WindowSystem::removeAddOn(IWindowAddOnFactory *factory) {
+        Q_D(WindowSystem);
         if (!factory) {
             qWarning() << "Core::WindowSystem::removeAddOn(): trying to remove null add-on";
             return;
         }
 
-        auto it = d_ptr->addOnIndexes.find(factory);
-        if (it == d_ptr->addOnIndexes.end()) {
+        auto it = d->addOnIndexes.find(factory);
+        if (it == d->addOnIndexes.end()) {
             qWarning() << "Core::WindowSystem::removeAddOn(): add-on does not exist:" << factory;
             return;
         }
-        d_ptr->addOnFactories.erase(it.value());
-        d_ptr->addOnIndexes.erase(it);
+        d->addOnFactories.erase(it.value());
+        d->addOnIndexes.erase(it);
     }
 
     QList<IWindowAddOnFactory *> WindowSystem::addOnFactories() const {
-        return QList<IWindowAddOnFactory *>(d_ptr->addOnFactories.begin(), d_ptr->addOnFactories.end());
+        Q_D(const WindowSystem);
+        return {d->addOnFactories.begin(), d->addOnFactories.end()};
     }
 
     void WindowSystem::removeAddOnFactories() {
-        d_ptr->addOnFactories.clear();
+        Q_D(WindowSystem);
+        d->addOnFactories.clear();
     }
 
     IWindow *WindowSystem::createWindow(const QString &id, QWidget *parent) {
-        auto it = d_ptr->windowFactories.find(id);
-        if (it == d_ptr->windowFactories.end()) {
+        Q_D(WindowSystem);
+
+        auto it = d->windowFactories.find(id);
+        if (it == d->windowFactories.end()) {
             qWarning() << "Core::WindowSystem::createWindow(): creator does not exist:" << id;
             return nullptr;
         }
@@ -123,7 +135,7 @@ namespace Core {
             qWarning() << "Core::WindowSystem::createWindow(): creator creates null instance:" << id;
             return nullptr;
         }
-        connect(iWin, &IWindow::closed, d_ptr.data(), &WindowSystemPrivate::_q_iWindowClosed);
+        connect(iWin, &IWindow::closed, d, &WindowSystemPrivate::_q_iWindowClosed);
 
         // Create window
         auto window = iWin->createWindow(parent);
@@ -134,13 +146,13 @@ namespace Core {
         auto filter = new WindowCloseFilter(window);
         connect(filter, &WindowCloseFilter::windowClosed, iWin->d_ptr.data(), &IWindowPrivate::_q_windowClosed);
 
-        d_ptr->iWindows.insert(iWin);
+        d->iWindows.insert(iWin);
 
         // Setup window
         iWin->setupWindow();
 
         // Call all add-ons
-        for (auto fac : qAsConst(d_ptr->addOnFactories)) {
+        for (auto fac : qAsConst(d->addOnFactories)) {
             if (!fac->predicate(iWin)) {
                 continue;
             }
@@ -157,25 +169,29 @@ namespace Core {
     }
 
     int WindowSystem::count() const {
-        return d_ptr->iWindows.count();
+        Q_D(const WindowSystem);
+        return d->iWindows.count();
     }
 
     QList<IWindow *> WindowSystem::windows() const {
-        return d_ptr->iWindows.values();
+        Q_D(const WindowSystem);
+        return d->iWindows.values();
     }
 
     WindowSystem::WindowSystem(QObject *parent) : WindowSystem(*new WindowSystemPrivate(), parent) {
     }
 
     WindowSystem::~WindowSystem() {
+        Q_D(WindowSystem);
+
         m_instance = nullptr;
 
         // Remove all managed factories
-        for (auto &item : qAsConst(d_ptr->windowFactories)) {
+        for (auto &item : qAsConst(d->windowFactories)) {
             delete item;
         }
 
-        for (auto &item : qAsConst(d_ptr->addOnFactories)) {
+        for (auto &item : qAsConst(d->addOnFactories)) {
             delete item;
         }
     }

@@ -6,7 +6,7 @@
 #define PROJECTWINDOWADDON_H
 
 
-#include "Window/IWindowAddOn.h"
+#include "CoreApi/IWindowAddOn.h"
 
 namespace Core {
 

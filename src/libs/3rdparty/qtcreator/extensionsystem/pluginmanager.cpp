@@ -1375,6 +1375,11 @@ void PluginManagerPrivate::readPluginPaths() {
     // Begin OpenVPI patch
     for (const auto &path : qAsConst(pluginPaths)) {
         const QDir dir(path);
+
+        // Collect current
+
+
+        // Collect subdirectories
         const QFileInfoList subdirs = dir.entryInfoList(QDir::Dirs | QDir::NoSymLinks | QDir::NoDotAndDotDot);
         for (const QFileInfo &subdir : subdirs) {
             PluginMetaJson metaJson(subdir.absoluteFilePath());

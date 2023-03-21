@@ -575,6 +575,8 @@ Add qt translation target.
         [PREFIX prefix]
         [TS_DIR dir]
         [QM_DIR dir]
+        [TS_TARGET <target>]
+        [QM_TARGET <target>]
     )
 
     Arguments:
@@ -584,10 +586,12 @@ Add qt translation target.
         PREFIX: translation file prefix, default to target name
         TS_DIR: ts files destination, default to `CMAKE_CURRENT_SOURCE_DIR`
         QM_DIR: qm files destination, default to `CMAKE_CURRENT_BINARY_DIR`
+        TS_TARGET: update ts files before build target
+        QM_TARGET: release qm files after build target
 ]] #
 function(ck_add_translations _target)
     set(options)
-    set(oneValueArgs PREFIX TS_DIR QM_DIR)
+    set(oneValueArgs PREFIX TS_DIR QM_DIR TS_TARGET QM_TARGET)
     set(multiValueArgs LOCALES SOURCES TARGETS)
     cmake_parse_arguments(FUNC "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
 
@@ -635,16 +639,30 @@ function(ck_add_translations _target)
         list(APPEND _ts_files ${_ts_dir}/${_prefix}_${_loc}.ts)
     endforeach()
 
+    set(_ts_target)
+    if (FUNC_TS_TARGET)
+        list(APPEND _ts_target PRE_BUILD_TARGET)
+        list(APPEND _ts_target ${FUNC_TS_TARGET})
+    endif()
+
+    set(_qm_target)
+    if (FUNC_QM_TARGET)
+        list(APPEND _qm_target POST_BUILD_TARGET)
+        list(APPEND _qm_target ${FUNC_QM_TARGET})
+    endif()
+
     _ck_add_lupdate_target(${_target}_lupdate
         INPUT ${_src_files}
         OUTPUT ${_ts_files}
         CREATE_ONCE
+        ${_ts_target}
     )
 
     _ck_add_lrelease_target(${_target}_lrelease
         INPUT ${_ts_files}
         DESTINATION ${_qm_dir}
         DEPENDS ${_target}_lupdate
+        ${_qm_target}
     )
 
     add_custom_target(${_target})
@@ -859,18 +877,34 @@ endfunction()
 #[[
 Create an executable shortcut after build.
 
-    ck_add_win_shortcut(<target> <dir>)
+    ck_add_win_shortcut(<target> <dir>
+        [OUTPUT_NAME <name>]
+    )
+    
+    Arguments:
+        OUTPUT_NAME: output lnk name
 ]] #
 function(ck_add_win_shortcut _target _dir)
     if(NOT WIN32)
         return()
     endif()
 
+    set(options)
+    set(oneValueArgs OUTPUT_NAME)
+    set(multiValueArgs)
+    cmake_parse_arguments(FUNC "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
+
+    if (FUNC_OUTPUT_NAME)
+        set(_output_name ${FUNC_OUTPUT_NAME})
+    else()
+        set(_output_name $<TARGET_FILE_BASE_NAME:${_target}>)
+    endif()
+
     string(RANDOM LENGTH 8 _rand)
     set(_vbs_name ${CMAKE_CURRENT_BINARY_DIR}/${_target}_shortcut.vbs)
     set(_vbs_temp ${_vbs_name}.in)
 
-    set(SHORTCUT_PATH "${_dir}/$<TARGET_FILE_BASE_NAME:${_target}>.lnk")
+    set(SHORTCUT_PATH "${_dir}/${_output_name}.lnk")
     set(SHORTCUT_TARGET_PATH $<TARGET_FILE:${_target}>)
     set(SHORTCUT_WORKING_DIRECOTRY $<TARGET_FILE_DIR:${_target}>)
     set(SHORTCUT_DESCRIPTION $<TARGET_FILE_BASE_NAME:${_target}>)

@@ -9,7 +9,7 @@ namespace Core {
 
     class ActionSystemPrivate;
 
-    class CORE_EXPORT ActionSystem : public QObject {
+    class CKAPPCORE_API ActionSystem : public QObject {
         Q_OBJECT
     public:
         void addContext(ActionContext *context);

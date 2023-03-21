@@ -28,6 +28,7 @@ namespace Core {
 
         QSet<IWindow *> iWindows;
 
+    private:
         void _q_iWindowClosed();
     };
 }

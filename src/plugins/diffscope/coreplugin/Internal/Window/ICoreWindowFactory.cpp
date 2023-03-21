@@ -1,7 +1,7 @@
 #include "ICoreWindowFactory.h"
 
-#include "coreplugin/Api/Home/IHomeWindow.h"
-#include "coreplugin/Api/Project/IProjectWindow.h"
+#include "Window/IHomeWindow.h"
+#include "Window/IProjectWindow.h"
 
 namespace Core {
 

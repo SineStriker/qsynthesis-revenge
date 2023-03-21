@@ -1,10 +1,11 @@
 #ifndef IHOMEWINDOW_P_H
 #define IHOMEWINDOW_P_H
 
-#include "../Window/ICoreWindow_p.h"
+#include "ICoreWindow_p.h"
 #include "IHomeWindow.h"
 
 #include "CNavFrame.h"
+#include "CTabButton.h"
 
 namespace Core {
 
@@ -17,6 +18,10 @@ namespace Core {
         void init();
 
         CNavFrame *navFrame;
+        CTabButton *aboutButton;
+
+    private:
+        void _q_aboutButtonClicked();
     };
 
 }

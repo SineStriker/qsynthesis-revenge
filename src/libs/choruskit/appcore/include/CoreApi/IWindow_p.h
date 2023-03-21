@@ -15,7 +15,7 @@ namespace Core {
         IWindowFactory::AvailableCreator creator;
     };
 
-    class CORE_EXPORT IWindowPrivate : public QObject {
+    class CKAPPCORE_API IWindowPrivate : public QObject {
         Q_OBJECT
         Q_DECLARE_PUBLIC(IWindow)
     public:
@@ -41,7 +41,10 @@ namespace Core {
         void initAllAddOns();
         void deleteAllAddOns();
 
+    private:
         void _q_windowClosed(QWidget *w);
+
+        friend class WindowSystem;
     };
 }
 

@@ -1,7 +1,8 @@
 #ifndef ICOREWINDOW_H
 #define ICOREWINDOW_H
 
-#include "IWindow.h"
+#include "CoreApi/IWindow.h"
+#include "Global/CoreGlobal.h"
 
 namespace Core {
 

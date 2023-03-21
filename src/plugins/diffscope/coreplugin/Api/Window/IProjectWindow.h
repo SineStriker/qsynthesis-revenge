@@ -1,7 +1,7 @@
 #ifndef IPROJECTWINDOW_H
 #define IPROJECTWINDOW_H
 
-#include "../Window/ICoreWindow.h"
+#include "ICoreWindow.h"
 
 namespace Core {
 

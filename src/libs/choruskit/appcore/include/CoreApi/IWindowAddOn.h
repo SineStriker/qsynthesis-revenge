@@ -1,13 +1,9 @@
-//
-// Created by Functioner on 2023/3/16.
-//
-
 #ifndef IWINDOWADDON_H
 #define IWINDOWADDON_H
 
 #include <QObject>
 
-#include "Global/CoreGlobal.h"
+#include "CkAppCoreGlobal.h"
 
 namespace Core {
 
@@ -15,7 +11,7 @@ namespace Core {
     class IWindowAddOn;
     class IWindowAddOnPrivate;
 
-    class CORE_EXPORT IWindowAddOnFactory {
+    class CKAPPCORE_API IWindowAddOnFactory {
     public:
         virtual ~IWindowAddOnFactory();
 
@@ -23,7 +19,7 @@ namespace Core {
         virtual IWindowAddOn *create(QObject *parent) = 0;
     };
 
-    class CORE_EXPORT IWindowAddOn : public QObject {
+    class CKAPPCORE_API IWindowAddOn : public QObject {
         Q_OBJECT
     public:
         explicit IWindowAddOn(QObject *parent = nullptr);
