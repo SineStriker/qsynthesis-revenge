@@ -19,6 +19,10 @@ ck_target_res(${PROJECT_NAME}
     MANIFEST
 )
 
+ck_add_attaches(${PROJECT_NAME}
+    SRC config.json splash.png DEST ${ROOT_SHARE_OUTPUT_DIRECTORY}/${PROJECT_NAME}
+)
+
 if (CONFIG_CREATE_WIN_SHORTCUT)
     ck_add_win_shortcut(${PROJECT_NAME} ${CONFIG_OUTPUT_DIRECTORY} OUTPUT_NAME "ChorusKit ${PROJECT_NAME}")
 endif()

@@ -24,6 +24,8 @@
 
 #include "singleapplication.h"
 
+#include "loadconfig.h"
+
 #define USE_NATIVE_MESSAGEBOX
 
 using namespace ExtensionSystem;
@@ -36,7 +38,6 @@ static const SingleApplication::Options opts =
 
 enum { OptionIndent = 4, DescriptionIndent = 34 };
 
-const char corePluginNameC[] = "Core";
 static const char fixedOptionsC[] = " [options]... [files]...\n";
 
 static const char HELP_OPTION1[] = "-h";
@@ -191,12 +192,46 @@ int main_entry(int argc, char *argv[]) {
 
     QMWidgetsHost host;
 
+    QString corePluginNameC = "Core";
+    QString pluginIID = QString("org.ChorusKit.%1.Plugin").arg(qAppName());
+    QPixmap splashImage(":/svsplash.png");
+    QStringList resourcesFiles{QString("%1/%2/%2.res.json").arg(host.shareDir(), qAppName())};
+
     // Add qslib plugin dir
     QApplication::addLibraryPath(host.libDir() + "/QsLib/plugins");
 
     // Load decorators
     QMDecorateDir dummyDec;
     dummyDec.load(QString("%1/%2/%2.res.json").arg(host.shareDir(), "qtdummy")); // qtdummy
+
+    // Load configuration
+    LoadConfig configFile;
+    if (configFile.load(QString("%1/%2/config.json").arg(host.shareDir(), qAppName()))) {
+        QString configDir = host.shareDir() + "/" + qAppName();
+        if (!configFile.pluginIID.isEmpty()) {
+            pluginIID = configFile.pluginIID;
+        }
+        if (!configFile.splashImage.isEmpty()) {
+            QString path = configFile.splashImage;
+            if (QDir::isRelativePath(path)) {
+                path = configDir + "/" + path;
+            }
+            QPixmap pixmap(path);
+            if (!pixmap.isNull()) {
+                splashImage = std::move(pixmap);
+            }
+        }
+        if (!configFile.coreName.isEmpty()) {
+            corePluginNameC = configFile.coreName;
+        }
+        for (const auto &file : qAsConst(configFile.resourceFiles)) {
+            if (QDir::isRelativePath(file)) {
+                resourcesFiles.append(configDir + "/" + file);
+            } else {
+                resourcesFiles.append(file);
+            }
+        }
+    }
 
     // Parse command line
     bool allowRoot = false;
@@ -243,7 +278,7 @@ int main_entry(int argc, char *argv[]) {
         return -1;
     }
 
-    QSplashScreen splash(QPixmap(":/svsplash.png"));
+    QSplashScreen splash(splashImage);
     splash.show();
 
     g_splash = &splash;
@@ -264,7 +299,7 @@ int main_entry(int argc, char *argv[]) {
     QSettings::setPath(QSettings::IniFormat, QSettings::SystemScope, qmHost->appDataDir());
 
     PluginManager pluginManager;
-    pluginManager.setPluginIID(QString("org.ChorusKit.%1.Plugin").arg(qAppName()));
+    pluginManager.setPluginIID(pluginIID);
 
     auto settings =
         new QSettings(QSettings::IniFormat, QSettings::SystemScope, a.organizationDomain(), a.applicationName());
@@ -291,9 +326,9 @@ int main_entry(int argc, char *argv[]) {
 
     // Load plugins
     const auto plugins = PluginManager::plugins();
-    PluginSpec *coreplugin = 0;
+    PluginSpec *coreplugin = nullptr;
     for (auto spec : qAsConst(plugins)) {
-        if (spec->name() == QLatin1String(corePluginNameC)) {
+        if (spec->name() == corePluginNameC) {
             coreplugin = spec;
             break;
         }
@@ -370,8 +405,13 @@ int main_entry(int argc, char *argv[]) {
     QObject::connect(&a, &QApplication::aboutToQuit, &pluginManager, &PluginManager::shutdown);
 
     // Load app decorator (If exists)
-    QMDecorateDir appDec;
-    appDec.load(QString("%1/%2/%2.res.json").arg(host.shareDir(), qAppName())); // app
+    QList<QSharedPointer<QMDecorateDir>> decs;
+    for (const auto &file : qAsConst(resourcesFiles)) {
+        auto dec = QSharedPointer<QMDecorateDir>::create();
+        if (dec->load(file)) {
+            decs.append(dec);
+        }
+    }
 
     return a.exec();
 }
