@@ -36,30 +36,32 @@ def main():
     if len(sources) == 0:
         print("No sources found")
         return
-    
+
     if len(sys.argv) > 2:
         copyright_file = sys.argv[2]
     else:
         copyright_file = os.path.dirname(__file__) + "/copyright1.txt"
 
-    print(copyright_file)
-    return
-
-    with open(copyright_file, "r") as f:
+    with open(copyright_file, "r", encoding="UTF-8") as f:
         copyright_lines = f.readlines()
 
-    copyright_comments = ["/****************************************************************************\n"]
+    copyright_comments = [
+        "/****************************************************************************\n"]
     copyright_comments.append(" *\n")
     for line in copyright_lines:
         if not line.endswith("\n"):
             line += "\n"
         copyright_comments.append(f" * {line}")
     copyright_comments.append(" *\n")
-    copyright_comments.append(" ****************************************************************************/\n")
+    copyright_comments.append(
+        " ****************************************************************************/\n")
 
+    i = 1
     for source in sources:
-        print(f"Process {source}")
-        with open(source, "r") as f:
+        print(f"Process {i}/{len(sources)}: {source}")
+        i += 1
+
+        with open(source, "r", encoding="UTF-8") as f:
             lines = f.readlines()
 
         is_comment = False
@@ -72,7 +74,7 @@ def main():
                 break
             del (lines[0])
 
-        with open(source, "w") as f:
+        with open(source, "w", encoding="UTF-8") as f:
             f.writelines(copyright_comments)
             f.write("\n\n")
             f.writelines(lines)
