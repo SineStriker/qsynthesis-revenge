@@ -5,9 +5,7 @@
 #include <QWidget>
 
 #include "ActionItem.h"
-
-class QMenuBar;
-class QStatusBar;
+#include "WindowElementsAdaptor.h"
 
 namespace Core {
 
@@ -40,25 +38,10 @@ namespace Core {
 
     class IWindowPrivate;
 
-    class CKAPPCORE_API IWindow : public QObject {
+    class CKAPPCORE_API IWindow : public QObject, public WindowElementsAdaptor {
         Q_OBJECT
     public:
         QString id() const;
-        QWidget *window() const;
-
-        virtual QMenuBar *menuBar() const;
-        virtual void setMenuBar(QMenuBar *menuBar);
-
-        virtual QWidget *centralWidget() const;
-        virtual void setCentralWidget(QWidget *widget);
-
-        virtual QStatusBar *statusBar() const;
-        virtual void setStatusBar(QStatusBar *statusBar);
-
-        bool windowTitleCorrectionEnabled() const;
-        void setWindowTitleCorrectionEnabled(bool enabled);
-
-        virtual QString correctWindowTitle(const QString &title) const;
 
         void addWidget(const QString &id, QWidget *w);
         void removeWidget(const QString &id);

@@ -24,7 +24,7 @@
 
 #include "singleapplication.h"
 
-#include "loadconfig.h"
+#include "config/loadconfig.h"
 
 #define USE_NATIVE_MESSAGEBOX
 

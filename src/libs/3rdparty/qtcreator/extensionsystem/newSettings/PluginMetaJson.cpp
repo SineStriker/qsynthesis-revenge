@@ -32,28 +32,28 @@ bool PluginMetaJson::load() {
 
     auto objDoc = doc.object();
     {
-        auto it = objDoc.find("Name");
+        auto it = objDoc.find("name");
         if (it != objDoc.end() && it->isString()) {
             name = it->toString();
         }
     }
 
     {
-        auto it = objDoc.find("AllFiles");
+        auto it = objDoc.find("allFiles");
         if (it != objDoc.end() && it->toBool()) {
             allFiles = true;
         }
     }
 
     {
-        auto it = objDoc.find("AllSubdirs");
+        auto it = objDoc.find("allSubdirs");
         if (it != objDoc.end() && it->toBool()) {
             allSubdirs = true;
         }
     }
 
     {
-        auto it = objDoc.find("Subdirs");
+        auto it = objDoc.find("subdirs");
         if (it != objDoc.end() && it->isArray()) {
             auto arr = it->toArray();
             for (const auto &item : qAsConst(arr)) {

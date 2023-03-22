@@ -10,7 +10,6 @@ namespace Core {
     }
 
     void ICoreWindowPrivate::init() {
-        q_ptr->setWindowTitleCorrectionEnabled(true);
     }
 
     QMenuBar *ICoreWindow::menuBar() const {
@@ -38,7 +37,7 @@ namespace Core {
     }
 
     QString ICoreWindow::correctWindowTitle(const QString &title) const {
-        return ICore::displayTitle(title);
+        return IWindow::correctWindowTitle(ICore::displayTitle(title));
     }
 
     ICoreWindow::ICoreWindow(const QString &id, QObject *parent) : ICoreWindow(*new ICoreWindowPrivate(), id, parent) {

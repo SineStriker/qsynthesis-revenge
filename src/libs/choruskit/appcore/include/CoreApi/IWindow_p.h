@@ -29,10 +29,6 @@ namespace Core {
         IWindow *q_ptr;
 
         QString id;
-        QWidget *window;
-
-        bool autoCorrectTitle;
-        bool isCorrectingTitle;
 
         QMap<QString, ActionItem *> actionItemMap;
         std::list<IWindowAddOn *> addOns;
@@ -45,9 +41,6 @@ namespace Core {
 
         void initAllAddOns();
         void deleteAllAddOns();
-
-    protected:
-        bool eventFilter(QObject *obj, QEvent *event) override;
 
     private:
         void _q_windowClosed(QWidget *w);

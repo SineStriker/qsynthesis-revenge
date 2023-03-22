@@ -1,6 +1,8 @@
 #ifndef CKAPPCOREGLOBAL_H
 #define CKAPPCOREGLOBAL_H
 
+#include <QtGlobal>
+
 #ifndef CKAPPCORE_API
 #    ifdef CKAPPCORE_STATIC
 #        define CKAPPCORE_API

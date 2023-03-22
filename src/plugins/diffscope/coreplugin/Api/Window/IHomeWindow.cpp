@@ -25,7 +25,7 @@ namespace Core {
     void IHomeWindow::reloadStrings() {
         Q_D(IHomeWindow);
         auto win = window();
-        win->setWindowTitle(tr("Welcome"));
+        setWindowTitle(tr("Welcome"));
         d->aboutButton->setText(tr("About %1").arg(qAppName()));
     }
 
@@ -59,6 +59,8 @@ namespace Core {
 
         d->navFrame = frame;
         d->aboutButton = aboutButton;
+
+        setWindowModified(true);
 
         connect(aboutButton, &QAbstractButton::clicked, d, &IHomeWindowPrivate::_q_aboutButtonClicked);
 

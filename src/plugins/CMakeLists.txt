@@ -60,19 +60,19 @@ function(configure_plugin_base _out)
 
     set(_plugin_json2_path ${CMAKE_CURRENT_BINARY_DIR}/${_name}PluginMetaData/plugin.json)
 
-    set(_content "{\n    \"Name\": \"${_name}\"")
+    set(_content "{\n    \"name\": \"${_name}\"")
 
     if(FUNC_META_ALL_FILES)
-        set(_content "${_content},\n    \"AllFiles\": true")
+        set(_content "${_content},\n    \"allFiles\": true")
     endif()
 
     if(FUNC_META_ALL_SUBDIRS)
-        set(_content "${_content},\n    \"AllSubdirs\": true")
+        set(_content "${_content},\n    \"allSubdirs\": true")
     endif()
 
     if(FUNC_META_SUBDIRS)
         string(JOIN "\",\n        \"" _json_arr_str ${FUNC_META_SUBDIRS})
-        set(_content "${_content},\n    \"Subdirs\": [\n        \"${_json_arr_str}\"\n    ]")
+        set(_content "${_content},\n    \"subdirs\": [\n        \"${_json_arr_str}\"\n    ]")
     endif()
 
     set(_content "${_content}\n}")

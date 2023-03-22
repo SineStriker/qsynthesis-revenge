@@ -42,7 +42,7 @@ def main():
     else:
         copyright_file = os.path.dirname(__file__) + "/copyright1.txt"
 
-    with open(copyright_file, "r", encoding="UTF-8") as f:
+    with open(copyright_file, "r", encoding="utf-8-sig") as f:
         copyright_lines = f.readlines()
 
     copyright_comments = [
@@ -61,7 +61,7 @@ def main():
         print(f"Process {i}/{len(sources)}: {source}")
         i += 1
 
-        with open(source, "r", encoding="UTF-8") as f:
+        with open(source, "r", encoding="utf-8-sig") as f:
             lines = f.readlines()
 
         is_comment = False
@@ -74,7 +74,7 @@ def main():
                 break
             del (lines[0])
 
-        with open(source, "w", encoding="UTF-8") as f:
+        with open(source, "w", encoding="utf-8") as f:
             f.writelines(copyright_comments)
             f.write("\n\n")
             f.writelines(lines)

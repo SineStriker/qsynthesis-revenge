@@ -11,9 +11,6 @@
 namespace Core {
 
     IWindowPrivate::IWindowPrivate() : q_ptr(nullptr) {
-        window = nullptr;
-        autoCorrectTitle = false;
-        isCorrectingTitle = false;
     }
 
     IWindowPrivate::~IWindowPrivate() {
@@ -43,48 +40,24 @@ namespace Core {
         }
     }
 
-    bool IWindowPrivate::eventFilter(QObject *obj, QEvent *event) {
-        Q_Q(IWindow);
-        if (obj == window) {
-            switch (event->type()) {
-                case QEvent::WindowTitleChange:
-                    if (!isCorrectingTitle) {
-                        isCorrectingTitle = true;
-                        window->setWindowTitle(q->correctWindowTitle(window->windowTitle()));
-                    } else {
-                        isCorrectingTitle = false;
-                    }
-                    break;
-                default:
-                    break;
-            }
-        }
-        return QObject::eventFilter(obj, event);
-    }
-
     void IWindowPrivate::_q_windowClosed(QWidget *w) {
         Q_Q(IWindow);
-
-        Q_UNUSED(w);
 
         emit q->aboutToClose();
         deleteAllAddOns();
 
         emit q->closed();
 
+        q->setWindow(nullptr);
         q->deleteLater();
-        window = nullptr;
     }
 
     void IWindowPrivate::setWindow(QWidget *w, WindowSystemPrivate *d) {
         Q_Q(IWindow);
 
-        window = w;
+        q->setWindow(w);
 
-        // Filter window title event
-        w->installEventFilter(this);
-
-        auto filter = new WindowCloseFilter(window);
+        auto filter = new WindowCloseFilter(q->window());
         connect(filter, &WindowCloseFilter::windowClosed, this, &IWindowPrivate::_q_windowClosed);
 
         // Setup window
@@ -130,49 +103,6 @@ namespace Core {
     QString IWindow::id() const {
         Q_D(const IWindow);
         return d->id;
-    }
-
-    QWidget *IWindow::window() const {
-        Q_D(const IWindow);
-        return d->window;
-    }
-
-    QMenuBar *IWindow::menuBar() const {
-        return nullptr;
-    }
-
-    void IWindow::setMenuBar(QMenuBar *menuBar) {
-        Q_UNUSED(menuBar);
-    }
-
-    QWidget *IWindow::centralWidget() const {
-        return nullptr;
-    }
-
-    void IWindow::setCentralWidget(QWidget *widget) {
-        Q_UNUSED(widget);
-    }
-
-    QStatusBar *IWindow::statusBar() const {
-        return nullptr;
-    }
-
-    void IWindow::setStatusBar(QStatusBar *statusBar) {
-        Q_UNUSED(statusBar);
-    }
-
-    bool IWindow::windowTitleCorrectionEnabled() const {
-        Q_D(const IWindow);
-        return d->autoCorrectTitle;
-    }
-
-    void IWindow::setWindowTitleCorrectionEnabled(bool enabled) {
-        Q_D(IWindow);
-        d->autoCorrectTitle = enabled;
-    }
-
-    QString IWindow::correctWindowTitle(const QString &title) const {
-        return title;
     }
 
     void IWindow::addWidget(const QString &id, QWidget *w) {
