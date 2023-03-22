@@ -4,27 +4,27 @@
 <context>
     <name>Application</name>
     <message>
-        <location filename="../../../../libs/choruskit/appload/main.cpp" line="161"/>
+        <location filename="../../../../libs/choruskit/appload/main.cpp" line="162"/>
         <source>Failed to load core: %1!</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../../../libs/choruskit/appload/main.cpp" line="315"/>
+        <location filename="../../../../libs/choruskit/appload/main.cpp" line="332"/>
         <source>Searching plugins...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../../../libs/choruskit/appload/main.cpp" line="355"/>
+        <location filename="../../../../libs/choruskit/appload/main.cpp" line="372"/>
         <source>Could not find Core plugin!</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../../../libs/choruskit/appload/main.cpp" line="361"/>
+        <location filename="../../../../libs/choruskit/appload/main.cpp" line="378"/>
         <source>Core plugin is disabled.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../../../libs/choruskit/appload/main.cpp" line="404"/>
+        <location filename="../../../../libs/choruskit/appload/main.cpp" line="422"/>
         <source>Loading plugins...</source>
         <translation type="unfinished"></translation>
     </message>
@@ -190,12 +190,12 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../../../libs/choruskit/appload/main.cpp" line="269"/>
+        <location filename="../../../../libs/choruskit/appload/main.cpp" line="282"/>
         <source>You&apos;re trying to start %1 as the %2, which is extremely dangerous and therefore strongly not recommended.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../../../libs/choruskit/appload/main.cpp" line="385"/>
+        <location filename="../../../../libs/choruskit/appload/main.cpp" line="402"/>
         <source>Please close the running application!</source>
         <translation type="unfinished"></translation>
     </message>

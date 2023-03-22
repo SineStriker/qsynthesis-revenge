@@ -6,9 +6,14 @@
 
 SplashScreen::SplashScreen(QScreen *screen) : QSplashScreen(screen) {
     m_showTexts = false;
+    m_texts.insert("_status", {});
 }
 
 SplashScreen::~SplashScreen() {
+}
+
+void SplashScreen::setDisplayStatus(const QString &text) {
+    setText("_status", text);
 }
 
 void SplashScreen::setTextAttribute(const QString &id, const SplashScreen::Attribute &attr) {
@@ -72,4 +77,8 @@ void SplashScreen::showTexts() {
     m_showTexts = true;
     if (isVisible())
         repaint();
+}
+
+void SplashScreen::mousePressEvent(QMouseEvent *event) {
+    // No hide
 }

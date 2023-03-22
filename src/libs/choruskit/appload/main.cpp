@@ -16,6 +16,7 @@
 
 #include "QBreakpadHandler.h"
 
+#include "extensionsystem/newSettings/PluginBridge.h"
 #include "extensionsystem/pluginmanager.h"
 #include "extensionsystem/pluginspec.h"
 
@@ -170,6 +171,18 @@ static inline QStringList getPluginPaths() {
     return rc;
 }
 
+class MyPluginBridge : public ExtensionSystem::PluginBridge {
+public:
+    explicit MyPluginBridge(QSplashScreen *splash) {
+        setSplash(splash);
+    }
+
+protected:
+    void updateLoaderText(const QString &text) override {
+        qobject_cast<SplashScreen *>(splash())->setText("_status", text);
+    }
+};
+
 int main_entry(int argc, char *argv[]) {
     QApplication a(argc, argv);
 
@@ -280,14 +293,17 @@ int main_entry(int argc, char *argv[]) {
 
     SplashScreen splash;
     splash.setPixmap(splashImage);
+
+    MyPluginBridge bridge(&splash);
+
     for (auto it = configFile.splashSettings.texts.begin(); it != configFile.splashSettings.texts.end(); ++it) {
         const auto &item = it.value();
         SplashScreen::Attribute attr;
-        attr.pos = item.pos.size() == 2 ? QPoint(item.pos[0], item.pos[1]) : QPoint();
-        attr.anchor = item.anchor.size() == 2 ? qMakePair(item.anchor[0], item.anchor[1]) : qMakePair(1, 1);
-        attr.fontSize = item.fontSize > 0 ? item.fontSize : 15;
+        attr.pos = item.pos.size() == 2 ? QPoint(item.pos[0], item.pos[1]) : attr.pos;
+        attr.anchor = item.anchor.size() == 2 ? qMakePair(item.anchor[0], item.anchor[1]) : attr.anchor;
+        attr.fontSize = item.fontSize > 0 ? item.fontSize : attr.fontSize;
         attr.fontColor = QMCss::CssStringToColor(item.fontColor);
-        attr.maxWidth = item.maxWidth;
+        attr.maxWidth = item.maxWidth > 0 ? item.maxWidth : attr.maxWidth;
         attr.text = item.text;
         splash.setTextAttribute(it.key(), attr);
     }
@@ -312,7 +328,8 @@ int main_entry(int argc, char *argv[]) {
     QSettings::setPath(QSettings::IniFormat, QSettings::UserScope, qmHost->appDataDir());
     QSettings::setPath(QSettings::IniFormat, QSettings::SystemScope, qmHost->appDataDir());
 
-    splash.setText("_status", QCoreApplication::translate("Application", "Searching plugins..."));
+    // Update loader text
+    PluginBridge::setLoaderText(QCoreApplication::translate("Application", "Searching plugins..."));
 
     PluginManager pluginManager;
     pluginManager.setPluginIID(pluginIID);
@@ -401,7 +418,8 @@ int main_entry(int argc, char *argv[]) {
         qInfo() << "apploader: primary instance initializing...";
     }
 
-    splash.setText("_status", QCoreApplication::translate("Application", "Loading plugins..."));
+    // Update loader text
+    PluginBridge::setLoaderText(QCoreApplication::translate("Application", "Loading plugins..."));
 
     PluginManager::loadPlugins();
     if (coreplugin->hasError()) {

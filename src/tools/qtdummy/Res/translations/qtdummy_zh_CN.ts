@@ -12,22 +12,22 @@
         <translation type="vanished">无法在%1中找到内核插件！</translation>
     </message>
     <message>
-        <location filename="../../../../libs/choruskit/appload/main.cpp" line="161"/>
+        <location filename="../../../../libs/choruskit/appload/main.cpp" line="162"/>
         <source>Failed to load core: %1!</source>
         <translation>无法加载内核：%1！</translation>
     </message>
     <message>
-        <location filename="../../../../libs/choruskit/appload/main.cpp" line="315"/>
+        <location filename="../../../../libs/choruskit/appload/main.cpp" line="332"/>
         <source>Searching plugins...</source>
         <translation>正在搜索插件...</translation>
     </message>
     <message>
-        <location filename="../../../../libs/choruskit/appload/main.cpp" line="355"/>
+        <location filename="../../../../libs/choruskit/appload/main.cpp" line="372"/>
         <source>Could not find Core plugin!</source>
         <translation>无法找到内核插件！</translation>
     </message>
     <message>
-        <location filename="../../../../libs/choruskit/appload/main.cpp" line="404"/>
+        <location filename="../../../../libs/choruskit/appload/main.cpp" line="422"/>
         <source>Loading plugins...</source>
         <translation>正在加载插件...</translation>
     </message>
@@ -36,7 +36,7 @@
         <translation type="vanished">无法在%1中找到内核插件！</translation>
     </message>
     <message>
-        <location filename="../../../../libs/choruskit/appload/main.cpp" line="361"/>
+        <location filename="../../../../libs/choruskit/appload/main.cpp" line="378"/>
         <source>Core plugin is disabled.</source>
         <translation>内核插件已被禁用。</translation>
     </message>
@@ -210,12 +210,12 @@
         <translation type="vanished">你正在尝试以%2身份运行%1，此番操作非常不安全。请使用普通权限启动。</translation>
     </message>
     <message>
-        <location filename="../../../../libs/choruskit/appload/main.cpp" line="269"/>
+        <location filename="../../../../libs/choruskit/appload/main.cpp" line="282"/>
         <source>You&apos;re trying to start %1 as the %2, which is extremely dangerous and therefore strongly not recommended.</source>
         <translation>你正在尝试以%2身份运行%1，此操作非常不安全，因此强烈不推荐。</translation>
     </message>
     <message>
-        <location filename="../../../../libs/choruskit/appload/main.cpp" line="385"/>
+        <location filename="../../../../libs/choruskit/appload/main.cpp" line="402"/>
         <source>Please close the running application!</source>
         <translation>请关闭正在运行中的程序！</translation>
     </message>

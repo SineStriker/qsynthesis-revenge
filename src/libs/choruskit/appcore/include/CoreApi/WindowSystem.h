@@ -28,6 +28,7 @@ namespace Core {
 
         int count() const;
         QList<IWindow *> windows() const;
+        IWindow *firstWindow() const;
 
     signals:
         void windowCreated(IWindow *iWin);

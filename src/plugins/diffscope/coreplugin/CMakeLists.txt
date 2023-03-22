@@ -27,6 +27,15 @@ ck_target_res(${_plugin}
     COPYRIGHT "Sine Striker"
 )
 
+ck_add_translations(${_plugin}_translations
+    PREFIX Core
+    TARGETS ${_plugin}
+    LOCALES zh_CN zh_HK ja_JP
+    TS_DIR Res/translations
+    QM_DIR $<TARGET_FILE_DIR:${_plugin}>/share/Core.res/translations
+    QM_TARGET ${_plugin}
+)
+
 ck_add_attaches(${_plugin}
     SRC Res/Core.res.json DEST $<TARGET_FILE_DIR:${_plugin}>/share
     SRC Res/themes/*.json DEST $<TARGET_FILE_DIR:${_plugin}>/share/Core.res/themes

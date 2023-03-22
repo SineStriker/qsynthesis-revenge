@@ -11,12 +11,17 @@ public:
 
     struct Attribute {
         QPoint pos;
-        QPair<int, int> anchor;
+        QPair<int, int> anchor{1, 1};
         int fontSize;
         QColor fontColor;
         int maxWidth;
         QString text;
+
+        Attribute() : fontSize(15), maxWidth(0) {
+        }
     };
+
+    Q_INVOKABLE void setDisplayStatus(const QString &text);
 
 public:
     void setTextAttribute(const QString &id, const Attribute &attr);
@@ -25,6 +30,8 @@ public:
 
 protected:
     void drawContents(QPainter *painter) override;
+
+    void mousePressEvent(QMouseEvent *event) override;
 
 private:
     bool m_showTexts;

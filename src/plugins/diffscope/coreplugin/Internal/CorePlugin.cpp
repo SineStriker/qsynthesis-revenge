@@ -1,7 +1,7 @@
 #include "CorePlugin.h"
 
 #include <QApplication>
-#include <QSplashScreen>
+#include <QThread>
 
 #include "CoreApi/WindowSystem.h"
 #include "Window/ICoreWindowFactory.h"
@@ -12,9 +12,12 @@
 #include "QMDecorateDir.h"
 #include "QMDecorator.h"
 #include "QMSystem.h"
+#include "QMView.h"
 
 #include <extensionsystem/pluginmanager.h>
 #include <extensionsystem/pluginspec.h>
+
+#include <extensionsystem/newSettings/PluginBridge.h>
 
 namespace Core {
 
@@ -39,6 +42,11 @@ namespace Core {
             auto &d = Internal::d;
             d = new CorePluginPrivate();
 
+            d->dec.load(QString("%1/share/%2.res.json").arg(QMFs::PathFindDirPath(pluginSpec()->filePath()), "Core"));
+
+            ExtensionSystem::PluginBridge::setLoaderText(tr("Initializing core plugin..."));
+            // QThread::msleep(2000);
+
             // Init ICore instance
             icore = new ICore(this);
 
@@ -54,9 +62,6 @@ namespace Core {
             qIDec->addThemeTemplate("Global", ":/themes/global.qss.in");
             qIDec->addThemeTemplate("HomeWindow", ":/themes/home.qss.in");
             qIDec->addThemeTemplate("PianoWindow", ":/themes/piano.qss.in");
-
-            QString path = QString("%1/share/%2.res.json").arg(QMFs::PathFindDirPath(pluginSpec()->filePath()), "Core");
-            d->dec.load(path);
 
             return true;
         }
@@ -79,13 +84,15 @@ namespace Core {
             qDebug() << options;
             qDebug() << workingDirectory;
             qDebug() << args;
+
+            QMView::bringWindowToForeground(icore->windowSystem()->firstWindow()->window());
+
             return nullptr;
         }
 
         void CorePlugin::waitSplash(QWidget *w) {
             // Get splash screen handle
-            auto var = qApp->property("__choruskit_init_splash__");
-            auto screen = var.value<QSplashScreen *>();
+            auto screen = ExtensionSystem::PluginBridge::splash();
             if (screen && screen->isVisible()) {
                 screen->finish(w);
             }

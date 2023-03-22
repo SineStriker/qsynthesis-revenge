@@ -162,6 +162,11 @@ namespace Core {
         return d->iWindows.values();
     }
 
+    IWindow *WindowSystem::firstWindow() const {
+        Q_D(const WindowSystem);
+        return d->iWindows.isEmpty() ? nullptr : *d->iWindows.begin();
+    }
+
     WindowSystem::WindowSystem(QObject *parent) : WindowSystem(*new WindowSystemPrivate(), parent) {
     }
 
