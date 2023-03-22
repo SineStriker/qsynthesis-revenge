@@ -3,13 +3,11 @@
 
 #include <QStringList>
 
+struct SplashSettings{
+};
+
 class LoadConfig {
 public:
-    QString appName;
-    QString appVersion;
-    QString appOrganizationName;
-    QString appOrganizationDomain;
-
     QString pluginIID;
     QString splashImage;
     QString coreName;

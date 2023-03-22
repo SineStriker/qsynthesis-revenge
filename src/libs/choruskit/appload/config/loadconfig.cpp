@@ -21,33 +21,33 @@ bool LoadConfig::load(const QString &filename) {
     }
 
     auto objDoc = doc.object();
-    {
-        auto it = objDoc.find("AppName");
-        if (it != objDoc.end() && it->isString()) {
-            appName = it->toString();
-        }
-    }
-
-    {
-        auto it = objDoc.find("AppVersion");
-        if (it != objDoc.end() && it->isString()) {
-            appVersion = it->toString();
-        }
-    }
-
-    {
-        auto it = objDoc.find("AppOrganizationName");
-        if (it != objDoc.end() && it->isString()) {
-            appOrganizationName = it->toString();
-        }
-    }
-
-    {
-        auto it = objDoc.find("AppOrganizationDomain");
-        if (it != objDoc.end() && it->isString()) {
-            appOrganizationDomain = it->toString();
-        }
-    }
+    //{
+    //    auto it = objDoc.find("AppName");
+    //    if (it != objDoc.end() && it->isString()) {
+    //        appName = it->toString();
+    //    }
+    //}
+    //
+    //{
+    //    auto it = objDoc.find("AppVersion");
+    //    if (it != objDoc.end() && it->isString()) {
+    //        appVersion = it->toString();
+    //    }
+    //}
+    //
+    //{
+    //    auto it = objDoc.find("AppOrganizationName");
+    //    if (it != objDoc.end() && it->isString()) {
+    //        appOrganizationName = it->toString();
+    //    }
+    //}
+    //
+    //{
+    //    auto it = objDoc.find("AppOrganizationDomain");
+    //    if (it != objDoc.end() && it->isString()) {
+    //        appOrganizationDomain = it->toString();
+    //    }
+    //}
 
     {
         auto it = objDoc.find("PluginIID");
