@@ -4,8 +4,8 @@
 #include <QJsonDocument>
 
 SplashText::SplashText() {
-    rightToLeft = false;
-    fontSize = 12;
+    fontSize = 0;
+    maxWidth = 0;
 }
 
 bool LoadConfig::load(const QString &filename) {

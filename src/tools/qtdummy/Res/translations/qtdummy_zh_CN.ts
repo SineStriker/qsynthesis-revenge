@@ -12,21 +12,31 @@
         <translation type="vanished">无法在%1中找到内核插件！</translation>
     </message>
     <message>
-        <location filename="../../../../libs/choruskit/appload/main.cpp" line="163"/>
+        <location filename="../../../../libs/choruskit/appload/main.cpp" line="161"/>
         <source>Failed to load core: %1!</source>
         <translation>无法加载内核：%1！</translation>
     </message>
     <message>
-        <location filename="../../../../libs/choruskit/appload/main.cpp" line="339"/>
+        <location filename="../../../../libs/choruskit/appload/main.cpp" line="315"/>
+        <source>Searching plugins...</source>
+        <translation>正在搜索插件...</translation>
+    </message>
+    <message>
+        <location filename="../../../../libs/choruskit/appload/main.cpp" line="355"/>
         <source>Could not find Core plugin!</source>
         <translation>无法找到内核插件！</translation>
+    </message>
+    <message>
+        <location filename="../../../../libs/choruskit/appload/main.cpp" line="404"/>
+        <source>Loading plugins...</source>
+        <translation>正在加载插件...</translation>
     </message>
     <message>
         <source>Could not find Core plugin in %1!</source>
         <translation type="vanished">无法在%1中找到内核插件！</translation>
     </message>
     <message>
-        <location filename="../../../../libs/choruskit/appload/main.cpp" line="345"/>
+        <location filename="../../../../libs/choruskit/appload/main.cpp" line="361"/>
         <source>Core plugin is disabled.</source>
         <translation>内核插件已被禁用。</translation>
     </message>
@@ -205,7 +215,7 @@
         <translation>你正在尝试以%2身份运行%1，此操作非常不安全，因此强烈不推荐。</translation>
     </message>
     <message>
-        <location filename="../../../../libs/choruskit/appload/main.cpp" line="369"/>
+        <location filename="../../../../libs/choruskit/appload/main.cpp" line="385"/>
         <source>Please close the running application!</source>
         <translation>请关闭正在运行中的程序！</translation>
     </message>

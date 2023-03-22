@@ -1,18 +1,15 @@
 #include <QApplication>
 #include <QDebug>
 #include <QDir>
-#include <QFileDialog>
 #include <QLoggingCategory>
 #include <QMainWindow>
-#include <QMessageBox>
 #include <QNetworkProxyFactory>
-#include <QPushButton>
-#include <QSplashScreen>
 #include <QTextStream>
 
 #include <QtTest/QTest>
 
 #include "QMConsole.h"
+#include "QMCss.h"
 #include "QMDecorateDir.h"
 #include "QMSystem.h"
 #include "QMWidgetsHost.h"
@@ -25,6 +22,7 @@
 #include "singleapplication.h"
 
 #include "config/loadconfig.h"
+#include "splash/SplashScreen.h"
 
 #define USE_NATIVE_MESSAGEBOX
 
@@ -238,23 +236,25 @@ int main_entry(int argc, char *argv[]) {
     bool showHelp = false;
     QStringList customPluginPaths;
     QStringList arguments = a.arguments(); // adapted arguments list is passed to plugin manager later
-    QMutableStringListIterator it(arguments);
-    while (it.hasNext()) {
-        const QString &arg = it.next();
-        if (arg == QLatin1String(ALLOW_ROOT_OPTION)) {
-            it.remove();
-            allowRoot = true;
-        } else if (arg == QLatin1String(PLUGIN_PATH_OPTION)) {
-            it.remove();
-            if (it.hasNext()) {
-                customPluginPaths << it.next();
+    {
+        QMutableStringListIterator it(arguments);
+        while (it.hasNext()) {
+            const QString &arg = it.next();
+            if (arg == QLatin1String(ALLOW_ROOT_OPTION)) {
                 it.remove();
-            }
-        } else if (arg == HELP_OPTION1 || arg == HELP_OPTION2) {
-            showHelp = true;
-        } else if (arg.startsWith('-')) {
-            if (it.hasNext()) {
-                it.next();
+                allowRoot = true;
+            } else if (arg == QLatin1String(PLUGIN_PATH_OPTION)) {
+                it.remove();
+                if (it.hasNext()) {
+                    customPluginPaths << it.next();
+                    it.remove();
+                }
+            } else if (arg == HELP_OPTION1 || arg == HELP_OPTION2) {
+                showHelp = true;
+            } else if (arg.startsWith('-')) {
+                if (it.hasNext()) {
+                    it.next();
+                }
             }
         }
     }
@@ -278,8 +278,22 @@ int main_entry(int argc, char *argv[]) {
         return -1;
     }
 
-    QSplashScreen splash(splashImage);
+    SplashScreen splash;
+    splash.setPixmap(splashImage);
+    for (auto it = configFile.splashSettings.texts.begin(); it != configFile.splashSettings.texts.end(); ++it) {
+        const auto &item = it.value();
+        SplashScreen::Attribute attr;
+        attr.pos = item.pos.size() == 2 ? QPoint(item.pos[0], item.pos[1]) : QPoint();
+        attr.anchor = item.anchor.size() == 2 ? qMakePair(item.anchor[0], item.anchor[1]) : qMakePair(1, 1);
+        attr.fontSize = item.fontSize > 0 ? item.fontSize : 15;
+        attr.fontColor = QMCss::CssStringToColor(item.fontColor);
+        attr.maxWidth = item.maxWidth;
+        attr.text = item.text;
+        splash.setTextAttribute(it.key(), attr);
+    }
+
     splash.show();
+    splash.showTexts();
 
     g_splash = &splash;
     a.setProperty("__choruskit_init_splash__", QVariant::fromValue(&splash));
@@ -297,6 +311,8 @@ int main_entry(int argc, char *argv[]) {
 
     QSettings::setPath(QSettings::IniFormat, QSettings::UserScope, qmHost->appDataDir());
     QSettings::setPath(QSettings::IniFormat, QSettings::SystemScope, qmHost->appDataDir());
+
+    splash.setText("_status", QCoreApplication::translate("Application", "Searching plugins..."));
 
     PluginManager pluginManager;
     pluginManager.setPluginIID(pluginIID);
@@ -384,6 +400,8 @@ int main_entry(int argc, char *argv[]) {
     } else {
         qInfo() << "apploader: primary instance initializing...";
     }
+
+    splash.setText("_status", QCoreApplication::translate("Application", "Loading plugins..."));
 
     PluginManager::loadPlugins();
     if (coreplugin->hasError()) {

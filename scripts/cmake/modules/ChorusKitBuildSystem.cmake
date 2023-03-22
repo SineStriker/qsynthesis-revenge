@@ -640,13 +640,15 @@ function(ck_add_translations _target)
     endforeach()
 
     set(_ts_target)
-    if (FUNC_TS_TARGET)
+
+    if(FUNC_TS_TARGET)
         list(APPEND _ts_target PRE_BUILD_TARGET)
         list(APPEND _ts_target ${FUNC_TS_TARGET})
     endif()
 
     set(_qm_target)
-    if (FUNC_QM_TARGET)
+
+    if(FUNC_QM_TARGET)
         list(APPEND _qm_target POST_BUILD_TARGET)
         list(APPEND _qm_target ${FUNC_QM_TARGET})
     endif()
@@ -716,7 +718,7 @@ function(ck_add_attaches _target)
 
                 set(_status NONE)
 
-                if(${_item} MATCHES ".*\$.*")
+                if(${_item} MATCHES ".*\\$.*")
                     set(_path ${_item})
                 else()
                     get_filename_component(_path ${_item} ABSOLUTE)
@@ -730,7 +732,12 @@ function(ck_add_attaches _target)
                             COMMAND ${CMAKE_COMMAND} -E copy_directory ${_src_item} ${_path}/${_name}
                         )
                     else()
-                        file(GLOB _src_files ${_src_item})
+                        if(${_src_item} MATCHES ".*\\$.*")
+                            set(_src_files ${_src_item})
+                        else()
+                            file(GLOB _src_files ${_src_item})
+                        endif()
+
                         add_custom_command(TARGET ${_target} POST_BUILD
                             COMMAND ${CMAKE_COMMAND} -E make_directory ${_path}
                             COMMAND ${CMAKE_COMMAND} -E copy ${_src_files} ${_path}
@@ -894,7 +901,7 @@ function(ck_add_win_shortcut _target _dir)
     set(multiValueArgs)
     cmake_parse_arguments(FUNC "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
 
-    if (FUNC_OUTPUT_NAME)
+    if(FUNC_OUTPUT_NAME)
         set(_output_name ${FUNC_OUTPUT_NAME})
     else()
         set(_output_name $<TARGET_FILE_BASE_NAME:${_target}>)

@@ -1,0 +1,14 @@
+{
+    "coreName": "@APP_CONFIG_CORE_NAME@",
+    "splashImage": "@APP_CONFIG_SPLASH_IMAGE@",
+    "splashSettings": {
+        "texts": {
+            "_status": {
+                "pos": [@APP_CONFIG_PADDING@, -@APP_CONFIG_PADDING@],
+                "anchor": [1, -1],
+                "text": "Loading...",
+                "fontColor": "#FFFFFF"
+            }
+        }
+    }
+}

@@ -6,10 +6,6 @@ QSynthesis is originally the name of the Qt-based UTAU editor, as a result of co
 
 All applications in this toolset are free softwares and aim to provide the community with user-friendly experience.
 
-## Compatibility
-
-The application is able to run on **Windows, MacOS and Linux**.
-
 ## Toolset
 
 + LabelVoice (Suspended)
@@ -23,6 +19,12 @@ The application is able to run on **Windows, MacOS and Linux**.
 
 + QVogenClient
     + Third-party edition of [Vogen.Client](https://github.com/aqtq314/Vogen.Client). -->
+
+## Supported Platforms
+
++ Microsoft Windows (Vista ~ 11)
++ Apple Mac OSX (11+)
++ Linux (Tested on Ubuntu)
 
 ## Build from source
 

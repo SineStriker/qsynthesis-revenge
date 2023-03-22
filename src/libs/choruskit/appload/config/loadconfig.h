@@ -8,9 +8,13 @@
 struct SplashText {
     QAS_JSON(SplashText)
 
+    QList<int> pos;
     QList<int> anchor;
-    bool rightToLeft;
     int fontSize;
+    QString fontColor;
+    int maxWidth;
+
+    QString text;
 
     SplashText();
 };
@@ -18,9 +22,8 @@ struct SplashText {
 struct SplashSettings {
     QAS_JSON(SplashSettings)
 
-    QList<int> splashSize;
-    SplashText copyrightText;
-    SplashText loaderText;
+    QList<int> size;
+    QMap<QString, SplashText> texts;
 };
 
 struct LoadConfig {

@@ -4,18 +4,28 @@
 <context>
     <name>Application</name>
     <message>
-        <location filename="../../../../libs/choruskit/appload/main.cpp" line="163"/>
+        <location filename="../../../../libs/choruskit/appload/main.cpp" line="161"/>
         <source>Failed to load core: %1!</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../../../libs/choruskit/appload/main.cpp" line="339"/>
+        <location filename="../../../../libs/choruskit/appload/main.cpp" line="315"/>
+        <source>Searching plugins...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../../../libs/choruskit/appload/main.cpp" line="355"/>
         <source>Could not find Core plugin!</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../../../libs/choruskit/appload/main.cpp" line="345"/>
+        <location filename="../../../../libs/choruskit/appload/main.cpp" line="361"/>
         <source>Core plugin is disabled.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../../../libs/choruskit/appload/main.cpp" line="404"/>
+        <source>Loading plugins...</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -185,7 +195,7 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../../../libs/choruskit/appload/main.cpp" line="369"/>
+        <location filename="../../../../libs/choruskit/appload/main.cpp" line="385"/>
         <source>Please close the running application!</source>
         <translation type="unfinished"></translation>
     </message>
