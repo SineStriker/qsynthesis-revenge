@@ -30,8 +30,6 @@ set(ROOT_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR})
 # ----------------------------------
 # Build configuration
 # ----------------------------------
-set(ROOT_SHARE_OUTPUT_DIRECTORY ${CONFIG_OUTPUT_DIRECTORY}/share)
-
 if(MSVC)
     set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /manifest:no")
     set(CMAKE_MODULE_LINKER_FLAGS "${CMAKE_MODULE_LINKER_FLAGS} /manifest:no")

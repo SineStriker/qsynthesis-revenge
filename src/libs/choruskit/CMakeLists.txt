@@ -3,6 +3,7 @@ set(CHORUSKIT_LIB_DIR ${CMAKE_CURRENT_SOURCE_DIR})
 
 function(configure_ck_library _name)
     ck_target_res(${_name}
+        VERSION ${PROJECT_VERSION}
         DESCRIPTION "ChorusKit Common Libraries"
         COPYRIGHT "${ROOT_OPENVPI_COPYRIGHT}"
     )

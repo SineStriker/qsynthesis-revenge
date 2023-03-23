@@ -12,7 +12,8 @@ ck_add_appmain(${PROJECT_NAME} CkAppLoad ${ROOT_APPMAIN_TYPE}
 )
 
 ck_target_res(${PROJECT_NAME}
-    DESCRIPTION "DiffSinger Client"
+    VERSION ${PROJECT_VERSION}
+    DESCRIPTION "${APP_TOOLSET_NAME} ${PROJECT_NAME}"
     COPYRIGHT ${ROOT_OPENVPI_COPYRIGHT}
     ICO win32/app.ico
     ICNS mac/app.icns
@@ -29,11 +30,13 @@ set(_config_file ${CMAKE_CURRENT_BINARY_DIR}/config.json)
 configure_file(config.json.in ${_config_file} @ONLY)
 
 ck_add_attaches(${PROJECT_NAME}
-    SRC ${_config_file} ${APP_CONFIG_SPLASH_IMAGE} DEST ${ROOT_SHARE_OUTPUT_DIRECTORY}/${PROJECT_NAME}
+    SRC ${_config_file} ${APP_CONFIG_SPLASH_IMAGE} DEST ${CHORUSKIT_SHARE_OUTPUT_DIRECTORY}/${PROJECT_NAME}
 )
 
-if (CONFIG_CREATE_WIN_SHORTCUT)
-    ck_add_win_shortcut(${PROJECT_NAME} ${CONFIG_OUTPUT_DIRECTORY} OUTPUT_NAME "ChorusKit ${PROJECT_NAME}")
+if(CONFIG_CREATE_WIN_SHORTCUT)
+    ck_add_win_shortcut(${PROJECT_NAME} ${CHORUSKIT_BINARY_DIR}
+        OUTPUT_NAME "${APP_TOOLSET_NAME} ${PROJECT_NAME}"
+    )
 endif()
 
 #[[
@@ -50,4 +53,4 @@ endif()
         "fontColor": "#FFFFFF"
     },
 
-]]#
+]] #

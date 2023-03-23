@@ -96,7 +96,7 @@ function(_ck_add_lupdate_target _target)
             BYPRODUCTS ${_ts_lst_file} VERBATIM
         )
 
-        if (_LUPDATE_PRE_BUILD_TARGET)
+        if(_LUPDATE_PRE_BUILD_TARGET)
             add_custom_command(
                 TARGET ${_LUPDATE_PRE_BUILD_TARGET} PRE_BUILD
                 COMMAND ${_lupdate_exe}
@@ -155,7 +155,7 @@ function(_ck_add_lrelease_target _target)
             VERBATIM
         )
 
-        if (_LRELEASE_POST_BUILD_TARGET)
+        if(_LRELEASE_POST_BUILD_TARGET)
             add_custom_command(
                 TARGET ${_LRELEASE_POST_BUILD_TARGET} POST_BUILD
                 COMMAND ${CMAKE_COMMAND} -E make_directory ${_out_dir}
@@ -173,3 +173,15 @@ function(_ck_add_lrelease_target _target)
         set(${_LRELEASE_OUTPUT} ${_qm_files} PARENT_SCOPE)
     endif()
 endfunction()
+
+# function(_ck_install_target _target)
+#     get_target_property()
+# endfunction()
+
+# function(_ck_install_attaches _src _dest _org_dir _new_dir)
+#     set(_scripts)
+#     list(APPEND _scripts "file(RELATIVE_PATH _rel_path \"${_org_dir}\" ${_dest})")
+#     list(APPEND _scripts "file(COPY \"${_src}\" DESTINATION \"${_new_dir}/\${_rel_path}\")")
+#     string(JOIN "\n" _script ${_scripts})
+#     install(CODE ${_script})
+# endfunction()

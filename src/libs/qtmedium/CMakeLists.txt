@@ -14,6 +14,7 @@ set(SUB_FILE_DESC "Qt With Advanced Implementations")
 function(configure_library)
     ck_add_library(${PROJECT_NAME} SHARED AUTOGEN)
     ck_target_res(${PROJECT_NAME}
+        VERSION ${PROJECT_VERSION}
         DESCRIPTION ${SUB_FILE_DESC}
         COPYRIGHT ${SUB_AUTHOR_NAME}
     )

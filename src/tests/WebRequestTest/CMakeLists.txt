@@ -6,7 +6,7 @@ set(CMAKE_AUTORCC ON)
 
 ck_add_files(_src CURRENT PATTERNS *.h *.cpp)
 
-add_executable(${PROJECT_NAME})
+ck_add_executable(${PROJECT_NAME})
 
 ck_target_components(${PROJECT_NAME}
     INCLUDE_CURRENT

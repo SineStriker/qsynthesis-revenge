@@ -1,46 +1,24 @@
-#[[
-Add plugin metadata of `PROJECT_NAME` and `PROJECT_VERSION`
+set(SUB_PROJECT unknown)
 
-    configure_plugin_base(<VAR>
-        METADATA_IN <plugin.json.in>
-        [COMPAT_VERSION     <version>]
-        [SUBDIR_NAME        <dirname>]
-        [PLUGIN_NAME        <name>]
-        [META_SUBDIRS       dirs...]
-        [META_ALL_FILES] [META_ALL_DIRS]
-    )
-
-    VAR: Return the real target name (Mangled to avoid duplication)
-
-    Arguments:
-        COMPAT_VERSION: compatible version, default to 0.0.0.0
-        SUBDIR_NAME: subdirectory name in plugins dir, default to `PROJECT_NAME`
-        PLUGIN_NAME: plugin output name, default to `PROJECT_NAME`
-
-        META_SUBDIRS: set "Subdirs" in generated json file
-        META_ALL_FILES: set "AllFiles" in generated json file
-        META_ALL_SUBDIRS: set "AllSubdirs" in generated json file
-]] #
-function(configure_plugin_base _out)
-    set(options META_ALL_FILES META_ALL_SUBDIRS)
-    set(oneValueArgs METADATA_IN COMPAT_VERSION SUBDIR_NAME PLUGIN_NAME)
-    set(multiValueArgs META_SUBDIRS)
+function(configure_plugin _plugin _author)
+    # Begin parse
+    set(options)
+    set(oneValueArgs MACRO_PREFIX LIBRARY_MACRO TYPE_MACRO PLUGIN_NAME PLUGIN_VERSION)
+    set(multiValueArgs)
     cmake_parse_arguments(FUNC "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
 
-    set(_target ${CURRENT_SUB_PROJECT}_Plugin_${PROJECT_NAME})
-    ck_add_library(${_target} SHARED AUTOGEN ${FUNC_UNPARSED_ARGUMENTS})
-    add_library(${CURRENT_SUB_PROJECT}::${PROJECT_NAME} ALIAS ${_target})
+    set(_add_lib_args)
 
-    if(FUNC_COMPAT_VERSION)
-        set(_compat_version ${FUNC_COMPAT_VERSION})
-    else()
-        set(_compat_version 0.0.0.0)
+    if(FUNC_MACRO_PREFIX)
+        list(APPEND _add_lib_args MACRO_PREFIX ${FUNC_MACRO_PREFIX})
     endif()
 
-    if(FUNC_SUBDIR_NAME)
-        set(_subdir_name ${FUNC_SUBDIR_NAME})
-    else()
-        set(_subdir_name ${PROJECT_NAME})
+    if(FUNC_LIBRARY_MACRO)
+        list(APPEND _add_lib_args LIBRARY_MACRO ${FUNC_LIBRARY_MACRO})
+    endif()
+
+    if(FUNC_TYPE_MACRO)
+        list(APPEND _add_lib_args TYPE_MACRO ${FUNC_TYPE_MACRO})
     endif()
 
     if(FUNC_PLUGIN_NAME)
@@ -49,54 +27,33 @@ function(configure_plugin_base _out)
         set(_name ${PROJECT_NAME})
     endif()
 
-    # Set output directory
-    set(_out_dir ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/${CURRENT_SUB_PROJECT}/plugins/${_subdir_name})
-    set_target_properties(${_target} PROPERTIES
-        RUNTIME_OUTPUT_DIRECTORY ${_out_dir}
-        LIBRARY_OUTPUT_DIRECTORY ${_out_dir}
-        ARCHIVE_OUTPUT_DIRECTORY ${_out_dir}
-        OUTPUT_NAME ${_name}
-    )
-
-    set(_plugin_json2_path ${CMAKE_CURRENT_BINARY_DIR}/${_name}PluginMetaData/plugin.json)
-
-    set(_content "{\n    \"name\": \"${_name}\"")
-
-    if(FUNC_META_ALL_FILES)
-        set(_content "${_content},\n    \"allFiles\": true")
+    if(FUNC_PLUGIN_VERSION)
+        set(_version ${FUNC_PLUGIN_VERSION})
+    else()
+        set(_version ${PROJECT_VERSION})
     endif()
 
-    if(FUNC_META_ALL_SUBDIRS)
-        set(_content "${_content},\n    \"allSubdirs\": true")
-    endif()
+    # End parse
+    set(_target ${SUB_PROJECT}_${PROJECT_NAME})
+    ck_add_library(${_target} SHARED AUTOGEN ${_add_lib_args})
+    add_library(${SUB_PROJECT}::${PROJECT_NAME} ALIAS ${_target})
 
-    if(FUNC_META_SUBDIRS)
-        string(JOIN "\",\n        \"" _json_arr_str ${FUNC_META_SUBDIRS})
-        set(_content "${_content},\n    \"subdirs\": [\n        \"${_json_arr_str}\"\n    ]")
-    endif()
-
-    set(_content "${_content}\n}")
-
-    file(GENERATE OUTPUT ${_plugin_json2_path} CONTENT ${_content})
-
-    add_custom_command(
-        TARGET ${_target} POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E copy ${_plugin_json2_path} ${_out_dir}
+    ck_configure_plugin(${_target}
+        PARENT ${SUB_PROJECT}
+        CATEGORY ${PROJECT_NAME}
+        PLUGIN_NAME ${_name}
+        PLUGIN_VERSION ${_version}
+        ${FUNC_UNPARSED_ARGUMENTS}
     )
 
-    # Set plugin metadata
-    set(PLUGIN_METADATA_VERSION
-        ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}.${PROJECT_VERSION_PATCH}_${PROJECT_VERSION_TWEAK})
-    ck_parse_version(_compat ${_compat_version})
-    set(PLUGIN_METADATA_COMPAT_VERSION ${_compat_1}.${_compat_2}.${_compat_3}_${_compat_4})
-    configure_file(
-        ${FUNC_METADATA_IN}
-        ${CMAKE_CURRENT_BINARY_DIR}/QtPluginMetadata/plugin.json
-        @ONLY
+    ck_target_res(${_target}
+        NAME ${_name}
+        VERSION ${_version}
+        DESCRIPTION ${CURRENT_PLUGIN_DESC}
+        COPYRIGHT "Copyright ${_author}"
     )
-    target_include_directories(${_target} PRIVATE ${CMAKE_CURRENT_BINARY_DIR}/QtPluginMetadata)
 
-    set(${_out} ${_target} PARENT_SCOPE)
+    set(${_plugin} ${_target} PARENT_SCOPE)
 endfunction()
 
 add_subdirectory(diffscope)

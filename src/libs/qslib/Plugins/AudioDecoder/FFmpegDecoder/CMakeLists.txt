@@ -9,7 +9,7 @@ ck_add_files(_src
     PATTERNS *.h *.hpp *.cpp *.cc
 )
 
-configure_plugin("Sine Striker" _plugin)
+configure_plugin(_plugin "Sine Striker")
 
 ck_target_components(${_plugin}
     INCLUDE_CURRENT

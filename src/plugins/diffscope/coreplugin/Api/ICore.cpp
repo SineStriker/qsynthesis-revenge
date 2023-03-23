@@ -29,7 +29,8 @@ namespace Core {
     }
 
     QString ICore::mainTitle() {
-        // return QString("%1 %2 %3").arg(qApp->organizationName(), qApp->applicationName(), qApp->applicationVersion());
+        // return QString("%1 %2 %3").arg(qApp->organizationName(), qApp->applicationName(),
+        // qApp->applicationVersion());
         return QString("%1 %2").arg(qApp->organizationName(), qApp->applicationName());
     }
 
@@ -39,7 +40,7 @@ namespace Core {
 
     void ICore::aboutApp(QWidget *parent) {
         QString title = tr("About %1").arg(qAppName());
-        QString text = tr("%1 %2, Copyright OpenVPI.").arg(qAppName(), QApplication::applicationVersion());
+        QString text = tr("%1 %2, Copyright OpenVPI.").arg(mainTitle(), QApplication::applicationVersion());
 #ifdef Q_OS_WINDOWS
         QMConsole::instance()->MsgBox(parent, QMConsole::Information, title, text);
 #else

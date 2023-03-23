@@ -38,20 +38,6 @@ function(ck_init_buildsystem)
     # Set CMAKE_XXX_OUTPUT_DIRECTORY
     if(FUNC_OUTPUT_DIR)
         set(_out_dir ${FUNC_OUTPUT_DIR})
-    else()
-        set(_out_dir ${CMAKE_BINARY_DIR}/out-${CMAKE_HOST_SYSTEM_NAME}-${CMAKE_BUILD_TYPE})
-    endif()
-
-    if(NOT DEFINED CMAKE_RUNTIME_OUTPUT_DIRECTORY)
-        set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${_out_dir}/bin PARENT_SCOPE)
-    endif()
-
-    if(NOT DEFINED CMAKE_LIBRARY_OUTPUT_DIRECTORY)
-        set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${_out_dir}/lib PARENT_SCOPE)
-    endif()
-
-    if(NOT DEFINED CMAKE_ARCHIVE_OUTPUT_DIRECTORY)
-        set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${_out_dir}/lib PARENT_SCOPE)
     endif()
 
     add_custom_target(ChorusKit_UpdateTranslations)
@@ -78,10 +64,10 @@ function(ck_init_vcpkg _vcpkg_dir _vcpkg_triplet)
 
     if(WIN32)
         set(_bin_dir ${_vcpkg_installed_dir}/${_vcpkg_triplet}${_vcpkg_triplet_suffix}/bin)
-        set(_runtime_output_dir ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
+        set(_runtime_output_dir ${CHORUSKIT_RUNTIME_OUTPUT_DIRECTORY})
     else()
         set(_bin_dir ${_vcpkg_installed_dir}/${_vcpkg_triplet}${_vcpkg_triplet_suffix}/lib)
-        set(_runtime_output_dir ${CMAKE_LIBRARY_OUTPUT_DIRECTORY})
+        set(_runtime_output_dir ${CHORUSKIT_LIBRARY_OUTPUT_DIRECTORY})
     endif()
 
     set(_prebuilt_dlls)
@@ -199,11 +185,13 @@ endmacro()
 Get subdirectories' names or paths.
 
     ck_get_subdirs(<list>  
-            [DIRECTORY dir]
-            [EXCLUDE names...]
-            [REGEX_INCLUDE exps...]
-            [REGEX_EXLCUDE exps...]
-            [RELATIVE path] [ABSOLUTE])
+        [DIRECTORY dir]
+        [EXCLUDE names...]
+        [REGEX_INCLUDE exps...]
+        [REGEX_EXLCUDE exps...]
+        [RELATIVE path]
+        [ABSOLUTE]
+    )
 
     If `DIRECTORY` is not specified, consider `CMAKE_CURRENT_SOURCE_DIR`.
     If `RELATIVE` is specified, return paths evaluated as a relative path to it.
@@ -456,17 +444,17 @@ Attach embedded resource files to target on Windows, MacOSX.
         [COPYRIGHT copyright]
         [ICO ico]
         [ICNS icns]
-        [MANIFEST]
+        [MANIFEST] [MAC_BUNDLE]
     )
 
     Arguments:
-        NAME: Default to `PROJECT_NAME`
-        VERSION: Default to `PROJECT_VERSION`, should be the format: A.B.C[.D]
-        DESCRIPTION: Default to `PROJECT_NAME`
-        COPYRIGHT: Default to `PROJECT_NAME`
+        NAME: Default to `_target`
+        VERSION: Default to `0.0.0.0`, should be the format: A.B.C[.D]
+        DESCRIPTION: Default to `_target`
+        COPYRIGHT: Default to `_target`
 ]] #
 function(ck_target_res _target)
-    set(options MANIFEST)
+    set(options MANIFEST MAC_BUNDLE)
     set(oneValueArgs NAME VERSION DESCRIPTION COPYRIGHT ICO ICNS)
     set(multiValueArgs)
     cmake_parse_arguments(FUNC "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
@@ -475,13 +463,13 @@ function(ck_target_res _target)
     if(FUNC_NAME)
         set(_app_name ${FUNC_NAME})
     else()
-        set(_app_name ${PROJECT_NAME})
+        set(_app_name ${_target})
     endif()
 
     if(FUNC_VERSION)
         set(_app_version ${FUNC_VERSION})
     else()
-        set(_app_version ${PROJECT_VERSION})
+        set(_app_version "0.0.0.0")
     endif()
 
     ck_parse_version(_app_version ${_app_version})
@@ -489,20 +477,26 @@ function(ck_target_res _target)
     if(FUNC_DESCRIPTION)
         set(_app_desc ${FUNC_DESCRIPTION})
     else()
-        set(_app_desc ${PROJECT_NAME})
+        set(_app_desc ${_target})
     endif()
 
     if(FUNC_COPYRIGHT)
         set(_app_copyright ${FUNC_COPYRIGHT})
     else()
-        set(_app_copyright ${PROJECT_NAME})
+        set(_app_copyright ${_target})
     endif()
 
     # Correct output name if empty
     get_target_property(_org_output_name ${_target} OUTPUT_NAME)
 
-    if(NOT _org_output_name AND NOT ${_target} STREQUAL ${_app_name})
-        set_target_properties(${_target} PROPERTIES OUTPUT_NAME ${_app_name})
+    if(_org_output_name)
+        if(NOT FUNC_NAME)
+            set(_app_name ${_org_output_name})
+        endif()
+    else()
+        if(NOT ${_target} STREQUAL ${_app_name})
+            set_target_properties(${_target} PROPERTIES OUTPUT_NAME ${_app_name})
+        endif()
     endif()
 
     if(WIN32)
@@ -533,7 +527,7 @@ function(ck_target_res _target)
             configure_file(${CHORUSKIT_CMAKE_MODULES_DIR}/WinManifest.manifest.in ${_manifest_path} @ONLY)
             target_sources(${_target} PRIVATE ${_manifest_path})
         endif()
-    elseif(APPLE)
+    elseif(APPLE AND FUNC_MAC_BUNDLE)
         # configure mac plist
         set_target_properties(${_target} PROPERTIES
             MACOSX_BUNDLE TRUE
@@ -574,8 +568,8 @@ endfunction()
 Add qt translation target.
 
     ck_add_translations(<target>
-        LOCALES locales
-        [SOURCES files... | TARGETS targets...]
+        [LOCALES locales]
+        [SOURCES files... | TARGETS targets... | TS_FILES files...]
         [PREFIX prefix]
         [TS_DIR dir]
         [QM_DIR dir]
@@ -584,9 +578,10 @@ Add qt translation target.
     )
 
     Arguments:
-        LOCALES: language names, e.g. zh_CN en_US
+        LOCALES: language names, e.g. zh_CN en_US, must specify if SOURCES or TARGETS is specified
         SOURCES: source files
         TARGETS: target names, the source files of which will be collected
+        TS_FILES: ts file names, add the specified ts file
         PREFIX: translation file prefix, default to target name
         TS_DIR: ts files destination, default to `CMAKE_CURRENT_SOURCE_DIR`
         QM_DIR: qm files destination, default to `CMAKE_CURRENT_BINARY_DIR`
@@ -596,19 +591,17 @@ Add qt translation target.
 function(ck_add_translations _target)
     set(options)
     set(oneValueArgs PREFIX TS_DIR QM_DIR TS_TARGET QM_TARGET)
-    set(multiValueArgs LOCALES SOURCES TARGETS)
+    set(multiValueArgs LOCALES SOURCES TARGETS TS_FILES)
     cmake_parse_arguments(FUNC "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
 
     # ----------------- Template Begin -----------------
-    if(NOT FUNC_LOCALES)
-        message(FATAL_ERROR "ck_add_translations: LOCALES not specified!")
-    endif()
+    set(_src_files)
 
     if(FUNC_SOURCES)
-        set(_src_files ${FUNC_SOURCES})
-    elseif(FUNC_TARGETS)
-        set(_src_files)
+        list(APPEND _src_files ${FUNC_SOURCES})
+    endif()
 
+    if(FUNC_TARGETS)
         foreach(_item ${FUNC_TARGETS})
             set(_tmp_files)
             get_target_property(_tmp_files ${_item} SOURCES)
@@ -617,22 +610,70 @@ function(ck_add_translations _target)
             list(APPEND _src_files ${_tmp_files})
             unset(_tmp_files)
         endforeach()
-    else()
-        message(FATAL_ERROR "ck_add_translations: either SOURCES or TARGETS should be specified!")
+    endif()
+
+    if(_src_files)
+        if(NOT FUNC_LOCALES)
+            message(FATAL_ERROR "ck_add_translations: source files collected but LOCALES not specified!")
+        endif()
+    elseif(NOT FUNC_TS_FILES)
+        message(FATAL_ERROR "ck_add_translations: no source files or ts files collected!")
     endif()
 
     ck_find_qt_module(LinguistTools)
 
-    if(FUNC_PREFIX)
-        set(_prefix ${FUNC_PREFIX})
-    else()
-        set(_prefix ${_target})
-    endif()
+    add_custom_target(${_target})
 
-    if(FUNC_TS_DIR)
-        set(_ts_dir ${FUNC_TS_DIR})
+    set(_qm_depends)
+
+    if(_src_files)
+        if(FUNC_PREFIX)
+            set(_prefix ${FUNC_PREFIX})
+        else()
+            set(_prefix ${_target})
+        endif()
+
+        if(FUNC_TS_DIR)
+            set(_ts_dir ${FUNC_TS_DIR})
+        else()
+            set(_ts_dir ${CMAKE_CURRENT_SOURCE_DIR})
+        endif()
+
+        set(_ts_target)
+
+        if(FUNC_TS_TARGET)
+            list(APPEND _ts_target PRE_BUILD_TARGET ${FUNC_TS_TARGET})
+        endif()
+
+        set(_ts_files)
+
+        foreach(_loc ${FUNC_LOCALES})
+            list(APPEND _ts_files ${_ts_dir}/${_prefix}_${_loc}.ts)
+        endforeach()
+
+        _ck_add_lupdate_target(${_target}_lupdate
+            INPUT ${_src_files}
+            OUTPUT ${_ts_files}
+            CREATE_ONCE
+            ${_ts_target}
+        )
+
+        add_dependencies(${_target} ${_target}_lupdate)
+        add_dependencies(ChorusKit_UpdateTranslations ${_target}_lupdate)
+
+        list(APPEND _qm_depends DEPENDS ${_target}_lupdate)
     else()
-        set(_ts_dir ${CMAKE_CURRENT_SOURCE_DIR})
+        if(FUNC_PREFIX)
+            message(WARNING "ck_add_translations: no source files collected, PREFIX ignored")
+        endif()
+
+        if(FUNC_TS_DIR)
+            message(WARNING "ck_add_translations: no source files collected, TS_DIR ignored")
+        endif()
+
+        if(FUNC_TS_TARGET)
+            message(WARNING "ck_add_translations: no source files collected, TS_TARGET ignored")
+        endif()
     endif()
 
     if(FUNC_QM_DIR)
@@ -641,45 +682,20 @@ function(ck_add_translations _target)
         set(_qm_dir ${CMAKE_CURRENT_BINARY_DIR})
     endif()
 
-    set(_ts_files)
-
-    foreach(_loc ${FUNC_LOCALES})
-        list(APPEND _ts_files ${_ts_dir}/${_prefix}_${_loc}.ts)
-    endforeach()
-
-    set(_ts_target)
-
-    if(FUNC_TS_TARGET)
-        list(APPEND _ts_target PRE_BUILD_TARGET)
-        list(APPEND _ts_target ${FUNC_TS_TARGET})
-    endif()
-
     set(_qm_target)
 
     if(FUNC_QM_TARGET)
-        list(APPEND _qm_target POST_BUILD_TARGET)
-        list(APPEND _qm_target ${FUNC_QM_TARGET})
+        list(APPEND _qm_target POST_BUILD_TARGET ${FUNC_QM_TARGET})
     endif()
 
-    _ck_add_lupdate_target(${_target}_lupdate
-        INPUT ${_src_files}
-        OUTPUT ${_ts_files}
-        CREATE_ONCE
-        ${_ts_target}
-    )
-
     _ck_add_lrelease_target(${_target}_lrelease
-        INPUT ${_ts_files}
+        INPUT ${_ts_files} ${FUNC_TS_FILES}
         DESTINATION ${_qm_dir}
-        DEPENDS ${_target}_lupdate
+        ${_qm_depends}
         ${_qm_target}
     )
 
-    add_custom_target(${_target})
-    add_dependencies(${_target} ${_target}_lupdate)
     add_dependencies(${_target} ${_target}_lrelease)
-
-    add_dependencies(ChorusKit_UpdateTranslations ${_target}_lupdate)
     add_dependencies(ChorusKit_ReleaseTranslations ${_target}_lrelease)
 
     # ----------------- Template End -----------------
@@ -736,7 +752,10 @@ function(ck_add_attaches _target)
                 endif()
 
                 foreach(_src_item ${_src})
-                    if(IS_DIRECTORY ${_src_item})
+                    get_filename_component(_full_path ${_src_item} ABSOLUTE)
+
+                    # In case IS_DIRECTORY failed with non-absolute paths
+                    if(IS_DIRECTORY ${_full_path})
                         get_filename_component(_name ${_src_item} NAME)
                         add_custom_command(TARGET ${_target} POST_BUILD
                             COMMAND ${CMAKE_COMMAND} -E make_directory ${_path}/${_name}
@@ -769,6 +788,19 @@ function(ck_add_attaches _target)
     elseif(${_count} STREQUAL 0)
         message(FATAL_ERROR "ck_add_attaches: no files specified!")
     endif()
+endfunction()
+
+#[[
+
+Add and executable.
+
+]] #
+function(ck_add_executable _target)
+    add_executable(${_target} ${ARGN})
+    set_target_properties(${_target} PROPERTIES
+        BUILD_RPATH "${CHORUSKIT_EXECUTABLE_RPATH}"
+        RUNTIME_OUTPUT_DIRECTORY ${CHORUSKIT_RUNTIME_OUTPUT_DIRECTORY}
+    )
 endfunction()
 
 #[[
@@ -814,7 +846,7 @@ function(ck_add_appmain _target _dll)
         ${_cpp_path}
         @ONLY
     )
-    add_executable(${_target} ${_cpp_path})
+    ck_add_executable(${_target} ${_cpp_path})
     target_link_libraries(${_target} PRIVATE ${_dll})
 
     if(FUNC_WINDOWS)
@@ -891,7 +923,139 @@ function(ck_add_library _target)
     target_compile_definitions(${_target} PUBLIC ${_type_macro})
     target_compile_definitions(${_target} PRIVATE ${_library_macro})
 
+    set_target_properties(${_target} PROPERTIES
+        BUILD_RPATH "${CHORUSKIT_LIBRARY_RPATH}"
+        RUNTIME_OUTPUT_DIRECTORY ${CHORUSKIT_RUNTIME_OUTPUT_DIRECTORY}
+        LIBRARY_OUTPUT_DIRECTORY ${CHORUSKIT_LIBRARY_OUTPUT_DIRECTORY}
+        ARCHIVE_OUTPUT_DIRECTORY ${CHORUSKIT_ARCHIVE_OUTPUT_DIRECTORY}
+    )
+
     # ----------------- Template End -----------------
+endfunction()
+
+#[[
+Add a plugin.
+
+    ck_configure_plugin(<target>
+        PARENT      <parent>
+        CATEGORY    <category>
+        [METADATA_IN        <plugin.json.in>]
+        [COMPAT_VERSION     <version>]
+        [PLUGIN_NAME        <name>]
+        [PLUGIN_VERSION     <version>]
+        [META_SUBDIRS       dirs...]
+        [META_ALL_FILES]
+        [META_ALL_DIRS]
+    )
+
+    Arguments:
+        PARENT: executable or library the plugin belongs to
+        CATEGORY: plugin category
+        METADATA_IN: plugin.json.in file, ignore all following attributes if not specified
+        COMPAT_VERSION: compatible version, default to 0.0.0.0
+        PLUGIN_NAME: plugin output name, default to `PROJECT_NAME`
+        PLUGIN_VERSION: plugin version, default to `0.1.0.0`
+        META_SUBDIRS: set "Subdirs" in generated json file
+        META_ALL_FILES: set "AllFiles" in generated json file
+        META_ALL_SUBDIRS: set "AllSubdirs" in generated json file
+]] #
+function(ck_configure_plugin _target)
+    set(options META_ALL_FILES META_ALL_SUBDIRS)
+    set(oneValueArgs PARENT CATEGORY METADATA_IN COMPAT_VERSION PLUGIN_NAME PLUGIN_VERSION)
+    set(multiValueArgs META_SUBDIRS)
+    cmake_parse_arguments(FUNC "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
+
+    if(NOT FUNC_PARENT)
+        message(FATAL_ERROR "ck_configure_plugin: PARENT not specified!")
+    endif()
+
+    if(NOT FUNC_CATEGORY)
+        message(FATAL_ERROR "ck_configure_plugin: CATEGORY not specified!")
+    endif()
+
+    set(_out_dir ${CHORUSKIT_LIBRARY_OUTPUT_DIRECTORY}/${FUNC_PARENT}/plugins/${FUNC_CATEGORY})
+
+    if(FUNC_PLUGIN_NAME)
+        set(_name ${FUNC_PLUGIN_NAME})
+    else()
+        set(_name ${_target})
+    endif()
+
+    if(FUNC_PLUGIN_VERSION)
+        set(_version ${FUNC_PLUGIN_VERSION})
+    else()
+        set(_version "0.0.1.0")
+    endif()
+
+    if(FUNC_METADATA_IN)
+        get_filename_component(_metadata_file ${FUNC_METADATA_IN} ABSOLUTE)
+
+        # In case EXISTS failed with non-absolute paths
+        if(NOT EXISTS ${_metadata_file})
+            set(_metadata_file)
+        endif()
+    else()
+        set(_metadata_file)
+    endif()
+
+    if(_metadata_file)
+        if(FUNC_COMPAT_VERSION)
+            set(_compat_version ${FUNC_COMPAT_VERSION})
+        else()
+            set(_compat_version "0.0.0.0")
+        endif()
+
+        set(_plugin_json2_path ${CMAKE_CURRENT_BINARY_DIR}/${_name}PluginMetaData/plugin.json)
+        set(_content "{\n    \"name\": \"${_name}\"")
+
+        if(FUNC_META_ALL_FILES)
+            set(_content "${_content},\n    \"allFiles\": true")
+        endif()
+
+        if(FUNC_META_ALL_SUBDIRS)
+            set(_content "${_content},\n    \"allSubdirs\": true")
+        endif()
+
+        if(FUNC_META_SUBDIRS)
+            string(JOIN "\",\n        \"" _json_arr_str ${FUNC_META_SUBDIRS})
+            set(_content "${_content},\n    \"subdirs\": [\n        \"${_json_arr_str}\"\n    ]")
+        endif()
+
+        set(_content "${_content}\n}")
+
+        file(GENERATE OUTPUT ${_plugin_json2_path} CONTENT ${_content})
+
+        add_custom_command(
+            TARGET ${_target} POST_BUILD
+            COMMAND ${CMAKE_COMMAND} -E copy ${_plugin_json2_path} ${_out_dir}
+        )
+
+        # Set plugin metadata
+        ck_parse_version(_ver ${_version})
+        set(PLUGIN_METADATA_VERSION ${_ver_1}.${_ver_2}.${_ver_3}_${_ver_4})
+
+        ck_parse_version(_compat ${_compat_version})
+        set(PLUGIN_METADATA_COMPAT_VERSION ${_compat_1}.${_compat_2}.${_compat_3}_${_compat_4})
+
+        configure_file(
+            ${_metadata_file}
+            ${CMAKE_CURRENT_BINARY_DIR}/QtPluginMetadata/plugin.json
+            @ONLY
+        )
+        target_include_directories(${_target} PRIVATE ${CMAKE_CURRENT_BINARY_DIR}/QtPluginMetadata)
+    else()
+        # To do...
+    endif()
+
+    # Change rpath and output paths
+    set_target_properties(${_target} PROPERTIES
+        BUILD_RPATH "${CHORUSKIT_PLUGIN_RPATH}"
+        RUNTIME_OUTPUT_DIRECTORY ${_out_dir}
+        LIBRARY_OUTPUT_DIRECTORY ${_out_dir}
+        ARCHIVE_OUTPUT_DIRECTORY ${_out_dir}
+
+        # OUTPUT_NAME ${_name}
+    )
 endfunction()
 
 #[[
@@ -960,12 +1124,6 @@ function(ck_add_deploy_qt_target _target)
     set(multiValueArgs)
     cmake_parse_arguments(FUNC "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
 
-    # string(TOLOWER ${PROJECT_NAME} PROJECT_NAME_LOWER)
-    # string(TOLOWER ${CMAKE_SYSTEM_NAME} SYSTEM_NAME_LOWER)
-    # string(TOLOWER ${CMAKE_SYSTEM_PROCESSOR} SYSTEM_ARCH_LOWER)
-
-    # set(_release_name ${PROJECT_NAME_LOWER}-${SYSTEM_NAME_LOWER}-${SYSTEM_ARCH_LOWER}-${APP_VERSION_VERBOSE})
-    # set(_deploy_dir ${CMAKE_BINARY_DIR}/${_release_name})
     if(NOT FUNC_TARGET)
         message(FATAL_ERROR "ck_add_deploy_qt_target: TARGET not specified!")
     endif()

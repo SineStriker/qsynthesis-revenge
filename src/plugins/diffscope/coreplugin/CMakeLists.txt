@@ -1,6 +1,6 @@
 project(coreplugin VERSION 0.1.0.0)
 
-set(_extra_includes ${CURRENT_SUB_PROJECT_MAIN_DIR})
+set(_extra_includes)
 set(_res_dir Res)
 
 ck_add_files(_src
@@ -8,10 +8,10 @@ ck_add_files(_src
     PATTERNS *.h *.hpp *.cpp *.cc
 )
 
-configure_plugin_base(_plugin
+configure_plugin(_plugin "Sine Striker"
+    MACRO_PREFIX CORE
     METADATA_IN plugin.json.in
     PLUGIN_NAME Core
-    MACRO_PREFIX CORE
 )
 
 ck_target_components(${_plugin}
@@ -20,11 +20,6 @@ ck_target_components(${_plugin}
     QT_LINKS Core Widgets
     LINKS QsFramework ExtensionSystem CkAppCore
     INCLUDES ${_extra_includes}
-)
-
-ck_target_res(${_plugin}
-    DESCRIPTION "DiffScope Core Plugin"
-    COPYRIGHT "Sine Striker"
 )
 
 ck_add_translations(${_plugin}_translations

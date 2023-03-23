@@ -7,10 +7,10 @@ ck_add_files(_src
     PATTERNS *.h *.hpp *.cpp *.cc
 )
 
-configure_plugin_base(_plugin
+configure_plugin(_plugin "FlutyDeer"
+    MACRO_PREFIX IMPORTMANAGER
     METADATA_IN plugin.json.in
     PLUGIN_NAME ImportManager
-    MACRO_PREFIX IMPORTMANAGER
 )
 
 ck_target_components(${_plugin} INCLUDE_CURRENT_PRIVATE INCLUDE_SUBDIRS_PRIVATE
@@ -18,9 +18,4 @@ ck_target_components(${_plugin} INCLUDE_CURRENT_PRIVATE INCLUDE_SUBDIRS_PRIVATE
     QT_LINKS Core Widgets Network
     LINKS QsFramework ExtensionSystem DiffScope::coreplugin
     INCLUDES ${_extra_includes}
-)
-
-ck_target_res(${_plugin}
-    DESCRIPTION "DiffScope Import Manger Plugin"
-    COPYRIGHT "FlutyDeer"
 )

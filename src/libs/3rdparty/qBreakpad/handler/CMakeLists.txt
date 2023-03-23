@@ -16,6 +16,7 @@ ck_target_components(${PROJECT_NAME}
 )
 
 ck_target_res(${PROJECT_NAME}
+    VERSION ${PROJECT_VERSION}
     DESCRIPTION "Cross-platform Qt crash handler"
     COPYRIGHT "Copyright buzzySmile 2021"
 )

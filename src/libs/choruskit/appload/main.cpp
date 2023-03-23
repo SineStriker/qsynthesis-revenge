@@ -289,7 +289,7 @@ int main_entry(int argc, char *argv[]) {
     Core::ILoader::addMessageHandler("__choruskit_loader_debug_", {&splash, [](void *data, const QString &text) {
                                                                        Q_UNUSED(data);
                                                                        qDebug()
-                                                                           << "appload: ILoader::setText():" << text;
+                                                                           << "apploader: ILoader::setText():" << text;
                                                                    }});
 #endif
 
@@ -314,6 +314,8 @@ int main_entry(int argc, char *argv[]) {
     }
 
     splash.show();
+
+    // Don't know why drawing text blocks so much time, so we show splash first and then show texts
     splash.showTexts();
 
 #ifdef CONFIG_ENABLE_BREAKPAD
