@@ -289,6 +289,10 @@ function(ck_add_files _var)
     set(multiValueArgs PATTERNS DIRS)
     cmake_parse_arguments(FUNC "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
 
+    if(NOT FUNC_PATTERNS)
+        message(FATAL_ERROR "ck_add_files: PATTERNS not specified!")
+    endif()
+
     set(_src)
 
     # Add current dir
@@ -596,6 +600,10 @@ function(ck_add_translations _target)
     cmake_parse_arguments(FUNC "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
 
     # ----------------- Template Begin -----------------
+    if(NOT FUNC_LOCALES)
+        message(FATAL_ERROR "ck_add_translations: LOCALES not specified!")
+    endif()
+
     if(FUNC_SOURCES)
         set(_src_files ${FUNC_SOURCES})
     elseif(FUNC_TARGETS)
@@ -689,6 +697,7 @@ function(ck_add_attaches _target)
     set(_src)
     set(_dest)
     set(_status NONE) # NONE, SRC, DEST
+    set(_count 0)
 
     foreach(_item ${ARGN})
         if(${_item} STREQUAL SRC)
@@ -717,6 +726,8 @@ function(ck_add_attaches _target)
                 endif()
 
                 set(_status NONE)
+
+                math(EXPR _count "${_count} + 1")
 
                 if(${_item} MATCHES ".*\\$.*")
                     set(_path ${_item})
@@ -755,6 +766,8 @@ function(ck_add_attaches _target)
         message(FATAL_ERROR "ck_add_attaches: missing DEST after source files!")
     elseif(${_status} STREQUAL DEST)
         message(FATAL_ERROR "ck_add_attaches: missing directory name after DEST!")
+    elseif(${_count} STREQUAL 0)
+        message(FATAL_ERROR "ck_add_attaches: no files specified!")
     endif()
 endfunction()
 
@@ -934,15 +947,16 @@ endfunction()
 Deploy Qt libraries and plugins.
 
     ck_add_deploy_qt_target(<target>
+        TARGET <target>
         [LIB_DIR <dir>]
         [PLUGINS_DIR <dir>]
     )
 
-    Should specify a target.
+    Create a target to deploy Qt frameworks for a real target.
 ]] #
 function(ck_add_deploy_qt_target _target)
     set(options)
-    set(oneValueArgs LIB_DIR PLUGINS_DIR)
+    set(oneValueArgs TARGET LIB_DIR PLUGINS_DIR)
     set(multiValueArgs)
     cmake_parse_arguments(FUNC "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
 
@@ -952,6 +966,11 @@ function(ck_add_deploy_qt_target _target)
 
     # set(_release_name ${PROJECT_NAME_LOWER}-${SYSTEM_NAME_LOWER}-${SYSTEM_ARCH_LOWER}-${APP_VERSION_VERBOSE})
     # set(_deploy_dir ${CMAKE_BINARY_DIR}/${_release_name})
+    if(NOT FUNC_TARGET)
+        message(FATAL_ERROR "ck_add_deploy_qt_target: TARGET not specified!")
+    endif()
+
+    set(_deploy_target ${FUNC_TARGET})
 
     # Find Qt tools
     if(NOT DEFINED QT_QMAKE_EXECUTABLE)
@@ -975,16 +994,16 @@ function(ck_add_deploy_qt_target _target)
     if(FUNC_LIB_DIR)
         set(_lib_dir ${FUNC_LIB_DIR})
     else()
-        set(_lib_dir $<TARGET_FILE_DIR:${_target}>)
+        set(_lib_dir $<TARGET_FILE_DIR:${_deploy_target}>)
     endif()
 
     if(FUNC_PLUGINS_DIR)
         set(_plugins_dir ${FUNC_PLUGINS_DIR})
     else()
-        set(_plugins_dir $<TARGET_FILE_DIR:${_target}>/plugins)
+        set(_plugins_dir $<TARGET_FILE_DIR:${_deploy_target}>/plugins)
     endif()
 
-    add_custom_target(ChorusKit_DeployQt
+    add_custom_target(${_target}
         COMMAND ${QT_DEPLOY_EXECUTABLE}
         --libdir ${_lib_dir}
         --plugindir ${_plugins_dir}
@@ -996,7 +1015,7 @@ function(ck_add_deploy_qt_target _target)
         --no-opengl-sw
         --force
         --verbose 0
-        $<TARGET_FILE:${_target}>
-        WORKING_DIRECTORY $<TARGET_FILE_DIR:${_target}>
+        $<TARGET_FILE:${_deploy_target}>
+        WORKING_DIRECTORY $<TARGET_FILE_DIR:${_deploy_target}>
     )
 endfunction()

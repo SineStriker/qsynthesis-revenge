@@ -37,7 +37,7 @@ if(TRUE)
     )
 
     if(WIN32 OR APPLE)
-        ck_add_deploy_qt_target(${PROJECT_NAME})
+        ck_add_deploy_qt_target(qtdummy_deploy TARGET ${PROJECT_NAME})
 
         # if(CMAKE_BUILD_TYPE MATCHES "Release|Rel")
         # string(TOLOWER ${APP_TOOLSET_NAME} TOOLSET_NAME_LOWER)

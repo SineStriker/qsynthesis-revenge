@@ -284,12 +284,20 @@ int main_entry(int argc, char *argv[]) {
     g_splash = &splash;
 
     Core::ILoader::setSplash(&splash);
-    Core::ILoader::addMessageHandler(
-        [](intptr_t data, const QString &text) {
-            Q_UNUSED(data);
-            qobject_cast<SplashScreen *>(g_splash)->setText("_status", text);
-        },
-        (intptr_t) &splash);
+
+#ifdef CONFIG_ENABLE_DEBUG
+    Core::ILoader::addMessageHandler("__choruskit_loader_debug_", {&splash, [](void *data, const QString &text) {
+                                                                       Q_UNUSED(data);
+                                                                       qDebug()
+                                                                           << "appload: ILoader::setText():" << text;
+                                                                   }});
+#endif
+
+    Core::ILoader::addMessageHandler("__choruskit_loader_",
+                                     {&splash, [](void *data, const QString &text) {
+                                          Q_UNUSED(data);
+                                          qobject_cast<SplashScreen *>(g_splash)->setText("_status", text);
+                                      }});
 
     splash.setPixmap(splashImage);
 
@@ -307,8 +315,6 @@ int main_entry(int argc, char *argv[]) {
 
     splash.show();
     splash.showTexts();
-
-    a.setProperty("__choruskit_init_splash__", QVariant::fromValue(&splash));
 
 #ifdef CONFIG_ENABLE_BREAKPAD
     // Prepare to load plugins

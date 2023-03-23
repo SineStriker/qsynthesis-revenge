@@ -11,13 +11,8 @@ namespace Core {
         QSplashScreen *splash = nullptr;
         QString text;
 
-        struct Handler {
-            ILoader::MessageHandler handler;
-            intptr_t data;
-        };
-
-        std::list<Handler> handlers;
-        QHash<intptr_t, decltype(handlers)::iterator> handlerIndexes;
+        std::list<ILoader::MessageHandler> handlers;
+        QHash<QString, decltype(handlers)::iterator> handlerIndexes;
     };
 
     Q_GLOBAL_STATIC(ILoaderData, d)
@@ -36,35 +31,46 @@ namespace Core {
 
     void ILoader::setText(const QString &text) {
         d->text = text;
-        for (auto item : qAsConst(d->handlers)) {
-            item.handler(item.data, text);
+        for (auto &handler : qAsConst(d->handlers)) {
+            handler.doIt(text);
         }
     }
 
-    void ILoader::addMessageHandler(ILoader::MessageHandler handler, intptr_t data) {
-        auto handler_ptr = intptr_t(handler);
-        if (!handler_ptr) {
+    void ILoader::addMessageHandler(const QString &id, const MessageHandler &handler) {
+        if (!handler.func) {
             qWarning() << "Core::ILoader::addMessageHandler(): trying to add null handler";
             return;
         }
-        auto it = d->handlers.insert(d->handlers.end(), {handler, data});
-        d->handlerIndexes.insert(handler_ptr, it);
-    }
 
-    void ILoader::removeMessageHandler(ILoader::MessageHandler handler, intptr_t data) {
-        auto handler_ptr = intptr_t(handler);
-        if (!handler_ptr) {
-            qWarning() << "Core::ILoader::removeMessageHandler(): trying to remove null handler";
+        if (d->handlerIndexes.contains(id)) {
+            qWarning() << "Core::ILoader::addMessageHandler(): trying to add duplicated handler:" << id;
             return;
         }
 
-        auto it = d->handlerIndexes.find(handler_ptr);
+        auto it = d->handlers.insert(d->handlers.end(), handler);
+        d->handlerIndexes.insert(id, it);
+    }
+
+    void ILoader::removeMessageHandler(const QString &id) {
+        auto it = d->handlerIndexes.find(id);
         if (it == d->handlerIndexes.end()) {
-            qWarning() << "Core::ILoader::removeMessageHandler(): handler does not exist:" << handler_ptr;
+            qWarning() << "Core::ILoader::removeMessageHandler(): handler does not exist:" << id;
             return;
         }
         d->handlers.erase(it.value());
         d->handlerIndexes.erase(it);
+    }
+
+    ILoader::MessageHandler ILoader::messageHandler(const QString &id) const {
+        auto it = d->handlerIndexes.find(id);
+        if (it == d->handlerIndexes.end()) {
+            return {};
+        }
+        return *it.value();
+    }
+
+    QList<ILoader::MessageHandler> ILoader::messageHandlers() const {
+        return {d->handlers.begin(), d->handlers.end()};
     }
 
 }

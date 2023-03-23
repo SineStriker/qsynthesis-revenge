@@ -3,6 +3,8 @@
 
 #include <QSplashScreen>
 
+#include <functional>
+
 #include "CkAppCoreGlobal.h"
 
 class QSplashScreen;
@@ -18,10 +20,27 @@ namespace Core {
         static void setText(const QString &text);
 
     public:
-        using MessageHandler = void (*)(intptr_t data, const QString &);
+        typedef void (*MessageHandlerFunc)(void *, const QString &);
 
-        static void addMessageHandler(MessageHandler handler, intptr_t data);
-        static void removeMessageHandler(MessageHandler handler, intptr_t data);
+        struct MessageHandler {
+            void *data;
+            MessageHandlerFunc func;
+
+            inline MessageHandler() : MessageHandler(nullptr, nullptr) {
+            }
+
+            inline MessageHandler(void *data, MessageHandlerFunc func) : data(data), func(func) {
+            }
+
+            inline void doIt(const QString &text) const {
+                func ? func(data, text) : void();
+            }
+        };
+
+        static void addMessageHandler(const QString &id, const MessageHandler &handler);
+        static void removeMessageHandler(const QString &id);
+        MessageHandler messageHandler(const QString &id) const;
+        QList<MessageHandler> messageHandlers() const;
     };
 
 }
