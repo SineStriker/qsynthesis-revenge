@@ -21,8 +21,6 @@ public:
         }
     };
 
-    Q_INVOKABLE void setDisplayStatus(const QString &text);
-
 public:
     void setTextAttribute(const QString &id, const Attribute &attr);
     void setText(const QString &id, const QString &text);

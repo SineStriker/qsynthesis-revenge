@@ -12,10 +12,6 @@ SplashScreen::SplashScreen(QScreen *screen) : QSplashScreen(screen) {
 SplashScreen::~SplashScreen() {
 }
 
-void SplashScreen::setDisplayStatus(const QString &text) {
-    setText("_status", text);
-}
-
 void SplashScreen::setTextAttribute(const QString &id, const SplashScreen::Attribute &attr) {
     m_texts[id] = attr;
 

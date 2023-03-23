@@ -17,7 +17,7 @@
 #include <extensionsystem/pluginmanager.h>
 #include <extensionsystem/pluginspec.h>
 
-#include <extensionsystem/newSettings/PluginBridge.h>
+#include "CoreApi/ILoader.h"
 
 namespace Core {
 
@@ -44,7 +44,7 @@ namespace Core {
 
             d->dec.load(QString("%1/share/%2.res.json").arg(QMFs::PathFindDirPath(pluginSpec()->filePath()), "Core"));
 
-            ExtensionSystem::PluginBridge::setLoaderText(tr("Initializing core plugin..."));
+            ILoader::setText(tr("Initializing core plugin..."));
             // QThread::msleep(2000);
 
             // Init ICore instance
@@ -92,7 +92,7 @@ namespace Core {
 
         void CorePlugin::waitSplash(QWidget *w) {
             // Get splash screen handle
-            auto screen = ExtensionSystem::PluginBridge::splash();
+            auto screen = ILoader::splash();
             if (screen && screen->isVisible()) {
                 screen->finish(w);
             }

@@ -16,7 +16,6 @@
 
 #include "QBreakpadHandler.h"
 
-#include "extensionsystem/newSettings/PluginBridge.h"
 #include "extensionsystem/pluginmanager.h"
 #include "extensionsystem/pluginspec.h"
 
@@ -24,6 +23,8 @@
 
 #include "config/loadconfig.h"
 #include "splash/SplashScreen.h"
+
+#include "CoreApi/ILoader.h"
 
 #define USE_NATIVE_MESSAGEBOX
 
@@ -171,18 +172,6 @@ static inline QStringList getPluginPaths() {
     return rc;
 }
 
-class MyPluginBridge : public ExtensionSystem::PluginBridge {
-public:
-    explicit MyPluginBridge(QSplashScreen *splash) {
-        setSplash(splash);
-    }
-
-protected:
-    void updateLoaderText(const QString &text) override {
-        qobject_cast<SplashScreen *>(splash())->setText("_status", text);
-    }
-};
-
 int main_entry(int argc, char *argv[]) {
     QApplication a(argc, argv);
 
@@ -292,9 +281,17 @@ int main_entry(int argc, char *argv[]) {
     }
 
     SplashScreen splash;
-    splash.setPixmap(splashImage);
+    g_splash = &splash;
 
-    MyPluginBridge bridge(&splash);
+    Core::ILoader::setSplash(&splash);
+    Core::ILoader::addMessageHandler(
+        [](intptr_t data, const QString &text) {
+            Q_UNUSED(data);
+            qobject_cast<SplashScreen *>(g_splash)->setText("_status", text);
+        },
+        (intptr_t) &splash);
+
+    splash.setPixmap(splashImage);
 
     for (auto it = configFile.splashSettings.texts.begin(); it != configFile.splashSettings.texts.end(); ++it) {
         const auto &item = it.value();
@@ -311,7 +308,6 @@ int main_entry(int argc, char *argv[]) {
     splash.show();
     splash.showTexts();
 
-    g_splash = &splash;
     a.setProperty("__choruskit_init_splash__", QVariant::fromValue(&splash));
 
 #ifdef CONFIG_ENABLE_BREAKPAD
@@ -329,7 +325,7 @@ int main_entry(int argc, char *argv[]) {
     QSettings::setPath(QSettings::IniFormat, QSettings::SystemScope, qmHost->appDataDir());
 
     // Update loader text
-    PluginBridge::setLoaderText(QCoreApplication::translate("Application", "Searching plugins..."));
+    Core::ILoader::setText(QCoreApplication::translate("Application", "Searching plugins..."));
 
     PluginManager pluginManager;
     pluginManager.setPluginIID(pluginIID);
@@ -419,7 +415,7 @@ int main_entry(int argc, char *argv[]) {
     }
 
     // Update loader text
-    PluginBridge::setLoaderText(QCoreApplication::translate("Application", "Loading plugins..."));
+    Core::ILoader::setText(QCoreApplication::translate("Application", "Loading plugins..."));
 
     PluginManager::loadPlugins();
     if (coreplugin->hasError()) {
