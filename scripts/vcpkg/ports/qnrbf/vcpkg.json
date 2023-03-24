@@ -1,6 +1,6 @@
 {
   "name": "qnrbf",
-  "version": "0.0.1.4",
+  "version": "0.0.1.5",
   "port-version": 1,
   "description": "C++ library to read/write MS-NRBF, X Studio Singer project files.",
   "homepage": "https://github.com/SineStriker/QNrbf",
