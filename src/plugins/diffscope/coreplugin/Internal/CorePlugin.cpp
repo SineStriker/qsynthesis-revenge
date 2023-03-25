@@ -45,7 +45,7 @@ namespace Core {
 
             d->dec.load(QString("%1/share/%2.res.json").arg(QMFs::PathFindDirPath(pluginSpec()->filePath()), "Core"));
 
-            auto splash = qobject_cast<QSplashScreen *>(ILoader::instance()->getFirstObject("_choruskit_init_splash_"));
+            auto splash = qobject_cast<QSplashScreen *>(ILoader::instance()->getFirstObject("choruskit_init_splash"));
             if (splash) {
                 splash->showMessage(tr("Initializing core plugin..."));
             }
@@ -79,7 +79,9 @@ namespace Core {
 
             auto winMgr = icore->windowSystem();
             auto handle = winMgr->createWindow("home");
+
             waitSplash(handle->window());
+
             return true;
         }
 
@@ -96,7 +98,7 @@ namespace Core {
 
         void CorePlugin::waitSplash(QWidget *w) {
             // Get splash screen handle
-            auto splash = qobject_cast<QSplashScreen *>(ILoader::instance()->getFirstObject("_choruskit_init_splash_"));
+            auto splash = qobject_cast<QSplashScreen *>(ILoader::instance()->getFirstObject("choruskit_init_splash"));
             if (splash) {
                 splash->finish(w);
             }

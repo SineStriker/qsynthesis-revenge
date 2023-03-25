@@ -28,7 +28,7 @@ namespace Core {
             auto iWin = qobject_cast<IHomeWindow *>(this->handle());
             iWin->menuBar()->addMenu(new QMenu("File(&F)"));
 
-            auto btn = iWin->addNavWidget(new QWidget());
+            auto btn = iWin->addNavWidget(new QLabel("22222222222222222"));
             btn->setText("123456");
         }
 

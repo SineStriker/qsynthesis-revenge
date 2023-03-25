@@ -278,7 +278,7 @@ int main_entry(int argc, char *argv[]) {
     g_splash = &splash;
 
     // Add splash to loader object pool
-    loader.addObject("_choruskit_init_splash_", &splash);
+    loader.addObject("choruskit_init_splash", &splash);
     QObject::connect(&splash, &SplashScreen::closed, [&] {
         loader.removeObject(&splash); //
     });
@@ -328,7 +328,7 @@ int main_entry(int argc, char *argv[]) {
 
     QStringList pluginPaths = [&]() {
         QStringList rc;
-        QFileInfo info(QString("%1/%2/plugins").arg(host.libDir(), qAppName(), "plugins"));
+        QFileInfo info(QString("%1/%2/plugins").arg(host.libDir(), qAppName()));
         if (info.isDir()) {
             rc += info.absoluteFilePath();
         }

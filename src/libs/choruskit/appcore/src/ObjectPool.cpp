@@ -4,6 +4,7 @@
 #include <QDebug>
 
 namespace Core {
+
     ObjectPoolPrivate::ObjectPoolPrivate(ObjectPool *q) : q(q) {
         connect(q, &ObjectPool::objectAdded, [this](const QString &id, QObject *obj) {
             Q_UNUSED(id)

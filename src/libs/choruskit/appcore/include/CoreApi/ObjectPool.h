@@ -1,10 +1,10 @@
 #ifndef OBJECTPOOL_H
 #define OBJECTPOOL_H
 
-#include "CkAppCoreGlobal.h"
-
 #include <QReadWriteLock>
 #include <QWidget>
+
+#include "CkAppCoreGlobal.h"
 
 namespace Core {
 

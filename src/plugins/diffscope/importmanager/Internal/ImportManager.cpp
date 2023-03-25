@@ -3,6 +3,8 @@
 #include <QApplication>
 #include <QThread>
 
+#include "CoreApi/ILoader.h"
+
 namespace Core {
 
     namespace Internal {
