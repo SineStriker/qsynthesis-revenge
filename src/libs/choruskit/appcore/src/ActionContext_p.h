@@ -4,6 +4,7 @@
 #include <QHash>
 
 #include "ActionContext.h"
+#include "QMChronSet.h"
 
 namespace Core {
 
@@ -26,8 +27,7 @@ namespace Core {
         ActionSystem *system; // Maybe removed later...
         QString id;
 
-        std::list<ActionContextDataPrivate> actions;
-        QHash<QString, decltype(actions)::iterator> actionIndexes;
+        QMChronMap<QString, ActionContextDataPrivate> actions;
     };
 
 }

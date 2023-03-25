@@ -29,7 +29,7 @@ void QMCoreHostPrivate::init() {
     appDataDir = QMFs::appDataPath() + "/ChorusKit/" + qAppName();
     tempDir = QDir::tempPath() + "/ChorusKit/" + qAppName();
 
-    QDir binDir(QMFs::binaryPath());
+    QDir binDir(qApp->applicationDirPath());
     binDir.cdUp();
 
     libDir = binDir.absoluteFilePath("lib");

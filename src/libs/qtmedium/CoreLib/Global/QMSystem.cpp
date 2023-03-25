@@ -182,22 +182,6 @@ QString QMFs::appDataPath() {
     return path;
 }
 
-static const char __bin_path_env_name[] = "QTMEDIUM_BINARY_PATH";
-
-QString QMFs::binaryPath() {
-    if (fsData->binPath.isEmpty()) {
-        QString tmp;
-        if (!(tmp = qEnvironmentVariable(__bin_path_env_name)).isEmpty()) {
-            QFileInfo info(tmp);
-            if (info.isDir()) {
-                return fsData->binPath = info.absoluteFilePath();
-            }
-        }
-        return fsData->binPath = qApp->applicationDirPath();
-    }
-    return fsData->binPath;
-}
-
 QStringList QMFs::FindRecursiveDirs(const QString &base, int max) {
     QDir dir(base);
     dir.setFilter(QDir::Dirs | QDir::NoDotAndDotDot);
@@ -230,19 +214,19 @@ QString QMFs::invalidFileNameChars() {
     return QString(ch, sizeof(ch));
 }
 
-QString QMFs::getSharedLibraryPath(void *func) {
+QString QMFs::getSharedLibraryPath(void *&func) {
 #ifdef _WIN32
     wchar_t buf[MAX_PATH + 1] = {0};
     HMODULE hm = NULL;
     if (!GetModuleHandleExW(GET_MODULE_HANDLE_EX_FLAG_FROM_ADDRESS | GET_MODULE_HANDLE_EX_FLAG_UNCHANGED_REFCOUNT,
-                            (LPCWSTR) func, &hm) ||
+                            (LPCWSTR) &func, &hm) ||
         !GetModuleFileNameW(hm, buf, sizeof(buf))) {
         return {};
     }
     return QString::fromStdWString(buf);
 #else
     Dl_info dl_info;
-    dladdr((void *) GetSelfName, &dl_info);
+    dladdr((void *) func, &dl_info);
     auto buf = dl_info.dli_fname;
     return QString::fromStdString(buf);
 #endif

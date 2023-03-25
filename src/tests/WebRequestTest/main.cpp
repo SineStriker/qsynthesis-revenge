@@ -4,8 +4,19 @@
 #include <QNetworkAccessManager>
 #include <QNetworkReply>
 
+#include "Collections/QMChronSet.h"
+
 int main(int argc, char *argv[]) {
     QApplication a(argc, argv);
+
+    // QMChronSet<int> arr;
+    // arr.insert(2);
+    // arr.insert(1);
+    // arr.insert(3);
+    //
+    // for (const auto &item : qAsConst(arr)) {
+    //     qDebug() << item;
+    // }
 
     QString url = "http://qt-project.org";
 

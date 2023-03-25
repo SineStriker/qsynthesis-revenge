@@ -1,10 +1,8 @@
 #ifndef IWINDOW_H
 #define IWINDOW_H
 
-#include <QReadWriteLock>
-#include <QWidget>
-
 #include "ActionItem.h"
+#include "ObjectPool.h"
 #include "WindowElementsAdaptor.h"
 
 namespace Core {
@@ -38,7 +36,7 @@ namespace Core {
 
     class IWindowPrivate;
 
-    class CKAPPCORE_API IWindow : public QObject, public WindowElementsAdaptor {
+    class CKAPPCORE_API IWindow : public ObjectPool, public WindowElementsAdaptor {
         Q_OBJECT
     public:
         QString id() const;
@@ -47,27 +45,6 @@ namespace Core {
         void removeWidget(const QString &id);
         QWidget *widget(const QString &id) const;
         QList<QWidget *> widgets() const;
-
-        void addObject(QObject *obj);
-        void addObject(const QString &id, QObject *obj);
-        void addObjects(const QString &id, const QList<QObject *> &objs);
-        void removeObject(QObject *obj);
-        void removeObjects(const QString &id);
-        QList<QObject *> getObjects(const QString &id) const;
-        QList<QObject *> allObjects() const;
-        QReadWriteLock *objectListLock() const;
-
-        template <class T>
-        QList<T *> getObjects() const {
-            QReadLocker lock(objectListLock());
-            QList<QObject *> all = allObjects();
-            QList<QObject *> res;
-            foreach (QObject *obj, all) {
-                if (T *result = qobject_cast<T *>(obj))
-                    res.append(result);
-            }
-            return res;
-        }
 
         void addActionItem(const QString &id, ActionItem *item);
         void removeActionItem(const QString &id);
@@ -79,9 +56,6 @@ namespace Core {
     signals:
         void widgetAdded(const QString &id, QWidget *w);
         void aboutToRemoveWidget(const QString &id, QWidget *w);
-
-        void objectAdded(const QString &id, QObject *obj);
-        void aboutToRemoveObject(const QString &id, QObject *obj);
 
         void aboutToClose();
         void closed();

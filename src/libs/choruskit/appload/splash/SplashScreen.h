@@ -26,14 +26,20 @@ public:
     void setText(const QString &id, const QString &text);
     void showTexts();
 
+signals:
+    void closed();
+
 protected:
     void drawContents(QPainter *painter) override;
 
     void mousePressEvent(QMouseEvent *event) override;
+    void closeEvent(QCloseEvent *event) override;
 
 private:
     bool m_showTexts;
     QHash<QString, Attribute> m_texts;
+
+    void _q_messageChanged(const QString &message);
 };
 
 

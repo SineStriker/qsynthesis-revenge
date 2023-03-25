@@ -64,7 +64,7 @@ namespace Core {
         q->setupWindow();
 
         // Call all add-ons
-        for (auto fac : qAsConst(d->addOnFactories)) {
+        for (auto &fac : qAsConst(d->addOnFactories)) {
             if (!fac->predicate(q)) {
                 continue;
             }
@@ -145,97 +145,6 @@ namespace Core {
         return d->widgetMap.values();
     }
 
-    void IWindow::addObject(QObject *obj) {
-        addObject({}, obj);
-    }
-
-    void IWindow::addObject(const QString &id, QObject *obj) {
-        Q_D(IWindow);
-        if (!obj) {
-            qWarning() << "Core::IWindow::addObject(): trying to add null object";
-            return;
-        }
-
-        QWriteLocker locker(&d->objectListLock);
-        auto &set = d->objectMap[id];
-        if (set.contains(obj)) {
-            qWarning() << "Core::IWindow::addObject(): trying to add duplicated object:" << id << obj;
-            return;
-        }
-        set.insert(obj);
-        emit objectAdded(id, obj);
-    }
-
-    void IWindow::addObjects(const QString &id, const QList<QObject *> &objs) {
-        for (const auto &obj : objs) {
-            addObject(id, obj);
-        }
-    }
-
-    void IWindow::removeObject(QObject *obj) {
-        Q_D(IWindow);
-        QWriteLocker locker(&d->objectListLock);
-
-        auto it = d->objectIndexes.find(obj);
-        if (it == d->objectIndexes.end()) {
-            qWarning() << "Core::IWindow::removeObject(): obj does not exist:" << obj;
-            return;
-        }
-        QString id = it.value();
-        auto it2 = d->objectMap.find(id);
-        if (it2 != d->objectMap.end()) {
-            auto &set = it2.value();
-
-            emit aboutToRemoveObject(id, obj);
-            set.remove(obj);
-
-            d->objectIndexes.remove(obj);
-            if (set.isEmpty()) {
-                d->objectMap.erase(it2);
-            }
-        }
-    }
-
-    void IWindow::removeObjects(const QString &id) {
-        Q_D(IWindow);
-        QWriteLocker locker(&d->objectListLock);
-
-        auto it2 = d->objectMap.find(id);
-        if (it2 != d->objectMap.end()) {
-            auto &set = it2.value();
-
-            for (const auto &obj : qAsConst(set)) {
-                emit aboutToRemoveObject(id, obj);
-                d->objectIndexes.remove(obj);
-            }
-
-            d->objectMap.erase(it2);
-        }
-    }
-
-    QList<QObject *> IWindow::getObjects(const QString &id) const {
-        Q_D(const IWindow);
-        QReadLocker locker(&d->objectListLock);
-
-        auto it2 = d->objectMap.find(id);
-        if (it2 != d->objectMap.end()) {
-            return it2->values();
-        }
-
-        return {};
-    }
-
-    QList<QObject *> IWindow::allObjects() const {
-        Q_D(const IWindow);
-        QReadLocker locker(&d->objectListLock);
-        return d->objectIndexes.keys();
-    }
-
-    QReadWriteLock *IWindow::objectListLock() const {
-        Q_D(const IWindow);
-        return &d->objectListLock;
-    }
-
     void IWindow::addActionItem(const QString &id, ActionItem *item) {
         Q_D(IWindow);
         if (!item) {
@@ -292,7 +201,7 @@ namespace Core {
         // Do nothing
     }
 
-    IWindow::IWindow(IWindowPrivate &d, const QString &id, QObject *parent) : QObject(parent), d_ptr(&d) {
+    IWindow::IWindow(IWindowPrivate &d, const QString &id, QObject *parent) : ObjectPool(parent), d_ptr(&d) {
         d.q_ptr = this;
         d.init();
 

@@ -163,15 +163,6 @@ static inline QString msgCoreLoadFailure(const QString &why) {
     return QCoreApplication::translate("Application", "Failed to load core: %1!").arg(why);
 }
 
-static inline QStringList getPluginPaths() {
-    QStringList rc;
-    QFileInfo info(QMFs::binaryPath() + "/../lib/" + qAppName() + "/plugins");
-    if (info.isDir()) {
-        rc += info.absoluteFilePath();
-    }
-    return rc;
-}
-
 int main_entry(int argc, char *argv[]) {
     QApplication a(argc, argv);
 
@@ -280,24 +271,17 @@ int main_entry(int argc, char *argv[]) {
         return -1;
     }
 
+    // Unique loader
+    Core::ILoader loader;
+
     SplashScreen splash;
     g_splash = &splash;
 
-    Core::ILoader::setSplash(&splash);
-
-#ifdef CONFIG_ENABLE_DEBUG
-    Core::ILoader::addMessageHandler("__choruskit_loader_debug_", {&splash, [](void *data, const QString &text) {
-                                                                       Q_UNUSED(data);
-                                                                       qDebug()
-                                                                           << "apploader: ILoader::setText():" << text;
-                                                                   }});
-#endif
-
-    Core::ILoader::addMessageHandler("__choruskit_loader_",
-                                     {&splash, [](void *data, const QString &text) {
-                                          Q_UNUSED(data);
-                                          qobject_cast<SplashScreen *>(g_splash)->setText("_status", text);
-                                      }});
+    // Add splash to loader object pool
+    loader.addObject("_choruskit_init_splash_", &splash);
+    QObject::connect(&splash, &SplashScreen::closed, [&] {
+        loader.removeObject(&splash); //
+    });
 
     splash.setPixmap(splashImage);
 
@@ -333,7 +317,7 @@ int main_entry(int argc, char *argv[]) {
     QSettings::setPath(QSettings::IniFormat, QSettings::SystemScope, qmHost->appDataDir());
 
     // Update loader text
-    Core::ILoader::setText(QCoreApplication::translate("Application", "Searching plugins..."));
+    splash.showMessage(QCoreApplication::translate("Application", "Searching plugins..."));
 
     PluginManager pluginManager;
     pluginManager.setPluginIID(pluginIID);
@@ -342,7 +326,15 @@ int main_entry(int argc, char *argv[]) {
         new QSettings(QSettings::IniFormat, QSettings::SystemScope, a.organizationDomain(), a.applicationName());
     pluginManager.setGlobalSettings(settings);
 
-    QStringList pluginPaths = getPluginPaths() + customPluginPaths;
+    QStringList pluginPaths = [&]() {
+        QStringList rc;
+        QFileInfo info(QString("%1/%2/plugins").arg(host.libDir(), qAppName(), "plugins"));
+        if (info.isDir()) {
+            rc += info.absoluteFilePath();
+        }
+        return rc;
+    }() + customPluginPaths;
+
     pluginManager.setPluginPaths(pluginPaths);
 
     // Parse arguments again
@@ -423,7 +415,7 @@ int main_entry(int argc, char *argv[]) {
     }
 
     // Update loader text
-    Core::ILoader::setText(QCoreApplication::translate("Application", "Loading plugins..."));
+    splash.showMessage(QCoreApplication::translate("Application", "Loading plugins..."));
 
     PluginManager::loadPlugins();
     if (coreplugin->hasError()) {

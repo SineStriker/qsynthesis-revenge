@@ -7,6 +7,8 @@
 SplashScreen::SplashScreen(QScreen *screen) : QSplashScreen(screen) {
     m_showTexts = false;
     m_texts.insert("_status", {});
+
+    connect(this, &QSplashScreen::messageChanged, this, &SplashScreen::_q_messageChanged);
 }
 
 SplashScreen::~SplashScreen() {
@@ -30,7 +32,7 @@ void SplashScreen::setText(const QString &id, const QString &text) {
 }
 
 void SplashScreen::drawContents(QPainter *painter) {
-    QSplashScreen::drawContents(painter);
+    // QSplashScreen::drawContents(painter);
 
     if (!m_showTexts) {
         return;
@@ -77,4 +79,12 @@ void SplashScreen::showTexts() {
 
 void SplashScreen::mousePressEvent(QMouseEvent *event) {
     // No hide
+}
+
+void SplashScreen::_q_messageChanged(const QString &message) {
+    setText("_status", message);
+}
+
+void SplashScreen::closeEvent(QCloseEvent *event) {
+    emit closed();
 }

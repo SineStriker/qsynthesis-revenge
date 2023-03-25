@@ -35,10 +35,6 @@ namespace Core {
 
         QMap<QString, QWidget *> widgetMap;
 
-        QMap<QString, QSet<QObject *>> objectMap;
-        QHash<QObject *, QString> objectIndexes;
-        mutable QReadWriteLock objectListLock;
-
         void initAllAddOns();
         void deleteAllAddOns();
 

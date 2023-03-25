@@ -17,7 +17,7 @@ ck_target_res(${PROJECT_NAME}
     COPYRIGHT ${ROOT_OPENVPI_COPYRIGHT}
     ICO win32/app.ico
     ICNS mac/app.icns
-    MANIFEST
+    MANIFEST MAC_BUNDLE
 )
 
 # Set configration file variables

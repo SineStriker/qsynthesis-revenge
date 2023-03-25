@@ -1,6 +1,7 @@
 #include "ImportManager.h"
 
 #include <QApplication>
+#include <QThread>
 
 namespace Core {
 

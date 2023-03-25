@@ -12,5 +12,5 @@ ck_target_components(${PROJECT_NAME}
     INCLUDE_CURRENT
     SOURCES ${_src}
     QT_LINKS Core Widgets Network
-    LINKS
+    LINKS QMCoreLib
 )

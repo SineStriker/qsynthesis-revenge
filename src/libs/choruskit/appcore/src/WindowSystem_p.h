@@ -4,8 +4,7 @@
 #include <QHash>
 #include <QSet>
 
-#include <list>
-
+#include "Collections/QMChronSet.h"
 #include "WindowSystem.h"
 
 namespace Core {
@@ -22,9 +21,7 @@ namespace Core {
         WindowSystem *q_ptr;
 
         QMap<QString, IWindowFactory *> windowFactories;
-
-        std::list<IWindowAddOnFactory *> addOnFactories;
-        QHash<IWindowAddOnFactory *, decltype(addOnFactories)::iterator> addOnIndexes;
+        QMChronSet<IWindowAddOnFactory *> addOnFactories;
 
         QSet<IWindow *> iWindows;
 

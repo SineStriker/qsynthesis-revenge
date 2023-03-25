@@ -1,6 +1,7 @@
 #include "CorePlugin.h"
 
 #include <QApplication>
+#include <QSplashScreen>
 #include <QThread>
 
 #include "CoreApi/WindowSystem.h"
@@ -44,7 +45,10 @@ namespace Core {
 
             d->dec.load(QString("%1/share/%2.res.json").arg(QMFs::PathFindDirPath(pluginSpec()->filePath()), "Core"));
 
-            ILoader::setText(tr("Initializing core plugin..."));
+            auto splash = qobject_cast<QSplashScreen *>(ILoader::instance()->getFirstObject("_choruskit_init_splash_"));
+            if (splash) {
+                splash->showMessage(tr("Initializing core plugin..."));
+            }
             // QThread::msleep(2000);
 
             // Init ICore instance
@@ -92,9 +96,9 @@ namespace Core {
 
         void CorePlugin::waitSplash(QWidget *w) {
             // Get splash screen handle
-            auto screen = ILoader::splash();
-            if (screen && screen->isVisible()) {
-                screen->finish(w);
+            auto splash = qobject_cast<QSplashScreen *>(ILoader::instance()->getFirstObject("_choruskit_init_splash_"));
+            if (splash) {
+                splash->finish(w);
             }
         }
 

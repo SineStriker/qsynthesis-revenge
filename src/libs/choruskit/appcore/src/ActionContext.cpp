@@ -50,31 +50,29 @@ namespace Core {
     }
 
     ActionContextData ActionContext::addAction(const QString &id) {
-        if (d_ptr->actionIndexes.contains(id)) {
+        if (d_ptr->actions.contains(id)) {
             qWarning() << "Core::ActionContext::addAction(): trying to add duplicated action:" << id;
             return ActionContextData(nullptr);
         }
-        auto it = d_ptr->actions.insert(d_ptr->actions.end(), {id, {}, {}});
-        d_ptr->actionIndexes.insert(id, it);
-        return ActionContextData(&(*it));
+        auto it = d_ptr->actions.insert(id, {id, {}, {}});
+        return ActionContextData(&(it.value()));
     }
 
     void ActionContext::removeAction(const QString &id) {
-        auto it = d_ptr->actionIndexes.find(id);
-        if (it == d_ptr->actionIndexes.end()) {
+        auto it = d_ptr->actions.find(id);
+        if (it == d_ptr->actions.end()) {
             qWarning() << "Core::ActionContext::removeAction(): action does not exist:" << id;
             return;
         }
-        d_ptr->actions.erase(it.value());
-        d_ptr->actionIndexes.erase(it);
+        d_ptr->actions.erase(it);
     }
 
     ActionContextData ActionContext::action(const QString &id) {
-        auto it = d_ptr->actionIndexes.find(id);
-        if (it == d_ptr->actionIndexes.end()) {
+        auto it = d_ptr->actions.find(id);
+        if (it == d_ptr->actions.end()) {
             return ActionContextData(nullptr);
         }
-        return ActionContextData(&(*it.value()));
+        return ActionContextData(&(it.value()));
     }
 
     void ActionContext::buildMenuBar(const QList<ActionItem *> &actionItems, QMenuBar *menuBar) const {

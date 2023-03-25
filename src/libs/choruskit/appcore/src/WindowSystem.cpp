@@ -87,8 +87,7 @@ namespace Core {
             qWarning() << "Core::WindowSystem::addAddOn(): trying to add null add-on";
             return;
         }
-        auto it = d->addOnFactories.insert(d->addOnFactories.end(), factory);
-        d->addOnIndexes.insert(factory, it);
+        d->addOnFactories.insert(factory);
     }
 
     void WindowSystem::removeAddOn(IWindowAddOnFactory *factory) {
@@ -98,18 +97,15 @@ namespace Core {
             return;
         }
 
-        auto it = d->addOnIndexes.find(factory);
-        if (it == d->addOnIndexes.end()) {
+        if (!d->addOnFactories.remove(factory)) {
             qWarning() << "Core::WindowSystem::removeAddOn(): add-on does not exist:" << factory;
             return;
         }
-        d->addOnFactories.erase(it.value());
-        d->addOnIndexes.erase(it);
     }
 
     QList<IWindowAddOnFactory *> WindowSystem::addOnFactories() const {
         Q_D(const WindowSystem);
-        return {d->addOnFactories.begin(), d->addOnFactories.end()};
+        return d->addOnFactories.values();
     }
 
     void WindowSystem::removeAddOnFactories() {

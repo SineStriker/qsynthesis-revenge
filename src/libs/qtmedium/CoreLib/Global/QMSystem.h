@@ -77,13 +77,11 @@ namespace QMFs {
 
     QMCORELIB_API QString appDataPath();
 
-    QMCORELIB_API QString binaryPath();
-
     QMCORELIB_API QStringList FindRecursiveDirs(const QString &base, int max = -1);
 
     QMCORELIB_API QString invalidFileNameChars();
 
-    QMCORELIB_API QString getSharedLibraryPath(void *func);
+    QMCORELIB_API QString getSharedLibraryPath(void *&func);
 
 }
 

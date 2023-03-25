@@ -90,7 +90,6 @@ QHash<QString, QString> QMSimpleVarExp::SystemValues() {
         {"TEMP",         QDir::tempPath()                                                      },
         {"ROOT",         QDir::rootPath()                                                      },
         {"APPPATH",      qApp->applicationDirPath()                                            },
-        {"BINPATH",      QMFs::binaryPath()                                                    },
         {"APPNAME",      qAppName()                                                            },
     };
 }
