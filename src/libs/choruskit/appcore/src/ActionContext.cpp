@@ -12,8 +12,14 @@ public:
     TreeNode *parent;
     QMChronMap<QString, TreeNode *> children;
 
+    TreeNode(const QString &id, TreeNode *parent, const QMChronMap<QString, TreeNode *> &children = {})
+        : id(id), parent(parent), children(children) {
+        fflush(stdout);
+    }
+
     ~TreeNode() {
         qDeleteAll(children);
+        fflush(stdout);
     }
 };
 
@@ -23,6 +29,11 @@ namespace Core {
     }
 
     void ActionContextPrivate::init() {
+    }
+
+    void ActionContextPrivate::setDirty() {
+        stateDirty = true;
+        emit q_ptr->changed();
     }
 
     bool ActionContextData::isValid() const {
@@ -46,7 +57,7 @@ namespace Core {
             return;
         d->rules = rules;
 
-        d->d->stateDirty = true;
+        d->d->setDirty();
         emit d->d->q_ptr->actionChanged(d->id);
     }
 
@@ -58,9 +69,6 @@ namespace Core {
         if (!d)
             return;
         d->shortcuts = shortcuts;
-
-        d->d->stateDirty = true;
-        emit d->d->q_ptr->actionChanged(d->id);
     }
 
     ActionContextData::ActionContextData(ActionContextDataPrivate *d) : d(d) {
@@ -68,6 +76,14 @@ namespace Core {
 
     ActionContext::ActionContext(const QString &id, QObject *parent)
         : ActionContext(*new ActionContextPrivate(), id, parent) {
+        Q_D(ActionContext);
+        d->title = id;
+    }
+
+    ActionContext::ActionContext(const QString &id, const QString &title, QObject *parent)
+        : ActionContext(*new ActionContextPrivate(), id, parent) {
+        Q_D(ActionContext);
+        d->title = title;
     }
 
     ActionContext::~ActionContext() {
@@ -81,7 +97,13 @@ namespace Core {
 
     QString ActionContext::title() const {
         Q_D(const ActionContext);
-        return d->id;
+        return d->title;
+    }
+
+    void ActionContext::setTitle(const QString &title) {
+        Q_D(ActionContext);
+        d->title = title;
+        emit titleChanged(title);
     }
 
     ActionContextData ActionContext::addAction(const QString &id, bool isGroup) {
@@ -92,7 +114,7 @@ namespace Core {
         }
         auto it = d->actions.append(id, {d, id, isGroup, {}, {}});
 
-        d->stateDirty = true;
+        d->setDirty();
         emit actionAdded(id);
 
         return ActionContextData(&(it.value()));
@@ -107,7 +129,7 @@ namespace Core {
         }
         d->actions.erase(it);
 
-        d->stateDirty = true;
+        d->setDirty();
         emit actionRemoved(id);
     }
 
@@ -156,7 +178,7 @@ namespace Core {
 
                 TreeNode *node;
                 if (id.isEmpty()) {
-                    node = root = new TreeNode{{}, nullptr};
+                    node = root = new TreeNode({}, nullptr);
                 } else {
                     // Find definition
                     auto it2 = d->actions.find(id);
@@ -324,6 +346,148 @@ namespace Core {
         delete root;
 
         return res;
+    }
+
+    template <class Menu>
+    void buildMenu(const QList<ActionItem *> &items, Menu *menuBar, const QMap<QString, QStringList> &state) {
+        if (!menuBar)
+            return;
+        menuBar->clear();
+
+        QHash<QString, ActionItem *> itemMap;
+
+        // Clear items and build map
+        for (const auto item : items) {
+            switch (item->type()) {
+                case ActionItem::Menu:
+                    item->menu()->clear();
+                    break;
+                case ActionItem::ActionGroup: {
+                    auto group = item->actionGroup();
+                    for (const auto &action : group->actions()) {
+                        group->removeAction(action);
+                    }
+                    break;
+                }
+                default:
+                    break;
+            }
+            itemMap.insert(item->id(), item);
+        }
+
+        for (auto it = state.begin(); it != state.end(); ++it) {
+            const auto &id = it.key();
+            const auto &ids = it.value();
+
+            if (ids.isEmpty()) {
+                continue;
+            }
+
+            if (id.isEmpty()) {
+                for (const auto &childId : qAsConst(ids)) {
+                    auto childItem = itemMap.value(childId, nullptr);
+                    if (!childItem)
+                        continue;
+
+                    switch (childItem->type()) {
+                        case ActionItem::Menu: {
+                            menuBar->addMenu(childItem->menu());
+                            break;
+                        }
+                        case ActionItem::Action: {
+                            menuBar->addAction(childItem->action());
+                            break;
+                        }
+                        default:
+                            break;
+                    }
+                }
+            } else {
+                auto item = itemMap.value(id, nullptr);
+                if (!item) {
+                    continue;
+                }
+
+                switch (item->type()) {
+                    case ActionItem::Menu: {
+                        auto menu = item->menu();
+
+                        auto sep = [&]() {
+                            if (!menu->isEmpty()) {
+                                menu->addSeparator();
+                            }
+                        };
+
+                        for (const auto &childId : qAsConst(ids)) {
+                            auto childItem = itemMap.value(childId, nullptr);
+                            if (!childItem)
+                                continue;
+
+                            switch (childItem->type()) {
+                                case ActionItem::Menu:
+                                    sep();
+                                    menu->addMenu(childItem->menu());
+                                    break;
+                                case ActionItem::ActionGroup: {
+                                    for (const auto &action : childItem->actionGroup()->actions()) {
+                                        sep();
+                                        menu->addAction(action);
+                                    }
+                                    break;
+                                }
+                                case ActionItem::Action: {
+                                    sep();
+                                    menu->addAction(childItem->action());
+                                    break;
+                                }
+                                default:
+                                    break;
+                            }
+                        }
+                        break;
+                    }
+
+                    case ActionItem::ActionGroup: {
+                        auto actionGroup = item->actionGroup();
+                        for (const auto &childId : qAsConst(ids)) {
+                            auto childItem = itemMap.value(childId, nullptr);
+                            if (!childItem)
+                                continue;
+
+                            switch (childItem->type()) {
+                                case ActionItem::Menu: {
+                                    actionGroup->addAction(childItem->menu()->menuAction());
+                                    break;
+                                }
+                                case ActionItem::ActionGroup: {
+                                    for (const auto &action : childItem->actionGroup()->actions()) {
+                                        actionGroup->addAction(action);
+                                    }
+                                    break;
+                                }
+                                case ActionItem::Action: {
+                                    actionGroup->addAction(childItem->action());
+                                    break;
+                                }
+                                default:
+                                    break;
+                            }
+                        }
+                        break;
+                    }
+                    default:
+                        break;
+                }
+            }
+        }
+    }
+
+    void ActionContext::buildMenuBarWithState(const QList<ActionItem *> &items, QMenuBar *menuBar) const {
+        buildMenu(items, menuBar, state());
+    }
+
+    void ActionContext::buildMenuWithState(const QList<ActionItem *> &items, QMenu *menu) const {
+        buildMenu(items, menu, state());
     }
 
     ActionContext::ActionContext(ActionContextPrivate &d, const QString &id, QObject *parent)

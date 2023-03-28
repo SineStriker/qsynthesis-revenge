@@ -7,21 +7,34 @@
 #include <QDebug>
 
 #include "Collections/QMChronSet.h"
+#include "Collections/QMChronMap.h"
 
 int main(int argc, char *argv[]) {
     QApplication a(argc, argv);
 
-//    QMChronSet<int> arr;
-//    arr.append(2);
-//    arr.append(1);
-//    arr.append(3);
-//
-//    auto it = arr.find(1);
-//    qDebug() << *std::next(it);
-//    qDebug() << *std::prev(it);
-//
-//    arr.insert(std::next(arr.find(1)), 4);
-//    qDebug() << arr;
+    {
+        QMChronSet<int> arr;
+        arr.append(2);
+        arr.append(1);
+        arr.append(3);
+
+        auto it = arr.find(1);
+        qDebug() << *std::next(it);
+        qDebug() << *std::prev(it);
+
+        arr.insert(std::next(arr.find(1)), 4);
+        qDebug() << arr;
+
+        qDebug() << *(arr.erase(arr.find(4)));
+    }
+
+    QMChronMap<QString, QString> map;
+    map.append("file", "1");
+    map.append("edit", "2");
+    for (auto it = map.begin(); it != map.end();) {
+        it = map.erase(it);
+    }
+    qDebug() << map;
 
     QString url = "http://qt-project.org";
 

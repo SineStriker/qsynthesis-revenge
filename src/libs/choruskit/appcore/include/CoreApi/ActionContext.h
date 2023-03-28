@@ -59,10 +59,13 @@ namespace Core {
         Q_OBJECT
     public:
         explicit ActionContext(const QString &id, QObject *parent = nullptr);
+        ActionContext(const QString &id, const QString &title, QObject *parent = nullptr);
         ~ActionContext();
 
         QString id() const;
+
         virtual QString title() const;
+        void setTitle(const QString &title);
 
         ActionContextData addAction(const QString &id, bool isGroup);
         void removeAction(const QString &id);
@@ -73,7 +76,13 @@ namespace Core {
 
         QMap<QString, QStringList> state() const;
 
+        void buildMenuBarWithState(const QList<ActionItem *> &items, QMenuBar *menuBar) const;
+        void buildMenuWithState(const QList<ActionItem *> &items, QMenu *menu) const;
+
     signals:
+        void titleChanged(const QString &title);
+        void changed();
+
         void actionAdded(const QString &id);
         void actionChanged(const QString &id);
         void actionRemoved(const QString &id);

@@ -1,9 +1,6 @@
 #include "ICore.h"
 #include "ICore_p.h"
 
-#include "CoreApi/ActionSystem.h"
-#include "CoreApi/WindowSystem.h"
-
 #include "QMConsole.h"
 
 #include <QApplication>

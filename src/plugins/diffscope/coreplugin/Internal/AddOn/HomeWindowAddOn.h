@@ -21,6 +21,8 @@ namespace Core {
 
             void initialize() override;
             void extensionsInitialized() override;
+
+            void reloadMenuBar();
         };
 
     }

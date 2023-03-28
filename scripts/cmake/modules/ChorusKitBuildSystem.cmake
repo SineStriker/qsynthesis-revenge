@@ -444,7 +444,6 @@ function(ck_target_components _target)
                 PUBLIC
                 "$<BUILD_INTERFACE:${_abs_dir}>"
                 "$<INSTALL_INTERFACE:include/${include_dir_relative_path}>"
-                "$<INSTALL_INTERFACE:include/${include_dir_relative_path}/..>"
             )
         endforeach()
     endif()

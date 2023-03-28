@@ -4,7 +4,7 @@
 #include <QHash>
 
 #include "ActionContext.h"
-#include "QMChronSet.h"
+#include "Collections/QMChronMap.h"
 
 namespace Core {
 
@@ -30,13 +30,15 @@ namespace Core {
         ActionContext *q_ptr;
 
         QString id;
-        bool isGroup;
+        QString title;
 
         bool configurable;
         QMChronMap<QString, ActionContextDataPrivate> actions;
 
         mutable bool stateDirty;
         mutable QMap<QString, QStringList> state;
+
+        void setDirty();
     };
 
 }

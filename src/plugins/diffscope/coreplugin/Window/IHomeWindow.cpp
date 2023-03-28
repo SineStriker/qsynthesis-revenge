@@ -2,7 +2,6 @@
 #include "IHomeWindow_p.h"
 
 #include <QCoreApplication>
-#include <QDebug>
 #include <QStyle>
 
 #include "ICore.h"

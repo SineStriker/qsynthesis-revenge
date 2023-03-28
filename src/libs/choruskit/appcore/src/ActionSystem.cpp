@@ -36,6 +36,7 @@ namespace Core {
             return;
         }
         context->setParent(this);
+        context->d_ptr->setDirty();
         d->contexts.insert(context->id(), context);
     }
 
@@ -57,6 +58,7 @@ namespace Core {
 
         auto context = it.value();
         context->setParent(nullptr);
+        context->d_ptr->setDirty();
         d->contexts.erase(it);
     }
 

@@ -3,6 +3,9 @@
 
 #include <QObject>
 
+#include <CoreApi/ActionSystem.h>
+#include <CoreApi/WindowSystem.h>
+
 #include "CoreGlobal.h"
 
 namespace Core {

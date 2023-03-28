@@ -1,55 +1,53 @@
-#ifndef QMCHRONSET_H
-#define QMCHRONSET_H
+#ifndef QMCHRONMAP_H
+#define QMCHRONMAP_H
 
 #include <QDebug>
 #include <QHash>
 
 #include <list>
 
-template <class K>
-class QMChronSet {
+template <class K, class T>
+class QMChronMap {
 private:
-    std::list<K> m_list;
+    std::list<QPair<K, T>> m_list;
     QHash<K, typename decltype(m_list)::iterator> m_map;
 
 public:
+    typedef T mapped_type;
     typedef K key_type;
-    typedef K value_type;
-    typedef value_type *pointer;
-    typedef const value_type *const_pointer;
-    typedef value_type &reference;
-    typedef const value_type &const_reference;
     typedef typename decltype(m_list)::difference_type difference_type;
     typedef int size_type;
 
-    QMChronSet() {
+    QMChronMap() {
     }
 
-    QMChronSet(const QMChronSet &other) {
+    QMChronMap(const QMChronMap &other) {
         for (const auto &item : other.m_list) {
-            append(item);
+            append(item.first, item.second);
         }
     }
 
-    QMChronSet(QMChronSet &&other) noexcept {
+    QMChronMap(QMChronMap &&other) noexcept {
         m_list = std::move(other.m_list);
         m_map = std::move(other.m_map);
     }
 
-    QMChronSet(std::initializer_list<K> list) : QMChronSet(list.begin(), list.end()) {
+    QMChronMap(std::initializer_list<std::pair<K, T>> list) {
+        for (typename std::initializer_list<std::pair<K, T>>::const_iterator it = list.begin(); it != list.end(); ++it)
+            append(it->first, it->second);
     }
 
     template <typename InputIterator>
-    QMChronSet(InputIterator first, InputIterator last) {
-        for (; first != last; ++first)
-            append(*first);
+    QMChronMap(InputIterator f, InputIterator l) {
+        for (; f != l; ++f)
+            append(f.key(), f.value());
     }
 
-    inline bool operator==(const QMChronSet &other) const {
+    inline bool operator==(const QMChronMap &other) const {
         return m_list == other.m_list;
     }
 
-    inline bool operator!=(const QMChronSet &other) const {
+    inline bool operator!=(const QMChronMap &other) const {
         return m_list != other.m_list;
     }
 
@@ -59,15 +57,21 @@ public:
 
         typedef typename decltype(m_list)::iterator::iterator_category iterator_category;
         typedef typename decltype(m_list)::iterator::difference_type difference_type;
-        typedef K value_type;
-        typedef const K *pointer;
-        typedef const K &reference;
+        typedef T value_type;
+        typedef T *pointer;
+        typedef T &reference;
 
-        inline K &operator*() const {
-            return *i;
+        inline const K &key() const {
+            return i->first;
         }
-        inline K *operator->() const {
-            return &(*i);
+        inline T &value() const {
+            return i->second;
+        }
+        inline T &operator*() const {
+            return value();
+        }
+        inline T *operator->() const {
+            return &value();
         }
         inline bool operator==(const iterator &o) const {
             return i == o.i;
@@ -100,7 +104,7 @@ public:
 
         typename decltype(m_list)::iterator i;
 
-        friend class QMChronSet;
+        friend class QMChronMap;
         friend class const_iterator;
     };
 
@@ -112,15 +116,21 @@ public:
 
         typedef typename decltype(m_list)::const_iterator::iterator_category iterator_category;
         typedef typename decltype(m_list)::const_iterator::difference_type difference_type;
-        typedef K value_type;
-        typedef const K *pointer;
-        typedef const K &reference;
+        typedef T value_type;
+        typedef T *pointer;
+        typedef T &reference;
 
-        inline const K &operator*() const {
-            return *i;
+        inline const K &key() const {
+            return i->first;
         }
-        inline const K *operator->() const {
-            return &(*i);
+        inline const T &value() const {
+            return i->second;
+        }
+        inline const T &operator*() const {
+            return value();
+        }
+        inline const T *operator->() const {
+            return &value();
         }
         inline bool operator==(const const_iterator &o) const {
             return i == o.i;
@@ -153,23 +163,23 @@ public:
 
         typename decltype(m_list)::const_iterator i;
 
-        friend class QMChronSet;
+        friend class QMChronMap;
     };
 
-    iterator append(const K &key) {
-        auto it = m_list.insert(m_list.end(), key);
+    iterator append(const K &key, const T &val) {
+        auto it = m_list.insert(m_list.end(), qMakePair(key, val));
         m_map.insert(key, it);
         return iterator(it);
     }
 
-    iterator prepend(const K &key) {
-        auto it = m_list.insert(m_list.begin(), key);
+    iterator prepend(const K &key, const T &val) {
+        auto it = m_list.insert(m_list.begin(), qMakePair(key, val));
         m_map.insert(key, it);
         return iterator(it);
     }
 
-    iterator insert(const const_iterator &it, const K &key) {
-        auto it2 = m_list.insert(it.i, key);
+    iterator insert(const const_iterator &it, const K &key, const T &val) {
+        auto it2 = m_list.insert(it.i, qMakePair(key, val));
         m_map.insert(key, it2);
         return iterator(it2);
     }
@@ -189,7 +199,7 @@ public:
     }
 
     iterator erase(const const_iterator &it) {
-        auto it2 = m_map.find(*it);
+        auto it2 = m_map.find(it.key());
         if (it2 == m_map.end()) {
             return iterator();
         }
@@ -217,6 +227,14 @@ public:
             return const_iterator(it.value());
         }
         return cend();
+    }
+
+    T value(const K &key, const T &defaultValue = T{}) const {
+        auto it = m_map.find(key);
+        if (it != m_map.end()) {
+            return (*it.value()).second;
+        }
+        return defaultValue;
     }
 
     inline iterator begin() {
@@ -257,14 +275,30 @@ public:
         m_map.clear();
     }
 
-    QList<K> values() const {
+    QList<K> keys() const {
+        QList<K> res;
+        for (const auto &item : qAsConst(m_list)) {
+            res.append(item.first);
+        }
+        return res;
+    }
+
+    QList<T> values() const {
         return {m_list.begin(), m_list.end()};
     }
 };
 
-template <typename T>
-inline QDebug operator<<(QDebug debug, const QMChronSet<T> &set) {
-    return QtPrivate::printSequentialContainer(debug, "QMChronSet", set);
+template <class Key, class T>
+inline QDebug operator<<(QDebug debug, const QMChronMap<Key, T> &map) {
+    const bool oldSetting = debug.autoInsertSpaces();
+    debug.nospace() << "QMChronMap(";
+    for (typename QMChronMap<Key, T>::const_iterator it = map.constBegin(); it != map.constEnd(); ++it) {
+        debug << '(' << it.key() << ", " << it.value() << ')';
+    }
+    debug << ')';
+    debug.setAutoInsertSpaces(oldSetting);
+    return debug.maybeSpace();
 }
 
-#endif // QMCHRONSET_H
+
+#endif // QMCHRONMAP_H

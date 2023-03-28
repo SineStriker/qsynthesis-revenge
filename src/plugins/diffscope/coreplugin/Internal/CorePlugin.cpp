@@ -4,11 +4,10 @@
 #include <QSplashScreen>
 #include <QThread>
 
-#include "CoreApi/WindowSystem.h"
-#include "Window/ICoreWindowFactory.h"
-
 #include "AddOn/HomeWindowAddOn.h"
 #include "AddOn/ProjectWindowAddOn.h"
+
+#include "Window/ICoreWindowFactory.h"
 
 #include "QMDecorateDir.h"
 #include "QMDecorator.h"
@@ -18,7 +17,10 @@
 #include <extensionsystem/pluginmanager.h>
 #include <extensionsystem/pluginspec.h>
 
+#include "CoreApi/ActionContext.h"
+#include "CoreApi/ActionSystem.h"
 #include "CoreApi/ILoader.h"
+#include "CoreApi/WindowSystem.h"
 
 namespace Core {
 
@@ -53,6 +55,20 @@ namespace Core {
 
             // Init ICore instance
             icore = new ICore(this);
+
+            // Add basic actions
+            auto actionMgr = icore->actionSystem();
+
+            {
+                // Home main menu
+                auto ctx = new ActionContext("home_menuBar");
+                ctx->setTitle(tr("Home Menu Bar"));
+
+                ctx->addAction("home_File", true);
+                ctx->addAction("home_Help", true);
+
+                actionMgr->addContext(ctx);
+            }
 
             // Add basic windows and add-ons
             auto winMgr = icore->windowSystem();
