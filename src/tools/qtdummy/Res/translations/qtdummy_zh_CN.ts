@@ -5,16 +5,16 @@
     <name>Application</name>
     <message>
         <source>Failed to load core: %1</source>
-        <translation type="vanished">无法加载内核：%1</translation>
+        <translation type="vanished">无法加载核心：%1</translation>
     </message>
     <message>
         <source>Could not find Core plugin in %1</source>
-        <translation type="vanished">无法在%1中找到内核插件！</translation>
+        <translation type="vanished">无法在%1中找到核心插件！</translation>
     </message>
     <message>
         <location filename="../../../../libs/choruskit/appload/main.cpp" line="162"/>
         <source>Failed to load core: %1!</source>
-        <translation>无法加载内核：%1！</translation>
+        <translation>无法加载核心：%1！</translation>
     </message>
     <message>
         <location filename="../../../../libs/choruskit/appload/main.cpp" line="332"/>
@@ -24,7 +24,7 @@
     <message>
         <location filename="../../../../libs/choruskit/appload/main.cpp" line="372"/>
         <source>Could not find Core plugin!</source>
-        <translation>无法找到内核插件！</translation>
+        <translation>无法找到核心插件！</translation>
     </message>
     <message>
         <location filename="../../../../libs/choruskit/appload/main.cpp" line="422"/>
@@ -33,12 +33,12 @@
     </message>
     <message>
         <source>Could not find Core plugin in %1!</source>
-        <translation type="vanished">无法在%1中找到内核插件！</translation>
+        <translation type="vanished">无法在%1中找到核心插件！</translation>
     </message>
     <message>
         <location filename="../../../../libs/choruskit/appload/main.cpp" line="378"/>
         <source>Core plugin is disabled.</source>
-        <translation>内核插件已被禁用。</translation>
+        <translation>核心插件已被禁用。</translation>
     </message>
 </context>
 <context>

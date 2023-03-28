@@ -17,7 +17,8 @@ namespace Core {
 
         ActionSystem *q_ptr;
 
-        QMap<QString, ActionContext *> contexts;
+        QHash<QString, ActionContext *> contexts;
+        QHash<QString, QMap<QString, QStringList>> stateCaches;
     };
 }
 

@@ -3,7 +3,7 @@
 
 #include <QObject>
 
-#include "Global/CoreGlobal.h"
+#include "CoreGlobal.h"
 
 namespace Core {
 
@@ -34,6 +34,8 @@ namespace Core {
 
         ICore(ICorePrivate &d, QObject *parent = nullptr);
         QScopedPointer<ICorePrivate> d_ptr;
+
+        Q_DECLARE_PRIVATE(ICore)
 
         friend class Internal::CorePlugin;
     };

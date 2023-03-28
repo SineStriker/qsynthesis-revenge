@@ -4,19 +4,24 @@
 #include <QNetworkAccessManager>
 #include <QNetworkReply>
 
+#include <QDebug>
+
 #include "Collections/QMChronSet.h"
 
 int main(int argc, char *argv[]) {
     QApplication a(argc, argv);
 
-    // QMChronSet<int> arr;
-    // arr.insert(2);
-    // arr.insert(1);
-    // arr.insert(3);
-    //
-    // for (const auto &item : qAsConst(arr)) {
-    //     qDebug() << item;
-    // }
+//    QMChronSet<int> arr;
+//    arr.append(2);
+//    arr.append(1);
+//    arr.append(3);
+//
+//    auto it = arr.find(1);
+//    qDebug() << *std::next(it);
+//    qDebug() << *std::prev(it);
+//
+//    arr.insert(std::next(arr.find(1)), 4);
+//    qDebug() << arr;
 
     QString url = "http://qt-project.org";
 

@@ -1,7 +1,3 @@
-//
-// Created by Functioner on 2023/3/19.
-//
-
 #ifndef PROJECTWINDOWADDON_H
 #define PROJECTWINDOWADDON_H
 

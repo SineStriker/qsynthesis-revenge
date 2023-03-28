@@ -5,8 +5,6 @@
 
 #include "ObjectPool.h"
 
-class QSplashScreen;
-
 namespace Core {
 
     class CKAPPCORE_API ILoader : public ObjectPool {

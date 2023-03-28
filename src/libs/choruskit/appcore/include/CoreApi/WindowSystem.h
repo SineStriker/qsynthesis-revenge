@@ -13,6 +13,10 @@ namespace Core {
     class CKAPPCORE_API WindowSystem : public QObject {
         Q_OBJECT
     public:
+        explicit WindowSystem(QObject *parent = nullptr);
+        ~WindowSystem();
+
+    public:
         void addWindow(IWindowFactory *factory);
         void removeWindow(IWindowFactory *factory);
         void removeWindow(const QString &id);
@@ -34,17 +38,12 @@ namespace Core {
         void windowCreated(IWindow *iWin);
         void windowDestroyed(IWindow *iWin);
 
-    private:
-        explicit WindowSystem(QObject *parent = nullptr);
-        ~WindowSystem();
-
+    protected:
         QScopedPointer<WindowSystemPrivate> d_ptr;
         WindowSystem(WindowSystemPrivate &d, QObject *parent = nullptr);
 
         Q_DECLARE_PRIVATE(WindowSystem)
 
-        friend class ICore;
-        friend class ICorePrivate;
         friend class IWindow;
         friend class IWindowPrivate;
     };

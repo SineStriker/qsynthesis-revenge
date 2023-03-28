@@ -10,16 +10,18 @@
 
 namespace Core {
 
-    ICorePrivate::ICorePrivate() : q_ptr(nullptr) {
+    ICorePrivate::ICorePrivate() {
         actionSystem = nullptr;
         windowSystem = nullptr;
     }
 
     void ICorePrivate::init() {
+        Q_Q(ICore);
+
         qApp->setQuitOnLastWindowClosed(false);
 
-        actionSystem = new ActionSystem(q_ptr);
-        windowSystem = new WindowSystem(q_ptr);
+        actionSystem = new ActionSystem(q);
+        windowSystem = new WindowSystem(q);
     }
 
     static ICore *m_instance = nullptr;
@@ -29,9 +31,7 @@ namespace Core {
     }
 
     QString ICore::mainTitle() {
-        // return QString("%1 %2 %3").arg(qApp->organizationName(), qApp->applicationName(),
-        // qApp->applicationVersion());
-        return QString("%1 %2").arg(qApp->organizationName(), qApp->applicationName());
+        return QString("%1 %2").arg(QApplication::organizationName(), QApplication::applicationName());
     }
 
     QString ICore::displayTitle(const QString &text) {
@@ -49,11 +49,13 @@ namespace Core {
     }
 
     ActionSystem *ICore::actionSystem() const {
-        return d_ptr->actionSystem;
+        Q_D(const ICore);
+        return d->actionSystem;
     }
 
     WindowSystem *ICore::windowSystem() const {
-        return d_ptr->windowSystem;
+        Q_D(const ICore);
+        return d->windowSystem;
     }
 
     ICore::ICore(QObject *parent) : ICore(*new ICorePrivate(), parent) {

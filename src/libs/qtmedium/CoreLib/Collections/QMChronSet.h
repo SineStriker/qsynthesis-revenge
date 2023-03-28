@@ -1,9 +1,11 @@
 #ifndef QMCHRONSET_H
 #define QMCHRONSET_H
 
-#include <list>
-
+#include <QDebug>
 #include <QHash>
+#include <QSet>
+
+#include <list>
 
 template <class K>
 class QMChronSet {
@@ -12,9 +14,24 @@ private:
     QHash<K, typename decltype(m_list)::iterator> m_map;
 
 public:
+    typedef K key_type;
+    typedef K value_type;
+    typedef value_type *pointer;
+    typedef const value_type *const_pointer;
+    typedef value_type &reference;
+    typedef const value_type &const_reference;
+    typedef typename decltype(m_list)::difference_type difference_type;
+    typedef int size_type;
+
     class iterator {
     public:
         iterator() = default;
+
+        typedef typename decltype(m_list)::iterator::iterator_category iterator_category;
+        typedef typename decltype(m_list)::iterator::difference_type difference_type;
+        typedef K value_type;
+        typedef const K *pointer;
+        typedef const K &reference;
 
         inline K &operator*() const {
             return *i;
@@ -63,6 +80,12 @@ public:
         const_iterator(const iterator &it) : i(it.i) {
         }
 
+        typedef typename decltype(m_list)::const_iterator::iterator_category iterator_category;
+        typedef typename decltype(m_list)::const_iterator::difference_type difference_type;
+        typedef K value_type;
+        typedef const K *pointer;
+        typedef const K &reference;
+
         inline const K &operator*() const {
             return *i;
         }
@@ -103,10 +126,22 @@ public:
         friend class QMChronSet;
     };
 
-    iterator insert(const K &key) {
+    iterator append(const K &key) {
         auto it = m_list.insert(m_list.end(), key);
         m_map.insert(key, it);
         return iterator(it);
+    }
+
+    iterator prepend(const K &key) {
+        auto it = m_list.insert(m_list.begin(), key);
+        m_map.insert(key, it);
+        return iterator(it);
+    }
+
+    iterator insert(const const_iterator &it, const K &key) {
+        auto it2 = m_list.insert(it.i, key);
+        m_map.insert(key, it2);
+        return iterator(it2);
     }
 
     bool remove(const K &key) {
@@ -119,17 +154,19 @@ public:
         return true;
     }
 
-    void erase(const iterator &it) {
+    iterator erase(const iterator &it) {
         return erase(const_iterator(it));
     }
 
-    void erase(const const_iterator &it) {
+    iterator erase(const const_iterator &it) {
         auto it2 = m_map.find(*it);
         if (it2 == m_map.end()) {
-            return;
+            return iterator();
         }
+        auto res = std::next(it2.value());
         m_list.erase(it2.value());
         m_map.erase(it2);
+        return iterator(res);
     }
 
     iterator find(const K &key) {
@@ -202,9 +239,20 @@ private:
     QHash<K, typename decltype(m_list)::iterator> m_map;
 
 public:
+    typedef T mapped_type;
+    typedef K key_type;
+    typedef typename decltype(m_list)::difference_type difference_type;
+    typedef int size_type;
+
     class iterator {
     public:
         iterator() = default;
+
+        typedef typename decltype(m_list)::iterator::iterator_category iterator_category;
+        typedef typename decltype(m_list)::iterator::difference_type difference_type;
+        typedef T value_type;
+        typedef T *pointer;
+        typedef T &reference;
 
         inline const K &key() const {
             return i->first;
@@ -259,6 +307,12 @@ public:
         const_iterator(const iterator &it) : i(it.i) {
         }
 
+        typedef typename decltype(m_list)::const_iterator::iterator_category iterator_category;
+        typedef typename decltype(m_list)::const_iterator::difference_type difference_type;
+        typedef T value_type;
+        typedef T *pointer;
+        typedef T &reference;
+
         inline const K &key() const {
             return i->first;
         }
@@ -305,10 +359,22 @@ public:
         friend class QMChronMap;
     };
 
-    iterator insert(const K &key, const T &val) {
+    iterator append(const K &key, const T &val) {
         auto it = m_list.insert(m_list.end(), qMakePair(key, val));
         m_map.insert(key, it);
         return iterator(it);
+    }
+
+    iterator prepend(const K &key, const T &val) {
+        auto it = m_list.insert(m_list.begin(), qMakePair(key, val));
+        m_map.insert(key, it);
+        return iterator(it);
+    }
+
+    iterator insert(const const_iterator &it, const K &key, const T &val) {
+        auto it2 = m_list.insert(it.i, qMakePair(key, val));
+        m_map.insert(key, it2);
+        return iterator(it2);
     }
 
     bool remove(const K &key) {
@@ -321,17 +387,19 @@ public:
         return true;
     }
 
-    void erase(const iterator &it) {
+    iterator erase(const iterator &it) {
         return erase(const_iterator(it));
     }
 
-    void erase(const const_iterator &it) {
+    iterator erase(const const_iterator &it) {
         auto it2 = m_map.find(it.key());
         if (it2 == m_map.end()) {
-            return;
+            return iterator();
         }
+        auto res = std::next(it2.value());
         m_list.erase(it2.value());
         m_map.erase(it2);
+        return iterator(res);
     }
 
     iterator find(const K &key) {
@@ -352,6 +420,14 @@ public:
             return const_iterator(it.value());
         }
         return cend();
+    }
+
+    T value(const K &key, const T &defaultValue = T{}) const {
+        auto it = m_map.find(key);
+        if (it != m_map.end()) {
+            return (*it.value()).second;
+        }
+        return defaultValue;
     }
 
     inline iterator begin() {
@@ -404,5 +480,22 @@ public:
         return {m_list.begin(), m_list.end()};
     }
 };
+
+template <typename T>
+inline QDebug operator<<(QDebug debug, const QMChronSet<T> &set) {
+    return QtPrivate::printSequentialContainer(debug, "QMChronSet", set);
+}
+
+template <class Key, class T>
+inline QDebug operator<<(QDebug debug, const QMChronMap<Key, T> &map) {
+    const bool oldSetting = debug.autoInsertSpaces();
+    debug.nospace() << "QMChronMap(";
+    for (typename QMap<Key, T>::const_iterator it = map.constBegin(); it != map.constEnd(); ++it) {
+        debug << '(' << it.key() << ", " << it.value() << ')';
+    }
+    debug << ')';
+    debug.setAutoInsertSpaces(oldSetting);
+    return debug.maybeSpace();
+}
 
 #endif // QMCHRONSET_H

@@ -40,6 +40,24 @@ namespace Core {
 
     static WindowSystem *m_instance = nullptr;
 
+    WindowSystem::WindowSystem(QObject *parent) : WindowSystem(*new WindowSystemPrivate(), parent) {
+    }
+
+    WindowSystem::~WindowSystem() {
+        Q_D(WindowSystem);
+
+        m_instance = nullptr;
+
+        // Remove all managed factories
+        for (auto &item : qAsConst(d->windowFactories)) {
+            delete item;
+        }
+
+        for (auto &item : qAsConst(d->addOnFactories)) {
+            delete item;
+        }
+    }
+
     void WindowSystem::addWindow(IWindowFactory *factory) {
         Q_D(WindowSystem);
         if (!factory) {
@@ -87,7 +105,7 @@ namespace Core {
             qWarning() << "Core::WindowSystem::addAddOn(): trying to add null add-on";
             return;
         }
-        d->addOnFactories.insert(factory);
+        d->addOnFactories.append(factory);
     }
 
     void WindowSystem::removeAddOn(IWindowAddOnFactory *factory) {
@@ -161,24 +179,6 @@ namespace Core {
     IWindow *WindowSystem::firstWindow() const {
         Q_D(const WindowSystem);
         return d->iWindows.isEmpty() ? nullptr : *d->iWindows.begin();
-    }
-
-    WindowSystem::WindowSystem(QObject *parent) : WindowSystem(*new WindowSystemPrivate(), parent) {
-    }
-
-    WindowSystem::~WindowSystem() {
-        Q_D(WindowSystem);
-
-        m_instance = nullptr;
-
-        // Remove all managed factories
-        for (auto &item : qAsConst(d->windowFactories)) {
-            delete item;
-        }
-
-        for (auto &item : qAsConst(d->addOnFactories)) {
-            delete item;
-        }
     }
 
     WindowSystem::WindowSystem(WindowSystemPrivate &d, QObject *parent) : QObject(parent), d_ptr(&d) {

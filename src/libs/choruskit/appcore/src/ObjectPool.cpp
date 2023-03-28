@@ -56,7 +56,7 @@ namespace Core {
             }
 
             // Add to map
-            set.insert(obj);
+            set.append(obj);
 
             // Add to list
             auto it = d->objects.insert(d->objects.end(), obj);

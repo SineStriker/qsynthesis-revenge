@@ -18,17 +18,25 @@ namespace Core {
 
     static ActionSystem *m_instance = nullptr;
 
+    ActionSystem::ActionSystem(QObject *parent) : ActionSystem(*new ActionSystemPrivate(), parent) {
+    }
+
+    ActionSystem::~ActionSystem() {
+        m_instance = nullptr;
+    }
+
     void ActionSystem::addContext(ActionContext *context) {
+        Q_D(ActionSystem);
         if (!context) {
             qWarning() << "Core::ActionSystem::addContext(): trying to add null context";
             return;
         }
-        if (d_ptr->contexts.contains(context->id())) {
+        if (d->contexts.contains(context->id())) {
             qWarning() << "Core::ActionSystem::addContext(): trying to add duplicated context:" << context->id();
             return;
         }
-        context->d_ptr->system = this;
-        d_ptr->contexts.insert(context->id(), context);
+        context->setParent(this);
+        d->contexts.insert(context->id(), context);
     }
 
     void ActionSystem::removeContext(ActionContext *context) {
@@ -40,44 +48,45 @@ namespace Core {
     }
 
     void ActionSystem::removeContext(const QString &id) {
-        auto it = d_ptr->contexts.find(id);
-        if (it == d_ptr->contexts.end()) {
+        Q_D(ActionSystem);
+        auto it = d->contexts.find(id);
+        if (it == d->contexts.end()) {
             qWarning() << "Core::ActionSystem::removeContext(): context does not exist:" << id;
             return;
         }
 
         auto context = it.value();
-        context->d_ptr->system = nullptr;
-        d_ptr->contexts.erase(it);
+        context->setParent(nullptr);
+        d->contexts.erase(it);
     }
 
     ActionContext *ActionSystem::context(const QString &id) const {
-        auto it = d_ptr->contexts.find(id);
-        if (it != d_ptr->contexts.end()) {
+        Q_D(const ActionSystem);
+        auto it = d->contexts.find(id);
+        if (it != d->contexts.end()) {
             return it.value();
         }
         return nullptr;
     }
 
     QList<ActionContext *> ActionSystem::contexts() const {
-        return d_ptr->contexts.values();
+        Q_D(const ActionSystem);
+        return d->contexts.values();
     }
 
     QStringList ActionSystem::contextIds() const {
-        return d_ptr->contexts.keys();
+        Q_D(const ActionSystem);
+        return d->contexts.keys();
     }
 
-    ActionSystem::ActionSystem(QObject *parent) : ActionSystem(*new ActionSystemPrivate(), parent) {
+    QMap<QString, QStringList> ActionSystem::stateCache(const QString &id) {
+        Q_D(const ActionSystem);
+        return d->stateCaches.value(id, {});
     }
 
-    ActionSystem::~ActionSystem() {
-        m_instance = nullptr;
-
-        // Remove all managed contexts
-        for (auto &item : qAsConst(d_ptr->contexts)) {
-            item->d_ptr->system = nullptr;
-            delete item;
-        }
+    void ActionSystem::setStateCache(const QString &id, const QMap<QString, QStringList> &state) {
+        Q_D(ActionSystem);
+        d->stateCaches.insert(id, state);
     }
 
     ActionSystem::ActionSystem(ActionSystemPrivate &d, QObject *parent) : QObject(parent), d_ptr(&d) {

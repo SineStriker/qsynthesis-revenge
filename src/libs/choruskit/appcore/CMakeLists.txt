@@ -14,8 +14,9 @@ ck_target_components(${PROJECT_NAME}
     QT_LINKS Core Widgets Network
     LINKS QsFramework ExtensionSystem qBreakpad
     LINKS_PRIVATE SingleApplication
-    INCLUDES include ${_extra_includes}
+    INCLUDES ${_extra_includes}
     INCLUDES_PRIVATE include/CoreApi src
+    AUTO_INCLUDE_DIRS include
 )
 
 configure_ck_library(${PROJECT_NAME})

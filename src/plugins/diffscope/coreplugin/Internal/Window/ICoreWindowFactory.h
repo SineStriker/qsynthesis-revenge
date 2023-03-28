@@ -1,7 +1,7 @@
 #ifndef ICOREWINDOWFACTORY_H
 #define ICOREWINDOWFACTORY_H
 
-#include "CoreApi//IWindow.h"
+#include "CoreApi/IWindow.h"
 
 namespace Core {
 

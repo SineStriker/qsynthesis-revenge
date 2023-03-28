@@ -37,8 +37,13 @@ namespace Core {
         bool isValid() const;
 
         QString id() const;
-        QList<ActionInsertRule> &rules();
-        QSet<ActionItem *> instances() const;
+        bool isGroup() const;
+
+        QList<ActionInsertRule> rules() const;
+        void setRules(const QList<ActionInsertRule> &rules);
+
+        QList<QKeySequence> shortcuts() const;
+        void setShortcuts(const QList<QKeySequence> &shortcuts);
 
     private:
         explicit ActionContextData(ActionContextDataPrivate *d);
@@ -50,25 +55,35 @@ namespace Core {
 
     class ActionContextPrivate;
 
-    class CKAPPCORE_API ActionContext {
+    class CKAPPCORE_API ActionContext : public QObject {
+        Q_OBJECT
     public:
-        explicit ActionContext(const QString &id);
-        virtual ~ActionContext();
+        explicit ActionContext(const QString &id, QObject *parent = nullptr);
+        ~ActionContext();
 
         QString id() const;
         virtual QString title() const;
 
-        ActionContextData addAction(const QString &id);
+        ActionContextData addAction(const QString &id, bool isGroup);
         void removeAction(const QString &id);
         ActionContextData action(const QString &id);
 
-        void buildMenuBar(const QList<ActionItem *> &actionItems, QMenuBar *menuBar) const;
-        void buildMenu(const QList<ActionItem *> &actionItems, QMenu *menu) const;
+        bool configurable() const;
+        void setConfigurable(bool configurable);
+
+        QMap<QString, QStringList> state() const;
+
+    signals:
+        void actionAdded(const QString &id);
+        void actionChanged(const QString &id);
+        void actionRemoved(const QString &id);
 
     protected:
-        ActionContext(ActionContextPrivate &d, const QString &id);
+        ActionContext(ActionContextPrivate &d, const QString &id, QObject *parent = nullptr);
 
         QScopedPointer<ActionContextPrivate> d_ptr;
+
+        Q_DECLARE_PRIVATE(ActionContext)
 
         friend class ActionSystem;
     };

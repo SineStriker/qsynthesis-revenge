@@ -184,9 +184,11 @@ public:
   explicit QSetInsertIterator (Container &x)
     : container(&x) {}
   QSetInsertIterator<Container> &operator=(const typename Container::value_type &value)
-    { container->insert(value); return *this; }
+    {
+      container->append(value); return *this; }
   QSetInsertIterator<Container> &operator= (typename Container::value_type &&value)
-    { container->insert(std::move(value)); return *this; }
+    {
+      container->append(std::move(value)); return *this; }
   QSetInsertIterator<Container >&operator*()
     { return *this; }
   QSetInsertIterator<Container> &operator++()

@@ -32,7 +32,7 @@
     <message>
         <location filename="../../Internal/CorePlugin.cpp" line="41"/>
         <source>Initializing core plugin...</source>
-        <translation>初始化内核插件...</translation>
+        <translation>初始化核心插件...</translation>
     </message>
 </context>
 <context>

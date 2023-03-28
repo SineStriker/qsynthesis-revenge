@@ -3,7 +3,7 @@
 
 #include <extensionsystem/iplugin.h>
 
-#include "Api/ICore.h"
+#include "ICore.h"
 
 namespace Core {
 

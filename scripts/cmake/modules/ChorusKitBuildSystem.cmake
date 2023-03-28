@@ -360,6 +360,9 @@ CMake target commands wrapper to add sources, links, includes.
         [QT_LINKS_PRIVATE     modules...]
         [QT_INCLUDES_PRIVATE  modules...]
 
+        [AUTO_INCLUDE_CURRENT]
+        [AUTO_INCLUDE_DIRS dirs...]
+
         [INCLUDE_CURRENT]
         [INCLUDE_SUBDIRS]
 
@@ -368,7 +371,7 @@ CMake target commands wrapper to add sources, links, includes.
     )
 ]] #
 function(ck_target_components _target)
-    set(options INCLUDE_CURRENT INCLUDE_CURRENT_PRIVATE INCLUDE_SUBDIRS INCLUDE_SUBDIRS_PRIVATE)
+    set(options AUTO_INCLUDE_CURRENT INCLUDE_CURRENT INCLUDE_CURRENT_PRIVATE INCLUDE_SUBDIRS INCLUDE_SUBDIRS_PRIVATE)
     set(oneValueArgs)
     set(multiValueArgs SOURCES
         LINKS LINKS_PRIVATE
@@ -377,6 +380,7 @@ function(ck_target_components _target)
         DEFINES DEFINES_PRIVATE
         CCFLAGS CCFLAGS_PUBLIC
         QT_LINKS QT_LINKS_PRIVATE QT_INCLUDES_PRIVATE
+        AUTO_INCLUDE_DIRS
     )
     cmake_parse_arguments(FUNC "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
 
@@ -419,6 +423,30 @@ function(ck_target_components _target)
         target_include_directories(${_target} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
     elseif(FUNC_INCLUDE_CURRENT_PRIVATE)
         target_include_directories(${_target} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
+    endif()
+
+    if (FUNC_AUTO_INCLUDE_CURRENT)
+        file(RELATIVE_PATH include_dir_relative_path ${PROJECT_SOURCE_DIR} ${CMAKE_CURRENT_SOURCE_DIR})
+        target_include_directories(${_target}
+            PUBLIC
+            "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>"
+            "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/..>"
+            "$<INSTALL_INTERFACE:include/${include_dir_relative_path}>"
+            "$<INSTALL_INTERFACE:include/${include_dir_relative_path}/..>"
+        )
+    endif()
+
+    if (FUNC_AUTO_INCLUDE_DIRS)
+        foreach(_item ${FUNC_AUTO_INCLUDE_DIRS})
+            get_filename_component(_abs_dir ${_item} ABSOLUTE)
+            file(RELATIVE_PATH include_dir_relative_path ${PROJECT_SOURCE_DIR} ${_abs_dir})
+            target_include_directories(${_target}
+                PUBLIC
+                "$<BUILD_INTERFACE:${_abs_dir}>"
+                "$<INSTALL_INTERFACE:include/${include_dir_relative_path}>"
+                "$<INSTALL_INTERFACE:include/${include_dir_relative_path}/..>"
+            )
+        endforeach()
     endif()
 
     if(FUNC_INCLUDE_SUBDIRS OR FUNC_INCLUDE_SUBDIRS_PRIVATE)

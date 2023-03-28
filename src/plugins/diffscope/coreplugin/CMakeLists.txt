@@ -15,11 +15,11 @@ configure_plugin(_plugin "Sine Striker"
 )
 
 ck_target_components(${_plugin}
-    INCLUDE_CURRENT_PRIVATE INCLUDE_SUBDIRS_PRIVATE
     SOURCES ${_src} ${_res_dir}/res.qrc
     QT_LINKS Core Widgets
     LINKS QsFramework ExtensionSystem CkAppCore
     INCLUDES ${_extra_includes}
+    AUTO_INCLUDE_CURRENT
 )
 
 ck_add_translations(${_plugin}_translations

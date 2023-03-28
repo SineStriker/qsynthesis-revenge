@@ -13,7 +13,3 @@ endfunction()
 add_subdirectory(appload)
 
 add_subdirectory(appcore)
-
-if(WIN32)
-    # add_subdirectory(winsplash)
-endif()

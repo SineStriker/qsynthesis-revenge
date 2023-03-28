@@ -2,6 +2,7 @@
 #define ICOREWINDOW_P_H
 
 #include "CoreApi/IWindow_p.h"
+
 #include "ICoreWindow.h"
 
 namespace Core {
