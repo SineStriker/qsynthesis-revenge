@@ -24,6 +24,8 @@ namespace Core {
         QList<ActionContext *> contexts() const;
         QStringList contextIds() const;
 
+        QStringList loadContexts(const QString &filename);
+
     public:
         QMap<QString, QStringList> stateCache(const QString &id);
         void setStateCache(const QString &id, const QMap<QString, QStringList> &state);

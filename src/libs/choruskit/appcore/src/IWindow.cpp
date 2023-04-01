@@ -170,11 +170,7 @@ namespace Core {
 
     ActionItem *IWindow::actionItem(const QString &id) const {
         Q_D(const IWindow);
-        auto it = d->actionItemMap.find(id);
-        if (it != d->actionItemMap.end()) {
-            return it.value();
-        }
-        return nullptr;
+        return d->actionItemMap.value(id, nullptr);
     }
 
     QList<ActionItem *> IWindow::actionItems() const {
@@ -192,9 +188,7 @@ namespace Core {
         Q_D(IWindow);
 
         // Remove action items
-        for (auto &item : qAsConst(d->actionItemMap)) {
-            delete item;
-        }
+        qDeleteAll(d->actionItemMap);
     }
 
     void IWindow::setupWindow() {

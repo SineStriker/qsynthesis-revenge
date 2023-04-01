@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<actionSystem>
+    <context id="home_MainMenu" prefix="home_">
+        <menu id="File">
+            <group id="OpenGroup">
+                <action id="NewFile"/>
+                <action id="OpenFile"/>
+            </group>
+        </menu>
+        <menu id="Edit"/>
+        <menu id="Help"/>
+    </context>
+</actionSystem>

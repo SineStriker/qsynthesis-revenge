@@ -40,12 +40,19 @@ namespace Core {
 
         void HomeWindowAddOn::reloadMenuBar() {
             auto fileItem = new ActionItem("home_File", new QMenu("File(&F)"));
-            auto editItem = new ActionItem("home_Help", new QMenu("Help(&H)"));
+            auto editItem = new ActionItem("home_Edit", new QMenu("Edit(&E)"));
+            auto helpItem = new ActionItem("home_Help", new QMenu("Help(&H)"));
+
+            auto openGroupItem = new ActionItem("home_OpenGroup", new QActionGroup(this));
+
+            auto newFileItem = new ActionItem("home_NewFile", new QAction("New File"));
+            auto openFileItem = new ActionItem("home_OpenFile", new QAction("Open File"));
 
             ICore::instance()
                 ->actionSystem()
-                ->context("home_menuBar")
-                ->buildMenuBarWithState({fileItem, editItem}, handle()->menuBar());
+                ->context("home_MainMenu")
+                ->buildMenuBarWithState({fileItem, editItem, helpItem, openGroupItem, newFileItem, openFileItem},
+                                        handle()->menuBar());
         }
     }
 

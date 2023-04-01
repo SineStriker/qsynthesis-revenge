@@ -12,13 +12,13 @@ namespace Core {
 
     class ActionInsertRule {
     public:
-        enum InsertDirection {
+        enum InsertMode {
             Append,
             Unshift,
         };
 
         QString id;
-        InsertDirection direction;
+        InsertMode direction;
 
         ActionInsertRule() : ActionInsertRule(QString()) {
         }
@@ -26,7 +26,7 @@ namespace Core {
         ActionInsertRule(const QString &id) : ActionInsertRule(id, Append) {
         }
 
-        ActionInsertRule(const QString &id, InsertDirection direction) : id(id), direction(direction) {
+        ActionInsertRule(const QString &id, InsertMode direction) : id(id), direction(direction) {
         }
     };
 
@@ -35,6 +35,9 @@ namespace Core {
     class CKAPPCORE_API ActionContextData {
     public:
         bool isValid() const;
+        inline operator bool() const {
+            return isValid();
+        }
 
         QString id() const;
         bool isGroup() const;
@@ -62,6 +65,7 @@ namespace Core {
         ActionContext(const QString &id, const QString &title, QObject *parent = nullptr);
         ~ActionContext();
 
+    public:
         QString id() const;
 
         virtual QString title() const;
@@ -70,6 +74,7 @@ namespace Core {
         ActionContextData addAction(const QString &id, bool isGroup);
         void removeAction(const QString &id);
         ActionContextData action(const QString &id);
+        QStringList actionIds() const;
 
         bool configurable() const;
         void setConfigurable(bool configurable);
@@ -81,11 +86,13 @@ namespace Core {
 
     signals:
         void titleChanged(const QString &title);
-        void changed();
+        void stateChanged();
 
         void actionAdded(const QString &id);
-        void actionChanged(const QString &id);
         void actionRemoved(const QString &id);
+
+        void actionRulesChanged(const QString &id, const QList<ActionInsertRule> &rules);
+        void actionShortcutsChanged(const QString &id, const QList<QKeySequence> &shortcuts);
 
     protected:
         ActionContext(ActionContextPrivate &d, const QString &id, QObject *parent = nullptr);

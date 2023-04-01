@@ -59,12 +59,12 @@ namespace Core {
         d->navFrame = frame;
         d->aboutButton = aboutButton;
 
-        setWindowModified(true);
-
         connect(aboutButton, &QAbstractButton::clicked, d, &IHomeWindowPrivate::_q_aboutButtonClicked);
 
         qIDec->installLocale(win, {{}}, _LOC(IHomeWindow, this));
         qIDec->installTheme(win, {"Global", "HomeWindow"});
+
+        qDebug() << "setup window finished";
     }
 
     IHomeWindow::IHomeWindow(IHomeWindowPrivate &d, QObject *parent)

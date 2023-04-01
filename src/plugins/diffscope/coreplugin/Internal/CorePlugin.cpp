@@ -58,17 +58,7 @@ namespace Core {
 
             // Add basic actions
             auto actionMgr = icore->actionSystem();
-
-            {
-                // Home main menu
-                auto ctx = new ActionContext("home_menuBar");
-                ctx->setTitle(tr("Home Menu Bar"));
-
-                ctx->addAction("home_File", true);
-                ctx->addAction("home_Help", true);
-
-                actionMgr->addContext(ctx);
-            }
+            actionMgr->loadContexts(":/actions.xml");
 
             // Add basic windows and add-ons
             auto winMgr = icore->windowSystem();

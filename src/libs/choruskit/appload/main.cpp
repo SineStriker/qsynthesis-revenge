@@ -185,7 +185,7 @@ int main_entry(int argc, char *argv[]) {
 
     QString corePluginNameC = "Core";
     QString pluginIID = QString("org.ChorusKit.%1.Plugin").arg(qAppName());
-    QPixmap splashImage(":/svsplash.png");
+    QPixmap splashImage;
     QStringList resourcesFiles{QString("%1/%2/%2.res.json").arg(host.shareDir(), qAppName())};
 
     // Add qslib plugin dir
@@ -207,10 +207,7 @@ int main_entry(int argc, char *argv[]) {
             if (QDir::isRelativePath(path)) {
                 path = configDir + "/" + path;
             }
-            QPixmap pixmap(path);
-            if (!pixmap.isNull()) {
-                splashImage = std::move(pixmap);
-            }
+            splashImage = QPixmap(path);
         }
         if (!configFile.coreName.isEmpty()) {
             corePluginNameC = configFile.coreName;
@@ -222,6 +219,10 @@ int main_entry(int argc, char *argv[]) {
                 resourcesFiles.append(file);
             }
         }
+    }
+
+    if (splashImage.isNull()) {
+        splashImage = QPixmap(":/yqzhishen.png");
     }
 
     // Parse command line

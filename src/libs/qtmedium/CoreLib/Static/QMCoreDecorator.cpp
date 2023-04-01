@@ -247,7 +247,7 @@ void QMCoreDecorator::uninstallLocale(QObject *obj) {
     /*
 
     Steps:
-        1. Ensure the widget has install a locale configuration
+        1. Ensure the widget has installed a locale configuration
         2. Go through all keys, remove the widget reference from all locale configurations
         3. Remove the widget from the global set
 

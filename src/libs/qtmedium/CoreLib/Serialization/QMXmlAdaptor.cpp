@@ -147,7 +147,7 @@ bool QMXmlAdaptor::load(const QString &filename) {
                 while (!stack.empty()) {
                     const auto &top = stack.back();
                     if (top.second != curLevel) {
-                        tmpStack.append(top.first);
+                        tmpStack.prepend(top.first);
                         stack.pop_back();
                         continue;
                     }
