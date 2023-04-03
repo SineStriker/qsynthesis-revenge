@@ -51,8 +51,16 @@ namespace Core {
             ICore::instance()
                 ->actionSystem()
                 ->context("home_MainMenu")
-                ->buildMenuBarWithState({fileItem, editItem, helpItem, openGroupItem, newFileItem, openFileItem},
-                                        handle()->menuBar());
+                ->buildMenuBarWithState(
+                    {
+                        fileItem,
+                        editItem,
+                        helpItem,
+                        openGroupItem,
+                        newFileItem,
+                        openFileItem,
+                    },
+                    handle()->menuBar());
         }
     }
 

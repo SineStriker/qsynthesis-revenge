@@ -16,16 +16,17 @@ namespace Core {
     void IHomeWindowPrivate::init() {
     }
 
+    void IHomeWindowPrivate::reloadStrings() {
+        Q_Q(IHomeWindow);
+        // auto win = window();
+
+        q->setWindowTitle(tr("Welcome"));
+        aboutButton->setText(tr("About %1").arg(qAppName()));
+    }
+
     void IHomeWindowPrivate::_q_aboutButtonClicked() {
         Q_Q(IHomeWindow);
         ICore::aboutApp(q->window());
-    }
-
-    void IHomeWindow::reloadStrings() {
-        Q_D(IHomeWindow);
-        auto win = window();
-        setWindowTitle(tr("Welcome"));
-        d->aboutButton->setText(tr("About %1").arg(qAppName()));
     }
 
     QAbstractButton *IHomeWindow::addNavWidget(QWidget *w) {
@@ -61,10 +62,8 @@ namespace Core {
 
         connect(aboutButton, &QAbstractButton::clicked, d, &IHomeWindowPrivate::_q_aboutButtonClicked);
 
-        qIDec->installLocale(win, {{}}, _LOC(IHomeWindow, this));
+        qIDec->installLocale(this, {{}}, _LOC(IHomeWindowPrivate, d));
         qIDec->installTheme(win, {"Global", "HomeWindow"});
-
-        qDebug() << "setup window finished";
     }
 
     IHomeWindow::IHomeWindow(IHomeWindowPrivate &d, QObject *parent)

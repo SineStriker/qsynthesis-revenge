@@ -7,7 +7,12 @@
                 <action id="OpenFile"/>
             </group>
         </menu>
-        <menu id="Edit"/>
-        <menu id="Help"/>
+
+        <menu id="Help">
+            <group id="AboutGroup">
+                <action id="AboutApp"/>
+                <action id="AboutQt"/>
+            </group>
+        </menu>
     </context>
 </actionSystem>

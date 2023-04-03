@@ -12,22 +12,22 @@
         <translation type="vanished">无法在%1中找到核心插件！</translation>
     </message>
     <message>
-        <location filename="../../../../libs/choruskit/appload/main.cpp" line="162"/>
+        <location filename="../../../../libs/choruskit/appload/main.cpp" line="163"/>
         <source>Failed to load core: %1!</source>
         <translation>无法加载核心：%1！</translation>
     </message>
     <message>
-        <location filename="../../../../libs/choruskit/appload/main.cpp" line="332"/>
+        <location filename="../../../../libs/choruskit/appload/main.cpp" line="321"/>
         <source>Searching plugins...</source>
         <translation>正在搜索插件...</translation>
     </message>
     <message>
-        <location filename="../../../../libs/choruskit/appload/main.cpp" line="372"/>
+        <location filename="../../../../libs/choruskit/appload/main.cpp" line="369"/>
         <source>Could not find Core plugin!</source>
         <translation>无法找到核心插件！</translation>
     </message>
     <message>
-        <location filename="../../../../libs/choruskit/appload/main.cpp" line="422"/>
+        <location filename="../../../../libs/choruskit/appload/main.cpp" line="419"/>
         <source>Loading plugins...</source>
         <translation>正在加载插件...</translation>
     </message>
@@ -36,7 +36,7 @@
         <translation type="vanished">无法在%1中找到核心插件！</translation>
     </message>
     <message>
-        <location filename="../../../../libs/choruskit/appload/main.cpp" line="378"/>
+        <location filename="../../../../libs/choruskit/appload/main.cpp" line="375"/>
         <source>Core plugin is disabled.</source>
         <translation>核心插件已被禁用。</translation>
     </message>
@@ -181,27 +181,27 @@
         <translation type="vanished">你正在尝试以%2身份运行%1，这可能存在安全问题。请使用普通权限启动。</translation>
     </message>
     <message>
-        <location filename="../../../../libs/qtmedium/CoreLib/Global/QMSystem.cpp" line="292"/>
+        <location filename="../../../../libs/qtmedium/CoreLib/Global/QMSystem.cpp" line="276"/>
         <source>Explorer</source>
         <translation>文件资源管理器</translation>
     </message>
     <message>
-        <location filename="../../../../libs/qtmedium/CoreLib/Global/QMSystem.cpp" line="294"/>
+        <location filename="../../../../libs/qtmedium/CoreLib/Global/QMSystem.cpp" line="278"/>
         <source>Finder</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../../../../libs/qtmedium/CoreLib/Global/QMSystem.cpp" line="296"/>
+        <location filename="../../../../libs/qtmedium/CoreLib/Global/QMSystem.cpp" line="280"/>
         <source>File Manager</source>
         <translation>文件管理器</translation>
     </message>
     <message>
-        <location filename="../../../../libs/qtmedium/CoreLib/Global/QMSystem.cpp" line="302"/>
+        <location filename="../../../../libs/qtmedium/CoreLib/Global/QMSystem.cpp" line="286"/>
         <source>Administrator</source>
         <translation>管理员</translation>
     </message>
     <message>
-        <location filename="../../../../libs/qtmedium/CoreLib/Global/QMSystem.cpp" line="304"/>
+        <location filename="../../../../libs/qtmedium/CoreLib/Global/QMSystem.cpp" line="288"/>
         <source>Root User</source>
         <translation>Root用户</translation>
     </message>
@@ -210,12 +210,12 @@
         <translation type="vanished">你正在尝试以%2身份运行%1，此番操作非常不安全。请使用普通权限启动。</translation>
     </message>
     <message>
-        <location filename="../../../../libs/choruskit/appload/main.cpp" line="282"/>
+        <location filename="../../../../libs/choruskit/appload/main.cpp" line="263"/>
         <source>You&apos;re trying to start %1 as the %2, which is extremely dangerous and therefore strongly not recommended.</source>
         <translation>你正在尝试以%2身份运行%1，此操作非常不安全，因此强烈不推荐。</translation>
     </message>
     <message>
-        <location filename="../../../../libs/choruskit/appload/main.cpp" line="402"/>
+        <location filename="../../../../libs/choruskit/appload/main.cpp" line="399"/>
         <source>Please close the running application!</source>
         <translation>请关闭正在运行中的程序！</translation>
     </message>

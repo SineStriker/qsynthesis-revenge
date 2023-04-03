@@ -1,6 +1,7 @@
 #ifndef HOMEWINDOWADDON_H
 #define HOMEWINDOWADDON_H
 
+#include "CoreApi/ActionItem.h"
 #include "CoreApi/IWindowAddOn.h"
 
 namespace Core {
@@ -23,6 +24,9 @@ namespace Core {
             void extensionsInitialized() override;
 
             void reloadMenuBar();
+
+        private:
+            ActionItem *fileMenu, *helpMenu;
         };
 
     }

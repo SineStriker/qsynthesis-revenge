@@ -4,25 +4,25 @@
 <context>
     <name>Core::ICore</name>
     <message>
-        <location filename="../../Api/ICore.cpp" line="41"/>
+        <location filename="../../ICore.cpp" line="39"/>
         <source>About %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Api/ICore.cpp" line="42"/>
+        <location filename="../../ICore.cpp" line="40"/>
         <source>%1 %2, Copyright OpenVPI.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
-    <name>Core::IHomeWindow</name>
+    <name>Core::IHomeWindowPrivate</name>
     <message>
-        <location filename="../../Api/Window/IHomeWindow.cpp" line="28"/>
+        <location filename="../../Window/IHomeWindow.cpp" line="23"/>
         <source>Welcome</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Api/Window/IHomeWindow.cpp" line="29"/>
+        <location filename="../../Window/IHomeWindow.cpp" line="24"/>
         <source>About %1</source>
         <translation type="unfinished"></translation>
     </message>
@@ -30,7 +30,7 @@
 <context>
     <name>Core::Internal::CorePlugin</name>
     <message>
-        <location filename="../../Internal/CorePlugin.cpp" line="41"/>
+        <location filename="../../Internal/CorePlugin.cpp" line="52"/>
         <source>Initializing core plugin...</source>
         <translation type="unfinished"></translation>
     </message>

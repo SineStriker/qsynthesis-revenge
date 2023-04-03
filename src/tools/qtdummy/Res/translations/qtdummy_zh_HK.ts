@@ -4,27 +4,27 @@
 <context>
     <name>Application</name>
     <message>
-        <location filename="../../../../libs/choruskit/appload/main.cpp" line="162"/>
+        <location filename="../../../../libs/choruskit/appload/main.cpp" line="163"/>
         <source>Failed to load core: %1!</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../../../libs/choruskit/appload/main.cpp" line="332"/>
+        <location filename="../../../../libs/choruskit/appload/main.cpp" line="321"/>
         <source>Searching plugins...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../../../libs/choruskit/appload/main.cpp" line="372"/>
+        <location filename="../../../../libs/choruskit/appload/main.cpp" line="369"/>
         <source>Could not find Core plugin!</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../../../libs/choruskit/appload/main.cpp" line="378"/>
+        <location filename="../../../../libs/choruskit/appload/main.cpp" line="375"/>
         <source>Core plugin is disabled.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../../../libs/choruskit/appload/main.cpp" line="422"/>
+        <location filename="../../../../libs/choruskit/appload/main.cpp" line="419"/>
         <source>Loading plugins...</source>
         <translation type="unfinished"></translation>
     </message>
@@ -165,37 +165,37 @@
 <context>
     <name>QCoreApplication</name>
     <message>
-        <location filename="../../../../libs/qtmedium/CoreLib/Global/QMSystem.cpp" line="292"/>
+        <location filename="../../../../libs/qtmedium/CoreLib/Global/QMSystem.cpp" line="276"/>
         <source>Explorer</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../../../libs/qtmedium/CoreLib/Global/QMSystem.cpp" line="294"/>
+        <location filename="../../../../libs/qtmedium/CoreLib/Global/QMSystem.cpp" line="278"/>
         <source>Finder</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../../../libs/qtmedium/CoreLib/Global/QMSystem.cpp" line="296"/>
+        <location filename="../../../../libs/qtmedium/CoreLib/Global/QMSystem.cpp" line="280"/>
         <source>File Manager</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../../../libs/qtmedium/CoreLib/Global/QMSystem.cpp" line="302"/>
+        <location filename="../../../../libs/qtmedium/CoreLib/Global/QMSystem.cpp" line="286"/>
         <source>Administrator</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../../../libs/qtmedium/CoreLib/Global/QMSystem.cpp" line="304"/>
+        <location filename="../../../../libs/qtmedium/CoreLib/Global/QMSystem.cpp" line="288"/>
         <source>Root User</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../../../libs/choruskit/appload/main.cpp" line="282"/>
+        <location filename="../../../../libs/choruskit/appload/main.cpp" line="263"/>
         <source>You&apos;re trying to start %1 as the %2, which is extremely dangerous and therefore strongly not recommended.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../../../libs/choruskit/appload/main.cpp" line="402"/>
+        <location filename="../../../../libs/choruskit/appload/main.cpp" line="399"/>
         <source>Please close the running application!</source>
         <translation type="unfinished"></translation>
     </message>

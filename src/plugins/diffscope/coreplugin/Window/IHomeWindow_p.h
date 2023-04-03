@@ -17,6 +17,8 @@ namespace Core {
 
         void init();
 
+        void reloadStrings();
+
         CNavFrame *navFrame;
         CTabButton *aboutButton;
 

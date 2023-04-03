@@ -24,18 +24,20 @@ if(TRUE)
         endif()
     endforeach()
 
-    ck_add_translations(qtdummy_translations
+    ck_add_translations(${PROJECT_NAME}_translations
         PREFIX qtdummy
         TARGETS ${_targets}
         LOCALES zh_CN zh_HK ja_JP
         TS_DIR Res/translations
-        QM_DIR ${CHORUSKIT_SHARE_OUTPUT_DIRECTORY}/qtdummy/qtdummy.res/translations
-        QM_TARGET ${PROJECT_NAME}
+        QM_DIR ${CMAKE_CURRENT_BINARY_DIR}/Res/translations
     )
+
+    add_dependencies(${PROJECT_NAME} ${PROJECT_NAME}_translations_lrelease)
 
     ck_add_attaches(${PROJECT_NAME}
         SRC Res/qtdummy.res.json DEST ${CHORUSKIT_SHARE_OUTPUT_DIRECTORY}/qtdummy
         SRC Res/themes DEST ${CHORUSKIT_SHARE_OUTPUT_DIRECTORY}/qtdummy/qtdummy.res
+        SRC ${CMAKE_CURRENT_BINARY_DIR}/Res/translations DEST ${CHORUSKIT_SHARE_OUTPUT_DIRECTORY}/qtdummy/qtdummy.res
     )
 
     if(WIN32 OR APPLE)

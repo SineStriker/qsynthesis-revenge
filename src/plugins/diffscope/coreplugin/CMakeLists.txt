@@ -27,11 +27,13 @@ ck_add_translations(${_plugin}_translations
     TARGETS ${_plugin}
     LOCALES zh_CN zh_HK ja_JP
     TS_DIR Res/translations
-    QM_DIR $<TARGET_FILE_DIR:${_plugin}>/share/Core.res/translations
-    QM_TARGET ${_plugin}
+    QM_DIR ${CMAKE_CURRENT_BINARY_DIR}/Res/translations
 )
 
+add_dependencies(${_plugin} ${_plugin}_translations_lrelease)
+
 ck_add_attaches(${_plugin}
-    SRC Res/Core.res.json DEST $<TARGET_FILE_DIR:${_plugin}>/share
-    SRC Res/themes/*.json DEST $<TARGET_FILE_DIR:${_plugin}>/share/Core.res/themes
+    SRC Res/Core.res.json DEST share
+    SRC Res/themes/*.json DEST share/Core.res/themes
+    SRC ${CMAKE_CURRENT_BINARY_DIR}/Res/translations DEST share/Core.res
 )

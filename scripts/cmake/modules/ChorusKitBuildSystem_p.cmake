@@ -44,7 +44,7 @@ endmacro()
 # Output: target ts files
 function(_ck_add_lupdate_target _target)
     set(options CREATE_ONCE)
-    set(oneValueArgs PRE_BUILD_TARGET)
+    set(oneValueArgs)
     set(multiValueArgs INPUT OUTPUT OPTIONS DEPENDS)
 
     cmake_parse_arguments(_LUPDATE "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
@@ -54,7 +54,7 @@ function(_ck_add_lupdate_target _target)
     set(_my_tsfiles ${_LUPDATE_OUTPUT})
 
     add_custom_target(${_target} DEPENDS ${_lupdate_deps})
-    get_target_property(_lupdate_exe ${Qt${QT_VERSION_MAJOR}_LUPDATE_EXECUTABLE} IMPORTED_LOCATION)
+    get_target_property(_lupdate_exe "${Qt${QT_VERSION_MAJOR}_LUPDATE_EXECUTABLE}" IMPORTED_LOCATION)
 
     foreach(_ts_file ${_my_tsfiles})
         # make a list file to call lupdate on, so we don't make our commands too
@@ -95,17 +95,6 @@ function(_ck_add_lupdate_target _target)
             DEPENDS ${_my_sources}
             BYPRODUCTS ${_ts_lst_file} VERBATIM
         )
-
-        if(_LUPDATE_PRE_BUILD_TARGET)
-            add_custom_command(
-                TARGET ${_LUPDATE_PRE_BUILD_TARGET} PRE_BUILD
-                COMMAND ${_lupdate_exe}
-                ARGS ${_LUPDATE_OPTIONS} "@${_ts_lst_file}" -ts ${_ts_file}
-                WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-                DEPENDS ${_my_sources}
-                BYPRODUCTS ${_ts_lst_file} VERBATIM
-            )
-        endif()
     endforeach()
 endfunction()
 
@@ -113,15 +102,14 @@ endfunction()
 # Output: list to append qm files
 function(_ck_add_lrelease_target _target)
     set(options)
-    set(oneValueArgs DESTINATION OUTPUT POST_BUILD_TARGET)
+    set(oneValueArgs DESTINATION OUTPUT)
     set(multiValueArgs INPUT OPTIONS DEPENDS)
 
     cmake_parse_arguments(_LRELEASE "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
     set(_lrelease_files ${_LRELEASE_INPUT})
     set(_lrelease_deps ${_LRELEASE_DEPENDS})
 
-    add_custom_target(${_target} DEPENDS ${_lrelease_deps})
-    get_target_property(_lrelease_exe ${Qt${QT_VERSION_MAJOR}_LRELEASE_EXECUTABLE} IMPORTED_LOCATION)
+    get_target_property(_lrelease_exe "${Qt${QT_VERSION_MAJOR}_LRELEASE_EXECUTABLE}" IMPORTED_LOCATION)
 
     set(_qm_files)
 
@@ -143,11 +131,8 @@ function(_ck_add_lrelease_target _target)
 
         set(_qm_file "${_out_dir}/${FILE_NAME}.qm")
 
-        get_filename_component(_qm_abs ${_qm_file} ABSOLUTE)
-        get_filename_component(_qm_name ${_qm_file} NAME)
-
         add_custom_command(
-            TARGET ${_target}
+            OUTPUT ${_qm_file}
             COMMAND ${CMAKE_COMMAND} -E make_directory ${_out_dir}
             COMMAND ${_lrelease_exe} ARGS ${_LRELEASE_OPTIONS} ${_abs_FILE} -qm ${_qm_file}
             WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
@@ -155,19 +140,10 @@ function(_ck_add_lrelease_target _target)
             VERBATIM
         )
 
-        if(_LRELEASE_POST_BUILD_TARGET)
-            add_custom_command(
-                TARGET ${_LRELEASE_POST_BUILD_TARGET} POST_BUILD
-                COMMAND ${CMAKE_COMMAND} -E make_directory ${_out_dir}
-                COMMAND ${_lrelease_exe} ARGS ${_LRELEASE_OPTIONS} ${_abs_FILE} -qm ${_qm_file}
-                WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-                DEPENDS ${_lrelease_files}
-                VERBATIM
-            )
-        endif()
-
         list(APPEND _qm_files ${_qm_file})
     endforeach()
+    
+    add_custom_target(${_target} ALL DEPENDS ${_lrelease_deps} ${_qm_files})
 
     if(_LRELEASE_OUTPUT)
         set(${_LRELEASE_OUTPUT} ${_qm_files} PARENT_SCOPE)

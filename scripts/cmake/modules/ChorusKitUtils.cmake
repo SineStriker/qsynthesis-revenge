@@ -7,7 +7,7 @@ Check if a variable is defined, throw error if not.
 ]] #
 function(ck_check_defined _var)
     if(NOT DEFINED ${_var})
-        message(FATAL_ERROR "$\"{_var}\" is not defined")
+        message(FATAL_ERROR "\"${_var}\" is not defined")
     endif()
 endfunction()
 

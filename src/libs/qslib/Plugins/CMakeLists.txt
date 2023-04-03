@@ -38,7 +38,7 @@ function(configure_plugin _plugin _author)
 
     # End parse
     set(_target ${SUB_PROJECT}_${PROJECT_NAME})
-    ck_add_library(${_target} SHARED AUTOGEN ${_add_lib_args})
+    ck_add_library(${_target} SHARED AUTOGEN SKIP_INSTALL ${_add_lib_args})
     add_library(${SUB_PROJECT}::${PROJECT_NAME} ALIAS ${_target})
 
     ck_configure_plugin(${_target}

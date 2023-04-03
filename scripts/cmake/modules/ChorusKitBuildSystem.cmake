@@ -7,13 +7,14 @@ include(${CMAKE_CURRENT_LIST_DIR}/ChorusKitBuildSystem_p.cmake)
 Initalize ChorusKitApi global settings.
 
     ck_init_buildsystem(
-        [OUTPUT_DIR dir]
+        [VERSION    version]
+        [DOCS       files...]
     )
 ]] #
 function(ck_init_buildsystem)
     set(options)
-    set(oneValueArgs OUTPUT_DIR)
-    set(multiValueArgs)
+    set(oneValueArgs VERSION)
+    set(multiValueArgs DOCS)
     cmake_parse_arguments(FUNC "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
 
     # Check operating system
@@ -35,14 +36,28 @@ function(ck_init_buildsystem)
 
     set(LINUX ${_linux} PARENT_SCOPE)
 
-    # Set CMAKE_XXX_OUTPUT_DIRECTORY
-    if(FUNC_OUTPUT_DIR)
-        set(_out_dir ${FUNC_OUTPUT_DIR})
-    endif()
-
     add_custom_target(ChorusKit_UpdateTranslations)
     add_custom_target(ChorusKit_ReleaseTranslations)
     add_custom_target(ChorusKit_CopyResources)
+
+    if(NOT FUNC_VERSION)
+        set(_version 0.0.0.0)
+    else()
+        set(_version ${FUNC_VERSION})
+    endif()
+
+    set(CHORUSKIT_PROJECT_VERSION ${_version} PARENT_SCOPE)
+    set(CHORUSKIT_SOURCE_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PARENT_SCOPE)
+
+    foreach(_item ${FUNC_DOCS})
+        get_filename_component(_abs_file ${_item} ABSOLUTE)
+
+        if(IS_DIRECTORY ${_abs_file})
+            install(DIRECTORY ${_abs_file} DESTINATION ${CHORUSKIT_INSTALL_SHARE_DIRECTORY}/docs)
+        elseif(EXISTS ${_abs_file})
+            install(FILES ${_abs_file} DESTINATION ${CHORUSKIT_INSTALL_SHARE_DIRECTORY}/docs)
+        endif()
+    endforeach()
 endfunction()
 
 #[[
@@ -65,9 +80,11 @@ function(ck_init_vcpkg _vcpkg_dir _vcpkg_triplet)
     if(WIN32)
         set(_bin_dir ${_vcpkg_installed_dir}/${_vcpkg_triplet}${_vcpkg_triplet_suffix}/bin)
         set(_runtime_output_dir ${CHORUSKIT_RUNTIME_OUTPUT_DIRECTORY})
+        set(_install_dir bin)
     else()
         set(_bin_dir ${_vcpkg_installed_dir}/${_vcpkg_triplet}${_vcpkg_triplet_suffix}/lib)
         set(_runtime_output_dir ${CHORUSKIT_LIBRARY_OUTPUT_DIRECTORY})
+        set(_install_dir lib)
     endif()
 
     set(_prebuilt_dlls)
@@ -84,6 +101,8 @@ function(ck_init_vcpkg _vcpkg_dir _vcpkg_triplet)
         )
 
         list(APPEND _prebuilt_dlls ${_out_dll})
+
+        install(FILES ${_dll} DESTINATION ${_install_dir})
     endforeach()
 
     add_custom_target(ChorusKit_SetupVcpkgDeps ALL DEPENDS ${_prebuilt_dlls})
@@ -425,25 +444,25 @@ function(ck_target_components _target)
         target_include_directories(${_target} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
     endif()
 
-    if (FUNC_AUTO_INCLUDE_CURRENT)
-        file(RELATIVE_PATH include_dir_relative_path ${PROJECT_SOURCE_DIR} ${CMAKE_CURRENT_SOURCE_DIR})
+    if(FUNC_AUTO_INCLUDE_CURRENT)
+        file(RELATIVE_PATH include_dir_relative_path ${CHORUSKIT_SOURCE_DIRECTORY} ${CMAKE_CURRENT_SOURCE_DIR})
         target_include_directories(${_target}
             PUBLIC
             "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>"
             "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/..>"
-            "$<INSTALL_INTERFACE:include/${include_dir_relative_path}>"
-            "$<INSTALL_INTERFACE:include/${include_dir_relative_path}/..>"
+            "$<INSTALL_INTERFACE:${CHORUSKIT_INSTALL_INCLUDE_DIRECTORY}/${include_dir_relative_path}>"
+            "$<INSTALL_INTERFACE:${CHORUSKIT_INSTALL_INCLUDE_DIRECTORY}/${include_dir_relative_path}/..>"
         )
     endif()
 
-    if (FUNC_AUTO_INCLUDE_DIRS)
+    if(FUNC_AUTO_INCLUDE_DIRS)
         foreach(_item ${FUNC_AUTO_INCLUDE_DIRS})
             get_filename_component(_abs_dir ${_item} ABSOLUTE)
-            file(RELATIVE_PATH include_dir_relative_path ${PROJECT_SOURCE_DIR} ${_abs_dir})
+            file(RELATIVE_PATH include_dir_relative_path ${CHORUSKIT_SOURCE_DIRECTORY} ${_abs_dir})
             target_include_directories(${_target}
                 PUBLIC
                 "$<BUILD_INTERFACE:${_abs_dir}>"
-                "$<INSTALL_INTERFACE:include/${include_dir_relative_path}>"
+                "$<INSTALL_INTERFACE:${CHORUSKIT_INSTALL_INCLUDE_DIRECTORY}/${include_dir_relative_path}>"
             )
         endforeach()
     endif()
@@ -600,8 +619,6 @@ Add qt translation target.
         [PREFIX prefix]
         [TS_DIR dir]
         [QM_DIR dir]
-        [TS_TARGET <target>]
-        [QM_TARGET <target>]
     )
 
     Arguments:
@@ -612,12 +629,10 @@ Add qt translation target.
         PREFIX: translation file prefix, default to target name
         TS_DIR: ts files destination, default to `CMAKE_CURRENT_SOURCE_DIR`
         QM_DIR: qm files destination, default to `CMAKE_CURRENT_BINARY_DIR`
-        TS_TARGET: update ts files before build target
-        QM_TARGET: release qm files after build target
 ]] #
 function(ck_add_translations _target)
     set(options)
-    set(oneValueArgs PREFIX TS_DIR QM_DIR TS_TARGET QM_TARGET)
+    set(oneValueArgs PREFIX TS_DIR QM_DIR)
     set(multiValueArgs LOCALES SOURCES TARGETS TS_FILES)
     cmake_parse_arguments(FUNC "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
 
@@ -666,12 +681,6 @@ function(ck_add_translations _target)
             set(_ts_dir ${CMAKE_CURRENT_SOURCE_DIR})
         endif()
 
-        set(_ts_target)
-
-        if(FUNC_TS_TARGET)
-            list(APPEND _ts_target PRE_BUILD_TARGET ${FUNC_TS_TARGET})
-        endif()
-
         set(_ts_files)
 
         foreach(_loc ${FUNC_LOCALES})
@@ -682,13 +691,12 @@ function(ck_add_translations _target)
             INPUT ${_src_files}
             OUTPUT ${_ts_files}
             CREATE_ONCE
-            ${_ts_target}
         )
 
         add_dependencies(${_target} ${_target}_lupdate)
         add_dependencies(ChorusKit_UpdateTranslations ${_target}_lupdate)
 
-        list(APPEND _qm_depends DEPENDS ${_target}_lupdate)
+    # list(APPEND _qm_depends DEPENDS ${_target}_lupdate)
     else()
         if(FUNC_PREFIX)
             message(WARNING "ck_add_translations: no source files collected, PREFIX ignored")
@@ -711,15 +719,10 @@ function(ck_add_translations _target)
 
     set(_qm_target)
 
-    if(FUNC_QM_TARGET)
-        list(APPEND _qm_target POST_BUILD_TARGET ${FUNC_QM_TARGET})
-    endif()
-
     _ck_add_lrelease_target(${_target}_lrelease
         INPUT ${_ts_files} ${FUNC_TS_FILES}
         DESTINATION ${_qm_dir}
         ${_qm_depends}
-        ${_qm_target}
     )
 
     add_dependencies(${_target} ${_target}_lrelease)
@@ -734,6 +737,7 @@ Add a resources copying command after building the target.
     ck_add_attaches(<target>
         SRC <files1...> DEST <dir1>
         SRC <files2...> DEST <dir2> ...
+        SKIP_INSTALL
     )
 ]] #
 function(ck_add_attaches _target)
@@ -742,7 +746,24 @@ function(ck_add_attaches _target)
     set(_status NONE) # NONE, SRC, DEST
     set(_count 0)
 
+    # string(RANDOM LENGTH 8 _rand)
+    # set(_attach_target ${_target}_attach_${_rand})
+
+    # add_custom_target(${_attach_target} ALL)
+    set(_attach_target ${_target})
+
+    set(_copy_args)
+    set(_skip_install off)
+
     foreach(_item ${ARGN})
+        if(${_item} STREQUAL SKIP_INSTALL)
+            set(_skip_install on)
+        else()
+            list(APPEND _copy_args ${_item})
+        endif()
+    endforeach()
+
+    foreach(_item ${_copy_args})
         if(${_item} STREQUAL SRC)
             if(${_status} STREQUAL NONE)
                 set(_src)
@@ -772,34 +793,74 @@ function(ck_add_attaches _target)
 
                 math(EXPR _count "${_count} + 1")
 
+                set(_is_abs off)
+                set(_is_rel off)
+
                 if(${_item} MATCHES ".*\\$.*")
                     set(_path ${_item})
                 else()
-                    get_filename_component(_path ${_item} ABSOLUTE)
+                    if(IS_ABSOLUTE ${_item})
+                        set(_is_abs on)
+                        set(_path ${_item})
+                    else()
+                        set(_is_rel on)
+                        set(_path $<TARGET_FILE_DIR:${_target}>/${_item})
+                    endif()
                 endif()
 
                 foreach(_src_item ${_src})
                     get_filename_component(_full_path ${_src_item} ABSOLUTE)
 
-                    # In case IS_DIRECTORY failed with non-absolute paths
-                    if(IS_DIRECTORY ${_full_path})
-                        get_filename_component(_name ${_src_item} NAME)
-                        add_custom_command(TARGET ${_target} POST_BUILD
-                            COMMAND ${CMAKE_COMMAND} -E make_directory ${_path}/${_name}
-                            COMMAND ${CMAKE_COMMAND} -E copy_directory ${_src_item} ${_path}/${_name}
-                        )
-                    else()
-                        if(${_src_item} MATCHES ".*\\$.*")
-                            set(_src_files ${_src_item})
-                        else()
-                            file(GLOB _src_files ${_src_item})
-                        endif()
+                    add_custom_command(TARGET ${_attach_target} POST_BUILD
+                        COMMAND ${CMAKE_COMMAND}
+                        -D "src=${_full_path}"
+                        -D "dest=${_path}"
+                        -P "${CHOURSKIT_SCIRPTS_DIR}/CopyIfDifferent.cmake"
+                    )
 
-                        add_custom_command(TARGET ${_target} POST_BUILD
-                            COMMAND ${CMAKE_COMMAND} -E make_directory ${_path}
-                            COMMAND ${CMAKE_COMMAND} -E copy ${_src_files} ${_path}
-                        )
+                    if(NOT _skip_install)
+                        if(_is_rel)
+                            install(CODE "
+                                file(RELATIVE_PATH _rel_path \"${CHORUSKIT_BINARY_DIR}\" \"$<TARGET_FILE_DIR:${_target}>\")
+                                execute_process(
+                                    COMMAND \"${CMAKE_COMMAND}\"
+                                    -D \"src=${_full_path}\"
+                                    -D \"dest=${CMAKE_INSTALL_PREFIX}/\${_rel_path}/${_item}\"
+                                    -P \"${CHOURSKIT_SCIRPTS_DIR}/CopyIfDifferent.cmake\"
+                                )
+                            ")
+                        elseif(_is_abs)
+                            install(CODE "
+                                file(RELATIVE_PATH _rel_path \"${CHORUSKIT_BINARY_DIR}\" \"${_item}\")
+                                execute_process(
+                                    COMMAND \"${CMAKE_COMMAND}\"
+                                    -D \"src=${_full_path}\"
+                                    -D \"dest=${CMAKE_INSTALL_PREFIX}/\${_rel_path}\"
+                                    -P \"${CHOURSKIT_SCIRPTS_DIR}/CopyIfDifferent.cmake\"
+                                )
+                            ")
+                        endif()
                     endif()
+
+                    # In case IS_DIRECTORY failed with non-absolute paths
+                    # if(IS_DIRECTORY ${_full_path})
+                    # get_filename_component(_name ${_src_item} NAME)
+                    # add_custom_command(TARGET ${_target} POST_BUILD
+                    # COMMAND ${CMAKE_COMMAND} -E make_directory ${_path}/${_name}
+                    # COMMAND ${CMAKE_COMMAND} -E copy_directory ${_src_item} ${_path}/${_name}
+                    # )
+                    # else()
+                    # if(${_src_item} MATCHES ".*\\$.*")
+                    # set(_src_files ${_src_item})
+                    # else()
+                    # file(GLOB _src_files ${_src_item})
+                    # endif()
+
+                    # add_custom_command(TARGET ${_target} POST_BUILD
+                    # COMMAND ${CMAKE_COMMAND} -E make_directory ${_path}
+                    # COMMAND ${CMAKE_COMMAND} -E copy ${_src_files} ${_path}
+                    # )
+                    # endif()
                 endforeach()
             else()
                 get_filename_component(_path ${_item} ABSOLUTE)
@@ -823,11 +884,22 @@ Add and executable.
 
 ]] #
 function(ck_add_executable _target)
+    set(options SKIP_INSTALL)
+    set(oneValueArgs)
+    set(multiValueArgs)
+    cmake_parse_arguments(FUNC "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
+
     add_executable(${_target} ${ARGN})
     set_target_properties(${_target} PROPERTIES
         BUILD_RPATH "${CHORUSKIT_EXECUTABLE_RPATH}"
         RUNTIME_OUTPUT_DIRECTORY ${CHORUSKIT_RUNTIME_OUTPUT_DIRECTORY}
     )
+
+    if(NOT FUNC_SKIP_INSTALL)
+        install(TARGETS ${_target}
+            DESTINATION "${CHORUSKIT_INSTALL_BINARY_DIRECTORY}" OPTIONAL
+        )
+    endif()
 endfunction()
 
 #[[
@@ -837,13 +909,14 @@ Add an application loader, add env vars and call `ENTRY_NAME`.
         [ENV envs...]
         [ENTRY_NAME name]
         [CONSOLE] [WINDOWS]
+        [SKIP_INSTALL]
     )
 
     Arguments:
         ENTRY_NAME: Default to "main_entry"
 ]] #
 function(ck_add_appmain _target _dll)
-    set(options CONSOLE WINDOWS)
+    set(options CONSOLE WINDOWS SKIP_INSTALL)
     set(oneValueArgs ENTRY_NAME)
     set(multiValueArgs ENV)
     cmake_parse_arguments(FUNC "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
@@ -886,6 +959,12 @@ function(ck_add_appmain _target _dll)
         )
     endif()
 
+    if(NOT FUNC_SKIP_INSTALL)
+        install(TARGETS ${_target}
+            DESTINATION "${CHORUSKIT_INSTALL_BINARY_DIRECTORY}" OPTIONAL
+        )
+    endif()
+
     # ----------------- Template End -----------------
 endfunction()
 
@@ -897,6 +976,7 @@ Add a library, default to static library.
         [MACRO_PREFIX   prefix]
         [TYPE_MACRO     macro]
         [LIBRARY_MACRO  macro]
+        [SKIP_INSTALL]
     )
 
     Arguments:
@@ -905,9 +985,10 @@ Add a library, default to static library.
         MACRO_PREFIX: Default to upcase of `target`
         TYPE_MACRO: Default to `MACRO_PREFIX`_STATIC or `MACRO_PREFIX`_SHARED
         LIBRARY_MACRO: Default to `MACRO_PREFIX`_LIBRARY
+        SKIP_INSTALL: Skip install rule
 ]] #
 function(ck_add_library _target)
-    set(options SHARED AUTOGEN)
+    set(options SHARED AUTOGEN SKIP_INSTALL)
     set(oneValueArgs MACRO_PREFIX LIBRARY_MACRO TYPE_MACRO)
     set(multiValueArgs)
     cmake_parse_arguments(FUNC "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
@@ -957,6 +1038,23 @@ function(ck_add_library _target)
         ARCHIVE_OUTPUT_DIRECTORY ${CHORUSKIT_ARCHIVE_OUTPUT_DIRECTORY}
     )
 
+    if(NOT FUNC_SKIP_INSTALL)
+        if(CHORUSKIT_INSTALL_DEV)
+            set(_archive
+                ARCHIVE DESTINATION "${CHORUSKIT_INSTALL_LIBRARY_DIRECTORY}" OPTIONAL
+            )
+        else()
+            set(_archive)
+        endif()
+
+        install(TARGETS ${_target}
+            EXPORT ChorusKit
+            RUNTIME DESTINATION "${CHORUSKIT_INSTALL_BINARY_DIRECTORY}" OPTIONAL
+            LIBRARY DESTINATION "${CHORUSKIT_INSTALL_LIBRARY_DIRECTORY}" OPTIONAL
+            ${_archive}
+        )
+    endif()
+
     # ----------------- Template End -----------------
 endfunction()
 
@@ -985,9 +1083,10 @@ Add a plugin.
         META_SUBDIRS: set "Subdirs" in generated json file
         META_ALL_FILES: set "AllFiles" in generated json file
         META_ALL_SUBDIRS: set "AllSubdirs" in generated json file
+        SKIP_INSTALL: skip install rule (specify when adding plugin to defer setting install rule)
 ]] #
 function(ck_configure_plugin _target)
-    set(options META_ALL_FILES META_ALL_SUBDIRS)
+    set(options META_ALL_FILES META_ALL_SUBDIRS SKIP_INSTALL)
     set(oneValueArgs PARENT CATEGORY METADATA_IN COMPAT_VERSION PLUGIN_NAME PLUGIN_VERSION)
     set(multiValueArgs META_SUBDIRS)
     cmake_parse_arguments(FUNC "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
@@ -1057,6 +1156,17 @@ function(ck_configure_plugin _target)
             COMMAND ${CMAKE_COMMAND} -E copy ${_plugin_json2_path} ${_out_dir}
         )
 
+        if(FUNC_SKIP_INSTALL)
+            set(_skip_flag SKIP_INSTALL)
+        else()
+            set(_skip_flag)
+        endif()
+
+        ck_add_attaches(${_target}
+            ${_skip_flag}
+            SRC ${_plugin_json2_path} DEST .
+        )
+
         # Set plugin metadata
         ck_parse_version(_ver ${_version})
         set(PLUGIN_METADATA_VERSION ${_ver_1}.${_ver_2}.${_ver_3}_${_ver_4})
@@ -1083,6 +1193,23 @@ function(ck_configure_plugin _target)
 
         # OUTPUT_NAME ${_name}
     )
+
+    if(NOT FUNC_SKIP_INSTALL)
+        if(CHORUSKIT_INSTALL_DEV)
+            set(_archive
+                ARCHIVE DESTINATION "lib/${FUNC_PARENT}/plugins/${FUNC_CATEGORY}" OPTIONAL
+            )
+        else()
+            set(_archive)
+        endif()
+
+        install(TARGETS ${_target}
+            EXPORT ChorusKit
+            RUNTIME DESTINATION "lib/${FUNC_PARENT}/plugins/${FUNC_CATEGORY}" OPTIONAL
+            LIBRARY DESTINATION "lib/${FUNC_PARENT}/plugins/${FUNC_CATEGORY}" OPTIONAL
+            ${_archive}
+        )
+    endif()
 endfunction()
 
 #[[
@@ -1179,13 +1306,13 @@ function(ck_add_deploy_qt_target _target)
     if(FUNC_LIB_DIR)
         set(_lib_dir ${FUNC_LIB_DIR})
     else()
-        set(_lib_dir $<TARGET_FILE_DIR:${_deploy_target}>)
+        set(_lib_dir .)
     endif()
 
     if(FUNC_PLUGINS_DIR)
         set(_plugins_dir ${FUNC_PLUGINS_DIR})
     else()
-        set(_plugins_dir $<TARGET_FILE_DIR:${_deploy_target}>/plugins)
+        set(_plugins_dir plugins)
     endif()
 
     add_custom_target(${_target}
@@ -1194,8 +1321,6 @@ function(ck_add_deploy_qt_target _target)
         --plugindir ${_plugins_dir}
         --no-translations
         --no-system-d3d-compiler
-
-        # --no-virtualkeyboard
         --no-compiler-runtime
         --no-opengl-sw
         --force
@@ -1203,4 +1328,76 @@ function(ck_add_deploy_qt_target _target)
         $<TARGET_FILE:${_deploy_target}>
         WORKING_DIRECTORY $<TARGET_FILE_DIR:${_deploy_target}>
     )
+
+    install(CODE "
+        execute_process(
+            COMMAND \"${QT_DEPLOY_EXECUTABLE}\"
+            --libdir \"${_lib_dir}\"
+            --plugindir \"${_plugins_dir}\"
+            --no-translations
+            --no-system-d3d-compiler
+            --no-compiler-runtime
+            --no-opengl-sw
+            --force
+            --verbose 0
+            \"$<TARGET_FILE_NAME:${_deploy_target}>\"
+            WORKING_DIRECTORY \"${CMAKE_INSTALL_PREFIX}/bin\"
+        )
+    ")
+endfunction()
+
+#[[
+Finish ChorusKitApi global settings.
+
+    ck_finish_build_system(
+        [SKIP_INSTALL]
+    )
+]] #
+function(ck_finish_build_system)
+    set(options SKIP_BUILD)
+    set(oneValueArgs)
+    set(multiValueArgs)
+    cmake_parse_arguments(FUNC "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
+
+    if(NOT FUNC_SKIP_INSTALL)
+        # install(DIRECTORY ${CHORUSKIT_SHARE_OUTPUT_DIRECTORY}/ DESTINATION "share")
+        set(_install_dir "lib/cmake")
+
+        include(GNUInstallDirs)
+        include(CMakePackageConfigHelpers)
+
+        if(CHORUSKIT_INSTALL_DEV)
+            # Add version file
+            write_basic_package_version_file(
+                "${CMAKE_CURRENT_BINARY_DIR}/ChorusKitConfigVersion.cmake"
+                VERSION ${CHORUSKIT_PROJECT_VERSION}
+                COMPATIBILITY AnyNewerVersion
+            )
+
+            # Add configuration file
+            configure_package_config_file(
+                "${CHORUSKIT_CMAKE_MODULES_DIR}/ChorusKitConfig.cmake.in"
+                "${CMAKE_CURRENT_BINARY_DIR}/ChorusKitConfig.cmake"
+                INSTALL_DESTINATION ${_install_dir}
+                NO_CHECK_REQUIRED_COMPONENTS_MACRO
+            )
+
+            # Install cmake files
+            install(FILES
+                "${CMAKE_CURRENT_BINARY_DIR}/ChorusKitConfig.cmake"
+                "${CMAKE_CURRENT_BINARY_DIR}/ChorusKitConfigVersion.cmake"
+                DESTINATION ${_install_dir}
+            )
+
+            # Install cmake targets files
+            install(EXPORT ChorusKit
+                DESTINATION ${_install_dir}
+            )
+
+            install(DIRECTORY ${CHORUSKIT_SOURCE_DIRECTORY}/
+                DESTINATION "${CHORUSKIT_INSTALL_INCLUDE_DIRECTORY}"
+                FILES_MATCHING PATTERN "*.h"
+            )
+        endif()
+    endif()
 endfunction()

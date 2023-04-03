@@ -15,7 +15,10 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 # ----------------------------------
 # Import vcpkg and libraries
 # ----------------------------------
-ck_init_buildsystem() # Init choruskit buildsystem
+ck_init_buildsystem(
+    VERSION ${PROJECT_VERSION}
+    DOCS "../LICENSE"
+)
 
 set(VCPKG_APPLOCAL_DEPS off) # Tell vcpkg not to copy dlls automatically on Windows
 include(${REPOSITORY_VCPKG_DIR}/scripts/buildsystems/vcpkg.cmake)
@@ -62,7 +65,7 @@ if(CONFIG_ENABLE_BREAKPAD)
     add_compile_definitions(CONFIG_ENABLE_BREAKPAD)
 endif()
 
-if((CONFIG_WIN32_DEBUG OR NOT_QT_CREATOR) AND (NOT CONFIG_WIN32_NO_DEBUG OR CMAKE_BUILD_TYPE STREQUAL "Debug"))
+if((CONFIG_WIN32_DEBUG OR NOT_QT_CREATOR) AND(NOT CONFIG_WIN32_NO_DEBUG OR CMAKE_BUILD_TYPE STREQUAL "Debug"))
     set(ROOT_APPMAIN_TYPE CONSOLE)
 else()
     set(ROOT_APPMAIN_TYPE WINDOWS)
@@ -83,3 +86,5 @@ add_subdirectory(apps)
 if(CONFIG_BUILD_TEST)
     add_subdirectory(tests)
 endif()
+
+ck_finish_build_system()

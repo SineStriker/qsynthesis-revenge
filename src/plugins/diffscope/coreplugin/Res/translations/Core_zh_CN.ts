@@ -4,12 +4,12 @@
 <context>
     <name>Core::ICore</name>
     <message>
-        <location filename="../../Api/ICore.cpp" line="41"/>
+        <location filename="../../ICore.cpp" line="39"/>
         <source>About %1</source>
         <translation>关于 %1</translation>
     </message>
     <message>
-        <location filename="../../Api/ICore.cpp" line="42"/>
+        <location filename="../../ICore.cpp" line="40"/>
         <source>%1 %2, Copyright OpenVPI.</source>
         <translation>%1 %2，版权所有 OpenVPI。</translation>
     </message>
@@ -17,20 +17,31 @@
 <context>
     <name>Core::IHomeWindow</name>
     <message>
-        <location filename="../../Api/Window/IHomeWindow.cpp" line="28"/>
         <source>Welcome</source>
-        <translation>欢迎</translation>
+        <translation type="vanished">欢迎</translation>
     </message>
     <message>
-        <location filename="../../Api/Window/IHomeWindow.cpp" line="29"/>
         <source>About %1</source>
-        <translation>关于 %1</translation>
+        <translation type="vanished">关于 %1</translation>
+    </message>
+</context>
+<context>
+    <name>Core::IHomeWindowPrivate</name>
+    <message>
+        <location filename="../../Window/IHomeWindow.cpp" line="23"/>
+        <source>Welcome</source>
+        <translation type="unfinished">欢迎</translation>
+    </message>
+    <message>
+        <location filename="../../Window/IHomeWindow.cpp" line="24"/>
+        <source>About %1</source>
+        <translation type="unfinished">关于 %1</translation>
     </message>
 </context>
 <context>
     <name>Core::Internal::CorePlugin</name>
     <message>
-        <location filename="../../Internal/CorePlugin.cpp" line="41"/>
+        <location filename="../../Internal/CorePlugin.cpp" line="52"/>
         <source>Initializing core plugin...</source>
         <translation>初始化核心插件...</translation>
     </message>
