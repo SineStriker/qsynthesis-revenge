@@ -15,6 +15,7 @@ namespace Core {
 
         ActionSystem *actionSystem;
         WindowSystem *windowSystem;
+        DialogHelper *dialogHelper;
     };
 
 }

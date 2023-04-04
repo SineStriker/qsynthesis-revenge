@@ -2,11 +2,15 @@
 
 #include <QDebug>
 #include <QLabel>
+#include <QLineEdit>
 #include <QMenuBar>
+#include <QVBoxLayout>
+#include <QPushButton>
 
 #include "Window/IHomeWindow.h"
 
 #include "ICore.h"
+#include "Internal/TestDialogPage.h"
 
 namespace Core {
 
@@ -28,8 +32,30 @@ namespace Core {
 
         void HomeWindowAddOn::initialize() {
             auto iWin = qobject_cast<IHomeWindow *>(this->handle());
-
-            auto btn = iWin->addNavWidget(new QLabel("22222222222222222"));
+            ICore::instance()->dialogHelper()->addDialogPage(new TestDialogPage);
+            auto testLayout = new QVBoxLayout;
+            auto testTextInput = new QLineEdit;
+            testTextInput->setText("114514");
+            auto testDialogPage = qobject_cast<TestDialogPage *>(ICore::instance()->dialogHelper()->getDialogPage("test"));
+            connect(testTextInput, &QLineEdit::textChanged, testDialogPage, &TestDialogPage::setLabelText);
+            connect(testDialogPage, &TestDialogPage::accepted, testTextInput, [=](){
+               testTextInput->setText(testDialogPage->getEditText());
+            });
+            auto testModalDialog = new QPushButton("Test modal dialog");
+            auto testModelessDialog = new QPushButton("Test modeless dialog");
+            connect(testModalDialog, &QPushButton::clicked, [=](){
+                ICore::instance()->dialogHelper()->showDialog("test", testModalDialog);
+            });
+            connect(testModelessDialog, &QPushButton::clicked, [=](){
+                ICore::instance()->dialogHelper()->showModelessDialog("test", testModelessDialog, DialogHelper::OkButton | DialogHelper::CancelButton | DialogHelper::ApplyButton);
+            });
+            testLayout->addWidget(testTextInput);
+            testLayout->addWidget(testModalDialog);
+            testLayout->addWidget(testModelessDialog);
+            testLayout->addWidget(new QLabel("22222222222222222"));
+            auto testWidget = new QWidget;
+            testWidget->setLayout(testLayout);
+            auto btn = iWin->addNavWidget(testWidget);
             btn->setText("123456");
 
             reloadMenuBar();
