@@ -6,6 +6,7 @@
 #include <CoreApi/ActionSystem.h>
 #include <CoreApi/WindowSystem.h>
 
+#include "CoreApi/DialogHelper.h"
 #include "CoreGlobal.h"
 
 namespace Core {
@@ -30,6 +31,7 @@ namespace Core {
 
         ActionSystem *actionSystem() const;
         WindowSystem *windowSystem() const;
+        DialogHelper *dialogHelper() const;
 
     private:
         explicit ICore(QObject *parent = nullptr);

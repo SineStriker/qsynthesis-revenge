@@ -11,6 +11,7 @@ namespace Core {
     ICorePrivate::ICorePrivate() {
         actionSystem = nullptr;
         windowSystem = nullptr;
+        dialogHelper = nullptr;
     }
 
     void ICorePrivate::init() {
@@ -20,6 +21,7 @@ namespace Core {
 
         actionSystem = new ActionSystem(q);
         windowSystem = new WindowSystem(q);
+        dialogHelper = new DialogHelper(q);
     }
 
     static ICore *m_instance = nullptr;
@@ -54,6 +56,11 @@ namespace Core {
     WindowSystem *ICore::windowSystem() const {
         Q_D(const ICore);
         return d->windowSystem;
+    }
+
+    DialogHelper *ICore::dialogHelper() const {
+        Q_D(const ICore);
+        return d->dialogHelper;
     }
 
     ICore::ICore(QObject *parent) : ICore(*new ICorePrivate(), parent) {
