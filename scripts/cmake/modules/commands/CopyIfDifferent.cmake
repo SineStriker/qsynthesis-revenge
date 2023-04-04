@@ -5,7 +5,7 @@
 
 # file or dir to dest if different
 
-include(${CMAKE_CURRENT_LIST_DIR}/modules/ChorusKitUtils.cmake)
+include(${CMAKE_CURRENT_LIST_DIR}/../ChorusKitUtils.cmake)
 
 ck_check_defined(src)
 ck_check_defined(dest)

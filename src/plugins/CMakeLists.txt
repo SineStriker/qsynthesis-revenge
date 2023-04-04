@@ -1,4 +1,5 @@
 set(SUB_PROJECT unknown)
+set(CURRENT_PLUGIN_DESC "ChorusKit Plugin")
 
 function(configure_plugin _plugin _author)
     # Begin parse

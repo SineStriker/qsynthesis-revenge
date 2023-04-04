@@ -793,17 +793,12 @@ function(ck_add_attaches _target)
 
                 math(EXPR _count "${_count} + 1")
 
-                set(_is_abs off)
-                set(_is_rel off)
-
                 if(${_item} MATCHES ".*\\$.*")
                     set(_path ${_item})
                 else()
                     if(IS_ABSOLUTE ${_item})
-                        set(_is_abs on)
                         set(_path ${_item})
                     else()
-                        set(_is_rel on)
                         set(_path $<TARGET_FILE_DIR:${_target}>/${_item})
                     endif()
                 endif()
@@ -815,52 +810,20 @@ function(ck_add_attaches _target)
                         COMMAND ${CMAKE_COMMAND}
                         -D "src=${_full_path}"
                         -D "dest=${_path}"
-                        -P "${CHOURSKIT_SCIRPTS_DIR}/CopyIfDifferent.cmake"
+                        -P "${CHOURSKIT_SCRIPTS_DIR}/CopyIfDifferent.cmake"
                     )
 
                     if(NOT _skip_install)
-                        if(_is_rel)
-                            install(CODE "
-                                file(RELATIVE_PATH _rel_path \"${CHORUSKIT_BINARY_DIR}\" \"$<TARGET_FILE_DIR:${_target}>\")
-                                execute_process(
-                                    COMMAND \"${CMAKE_COMMAND}\"
-                                    -D \"src=${_full_path}\"
-                                    -D \"dest=${CMAKE_INSTALL_PREFIX}/\${_rel_path}/${_item}\"
-                                    -P \"${CHOURSKIT_SCIRPTS_DIR}/CopyIfDifferent.cmake\"
-                                )
-                            ")
-                        elseif(_is_abs)
-                            install(CODE "
-                                file(RELATIVE_PATH _rel_path \"${CHORUSKIT_BINARY_DIR}\" \"${_item}\")
-                                execute_process(
-                                    COMMAND \"${CMAKE_COMMAND}\"
-                                    -D \"src=${_full_path}\"
-                                    -D \"dest=${CMAKE_INSTALL_PREFIX}/\${_rel_path}\"
-                                    -P \"${CHOURSKIT_SCIRPTS_DIR}/CopyIfDifferent.cmake\"
-                                )
-                            ")
-                        endif()
+                        install(CODE "
+                            file(RELATIVE_PATH _rel_path \"${CHORUSKIT_BINARY_DIR}\" \"${_path}\")
+                            execute_process(
+                                COMMAND \"${CMAKE_COMMAND}\"
+                                -D \"src=${_full_path}\"
+                                -D \"dest=${CMAKE_INSTALL_PREFIX}/\${_rel_path}\"
+                                -P \"${CHOURSKIT_SCRIPTS_DIR}/CopyIfDifferent.cmake\"
+                            )
+                        ")
                     endif()
-
-                    # In case IS_DIRECTORY failed with non-absolute paths
-                    # if(IS_DIRECTORY ${_full_path})
-                    # get_filename_component(_name ${_src_item} NAME)
-                    # add_custom_command(TARGET ${_target} POST_BUILD
-                    # COMMAND ${CMAKE_COMMAND} -E make_directory ${_path}/${_name}
-                    # COMMAND ${CMAKE_COMMAND} -E copy_directory ${_src_item} ${_path}/${_name}
-                    # )
-                    # else()
-                    # if(${_src_item} MATCHES ".*\\$.*")
-                    # set(_src_files ${_src_item})
-                    # else()
-                    # file(GLOB _src_files ${_src_item})
-                    # endif()
-
-                    # add_custom_command(TARGET ${_target} POST_BUILD
-                    # COMMAND ${CMAKE_COMMAND} -E make_directory ${_path}
-                    # COMMAND ${CMAKE_COMMAND} -E copy ${_src_files} ${_path}
-                    # )
-                    # endif()
                 endforeach()
             else()
                 get_filename_component(_path ${_item} ABSOLUTE)
@@ -1197,7 +1160,7 @@ function(ck_configure_plugin _target)
     if(NOT FUNC_SKIP_INSTALL)
         if(CHORUSKIT_INSTALL_DEV)
             set(_archive
-                ARCHIVE DESTINATION "lib/${FUNC_PARENT}/plugins/${FUNC_CATEGORY}" OPTIONAL
+                ARCHIVE DESTINATION "${CHORUSKIT_INSTALL_LIBRARY_DIRECTORY}/${FUNC_PARENT}/plugins/${FUNC_CATEGORY}" OPTIONAL
             )
         else()
             set(_archive)
@@ -1205,8 +1168,8 @@ function(ck_configure_plugin _target)
 
         install(TARGETS ${_target}
             EXPORT ChorusKit
-            RUNTIME DESTINATION "lib/${FUNC_PARENT}/plugins/${FUNC_CATEGORY}" OPTIONAL
-            LIBRARY DESTINATION "lib/${FUNC_PARENT}/plugins/${FUNC_CATEGORY}" OPTIONAL
+            RUNTIME DESTINATION "${CHORUSKIT_INSTALL_LIBRARY_DIRECTORY}/${FUNC_PARENT}/plugins/${FUNC_CATEGORY}" OPTIONAL
+            LIBRARY DESTINATION "${CHORUSKIT_INSTALL_LIBRARY_DIRECTORY}/${FUNC_PARENT}/plugins/${FUNC_CATEGORY}" OPTIONAL
             ${_archive}
         )
     endif()
@@ -1390,13 +1353,17 @@ function(ck_finish_build_system)
             )
 
             # Install cmake targets files
-            install(EXPORT ChorusKit
-                DESTINATION ${_install_dir}
-            )
+            # install(EXPORT ChorusKit
+            #     DESTINATION ${_install_dir}
+            # )
 
             install(DIRECTORY ${CHORUSKIT_SOURCE_DIRECTORY}/
                 DESTINATION "${CHORUSKIT_INSTALL_INCLUDE_DIRECTORY}"
                 FILES_MATCHING PATTERN "*.h"
+            )
+
+            install(DIRECTORY ${CHORUSKIT_CMAKE_MODULES_DIR}/
+                DESTINATION "${_install_dir}/modules"
             )
         endif()
     endif()
