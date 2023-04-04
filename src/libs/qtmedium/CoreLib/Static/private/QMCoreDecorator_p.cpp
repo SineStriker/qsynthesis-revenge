@@ -62,4 +62,5 @@ QMCoreDecoratorPrivate::~QMCoreDecoratorPrivate() {
 
 void QMCoreDecoratorPrivate::init() {
     loc = QLocale::system().name();
+    // loc = "zh_CN";
 }

@@ -46,7 +46,7 @@ find_package(yaml-cpp REQUIRED)
 find_package(ffmpeg-fake REQUIRED NAMES FFmpeg)
 find_package(QuaZip NAMES quazip QuaZip-Qt5 QuaZip-Qt6 REQUIRED)
 find_package(QNrbf REQUIRED)
-find_package(qastool REQUIRED)
+find_package(QasTool REQUIRED)
 
 if(NOT APPLE)
     find_package(FramelessHelper REQUIRED COMPONENTS Core Widgets)

@@ -6,6 +6,8 @@
 #include <QDebug>
 #include <QWidget>
 
+#include <algorithm>
+
 QMDecorator::QMDecorator(QObject *parent) : QMDecorator(*new QMDecoratorPrivate(), parent) {
 }
 

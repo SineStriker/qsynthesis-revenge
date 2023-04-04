@@ -15,12 +15,17 @@ configure_plugin(_plugin "Sine Striker"
 )
 
 ck_target_components(${_plugin}
-    SOURCES ${_src} ${_res_dir}/res.qrc
+    SOURCES ${_src} ${_res_dir}/core_res.qrc
     QT_LINKS Core Widgets
     LINKS QsFramework ExtensionSystem CkAppCore
     INCLUDES ${_extra_includes}
     AUTO_INCLUDE_CURRENT
 )
+
+# if(LINUX)
+#     qt5_add_resources(_cpp ${_res_dir}/res.qrc)
+#     target_sources(${_plugin} PRIVATE ${_cpp})
+# endif()
 
 ck_add_translations(${_plugin}_translations
     PREFIX Core

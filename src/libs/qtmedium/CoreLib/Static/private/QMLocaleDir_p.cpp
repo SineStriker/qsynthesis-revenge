@@ -36,6 +36,7 @@ static QMap<QString, QStringList> findLocales(const QString &prefix, const QStri
         if (!match.hasMatch() || (!prefix.isEmpty() && match.captured() != prefix)) {
             continue;
         }
+
         res[match.captured(2) + match.captured(3)].append(it->absoluteFilePath());
     }
 

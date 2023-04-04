@@ -17,7 +17,6 @@ set(CHORUSKIT_INSTALL_SHARE_DIRECTORY share)
 
 if(WIN32)
     set(CHORUSKIT_SHARED_LIBRARY_PATTERN "*.dll")
-    set(CHORUSKIT_RPATH_BASE "")
     set(CHORUSKIT_EXECUTABLE_RPATH "")
     set(CHORUSKIT_LIBRARY_RPATH "")
     set(CHORUSKIT_PLUGIN_RPATH "")
@@ -28,9 +27,9 @@ elseif(APPLE)
     set(CHORUSKIT_PLUGIN_RPATH "@loader_path/../../..") # lib/_app/plugins/_plugin/xxx.dylib
 else()
     set(CHORUSKIT_SHARED_LIBRARY_PATTERN "*.so*")
-    set(CHORUSKIT_EXECUTABLE_RPATH "@ORIGIN")
+    set(CHORUSKIT_EXECUTABLE_RPATH "@ORIGIN/../lib")
     set(CHORUSKIT_LIBRARY_RPATH "@ORIGIN")
-    set(CHORUSKIT_PLUGIN_RPATH "@ORIGIN/../../..") # lib/_app/plugins/_plugin/xxx.dylib
+    set(CHORUSKIT_PLUGIN_RPATH "@ORIGIN/../../..") # lib/_app/plugins/_plugin/xxx.so
 endif()
 
 if(NOT DEFINED CHORUSKIT_INSTALL_DEV)

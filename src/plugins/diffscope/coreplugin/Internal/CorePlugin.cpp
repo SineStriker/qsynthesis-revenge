@@ -1,6 +1,7 @@
 #include "CorePlugin.h"
 
 #include <QApplication>
+#include <QDirIterator>
 #include <QSplashScreen>
 #include <QThread>
 
@@ -58,7 +59,16 @@ namespace Core {
 
             // Add basic actions
             auto actionMgr = icore->actionSystem();
-            actionMgr->loadContexts(":/actions.xml");
+
+            // QDirIterator it(":", QDirIterator::Subdirectories);
+            // while (it.hasNext()) {
+            //     qDebug() << it.next();
+            // }
+
+            if (actionMgr->loadContexts(":/actions.xml").isEmpty()) {
+                *errorMessage = tr("Cannot load action configuration.");
+                return false;
+            }
 
             // Add basic windows and add-ons
             auto winMgr = icore->windowSystem();

@@ -9,6 +9,8 @@
 
 namespace Core {
 
+    class WindowSystemPrivate;
+
     class IWindowFactoryPrivate {
     public:
         QString id;

@@ -1,8 +1,8 @@
 #ifndef LIBRARYLOADGUARD_H
 #define LIBRARYLOADGUARD_H
 
-#include <QString>
 #include <QScopedPointer>
+#include <QString>
 
 class LibraryLoadGuardPrivate;
 
@@ -12,7 +12,9 @@ public:
     ~LibraryLoadGuard();
 
 protected:
+#ifdef Q_OS_WINDOWS
     QScopedPointer<LibraryLoadGuardPrivate> d_ptr;
+#endif
 };
 
 #endif // LIBRARYLOADGUARD_H

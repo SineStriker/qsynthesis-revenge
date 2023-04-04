@@ -852,7 +852,7 @@ function(ck_add_executable _target)
     set(multiValueArgs)
     cmake_parse_arguments(FUNC "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
 
-    add_executable(${_target} ${ARGN})
+    add_executable(${_target} ${FUNC_UNPARSED_ARGUMENTS})
     set_target_properties(${_target} PROPERTIES
         BUILD_RPATH "${CHORUSKIT_EXECUTABLE_RPATH}"
         RUNTIME_OUTPUT_DIRECTORY ${CHORUSKIT_RUNTIME_OUTPUT_DIRECTORY}
@@ -909,7 +909,14 @@ function(ck_add_appmain _target _dll)
         ${_cpp_path}
         @ONLY
     )
-    ck_add_executable(${_target} ${_cpp_path})
+
+    if(FUNC_SKIP_INSTALL)
+        set(_skip_install SKIP_INSTALL)
+    else()
+        set(_skip_install)
+    endif()
+
+    ck_add_executable(${_target} ${_skip_install} ${_cpp_path})
     target_link_libraries(${_target} PRIVATE ${_dll})
 
     if(FUNC_WINDOWS)
@@ -919,12 +926,6 @@ function(ck_add_appmain _target _dll)
     elseif(FUNC_CONSOLE)
         set_target_properties(${_target} PROPERTIES
             WIN32_EXECUTABLE FALSE
-        )
-    endif()
-
-    if(NOT FUNC_SKIP_INSTALL)
-        install(TARGETS ${_target}
-            DESTINATION "${CHORUSKIT_INSTALL_BINARY_DIRECTORY}" OPTIONAL
         )
     endif()
 
@@ -1354,9 +1355,8 @@ function(ck_finish_build_system)
 
             # Install cmake targets files
             # install(EXPORT ChorusKit
-            #     DESTINATION ${_install_dir}
+            # DESTINATION ${_install_dir}
             # )
-
             install(DIRECTORY ${CHORUSKIT_SOURCE_DIRECTORY}/
                 DESTINATION "${CHORUSKIT_INSTALL_INCLUDE_DIRECTORY}"
                 FILES_MATCHING PATTERN "*.h"

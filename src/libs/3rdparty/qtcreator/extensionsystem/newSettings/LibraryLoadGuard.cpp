@@ -1,11 +1,13 @@
 #include "LibraryLoadGuard.h"
 
 #ifndef Q_OS_WINDOWS
-LibraryLoadGuared::LibraryLoadGuared(const QString &path) {
+
+LibraryLoadGuard::LibraryLoadGuard(const QString &path) {
 }
 
-LibraryLoadGuared::~LibraryLoadGuared() {
+LibraryLoadGuard::~LibraryLoadGuard() {
 }
+
 #else
 #    include <Windows.h>
 

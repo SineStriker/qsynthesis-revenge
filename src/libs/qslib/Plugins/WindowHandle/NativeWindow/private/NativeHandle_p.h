@@ -3,12 +3,12 @@
 
 #include "../NativeHandle.h"
 #include "Api/private/IWindowHandle_p.h"
-#include "widgets/CWindowBarV2.h"
+#include "Widgets/CWindowBarV2.h"
 
 #include <FramelessWidgetsHelper>
 
-#include <private/widgetssharedhelper_p.h>
 #include <private/framelessconfig_p.h>
+#include <private/widgetssharedhelper_p.h>
 
 FRAMELESSHELPER_USE_NAMESPACE
 

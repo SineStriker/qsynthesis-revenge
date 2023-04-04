@@ -4,6 +4,7 @@
 #include "QMConsole.h"
 
 #include <QApplication>
+#include <QMessageBox>
 
 namespace Core {
 

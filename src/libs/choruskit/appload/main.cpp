@@ -6,8 +6,6 @@
 #include <QNetworkProxyFactory>
 #include <QTextStream>
 
-#include <QtTest/QTest>
-
 #include "QMConsole.h"
 #include "QMCss.h"
 #include "QMDecorateDir.h"

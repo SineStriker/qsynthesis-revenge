@@ -244,7 +244,7 @@ void QMOs::messageStderr(const QString &title, const QString &text) {
                       | MB_TOPMOST
 #    endif
                       | MB_SETFOREGROUND | MB_ICONWARNING);
-#elif Q_OS_LINUX
+#elif defined(Q_OS_LINUX)
     fputs(qPrintable(text), stdout);
 #else
     fputs(qPrintable(text), stdout);
