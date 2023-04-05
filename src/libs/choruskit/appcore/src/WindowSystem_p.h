@@ -4,7 +4,9 @@
 #include <QHash>
 #include <QSet>
 
+#include "Collections/QMChronMap.h"
 #include "Collections/QMChronSet.h"
+
 #include "WindowSystem.h"
 
 namespace Core {
@@ -20,7 +22,7 @@ namespace Core {
 
         WindowSystem *q_ptr;
 
-        QMap<QString, IWindowFactory *> windowFactories;
+        QMChronMap<QString, IWindowFactory *> windowFactories;
         QMChronSet<IWindowAddOnFactory *> addOnFactories;
 
         QSet<IWindow *> iWindows;

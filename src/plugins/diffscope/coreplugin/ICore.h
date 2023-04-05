@@ -4,11 +4,10 @@
 #include <QObject>
 
 #include <CoreApi/ActionSystem.h>
+#include <CoreApi/DialogHelper.h>
 #include <CoreApi/WindowSystem.h>
 
 #include "Settings/SettingCatalog.h"
-
-#include <CoreApi/DialogHelper.h>
 
 namespace Core {
 
@@ -35,7 +34,7 @@ namespace Core {
 
         DialogHelper *dialogHelper() const;
 
-        // SettingCatalog *settingCatalog() const;
+        SettingCatalog *settingCatalog() const;
 
     private:
         explicit ICore(QObject *parent = nullptr);

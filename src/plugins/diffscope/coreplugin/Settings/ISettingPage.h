@@ -22,7 +22,16 @@ namespace Core {
         QString title() const;
         void setTitle(const QString &title);
 
+        bool addPage(ISettingPage *page);
+        bool removePage(ISettingPage *page);
+        bool removePage(const QString &id);
+
+        ISettingPage *page(const QString &id) const;
+        QList<ISettingPage *> pages() const;
+
     public:
+        virtual QString sortKeyword() const;
+
         virtual bool matches(const QString &word) const;
         virtual QWidget *widget() = 0;
 

@@ -1,9 +1,8 @@
 #ifndef ACTIONSYSTEM_P_H
 #define ACTIONSYSTEM_P_H
 
-#include <QHash>
-
 #include "ActionSystem.h"
+#include "Collections/QMChronMap.h"
 
 namespace Core {
 
@@ -17,7 +16,7 @@ namespace Core {
 
         ActionSystem *q_ptr;
 
-        QHash<QString, ActionContext *> contexts;
+        QMChronMap<QString, ActionContext *> contexts;
         QHash<QString, QMap<QString, QStringList>> stateCaches;
     };
 }

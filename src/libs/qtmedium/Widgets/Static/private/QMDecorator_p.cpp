@@ -94,8 +94,7 @@ void ThemeSubscriber::removeWidget(QWidget *w) {
     auto tg = it.value();
     uninstallScreen(tg);
     if (tg->queueIterator != QMDecoratorPrivate::subscriberUpdateQueue.end()) {
-        qDebug() << "ThemeSubscriber: subscriber" << tg
-                 << "has been removed when it's in update queue";
+        qDebug() << "ThemeSubscriber: subscriber" << tg << "has been removed when it's in update queue";
         QMDecoratorPrivate::subscriberUpdateQueue.erase(tg->queueIterator);
         tg->queueIterator = QMDecoratorPrivate::subscriberUpdateQueue.end();
     }
@@ -195,16 +194,14 @@ void QMDecoratorPrivate::init() {
     theme = "Zhibin - Dark";
 
     // Notify screen add or remove
-    q->connect(qApp, &QApplication::screenAdded, q, &QMDecorator::_q_screenAdded);
-    q->connect(qApp, &QApplication::screenRemoved, q, &QMDecorator::_q_screenRemoved);
+    connect(qApp, &QApplication::screenAdded, this, &QMDecoratorPrivate::_q_screenAdded);
+    connect(qApp, &QApplication::screenRemoved, this, &QMDecoratorPrivate::_q_screenRemoved);
 
     // Monitor all screen at first time
-    auto screens = qApp->screens();
+    auto screens = QApplication::screens();
     for (auto screen : qAsConst(screens)) {
-        q->connect(screen, &QScreen::physicalDotsPerInchChanged, q,
-                   &QMDecorator::_q_deviceRatioChanged);
-        q->connect(screen, &QScreen::logicalDotsPerInchChanged, q,
-                   &QMDecorator::_q_logicalRatioChanged);
+        connect(screen, &QScreen::physicalDotsPerInchChanged, this, &QMDecoratorPrivate::_q_deviceRatioChanged);
+        connect(screen, &QScreen::logicalDotsPerInchChanged, this, &QMDecoratorPrivate::_q_logicalRatioChanged);
     }
 }
 
@@ -246,3 +243,37 @@ void QMDecoratorPrivate::subscriberUpdateEnqueue(ThemeGuard *tg) {
 QMDecoratorPrivate *QMDecoratorPrivate::self = nullptr;
 
 std::list<ThemeGuard *> QMDecoratorPrivate::subscriberUpdateQueue;
+
+void QMDecoratorPrivate::_q_screenAdded(QScreen *screen) {
+    connect(screen, &QScreen::physicalDotsPerInchChanged, this, &QMDecoratorPrivate::_q_deviceRatioChanged);
+    connect(screen, &QScreen::logicalDotsPerInchChanged, this, &QMDecoratorPrivate::_q_logicalRatioChanged);
+}
+
+void QMDecoratorPrivate::_q_screenRemoved(QScreen *screen) {
+    disconnect(screen, &QScreen::physicalDotsPerInchChanged, this, &QMDecoratorPrivate::_q_deviceRatioChanged);
+    disconnect(screen, &QScreen::logicalDotsPerInchChanged, this, &QMDecoratorPrivate::_q_logicalRatioChanged);
+
+    // How to deal with windows on the removed screen?
+}
+
+void QMDecoratorPrivate::_q_deviceRatioChanged(double dpi) {
+    Q_Q(QMDecorator);
+
+    auto screen = qobject_cast<QScreen *>(sender());
+    screenChange_helper(screen);
+    emit q->deviceRatioChanged(screen, dpi);
+}
+
+void QMDecoratorPrivate::_q_logicalRatioChanged(double dpi) {
+    Q_Q(QMDecorator);
+
+    auto screen = qobject_cast<QScreen *>(sender());
+    screenChange_helper(screen);
+    emit q->logicalRatioChanged(screen, dpi);
+}
+
+void QMDecoratorPrivate::_q_themeSubscriberDestroyed() {
+    Q_Q(QMDecorator);
+    auto w = qobject_cast<QWidget *>(sender());
+    q->uninstallTheme(w);
+}

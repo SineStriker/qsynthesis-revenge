@@ -49,20 +49,12 @@ public:
     void installTheme(QWidget *w, const QStringList &templateKeys);
     void uninstallTheme(QWidget *w);
 
-protected:
-    QMDecorator(QMDecoratorPrivate &d, QObject *parent = nullptr);
-
-private:
-    void _q_screenAdded(QScreen *screen);
-    void _q_screenRemoved(QScreen *screen);
-    void _q_deviceRatioChanged(double dpi);
-    void _q_logicalRatioChanged(double dpi);
-
-    void _q_themeSubscriberDestroyed();
-
 signals:
     void deviceRatioChanged(QScreen *screen, double dpi);
     void logicalRatioChanged(QScreen *screen, double dpi);
+
+protected:
+    QMDecorator(QMDecoratorPrivate &d, QObject *parent = nullptr);
 };
 
 #endif // QMDECORATOR_H

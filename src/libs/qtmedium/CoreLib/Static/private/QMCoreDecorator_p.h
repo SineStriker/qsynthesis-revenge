@@ -12,8 +12,8 @@
  *
  */
 struct LocaleSubscriber {
-    QStringList keys;
-    std::function<void()> updater;
+    QHash<QString, std::list<std::function<void()>>> updaters;
+    std::list<std::function<void()>> allUpdaters;
 };
 
 struct QMCORELIB_API LocaleData {
@@ -40,11 +40,12 @@ struct LocalePlaceholder {
     QSharedPointer<LocaleData> data;
 };
 
-class QMCORELIB_API QMCoreDecoratorPrivate {
+class QMCORELIB_API QMCoreDecoratorPrivate : public QObject {
+    Q_OBJECT
     Q_DECLARE_PUBLIC(QMCoreDecorator)
 public:
     QMCoreDecoratorPrivate();
-    virtual ~QMCoreDecoratorPrivate();
+    ~QMCoreDecoratorPrivate();
 
     void init();
 
@@ -59,6 +60,9 @@ public:
     QHash<QString, int> localeNames;
     QHash<QString, LocalePlaceholder *> localeConfigs;
     QHash<QObject *, LocaleSubscriber *> localeSubscribers;
+
+private:
+    void _q_localeSubscriberDestroyed();
 };
 
 #endif // QMCOREDECORATOR_P_H

@@ -3,7 +3,10 @@
 # -D src=<files/dirs>
 # -P dest=<dir>
 
-# file or dir to dest if different
+# copy file or dir to dest if different
+
+# From CMake 3.26, `copy_directory_if_different` feature is supported,
+# this script is intended to be compatible with earlier versions.
 
 include(${CMAKE_CURRENT_LIST_DIR}/../ChorusKitUtils.cmake)
 

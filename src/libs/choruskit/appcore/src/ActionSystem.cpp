@@ -41,7 +41,7 @@ namespace Core {
         }
         context->setParent(this);
         context->d_ptr->setDirty();
-        d->contexts.insert(context->id(), context);
+        d->contexts.append(context->id(), context);
 
         return true;
     }

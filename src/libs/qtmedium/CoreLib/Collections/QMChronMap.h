@@ -284,7 +284,11 @@ public:
     }
 
     QList<T> values() const {
-        return {m_list.begin(), m_list.end()};
+        QList<T> res;
+        for (const auto &item : qAsConst(m_list)) {
+            res.append(item.second);
+        }
+        return res;
     }
 };
 
