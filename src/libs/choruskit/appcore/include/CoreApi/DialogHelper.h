@@ -39,16 +39,19 @@ namespace Core {
         int showDialog(const QString &id, QWidget* parent, int controls = OkButton | CloseButton);
 
         void showModelessDialog(const QString &id, QWidget* parent, int controls = OkButton | CloseButton);
+
+        void closeDialog(const QString &id, int result);
+
+        bool getDialogOpenState(const QString &id);
     protected:
         QScopedPointer<DialogHelperPrivate> d_ptr;
         Q_DECLARE_PRIVATE(DialogHelper)
         explicit DialogHelper(DialogHelperPrivate *d, QObject *parent = nullptr);
-        QMap<QString, IDialogPage *> &dialogs();
-        void setDialogOpenState(IDialogPage *dialogPage, bool state);
-        bool getDialogOpenState(IDialogPage *dialogPage);
-
+        QMap<QString, IDialogPage *> &dialogPages();
+        void setDialogOpenState(const QString &id, QDialog* dialog, bool state);
     private:
         QDialog *prepareDialog(IDialogPage *dialogPage, QWidget* parent, bool modal, int controls);
+        void finalizeDialog(QDialog *dialog);
     };
 }
 

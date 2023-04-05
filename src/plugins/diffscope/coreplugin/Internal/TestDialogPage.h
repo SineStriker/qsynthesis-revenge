@@ -18,6 +18,7 @@ namespace Core {
         QString title() const override;
         QWidget * widget() override;
         QString getEditText() const;
+        void reloadStrings() override;
     public slots:
         void load() override;
         void accept() override;
@@ -27,6 +28,7 @@ namespace Core {
         QWidget *m_widget = nullptr;
         QLineEdit *m_lineEdit = nullptr;
         QLabel *m_label = nullptr;
+        QString m_staged_text;
     };
 }
 

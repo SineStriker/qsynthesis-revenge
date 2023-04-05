@@ -24,8 +24,8 @@ QWidget *TestDialogPage::widget() {
         return m_widget;
     } else {
         m_widget = new QWidget;
-        m_label = new QLabel("114514");
-        m_lineEdit = new QLineEdit("1919810");
+        m_label = new QLabel(m_staged_text);
+        m_lineEdit = new QLineEdit;
         auto layout = new QHBoxLayout;
         layout->addWidget(m_label);
         layout->addWidget(m_lineEdit);
@@ -52,5 +52,10 @@ QString TestDialogPage::getEditText() const  {
 }
 
 void TestDialogPage::setLabelText(const QString &text)  {
+    m_staged_text = text;
     if(m_label) m_label->setText(text);
-};
+}
+
+void TestDialogPage::reloadStrings() {
+
+}
