@@ -17,6 +17,7 @@ namespace Core {
         virtual QString title() const = 0;
 
         virtual QWidget *widget() = 0;
+        virtual void reloadStrings() = 0;
 
     signals:
         void accepted();

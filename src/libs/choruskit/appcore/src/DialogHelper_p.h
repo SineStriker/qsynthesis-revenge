@@ -16,8 +16,10 @@ namespace Core {
         Q_DECLARE_PUBLIC(DialogHelper)
     public:
         DialogHelper* q_ptr;
-        QMap<QString, IDialogPage *> dialogs;
-        QSet<IDialogPage *> openedDialogPages;
+        QMap<QString, IDialogPage *> dialogPages;
+        QMap<QString, QDialog *> openedDialogs;
+    signals:
+        void reloadStrings();
     };
 
 }
