@@ -21,14 +21,12 @@ include(${PROJECT_MODULES_DIR}/ChorusKitBuildSystem.cmake)
 # ----------------------------------
 # Build system configuration
 # ----------------------------------
-ck_option(APP_TOOLSET_NAME ChorusKit)
-ck_option(APP_VERSION_VERBOSE 0.0.1.8)
-ck_option(APP_START_YEAR 2019)
+ck_option(CONFIG_APP_VERSION 0.0.1.8)
+ck_option(CONFIG_START_YEAR 2019)
+ck_option(CONFIG_CURRENT_APP DiffScope)
 
 # Build
-ck_option(CONFIG_INSTALL_DIRECTORY ${CMAKE_INSTALL_PREFIX})
 ck_option(CONFIG_BUILD_TEST on)
-ck_option(CONFIG_CREATE_WIN_SHORTCUT on)
 ck_option(CONFIG_ENABLE_BREAKPAD off)
 
 # CMake

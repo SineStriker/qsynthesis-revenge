@@ -16,9 +16,9 @@ namespace Core {
         ~ActionSystem();
 
     public:
-        void addContext(ActionContext *context);
-        void removeContext(ActionContext *context);
-        void removeContext(const QString &id);
+        bool addContext(ActionContext *context);
+        bool removeContext(ActionContext *context);
+        bool removeContext(const QString &id);
 
         ActionContext *context(const QString &id) const;
         QList<ActionContext *> contexts() const;

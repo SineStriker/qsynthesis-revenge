@@ -1,6 +1,6 @@
 project(LabelVoice
     LANGUAGES CXX
-    VERSION ${APP_VERSION_VERBOSE}
+    VERSION ${CONFIG_APP_VERSION}
 )
 
 include(Template.cmake)

@@ -2,33 +2,41 @@ cmake_minimum_required(VERSION 3.17)
 
 set(CMAKE_POLICY_DEFAULT_CMP0077 NEW)
 
+# ----------------------------------
+# Import base configuration
+# ----------------------------------
 include(../Config.cmake)
 
 # ----------------------------------
 # Main project
 # ----------------------------------
-project(${APP_TOOLSET_NAME} VERSION ${APP_VERSION_VERBOSE} LANGUAGES CXX)
+project(ChorusKit VERSION ${CONFIG_APP_VERSION} LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # ----------------------------------
+# Root settings
+# ----------------------------------
+set(ROOT_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR})
+set(ROOT_OPENVPI_COPYRIGHT "Copyright ${CONFIG_START_YEAR}-${ROOT_CURRENT_YEAR} OpenVPI Team")
+
+string(TOLOWER ${CONFIG_CURRENT_APP} ROOT_CURRENT_APP_LOWER)
+string(TIMESTAMP ROOT_CURRENT_YEAR %Y)
+
+# ----------------------------------
 # Import vcpkg and libraries
 # ----------------------------------
 ck_init_buildsystem(
+    NAME "ChorusKit ${CONFIG_CURRENT_APP}"
     VERSION ${PROJECT_VERSION}
-    DOCS "../LICENSE"
+    DOCS ../LICENSE ../docs/redist/thirdparty
 )
 
 set(VCPKG_APPLOCAL_DEPS off) # Tell vcpkg not to copy dlls automatically on Windows
 include(${REPOSITORY_VCPKG_DIR}/scripts/buildsystems/vcpkg.cmake)
 
 ck_init_vcpkg(${REPOSITORY_VCPKG_DIR} ${VCPKG_TARGET_TRIPLET})
-
-# ----------------------------------
-# Import base configuration
-# ----------------------------------
-set(ROOT_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR})
 
 # ----------------------------------
 # Build configuration
@@ -71,16 +79,13 @@ else()
     set(ROOT_APPMAIN_TYPE WINDOWS)
 endif()
 
-string(TIMESTAMP ROOT_CURRENT_YEAR %Y)
-set(ROOT_OPENVPI_COPYRIGHT "Copyright ${APP_START_YEAR}-${ROOT_CURRENT_YEAR} OpenVPI Team")
-
 # ----------------------------------
 # Add projects
 # ----------------------------------
+add_subdirectory(apps)
 add_subdirectory(libs)
 add_subdirectory(tools)
 add_subdirectory(plugins)
-add_subdirectory(apps)
 
 # Add tests
 if(CONFIG_BUILD_TEST)

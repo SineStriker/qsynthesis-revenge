@@ -7,13 +7,15 @@ include(${CMAKE_CURRENT_LIST_DIR}/ChorusKitBuildSystem_p.cmake)
 Initalize ChorusKitApi global settings.
 
     ck_init_buildsystem(
+        [NAME       name]
         [VERSION    version]
         [DOCS       files...]
+        [DEV]
     )
 ]] #
 function(ck_init_buildsystem)
-    set(options)
-    set(oneValueArgs VERSION)
+    set(options DEV)
+    set(oneValueArgs NAME VERSION)
     set(multiValueArgs DOCS)
     cmake_parse_arguments(FUNC "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
 
@@ -46,16 +48,81 @@ function(ck_init_buildsystem)
         set(_version ${FUNC_VERSION})
     endif()
 
+    set(_dev off)
+
+    if(FUNC_DEV)
+        set(_dev on)
+    endif()
+
+    set(_project "ChorusKit Application")
+
+    if(FUNC_NAME)
+        set(_project ${FUNC_NAME})
+    endif()
+
+    set(_output_root ${CMAKE_BINARY_DIR}/out-${CMAKE_HOST_SYSTEM_NAME}-${CMAKE_BUILD_TYPE})
+
+    if(APPLE)
+        set(_output_path ${_project}.app/Contents)
+
+        set(_binary_path ${_output_path}/MacOS)
+        set(_library_path ${_output_path}/Frameworks)
+        set(_plugin_path ${_output_path}/Plugins)
+        set(_share_path ${_output_path}/Resources)
+        set(_docs_path ${_output_path}/Resources/docs)
+
+        set(_qt_conf_dir ${_share_path})
+
+        set(_platform mac)
+    else()
+        set(_binary_path bin)
+        set(_library_path lib)
+        set(_plugin_path lib)
+        set(_share_path share)
+        set(_docs_path share/docs)
+
+        set(_qt_conf_dir ${_binary_path})
+
+        if(WIN32)
+            set(_platform win)
+        else()
+            set(_platform linux)
+        endif()
+    endif()
+
+    set(CHORUSKIT_INSTALL_DEV ${_dev} PARENT_SCOPE)
+
+    set(CHORUSKIT_PROJECT_NAME ${_project} PARENT_SCOPE)
     set(CHORUSKIT_PROJECT_VERSION ${_version} PARENT_SCOPE)
-    set(CHORUSKIT_SOURCE_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PARENT_SCOPE)
+
+    set(CHORUSKIT_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR} PARENT_SCOPE)
+    set(CHORUSKIT_BUILD_DIR ${_output_root} PARENT_SCOPE)
+
+    set(CHORUSKIT_RELATIVE_RUNTIME_DIR ${_binary_path} PARENT_SCOPE)
+    set(CHORUSKIT_RELATIVE_LIBRARY_DIR ${_library_path} PARENT_SCOPE)
+    set(CHORUSKIT_RELATIVE_ARCHIVE_DIR ${_library_path} PARENT_SCOPE)
+    set(CHORUSKIT_RELATIVE_PLUGIN_DIR ${_plugin_path} PARENT_SCOPE)
+    set(CHORUSKIT_RELATIVE_SHARE_DIR ${_share_path} PARENT_SCOPE)
+    set(CHORUSKIT_RELATIVE_DOCS_DIR ${_docs_path} PARENT_SCOPE)
+    set(CHORUSKIT_RELATIVE_INCLUDE_DIR include/ChorusKit PARENT_SCOPE)
+
+    set(CHORUSKIT_RUNTIME_OUTPUT_DIR ${_output_root}/${_binary_path} PARENT_SCOPE)
+    set(CHORUSKIT_LIBRARY_OUTPUT_DIR ${_output_root}/${_library_path} PARENT_SCOPE)
+    set(CHORUSKIT_ARCHIVE_OUTPUT_DIR ${_output_root}/${_library_path} PARENT_SCOPE)
+    set(CHORUSKIT_SHARE_OUTPUT_DIR ${_output_root}/${_share_path} PARENT_SCOPE)
+    set(CHORUSKIT_DOCS_OUTPUT_DIR ${_output_root}/${_docs_path} PARENT_SCOPE)
+    set(CHORUSKIT_PLUGIN_OUTPUT_DIR ${_output_root}/${_plugin_path} PARENT_SCOPE)
+
+    set(CHORUSKIT_QT_CONF_OUTPUT_DIR ${_output_root}/${_qt_conf_dir} PARENT_SCOPE)
+    set(CHORUSKIT_PLATFORM_SHORT ${_platform} PARENT_SCOPE)
 
     foreach(_item ${FUNC_DOCS})
         get_filename_component(_abs_file ${_item} ABSOLUTE)
 
         if(IS_DIRECTORY ${_abs_file})
-            install(DIRECTORY ${_abs_file} DESTINATION ${CHORUSKIT_INSTALL_SHARE_DIRECTORY}/docs)
+            install(DIRECTORY ${_abs_file} DESTINATION ${_docs_path})
         elseif(EXISTS ${_abs_file})
-            install(FILES ${_abs_file} DESTINATION ${CHORUSKIT_INSTALL_SHARE_DIRECTORY}/docs)
+            install(FILES ${_abs_file} DESTINATION ${_docs_path})
         endif()
     endforeach()
 endfunction()
@@ -79,11 +146,11 @@ function(ck_init_vcpkg _vcpkg_dir _vcpkg_triplet)
 
     if(WIN32)
         set(_bin_dir ${_vcpkg_installed_dir}/${_vcpkg_triplet}${_vcpkg_triplet_suffix}/bin)
-        set(_runtime_output_dir ${CHORUSKIT_RUNTIME_OUTPUT_DIRECTORY})
+        set(_runtime_output_dir ${CHORUSKIT_RUNTIME_OUTPUT_DIR})
         set(_install_dir bin)
     else()
         set(_bin_dir ${_vcpkg_installed_dir}/${_vcpkg_triplet}${_vcpkg_triplet_suffix}/lib)
-        set(_runtime_output_dir ${CHORUSKIT_LIBRARY_OUTPUT_DIRECTORY})
+        set(_runtime_output_dir ${CHORUSKIT_LIBRARY_OUTPUT_DIR})
         set(_install_dir lib)
     endif()
 
@@ -445,24 +512,24 @@ function(ck_target_components _target)
     endif()
 
     if(FUNC_AUTO_INCLUDE_CURRENT)
-        file(RELATIVE_PATH include_dir_relative_path ${CHORUSKIT_SOURCE_DIRECTORY} ${CMAKE_CURRENT_SOURCE_DIR})
+        file(RELATIVE_PATH include_dir_relative_path ${CHORUSKIT_SOURCE_DIR} ${CMAKE_CURRENT_SOURCE_DIR})
         target_include_directories(${_target}
             PUBLIC
             "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>"
             "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/..>"
-            "$<INSTALL_INTERFACE:${CHORUSKIT_INSTALL_INCLUDE_DIRECTORY}/${include_dir_relative_path}>"
-            "$<INSTALL_INTERFACE:${CHORUSKIT_INSTALL_INCLUDE_DIRECTORY}/${include_dir_relative_path}/..>"
+            "$<INSTALL_INTERFACE:${CHORUSKIT_RELATIVE_INCLUDE_DIR}/${include_dir_relative_path}>"
+            "$<INSTALL_INTERFACE:${CHORUSKIT_RELATIVE_INCLUDE_DIR}/${include_dir_relative_path}/..>"
         )
     endif()
 
     if(FUNC_AUTO_INCLUDE_DIRS)
         foreach(_item ${FUNC_AUTO_INCLUDE_DIRS})
             get_filename_component(_abs_dir ${_item} ABSOLUTE)
-            file(RELATIVE_PATH include_dir_relative_path ${CHORUSKIT_SOURCE_DIRECTORY} ${_abs_dir})
+            file(RELATIVE_PATH include_dir_relative_path ${CHORUSKIT_SOURCE_DIR} ${_abs_dir})
             target_include_directories(${_target}
                 PUBLIC
                 "$<BUILD_INTERFACE:${_abs_dir}>"
-                "$<INSTALL_INTERFACE:${CHORUSKIT_INSTALL_INCLUDE_DIRECTORY}/${include_dir_relative_path}>"
+                "$<INSTALL_INTERFACE:${CHORUSKIT_RELATIVE_INCLUDE_DIR}/${include_dir_relative_path}>"
             )
         endforeach()
     endif()
@@ -573,6 +640,14 @@ function(ck_target_res _target)
             configure_file(${CHORUSKIT_CMAKE_MODULES_DIR}/WinManifest.manifest.in ${_manifest_path} @ONLY)
             target_sources(${_target} PRIVATE ${_manifest_path})
         endif()
+
+        get_target_property(_type ${_target} TYPE)
+
+        if(${_type} STREQUAL "EXECUTABLE")
+            ck_add_win_shortcut(${_target} ${CHORUSKIT_BUILD_DIR}
+                OUTPUT_NAME "${CHORUSKIT_PROJECT_NAME}"
+            )
+        endif()
     elseif(APPLE AND FUNC_MAC_BUNDLE)
         # configure mac plist
         set_target_properties(${_target} PROPERTIES
@@ -604,6 +679,14 @@ function(ck_target_res _target)
             # ICNS icon MUST be added to executable's sources list, for some reason
             # Only apple can do
             target_sources(${_target} PRIVATE ${FUNC_ICNS})
+        endif()
+
+        get_target_property(_type ${_target} TYPE)
+
+        if(${_type} STREQUAL "EXECUTABLE")
+            set_target_properties(${_target} PROPERTIES
+                RUNTIME_OUTPUT_DIRECTORY ${CHORUSKIT_BUILD_DIR}
+            )
         endif()
     endif()
 
@@ -737,7 +820,7 @@ Add a resources copying command after building the target.
     ck_add_attaches(<target>
         SRC <files1...> DEST <dir1>
         SRC <files2...> DEST <dir2> ...
-        SKIP_INSTALL
+        [SKIP_INSTALL] [INSTALL_ONLY]
     )
 ]] #
 function(ck_add_attaches _target)
@@ -754,14 +837,21 @@ function(ck_add_attaches _target)
 
     set(_copy_args)
     set(_skip_install off)
+    set(_install_only off)
 
     foreach(_item ${ARGN})
         if(${_item} STREQUAL SKIP_INSTALL)
             set(_skip_install on)
+        elseif(${_item} STREQUAL INSTALL_ONLY)
+            set(_install_only on)
         else()
             list(APPEND _copy_args ${_item})
         endif()
     endforeach()
+
+    if(_install_only AND _skip_install)
+        message(FATAL_ERROR "ck_add_attaches: SKIP_INSTALL and INSTALL_ONLY are contradictory!")
+    endif()
 
     foreach(_item ${_copy_args})
         if(${_item} STREQUAL SRC)
@@ -806,16 +896,18 @@ function(ck_add_attaches _target)
                 foreach(_src_item ${_src})
                     get_filename_component(_full_path ${_src_item} ABSOLUTE)
 
-                    add_custom_command(TARGET ${_attach_target} POST_BUILD
-                        COMMAND ${CMAKE_COMMAND}
-                        -D "src=${_full_path}"
-                        -D "dest=${_path}"
-                        -P "${CHOURSKIT_SCRIPTS_DIR}/CopyIfDifferent.cmake"
-                    )
+                    if(NOT _install_only)
+                        add_custom_command(TARGET ${_attach_target} POST_BUILD
+                            COMMAND ${CMAKE_COMMAND}
+                            -D "src=${_full_path}"
+                            -D "dest=${_path}"
+                            -P "${CHOURSKIT_SCRIPTS_DIR}/CopyIfDifferent.cmake"
+                        )
+                    endif()
 
                     if(NOT _skip_install)
                         install(CODE "
-                            file(RELATIVE_PATH _rel_path \"${CHORUSKIT_BINARY_DIR}\" \"${_path}\")
+                            file(RELATIVE_PATH _rel_path \"${CHORUSKIT_BUILD_DIR}\" \"${_path}\")
                             execute_process(
                                 COMMAND \"${CMAKE_COMMAND}\"
                                 -D \"src=${_full_path}\"
@@ -855,12 +947,12 @@ function(ck_add_executable _target)
     add_executable(${_target} ${FUNC_UNPARSED_ARGUMENTS})
     set_target_properties(${_target} PROPERTIES
         BUILD_RPATH "${CHORUSKIT_EXECUTABLE_RPATH}"
-        RUNTIME_OUTPUT_DIRECTORY ${CHORUSKIT_RUNTIME_OUTPUT_DIRECTORY}
+        RUNTIME_OUTPUT_DIRECTORY ${CHORUSKIT_RUNTIME_OUTPUT_DIR}
     )
 
     if(NOT FUNC_SKIP_INSTALL)
         install(TARGETS ${_target}
-            DESTINATION "${CHORUSKIT_INSTALL_BINARY_DIRECTORY}" OPTIONAL
+            DESTINATION "${CHORUSKIT_RELATIVE_RUNTIME_DIR}" OPTIONAL
         )
     endif()
 endfunction()
@@ -997,15 +1089,15 @@ function(ck_add_library _target)
 
     set_target_properties(${_target} PROPERTIES
         BUILD_RPATH "${CHORUSKIT_LIBRARY_RPATH}"
-        RUNTIME_OUTPUT_DIRECTORY ${CHORUSKIT_RUNTIME_OUTPUT_DIRECTORY}
-        LIBRARY_OUTPUT_DIRECTORY ${CHORUSKIT_LIBRARY_OUTPUT_DIRECTORY}
-        ARCHIVE_OUTPUT_DIRECTORY ${CHORUSKIT_ARCHIVE_OUTPUT_DIRECTORY}
+        RUNTIME_OUTPUT_DIRECTORY ${CHORUSKIT_RUNTIME_OUTPUT_DIR}
+        LIBRARY_OUTPUT_DIRECTORY ${CHORUSKIT_LIBRARY_OUTPUT_DIR}
+        ARCHIVE_OUTPUT_DIRECTORY ${CHORUSKIT_ARCHIVE_OUTPUT_DIR}
     )
 
     if(NOT FUNC_SKIP_INSTALL)
         if(CHORUSKIT_INSTALL_DEV)
             set(_archive
-                ARCHIVE DESTINATION "${CHORUSKIT_INSTALL_LIBRARY_DIRECTORY}" OPTIONAL
+                ARCHIVE DESTINATION "${CHORUSKIT_RELATIVE_ARCHIVE_DIR}" OPTIONAL
             )
         else()
             set(_archive)
@@ -1013,8 +1105,8 @@ function(ck_add_library _target)
 
         install(TARGETS ${_target}
             EXPORT ChorusKit
-            RUNTIME DESTINATION "${CHORUSKIT_INSTALL_BINARY_DIRECTORY}" OPTIONAL
-            LIBRARY DESTINATION "${CHORUSKIT_INSTALL_LIBRARY_DIRECTORY}" OPTIONAL
+            RUNTIME DESTINATION "${CHORUSKIT_RELATIVE_RUNTIME_DIR}" OPTIONAL
+            LIBRARY DESTINATION "${CHORUSKIT_RELATIVE_LIBRARY_DIR}" OPTIONAL
             ${_archive}
         )
     endif()
@@ -1063,7 +1155,8 @@ function(ck_configure_plugin _target)
         message(FATAL_ERROR "ck_configure_plugin: CATEGORY not specified!")
     endif()
 
-    set(_out_dir ${CHORUSKIT_LIBRARY_OUTPUT_DIRECTORY}/${FUNC_PARENT}/plugins/${FUNC_CATEGORY})
+    set(_out_rel_path ${CHORUSKIT_RELATIVE_PLUGIN_DIR}/${FUNC_PARENT}/plugins/${FUNC_CATEGORY})
+    set(_out_dir ${CHORUSKIT_BUILD_DIR}/${_out_rel_path})
 
     if(FUNC_PLUGIN_NAME)
         set(_name ${FUNC_PLUGIN_NAME})
@@ -1154,14 +1247,12 @@ function(ck_configure_plugin _target)
         RUNTIME_OUTPUT_DIRECTORY ${_out_dir}
         LIBRARY_OUTPUT_DIRECTORY ${_out_dir}
         ARCHIVE_OUTPUT_DIRECTORY ${_out_dir}
-
-        # OUTPUT_NAME ${_name}
     )
 
     if(NOT FUNC_SKIP_INSTALL)
         if(CHORUSKIT_INSTALL_DEV)
             set(_archive
-                ARCHIVE DESTINATION "${CHORUSKIT_INSTALL_LIBRARY_DIRECTORY}/${FUNC_PARENT}/plugins/${FUNC_CATEGORY}" OPTIONAL
+                ARCHIVE DESTINATION "${_out_rel_path}" OPTIONAL
             )
         else()
             set(_archive)
@@ -1169,8 +1260,8 @@ function(ck_configure_plugin _target)
 
         install(TARGETS ${_target}
             EXPORT ChorusKit
-            RUNTIME DESTINATION "${CHORUSKIT_INSTALL_LIBRARY_DIRECTORY}/${FUNC_PARENT}/plugins/${FUNC_CATEGORY}" OPTIONAL
-            LIBRARY DESTINATION "${CHORUSKIT_INSTALL_LIBRARY_DIRECTORY}/${FUNC_PARENT}/plugins/${FUNC_CATEGORY}" OPTIONAL
+            RUNTIME DESTINATION "${_out_rel_path}" OPTIONAL
+            LIBRARY DESTINATION "${_out_rel_path}" OPTIONAL
             ${_archive}
         )
     endif()
@@ -1206,7 +1297,9 @@ function(ck_add_win_shortcut _target _dir)
     set(_vbs_name ${CMAKE_CURRENT_BINARY_DIR}/${_target}_shortcut.vbs)
     set(_vbs_temp ${_vbs_name}.in)
 
-    set(SHORTCUT_PATH "${_dir}/${_output_name}.lnk")
+    set(_lnk_path "${_dir}/${_output_name}.lnk")
+
+    set(SHORTCUT_PATH ${_lnk_path})
     set(SHORTCUT_TARGET_PATH $<TARGET_FILE:${_target}>)
     set(SHORTCUT_WORKING_DIRECOTRY $<TARGET_FILE_DIR:${_target}>)
     set(SHORTCUT_DESCRIPTION $<TARGET_FILE_BASE_NAME:${_target}>)
@@ -1222,6 +1315,7 @@ function(ck_add_win_shortcut _target _dir)
     add_custom_command(
         TARGET ${_target} POST_BUILD
         COMMAND cscript ${_vbs_name}
+        BYPRODUCTS ${_lnk_path}
     )
 endfunction()
 
@@ -1237,7 +1331,7 @@ Deploy Qt libraries and plugins.
     Create a target to deploy Qt frameworks for a real target.
 ]] #
 function(ck_add_deploy_qt_target _target)
-    set(options)
+    set(options SKIP_INSTALL)
     set(oneValueArgs TARGET LIB_DIR PLUGINS_DIR)
     set(multiValueArgs)
     cmake_parse_arguments(FUNC "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
@@ -1293,7 +1387,8 @@ function(ck_add_deploy_qt_target _target)
         WORKING_DIRECTORY $<TARGET_FILE_DIR:${_deploy_target}>
     )
 
-    install(CODE "
+    if(NOT FUNC_SKIP_INSTALL)
+        install(CODE "
         execute_process(
             COMMAND \"${QT_DEPLOY_EXECUTABLE}\"
             --libdir \"${_lib_dir}\"
@@ -1308,6 +1403,7 @@ function(ck_add_deploy_qt_target _target)
             WORKING_DIRECTORY \"${CMAKE_INSTALL_PREFIX}/bin\"
         )
     ")
+    endif()
 endfunction()
 
 #[[
@@ -1324,7 +1420,6 @@ function(ck_finish_build_system)
     cmake_parse_arguments(FUNC "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
 
     if(NOT FUNC_SKIP_INSTALL)
-        # install(DIRECTORY ${CHORUSKIT_SHARE_OUTPUT_DIRECTORY}/ DESTINATION "share")
         set(_install_dir "lib/cmake")
 
         include(GNUInstallDirs)
@@ -1357,7 +1452,7 @@ function(ck_finish_build_system)
             # install(EXPORT ChorusKit
             # DESTINATION ${_install_dir}
             # )
-            install(DIRECTORY ${CHORUSKIT_SOURCE_DIRECTORY}/
+            install(DIRECTORY ${CHORUSKIT_SOURCE_DIR}/
                 DESTINATION "${CHORUSKIT_INSTALL_INCLUDE_DIRECTORY}"
                 FILES_MATCHING PATTERN "*.h"
             )

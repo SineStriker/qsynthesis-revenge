@@ -35,12 +35,18 @@ if(TRUE)
     add_dependencies(${PROJECT_NAME} ${PROJECT_NAME}_translations_lrelease)
 
     ck_add_attaches(${PROJECT_NAME}
-        SRC Res/qtdummy.res.json DEST ${CHORUSKIT_SHARE_OUTPUT_DIRECTORY}/qtdummy
-        SRC Res/themes DEST ${CHORUSKIT_SHARE_OUTPUT_DIRECTORY}/qtdummy/qtdummy.res
-        SRC ${CMAKE_CURRENT_BINARY_DIR}/Res/translations DEST ${CHORUSKIT_SHARE_OUTPUT_DIRECTORY}/qtdummy/qtdummy.res
+        SRC Res/conf/${CHORUSKIT_PLATFORM_SHORT}/qtmedium.conf.json DEST ${CHORUSKIT_RUNTIME_OUTPUT_DIR}
+        SRC Res/qtdummy.res.json DEST ${CHORUSKIT_SHARE_OUTPUT_DIR}/qtdummy
+        SRC Res/themes DEST ${CHORUSKIT_SHARE_OUTPUT_DIR}/qtdummy/qtdummy.res
+        SRC ${CMAKE_CURRENT_BINARY_DIR}/Res/translations DEST ${CHORUSKIT_SHARE_OUTPUT_DIR}/qtdummy/qtdummy.res
+    )
+
+    ck_add_attaches(${PROJECT_NAME}
+        INSTALL_ONLY
+        SRC Res/conf/${CHORUSKIT_PLATFORM_SHORT}/qt.conf DEST ${CHORUSKIT_QT_CONF_OUTPUT_DIR}
     )
 
     if(WIN32 OR APPLE)
-        ck_add_deploy_qt_target(qtdummy_deploy TARGET ${PROJECT_NAME})
+        ck_add_deploy_qt_target(qtdummy_deploy TARGET ${PROJECT_NAME} SKIP_INSTALL)
     endif()
 endif()

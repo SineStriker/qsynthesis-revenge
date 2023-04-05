@@ -6,6 +6,7 @@
 #define CHORUSKIT_DIALOGHELPER_P_H
 
 #include "DialogHelper.h"
+
 #include <QSet>
 
 namespace Core {

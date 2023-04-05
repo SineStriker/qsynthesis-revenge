@@ -58,35 +58,37 @@ namespace Core {
         }
     }
 
-    void WindowSystem::addWindow(IWindowFactory *factory) {
+    bool WindowSystem::addWindow(IWindowFactory *factory) {
         Q_D(WindowSystem);
         if (!factory) {
             qWarning() << "Core::WindowSystem::addWindow(): trying to add null creator";
-            return;
+            return false;
         }
         if (d->windowFactories.contains(factory->id())) {
             qWarning() << "Core::WindowSystem::addWindow(): trying to add duplicated creator:" << factory->id();
-            return;
+            return false;
         }
         d->windowFactories.insert(factory->id(), factory);
+        return true;
     }
 
-    void WindowSystem::removeWindow(IWindowFactory *factory) {
+    bool WindowSystem::removeWindow(IWindowFactory *factory) {
         if (factory == nullptr) {
             qWarning() << "Core::WindowSystem::removeWindow(): trying to remove null creator";
-            return;
+            return false;
         }
-        removeWindow(factory->id());
+        return removeWindow(factory->id());
     }
 
-    void WindowSystem::removeWindow(const QString &id) {
+    bool WindowSystem::removeWindow(const QString &id) {
         Q_D(WindowSystem);
         auto it = d->windowFactories.find(id);
         if (it == d->windowFactories.end()) {
             qWarning() << "Core::WindowSystem::removeWindow(): creator does not exist:" << id;
-            return;
+            return false;
         }
         d->windowFactories.erase(it);
+        return true;
     }
 
     QList<IWindowFactory *> WindowSystem::windowFactories() const {
@@ -99,26 +101,28 @@ namespace Core {
         d->windowFactories.clear();
     }
 
-    void WindowSystem::addAddOn(IWindowAddOnFactory *factory) {
+    bool WindowSystem::addAddOn(IWindowAddOnFactory *factory) {
         Q_D(WindowSystem);
         if (!factory) {
             qWarning() << "Core::WindowSystem::addAddOn(): trying to add null add-on";
-            return;
+            return false;
         }
         d->addOnFactories.append(factory);
+        return true;
     }
 
-    void WindowSystem::removeAddOn(IWindowAddOnFactory *factory) {
+    bool WindowSystem::removeAddOn(IWindowAddOnFactory *factory) {
         Q_D(WindowSystem);
         if (!factory) {
             qWarning() << "Core::WindowSystem::removeAddOn(): trying to remove null add-on";
-            return;
+            return false;
         }
 
         if (!d->addOnFactories.remove(factory)) {
             qWarning() << "Core::WindowSystem::removeAddOn(): add-on does not exist:" << factory;
-            return;
+            return false;
         }
+        return true;
     }
 
     QList<IWindowAddOnFactory *> WindowSystem::addOnFactories() const {
