@@ -47,6 +47,6 @@ if(TRUE)
     )
 
     if(WIN32 OR APPLE)
-        ck_add_deploy_qt_target(qtdummy_deploy TARGET ${PROJECT_NAME} SKIP_INSTALL)
+        ck_add_deploy_qt_target(qtdummy_deploy TARGET ${PROJECT_NAME})
     endif()
 endif()

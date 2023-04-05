@@ -11,7 +11,7 @@ int main(int argc, char *argv[]) {
     
     QNetworkAccessManager manager;
 
-    // An highlighted block
+    // A highlighted block
     QNetworkRequest request;
     request.setUrl(QUrl(url));
     request.setRawHeader("User-Agent", "MyOwnBrowser 1.0");

@@ -29,13 +29,13 @@ namespace Core {
         static QString mainTitle();
         static QString displayTitle(const QString &text);
         static void aboutApp(QWidget *parent = nullptr);
-        
+
         ActionSystem *actionSystem() const;
         WindowSystem *windowSystem() const;
 
         DialogHelper *dialogHelper() const;
 
-//        SettingCatalog *settingCatalog() const;
+        // SettingCatalog *settingCatalog() const;
 
     private:
         explicit ICore(QObject *parent = nullptr);

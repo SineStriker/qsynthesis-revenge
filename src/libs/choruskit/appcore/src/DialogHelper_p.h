@@ -18,6 +18,7 @@ namespace Core {
         DialogHelper* q_ptr;
         QMap<QString, IDialogPage *> dialogPages;
         QMap<QString, QDialog *> openedDialogs;
+
     signals:
         void reloadStrings();
     };
