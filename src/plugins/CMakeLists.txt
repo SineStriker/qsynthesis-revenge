@@ -39,6 +39,8 @@ function(configure_plugin _plugin _author)
     ck_add_library(${_target} SHARED AUTOGEN SKIP_INSTALL ${_add_lib_args})
     add_library(${SUB_PROJECT}::${PROJECT_NAME} ALIAS ${_target})
 
+    add_dependencies(${SUB_PROJECT} ${_target})
+
     ck_configure_plugin(${_target}
         PARENT ${SUB_PROJECT}
         CATEGORY ${PROJECT_NAME}
@@ -57,4 +59,4 @@ function(configure_plugin _plugin _author)
     set(${_plugin} ${_target} PARENT_SCOPE)
 endfunction()
 
-add_subdirectory(diffscope)
+add_subdirectory(${ROOT_CURRENT_APP_LOWER})

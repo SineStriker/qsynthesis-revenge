@@ -7,6 +7,10 @@
 #include <QCoreApplication>
 #include <QDebug>
 
+#include <QJsonArray>
+#include <QJsonDocument>
+#include <QJsonObject>
+
 QMCoreHostPrivate::QMCoreHostPrivate() {
     isAboutToQuit = false;
 
@@ -29,11 +33,73 @@ void QMCoreHostPrivate::init() {
     appDataDir = QMFs::appDataPath() + "/ChorusKit/" + qAppName();
     tempDir = QDir::tempPath() + "/ChorusKit/" + qAppName();
 
-    QDir binDir(qApp->applicationDirPath());
-    binDir.cdUp();
+    // Read qtmedium.json
+    {
+        QFile file(qApp->applicationDirPath() + "/qtmedium.conf.json");
+        if (!file.open(QIODevice::ReadOnly)) {
+            qDebug() << "qtmedium: configuration file not found";
+            goto finish_conf;
+        }
+        QByteArray data(file.readAll());
+        file.close();
 
-    libDir = binDir.absoluteFilePath("lib");
-    shareDir = binDir.absoluteFilePath("share");
+        QJsonParseError err;
+        QJsonDocument doc = QJsonDocument::fromJson(data, &err);
+        if (err.error != QJsonParseError::NoError || !doc.isObject()) {
+            qDebug() << "qtmedium: configuration file not valid";
+            goto finish_conf;
+        }
+
+        qDebug() << "qtmedium: load configuration file success";
+
+        auto obj = doc.object();
+        for (auto it = obj.begin(); it != obj.end(); ++it) {
+            QStringList res;
+            if (it->isArray()) {
+                auto arr = it->toArray();
+                for (const auto &item : qAsConst(arr)) {
+                    if (item.isString()) {
+                        res.append(item.toString());
+                    }
+                }
+            } else if (it->isString()) {
+                res.append(it->toString());
+            } else if (it->isDouble()) {
+                res.append(QString::number(it->toDouble()));
+            }
+            if (res.isEmpty()) {
+                continue;
+            }
+            confValues.insert(it.key(), res);
+        }
+    }
+
+finish_conf:
+    QString appDir = qApp->applicationDirPath();
+
+    confPrefix = confValues.value("Prefix", {appDir}).front();
+    if (QMFs::isPathRelative(confPrefix)) {
+        confPrefix = appDir + "/" + confPrefix;
+    }
+    confPrefix = QFileInfo(confPrefix).canonicalFilePath();
+
+    libDir = confValues.value("Libraries", {"lib"}).front();
+    if (QMFs::isPathRelative(libDir)) {
+        libDir = confPrefix + "/" + libDir;
+    }
+
+    shareDir = confValues.value("Share", {"share"}).front();
+    if (QMFs::isPathRelative(shareDir)) {
+        shareDir = confPrefix + "/" + shareDir;
+    }
+
+    QStringList plugins = confValues.value("Plugins", {});
+    for (auto path : qAsConst(plugins)) {
+        if (QMFs::isPathRelative(path)) {
+            path = confPrefix + "/" + path;
+        }
+        QCoreApplication::addLibraryPath(path);
+    }
 
     // Init factory
     fac.reset(createFactory());

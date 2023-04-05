@@ -1,6 +1,6 @@
 project(DiffScope
     LANGUAGES CXX
-    VERSION ${APP_VERSION_VERBOSE}
+    VERSION ${CONFIG_APP_VERSION}
 )
 
 ck_get_short_version(PROJECT_VERSION_SHORT ${PROJECT_VERSION} 3)
@@ -13,10 +13,10 @@ ck_add_appmain(${PROJECT_NAME} CkAppLoad ${ROOT_APPMAIN_TYPE}
 
 ck_target_res(${PROJECT_NAME}
     VERSION ${PROJECT_VERSION}
-    DESCRIPTION "${APP_TOOLSET_NAME} ${PROJECT_NAME}"
+    DESCRIPTION "ChorusKit ${PROJECT_NAME}"
     COPYRIGHT ${ROOT_OPENVPI_COPYRIGHT}
-    ICO win32/app.ico
-    ICNS mac/app.icns
+    ICO app.ico
+    ICNS app.icns
     MANIFEST MAC_BUNDLE
 )
 
@@ -30,14 +30,17 @@ set(_config_file ${CMAKE_CURRENT_BINARY_DIR}/config.json)
 configure_file(config.json.in ${_config_file} @ONLY)
 
 ck_add_attaches(${PROJECT_NAME}
-    SRC ${_config_file} ${APP_CONFIG_SPLASH_IMAGE} DEST ${CHORUSKIT_SHARE_OUTPUT_DIRECTORY}/${PROJECT_NAME}
+    SRC ${_config_file} ${APP_CONFIG_SPLASH_IMAGE} DEST ${CHORUSKIT_SHARE_OUTPUT_DIR}/${PROJECT_NAME}
 )
 
-if(CONFIG_CREATE_WIN_SHORTCUT)
-    ck_add_win_shortcut(${PROJECT_NAME} ${CHORUSKIT_BINARY_DIR}
-        OUTPUT_NAME "${APP_TOOLSET_NAME} ${PROJECT_NAME}"
-    )
-endif()
+# Install docs and platform files
+ck_get_subdirs(_docs_dirs DIRECTORY docs ABSOLUTE)
+ck_get_subdirs(_platform_dirs DIRECTORY share/${CHORUSKIT_PLATFORM_SHORT} ABSOLUTE)
+
+ck_add_attaches(${PROJECT_NAME} INSTALL_ONLY
+    SRC ${_docs_dirs} DEST ${CHORUSKIT_DOCS_OUTPUT_DIR}
+    SRC ${_platform_dirs} DEST ${CHORUSKIT_SHARE_OUTPUT_DIR}
+)
 
 #[[
 

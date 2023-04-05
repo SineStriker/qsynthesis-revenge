@@ -1,0 +1,11 @@
+{
+    "Prefix": "..",
+    "Libraries": "lib",
+    "Share": "share",
+    "Plugins": [
+        "lib/QsLib/plugins"
+    ],
+    "Decorators": [
+        "share/qtdummy/qtdummy.res.json"
+    ]
+}
