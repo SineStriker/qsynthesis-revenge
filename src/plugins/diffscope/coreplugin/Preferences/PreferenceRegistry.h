@@ -21,7 +21,7 @@ namespace Core {
         void addItem(IPreferenceItem *node, const QString &parentId = "");
         IPreferenceItem *getItem(const QString &id);
 
-        void showPreferenceDialog(QWidget *parent, QString &entryPageId);
+        void showPreferenceDialog(QWidget *parent, const QString &entryPageId);
         void closePreferenceDialog(int result);
 
     protected:

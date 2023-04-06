@@ -7,7 +7,6 @@
 #include <QObject>
 namespace Core {
     class IPreferenceItem {
-        Q_OBJECT
     public:
         enum NodeType {
             Page,

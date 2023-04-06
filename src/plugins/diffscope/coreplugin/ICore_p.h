@@ -2,6 +2,7 @@
 #define ICORE_P_H
 
 #include "ICore.h"
+#include "Preferences/PreferenceRegistry.h"
 
 namespace Core {
 
@@ -16,6 +17,7 @@ namespace Core {
         ActionSystem *actionSystem;
         WindowSystem *windowSystem;
         DialogHelper *dialogHelper;
+        PreferenceRegistry *preferenceRegistry;
         SettingCatalog *settingCatalog;
     };
 

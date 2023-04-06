@@ -7,6 +7,7 @@
 #include <CoreApi/DialogHelper.h>
 #include <CoreApi/WindowSystem.h>
 
+#include "Preferences/PreferenceRegistry.h"
 #include "Settings/SettingCatalog.h"
 
 namespace Core {
@@ -33,6 +34,8 @@ namespace Core {
         WindowSystem *windowSystem() const;
 
         DialogHelper *dialogHelper() const;
+
+        PreferenceRegistry *preferenceRegistry() const;
 
         SettingCatalog *settingCatalog() const;
 
