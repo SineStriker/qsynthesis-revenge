@@ -6,17 +6,24 @@
 #define MyAppPublisher "OpenVPI"
 #define MyAppURL "https://www.openvpi.org/"
 #define MyAppExeName "DiffScope.exe"
+#define MyAppAssocName MyAppName + " Project File"
+#define MyAppAssocExt ".dspx"
+#define MyAppAssocKey StringChange(MyAppAssocName, " ", "") + MyAppAssocExt
 
 #define MyAppExePath "bin\DiffScope.exe"    
-#define MyAppBuildPath "C:\Users\truef\Documents\GitHub\qsynthesis-revenge\build\install"
-#define MyAppIconFile "C:\Users\truef\Documents\GitHub\qsynthesis-revenge\src\apps\diffscope\win32\app.ico"
-#define MyAppUninstallerIconFile "C:\Users\truef\Documents\GitHub\qsynthesis-revenge\src\apps\diffscope\win32\app.ico"
+; #define MyAppBuildPath "C:\Users\truef\Documents\GitHub\qsynthesis-revenge\build\install"
+; #define MyAppIconFile "C:\Users\truef\Documents\GitHub\qsynthesis-revenge\src\apps\diffscope\win32\app.ico"
+; #define MyAppUninstallerIconFile "C:\Users\truef\Documents\GitHub\qsynthesis-revenge\src\apps\diffscope\win32\app.ico"
+#define MyAppBuildPath "D:\Users\fluty\Documents\GitHub\DiffScope-FD\cmake-build-debug\install"
+#define MyAppIconFile "D:\Users\fluty\Documents\GitHub\DiffScope-FD\src\apps\diffscope\app.ico"
+#define MyAppUninstallerIconFile "D:\Users\fluty\Documents\GitHub\DiffScope-FD\src\apps\diffscope\app.ico"
 
-#define MyLicenseFileEN "C:\Users\truef\Documents\GitHub\qsynthesis-revenge\scripts\installer\license-en.txt"
-#define MyLicenseFileCN "C:\Users\truef\Documents\GitHub\qsynthesis-revenge\scripts\installer\license-cn.txt"
+#define MyLicenseFileEN MyAppBuildPath + "\share\docs\DiffScope\license-en.txt"
+#define MyLicenseFileCN MyAppBuildPath + "\share\docs\DiffScope\license-cn.txt"
 
 #define MyOutputName "choruskit-diffscope-1.0-setup"
-#define MyOutputDir "C:\Users\truef\Desktop"
+; #define MyOutputDir "C:\Users\truef\Desktop"
+#define MyOutputDir "C:\Users\fluty\Downloads"
 
 [Setup]
 ; NOTE: The value of AppId uniquely identifies this application. Do not use the same AppId value in installers for other applications.
@@ -57,6 +64,13 @@ Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{
 [Files]
 Source: "{#MyAppBuildPath}\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
+
+[Registry]
+Root: HKA; Subkey: "Software\Classes\{#MyAppAssocExt}\OpenWithProgids"; ValueType: string; ValueName: "{#MyAppAssocKey}"; ValueData: ""; Flags: uninsdeletevalue
+Root: HKA; Subkey: "Software\Classes\{#MyAppAssocKey}"; ValueType: string; ValueName: ""; ValueData: "{#MyAppAssocName}"; Flags: uninsdeletekey
+Root: HKA; Subkey: "Software\Classes\{#MyAppAssocKey}\DefaultIcon"; ValueType: string; ValueName: ""; ValueData: "{app}\share\DiffScope\icons\dspx.ico"; Flags: uninsdeletekey
+Root: HKA; Subkey: "Software\Classes\{#MyAppAssocKey}\shell\open\command"; ValueType: string; ValueName: ""; ValueData: """{app}\{#MyAppExePath}"" ""%1"""; Flags: uninsdeletekey
+Root: HKA; Subkey: "Software\Classes\Applications\{#MyAppExeName}\SupportedTypes"; ValueType: string; ValueName: ".dspx"; ValueData: ""; Flags: uninsdeletekey
 
 [Icons]
 Name: "{group}\{#MyAppName}"; Filename: "{app}\{#MyAppExePath}"

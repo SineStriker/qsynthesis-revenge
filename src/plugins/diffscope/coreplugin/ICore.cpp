@@ -6,6 +6,8 @@
 #include <QApplication>
 #include <QMessageBox>
 
+#include "Internal/Dialogs/SettingsDialog.h"
+
 namespace Core {
 
     ICorePrivate::ICorePrivate() {
@@ -50,6 +52,26 @@ namespace Core {
 #else
         QMessageBox::information(parent, title, text);
 #endif
+    }
+
+    int ICore::showSettingsDialog(const QString &id, QWidget *parent) {
+        static Internal::SettingsDialog *dlg = nullptr;
+
+        if (dlg) {
+            dlg->selectPage(id);
+            return 0;
+        }
+
+        int code;
+        {
+            Internal::SettingsDialog dlg2(parent);
+            dlg = &dlg2;
+            dlg2.selectPage(id);
+            code = dlg2.exec();
+            dlg = nullptr;
+        }
+
+        return code;
     }
 
     ActionSystem *ICore::actionSystem() const {
