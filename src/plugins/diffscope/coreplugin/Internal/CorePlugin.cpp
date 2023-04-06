@@ -23,6 +23,10 @@
 #include "CoreApi/ILoader.h"
 #include "CoreApi/WindowSystem.h"
 
+#include "Internal/Settings/ActionConfigurePage.h"
+#include "Internal/Settings/AppearanceTopPage.h"
+#include "Internal/Settings/DisplayPage.h"
+
 namespace Core {
 
     namespace Internal {
@@ -60,11 +64,6 @@ namespace Core {
             // Add basic actions
             auto actionMgr = icore->actionSystem();
 
-            // QDirIterator it(":", QDirIterator::Subdirectories);
-            // while (it.hasNext()) {
-            //     qDebug() << it.next();
-            // }
-
             if (actionMgr->loadContexts(":/actions.xml").isEmpty()) {
                 *errorMessage = tr("Cannot load action configuration.");
                 return false;
@@ -78,6 +77,20 @@ namespace Core {
 
             winMgr->addAddOn(new HomeWindowAddOnFactory());
             winMgr->addAddOn(new ProjectWindowAddOnFactory());
+
+            // Add setting panels
+            auto sc = icore->settingCatalog();
+            {
+                auto appearance = new AppearanceTopPage();
+
+                auto display = new DisplayPage();
+                auto actionConfigure = new ActionConfigurePage();
+
+                appearance->addPage(display);
+                appearance->addPage(actionConfigure);
+
+                sc->addPage(appearance);
+            }
 
             qIDec->addThemeTemplate("Global", ":/themes/global.qss.in");
             qIDec->addThemeTemplate("HomeWindow", ":/themes/home.qss.in");

@@ -24,9 +24,6 @@ namespace Core {
             void extensionsInitialized() override;
 
             void reloadMenuBar();
-
-        private:
-            ActionItem *fileMenu, *helpMenu;
         };
 
     }

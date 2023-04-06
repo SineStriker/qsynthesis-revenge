@@ -1,6 +1,8 @@
 #include "SettingCatalog.h"
 #include "SettingCatalog_p.h"
 
+#include "Internal/Dialogs/SettingsDialog.h"
+
 #include <QDebug>
 
 namespace Core {
@@ -19,6 +21,7 @@ namespace Core {
             allPages[page->id()].insert(page);
             emit q_ptr->pageAdded(page);
 
+            connect(page, &ISettingPage::titleChanged, this, &SettingCatalogPrivate::_q_pageTitleChanged);
             connect(page, &ISettingPage::pageAdded, this, &SettingCatalogPrivate::_q_pageAdded);
             connect(page, &ISettingPage::pageRemoved, this, &SettingCatalogPrivate::_q_pageRemoved);
         };
@@ -39,16 +42,22 @@ namespace Core {
                     allPages.erase(it);
                 }
             }
-            emit q_ptr->pageRemoved(page);
-
+            disconnect(page, &ISettingPage::titleChanged, this, &SettingCatalogPrivate::_q_pageTitleChanged);
             disconnect(page, &ISettingPage::pageAdded, this, &SettingCatalogPrivate::_q_pageAdded);
             disconnect(page, &ISettingPage::pageRemoved, this, &SettingCatalogPrivate::_q_pageRemoved);
+
+            emit q_ptr->pageRemoved(page);
         };
 
         doIt(page);
         for (const auto &item : page->allPages()) {
             doIt(item);
         }
+    }
+
+    void SettingCatalogPrivate::_q_pageTitleChanged(const QString &title) {
+        Q_Q(SettingCatalog);
+        emit q->titleChanged(qobject_cast<ISettingPage *>(sender()), title);
     }
 
     void SettingCatalogPrivate::_q_pageAdded(ISettingPage *page) {
@@ -63,6 +72,26 @@ namespace Core {
     }
 
     SettingCatalog::~SettingCatalog() {
+    }
+
+    int SettingCatalog::showDialog(const QString &id, QWidget *parent) {
+        static Internal::SettingsDialog *dlg = nullptr;
+
+        if (dlg) {
+            dlg->selectPage(id);
+            return 0;
+        }
+
+        int code;
+        {
+            Internal::SettingsDialog dlg2(parent);
+            dlg = &dlg2;
+            dlg2.selectPage(id);
+            code = dlg2.exec();
+            dlg = nullptr;
+        }
+
+        return code;
     }
 
     bool SettingCatalog::addPage(ISettingPage *page) {
@@ -110,6 +139,16 @@ namespace Core {
         return true;
     }
 
+    ISettingPage *SettingCatalog::page(const QString &id) const {
+        Q_D(const SettingCatalog);
+        return d->pages.value(id, nullptr);
+    }
+
+    QList<ISettingPage *> SettingCatalog::pages() const {
+        Q_D(const SettingCatalog);
+        return d->pages.values();
+    }
+
     QList<ISettingPage *> SettingCatalog::pages(const QString &id) const {
         Q_D(const SettingCatalog);
         return d->allPages.value(id, {}).values();
@@ -118,7 +157,7 @@ namespace Core {
     QList<ISettingPage *> SettingCatalog::allPages() const {
         Q_D(const SettingCatalog);
         QList<ISettingPage *> res;
-        for (const auto &page : d->pages){
+        for (const auto &page : d->pages) {
             res.append(page);
             res.append(page->allPages());
         }

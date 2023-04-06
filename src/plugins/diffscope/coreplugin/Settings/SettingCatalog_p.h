@@ -25,6 +25,7 @@ namespace Core {
         QHash<QString, QSet<ISettingPage *>> allPages;
 
     private:
+        void _q_pageTitleChanged(const QString &title);
         void _q_pageAdded(ISettingPage *page);
         void _q_pageRemoved(ISettingPage *page);
     };
