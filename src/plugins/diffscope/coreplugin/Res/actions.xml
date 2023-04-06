@@ -6,6 +6,9 @@
                 <action id="NewFile"/>
                 <action id="OpenFile"/>
             </group>
+            <group id="PreferenceGroup">
+                <action id="Settings"/>
+            </group>
         </menu>
 
         <menu id="Help">
