@@ -28,6 +28,7 @@ namespace Core {
 
         ISettingPage *page(const QString &id) const;
         QList<ISettingPage *> pages() const;
+        QList<ISettingPage *> allPages() const;
 
     public:
         virtual QString sortKeyword() const;
@@ -40,6 +41,9 @@ namespace Core {
 
     signals:
         void titleChanged(const QString &title);
+
+        void pageAdded(ISettingPage *page);
+        void pageRemoved(ISettingPage *page);
 
     protected:
         ISettingPage(ISettingPagePrivate &d, const QString &id, QObject *parent = nullptr);

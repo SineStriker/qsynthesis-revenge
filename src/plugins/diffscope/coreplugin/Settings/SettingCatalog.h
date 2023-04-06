@@ -19,8 +19,12 @@ namespace Core {
         bool removePage(ISettingPage *page);
         bool removePage(const QString &id);
 
-        ISettingPage *page(const QString &id) const;
-        QList<ISettingPage *> pages() const;
+        QList<ISettingPage *> pages(const QString &id) const;
+        QList<ISettingPage *> allPages() const;
+
+    signals:
+        void pageAdded(ISettingPage *page);
+        void pageRemoved(ISettingPage *page);
 
     protected:
         SettingCatalog(SettingCatalogPrivate &d, QObject *parent = nullptr);
