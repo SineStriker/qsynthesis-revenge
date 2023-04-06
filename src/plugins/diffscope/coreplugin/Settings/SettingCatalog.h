@@ -14,15 +14,21 @@ namespace Core {
         explicit SettingCatalog(QObject *parent = nullptr);
         ~SettingCatalog();
 
+        static int showDialog(const QString &id, QWidget *parent = nullptr);
+
     public:
         bool addPage(ISettingPage *page);
         bool removePage(ISettingPage *page);
         bool removePage(const QString &id);
 
+        ISettingPage *page(const QString &id) const;
+        QList<ISettingPage *> pages() const;
         QList<ISettingPage *> pages(const QString &id) const;
         QList<ISettingPage *> allPages() const;
 
     signals:
+        void titleChanged(ISettingPage *page, const QString &title);
+
         void pageAdded(ISettingPage *page);
         void pageRemoved(ISettingPage *page);
 

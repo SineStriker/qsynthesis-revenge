@@ -92,7 +92,7 @@ namespace Core {
     QList<ISettingPage *> ISettingPage::allPages() const {
         Q_D(const ISettingPage);
         QList<ISettingPage *> res;
-        for (const auto &page : d->pages){
+        for (const auto &page : d->pages) {
             res.append(page);
             res.append(page->allPages());
         }
@@ -105,7 +105,8 @@ namespace Core {
     }
 
     bool ISettingPage::matches(const QString &word) const {
-        return false;
+        Q_D(const ISettingPage);
+        return d->title.contains(word) || sortKeyword().contains(word);
     }
 
     ISettingPage::ISettingPage(ISettingPagePrivate &d, const QString &id, QObject *parent)

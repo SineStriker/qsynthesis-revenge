@@ -4,8 +4,8 @@
 #include <QLabel>
 #include <QLineEdit>
 #include <QMenuBar>
-#include <QVBoxLayout>
 #include <QPushButton>
+#include <QVBoxLayout>
 
 #include "Window/IHomeWindow.h"
 
@@ -35,28 +35,27 @@ namespace Core {
             ICore::instance()->dialogHelper()->addDialogPage(new TestDialogPage);
             auto testLayout = new QVBoxLayout;
             auto testTextInput = new QLineEdit;
-            auto testDialogPage = qobject_cast<TestDialogPage *>(ICore::instance()->dialogHelper()->getDialogPage("test"));
+            auto testDialogPage =
+                qobject_cast<TestDialogPage *>(ICore::instance()->dialogHelper()->getDialogPage("test"));
             connect(testTextInput, &QLineEdit::textChanged, testDialogPage, &TestDialogPage::setLabelText);
-            connect(testDialogPage, &TestDialogPage::accepted, testTextInput, [=](){
-               testTextInput->setText(testDialogPage->getEditText());
-            });
+            connect(testDialogPage, &TestDialogPage::accepted, testTextInput,
+                    [=]() { testTextInput->setText(testDialogPage->getEditText()); });
             testTextInput->setText("114514");
             auto testModalDialog = new QPushButton("Test modal dialog");
             auto testModelessDialog = new QPushButton("Test modeless dialog");
             auto testAcceptCloseDialog = new QPushButton("Test accept and close dialog");
             auto testRejectCloseDialog = new QPushButton("Test reject and close dialog");
-            connect(testModalDialog, &QPushButton::clicked, [=](){
-                ICore::instance()->dialogHelper()->showDialog("test", testModalDialog);
+            connect(testModalDialog, &QPushButton::clicked,
+                    [=]() { ICore::instance()->dialogHelper()->showDialog("test", testModalDialog); });
+            connect(testModelessDialog, &QPushButton::clicked, [=]() {
+                ICore::instance()->dialogHelper()->showModelessDialog(
+                    "test", testModelessDialog,
+                    DialogHelper::OkButton | DialogHelper::CancelButton | DialogHelper::ApplyButton);
             });
-            connect(testModelessDialog, &QPushButton::clicked, [=](){
-                ICore::instance()->dialogHelper()->showModelessDialog("test", testModelessDialog, DialogHelper::OkButton | DialogHelper::CancelButton | DialogHelper::ApplyButton);
-            });
-            connect(testAcceptCloseDialog, &QPushButton::clicked, [=](){
-                ICore::instance()->dialogHelper()->closeDialog("test", QDialog::Accepted);
-            });
-            connect(testRejectCloseDialog, &QPushButton::clicked, [=](){
-                ICore::instance()->dialogHelper()->closeDialog("test", QDialog::Rejected);
-            });
+            connect(testAcceptCloseDialog, &QPushButton::clicked,
+                    [=]() { ICore::instance()->dialogHelper()->closeDialog("test", QDialog::Accepted); });
+            connect(testRejectCloseDialog, &QPushButton::clicked,
+                    [=]() { ICore::instance()->dialogHelper()->closeDialog("test", QDialog::Rejected); });
             testLayout->addWidget(testTextInput);
             testLayout->addWidget(testModalDialog);
             testLayout->addWidget(testModelessDialog);
@@ -80,9 +79,16 @@ namespace Core {
             auto helpItem = new ActionItem("home_Help", new QMenu("Help(&H)"));
 
             auto openGroupItem = new ActionItem("home_OpenGroup", new QActionGroup(this));
-
             auto newFileItem = new ActionItem("home_NewFile", new QAction("New File"));
             auto openFileItem = new ActionItem("home_OpenFile", new QAction("Open File"));
+
+            auto preferenceGroupItem = new ActionItem("home_PreferenceGroup", new QActionGroup(this));
+            auto settingsItem = new ActionItem("home_Settings", new QAction("Settings"));
+
+            connect(settingsItem->action(), &QAction::triggered, this, [this]() {
+                Q_UNUSED(this);
+                ICore::instance()->settingCatalog()->showDialog("core_Settings"); //
+            });
 
             ICore::instance()
                 ->actionSystem()
@@ -95,6 +101,8 @@ namespace Core {
                         openGroupItem,
                         newFileItem,
                         openFileItem,
+                        preferenceGroupItem,
+                        settingsItem,
                     },
                     handle()->menuBar());
         }
