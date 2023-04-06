@@ -29,6 +29,8 @@ namespace Core {
         void commitWidgetUpdate();
         PreferencePage *preferencePage;
         void repaintPreferencePage();
+    public slots:
+        void filter(const QString &pattern);
     signals:
         void reloadStrings();
     private:

@@ -22,6 +22,8 @@ namespace Core {
         std::set<RegistryNode *> children;
         RegistryNodeTreeWidgetItem *widgetItem;
         bool operator< (const RegistryNode &rhs);
+    public slots:
+        void reloadStrings();
     };
 }
 

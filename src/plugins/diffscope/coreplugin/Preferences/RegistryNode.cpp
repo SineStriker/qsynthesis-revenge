@@ -37,4 +37,11 @@ bool RegistryNode::operator<(const RegistryNode &rhs) {
     //TODO locale string sort
     return item->title() < rhs.item->title();
 }
-
+void RegistryNode::reloadStrings() {
+    if(!item) return;
+    widgetItem->setText(0, item->title());
+    widgetItem->setToolTip(0, item->description());
+    if(item->nodeType() == IPreferenceItem::Page) {
+        dynamic_cast<IOptionsPage *>(item)->reloadStrings();
+    }
+}

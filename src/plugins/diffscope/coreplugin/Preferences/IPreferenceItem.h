@@ -6,6 +6,8 @@
 #define CHORUSKIT_IPREFERENCEITEM_H
 #include <QObject>
 namespace Core {
+    class IOptionsPage;
+
     class IPreferenceItem {
     public:
         enum NodeType {
@@ -16,6 +18,7 @@ namespace Core {
         virtual QString title() const = 0;
         virtual QString description() const = 0;
         virtual NodeType nodeType() = 0;
+        IOptionsPage *asPage();
     };
 }
 #endif // CHORUSKIT_IPREFERENCEITEM_H

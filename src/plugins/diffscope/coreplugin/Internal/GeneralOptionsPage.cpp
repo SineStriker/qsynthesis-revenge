@@ -41,7 +41,7 @@ void GeneralOptionsPage::load() {
 }
 
 void GeneralOptionsPage::accept() {
-
+    qDebug(QString("General accepted: %1").arg(m_lineEdit->text()).toStdString().c_str());
 }
 
 void GeneralOptionsPage::finish() {

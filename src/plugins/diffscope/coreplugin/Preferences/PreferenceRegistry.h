@@ -28,7 +28,6 @@ namespace Core {
         QScopedPointer<PreferenceRegistryPrivate> d_ptr;
         Q_DECLARE_PRIVATE(PreferenceRegistry)
         PreferenceRegistry(PreferenceRegistryPrivate *d, QObject *parent);
-
         void removeItem(const QString &id); //TODO
     };
 }

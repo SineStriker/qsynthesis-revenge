@@ -21,7 +21,7 @@ QString PreferencePage::title() const {
 }
 
 void PreferencePage::reloadStrings() {
-    //TODO
+    if(m_filterEdit) m_filterEdit->setPlaceholderText(tr("Filter"));
 }
 
 QWidget *PreferencePage::widget() {
@@ -31,6 +31,7 @@ QWidget *PreferencePage::widget() {
         auto selectAreaLayout = new QVBoxLayout;
         auto optionsAreaLayout = new QVBoxLayout;
         m_treeWidget = new QTreeWidget;
+        m_treeWidget->setHeaderHidden(true);
         m_filterEdit = new QLineEdit;
         m_titleLabel = new QLabel;
         m_descriptionLabel = new QLabel;

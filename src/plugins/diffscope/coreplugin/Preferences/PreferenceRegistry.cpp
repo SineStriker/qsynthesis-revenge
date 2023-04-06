@@ -7,6 +7,7 @@
 #include "ICore.h"
 #include "IOptionsPage.h"
 #include "PreferenceRegistry_p.h"
+#include "QMDecorator.h"
 #include "RegistryNode.h"
 #include <QHBoxLayout>
 #include <utility>
@@ -34,7 +35,7 @@ void PreferenceRegistryPrivate::removeNode(const QString &id) {
     itemList.erase(itemList.find(node->item));
     disconnect(this, &PreferenceRegistryPrivate::reloadStrings, node, nullptr);
     if(node->item && node->item->nodeType() == IPreferenceItem::Page) {
-        disconnect(this, &PreferenceRegistryPrivate::reloadStrings, dynamic_cast<IOptionsPage *>(node->item), nullptr);
+        disconnect(this, nullptr, node->item->asPage(), nullptr);
     }
     for(auto child: node->children) {
         removeNode(child->item->id());
@@ -52,12 +53,15 @@ PreferenceRegistry::PreferenceRegistry(PreferenceRegistryPrivate *d, QObject *pa
     d->root = new RegistryNode(nullptr, nullptr, {});
     d->nodeList.insert("", d->root);
     d->preferencePage = new PreferencePage;
+    d->preferencePage->widget();
     connect(d->preferencePage->m_treeWidget, &QTreeWidget::currentItemChanged, d->preferencePage, [=](QTreeWidgetItem *current, QTreeWidgetItem *previous){
         auto currentNode = dynamic_cast<RegistryNodeTreeWidgetItem *>(current)->node();
         if(currentNode->item && currentNode->item->nodeType() == IPreferenceItem::Page) {
-            d->preferencePage->setPage(dynamic_cast<IOptionsPage *>(currentNode->item));
+            d->preferencePage->setPage(currentNode->item->asPage());
         }
     });
+    connect(d->preferencePage->m_filterEdit, &QLineEdit::textChanged, d, &PreferenceRegistryPrivate::filter);
+    qIDec->installLocale(this, {{}}, _LOC(PreferenceRegistryPrivate, d));
 }
 
 PreferenceRegistry::PreferenceRegistry(QObject *parent): PreferenceRegistry(new PreferenceRegistryPrivate, parent) {}
@@ -98,13 +102,17 @@ void PreferenceRegistry::addItem(IPreferenceItem *item, const QString &parentId)
         return;
     }
     auto node = new RegistryNode(item, parentNode, {});
-    connect(d, &PreferenceRegistryPrivate::reloadStrings, node, [=](){
-        node->widgetItem->setText(0, node->item->title());
-        node->widgetItem->setToolTip(0, node->item->description());
-        if(node->item && node->item->nodeType() == IPreferenceItem::Page) {
-            dynamic_cast<IOptionsPage *>(node->item)->reloadStrings();
-        }
-    });
+    connect(d, &PreferenceRegistryPrivate::reloadStrings, node, &RegistryNode::reloadStrings);
+    if(item->nodeType() == IPreferenceItem::Page) {
+        connect(d->preferencePage, &IDialogPage::accepted, item->asPage(), [=](){
+            item->asPage()->accept();
+            emit item->asPage()->accepted();
+        });
+        connect(d->preferencePage, &IDialogPage::done, item->asPage(), [=](int result){
+            item->asPage()->finish();
+            emit item->asPage()->done(result);
+        });
+    }
     d->addNode(node);
     d->commitWidgetUpdate();
 }
@@ -140,8 +148,8 @@ void PreferenceRegistryPrivate::repaintPreferencePage() {
     }
     for(auto node: nodeList) {
         if(node->item && node->item->nodeType() == IPreferenceItem::Page) {
-            preferencePage->m_stackedWidget->addWidget(dynamic_cast<IOptionsPage *>(node->item)->widget());
-            dynamic_cast<IOptionsPage *>(node->item)->reloadStrings();
+            preferencePage->m_stackedWidget->addWidget(node->item->asPage()->widget());
+            node->item->asPage()->reloadStrings();
         }
     }
     lazyWidgetUpdate = false;
@@ -159,11 +167,26 @@ void PreferenceRegistry::showPreferenceDialog(QWidget *parent, const QString &en
         return;
     }
     d->preferencePage->m_treeWidget->setCurrentItem(currentNode->widgetItem);
-    emit d->preferencePage->m_treeWidget->currentItemChanged(currentNode->widgetItem, nullptr);
+    d->preferencePage->setPage(currentNode->item->asPage());
+    for(auto node: d->nodeList) {
+        if(node->item && node->item->nodeType() == IPreferenceItem::Page) {
+            node->item->asPage()->load();
+        }
+    }
     ICore::instance()->dialogHelper()->showDialog(d->preferencePage->id(), parent, DialogHelper::OkButton | DialogHelper::CancelButton | DialogHelper::ApplyButton | DialogHelper::CloseButton);
 }
 
 void PreferenceRegistry::closePreferenceDialog(int result) {
     Q_D(PreferenceRegistry);
     ICore::instance()->dialogHelper()->closeDialog(d->preferencePage->id(), result);
+}
+
+void PreferenceRegistryPrivate::filter(const QString &pattern) {
+    for(auto node: nodeList) {
+        if(node->item && node->item->nodeType() == IPreferenceItem::Page) {
+            if(node->item->asPage()->match(pattern)) {
+                //TODO do something (e. g. highlight the title)
+            }
+        }
+    }
 }
