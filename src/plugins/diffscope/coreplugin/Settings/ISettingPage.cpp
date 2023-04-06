@@ -49,6 +49,8 @@ namespace Core {
 
         page->setParent(this);
         d->pages.append(page->id(), page);
+        emit pageAdded(page);
+
         return true;
     }
 
@@ -69,9 +71,10 @@ namespace Core {
             return false;
         }
 
-        auto context = it.value();
-        context->setParent(nullptr);
+        auto page = it.value();
+        page->setParent(nullptr);
         d->pages.erase(it);
+        emit pageRemoved(page);
 
         return true;
     }
@@ -84,6 +87,16 @@ namespace Core {
     QList<ISettingPage *> ISettingPage::pages() const {
         Q_D(const ISettingPage);
         return d->pages.values();
+    }
+
+    QList<ISettingPage *> ISettingPage::allPages() const {
+        Q_D(const ISettingPage);
+        QList<ISettingPage *> res;
+        for (const auto &page : d->pages){
+            res.append(page);
+            res.append(page->allPages());
+        }
+        return res;
     }
 
     QString ISettingPage::sortKeyword() const {

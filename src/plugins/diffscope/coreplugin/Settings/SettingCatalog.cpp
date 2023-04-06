@@ -14,6 +14,51 @@ namespace Core {
     void SettingCatalogPrivate::init() {
     }
 
+    void SettingCatalogPrivate::addPageRecursive(ISettingPage *page) {
+        auto doIt = [this](ISettingPage *page) {
+            allPages[page->id()].insert(page);
+            emit q_ptr->pageAdded(page);
+
+            connect(page, &ISettingPage::pageAdded, this, &SettingCatalogPrivate::_q_pageAdded);
+            connect(page, &ISettingPage::pageRemoved, this, &SettingCatalogPrivate::_q_pageRemoved);
+        };
+
+        doIt(page);
+        for (const auto &item : page->allPages()) {
+            doIt(item);
+        }
+    }
+
+    void SettingCatalogPrivate::removePageRecursive(ISettingPage *page) {
+        auto doIt = [this](ISettingPage *page) {
+            auto it = allPages.find(page->id());
+            if (it != allPages.end()) {
+                auto &set = it.value();
+                set.remove(page);
+                if (set.isEmpty()) {
+                    allPages.erase(it);
+                }
+            }
+            emit q_ptr->pageRemoved(page);
+
+            disconnect(page, &ISettingPage::pageAdded, this, &SettingCatalogPrivate::_q_pageAdded);
+            disconnect(page, &ISettingPage::pageRemoved, this, &SettingCatalogPrivate::_q_pageRemoved);
+        };
+
+        doIt(page);
+        for (const auto &item : page->allPages()) {
+            doIt(item);
+        }
+    }
+
+    void SettingCatalogPrivate::_q_pageAdded(ISettingPage *page) {
+        addPageRecursive(page);
+    }
+
+    void SettingCatalogPrivate::_q_pageRemoved(ISettingPage *page) {
+        removePageRecursive(page);
+    }
+
     SettingCatalog::SettingCatalog(QObject *parent) : SettingCatalog(*new SettingCatalogPrivate(), parent) {
     }
 
@@ -33,6 +78,9 @@ namespace Core {
 
         page->setParent(this);
         d->pages.append(page->id(), page);
+
+        d->addPageRecursive(page);
+
         return true;
     }
 
@@ -53,21 +101,28 @@ namespace Core {
             return false;
         }
 
-        auto context = it.value();
-        context->setParent(nullptr);
+        auto page = it.value();
+        page->setParent(nullptr);
         d->pages.erase(it);
+
+        d->removePageRecursive(page);
 
         return true;
     }
 
-    ISettingPage *SettingCatalog::page(const QString &id) const {
+    QList<ISettingPage *> SettingCatalog::pages(const QString &id) const {
         Q_D(const SettingCatalog);
-        return d->pages.value(id, nullptr);
+        return d->allPages.value(id, {}).values();
     }
 
-    QList<ISettingPage *> SettingCatalog::pages() const {
+    QList<ISettingPage *> SettingCatalog::allPages() const {
         Q_D(const SettingCatalog);
-        return d->pages.values();
+        QList<ISettingPage *> res;
+        for (const auto &page : d->pages){
+            res.append(page);
+            res.append(page->allPages());
+        }
+        return res;
     }
 
     SettingCatalog::SettingCatalog(SettingCatalogPrivate &d, QObject *parent) : QObject(parent), d_ptr(&d) {
