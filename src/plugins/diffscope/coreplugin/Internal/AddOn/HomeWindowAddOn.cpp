@@ -10,7 +10,9 @@
 #include "Window/IHomeWindow.h"
 
 #include "ICore.h"
+#include "Internal/GeneralOptionsPage.h"
 #include "Internal/TestDialogPage.h"
+#include "Internal/TestOptionsPage.h"
 
 namespace Core {
 
@@ -56,11 +58,20 @@ namespace Core {
                     [=]() { ICore::instance()->dialogHelper()->closeDialog("test", QDialog::Accepted); });
             connect(testRejectCloseDialog, &QPushButton::clicked,
                     [=]() { ICore::instance()->dialogHelper()->closeDialog("test", QDialog::Rejected); });
+
+            ICore::instance()->preferenceRegistry()->addItem(new GeneralOptionsPage);
+            ICore::instance()->preferenceRegistry()->addItem(new TestOptionsPage, "ChorusKit:General");
+            auto testPreferenceDialog = new QPushButton("Test preference dialog");
+            connect(testPreferenceDialog, &QPushButton::clicked, [=](){
+                ICore::instance()->preferenceRegistry()->showPreferenceDialog(testPreferenceDialog, "ChorusKit:General");
+            });
+
             testLayout->addWidget(testTextInput);
             testLayout->addWidget(testModalDialog);
             testLayout->addWidget(testModelessDialog);
             testLayout->addWidget(testAcceptCloseDialog);
             testLayout->addWidget(testRejectCloseDialog);
+            testLayout->addWidget(testPreferenceDialog);
             testLayout->addWidget(new QLabel("22222222222222222"));
             auto testWidget = new QWidget;
             testWidget->setLayout(testLayout);

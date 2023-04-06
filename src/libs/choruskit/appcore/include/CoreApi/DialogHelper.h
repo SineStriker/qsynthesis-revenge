@@ -54,8 +54,7 @@ namespace Core {
 
     private:
         QDialog *prepareDialog(IDialogPage *dialogPage, QWidget* parent, bool modal, int controls);
-
-        void finalizeDialog(QDialog *dialog);
+        void finalizeDialog(IDialogPage *dialogPage, QDialog *dialog);
     };
 }
 

@@ -14,6 +14,7 @@ namespace Core {
         actionSystem = nullptr;
         windowSystem = nullptr;
         dialogHelper = nullptr;
+        preferenceRegistry = nullptr;
     }
 
     void ICorePrivate::init() {
@@ -24,6 +25,7 @@ namespace Core {
         actionSystem = new ActionSystem(q);
         windowSystem = new WindowSystem(q);
         dialogHelper = new DialogHelper(q);
+        preferenceRegistry = new PreferenceRegistry(q);
 
         settingCatalog = new SettingCatalog(q);
     }
@@ -85,6 +87,11 @@ namespace Core {
     DialogHelper *ICore::dialogHelper() const {
         Q_D(const ICore);
         return d->dialogHelper;
+    }
+
+    PreferenceRegistry *ICore::preferenceRegistry() const {
+        Q_D(const ICore);
+        return d->preferenceRegistry;
     }
 
     SettingCatalog *ICore::settingCatalog() const {

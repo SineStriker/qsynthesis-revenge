@@ -28,7 +28,7 @@ DialogHelper::~DialogHelper() noexcept {
     Q_D(DialogHelper);
     m_instance = nullptr;
     for(auto &item: d->dialogPages) {
-        delete item;
+        item->deleteLater();
     }
 }
 
@@ -52,6 +52,7 @@ void DialogHelper::removeDialogPage(const QString &id) {
         return;
     }
     disconnect(d, &DialogHelperPrivate::reloadStrings, it.value(), nullptr);
+    it.value()->deleteLater();
     dialogPages().erase(it);
 }
 IDialogPage *DialogHelper::getDialogPage(const QString &id) {
@@ -121,7 +122,7 @@ QDialog *DialogHelper::prepareDialog(IDialogPage *dialogPage, QWidget *parent, b
     return dialog;
 }
 
-void DialogHelper::finalizeDialog(QDialog *dialog) {
+void DialogHelper::finalizeDialog(IDialogPage *dialogPage, QDialog *dialog) {
     Q_D(DialogHelper);
     disconnect(d, &DialogHelperPrivate::reloadStrings, dialog, nullptr);
 }
@@ -138,7 +139,7 @@ int DialogHelper::showDialog(const QString &id, QWidget* parent, int controls) {
     setDialogOpenState(id, dialog, true);
     connect(dialog, &QDialog::finished, [=](){
         dialogPage->widget()->setParent(nullptr);
-        finalizeDialog(dialog);
+        finalizeDialog(dialogPage, dialog);
     });
 
     dialogPage->load();
@@ -166,7 +167,7 @@ void DialogHelper::showModelessDialog(const QString &id, QWidget* parent, int co
     setDialogOpenState(id, dialog, true);
     connect(dialog, &QDialog::finished, [=](int result){
         dialogPage->widget()->setParent(nullptr);
-        finalizeDialog(dialog);
+        finalizeDialog(dialogPage, dialog);
         if(result == QDialog::Accepted) {
             dialogPage->accept();
             emit dialogPage->accepted();
