@@ -86,7 +86,7 @@ namespace Core {
             auto settingsItem = new ActionItem("home_Settings", new QAction("Settings"));
 
             connect(settingsItem->action(), &QAction::triggered, this, [this]() {
-                ICore::instance()->settingCatalog()->showDialog("core_Settings", handle()->window()); //
+                ICore::instance()->showSettingsDialog("core_Settings", handle()->window()); //
             });
 
             ICore::instance()

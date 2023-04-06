@@ -1,7 +1,6 @@
 #include "SettingsDialog.h"
 
 #include "ICore.h"
-#include "Settings/ISettingPage.h"
 
 #include <QCollator>
 
@@ -25,10 +24,7 @@ namespace Core {
             }
         };
 
-        SettingsDialog::SettingsDialog(QWidget *parent) : QDialog(parent) {
-            setWindowFlag(Qt::WindowContextHelpButtonHint, false);
-            setWindowFlag(Qt::WindowCloseButtonHint, true);
-
+        SettingsDialog::SettingsDialog(QWidget *parent) : ConfigurableDialog(parent) {
             m_tree = new QTreeWidget();
             m_tree->setHeaderHidden(true);
 
@@ -50,21 +46,7 @@ namespace Core {
             topSplitter->addWidget(leftWidget);
             topSplitter->addWidget(m_page);
 
-            okButton = new CTabButton();
-            cancelButton = new CTabButton();
-            applyButton = new CTabButton();
-
-            buttonsLayout = new QMEqualBoxLayout(QBoxLayout::LeftToRight);
-            buttonsLayout->setAlignment(Qt::AlignRight);
-            buttonsLayout->addWidget(okButton);
-            buttonsLayout->addWidget(cancelButton);
-            buttonsLayout->addWidget(applyButton);
-
-            mainLayout = new QVBoxLayout();
-            mainLayout->addWidget(topSplitter);
-            mainLayout->addLayout(buttonsLayout);
-
-            setLayout(mainLayout);
+            setWidget(topSplitter);
 
             auto sc = ICore::instance()->settingCatalog();
 
@@ -80,10 +62,6 @@ namespace Core {
 
             connect(m_tree, &QTreeWidget::currentItemChanged, this, &SettingsDialog::_q_currentItemChanged);
 
-            connect(okButton, &QPushButton::clicked, this, &SettingsDialog::accept);
-            connect(cancelButton, &QPushButton::clicked, this, &SettingsDialog::reject);
-            connect(applyButton, &QPushButton::clicked, this, &SettingsDialog::apply);
-
             connect(sc, &SettingCatalog::titleChanged, this, &SettingsDialog::_q_titleChanged);
             connect(sc, &SettingCatalog::pageAdded, this, &SettingsDialog::_q_pageAdded);
             connect(sc, &SettingCatalog::pageRemoved, this, &SettingsDialog::_q_pageRemoved);
@@ -96,10 +74,6 @@ namespace Core {
 
         void SettingsDialog::reloadStrings() {
             m_searchBox->setPlaceholderText(tr("Search for settings"));
-
-            okButton->setText(tr("OK"));
-            cancelButton->setText(tr("Cancel"));
-            applyButton->setText(tr("Apply"));
 
             setWindowTitle(tr("Settings"));
         }
@@ -119,24 +93,22 @@ namespace Core {
             }
         }
 
-        void SettingsDialog::done(int r) {
-            if (r == Accepted) {
-                apply();
-            }
-
-            // finish all
-            for (auto it = m_treeIndexes.begin(); it != m_treeIndexes.end(); ++it) {
-                it.key()->finish();
-            }
-
-            QDialog::done(r);
-        }
-
         void SettingsDialog::apply() {
             // accept all
             for (auto it = m_treeIndexes.begin(); it != m_treeIndexes.end(); ++it) {
                 it.key()->accept();
             }
+
+            ConfigurableDialog::apply();
+        }
+
+        void SettingsDialog::finish() {
+            // finish all
+            for (auto it = m_treeIndexes.begin(); it != m_treeIndexes.end(); ++it) {
+                it.key()->finish();
+            }
+
+            ConfigurableDialog::finish();
         }
 
         QTreeWidgetItem *SettingsDialog::buildTreeWidgetItem(Core::ISettingPage *page) {

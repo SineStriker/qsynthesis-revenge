@@ -7,14 +7,12 @@ namespace Core {
 
     class SettingCatalogPrivate;
 
-    class CORE_EXPORT SettingCatalog : public QObject {
+    class CKAPPCORE_API SettingCatalog : public QObject {
         Q_OBJECT
         Q_DECLARE_PRIVATE(SettingCatalog)
     public:
         explicit SettingCatalog(QObject *parent = nullptr);
         ~SettingCatalog();
-
-        static int showDialog(const QString &id, QWidget *parent = nullptr);
 
     public:
         bool addPage(ISettingPage *page);

@@ -1,7 +1,7 @@
 #ifndef CHORUSKIT_DISPLAYPAGE_H
 #define CHORUSKIT_DISPLAYPAGE_H
 
-#include "Settings/ISettingPage.h"
+#include <CoreApi/ISettingPage.h>
 
 namespace Core {
 

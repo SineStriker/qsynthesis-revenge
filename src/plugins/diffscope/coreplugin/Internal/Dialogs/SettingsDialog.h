@@ -13,13 +13,15 @@
 #include <Metatypes/QPixelSize.h>
 #include <Widgets/CTabButton.h>
 
+#include "Dialogs/ConfigurableDialog.h"
+
 namespace Core {
 
     class ISettingPage;
 
     namespace Internal {
 
-        class SettingsDialog : public QDialog {
+        class SettingsDialog : public ConfigurableDialog {
             Q_OBJECT
             Q_LAYOUT_PROPERTY_DELCARE
         public:
@@ -31,7 +33,9 @@ namespace Core {
         public:
             void selectPage(const QString &id);
 
-            void done(int r) override;
+        protected:
+            void apply() override;
+            void finish() override;
 
         private:
             QTreeWidget *m_tree;
@@ -41,15 +45,9 @@ namespace Core {
             QWidget *leftWidget;
             QVBoxLayout *leftLayout;
 
-            CTabButton *okButton, *cancelButton, *applyButton;
-            QMEqualBoxLayout *buttonsLayout;
-
             QSplitter *topSplitter;
-            QVBoxLayout *mainLayout;
 
             QHash<ISettingPage *, QTreeWidgetItem *> m_treeIndexes;
-
-            void apply();
 
             QTreeWidgetItem *buildTreeWidgetItem(ISettingPage *page);
 

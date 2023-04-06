@@ -5,9 +5,10 @@
 
 #include <CoreApi/ActionSystem.h>
 #include <CoreApi/DialogHelper.h>
+#include <CoreApi/SettingCatalog.h>
 #include <CoreApi/WindowSystem.h>
 
-#include "Settings/SettingCatalog.h"
+#include "CoreGlobal.h"
 
 namespace Core {
 
@@ -28,6 +29,7 @@ namespace Core {
         static QString mainTitle();
         static QString displayTitle(const QString &text);
         static void aboutApp(QWidget *parent = nullptr);
+        static int showSettingsDialog(const QString &id, QWidget *parent = nullptr);
 
         ActionSystem *actionSystem() const;
         WindowSystem *windowSystem() const;
