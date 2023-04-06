@@ -32,10 +32,22 @@ namespace Core {
             m_tree = new QTreeWidget();
             m_tree->setHeaderHidden(true);
 
+            m_searchBox = new QLineEdit();
+
+            leftLayout = new QVBoxLayout();
+            leftLayout->setMargin(0);
+            // leftLayout->setSpacing(0);
+
+            leftLayout->addWidget(m_searchBox);
+            leftLayout->addWidget(m_tree);
+
+            leftWidget = new QWidget();
+            leftWidget->setLayout(leftLayout);
+
             m_page = new QStackedWidget();
 
             topSplitter = new QSplitter();
-            topSplitter->addWidget(m_tree);
+            topSplitter->addWidget(leftWidget);
             topSplitter->addWidget(m_page);
 
             okButton = new CTabButton();
@@ -83,6 +95,8 @@ namespace Core {
         }
 
         void SettingsDialog::reloadStrings() {
+            m_searchBox->setPlaceholderText(tr("Search for settings"));
+
             okButton->setText(tr("OK"));
             cancelButton->setText(tr("Cancel"));
             applyButton->setText(tr("Apply"));

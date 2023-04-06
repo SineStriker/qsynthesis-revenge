@@ -31,11 +31,15 @@ namespace Core {
         public:
             void selectPage(const QString &id);
 
-            void done(int) override;
+            void done(int r) override;
 
         private:
             QTreeWidget *m_tree;
             QStackedWidget *m_page;
+            QLineEdit *m_searchBox;
+
+            QWidget *leftWidget;
+            QVBoxLayout *leftLayout;
 
             CTabButton *okButton, *cancelButton, *applyButton;
             QMEqualBoxLayout *buttonsLayout;
