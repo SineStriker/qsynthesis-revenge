@@ -1,3 +1,1 @@
-add_subdirectory(diffscope)
-
-# add_subdirectory(labelvoice)
+add_subdirectory(${ROOT_CURRENT_APP_LOWER})

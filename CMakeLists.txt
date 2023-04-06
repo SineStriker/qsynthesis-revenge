@@ -11,7 +11,7 @@ include(Config.cmake)
 # ----------------------------------
 # Main project
 # ----------------------------------
-project(${APP_TOOLSET_NAME} LANGUAGES C CXX VERSION ${APP_VERSION_VERBOSE})
+project(ChorusKit LANGUAGES C CXX VERSION ${CONFIG_APP_VERSION})
 
 set(NOT_QT_CREATOR on)
 

@@ -4,6 +4,8 @@
 #include "../QMWidgetsHost.h"
 #include "private/QMCoreHost_p.h"
 
+#include "../QMDecorateDir.h"
+
 class QMWIDGETS_API QMWidgetsHostPrivate : public QMCoreHostPrivate {
     Q_DECLARE_PUBLIC(QMWidgetsHost)
 public:
@@ -11,6 +13,8 @@ public:
     ~QMWidgetsHostPrivate();
 
     void init();
+    
+    QList<QSharedPointer<QMDecorateDir>> decs;
 
     QMCoreFactory *createFactory() override;
 };

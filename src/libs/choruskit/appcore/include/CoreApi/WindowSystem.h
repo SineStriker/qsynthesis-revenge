@@ -17,14 +17,14 @@ namespace Core {
         ~WindowSystem();
 
     public:
-        void addWindow(IWindowFactory *factory);
-        void removeWindow(IWindowFactory *factory);
-        void removeWindow(const QString &id);
+        bool addWindow(IWindowFactory *factory);
+        bool removeWindow(IWindowFactory *factory);
+        bool removeWindow(const QString &id);
         QList<IWindowFactory *> windowFactories() const;
         void removeWindowFactories();
 
-        void addAddOn(IWindowAddOnFactory *factory);
-        void removeAddOn(IWindowAddOnFactory *factory);
+        bool addAddOn(IWindowAddOnFactory *factory);
+        bool removeAddOn(IWindowAddOnFactory *factory);
         QList<IWindowAddOnFactory *> addOnFactories() const;
         void removeAddOnFactories();
 

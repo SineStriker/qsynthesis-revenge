@@ -29,41 +29,45 @@ namespace Core {
         m_instance = nullptr;
     }
 
-    void ActionSystem::addContext(ActionContext *context) {
+    bool ActionSystem::addContext(ActionContext *context) {
         Q_D(ActionSystem);
         if (!context) {
             qWarning() << "Core::ActionSystem::addContext(): trying to add null context";
-            return;
+            return false;
         }
         if (d->contexts.contains(context->id())) {
             qWarning() << "Core::ActionSystem::addContext(): trying to add duplicated context:" << context->id();
-            return;
+            return false;
         }
         context->setParent(this);
         context->d_ptr->setDirty();
         d->contexts.insert(context->id(), context);
+
+        return true;
     }
 
-    void ActionSystem::removeContext(ActionContext *context) {
+    bool ActionSystem::removeContext(ActionContext *context) {
         if (context == nullptr) {
             qWarning() << "Core::ActionSystem::removeContext(): trying to remove null context";
-            return;
+            return false;
         }
-        removeContext(context->id());
+        return removeContext(context->id());
     }
 
-    void ActionSystem::removeContext(const QString &id) {
+    bool ActionSystem::removeContext(const QString &id) {
         Q_D(ActionSystem);
         auto it = d->contexts.find(id);
         if (it == d->contexts.end()) {
             qWarning() << "Core::ActionSystem::removeContext(): context does not exist:" << id;
-            return;
+            return false;
         }
 
         auto context = it.value();
         context->setParent(nullptr);
         context->d_ptr->setDirty();
         d->contexts.erase(it);
+
+        return true;
     }
 
     ActionContext *ActionSystem::context(const QString &id) const {

@@ -1,0 +1,4 @@
+[Desktop Entry]
+Type=Application
+Exec=DiffScope %F
+Name=ChorusKit DiffScope

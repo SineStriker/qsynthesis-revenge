@@ -18,6 +18,9 @@ public:
     bool isAboutToQuit;
     QSettings::Format settingsJsonFormat;
 
+    QHash<QString, QStringList> confValues;
+    QString confPrefix;
+
     QString appDataDir;
     QString tempDir;
     QString libDir;
