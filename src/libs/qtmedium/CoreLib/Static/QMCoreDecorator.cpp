@@ -55,7 +55,9 @@ void QMCoreDecorator::setLocale(const QString &locale) {
 
     // Notify all
     for (const auto &subscriber : qAsConst(d->localeSubscribers)) {
-        subscriber->updater();
+        for (const auto &updater : subscriber->allUpdaters) {
+            updater();
+        }
     }
 }
 
@@ -91,7 +93,10 @@ void QMCoreDecorator::addLocale(const QString &key, const QMap<QString, QStringL
 
             // Notify related objects
             for (const auto &sub : qAsConst(lp.subscribers)) {
-                sub->updater();
+                auto updaters = sub->updaters.value(key, {});
+                for (const auto &updater : qAsConst(updaters)) {
+                    updater();
+                }
             }
         }
     };
@@ -122,7 +127,10 @@ void QMCoreDecorator::addLocale(const QString &key, const QMap<QString, QStringL
             auto &lp = *it2.value();
             // Notify related objects
             for (const auto &sub : qAsConst(lp.subscribers)) {
-                sub->updater();
+                auto updaters = sub->updaters.value(key, {});
+                for (const auto &updater : qAsConst(updaters)) {
+                    updater();
+                }
             }
         }
     }
@@ -166,7 +174,10 @@ void QMCoreDecorator::removeLocale(const QString &key) {
 
             // Notify related objects
             for (const auto &sub : qAsConst(lp.subscribers)) {
-                sub->updater();
+                auto updaters = sub->updaters.value(key, {});
+                for (const auto &updater : qAsConst(updaters)) {
+                    updater();
+                }
             }
         }
 
@@ -186,20 +197,23 @@ void QMCoreDecorator::removeLocale(const QString &key) {
             auto &lp = *it2.value();
             // Notify related objects
             for (const auto &sub : qAsConst(lp.subscribers)) {
-                sub->updater();
+                auto updaters = sub->updaters.value(key, {});
+                for (const auto &updater : qAsConst(updaters)) {
+                    updater();
+                }
             }
         }
     }
 }
 
-void QMCoreDecorator::installLocale(QObject *obj, const QStringList &keys, const std::function<void()> updater) {
+void QMCoreDecorator::installLocale(QObject *obj, const QStringList &keys, const std::function<void()> &updater) {
     Q_D(QMCoreDecorator);
 
     /*
 
     Steps:
-        1. Ensure it's the first time the widget installs a locale
-        2. Go through all keys, if the required configuration doesn't exist, add a empty one as a
+        1. Check if the subscriber exists, create if not
+        2. Go through all keys, if the required configuration doesn't exist, add an empty one as a
     placeholder
         3. Add subscriber to the locale configuration
         4. Add the widget to a global set to check existence
@@ -207,13 +221,20 @@ void QMCoreDecorator::installLocale(QObject *obj, const QStringList &keys, const
 
     */
 
-    if (d->localeSubscribers.contains(obj)) {
-        return;
+    auto ls = d->localeSubscribers.value(obj, nullptr);
+    if (!ls) {
+        ls = new LocaleSubscriber();
+
+        // Detect destruction
+        connect(obj, &QObject::destroyed, d, &QMCoreDecoratorPrivate::_q_localeSubscriberDestroyed);
+
+        d->localeSubscribers.insert(obj, ls); // Add subscriber
     }
 
-    auto ls = new LocaleSubscriber();
-    ls->keys = keys;
-    ls->updater = updater;
+    for (const auto &key : keys) {
+        ls->updaters[key].push_back(updater);
+    }
+    ls->allUpdaters.push_back(updater);
 
     // Add to locale cache
     for (const auto &key : keys) {
@@ -231,11 +252,6 @@ void QMCoreDecorator::installLocale(QObject *obj, const QStringList &keys, const
         }
         setup(*it2.value());
     }
-
-    // Detect destruction
-    connect(obj, &QObject::destroyed, this, &QMCoreDecorator::_q_localeSubscriberDestroyed);
-
-    d->localeSubscribers.insert(obj, ls); // Add subscriber
 
     // Notify one forcefully
     updater();
@@ -261,7 +277,8 @@ void QMCoreDecorator::uninstallLocale(QObject *obj) {
     auto ls = it.value();
 
     // Remove from locale cache
-    for (const auto &key : qAsConst(ls->keys)) {
+    const auto &keys = ls->updaters.keys();
+    for (const auto &key : keys) {
         auto it2 = d->localeConfigs.find(key);
         if (it2 == d->localeConfigs.end()) {
             continue;
@@ -270,14 +287,14 @@ void QMCoreDecorator::uninstallLocale(QObject *obj) {
         auto &lp = *it2.value();
         lp.subscribers.remove(ls);
 
-        // Remove placeholder if there're no subscribers
+        // Remove placeholder if there are no subscribers
         if (lp.data.isNull() && lp.subscribers.isEmpty()) {
             delete it2.value();
             d->localeConfigs.erase(it2);
         }
     }
 
-    disconnect(obj, &QObject::destroyed, this, &QMCoreDecorator::_q_localeSubscriberDestroyed);
+    disconnect(obj, &QObject::destroyed, d, &QMCoreDecoratorPrivate::_q_localeSubscriberDestroyed);
 
     delete ls;
     d->localeSubscribers.erase(it); // Remove subscriber
@@ -288,8 +305,4 @@ QMCoreDecorator::QMCoreDecorator(QMCoreDecoratorPrivate &d, QObject *parent) : Q
 
     d.q_ptr = this;
     d.init();
-}
-
-void QMCoreDecorator::_q_localeSubscriberDestroyed() {
-    uninstallLocale(sender());
 }

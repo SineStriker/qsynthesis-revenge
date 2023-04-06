@@ -207,6 +207,6 @@ void PreferenceRegistry::showPreferenceDialog(QWidget *parent, QString &entryPag
         //TODO warning invalid entry page
         return;
     }
-    
+
     d->preferencePage->m_treeWidget->setCurrentItem(currentNode->widgetItem);
 }

@@ -3,6 +3,8 @@
 
 #include "SettingCatalog.h"
 
+#include <Collections/QMChronMap.h>
+
 namespace Core {
 
     class SettingCatalogPrivate {
@@ -14,6 +16,8 @@ namespace Core {
         void init();
 
         SettingCatalog *q_ptr;
+
+        QMChronMap<QString, ISettingPage *> pages;
     };
 
 }

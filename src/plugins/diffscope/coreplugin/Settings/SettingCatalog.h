@@ -15,10 +15,12 @@ namespace Core {
         ~SettingCatalog();
 
     public:
-        bool addCatalog(const QStringList &treePath, ISettingPage *page);
-        bool removeCatalog(const QStringList &treePath);
+        bool addPage(ISettingPage *page);
+        bool removePage(ISettingPage *page);
+        bool removePage(const QString &id);
 
-        bool loadCatalogs(const QString &filename, const QList<ISettingPage *> &pages);
+        ISettingPage *page(const QString &id) const;
+        QList<ISettingPage *> pages() const;
 
     protected:
         SettingCatalog(SettingCatalogPrivate &d, QObject *parent = nullptr);

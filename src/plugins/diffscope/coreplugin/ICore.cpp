@@ -22,6 +22,8 @@ namespace Core {
         actionSystem = new ActionSystem(q);
         windowSystem = new WindowSystem(q);
         dialogHelper = new DialogHelper(q);
+
+        settingCatalog = new SettingCatalog(q);
     }
 
     static ICore *m_instance = nullptr;
@@ -61,6 +63,11 @@ namespace Core {
     DialogHelper *ICore::dialogHelper() const {
         Q_D(const ICore);
         return d->dialogHelper;
+    }
+
+    SettingCatalog *ICore::settingCatalog() const {
+        Q_D(const ICore);
+        return d->settingCatalog;
     }
 
     ICore::ICore(QObject *parent) : ICore(*new ICorePrivate(), parent) {

@@ -16,6 +16,7 @@ static DialogHelper *m_instance = nullptr;
 DialogHelper::DialogHelper(DialogHelperPrivate *d, QObject *parent): QObject(parent), d_ptr(d) {
     m_instance = this;
     d->q_ptr = this;
+
     qIDec->installLocale(this, {{}}, _LOC(DialogHelperPrivate, d));
 }
 
@@ -108,6 +109,7 @@ QDialog *DialogHelper::prepareDialog(IDialogPage *dialogPage, QWidget *parent, b
         okButton->setText(tr("OK"));
         okButton->setText(tr("Cancel"));
         okButton->setText(tr("Apply"));
+
         dialog->setWindowTitle(dialogPage->title());
     });
 

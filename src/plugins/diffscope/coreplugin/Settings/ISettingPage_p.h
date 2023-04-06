@@ -3,6 +3,8 @@
 
 #include "ISettingPage.h"
 
+#include "Collections/QMChronMap.h"
+
 namespace Core {
 
     class ISettingPagePrivate {
@@ -14,6 +16,8 @@ namespace Core {
         void init();
 
         ISettingPage *q_ptr;
+
+        QMChronMap<QString, ISettingPage *> pages;
 
         QString id;
         QString title;

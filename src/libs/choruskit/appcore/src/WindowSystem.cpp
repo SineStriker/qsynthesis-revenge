@@ -68,7 +68,7 @@ namespace Core {
             qWarning() << "Core::WindowSystem::addWindow(): trying to add duplicated creator:" << factory->id();
             return false;
         }
-        d->windowFactories.insert(factory->id(), factory);
+        d->windowFactories.append(factory->id(), factory);
         return true;
     }
 

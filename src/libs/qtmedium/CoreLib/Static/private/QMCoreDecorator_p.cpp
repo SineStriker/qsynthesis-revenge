@@ -64,3 +64,8 @@ void QMCoreDecoratorPrivate::init() {
     loc = QLocale::system().name();
     // loc = "zh_CN";
 }
+
+void QMCoreDecoratorPrivate::_q_localeSubscriberDestroyed() {
+    Q_Q(QMCoreDecorator);
+    q->uninstallLocale(sender());
+}

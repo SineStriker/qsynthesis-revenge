@@ -52,16 +52,13 @@ public:
      * @param keys Tokens of locales
      * @param updater Member function or global function to update texts
      */
-    void installLocale(QObject *obj, const QStringList &keys, const std::function<void()> updater);
+    void installLocale(QObject *obj, const QStringList &keys, const std::function<void()> &updater);
     void uninstallLocale(QObject *obj);
 
 protected:
     QMCoreDecorator(QMCoreDecoratorPrivate &d, QObject *parent = nullptr);
 
     QScopedPointer<QMCoreDecoratorPrivate> d_ptr;
-
-private:
-    void _q_localeSubscriberDestroyed();
 };
 
 #ifndef _LOC

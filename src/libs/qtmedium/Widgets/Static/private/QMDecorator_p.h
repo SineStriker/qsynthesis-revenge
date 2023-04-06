@@ -52,8 +52,7 @@ struct ThemePlaceholder {
     QSet<ThemeSubscriber *> subscribers;
 
     struct ConfigSet {
-        std::map<int, QHash<QString, QSharedPointer<ThemeConfig>>>
-            data; // priority - (config_key - config)
+        std::map<int, QHash<QString, QSharedPointer<ThemeConfig>>> data; // priority - (config_key - config)
     };
     QHash<QString, ConfigSet> configs; // theme_key - config_set
 
@@ -71,12 +70,12 @@ struct ThemeConfigPack {
     QHash<QString, QSharedPointer<ThemeConfig>> data; // theme_key - config
 };
 
-
 class QMDecoratorPrivate : public QMCoreDecoratorPrivate {
+    Q_OBJECT
     Q_DECLARE_PUBLIC(QMDecorator)
 public:
     QMDecoratorPrivate();
-    virtual ~QMDecoratorPrivate();
+    ~QMDecoratorPrivate();
 
     void init();
 
@@ -93,6 +92,14 @@ public:
 
     // Internal use
     static QMDecoratorPrivate *self;
+
+private:
+    void _q_screenAdded(QScreen *screen);
+    void _q_screenRemoved(QScreen *screen);
+    void _q_deviceRatioChanged(double dpi);
+    void _q_logicalRatioChanged(double dpi);
+
+    void _q_themeSubscriberDestroyed();
 };
 
 #endif // QMDECORATORPRIVATE_H

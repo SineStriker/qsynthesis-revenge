@@ -313,14 +313,31 @@ void QMDecorator::removeThemeConfig(const QString &key) {
 void QMDecorator::installTheme(QWidget *w, const QStringList &templateKeys) {
     Q_D(QMDecorator);
 
-    if (d->themeSubscribers.contains(w)) {
+    auto ts0 = d->themeSubscribers.value(w, nullptr);
+    if (ts0) {
+        auto keySeq = templateKeys;
+        QSet<QString> keys(ts0->keySeq.begin(), ts0->keySeq.end());
+
+        bool diff = false;
+        for (const auto &key : templateKeys) {
+            if (keys.contains(key)) {
+                continue;
+            }
+            diff = true;
+            keySeq.append(key);
+        }
+
+        if (diff) {
+            uninstallTheme(w);
+            installTheme(w, keySeq);
+        }
         return;
     }
 
     ThemeSubscriber *ts;
-    auto &keySeq = templateKeys;
 
     // Find group by key set
+    const auto &keySeq = templateKeys;
     auto it = d->themeSubscriberGroups.find(keySeq);
     if (it == d->themeSubscriberGroups.end()) {
         // Add new
@@ -358,7 +375,7 @@ void QMDecorator::installTheme(QWidget *w, const QStringList &templateKeys) {
     ts->addWidget(w);
 
     // Detect destruction
-    connect(w, &QObject::destroyed, this, &QMDecorator::_q_themeSubscriberDestroyed);
+    connect(w, &QObject::destroyed, d, &QMDecoratorPrivate::_q_themeSubscriberDestroyed);
 }
 
 void QMDecorator::uninstallTheme(QWidget *w) {
@@ -402,43 +419,10 @@ void QMDecorator::uninstallTheme(QWidget *w) {
         d->themeSubscriberGroups.remove(keySeq); // Remove group
     }
 
-    disconnect(w, &QObject::destroyed, this, &QMDecorator::_q_themeSubscriberDestroyed);
+    disconnect(w, &QObject::destroyed, d, &QMDecoratorPrivate::_q_themeSubscriberDestroyed);
 }
 
 // Protected or private members
 QMDecorator::QMDecorator(QMDecoratorPrivate &d, QObject *parent) : QMCoreDecorator(d, parent) {
     d.init();
-}
-
-void QMDecorator::_q_screenAdded(QScreen *screen) {
-    connect(screen, &QScreen::physicalDotsPerInchChanged, this, &QMDecorator::_q_deviceRatioChanged);
-    connect(screen, &QScreen::logicalDotsPerInchChanged, this, &QMDecorator::_q_logicalRatioChanged);
-}
-
-void QMDecorator::_q_screenRemoved(QScreen *screen) {
-    disconnect(screen, &QScreen::physicalDotsPerInchChanged, this,
-               &QMDecorator::_q_deviceRatioChanged);
-    disconnect(screen, &QScreen::logicalDotsPerInchChanged, this,
-               &QMDecorator::_q_logicalRatioChanged);
-
-    // How to deal with windows on the removed screen?
-}
-
-void QMDecorator::_q_deviceRatioChanged(double dpi) {
-    Q_D(QMDecorator);
-    auto screen = qobject_cast<QScreen *>(sender());
-    d->screenChange_helper(screen);
-    emit deviceRatioChanged(screen, dpi);
-}
-
-void QMDecorator::_q_logicalRatioChanged(double dpi) {
-    Q_D(QMDecorator);
-    auto screen = qobject_cast<QScreen *>(sender());
-    d->screenChange_helper(screen);
-    emit logicalRatioChanged(screen, dpi);
-}
-
-void QMDecorator::_q_themeSubscriberDestroyed() {
-    auto w = qobject_cast<QWidget *>(sender());
-    uninstallTheme(w);
 }
