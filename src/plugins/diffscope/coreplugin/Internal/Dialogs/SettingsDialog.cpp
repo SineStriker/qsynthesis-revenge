@@ -3,6 +3,7 @@
 #include "ICore.h"
 
 #include <QCollator>
+#include <QLabel>
 
 #include <QMDecorator.h>
 
@@ -25,6 +26,9 @@ namespace Core {
         };
 
         SettingsDialog::SettingsDialog(QWidget *parent) : ConfigurableDialog(parent) {
+            m_currentPage = nullptr;
+            m_catalogWidget = nullptr;
+
             m_tree = new QTreeWidget();
             m_tree->setHeaderHidden(true);
 
@@ -61,8 +65,10 @@ namespace Core {
             }
 
             connect(m_tree, &QTreeWidget::currentItemChanged, this, &SettingsDialog::_q_currentItemChanged);
+            connect(m_searchBox, &QLineEdit::textChanged, this, &SettingsDialog::_q_searchBoxTextChanged);
 
             connect(sc, &SettingCatalog::titleChanged, this, &SettingsDialog::_q_titleChanged);
+            connect(sc, &SettingCatalog::descriptionChanged, this, &SettingsDialog::_q_descriptionChanged);
             connect(sc, &SettingCatalog::pageAdded, this, &SettingsDialog::_q_pageAdded);
             connect(sc, &SettingCatalog::pageRemoved, this, &SettingsDialog::_q_pageRemoved);
 
@@ -90,7 +96,10 @@ namespace Core {
             }
             if (m_tree->topLevelItemCount()) {
                 m_tree->setCurrentItem(m_tree->topLevelItem(0));
+                return;
             }
+
+            clearPage();
         }
 
         void SettingsDialog::apply() {
@@ -98,8 +107,6 @@ namespace Core {
             for (auto it = m_treeIndexes.begin(); it != m_treeIndexes.end(); ++it) {
                 it.key()->accept();
             }
-
-            ConfigurableDialog::apply();
         }
 
         void SettingsDialog::finish() {
@@ -108,7 +115,7 @@ namespace Core {
                 it.key()->finish();
             }
 
-            ConfigurableDialog::finish();
+            takeWidget();
         }
 
         QTreeWidgetItem *SettingsDialog::buildTreeWidgetItem(Core::ISettingPage *page) {
@@ -128,12 +135,66 @@ namespace Core {
             return item;
         }
 
+        void SettingsDialog::clearPage() {
+            if (m_page->count()) {
+                auto w = m_page->widget(0);
+                m_page->removeWidget(w);
+
+                if (w == m_catalogWidget) {
+                    delete w;
+                    m_catalogWidget = nullptr;
+                }
+            }
+        }
+
+        void SettingsDialog::showCatalog() {
+            auto w = new QFrame();
+
+            auto layout = new QVBoxLayout();
+
+            auto label = new QLabel(m_currentPage->description());
+            layout->addWidget(label);
+
+            // Update text
+            connect(m_currentPage, &ISettingPage::descriptionChanged, label, &QLabel::setText);
+
+            auto curItem = m_tree->currentItem();
+            for (int i = 0; i < curItem->childCount(); ++i) {
+                auto page = curItem->child(i)->data(0, EntityRole).value<ISettingPage *>();
+                if (!page)
+                    continue;
+
+                auto btn = new CTabButton();
+                btn->setProperty("id", page->id());
+                btn->setText(page->title());
+
+                // Update text
+                connect(page, &ISettingPage::titleChanged, btn, &QAbstractButton::setText);
+
+                connect(btn, &QAbstractButton::clicked, this, [this]() {
+                    selectPage(sender()->property("id").toString()); //
+                });
+                layout->addWidget(btn);
+            }
+            layout->addStretch();
+
+            w->setLayout(layout);
+
+            clearPage();
+            m_page->addWidget(w);
+
+            m_catalogWidget = w;
+        }
+
         void SettingsDialog::_q_titleChanged(ISettingPage *page, const QString &title) {
             auto item = m_treeIndexes.value(page, nullptr);
             if (!item) {
                 return;
             }
             item->setText(0, title);
+        }
+
+        void SettingsDialog::_q_descriptionChanged(Core::ISettingPage *page, const QString &description) {
         }
 
         void SettingsDialog::_q_pageAdded(ISettingPage *page) {
@@ -165,6 +226,10 @@ namespace Core {
                 }
                 parentItem->insertChild(i, item);
             }
+
+            if (parent == m_currentPage && m_catalogWidget) {
+                showCatalog();
+            }
         }
 
         void SettingsDialog::_q_pageRemoved(ISettingPage *page) {
@@ -177,19 +242,61 @@ namespace Core {
                 m_treeIndexes.remove(sub);
             }
             m_treeIndexes.remove(page);
-
             delete item;
+
+            if (page == m_currentPage) {
+                selectPage(QString());
+            } else if (page->parent() == m_currentPage && m_catalogWidget) {
+                showCatalog();
+            }
         }
 
         void SettingsDialog::_q_currentItemChanged(QTreeWidgetItem *cur, QTreeWidgetItem *prev) {
             Q_UNUSED(prev);
 
-            auto page = cur->data(0, EntityRole).value<ISettingPage *>();
-            if (page) {
-                if (m_page->count()) {
-                    m_page->removeWidget(m_page->widget(0));
-                }
+            clearPage();
+
+            auto page = cur ? cur->data(0, EntityRole).value<ISettingPage *>() : nullptr;
+            m_currentPage = page;
+
+            if (!page) {
+                return;
+            }
+
+            auto w = page->widget();
+            if (w) {
                 m_page->addWidget(page->widget());
+            } else {
+                // Add a catalog widget with description
+                showCatalog();
+            }
+        }
+
+        void SettingsDialog::_q_searchBoxTextChanged(const QString &text) {
+            if (text.isEmpty()) {
+                for (const auto &item : qAsConst(m_treeIndexes)) {
+                    item->setHidden(false);
+                }
+                return;
+            }
+
+            std::list<QTreeWidgetItem *> items;
+            for (auto it = m_treeIndexes.begin(); it != m_treeIndexes.end(); ++it) {
+                if (it.key()->matches(text)) {
+                    items.push_back(it.value());
+                }
+            }
+
+            // All hidden
+            for (const auto &item : qAsConst(m_treeIndexes)) {
+                item->setHidden(true);
+            }
+
+            for (auto p : qAsConst(items)) {
+                while (p && p->isHidden()) {
+                    p->setHidden(false);
+                    p = p->parent();
+                }
             }
         }
 

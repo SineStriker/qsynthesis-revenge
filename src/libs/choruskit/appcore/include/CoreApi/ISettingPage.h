@@ -22,6 +22,9 @@ namespace Core {
         QString title() const;
         void setTitle(const QString &title);
 
+        QString description() const;
+        void setDescription(const QString &description);
+
         bool addPage(ISettingPage *page);
         bool removePage(ISettingPage *page);
         bool removePage(const QString &id);
@@ -41,6 +44,7 @@ namespace Core {
 
     signals:
         void titleChanged(const QString &title);
+        void descriptionChanged(const QString &description);
 
         void pageAdded(ISettingPage *page);
         void pageRemoved(ISettingPage *page);

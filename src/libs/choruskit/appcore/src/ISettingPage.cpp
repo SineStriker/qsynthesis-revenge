@@ -36,6 +36,18 @@ namespace Core {
         emit titleChanged(title);
     }
 
+    QString ISettingPage::description() const {
+        Q_D(const ISettingPage);
+        return d->description;
+    }
+
+    void ISettingPage::setDescription(const QString &description) {
+        Q_D(ISettingPage);
+        d->description = description;
+
+        emit descriptionChanged(description);
+    }
+
     bool ISettingPage::addPage(ISettingPage *page) {
         Q_D(ISettingPage);
         if (!page) {
@@ -57,7 +69,7 @@ namespace Core {
     bool ISettingPage::removePage(ISettingPage *page) {
         Q_D(ISettingPage);
         if (page == nullptr) {
-            qWarning() << "Core::ISettingPage::removePage(): trying to remove null page";
+            qWarning() << "Core::ISettingPage::clearPage(): trying to remove null page";
             return false;
         }
         return removePage(page->id());
@@ -67,7 +79,7 @@ namespace Core {
         Q_D(ISettingPage);
         auto it = d->pages.find(id);
         if (it == d->pages.end()) {
-            qWarning() << "Core::ISettingPage::removePage(): page does not exist:" << id;
+            qWarning() << "Core::ISettingPage::clearPage(): page does not exist:" << id;
             return false;
         }
 
@@ -106,7 +118,7 @@ namespace Core {
 
     bool ISettingPage::matches(const QString &word) const {
         Q_D(const ISettingPage);
-        return d->title.contains(word) || sortKeyword().contains(word);
+        return d->title.contains(word, Qt::CaseInsensitive) || sortKeyword().contains(word, Qt::CaseInsensitive);
     }
 
     ISettingPage::ISettingPage(ISettingPagePrivate &d, const QString &id, QObject *parent)

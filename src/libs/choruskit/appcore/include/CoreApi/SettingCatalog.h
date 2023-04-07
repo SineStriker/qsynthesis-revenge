@@ -26,6 +26,7 @@ namespace Core {
 
     signals:
         void titleChanged(ISettingPage *page, const QString &title);
+        void descriptionChanged(ISettingPage *page, const QString &description);
 
         void pageAdded(ISettingPage *page);
         void pageRemoved(ISettingPage *page);

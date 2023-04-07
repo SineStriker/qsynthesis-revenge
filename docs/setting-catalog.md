@@ -2,13 +2,13 @@
 
 ## ISettingPage
 
-+ 负责单个设置页面，可对其进行`addPage`、`removePage`操作。
++ 负责单个设置页面，可对其进行`addPage`、`clearPage`操作。
 
 + `sortKeyword`返回一个字符串常量，默认为`id`，建议将其重载为语言为英语时的`title`，这样英语时视觉上是关于名字有序的，切换为别的语言此排序方式依然保持。
 
 
 ## SettingCatalog
-+ 负责管理树根上的所有`ISettingPage`，可对其进行`addPage`、`removePage`操作。由`ICore`或`SettingCatalog`负责提供`SettingDialog`显示的API。（QtCreator中为`Core::ICore::showOptionsDialog`）
++ 负责管理树根上的所有`ISettingPage`，可对其进行`addPage`、`clearPage`操作。由`ICore`或`SettingCatalog`负责提供`SettingDialog`显示的API。（QtCreator中为`Core::ICore::showOptionsDialog`）
 
 + `SettingDialog`使用懒加载方式，第一次调用时才创建，其生命周期由`SettingCatalog`负责管理。
 

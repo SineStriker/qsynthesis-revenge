@@ -7,6 +7,7 @@
 #include <QMessageBox>
 
 #include "Internal/Dialogs/SettingsDialog.h"
+#include "Internal/Dialogs/WizardDialog.h"
 
 namespace Core {
 
@@ -59,7 +60,7 @@ namespace Core {
 
         if (dlg) {
             dlg->selectPage(id);
-            return 0;
+            return -1;
         }
 
         int code;
@@ -67,6 +68,25 @@ namespace Core {
             Internal::SettingsDialog dlg2(parent);
             dlg = &dlg2;
             dlg2.selectPage(id);
+            code = dlg2.exec();
+            dlg = nullptr;
+        }
+
+        return code;
+    }
+
+    int ICore::showWizardDialog(const QString &id, QWidget *parent) {
+        static Internal::WizardDialog *dlg = nullptr;
+
+        if (dlg) {
+            return -1;
+        }
+
+        int code;
+        {
+            Internal::WizardDialog dlg2(parent);
+            dlg = &dlg2;
+            // dlg2.selectPage(id);
             code = dlg2.exec();
             dlg = nullptr;
         }

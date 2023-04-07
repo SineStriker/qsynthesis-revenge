@@ -12,22 +12,22 @@
         <translation type="vanished">无法在%1中找到核心插件！</translation>
     </message>
     <message>
-        <location filename="../../../../libs/choruskit/appload/main.cpp" line="163"/>
+        <location filename="../../../../libs/choruskit/appload/main.cpp" line="161"/>
         <source>Failed to load core: %1!</source>
         <translation>无法加载核心：%1！</translation>
     </message>
     <message>
-        <location filename="../../../../libs/choruskit/appload/main.cpp" line="321"/>
+        <location filename="../../../../libs/choruskit/appload/main.cpp" line="319"/>
         <source>Searching plugins...</source>
         <translation>正在搜索插件...</translation>
     </message>
     <message>
-        <location filename="../../../../libs/choruskit/appload/main.cpp" line="369"/>
+        <location filename="../../../../libs/choruskit/appload/main.cpp" line="367"/>
         <source>Could not find Core plugin!</source>
         <translation>无法找到核心插件！</translation>
     </message>
     <message>
-        <location filename="../../../../libs/choruskit/appload/main.cpp" line="419"/>
+        <location filename="../../../../libs/choruskit/appload/main.cpp" line="417"/>
         <source>Loading plugins...</source>
         <translation>正在加载插件...</translation>
     </message>
@@ -36,7 +36,7 @@
         <translation type="vanished">无法在%1中找到核心插件！</translation>
     </message>
     <message>
-        <location filename="../../../../libs/choruskit/appload/main.cpp" line="375"/>
+        <location filename="../../../../libs/choruskit/appload/main.cpp" line="373"/>
         <source>Core plugin is disabled.</source>
         <translation>核心插件已被禁用。</translation>
     </message>
@@ -133,6 +133,27 @@
     </message>
 </context>
 <context>
+    <name>DialogHelper</name>
+    <message>
+        <location filename="../../../../libs/choruskit/appcore/src/DialogHelper.cpp" line="89"/>
+        <location filename="../../../../libs/choruskit/appcore/src/DialogHelper.cpp" line="108"/>
+        <source>OK</source>
+        <translation type="unfinished">确定</translation>
+    </message>
+    <message>
+        <location filename="../../../../libs/choruskit/appcore/src/DialogHelper.cpp" line="90"/>
+        <location filename="../../../../libs/choruskit/appcore/src/DialogHelper.cpp" line="109"/>
+        <source>Cancel</source>
+        <translation type="unfinished">取消</translation>
+    </message>
+    <message>
+        <location filename="../../../../libs/choruskit/appcore/src/DialogHelper.cpp" line="91"/>
+        <location filename="../../../../libs/choruskit/appcore/src/DialogHelper.cpp" line="110"/>
+        <source>Apply</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>ImportDialog</name>
     <message>
         <location filename="../../../../libs/qslib/Framework/Widgets/Dialogs/ImportDialog.cpp" line="22"/>
@@ -210,12 +231,12 @@
         <translation type="vanished">你正在尝试以%2身份运行%1，此番操作非常不安全。请使用普通权限启动。</translation>
     </message>
     <message>
-        <location filename="../../../../libs/choruskit/appload/main.cpp" line="263"/>
+        <location filename="../../../../libs/choruskit/appload/main.cpp" line="261"/>
         <source>You&apos;re trying to start %1 as the %2, which is extremely dangerous and therefore strongly not recommended.</source>
         <translation>你正在尝试以%2身份运行%1，此操作非常不安全，因此强烈不推荐。</translation>
     </message>
     <message>
-        <location filename="../../../../libs/choruskit/appload/main.cpp" line="399"/>
+        <location filename="../../../../libs/choruskit/appload/main.cpp" line="397"/>
         <source>Please close the running application!</source>
         <translation>请关闭正在运行中的程序！</translation>
     </message>

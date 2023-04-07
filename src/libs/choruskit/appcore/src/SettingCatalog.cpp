@@ -20,6 +20,7 @@ namespace Core {
             emit q_ptr->pageAdded(page);
 
             connect(page, &ISettingPage::titleChanged, this, &SettingCatalogPrivate::_q_pageTitleChanged);
+            connect(page, &ISettingPage::descriptionChanged, this, &SettingCatalogPrivate::_q_pageDescriptionChanged);
             connect(page, &ISettingPage::pageAdded, this, &SettingCatalogPrivate::_q_pageAdded);
             connect(page, &ISettingPage::pageRemoved, this, &SettingCatalogPrivate::_q_pageRemoved);
         };
@@ -41,6 +42,8 @@ namespace Core {
                 }
             }
             disconnect(page, &ISettingPage::titleChanged, this, &SettingCatalogPrivate::_q_pageTitleChanged);
+            disconnect(page, &ISettingPage::descriptionChanged, this,
+                       &SettingCatalogPrivate::_q_pageDescriptionChanged);
             disconnect(page, &ISettingPage::pageAdded, this, &SettingCatalogPrivate::_q_pageAdded);
             disconnect(page, &ISettingPage::pageRemoved, this, &SettingCatalogPrivate::_q_pageRemoved);
 
@@ -56,6 +59,11 @@ namespace Core {
     void SettingCatalogPrivate::_q_pageTitleChanged(const QString &title) {
         Q_Q(SettingCatalog);
         emit q->titleChanged(qobject_cast<ISettingPage *>(sender()), title);
+    }
+
+    void SettingCatalogPrivate::_q_pageDescriptionChanged(const QString &desc) {
+        Q_Q(SettingCatalog);
+        emit q->descriptionChanged(qobject_cast<ISettingPage *>(sender()), desc);
     }
 
     void SettingCatalogPrivate::_q_pageAdded(ISettingPage *page) {
@@ -94,7 +102,7 @@ namespace Core {
     bool SettingCatalog::removePage(ISettingPage *page) {
         Q_D(SettingCatalog);
         if (page == nullptr) {
-            qWarning() << "Core::ISettingPage::removePage(): trying to remove null page";
+            qWarning() << "Core::ISettingPage::clearPage(): trying to remove null page";
             return false;
         }
         return removePage(page->id());
@@ -104,7 +112,7 @@ namespace Core {
         Q_D(SettingCatalog);
         auto it = d->pages.find(id);
         if (it == d->pages.end()) {
-            qWarning() << "Core::ISettingPage::removePage(): page does not exist:" << id;
+            qWarning() << "Core::ISettingPage::clearPage(): page does not exist:" << id;
             return false;
         }
 

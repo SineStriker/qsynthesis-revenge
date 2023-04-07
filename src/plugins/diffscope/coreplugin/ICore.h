@@ -30,7 +30,9 @@ namespace Core {
         static QString mainTitle();
         static QString displayTitle(const QString &text);
         static void aboutApp(QWidget *parent = nullptr);
+
         static int showSettingsDialog(const QString &id, QWidget *parent = nullptr);
+        static int showWizardDialog(const QString &id, QWidget *parent = nullptr);
 
         ActionSystem *actionSystem() const;
         WindowSystem *windowSystem() const;

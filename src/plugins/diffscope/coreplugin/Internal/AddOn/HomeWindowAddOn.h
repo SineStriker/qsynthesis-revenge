@@ -23,7 +23,24 @@ namespace Core {
             void initialize() override;
             void extensionsInitialized() override;
 
+            void reloadStrings();
             void reloadMenuBar();
+
+        private:
+            ActionItem *fileItem;
+            ActionItem *editItem;
+            ActionItem *helpItem;
+
+            ActionItem *openGroupItem;
+            ActionItem *newFileItem;
+            ActionItem *openFileItem;
+
+            ActionItem *preferenceGroupItem;
+            ActionItem *settingsItem;
+
+            ActionItem *aboutGroupItem;
+            ActionItem *aboutAppItem;
+            ActionItem *aboutQtItem;
         };
 
     }

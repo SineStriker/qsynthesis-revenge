@@ -4,27 +4,27 @@
 <context>
     <name>Application</name>
     <message>
-        <location filename="../../../../libs/choruskit/appload/main.cpp" line="163"/>
+        <location filename="../../../../libs/choruskit/appload/main.cpp" line="161"/>
         <source>Failed to load core: %1!</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../../../libs/choruskit/appload/main.cpp" line="321"/>
+        <location filename="../../../../libs/choruskit/appload/main.cpp" line="319"/>
         <source>Searching plugins...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../../../libs/choruskit/appload/main.cpp" line="369"/>
+        <location filename="../../../../libs/choruskit/appload/main.cpp" line="367"/>
         <source>Could not find Core plugin!</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../../../libs/choruskit/appload/main.cpp" line="375"/>
+        <location filename="../../../../libs/choruskit/appload/main.cpp" line="373"/>
         <source>Core plugin is disabled.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../../../libs/choruskit/appload/main.cpp" line="419"/>
+        <location filename="../../../../libs/choruskit/appload/main.cpp" line="417"/>
         <source>Loading plugins...</source>
         <translation type="unfinished"></translation>
     </message>
@@ -121,6 +121,27 @@
     </message>
 </context>
 <context>
+    <name>DialogHelper</name>
+    <message>
+        <location filename="../../../../libs/choruskit/appcore/src/DialogHelper.cpp" line="89"/>
+        <location filename="../../../../libs/choruskit/appcore/src/DialogHelper.cpp" line="108"/>
+        <source>OK</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../../../libs/choruskit/appcore/src/DialogHelper.cpp" line="90"/>
+        <location filename="../../../../libs/choruskit/appcore/src/DialogHelper.cpp" line="109"/>
+        <source>Cancel</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../../../libs/choruskit/appcore/src/DialogHelper.cpp" line="91"/>
+        <location filename="../../../../libs/choruskit/appcore/src/DialogHelper.cpp" line="110"/>
+        <source>Apply</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>ImportDialog</name>
     <message>
         <location filename="../../../../libs/qslib/Framework/Widgets/Dialogs/ImportDialog.cpp" line="22"/>
@@ -190,12 +211,12 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../../../libs/choruskit/appload/main.cpp" line="263"/>
+        <location filename="../../../../libs/choruskit/appload/main.cpp" line="261"/>
         <source>You&apos;re trying to start %1 as the %2, which is extremely dangerous and therefore strongly not recommended.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../../../libs/choruskit/appload/main.cpp" line="399"/>
+        <location filename="../../../../libs/choruskit/appload/main.cpp" line="397"/>
         <source>Please close the running application!</source>
         <translation type="unfinished"></translation>
     </message>

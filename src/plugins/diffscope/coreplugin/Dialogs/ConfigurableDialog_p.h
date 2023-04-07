@@ -29,6 +29,8 @@ namespace Core {
         QWidget *widget;
 
         QVBoxLayout *mainLayout;
+
+        void apply_helper();
     };
 
 }

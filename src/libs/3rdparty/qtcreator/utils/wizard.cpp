@@ -739,7 +739,7 @@ void WizardProgress::removeItem(WizardProgressItem *item)
 
     QMap<WizardProgressItem *, WizardProgressItem *>::iterator it = d->m_itemToItem.find(item);
     if (it == d->m_itemToItem.end()) {
-        qWarning("WizardProgress::removePage: Item is not a part of the wizard");
+        qWarning("WizardProgress::clearPage: Item is not a part of the wizard");
         return;
     }
 
@@ -780,7 +780,7 @@ void WizardProgress::removePage(int pageId)
 
     QMap<int, WizardProgressItem *>::iterator it = d->m_pageToItem.find(pageId);
     if (it == d->m_pageToItem.end()) {
-        qWarning("WizardProgress::removePage: page is not a part of the wizard");
+        qWarning("WizardProgress::clearPage: page is not a part of the wizard");
         return;
     }
     WizardProgressItem *item = it.value();

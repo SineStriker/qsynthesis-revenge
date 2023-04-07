@@ -1,9 +1,11 @@
 #include "HomeWindowAddOn.h"
 
+#include <QApplication>
 #include <QDebug>
 #include <QLabel>
 #include <QLineEdit>
 #include <QMenuBar>
+#include <QMessageBox>
 #include <QPushButton>
 #include <QVBoxLayout>
 
@@ -13,6 +15,8 @@
 #include "Internal/GeneralOptionsPage.h"
 #include "Internal/TestDialogPage.h"
 #include "Internal/TestOptionsPage.h"
+
+#include <QMDecorator.h>
 
 namespace Core {
 
@@ -62,8 +66,9 @@ namespace Core {
             ICore::instance()->preferenceRegistry()->addItem(new GeneralOptionsPage);
             ICore::instance()->preferenceRegistry()->addItem(new TestOptionsPage, "ChorusKit:General");
             auto testPreferenceDialog = new QPushButton("Test preference dialog");
-            connect(testPreferenceDialog, &QPushButton::clicked, [=](){
-                ICore::instance()->preferenceRegistry()->showPreferenceDialog(testPreferenceDialog, "ChorusKit:General");
+            connect(testPreferenceDialog, &QPushButton::clicked, [=]() {
+                ICore::instance()->preferenceRegistry()->showPreferenceDialog(testPreferenceDialog,
+                                                                              "ChorusKit:General");
             });
 
             testLayout->addWidget(testTextInput);
@@ -79,25 +84,60 @@ namespace Core {
             btn->setText("123456");
 
             reloadMenuBar();
+
+            qIDec->installLocale(this, {{}}, _LOC(HomeWindowAddOn, this));
         }
 
         void HomeWindowAddOn::extensionsInitialized() {
         }
 
+        void HomeWindowAddOn::reloadStrings() {
+            fileItem->setText(tr("File(&F)"));
+            editItem->setText(tr("Edit(&E)"));
+            helpItem->setText(tr("Help(&H)"));
+
+            openGroupItem->setText(tr("Open Actions"));
+            newFileItem->setText(tr("New"));
+            openFileItem->setText(tr("Open"));
+
+            preferenceGroupItem->setText(tr("Preference Actions"));
+            settingsItem->setText(tr("Settings"));
+
+            aboutGroupItem->setText(tr("About Actions"));
+            aboutAppItem->setText(tr("About %1").arg(qAppName()));
+            aboutQtItem->setText(tr("About Qt"));
+        }
+
         void HomeWindowAddOn::reloadMenuBar() {
-            auto fileItem = new ActionItem("home_File", new QMenu("File(&F)"));
-            auto editItem = new ActionItem("home_Edit", new QMenu("Edit(&E)"));
-            auto helpItem = new ActionItem("home_Help", new QMenu("Help(&H)"));
+            fileItem = new ActionItem("home_File", new QMenu());
+            editItem = new ActionItem("home_Edit", new QMenu());
+            helpItem = new ActionItem("home_Help", new QMenu());
 
-            auto openGroupItem = new ActionItem("home_OpenGroup", new QActionGroup(this));
-            auto newFileItem = new ActionItem("home_NewFile", new QAction("New File"));
-            auto openFileItem = new ActionItem("home_OpenFile", new QAction("Open File"));
+            openGroupItem = new ActionItem("home_OpenGroup", new QActionGroup(this));
+            newFileItem = new ActionItem("home_NewFile", new QAction());
+            openFileItem = new ActionItem("home_OpenFile", new QAction());
 
-            auto preferenceGroupItem = new ActionItem("home_PreferenceGroup", new QActionGroup(this));
-            auto settingsItem = new ActionItem("home_Settings", new QAction("Settings"));
+            preferenceGroupItem = new ActionItem("home_PreferenceGroup", new QActionGroup(this));
+            settingsItem = new ActionItem("home_Settings", new QAction());
+
+            aboutGroupItem = new ActionItem("home_AboutGroup", new QActionGroup(this));
+            aboutAppItem = new ActionItem("home_AboutApp", new QAction(this));
+            aboutQtItem = new ActionItem("home_AboutQt", new QAction(this));
+
+            connect(newFileItem->action(), &QAction::triggered, this, [this]() {
+                ICore::instance()->showWizardDialog("", handle()->window()); //
+            });
 
             connect(settingsItem->action(), &QAction::triggered, this, [this]() {
                 ICore::instance()->showSettingsDialog("core_Settings", handle()->window()); //
+            });
+
+            connect(aboutAppItem->action(), &QAction::triggered, this, [this]() {
+                ICore::instance()->aboutApp(handle()->window()); //
+            });
+
+            connect(aboutQtItem->action(), &QAction::triggered, this, [this]() {
+                QMessageBox::aboutQt(handle()->window()); //
             });
 
             ICore::instance()
@@ -113,6 +153,9 @@ namespace Core {
                         openFileItem,
                         preferenceGroupItem,
                         settingsItem,
+                        aboutGroupItem,
+                        aboutAppItem,
+                        aboutQtItem,
                     },
                     handle()->menuBar());
         }

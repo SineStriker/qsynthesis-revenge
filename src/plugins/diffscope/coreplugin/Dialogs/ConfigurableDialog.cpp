@@ -6,6 +6,7 @@
 namespace Core {
 
     ConfigurableDialogPrivate::ConfigurableDialogPrivate() {
+        widget = nullptr;
     }
 
     ConfigurableDialogPrivate::~ConfigurableDialogPrivate() {
@@ -16,8 +17,6 @@ namespace Core {
 
         q->setWindowFlag(Qt::WindowContextHelpButtonHint, false);
         q->setWindowFlag(Qt::WindowCloseButtonHint, true);
-
-        widget = nullptr;
 
         okButton = new CTabButton();
         cancelButton = new CTabButton();
@@ -36,7 +35,7 @@ namespace Core {
 
         connect(okButton, &QPushButton::clicked, q, &ConfigurableDialog::accept);
         connect(cancelButton, &QPushButton::clicked, q, &ConfigurableDialog::reject);
-        connect(applyButton, &QPushButton::clicked, q, &ConfigurableDialog::apply);
+        connect(applyButton, &QPushButton::clicked, this, &ConfigurableDialogPrivate::apply_helper);
 
         qIDec->installLocale(this, {{}}, _LOC(ConfigurableDialogPrivate, this));
     }
@@ -47,6 +46,12 @@ namespace Core {
         applyButton->setText(tr("Apply"));
     }
 
+    void ConfigurableDialogPrivate::apply_helper() {
+        Q_Q(ConfigurableDialog);
+        q->apply();
+        emit q->applied();
+    }
+
     ConfigurableDialog::ConfigurableDialog(QWidget *parent)
         : ConfigurableDialog(*new ConfigurableDialogPrivate(), parent) {
     }
@@ -55,10 +60,15 @@ namespace Core {
     }
 
     void ConfigurableDialog::done(int r) {
+        Q_D(ConfigurableDialog);
+
         if (r == Accepted) {
-            apply();
+            d->apply_helper();
         }
+
         finish();
+        emit finished();
+
         QDialog::done(r);
     }
 
@@ -86,11 +96,9 @@ namespace Core {
     }
 
     void ConfigurableDialog::apply() {
-        emit applied();
     }
 
     void ConfigurableDialog::finish() {
-        emit finished();
     }
 
     ConfigurableDialog::ConfigurableDialog(ConfigurableDialogPrivate &d, QWidget *parent) : QDialog(parent), d_ptr(&d) {
