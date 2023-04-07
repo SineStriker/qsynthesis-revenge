@@ -4,30 +4,48 @@
 <context>
     <name>Core::ConfigurableDialogPrivate</name>
     <message>
-        <location filename="../../Dialogs/ConfigurableDialog.cpp" line="45"/>
+        <location filename="../../Dialogs/ConfigurableDialog.cpp" line="44"/>
         <source>OK</source>
         <translation>确定</translation>
     </message>
     <message>
-        <location filename="../../Dialogs/ConfigurableDialog.cpp" line="46"/>
+        <location filename="../../Dialogs/ConfigurableDialog.cpp" line="45"/>
         <source>Cancel</source>
         <translation>取消</translation>
     </message>
     <message>
-        <location filename="../../Dialogs/ConfigurableDialog.cpp" line="47"/>
+        <location filename="../../Dialogs/ConfigurableDialog.cpp" line="46"/>
         <source>Apply</source>
         <translation>应用</translation>
     </message>
 </context>
 <context>
+    <name>Core::GeneralOptionsPage</name>
+    <message>
+        <location filename="../../Internal/GeneralOptionsPage.cpp" line="15"/>
+        <source>General</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../Internal/GeneralOptionsPage.cpp" line="19"/>
+        <source>General options.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../Internal/GeneralOptionsPage.cpp" line="36"/>
+        <source>Test</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>Core::ICore</name>
     <message>
-        <location filename="../../ICore.cpp" line="46"/>
+        <location filename="../../ICore.cpp" line="49"/>
         <source>About %1</source>
         <translation>关于 %1</translation>
     </message>
     <message>
-        <location filename="../../ICore.cpp" line="47"/>
+        <location filename="../../ICore.cpp" line="50"/>
         <source>%1 %2, Copyright OpenVPI.</source>
         <translation>%1 %2，版权所有 OpenVPI。</translation>
     </message>
@@ -71,6 +89,11 @@
         <source>Appearance</source>
         <translation>外观</translation>
     </message>
+    <message>
+        <location filename="../../Internal/Settings/AppearanceTopPage.cpp" line="22"/>
+        <source>Application appearance.</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>Core::Internal::CorePlugin</name>
@@ -96,57 +119,57 @@
 <context>
     <name>Core::Internal::HomeWindowAddOn</name>
     <message>
-        <location filename="../../Internal/AddOn/HomeWindowAddOn.cpp" line="83"/>
+        <location filename="../../Internal/AddOn/HomeWindowAddOn.cpp" line="95"/>
         <source>File(&amp;F)</source>
         <translation>文件(&amp;F)</translation>
     </message>
     <message>
-        <location filename="../../Internal/AddOn/HomeWindowAddOn.cpp" line="84"/>
+        <location filename="../../Internal/AddOn/HomeWindowAddOn.cpp" line="96"/>
         <source>Edit(&amp;E)</source>
         <translation>编辑(&amp;E)</translation>
     </message>
     <message>
-        <location filename="../../Internal/AddOn/HomeWindowAddOn.cpp" line="85"/>
+        <location filename="../../Internal/AddOn/HomeWindowAddOn.cpp" line="97"/>
         <source>Help(&amp;H)</source>
         <translation>帮助(&amp;H)</translation>
     </message>
     <message>
-        <location filename="../../Internal/AddOn/HomeWindowAddOn.cpp" line="87"/>
+        <location filename="../../Internal/AddOn/HomeWindowAddOn.cpp" line="99"/>
         <source>Open Actions</source>
         <translation>打开组</translation>
     </message>
     <message>
-        <location filename="../../Internal/AddOn/HomeWindowAddOn.cpp" line="88"/>
+        <location filename="../../Internal/AddOn/HomeWindowAddOn.cpp" line="100"/>
         <source>New</source>
         <translation>新建</translation>
     </message>
     <message>
-        <location filename="../../Internal/AddOn/HomeWindowAddOn.cpp" line="89"/>
+        <location filename="../../Internal/AddOn/HomeWindowAddOn.cpp" line="101"/>
         <source>Open</source>
         <translation>打开</translation>
     </message>
     <message>
-        <location filename="../../Internal/AddOn/HomeWindowAddOn.cpp" line="91"/>
+        <location filename="../../Internal/AddOn/HomeWindowAddOn.cpp" line="103"/>
         <source>Preference Actions</source>
         <translation>首选项组</translation>
     </message>
     <message>
-        <location filename="../../Internal/AddOn/HomeWindowAddOn.cpp" line="92"/>
+        <location filename="../../Internal/AddOn/HomeWindowAddOn.cpp" line="104"/>
         <source>Settings</source>
         <translation>设置</translation>
     </message>
     <message>
-        <location filename="../../Internal/AddOn/HomeWindowAddOn.cpp" line="94"/>
+        <location filename="../../Internal/AddOn/HomeWindowAddOn.cpp" line="106"/>
         <source>About Actions</source>
         <translation>关于组</translation>
     </message>
     <message>
-        <location filename="../../Internal/AddOn/HomeWindowAddOn.cpp" line="95"/>
+        <location filename="../../Internal/AddOn/HomeWindowAddOn.cpp" line="107"/>
         <source>About %1</source>
         <translation>关于 %1</translation>
     </message>
     <message>
-        <location filename="../../Internal/AddOn/HomeWindowAddOn.cpp" line="96"/>
+        <location filename="../../Internal/AddOn/HomeWindowAddOn.cpp" line="108"/>
         <source>About Qt</source>
         <translation>关于 Qt</translation>
     </message>
@@ -192,14 +215,68 @@
 <context>
     <name>Core::Internal::SettingsDialog</name>
     <message>
-        <location filename="../../Internal/Dialogs/SettingsDialog.cpp" line="77"/>
+        <location filename="../../Internal/Dialogs/SettingsDialog.cpp" line="82"/>
         <source>Search for settings</source>
         <translation>搜索设置项</translation>
     </message>
     <message>
-        <location filename="../../Internal/Dialogs/SettingsDialog.cpp" line="79"/>
+        <location filename="../../Internal/Dialogs/SettingsDialog.cpp" line="84"/>
         <source>Settings</source>
         <translation>设置</translation>
+    </message>
+</context>
+<context>
+    <name>Core::PreferencePage</name>
+    <message>
+        <location filename="../../Preferences/PreferencePage.cpp" line="20"/>
+        <source>Preference</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../Preferences/PreferencePage.cpp" line="24"/>
+        <source>Filter</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>Core::TestOptionsPage</name>
+    <message>
+        <location filename="../../Internal/TestOptionsPage.cpp" line="15"/>
+        <source>Test</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../Internal/TestOptionsPage.cpp" line="19"/>
+        <source>This is a test.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../Internal/TestOptionsPage.cpp" line="36"/>
+        <source>Test2</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>Core::WorkflowDialogPrivate</name>
+    <message>
+        <location filename="../../Dialogs/WorkflowDialog.cpp" line="97"/>
+        <source>Previous</source>
+        <translation>上一步</translation>
+    </message>
+    <message>
+        <location filename="../../Dialogs/WorkflowDialog.cpp" line="98"/>
+        <source>Cancel</source>
+        <translation>取消</translation>
+    </message>
+    <message>
+        <location filename="../../Dialogs/WorkflowDialog.cpp" line="176"/>
+        <source>Next</source>
+        <translation>下一步</translation>
+    </message>
+    <message>
+        <location filename="../../Dialogs/WorkflowDialog.cpp" line="176"/>
+        <source>Finish</source>
+        <translation>完成</translation>
     </message>
 </context>
 </TS>

@@ -121,6 +121,7 @@ namespace Core {
         QTreeWidgetItem *SettingsDialog::buildTreeWidgetItem(Core::ISettingPage *page) {
             auto item = new QTreeWidgetItem();
             item->setText(0, page->title());
+            item->setToolTip(0, page->description());
             item->setData(0, TitleRole, page->sortKeyword());
             item->setData(0, EntityRole, QVariant::fromValue(page));
 
@@ -220,6 +221,11 @@ namespace Core {
         }
 
         void SettingsDialog::_q_descriptionChanged(Core::ISettingPage *page, const QString &description) {
+            auto item = m_treeIndexes.value(page, nullptr);
+            if (!item) {
+                return;
+            }
+            item->setToolTip(0, description);
         }
 
         void SettingsDialog::_q_pageAdded(ISettingPage *page) {

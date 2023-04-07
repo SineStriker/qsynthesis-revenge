@@ -135,20 +135,20 @@
 <context>
     <name>DialogHelper</name>
     <message>
-        <location filename="../../../../libs/choruskit/appcore/src/DialogHelper.cpp" line="89"/>
-        <location filename="../../../../libs/choruskit/appcore/src/DialogHelper.cpp" line="108"/>
+        <location filename="../../../../libs/choruskit/appcore/src/DialogHelper.cpp" line="90"/>
+        <location filename="../../../../libs/choruskit/appcore/src/DialogHelper.cpp" line="109"/>
         <source>OK</source>
         <translation type="unfinished">确定</translation>
     </message>
     <message>
-        <location filename="../../../../libs/choruskit/appcore/src/DialogHelper.cpp" line="90"/>
-        <location filename="../../../../libs/choruskit/appcore/src/DialogHelper.cpp" line="109"/>
+        <location filename="../../../../libs/choruskit/appcore/src/DialogHelper.cpp" line="91"/>
+        <location filename="../../../../libs/choruskit/appcore/src/DialogHelper.cpp" line="110"/>
         <source>Cancel</source>
         <translation type="unfinished">取消</translation>
     </message>
     <message>
-        <location filename="../../../../libs/choruskit/appcore/src/DialogHelper.cpp" line="91"/>
-        <location filename="../../../../libs/choruskit/appcore/src/DialogHelper.cpp" line="110"/>
+        <location filename="../../../../libs/choruskit/appcore/src/DialogHelper.cpp" line="92"/>
+        <location filename="../../../../libs/choruskit/appcore/src/DialogHelper.cpp" line="111"/>
         <source>Apply</source>
         <translation type="unfinished"></translation>
     </message>

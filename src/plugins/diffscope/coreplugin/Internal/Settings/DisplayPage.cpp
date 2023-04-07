@@ -19,6 +19,7 @@ namespace Core {
 
         void DisplayPage::reloadStrings() {
             setTitle(tr("Display"));
+            setDescription(tr("Display"));
         }
 
         QString DisplayPage::sortKeyword() const {

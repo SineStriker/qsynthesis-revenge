@@ -28,6 +28,8 @@ namespace Core {
         void setWidget(QWidget *w);
 
     protected:
+        virtual bool validate() const;
+
         virtual void prev();
         virtual void next();
         virtual void finish();

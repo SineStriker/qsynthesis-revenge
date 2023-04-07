@@ -18,6 +18,7 @@ namespace Core::Internal {
 
     void ActionConfigurePage::reloadStrings() {
         setTitle(tr("Actions and Toolbars"));
+        setDescription(tr("Actions and Toolbars"));
     }
 
     QString ActionConfigurePage::sortKeyword() const {

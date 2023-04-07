@@ -11,6 +11,8 @@
 
 namespace Core {
 
+    class WorkflowDialogContainer;
+
     class WorkflowDialogPrivate : public QObject {
         Q_OBJECT
         Q_DECLARE_PUBLIC(WorkflowDialog)
@@ -31,7 +33,7 @@ namespace Core {
 
         QWidget *widget;
 
-        QFrame *container;
+        WorkflowDialogContainer *container;
         QVBoxLayout *mainLayout;
 
         QPropertyAnimation *m_animation;

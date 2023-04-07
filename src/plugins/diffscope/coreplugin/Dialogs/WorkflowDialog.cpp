@@ -9,6 +9,36 @@ namespace Core {
 
     static int AnimationDuration = 250;
 
+    class WorkflowDialogContainer : public QWidget {
+    public:
+        explicit WorkflowDialogContainer(WorkflowDialogPrivate *d, QWidget *parent = nullptr) : QWidget(parent), d(d) {
+        }
+
+        ~WorkflowDialogContainer() {
+        }
+
+        QSize sizeHint() const override {
+            return d->widget ? d->widget->sizeHint() : QWidget::sizeHint();
+        }
+
+        QSize minimumSizeHint() const override {
+            return d->widget ? d->widget->minimumSizeHint() : QWidget::minimumSizeHint();
+        }
+
+        bool event(QEvent *event) override {
+            switch (event->type()) {
+                case QEvent::LayoutRequest:
+                    updateGeometry();
+                    break;
+                default:
+                    break;
+            }
+            return QWidget::event(event);
+        }
+
+        WorkflowDialogPrivate *d;
+    };
+
     WorkflowDialogPrivate::WorkflowDialogPrivate() {
         hasPrev = false;
         hasNext = false;
@@ -33,7 +63,7 @@ namespace Core {
         m_animation->setEasingCurve(QEasingCurve::OutCubic);
         m_animation2->setEasingCurve(QEasingCurve::OutCubic);
 
-        container = new QFrame();
+        container = new WorkflowDialogContainer(this);
         container->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Expanding);
         container->installEventFilter(this);
 
@@ -173,7 +203,7 @@ namespace Core {
     void WorkflowDialogPrivate::_q_prevClicked() {
         Q_Q(WorkflowDialog);
 
-        if (m_animation->state() == QAbstractAnimation::Running) {
+        if (m_animation->state() == QAbstractAnimation::Running || !q->validate()) {
             return;
         }
 
@@ -191,14 +221,14 @@ namespace Core {
     void WorkflowDialogPrivate::_q_nextClicked() {
         Q_Q(WorkflowDialog);
 
-        if (m_animation->state() == QAbstractAnimation::Running) {
+        if (m_animation->state() == QAbstractAnimation::Running || !q->validate()) {
             return;
         }
 
         if (!hasNext) {
             q->finish();
             emit q->finished();
-            
+
             q->accept();
             return;
         }
@@ -255,7 +285,9 @@ namespace Core {
             d->m_animation2->stop();
 
             org->setParent(nullptr);
+
             d->widget = nullptr;
+            d->container->updateGeometry();
         }
         return org;
     }
@@ -268,7 +300,13 @@ namespace Core {
         w->setParent(d->container);
         w->setGeometry(QRect(QPoint(), d->container->size()));
         w->show();
+
         d->widget = w;
+        d->container->updateGeometry();
+    }
+
+    bool WorkflowDialog::validate() const {
+        return true;
     }
 
     void WorkflowDialog::prev() {
