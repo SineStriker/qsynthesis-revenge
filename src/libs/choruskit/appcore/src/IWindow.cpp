@@ -145,24 +145,38 @@ namespace Core {
         return d->widgetMap.values();
     }
 
-    void IWindow::addActionItem(const QString &id, ActionItem *item) {
+    void IWindow::addActionItem(ActionItem *item) {
         Q_D(IWindow);
         if (!item) {
             qWarning() << "Core::IWindow::addActionItem(): trying to add null action item";
             return;
         }
-        if (d->actionItemMap.contains(id)) {
-            qWarning() << "Core::IWindow::addActionItem(): trying to add duplicated action item:" << id;
+        if (d->actionItemMap.contains(item->id())) {
+            qWarning() << "Core::IWindow::addActionItem(): trying to add duplicated action item:" << item->id();
             return;
         }
-        d->actionItemMap.insert(id, item);
+        d->actionItemMap.insert(item->id(), item);
+    }
+
+    void IWindow::addActionItems(const QList<Core::ActionItem *> &items) {
+        for (const auto &item : items) {
+            addActionItem(item);
+        }
+    }
+
+    void IWindow::removeActionItem(Core::ActionItem *item) {
+        if (item == nullptr) {
+            qWarning() << "Core::IWindow::removeActionItem(): trying to remove null item";
+            return;
+        }
+        removeActionItem(item->id());
     }
 
     void IWindow::removeActionItem(const QString &id) {
         Q_D(IWindow);
         auto it = d->actionItemMap.find(id);
         if (it == d->actionItemMap.end()) {
-            qWarning() << "Core::IWindow::addActionItem(): action item does not exist:" << id;
+            qWarning() << "Core::IWindow::removeActionItem(): action item does not exist:" << id;
             return;
         }
         d->actionItemMap.erase(it);

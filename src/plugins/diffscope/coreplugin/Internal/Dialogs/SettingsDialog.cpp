@@ -29,6 +29,7 @@ namespace Core {
             m_currentPage = nullptr;
             m_catalogWidget = nullptr;
 
+            // Left
             m_tree = new QTreeWidget();
             m_tree->setHeaderHidden(true);
 
@@ -44,11 +45,32 @@ namespace Core {
             leftWidget = new QWidget();
             leftWidget->setLayout(leftLayout);
 
+            // Right
+            titleLabel = new QLabel();
+            descriptionLabel = new QLabel();
+
+            labelLayout = new QVBoxLayout();
+            labelLayout->setMargin(0);
+            labelLayout->setSpacing(0);
+
+            labelLayout->addWidget(titleLabel);
+            labelLayout->addWidget(descriptionLabel);
+
             m_page = new QStackedWidget();
+
+            rightLayout = new QVBoxLayout();
+            rightLayout->setMargin(0);
+            // leftLayout->setSpacing(0);
+
+            rightLayout->addLayout(labelLayout);
+            rightLayout->addWidget(m_page);
+
+            rightWidget = new QWidget();
+            rightWidget->setLayout(rightLayout);
 
             topSplitter = new QSplitter();
             topSplitter->addWidget(leftWidget);
-            topSplitter->addWidget(m_page);
+            topSplitter->addWidget(rightWidget);
 
             setWidget(topSplitter);
 
@@ -171,18 +193,15 @@ namespace Core {
                     m_catalogWidget = nullptr;
                 }
             }
+
+            titleLabel->setText({});
+            descriptionLabel->setText({});
         }
 
         void SettingsDialog::showCatalog() {
             auto w = new QFrame();
 
             auto layout = new QVBoxLayout();
-
-            auto label = new QLabel(m_currentPage->description());
-            layout->addWidget(label);
-
-            // Update text
-            connect(m_currentPage, &ISettingPage::descriptionChanged, label, &QLabel::setText);
 
             auto curItem = m_tree->currentItem();
             for (int i = 0; i < curItem->childCount(); ++i) {
@@ -207,6 +226,9 @@ namespace Core {
             w->setLayout(layout);
 
             clearPage();
+
+            titleLabel->setText(m_currentPage->title());
+            descriptionLabel->setText(m_currentPage->description());
             m_page->addWidget(w);
 
             m_catalogWidget = w;
@@ -218,6 +240,10 @@ namespace Core {
                 return;
             }
             item->setText(0, title);
+
+            if (page == m_currentPage) {
+                titleLabel->setText(title);
+            }
         }
 
         void SettingsDialog::_q_descriptionChanged(Core::ISettingPage *page, const QString &description) {
@@ -226,6 +252,10 @@ namespace Core {
                 return;
             }
             item->setToolTip(0, description);
+
+            if (page == m_currentPage) {
+                descriptionLabel->setText(description);
+            }
         }
 
         void SettingsDialog::_q_pageAdded(ISettingPage *page) {
@@ -296,6 +326,8 @@ namespace Core {
 
             auto w = page->widget();
             if (w) {
+                titleLabel->setText(page->title());
+                descriptionLabel->setText(page->description());
                 m_page->addWidget(page->widget());
             } else {
                 // Add a catalog widget with description

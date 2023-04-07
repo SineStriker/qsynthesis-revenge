@@ -25,7 +25,7 @@ namespace Core {
         }
 
         void ProjectWindowAddOn::initialize() {
-            auto iWin = this->handle();
+            auto iWin = this->windowHandle();
             auto win = iWin->window();
 
             auto label = new QLabel("123");

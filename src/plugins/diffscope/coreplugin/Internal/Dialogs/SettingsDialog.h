@@ -7,6 +7,7 @@
 #include <QLineEdit>
 #include <QSplitter>
 #include <QStackedWidget>
+#include <QLabel>
 #include <QTreeWidget>
 
 #include <Layout/QMEqualBoxLayout.h>
@@ -44,6 +45,13 @@ namespace Core {
 
             QWidget *leftWidget;
             QVBoxLayout *leftLayout;
+
+            QWidget *rightWidget;
+            QVBoxLayout *rightLayout;
+
+            QLabel *titleLabel;
+            QLabel *descriptionLabel;
+            QLayout *labelLayout;
 
             QSplitter *topSplitter;
 

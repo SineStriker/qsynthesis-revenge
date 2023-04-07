@@ -37,7 +37,7 @@ namespace Core {
         }
 
         void HomeWindowAddOn::initialize() {
-            auto iWin = qobject_cast<IHomeWindow *>(this->handle());
+            auto iWin = qobject_cast<IHomeWindow *>(this->windowHandle());
             ICore::instance()->dialogHelper()->addDialogPage(new TestDialogPage);
             auto testLayout = new QVBoxLayout;
             auto testTextInput = new QLineEdit;
@@ -109,6 +109,8 @@ namespace Core {
         }
 
         void HomeWindowAddOn::reloadMenuBar() {
+            auto iWin = windowHandle();
+
             fileItem = new ActionItem("home_File", new QMenu());
             editItem = new ActionItem("home_Edit", new QMenu());
             helpItem = new ActionItem("home_Help", new QMenu());
@@ -125,39 +127,41 @@ namespace Core {
             aboutQtItem = new ActionItem("home_AboutQt", new QAction(this));
 
             connect(newFileItem->action(), &QAction::triggered, this, [this]() {
-                ICore::instance()->showWizardDialog("", handle()->window()); //
+                ICore::instance()->showWizardDialog("", windowHandle()->window()); //
             });
 
             connect(settingsItem->action(), &QAction::triggered, this, [this]() {
-                ICore::instance()->showSettingsDialog("core_Settings", handle()->window()); //
+                ICore::instance()->showSettingsDialog("core_Settings", windowHandle()->window()); //
             });
 
             connect(aboutAppItem->action(), &QAction::triggered, this, [this]() {
-                ICore::instance()->aboutApp(handle()->window()); //
+                ICore::aboutApp(windowHandle()->window()); //
             });
 
             connect(aboutQtItem->action(), &QAction::triggered, this, [this]() {
-                QMessageBox::aboutQt(handle()->window()); //
+                QMessageBox::aboutQt(windowHandle()->window()); //
             });
+
+            QList<ActionItem *> actionItems = {
+                fileItem,
+                editItem,
+                helpItem,
+                openGroupItem,
+                newFileItem,
+                openFileItem,
+                preferenceGroupItem,
+                settingsItem,
+                aboutGroupItem,
+                aboutAppItem,
+                aboutQtItem,
+            };
 
             ICore::instance()
                 ->actionSystem()
                 ->context("home_MainMenu")
-                ->buildMenuBarWithState(
-                    {
-                        fileItem,
-                        editItem,
-                        helpItem,
-                        openGroupItem,
-                        newFileItem,
-                        openFileItem,
-                        preferenceGroupItem,
-                        settingsItem,
-                        aboutGroupItem,
-                        aboutAppItem,
-                        aboutQtItem,
-                    },
-                    handle()->menuBar());
+                ->buildMenuBarWithState(actionItems, iWin->menuBar());
+
+            iWin->addActionItems(actionItems);
         }
     }
 

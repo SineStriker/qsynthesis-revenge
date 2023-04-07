@@ -2,7 +2,7 @@
 
 namespace Core {
 
-    static const QChar m_modifiedIdentifier[] = {0x25cf, 0x0};
+    static const QChar m_modifiedIdentifier[] = {0x25cf};
 
     class WindowElementsAdaptorPrivate {
     public:
@@ -90,7 +90,7 @@ namespace Core {
     }
 
     QString WindowElementsAdaptor::modifiedIdentifier() const {
-        return QString(m_modifiedIdentifier);
+        return QString(m_modifiedIdentifier, sizeof(m_modifiedIdentifier) / sizeof(QChar));
     }
 
     QString WindowElementsAdaptor::correctWindowTitle(const QString &title) const {

@@ -25,7 +25,7 @@ namespace Core {
     IWindowAddOn::~IWindowAddOn() {
     }
 
-    IWindow *IWindowAddOn::handle() const {
+    IWindow *IWindowAddOn::windowHandle() const {
         return d_ptr->iWin;
     }
 

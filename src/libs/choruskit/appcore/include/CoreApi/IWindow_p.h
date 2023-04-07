@@ -32,10 +32,10 @@ namespace Core {
 
         QString id;
 
-        QMap<QString, ActionItem *> actionItemMap;
+        QHash<QString, ActionItem *> actionItemMap;
         std::list<IWindowAddOn *> addOns;
 
-        QMap<QString, QWidget *> widgetMap;
+        QHash<QString, QWidget *> widgetMap;
 
         void initAllAddOns();
         void deleteAllAddOns();

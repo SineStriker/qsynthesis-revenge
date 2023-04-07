@@ -203,7 +203,7 @@ namespace Core {
     void WorkflowDialogPrivate::_q_prevClicked() {
         Q_Q(WorkflowDialog);
 
-        if (m_animation->state() == QAbstractAnimation::Running || !q->validate()) {
+        if (m_animation->state() == QAbstractAnimation::Running) {
             return;
         }
 

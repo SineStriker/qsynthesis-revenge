@@ -46,7 +46,9 @@ namespace Core {
         QWidget *widget(const QString &id) const;
         QList<QWidget *> widgets() const;
 
-        void addActionItem(const QString &id, ActionItem *item);
+        void addActionItem(ActionItem *item);
+        void addActionItems(const QList<ActionItem *> &items);
+        void removeActionItem(ActionItem *item);
         void removeActionItem(const QString &id);
         ActionItem *actionItem(const QString &id) const;
         QList<ActionItem *> actionItems() const;

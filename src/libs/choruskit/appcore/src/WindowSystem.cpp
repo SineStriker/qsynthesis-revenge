@@ -61,11 +61,11 @@ namespace Core {
     bool WindowSystem::addWindow(IWindowFactory *factory) {
         Q_D(WindowSystem);
         if (!factory) {
-            qWarning() << "Core::WindowSystem::addWindow(): trying to add null creator";
+            qWarning() << "Core::WindowSystem::addWindow(): trying to add null factory";
             return false;
         }
         if (d->windowFactories.contains(factory->id())) {
-            qWarning() << "Core::WindowSystem::addWindow(): trying to add duplicated creator:" << factory->id();
+            qWarning() << "Core::WindowSystem::addWindow(): trying to add duplicated factory:" << factory->id();
             return false;
         }
         d->windowFactories.append(factory->id(), factory);
@@ -74,7 +74,7 @@ namespace Core {
 
     bool WindowSystem::removeWindow(IWindowFactory *factory) {
         if (factory == nullptr) {
-            qWarning() << "Core::WindowSystem::removeWindow(): trying to remove null creator";
+            qWarning() << "Core::WindowSystem::removeWindow(): trying to remove null factory";
             return false;
         }
         return removeWindow(factory->id());
@@ -104,7 +104,7 @@ namespace Core {
     bool WindowSystem::addAddOn(IWindowAddOnFactory *factory) {
         Q_D(WindowSystem);
         if (!factory) {
-            qWarning() << "Core::WindowSystem::addAddOn(): trying to add null add-on";
+            qWarning() << "Core::WindowSystem::addAddOn(): trying to add null factory";
             return false;
         }
         d->addOnFactories.append(factory);
@@ -114,12 +114,12 @@ namespace Core {
     bool WindowSystem::removeAddOn(IWindowAddOnFactory *factory) {
         Q_D(WindowSystem);
         if (!factory) {
-            qWarning() << "Core::WindowSystem::removeAddOn(): trying to remove null add-on";
+            qWarning() << "Core::WindowSystem::removeAddOn(): trying to remove null factory";
             return false;
         }
 
         if (!d->addOnFactories.remove(factory)) {
-            qWarning() << "Core::WindowSystem::removeAddOn(): add-on does not exist:" << factory;
+            qWarning() << "Core::WindowSystem::removeAddOn(): factory does not exist:" << factory;
             return false;
         }
         return true;
@@ -140,7 +140,7 @@ namespace Core {
 
         auto it = d->windowFactories.find(id);
         if (it == d->windowFactories.end()) {
-            qWarning() << "Core::WindowSystem::createWindow(): creator does not exist:" << id;
+            qWarning() << "Core::WindowSystem::createWindow(): window factory does not exist:" << id;
             return nullptr;
         }
 
@@ -150,7 +150,7 @@ namespace Core {
         auto iWin = factory->creator() == IWindowFactory::Create ? factory->create(nullptr)
                                                                  : factory->create(factory->id(), nullptr);
         if (!iWin) {
-            qWarning() << "Core::WindowSystem::createWindow(): creator creates null instance:" << id;
+            qWarning() << "Core::WindowSystem::createWindow(): window factory creates null instance:" << id;
             return nullptr;
         }
 

@@ -444,20 +444,6 @@ namespace Core {
 
         // Clear items and build map
         for (const auto item : items) {
-            switch (item->type()) {
-                case ActionItem::Menu:
-                    item->menu()->clear();
-                    break;
-                case ActionItem::ActionGroup: {
-                    auto group = item->actionGroup();
-                    for (const auto &action : group->actions()) {
-                        group->removeAction(action);
-                    }
-                    break;
-                }
-                default:
-                    break;
-            }
             itemMap.insert(item->id(), item);
         }
 
@@ -468,6 +454,7 @@ namespace Core {
             if (ids.isEmpty()) {
                 continue;
             }
+
             if (id.isEmpty()) {
                 continue;
             } else {
@@ -478,6 +465,11 @@ namespace Core {
                 switch (item->type()) {
                     case ActionItem::ActionGroup: {
                         auto actionGroup = item->actionGroup();
+
+                        for (const auto &action : actionGroup->actions()) {
+                            actionGroup->removeAction(action);
+                        }
+
                         for (const auto &childId : qAsConst(ids)) {
                             auto childItem = itemMap.value(childId, nullptr);
                             if (!childItem)
@@ -498,6 +490,7 @@ namespace Core {
             if (ids.isEmpty()) {
                 continue;
             }
+
             if (id.isEmpty()) {
                 for (const auto &childId : qAsConst(ids)) {
                     auto childItem = itemMap.value(childId, nullptr);
@@ -513,6 +506,7 @@ namespace Core {
                 switch (item->type()) {
                     case ActionItem::Menu: {
                         auto menu = item->menu();
+                        menu->clear();
                         for (const auto &childId : qAsConst(ids)) {
                             auto childItem = itemMap.value(childId, nullptr);
                             if (!childItem)
