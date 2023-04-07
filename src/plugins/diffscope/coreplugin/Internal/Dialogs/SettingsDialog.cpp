@@ -132,6 +132,31 @@ namespace Core {
             item->addChildren(items);
 
             m_treeIndexes.insert(page, item);
+
+            auto text = m_searchBox->text();
+            if (!text.isEmpty()) {
+                item->setHidden(!page->matches(text));
+
+                std::list<QTreeWidgetItem *> items;
+                for (const auto &sub : page->allPages()) {
+                    auto item = m_treeIndexes[sub];
+
+                    // All hidden
+                    item->setHidden(true);
+
+                    if (sub->matches(text)) {
+                        items.push_back(item);
+                    }
+                }
+
+                for (auto p : qAsConst(items)) {
+                    while (p && p->isHidden()) {
+                        p->setHidden(false);
+                        p = p->parent();
+                    }
+                }
+            }
+
             return item;
         }
 
@@ -282,15 +307,16 @@ namespace Core {
 
             std::list<QTreeWidgetItem *> items;
             for (auto it = m_treeIndexes.begin(); it != m_treeIndexes.end(); ++it) {
+                auto item = it.value();
+
+                // All hidden
+                item->setHidden(true);
+
                 if (it.key()->matches(text)) {
-                    items.push_back(it.value());
+                    items.push_back(item);
                 }
             }
 
-            // All hidden
-            for (const auto &item : qAsConst(m_treeIndexes)) {
-                item->setHidden(true);
-            }
 
             for (auto p : qAsConst(items)) {
                 while (p && p->isHidden()) {

@@ -20,6 +20,7 @@ namespace Core {
         protected:
             void prev() override;
             void next() override;
+            void finish() override;
 
         private:
             void refreshPage();

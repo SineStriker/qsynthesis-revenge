@@ -13,9 +13,6 @@ namespace Core {
         hasPrev = false;
         hasNext = false;
         widget = nullptr;
-
-        m_pos1 = new PosWrapper(this);
-        m_pos2 = new PosWrapper(this);
     }
 
     WorkflowDialogPrivate::~WorkflowDialogPrivate() {
@@ -42,7 +39,6 @@ namespace Core {
 
         m_label = new QLabel(container);
         m_label->hide();
-        m_pos1->w = m_label;
 
         prevButton = new CTabButton();
         nextButton = new CTabButton();
@@ -91,22 +87,25 @@ namespace Core {
     void WorkflowDialogPrivate::doPrevTransition() {
         Q_Q(WorkflowDialog);
 
-        m_label->show();
         m_label->adjustSize();
         m_label->move(0, 0);
 
-        widget->show();
         widget->setGeometry(QRect(QPoint(-container->width(), 0), container->size()));
 
-        m_animation->setTargetObject(m_pos1);
-        m_animation->setPropertyName("x");
-        m_animation->setStartValue(m_label->x());
-        m_animation->setEndValue(container->width());
+        QRect labelEnd(QPoint(container->width(), 0), m_label->size());
+        QRect widgetEnd(QPoint(), widget->size());
 
-        m_animation2->setTargetObject(m_pos2);
-        m_animation2->setPropertyName("x");
-        m_animation2->setStartValue(widget->x());
-        m_animation2->setEndValue(0);
+        m_animation->setTargetObject(m_label);
+        m_animation->setPropertyName("geometry");
+        m_animation->setStartValue(m_label->geometry());
+        m_animation->setEndValue(labelEnd);
+
+        m_animation2->setTargetObject(widget);
+        m_animation2->setPropertyName("geometry");
+        m_animation2->setStartValue(widget->geometry());
+        m_animation2->setEndValue(widgetEnd);
+
+        m_label->show();
 
         m_animation->start();
         m_animation2->start();
@@ -115,22 +114,25 @@ namespace Core {
     void WorkflowDialogPrivate::doNextTransition() {
         Q_Q(WorkflowDialog);
 
-        m_label->show();
         m_label->adjustSize();
         m_label->move(0, 0);
 
-        widget->show();
         widget->setGeometry(QRect(QPoint(container->width(), 0), container->size()));
 
-        m_animation->setTargetObject(m_pos1);
-        m_animation->setPropertyName("x");
-        m_animation->setStartValue(m_label->x());
-        m_animation->setEndValue(-container->width());
+        QRect labelEnd(QPoint(-container->width(), 0), m_label->size());
+        QRect widgetEnd(QPoint(), widget->size());
 
-        m_animation2->setTargetObject(m_pos2);
-        m_animation2->setPropertyName("x");
-        m_animation2->setStartValue(widget->x());
-        m_animation2->setEndValue(0);
+        m_animation->setTargetObject(m_label);
+        m_animation->setPropertyName("geometry");
+        m_animation->setStartValue(m_label->geometry());
+        m_animation->setEndValue(labelEnd);
+
+        m_animation2->setTargetObject(widget);
+        m_animation2->setPropertyName("geometry");
+        m_animation2->setStartValue(widget->geometry());
+        m_animation2->setEndValue(widgetEnd);
+
+        m_label->show();
 
         m_animation->start();
         m_animation2->start();
@@ -194,7 +196,9 @@ namespace Core {
         }
 
         if (!hasNext) {
+            q->finish();
             emit q->finished();
+            
             q->accept();
             return;
         }
@@ -249,7 +253,6 @@ namespace Core {
         if (org) {
             d->m_animation->stop();
             d->m_animation2->stop();
-            d->m_pos2->w = nullptr;
 
             org->setParent(nullptr);
             d->widget = nullptr;
@@ -264,14 +267,17 @@ namespace Core {
 
         w->setParent(d->container);
         w->setGeometry(QRect(QPoint(), d->container->size()));
+        w->show();
         d->widget = w;
-        d->m_pos2->w = w;
     }
 
     void WorkflowDialog::prev() {
     }
 
     void WorkflowDialog::next() {
+    }
+
+    void WorkflowDialog::finish() {
     }
 
     WorkflowDialog::WorkflowDialog(WorkflowDialogPrivate &d, QWidget *parent) : QDialog(parent), d_ptr(&d) {

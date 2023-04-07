@@ -1,5 +1,6 @@
 #include "WizardDialog.h"
 
+#include <QDebug>
 #include <QLabel>
 
 #include <QMDecorator.h>
@@ -30,6 +31,10 @@ namespace Core::Internal {
     void WizardDialog::next() {
         step++;
         refreshPage();
+    }
+
+    void WizardDialog::finish() {
+        qDebug() << "Wizard finished";
     }
 
     void WizardDialog::refreshPage() {

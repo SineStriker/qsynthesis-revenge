@@ -30,6 +30,7 @@ namespace Core {
     protected:
         virtual void prev();
         virtual void next();
+        virtual void finish();
 
     signals:
         void aboutToPrev();

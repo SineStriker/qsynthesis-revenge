@@ -11,33 +11,6 @@
 
 namespace Core {
 
-    class PosWrapper : public QObject {
-        Q_OBJECT
-        Q_PROPERTY(int x READ x WRITE setX)
-        Q_PROPERTY(int y READ y WRITE setY)
-
-    public:
-        explicit PosWrapper(QObject *parent = nullptr) : QObject(parent) {
-        }
-
-        inline int x() const {
-            return w->x();
-        }
-
-        inline void setX(int x) {
-            w->move(x, w->y());
-        }
-
-        inline int y() const {
-            return w->y();
-        }
-        inline void setY(int y) {
-            w->move(w->x(), y);
-        }
-
-        QWidget *w;
-    };
-
     class WorkflowDialogPrivate : public QObject {
         Q_OBJECT
         Q_DECLARE_PUBLIC(WorkflowDialog)
@@ -64,9 +37,6 @@ namespace Core {
         QPropertyAnimation *m_animation;
         QPropertyAnimation *m_animation2;
         QLabel *m_label;
-
-        PosWrapper *m_pos1;
-        PosWrapper *m_pos2;
 
         void refreshPrevButton();
         void refreshNextButton();
