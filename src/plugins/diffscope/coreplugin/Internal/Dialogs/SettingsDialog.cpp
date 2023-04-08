@@ -14,6 +14,15 @@ namespace Core {
 
     namespace Internal {
 
+        static QString _getItemPathTitle(QTreeWidgetItem *item) {
+            QStringList titles;
+            while (item) {
+                titles.prepend(item->text(0));
+                item = item->parent();
+            }
+            return titles.join(" > ");
+        }
+
         struct Order {
             QCollator qoc;
             Order() {
@@ -227,7 +236,7 @@ namespace Core {
 
             clearPage();
 
-            titleLabel->setText(m_currentPage->title());
+            titleLabel->setText(_getItemPathTitle(curItem));
             descriptionLabel->setText(m_currentPage->description());
             m_page->addWidget(w);
 
@@ -241,8 +250,13 @@ namespace Core {
             }
             item->setText(0, title);
 
-            if (page == m_currentPage) {
-                titleLabel->setText(title);
+            auto curItem = m_tree->currentItem();
+            while (item && item != curItem) {
+                item = item->parent();
+            }
+
+            if (item) {
+                titleLabel->setText(_getItemPathTitle(curItem));
             }
         }
 
@@ -326,7 +340,7 @@ namespace Core {
 
             auto w = page->widget();
             if (w) {
-                titleLabel->setText(page->title());
+                titleLabel->setText(_getItemPathTitle(cur));
                 descriptionLabel->setText(page->description());
                 m_page->addWidget(page->widget());
             } else {

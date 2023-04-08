@@ -4,7 +4,7 @@ include(${CMAKE_CURRENT_LIST_DIR}/ChorusKitUtils.cmake)
 include(${CMAKE_CURRENT_LIST_DIR}/ChorusKitBuildSystem_p.cmake)
 
 #[[
-Initalize ChorusKitApi global settings.
+Initialize ChorusKitApi global settings.
 
     ck_init_buildsystem(
         [NAME       name]

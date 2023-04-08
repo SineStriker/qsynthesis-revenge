@@ -67,6 +67,7 @@
     <name>Core::Internal::ActionConfigurePage</name>
     <message>
         <location filename="../../Internal/Settings/ActionConfigurePage.cpp" line="20"/>
+        <location filename="../../Internal/Settings/ActionConfigurePage.cpp" line="21"/>
         <source>Actions and Toolbars</source>
         <translation type="unfinished"></translation>
     </message>
@@ -101,6 +102,7 @@
     <name>Core::Internal::DisplayPage</name>
     <message>
         <location filename="../../Internal/Settings/DisplayPage.cpp" line="21"/>
+        <location filename="../../Internal/Settings/DisplayPage.cpp" line="22"/>
         <source>Display</source>
         <translation type="unfinished"></translation>
     </message>
@@ -204,12 +206,12 @@
 <context>
     <name>Core::Internal::SettingsDialog</name>
     <message>
-        <location filename="../../Internal/Dialogs/SettingsDialog.cpp" line="82"/>
+        <location filename="../../Internal/Dialogs/SettingsDialog.cpp" line="113"/>
         <source>Search for settings</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Internal/Dialogs/SettingsDialog.cpp" line="84"/>
+        <location filename="../../Internal/Dialogs/SettingsDialog.cpp" line="115"/>
         <source>Settings</source>
         <translation type="unfinished"></translation>
     </message>
@@ -246,25 +248,30 @@
     </message>
 </context>
 <context>
-    <name>Core::WorkflowDialogPrivate</name>
+    <name>Core::WorkflowPagePrivate</name>
     <message>
-        <location filename="../../Dialogs/WorkflowDialog.cpp" line="97"/>
+        <location filename="../../Dialogs/WorkflowDialog.cpp" line="87"/>
         <source>Previous</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Dialogs/WorkflowDialog.cpp" line="98"/>
-        <source>Cancel</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../Dialogs/WorkflowDialog.cpp" line="176"/>
+        <location filename="../../Dialogs/WorkflowDialog.cpp" line="88"/>
         <source>Next</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Dialogs/WorkflowDialog.cpp" line="176"/>
+        <location filename="../../Dialogs/WorkflowDialog.cpp" line="89"/>
         <source>Finish</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../Dialogs/WorkflowDialog.cpp" line="90"/>
+        <source>Cancel</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../../Dialogs/WorkflowDialog.cpp" line="91"/>
+        <source>Help</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

@@ -78,6 +78,7 @@
     <name>Core::Internal::ActionConfigurePage</name>
     <message>
         <location filename="../../Internal/Settings/ActionConfigurePage.cpp" line="20"/>
+        <location filename="../../Internal/Settings/ActionConfigurePage.cpp" line="21"/>
         <source>Actions and Toolbars</source>
         <translation>菜单项与工具栏</translation>
     </message>
@@ -112,6 +113,7 @@
     <name>Core::Internal::DisplayPage</name>
     <message>
         <location filename="../../Internal/Settings/DisplayPage.cpp" line="21"/>
+        <location filename="../../Internal/Settings/DisplayPage.cpp" line="22"/>
         <source>Display</source>
         <translation>显示</translation>
     </message>
@@ -215,12 +217,12 @@
 <context>
     <name>Core::Internal::SettingsDialog</name>
     <message>
-        <location filename="../../Internal/Dialogs/SettingsDialog.cpp" line="82"/>
+        <location filename="../../Internal/Dialogs/SettingsDialog.cpp" line="113"/>
         <source>Search for settings</source>
         <translation>搜索设置项</translation>
     </message>
     <message>
-        <location filename="../../Internal/Dialogs/SettingsDialog.cpp" line="84"/>
+        <location filename="../../Internal/Dialogs/SettingsDialog.cpp" line="115"/>
         <source>Settings</source>
         <translation>设置</translation>
     </message>
@@ -259,24 +261,48 @@
 <context>
     <name>Core::WorkflowDialogPrivate</name>
     <message>
-        <location filename="../../Dialogs/WorkflowDialog.cpp" line="97"/>
+        <source>Previous</source>
+        <translation type="vanished">上一步</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation type="vanished">取消</translation>
+    </message>
+    <message>
+        <source>Next</source>
+        <translation type="vanished">下一步</translation>
+    </message>
+    <message>
+        <source>Finish</source>
+        <translation type="vanished">完成</translation>
+    </message>
+</context>
+<context>
+    <name>Core::WorkflowPagePrivate</name>
+    <message>
+        <location filename="../../Dialogs/WorkflowDialog.cpp" line="87"/>
         <source>Previous</source>
         <translation>上一步</translation>
     </message>
     <message>
-        <location filename="../../Dialogs/WorkflowDialog.cpp" line="98"/>
-        <source>Cancel</source>
-        <translation>取消</translation>
-    </message>
-    <message>
-        <location filename="../../Dialogs/WorkflowDialog.cpp" line="176"/>
+        <location filename="../../Dialogs/WorkflowDialog.cpp" line="88"/>
         <source>Next</source>
         <translation>下一步</translation>
     </message>
     <message>
-        <location filename="../../Dialogs/WorkflowDialog.cpp" line="176"/>
+        <location filename="../../Dialogs/WorkflowDialog.cpp" line="89"/>
         <source>Finish</source>
         <translation>完成</translation>
+    </message>
+    <message>
+        <location filename="../../Dialogs/WorkflowDialog.cpp" line="90"/>
+        <source>Cancel</source>
+        <translation>取消</translation>
+    </message>
+    <message>
+        <location filename="../../Dialogs/WorkflowDialog.cpp" line="91"/>
+        <source>Help</source>
+        <translation>帮助</translation>
     </message>
 </context>
 </TS>

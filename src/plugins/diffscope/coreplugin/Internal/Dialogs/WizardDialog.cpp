@@ -41,8 +41,14 @@ namespace Core::Internal {
         auto label = new QLabel(QString(20, QString::number(step).front()));
         label->setStyleSheet("QLabel { border: 2px solid red; }");
 
-        setWidget(label);
-        setPrevEnabled(step > 0);
-        setNextEnabled(step < 5);
+        auto page = new WorkflowPage();
+        page->setTitle("My Title " + QString::number(step));
+        page->setDescription("My Description " + QString::number(step));
+        page->setWidget(label);
+
+        page->setButtons(step < 5 ? WorkflowPage::StandardButtons : WorkflowPage::FinalButtons);
+        page->setButtonEnabled(WorkflowPage::PreviousButton, step > 0);
+
+        setPage(page);
     }
 }
