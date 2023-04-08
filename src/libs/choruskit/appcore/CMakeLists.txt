@@ -1,4 +1,4 @@
-project(CkAppCore
+project(CkCore
     VERSION ${CHORUSKIT_VERSION}
     LANGUAGES CXX
 )

@@ -26,6 +26,7 @@ namespace Core {
         auto iWin = qobject_cast<IWindow *>(sender());
         emit q->windowDestroyed(iWin);
         iWindows.remove(iWin);
+        windowMap.remove(iWin->window());
 
         if (iWindows.isEmpty()) {
             QCloseEvent e;
@@ -154,13 +155,16 @@ namespace Core {
             return nullptr;
         }
 
-        d->iWindows.insert(iWin);
+        d->iWindows.append(iWin);
         connect(iWin, &IWindow::closed, d, &WindowSystemPrivate::_q_iWindowClosed);
 
         // Create window
         auto window = iWin->createWindow(parent);
-        window->setAttribute(Qt::WA_DeleteOnClose);
 
+        // Add to indexes
+        d->windowMap.insert(window, iWin);
+
+        window->setAttribute(Qt::WA_DeleteOnClose);
         iWin->d_ptr->setWindow(window, d);
 
         emit windowCreated(iWin);
@@ -170,9 +174,14 @@ namespace Core {
         return iWin;
     }
 
+    IWindow *WindowSystem::findWindow(QWidget *window) const {
+        Q_D(const WindowSystem);
+        return d->windowMap.value(window, nullptr);
+    }
+
     int WindowSystem::count() const {
         Q_D(const WindowSystem);
-        return d->iWindows.count();
+        return d->iWindows.size();
     }
 
     QList<IWindow *> WindowSystem::windows() const {

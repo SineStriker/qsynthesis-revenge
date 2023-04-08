@@ -14,7 +14,7 @@ namespace Core {
 
     class DialogHelperPrivate;
 
-    class CKAPPCORE_API DialogHelper: public QObject {
+    class CKCORE_API DialogHelper: public QObject {
         Q_OBJECT
     public:
         explicit DialogHelper(QObject *parent = nullptr);

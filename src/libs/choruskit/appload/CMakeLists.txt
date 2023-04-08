@@ -13,7 +13,7 @@ ck_target_components(${PROJECT_NAME}
     INCLUDE_CURRENT
     SOURCES ${_src}
     QT_LINKS Core Widgets Network
-    LINKS QsFramework ExtensionSystem qBreakpad CkAppCore
+    LINKS QsFramework ExtensionSystem qBreakpad CkCore
     LINKS_PRIVATE SingleApplication
     INCLUDES ${_extra_includes}
 )

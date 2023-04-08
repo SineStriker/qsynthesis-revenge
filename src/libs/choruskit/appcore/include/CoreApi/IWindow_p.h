@@ -17,7 +17,7 @@ namespace Core {
         IWindowFactory::AvailableCreator creator;
     };
 
-    class CKAPPCORE_API IWindowPrivate : public QObject {
+    class CKCORE_API IWindowPrivate : public QObject {
         Q_OBJECT
         Q_DECLARE_PUBLIC(IWindow)
     public:

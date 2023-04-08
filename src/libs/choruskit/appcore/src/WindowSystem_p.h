@@ -25,7 +25,8 @@ namespace Core {
         QMChronMap<QString, IWindowFactory *> windowFactories;
         QMChronSet<IWindowAddOnFactory *> addOnFactories;
 
-        QSet<IWindow *> iWindows;
+        QMChronSet<IWindow *> iWindows;
+        QHash<QWidget *, IWindow *> windowMap;
 
     private:
         void _q_iWindowClosed();

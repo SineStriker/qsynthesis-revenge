@@ -44,6 +44,7 @@ namespace Core {
         Q_Q(IWindow);
 
         emit q->aboutToClose();
+
         deleteAllAddOns();
 
         emit q->closed();

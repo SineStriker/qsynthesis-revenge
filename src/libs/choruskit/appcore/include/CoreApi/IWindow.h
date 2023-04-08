@@ -14,7 +14,7 @@ namespace Core {
     class IWindow;
     class IWindowFactoryPrivate;
 
-    class CKAPPCORE_API IWindowFactory {
+    class CKCORE_API IWindowFactory {
     public:
         enum AvailableCreator {
             Create,
@@ -36,7 +36,7 @@ namespace Core {
 
     class IWindowPrivate;
 
-    class CKAPPCORE_API IWindow : public ObjectPool, public WindowElementsAdaptor {
+    class CKCORE_API IWindow : public ObjectPool, public WindowElementsAdaptor {
         Q_OBJECT
     public:
         QString id() const;

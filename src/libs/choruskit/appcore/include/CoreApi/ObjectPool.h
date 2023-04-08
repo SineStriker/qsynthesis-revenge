@@ -4,13 +4,13 @@
 #include <QReadWriteLock>
 #include <QWidget>
 
-#include "CkAppCoreGlobal.h"
+#include "CkCoreGlobal.h"
 
 namespace Core {
 
     class ObjectPoolPrivate;
 
-    class CKAPPCORE_API ObjectPool : public QObject {
+    class CKCORE_API ObjectPool : public QObject {
         Q_OBJECT
     public:
         explicit ObjectPool(QObject *parent = nullptr);

@@ -4,6 +4,7 @@
 #include <QResizeEvent>
 
 #include <QMDecorator.h>
+#include <QMView.h>
 
 namespace Core {
 
@@ -306,7 +307,7 @@ namespace Core {
             return;
         }
 
-        QPixmap pixmap(widget->size());
+        auto pixmap = QMView::createDeviceRenderPixmap(q->window()->windowHandle(), widget->size());
         pixmap.fill(Qt::transparent);
         widget->render(&pixmap);
 

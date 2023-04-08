@@ -10,7 +10,7 @@ namespace Core {
 
     class WindowSystemPrivate;
 
-    class CKAPPCORE_API WindowSystem : public QObject {
+    class CKCORE_API WindowSystem : public QObject {
         Q_OBJECT
     public:
         explicit WindowSystem(QObject *parent = nullptr);
@@ -29,6 +29,7 @@ namespace Core {
         void removeAddOnFactories();
 
         IWindow *createWindow(const QString &id, QWidget *parent = nullptr);
+        IWindow *findWindow(QWidget *window) const;
 
         int count() const;
         QList<IWindow *> windows() const;
