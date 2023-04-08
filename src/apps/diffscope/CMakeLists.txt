@@ -5,7 +5,7 @@ project(DiffScope
 
 ck_get_short_version(PROJECT_VERSION_SHORT ${PROJECT_VERSION} 3)
 
-ck_add_appmain(${PROJECT_NAME} CkAppLoad ${ROOT_APPMAIN_TYPE}
+ck_add_appmain(${PROJECT_NAME} CkLoad ${ROOT_APPMAIN_TYPE}
     ENV
     "APP_NAME_HINT=${PROJECT_NAME}"
     "APP_VERSION_HINT=${PROJECT_VERSION_SHORT}"

@@ -1,7 +1,7 @@
 #ifndef FFMPEGDECODERPLUGIN_H
 #define FFMPEGDECODERPLUGIN_H
 
-#include "interfaces/IAudioDecoderPlugin.h"
+#include "Api/interfaces/IAudioDecoderPlugin.h"
 
 QSAPI_USING_NAMESPACE
 

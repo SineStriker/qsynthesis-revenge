@@ -1,5 +1,5 @@
-#ifndef CODECARGUMENTS_H
-#define CODECARGUMENTS_H
+#ifndef QSMEDIAGLOBAL_H
+#define QSMEDIAGLOBAL_H
 
 #include "QMGlobal.h"
 
@@ -22,4 +22,4 @@
 #define QSMEDIA_BEGIN_NAMESPACE namespace QsMedia {
 #define QSMEDIA_END_NAMESPACE   }
 
-#endif // CODECARGUMENTS_H
+#endif // QSMEDIAGLOBAL_H

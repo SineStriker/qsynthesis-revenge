@@ -5,8 +5,8 @@
 #include <QLayout>
 #include <QTextCodec>
 
-#include "QPixelSize.h"
 #include "QsFrameworkGlobal.h"
+#include "QPixelSize.h"
 
 class ImportDialogPrivate;
 

@@ -1,7 +1,7 @@
 #ifndef IWINDOWHANDLEPRIVATE_H
 #define IWINDOWHANDLEPRIVATE_H
 
-#include "IWindowHandle.h"
+#include "Api/IWindowHandle.h"
 
 QSAPI_BEGIN_NAMESPACE
 

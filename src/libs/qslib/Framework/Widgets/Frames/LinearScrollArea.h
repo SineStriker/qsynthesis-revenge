@@ -4,7 +4,7 @@
 #include <QDebug>
 #include <QEvent>
 
-#include "CScrollArea.h"
+#include "Widgets/CScrollArea.h"
 
 #include "QsFrameworkGlobal.h"
 

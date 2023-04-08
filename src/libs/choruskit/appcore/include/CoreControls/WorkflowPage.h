@@ -1,18 +1,15 @@
-#ifndef WORKFLOWDIALOG_H
-#define WORKFLOWDIALOG_H
+#ifndef WORKFLOWPAGE_H
+#define WORKFLOWPAGE_H
 
-#include <QDialog>
 #include <QSplitter>
 
-#include "coreplugin/CoreGlobal.h"
+#include "CoreApi/CkCoreGlobal.h"
 
 namespace Core {
 
     class WorkflowPagePrivate;
 
-    class WorkflowDialogPrivate;
-
-    class CORE_EXPORT WorkflowPage : public QSplitter {
+    class CKCORE_API WorkflowPage : public QSplitter {
         Q_OBJECT
         Q_DECLARE_PRIVATE(WorkflowPage)
     public:
@@ -72,36 +69,6 @@ namespace Core {
         QScopedPointer<WorkflowPagePrivate> d_ptr;
     };
 
-    class CORE_EXPORT WorkflowDialog : public QDialog {
-        Q_OBJECT
-        Q_DECLARE_PRIVATE(WorkflowDialog)
-    public:
-        explicit WorkflowDialog(QWidget *parent = nullptr);
-        ~WorkflowDialog();
-
-    public:
-        WorkflowPage *page() const;
-        WorkflowPage *takePage();
-        void setPage(WorkflowPage *w);
-
-    protected:
-        virtual void prev();
-        virtual void next();
-        virtual void finish();
-
-    signals:
-        void aboutToPrev();
-        void aboutToNext();
-        void finished();
-
-        void helpRequested();
-
-    protected:
-        WorkflowDialog(WorkflowDialogPrivate &d, QWidget *parent = nullptr);
-
-        QScopedPointer<WorkflowDialogPrivate> d_ptr;
-    };
-
 }
 
-#endif // WORKFLOWDIALOG_H
+#endif // WORKFLOWPAGE_H

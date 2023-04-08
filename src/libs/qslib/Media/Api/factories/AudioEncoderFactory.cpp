@@ -1,7 +1,7 @@
 #include "AudioEncoderFactory.h"
 
 #include "IAudioEncoder.h"
-#include "interfaces/IAudioEncoderPlugin.h"
+#include "Api/interfaces/IAudioEncoderPlugin.h"
 
 #include <private/qfactoryloader_p.h>
 

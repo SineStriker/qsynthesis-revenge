@@ -19,3 +19,5 @@ ck_target_components(${_plugin} INCLUDE_CURRENT_PRIVATE INCLUDE_SUBDIRS_PRIVATE
     LINKS QsFramework ExtensionSystem DiffScope::coreplugin
     INCLUDES ${_extra_includes}
 )
+
+ck_install_headers(.)

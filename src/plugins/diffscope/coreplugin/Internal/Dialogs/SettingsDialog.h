@@ -1,5 +1,5 @@
-#ifndef CHORUSKIT_SETTINGSDIALOG_H
-#define CHORUSKIT_SETTINGSDIALOG_H
+#ifndef SETTINGSDIALOG_H
+#define SETTINGSDIALOG_H
 
 #include <QBoxLayout>
 #include <QDialog>
@@ -14,7 +14,7 @@
 #include <Metatypes/QPixelSize.h>
 #include <Widgets/CTabButton.h>
 
-#include "Dialogs/ConfigurableDialog.h"
+#include "CoreControls/ConfigurableDialog.h"
 
 namespace Core {
 
@@ -81,4 +81,4 @@ namespace Core {
 
 
 
-#endif // CHORUSKIT_SETTINGSDIALOG_H
+#endif // SETTINGSDIALOG_H

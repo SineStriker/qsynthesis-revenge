@@ -5,7 +5,7 @@
 #include <QPushButton>
 #include <QScrollBar>
 
-#include "CCheckBox.h"
+#include "Widgets/CCheckBox.h"
 
 Q_D_LAYOUT_PROPERTY_DECLARE(buttons, Buttons, buttonsLayout, ImportDialog)
 Q_D_LAYOUT_PROPERTY_DECLARE(boxes, Boxes, boxesLayout, ImportDialog)

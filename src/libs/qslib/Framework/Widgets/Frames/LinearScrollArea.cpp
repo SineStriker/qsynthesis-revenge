@@ -1,8 +1,7 @@
 #include "LinearScrollArea.h"
-#include "CScrollBar.h"
+#include "Widgets/CScrollBar.h"
 
-LinearScrollArea::LinearScrollArea(Qt::Orientation ori, QWidget *parent)
-    : CScrollArea(parent), m_orient(ori) {
+LinearScrollArea::LinearScrollArea(Qt::Orientation ori, QWidget *parent) : CScrollArea(parent), m_orient(ori) {
     if (ori == Qt::Horizontal) {
         setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
         verticalScrollBar()->setEnabled(false);

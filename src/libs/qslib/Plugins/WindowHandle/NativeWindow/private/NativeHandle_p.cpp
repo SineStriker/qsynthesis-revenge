@@ -1,6 +1,6 @@
 #include "NativeHandle_p.h"
 
-#include "CMenuBar.h"
+#include "Widgets/CMenuBar.h"
 
 #include <WindowBorderPainter>
 

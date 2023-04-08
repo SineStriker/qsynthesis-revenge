@@ -3,7 +3,7 @@
 
 #include <QObject>
 
-#include "IAudioDecoder.h"
+#include "Api/IAudioDecoder.h"
 #include "QsMediaNamespace.h"
 
 QSAPI_BEGIN_NAMESPACE

@@ -1,7 +1,7 @@
 #include "AudioDecoderFactory.h"
 
 #include "IAudioDecoder.h"
-#include "interfaces/IAudioDecoderPlugin.h"
+#include "Api/interfaces/IAudioDecoderPlugin.h"
 
 #include <private/qfactoryloader_p.h>
 

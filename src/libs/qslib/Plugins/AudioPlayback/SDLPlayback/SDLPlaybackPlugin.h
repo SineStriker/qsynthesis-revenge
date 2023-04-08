@@ -1,7 +1,7 @@
 #ifndef SDLPLAYBACKPLUGIN_H
 #define SDLPLAYBACKPLUGIN_H
 
-#include "interfaces/IAudioPlaybackPlugin.h"
+#include "Api/interfaces/IAudioPlaybackPlugin.h"
 
 QSAPI_USING_NAMESPACE
 

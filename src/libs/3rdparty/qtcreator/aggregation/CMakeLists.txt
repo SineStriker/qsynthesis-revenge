@@ -5,7 +5,7 @@ ck_add_files(_src CURRENT PATTERNS *.h *.cpp)
 ck_add_library(${PROJECT_NAME} SHARED AUTOGEN)
 
 ck_target_components(${PROJECT_NAME}
-    INCLUDE_CURRENT
+    AUTO_INCLUDE_CURRENT
     SOURCES ${_src}
     QT_LINKS Core
 )

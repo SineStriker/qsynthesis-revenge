@@ -3,7 +3,7 @@
 
 #include <QScopedPointer>
 
-#include "QMSimpleVarExp.h"
+#include "Text/QMSimpleVarExp.h"
 
 class QMLocaleDirPrivate;
 

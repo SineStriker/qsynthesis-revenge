@@ -13,11 +13,12 @@ ck_add_files(_src
 configure_library()
 
 ck_target_components(${PROJECT_NAME}
-    INCLUDE_CURRENT INCLUDE_SUBDIRS
+    AUTO_INCLUDE_CURRENT INCLUDE_SUBDIRS_PRIVATE
     SOURCES ${_src}
     QT_LINKS Widgets
     QT_INCLUDES_PRIVATE Core Widgets
     LINKS QMWidgets QsMedia QsSVS
     LINKS_PRIVATE
     INCLUDES ${_extra_includes}
+    AUTO_INCLUDE_DIRS Global
 )

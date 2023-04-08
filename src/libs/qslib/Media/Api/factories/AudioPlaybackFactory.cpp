@@ -1,7 +1,7 @@
 #include "AudioPlaybackFactory.h"
 
 #include "IAudioPlayback.h"
-#include "interfaces/IAudioPlaybackPlugin.h"
+#include "Api/interfaces/IAudioPlaybackPlugin.h"
 
 #include <private/qfactoryloader_p.h>
 

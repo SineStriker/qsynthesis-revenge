@@ -9,13 +9,12 @@
 #include <QWidget>
 
 #include "CBaseTitleBarV2.h"
-#include "CToolButton.h"
 #include "QPixelSize.h"
+#include "Widgets/CToolButton.h"
 
 class Q_DECL_EXPORT CWindowBarV2 : public CBaseTitleBarV2 {
     Q_OBJECT
-    Q_PROPERTY(
-        QPixelSize titleMargin READ titleMargin WRITE setTitleMargin NOTIFY styleChanged)
+    Q_PROPERTY(QPixelSize titleMargin READ titleMargin WRITE setTitleMargin NOTIFY styleChanged)
 public:
     explicit CWindowBarV2(QMenuBar *menuBar, QWidget *parent = nullptr);
     ~CWindowBarV2();

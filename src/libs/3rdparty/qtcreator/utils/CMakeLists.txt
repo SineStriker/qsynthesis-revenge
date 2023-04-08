@@ -30,7 +30,7 @@ ck_add_library(${PROJECT_NAME} SHARED AUTOGEN
 )
 
 ck_target_components(${PROJECT_NAME}
-    INCLUDE_CURRENT
+    AUTO_INCLUDE_CURRENT
     SOURCES ${_src}
     QT_LINKS ${_qt_libs}
     DEFINES_PRIVATE ${_defines}

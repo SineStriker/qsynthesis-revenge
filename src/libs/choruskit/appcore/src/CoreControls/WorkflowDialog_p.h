@@ -5,8 +5,6 @@
 
 #include <QLabel>
 #include <QPropertyAnimation>
-#include <QSplitter>
-#include <QStackedWidget>
 
 #include "CTabButton.h"
 #include "QMEqualBoxLayout.h"
@@ -14,43 +12,6 @@
 namespace Core {
 
     class WorkflowDialogContainer;
-
-    class WorkflowPagePrivate : public QObject {
-        Q_OBJECT
-        Q_DECLARE_PUBLIC(WorkflowPage)
-    public:
-        WorkflowPagePrivate();
-        ~WorkflowPagePrivate();
-
-        void init();
-
-        void reloadStrings();
-
-        QString buttonText(WorkflowPage::Button button) const;
-        void setButtonText(WorkflowPage::Button button, const QString &text);
-
-        WorkflowPage *q_ptr;
-
-        QLabel *titleLabel;
-        QLabel *descriptionLabel;
-        QStackedWidget *stackedWidget;
-
-        QVBoxLayout *rightLayout;
-        QWidget *rightWidget;
-
-        QWidget *emptyWidget;
-
-        WorkflowPage::Buttons buttons;
-
-        struct ButtonData {
-            QString text;
-            QString overrideText;
-            bool enabled;
-            ButtonData() : enabled(true){};
-        };
-
-        QMap<WorkflowPage::Button, ButtonData> buttonsData;
-    };
 
     class WorkflowDialogPrivate : public QObject {
         Q_OBJECT

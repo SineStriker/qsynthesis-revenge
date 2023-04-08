@@ -1,7 +1,7 @@
 #ifndef FULLICONBUTTON_H
 #define FULLICONBUTTON_H
 
-#include "CPushButton.h"
+#include "Widgets/CPushButton.h"
 
 #include "QsFrameworkGlobal.h"
 

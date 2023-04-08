@@ -1033,6 +1033,7 @@ Add a library, default to static library.
         [TYPE_MACRO     macro]
         [LIBRARY_MACRO  macro]
         [SKIP_INSTALL]
+        [SKIP_EXPORT]
     )
 
     Arguments:
@@ -1042,9 +1043,10 @@ Add a library, default to static library.
         TYPE_MACRO: Default to `MACRO_PREFIX`_STATIC or `MACRO_PREFIX`_SHARED
         LIBRARY_MACRO: Default to `MACRO_PREFIX`_LIBRARY
         SKIP_INSTALL: Skip install rule
+        SKIP_EXPORT: Don't export when install
 ]] #
 function(ck_add_library _target)
-    set(options SHARED AUTOGEN SKIP_INSTALL)
+    set(options SHARED AUTOGEN SKIP_INSTALL SKIP_EXPORT)
     set(oneValueArgs MACRO_PREFIX LIBRARY_MACRO TYPE_MACRO)
     set(multiValueArgs)
     cmake_parse_arguments(FUNC "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
@@ -1103,8 +1105,14 @@ function(ck_add_library _target)
             set(_archive)
         endif()
 
+        if(FUNC_SKIP_EXPORT)
+            set(_export ChorusKitTargets_Private)
+        else()
+            set(_export ChorusKitTargets)
+        endif()
+
         install(TARGETS ${_target}
-            EXPORT ChorusKit
+            EXPORT ${_export}
             RUNTIME DESTINATION "${CHORUSKIT_RELATIVE_RUNTIME_DIR}" OPTIONAL
             LIBRARY DESTINATION "${CHORUSKIT_RELATIVE_LIBRARY_DIR}" OPTIONAL
             ${_archive}
@@ -1127,6 +1135,8 @@ Add a plugin.
         [META_SUBDIRS       dirs...]
         [META_ALL_FILES]
         [META_ALL_DIRS]
+        [SKIP_INSTALL]
+        [SKIP_EXPORT]
     )
 
     Arguments:
@@ -1140,9 +1150,10 @@ Add a plugin.
         META_ALL_FILES: set "AllFiles" in generated json file
         META_ALL_SUBDIRS: set "AllSubdirs" in generated json file
         SKIP_INSTALL: skip install rule (specify when adding plugin to defer setting install rule)
+        SKIP_EXPORT: Don't export when install
 ]] #
 function(ck_configure_plugin _target)
-    set(options META_ALL_FILES META_ALL_SUBDIRS SKIP_INSTALL)
+    set(options META_ALL_FILES META_ALL_SUBDIRS SKIP_INSTALL SKIP_EXPORT)
     set(oneValueArgs PARENT CATEGORY METADATA_IN COMPAT_VERSION PLUGIN_NAME PLUGIN_VERSION)
     set(multiValueArgs META_SUBDIRS)
     cmake_parse_arguments(FUNC "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
@@ -1258,8 +1269,14 @@ function(ck_configure_plugin _target)
             set(_archive)
         endif()
 
+        if(FUNC_SKIP_EXPORT)
+            set(_export ChorusKitTargets_Private)
+        else()
+            set(_export ChorusKitTargets)
+        endif()
+
         install(TARGETS ${_target}
-            EXPORT ChorusKit
+            EXPORT ${_export}
             RUNTIME DESTINATION "${_out_rel_path}" OPTIONAL
             LIBRARY DESTINATION "${_out_rel_path}" OPTIONAL
             ${_archive}
@@ -1407,6 +1424,25 @@ function(ck_add_deploy_qt_target _target)
 endfunction()
 
 #[[
+Install all headers in specified directory.
+
+    ck_install_headers(_dir)
+]] #
+function(ck_install_headers _dir)
+    set(_test_install off)
+
+    if(CHORUSKIT_INSTALL_DEV OR _test_install)
+        get_filename_component(_abs_dir ${_dir} ABSOLUTE)
+
+        file(RELATIVE_PATH include_dir_relative_path ${CHORUSKIT_SOURCE_DIR} ${_abs_dir})
+        install(DIRECTORY ${_abs_dir}/.
+            DESTINATION "${CHORUSKIT_RELATIVE_INCLUDE_DIR}/${include_dir_relative_path}"
+            FILES_MATCHING REGEX ".+\\.(h|hpp)"
+        )
+    endif()
+endfunction()
+
+#[[
 Finish ChorusKitApi global settings.
 
     ck_finish_build_system(
@@ -1449,15 +1485,15 @@ function(ck_finish_build_system)
             )
 
             # Install cmake targets files
-            # install(EXPORT ChorusKit
-            # DESTINATION ${_install_dir}
-            # )
-            install(DIRECTORY ${CHORUSKIT_SOURCE_DIR}/
-                DESTINATION "${CHORUSKIT_INSTALL_INCLUDE_DIRECTORY}"
-                FILES_MATCHING PATTERN "*.h"
+            install(EXPORT ChorusKitTargets
+                DESTINATION ${_install_dir}
             )
 
-            install(DIRECTORY ${CHORUSKIT_CMAKE_MODULES_DIR}/
+            # install(DIRECTORY ${CHORUSKIT_SOURCE_DIR}/
+            # DESTINATION "${CHORUSKIT_RELATIVE_INCLUDE_DIR}"
+            # FILES_MATCHING PATTERN "*.h"
+            # )
+            install(DIRECTORY "${CHORUSKIT_CMAKE_MODULES_DIR}/"
                 DESTINATION "${_install_dir}/modules"
             )
         endif()

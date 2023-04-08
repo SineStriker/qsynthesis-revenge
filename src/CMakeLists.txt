@@ -27,10 +27,17 @@ set(ROOT_OPENVPI_COPYRIGHT "Copyright ${CONFIG_START_YEAR}-${ROOT_CURRENT_YEAR} 
 # ----------------------------------
 # Import vcpkg and libraries
 # ----------------------------------
+if(CONFIG_ENABLE_DEVELOP)
+    set(_dev DEV)
+else()
+    set(_dev)
+endif()
+
 ck_init_buildsystem(
     NAME "ChorusKit ${CONFIG_CURRENT_APP}"
     VERSION ${PROJECT_VERSION}
     DOCS ../LICENSE ../docs/redist/thirdparty
+    ${_dev}
 )
 
 set(VCPKG_APPLOCAL_DEPS off) # Tell vcpkg not to copy dlls automatically on Windows

@@ -1,7 +1,7 @@
 #include "QMDecorateDir_p.h"
 
 #include "../QMDecorator.h"
-#include "QMMapTransaction.h"
+#include "Collections/QMMapTransaction.h"
 
 #include <QJsonArray>
 

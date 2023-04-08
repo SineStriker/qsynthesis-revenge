@@ -37,3 +37,5 @@ ck_add_attaches(${_plugin}
     SRC Res/themes/*.json DEST share/Core.res/themes
     SRC ${CMAKE_CURRENT_BINARY_DIR}/Res/translations DEST share/Core.res
 )
+
+ck_install_headers(.)

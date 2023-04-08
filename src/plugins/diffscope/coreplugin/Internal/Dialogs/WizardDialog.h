@@ -1,7 +1,7 @@
 #ifndef CHORUSKIT_WIZARDDIALOG_H
 #define CHORUSKIT_WIZARDDIALOG_H
 
-#include "Dialogs/WorkflowDialog.h"
+#include "CoreControls/WorkflowDialog.h"
 
 namespace Core {
 

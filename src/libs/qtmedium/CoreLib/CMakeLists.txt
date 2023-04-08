@@ -23,11 +23,13 @@ ck_add_files(_src
 configure_library()
 
 ck_target_components(${PROJECT_NAME}
-    INCLUDE_CURRENT INCLUDE_SUBDIRS
     SOURCES ${_src}
     QT_LINKS Core
     QT_INCLUDES_PRIVATE Core
     LINKS
     LINKS_PRIVATE ${_platform_libs}
     INCLUDES ${_extra_includes}
+    AUTO_INCLUDE_CURRENT
+    AUTO_INCLUDE_DIRS Global Static ../..
+    INCLUDE_SUBDIRS_PRIVATE
 )

@@ -22,3 +22,5 @@ endfunction()
 
 add_subdirectory(CoreLib)
 add_subdirectory(Widgets)
+
+ck_install_headers(.)

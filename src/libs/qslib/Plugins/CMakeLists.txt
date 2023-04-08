@@ -45,6 +45,7 @@ function(configure_plugin _plugin _author)
         PARENT ${SUB_PROJECT}
         CATEGORY ${CURRENT_PLUGIN_CATEGORY}
         ${FUNC_UNPARSED_ARGUMENTS}
+        SKIP_EXPORT
     )
 
     ck_target_res(${_target}

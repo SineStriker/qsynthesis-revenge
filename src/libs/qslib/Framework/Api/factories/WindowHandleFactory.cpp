@@ -1,7 +1,7 @@
 #include "WindowHandleFactory.h"
 
 #include "IWindowHandle.h"
-#include "interfaces/IWindowHandlePlugin.h"
+#include "Api/interfaces/IWindowHandlePlugin.h"
 
 #include <private/qfactoryloader_p.h>
 

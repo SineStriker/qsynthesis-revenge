@@ -24,3 +24,5 @@ add_subdirectory(SVS)
 add_subdirectory(Media)
 add_subdirectory(Framework)
 add_subdirectory(Plugins)
+
+ck_install_headers(.)

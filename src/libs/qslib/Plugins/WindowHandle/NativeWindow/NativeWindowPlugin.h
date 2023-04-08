@@ -1,7 +1,7 @@
 #ifndef NATIVEWINDOWPLUGIN_H
 #define NATIVEWINDOWPLUGIN_H
 
-#include "interfaces/IWindowHandlePlugin.h"
+#include "Api/interfaces/IWindowHandlePlugin.h"
 
 QSAPI_USING_NAMESPACE
 
