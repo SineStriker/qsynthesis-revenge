@@ -68,6 +68,8 @@ namespace Core {
         q->addWidget(emptyWidget);
         q->addWidget(rightWidget);
 
+        titleLabel->hide();
+        descriptionLabel->hide();
         emptyWidget->hide();
 
         qIDec->installLocale(this, {{}}, _LOC(WorkflowPagePrivate, this));
@@ -117,6 +119,7 @@ namespace Core {
     void WorkflowPage::setTitle(const QString &title) {
         Q_D(WorkflowPage);
         d->titleLabel->setText(title);
+        d->titleLabel->setHidden(title.isEmpty());
     }
 
     QString WorkflowPage::description() const {
@@ -127,6 +130,7 @@ namespace Core {
     void WorkflowPage::setDescription(const QString &description) {
         Q_D(WorkflowPage);
         d->descriptionLabel->setText(description);
+        d->descriptionLabel->setHidden(description.isEmpty());
     }
 
     QWidget *WorkflowPage::takeWidget() {
@@ -191,9 +195,9 @@ namespace Core {
         emit buttonsChanged(buttons);
     }
 
-    void WorkflowPage::setButton(Core::WorkflowPage::Button button, bool enabled) {
+    void WorkflowPage::setButton(Core::WorkflowPage::Button button, bool visible) {
         Q_D(WorkflowPage);
-        d->buttons = enabled ? (d->buttons | button) : (d->buttons & ~button);
+        d->buttons = visible ? (d->buttons | button) : (d->buttons & ~button);
         emit buttonsChanged(d->buttons);
     }
 

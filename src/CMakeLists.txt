@@ -18,11 +18,11 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 # ----------------------------------
 # Root settings
 # ----------------------------------
-set(ROOT_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR})
-set(ROOT_OPENVPI_COPYRIGHT "Copyright ${CONFIG_START_YEAR}-${ROOT_CURRENT_YEAR} OpenVPI Team")
-
 string(TOLOWER ${CONFIG_CURRENT_APP} ROOT_CURRENT_APP_LOWER)
 string(TIMESTAMP ROOT_CURRENT_YEAR %Y)
+
+set(ROOT_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR})
+set(ROOT_OPENVPI_COPYRIGHT "Copyright ${CONFIG_START_YEAR}-${ROOT_CURRENT_YEAR} OpenVPI Team")
 
 # ----------------------------------
 # Import vcpkg and libraries

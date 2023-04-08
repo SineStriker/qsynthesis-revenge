@@ -49,7 +49,7 @@ namespace Core {
 
         Buttons buttons() const;
         void setButtons(Buttons buttons);
-        void setButton(Button button, bool enabled);
+        void setButton(Button button, bool visible);
 
         QString buttonText(Button which) const;
         void setButtonText(Button which, const QString &text);
