@@ -3,13 +3,13 @@
 
 #include <QDialog>
 
-#include "CoreApi/CkCoreGlobal.h"
+#include "CoreApi/CkAppCoreGlobal.h"
 
 namespace Core {
 
     class ConfigurableDialogPrivate;
 
-    class CKCORE_API ConfigurableDialog : public QDialog {
+    class CKAPPCORE_API ConfigurableDialog : public QDialog {
         Q_OBJECT
         Q_DECLARE_PRIVATE(ConfigurableDialog)
     public:

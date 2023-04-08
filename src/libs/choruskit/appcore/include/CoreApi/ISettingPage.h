@@ -3,13 +3,13 @@
 
 #include <QObject>
 
-#include "CkCoreGlobal.h"
+#include "CkAppCoreGlobal.h"
 
 namespace Core {
 
     class ISettingPagePrivate;
 
-    class CKCORE_API ISettingPage : public QObject {
+    class CKAPPCORE_API ISettingPage : public QObject {
         Q_OBJECT
         Q_DECLARE_PRIVATE(ISettingPage)
     public:

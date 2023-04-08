@@ -4,7 +4,7 @@
 #include <QMenuBar>
 #include <QSet>
 
-#include "CkCoreGlobal.h"
+#include "CkAppCoreGlobal.h"
 
 namespace Core {
 
@@ -32,7 +32,7 @@ namespace Core {
 
     class ActionContextDataPrivate;
 
-    class CKCORE_API ActionContextData {
+    class CKAPPCORE_API ActionContextData {
     public:
         bool isValid() const;
         inline operator bool() const {
@@ -58,7 +58,7 @@ namespace Core {
 
     class ActionContextPrivate;
 
-    class CKCORE_API ActionContext : public QObject {
+    class CKAPPCORE_API ActionContext : public QObject {
         Q_OBJECT
     public:
         explicit ActionContext(const QString &id, QObject *parent = nullptr);

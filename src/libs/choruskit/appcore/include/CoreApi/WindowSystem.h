@@ -10,7 +10,7 @@ namespace Core {
 
     class WindowSystemPrivate;
 
-    class CKCORE_API WindowSystem : public QObject {
+    class CKAPPCORE_API WindowSystem : public QObject {
         Q_OBJECT
     public:
         explicit WindowSystem(QObject *parent = nullptr);

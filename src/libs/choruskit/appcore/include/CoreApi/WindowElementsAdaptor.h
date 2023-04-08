@@ -1,7 +1,7 @@
 #ifndef WINDOWELEMENTSADAPTOR_H
 #define WINDOWELEMENTSADAPTOR_H
 
-#include "CkCoreGlobal.h"
+#include "CkAppCoreGlobal.h"
 
 #include <QWidget>
 
@@ -12,7 +12,7 @@ namespace Core {
 
     class WindowElementsAdaptorPrivate;
 
-    class CKCORE_API WindowElementsAdaptor {
+    class CKAPPCORE_API WindowElementsAdaptor {
     public:
         explicit WindowElementsAdaptor(QWidget *w = nullptr);
         ~WindowElementsAdaptor();

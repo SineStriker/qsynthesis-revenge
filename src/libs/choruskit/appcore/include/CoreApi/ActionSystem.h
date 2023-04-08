@@ -9,7 +9,7 @@ namespace Core {
 
     class ActionSystemPrivate;
 
-    class CKCORE_API ActionSystem : public QObject {
+    class CKAPPCORE_API ActionSystem : public QObject {
         Q_OBJECT
     public:
         explicit ActionSystem(QObject *parent = nullptr);

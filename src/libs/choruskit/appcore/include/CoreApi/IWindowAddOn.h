@@ -3,7 +3,7 @@
 
 #include <QObject>
 
-#include "CkCoreGlobal.h"
+#include "CkAppCoreGlobal.h"
 
 namespace Core {
 
@@ -11,7 +11,7 @@ namespace Core {
     class IWindowAddOn;
     class IWindowAddOnPrivate;
 
-    class CKCORE_API IWindowAddOnFactory {
+    class CKAPPCORE_API IWindowAddOnFactory {
     public:
         virtual ~IWindowAddOnFactory();
 
@@ -19,7 +19,7 @@ namespace Core {
         virtual IWindowAddOn *create(QObject *parent) = 0;
     };
 
-    class CKCORE_API IWindowAddOn : public QObject {
+    class CKAPPCORE_API IWindowAddOn : public QObject {
         Q_OBJECT
     public:
         explicit IWindowAddOn(QObject *parent = nullptr);

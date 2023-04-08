@@ -6,13 +6,13 @@
 #include <QMenu>
 #include <QWidget>
 
-#include "CkCoreGlobal.h"
+#include "CkAppCoreGlobal.h"
 
 namespace Core {
 
     class ActionItemPrivate;
 
-    class CKCORE_API ActionItem {
+    class CKAPPCORE_API ActionItem {
     public:
         enum Type {
             Invalid,

@@ -3,13 +3,13 @@
 
 #include <QSplitter>
 
-#include "CoreApi/CkCoreGlobal.h"
+#include "CoreApi/CkAppCoreGlobal.h"
 
 namespace Core {
 
     class WorkflowPagePrivate;
 
-    class CKCORE_API WorkflowPage : public QSplitter {
+    class CKAPPCORE_API WorkflowPage : public QSplitter {
         Q_OBJECT
         Q_DECLARE_PRIVATE(WorkflowPage)
     public:

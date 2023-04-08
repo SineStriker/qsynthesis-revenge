@@ -7,7 +7,7 @@
 
 namespace Core {
 
-    class CKCORE_API ILoader : public ObjectPool {
+    class CKAPPCORE_API ILoader : public ObjectPool {
         Q_OBJECT
     public:
         explicit ILoader(QObject *parent = nullptr);

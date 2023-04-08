@@ -17,7 +17,7 @@ configure_plugin(_plugin "Sine Striker"
 ck_target_components(${_plugin}
     SOURCES ${_src} ${_res_dir}/core_res.qrc
     QT_LINKS Core Widgets
-    LINKS QsFramework ExtensionSystem CkCore
+    LINKS QsFramework ExtensionSystem CkAppCore
     INCLUDES ${_extra_includes}
     AUTO_INCLUDE_CURRENT
 )

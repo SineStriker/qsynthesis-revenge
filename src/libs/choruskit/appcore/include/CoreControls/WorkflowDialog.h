@@ -9,7 +9,7 @@ namespace Core {
 
     class WorkflowDialogPrivate;
 
-    class CKCORE_API WorkflowDialog : public QDialog {
+    class CKAPPCORE_API WorkflowDialog : public QDialog {
         Q_OBJECT
         Q_DECLARE_PRIVATE(WorkflowDialog)
     public:

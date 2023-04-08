@@ -7,7 +7,7 @@ namespace Core {
 
     class SettingCatalogPrivate;
 
-    class CKCORE_API SettingCatalog : public QObject {
+    class CKAPPCORE_API SettingCatalog : public QObject {
         Q_OBJECT
         Q_DECLARE_PRIVATE(SettingCatalog)
     public:

@@ -5,12 +5,12 @@
 #ifndef CHORUSKIT_IDIALOGPAGE_H
 #define CHORUSKIT_IDIALOGPAGE_H
 
-#include "CkCoreGlobal.h"
+#include "CkAppCoreGlobal.h"
 #include <QObject>
 
 namespace Core {
 
-    class CKCORE_API IDialogPage: public QObject {
+    class CKAPPCORE_API IDialogPage: public QObject {
         Q_OBJECT
     public:
         virtual QString id() const = 0;
