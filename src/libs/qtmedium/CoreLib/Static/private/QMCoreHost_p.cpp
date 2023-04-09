@@ -88,7 +88,16 @@ finish_conf:
         libDir = confPrefix + "/" + libDir;
     }
 
-    shareDir = confValues.value("Share", {"share"}).front();
+    shareDir = confValues
+                   .value("Share",
+                          {
+#ifdef Q_OS_MAC
+                              "Resources"
+#else
+                              "share"
+#endif
+                          })
+                   .front();
     if (QMFs::isPathRelative(shareDir)) {
         shareDir = confPrefix + "/" + shareDir;
     }

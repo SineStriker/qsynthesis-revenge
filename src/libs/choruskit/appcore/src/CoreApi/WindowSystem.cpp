@@ -85,7 +85,7 @@ namespace Core {
         Q_D(WindowSystem);
         auto it = d->windowFactories.find(id);
         if (it == d->windowFactories.end()) {
-            qWarning() << "Core::WindowSystem::removeWindow(): creator does not exist:" << id;
+            qWarning() << "Core::WindowSystem::removeWindow(): factory does not exist:" << id;
             return false;
         }
         d->windowFactories.erase(it);
@@ -97,7 +97,7 @@ namespace Core {
         return d->windowFactories.values();
     }
 
-    void WindowSystem::removeWindowFactories() {
+    void WindowSystem::clearWindowFactories() {
         Q_D(WindowSystem);
         d->windowFactories.clear();
     }
@@ -131,7 +131,7 @@ namespace Core {
         return d->addOnFactories.values();
     }
 
-    void WindowSystem::removeAddOnFactories() {
+    void WindowSystem::clearAddOnFactories() {
         Q_D(WindowSystem);
         d->addOnFactories.clear();
     }

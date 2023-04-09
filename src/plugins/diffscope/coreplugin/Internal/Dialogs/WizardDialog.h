@@ -18,9 +18,9 @@ namespace Core {
             int step;
 
         protected:
-            void prev() override;
-            void next() override;
-            void finish() override;
+            bool prev() override;
+            bool next() override;
+            bool finish() override;
 
         private:
             void refreshPage();

@@ -13,6 +13,11 @@
 
 #include "AddOn/IEMgrAddOn.h"
 
+#include "iemgr/IManager.h"
+
+#include "Internal/Wizards/MidiWizard.h"
+#include "Internal/Wizards/UstWizard.h"
+
 namespace IEMgr {
 
     using namespace Core;
@@ -23,6 +28,8 @@ namespace IEMgr {
         public:
             QMDecorateDir dec;
         };
+
+        static IManager *imgr = nullptr;
 
         static ImportManagerPrivate *d = nullptr;
 
@@ -44,18 +51,25 @@ namespace IEMgr {
             }
             // QThread::msleep(2000);
 
-            // Add basic actions
-            auto actionMgr = ICore::instance()->actionSystem();
+            // Init IManager instance
+            imgr = new IManager(this);
 
+            auto icore = ICore::instance();
+
+            // Add basic actions
+            auto actionMgr = icore->actionSystem();
             if (actionMgr->loadContexts(":/iemgr_actions.xml").isEmpty()) {
                 *errorMessage = tr("Failed to load action configuration!");
                 return false;
             }
 
             // Add basic windows and add-ons
-            auto winMgr = ICore::instance()->windowSystem();
-
+            auto winMgr = icore->windowSystem();
             winMgr->addAddOn(new IEMgrAddOnFactory());
+
+            // Add wizards
+            imgr->addImportWizard(new Internal::MidiWizard());
+            imgr->addImportWizard(new Internal::UstWizard());
 
             return true;
         }

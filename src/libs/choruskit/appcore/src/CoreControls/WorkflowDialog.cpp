@@ -72,12 +72,14 @@ namespace Core {
         prevButton = new CTabButton();
         nextButton = new CTabButton();
         finishButton = new CTabButton();
+        okButton = new CTabButton();
         cancelButton = new CTabButton();
         helpButton = new CTabButton();
 
         buttons[WorkflowPage::PreviousButton] = prevButton;
         buttons[WorkflowPage::NextButton] = nextButton;
         buttons[WorkflowPage::FinishButton] = finishButton;
+        buttons[WorkflowPage::OkButton] = okButton;
         buttons[WorkflowPage::CancelButton] = cancelButton;
         buttons[WorkflowPage::HelpButton] = helpButton;
 
@@ -86,6 +88,7 @@ namespace Core {
         buttonsLayout->addWidget(prevButton);
         buttonsLayout->addWidget(nextButton);
         buttonsLayout->addWidget(finishButton);
+        buttonsLayout->addWidget(okButton);
         buttonsLayout->addWidget(cancelButton);
         buttonsLayout->addWidget(helpButton);
 
@@ -97,6 +100,7 @@ namespace Core {
 
         connect(prevButton, &QPushButton::clicked, this, &WorkflowDialogPrivate::_q_prevClicked);
         connect(nextButton, &QPushButton::clicked, this, &WorkflowDialogPrivate::_q_nextClicked);
+        connect(okButton, &QPushButton::clicked, this, &WorkflowDialogPrivate::_q_finishClicked);
         connect(finishButton, &QPushButton::clicked, this, &WorkflowDialogPrivate::_q_finishClicked);
         connect(cancelButton, &QPushButton::clicked, q, &WorkflowDialog::reject);
         connect(helpButton, &QPushButton::clicked, this, &WorkflowDialogPrivate::_q_helpClicked);
@@ -208,7 +212,9 @@ namespace Core {
 
         prepareTransition();
 
-        q->prev();
+        if (!q->prev()) {
+            return;
+        }
         emit q->aboutToPrev();
 
         if (widget)
@@ -228,7 +234,9 @@ namespace Core {
 
         prepareTransition();
 
-        q->next();
+        if (!q->next()) {
+            return;
+        }
         emit q->aboutToNext();
 
         if (widget)
@@ -246,7 +254,9 @@ namespace Core {
             return;
         }
 
-        q->finish();
+        if (!q->finish()) {
+            return;
+        }
         emit q->finished();
 
         q->accept();
@@ -273,6 +283,8 @@ namespace Core {
         if (cancelButton->isDefault() || helpButton->isDefault()) {
             if (buttons & WorkflowPage::FinishButton && finishButton->isEnabled()) {
                 finishButton->setDefault(true);
+            } else if (buttons & WorkflowPage::OkButton && okButton->isEnabled()) {
+                okButton->setDefault(true);
             } else if (buttons & WorkflowPage::NextButton && nextButton->isEnabled()) {
                 nextButton->setDefault(true);
             } else if (buttons & WorkflowPage::PreviousButton && prevButton->isEnabled()) {
@@ -346,13 +358,16 @@ namespace Core {
         connect(w, &WorkflowPage::buttonEnabledChanged, d, &WorkflowDialogPrivate::_q_buttonEnabledChanged);
     }
 
-    void WorkflowDialog::prev() {
+    bool WorkflowDialog::prev() {
+        return true;
     }
 
-    void WorkflowDialog::next() {
+    bool WorkflowDialog::next() {
+        return true;
     }
 
-    void WorkflowDialog::finish() {
+    bool WorkflowDialog::finish() {
+        return true;
     }
 
     WorkflowDialog::WorkflowDialog(WorkflowDialogPrivate &d, QWidget *parent) : QDialog(parent), d_ptr(&d) {

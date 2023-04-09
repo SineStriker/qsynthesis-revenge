@@ -22,9 +22,9 @@ namespace Core {
         void setPage(WorkflowPage *w);
 
     protected:
-        virtual void prev();
-        virtual void next();
-        virtual void finish();
+        virtual bool prev();
+        virtual bool next();
+        virtual bool finish();
 
     signals:
         void aboutToPrev();

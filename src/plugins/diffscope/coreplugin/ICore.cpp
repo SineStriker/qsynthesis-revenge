@@ -6,6 +6,8 @@
 #include <QApplication>
 #include <QMessageBox>
 
+#include <extensionsystem/pluginmanager.h>
+
 #include "Internal/Dialogs/SettingsDialog.h"
 #include "Internal/Dialogs/WizardDialog.h"
 
@@ -40,6 +42,13 @@ namespace Core {
 #else
         QMessageBox::information(parent, title, text);
 #endif
+    }
+
+    QSettings *ICore::settings(QSettings::Scope scope) {
+        if (scope == QSettings::UserScope)
+            return ExtensionSystem::PluginManager::settings();
+        else
+            return ExtensionSystem::PluginManager::globalSettings();
     }
 
     int ICore::showSettingsDialog(const QString &id, QWidget *parent) {

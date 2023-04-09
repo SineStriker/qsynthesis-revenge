@@ -2,6 +2,7 @@
 #define ICORE_H
 
 #include <QObject>
+#include <QSettings>
 
 #include <CoreApi/ICoreBase.h>
 
@@ -17,6 +18,7 @@ namespace Core {
 
     class CORE_EXPORT ICore : public ICoreBase {
         Q_OBJECT
+        Q_DECLARE_PRIVATE(ICore)
     public:
         static ICore *instance();
 
@@ -24,6 +26,7 @@ namespace Core {
         static QString displayTitle(const QString &text);
 
         static void aboutApp(QWidget *parent = nullptr);
+        static QSettings *settings(QSettings::Scope scope = QSettings::UserScope);
 
         static int showSettingsDialog(const QString &id, QWidget *parent = nullptr);
         static int showWizardDialog(const QString &id, QWidget *parent = nullptr);
@@ -33,8 +36,6 @@ namespace Core {
         ~ICore();
 
         ICore(ICorePrivate &d, QObject *parent = nullptr);
-
-        Q_DECLARE_PRIVATE(ICore)
 
         friend class Internal::CorePlugin;
     };

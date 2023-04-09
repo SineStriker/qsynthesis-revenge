@@ -1,7 +1,7 @@
 #ifndef WORKFLOWPAGE_H
 #define WORKFLOWPAGE_H
 
-#include <QSplitter>
+#include <QFrame>
 
 #include "CoreApi/CkAppCoreGlobal.h"
 
@@ -9,7 +9,7 @@ namespace Core {
 
     class WorkflowPagePrivate;
 
-    class CKAPPCORE_API WorkflowPage : public QSplitter {
+    class CKAPPCORE_API WorkflowPage : public QFrame {
         Q_OBJECT
         Q_DECLARE_PRIVATE(WorkflowPage)
     public:
@@ -21,9 +21,11 @@ namespace Core {
             PreviousButton = 1,
             NextButton = 2,
             FinishButton = 4,
-            CancelButton = 8,
-            HelpButton = 16,
+            OkButton = 8,
+            CancelButton = 16,
+            HelpButton = 32,
 
+            SingleStepButtons = OkButton | CancelButton,
             StandardButtons = PreviousButton | NextButton | CancelButton,
             FinalButtons = PreviousButton | FinishButton | CancelButton,
         };

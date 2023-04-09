@@ -23,7 +23,9 @@ QStringList QMCoreDecorator::themes() const {
     return d->themeNames.keys();
 }
 
-void QMCoreDecorator::setTheme(const QString &theme){Q_UNUSED(theme)}
+void QMCoreDecorator::setTheme(const QString &theme) {
+    emit themeChanged(theme);
+}
 
 
 // Locale related
@@ -59,6 +61,8 @@ void QMCoreDecorator::setLocale(const QString &locale) {
             updater();
         }
     }
+
+    emit localeChanged(locale);
 }
 
 void QMCoreDecorator::addLocale(const QString &key, const QMap<QString, QStringList> &paths) {

@@ -55,6 +55,10 @@ public:
     void installLocale(QObject *obj, const QStringList &keys, const std::function<void()> &updater);
     void uninstallLocale(QObject *obj);
 
+signals:
+    void localeChanged(const QString &locale);
+    void themeChanged(const QString &theme);
+
 protected:
     QMCoreDecorator(QMCoreDecoratorPrivate &d, QObject *parent = nullptr);
 

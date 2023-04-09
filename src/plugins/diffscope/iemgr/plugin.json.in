@@ -11,7 +11,7 @@
         "Apache 2.0"
     ],
     "Category": "Core",
-    "Description": "Import/export manager plugin for DiffScope.",
+    "Description": "Import/Export manager plugin for DiffScope.",
     "Url": "https://www.baidu.com/",
     "Required": true,
     "Dependencies" : [

@@ -23,18 +23,21 @@ namespace Core::Internal {
     void WizardDialog::reloadStrings() {
     }
 
-    void WizardDialog::prev() {
+    bool WizardDialog::prev() {
         step--;
         refreshPage();
+        return true;
     }
 
-    void WizardDialog::next() {
+    bool WizardDialog::next() {
         step++;
         refreshPage();
+        return true;
     }
 
-    void WizardDialog::finish() {
+    bool WizardDialog::finish() {
         qDebug() << "Wizard finished";
+        return true;
     }
 
     void WizardDialog::refreshPage() {

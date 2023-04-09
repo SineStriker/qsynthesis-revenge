@@ -1,18 +1,47 @@
-#ifndef CHORUSKIT_IMANAGER_H
-#define CHORUSKIT_IMANAGER_H
+#ifndef IMANAGER_H
+#define IMANAGER_H
 
 #include <QObject>
 
-#include "IEMgrGlobal.h"
+#include "IImportWizard.h"
 
 namespace IEMgr {
 
-//    class IEMGR_EXPORT IManager : public QObject {
-//        Q_OBJECT
-//    public:
-//explicit
-//    };
+    namespace Internal {
+        class ImportManager;
+    }
 
-} // IEMgr
+    class IManagerPrivate;
 
-#endif // CHORUSKIT_IMANAGER_H
+    class IEMGR_EXPORT IManager : public QObject {
+        Q_OBJECT
+        Q_DECLARE_PRIVATE(IManager)
+    public:
+        static IManager *instance();
+
+    public:
+        bool addImportWizard(IImportWizard *factory);
+        bool removeImportWizard(IImportWizard *factory);
+        bool removeImportWizard(const QString &id);
+        QList<IImportWizard *> importWizards() const;
+        void clearImportWizards();
+
+        void runImport(const QString &id, QWidget *parent = nullptr);
+        void runExport(const QString &id, QWidget *parent = nullptr);
+
+        bool isRunning() const;
+
+    private:
+        explicit IManager(QObject *parent = nullptr);
+        ~IManager();
+
+        IManager(IManagerPrivate &d, QObject *parent = nullptr);
+
+        QScopedPointer<IManagerPrivate> d_ptr;
+
+        friend class Internal::ImportManager;
+    };
+
+}
+
+#endif // IMANAGER_H

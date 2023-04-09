@@ -1,6 +1,7 @@
 #include "IEMgrAddOn.h"
 
 #include "CoreApi/IWindow.h"
+#include "IManager.h"
 
 #include <QMDecorator.h>
 
@@ -49,6 +50,14 @@ namespace IEMgr::Internal {
 
         exportGroupItem = new ActionItem("iemgr_ExportGroup", new QActionGroup(this));
         exportItem = new ActionItem("iemgr_Export", new QAction());
+
+        connect(importItem->action(), &QAction::triggered, this, [this]() {
+            IManager::instance()->runImport({}, windowHandle()->window()); //
+        });
+
+        connect(exportItem->action(), &QAction::triggered, this, [this]() {
+            IManager::instance()->runExport({}, windowHandle()->window()); //
+        });
 
         iWin->addActionItems({
             importGroupItem,

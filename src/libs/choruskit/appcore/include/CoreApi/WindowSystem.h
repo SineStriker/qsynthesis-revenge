@@ -21,12 +21,12 @@ namespace Core {
         bool removeWindow(IWindowFactory *factory);
         bool removeWindow(const QString &id);
         QList<IWindowFactory *> windowFactories() const;
-        void removeWindowFactories();
+        void clearWindowFactories();
 
         bool addAddOn(IWindowAddOnFactory *factory);
         bool removeAddOn(IWindowAddOnFactory *factory);
         QList<IWindowAddOnFactory *> addOnFactories() const;
-        void removeAddOnFactories();
+        void clearAddOnFactories();
 
         IWindow *createWindow(const QString &id, QWidget *parent = nullptr);
         IWindow *findWindow(QWidget *window) const;

@@ -11,7 +11,7 @@ configure_plugin(_plugin "FlutyDeer"
     MACRO_PREFIX IEMGR
     METADATA_IN plugin.json.in
     PLUGIN_NAME IEMgr
-    META_SUBDIRS plugins
+    # META_SUBDIRS plugins
 )
 
 ck_target_components(${_plugin} INCLUDE_CURRENT_PRIVATE INCLUDE_SUBDIRS_PRIVATE

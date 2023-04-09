@@ -177,7 +177,7 @@ int main_entry(int argc, char *argv[]) {
         vstiAddr = hint;
     }
     a.setOrganizationName("ChorusKit");
-    a.setOrganizationDomain("org.ChorusKit");
+    a.setOrganizationDomain("ChorusKit");
 
     QMWidgetsHost host;
 
@@ -312,8 +312,11 @@ int main_entry(int argc, char *argv[]) {
     // Don't show plugin manager debug info
     QLoggingCategory::setFilterRules(QLatin1String("qtc.*.debug=false"));
 
-    QSettings::setPath(QSettings::IniFormat, QSettings::UserScope, qmHost->appDataDir());
-    QSettings::setPath(QSettings::IniFormat, QSettings::SystemScope, qmHost->appDataDir());
+    QString userSettingPath = host.appDataDir();
+    QString systemSettingPath = host.shareDir() + "/" + qAppName();
+
+    QSettings::setPath(QSettings::IniFormat, QSettings::UserScope, userSettingPath);
+    QSettings::setPath(QSettings::IniFormat, QSettings::SystemScope, systemSettingPath);
 
     // Update loader text
     splash.showMessage(QCoreApplication::translate("Application", "Searching plugins..."));
@@ -321,9 +324,10 @@ int main_entry(int argc, char *argv[]) {
     PluginManager pluginManager;
     pluginManager.setPluginIID(pluginIID);
 
-    auto settings =
-        new QSettings(QSettings::IniFormat, QSettings::SystemScope, a.organizationDomain(), a.applicationName());
-    pluginManager.setGlobalSettings(settings);
+    pluginManager.setSettings(
+        new QSettings(QString("%1/%2.ini").arg(userSettingPath, qAppName()), QSettings::IniFormat));
+    pluginManager.setGlobalSettings(
+        new QSettings(QString("%1/%2.ini").arg(systemSettingPath, qAppName()), QSettings::IniFormat));
 
     QStringList pluginPaths = [&]() {
         QStringList rc;

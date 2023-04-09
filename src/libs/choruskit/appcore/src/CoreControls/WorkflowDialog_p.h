@@ -24,7 +24,7 @@ namespace Core {
 
         WorkflowDialog *q_ptr;
 
-        CTabButton *prevButton, *nextButton, *finishButton, *cancelButton, *helpButton;
+        CTabButton *prevButton, *nextButton, *finishButton, *okButton, *cancelButton, *helpButton;
         QMEqualBoxLayout *buttonsLayout;
 
         WorkflowPage *widget;

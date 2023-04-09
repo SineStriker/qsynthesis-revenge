@@ -37,6 +37,9 @@ namespace Core {
 
         QWidget *emptyWidget;
 
+        QSplitter *splitter;
+        QVBoxLayout *mainLayout;
+
         WorkflowPage::Buttons buttons;
 
         struct ButtonData {

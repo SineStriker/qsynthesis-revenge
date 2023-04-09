@@ -31,8 +31,16 @@ namespace Core {
 
         emptyWidget = new QWidget();
 
-        q->addWidget(emptyWidget);
-        q->addWidget(rightWidget);
+        splitter = new QSplitter(Qt::Horizontal);
+        splitter->setChildrenCollapsible(false);
+        splitter->addWidget(emptyWidget);
+        splitter->addWidget(rightWidget);
+
+        mainLayout = new QVBoxLayout();
+        mainLayout->setMargin(0);
+        mainLayout->setSpacing(0);
+        mainLayout->addWidget(splitter);
+        q->setLayout(mainLayout);
 
         titleLabel->hide();
         descriptionLabel->hide();
@@ -55,6 +63,7 @@ namespace Core {
         tryUpdateText(WorkflowPage::PreviousButton, tr("Previous"));
         tryUpdateText(WorkflowPage::NextButton, tr("Next"));
         tryUpdateText(WorkflowPage::FinishButton, tr("Finish"));
+        tryUpdateText(WorkflowPage::OkButton, tr("Confirm"));
         tryUpdateText(WorkflowPage::CancelButton, tr("Cancel"));
         tryUpdateText(WorkflowPage::HelpButton, tr("Help"));
     }
@@ -124,8 +133,8 @@ namespace Core {
         if (d->emptyWidget)
             return nullptr;
 
-        auto w = QSplitter::widget(0);
-        QSplitter::replaceWidget(0, d->emptyWidget = new QWidget());
+        auto w = d->splitter->widget(0);
+        d->splitter->replaceWidget(0, d->emptyWidget = new QWidget());
         d->emptyWidget->hide();
         return w;
     }
@@ -135,17 +144,19 @@ namespace Core {
         if (d->emptyWidget)
             return nullptr;
 
-        return QSplitter::widget(0);
+        return  d->splitter->widget(0);
     }
 
     void WorkflowPage::setSideWidget(QWidget *w) {
         Q_D(WorkflowPage);
 
-        auto org = QSplitter::widget(0);
-        QSplitter::replaceWidget(0, w);
-
+        auto org =  d->splitter->widget(0);
         delete org;
         d->emptyWidget = nullptr;
+        d->splitter->insertWidget(0, w);
+
+        d->splitter->setStretchFactor(0, 0);
+        d->splitter-> setStretchFactor(1, 1);
 
         w->show();
     }
@@ -195,7 +206,7 @@ namespace Core {
         return true;
     }
 
-    WorkflowPage::WorkflowPage(WorkflowPagePrivate &d, QWidget *parent) : QSplitter(Qt::Horizontal, parent), d_ptr(&d) {
+    WorkflowPage::WorkflowPage(WorkflowPagePrivate &d, QWidget *parent) : QFrame(parent), d_ptr(&d) {
         d.q_ptr = this;
         d.init();
     }

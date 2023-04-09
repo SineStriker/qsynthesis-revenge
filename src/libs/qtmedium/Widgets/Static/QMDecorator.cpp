@@ -37,6 +37,8 @@ void QMDecorator::setTheme(const QString &theme) {
     for (const auto &sub : qAsConst(subscribersToUpdate)) {
         sub->notifyAll();
     }
+
+    QMCoreDecorator::setTheme(theme);
 }
 
 void QMDecorator::addThemeTemplate(const QString &key, const QString &path) {

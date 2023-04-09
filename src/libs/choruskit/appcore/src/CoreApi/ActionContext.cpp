@@ -379,12 +379,12 @@ namespace Core {
                 group->addAction(item->menu()->menuAction());
                 break;
             }
-            case ActionItem::ActionGroup: {
-                for (const auto &action : item->actionGroup()->actions()) {
-                    group->addAction(action);
-                }
-                break;
-            }
+                // case ActionItem::ActionGroup: {
+                //     for (const auto &action : item->actionGroup()->actions()) {
+                //         group->addAction(action);
+                //     }
+                //     break;
+                // }
             case ActionItem::Action: {
                 group->addAction(item->action());
                 break;
