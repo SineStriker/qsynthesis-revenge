@@ -10,8 +10,8 @@ namespace Core {
 
     namespace Internal {
 
-        bool ProjectWindowAddOnFactory::predicate(IWindow *iWindow) const {
-            return iWindow->id() == "project";
+        bool ProjectWindowAddOnFactory::predicate(IWindow *handle) const {
+            return handle->id() == "project";
         }
 
         IWindowAddOn *ProjectWindowAddOnFactory::create(QObject *parent) {

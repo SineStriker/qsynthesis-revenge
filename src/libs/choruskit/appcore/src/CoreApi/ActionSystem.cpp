@@ -127,8 +127,19 @@ namespace Core {
                             continue;
                         }
 
-                        rules.append({targetId, ctx4.properties.value("mode") == "prepend" ? ActionInsertRule::Unshift
-                                                                                           : ActionInsertRule::Append});
+                        auto mode = ctx4.properties.value("mode");
+                        ActionInsertRule::InsertMode rule = ActionInsertRule::Append;
+                        if (!mode.isEmpty()) {
+                            if (mode == "prepend" || mode == "unshift") {
+                                rule = ActionInsertRule::Unshift;
+                            } else if (mode == "insertBehind") {
+                                rule = ActionInsertRule::InsertBehind;
+                            } else if (mode == "insertFront") {
+                                rule = ActionInsertRule::InsertFront;
+                            }
+                        }
+
+                        rules.append({targetId, rule});
                     }
                 }
             } else if (ctx3.name == "shortcuts") {
@@ -141,7 +152,7 @@ namespace Core {
                         shortcuts.append(ctx4.value);
                     }
                 }
-            } else if (ctx2.name == "content") {
+            } else if (ctx3.name == "content") {
                 if (isGroup) {
                     for (const auto &ctx_ref4 : qAsConst(ctx3.children)) {
                         children.append(ctx_ref4.data());

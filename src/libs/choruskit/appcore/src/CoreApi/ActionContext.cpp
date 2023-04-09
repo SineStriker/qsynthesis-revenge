@@ -279,7 +279,8 @@ namespace Core {
                             continue;
                         }
 
-                        if (it2->isGroup) {
+                        if (it2->isGroup && (rule.direction == ActionInsertRule::Append ||
+                                             rule.direction == ActionInsertRule::Unshift)) {
                             target = it3.value();
                         } else {
                             target = it3.value()->parent;
@@ -288,14 +289,16 @@ namespace Core {
                     }
 
                     switch (rule.direction) {
-                        case ActionInsertRule::Append: {
+                        case ActionInsertRule::Append:
+                        case ActionInsertRule::InsertBehind: {
                             auto node = new TreeNode{id, target};
                             target->children.append(id, node);
                             nodes.insert(id, node);
                             goto done;
                             break;
                         }
-                        case ActionInsertRule::Unshift: {
+                        case ActionInsertRule::Unshift:
+                        case ActionInsertRule::InsertFront: {
                             auto node = new TreeNode{id, target};
                             target->children.prepend(id, node);
                             nodes.insert(id, node);
@@ -310,14 +313,16 @@ namespace Core {
 
                 non_group:
                     switch (rule.direction) {
-                        case ActionInsertRule::Append: {
+                        case ActionInsertRule::Append:
+                        case ActionInsertRule::InsertBehind: {
                             auto node = new TreeNode{id, target};
                             target->children.insert(std::next(target->children.find(rule.id)), id, node);
                             nodes.insert(id, node);
                             goto done;
                             break;
                         }
-                        case ActionInsertRule::Unshift: {
+                        case ActionInsertRule::Unshift:
+                        case ActionInsertRule::InsertFront: {
                             auto node = new TreeNode{id, target};
                             target->children.insert(target->children.find(rule.id), id, node);
                             nodes.insert(id, node);

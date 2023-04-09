@@ -64,7 +64,7 @@ namespace Core {
             // Add basic actions
             auto actionMgr = icore->actionSystem();
 
-            if (actionMgr->loadContexts(":/actions.xml").isEmpty()) {
+            if (actionMgr->loadContexts(":/core_actions.xml").isEmpty()) {
                 *errorMessage = tr("Failed to load action configuration!");
                 return false;
             }

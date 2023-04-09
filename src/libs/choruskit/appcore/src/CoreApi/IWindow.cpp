@@ -69,12 +69,22 @@ namespace Core {
             if (!fac->predicate(q)) {
                 continue;
             }
+
             auto addOn = fac->create(q);
+            if (!addOn) {
+                qWarning() << "Core::WindowSystem::createWindow(): window add-on factory creates null instance:"
+                           << typeid(*fac).name();
+                continue;
+            }
+
             addOn->d_ptr->iWin = q;
             addOns.push_back(addOn);
         }
 
         initAllAddOns();
+
+        // Add-ons finished
+        q->windowAddOnsFinished();
     }
 
     IWindowFactory::IWindowFactory(const QString &id, AvailableCreator creator) : d_ptr(new IWindowFactoryPrivate()) {
@@ -207,6 +217,10 @@ namespace Core {
     }
 
     void IWindow::setupWindow() {
+        // Do nothing
+    }
+
+    void IWindow::windowAddOnsFinished() {
         // Do nothing
     }
 

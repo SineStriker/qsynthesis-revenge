@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/">
+        <file>iemgr_actions.xml</file>
+    </qresource>
+</RCC>

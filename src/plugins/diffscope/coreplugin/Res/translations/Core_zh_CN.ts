@@ -4,19 +4,16 @@
 <context>
     <name>Core::ConfigurableDialogPrivate</name>
     <message>
-        <location filename="../../Dialogs/ConfigurableDialog.cpp" line="44"/>
         <source>OK</source>
-        <translation>确定</translation>
+        <translation type="vanished">确定</translation>
     </message>
     <message>
-        <location filename="../../Dialogs/ConfigurableDialog.cpp" line="45"/>
         <source>Cancel</source>
-        <translation>取消</translation>
+        <translation type="vanished">取消</translation>
     </message>
     <message>
-        <location filename="../../Dialogs/ConfigurableDialog.cpp" line="46"/>
         <source>Apply</source>
-        <translation>应用</translation>
+        <translation type="vanished">应用</translation>
     </message>
 </context>
 <context>
@@ -280,29 +277,24 @@
 <context>
     <name>Core::WorkflowPagePrivate</name>
     <message>
-        <location filename="../../Dialogs/WorkflowDialog.cpp" line="87"/>
         <source>Previous</source>
-        <translation>上一步</translation>
+        <translation type="vanished">上一步</translation>
     </message>
     <message>
-        <location filename="../../Dialogs/WorkflowDialog.cpp" line="88"/>
         <source>Next</source>
-        <translation>下一步</translation>
+        <translation type="vanished">下一步</translation>
     </message>
     <message>
-        <location filename="../../Dialogs/WorkflowDialog.cpp" line="89"/>
         <source>Finish</source>
-        <translation>完成</translation>
+        <translation type="vanished">完成</translation>
     </message>
     <message>
-        <location filename="../../Dialogs/WorkflowDialog.cpp" line="90"/>
         <source>Cancel</source>
-        <translation>取消</translation>
+        <translation type="vanished">取消</translation>
     </message>
     <message>
-        <location filename="../../Dialogs/WorkflowDialog.cpp" line="91"/>
         <source>Help</source>
-        <translation>帮助</translation>
+        <translation type="vanished">帮助</translation>
     </message>
 </context>
 </TS>

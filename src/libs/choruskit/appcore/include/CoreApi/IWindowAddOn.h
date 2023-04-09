@@ -15,7 +15,7 @@ namespace Core {
     public:
         virtual ~IWindowAddOnFactory();
 
-        virtual bool predicate(IWindow *iWindow) const;
+        virtual bool predicate(IWindow *handle) const;
         virtual IWindowAddOn *create(QObject *parent) = 0;
     };
 

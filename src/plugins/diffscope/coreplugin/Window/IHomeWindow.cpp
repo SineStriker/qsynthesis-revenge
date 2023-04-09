@@ -66,6 +66,10 @@ namespace Core {
         qIDec->installTheme(win, {"Global", "HomeWindow"});
     }
 
+    void IHomeWindow::windowAddOnsFinished() {
+        ICore::instance()->actionSystem()->context("home_MainMenu")->buildMenuBarWithState(actionItems(), menuBar());
+    }
+
     IHomeWindow::IHomeWindow(IHomeWindowPrivate &d, QObject *parent)
         : ICoreWindow(d, IHomeWindow::WindowTypeID(), parent) {
         d.init();

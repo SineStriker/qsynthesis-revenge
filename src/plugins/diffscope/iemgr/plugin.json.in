@@ -1,6 +1,6 @@
 {
-    "Name": "ImportManager",
-    "DisplayName": "ImportManager",
+    "Name": "IEMgr",
+    "DisplayName": "Import/Export Manager",
     "Version": "@PLUGIN_METADATA_VERSION@",
     "CompatVersion": "@PLUGIN_METADATA_COMPAT_VERSION@",
     "DisabledByDefault": false,
@@ -11,7 +11,7 @@
         "Apache 2.0"
     ],
     "Category": "Core",
-    "Description": "The import manager plugin for DiffScope.",
+    "Description": "Import/export manager plugin for DiffScope.",
     "Url": "https://www.baidu.com/",
     "Required": true,
     "Dependencies" : [

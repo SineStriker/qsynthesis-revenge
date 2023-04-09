@@ -3,13 +3,13 @@
 
 #include <extensionsystem/iplugin.h>
 
-#include "ImportManagerGlobal.h"
+#include "IEMgrGlobal.h"
 
-namespace Core {
+namespace IEMgr {
 
     namespace Internal {
 
-        class IMPORTMANAGER_EXPORT ImportManager : public ExtensionSystem::IPlugin {
+        class ImportManager : public ExtensionSystem::IPlugin {
             Q_OBJECT
             Q_PLUGIN_METADATA(IID "org.ChorusKit.DiffScope.Plugin" FILE "plugin.json")
         public:

@@ -1,6 +1,5 @@
 project(coreplugin VERSION 0.1.0.0)
 
-set(_extra_includes)
 set(_res_dir Res)
 
 ck_add_files(_src
@@ -18,7 +17,6 @@ ck_target_components(${_plugin}
     SOURCES ${_src} ${_res_dir}/core_res.qrc
     QT_LINKS Core Widgets
     LINKS QsFramework ExtensionSystem CkAppCore
-    INCLUDES ${_extra_includes}
     AUTO_INCLUDE_CURRENT
 )
 

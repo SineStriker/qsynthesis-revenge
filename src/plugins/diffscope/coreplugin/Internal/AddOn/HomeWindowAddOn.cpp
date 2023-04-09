@@ -22,8 +22,8 @@ namespace Core {
 
     namespace Internal {
 
-        bool HomeWindowAddOnFactory::predicate(IWindow *iWindow) const {
-            return iWindow->id() == "home";
+        bool HomeWindowAddOnFactory::predicate(IWindow *handle) const {
+            return handle->id() == "home";
         }
 
         IWindowAddOn *HomeWindowAddOnFactory::create(QObject *parent) {
@@ -83,7 +83,7 @@ namespace Core {
             auto btn = iWin->addNavWidget(testWidget);
             btn->setText("123456");
 
-            reloadMenuBar();
+            initActions();
 
             qIDec->installLocale(this, {{}}, _LOC(HomeWindowAddOn, this));
         }
@@ -108,23 +108,23 @@ namespace Core {
             aboutQtItem->setText(tr("About Qt"));
         }
 
-        void HomeWindowAddOn::reloadMenuBar() {
+        void HomeWindowAddOn::initActions() {
             auto iWin = windowHandle();
 
-            fileItem = new ActionItem("home_File", new QMenu());
-            editItem = new ActionItem("home_Edit", new QMenu());
-            helpItem = new ActionItem("home_Help", new QMenu());
+            fileItem = new ActionItem("core_File", new QMenu());
+            editItem = new ActionItem("core_Edit", new QMenu());
+            helpItem = new ActionItem("core_Help", new QMenu());
 
-            openGroupItem = new ActionItem("home_OpenGroup", new QActionGroup(this));
-            newFileItem = new ActionItem("home_NewFile", new QAction());
-            openFileItem = new ActionItem("home_OpenFile", new QAction());
+            openGroupItem = new ActionItem("core_OpenGroup", new QActionGroup(this));
+            newFileItem = new ActionItem("core_NewFile", new QAction());
+            openFileItem = new ActionItem("core_OpenFile", new QAction());
 
-            preferenceGroupItem = new ActionItem("home_PreferenceGroup", new QActionGroup(this));
-            settingsItem = new ActionItem("home_Settings", new QAction());
+            preferenceGroupItem = new ActionItem("core_PreferenceGroup", new QActionGroup(this));
+            settingsItem = new ActionItem("core_Settings", new QAction());
 
-            aboutGroupItem = new ActionItem("home_AboutGroup", new QActionGroup(this));
-            aboutAppItem = new ActionItem("home_AboutApp", new QAction(this));
-            aboutQtItem = new ActionItem("home_AboutQt", new QAction(this));
+            aboutGroupItem = new ActionItem("core_AboutGroup", new QActionGroup(this));
+            aboutAppItem = new ActionItem("core_AboutApp", new QAction(this));
+            aboutQtItem = new ActionItem("core_AboutQt", new QAction(this));
 
             connect(newFileItem->action(), &QAction::triggered, this, [this]() {
                 ICore::instance()->showWizardDialog("", windowHandle()->window()); //
@@ -142,7 +142,7 @@ namespace Core {
                 QMessageBox::aboutQt(windowHandle()->window()); //
             });
 
-            QList<ActionItem *> actionItems = {
+            iWin->addActionItems({
                 fileItem,
                 editItem,
                 helpItem,
@@ -154,14 +154,7 @@ namespace Core {
                 aboutGroupItem,
                 aboutAppItem,
                 aboutQtItem,
-            };
-
-            ICore::instance()
-                ->actionSystem()
-                ->context("home_MainMenu")
-                ->buildMenuBarWithState(actionItems, iWin->menuBar());
-
-            iWin->addActionItems(actionItems);
+            });
         }
     }
 

@@ -10,7 +10,7 @@ namespace Core {
 
         class HomeWindowAddOnFactory : public IWindowAddOnFactory {
         public:
-            bool predicate(IWindow *iWindow) const override;
+            bool predicate(IWindow *handle) const override;
             IWindowAddOn *create(QObject *parent) override;
         };
 
@@ -23,8 +23,9 @@ namespace Core {
             void initialize() override;
             void extensionsInitialized() override;
 
+        public:
             void reloadStrings();
-            void reloadMenuBar();
+            void initActions();
 
         private:
             ActionItem *fileItem;

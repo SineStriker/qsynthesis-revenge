@@ -15,7 +15,7 @@ namespace Core {
     IWindowAddOnFactory::~IWindowAddOnFactory() {
     }
 
-    bool IWindowAddOnFactory::predicate(IWindow *iWindow) const {
+    bool IWindowAddOnFactory::predicate(IWindow *handle) const {
         return true;
     }
 

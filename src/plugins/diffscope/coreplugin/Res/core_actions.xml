@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <actionSystem>
-    <context id="home_MainMenu" prefix="home_">
+    <context id="home_MainMenu" prefix="core_">
         <menu id="File">
             <group id="OpenGroup">
-                <action id="NewFile"/>
-                <action id="OpenFile"/>
+                <action id="NewFile" shortcut="Ctrl+N"/>
+                <action id="OpenFile" shortcut="Ctrl+O"/>
             </group>
             <group id="PreferenceGroup">
                 <action id="Settings"/>
@@ -17,5 +17,8 @@
                 <action id="AboutQt"/>
             </group>
         </menu>
+    </context>
+
+    <context id="project_MainMenu" prefix="project_">
     </context>
 </actionSystem>

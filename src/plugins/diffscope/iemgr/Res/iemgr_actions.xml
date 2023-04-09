@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<actionSystem>
+    <context id="home_MainMenu" prefix="iemgr_" mode="find">
+        <group id="ImportGroup">
+            <rules>
+                <rule id="core_OpenGroup" mode="insertBehind"/>
+            </rules>
+            <content>
+                <action id="Import"/>
+            </content>
+        </group>
+
+        <group id="ExportGroup">
+            <rules>
+                <rule id="iemgr_ImportGroup" mode="insertBehind"/>
+            </rules>
+            <content>
+                <action id="Export"/>
+            </content>
+        </group>
+    </context>
+</actionSystem>

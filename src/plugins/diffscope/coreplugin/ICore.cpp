@@ -12,23 +12,11 @@
 namespace Core {
 
     ICorePrivate::ICorePrivate() {
-        actionSystem = nullptr;
-        windowSystem = nullptr;
-        dialogHelper = nullptr;
-        preferenceRegistry = nullptr;
     }
 
     void ICorePrivate::init() {
         Q_Q(ICore);
-
-        qApp->setQuitOnLastWindowClosed(false);
-
-        actionSystem = new ActionSystem(q);
-        windowSystem = new WindowSystem(q);
-        dialogHelper = new DialogHelper(q);
         preferenceRegistry = new PreferenceRegistry(q);
-
-        settingCatalog = new SettingCatalog(q);
     }
 
     static ICore *m_instance = nullptr;
@@ -94,29 +82,9 @@ namespace Core {
         return code;
     }
 
-    ActionSystem *ICore::actionSystem() const {
-        Q_D(const ICore);
-        return d->actionSystem;
-    }
-
-    WindowSystem *ICore::windowSystem() const {
-        Q_D(const ICore);
-        return d->windowSystem;
-    }
-
-    DialogHelper *ICore::dialogHelper() const {
-        Q_D(const ICore);
-        return d->dialogHelper;
-    }
-
     PreferenceRegistry *ICore::preferenceRegistry() const {
         Q_D(const ICore);
         return d->preferenceRegistry;
-    }
-
-    SettingCatalog *ICore::settingCatalog() const {
-        Q_D(const ICore);
-        return d->settingCatalog;
     }
 
     ICore::ICore(QObject *parent) : ICore(*new ICorePrivate(), parent) {
@@ -126,10 +94,9 @@ namespace Core {
         m_instance = nullptr;
     }
 
-    ICore::ICore(ICorePrivate &d, QObject *parent) : QObject(parent), d_ptr(&d) {
+    ICore::ICore(ICorePrivate &d, QObject *parent) : ICoreBase(d, parent) {
         m_instance = this;
 
-        d.q_ptr = this;
         d.init();
     }
 

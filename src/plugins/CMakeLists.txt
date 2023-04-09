@@ -4,7 +4,7 @@ set(CURRENT_PLUGIN_DESC "ChorusKit Plugin")
 function(configure_plugin _plugin _author)
     # Begin parse
     set(options)
-    set(oneValueArgs MACRO_PREFIX LIBRARY_MACRO TYPE_MACRO PLUGIN_NAME PLUGIN_VERSION)
+    set(oneValueArgs MACRO_PREFIX LIBRARY_MACRO TYPE_MACRO PLUGIN_NAME PLUGIN_VERSION DIR_NAME)
     set(multiValueArgs)
     cmake_parse_arguments(FUNC "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
 
@@ -34,6 +34,12 @@ function(configure_plugin _plugin _author)
         set(_version ${PROJECT_VERSION})
     endif()
 
+    if(FUNC_DIR_NAME)
+        set(_category ${FUNC_DIR_NAME})
+    else()
+        set(_category ${PROJECT_NAME})
+    endif()
+
     # End parse
     set(_target ${SUB_PROJECT}_${PROJECT_NAME})
     ck_add_library(${_target} SHARED AUTOGEN SKIP_INSTALL ${_add_lib_args})
@@ -43,7 +49,7 @@ function(configure_plugin _plugin _author)
 
     ck_configure_plugin(${_target}
         PARENT ${SUB_PROJECT}
-        CATEGORY ${PROJECT_NAME}
+        CATEGORY ${_category}
         PLUGIN_NAME ${_name}
         PLUGIN_VERSION ${_version}
         ${FUNC_UNPARSED_ARGUMENTS}

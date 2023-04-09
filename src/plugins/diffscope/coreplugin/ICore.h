@@ -3,10 +3,7 @@
 
 #include <QObject>
 
-#include <CoreApi/ActionSystem.h>
-#include <CoreApi/DialogHelper.h>
-#include <CoreApi/SettingCatalog.h>
-#include <CoreApi/WindowSystem.h>
+#include <CoreApi/ICoreBase.h>
 
 #include "CoreGlobal.h"
 #include "Preferences/PreferenceRegistry.h"
@@ -17,12 +14,9 @@ namespace Core {
         class CorePlugin;
     }
 
-    class ActionSystem;
-    class WindowSystem;
-
     class ICorePrivate;
 
-    class CORE_EXPORT ICore : public QObject {
+    class CORE_EXPORT ICore : public ICoreBase {
         Q_OBJECT
     public:
         static ICore *instance();
@@ -35,21 +29,13 @@ namespace Core {
         static int showSettingsDialog(const QString &id, QWidget *parent = nullptr);
         static int showWizardDialog(const QString &id, QWidget *parent = nullptr);
 
-        ActionSystem *actionSystem() const;
-        WindowSystem *windowSystem() const;
-
-        DialogHelper *dialogHelper() const;
-
         PreferenceRegistry *preferenceRegistry() const;
-
-        SettingCatalog *settingCatalog() const;
 
     private:
         explicit ICore(QObject *parent = nullptr);
         ~ICore();
 
         ICore(ICorePrivate &d, QObject *parent = nullptr);
-        QScopedPointer<ICorePrivate> d_ptr;
 
         Q_DECLARE_PRIVATE(ICore)
 

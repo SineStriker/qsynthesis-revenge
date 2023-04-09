@@ -15,6 +15,8 @@ namespace Core {
         enum InsertMode {
             Append,
             Unshift,
+            InsertBehind,
+            InsertFront,
         };
 
         QString id;

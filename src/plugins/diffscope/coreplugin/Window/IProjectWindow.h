@@ -23,6 +23,7 @@ namespace Core {
         ~IProjectWindow();
 
         void setupWindow() override;
+        void windowAddOnsFinished() override;
 
     protected:
         IProjectWindow(IProjectWindowPrivate &d, QObject *parent = nullptr);

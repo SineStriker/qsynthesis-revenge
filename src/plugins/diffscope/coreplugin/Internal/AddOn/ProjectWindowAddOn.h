@@ -1,7 +1,6 @@
 #ifndef PROJECTWINDOWADDON_H
 #define PROJECTWINDOWADDON_H
 
-
 #include "CoreApi/IWindowAddOn.h"
 
 namespace Core {
@@ -10,7 +9,7 @@ namespace Core {
 
         class ProjectWindowAddOnFactory : public IWindowAddOnFactory {
         public:
-            bool predicate(IWindow *iWindow) const override;
+            bool predicate(IWindow *handle) const override;
             IWindowAddOn *create(QObject *parent) override;
         };
 

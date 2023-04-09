@@ -8,6 +8,6 @@
         <file>svg/home/new-file.svg</file>
         <file>svg/home/open-file.svg</file>
         <file>themes/global.qss.in</file>
-        <file>actions.xml</file>
+        <file>core_actions.xml</file>
     </qresource>
 </RCC>

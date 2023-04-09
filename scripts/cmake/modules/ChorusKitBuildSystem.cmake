@@ -1252,9 +1252,12 @@ function(ck_configure_plugin _target)
         # To do...
     endif()
 
+    file(RELATIVE_PATH _plugin_relative_path ${_out_dir} ${CHORUSKIT_LIBRARY_OUTPUT_DIR})
+    string(REPLACE "<rel>" "${_plugin_relative_path}" _rpath "${CHORUSKIT_PLUGIN_RPATH_PATTERN}")
+
     # Change rpath and output paths
     set_target_properties(${_target} PROPERTIES
-        BUILD_RPATH "${CHORUSKIT_PLUGIN_RPATH}"
+        BUILD_RPATH "${_rpath}"
         RUNTIME_OUTPUT_DIRECTORY ${_out_dir}
         LIBRARY_OUTPUT_DIRECTORY ${_out_dir}
         ARCHIVE_OUTPUT_DIRECTORY ${_out_dir}

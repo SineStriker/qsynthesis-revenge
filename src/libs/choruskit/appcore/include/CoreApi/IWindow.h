@@ -67,7 +67,9 @@ namespace Core {
         ~IWindow();
 
         virtual QWidget *createWindow(QWidget *parent) const = 0;
+
         virtual void setupWindow();
+        virtual void windowAddOnsFinished();
 
     protected:
         IWindow(IWindowPrivate &d, const QString &id, QObject *parent = nullptr);

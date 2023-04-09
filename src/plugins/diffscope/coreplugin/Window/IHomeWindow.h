@@ -27,6 +27,7 @@ namespace Core {
         ~IHomeWindow();
 
         void setupWindow() override;
+        void windowAddOnsFinished() override;
 
     protected:
         IHomeWindow(IHomeWindowPrivate &d, QObject *parent = nullptr);

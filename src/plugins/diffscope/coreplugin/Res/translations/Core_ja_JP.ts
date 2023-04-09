@@ -2,24 +2,6 @@
 <!DOCTYPE TS>
 <TS version="2.1" language="ja_JP">
 <context>
-    <name>Core::ConfigurableDialogPrivate</name>
-    <message>
-        <location filename="../../Dialogs/ConfigurableDialog.cpp" line="44"/>
-        <source>OK</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../Dialogs/ConfigurableDialog.cpp" line="45"/>
-        <source>Cancel</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../Dialogs/ConfigurableDialog.cpp" line="46"/>
-        <source>Apply</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
     <name>Core::GeneralOptionsPage</name>
     <message>
         <location filename="../../Internal/GeneralOptionsPage.cpp" line="15"/>
@@ -244,34 +226,6 @@
     <message>
         <location filename="../../Internal/TestOptionsPage.cpp" line="36"/>
         <source>Test2</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>Core::WorkflowPagePrivate</name>
-    <message>
-        <location filename="../../Dialogs/WorkflowDialog.cpp" line="87"/>
-        <source>Previous</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../Dialogs/WorkflowDialog.cpp" line="88"/>
-        <source>Next</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../Dialogs/WorkflowDialog.cpp" line="89"/>
-        <source>Finish</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../Dialogs/WorkflowDialog.cpp" line="90"/>
-        <source>Cancel</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../Dialogs/WorkflowDialog.cpp" line="91"/>
-        <source>Help</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
