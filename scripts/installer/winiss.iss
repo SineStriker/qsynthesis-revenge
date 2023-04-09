@@ -23,7 +23,7 @@
 
 #define MyOutputName "choruskit-diffscope-1.0-setup"
 ; #define MyOutputDir "C:\Users\truef\Desktop"
-#define MyOutputDir "C:\Users\fluty\Downloads"
+#define MyOutputDir "D:\Users\fluty\Downloads"
 
 [Setup]
 ; NOTE: The value of AppId uniquely identifies this application. Do not use the same AppId value in installers for other applications.
@@ -53,6 +53,7 @@ WizardStyle=modern
 
 ArchitecturesAllowed=x64
 ArchitecturesInstallIn64BitMode=x64
+MinVersion=10.0
 
 [Languages]
 Name: "english"; MessagesFile: "compiler:Default.isl"; LicenseFile: "{#MyLicenseFileEN}"
@@ -80,8 +81,24 @@ Name: "{autodesktop}\{#MyAppName}"; Filename: "{app}\{#MyAppExePath}"; Tasks: de
 [Run]
 Filename: "{app}\{#MyAppExePath}"; Description: "{cm:LaunchProgram,{#StringChange(MyAppName, '&', '&&')}}"; Flags: nowait postinstall skipifsilent
 
-[Code]
-procedure InitializeWizard();
-begin
-    WizardForm.NoIconsCheck.Checked := True;
-end;
+; [Code]
+; function InitializeSetup: Boolean;
+
+; var
+;     productName:String;
+
+; begin
+;     RegQueryStringValue(HKLM, 'SOFTWARE\Microsoft\Windows NT\CurrentVersion', 'ProductName', ProductName);
+
+;     if (Pos('Windows 10', ProductName) > 0) then
+;     begin
+;         //MsgBox('Win 10', mbInformation, MB_OK);
+;     end else 
+;     begin
+;         SuppressibleMsgBox('DiffScope can only run on Windows 10/11.', mbCriticalError, MB_OK, MB_OK);
+;         Result := False;
+;         Exit;
+;     end;
+
+;     Result :=  True;
+; end;
