@@ -6,7 +6,6 @@
 #include <CoreApi/ICoreBase.h>
 
 #include "CoreGlobal.h"
-#include "Preferences/PreferenceRegistry.h"
 
 namespace Core {
 
@@ -28,8 +27,6 @@ namespace Core {
 
         static int showSettingsDialog(const QString &id, QWidget *parent = nullptr);
         static int showWizardDialog(const QString &id, QWidget *parent = nullptr);
-
-        PreferenceRegistry *preferenceRegistry() const;
 
     private:
         explicit ICore(QObject *parent = nullptr);

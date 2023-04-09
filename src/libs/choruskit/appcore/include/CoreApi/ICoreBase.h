@@ -22,7 +22,6 @@ namespace Core {
     public:
         ActionSystem *actionSystem() const;
         WindowSystem *windowSystem() const;
-        DialogHelper *dialogHelper() const;
         SettingCatalog *settingCatalog() const;
 
     protected:

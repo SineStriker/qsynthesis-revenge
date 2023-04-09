@@ -4,7 +4,6 @@
 #include <CoreApi/ICoreBase_p.h>
 
 #include "ICore.h"
-#include "Preferences/PreferenceRegistry.h"
 
 namespace Core {
 
@@ -14,8 +13,6 @@ namespace Core {
         ICorePrivate();
 
         void init();
-
-        PreferenceRegistry *preferenceRegistry;
     };
 
 }

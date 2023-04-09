@@ -18,9 +18,6 @@ namespace Core {
 
         actionSystem = new ActionSystem(q);
         windowSystem = new WindowSystem(q);
-
-        dialogHelper = new DialogHelper(q);
-
         settingCatalog = new SettingCatalog(q);
     }
 
@@ -38,11 +35,6 @@ namespace Core {
     WindowSystem *ICoreBase::windowSystem() const {
         Q_D(const ICoreBase);
         return d->windowSystem;
-    }
-
-    DialogHelper *ICoreBase::dialogHelper() const {
-        Q_D(const ICoreBase);
-        return d->dialogHelper;
     }
 
     SettingCatalog *ICoreBase::settingCatalog() const {

@@ -16,7 +16,6 @@ namespace Core {
 
     void ICorePrivate::init() {
         Q_Q(ICore);
-        preferenceRegistry = new PreferenceRegistry(q);
     }
 
     static ICore *m_instance = nullptr;
@@ -80,11 +79,6 @@ namespace Core {
         }
 
         return code;
-    }
-
-    PreferenceRegistry *ICore::preferenceRegistry() const {
-        Q_D(const ICore);
-        return d->preferenceRegistry;
     }
 
     ICore::ICore(QObject *parent) : ICore(*new ICorePrivate(), parent) {

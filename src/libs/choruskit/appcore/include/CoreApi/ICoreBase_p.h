@@ -15,7 +15,6 @@ namespace Core{
 
         ActionSystem *actionSystem;
         WindowSystem *windowSystem;
-        DialogHelper *dialogHelper;
         SettingCatalog *settingCatalog;
 
         ICoreBase *q_ptr;
