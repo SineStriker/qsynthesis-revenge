@@ -3,7 +3,7 @@
 
 #include <coreplugin/ICore.h>
 
-#include "IImportWizard_p.h"
+#include "IWizardFactory_p.h"
 
 #include "Internal/Dialogs/ImportInitDialog.h"
 
@@ -25,14 +25,14 @@ namespace IEMgr {
         return m_instance;
     }
 
-    bool IManager::addImportWizard(IImportWizard *factory) {
+    bool IManager::addWizard(IWizardFactory *factory) {
         Q_D(IManager);
         if (!factory) {
-            qWarning() << "IEMgr::IManager::addImportWizard(): trying to add null factory";
+            qWarning() << "IEMgr::IManager::addWizard(): trying to add null factory";
             return false;
         }
         if (d->importWizards.contains(factory->id())) {
-            qWarning() << "IEMgr::IManager::addImportWizard(): trying to add duplicated factory:" << factory->id();
+            qWarning() << "IEMgr::IManager::addWizard(): trying to add duplicated factory:" << factory->id();
             return false;
         }
         factory->setParent(this);
@@ -40,19 +40,19 @@ namespace IEMgr {
         return true;
     }
 
-    bool IManager::removeImportWizard(IImportWizard *factory) {
+    bool IManager::removeWizard(IWizardFactory *factory) {
         if (factory == nullptr) {
-            qWarning() << "IEMgr::IManager::removeImportWizard(): trying to remove null factory";
+            qWarning() << "IEMgr::IManager::removeWizard(): trying to remove null factory";
             return false;
         }
-        return removeImportWizard(factory->id());
+        return removeWizard(factory->id());
     }
 
-    bool IManager::removeImportWizard(const QString &id) {
+    bool IManager::removeWizard(const QString &id) {
         Q_D(IManager);
         auto it = d->importWizards.find(id);
         if (it == d->importWizards.end()) {
-            qWarning() << "IEMgr::IManager::removeImportWizard(): factory does not exist:" << id;
+            qWarning() << "IEMgr::IManager::removeWizard(): factory does not exist:" << id;
             return false;
         }
         it.value()->setParent(nullptr);
@@ -60,12 +60,12 @@ namespace IEMgr {
         return true;
     }
 
-    QList<IImportWizard *> IManager::importWizards() const {
+    QList<IWizardFactory *> IManager::wizards() const {
         Q_D(const IManager);
         return d->importWizards.values();
     }
 
-    void IManager::clearImportWizards() {
+    void IManager::clearWizards() {
         Q_D(IManager);
         d->importWizards.clear();
     }
@@ -94,7 +94,8 @@ namespace IEMgr {
         int code;
         do {
             code = dlg.exec();
-        } while (code == QDialog::Accepted && !dlg.currentWizard()->runWizard(iWin));
+        } while (code == QDialog::Accepted &&
+                 !dlg.currentWizard()->runWizard(IWizardFactory::Import, dlg.currentPath(), iWin));
 
         d->running = false;
     }

@@ -18,7 +18,7 @@ namespace IEMgr {
         IManager *q_ptr;
 
         bool running;
-        QMChronMap<QString, IImportWizard *> importWizards;
+        QMChronMap<QString, IWizardFactory *> importWizards;
     };
 
 }

@@ -1,8 +1,8 @@
 #include "UstWizard.h"
 
 namespace IEMgr ::Internal {
-    
-    UstWizard::UstWizard(QObject *parent) : IImportWizard("iemgr.UstWizard", parent) {
+
+    UstWizard::UstWizard(QObject *parent) : IWizardFactory("iemgr.UstWizard", parent) {
         setDisplayName("UST file");
         setDescription("Utau sequence text file.");
 
@@ -14,11 +14,15 @@ namespace IEMgr ::Internal {
     }
 
     QString UstWizard::filter() const {
-        return QString("%1(%2)").arg(tr("Utau Sequence Texts"), "*.ust") + ";;" + IImportWizard::filter();
+        return QString("%1(%2)").arg(tr("Utau Sequence Texts"), "*.ust") + ";;" + IWizardFactory::filter();
     }
 
-    bool UstWizard::runWizard(Core::IWindow *windowHandle) {
+    IWizardFactory::Features UstWizard::features() const {
+        return {Import | Export};
+    }
+
+    bool UstWizard::runWizard(Feature feature, const QString &path, Core::IWindow *windowHandle) {
         return false;
     }
 
-} 
+}

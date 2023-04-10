@@ -1,5 +1,5 @@
-#ifndef IIMPORTWIZARD_H
-#define IIMPORTWIZARD_H
+#ifndef IWIZARDFACTORY_H
+#define IWIZARDFACTORY_H
 
 #include <QDateTime>
 #include <QObject>
@@ -10,18 +10,24 @@
 
 namespace IEMgr {
 
-    class IImportWizardPrivate;
+    class IWizardFactoryPrivate;
 
-    class IEMGR_EXPORT IImportWizard : public QObject {
+    class IEMGR_EXPORT IWizardFactory : public QObject {
         Q_OBJECT
-        Q_DECLARE_PRIVATE(IImportWizard)
+        Q_DECLARE_PRIVATE(IWizardFactory)
     public:
-        explicit IImportWizard(const QString &id, QObject *parent = nullptr);
-        ~IImportWizard();
+        explicit IWizardFactory(const QString &id, QObject *parent = nullptr);
+        ~IWizardFactory();
+
+        enum Feature {
+            Import = 1,
+            Export = 2,
+        };
+        Q_DECLARE_FLAGS(Features, Feature);
 
         virtual QString filter() const;
-
-        virtual bool runWizard(Core::IWindow *windowHandle) = 0;
+        virtual Features features() const = 0;
+        virtual bool runWizard(Feature feature, const QString &path, Core::IWindow *windowHandle) = 0;
 
     public:
         QString id() const;
@@ -42,13 +48,13 @@ namespace IEMgr {
         void setDisplayCategory(const QString &displayCategory);
 
     protected:
-        IImportWizard(IImportWizardPrivate &d, const QString &id, QObject *parent = nullptr);
+        IWizardFactory(IWizardFactoryPrivate &d, const QString &id, QObject *parent = nullptr);
 
-        QScopedPointer<IImportWizardPrivate> d_ptr;
+        QScopedPointer<IWizardFactoryPrivate> d_ptr;
 
         friend class IManager;
     };
 
 }
 
-#endif // IIMPORTWIZARD_H
+#endif // IWIZARDFACTORY_H

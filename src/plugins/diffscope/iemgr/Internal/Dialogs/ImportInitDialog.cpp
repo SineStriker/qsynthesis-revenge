@@ -75,11 +75,15 @@ namespace IEMgr::Internal {
     ImportInitDialog::~ImportInitDialog() {
     }
 
-    IImportWizard *ImportInitDialog::currentWizard() const {
+    IWizardFactory *ImportInitDialog::currentWizard() const {
         return curWizard;
     }
 
-    void ImportInitDialog::selectWizard(IEMgr::IImportWizard *wizard) {
+    QString ImportInitDialog::currentPath() const {
+        return lineEdit->text();
+    }
+
+    void ImportInitDialog::selectWizard(IEMgr::IWizardFactory *wizard) {
         page->setTitle(wizard->displayName());
         page->setDescription(wizard->description());
         // lineEdit->clear();
@@ -92,7 +96,7 @@ namespace IEMgr::Internal {
     }
 
     void ImportInitDialog::initWizardsDisplay() {
-        auto wizards = IManager::instance()->importWizards();
+        auto wizards = IManager::instance()->wizards();
 
         struct Category {
             QString name;
@@ -101,7 +105,9 @@ namespace IEMgr::Internal {
 
         QMChronMap<QString, Category> categories;
         for (const auto &wizard : qAsConst(wizards)) {
-            auto it = categories.find(wizard->category());
+            if (!(wizard->features() & IWizardFactory::Import)) {
+                continue;
+            }
 
             auto btn = new CTabButton(wizard->displayName());
             btn->setCheckable(true);
@@ -109,6 +115,7 @@ namespace IEMgr::Internal {
             btn->setProperty("wizard", QVariant::fromValue(wizard));
             connect(btn, &QAbstractButton::clicked, this, &ImportInitDialog::_q_itemButtonClicked);
 
+            auto it = categories.find(wizard->category());
             if (it == categories.end()) {
                 categories.append(wizard->category(), {wizard->displayCategory(), {btn}});
             } else {
@@ -154,7 +161,7 @@ namespace IEMgr::Internal {
 
     void ImportInitDialog::_q_itemButtonClicked() {
         auto btn = qobject_cast<QAbstractButton *>(sender());
-        auto wizard = btn->property("wizard").value<IImportWizard *>();
+        auto wizard = btn->property("wizard").value<IWizardFactory *>();
 
         if (!wizard) {
             return;

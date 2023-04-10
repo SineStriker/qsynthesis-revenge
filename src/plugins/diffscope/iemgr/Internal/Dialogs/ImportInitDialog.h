@@ -8,7 +8,7 @@
 
 #include <CoreControls/WorkflowDialog.h>
 
-#include "IImportWizard.h"
+#include "IWizardFactory.h"
 
 #include "CTabButton.h"
 
@@ -23,8 +23,11 @@ namespace IEMgr {
             ~ImportInitDialog();
 
         public:
-            IImportWizard *currentWizard() const;
-            void selectWizard(IImportWizard *wizard);
+            IWizardFactory *currentWizard() const;
+
+            QString currentPath() const;
+
+            void selectWizard(IWizardFactory *wizard);
 
         protected:
             bool finish() override;
@@ -44,7 +47,7 @@ namespace IEMgr {
             QLabel *pathLabel;
             QLabel *hintLabel;
 
-            IImportWizard *curWizard;
+            IWizardFactory *curWizard;
 
             void initWizardsDisplay();
 

@@ -2,7 +2,7 @@
 
 namespace IEMgr ::Internal {
 
-    MidiWizard::MidiWizard(QObject *parent) : IImportWizard("iemgr.MidiWizard", parent) {
+    MidiWizard::MidiWizard(QObject *parent) : IWizardFactory("iemgr.MidiWizard", parent) {
         setDisplayName("Midi file");
         setDescription("A communications protocol for media interfaces.");
 
@@ -14,10 +14,14 @@ namespace IEMgr ::Internal {
     }
 
     QString MidiWizard::filter() const {
-        return QString("%1(%2)").arg(tr("Standard Midi Files"), "*.mid *.midi") + ";;" + IImportWizard::filter();
+        return QString("%1(%2)").arg(tr("Standard Midi Files"), "*.mid *.midi") + ";;" + IWizardFactory::filter();
     }
 
-    bool MidiWizard::runWizard(Core::IWindow *windowHandle) {
+    IWizardFactory::Features MidiWizard::features() const {
+        return {Import | Export};
+    }
+
+    bool MidiWizard::runWizard(Feature feature, const QString &path, Core::IWindow *windowHandle) {
         return false;
     }
 

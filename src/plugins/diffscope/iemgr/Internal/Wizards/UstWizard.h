@@ -1,13 +1,13 @@
 #ifndef CHORUSKIT_USTWIZARD_H
 #define CHORUSKIT_USTWIZARD_H
 
-#include "iemgr/IImportWizard.h"
+#include "iemgr/IWizardFactory.h"
 
 namespace IEMgr {
 
     namespace Internal {
 
-        class UstWizard : public IImportWizard {
+        class UstWizard : public IWizardFactory {
             Q_OBJECT
         public:
             explicit UstWizard(QObject *parent = nullptr);
@@ -15,7 +15,8 @@ namespace IEMgr {
 
         public:
             QString filter() const override;
-            bool runWizard(Core::IWindow *windowHandle) override;
+            Features features() const override;
+            bool runWizard(Feature feature, const QString &path, Core::IWindow *windowHandle) override;
         };
     }
 } // IEMgr

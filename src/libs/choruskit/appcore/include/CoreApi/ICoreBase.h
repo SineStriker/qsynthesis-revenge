@@ -4,7 +4,6 @@
 #include <QObject>
 
 #include "ActionSystem.h"
-#include "DialogHelper.h"
 #include "SettingCatalog.h"
 #include "WindowSystem.h"
 

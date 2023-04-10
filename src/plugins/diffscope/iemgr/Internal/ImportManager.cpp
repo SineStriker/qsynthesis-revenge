@@ -68,18 +68,16 @@ namespace IEMgr {
             winMgr->addAddOn(new IEMgrAddOnFactory());
 
             // Add wizards
-            imgr->addImportWizard(new Internal::MidiWizard());
-            imgr->addImportWizard(new Internal::UstWizard());
+            imgr->addWizard(new Internal::MidiWizard());
+            imgr->addWizard(new Internal::UstWizard());
 
             return true;
         }
 
         void ImportManager::extensionsInitialized() {
-            qDebug() << "extensions initialized ImportManager Plugin";
         }
 
         bool ImportManager::delayedInitialize() {
-            qDebug() << "delayed initialize ImportManager Plugin";
             return true;
         }
 

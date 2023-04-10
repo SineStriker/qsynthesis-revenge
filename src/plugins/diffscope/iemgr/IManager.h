@@ -3,7 +3,7 @@
 
 #include <QObject>
 
-#include "IImportWizard.h"
+#include "IWizardFactory.h"
 
 namespace IEMgr {
 
@@ -20,11 +20,11 @@ namespace IEMgr {
         static IManager *instance();
 
     public:
-        bool addImportWizard(IImportWizard *factory);
-        bool removeImportWizard(IImportWizard *factory);
-        bool removeImportWizard(const QString &id);
-        QList<IImportWizard *> importWizards() const;
-        void clearImportWizards();
+        bool addWizard(IWizardFactory *factory);
+        bool removeWizard(IWizardFactory *factory);
+        bool removeWizard(const QString &id);
+        QList<IWizardFactory *> wizards() const;
+        void clearWizards();
 
         void runImport(const QString &id, QWidget *parent = nullptr);
         void runExport(const QString &id, QWidget *parent = nullptr);
