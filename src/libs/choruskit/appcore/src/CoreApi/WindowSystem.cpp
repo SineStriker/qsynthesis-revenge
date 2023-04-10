@@ -28,14 +28,32 @@ namespace Core {
         iWindows.remove(iWin);
         windowMap.remove(iWin->window());
 
-        if (iWindows.isEmpty()) {
-            QCloseEvent e;
-            qApp->sendEvent(q, &e);
-            if (e.isAccepted()) {
-                // auto e2 = new QEvent(QEvent::Quit);
-                // qApp->postEvent(qApp, e2);
-                qApp->quit();
+        if (!iWindows.isEmpty()) {
+            return;
+        }
+
+        {
+            bool lastWindowClosed = true;
+            for (auto w : QApplication::topLevelWidgets()) {
+                if (!w->isVisible() || w->parentWidget() || !w->testAttribute(Qt::WA_QuitOnClose))
+                    continue;
+                lastWindowClosed = false;
+                break;
             }
+
+            if (!lastWindowClosed) {
+                // Release quit control
+                qApp->setQuitOnLastWindowClosed(true);
+                return;
+            }
+        }
+
+        QCloseEvent e;
+        qApp->sendEvent(q, &e);
+        if (e.isAccepted()) {
+            // auto e2 = new QEvent(QEvent::Quit);
+            // qApp->postEvent(qApp, e2);
+            qApp->quit();
         }
     }
 
@@ -157,6 +175,9 @@ namespace Core {
 
         d->iWindows.append(iWin);
         connect(iWin, &IWindow::closed, d, &WindowSystemPrivate::_q_iWindowClosed);
+
+        // Get quit control
+        qApp->setQuitOnLastWindowClosed(false);
 
         // Create window
         auto window = iWin->createWindow(parent);

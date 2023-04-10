@@ -45,11 +45,11 @@ namespace IEMgr::Internal {
     void IEMgrAddOn::initActions() {
         auto iWin = windowHandle();
 
-        importGroupItem = new ActionItem("iemgr_ImportGroup", new QActionGroup(this));
-        importItem = new ActionItem("iemgr_Import", new QAction());
+        importGroupItem = new ActionItem("iemgr.ImportGroup", new QActionGroup(this));
+        importItem = new ActionItem("iemgr.Import", new QAction());
 
-        exportGroupItem = new ActionItem("iemgr_ExportGroup", new QActionGroup(this));
-        exportItem = new ActionItem("iemgr_Export", new QAction());
+        exportGroupItem = new ActionItem("iemgr.ExportGroup", new QActionGroup(this));
+        exportItem = new ActionItem("iemgr.Export", new QAction());
 
         connect(importItem->action(), &QAction::triggered, this, [this]() {
             IManager::instance()->runImport({}, windowHandle()->window()); //

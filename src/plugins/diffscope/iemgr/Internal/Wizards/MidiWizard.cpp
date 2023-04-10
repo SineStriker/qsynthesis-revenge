@@ -17,7 +17,7 @@ namespace IEMgr ::Internal {
         return QString("%1(%2)").arg(tr("Standard Midi Files"), "*.mid *.midi") + ";;" + IImportWizard::filter();
     }
 
-    bool MidiWizard::runWizard(WizardContext *context) {
+    bool MidiWizard::runWizard(Core::IWindow *windowHandle) {
         return false;
     }
 

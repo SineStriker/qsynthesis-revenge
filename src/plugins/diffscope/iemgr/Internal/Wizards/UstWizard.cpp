@@ -17,7 +17,7 @@ namespace IEMgr ::Internal {
         return QString("%1(%2)").arg(tr("Utau Sequence Texts"), "*.ust") + ";;" + IImportWizard::filter();
     }
 
-    bool UstWizard::runWizard(WizardContext *context) {
+    bool UstWizard::runWizard(Core::IWindow *windowHandle) {
         return false;
     }
 

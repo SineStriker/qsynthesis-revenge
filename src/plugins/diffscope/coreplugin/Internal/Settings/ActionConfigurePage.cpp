@@ -7,7 +7,7 @@
 namespace Core::Internal {
 
     ActionConfigurePage::ActionConfigurePage(QObject *parent)
-        : ISettingPage("core_ActionConfigure", parent) {
+        : ISettingPage("core.ActionConfigure", parent) {
         m_widget = nullptr;
 
         qIDec->installLocale(this, {{}}, _LOC(ActionConfigurePage, this));

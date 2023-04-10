@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <actionSystem>
-    <context id="home_MainMenu" prefix="iemgr_" mode="find">
+    <context id="home.MainMenu" prefix="iemgr." mode="find">
         <group id="ImportGroup">
             <rules>
-                <rule id="core_OpenGroup" mode="insertBehind"/>
+                <rule id="core.OpenGroup" mode="insertBehind"/>
             </rules>
             <content>
                 <action id="Import"/>
@@ -12,7 +12,7 @@
 
         <group id="ExportGroup">
             <rules>
-                <rule id="iemgr_ImportGroup" mode="insertBehind"/>
+                <rule id="iemgr.ImportGroup" mode="insertBehind"/>
             </rules>
             <content>
                 <action id="Export"/>

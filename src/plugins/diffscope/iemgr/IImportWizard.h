@@ -10,23 +10,6 @@
 
 namespace IEMgr {
 
-    class WizardContextPrivate;
-
-    class IEMGR_EXPORT WizardContext {
-    public:
-        QDateTime dateTime() const;
-
-        Core::IWindow *windowHandle() const;
-
-    private:
-        explicit WizardContext(WizardContextPrivate *d);
-
-        WizardContextPrivate *d;
-
-        friend class IManager;
-        friend class IImportWizard;
-    };
-
     class IImportWizardPrivate;
 
     class IEMGR_EXPORT IImportWizard : public QObject {
@@ -38,7 +21,7 @@ namespace IEMgr {
 
         virtual QString filter() const;
 
-        virtual bool runWizard(WizardContext *context) = 0;
+        virtual bool runWizard(Core::IWindow *windowHandle) = 0;
 
     public:
         QString id() const;

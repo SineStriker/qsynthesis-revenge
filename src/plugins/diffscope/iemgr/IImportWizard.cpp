@@ -5,16 +5,6 @@
 
 namespace IEMgr {
 
-    QDateTime WizardContext::dateTime() const {
-        return d->time;
-    }
-    Core::IWindow *WizardContext::windowHandle() const {
-        return d->winHandle;
-    }
-
-    WizardContext::WizardContext(IEMgr::WizardContextPrivate *d) : d(d) {
-    }
-
     IImportWizardPrivate::IImportWizardPrivate() {
     }
 

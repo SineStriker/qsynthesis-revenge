@@ -13,8 +13,6 @@ namespace Core {
 
     void ICoreBasePrivate::init() {
         Q_Q(ICoreBase);
-        
-        qApp->setQuitOnLastWindowClosed(false);
 
         actionSystem = new ActionSystem(q);
         windowSystem = new WindowSystem(q);

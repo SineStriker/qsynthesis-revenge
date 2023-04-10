@@ -15,7 +15,7 @@ namespace IEMgr {
 
         public:
             QString filter() const override;
-            bool runWizard(WizardContext *context) override;
+            bool runWizard(Core::IWindow *windowHandle) override;
         };
 
     }

@@ -84,9 +84,6 @@ namespace IEMgr {
 
         d->running = true;
 
-        WizardContextPrivate context_d{QDateTime::currentDateTime(), iWin};
-        WizardContext context(&context_d);
-
         Internal::ImportInitDialog dlg(parent);
         if (!id.isEmpty()) {
             auto wizard = d->importWizards.value(id, nullptr);
@@ -97,7 +94,7 @@ namespace IEMgr {
         int code;
         do {
             code = dlg.exec();
-        } while (code == QDialog::Accepted && !dlg.currentWizard()->runWizard(&context));
+        } while (code == QDialog::Accepted && !dlg.currentWizard()->runWizard(iWin));
 
         d->running = false;
     }

@@ -67,7 +67,11 @@ namespace Core {
     }
 
     void IHomeWindow::windowAddOnsFinished() {
-        ICore::instance()->actionSystem()->context("home_MainMenu")->buildMenuBarWithState(actionItems(), menuBar());
+        auto ctx = ICore::instance()->actionSystem()->context("home.MainMenu");
+        if (!ctx) {
+            qWarning() << "Core::IHomeWindow::windowAddOnsFinished(): menu context has been removed unexpectedly.";
+        }
+        ctx->buildMenuBarWithState(actionItems(), menuBar());
     }
 
     IHomeWindow::IHomeWindow(IHomeWindowPrivate &d, QObject *parent)

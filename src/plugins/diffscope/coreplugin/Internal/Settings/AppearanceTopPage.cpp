@@ -8,7 +8,7 @@ namespace Core {
 
     namespace Internal {
 
-        AppearanceTopPage::AppearanceTopPage(QObject *parent) : ISettingPage("core_AppearanceTop", parent) {
+        AppearanceTopPage::AppearanceTopPage(QObject *parent) : ISettingPage("core.AppearanceTop", parent) {
             m_widget = nullptr;
 
             qIDec->installLocale(this, {{}}, _LOC(AppearanceTopPage, this));

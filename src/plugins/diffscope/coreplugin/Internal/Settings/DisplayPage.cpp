@@ -8,7 +8,7 @@ namespace Core {
 
     namespace Internal {
 
-        DisplayPage::DisplayPage(QObject *parent) : ISettingPage("core_Display", parent) {
+        DisplayPage::DisplayPage(QObject *parent) : ISettingPage("core.Display", parent) {
             m_widget = nullptr;
 
             qIDec->installLocale(this, {{}}, _LOC(DisplayPage, this));

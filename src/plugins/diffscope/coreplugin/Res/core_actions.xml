@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <actionSystem>
-    <context id="home_MainMenu" prefix="core_">
+    <context id="home.MainMenu" prefix="core.">
         <menu id="File">
             <group id="OpenGroup">
                 <action id="NewFile" shortcut="Ctrl+N"/>
@@ -19,6 +19,6 @@
         </menu>
     </context>
 
-    <context id="project_MainMenu" prefix="project_">
+    <context id="project.MainMenu" prefix="project.">
     </context>
 </actionSystem>

@@ -67,27 +67,27 @@ namespace Core {
         void HomeWindowAddOn::initActions() {
             auto iWin = windowHandle();
 
-            fileItem = new ActionItem("core_File", new QMenu());
-            editItem = new ActionItem("core_Edit", new QMenu());
-            helpItem = new ActionItem("core_Help", new QMenu());
+            fileItem = new ActionItem("core.File", new QMenu());
+            editItem = new ActionItem("core.Edit", new QMenu());
+            helpItem = new ActionItem("core.Help", new QMenu());
 
-            openGroupItem = new ActionItem("core_OpenGroup", new QActionGroup(this));
-            newFileItem = new ActionItem("core_NewFile", new QAction());
-            openFileItem = new ActionItem("core_OpenFile", new QAction());
+            openGroupItem = new ActionItem("core.OpenGroup", new QActionGroup(this));
+            newFileItem = new ActionItem("core.NewFile", new QAction());
+            openFileItem = new ActionItem("core.OpenFile", new QAction());
 
-            preferenceGroupItem = new ActionItem("core_PreferenceGroup", new QActionGroup(this));
-            settingsItem = new ActionItem("core_Settings", new QAction());
+            preferenceGroupItem = new ActionItem("core.PreferenceGroup", new QActionGroup(this));
+            settingsItem = new ActionItem("core.Settings", new QAction());
 
-            aboutGroupItem = new ActionItem("core_AboutGroup", new QActionGroup(this));
-            aboutAppItem = new ActionItem("core_AboutApp", new QAction(this));
-            aboutQtItem = new ActionItem("core_AboutQt", new QAction(this));
+            aboutGroupItem = new ActionItem("core.AboutGroup", new QActionGroup(this));
+            aboutAppItem = new ActionItem("core.AboutApp", new QAction(this));
+            aboutQtItem = new ActionItem("core.AboutQt", new QAction(this));
 
             connect(newFileItem->action(), &QAction::triggered, this, [this]() {
                 ICore::instance()->showWizardDialog("", windowHandle()->window()); //
             });
 
             connect(settingsItem->action(), &QAction::triggered, this, [this]() {
-                ICore::instance()->showSettingsDialog("core_Settings", windowHandle()->window()); //
+                ICore::instance()->showSettingsDialog("core.Settings", windowHandle()->window()); //
             });
 
             connect(aboutAppItem->action(), &QAction::triggered, this, [this]() {

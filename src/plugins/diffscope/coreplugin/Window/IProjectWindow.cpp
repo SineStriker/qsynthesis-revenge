@@ -3,6 +3,8 @@
 
 #include "ICore.h"
 
+#include <QDebug>
+
 namespace Core {
 
     IProjectWindowPrivate::IProjectWindowPrivate() {
@@ -21,7 +23,11 @@ namespace Core {
     }
 
     void IProjectWindow::windowAddOnsFinished() {
-        ICore::instance()->actionSystem()->context("project_MainMenu")->buildMenuBarWithState(actionItems(), menuBar());
+        auto ctx = ICore::instance()->actionSystem()->context("project.MainMenu");
+        if (!ctx) {
+            qWarning() << "Core::IProjectWindow::windowAddOnsFinished(): menu context has been removed unexpectedly.";
+        }
+        ctx->buildMenuBarWithState(actionItems(), menuBar());
     }
 
     IProjectWindow::IProjectWindow(IProjectWindowPrivate &d, QObject *parent)
