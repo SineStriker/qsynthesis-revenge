@@ -30,6 +30,8 @@ namespace IEMgr {
 
         void init();
 
+        void testUtf8_helper();
+
         ImportDialog *q_ptr;
 
         // Options

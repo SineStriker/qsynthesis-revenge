@@ -86,6 +86,11 @@ namespace IEMgr {
         return d->codec;
     }
 
+    void ImportDialog::testUtf8() {
+        Q_D(ImportDialog);
+        d->testUtf8_helper();
+    }
+
     ImportDialog::ImportDialog(ImportDialogPrivate &d, QWidget *parent) : QDialog(parent), d_ptr(&d) {
         d.q_ptr = this;
 

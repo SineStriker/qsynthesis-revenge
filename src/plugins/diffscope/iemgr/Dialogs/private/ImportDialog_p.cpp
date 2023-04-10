@@ -8,26 +8,25 @@
 
 namespace IEMgr {
 
-    static bool defaultCodecFailure = false;
+    static bool _defaultCodecFailure = false;
 
     static const char *SupportedEncodings[] = {
         "System", "UTF-8", "UTF-16", "UTF-32", "GBK", "Shift-JIS", "Big5",
     };
 
-    static const int EncodingDefaultIndex = 1;
+    static const int SystemEncodingIndex = 0;
 
-    static const int EncodingDefaultFallbackIndex = 0;
+    static const int Utf8EncodingIndex = 1;
 
     static const int SupportedEncodingsCount = sizeof(SupportedEncodings) / sizeof(const char *);
 
-#define DEFAULT_CODEC QTextCodec::codecForName(SupportedEncodings[EncodingDefaultIndex])
+#define DEFAULT_CODEC QTextCodec::codecForName(SupportedEncodings[Utf8EncodingIndex])
 
     static QString convertBytes(QTextCodec *codec, const QByteArray &data) {
         QTextCodec::ConverterState state;
         QString res = codec->toUnicode(data.constData(), data.size(), &state);
         if (state.invalidChars > 0) {
-            qDebug() << "convert bytes failure";
-            defaultCodecFailure = true;
+            _defaultCodecFailure = true;
             res = ImportDialogPrivate::tr("(Decoding failure)");
         }
         return res;
@@ -39,8 +38,7 @@ namespace IEMgr {
         for (const auto &data : dataList) {
             QString res = codec->toUnicode(data.constData(), data.size(), &state);
             if (state.invalidChars > 0) {
-                qDebug() << "convert bytes list failure";
-                defaultCodecFailure = true;
+                _defaultCodecFailure = true;
                 return ImportDialogPrivate::tr("(Decoding failure)");
             }
             resList.append(res);
@@ -168,7 +166,21 @@ namespace IEMgr {
         qIDec->installLocale(q, {{}}, _LOC(ImportDialog, q));
         qIDec->installTheme(q, {"IEMgr_ImportDialog"});
 
-        codecListWidget->setCurrentRow(EncodingDefaultIndex);
+        codecListWidget->setCurrentRow(Utf8EncodingIndex);
+    }
+
+    void ImportDialogPrivate::testUtf8_helper() {
+        _defaultCodecFailure = false;
+
+        if (codecListWidget->currentRow() == Utf8EncodingIndex) {
+            updateEncoding();
+        } else {
+            codecListWidget->setCurrentRow(Utf8EncodingIndex);
+        }
+
+        if (_defaultCodecFailure){
+            codecListWidget->setCurrentRow(SystemEncodingIndex);
+        }
     }
 
     void ImportDialogPrivate::updateEncoding() {
@@ -195,14 +207,6 @@ namespace IEMgr {
             }
         }
         labelsWidget->setPlainText(convertBytesList(codec, opt.labels));
-
-        {
-            static bool _firstTestEncoding = true;
-            if (_firstTestEncoding && defaultCodecFailure) {
-                _firstTestEncoding = false;
-                codecListWidget->setCurrentRow(EncodingDefaultFallbackIndex);
-            }
-        }
     }
 
     void ImportDialogPrivate::updateNameList() {

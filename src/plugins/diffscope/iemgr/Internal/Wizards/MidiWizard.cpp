@@ -334,6 +334,7 @@ namespace IEMgr ::Internal {
             }
 
             dlg.setImportOptions(opt);
+            dlg.testUtf8();
             if (dlg.exec() == 0) {
                 return false;
             }

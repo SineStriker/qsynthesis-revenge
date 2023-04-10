@@ -50,6 +50,8 @@ namespace IEMgr {
         QList<int> selectResult() const;
         QTextCodec *codecResult() const;
 
+        void testUtf8();
+
     protected:
         ImportDialog(ImportDialogPrivate &d, QWidget *parent = nullptr);
 
