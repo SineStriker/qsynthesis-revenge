@@ -17,7 +17,8 @@ configure_plugin(_plugin "FlutyDeer"
 ck_target_components(${_plugin} INCLUDE_CURRENT_PRIVATE INCLUDE_SUBDIRS_PRIVATE
     SOURCES ${_src} ${_res_dir}/iemgr_res.qrc
     QT_LINKS Core Widgets Network
-    LINKS QsFramework ExtensionSystem DiffScope::coreplugin
+    LINKS QsSVS QsFramework ExtensionSystem DiffScope::coreplugin
+    LINKS_PRIVATE QMidi
     INCLUDES ${_extra_includes}
     AUTO_INCLUDE_CURRENT
 )

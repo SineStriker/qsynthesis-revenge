@@ -150,7 +150,8 @@ namespace IEMgr::Internal {
         auto &settings = *Core::ICore::settings();
 
         auto basePath = settings.value(KEY_NAME_IMPORT_DIALOG_BASE_PATH).toString();
-        auto path = QFileDialog::getOpenFileName(this, tr("Import file"), basePath, curWizard->filter());
+        auto path =
+            QFileDialog::getOpenFileName(this, tr("Import file"), basePath, curWizard->filter(IWizardFactory::Import));
         if (path.isEmpty()) {
             return;
         }

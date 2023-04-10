@@ -26,6 +26,7 @@ namespace IEMgr {
         QList<IWizardFactory *> wizards() const;
         void clearWizards();
 
+    public:
         void runImport(const QString &id, QWidget *parent = nullptr);
         void runExport(const QString &id, QWidget *parent = nullptr);
 

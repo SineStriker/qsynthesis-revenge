@@ -25,8 +25,8 @@ namespace IEMgr {
         };
         Q_DECLARE_FLAGS(Features, Feature);
 
-        virtual QString filter() const;
         virtual Features features() const = 0;
+        virtual QString filter(Feature feature) const;
         virtual bool runWizard(Feature feature, const QString &path, Core::IWindow *windowHandle) = 0;
 
     public:

@@ -1,5 +1,5 @@
-#ifndef CHORUSKIT_USTWIZARD_H
-#define CHORUSKIT_USTWIZARD_H
+#ifndef USTWIZARD_H
+#define USTWIZARD_H
 
 #include "iemgr/IWizardFactory.h"
 
@@ -14,11 +14,11 @@ namespace IEMgr {
             ~UstWizard();
 
         public:
-            QString filter() const override;
             Features features() const override;
+            QString filter(Feature feature) const override;
             bool runWizard(Feature feature, const QString &path, Core::IWindow *windowHandle) override;
         };
     }
 } // IEMgr
 
-#endif // CHORUSKIT_USTWIZARD_H
+#endif // USTWIZARD_H

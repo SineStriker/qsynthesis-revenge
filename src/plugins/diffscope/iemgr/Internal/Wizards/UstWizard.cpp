@@ -6,15 +6,16 @@ namespace IEMgr ::Internal {
         setDisplayName("UST file");
         setDescription("Utau sequence text file.");
 
-        setCategory("import.SimpleFormats");
-        setDisplayCategory(tr("Simple Formats"));
+        setCategory("score.SimpleScore");
+        setDisplayCategory(tr("Simple Score"));
     }
 
     UstWizard::~UstWizard() {
     }
 
-    QString UstWizard::filter() const {
-        return QString("%1(%2)").arg(tr("Utau Sequence Texts"), "*.ust") + ";;" + IWizardFactory::filter();
+    QString UstWizard::filter(Feature feature) const {
+        Q_UNUSED(feature)
+        return QString("%1(%2)").arg(tr("Utau Sequence Texts"), "*.ust") + ";;" + IWizardFactory::filter(feature);
     }
 
     IWizardFactory::Features UstWizard::features() const {

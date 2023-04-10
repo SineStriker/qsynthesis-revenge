@@ -70,18 +70,17 @@ namespace IEMgr {
         d->importWizards.clear();
     }
 
+    Core::IWindow *_getWindowHandle(QWidget *w) {
+        return Core::ICore::instance()->windowSystem()->findWindow(w->window());
+    }
+
     void IManager::runImport(const QString &id, QWidget *parent) {
         Q_D(IManager);
 
-        auto iWin = Core::ICore::instance()->windowSystem()->findWindow(parent->window());
-        if (!iWin) {
+        auto iWin = _getWindowHandle(parent);
+        if (!iWin || d->running) {
             return;
         }
-
-        if (d->running) {
-            return;
-        }
-
         d->running = true;
 
         Internal::ImportInitDialog dlg(parent);
@@ -101,6 +100,15 @@ namespace IEMgr {
     }
 
     void IManager::runExport(const QString &id, QWidget *parent) {
+        Q_D(IManager);
+
+        auto iWin = _getWindowHandle(parent);
+        if (!iWin || d->running) {
+            return;
+        }
+        d->running = true;
+
+        d->running = false;
     }
 
     bool IManager::isRunning() const {

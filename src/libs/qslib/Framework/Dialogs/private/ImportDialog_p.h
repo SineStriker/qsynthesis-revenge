@@ -19,67 +19,70 @@
 
 #include <list>
 
-class ImportDialogPrivate : public QObject {
-    Q_OBJECT
-    Q_DECLARE_PUBLIC(ImportDialog)
-public:
-    ImportDialogPrivate();
-    ~ImportDialogPrivate();
+namespace QsApi {
 
-    void init();
+    class ImportDialogPrivate : public QObject {
+        Q_OBJECT
+        Q_DECLARE_PUBLIC(ImportDialog)
+    public:
+        ImportDialogPrivate();
+        ~ImportDialogPrivate();
 
-    ImportDialog *q_ptr;
+        void init();
 
-    // Options
-    ImportDialog::ImportOptions opt;
+        ImportDialog *q_ptr;
 
-    // Results
-    QList<int> trackIndexs;
-    QTextCodec *codec;
+        // Options
+        ImportDialog::ImportOptions opt;
 
-    // Tab - Track
-    QButtonGroup *boxGroup;
-    QWidget *boxesWidget;
-    QMAutoResizer *boxesWidgetResizer;
-    QVBoxLayout *boxesLayout;
-    QScrollArea *tracksScroll;
+        // Results
+        QList<int> trackIndexs;
+        QTextCodec *codec;
 
-    // Tab - Codec
-    QSplitter *codecWidget;
-    QListWidget *codecListWidget;
-    QPlainTextEdit *labelsWidget;
-    QListWidget *nameListWidget;
-    QPlainTextEdit *lyricsWidget;
+        // Tab - Track
+        QButtonGroup *boxGroup;
+        QWidget *boxesWidget;
+        QMAutoResizer *boxesWidgetResizer;
+        QVBoxLayout *boxesLayout;
+        QScrollArea *tracksScroll;
 
-    // Main
-    QTabWidget *tabWidget;
-    CTabButton *btnCancel, *btnOK;
-    QMEqualBoxLayout *buttonsLayout;
+        // Tab - Codec
+        QSplitter *codecWidget;
+        QListWidget *codecListWidget;
+        QPlainTextEdit *labelsWidget;
+        QListWidget *nameListWidget;
+        QPlainTextEdit *lyricsWidget;
 
-    QVBoxLayout *layout;
-    QAction *okAction;
+        // Main
+        QTabWidget *tabWidget;
+        CTabButton *btnCancel, *btnOK;
+        QMEqualBoxLayout *buttonsLayout;
 
-    std::list<QAbstractButton *> queue;
-    QHash<QAbstractButton *, std::list<QAbstractButton *>::iterator> queueMap;
+        QVBoxLayout *layout;
+        QAction *okAction;
 
-    bool firstShow;
-    int maxInitHeight;
+        std::list<QAbstractButton *> queue;
+        QHash<QAbstractButton *, std::list<QAbstractButton *>::iterator> queueMap;
 
-    void updateEncoding();
-    void updateNameList();
+        bool firstShow;
+        int maxInitHeight;
 
-    bool codecVisible;
-    void setCodecTabVisible(bool visible);
+        void updateEncoding();
+        void updateNameList();
 
-private:
-    void _q_boxToggled(bool checked);
-    void _q_okButtonClicked();
-    void _q_cancelButtonClicked();
-    void _q_scrollRangeChanged(int min, int max);
+        bool codecVisible;
+        void setCodecTabVisible(bool visible);
 
-    void _q_currentCodecChanged(QListWidgetItem *cur, QListWidgetItem *prev);
-    void _q_currentNameChanged(QListWidgetItem *cur, QListWidgetItem *prev);
-};
+    private:
+        void _q_boxToggled(bool checked);
+        void _q_okButtonClicked();
+        void _q_cancelButtonClicked();
+        void _q_scrollRangeChanged(int min, int max);
 
+        void _q_currentCodecChanged(QListWidgetItem *cur, QListWidgetItem *prev);
+        void _q_currentNameChanged(QListWidgetItem *cur, QListWidgetItem *prev);
+    };
+
+}
 
 #endif // IMPORTDIALOG_P_H

@@ -34,7 +34,8 @@ namespace IEMgr {
         return d->id;
     }
 
-    QString IWizardFactory::filter() const {
+    QString IWizardFactory::filter(Feature feature) const {
+        Q_UNUSED(feature);
         return QString("%1(%2)").arg(tr("All Files"), QMOs::allFilesFilter());
     }
 
