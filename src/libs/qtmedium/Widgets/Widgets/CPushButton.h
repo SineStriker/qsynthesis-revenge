@@ -7,6 +7,8 @@
 #include "QSvgUri.h"
 #include "QMWidgetsGlobal.h"
 
+class CPushButtonPrivate;
+
 class QMWIDGETS_API CPushButton : public QPushButton {
     Q_OBJECT
 
@@ -20,14 +22,12 @@ class QMWIDGETS_API CPushButton : public QPushButton {
     Q_PROPERTY(
         QSvgUri iconDownChecked READ iconDownChecked WRITE setIconDownChecked NOTIFY iconChanged)
     Q_PROPERTY(QSvgUri iconDisabled READ iconDisabled WRITE setIconDisabled NOTIFY iconChanged)
+
 public:
     explicit CPushButton(QWidget *parent = nullptr);
     explicit CPushButton(const QString &text, QWidget *parent = nullptr);
     CPushButton(const QIcon &icon, const QString &text, QWidget *parent = nullptr);
     ~CPushButton();
-
-private:
-    void init();
 
 public:
     QSvgUri iconUp() const;
@@ -55,25 +55,16 @@ public:
     void setAutoCheck(bool autoCheck);
 
 protected:
-    QSvgUri m_svgUris[7];
-
-    QIcon m_iconUp;
-    QIcon m_iconOver;
-    QIcon m_iconDown;
-    QIcon m_iconUpChecked;
-    QIcon m_iconOverChecked;
-    QIcon m_iconDownChecked;
-    QIcon m_iconDisabled;
-
-    bool m_autoCheck;
-
     bool event(QEvent *event) override;
 
     void nextCheckState() override;
     void checkStateSet() override;
 
-private:
-    void reloadIcon();
+protected:
+    CPushButton(CPushButtonPrivate &d, QWidget *parent = nullptr);
+    QScopedPointer<CPushButtonPrivate> d_ptr;
+
+    Q_DECLARE_PRIVATE(CPushButton);
 
 signals:
     void iconChanged();

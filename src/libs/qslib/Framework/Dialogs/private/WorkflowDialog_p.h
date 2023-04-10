@@ -1,7 +1,7 @@
 #ifndef WORKFLOWDIALOGPRIVATE_H
 #define WORKFLOWDIALOGPRIVATE_H
 
-#include "WorkflowDialog.h"
+#include "../WorkflowDialog.h"
 
 #include <QLabel>
 #include <QPropertyAnimation>
@@ -9,7 +9,7 @@
 #include "CTabButton.h"
 #include "QMEqualBoxLayout.h"
 
-namespace Core {
+namespace QsApi {
 
     class WorkflowDialogContainer;
 

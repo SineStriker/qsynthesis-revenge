@@ -3,168 +3,219 @@
 #include <QDateTime>
 #include <QPaintEvent>
 
-CPushButton::CPushButton(QWidget *parent) : QPushButton(parent) {
-    init();
+class CPushButtonPrivate {
+    Q_DECLARE_PUBLIC(CPushButton)
+public:
+    CPushButton *q_ptr;
+
+    QSvgUri m_svgUris[7];
+
+    QIcon m_iconUp;
+    QIcon m_iconOver;
+    QIcon m_iconDown;
+    QIcon m_iconUpChecked;
+    QIcon m_iconOverChecked;
+    QIcon m_iconDownChecked;
+    QIcon m_iconDisabled;
+
+    bool m_autoCheck;
+
+    void init() {
+#ifdef QS_NO_TAB_FOCUS
+        QS_REMOVE_TAB_FOCUS(q_ptr)
+#endif
+        m_autoCheck = true;
+    }
+
+    void reloadIcon() {
+        Q_Q(CPushButton);
+        if (!q->isEnabled() && !m_iconDisabled.isNull()) {
+            q->setIcon(m_iconDisabled);
+            return;
+        }
+        if (q->isChecked()) {
+            if (q->isDown() && !m_iconDownChecked.isNull()) {
+                q->setIcon(m_iconDownChecked);
+                return;
+            } else if (q->underMouse() && !m_iconOverChecked.isNull()) {
+                q->setIcon(m_iconOverChecked);
+                return;
+            } else if (!m_iconUpChecked.isNull()) {
+                q->setIcon(m_iconUpChecked);
+                return;
+            }
+        }
+        if (q->isDown() && !m_iconDown.isNull()) {
+            q->setIcon(m_iconDown);
+            return;
+        } else if (q->underMouse() && !m_iconOver.isNull()) {
+            q->setIcon(m_iconOver);
+            return;
+        } else if (!m_iconUp.isNull()) {
+            q->setIcon(m_iconUp);
+            return;
+        } else {
+            q->setIcon(QIcon());
+        }
+    }
+};
+
+CPushButton::CPushButton(QWidget *parent) : CPushButton(*new CPushButtonPrivate(), parent) {
 }
 
-CPushButton::CPushButton(const QString &text, QWidget *parent) : QPushButton(text, parent) {
-    init();
+CPushButton::CPushButton(const QString &text, QWidget *parent) : CPushButton(parent) {
+    setText(text);
 }
 
-CPushButton::CPushButton(const QIcon &icon, const QString &text, QWidget *parent)
-    : QPushButton(icon, text, parent) {
-    init();
+CPushButton::CPushButton(const QIcon &icon, const QString &text, QWidget *parent) : CPushButton(parent) {
+    setIcon(icon);
+    setText(text);
 }
 
 CPushButton::~CPushButton() {
 }
 
-void CPushButton::init() {
-#ifdef QS_NO_TAB_FOCUS
-    QS_REMOVE_TAB_FOCUS(this)
-#endif
-    m_autoCheck = true;
-}
-
 QSvgUri CPushButton::iconUp() const {
-    return m_svgUris[0];
+    Q_D(const CPushButton);
+    return d->m_svgUris[0];
 }
 
 void CPushButton::setIconUp(const QSvgUri &iconUp) {
-    m_svgUris[0] = iconUp;
-    m_iconUp = iconUp.toIcon();
-    reloadIcon();
+    Q_D(CPushButton);
+
+    d->m_svgUris[0] = iconUp;
+    d->m_iconUp = iconUp.toIcon();
+    d->reloadIcon();
     emit iconChanged();
 }
 
 QSvgUri CPushButton::iconOver() const {
-    return m_svgUris[1];
+    Q_D(const CPushButton);
+    return d->m_svgUris[1];
 }
 
 void CPushButton::setIconOver(const QSvgUri &iconOver) {
-    m_svgUris[1] = iconOver;
-    m_iconOver = iconOver.toIcon();
-    reloadIcon();
+    Q_D(CPushButton);
+
+    d->m_svgUris[1] = iconOver;
+    d->m_iconOver = iconOver.toIcon();
+    d->reloadIcon();
     emit iconChanged();
 }
 
 QSvgUri CPushButton::iconDown() const {
-    return m_svgUris[2];
+    Q_D(const CPushButton);
+    return d->m_svgUris[2];
 }
 
 void CPushButton::setIconDown(const QSvgUri &iconDown) {
-    m_svgUris[2] = iconDown;
-    m_iconDown = iconDown.toIcon();
-    reloadIcon();
+    Q_D(CPushButton);
+
+    d->m_svgUris[2] = iconDown;
+    d->m_iconDown = iconDown.toIcon();
+    d->reloadIcon();
     emit iconChanged();
 }
 QSvgUri CPushButton::iconUpChecked() const {
-    return m_svgUris[3];
+    Q_D(const CPushButton);
+    return d->m_svgUris[3];
 }
 
 void CPushButton::setIconUpChecked(const QSvgUri &iconUpChecked) {
-    m_svgUris[3] = iconUpChecked;
-    m_iconUpChecked = iconUpChecked.toIcon();
-    reloadIcon();
+    Q_D(CPushButton);
+
+    d->m_svgUris[3] = iconUpChecked;
+    d->m_iconUpChecked = iconUpChecked.toIcon();
+    d->reloadIcon();
     emit iconChanged();
 }
 
 QSvgUri CPushButton::iconOverChecked() const {
-    return m_svgUris[4];
+    Q_D(const CPushButton);
+    return d->m_svgUris[4];
 }
 
 void CPushButton::setIconOverChecked(const QSvgUri &iconOverChecked) {
-    m_svgUris[4] = iconOverChecked;
-    m_iconOverChecked = iconOverChecked.toIcon();
-    reloadIcon();
+    Q_D(CPushButton);
+
+    d->m_svgUris[4] = iconOverChecked;
+    d->m_iconOverChecked = iconOverChecked.toIcon();
+    d->reloadIcon();
     emit iconChanged();
 }
 
 QSvgUri CPushButton::iconDownChecked() const {
-    return m_svgUris[5];
+    Q_D(const CPushButton);
+    return d->m_svgUris[5];
 }
 
 void CPushButton::setIconDownChecked(const QSvgUri &iconDownChecked) {
-    m_svgUris[5] = iconDownChecked;
-    m_iconDownChecked = iconDownChecked.toIcon();
-    reloadIcon();
+    Q_D(CPushButton);
+
+    d->m_svgUris[5] = iconDownChecked;
+    d->m_iconDownChecked = iconDownChecked.toIcon();
+    d->reloadIcon();
     emit iconChanged();
 }
 
 QSvgUri CPushButton::iconDisabled() const {
-    return m_svgUris[6];
+    Q_D(const CPushButton);
+    return d->m_svgUris[6];
 }
 
 void CPushButton::setIconDisabled(const QSvgUri &iconDisabled) {
-    m_svgUris[6] = iconDisabled;
-    m_iconDisabled = iconDisabled.toIcon(QSvgUri::Normal | QSvgUri::Disabled);
-    reloadIcon();
+    Q_D(CPushButton);
+
+    d->m_svgUris[6] = iconDisabled;
+    d->m_iconDisabled = iconDisabled.toIcon(QSvgUri::Normal | QSvgUri::Disabled);
+    d->reloadIcon();
     emit iconChanged();
 }
 
 bool CPushButton::autoCheck() const {
-    return m_autoCheck;
+    Q_D(const CPushButton);
+    return d->m_autoCheck;
 }
 
 void CPushButton::setAutoCheck(bool autoCheck) {
-    m_autoCheck = autoCheck;
+    Q_D(CPushButton);
+
+    d->m_autoCheck = autoCheck;
+}
+
+CPushButton::CPushButton(CPushButtonPrivate &d, QWidget *parent) : QPushButton(parent), d_ptr(&d) {
+    d.q_ptr = this;
+    d.init();
 }
 
 bool CPushButton::event(QEvent *event) {
+    Q_D(CPushButton);
     switch (event->type()) {
-    case QEvent::MouseButtonPress:
-    case QEvent::MouseButtonRelease:
-    case QEvent::MouseButtonDblClick:
-    case QEvent::Enter:
-    case QEvent::Leave:
-    case QEvent::EnabledChange:
-        reloadIcon();
-        break;
-    default:
-        break;
+        case QEvent::MouseButtonPress:
+        case QEvent::MouseButtonRelease:
+        case QEvent::MouseButtonDblClick:
+        case QEvent::Enter:
+        case QEvent::Leave:
+        case QEvent::EnabledChange:
+            d->reloadIcon();
+            break;
+        default:
+            break;
     }
     return QPushButton::event(event);
 }
 
 void CPushButton::nextCheckState() {
-    if (m_autoCheck) {
+    Q_D(CPushButton);
+    if (d->m_autoCheck) {
         QPushButton::nextCheckState();
-        reloadIcon();
+        d->reloadIcon();
     }
 }
 
 void CPushButton::checkStateSet() {
-    QPushButton::checkStateSet();
-    reloadIcon();
-}
+    Q_D(CPushButton);
 
-void CPushButton::reloadIcon() {
-    if (!isEnabled() && !m_iconDisabled.isNull()) {
-        setIcon(m_iconDisabled);
-        return;
-    }
-    if (isChecked()) {
-        if (isDown() && !m_iconDownChecked.isNull()) {
-            setIcon(m_iconDownChecked);
-            return;
-        } else if (underMouse() && !m_iconOverChecked.isNull()) {
-            setIcon(m_iconOverChecked);
-            return;
-        } else if (!m_iconUpChecked.isNull()) {
-            setIcon(m_iconUpChecked);
-            return;
-        }
-    }
-    if (isDown() && !m_iconDown.isNull()) {
-        setIcon(m_iconDown);
-        return;
-    } else if (underMouse() && !m_iconOver.isNull()) {
-        setIcon(m_iconOver);
-        return;
-    } else if (!m_iconUp.isNull()) {
-        setIcon(m_iconUp);
-        return;
-    } else {
-        setIcon(QIcon());
-    }
+    QPushButton::checkStateSet();
+    d->reloadIcon();
 }

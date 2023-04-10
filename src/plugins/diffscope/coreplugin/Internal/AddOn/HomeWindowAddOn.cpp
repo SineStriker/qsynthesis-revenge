@@ -83,7 +83,7 @@ namespace Core {
             aboutQtItem = new ActionItem("core.AboutQt", new QAction(this));
 
             connect(newFileItem->action(), &QAction::triggered, this, [this]() {
-                ICore::instance()->showWizardDialog("", windowHandle()->window()); //
+                //
             });
 
             connect(settingsItem->action(), &QAction::triggered, this, [this]() {

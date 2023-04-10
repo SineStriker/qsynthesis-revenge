@@ -3,10 +3,10 @@
 
 #include "../ImportDialog.h"
 
-#include "Frames/LinearScrollArea.h"
 #include "Layout/QMAutoResizer.h"
 #include "Layout/QMEqualBoxLayout.h"
 #include "Widgets/CTabButton.h"
+#include "Widgets/LinearScrollArea.h"
 
 #include <QAction>
 #include <QButtonGroup>

@@ -29,7 +29,6 @@ namespace Core {
         static QSettings *settings(QSettings::Scope scope = QSettings::UserScope);
 
         static int showSettingsDialog(const QString &id, QWidget *parent = nullptr);
-        static int showWizardDialog(const QString &id, QWidget *parent = nullptr);
 
     private:
         explicit ICore(QObject *parent = nullptr);

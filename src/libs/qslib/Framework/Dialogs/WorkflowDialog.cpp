@@ -1,12 +1,12 @@
 #include "WorkflowDialog.h"
-#include "WorkflowDialog_p.h"
+#include "private/WorkflowDialog_p.h"
 
 #include <QResizeEvent>
 
 #include <QMDecorator.h>
 #include <QMView.h>
 
-namespace Core {
+namespace QsApi {
 
     static int AnimationDuration = 250;
 

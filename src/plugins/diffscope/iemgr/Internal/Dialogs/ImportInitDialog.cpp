@@ -14,7 +14,7 @@ namespace IEMgr::Internal {
 
     static const char KEY_NAME_IMPORT_DIALOG_BASE_PATH[] = "IEMgr/FileDialogPath";
 
-    ImportInitDialog::ImportInitDialog(QWidget *parent) : Core::WorkflowDialog(parent) {
+    ImportInitDialog::ImportInitDialog(QWidget *parent) : QsApi::WorkflowDialog(parent) {
         curWizard = nullptr;
 
         // Left
@@ -56,11 +56,11 @@ namespace IEMgr::Internal {
         rightWidget->setLayout(rightLayout);
 
         // Page
-        page = new Core::WorkflowPage();
+        page = new QsApi::WorkflowPage();
         page->setSideWidget(leftWidget);
         page->setWidget(rightWidget);
-        page->setButtons(Core::WorkflowPage::SingleStepButtons);
-        page->setButtonEnabled(Core::WorkflowPage::OkButton, false);
+        page->setButtons(QsApi::WorkflowPage::SingleStepButtons);
+        page->setButtonEnabled(QsApi::WorkflowPage::OkButton, false);
         setPage(page);
 
         connect(lineEdit, &QLineEdit::textChanged, this, &ImportInitDialog::_q_textChanged);
@@ -173,16 +173,16 @@ namespace IEMgr::Internal {
     void ImportInitDialog::_q_textChanged(const QString &text) {
         if (text.isEmpty()) {
             hintLabel->setText(QString());
-            page->setButtonEnabled(Core::WorkflowPage::OkButton, false);
+            page->setButtonEnabled(QsApi::WorkflowPage::OkButton, false);
             return;
         }
 
         if (!QMFs::isFileExist(text)) {
             hintLabel->setText(tr("File doesn't exist."));
-            page->setButtonEnabled(Core::WorkflowPage::OkButton, false);
+            page->setButtonEnabled(QsApi::WorkflowPage::OkButton, false);
         } else {
             hintLabel->setText(QString());
-            page->setButtonEnabled(Core::WorkflowPage::OkButton, true);
+            page->setButtonEnabled(QsApi::WorkflowPage::OkButton, true);
         }
     }
 

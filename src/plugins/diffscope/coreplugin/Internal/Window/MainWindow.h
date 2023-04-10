@@ -2,14 +2,14 @@
 #define MAINWINDOW_H
 
 #include "CoreGlobal.h"
-#include "Widgets/Windows/PlainWindow.h"
+#include "Windows/PlainWindow.h"
 
 namespace Core {
 
     namespace Internal {
         class CorePlugin;
 
-        class MainWindow : public PlainWindow {
+        class MainWindow : public QsApi::PlainWindow {
             Q_OBJECT
         public:
             explicit MainWindow(QWidget *parent = nullptr);

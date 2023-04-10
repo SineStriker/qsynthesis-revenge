@@ -5,11 +5,11 @@
 
 #include "WorkflowPage.h"
 
-namespace Core {
+namespace QsApi {
 
     class WorkflowDialogPrivate;
 
-    class CKAPPCORE_API WorkflowDialog : public QDialog {
+    class QSFRAMEWORK_API WorkflowDialog : public QDialog {
         Q_OBJECT
         Q_DECLARE_PRIVATE(WorkflowDialog)
     public:

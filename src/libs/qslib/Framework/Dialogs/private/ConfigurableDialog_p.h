@@ -1,14 +1,14 @@
 #ifndef CONFIGURABLEDIALOGPRIVATE_H
 #define CONFIGURABLEDIALOGPRIVATE_H
 
-#include "ConfigurableDialog.h"
+#include "../ConfigurableDialog.h"
 
 #include <QVBoxLayout>
 
 #include "CTabButton.h"
 #include "QMEqualBoxLayout.h"
 
-namespace Core {
+namespace QsApi {
 
     class ConfigurableDialogPrivate : public QObject {
         Q_OBJECT

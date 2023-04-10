@@ -1,9 +1,9 @@
 #include "ConfigurableDialog.h"
-#include "ConfigurableDialog_p.h"
+#include "private/ConfigurableDialog_p.h"
 
 #include <QMDecorator.h>
 
-namespace Core {
+namespace QsApi {
 
     ConfigurableDialogPrivate::ConfigurableDialogPrivate() {
         widget = nullptr;

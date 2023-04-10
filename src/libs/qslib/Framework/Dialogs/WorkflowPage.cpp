@@ -1,9 +1,9 @@
 #include "WorkflowPage.h"
-#include "WorkflowPage_p.h"
+#include "private/WorkflowPage_p.h"
 
 #include <QMDecorator.h>
 
-namespace Core {
+namespace QsApi {
 
     WorkflowPagePrivate::WorkflowPagePrivate() {
     }
@@ -172,7 +172,7 @@ namespace Core {
         emit buttonsChanged(buttons);
     }
 
-    void WorkflowPage::setButton(Core::WorkflowPage::Button button, bool visible) {
+    void WorkflowPage::setButton(WorkflowPage::Button button, bool visible) {
         Q_D(WorkflowPage);
         d->buttons = visible ? (d->buttons | button) : (d->buttons & ~button);
         emit buttonsChanged(d->buttons);

@@ -3,18 +3,18 @@
 
 #include <QBoxLayout>
 #include <QDialog>
+#include <QLabel>
 #include <QLayout>
 #include <QLineEdit>
 #include <QSplitter>
 #include <QStackedWidget>
-#include <QLabel>
 #include <QTreeWidget>
 
 #include <Layout/QMEqualBoxLayout.h>
 #include <Metatypes/QPixelSize.h>
 #include <Widgets/CTabButton.h>
 
-#include "CoreControls/ConfigurableDialog.h"
+#include "Framework/Dialogs/ConfigurableDialog.h"
 
 namespace Core {
 
@@ -22,7 +22,7 @@ namespace Core {
 
     namespace Internal {
 
-        class SettingsDialog : public ConfigurableDialog {
+        class SettingsDialog : public QsApi::ConfigurableDialog {
             Q_OBJECT
             Q_LAYOUT_PROPERTY_DELCARE
         public:

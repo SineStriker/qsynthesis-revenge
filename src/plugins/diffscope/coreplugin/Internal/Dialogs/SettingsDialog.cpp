@@ -34,7 +34,7 @@ namespace Core {
             }
         };
 
-        SettingsDialog::SettingsDialog(QWidget *parent) : ConfigurableDialog(parent) {
+        SettingsDialog::SettingsDialog(QWidget *parent) : QsApi::ConfigurableDialog(parent) {
             m_currentPage = nullptr;
             m_catalogWidget = nullptr;
 

@@ -3,15 +3,16 @@
 
 #include <QMenu>
 
-#include "QSvgUri.h"
 #include "QMWidgetsGlobal.h"
+#include "QSvgUri.h"
+
+class CMenuPrivate;
 
 class QMWIDGETS_API CMenu : public QMenu {
     Q_OBJECT
     Q_PROPERTY(QSvgUri subIcon READ subIcon WRITE setSubIcon NOTIFY styleChanged)
     Q_PROPERTY(QSvgUri subIconActive READ subIconActive WRITE setSubIconActive NOTIFY styleChanged)
-    Q_PROPERTY(
-        QSvgUri subIconDisabled READ subIconDisabled WRITE setSubIconDisabled NOTIFY styleChanged)
+    Q_PROPERTY(QSvgUri subIconDisabled READ subIconDisabled WRITE setSubIconDisabled NOTIFY styleChanged)
     Q_PROPERTY(QSize subIconMargins READ subIconMargins WRITE setSubIconMargins NOTIFY styleChanged)
 public:
     explicit CMenu(QWidget *parent = nullptr);
@@ -32,14 +33,14 @@ public:
     void setSubIconMargins(const QSize &margins);
 
 protected:
-    QSvgUri m_subIcon;
-    QSvgUri m_subIconActive;
-    QSvgUri m_subIconDisabled;
-    QSize m_subIconMargins;
-
     void paintEvent(QPaintEvent *event) override;
-
     void initStyleOption(QStyleOptionMenuItem *option, const QAction *action) const;
+
+protected:
+    CMenu(CMenuPrivate &d, QWidget *parent = nullptr);
+    QScopedPointer<CMenuPrivate> d_ptr;
+
+    Q_DECLARE_PRIVATE(CMenu)
 
 signals:
     void styleChanged();

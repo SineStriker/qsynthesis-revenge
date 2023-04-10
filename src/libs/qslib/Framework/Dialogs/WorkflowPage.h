@@ -3,13 +3,13 @@
 
 #include <QFrame>
 
-#include "CoreApi/CkAppCoreGlobal.h"
+#include "QsFrameworkGlobal.h"
 
-namespace Core {
+namespace QsApi {
 
     class WorkflowPagePrivate;
 
-    class CKAPPCORE_API WorkflowPage : public QFrame {
+    class QSFRAMEWORK_API WorkflowPage : public QFrame {
         Q_OBJECT
         Q_DECLARE_PRIVATE(WorkflowPage)
     public:

@@ -8,9 +8,9 @@
 
 #include <QMap>
 
-#include "WorkflowPage.h"
+#include "../WorkflowPage.h"
 
-namespace Core {
+namespace QsApi {
 
     class WorkflowPagePrivate : public QObject {
         Q_OBJECT
