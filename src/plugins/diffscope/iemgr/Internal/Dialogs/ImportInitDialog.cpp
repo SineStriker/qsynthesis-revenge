@@ -105,7 +105,7 @@ namespace IEMgr::Internal {
 
         QMChronMap<QString, Category> categories;
         for (const auto &wizard : qAsConst(wizards)) {
-            if (!(wizard->features() & IWizardFactory::Import)) {
+            if (!(wizard->features() & IWizardFactory::ImportProject)) {
                 continue;
             }
 
@@ -151,7 +151,7 @@ namespace IEMgr::Internal {
 
         auto basePath = settings.value(KEY_NAME_IMPORT_DIALOG_BASE_PATH).toString();
         auto path =
-            QFileDialog::getOpenFileName(this, tr("Import file"), basePath, curWizard->filter(IWizardFactory::Import));
+            QFileDialog::getOpenFileName(this, tr("Import file"), basePath, curWizard->filter(IWizardFactory::ImportProject));
         if (path.isEmpty()) {
             return;
         }

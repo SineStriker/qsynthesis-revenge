@@ -94,7 +94,7 @@ namespace IEMgr {
         do {
             code = dlg.exec();
         } while (code == QDialog::Accepted &&
-                 !dlg.currentWizard()->runWizard(IWizardFactory::Import, dlg.currentPath(), iWin));
+                 !dlg.currentWizard()->runWizard(IWizardFactory::ImportProject, dlg.currentPath(), iWin));
 
         d->running = false;
     }

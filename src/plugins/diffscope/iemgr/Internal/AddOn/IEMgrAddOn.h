@@ -28,11 +28,15 @@ namespace IEMgr {
             void initActions();
 
         private:
-            Core::ActionItem *importGroupItem;
-            Core::ActionItem *importItem;
+            Core::ActionItem *importExportGroupItem;
 
-            Core::ActionItem *exportGroupItem;
+            Core::ActionItem *importItem;
+            Core::ActionItem *importProjectItem;
+            Core::ActionItem *importAudioItem;
+
             Core::ActionItem *exportItem;
+            Core::ActionItem *exportProjectItem;
+            Core::ActionItem *exportAudioItem;
         };
 
     }

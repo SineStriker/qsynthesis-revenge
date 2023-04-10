@@ -20,8 +20,10 @@ namespace IEMgr {
         ~IWizardFactory();
 
         enum Feature {
-            Import = 1,
-            Export = 2,
+            ImportProject = 1,
+            ExportProject = 2,
+            ImportAudio = 4,
+            ExportAudio = 8,
         };
         Q_DECLARE_FLAGS(Features, Feature);
 

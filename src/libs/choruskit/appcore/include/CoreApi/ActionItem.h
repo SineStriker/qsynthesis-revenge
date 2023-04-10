@@ -42,6 +42,9 @@ namespace Core {
         QString text() const;
         void setText(const QString &text) const;
 
+        bool enabled() const;
+        void setEnabled(bool enabled);
+
         bool autoDelete() const;
         void setAutoDelete(bool autoDelete);
 

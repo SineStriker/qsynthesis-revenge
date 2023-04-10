@@ -46,7 +46,7 @@
     <name>IEMgr::Internal::IEMgrAddOn</name>
     <message>
         <source>Import Actions</source>
-        <translation>导入组</translation>
+        <translation type="vanished">导入组</translation>
     </message>
     <message>
         <source>Import</source>
@@ -54,11 +54,31 @@
     </message>
     <message>
         <source>Export Actions</source>
-        <translation>导出组</translation>
+        <translation type="vanished">导出组</translation>
     </message>
     <message>
         <source>Export</source>
         <translation>导出</translation>
+    </message>
+    <message>
+        <source>Import/Export Actions</source>
+        <translation>导入/导出组</translation>
+    </message>
+    <message>
+        <source>Import Project</source>
+        <translation>导入工程</translation>
+    </message>
+    <message>
+        <source>Import Audio</source>
+        <translation>导入音频</translation>
+    </message>
+    <message>
+        <source>Export Project</source>
+        <translation>导出工程</translation>
+    </message>
+    <message>
+        <source>Export Audio</source>
+        <translation>导出音频</translation>
     </message>
 </context>
 <context>

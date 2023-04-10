@@ -19,7 +19,7 @@ namespace IEMgr ::Internal {
     }
 
     IWizardFactory::Features UstWizard::features() const {
-        return {Import | Export};
+        return {ImportProject | ExportProject};
     }
 
     bool UstWizard::runWizard(Feature feature, const QString &path, Core::IWindow *windowHandle) {

@@ -182,6 +182,46 @@ namespace Core {
         }
     }
 
+    bool ActionItem::enabled() const {
+        bool res = false;
+        switch (d_ptr->type) {
+            case Action:
+                res = d_ptr->action->isEnabled();
+                break;
+            case ActionGroup:
+                res = d_ptr->actionGroup->isEnabled();
+                break;
+            case Menu:
+                res = d_ptr->menu->isEnabled();
+                break;
+            case Widget:
+                res = d_ptr->widget->isEnabled();
+                break;
+            default:
+                break;
+        }
+        return res;
+    }
+
+    void ActionItem::setEnabled(bool enabled) {
+        switch (d_ptr->type) {
+            case Action:
+                d_ptr->action->setEnabled(enabled);
+                break;
+            case ActionGroup:
+                d_ptr->actionGroup->setEnabled(enabled);
+                break;
+            case Menu:
+                d_ptr->menu->setEnabled(enabled);
+                break;
+            case Widget:
+                d_ptr->widget->setEnabled(enabled);
+                break;
+            default:
+                break;
+        }
+    }
+
     bool ActionItem::autoDelete() const {
         return d_ptr->autoDelete;
     }

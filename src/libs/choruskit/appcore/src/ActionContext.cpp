@@ -411,7 +411,7 @@ namespace Core {
 
     static void insertMenu(QMenu *menu, ActionItem *item) {
         auto sep = [&]() {
-            if (!menu->isEmpty()) {
+            if (menu->property("last_insert").toString() == "group" || item->type() == ActionItem::ActionGroup) {
                 menu->addSeparator();
             }
         };
@@ -420,17 +420,20 @@ namespace Core {
             case ActionItem::Menu:
                 sep();
                 menu->addMenu(item->menu());
+                menu->setProperty("last_insert", "menu");
                 break;
             case ActionItem::ActionGroup: {
                 sep();
                 for (const auto &action : item->actionGroup()->actions()) {
                     menu->addAction(action);
                 }
+                menu->setProperty("last_insert", "group");
                 break;
             }
             case ActionItem::Action: {
                 sep();
                 menu->addAction(item->action());
+                menu->setProperty("last_insert", "action");
                 break;
             }
             default:

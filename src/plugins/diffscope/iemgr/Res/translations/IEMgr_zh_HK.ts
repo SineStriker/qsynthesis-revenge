@@ -45,19 +45,31 @@
 <context>
     <name>IEMgr::Internal::IEMgrAddOn</name>
     <message>
-        <source>Import Actions</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Import</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Export Actions</source>
+        <source>Export</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Export</source>
+        <source>Import/Export Actions</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Import Project</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Import Audio</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Export Project</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Export Audio</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

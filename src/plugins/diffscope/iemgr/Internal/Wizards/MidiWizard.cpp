@@ -26,13 +26,13 @@ namespace IEMgr ::Internal {
     }
 
     IWizardFactory::Features MidiWizard::features() const {
-        return {Import | Export};
+        return {ImportProject | ExportProject};
     }
 
     QString MidiWizard::filter(Feature feature) const {
         const char *suffixes;
         switch (feature) {
-            case IWizardFactory::Import:
+            case IWizardFactory::ImportProject:
                 suffixes = "*.mid *.midi";
                 break;
             default:
@@ -44,7 +44,7 @@ namespace IEMgr ::Internal {
 
     bool MidiWizard::runWizard(Feature feature, const QString &path, Core::IWindow *windowHandle) {
         switch (feature) {
-            case IWizardFactory::Import: {
+            case IWizardFactory::ImportProject: {
                 QDspxModel model;
                 if (!load(path, &model, windowHandle->window())) {
                     return false;
@@ -52,7 +52,7 @@ namespace IEMgr ::Internal {
                 qDebug() << model.content.tracks.size();
                 break;
             }
-            case IWizardFactory::Export: {
+            case IWizardFactory::ExportProject: {
                 break;
             }
             default:

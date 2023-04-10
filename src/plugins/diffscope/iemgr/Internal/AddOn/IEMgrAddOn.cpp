@@ -35,35 +35,52 @@ namespace IEMgr::Internal {
     }
 
     void IEMgrAddOn::reloadStrings() {
-        importGroupItem->setText(tr("Import Actions"));
+        importExportGroupItem->setText(tr("Import/Export Actions"));
         importItem->setText(tr("Import"));
-
-        exportGroupItem->setText(tr("Export Actions"));
+        importProjectItem->setText(tr("Import Project"));
+        importAudioItem->setText(tr("Import Audio"));
         exportItem->setText(tr("Export"));
+        exportProjectItem->setText(tr("Export Project"));
+        exportAudioItem->setText(tr("Export Audio"));
     }
 
     void IEMgrAddOn::initActions() {
         auto iWin = windowHandle();
 
-        importGroupItem = new ActionItem("iemgr.ImportGroup", new QActionGroup(this));
-        importItem = new ActionItem("iemgr.Import", new QAction());
+        importExportGroupItem = new ActionItem("iemgr.ImportExportGroup", new QActionGroup(this));
 
-        exportGroupItem = new ActionItem("iemgr.ExportGroup", new QActionGroup(this));
+        importItem = new ActionItem("iemgr.Import", new QMenu());
+        importProjectItem = new ActionItem("iemgr.ImportProject", new QAction());
+        importAudioItem = new ActionItem("iemgr.ImportAudio", new QAction());
+
         exportItem = new ActionItem("iemgr.Export", new QAction());
+        exportProjectItem = new ActionItem("iemgr.ExportProject", new QAction());
+        exportAudioItem = new ActionItem("iemgr.ExportAudio", new QAction());
 
-        connect(importItem->action(), &QAction::triggered, this, [this]() {
+        connect(importProjectItem->action(), &QAction::triggered, this, [this]() {
             IManager::instance()->runImport({}, windowHandle()->window()); //
         });
 
-        connect(exportItem->action(), &QAction::triggered, this, [this]() {
+        connect(importAudioItem->action(), &QAction::triggered, this, [this]() {
+            //
+        });
+
+        connect(exportProjectItem->action(), &QAction::triggered, this, [this]() {
             IManager::instance()->runExport({}, windowHandle()->window()); //
         });
 
+        connect(exportAudioItem->action(), &QAction::triggered, this, [this]() {
+            //
+        });
+
         iWin->addActionItems({
-            importGroupItem,
+            importExportGroupItem,
             importItem,
-            exportGroupItem,
+            importProjectItem,
+            importAudioItem,
             exportItem,
+            exportProjectItem,
+            exportAudioItem,
         });
     }
 }

@@ -1,21 +1,19 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <actionSystem>
     <context id="home.MainMenu" prefix="iemgr." mode="find">
-        <group id="ImportGroup">
+        <group id="ImportExportGroup">
             <rules>
                 <rule id="core.OpenGroup" mode="insertBehind"/>
             </rules>
             <content>
-                <action id="Import"/>
-            </content>
-        </group>
-
-        <group id="ExportGroup">
-            <rules>
-                <rule id="iemgr.ImportGroup" mode="insertBehind"/>
-            </rules>
-            <content>
-                <action id="Export"/>
+                <menu id="Import">
+                    <action id="ImportProject"/>
+                    <action id="ImportAudio"/>
+                </menu>
+                <menu id="Export">
+                    <action id="ExportProject"/>
+                    <action id="ExportAudio"/>
+                </menu>
             </content>
         </group>
     </context>
