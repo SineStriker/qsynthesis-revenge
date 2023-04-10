@@ -47,18 +47,18 @@ namespace IEMgr::Internal {
     void IEMgrAddOn::initActions() {
         auto iWin = windowHandle();
 
-        importExportGroupItem = new ActionItem("iemgr.ImportExportGroup", new QActionGroup(this));
+        importExportGroupItem = new ActionItem("iemgr.ImportExportGroup", new QActionGroup(this), this);
 
-        importItem = new ActionItem("iemgr.Import", new QMenu());
-        importProjectItem = new ActionItem("iemgr.ImportProject", new QAction());
-        importAudioItem = new ActionItem("iemgr.ImportAudio", new QAction());
+        importItem = new ActionItem("iemgr.Import", new QMenu(), this);
+        importProjectItem = new ActionItem("iemgr.ImportProject", new QAction(), this);
+        importAudioItem = new ActionItem("iemgr.ImportAudio", new QAction(), this);
 
         exportItem = new ActionItem("iemgr.Export", new QAction());
-        exportProjectItem = new ActionItem("iemgr.ExportProject", new QAction());
-        exportAudioItem = new ActionItem("iemgr.ExportAudio", new QAction());
+        exportProjectItem = new ActionItem("iemgr.ExportProject", new QAction(), this);
+        exportAudioItem = new ActionItem("iemgr.ExportAudio", new QAction(), this);
 
         connect(importProjectItem->action(), &QAction::triggered, this, [this]() {
-            IManager::instance()->runImport({}, windowHandle()->window()); //
+            IManager::instance()->runImport({}, {}, windowHandle()->window()); //
         });
 
         connect(importAudioItem->action(), &QAction::triggered, this, [this]() {
@@ -66,7 +66,7 @@ namespace IEMgr::Internal {
         });
 
         connect(exportProjectItem->action(), &QAction::triggered, this, [this]() {
-            IManager::instance()->runExport({}, windowHandle()->window()); //
+            IManager::instance()->runExport({}, {}, windowHandle()->window()); //
         });
 
         connect(exportAudioItem->action(), &QAction::triggered, this, [this]() {

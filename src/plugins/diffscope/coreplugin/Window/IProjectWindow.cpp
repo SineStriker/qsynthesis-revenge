@@ -1,9 +1,11 @@
 #include "IProjectWindow.h"
 #include "IProjectWindow_p.h"
 
-#include "ICore.h"
-
 #include <QDebug>
+
+#include <QMDecorator.h>
+
+#include "ICore.h"
 
 namespace Core {
 
@@ -13,6 +15,14 @@ namespace Core {
     void IProjectWindowPrivate::init() {
     }
 
+    void IProjectWindowPrivate::reloadStrings() {
+    }
+
+    void IProjectWindowPrivate::reloadMenuBar() {
+        Q_Q(IProjectWindow);
+        mainMenuCtx->buildMenuBarWithState(q->actionItems(), q->menuBar());
+    }
+
     IProjectWindow::IProjectWindow(QObject *parent) : IProjectWindow(*new IProjectWindowPrivate(), parent) {
     }
 
@@ -20,14 +30,20 @@ namespace Core {
     }
 
     void IProjectWindow::setupWindow() {
+        Q_D(IProjectWindow);
+
+        auto win = window();
+
+        qIDec->installLocale(this, {{}}, _LOC(IProjectWindowPrivate, d));
+        qIDec->installTheme(win, {"Global", "ProjectWindow"});
+
+        d->mainMenuCtx = ICore::instance()->actionSystem()->context("project.MainMenu");
     }
 
     void IProjectWindow::windowAddOnsFinished() {
-        auto ctx = ICore::instance()->actionSystem()->context("project.MainMenu");
-        if (!ctx) {
-            qWarning() << "Core::IProjectWindow::windowAddOnsFinished(): menu context has been removed unexpectedly.";
-        }
-        ctx->buildMenuBarWithState(actionItems(), menuBar());
+        Q_D(IProjectWindow);
+        connect(d->mainMenuCtx, &ActionContext::stateChanged, d, &IProjectWindowPrivate::reloadMenuBar);
+        d->reloadMenuBar();
     }
 
     IProjectWindow::IProjectWindow(IProjectWindowPrivate &d, QObject *parent)

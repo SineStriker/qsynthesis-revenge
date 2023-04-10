@@ -7,8 +7,14 @@
 
 namespace Core {
 
-    class ActionItemPrivate {
+    class ActionItemPrivate : public QObject {
+        Q_DECLARE_PUBLIC(ActionItem)
     public:
+        ActionItemPrivate();
+        virtual ~ActionItemPrivate();
+
+        void init();
+
         ActionItem *q_ptr;
 
         QString id;
@@ -21,10 +27,10 @@ namespace Core {
         QPointer<QMenu> menu;
         QPointer<QWidget> widget;
 
-        ActionItemPrivate();
-        virtual ~ActionItemPrivate();
-
-        void init();
+    private:
+        void _q_actionDisplayNameChanged(const QString &id, const QString &displayName);
+        void _q_actionDescriptionChanged(const QString &id, const QString &description);
+        void _q_actionShortcutsChanged(const QString &id, const QList<QKeySequence> &shortcuts);
     };
 
 }

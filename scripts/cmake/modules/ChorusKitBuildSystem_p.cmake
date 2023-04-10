@@ -80,6 +80,9 @@ function(_ck_add_lupdate_target _target)
 
         if(_LUPDATE_CREATE_ONCE AND NOT EXISTS ${_ts_abs})
             message(STATUS "[INFO] Linguist update, generate ${_ts_name}")
+            get_filename_component(_abs_file ${_ts_file} ABSOLUTE)
+            get_filename_component(_dir ${_abs_file} DIRECTORY)
+            make_directory(${_dir})
             execute_process(
                 COMMAND ${_lupdate_exe} ${_LUPDATE_OPTIONS} "@${_ts_lst_file}" -ts ${_ts_file}
                 WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}

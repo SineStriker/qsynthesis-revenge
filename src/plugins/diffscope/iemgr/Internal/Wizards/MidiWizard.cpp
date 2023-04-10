@@ -42,7 +42,8 @@ namespace IEMgr ::Internal {
         return QString("%1(%2)").arg(tr("Standard Midi Files"), suffixes) + ";;" + IWizardFactory::filter(feature);
     }
 
-    bool MidiWizard::runWizard(Feature feature, const QString &path, Core::IWindow *windowHandle) {
+    bool MidiWizard::runWizard(Feature feature, const QString &path, const QVariantMap &args,
+                               Core::IWindow *windowHandle) {
         switch (feature) {
             case IWizardFactory::ImportProject: {
                 QDspxModel model;
@@ -298,8 +299,7 @@ namespace IEMgr ::Internal {
 
             // 逻辑轨道名称
             auto nameBytes = trackNameAndLyrics[trackAndChannelIndex.track].name;
-            ImportDialog::TrackInfo info(nameBytes,
-                                                trackNameAndLyrics[trackAndChannelIndex.track].lyrics.values());
+            ImportDialog::TrackInfo info(nameBytes, trackNameAndLyrics[trackAndChannelIndex.track].lyrics.values());
 
             info.format = tr("%1(%2): (%3 notes, %4)")
                               .arg("%1", QString::number(trackAndChannelIndex.channel), QString::number(noteCount),

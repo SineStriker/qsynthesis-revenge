@@ -211,9 +211,6 @@ namespace Core {
 
     IWindow::~IWindow() {
         Q_D(IWindow);
-
-        // Remove action items
-        qDeleteAll(d->actionItemMap);
     }
 
     void IWindow::setupWindow() {

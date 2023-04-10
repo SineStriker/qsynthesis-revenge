@@ -16,13 +16,10 @@ namespace Core {
     }
 
     void ICorePrivate::init() {
-        Q_Q(ICore);
     }
 
-    static ICore *m_instance = nullptr;
-
     ICore *ICore::instance() {
-        return m_instance;
+        return qobject_cast<ICore *>(ICoreBase::instance());
     }
 
     QString ICore::mainTitle() {
@@ -74,12 +71,9 @@ namespace Core {
     }
 
     ICore::~ICore() {
-        m_instance = nullptr;
     }
 
     ICore::ICore(ICorePrivate &d, QObject *parent) : ICoreBase(d, parent) {
-        m_instance = this;
-
         d.init();
     }
 

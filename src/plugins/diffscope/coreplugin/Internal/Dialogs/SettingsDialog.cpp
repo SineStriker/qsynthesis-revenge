@@ -81,6 +81,9 @@ namespace Core {
             topSplitter->addWidget(leftWidget);
             topSplitter->addWidget(rightWidget);
 
+            topSplitter->setStretchFactor(0, 0);
+            topSplitter->setStretchFactor(1, 1);
+
             setWidget(topSplitter);
 
             auto sc = ICore::instance()->settingCatalog();

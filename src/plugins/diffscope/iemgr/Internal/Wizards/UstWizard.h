@@ -16,7 +16,8 @@ namespace IEMgr {
         public:
             Features features() const override;
             QString filter(Feature feature) const override;
-            bool runWizard(Feature feature, const QString &path, Core::IWindow *windowHandle) override;
+            bool runWizard(Feature feature, const QString &path, const QVariantMap &args,
+                           Core::IWindow *windowHandle) override;
         };
     }
 } // IEMgr

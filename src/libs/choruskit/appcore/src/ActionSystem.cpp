@@ -11,6 +11,53 @@
 
 namespace Core {
 
+    ActionSpec::ActionSpec() : d(nullptr) {
+    }
+
+    bool ActionSpec::isValid() const {
+        return d != nullptr;
+    }
+
+    QString ActionSpec::id() const {
+        return d ? d->id : QString();
+    }
+
+    QString ActionSpec::displayName() const {
+        return d ? d->displayName : QString();
+    }
+
+    void ActionSpec::setDisplayName(const QString &displayName) {
+        if (!d)
+            return;
+        d->displayName = displayName;
+        emit d->d->q_ptr->actionDisplayNameChanged(d->id, displayName);
+    }
+
+    QString ActionSpec::description() const {
+        return d ? d->description : QString();
+    }
+
+    void ActionSpec::setDescription(const QString &description) {
+        if (!d)
+            return;
+        d->description = description;
+        emit d->d->q_ptr->actionDisplayNameChanged(d->id, description);
+    }
+
+    QList<QKeySequence> ActionSpec::shortcuts() const {
+        return d ? d->shortcuts : QList<QKeySequence>();
+    }
+
+    void ActionSpec::setShortcuts(const QList<QKeySequence> &shortcuts) {
+        if (!d)
+            return;
+        d->shortcuts = shortcuts;
+        emit d->d->q_ptr->actionShortcutsChanged(d->id, shortcuts);
+    }
+
+    ActionSpec::ActionSpec(ActionSpecPrivate *d) : d(d) {
+    }
+
     ActionSystemPrivate::ActionSystemPrivate() : q_ptr(nullptr) {
     }
 
@@ -27,6 +74,45 @@ namespace Core {
 
     ActionSystem::~ActionSystem() {
         m_instance = nullptr;
+    }
+
+    ActionSpec ActionSystem::addAction(const QString &id) {
+        Q_D(ActionSystem);
+        if (d->actions.contains(id)) {
+            qWarning() << "Core::ActionSystem::addAction(): trying to add duplicated action:" << id;
+            return {};
+        }
+        auto it = d->actions.append(id, {d, id, id, {}, {}});
+
+        emit actionAdded(id);
+
+        return ActionSpec(&(it.value()));
+    }
+
+    void ActionSystem::removeAction(const QString &id) {
+        Q_D(ActionSystem);
+        auto it = d->actions.find(id);
+        if (it == d->actions.end()) {
+            qWarning() << "Core::ActionSystem::removeAction(): action does not exist:" << id;
+            return;
+        }
+        d->actions.erase(it);
+
+        emit actionRemoved(id);
+    }
+
+    ActionSpec ActionSystem::action(const QString &id) {
+        Q_D(ActionSystem);
+        auto it = d->actions.find(id);
+        if (it == d->actions.end()) {
+            return {};
+        }
+        return ActionSpec(&(it.value()));
+    }
+
+    QStringList ActionSystem::actionIds() const {
+        Q_D(const ActionSystem);
+        return d->actions.keys();
     }
 
     bool ActionSystem::addContext(ActionContext *context) {
@@ -85,8 +171,8 @@ namespace Core {
         return d->contexts.keys();
     }
 
-    void _loadContexts_dfs(const QString &prefix, const QString &parentId, const QMXmlAdaptorElement *ele,
-                           ActionContext *context) {
+    void _loadContexts_dfs(ActionSystemPrivate *d, const QString &prefix, const QString &parentId,
+                           const QMXmlAdaptorElement *ele, ActionContext *context) {
         const auto &ctx2 = *ele;
         QString id = prefix + ctx2.properties.value("id");
         if (id.isEmpty()) {
@@ -168,14 +254,26 @@ namespace Core {
             action = context->addAction(id, isGroup);
         }
         action.setRules(action.rules() + rules);
-        action.setShortcuts(action.shortcuts() + shortcuts);
+
+        {
+            auto it = d->actions.find(id);
+            if (it == d->actions.end()) {
+                auto spec = d->q_ptr->addAction(id);
+                spec.setShortcuts(shortcuts);
+            } else {
+                auto &spec = it.value();
+                spec.shortcuts.append(shortcuts);
+            }
+        }
 
         for (const auto &child : qAsConst(children)) {
-            _loadContexts_dfs(prefix, id, child, context);
+            _loadContexts_dfs(d, prefix, id, child, context);
         }
     }
 
     QStringList ActionSystem::loadContexts(const QString &filename) {
+        Q_D(ActionSystem);
+
         QMXmlAdaptor file;
         if (!file.load(filename)) {
             qWarning() << "Core::ActionSystem::loadContexts(): load file failed";
@@ -217,7 +315,7 @@ namespace Core {
 
             QString prefix = ctx.properties.value("prefix");
             for (const auto &ctx_ref2 : qAsConst(ctx.children)) {
-                _loadContexts_dfs(prefix, {}, ctx_ref2.data(), context);
+                _loadContexts_dfs(d, prefix, {}, ctx_ref2.data(), context);
             }
         }
 
@@ -232,6 +330,11 @@ namespace Core {
     void ActionSystem::setStateCache(const QString &id, const QMap<QString, QStringList> &state) {
         Q_D(ActionSystem);
         d->stateCaches.insert(id, state);
+
+        auto ctx = context(id);
+        if (ctx) {
+            ctx->d_ptr->setDirty();
+        }
     }
 
     ActionSystem::ActionSystem(ActionSystemPrivate &d, QObject *parent) : QObject(parent), d_ptr(&d) {

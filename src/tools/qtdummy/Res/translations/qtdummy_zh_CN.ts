@@ -4,17 +4,17 @@
 <context>
     <name>Application</name>
     <message>
+        <location filename="../../../../libs/choruskit/appload/main.cpp" line="161"/>
         <source>Failed to load core: %1</source>
-        <translation type="vanished">无法加载核心：%1</translation>
+        <translation>无法加载核心：%1</translation>
     </message>
     <message>
         <source>Could not find Core plugin in %1</source>
         <translation type="vanished">无法在%1中找到核心插件！</translation>
     </message>
     <message>
-        <location filename="../../../../libs/choruskit/appload/main.cpp" line="161"/>
         <source>Failed to load core: %1!</source>
-        <translation>无法加载核心：%1！</translation>
+        <translation type="vanished">无法加载核心：%1！</translation>
     </message>
     <message>
         <location filename="../../../../libs/choruskit/appload/main.cpp" line="322"/>

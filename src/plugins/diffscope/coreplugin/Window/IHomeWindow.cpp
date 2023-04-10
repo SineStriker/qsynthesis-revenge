@@ -18,10 +18,15 @@ namespace Core {
 
     void IHomeWindowPrivate::reloadStrings() {
         Q_Q(IHomeWindow);
-        // auto win = window();
+        auto win = q->window();
 
         q->setWindowTitle(tr("Welcome"));
         aboutButton->setText(tr("About %1").arg(qAppName()));
+    }
+
+    void IHomeWindowPrivate::reloadMenuBar() {
+        Q_Q(IHomeWindow);
+        mainMenuCtx->buildMenuBarWithState(q->actionItems(), q->menuBar());
     }
 
     void IHomeWindowPrivate::_q_aboutButtonClicked() {
@@ -64,14 +69,14 @@ namespace Core {
 
         qIDec->installLocale(this, {{}}, _LOC(IHomeWindowPrivate, d));
         qIDec->installTheme(win, {"Global", "HomeWindow"});
+
+        d->mainMenuCtx = ICore::instance()->actionSystem()->context("home.MainMenu");
     }
 
     void IHomeWindow::windowAddOnsFinished() {
-        auto ctx = ICore::instance()->actionSystem()->context("home.MainMenu");
-        if (!ctx) {
-            qWarning() << "Core::IHomeWindow::windowAddOnsFinished(): menu context has been removed unexpectedly.";
-        }
-        ctx->buildMenuBarWithState(actionItems(), menuBar());
+        Q_D(IHomeWindow);
+        connect(d->mainMenuCtx, &ActionContext::stateChanged, d, &IHomeWindowPrivate::reloadMenuBar);
+        d->reloadMenuBar();
     }
 
     IHomeWindow::IHomeWindow(IHomeWindowPrivate &d, QObject *parent)

@@ -27,8 +27,8 @@ namespace IEMgr {
         void clearWizards();
 
     public:
-        void runImport(const QString &id, QWidget *parent = nullptr);
-        void runExport(const QString &id, QWidget *parent = nullptr);
+        void runImport(const QString &id, const QVariantMap &args, QWidget *parent = nullptr);
+        void runExport(const QString &id, const QVariantMap &args,QWidget *parent = nullptr);
 
         bool isRunning() const;
 

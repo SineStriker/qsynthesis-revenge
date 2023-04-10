@@ -1,6 +1,6 @@
 {
-    "Name": "IEMgr",
-    "DisplayName": "Import/Export Manager",
+    "Name": "ParseDs",
+    "DisplayName": "DS format parser",
     "Version": "@PLUGIN_METADATA_VERSION@",
     "CompatVersion": "@PLUGIN_METADATA_COMPAT_VERSION@",
     "DisabledByDefault": false,
@@ -11,10 +11,10 @@
         "Apache 2.0"
     ],
     "Category": "Format Exchange",
-    "Description": "Import/Export manager plugin for DiffScope.",
+    "Description": "DS format parser plugin for DiffScope.",
     "Url": "https://www.baidu.com/",
-    "Required": true,
+    "Required": false,
     "Dependencies" : [
-        { "Name" : "Core", "Version" : "0.1.0" }
+        { "Name" : "IEMgr", "Version" : "0.1.0" }
     ]
 }

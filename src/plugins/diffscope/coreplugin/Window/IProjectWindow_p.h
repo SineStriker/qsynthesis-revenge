@@ -4,6 +4,8 @@
 #include "ICoreWindow_p.h"
 #include "IProjectWindow.h"
 
+#include <CoreApi/ActionContext.h>
+
 namespace Core {
 
     class IProjectWindowPrivate : public ICoreWindowPrivate {
@@ -13,6 +15,11 @@ namespace Core {
         IProjectWindowPrivate();
 
         void init();
+
+        void reloadStrings();
+        void reloadMenuBar();
+
+        ActionContext *mainMenuCtx;
     };
 
 }

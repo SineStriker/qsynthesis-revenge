@@ -10,9 +10,13 @@
 
 namespace Core {
 
+    class ActionSystem;
+
     class ActionItemPrivate;
 
-    class CKAPPCORE_API ActionItem {
+    class CKAPPCORE_API ActionItem : public QObject {
+        Q_OBJECT
+        Q_DECLARE_PRIVATE(ActionItem)
     public:
         enum Type {
             Invalid,
@@ -22,10 +26,10 @@ namespace Core {
             Widget,
         };
 
-        ActionItem(const QString &id, QAction *action);
-        ActionItem(const QString &id, QActionGroup *actionGroup);
-        ActionItem(const QString &id, QMenu *menu);
-        ActionItem(const QString &id, QWidget *widget);
+        ActionItem(const QString &id, QAction *action, QObject *parent = nullptr);
+        ActionItem(const QString &id, QActionGroup *actionGroup, QObject *parent = nullptr);
+        ActionItem(const QString &id, QMenu *menu, QObject *parent = nullptr);
+        ActionItem(const QString &id, QWidget *widget, QObject *parent = nullptr);
         ~ActionItem();
 
         QString id() const;
@@ -37,10 +41,10 @@ namespace Core {
         QWidget *widget() const;
 
         QIcon icon() const;
-        void setIcon(const QIcon &icon) const;
+        void setIcon(const QIcon &icon);
 
         QString text() const;
-        void setText(const QString &text) const;
+        void setText(const QString &text);
 
         bool enabled() const;
         void setEnabled(bool enabled);
@@ -53,7 +57,7 @@ namespace Core {
         static void setAutoDeleteGlobal(bool autoDelete);
 
     protected:
-        ActionItem(ActionItemPrivate &d, const QString &id);
+        ActionItem(ActionItemPrivate &d, const QString &id, QObject *parent = nullptr);
 
         QScopedPointer<ActionItemPrivate> d_ptr;
     };

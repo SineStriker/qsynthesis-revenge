@@ -29,7 +29,7 @@ namespace IEMgr {
 
         virtual Features features() const = 0;
         virtual QString filter(Feature feature) const;
-        virtual bool runWizard(Feature feature, const QString &path, Core::IWindow *windowHandle) = 0;
+        virtual bool runWizard(Feature feature, const QString &path,const QVariantMap &args, Core::IWindow *windowHandle) = 0;
 
     public:
         QString id() const;

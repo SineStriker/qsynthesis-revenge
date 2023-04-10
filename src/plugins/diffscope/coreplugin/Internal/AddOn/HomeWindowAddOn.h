@@ -29,7 +29,6 @@ namespace Core {
 
         private:
             ActionItem *fileItem;
-            ActionItem *editItem;
             ActionItem *helpItem;
 
             ActionItem *openGroupItem;

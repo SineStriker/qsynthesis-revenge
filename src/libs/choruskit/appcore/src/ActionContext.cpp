@@ -34,23 +34,26 @@ namespace Core {
         emit q_ptr->stateChanged();
     }
 
-    bool ActionContextData::isValid() const {
+    ActionContextItem::ActionContextItem() : d(nullptr) {
+    }
+
+    bool ActionContextItem::isValid() const {
         return d != nullptr;
     }
 
-    QString ActionContextData::id() const {
+    QString ActionContextItem::id() const {
         return d ? d->id : QString();
     }
 
-    bool ActionContextData::isGroup() const {
+    bool ActionContextItem::isGroup() const {
         return d ? d->isGroup : false;
     }
 
-    QList<ActionInsertRule> ActionContextData::rules() const {
+    QList<ActionInsertRule> ActionContextItem::rules() const {
         return d ? d->rules : QList<ActionInsertRule>();
     }
 
-    void ActionContextData::setRules(const QList<ActionInsertRule> &rules) {
+    void ActionContextItem::setRules(const QList<ActionInsertRule> &rules) {
         if (!d)
             return;
         d->rules = rules;
@@ -59,18 +62,7 @@ namespace Core {
         emit d->d->q_ptr->actionRulesChanged(d->id, rules);
     }
 
-    QList<QKeySequence> ActionContextData::shortcuts() const {
-        return d ? d->shortcuts : QList<QKeySequence>();
-    }
-
-    void ActionContextData::setShortcuts(const QList<QKeySequence> &shortcuts) {
-        if (!d)
-            return;
-        d->shortcuts = shortcuts;
-        emit d->d->q_ptr->actionShortcutsChanged(d->id, shortcuts);
-    }
-
-    ActionContextData::ActionContextData(ActionContextDataPrivate *d) : d(d) {
+    ActionContextItem::ActionContextItem(ActionContextItemPrivate *d) : d(d) {
     }
 
     ActionContext::ActionContext(const QString &id, QObject *parent)
@@ -105,18 +97,18 @@ namespace Core {
         emit titleChanged(title);
     }
 
-    ActionContextData ActionContext::addAction(const QString &id, bool isGroup) {
+    ActionContextItem ActionContext::addAction(const QString &id, bool isGroup) {
         Q_D(ActionContext);
         if (d->actions.contains(id)) {
             qWarning() << "Core::ActionContext::addAction(): trying to add duplicated action:" << id;
-            return ActionContextData(nullptr);
+            return {};
         }
         auto it = d->actions.append(id, {d, id, isGroup, {}, {}});
 
         d->setDirty();
         emit actionAdded(id);
 
-        return ActionContextData(&(it.value()));
+        return ActionContextItem(&(it.value()));
     }
 
     void ActionContext::removeAction(const QString &id) {
@@ -132,13 +124,13 @@ namespace Core {
         emit actionRemoved(id);
     }
 
-    ActionContextData ActionContext::action(const QString &id) {
+    ActionContextItem ActionContext::action(const QString &id) {
         Q_D(ActionContext);
         auto it = d->actions.find(id);
         if (it == d->actions.end()) {
-            return ActionContextData(nullptr);
+            return {};
         }
-        return ActionContextData(&(it.value()));
+        return ActionContextItem(&(it.value()));
     }
 
     QStringList ActionContext::actionIds() const {

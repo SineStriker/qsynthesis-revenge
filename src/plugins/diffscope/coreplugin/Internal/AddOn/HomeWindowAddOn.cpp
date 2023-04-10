@@ -49,7 +49,6 @@ namespace Core {
 
         void HomeWindowAddOn::reloadStrings() {
             fileItem->setText(tr("File(&F)"));
-            editItem->setText(tr("Edit(&E)"));
             helpItem->setText(tr("Help(&H)"));
 
             openGroupItem->setText(tr("Open Actions"));
@@ -67,20 +66,19 @@ namespace Core {
         void HomeWindowAddOn::initActions() {
             auto iWin = windowHandle();
 
-            fileItem = new ActionItem("core.File", new QMenu());
-            editItem = new ActionItem("core.Edit", new QMenu());
-            helpItem = new ActionItem("core.Help", new QMenu());
+            fileItem = new ActionItem("core.File", new QMenu(), this);
+            helpItem = new ActionItem("core.Help", new QMenu(), this);
 
-            openGroupItem = new ActionItem("core.OpenGroup", new QActionGroup(this));
-            newFileItem = new ActionItem("core.NewFile", new QAction());
-            openFileItem = new ActionItem("core.OpenFile", new QAction());
+            openGroupItem = new ActionItem("core.OpenGroup", new QActionGroup(this), this);
+            newFileItem = new ActionItem("core.NewFile", new QAction(), this);
+            openFileItem = new ActionItem("core.OpenFile", new QAction(), this);
 
-            preferenceGroupItem = new ActionItem("core.PreferenceGroup", new QActionGroup(this));
-            settingsItem = new ActionItem("core.Settings", new QAction());
+            preferenceGroupItem = new ActionItem("core.PreferenceGroup", new QActionGroup(this), this);
+            settingsItem = new ActionItem("core.Settings", new QAction(), this);
 
-            aboutGroupItem = new ActionItem("core.AboutGroup", new QActionGroup(this));
-            aboutAppItem = new ActionItem("core.AboutApp", new QAction(this));
-            aboutQtItem = new ActionItem("core.AboutQt", new QAction(this));
+            aboutGroupItem = new ActionItem("core.AboutGroup", new QActionGroup(this), this);
+            aboutAppItem = new ActionItem("core.AboutApp", new QAction(this), this);
+            aboutQtItem = new ActionItem("core.AboutQt", new QAction(this), this);
 
             connect(newFileItem->action(), &QAction::triggered, this, [this]() {
                 //
@@ -100,7 +98,6 @@ namespace Core {
 
             iWin->addActionItems({
                 fileItem,
-                editItem,
                 helpItem,
                 openGroupItem,
                 newFileItem,

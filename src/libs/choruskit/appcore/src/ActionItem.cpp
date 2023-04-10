@@ -1,6 +1,9 @@
 #include "ActionItem.h"
 #include "ActionItem_p.h"
 
+#include "ActionSystem.h"
+#include "ICoreBase.h"
+
 #include <QDebug>
 
 namespace Core {
@@ -16,59 +19,118 @@ namespace Core {
     }
 
     void ActionItemPrivate::init() {
+        auto as = ICoreBase::instance()->actionSystem();
+        connect(as, &ActionSystem::actionDisplayNameChanged, this, &ActionItemPrivate::_q_actionDisplayNameChanged);
+        connect(as, &ActionSystem::actionDescriptionChanged, this, &ActionItemPrivate::_q_actionDescriptionChanged);
+        connect(as, &ActionSystem::actionShortcutsChanged, this, &ActionItemPrivate::_q_actionShortcutsChanged);
     }
 
-    ActionItem::ActionItem(const QString &id, QAction *action) : ActionItem(*new ActionItemPrivate(), id) {
+    void ActionItemPrivate::_q_actionDisplayNameChanged(const QString &id, const QString &displayName) {
+        if (id == this->id) {
+            //
+        }
+    }
+
+    void ActionItemPrivate::_q_actionDescriptionChanged(const QString &id, const QString &description) {
+        if (id == this->id) {
+            //
+        }
+    }
+
+    void ActionItemPrivate::_q_actionShortcutsChanged(const QString &id, const QList<QKeySequence> &shortcuts) {
+        if (id == this->id && type == ActionItem::Action) {
+            action->setShortcuts(shortcuts);
+        }
+    }
+
+    ActionItem::ActionItem(const QString &id, QAction *action, QObject *parent)
+        : ActionItem(*new ActionItemPrivate(), id, parent) {
+        Q_D(ActionItem);
+
         if (!action) {
             qWarning() << "Core::ActionItem(): trying to wrap null action";
             return;
         }
-        d_ptr->type = Action;
-        d_ptr->action = action;
+        d->type = Action;
+        d->action = action;
+
+        auto spec = ICoreBase::instance()->actionSystem()->action(id);
+        if (!spec) {
+            qWarning() << "ActionItem: action is not registered to ActionSystem:" << id;
+            return;
+        }
+
+        action->setShortcuts(spec.shortcuts());
     }
 
-    ActionItem::ActionItem(const QString &id, QActionGroup *actionGroup) : ActionItem(*new ActionItemPrivate(), id) {
+    ActionItem::ActionItem(const QString &id, QActionGroup *actionGroup, QObject *parent)
+        : ActionItem(*new ActionItemPrivate(), id, parent) {
+        Q_D(ActionItem);
+
         if (!actionGroup) {
             qWarning() << "Core::ActionItem(): trying to wrap null action group";
             return;
         }
-        d_ptr->type = ActionGroup;
-        d_ptr->actionGroup = actionGroup;
+        d->type = ActionGroup;
+        d->actionGroup = actionGroup;
+
+        auto spec = ICoreBase::instance()->actionSystem()->action(id);
+        if (!spec) {
+            qWarning() << "ActionItem: action is not registered to ActionSystem:" << id;
+        }
     }
 
-    ActionItem::ActionItem(const QString &id, QMenu *menu) : ActionItem(*new ActionItemPrivate(), id) {
+    ActionItem::ActionItem(const QString &id, QMenu *menu, QObject *parent)
+        : ActionItem(*new ActionItemPrivate(), id, parent) {
+        Q_D(ActionItem);
+
         if (!menu) {
             qWarning() << "Core::ActionItem(): trying to wrap null menu";
             return;
         }
-        d_ptr->type = Menu;
-        d_ptr->menu = menu;
+        d->type = Menu;
+        d->menu = menu;
+
+        auto spec = ICoreBase::instance()->actionSystem()->action(id);
+        if (!spec) {
+            qWarning() << "ActionItem: action is not registered to ActionSystem:" << id;
+        }
     }
 
-    ActionItem::ActionItem(const QString &id, QWidget *widget) : ActionItem(*new ActionItemPrivate(), id) {
+    ActionItem::ActionItem(const QString &id, QWidget *widget, QObject *parent)
+        : ActionItem(*new ActionItemPrivate(), id, parent) {
+        Q_D(ActionItem);
+
         if (!widget) {
             qWarning() << "Core::ActionItem(): trying to wrap null widget";
             return;
         }
-        d_ptr->type = Widget;
-        d_ptr->widget = widget;
+        d->type = Widget;
+        d->widget = widget;
+
+        auto spec = ICoreBase::instance()->actionSystem()->action(id);
+        if (!spec) {
+            qWarning() << "ActionItem: action is not registered to ActionSystem:" << id;
+        }
     }
 
     ActionItem::~ActionItem() {
-        if (d_ptr->autoDelete) {
+        Q_D(ActionItem);
+
+        if (d->autoDelete) {
             QObject *obj = nullptr;
-            switch (d_ptr->type) {
+            switch (d->type) {
                 case Action:
-                    obj = d_ptr->action;
+                    obj = d->action;
                     break;
                 case ActionGroup:
-                    obj = d_ptr->actionGroup;
+                    obj = d->actionGroup;
                     break;
                 case Menu:
-                    obj = d_ptr->menu;
+                    obj = d->menu;
                     break;
                 case Widget:
-                    obj = d_ptr->widget;
+                    obj = d->widget;
                     break;
                 default:
                     break;
@@ -80,62 +142,71 @@ namespace Core {
     }
 
     QString ActionItem::id() const {
-        return d_ptr->id;
+        Q_D(const ActionItem);
+        return d->id;
     }
 
     ActionItem::Type ActionItem::type() const {
-        return d_ptr->type;
+        Q_D(const ActionItem);
+        return d->type;
     }
 
     QAction *ActionItem::action() const {
-        return d_ptr->action;
+        Q_D(const ActionItem);
+        return d->action;
     }
 
     QActionGroup *ActionItem::actionGroup() const {
-        return d_ptr->actionGroup;
+        Q_D(const ActionItem);
+        return d->actionGroup;
     }
 
     QMenu *ActionItem::menu() const {
-        return d_ptr->menu;
+        Q_D(const ActionItem);
+        return d->menu;
     }
 
     QWidget *ActionItem::widget() const {
-        return d_ptr->widget;
+        Q_D(const ActionItem);
+        return d->widget;
     }
 
     QIcon ActionItem::icon() const {
+        Q_D(const ActionItem);
         QIcon res;
-        switch (d_ptr->type) {
+        switch (d->type) {
             case Action:
-                res = d_ptr->action->icon();
+                res = d->action->icon();
                 break;
             case ActionGroup:
-                res = d_ptr->actionGroup->property("icon").value<QIcon>();
+                res = d->actionGroup->property("icon").value<QIcon>();
                 break;
             case Menu:
-                res = d_ptr->menu->icon();
+                res = d->menu->icon();
                 break;
             case Widget:
-                res = d_ptr->widget->windowIcon();
+                res = d->widget->windowIcon();
                 break;
             default:
                 break;
         }
         return res;
     }
-    void ActionItem::setIcon(const QIcon &icon) const {
-        switch (d_ptr->type) {
+    void ActionItem::setIcon(const QIcon &icon) {
+        Q_D(ActionItem);
+
+        switch (d->type) {
             case Action:
-                d_ptr->action->setIcon(icon);
+                d->action->setIcon(icon);
                 break;
             case ActionGroup:
-                d_ptr->actionGroup->setProperty("icon", icon);
+                d->actionGroup->setProperty("icon", icon);
                 break;
             case Menu:
-                d_ptr->menu->setIcon(icon);
+                d->menu->setIcon(icon);
                 break;
             case Widget:
-                d_ptr->widget->setWindowIcon(icon);
+                d->widget->setWindowIcon(icon);
                 break;
             default:
                 break;
@@ -143,19 +214,21 @@ namespace Core {
     }
 
     QString ActionItem::text() const {
+        Q_D(const ActionItem);
+
         QString res;
-        switch (d_ptr->type) {
+        switch (d->type) {
             case Action:
-                res = d_ptr->action->text();
+                res = d->action->text();
                 break;
             case ActionGroup:
-                res = d_ptr->actionGroup->property("text").value<QString>();
+                res = d->actionGroup->property("text").value<QString>();
                 break;
             case Menu:
-                res = d_ptr->menu->title();
+                res = d->menu->title();
                 break;
             case Widget:
-                res = d_ptr->widget->windowTitle();
+                res = d->widget->windowTitle();
                 break;
             default:
                 break;
@@ -163,19 +236,20 @@ namespace Core {
         return res;
     }
 
-    void ActionItem::setText(const QString &text) const {
-        switch (d_ptr->type) {
+    void ActionItem::setText(const QString &text) {
+        Q_D(ActionItem);
+        switch (d->type) {
             case Action:
-                d_ptr->action->setText(text);
+                d->action->setText(text);
                 break;
             case ActionGroup:
-                d_ptr->actionGroup->setProperty("text", text);
+                d->actionGroup->setProperty("text", text);
                 break;
             case Menu:
-                d_ptr->menu->setTitle(text);
+                d->menu->setTitle(text);
                 break;
             case Widget:
-                d_ptr->widget->setWindowTitle(text);
+                d->widget->setWindowTitle(text);
                 break;
             default:
                 break;
@@ -183,19 +257,21 @@ namespace Core {
     }
 
     bool ActionItem::enabled() const {
+        Q_D(const ActionItem);
+
         bool res = false;
-        switch (d_ptr->type) {
+        switch (d->type) {
             case Action:
-                res = d_ptr->action->isEnabled();
+                res = d->action->isEnabled();
                 break;
             case ActionGroup:
-                res = d_ptr->actionGroup->isEnabled();
+                res = d->actionGroup->isEnabled();
                 break;
             case Menu:
-                res = d_ptr->menu->isEnabled();
+                res = d->menu->isEnabled();
                 break;
             case Widget:
-                res = d_ptr->widget->isEnabled();
+                res = d->widget->isEnabled();
                 break;
             default:
                 break;
@@ -204,18 +280,20 @@ namespace Core {
     }
 
     void ActionItem::setEnabled(bool enabled) {
-        switch (d_ptr->type) {
+        Q_D(ActionItem);
+
+        switch (d->type) {
             case Action:
-                d_ptr->action->setEnabled(enabled);
+                d->action->setEnabled(enabled);
                 break;
             case ActionGroup:
-                d_ptr->actionGroup->setEnabled(enabled);
+                d->actionGroup->setEnabled(enabled);
                 break;
             case Menu:
-                d_ptr->menu->setEnabled(enabled);
+                d->menu->setEnabled(enabled);
                 break;
             case Widget:
-                d_ptr->widget->setEnabled(enabled);
+                d->widget->setEnabled(enabled);
                 break;
             default:
                 break;
@@ -223,11 +301,13 @@ namespace Core {
     }
 
     bool ActionItem::autoDelete() const {
-        return d_ptr->autoDelete;
+        Q_D(const ActionItem);
+        return d->autoDelete;
     }
 
     void ActionItem::setAutoDelete(bool autoDelete) {
-        d_ptr->autoDelete = autoDelete;
+        Q_D(ActionItem);
+        d->autoDelete = autoDelete;
     }
 
     bool ActionItem::autoDeleteGlobal() {
@@ -238,7 +318,7 @@ namespace Core {
         m_autoDelete = autoDelete;
     }
 
-    ActionItem::ActionItem(ActionItemPrivate &d, const QString &id) : d_ptr(&d) {
+    ActionItem::ActionItem(ActionItemPrivate &d, const QString &id, QObject *parent) : QObject(parent), d_ptr(&d) {
         d.q_ptr = this;
         d.init();
 

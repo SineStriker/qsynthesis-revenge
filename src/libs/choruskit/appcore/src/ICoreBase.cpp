@@ -19,12 +19,19 @@ namespace Core {
         settingCatalog = new SettingCatalog(q);
     }
 
+    static ICoreBase *m_instance = nullptr;
+
     ICoreBase::ICoreBase(QObject *parent) : ICoreBase(*new ICoreBasePrivate(), parent) {
     }
 
     ICoreBase::~ICoreBase() {
+        m_instance = nullptr;
     }
-    
+
+    ICoreBase *ICoreBase::instance() {
+        return m_instance;
+    }
+
     ActionSystem *ICoreBase::actionSystem() const {
         Q_D(const ICoreBase);
         return d->actionSystem;
@@ -41,6 +48,7 @@ namespace Core {
     }
 
     ICoreBase::ICoreBase(ICoreBasePrivate &d, QObject *parent) : QObject(parent), d_ptr(&d) {
+        m_instance = this;
         d.q_ptr = this;
 
         d.init();

@@ -7,6 +7,8 @@
 #include "CNavFrame.h"
 #include "CTabButton.h"
 
+#include <CoreApi/ActionContext.h>
+
 namespace Core {
 
     class IHomeWindowPrivate : public ICoreWindowPrivate {
@@ -18,6 +20,9 @@ namespace Core {
         void init();
 
         void reloadStrings();
+        void reloadMenuBar();
+
+        ActionContext *mainMenuCtx;
 
         CNavFrame *navFrame;
         CTabButton *aboutButton;

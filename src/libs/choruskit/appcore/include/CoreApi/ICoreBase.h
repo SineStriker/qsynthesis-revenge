@@ -18,6 +18,8 @@ namespace Core {
         explicit ICoreBase(QObject *parent = nullptr);
         ~ICoreBase();
 
+        static ICoreBase *instance();
+
     public:
         ActionSystem *actionSystem() const;
         WindowSystem *windowSystem() const;

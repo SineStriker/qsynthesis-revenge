@@ -10,14 +10,13 @@ namespace Core {
 
     class ActionSystem;
 
-    class ActionContextDataPrivate {
+    class ActionContextItemPrivate {
     public:
         ActionContextPrivate *d;
 
         QString id;
         bool isGroup;
         QList<ActionInsertRule> rules;
-        QList<QKeySequence> shortcuts;
         QSet<ActionItem *> instances;
     };
 
@@ -33,7 +32,7 @@ namespace Core {
         QString title;
 
         bool configurable;
-        QMChronMap<QString, ActionContextDataPrivate> actions;
+        QMChronMap<QString, ActionContextItemPrivate> actions;
 
         mutable bool stateDirty;
         mutable QMap<QString, QStringList> state;

@@ -1,5 +1,5 @@
-#ifndef CHORUSKIT_MIDIWIZARD_H
-#define CHORUSKIT_MIDIWIZARD_H
+#ifndef DSWIZARD_H
+#define DSWIZARD_H
 
 #include "iemgr/IWizardFactory.h"
 
@@ -9,21 +9,17 @@ namespace IEMgr {
 
     namespace Internal {
 
-        class MidiWizard : public IWizardFactory {
+        class DsWizard : public IEMgr::IWizardFactory {
             Q_OBJECT
         public:
-            explicit MidiWizard(QObject *parent = nullptr);
-            ~MidiWizard();
+            explicit DsWizard(QObject *parent = nullptr);
+            ~DsWizard();
 
         public:
             Features features() const override;
             QString filter(Feature feature) const override;
             bool runWizard(Feature feature, const QString &path, const QVariantMap &args,
                            Core::IWindow *windowHandle) override;
-
-        private:
-            bool load(const QString &filename, QDspxModel *out, QWidget *parent = nullptr);
-            bool save(const QString &filename, const QDspxModel &in, QWidget *parent = nullptr);
         };
 
     }

@@ -4,12 +4,12 @@
 <context>
     <name>Core::ICore</name>
     <message>
-        <location filename="../../ICore.cpp" line="37"/>
+        <location filename="../../ICore.cpp" line="34"/>
         <source>About %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../ICore.cpp" line="38"/>
+        <location filename="../../ICore.cpp" line="35"/>
         <source>%1 %2, Copyright OpenVPI.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -80,51 +80,46 @@
     </message>
     <message>
         <location filename="../../Internal/AddOn/HomeWindowAddOn.cpp" line="52"/>
-        <source>Edit(&amp;E)</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../Internal/AddOn/HomeWindowAddOn.cpp" line="53"/>
         <source>Help(&amp;H)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Internal/AddOn/HomeWindowAddOn.cpp" line="55"/>
+        <location filename="../../Internal/AddOn/HomeWindowAddOn.cpp" line="54"/>
         <source>Open Actions</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Internal/AddOn/HomeWindowAddOn.cpp" line="56"/>
+        <location filename="../../Internal/AddOn/HomeWindowAddOn.cpp" line="55"/>
         <source>New</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Internal/AddOn/HomeWindowAddOn.cpp" line="57"/>
+        <location filename="../../Internal/AddOn/HomeWindowAddOn.cpp" line="56"/>
         <source>Open</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Internal/AddOn/HomeWindowAddOn.cpp" line="59"/>
+        <location filename="../../Internal/AddOn/HomeWindowAddOn.cpp" line="58"/>
         <source>Preference Actions</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Internal/AddOn/HomeWindowAddOn.cpp" line="60"/>
+        <location filename="../../Internal/AddOn/HomeWindowAddOn.cpp" line="59"/>
         <source>Settings</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Internal/AddOn/HomeWindowAddOn.cpp" line="62"/>
+        <location filename="../../Internal/AddOn/HomeWindowAddOn.cpp" line="61"/>
         <source>About Actions</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Internal/AddOn/HomeWindowAddOn.cpp" line="63"/>
+        <location filename="../../Internal/AddOn/HomeWindowAddOn.cpp" line="62"/>
         <source>About %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Internal/AddOn/HomeWindowAddOn.cpp" line="64"/>
+        <location filename="../../Internal/AddOn/HomeWindowAddOn.cpp" line="63"/>
         <source>About Qt</source>
         <translation type="unfinished"></translation>
     </message>
@@ -170,12 +165,12 @@
 <context>
     <name>Core::Internal::SettingsDialog</name>
     <message>
-        <location filename="../../Internal/Dialogs/SettingsDialog.cpp" line="113"/>
+        <location filename="../../Internal/Dialogs/SettingsDialog.cpp" line="116"/>
         <source>Search for settings</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Internal/Dialogs/SettingsDialog.cpp" line="115"/>
+        <location filename="../../Internal/Dialogs/SettingsDialog.cpp" line="118"/>
         <source>Settings</source>
         <translation type="unfinished"></translation>
     </message>

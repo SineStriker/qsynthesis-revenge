@@ -5,7 +5,7 @@
     <name>Application</name>
     <message>
         <location filename="../../../../libs/choruskit/appload/main.cpp" line="161"/>
-        <source>Failed to load core: %1!</source>
+        <source>Failed to load core: %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>

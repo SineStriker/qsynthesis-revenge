@@ -19,12 +19,12 @@
 <context>
     <name>Core::ICore</name>
     <message>
-        <location filename="../../ICore.cpp" line="37"/>
+        <location filename="../../ICore.cpp" line="34"/>
         <source>About %1</source>
         <translation>关于 %1</translation>
     </message>
     <message>
-        <location filename="../../ICore.cpp" line="38"/>
+        <location filename="../../ICore.cpp" line="35"/>
         <source>%1 %2, Copyright OpenVPI.</source>
         <translation>%1 %2，版权所有 OpenVPI。</translation>
     </message>
@@ -105,52 +105,51 @@
         <translation>文件(&amp;F)</translation>
     </message>
     <message>
-        <location filename="../../Internal/AddOn/HomeWindowAddOn.cpp" line="52"/>
         <source>Edit(&amp;E)</source>
-        <translation>编辑(&amp;E)</translation>
+        <translation type="vanished">编辑(&amp;E)</translation>
     </message>
     <message>
-        <location filename="../../Internal/AddOn/HomeWindowAddOn.cpp" line="53"/>
+        <location filename="../../Internal/AddOn/HomeWindowAddOn.cpp" line="52"/>
         <source>Help(&amp;H)</source>
         <translation>帮助(&amp;H)</translation>
     </message>
     <message>
-        <location filename="../../Internal/AddOn/HomeWindowAddOn.cpp" line="55"/>
+        <location filename="../../Internal/AddOn/HomeWindowAddOn.cpp" line="54"/>
         <source>Open Actions</source>
         <translation>打开组</translation>
     </message>
     <message>
-        <location filename="../../Internal/AddOn/HomeWindowAddOn.cpp" line="56"/>
+        <location filename="../../Internal/AddOn/HomeWindowAddOn.cpp" line="55"/>
         <source>New</source>
         <translation>新建</translation>
     </message>
     <message>
-        <location filename="../../Internal/AddOn/HomeWindowAddOn.cpp" line="57"/>
+        <location filename="../../Internal/AddOn/HomeWindowAddOn.cpp" line="56"/>
         <source>Open</source>
         <translation>打开</translation>
     </message>
     <message>
-        <location filename="../../Internal/AddOn/HomeWindowAddOn.cpp" line="59"/>
+        <location filename="../../Internal/AddOn/HomeWindowAddOn.cpp" line="58"/>
         <source>Preference Actions</source>
         <translation>首选项组</translation>
     </message>
     <message>
-        <location filename="../../Internal/AddOn/HomeWindowAddOn.cpp" line="60"/>
+        <location filename="../../Internal/AddOn/HomeWindowAddOn.cpp" line="59"/>
         <source>Settings</source>
         <translation>设置</translation>
     </message>
     <message>
-        <location filename="../../Internal/AddOn/HomeWindowAddOn.cpp" line="62"/>
+        <location filename="../../Internal/AddOn/HomeWindowAddOn.cpp" line="61"/>
         <source>About Actions</source>
         <translation>关于组</translation>
     </message>
     <message>
-        <location filename="../../Internal/AddOn/HomeWindowAddOn.cpp" line="63"/>
+        <location filename="../../Internal/AddOn/HomeWindowAddOn.cpp" line="62"/>
         <source>About %1</source>
         <translation>关于 %1</translation>
     </message>
     <message>
-        <location filename="../../Internal/AddOn/HomeWindowAddOn.cpp" line="64"/>
+        <location filename="../../Internal/AddOn/HomeWindowAddOn.cpp" line="63"/>
         <source>About Qt</source>
         <translation>关于 Qt</translation>
     </message>
@@ -196,12 +195,12 @@
 <context>
     <name>Core::Internal::SettingsDialog</name>
     <message>
-        <location filename="../../Internal/Dialogs/SettingsDialog.cpp" line="113"/>
+        <location filename="../../Internal/Dialogs/SettingsDialog.cpp" line="116"/>
         <source>Search for settings</source>
         <translation>搜索设置项</translation>
     </message>
     <message>
-        <location filename="../../Internal/Dialogs/SettingsDialog.cpp" line="115"/>
+        <location filename="../../Internal/Dialogs/SettingsDialog.cpp" line="118"/>
         <source>Settings</source>
         <translation>设置</translation>
     </message>

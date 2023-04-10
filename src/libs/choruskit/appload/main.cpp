@@ -158,7 +158,7 @@ static inline void printHelp() {
 }
 
 static inline QString msgCoreLoadFailure(const QString &why) {
-    return QCoreApplication::translate("Application", "Failed to load core: %1!").arg(why);
+    return QCoreApplication::translate("Application", "Failed to load core: %1").arg(why);
 }
 
 int main_entry(int argc, char *argv[]) {
