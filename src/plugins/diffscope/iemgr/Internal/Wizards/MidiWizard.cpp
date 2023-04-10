@@ -2,11 +2,11 @@
 
 namespace IEMgr ::Internal {
 
-    MidiWizard::MidiWizard(QObject *parent) : IImportWizard("iemgr_MidiWizard", parent) {
+    MidiWizard::MidiWizard(QObject *parent) : IImportWizard("iemgr.MidiWizard", parent) {
         setDisplayName("Midi file");
         setDescription("A communications protocol for media interfaces.");
 
-        setCategory("SimpleFormats");
+        setCategory("import.SimpleFormats");
         setDisplayCategory(tr("Simple Formats"));
     }
 

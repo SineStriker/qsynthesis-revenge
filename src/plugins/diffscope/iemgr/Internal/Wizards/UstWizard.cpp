@@ -2,11 +2,11 @@
 
 namespace IEMgr ::Internal {
     
-    UstWizard::UstWizard(QObject *parent) : IImportWizard("iemgr_UstWizard", parent) {
+    UstWizard::UstWizard(QObject *parent) : IImportWizard("iemgr.UstWizard", parent) {
         setDisplayName("UST file");
         setDescription("Utau sequence text file.");
 
-        setCategory("SimpleFormats");
+        setCategory("import.SimpleFormats");
         setDisplayCategory(tr("Simple Formats"));
     }
 
