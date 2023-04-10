@@ -10,13 +10,13 @@
 #include "QMidiFile.h"
 #include "Utau/Utils/QUtaUtils.h"
 
-#include <Framework/Dialogs/ImportDialog.h>
+#include "Dialogs/ImportDialog.h"
 
 namespace IEMgr ::Internal {
 
     MidiWizard::MidiWizard(QObject *parent) : IWizardFactory("iemgr.MidiWizard", parent) {
-        setDisplayName("Midi file");
-        setDescription("A communications protocol for media interfaces.");
+        setDisplayName(tr("Midi file"));
+        setDescription(tr("A communications protocol for media interfaces."));
 
         setCategory("score.SimpleScore");
         setDisplayCategory(tr("Simple Score"));
@@ -207,7 +207,7 @@ namespace IEMgr ::Internal {
         }
 
         struct LogicTrackInfo {
-            QsApi::ImportDialog::TrackInfo option;
+            ImportDialog::TrackInfo option;
         };
 
         // 解析轨道
@@ -298,7 +298,7 @@ namespace IEMgr ::Internal {
 
             // 逻辑轨道名称
             auto nameBytes = trackNameAndLyrics[trackAndChannelIndex.track].name;
-            QsApi::ImportDialog::TrackInfo info(nameBytes,
+            ImportDialog::TrackInfo info(nameBytes,
                                                 trackNameAndLyrics[trackAndChannelIndex.track].lyrics.values());
 
             info.format = tr("%1(%2): (%3 notes, %4)")
@@ -314,10 +314,10 @@ namespace IEMgr ::Internal {
 
         // 获取选中轨道
         {
-            QsApi::ImportDialog dlg(parent);
+            ImportDialog dlg(parent);
             dlg.setWindowTitle(tr("Import MIDI file"));
 
-            QsApi::ImportDialog::ImportOptions opt;
+            ImportDialog::ImportOptions opt;
             opt.minTracks = markers.isEmpty() ? 1 : 0;
             opt.maxTracks = 32;
             opt.labels = QMLinq::Select<QPair<qint32, QByteArray>, QByteArray>(

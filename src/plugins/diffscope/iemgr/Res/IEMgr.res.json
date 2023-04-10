@@ -8,5 +8,19 @@
             "key": "${PARENT}",
             "dir": "${FILEPATH}/${CURRENT_KEY}.res/translations"
         }
+    ],
+    "themes": [
+        {
+            "key": "${PARENT}",
+            "dir": "${FILEPATH}/${CURRENT_KEY}.res/themes",
+            "files": {
+                "Zhibin - Dark": [
+                    "import-dialog-dark.json"
+                ],
+                "Zhibin - Light": [
+                    "import-dialog-light.json"
+                ]
+            }
+        }
     ]
 }

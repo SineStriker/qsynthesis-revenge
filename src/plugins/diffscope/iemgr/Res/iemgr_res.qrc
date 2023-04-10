@@ -1,5 +1,6 @@
 <RCC>
     <qresource prefix="/">
         <file>iemgr_actions.xml</file>
+        <file>themes/import-dialog.qss.in</file>
     </qresource>
 </RCC>

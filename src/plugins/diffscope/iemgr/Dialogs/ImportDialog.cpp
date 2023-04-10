@@ -7,7 +7,7 @@
 
 #include "Widgets/CCheckBox.h"
 
-namespace QsApi {
+namespace IEMgr {
 
     Q_D_LAYOUT_PROPERTY_DECLARE(buttons, Buttons, buttonsLayout, ImportDialog)
     Q_D_LAYOUT_PROPERTY_DECLARE(boxes, Boxes, boxesLayout, ImportDialog)

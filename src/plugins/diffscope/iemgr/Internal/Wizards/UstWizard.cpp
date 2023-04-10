@@ -3,8 +3,8 @@
 namespace IEMgr ::Internal {
 
     UstWizard::UstWizard(QObject *parent) : IWizardFactory("iemgr.UstWizard", parent) {
-        setDisplayName("UST file");
-        setDescription("Utau sequence text file.");
+        setDisplayName(tr("UST file"));
+        setDescription(tr("Utau sequence text file."));
 
         setCategory("score.SimpleScore");
         setDisplayCategory(tr("Simple Score"));

@@ -17,32 +17,14 @@
     </message>
 </context>
 <context>
-    <name>Core::GeneralOptionsPage</name>
-    <message>
-        <location filename="../../Internal/GeneralOptionsPage.cpp" line="15"/>
-        <source>General</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../Internal/GeneralOptionsPage.cpp" line="19"/>
-        <source>General options.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../Internal/GeneralOptionsPage.cpp" line="36"/>
-        <source>Test</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
     <name>Core::ICore</name>
     <message>
-        <location filename="../../ICore.cpp" line="49"/>
+        <location filename="../../ICore.cpp" line="37"/>
         <source>About %1</source>
         <translation>关于 %1</translation>
     </message>
     <message>
-        <location filename="../../ICore.cpp" line="50"/>
+        <location filename="../../ICore.cpp" line="38"/>
         <source>%1 %2, Copyright OpenVPI.</source>
         <translation>%1 %2，版权所有 OpenVPI。</translation>
     </message>
@@ -118,57 +100,57 @@
 <context>
     <name>Core::Internal::HomeWindowAddOn</name>
     <message>
-        <location filename="../../Internal/AddOn/HomeWindowAddOn.cpp" line="95"/>
+        <location filename="../../Internal/AddOn/HomeWindowAddOn.cpp" line="51"/>
         <source>File(&amp;F)</source>
         <translation>文件(&amp;F)</translation>
     </message>
     <message>
-        <location filename="../../Internal/AddOn/HomeWindowAddOn.cpp" line="96"/>
+        <location filename="../../Internal/AddOn/HomeWindowAddOn.cpp" line="52"/>
         <source>Edit(&amp;E)</source>
         <translation>编辑(&amp;E)</translation>
     </message>
     <message>
-        <location filename="../../Internal/AddOn/HomeWindowAddOn.cpp" line="97"/>
+        <location filename="../../Internal/AddOn/HomeWindowAddOn.cpp" line="53"/>
         <source>Help(&amp;H)</source>
         <translation>帮助(&amp;H)</translation>
     </message>
     <message>
-        <location filename="../../Internal/AddOn/HomeWindowAddOn.cpp" line="99"/>
+        <location filename="../../Internal/AddOn/HomeWindowAddOn.cpp" line="55"/>
         <source>Open Actions</source>
         <translation>打开组</translation>
     </message>
     <message>
-        <location filename="../../Internal/AddOn/HomeWindowAddOn.cpp" line="100"/>
+        <location filename="../../Internal/AddOn/HomeWindowAddOn.cpp" line="56"/>
         <source>New</source>
         <translation>新建</translation>
     </message>
     <message>
-        <location filename="../../Internal/AddOn/HomeWindowAddOn.cpp" line="101"/>
+        <location filename="../../Internal/AddOn/HomeWindowAddOn.cpp" line="57"/>
         <source>Open</source>
         <translation>打开</translation>
     </message>
     <message>
-        <location filename="../../Internal/AddOn/HomeWindowAddOn.cpp" line="103"/>
+        <location filename="../../Internal/AddOn/HomeWindowAddOn.cpp" line="59"/>
         <source>Preference Actions</source>
         <translation>首选项组</translation>
     </message>
     <message>
-        <location filename="../../Internal/AddOn/HomeWindowAddOn.cpp" line="104"/>
+        <location filename="../../Internal/AddOn/HomeWindowAddOn.cpp" line="60"/>
         <source>Settings</source>
         <translation>设置</translation>
     </message>
     <message>
-        <location filename="../../Internal/AddOn/HomeWindowAddOn.cpp" line="106"/>
+        <location filename="../../Internal/AddOn/HomeWindowAddOn.cpp" line="62"/>
         <source>About Actions</source>
         <translation>关于组</translation>
     </message>
     <message>
-        <location filename="../../Internal/AddOn/HomeWindowAddOn.cpp" line="107"/>
+        <location filename="../../Internal/AddOn/HomeWindowAddOn.cpp" line="63"/>
         <source>About %1</source>
         <translation>关于 %1</translation>
     </message>
     <message>
-        <location filename="../../Internal/AddOn/HomeWindowAddOn.cpp" line="108"/>
+        <location filename="../../Internal/AddOn/HomeWindowAddOn.cpp" line="64"/>
         <source>About Qt</source>
         <translation>关于 Qt</translation>
     </message>
@@ -222,37 +204,6 @@
         <location filename="../../Internal/Dialogs/SettingsDialog.cpp" line="115"/>
         <source>Settings</source>
         <translation>设置</translation>
-    </message>
-</context>
-<context>
-    <name>Core::PreferencePage</name>
-    <message>
-        <location filename="../../Preferences/PreferencePage.cpp" line="20"/>
-        <source>Preference</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../Preferences/PreferencePage.cpp" line="24"/>
-        <source>Filter</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>Core::TestOptionsPage</name>
-    <message>
-        <location filename="../../Internal/TestOptionsPage.cpp" line="15"/>
-        <source>Test</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../Internal/TestOptionsPage.cpp" line="19"/>
-        <source>This is a test.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../Internal/TestOptionsPage.cpp" line="36"/>
-        <source>Test2</source>
-        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>

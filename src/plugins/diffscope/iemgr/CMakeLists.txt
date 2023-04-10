@@ -35,7 +35,7 @@ add_dependencies(${_plugin} ${_plugin}_translations_lrelease)
 
 ck_add_attaches(${_plugin}
     SRC Res/IEMgr.res.json DEST share
-    # SRC Res/themes/*.json DEST share/IEMgr.res/themes
+    SRC Res/themes/*.json DEST share/IEMgr.res/themes
     SRC ${CMAKE_CURRENT_BINARY_DIR}/Res/translations DEST share/IEMgr.res
 )
 

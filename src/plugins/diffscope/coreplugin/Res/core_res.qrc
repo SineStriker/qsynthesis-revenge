@@ -9,5 +9,6 @@
         <file>svg/home/open-file.svg</file>
         <file>themes/global.qss.in</file>
         <file>core_actions.xml</file>
+        <file>svg/checkbox/check-line.svg</file>
     </qresource>
 </RCC>

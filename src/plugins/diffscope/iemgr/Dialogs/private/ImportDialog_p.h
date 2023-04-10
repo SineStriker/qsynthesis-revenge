@@ -19,7 +19,7 @@
 
 #include <list>
 
-namespace QsApi {
+namespace IEMgr {
 
     class ImportDialogPrivate : public QObject {
         Q_OBJECT

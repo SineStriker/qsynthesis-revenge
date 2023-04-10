@@ -390,7 +390,7 @@ void QMDecorator::uninstallTheme(QWidget *w) {
 
     auto ts = it.value();
 
-    // Remove guard from group
+    // Remove guard_x from group
     ts->removeWidget(w);
 
     // Remove from global set
@@ -411,7 +411,7 @@ void QMDecorator::uninstallTheme(QWidget *w) {
             auto &tp = *it2.value();
             tp.subscribers.remove(ts);
 
-            // Remove placeholder if there're no subscribers
+            // Remove placeholder if there are no subscribers
             if (tp.isEmpty()) {
                 d->themeTemplates.erase(it2);
             }

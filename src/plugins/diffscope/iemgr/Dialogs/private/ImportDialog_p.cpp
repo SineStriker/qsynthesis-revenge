@@ -1,18 +1,22 @@
 #include "ImportDialog_p.h"
 
-#include <QScrollBar>
 #include <QApplication>
+#include <QScrollBar>
 
 #include "QMConsole.h"
 #include "QMDecorator.h"
 
-namespace QsApi {
+namespace IEMgr {
+
+    static bool defaultCodecFailure = false;
 
     static const char *SupportedEncodings[] = {
         "System", "UTF-8", "UTF-16", "UTF-32", "GBK", "Shift-JIS", "Big5",
     };
 
     static const int EncodingDefaultIndex = 1;
+
+    static const int EncodingDefaultFallbackIndex = 0;
 
     static const int SupportedEncodingsCount = sizeof(SupportedEncodings) / sizeof(const char *);
 
@@ -22,6 +26,8 @@ namespace QsApi {
         QTextCodec::ConverterState state;
         QString res = codec->toUnicode(data.constData(), data.size(), &state);
         if (state.invalidChars > 0) {
+            qDebug() << "convert bytes failure";
+            defaultCodecFailure = true;
             res = ImportDialogPrivate::tr("(Decoding failure)");
         }
         return res;
@@ -33,6 +39,8 @@ namespace QsApi {
         for (const auto &data : dataList) {
             QString res = codec->toUnicode(data.constData(), data.size(), &state);
             if (state.invalidChars > 0) {
+                qDebug() << "convert bytes list failure";
+                defaultCodecFailure = true;
                 return ImportDialogPrivate::tr("(Decoding failure)");
             }
             resList.append(res);
@@ -157,15 +165,16 @@ namespace QsApi {
         connect(codecListWidget, &QListWidget::currentItemChanged, this, &ImportDialogPrivate::_q_currentCodecChanged);
         connect(nameListWidget, &QListWidget::currentItemChanged, this, &ImportDialogPrivate::_q_currentNameChanged);
 
-        qIDec->installLocale(q, {"QsIntegrate"}, _LOC(ImportDialog, q));
-        qIDec->installTheme(q, {"ImportDialog"});
+        qIDec->installLocale(q, {{}}, _LOC(ImportDialog, q));
+        qIDec->installTheme(q, {"IEMgr_ImportDialog"});
 
-        codecListWidget->setCurrentRow(1);
+        codecListWidget->setCurrentRow(EncodingDefaultIndex);
     }
 
     void ImportDialogPrivate::updateEncoding() {
         auto codecItem = codecListWidget->currentItem();
         codec = codecItem ? QTextCodec::codecForName(codecItem->text().toLatin1()) : DEFAULT_CODEC;
+
         for (int i = 0; i < nameListWidget->count(); ++i) {
             auto item = nameListWidget->item(i);
             const auto &track = opt.tracks.at(i);
@@ -186,6 +195,14 @@ namespace QsApi {
             }
         }
         labelsWidget->setPlainText(convertBytesList(codec, opt.labels));
+
+        {
+            static bool _firstTestEncoding = true;
+            if (_firstTestEncoding && defaultCodecFailure) {
+                _firstTestEncoding = false;
+                codecListWidget->setCurrentRow(EncodingDefaultFallbackIndex);
+            }
+        }
     }
 
     void ImportDialogPrivate::updateNameList() {

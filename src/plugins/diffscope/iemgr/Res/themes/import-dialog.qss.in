@@ -1,0 +1,144 @@
+/* Configuration */
+
+Config {
+    pattern: "\"\\{\\{(.*?)\\}\\}\"";
+    separator: "|";
+}
+
+
+/* Stylesheet Content */
+
+IEMgr--ImportDialog {
+    min-width: "{{minWidth|size}}";
+    background-color: "{{background|str}}";
+    qproperty-maxInitHeight: "{{maxInitHeight|size}}";
+    qproperty-layoutMargins: qmargins("{{content.margins|size}}");
+    qproperty-boxesLayoutMargins: qmargins("{{tracks.boxes.margins|size}}");
+    qproperty-boxesLayoutSpacing: "{{tracks.boxes.spacing|size}}";
+    qproperty-buttonsLayoutMargins: qmargins("{{buttons.margins|size}}");
+    qproperty-buttonsLayoutSpacing: "{{buttons.spacing|size}}";
+}
+
+
+/* Tracks Widgets */
+
+QScrollArea#tracks-scroll {
+    background-color:"{{tracks.scroll.background|str|transparent}}";
+    padding: "{{tracks.scroll.padding|size}}";
+    margin: "{{tracks.scroll.margin|size}}";
+    border-color: "{{tracks.scroll.border.color|str}}";
+    border-width: "{{tracks.scroll.border.size|size}}";
+    border-style: "{{tracks.scroll.border.style|str|none}}";
+}
+
+QWidget#tracks-widget {
+    background-color: transparent;
+}
+
+
+/* CheckBox */
+
+QWidget#tracks-widget>CCheckBox {
+    padding: "{{tracks.boxes.item.padding|size}}";
+    margin: "{{tracks.boxes.item.margin|size}}";
+    qproperty-layoutSpacing: "{{tracks.boxes.item.spacing|size}}";
+}
+
+QWidget#tracks-widget>CCheckBox>CToolButton#box {
+    qproperty-iconUpChecked: svg(":/svg/checkbox/check-line.svg", #111111);
+    qproperty-iconSize: "{{tracks.boxes.item.icon.size|size}}";
+    background-color: "{{tracks.boxes.item.box.background.up|str}}";
+    border-color: "{{tracks.boxes.item.box.border.color.up|str}}";
+    border-width: "{{tracks.boxes.item.box.border.size.up|size}}";
+    border-style: "{{tracks.boxes.item.box.border.style.up|str}}";
+    border-radius: "{{tracks.boxes.item.box.border.radius.up|size}}";
+    padding: "{{tracks.boxes.item.box.padding|size}}";
+    margin: "{{tracks.boxes.item.box.margin|size}}";
+}
+
+QWidget#tracks-widget>CCheckBox>CToolButton#box:hover {
+    background-color: "{{tracks.boxes.item.box.background.over|str}}";
+    border-color: "{{tracks.boxes.item.box.border.color.over|str}}";
+    border-width: "{{tracks.boxes.item.box.border.size.over|size}}";
+    border-style: "{{tracks.boxes.item.box.border.style.over|str}}";
+    border-radius: "{{tracks.boxes.item.box.border.radius.over|size}}";
+}
+
+QWidget#tracks-widget>CCheckBox>CToolButton#box:pressed {
+    background-color: "{{tracks.boxes.item.box.background.down|str}}";
+    border-color: "{{tracks.boxes.item.box.border.color.down|str}}";
+    border-width: "{{tracks.boxes.item.box.border.size.down|size}}";
+    border-style: "{{tracks.boxes.item.box.border.style.down|str}}";
+    border-radius: "{{tracks.boxes.item.box.border.radius.down|size}}";
+}
+
+QWidget#tracks-widget>CCheckBox>QLabel {
+    font-size: "{{tracks.boxes.item.font.size|size}}";
+    color: "{{tracks.boxes.item.color|str}}";
+    padding: "{{tracks.boxes.item.label.padding|size}}";
+    margin: "{{tracks.boxes.item.label.margin|size}}";
+}
+
+
+/* Codec Widget */
+
+QSplitter#codec-widget {
+    background-color:"{{codec.background|str}}";
+    padding: "{{codec.padding|size}}";
+    margin: "{{codec.margin|size}}";
+    border-color: "{{codec.border.color|str}}";
+    border-width: "{{codec.border.size|size}}";
+    border-style: "{{codec.border.style|str}}";
+}
+
+QSplitter#codec-widget::handle {
+    background-color: "{{codec.handle.color|str}}";
+    width: "{{codec.handle.width|size}}";
+}
+
+
+/* Tab Widget */
+
+QTabWidget#tab-widget {
+    background-color: "{{tabs.background|str}}";
+    padding: "{{tabs.padding|size}}";
+    margin: "{{tabs.margin|size}}";
+    border-color: "{{tabs.border.color|str}}";
+    border-width: "{{tabs.border.size|size}}";
+    border-style: "{{tabs.border.style|str}}";
+}
+
+
+/* Button */
+
+IEMgr--ImportDialog>CTabButton[type=done-button] {
+    background-color: "{{buttons.item.background.up|str}}";
+    color: "{{buttons.item.color.up|str}}";
+    border-color: "{{buttons.item.border.color.up|str}}";
+    border-width: "{{buttons.item.border.size.up|size}}";
+    border-style: "{{buttons.item.border.style.up|str}}";
+    border-radius: "{{buttons.item.border.radius.up|size}}";
+    padding: "{{buttons.item.padding|size}}";
+    margin: "{{buttons.item.margin|size}}";
+    text-align: "{{buttons.item.color|str}}";
+    font-size: "{{buttons.item.font.size|size}}";
+    min-width: "{{buttons.item.minWidth|size}}";
+}
+
+IEMgr--ImportDialog>CTabButton[type=done-button]:hover {
+    background-color: "{{buttons.item.background.over|str}}";
+    color: "{{buttons.item.color.over|str}}";
+    border-color: "{{buttons.item.border.color.over|str}}";
+    border-width: "{{buttons.item.border.size.over|size}}";
+    border-style: "{{buttons.item.border.style.over|str}}";
+    border-radius: "{{buttons.item.border.radius.over|size}}";
+}
+
+IEMgr--ImportDialog>CTabButton[type=done-button]:pressed {
+    background-color: "{{buttons.item.background.down|str}}";
+    color: "{{buttons.item.color.down|str}}";
+    border-color: "{{buttons.item.border.color.down|str}}";
+    border-width: "{{buttons.item.border.size.down|size}}";
+    border-style: "{{buttons.item.border.style.down|str}}";
+    border-radius: "{{buttons.item.border.radius.down|size}}";
+}

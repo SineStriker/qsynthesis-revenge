@@ -6,6 +6,7 @@
 #include "CoreApi/ILoader.h"
 
 #include <QMDecorateDir.h>
+#include <QMDecorator.h>
 #include <QMSystem.h>
 
 #include <coreplugin/ICore.h>
@@ -70,6 +71,8 @@ namespace IEMgr {
             // Add wizards
             imgr->addWizard(new Internal::MidiWizard());
             imgr->addWizard(new Internal::UstWizard());
+
+            qIDec->addThemeTemplate("IEMgr_ImportDialog", ":/themes/import-dialog.qss.in");
 
             return true;
         }

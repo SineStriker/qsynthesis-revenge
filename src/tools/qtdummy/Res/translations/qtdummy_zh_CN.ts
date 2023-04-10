@@ -17,17 +17,17 @@
         <translation>无法加载核心：%1！</translation>
     </message>
     <message>
-        <location filename="../../../../libs/choruskit/appload/main.cpp" line="319"/>
+        <location filename="../../../../libs/choruskit/appload/main.cpp" line="322"/>
         <source>Searching plugins...</source>
         <translation>正在搜索插件...</translation>
     </message>
     <message>
-        <location filename="../../../../libs/choruskit/appload/main.cpp" line="367"/>
+        <location filename="../../../../libs/choruskit/appload/main.cpp" line="371"/>
         <source>Could not find Core plugin!</source>
         <translation>无法找到核心插件！</translation>
     </message>
     <message>
-        <location filename="../../../../libs/choruskit/appload/main.cpp" line="417"/>
+        <location filename="../../../../libs/choruskit/appload/main.cpp" line="421"/>
         <source>Loading plugins...</source>
         <translation>正在加载插件...</translation>
     </message>
@@ -36,7 +36,7 @@
         <translation type="vanished">无法在%1中找到核心插件！</translation>
     </message>
     <message>
-        <location filename="../../../../libs/choruskit/appload/main.cpp" line="373"/>
+        <location filename="../../../../libs/choruskit/appload/main.cpp" line="377"/>
         <source>Core plugin is disabled.</source>
         <translation>核心插件已被禁用。</translation>
     </message>
@@ -135,110 +135,84 @@
 <context>
     <name>Core::ConfigurableDialogPrivate</name>
     <message>
-        <location filename="../../../../libs/choruskit/appcore/src/CoreControls/ConfigurableDialog.cpp" line="44"/>
         <source>OK</source>
-        <translation>确定</translation>
+        <translation type="vanished">确定</translation>
     </message>
     <message>
-        <location filename="../../../../libs/choruskit/appcore/src/CoreControls/ConfigurableDialog.cpp" line="45"/>
         <source>Cancel</source>
-        <translation>取消</translation>
+        <translation type="vanished">取消</translation>
     </message>
     <message>
-        <location filename="../../../../libs/choruskit/appcore/src/CoreControls/ConfigurableDialog.cpp" line="46"/>
         <source>Apply</source>
-        <translation>应用</translation>
+        <translation type="vanished">应用</translation>
     </message>
 </context>
 <context>
     <name>Core::WorkflowPagePrivate</name>
     <message>
-        <location filename="../../../../libs/choruskit/appcore/src/CoreControls/WorkflowPage.cpp" line="55"/>
         <source>Previous</source>
-        <translation>上一步</translation>
+        <translation type="vanished">上一步</translation>
     </message>
     <message>
-        <location filename="../../../../libs/choruskit/appcore/src/CoreControls/WorkflowPage.cpp" line="56"/>
         <source>Next</source>
-        <translation>下一步</translation>
+        <translation type="vanished">下一步</translation>
     </message>
     <message>
-        <location filename="../../../../libs/choruskit/appcore/src/CoreControls/WorkflowPage.cpp" line="57"/>
         <source>Finish</source>
-        <translation>完成</translation>
+        <translation type="vanished">完成</translation>
     </message>
     <message>
-        <location filename="../../../../libs/choruskit/appcore/src/CoreControls/WorkflowPage.cpp" line="58"/>
         <source>Cancel</source>
-        <translation>取消</translation>
+        <translation type="vanished">取消</translation>
     </message>
     <message>
-        <location filename="../../../../libs/choruskit/appcore/src/CoreControls/WorkflowPage.cpp" line="59"/>
         <source>Help</source>
-        <translation>帮助</translation>
+        <translation type="vanished">帮助</translation>
     </message>
 </context>
 <context>
     <name>DialogHelper</name>
     <message>
-        <location filename="../../../../libs/choruskit/appcore/src/CoreApi/DialogHelper.cpp" line="90"/>
-        <location filename="../../../../libs/choruskit/appcore/src/CoreApi/DialogHelper.cpp" line="109"/>
         <source>OK</source>
-        <translation type="unfinished">确定</translation>
+        <translation type="obsolete">确定</translation>
     </message>
     <message>
-        <location filename="../../../../libs/choruskit/appcore/src/CoreApi/DialogHelper.cpp" line="91"/>
-        <location filename="../../../../libs/choruskit/appcore/src/CoreApi/DialogHelper.cpp" line="110"/>
         <source>Cancel</source>
-        <translation type="unfinished">取消</translation>
-    </message>
-    <message>
-        <location filename="../../../../libs/choruskit/appcore/src/CoreApi/DialogHelper.cpp" line="92"/>
-        <location filename="../../../../libs/choruskit/appcore/src/CoreApi/DialogHelper.cpp" line="111"/>
-        <source>Apply</source>
-        <translation type="unfinished"></translation>
+        <translation type="obsolete">取消</translation>
     </message>
 </context>
 <context>
     <name>ImportDialog</name>
     <message>
-        <location filename="../../../../libs/qslib/Framework/Widgets/Dialogs/ImportDialog.cpp" line="22"/>
         <source>OK</source>
-        <translation>确定</translation>
+        <translation type="vanished">确定</translation>
     </message>
     <message>
-        <location filename="../../../../libs/qslib/Framework/Widgets/Dialogs/ImportDialog.cpp" line="23"/>
         <source>Cancel</source>
-        <translation>取消</translation>
+        <translation type="vanished">取消</translation>
     </message>
 </context>
 <context>
     <name>ImportDialogPrivate</name>
     <message>
-        <location filename="../../../../libs/qslib/Framework/Widgets/Dialogs/private/ImportDialog_p.cpp" line="23"/>
-        <location filename="../../../../libs/qslib/Framework/Widgets/Dialogs/private/ImportDialog_p.cpp" line="34"/>
         <source>(Decoding failure)</source>
-        <translation>（解码失败）</translation>
+        <translation type="vanished">（解码失败）</translation>
     </message>
     <message>
-        <location filename="../../../../libs/qslib/Framework/Widgets/Dialogs/private/ImportDialog_p.cpp" line="114"/>
         <source>Select tracks</source>
-        <translation>选择轨道</translation>
+        <translation type="vanished">选择轨道</translation>
     </message>
     <message>
-        <location filename="../../../../libs/qslib/Framework/Widgets/Dialogs/private/ImportDialog_p.cpp" line="172"/>
         <source>Track %1</source>
-        <translation>音轨 %1</translation>
+        <translation type="vanished">音轨 %1</translation>
     </message>
     <message>
-        <location filename="../../../../libs/qslib/Framework/Widgets/Dialogs/private/ImportDialog_p.cpp" line="213"/>
         <source>Select encoding</source>
-        <translation>选择字符集</translation>
+        <translation type="vanished">选择字符集</translation>
     </message>
     <message>
-        <location filename="../../../../libs/qslib/Framework/Widgets/Dialogs/private/ImportDialog_p.cpp" line="257"/>
         <source>Please select at least one track!</source>
-        <translation>请至少选择一项！</translation>
+        <translation type="vanished">请至少选择一项！</translation>
     </message>
 </context>
 <context>
@@ -282,9 +256,60 @@
         <translation>你正在尝试以%2身份运行%1，此操作非常不安全，因此强烈不推荐。</translation>
     </message>
     <message>
-        <location filename="../../../../libs/choruskit/appload/main.cpp" line="397"/>
+        <location filename="../../../../libs/choruskit/appload/main.cpp" line="401"/>
         <source>Please close the running application!</source>
         <translation>请关闭正在运行中的程序！</translation>
+    </message>
+</context>
+<context>
+    <name>QsApi::ConfigurableDialogPrivate</name>
+    <message>
+        <location filename="../../../../libs/qslib/Framework/Dialogs/ConfigurableDialog.cpp" line="44"/>
+        <source>OK</source>
+        <translation>确定</translation>
+    </message>
+    <message>
+        <location filename="../../../../libs/qslib/Framework/Dialogs/ConfigurableDialog.cpp" line="45"/>
+        <source>Cancel</source>
+        <translation>取消</translation>
+    </message>
+    <message>
+        <location filename="../../../../libs/qslib/Framework/Dialogs/ConfigurableDialog.cpp" line="46"/>
+        <source>Apply</source>
+        <translation>应用</translation>
+    </message>
+</context>
+<context>
+    <name>QsApi::WorkflowPagePrivate</name>
+    <message>
+        <location filename="../../../../libs/qslib/Framework/Dialogs/WorkflowPage.cpp" line="63"/>
+        <source>Previous</source>
+        <translation>上一步</translation>
+    </message>
+    <message>
+        <location filename="../../../../libs/qslib/Framework/Dialogs/WorkflowPage.cpp" line="64"/>
+        <source>Next</source>
+        <translation>下一步</translation>
+    </message>
+    <message>
+        <location filename="../../../../libs/qslib/Framework/Dialogs/WorkflowPage.cpp" line="65"/>
+        <source>Finish</source>
+        <translation>完成</translation>
+    </message>
+    <message>
+        <location filename="../../../../libs/qslib/Framework/Dialogs/WorkflowPage.cpp" line="66"/>
+        <source>Confirm</source>
+        <translation>确定</translation>
+    </message>
+    <message>
+        <location filename="../../../../libs/qslib/Framework/Dialogs/WorkflowPage.cpp" line="67"/>
+        <source>Cancel</source>
+        <translation>取消</translation>
+    </message>
+    <message>
+        <location filename="../../../../libs/qslib/Framework/Dialogs/WorkflowPage.cpp" line="68"/>
+        <source>Help</source>
+        <translation>帮助</translation>
     </message>
 </context>
 </TS>

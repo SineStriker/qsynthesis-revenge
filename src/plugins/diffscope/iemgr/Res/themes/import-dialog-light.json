@@ -1,0 +1,21 @@
+{
+    "config": {
+        "priority": 10,
+        "ratio": 0.8
+    },
+    "values": {
+        "IEMgr_ImportDialog": {
+            "content.margins": 5,
+            "boxes": {
+                "margins": 10,
+                "spacing": 10
+            },
+            "buttons": {
+                "spacing": 10
+            },
+            "caption": {
+                "padding": 10
+            }
+        }
+    }
+}

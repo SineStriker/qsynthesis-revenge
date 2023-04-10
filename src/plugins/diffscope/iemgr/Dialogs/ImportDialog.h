@@ -5,14 +5,14 @@
 #include <QLayout>
 #include <QTextCodec>
 
-#include "QsFrameworkGlobal.h"
+#include "IEMgrGlobal.h"
 #include "QPixelSize.h"
 
-namespace QsApi {
+namespace IEMgr {
 
     class ImportDialogPrivate;
 
-    class QSFRAMEWORK_API ImportDialog : public QDialog {
+    class IEMGR_EXPORT ImportDialog : public QDialog {
         Q_OBJECT
         Q_LAYOUT_PROPERTY_DELCARE
         Q_D_LAYOUT_PROPERTY(buttons, Buttons)
