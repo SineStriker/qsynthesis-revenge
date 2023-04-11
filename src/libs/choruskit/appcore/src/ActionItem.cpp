@@ -19,26 +19,39 @@ namespace Core {
     }
 
     void ActionItemPrivate::init() {
-        auto as = ICoreBase::instance()->actionSystem();
-        connect(as, &ActionSystem::actionDisplayNameChanged, this, &ActionItemPrivate::_q_actionDisplayNameChanged);
-        connect(as, &ActionSystem::actionDescriptionChanged, this, &ActionItemPrivate::_q_actionDescriptionChanged);
-        connect(as, &ActionSystem::actionShortcutsChanged, this, &ActionItemPrivate::_q_actionShortcutsChanged);
     }
 
-    void ActionItemPrivate::_q_actionDisplayNameChanged(const QString &id, const QString &displayName) {
+    bool ActionItemPrivate::getSpec() {
+        spec = ICoreBase::instance()->actionSystem()->action(id);
+        if (!spec) {
+            qWarning() << "ActionItem: action is not registered to ActionSystem:" << id;
+            return false;
+        }
+
+        connect(spec, &ActionSpec::displayNameChanged, this, &ActionItemPrivate::_q_actionDisplayNameChanged);
+        connect(spec, &ActionSpec::descriptionChanged, this, &ActionItemPrivate::_q_actionDescriptionChanged);
+        connect(spec, &ActionSpec::shortcutsChanged, this, &ActionItemPrivate::_q_actionShortcutsChanged);
+        if (type == ActionItem::Action) {
+            action->setShortcuts(spec->shortcuts());
+        }
+
+        return true;
+    }
+
+    void ActionItemPrivate::_q_actionDisplayNameChanged(const QString &displayName) {
         if (id == this->id) {
             //
         }
     }
 
-    void ActionItemPrivate::_q_actionDescriptionChanged(const QString &id, const QString &description) {
+    void ActionItemPrivate::_q_actionDescriptionChanged(const QString &description) {
         if (id == this->id) {
             //
         }
     }
 
-    void ActionItemPrivate::_q_actionShortcutsChanged(const QString &id, const QList<QKeySequence> &shortcuts) {
-        if (id == this->id && type == ActionItem::Action) {
+    void ActionItemPrivate::_q_actionShortcutsChanged(const QList<QKeySequence> &shortcuts) {
+        if (type == ActionItem::Action) {
             action->setShortcuts(shortcuts);
         }
     }
@@ -54,13 +67,9 @@ namespace Core {
         d->type = Action;
         d->action = action;
 
-        auto spec = ICoreBase::instance()->actionSystem()->action(id);
-        if (!spec) {
-            qWarning() << "ActionItem: action is not registered to ActionSystem:" << id;
+        if (!d->getSpec()) {
             return;
         }
-
-        action->setShortcuts(spec.shortcuts());
     }
 
     ActionItem::ActionItem(const QString &id, QActionGroup *actionGroup, QObject *parent)
@@ -74,9 +83,8 @@ namespace Core {
         d->type = ActionGroup;
         d->actionGroup = actionGroup;
 
-        auto spec = ICoreBase::instance()->actionSystem()->action(id);
-        if (!spec) {
-            qWarning() << "ActionItem: action is not registered to ActionSystem:" << id;
+        if (!d->getSpec()) {
+            return;
         }
     }
 
@@ -91,9 +99,8 @@ namespace Core {
         d->type = Menu;
         d->menu = menu;
 
-        auto spec = ICoreBase::instance()->actionSystem()->action(id);
-        if (!spec) {
-            qWarning() << "ActionItem: action is not registered to ActionSystem:" << id;
+        if (!d->getSpec()) {
+            return;
         }
     }
 
@@ -108,9 +115,8 @@ namespace Core {
         d->type = Widget;
         d->widget = widget;
 
-        auto spec = ICoreBase::instance()->actionSystem()->action(id);
-        if (!spec) {
-            qWarning() << "ActionItem: action is not registered to ActionSystem:" << id;
+        if (!d->getSpec()) {
+            return;
         }
     }
 
@@ -320,9 +326,9 @@ namespace Core {
 
     ActionItem::ActionItem(ActionItemPrivate &d, const QString &id, QObject *parent) : QObject(parent), d_ptr(&d) {
         d.q_ptr = this;
-        d.init();
-
         d.id = id;
+
+        d.init();
     }
 
 }

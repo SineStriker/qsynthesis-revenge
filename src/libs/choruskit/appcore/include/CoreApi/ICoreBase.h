@@ -2,8 +2,10 @@
 #define ICOREBASE_H
 
 #include <QObject>
+#include <QSettings>
 
 #include "ActionSystem.h"
+#include "DocumentSystem.h"
 #include "SettingCatalog.h"
 #include "WindowSystem.h"
 
@@ -23,6 +25,7 @@ namespace Core {
     public:
         ActionSystem *actionSystem() const;
         WindowSystem *windowSystem() const;
+        DocumentSystem *documentSystem() const;
         SettingCatalog *settingCatalog() const;
 
     protected:

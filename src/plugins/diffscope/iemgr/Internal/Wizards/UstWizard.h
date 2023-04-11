@@ -19,6 +19,6 @@ namespace IEMgr {
             bool runWizard(Feature feature, IWizardContext *context) override;
         };
     }
-} // IEMgr
+}
 
 #endif // USTWIZARD_H

@@ -124,10 +124,10 @@ namespace Core {
     ISettingPage::ISettingPage(ISettingPagePrivate &d, const QString &id, QObject *parent)
         : QObject(parent), d_ptr(&d) {
         d.q_ptr = this;
-        d.init();
-
         d.id = id;
         d.title = id;
+
+        d.init();
     }
 
 }

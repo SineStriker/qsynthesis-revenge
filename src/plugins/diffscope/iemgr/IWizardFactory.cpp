@@ -24,9 +24,9 @@ namespace IEMgr {
     IWizardFactory::IWizardFactory(IWizardFactoryPrivate &d, const QString &id, QObject *parent)
         : QObject(parent), d_ptr(&d) {
         d.q_ptr = this;
+        d.id = id;
 
         d.init();
-        d.id = id;
     }
 
     QString IWizardFactory::id() const {

@@ -27,6 +27,8 @@
 #include "Internal/Settings/AppearanceTopPage.h"
 #include "Internal/Settings/DisplayPage.h"
 
+#include "Internal/Documents/DspxDocument.h"
+
 namespace Core {
 
     namespace Internal {
@@ -91,6 +93,11 @@ namespace Core {
 
                 sc->addPage(appearance);
             }
+
+            // Add mime types
+            auto docMgr = icore->documentSystem();
+
+            docMgr->addDocument(new DspxSpec());
 
             qIDec->addThemeTemplate("Global", ":/themes/global.qss.in");
             qIDec->addThemeTemplate("HomeWindow", ":/themes/home.qss.in");

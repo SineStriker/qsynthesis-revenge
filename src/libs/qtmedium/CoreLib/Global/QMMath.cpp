@@ -32,6 +32,16 @@ QList<double> QMMath::toDoubleList(const QStringList &list) {
     return res;
 }
 
+QStringList QMMath::arrayToStringList(const QJsonArray &arr, bool considerNumber) {
+    QStringList res;
+    for (const auto &item : arr)
+        if (item.isString())
+            res.append(item.toString());
+        else if (item.isDouble() && considerNumber)
+            res.append(QString::number(item.toDouble()));
+    return res;
+}
+
 bool QMMath::isNumber(const QString &s, bool considerDot, bool considerNeg) {
     bool flag = true;
 

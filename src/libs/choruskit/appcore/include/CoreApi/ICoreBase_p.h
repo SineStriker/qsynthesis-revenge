@@ -15,6 +15,7 @@ namespace Core{
 
         ActionSystem *actionSystem;
         WindowSystem *windowSystem;
+        DocumentSystem *documentSystem;
         SettingCatalog *settingCatalog;
 
         ICoreBase *q_ptr;

@@ -1,6 +1,7 @@
 #ifndef QMMATH_H
 #define QMMATH_H
 
+#include <QJsonArray>
 #include <QPoint>
 #include <QStringList>
 
@@ -23,6 +24,14 @@ namespace QMMath {
      * @return
      */
     QMCORELIB_API QList<double> toDoubleList(const QStringList &list);
+
+    /**
+     * @brief Iterate json array and append string element to a string list
+     *
+     * @param arr Json array
+     * @return
+     */
+    QMCORELIB_API QStringList arrayToStringList(const QJsonArray &arr, bool considerNumber = false);
 
     /**
      * @brief Determine if a string is all of number(dot, minus)

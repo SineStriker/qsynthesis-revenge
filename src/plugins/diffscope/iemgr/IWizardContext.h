@@ -35,6 +35,6 @@ namespace IEMgr {
         Q_DECLARE_PRIVATE(IWizardContext)
     };
 
-} // IEMgr
+}
 
 #endif // CHORUSKIT_IWIZARDCONTEXT_H

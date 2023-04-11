@@ -8,16 +8,6 @@
 
 namespace Core {
 
-    class ActionSpecPrivate {
-    public:
-        ActionSystemPrivate *d;
-
-        QString id;
-        QString displayName;
-        QString description;
-        QList<QKeySequence> shortcuts;
-    };
-
     class ActionSystemPrivate {
         Q_DECLARE_PUBLIC(ActionSystem)
     public:
@@ -26,14 +16,17 @@ namespace Core {
 
         void init();
 
+        void readSettings();
+        void saveSettings() const;
+
         void loadContexts_dfs(const QString &prefix, const QString &parentId, const QMXmlAdaptorElement *ele,
                               ActionContext *context);
 
         ActionSystem *q_ptr;
 
-        QMChronMap<QString, ActionSpecPrivate> actions;
-
+        QMChronMap<QString, ActionSpec *> actions;
         QMChronMap<QString, ActionContext *> contexts;
+
         QHash<QString, QMap<QString, QStringList>> stateCaches;
     };
 }

@@ -79,12 +79,22 @@ function(_ck_add_lupdate_target _target)
         get_filename_component(_ts_abs ${_ts_file} ABSOLUTE)
 
         if(_LUPDATE_CREATE_ONCE AND NOT EXISTS ${_ts_abs})
+            set(_options_filtered)
+
+            foreach(_opt ${_LUPDATE_OPTIONS})
+                if(_opt MATCHES ".*\\\$.*")
+                    continue()
+                endif()
+
+                list(APPEND _options_filtered ${_opt})
+            endforeach()
+
             message(STATUS "[INFO] Linguist update, generate ${_ts_name}")
             get_filename_component(_abs_file ${_ts_file} ABSOLUTE)
             get_filename_component(_dir ${_abs_file} DIRECTORY)
             make_directory(${_dir})
             execute_process(
-                COMMAND ${_lupdate_exe} ${_LUPDATE_OPTIONS} "@${_ts_lst_file}" -ts ${_ts_file}
+                COMMAND ${_lupdate_exe} ${_options_filtered} "@${_ts_lst_file}" -ts ${_ts_file}
                 WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
                 OUTPUT_VARIABLE _null
             )
@@ -145,7 +155,7 @@ function(_ck_add_lrelease_target _target)
 
         list(APPEND _qm_files ${_qm_file})
     endforeach()
-    
+
     add_custom_target(${_target} ALL DEPENDS ${_lrelease_deps} ${_qm_files})
 
     if(_LRELEASE_OUTPUT)
@@ -154,13 +164,13 @@ function(_ck_add_lrelease_target _target)
 endfunction()
 
 # function(_ck_install_target _target)
-#     get_target_property()
+# get_target_property()
 # endfunction()
 
 # function(_ck_install_attaches _src _dest _org_dir _new_dir)
-#     set(_scripts)
-#     list(APPEND _scripts "file(RELATIVE_PATH _rel_path \"${_org_dir}\" ${_dest})")
-#     list(APPEND _scripts "file(COPY \"${_src}\" DESTINATION \"${_new_dir}/\${_rel_path}\")")
-#     string(JOIN "\n" _script ${_scripts})
-#     install(CODE ${_script})
+# set(_scripts)
+# list(APPEND _scripts "file(RELATIVE_PATH _rel_path \"${_org_dir}\" ${_dest})")
+# list(APPEND _scripts "file(COPY \"${_src}\" DESTINATION \"${_new_dir}/\${_rel_path}\")")
+# string(JOIN "\n" _script ${_scripts})
+# install(CODE ${_script})
 # endfunction()

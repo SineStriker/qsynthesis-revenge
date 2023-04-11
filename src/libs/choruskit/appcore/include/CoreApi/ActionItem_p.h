@@ -4,6 +4,7 @@
 #include <QPointer>
 
 #include "ActionItem.h"
+#include "ActionSpec.h"
 
 namespace Core {
 
@@ -15,7 +16,11 @@ namespace Core {
 
         void init();
 
+        bool getSpec();
+
         ActionItem *q_ptr;
+
+        ActionSpec *spec;
 
         QString id;
         ActionItem::Type type;
@@ -28,9 +33,9 @@ namespace Core {
         QPointer<QWidget> widget;
 
     private:
-        void _q_actionDisplayNameChanged(const QString &id, const QString &displayName);
-        void _q_actionDescriptionChanged(const QString &id, const QString &description);
-        void _q_actionShortcutsChanged(const QString &id, const QList<QKeySequence> &shortcuts);
+        void _q_actionDisplayNameChanged(const QString &displayName);
+        void _q_actionDescriptionChanged(const QString &description);
+        void _q_actionShortcutsChanged(const QList<QKeySequence> &shortcuts);
     };
 
 }

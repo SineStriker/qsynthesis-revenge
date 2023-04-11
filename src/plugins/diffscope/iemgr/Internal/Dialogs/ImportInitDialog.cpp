@@ -8,6 +8,8 @@
 
 #include "IManager.h"
 
+#include <CoreApi/ILoader.h>
+
 #include <coreplugin/ICore.h>
 
 namespace IEMgr::Internal {
@@ -153,15 +155,15 @@ namespace IEMgr::Internal {
             return;
         }
 
-        auto &settings = *Core::ICore::settings();
+        auto &settings = *Core::ILoader::instance()->settings();
 
         auto basePath = settings.value(KEY_NAME_IMPORT_DIALOG_BASE_PATH).toString();
-        auto path =
-            QFileDialog::getOpenFileName(this, tr("Browse"), basePath, curWizard->filter(IWizardFactory::ImportProject));
+        auto path = QFileDialog::getOpenFileName(this, tr("Browse"), basePath,
+                                                 curWizard->filter(IWizardFactory::ImportProject));
         if (path.isEmpty()) {
             return;
         }
-        settings.setValue(KEY_NAME_IMPORT_DIALOG_BASE_PATH, QMFs::PathFindDirPath(path));
+        settings.insert(KEY_NAME_IMPORT_DIALOG_BASE_PATH, QMFs::PathFindDirPath(path));
 
         lineEdit->setText(QDir::toNativeSeparators(path));
     }

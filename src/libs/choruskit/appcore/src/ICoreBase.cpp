@@ -3,6 +3,8 @@
 
 #include <QApplication>
 
+#include <extensionsystem/pluginmanager.h>
+
 namespace Core {
 
     ICoreBasePrivate::ICoreBasePrivate() {
@@ -16,6 +18,7 @@ namespace Core {
 
         actionSystem = new ActionSystem(q);
         windowSystem = new WindowSystem(q);
+        documentSystem = new DocumentSystem(q);
         settingCatalog = new SettingCatalog(q);
     }
 
@@ -40,6 +43,11 @@ namespace Core {
     WindowSystem *ICoreBase::windowSystem() const {
         Q_D(const ICoreBase);
         return d->windowSystem;
+    }
+
+    DocumentSystem *ICoreBase::documentSystem() const {
+        Q_D(const ICoreBase);
+        return d->documentSystem;
     }
 
     SettingCatalog *ICoreBase::settingCatalog() const {

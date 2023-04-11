@@ -223,9 +223,9 @@ namespace Core {
 
     IWindow::IWindow(IWindowPrivate &d, const QString &id, QObject *parent) : ObjectPool(parent), d_ptr(&d) {
         d.q_ptr = this;
-        d.init();
-
         d.id = id;
+
+        d.init();
     }
 
 }

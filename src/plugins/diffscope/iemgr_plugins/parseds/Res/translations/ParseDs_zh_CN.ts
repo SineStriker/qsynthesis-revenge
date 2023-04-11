@@ -20,7 +20,7 @@
     <message>
         <location filename="../../DsWizard.cpp" line="17"/>
         <source>OpenVPI</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../../DsWizard.cpp" line="28"/>

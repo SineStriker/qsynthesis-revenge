@@ -9,4 +9,4 @@
 #    define IEMGR_EXPORT Q_DECL_IMPORT
 #endif
 
-#endif // IEMGRGLOBAL_H
+#endif GLOBAL_H

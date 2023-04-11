@@ -40,13 +40,6 @@ namespace Core {
 #endif
     }
 
-    QSettings *ICore::settings(QSettings::Scope scope) {
-        if (scope == QSettings::UserScope)
-            return ExtensionSystem::PluginManager::settings();
-        else
-            return ExtensionSystem::PluginManager::globalSettings();
-    }
-
     int ICore::showSettingsDialog(const QString &id, QWidget *parent) {
         static Internal::SettingsDialog *dlg = nullptr;
 

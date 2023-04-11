@@ -21,7 +21,7 @@ namespace IEMgr {
 
     }
 
-} // IEMgr
+}
 
 
 #endif // CHORUSKIT_OPENSVIPWIZARD_H

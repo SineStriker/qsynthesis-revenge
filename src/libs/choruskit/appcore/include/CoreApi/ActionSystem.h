@@ -4,37 +4,9 @@
 #include <QMenuBar>
 
 #include "ActionContext.h"
+#include "ActionSpec.h"
 
 namespace Core {
-
-    class ActionSpecPrivate;
-
-    class CKAPPCORE_API ActionSpec {
-    public:
-        ActionSpec();
-
-        bool isValid() const;
-        inline operator bool() const {
-            return isValid();
-        }
-
-        QString id() const;
-
-        QString displayName() const;
-        void setDisplayName(const QString &displayName);
-
-        QString description() const;
-        void setDescription(const QString &description);
-
-        QList<QKeySequence> shortcuts() const;
-        void setShortcuts(const QList<QKeySequence> &shortcuts);
-
-    private:
-        explicit ActionSpec(ActionSpecPrivate *d);
-        ActionSpecPrivate *d;
-
-        friend class ActionSystem;
-    };
 
     class ActionSystemPrivate;
 
@@ -45,15 +17,16 @@ namespace Core {
         ~ActionSystem();
 
     public:
-        ActionSpec addAction(const QString &id);
-        void removeAction(const QString &id);
-        ActionSpec action(const QString &id);
+        bool addAction(ActionSpec *action);
+        bool removeAction(ActionSpec *action);
+        bool removeAction(const QString &id);
+        ActionSpec *action(const QString &id) const;
+        QList<ActionSpec *> actions() const;
         QStringList actionIds() const;
 
         bool addContext(ActionContext *context);
         bool removeContext(ActionContext *context);
         bool removeContext(const QString &id);
-
         ActionContext *context(const QString &id) const;
         QList<ActionContext *> contexts() const;
         QStringList contextIds() const;
@@ -68,9 +41,8 @@ namespace Core {
         void actionAdded(const QString &id);
         void actionRemoved(const QString &id);
 
-        void actionDisplayNameChanged(const QString &id, const QString &displayName);
-        void actionDescriptionChanged(const QString &id, const QString &description);
-        void actionShortcutsChanged(const QString &id, const QList<QKeySequence> &shortcuts);
+        void contextAdded(const QString &id);
+        void contextRemoved(const QString &id);
 
     protected:
         QScopedPointer<ActionSystemPrivate> d_ptr;

@@ -6,57 +6,14 @@
 #include "Collections/QMChronSet.h"
 #include "Serialization/QMXmlAdaptor.h"
 
+#include "QMMath.h"
+
+#include "ILoader.h"
+
 #include <QDebug>
 #include <QFile>
 
 namespace Core {
-
-    ActionSpec::ActionSpec() : d(nullptr) {
-    }
-
-    bool ActionSpec::isValid() const {
-        return d != nullptr;
-    }
-
-    QString ActionSpec::id() const {
-        return d ? d->id : QString();
-    }
-
-    QString ActionSpec::displayName() const {
-        return d ? d->displayName : QString();
-    }
-
-    void ActionSpec::setDisplayName(const QString &displayName) {
-        if (!d)
-            return;
-        d->displayName = displayName;
-        emit d->d->q_ptr->actionDisplayNameChanged(d->id, displayName);
-    }
-
-    QString ActionSpec::description() const {
-        return d ? d->description : QString();
-    }
-
-    void ActionSpec::setDescription(const QString &description) {
-        if (!d)
-            return;
-        d->description = description;
-        emit d->d->q_ptr->actionDisplayNameChanged(d->id, description);
-    }
-
-    QList<QKeySequence> ActionSpec::shortcuts() const {
-        return d ? d->shortcuts : QList<QKeySequence>();
-    }
-
-    void ActionSpec::setShortcuts(const QList<QKeySequence> &shortcuts) {
-        if (!d)
-            return;
-        d->shortcuts = shortcuts;
-        emit d->d->q_ptr->actionShortcutsChanged(d->id, shortcuts);
-    }
-
-    ActionSpec::ActionSpec(ActionSpecPrivate *d) : d(d) {
-    }
 
     ActionSystemPrivate::ActionSystemPrivate() : q_ptr(nullptr) {
     }
@@ -65,6 +22,7 @@ namespace Core {
     }
 
     void ActionSystemPrivate::init() {
+        readSettings();
     }
 
     static ActionSystem *m_instance = nullptr;
@@ -74,40 +32,58 @@ namespace Core {
 
     ActionSystem::~ActionSystem() {
         m_instance = nullptr;
-    }
 
-    ActionSpec ActionSystem::addAction(const QString &id) {
         Q_D(ActionSystem);
-        if (d->actions.contains(id)) {
-            qWarning() << "Core::ActionSystem::addAction(): trying to add duplicated action:" << id;
-            return {};
-        }
-        auto it = d->actions.append(id, {d, id, id, {}, {}});
-
-        emit actionAdded(id);
-
-        return ActionSpec(&(it.value()));
+        d->saveSettings();
     }
 
-    void ActionSystem::removeAction(const QString &id) {
+    bool ActionSystem::addAction(ActionSpec *action) {
+        Q_D(ActionSystem);
+        if (!action) {
+            qWarning() << "Core::ActionSystem::addAction(): trying to add null action";
+            return false;
+        }
+        if (d->actions.contains(action->id())) {
+            qWarning() << "Core::ActionSystem::addAction(): trying to add duplicated action:" << action->id();
+            return false;
+        }
+        action->setParent(this);
+        d->actions.append(action->id(), action);
+
+        return true;
+    }
+
+    bool ActionSystem::removeAction(Core::ActionSpec *action) {
+        if (action == nullptr) {
+            qWarning() << "Core::ActionSystem::removeAction(): trying to remove null action";
+            return false;
+        }
+        return removeAction(action->id());
+    }
+
+    bool ActionSystem::removeAction(const QString &id) {
         Q_D(ActionSystem);
         auto it = d->actions.find(id);
         if (it == d->actions.end()) {
             qWarning() << "Core::ActionSystem::removeAction(): action does not exist:" << id;
-            return;
+            return false;
         }
+
+        auto action = it.value();
+        action->setParent(nullptr);
         d->actions.erase(it);
 
-        emit actionRemoved(id);
+        return true;
     }
 
-    ActionSpec ActionSystem::action(const QString &id) {
-        Q_D(ActionSystem);
-        auto it = d->actions.find(id);
-        if (it == d->actions.end()) {
-            return {};
-        }
-        return ActionSpec(&(it.value()));
+    ActionSpec *ActionSystem::action(const QString &id) const {
+        Q_D(const ActionSystem);
+        return d->actions.value(id, nullptr);
+    }
+
+    QList<ActionSpec *> ActionSystem::actions() const {
+        Q_D(const ActionSystem);
+        return d->actions.values();
     }
 
     QStringList ActionSystem::actionIds() const {
@@ -172,7 +148,7 @@ namespace Core {
     }
 
     void ActionSystemPrivate::loadContexts_dfs(const QString &prefix, const QString &parentId,
-                                                const QMXmlAdaptorElement *ele, ActionContext *context) {
+                                               const QMXmlAdaptorElement *ele, ActionContext *context) {
         Q_Q(ActionSystem);
 
         const auto &ctx2 = *ele;
@@ -260,17 +236,74 @@ namespace Core {
         {
             auto it = actions.find(id);
             if (it == actions.end()) {
-                auto spec = q->addAction(id);
-                spec.setShortcuts(shortcuts);
+                auto spec = new ActionSpec(id);
+                spec->setShortcuts(shortcuts);
+                q->addAction(spec);
             } else {
                 auto &spec = it.value();
-                spec.shortcuts.append(shortcuts);
+                spec->setShortcuts(spec->shortcuts() + shortcuts);
             }
         }
 
         for (const auto &child : qAsConst(children)) {
             loadContexts_dfs(prefix, id, child, context);
         }
+    }
+
+    static const char settingCatalogC[] = "ActionSystem";
+
+    static const char stateGroupC[] = "State";
+
+    QMap<QString, QStringList> _obj_to_state(const QJsonObject &obj) {
+        QMap<QString, QStringList> res;
+        for (auto it = obj.begin(); it != obj.end(); ++it) {
+            if (!it->isArray()) {
+                continue;
+            }
+            res.insert(it.key(), QMMath::arrayToStringList(it->toArray()));
+        }
+        return res;
+    }
+
+    QJsonObject _state_to_obj(const QMap<QString, QStringList> &state) {
+        QJsonObject obj;
+        for (auto it = state.begin(); it != state.end(); ++it) {
+            obj.insert(it.key(), QJsonArray::fromStringList(it.value()));
+        }
+        return obj;
+    }
+
+    void ActionSystemPrivate::readSettings() {
+        stateCaches.clear();
+
+        auto settings = ILoader::instance()->settings();
+
+        auto obj = settings->value(settingCatalogC).toObject();
+        auto stateObj = obj.value(stateGroupC).toObject();
+        for (auto it = stateObj.begin(); it != stateObj.end(); ++it) {
+            if (!it->isObject()) {
+                continue;
+            }
+            auto state = _obj_to_state(it->toObject());
+            if (state.isEmpty()) {
+                continue;
+            }
+            stateCaches.insert(it.key(), state);
+        }
+    }
+
+    void ActionSystemPrivate::saveSettings() const {
+        auto settings = ILoader::instance()->settings();
+
+        QJsonObject stateObj;
+        for (auto it = stateCaches.begin(); it != stateCaches.end(); ++it) {
+            stateObj.insert(it.key(), _state_to_obj(it.value()));
+        }
+
+        QJsonObject obj;
+        obj.insert(stateGroupC, stateObj);
+
+        settings->insert(settingCatalogC, obj);
     }
 
     QStringList ActionSystem::loadContexts(const QString &filename) {

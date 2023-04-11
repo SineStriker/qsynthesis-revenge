@@ -10,7 +10,7 @@
 #include "QMidiFile.h"
 #include "Utau/Utils/QUtaUtils.h"
 
-#include "Dialogs/ImportDialog.h"
+#include "Internal/Utils/ImportDialog.h"
 
 namespace IEMgr ::Internal {
 

@@ -21,6 +21,6 @@ namespace IEMgr {
 
     }
 
-} // IEMgr
+}
 
 #endif // CHORUSKIT_SVIPWIZARD_H

@@ -721,6 +721,7 @@ function(ck_add_translations _target)
 
     # ----------------- Template Begin -----------------
     set(_src_files)
+    set(_include_dirs)
 
     if(FUNC_SOURCES)
         list(APPEND _src_files ${FUNC_SOURCES})
@@ -734,6 +735,9 @@ function(ck_add_translations _target)
             list(FILTER _tmp_files EXCLUDE REGEX "(qasc|moc)_.+")
             list(APPEND _src_files ${_tmp_files})
             unset(_tmp_files)
+
+            get_target_property(_tmp_dirs ${_item} INCLUDE_DIRECTORIES)
+            list(APPEND _include_dirs ${_tmp_dirs})
         endforeach()
     endif()
 
@@ -770,9 +774,20 @@ function(ck_add_translations _target)
             list(APPEND _ts_files ${_ts_dir}/${_prefix}_${_loc}.ts)
         endforeach()
 
+        set(_include_options)
+
+        foreach(_inc ${_include_dirs})
+            list(APPEND _include_options "-I${_inc}")
+        endforeach()
+
+        if(_include_options)
+            list(PREPEND _include_options OPTIONS)
+        endif()
+
         _ck_add_lupdate_target(${_target}_lupdate
             INPUT ${_src_files}
             OUTPUT ${_ts_files}
+            # ${_include_options}
             CREATE_ONCE
         )
 

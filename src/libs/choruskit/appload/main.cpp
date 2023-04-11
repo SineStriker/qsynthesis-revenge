@@ -273,6 +273,12 @@ int main_entry(int argc, char *argv[]) {
     // Unique loader
     Core::ILoader loader;
 
+    QString userSettingPath = host.appDataDir();
+    QString systemSettingPath = host.shareDir() + "/" + qAppName();
+
+    loader.setSettingsPath(QSettings::UserScope,QString("%1/%2.settings.json").arg(userSettingPath, qAppName()));
+    loader.setSettingsPath(QSettings::SystemScope,QString("%1/%2.settings.json").arg(systemSettingPath, qAppName()));
+
     SplashScreen splash;
     g_splash = &splash;
 
@@ -311,9 +317,6 @@ int main_entry(int argc, char *argv[]) {
 
     // Don't show plugin manager debug info
     QLoggingCategory::setFilterRules(QLatin1String("qtc.*.debug=false"));
-
-    QString userSettingPath = host.appDataDir();
-    QString systemSettingPath = host.shareDir() + "/" + qAppName();
 
     QSettings::setPath(QSettings::IniFormat, QSettings::UserScope, userSettingPath);
     QSettings::setPath(QSettings::IniFormat, QSettings::SystemScope, systemSettingPath);

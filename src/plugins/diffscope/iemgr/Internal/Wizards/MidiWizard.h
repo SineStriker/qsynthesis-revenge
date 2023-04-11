@@ -27,6 +27,6 @@ namespace IEMgr {
 
     }
 
-} // IEMgr
+}
 
 #endif // CHORUSKIT_MIDIWIZARD_H

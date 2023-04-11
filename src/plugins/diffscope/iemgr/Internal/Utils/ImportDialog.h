@@ -12,7 +12,7 @@ namespace IEMgr {
 
     class ImportDialogPrivate;
 
-    class IEMGR_EXPORT ImportDialog : public QDialog {
+    class ImportDialog : public QDialog {
         Q_OBJECT
         Q_LAYOUT_PROPERTY_DELCARE
         Q_D_LAYOUT_PROPERTY(buttons, Buttons)

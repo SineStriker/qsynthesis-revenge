@@ -12,42 +12,47 @@
 
 #include "QTypeFace.h"
 
-// Recent list items
-class FileListItemDelegate : public QStyledItemDelegate {
-    Q_OBJECT
-public:
-    explicit FileListItemDelegate(QObject *parent = nullptr);
-    ~FileListItemDelegate();
+namespace QsApi {
 
-    friend class FileListWidget;
+    // Recent list items
+    class FileListItemDelegate : public QStyledItemDelegate {
+        Q_OBJECT
+    public:
+        explicit FileListItemDelegate(QObject *parent = nullptr);
+        ~FileListItemDelegate();
 
-public:
-    QSize sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const override;
+        friend class FileListWidget;
+        friend class FileListWidgetPrivate;
 
-    void paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const override;
+    public:
+        QSize sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const override;
 
-protected:
-    QTypeFace m_idleType;
-    QTypeFace m_selectType;
-    QTypeFace m_underline;
+        void paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const override;
 
-    QTypeFace m_fileType;
-    QTypeFace m_locType;
-    QTypeFace m_dateType;
+    protected:
+        QTypeFace m_idleType;
+        QTypeFace m_selectType;
+        QTypeFace m_underline;
 
-    QMargins m_fileMargins;
-    QMargins m_locMargins;
-    QMargins m_dateMargins;
-    QMargins m_margins;
+        QTypeFace m_fileType;
+        QTypeFace m_locType;
+        QTypeFace m_dateType;
 
-    QMargins m_iconMargins;
+        QMargins m_fileMargins;
+        QMargins m_locMargins;
+        QMargins m_dateMargins;
+        QMargins m_margins;
 
-protected:
-    bool editorEvent(QEvent *event, QAbstractItemModel *model, const QStyleOptionViewItem &option,
-                     const QModelIndex &index) override;
+        QMargins m_iconMargins;
 
-signals:
-    void clicked(const QModelIndex &index, int button);
-};
+    protected:
+        bool editorEvent(QEvent *event, QAbstractItemModel *model, const QStyleOptionViewItem &option,
+                         const QModelIndex &index) override;
+
+    signals:
+        void clicked(const QModelIndex &index, int button);
+    };
+
+}
 
 #endif // FILELISTITEMDELEGATE_H

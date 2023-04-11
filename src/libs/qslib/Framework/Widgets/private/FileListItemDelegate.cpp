@@ -3,190 +3,189 @@
 
 #include <QDir>
 
-FileListItemDelegate::FileListItemDelegate(QObject *pParent) : QStyledItemDelegate(pParent) {
-    m_selectType = QTypeFace(Qt::transparent, 1);
-    m_underline = QTypeFace(Qt::lightGray, 1);
+namespace QsApi {
 
-    m_fileMargins = QMargins(5, 5, 5, 5);
-    m_locMargins = QMargins(5, 5, 5, 5);
-    m_dateMargins = QMargins(5, 5, 5, 5);
+    FileListItemDelegate::FileListItemDelegate(QObject *pParent) : QStyledItemDelegate(pParent) {
+        m_selectType = QTypeFace(Qt::transparent, 1);
+        m_underline = QTypeFace(Qt::lightGray, 1);
 
-    m_iconMargins = QMargins(5, 5, 5, 5);
-}
+        m_fileMargins = QMargins(5, 5, 5, 5);
+        m_locMargins = QMargins(5, 5, 5, 5);
+        m_dateMargins = QMargins(5, 5, 5, 5);
 
-FileListItemDelegate::~FileListItemDelegate() {
-}
+        m_iconMargins = QMargins(5, 5, 5, 5);
+    }
 
-QSize FileListItemDelegate::sizeHint(const QStyleOptionViewItem &option,
+    FileListItemDelegate::~FileListItemDelegate() {
+    }
+
+    QSize FileListItemDelegate::sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const {
+        QSize size = QStyledItemDelegate::sizeHint(option, index);
+
+        int iconHeight =
+            index.data(FileListWidget::IconSize).toSize().height() + m_iconMargins.top() + m_iconMargins.bottom();
+        int midHeight = QFontMetrics(m_fileType.font()).height() + QFontMetrics(m_locType.font()).height() +
+                        m_fileMargins.top() + m_fileMargins.bottom() + m_locMargins.top() + m_locMargins.bottom();
+        int dateHeight = QFontMetrics(m_dateType.font()).height() + m_dateMargins.top() + m_dateMargins.bottom();
+        int h = qMax(iconHeight, qMax(midHeight, dateHeight));
+        h += m_margins.bottom() + m_margins.top();
+        if (size.height() < h) {
+            size.setHeight(h);
+        }
+        return size;
+    }
+
+    void FileListItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option,
                                      const QModelIndex &index) const {
-    QSize size = QStyledItemDelegate::sizeHint(option, index);
+        QRect rect = option.rect;
+        rect.adjust(m_margins.left(), m_margins.top(), -m_margins.right(), -m_margins.bottom());
 
-    int iconHeight = index.data(FileListWidget::IconSize).toSize().height() + m_iconMargins.top() +
-                     m_iconMargins.bottom();
-    int midHeight = QFontMetrics(m_fileType.font()).height() +
-                    QFontMetrics(m_locType.font()).height() + m_fileMargins.top() +
-                    m_fileMargins.bottom() + m_locMargins.top() + m_locMargins.bottom();
-    int dateHeight =
-        QFontMetrics(m_dateType.font()).height() + m_dateMargins.top() + m_dateMargins.bottom();
-    int h = qMax(iconHeight, qMax(midHeight, dateHeight));
-    h += m_margins.bottom() + m_margins.top();
-    if (size.height() < h) {
-        size.setHeight(h);
-    }
-    return size;
-}
+        // Fetch data
+        QString filename = index.data(FileListWidget::Filename).toString();
+        QString location = QDir::toNativeSeparators(index.data(FileListWidget::Location).toString());
+        QString date = index.data(FileListWidget::Date).toString();
 
-void FileListItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option,
-                                 const QModelIndex &index) const {
-    QRect rect = option.rect;
-    rect.adjust(m_margins.left(), m_margins.top(), -m_margins.right(), -m_margins.bottom());
+        QIcon icon = index.data(FileListWidget::Icon).value<QIcon>();
+        QSize iconSize = index.data(FileListWidget::IconSize).toSize();
 
-    // Fetch data
-    QString filename = index.data(FileListWidget::Filename).toString();
-    QString location = QDir::toNativeSeparators(index.data(FileListWidget::Location).toString());
-    QString date = index.data(FileListWidget::Date).toString();
+        // Calculate size
+        QFont fileFont = m_fileType.font();
+        QFont locFont = m_locType.font();
+        QFont dateFont = m_dateType.font();
 
-    QIcon icon = index.data(FileListWidget::Icon).value<QIcon>();
-    QSize iconSize = index.data(FileListWidget::IconSize).toSize();
+        //    fileFont.setStyleStrategy(QFont::PreferAntialias);
+        //    locFont.setStyleStrategy(QFont::PreferAntialias);
+        //    dateFont.setStyleStrategy(QFont::PreferAntialias);
 
-    // Calculate size
-    QFont fileFont = m_fileType.font();
-    QFont locFont = m_locType.font();
-    QFont dateFont = m_dateType.font();
+        QFontMetrics fileFontM(fileFont);
+        QFontMetrics locFontM(locFont);
+        QFontMetrics dateFontM(dateFont);
 
-    //    fileFont.setStyleStrategy(QFont::PreferAntialias);
-    //    locFont.setStyleStrategy(QFont::PreferAntialias);
-    //    dateFont.setStyleStrategy(QFont::PreferAntialias);
+        int fileFontHeight = fileFontM.height();
+        int locFontHeight = locFontM.height();
+        int dateFontHeight = dateFontM.height();
 
-    QFontMetrics fileFontM(fileFont);
-    QFontMetrics locFontM(locFont);
-    QFontMetrics dateFontM(dateFont);
+        int dateWidth = dateFontM.horizontalAdvance(date);
 
-    int fileFontHeight = fileFontM.height();
-    int locFontHeight = locFontM.height();
-    int dateFontHeight = dateFontM.height();
+        int iconHeight =
+            index.data(FileListWidget::IconSize).toSize().height() + m_iconMargins.top() + m_iconMargins.bottom();
+        int midHeight = fileFontHeight + m_fileMargins.top() + m_fileMargins.bottom() + locFontHeight +
+                        m_locMargins.top() + m_locMargins.bottom();
+        int dateHeight = dateFontHeight + m_dateMargins.top() + m_dateMargins.bottom();
 
-    int dateWidth = dateFontM.horizontalAdvance(date);
+        int realHeight = rect.height();
 
-    int iconHeight = index.data(FileListWidget::IconSize).toSize().height() + m_iconMargins.top() +
-                     m_iconMargins.bottom();
-    int midHeight = fileFontHeight + m_fileMargins.top() + m_fileMargins.bottom() + locFontHeight +
-                    m_locMargins.top() + m_locMargins.bottom();
-    int dateHeight = dateFontHeight + m_dateMargins.top() + m_dateMargins.bottom();
+        QRect iconRect;
+        iconRect.setTop(rect.top() + (realHeight - iconHeight) / 2 + m_iconMargins.top());
+        iconRect.setLeft(m_iconMargins.left());
+        iconRect.setSize(iconSize);
 
-    int realHeight = rect.height();
+        int iconRight = iconRect.right() + m_iconMargins.right();
+        int wordsWidth = rect.width() - iconRight;
 
-    QRect iconRect;
-    iconRect.setTop(rect.top() + (realHeight - iconHeight) / 2 + m_iconMargins.top());
-    iconRect.setLeft(m_iconMargins.left());
-    iconRect.setSize(iconSize);
+        QRect dateRect;
+        dateRect.setTop(rect.top() + (realHeight - dateHeight) / 2 + m_dateMargins.top());
+        dateRect.setRight(rect.width() - m_dateMargins.right());
+        dateRect.setLeft(qMax(iconRect.right() + wordsWidth / 2 + m_dateMargins.left(), dateRect.right() - dateWidth));
+        dateRect.setHeight(dateFontHeight);
 
-    int iconRight = iconRect.right() + m_iconMargins.right();
-    int wordsWidth = rect.width() - iconRight;
+        int dateLeft = dateRect.left() - m_dateMargins.left();
 
-    QRect dateRect;
-    dateRect.setTop(rect.top() + (realHeight - dateHeight) / 2 + m_dateMargins.top());
-    dateRect.setRight(rect.width() - m_dateMargins.right());
-    dateRect.setLeft(qMax(iconRect.right() + wordsWidth / 2 + m_dateMargins.left(),
-                          dateRect.right() - dateWidth));
-    dateRect.setHeight(dateFontHeight);
+        QRect fileRect;
+        fileRect.setTop(rect.top() + (realHeight - midHeight) / 2 + m_fileMargins.top());
+        fileRect.setLeft(iconRight + m_fileMargins.left());
+        fileRect.setRight(dateLeft - m_fileMargins.right());
+        fileRect.setHeight(fileFontHeight);
 
-    int dateLeft = dateRect.left() - m_dateMargins.left();
+        int fileBottom = fileRect.bottom() + m_fileMargins.bottom();
 
-    QRect fileRect;
-    fileRect.setTop(rect.top() + (realHeight - midHeight) / 2 + m_fileMargins.top());
-    fileRect.setLeft(iconRight + m_fileMargins.left());
-    fileRect.setRight(dateLeft - m_fileMargins.right());
-    fileRect.setHeight(fileFontHeight);
+        QRect locRect;
+        locRect.setTop(fileBottom + m_locMargins.top());
+        locRect.setLeft(iconRight + m_locMargins.left());
+        locRect.setRight(dateLeft - m_locMargins.right());
+        locRect.setHeight(locFontHeight);
 
-    int fileBottom = fileRect.bottom() + m_fileMargins.bottom();
+        painter->setRenderHint(QPainter::Antialiasing);
 
-    QRect locRect;
-    locRect.setTop(fileBottom + m_locMargins.top());
-    locRect.setLeft(iconRight + m_locMargins.left());
-    locRect.setRight(dateLeft - m_locMargins.right());
-    locRect.setHeight(locFontHeight);
-
-    painter->setRenderHint(QPainter::Antialiasing);
-
-    // Status
-    painter->setPen(Qt::NoPen);
-    if (option.state & QStyle::State_Selected || option.state & QStyle::State_MouseOver) {
-        painter->setBrush(m_selectType.color());
-    } else {
-        painter->setBrush(m_idleType.color());
-    }
-    painter->drawRect(rect);
-
-    // Icon
-    if (!icon.isNull()) {
-        painter->drawPixmap(iconRect, icon.pixmap(iconSize));
-    }
-
-    painter->setFont(dateFont);
-    painter->setPen(m_dateType.color());
-
-    // Last open time
-    {
-        QString text = date;
-        const QRect &dst = dateRect;
-        const QFontMetrics &fm = dateFontM;
-
-        int width = fm.horizontalAdvance(text);
-        if (width > dst.width()) {
-            text = fm.elidedText(text, Qt::ElideRight, dst.width());
+        // Status
+        painter->setPen(Qt::NoPen);
+        if (option.state & QStyle::State_Selected || option.state & QStyle::State_MouseOver) {
+            painter->setBrush(m_selectType.color());
+        } else {
+            painter->setBrush(m_idleType.color());
         }
-        painter->drawText(dst, Qt::AlignLeft | Qt::AlignVCenter, text);
-    }
+        painter->drawRect(rect);
 
-    painter->setFont(fileFont);
-    painter->setPen(m_fileType.color());
-
-    // Filename
-    {
-        QString text = filename;
-        const QRect &dst = fileRect;
-        const QFontMetrics &fm = fileFontM;
-
-        int width = fm.horizontalAdvance(text);
-        if (width > dst.width()) {
-            text = fm.elidedText(text, Qt::ElideRight, dst.width());
+        // Icon
+        if (!icon.isNull()) {
+            painter->drawPixmap(iconRect, icon.pixmap(iconSize));
         }
-        painter->drawText(dst, Qt::AlignLeft | Qt::AlignVCenter, text);
-    }
 
-    painter->setFont(locFont);
-    painter->setPen(m_locType.color());
+        painter->setFont(dateFont);
+        painter->setPen(m_dateType.color());
 
-    // Address
-    {
-        QString text = location;
-        const QRect &dst = locRect;
-        const QFontMetrics &fm = locFontM;
+        // Last open time
+        {
+            QString text = date;
+            const QRect &dst = dateRect;
+            const QFontMetrics &fm = dateFontM;
 
-        int width = fm.horizontalAdvance(text);
-        if (width > dst.width()) {
-            text = fm.elidedText(text, Qt::ElideRight, dst.width());
+            int width = fm.horizontalAdvance(text);
+            if (width > dst.width()) {
+                text = fm.elidedText(text, Qt::ElideRight, dst.width());
+            }
+            painter->drawText(dst, Qt::AlignLeft | Qt::AlignVCenter, text);
         }
-        painter->drawText(dst, Qt::AlignLeft | Qt::AlignVCenter, text);
-    }
 
-    painter->setPen(QPen(m_underline.color(), m_underline.widthF()));
-    painter->drawLine(rect.bottomLeft(), rect.bottomRight());
-}
+        painter->setFont(fileFont);
+        painter->setPen(m_fileType.color());
 
-bool FileListItemDelegate::editorEvent(QEvent *event, QAbstractItemModel *model,
-                                       const QStyleOptionViewItem &option,
-                                       const QModelIndex &index) {
-    if (event->type() == QEvent::MouseButtonRelease) {
-        QMouseEvent *mouseEvent = static_cast<QMouseEvent *>(event);
+        // Filename
+        {
+            QString text = filename;
+            const QRect &dst = fileRect;
+            const QFontMetrics &fm = fileFontM;
 
-        if (mouseEvent->button() == Qt::RightButton) {
-            emit clicked(index, Qt::RightButton);
-        } else if (mouseEvent->button() == Qt::LeftButton) {
-            emit clicked(index, Qt::LeftButton);
+            int width = fm.horizontalAdvance(text);
+            if (width > dst.width()) {
+                text = fm.elidedText(text, Qt::ElideRight, dst.width());
+            }
+            painter->drawText(dst, Qt::AlignLeft | Qt::AlignVCenter, text);
         }
+
+        painter->setFont(locFont);
+        painter->setPen(m_locType.color());
+
+        // Address
+        {
+            QString text = location;
+            const QRect &dst = locRect;
+            const QFontMetrics &fm = locFontM;
+
+            int width = fm.horizontalAdvance(text);
+            if (width > dst.width()) {
+                text = fm.elidedText(text, Qt::ElideRight, dst.width());
+            }
+            painter->drawText(dst, Qt::AlignLeft | Qt::AlignVCenter, text);
+        }
+
+        painter->setPen(QPen(m_underline.color(), m_underline.widthF()));
+        painter->drawLine(rect.bottomLeft(), rect.bottomRight());
     }
 
-    return QStyledItemDelegate::editorEvent(event, model, option, index);
+    bool FileListItemDelegate::editorEvent(QEvent *event, QAbstractItemModel *model, const QStyleOptionViewItem &option,
+                                           const QModelIndex &index) {
+        if (event->type() == QEvent::MouseButtonRelease) {
+            QMouseEvent *mouseEvent = static_cast<QMouseEvent *>(event);
+
+            if (mouseEvent->button() == Qt::RightButton) {
+                emit clicked(index, Qt::RightButton);
+            } else if (mouseEvent->button() == Qt::LeftButton) {
+                emit clicked(index, Qt::LeftButton);
+            }
+        }
+
+        return QStyledItemDelegate::editorEvent(event, model, option, index);
+    }
+
 }
