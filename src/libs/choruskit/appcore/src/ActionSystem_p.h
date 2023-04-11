@@ -4,6 +4,8 @@
 #include "ActionSystem.h"
 #include "Collections/QMChronMap.h"
 
+#include <Serialization/QMXmlAdaptor.h>
+
 namespace Core {
 
     class ActionSpecPrivate {
@@ -23,6 +25,9 @@ namespace Core {
         virtual ~ActionSystemPrivate();
 
         void init();
+
+        void loadContexts_dfs(const QString &prefix, const QString &parentId, const QMXmlAdaptorElement *ele,
+                              ActionContext *context);
 
         ActionSystem *q_ptr;
 

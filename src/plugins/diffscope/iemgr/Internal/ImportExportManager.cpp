@@ -1,4 +1,4 @@
-#include "ImportManager.h"
+#include "ImportExportManager.h"
 
 #include <QApplication>
 #include <QThread>
@@ -25,24 +25,24 @@ namespace IEMgr {
 
     namespace Internal {
 
-        class ImportManagerPrivate {
+        class ImportExportManagerPrivate {
         public:
             QMDecorateDir dec;
         };
 
         static IManager *imgr = nullptr;
 
-        static ImportManagerPrivate *d = nullptr;
+        static ImportExportManagerPrivate *d = nullptr;
 
-        ImportManager::ImportManager() {
+        ImportExportManager::ImportExportManager() {
         }
 
-        ImportManager::~ImportManager() {
+        ImportExportManager::~ImportExportManager() {
         }
 
-        bool ImportManager::initialize(const QStringList &arguments, QString *errorMessage) {
+        bool ImportExportManager::initialize(const QStringList &arguments, QString *errorMessage) {
             auto &d = Internal::d;
-            d = new ImportManagerPrivate();
+            d = new ImportExportManagerPrivate();
 
             d->dec.load(QString("%1/share/%2.res.json").arg(QMFs::PathFindDirPath(pluginSpec()->filePath()), "IEMgr"));
 
@@ -77,10 +77,10 @@ namespace IEMgr {
             return true;
         }
 
-        void ImportManager::extensionsInitialized() {
+        void ImportExportManager::extensionsInitialized() {
         }
 
-        bool ImportManager::delayedInitialize() {
+        bool ImportExportManager::delayedInitialize() {
             return true;
         }
 

@@ -1,5 +1,5 @@
-#ifndef IMPORTMANAGER_H
-#define IMPORTMANAGER_H
+#ifndef IMPORTEXPORTMANAGER_H
+#define IMPORTEXPORTMANAGER_H
 
 #include <extensionsystem/iplugin.h>
 
@@ -9,12 +9,12 @@ namespace IEMgr {
 
     namespace Internal {
 
-        class ImportManager : public ExtensionSystem::IPlugin {
+        class ImportExportManager : public ExtensionSystem::IPlugin {
             Q_OBJECT
             Q_PLUGIN_METADATA(IID "org.ChorusKit.DiffScope.Plugin" FILE "plugin.json")
         public:
-            ImportManager();
-            ~ImportManager();
+            ImportExportManager();
+            ~ImportExportManager();
 
             bool initialize(const QStringList &arguments, QString *errorMessage) override;
             void extensionsInitialized() override;
@@ -26,4 +26,4 @@ namespace IEMgr {
 } // namespace Core
 
 
-#endif // IMPORTMANAGER_H
+#endif // IMPORTEXPORTMANAGER_H

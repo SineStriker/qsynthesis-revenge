@@ -42,12 +42,11 @@ namespace IEMgr ::Internal {
         return QString("%1(%2)").arg(tr("Standard Midi Files"), suffixes) + ";;" + IWizardFactory::filter(feature);
     }
 
-    bool MidiWizard::runWizard(Feature feature, const QString &path, const QVariantMap &args,
-                               Core::IWindow *windowHandle) {
+    bool MidiWizard::runWizard(Feature feature, IWizardContext *context) {
         switch (feature) {
             case IWizardFactory::ImportProject: {
                 QDspxModel model;
-                if (!load(path, &model, windowHandle->window())) {
+                if (!load(context->path(), &model, context->windowHandle()->window())) {
                     return false;
                 }
                 qDebug() << model.content.tracks.size();

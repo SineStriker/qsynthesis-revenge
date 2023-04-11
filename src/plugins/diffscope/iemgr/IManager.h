@@ -8,7 +8,7 @@
 namespace IEMgr {
 
     namespace Internal {
-        class ImportManager;
+        class ImportExportManager;
     }
 
     class IManagerPrivate;
@@ -27,8 +27,8 @@ namespace IEMgr {
         void clearWizards();
 
     public:
-        void runImport(const QString &id, const QVariantMap &args, QWidget *parent = nullptr);
-        void runExport(const QString &id, const QVariantMap &args,QWidget *parent = nullptr);
+        void runImport(IWizardContext *context, QWidget *parent = nullptr);
+        void runExport(IWizardContext *context,QWidget *parent = nullptr);
 
         bool isRunning() const;
 
@@ -40,7 +40,7 @@ namespace IEMgr {
 
         QScopedPointer<IManagerPrivate> d_ptr;
 
-        friend class Internal::ImportManager;
+        friend class Internal::ImportExportManager;
     };
 
 }

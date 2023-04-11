@@ -4,9 +4,7 @@
 #include <QDateTime>
 #include <QObject>
 
-#include "IEMgrGlobal.h"
-
-#include <CoreApi/IWindow.h>
+#include "IWizardContext.h"
 
 namespace IEMgr {
 
@@ -29,7 +27,7 @@ namespace IEMgr {
 
         virtual Features features() const = 0;
         virtual QString filter(Feature feature) const;
-        virtual bool runWizard(Feature feature, const QString &path,const QVariantMap &args, Core::IWindow *windowHandle) = 0;
+        virtual bool runWizard(Feature feature, IWizardContext *context) = 0;
 
     public:
         QString id() const;

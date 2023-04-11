@@ -83,6 +83,10 @@ namespace IEMgr::Internal {
         return lineEdit->text();
     }
 
+    void ImportInitDialog::setCurrentPath(const QString &path) {
+        lineEdit->setText(path);
+    }
+
     void ImportInitDialog::selectWizard(IEMgr::IWizardFactory *wizard) {
         page->setTitle(wizard->displayName());
         page->setDescription(wizard->description());

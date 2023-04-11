@@ -26,6 +26,7 @@ namespace IEMgr {
             IWizardFactory *currentWizard() const;
 
             QString currentPath() const;
+            void setCurrentPath(const QString &path);
 
             void selectWizard(IWizardFactory *wizard);
 

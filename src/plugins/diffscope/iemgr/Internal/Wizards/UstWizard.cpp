@@ -22,8 +22,7 @@ namespace IEMgr ::Internal {
         return {ImportProject | ExportProject};
     }
 
-    bool UstWizard::runWizard(Feature feature, const QString &path, const QVariantMap &args,
-                              Core::IWindow *windowHandle) {
+    bool UstWizard::runWizard(Feature feature, IWizardContext *context) {
         return false;
     }
 

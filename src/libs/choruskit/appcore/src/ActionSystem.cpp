@@ -171,8 +171,10 @@ namespace Core {
         return d->contexts.keys();
     }
 
-    void _loadContexts_dfs(ActionSystemPrivate *d, const QString &prefix, const QString &parentId,
-                           const QMXmlAdaptorElement *ele, ActionContext *context) {
+    void ActionSystemPrivate::loadContexts_dfs(const QString &prefix, const QString &parentId,
+                                                const QMXmlAdaptorElement *ele, ActionContext *context) {
+        Q_Q(ActionSystem);
+
         const auto &ctx2 = *ele;
         QString id = prefix + ctx2.properties.value("id");
         if (id.isEmpty()) {
@@ -256,9 +258,9 @@ namespace Core {
         action.setRules(action.rules() + rules);
 
         {
-            auto it = d->actions.find(id);
-            if (it == d->actions.end()) {
-                auto spec = d->q_ptr->addAction(id);
+            auto it = actions.find(id);
+            if (it == actions.end()) {
+                auto spec = q->addAction(id);
                 spec.setShortcuts(shortcuts);
             } else {
                 auto &spec = it.value();
@@ -267,7 +269,7 @@ namespace Core {
         }
 
         for (const auto &child : qAsConst(children)) {
-            _loadContexts_dfs(d, prefix, id, child, context);
+            loadContexts_dfs(prefix, id, child, context);
         }
     }
 
@@ -315,7 +317,7 @@ namespace Core {
 
             QString prefix = ctx.properties.value("prefix");
             for (const auto &ctx_ref2 : qAsConst(ctx.children)) {
-                _loadContexts_dfs(d, prefix, {}, ctx_ref2.data(), context);
+                d->loadContexts_dfs(prefix, {}, ctx_ref2.data(), context);
             }
         }
 
