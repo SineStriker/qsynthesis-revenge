@@ -70,6 +70,8 @@ namespace IEMgr::Internal {
         if (btn) {
             btn->click();
         }
+
+        setWindowTitle(tr("Import Project"));
     }
 
     ImportInitDialog::~ImportInitDialog() {
@@ -155,7 +157,7 @@ namespace IEMgr::Internal {
 
         auto basePath = settings.value(KEY_NAME_IMPORT_DIALOG_BASE_PATH).toString();
         auto path =
-            QFileDialog::getOpenFileName(this, tr("Import file"), basePath, curWizard->filter(IWizardFactory::ImportProject));
+            QFileDialog::getOpenFileName(this, tr("Browse"), basePath, curWizard->filter(IWizardFactory::ImportProject));
         if (path.isEmpty()) {
             return;
         }

@@ -17,6 +17,8 @@
 #include "iemgr/IManager.h"
 
 #include "Internal/Wizards/MidiWizard.h"
+#include "Internal/Wizards/OpenSvipWizard.h"
+#include "Internal/Wizards/SvipWizard.h"
 #include "Internal/Wizards/UstWizard.h"
 
 namespace IEMgr {
@@ -71,6 +73,8 @@ namespace IEMgr {
             // Add wizards
             imgr->addWizard(new Internal::MidiWizard());
             imgr->addWizard(new Internal::UstWizard());
+            imgr->addWizard(new Internal::OpenSvipWizard());
+            imgr->addWizard(new Internal::SvipWizard());
 
             qIDec->addThemeTemplate("IEMgr_ImportDialog", ":/themes/import-dialog.qss.in");
 

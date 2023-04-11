@@ -18,7 +18,7 @@ ck_target_components(${_plugin} INCLUDE_CURRENT_PRIVATE INCLUDE_SUBDIRS_PRIVATE
     SOURCES ${_src} ${_res_dir}/iemgr_res.qrc
     QT_LINKS Core Widgets Network
     LINKS QsSVS QsFramework ExtensionSystem DiffScope::coreplugin
-    LINKS_PRIVATE QMidi
+    LINKS_PRIVATE QMidi QNrbfFormat
     AUTO_INCLUDE_CURRENT
 )
 

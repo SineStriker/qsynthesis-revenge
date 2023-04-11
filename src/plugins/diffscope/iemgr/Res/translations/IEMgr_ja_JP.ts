@@ -74,6 +74,17 @@
     </message>
 </context>
 <context>
+    <name>IEMgr::Internal::ImportExportManager</name>
+    <message>
+        <source>Initializing import/export manager...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Failed to load action configuration!</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>IEMgr::Internal::ImportInitDialog</name>
     <message>
         <source>File Path:</source>
@@ -84,22 +95,11 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Import file</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>File doesn&apos;t exist.</source>
         <translation type="unfinished"></translation>
     </message>
-</context>
-<context>
-    <name>IEMgr::Internal::ImportManager</name>
     <message>
-        <source>Initializing import/export manager...</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Failed to load action configuration!</source>
+        <source>Import Project</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -155,6 +155,44 @@
     </message>
     <message>
         <source>A communications protocol for media interfaces.</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>IEMgr::Internal::OpenSvipWizard</name>
+    <message>
+        <source>OpenSVIP model</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>OpenSVIP converter intermediate model.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>OpenVPI</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>OpenSVIP Json Files</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>IEMgr::Internal::SvipWizard</name>
+    <message>
+        <source>SVIP file</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>XStudio 2.0 project file.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>XiaoIce</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>XStudio Svip Files</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

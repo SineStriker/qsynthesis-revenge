@@ -82,6 +82,17 @@
     </message>
 </context>
 <context>
+    <name>IEMgr::Internal::ImportExportManager</name>
+    <message>
+        <source>Initializing import/export manager...</source>
+        <translation>初始化导入/导出管理器...</translation>
+    </message>
+    <message>
+        <source>Failed to load action configuration!</source>
+        <translation>无法加载菜单项配置信息！</translation>
+    </message>
+</context>
+<context>
     <name>IEMgr::Internal::ImportInitDialog</name>
     <message>
         <source>File Path:</source>
@@ -93,22 +104,26 @@
     </message>
     <message>
         <source>Import file</source>
-        <translation>导入文件</translation>
+        <translation type="vanished">导入文件</translation>
     </message>
     <message>
         <source>File doesn&apos;t exist.</source>
         <translation>文件不存在。</translation>
+    </message>
+    <message>
+        <source>Import Project</source>
+        <translation>导入工程</translation>
     </message>
 </context>
 <context>
     <name>IEMgr::Internal::ImportManager</name>
     <message>
         <source>Initializing import/export manager...</source>
-        <translation>初始化导入/导出管理器...</translation>
+        <translation type="vanished">初始化导入/导出管理器...</translation>
     </message>
     <message>
         <source>Failed to load action configuration!</source>
-        <translation>无法加载菜单项配置信息！</translation>
+        <translation type="vanished">无法加载菜单项配置信息！</translation>
     </message>
 </context>
 <context>
@@ -164,6 +179,44 @@
     <message>
         <source>A communications protocol for media interfaces.</source>
         <translation>乐器数字化接口通信协议。</translation>
+    </message>
+</context>
+<context>
+    <name>IEMgr::Internal::OpenSvipWizard</name>
+    <message>
+        <source>OpenSVIP model</source>
+        <translation>OpenSVIP模型</translation>
+    </message>
+    <message>
+        <source>OpenSVIP converter intermediate model.</source>
+        <translation>OpenSVPI转换器中间模型。</translation>
+    </message>
+    <message>
+        <source>OpenVPI</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>OpenSVIP Json Files</source>
+        <translation>OpenSVIP Json文件</translation>
+    </message>
+</context>
+<context>
+    <name>IEMgr::Internal::SvipWizard</name>
+    <message>
+        <source>SVIP file</source>
+        <translation>SVIP文件</translation>
+    </message>
+    <message>
+        <source>XStudio 2.0 project file.</source>
+        <translation>XStudio 2.0工程文件。</translation>
+    </message>
+    <message>
+        <source>XiaoIce</source>
+        <translation>小冰</translation>
+    </message>
+    <message>
+        <source>XStudio Svip Files</source>
+        <translation>XStudio Svip文件</translation>
     </message>
 </context>
 <context>
