@@ -1,6 +1,8 @@
 #ifndef CHORUSKIT_IEMGRADDON_H
 #define CHORUSKIT_IEMGRADDON_H
 
+#include <QAbstractButton>
+
 #include <CoreApi/ActionItem.h>
 #include <CoreApi/IWindowAddOn.h>
 
@@ -37,6 +39,10 @@ namespace IEMgr {
             Core::ActionItem *exportItem;
             Core::ActionItem *exportProjectItem;
             Core::ActionItem *exportAudioItem;
+
+            QAbstractButton *importButton;
+
+            void _q_importButtonClicked();
         };
 
     }

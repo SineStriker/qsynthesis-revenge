@@ -24,9 +24,9 @@ namespace QsApi {
 
         buttonsLayout = new QMEqualBoxLayout(QBoxLayout::LeftToRight);
         buttonsLayout->setAlignment(Qt::AlignRight);
-        buttonsLayout->addWidget(okButton);
-        buttonsLayout->addWidget(cancelButton);
-        buttonsLayout->addWidget(applyButton);
+        buttonsLayout->addWidgetE(okButton);
+        buttonsLayout->addWidgetE(cancelButton);
+        buttonsLayout->addWidgetE(applyButton);
 
         mainLayout = new QVBoxLayout();
         mainLayout->addLayout(buttonsLayout);

@@ -1,6 +1,8 @@
 #ifndef HOMEWINDOWADDON_H
 #define HOMEWINDOWADDON_H
 
+#include <QPushButton>
+
 #include "CoreApi/ActionItem.h"
 #include "CoreApi/IWindowAddOn.h"
 
@@ -39,8 +41,16 @@ namespace Core {
             ActionItem *settingsItem;
 
             ActionItem *aboutGroupItem;
+            ActionItem *aboutPluginsItem;
             ActionItem *aboutAppItem;
             ActionItem *aboutQtItem;
+
+            QAbstractButton *recentWidgetButton;
+
+        private:
+            void _q_newButtonClicked();
+            void _q_openButtonClicked();
+
         };
 
     }

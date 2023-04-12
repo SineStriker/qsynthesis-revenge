@@ -41,8 +41,9 @@ CLayoutEqualizerItem::~CLayoutEqualizerItem() {
 }
 
 QSize CLayoutEqualizerItem::sizeHint() const {
-    if (!le) {
-        return realSizeHint();
+    auto rs = realSizeHint();
+    if (!le || rs.width() == 0 || rs.width() == 0) {
+        return rs;
     }
 
     QSize size(0, 0);
@@ -69,13 +70,11 @@ void QMEqualBoxLayout::addWidgetE(QWidget *widget, int stretch, Qt::Alignment al
     insertWidgetE(-1, widget, stretch, alignment);
 }
 
-void QMEqualBoxLayout::insertWidgetE(int index, QWidget *widget, int stretch,
-                                   Qt::Alignment alignment) {
+void QMEqualBoxLayout::insertWidgetE(int index, QWidget *widget, int stretch, Qt::Alignment alignment) {
     auto org = QLayoutPrivate::widgetItemFactoryMethod;
 
     // Exchange method temporarily
-    QLayoutPrivate::widgetItemFactoryMethod = [](const QLayout *layout,
-                                                 QWidget *widget) -> QWidgetItem * {
+    QLayoutPrivate::widgetItemFactoryMethod = [](const QLayout *layout, QWidget *widget) -> QWidgetItem * {
         auto item = new CLayoutEqualizerItem(widget);
         item->le = reinterpret_cast<const QMEqualBoxLayout *>(layout)->d_ptr.data();
         item->le->items.insert(item);

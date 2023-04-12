@@ -2,6 +2,21 @@
 <!DOCTYPE TS>
 <TS version="2.1" language="ja_JP">
 <context>
+    <name>Core::HomeRecentTopFrame</name>
+    <message>
+        <source>New</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Open</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Search for files</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>Core::ICore</name>
     <message>
         <source>About %1</source>
@@ -106,6 +121,14 @@
     </message>
     <message>
         <source>About Qt</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Recent</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>About Plugins</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

@@ -156,7 +156,7 @@ namespace Core {
             // file modified dialog, or of loading large files, has delivered a file change event from
             // a watcher *and* the timer triggered. We may never end up here in a nested way, so
             // recheck later.
-            QTimer::singleShot(200, this, SLOT(checkForReload()));
+            QTimer::singleShot(200, this, &DocumentWatcherPrivate::checkForReload);
             return;
         }
 
@@ -333,8 +333,7 @@ namespace Core {
                     while (unhandled) {
                         if (previousDeletedAnswer != PromptHandler::FileDeletedCloseAll) {
                             previousDeletedAnswer = promptHandler->fileDeletedPrompt(
-                                document->filePath(), trigger == IDocument::TriggerExternal,
-                                QApplication::activeWindow());
+                                document->filePath(), trigger == IDocument::TriggerExternal,document->dialogParent());
                         }
                         switch (previousDeletedAnswer) {
                             case PromptHandler::FileDeletedSave:

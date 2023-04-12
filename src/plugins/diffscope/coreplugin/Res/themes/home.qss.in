@@ -148,22 +148,22 @@ CTabButton[type=home-bottom-button]:pressed {
 
 /* Home Recent Widget */
 
-HomeRecentWidget>QSplitterHandle {
+Core--HomeRecentWidget>QSplitterHandle {
     qproperty-enabled: "{{main.recent.handle.enabled|str|false}}";
 }
 
-HomeRecentWidget::handle {
+Core--HomeRecentWidget::handle {
     background-color: "{{main.recent.handle.color|str}}";
     height: "{{main.recent.handle.width|size}}";
 }
 
-HomeRecentTopFrame {
+Core--HomeRecentTopFrame {
     qproperty-layoutSpacing: "{{main.recent.top.spacing|size}}";
     padding: "{{main.recent.top.padding|size}}";
     margin: "{{main.recent.top.margin|size}}";
 }
 
-HomeRecentWidget>LinearScrollArea {
+Core--HomeRecentWidget>LinearScrollArea {
     background-color:"{{main.recent.bottom.background|str|transparent}}";
     padding: "{{main.recent.bottom.padding|size}}";
     margin: "{{main.recent.bottom.margin|size}}";
@@ -172,18 +172,18 @@ HomeRecentWidget>LinearScrollArea {
     border-style: "{{main.recent.bottom.border.style|str|none}}";
 }
 
-HomeRecentTopFrame>QLineEdit {
+Core--HomeRecentTopFrame>QLineEdit {
     padding: 5px;
 }
 
-HomeRecentTopFrame>CTabButton {
+Core--HomeRecentTopFrame>CTabButton {
     padding: 5px 10px;
 }
 
 
 /* Recent Top Buttons */
 
-HomeRecentTopFrame>CTabButton#new-button {
+Core--HomeRecentTopFrame>CTabButton#new-button {
     qproperty-iconUp: svg(":/svg/home/new-file.svg", "{{main.recent.top.buttons.icon.up|str}}");
     qproperty-iconOver: svg(":/svg/home/new-file.svg", "{{main.recent.top.buttons.icon.over|str}}");
     qproperty-iconDown: svg(":/svg/home/new-file.svg", "{{main.recent.top.buttons.icon.down|str}}");
@@ -192,7 +192,7 @@ HomeRecentTopFrame>CTabButton#new-button {
     qproperty-iconDownChecked: svg(":/svg/home/new-file.svg", "{{main.recent.top.buttons.icon.down.checked|str}}");
 }
 
-HomeRecentTopFrame>CTabButton#open-button {
+Core--HomeRecentTopFrame>CTabButton#open-button {
     qproperty-iconUp: svg(":/svg/home/open-file.svg", "{{main.recent.top.buttons.icon.up|str}}");
     qproperty-iconOver: svg(":/svg/home/open-file.svg", "{{main.recent.top.buttons.icon.over|str}}");
     qproperty-iconDown: svg(":/svg/home/open-file.svg", "{{main.recent.top.buttons.icon.down|str}}");
@@ -201,7 +201,7 @@ HomeRecentTopFrame>CTabButton#open-button {
     qproperty-iconDownChecked: svg(":/svg/home/open-file.svg", "{{main.recent.top.buttons.icon.down.checked|str}}");
 }
 
-HomeRecentTopFrame>CTabButton#import-button {
+Core--HomeRecentTopFrame>CTabButton#import-button {
     qproperty-iconUp: svg(":/svg/home/import-file.svg", "{{main.recent.top.buttons.icon.up|str}}");
     qproperty-iconOver: svg(":/svg/home/import-file.svg", "{{main.recent.top.buttons.icon.over|str}}");
     qproperty-iconDown: svg(":/svg/home/import-file.svg", "{{main.recent.top.buttons.icon.down|str}}");
@@ -210,7 +210,7 @@ HomeRecentTopFrame>CTabButton#import-button {
     qproperty-iconDownChecked: svg(":/svg/home/import-file.svg", "{{main.recent.top.buttons.icon.down.checked|str}}");
 }
 
-HomeRecentTopFrame>CTabButton[type=top-button] {
+Core--HomeRecentTopFrame>CTabButton[type=top-button] {
     qproperty-iconSize: "{{main.recent.top.buttons.icon.size|size}}";
     qproperty-spaceRatio: "{{main.recent.top.buttons.spacing|num|0.2}}";
     background-color: "{{main.recent.top.buttons.background.up|str}}";
@@ -225,7 +225,7 @@ HomeRecentTopFrame>CTabButton[type=top-button] {
     font-size: "{{main.recent.top.buttons.font.size|size}}";
 }
 
-HomeRecentTopFrame>CTabButton[type=top-button]:hover {
+Core--HomeRecentTopFrame>CTabButton[type=top-button]:hover {
     background-color: "{{main.recent.top.buttons.background.over|str}}";
     color: "{{main.recent.top.buttons.color.over|str}}";
     border-color: "{{main.recent.top.buttons.border.color.over|str}}";
@@ -234,7 +234,7 @@ HomeRecentTopFrame>CTabButton[type=top-button]:hover {
     border-radius: "{{main.recent.top.buttons.border.radius.over|size}}";
 }
 
-HomeRecentTopFrame>CTabButton[type=top-button]:pressed {
+Core--HomeRecentTopFrame>CTabButton[type=top-button]:pressed {
     background-color: "{{main.recent.top.buttons.background.down|str}}";
     color: "{{main.recent.top.buttons.color.down|str}}";
     border-color: "{{main.recent.top.buttons.border.color.down|str}}";
@@ -243,7 +243,7 @@ HomeRecentTopFrame>CTabButton[type=top-button]:pressed {
     border-radius: "{{main.recent.top.buttons.border.radius.down|size}}";
 }
 
-HomeRecentTopFrame>QLineEdit#search-box {
+Core--HomeRecentTopFrame>QLineEdit#search-box {
     background-color: "{{main.recent.top.textBox.background.up|str}}";
     color: "{{main.recent.top.textBox.color.up|str}}";
     border-color: "{{main.recent.top.textBox.border.color.up|str}}";
@@ -255,7 +255,7 @@ HomeRecentTopFrame>QLineEdit#search-box {
     font-size: "{{main.recent.top.textBox.font.size|size}}";
 }
 
-HomeRecentTopFrame>QLineEdit#search-box:focus {
+Core--HomeRecentTopFrame>QLineEdit#search-box:focus {
     background-color: "{{main.recent.top.textBox.background.focus|str}}";
     color: "{{main.recent.top.textBox.color.focus|str}}";
     border-color: "{{main.recent.top.textBox.border.color.focus|str}}";

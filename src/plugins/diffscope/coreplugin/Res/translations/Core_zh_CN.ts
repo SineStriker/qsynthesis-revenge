@@ -17,6 +17,21 @@
     </message>
 </context>
 <context>
+    <name>Core::HomeRecentTopFrame</name>
+    <message>
+        <source>New</source>
+        <translation>新建</translation>
+    </message>
+    <message>
+        <source>Open</source>
+        <translation>打开</translation>
+    </message>
+    <message>
+        <source>Search for files</source>
+        <translation>搜索文件</translation>
+    </message>
+</context>
+<context>
     <name>Core::ICore</name>
     <message>
         <source>About %1</source>
@@ -137,6 +152,14 @@
     <message>
         <source>About Qt</source>
         <translation>关于 Qt</translation>
+    </message>
+    <message>
+        <source>Recent</source>
+        <translation>最近</translation>
+    </message>
+    <message>
+        <source>About Plugins</source>
+        <translation>关于插件</translation>
     </message>
 </context>
 <context>

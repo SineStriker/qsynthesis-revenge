@@ -15,10 +15,12 @@
             "dir": "${FILEPATH}/${CURRENT_KEY}.res/themes",
             "files": {
                 "Zhibin - Dark": [
-                    "import-dialog-dark.json"
+                    "import-dialog-dark.json",
+                    "iemgr-addons-dark.json"
                 ],
                 "Zhibin - Light": [
-                    "import-dialog-light.json"
+                    "import-dialog-light.json",
+                    "iemgr-addons-light.json"
                 ]
             }
         }

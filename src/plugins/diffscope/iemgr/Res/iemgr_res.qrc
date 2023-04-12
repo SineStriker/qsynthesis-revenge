@@ -1,6 +1,8 @@
 <RCC>
     <qresource prefix="/">
         <file>iemgr_actions.xml</file>
+        <file>svg/home/import-file.svg</file>
         <file>themes/import-dialog.qss.in</file>
+        <file>themes/iemgr-addons.qss.in</file>
     </qresource>
 </RCC>

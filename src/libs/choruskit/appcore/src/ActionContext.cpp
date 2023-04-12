@@ -59,7 +59,6 @@ namespace Core {
         d->rules = rules;
 
         d->d->setDirty();
-        emit d->d->q_ptr->actionRulesChanged(d->id, rules);
     }
 
     ActionContextItem::ActionContextItem(ActionContextItemPrivate *d) : d(d) {
@@ -106,7 +105,6 @@ namespace Core {
         auto it = d->actions.append(id, {d, id, isGroup, {}, {}});
 
         d->setDirty();
-        emit actionAdded(id);
 
         return ActionContextItem(&(it.value()));
     }
@@ -121,7 +119,6 @@ namespace Core {
         d->actions.erase(it);
 
         d->setDirty();
-        emit actionRemoved(id);
     }
 
     ActionContextItem ActionContext::action(const QString &id) {

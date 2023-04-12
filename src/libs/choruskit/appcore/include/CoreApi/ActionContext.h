@@ -89,11 +89,6 @@ namespace Core {
         void titleChanged(const QString &title);
         void stateChanged();
 
-        void actionAdded(const QString &id);
-        void actionRemoved(const QString &id);
-
-        void actionRulesChanged(const QString &id, const QList<ActionInsertRule> &rules);
-
     protected:
         ActionContext(ActionContextPrivate &d, const QString &id, QObject *parent = nullptr);
 

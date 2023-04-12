@@ -77,6 +77,7 @@ namespace IEMgr {
             imgr->addWizard(new Internal::SvipWizard());
 
             qIDec->addThemeTemplate("IEMgr_ImportDialog", ":/themes/import-dialog.qss.in");
+            qIDec->addThemeTemplate("IEMgr_AddOns", ":/themes/iemgr-addons.qss.in");
 
             return true;
         }

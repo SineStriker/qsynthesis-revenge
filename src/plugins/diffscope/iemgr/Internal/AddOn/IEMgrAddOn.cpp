@@ -5,6 +5,11 @@
 
 #include <QMDecorator.h>
 
+#include <QDebug>
+#include <QMetaObject>
+
+// #include <extensionsystem/invoker.h>
+
 namespace IEMgr::Internal {
 
     using namespace Core;
@@ -28,6 +33,29 @@ namespace IEMgr::Internal {
 
         initActions();
 
+        // Test add button
+        {
+            importButton = nullptr;
+
+            auto buttonsLayout = iWin->widget("core.recentWidget.buttonsLayout");
+            if (buttonsLayout) {
+                QAbstractButton *button;
+
+                bool res = QMetaObject::invokeMethod(buttonsLayout, "addButton", Qt::DirectConnection,
+                                                     Q_RETURN_ARG(QAbstractButton *, button), // Ret
+                                                     Q_ARG(QString, "import-button")          // Arg
+                );
+
+                if (res) {
+                    button->setObjectName("import-button");
+                    connect(button, &QAbstractButton::clicked, this, &IEMgrAddOn::_q_importButtonClicked);
+                    importButton = button;
+
+                    qIDec->installTheme(importButton, {"IEMgr_AddOns"});
+                }
+            }
+        }
+
         qIDec->installLocale(this, {{}}, _LOC(IEMgrAddOn, this));
     }
 
@@ -42,6 +70,10 @@ namespace IEMgr::Internal {
         exportItem->setText(tr("Export"));
         exportProjectItem->setText(tr("Export Project"));
         exportAudioItem->setText(tr("Export Audio"));
+
+        if (importButton) {
+            importButton->setText(tr("Import"));
+        }
     }
 
     void IEMgrAddOn::initActions() {
@@ -84,5 +116,9 @@ namespace IEMgr::Internal {
             exportProjectItem,
             exportAudioItem,
         });
+    }
+
+    void IEMgrAddOn::_q_importButtonClicked() {
+        importProjectItem->action()->trigger();
     }
 }

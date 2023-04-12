@@ -13,6 +13,7 @@
 
         <menu id="Help">
             <group id="AboutGroup">
+                <action id="AboutPlugins"/>
                 <action id="AboutApp"/>
                 <action id="AboutQt"/>
             </group>

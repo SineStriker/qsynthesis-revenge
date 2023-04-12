@@ -1,0 +1,18 @@
+/* Configuration */
+
+Config {
+    pattern: "\\\"\\{\\{(.*?)\\}\\}\\\"";
+    separator: "|";
+}
+
+
+/* Stylesheet Content */
+
+Core--HomeRecentTopFrame>CTabButton#import-button {
+    qproperty-iconUp: svg(":/svg/home/import-file.svg", "{{home.buttons.icon.up|str}}");
+    qproperty-iconOver: svg(":/svg/home/import-file.svg", "{{home.buttons.icon.over|str}}");
+    qproperty-iconDown: svg(":/svg/home/import-file.svg", "{{home.buttons.icon.down|str}}");
+    qproperty-iconUpChecked: svg(":/svg/home/import-file.svg", "{{home.buttons.icon.up.checked|str}}");
+    qproperty-iconOverChecked: svg(":/svg/home/import-file.svg", "{{home.buttons.icon.over.checked|str}}");
+    qproperty-iconDownChecked: svg(":/svg/home/import-file.svg", "{{home.buttons.icon.down.checked|str}}");
+}

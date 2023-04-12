@@ -37,13 +37,6 @@ namespace Core {
         QMap<QString, QStringList> stateCache(const QString &id);
         void setStateCache(const QString &id, const QMap<QString, QStringList> &state);
 
-    signals:
-        void actionAdded(const QString &id);
-        void actionRemoved(const QString &id);
-
-        void contextAdded(const QString &id);
-        void contextRemoved(const QString &id);
-
     protected:
         QScopedPointer<ActionSystemPrivate> d_ptr;
         ActionSystem(ActionSystemPrivate &d, QObject *parent = nullptr);

@@ -1,0 +1,15 @@
+{
+    "config": {
+        "priority": 10,
+        "ratio": 0.8
+    },
+    "values": {
+        "IEMgr_AddOns": {
+            "home.buttons": {
+                "icon": {
+                    "up": "#FFFFFF"
+                }
+            }
+        }
+    }
+}
