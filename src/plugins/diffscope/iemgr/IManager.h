@@ -28,7 +28,7 @@ namespace IEMgr {
 
     public:
         void runImport(IWizardContext *context, QWidget *parent = nullptr);
-        void runExport(IWizardContext *context,QWidget *parent = nullptr);
+        void runExport(IWizardContext *context, QWidget *parent = nullptr);
 
         bool isRunning() const;
 

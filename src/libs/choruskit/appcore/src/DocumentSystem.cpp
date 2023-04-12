@@ -9,7 +9,6 @@
 #include <QMSystem.h>
 
 #include <QApplication>
-#include <QDir>
 #include <QFileDialog>
 #include <QFileInfo>
 #include <QJsonArray>
@@ -96,35 +95,35 @@ namespace Core {
         d->saveSettings();
     }
 
-    bool DocumentSystem::addDocument(DocumentSpec *document) {
+    bool DocumentSystem::addDocType(DocumentSpec *doc) {
         Q_D(DocumentSystem);
-        if (!document) {
-            qWarning() << "Core::DocumentSystem::addDocument(): trying to add null document";
+        if (!doc) {
+            qWarning() << "Core::DocumentSystem::addDocType(): trying to add null document";
             return false;
         }
-        if (d->documents.contains(document->id())) {
-            qWarning() << "Core::DocumentSystem::addDocument(): trying to add duplicated document:" << document->id();
+        if (d->documents.contains(doc->id())) {
+            qWarning() << "Core::DocumentSystem::addDocType(): trying to add duplicated document:" << doc->id();
             return false;
         }
-        document->setParent(this);
-        d->documents.append(document->id(), document);
+        doc->setParent(this);
+        d->documents.append(doc->id(), doc);
 
         return true;
     }
 
-    bool DocumentSystem::removeDocument(DocumentSpec *document) {
-        if (document == nullptr) {
-            qWarning() << "Core::DocumentSystem::removeDocument(): trying to remove null document";
+    bool DocumentSystem::removeDocType(DocumentSpec *doc) {
+        if (doc == nullptr) {
+            qWarning() << "Core::DocumentSystem::removeDocType(): trying to remove null document";
             return false;
         }
-        return removeDocument(document->id());
+        return removeDocType(doc->id());
     }
 
-    bool DocumentSystem::removeDocument(const QString &id) {
+    bool DocumentSystem::removeDocType(const QString &id) {
         Q_D(DocumentSystem);
         auto it = d->documents.find(id);
         if (it == d->documents.end()) {
-            qWarning() << "Core::DocumentSystem::removeDocument(): document does not exist:" << id;
+            qWarning() << "Core::DocumentSystem::removeDocType(): document does not exist:" << id;
             return false;
         }
 
@@ -135,17 +134,17 @@ namespace Core {
         return true;
     }
 
-    DocumentSpec *DocumentSystem::document(const QString &id) const {
+    DocumentSpec *DocumentSystem::docType(const QString &id) const {
         Q_D(const DocumentSystem);
         return d->documents.value(id, nullptr);
     }
 
-    QList<DocumentSpec *> DocumentSystem::documents() const {
+    QList<DocumentSpec *> DocumentSystem::docTypes() const {
         Q_D(const DocumentSystem);
         return d->documents.values();
     }
 
-    QStringList DocumentSystem::documentIds() const {
+    QStringList DocumentSystem::docTypeIds() const {
         Q_D(const DocumentSystem);
         return d->documents.keys();
     }
@@ -206,90 +205,94 @@ namespace Core {
         Q_D(const DocumentSystem);
         auto filter =
             spec->filter() + ";;" +
-            QString("%1(%2)").arg(QApplication::translate("DocumentSystem", "All Files"), QMOs::allFilesFilter());
-        auto path2 = getOpenFileName(parent, filter, path);
+            QString("%1(%2)").arg(QApplication::translate("Core::DocumentSystem", "All Files"), QMOs::allFilesFilter());
+        auto path2 = getOpenFileName(parent, {}, filter, path);
         if (path2.isEmpty()) {
             return false;
         }
         return spec->open(path2);
     }
 
-    bool DocumentSystem::openDirBrowse(DocumentSpec *spec, const QString &path, QWidget *parent) const {
+    QString DocumentSystem::getOpenFileName(QWidget *parent, const QString &title, const QString &filters,
+                                            const QString &path, QString *selectedFilter) const {
         Q_D(const DocumentSystem);
-        auto path2 = getExistingDirectory(parent, path);
-        if (path2.isEmpty()) {
-            return false;
+        auto res = QFileDialog::getOpenFileName(
+            parent, title.isEmpty() ? QApplication::translate("Core::DocumentSystem", "Open File") : title,
+            path.isEmpty() ? d->openFileLastVisitDir : path, filters, selectedFilter);
+        if (!res.isEmpty()) {
+            d->openFileLastVisitDir = QMFs::PathFindDirPath(res);
         }
-        return spec->open(path2);
+        return res;
     }
 
-    bool DocumentSystem::saveFileBrowse(IDocument *iDoc, const QString &path, QWidget *parent) const {
+    QStringList DocumentSystem::getOpenFileNames(QWidget *parent, const QString &title, const QString &filters,
+                                                 const QString &path, QString *selectedFilter) const {
         Q_D(const DocumentSystem);
-        auto spec = iDoc->d_ptr->spec;
+        auto res = QFileDialog::getOpenFileNames(
+            parent, title.isEmpty() ? QApplication::translate("Core::DocumentSystem", "Open Files") : title,
+            path.isEmpty() ? d->openFileLastVisitDir : path, filters, selectedFilter);
+        if (!res.isEmpty()) {
+            d->openFileLastVisitDir = QMFs::PathFindDirPath(res.first());
+        }
+        return res;
+    }
+
+    QString DocumentSystem::getExistingDirectory(QWidget *parent, const QString &title, const QString &path) const {
+        Q_D(const DocumentSystem);
+        auto res = QFileDialog::getExistingDirectory(
+            parent, title.isEmpty() ? QApplication::translate("Core::DocumentSystem", "Open Directory") : title,
+            path.isEmpty() ? d->openDirLastVisitDir : path);
+        if (!res.isEmpty()) {
+            d->openDirLastVisitDir = QMFs::PathFindDirPath(res);
+        }
+        return res;
+    }
+
+    QString DocumentSystem::getSaveFileName(QWidget *parent, const QString &title, const QString &path,
+                                            const QString &filter, QString *selectedFilter) const {
+        Q_D(const DocumentSystem);
+        auto res = QFileDialog::getSaveFileName(
+            parent, title.isEmpty() ? QApplication::translate("Core::DocumentSystem", "Save File") : title,
+            path.isEmpty() ? d->saveFileLastVisitDir : path, filter, selectedFilter);
+        if (!res.isEmpty()) {
+            d->saveFileLastVisitDir = QMFs::PathFindDirPath(res);
+        }
+        return res;
+    }
+
+    QString DocumentSystem::getSaveAsFileName(const IDocument *document, QWidget *parent) {
+        Q_D(const DocumentSystem);
+        auto spec = document->d_ptr->spec;
         if (!spec) {
-            return false;
+            return {};
         }
 
         auto filter =
             spec->filter() + ";;" +
-            QString("%1(%2)").arg(QApplication::translate("DocumentSystem", "All Files"), QMOs::allFilesFilter());
-        auto path2 = getSaveFileName(parent, filter, path);
-        if (path2.isEmpty()) {
-            return false;
-        }
+            QString("%1(%2)").arg(QApplication::translate("Core::DocumentSystem", "All Files"), QMOs::allFilesFilter());
 
-        return spec->open(path2);
-    }
-
-    QString DocumentSystem::getOpenFileName(QWidget *parent, const QString &filters, const QString &path,
-                                            QString *selectedFilter) const {
-        Q_D(const DocumentSystem);
-        return QFileDialog::getOpenFileName(parent, QApplication::translate("DocumentSystem", "Open File"),
-                                            path.isEmpty() ? d->openFileLastVisitDir : path, filters, selectedFilter);
-    }
-
-    QStringList DocumentSystem::getOpenFileNames(QWidget *parent, const QString &filters, const QString &path,
-                                                 QString *selectedFilter) const {
-        Q_D(const DocumentSystem);
-        return QFileDialog::getOpenFileNames(parent, QApplication::translate("DocumentSystem", "Open Files"),
-                                             path.isEmpty() ? d->openFileLastVisitDir : path, filters, selectedFilter);
-    }
-
-    QString DocumentSystem::getExistingDirectory(QWidget *parent, const QString &path) const {
-        Q_D(const DocumentSystem);
-        return QFileDialog::getExistingDirectory(parent, QApplication::translate("DocumentSystem", "Open Directory"),
-                                                 path.isEmpty() ? d->openDirLastVisitDir : path);
-    }
-
-    QString DocumentSystem::getSaveFileName(QWidget *parent, const QString &path, const QString &filter,
-                                            QString *selectedFilter) const {
-        Q_D(const DocumentSystem);
-        return QFileDialog::getSaveFileName(parent, QApplication::translate("DocumentSystem", "Save File"),
-                                            path.isEmpty() ? d->saveFileLastVisitDir : path, filter, selectedFilter);
-    }
-
-    QString DocumentSystem::fixFileName(const QString &fileName, DocumentSystem::FixMode fixmode) {
-        QString s = fileName;
-        QFileInfo fi(s);
-        if (fi.exists()) {
-            if (fixmode == ResolveLinks)
-                s = fi.canonicalFilePath();
-            else
-                s = QDir::cleanPath(fi.absoluteFilePath());
+        QString absoluteFilePath = document->filePath();
+        const QFileInfo fi(absoluteFilePath);
+        QString path;
+        QString fileName;
+        if (absoluteFilePath.isEmpty()) {
+            fileName = document->suggestedFileName();
+            const QString defaultPath = document->defaultPath();
+            if (!defaultPath.isEmpty())
+                path = defaultPath;
         } else {
-            s = QDir::cleanPath(s);
+            path = fi.absolutePath();
+            fileName = fi.fileName();
         }
-        s = QDir::toNativeSeparators(s);
-#ifndef Q_OS_LINUX
-        s = s.toLower();
-#endif
-        return s;
+
+        return getSaveFileName(parent, QApplication::translate("Core::DocumentSystem", "Save As File"),
+                               path + QLatin1Char('/') + fileName, filter);
     }
 
-    DocumentSystem::DocumentSystem(DocumentSystemPrivate &d, QObject *parent) : QObject(parent), d_ptr(&d) {
+    DocumentSystem::DocumentSystem(DocumentSystemPrivate &d, QObject *parent) : DocumentWatcher(d, parent) {
         m_instance = this;
 
-        d.q_ptr = this;
         d.init();
     }
+
 }

@@ -126,6 +126,99 @@
     </message>
 </context>
 <context>
+    <name>Core::DocumentSystem</name>
+    <message>
+        <source>All Files</source>
+        <translation>所有文件</translation>
+    </message>
+    <message>
+        <source>Open File</source>
+        <translation>打开文件</translation>
+    </message>
+    <message>
+        <source>Open Files</source>
+        <translation>打开文件</translation>
+    </message>
+    <message>
+        <source>Open Directory</source>
+        <translation>打开文件夹</translation>
+    </message>
+    <message>
+        <source>Save File</source>
+        <translation>保存文件</translation>
+    </message>
+    <message>
+        <source>Save As File</source>
+        <translation>文件另存为</translation>
+    </message>
+</context>
+<context>
+    <name>Core::DocumentWatcher</name>
+    <message>
+        <source>File Error</source>
+        <translation>文件错误</translation>
+    </message>
+    <message>
+        <source>Cannot reload %1</source>
+        <translation>无法重新加载%1</translation>
+    </message>
+    <message>
+        <source>Error while saving file: %1</source>
+        <translation>保存文件时发生错误：%1</translation>
+    </message>
+    <message>
+        <source>Save As File</source>
+        <translation>文件另存为</translation>
+    </message>
+</context>
+<context>
+    <name>Core::PromptHandler</name>
+    <message>
+        <source>All Files</source>
+        <translation>所有文件</translation>
+    </message>
+    <message>
+        <source>File Changed</source>
+        <translation>文件已被修改</translation>
+    </message>
+    <message>
+        <source>The unsaved file &lt;i&gt;%1&lt;/i&gt; has changed outside. Do you want to reload it and discard your changes?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>The file &lt;i&gt;%1&lt;/i&gt; has changed outside. Do you want to reload it?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>File has been removed</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>The file %1 has been removed outside. Do you want to save it under a different name, or close the editor?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>The file %1 was removed. Do you want to save it under a different name, or close the editor?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Close</source>
+        <translation>关闭(&amp;C)</translation>
+    </message>
+    <message>
+        <source>C&amp;lose All</source>
+        <translation>关闭全部(&amp;L)</translation>
+    </message>
+    <message>
+        <source>Save &amp;as...</source>
+        <translation>另存为...(&amp;A)</translation>
+    </message>
+    <message>
+        <source>&amp;Save</source>
+        <translation>保存(&amp;S)</translation>
+    </message>
+</context>
+<context>
     <name>Core::WorkflowPagePrivate</name>
     <message>
         <source>Previous</source>
@@ -163,23 +256,23 @@
     <name>DocumentSystem</name>
     <message>
         <source>All Files</source>
-        <translation>所有文件</translation>
+        <translation type="vanished">所有文件</translation>
     </message>
     <message>
         <source>Open File</source>
-        <translation>打开文件</translation>
+        <translation type="vanished">打开文件</translation>
     </message>
     <message>
         <source>Open Files</source>
-        <translation>打开文件</translation>
+        <translation type="vanished">打开文件</translation>
     </message>
     <message>
         <source>Open Directory</source>
-        <translation>打开文件夹</translation>
+        <translation type="vanished">打开文件夹</translation>
     </message>
     <message>
         <source>Save File</source>
-        <translation>保存文件</translation>
+        <translation type="vanished">保存文件</translation>
     </message>
 </context>
 <context>

@@ -19,7 +19,7 @@ namespace Core {
     }
 
     bool IDocumentPrivate::getSpec() {
-        spec = ICoreBase::instance()->documentSystem()->document(id);
+        spec = ICoreBase::instance()->documentSystem()->docType(id);
         if (!spec) {
             qWarning() << "IDocument: document is not registered to Document:" << id;
             return false;
@@ -133,6 +133,33 @@ namespace Core {
 
     bool IDocument::isSaveAsAllowed() const {
         return false;
+    }
+
+    IDocument::ReloadBehavior IDocument::reloadBehavior(IDocument::ChangeTrigger state,
+                                                        IDocument::ChangeType type) const {
+        switch (type) {
+            case TypePermissions:
+                return BehaviorSilent;
+            case TypeContents:
+                if (state == TriggerInternal && !isModified())
+                    return BehaviorSilent;
+                break;
+            default:
+                break;
+        }
+        return BehaviorAsk;
+    }
+
+    void IDocument::close() {
+        emit closeRequested();
+    }
+
+    QWidget *IDocument::dialogParent() const {
+        auto p = parent();
+        while (p->parent()) {
+            p = p->parent();
+        }
+        return p->isWidgetType() ? qobject_cast<QWidget *>(p) : nullptr;
     }
 
     IDocument::IDocument(IDocumentPrivate &d, const QString &id, QObject *parent) : QObject(parent), d_ptr(&d) {

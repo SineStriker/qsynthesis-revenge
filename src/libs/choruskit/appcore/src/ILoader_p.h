@@ -22,8 +22,8 @@ namespace Core {
         QString globalSettingsPath;
         QString settingsPath;
 
-        bool settingsUnread;
-        bool settingsNeedWrite;
+        mutable bool settingsUnread;
+        mutable bool settingsNeedWrite;
 
         QJsonObject globalSettings;
         QJsonObject userSettings;

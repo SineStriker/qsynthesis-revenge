@@ -99,7 +99,7 @@
     </message>
 </context>
 <context>
-    <name>DocumentSystem</name>
+    <name>Core::DocumentSystem</name>
     <message>
         <source>All Files</source>
         <translation type="unfinished"></translation>
@@ -118,6 +118,76 @@
     </message>
     <message>
         <source>Save File</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Save As File</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>Core::DocumentWatcher</name>
+    <message>
+        <source>File Error</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Cannot reload %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Error while saving file: %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Save As File</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>Core::PromptHandler</name>
+    <message>
+        <source>All Files</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>File Changed</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>The unsaved file &lt;i&gt;%1&lt;/i&gt; has changed outside. Do you want to reload it and discard your changes?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>The file &lt;i&gt;%1&lt;/i&gt; has changed outside. Do you want to reload it?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>File has been removed</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>The file %1 has been removed outside. Do you want to save it under a different name, or close the editor?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>The file %1 was removed. Do you want to save it under a different name, or close the editor?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Close</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>C&amp;lose All</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Save &amp;as...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Save</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

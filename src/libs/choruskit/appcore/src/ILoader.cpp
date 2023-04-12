@@ -117,8 +117,8 @@ namespace Core {
         d->settingsUnread = false;
     }
 
-    void ILoader::writeSettings() {
-        Q_D(ILoader);
+    void ILoader::writeSettings() const {
+        Q_D(const ILoader);
         if (!d->settingsPath.isEmpty()) {
             ILoaderPrivate::writeJson(d->settingsPath, d->userSettings);
         }

@@ -6,29 +6,30 @@
 #include <Collections/QMChronMap.h>
 #include <Collections/QMChronSet.h>
 
+#include "DocumentWatcher_p.h"
+
 namespace Core {
 
-    class DocumentSystemPrivate {
+    class DocumentSystemPrivate : public DocumentWatcherPrivate {
+        Q_OBJECT
         Q_DECLARE_PUBLIC(DocumentSystem)
     public:
         DocumentSystemPrivate();
-        virtual ~DocumentSystemPrivate();
+        ~DocumentSystemPrivate();
 
         void init();
 
         void readSettings();
         void saveSettings() const;
 
-        DocumentSystem *q_ptr;
-
         QMChronMap<QString, DocumentSpec *> documents;
 
         QStringList m_recentFiles;
         QStringList m_recentDirs;
 
-        QString openFileLastVisitDir;
-        QString openDirLastVisitDir;
-        QString saveFileLastVisitDir;
+        mutable QString openFileLastVisitDir;
+        mutable QString openDirLastVisitDir;
+        mutable QString saveFileLastVisitDir;
     };
 
 }

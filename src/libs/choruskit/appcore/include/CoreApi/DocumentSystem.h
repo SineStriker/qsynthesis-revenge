@@ -2,13 +2,13 @@
 #define DOCUMENTSYSTEM_H
 
 #include "DocumentSpec.h"
-#include "IDocument.h"
+#include "DocumentWatcher.h"
 
 namespace Core {
 
     class DocumentSystemPrivate;
 
-    class CKAPPCORE_API DocumentSystem : public QObject {
+    class CKAPPCORE_API DocumentSystem : public DocumentWatcher {
         Q_OBJECT
         Q_DECLARE_PRIVATE(DocumentSystem)
     public:
@@ -16,12 +16,12 @@ namespace Core {
         ~DocumentSystem();
 
     public:
-        bool addDocument(DocumentSpec *doc);
-        bool removeDocument(DocumentSpec *doc);
-        bool removeDocument(const QString &id);
-        DocumentSpec *document(const QString &id) const;
-        QList<DocumentSpec *> documents() const;
-        QStringList documentIds() const;
+        bool addDocType(DocumentSpec *doc);
+        bool removeDocType(DocumentSpec *doc);
+        bool removeDocType(const QString &id);
+        DocumentSpec *docType(const QString &id) const;
+        QList<DocumentSpec *> docTypes() const;
+        QStringList docTypeIds() const;
 
         // recent files
         void addRecentFile(const QString &fileName);
@@ -33,28 +33,22 @@ namespace Core {
         void clearRecentDirs();
         QStringList recentDirs() const;
 
-    public:
         bool openFileBrowse(DocumentSpec *spec, const QString &path = {}, QWidget *parent = nullptr) const;
 
-        bool openDirBrowse(DocumentSpec *spec, const QString &path = {}, QWidget *parent = nullptr) const;
-
-        bool saveFileBrowse(IDocument *iDoc, const QString &path = {}, QWidget *parent = nullptr) const;
-
-        QString getOpenFileName(QWidget *parent, const QString &filters, const QString &path = {},
-                                QString *selectedFilter = nullptr) const;
-
-        QStringList getOpenFileNames(QWidget *parent, const QString &filters, const QString &path = {},
-                                     QString *selectedFilter = nullptr) const;
-
-        QString getExistingDirectory(QWidget *parent, const QString &path = {}) const;
-
-        QString getSaveFileName(QWidget *parent, const QString &path = {}, const QString &filter = QString(),
-                                QString *selectedFilter = nullptr) const;
-
     public:
-        enum FixMode { ResolveLinks, KeepLinks };
+        QString getOpenFileName(QWidget *parent, const QString &title, const QString &filters, const QString &path = {},
+                                QString *selectedFilter = nullptr) const;
 
-        static QString fixFileName(const QString &fileName, FixMode fixmode);
+        QStringList getOpenFileNames(QWidget *parent, const QString &title, const QString &filters,
+                                     const QString &path = {}, QString *selectedFilter = nullptr) const;
+
+        QString getExistingDirectory(QWidget *parent, const QString &title, const QString &path = {}) const;
+
+        QString getSaveFileName(QWidget *parent, const QString &title, const QString &path = {},
+                                const QString &filter = QString(), QString *selectedFilter = nullptr) const;
+
+    protected:
+        QString getSaveAsFileName(const IDocument *document, QWidget *parent) override;
 
     signals:
         void recentFilesChanged();
@@ -62,8 +56,6 @@ namespace Core {
 
     protected:
         DocumentSystem(DocumentSystemPrivate &d, QObject *parent = nullptr);
-
-        QScopedPointer<DocumentSystemPrivate> d_ptr;
     };
 
 }

@@ -16,6 +16,14 @@ namespace Core {
         explicit IDocument(const QString &id, QObject *parent = nullptr);
         ~IDocument();
 
+        enum ChangeTrigger { TriggerInternal, TriggerExternal };
+
+        enum ChangeType { TypeContents, TypePermissions, TypeRemoved };
+
+        enum ReloadBehavior { BehaviorAsk, BehaviorSilent };
+
+        enum ReloadFlag { FlagReload, FlagIgnore };
+
     public:
         virtual bool open(const QString &filename) = 0;
         virtual bool save(const QString &filename) = 0;
@@ -46,9 +54,21 @@ namespace Core {
         virtual bool isModified() const = 0;
         virtual bool isSaveAsAllowed() const;
 
+        virtual ReloadBehavior reloadBehavior(ChangeTrigger state, ChangeType type) const;
+
+        virtual bool reload(QString *errorString, ReloadFlag flag, ChangeType type) = 0;
+        virtual void close();
+
+        virtual QWidget *dialogParent() const;
+
     signals:
         void changed();
         void mimeTypeChanged();
+
+        void aboutToReload();
+        void reloadFinished(bool success);
+
+        void closeRequested();
 
         void filePathChanged(const QString &oldName, const QString &newName);
 

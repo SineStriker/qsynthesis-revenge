@@ -97,7 +97,7 @@ namespace Core {
             // Add mime types
             auto docMgr = icore->documentSystem();
 
-            docMgr->addDocument(new DspxSpec());
+            docMgr->addDocType(new DspxSpec());
 
             qIDec->addThemeTemplate("Global", ":/themes/global.qss.in");
             qIDec->addThemeTemplate("HomeWindow", ":/themes/home.qss.in");

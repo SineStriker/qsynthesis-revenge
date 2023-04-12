@@ -86,7 +86,7 @@ namespace Core {
 
             connect(openFileItem->action(), &QAction::triggered, this, [this]() {
                 auto docMgr = ICore::instance()->documentSystem();
-                docMgr->openFileBrowse(docMgr->document("core.Dspx"));
+                docMgr->openFileBrowse(docMgr->docType("core.Dspx"));
             });
 
             connect(settingsItem->action(), &QAction::triggered, this, [this]() {

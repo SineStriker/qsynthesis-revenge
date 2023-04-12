@@ -25,7 +25,7 @@ namespace Core {
         void setSettingsPath(QSettings::Scope scope, const QString &path);
 
         void readSettings();
-        void writeSettings();
+        void writeSettings() const;
 
         QJsonObject *settings(QSettings::Scope scope = QSettings::UserScope);
 
