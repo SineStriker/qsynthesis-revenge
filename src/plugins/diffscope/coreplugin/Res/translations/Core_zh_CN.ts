@@ -92,6 +92,10 @@
         <source>Failed to load action configuration!</source>
         <translation>无法加载菜单项配置信息！</translation>
     </message>
+    <message>
+        <source>Initializing user interface...</source>
+        <translation type="unfinished">初始化用户界面...</translation>
+    </message>
 </context>
 <context>
     <name>Core::Internal::DisplayPage</name>

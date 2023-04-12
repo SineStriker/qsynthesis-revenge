@@ -42,6 +42,8 @@ namespace Core {
 
         static CorePluginPrivate *d = nullptr;
 
+        static QSplashScreen *m_splash = nullptr;
+
         CorePlugin::CorePlugin() {
         }
 
@@ -58,6 +60,7 @@ namespace Core {
             if (splash) {
                 splash->showMessage(tr("Initializing core plugin..."));
             }
+            m_splash = splash;
             // QThread::msleep(2000);
 
             // Init ICore instance
@@ -113,6 +116,9 @@ namespace Core {
             // PluginDialog dlg(nullptr);
             // dlg.exec();
 
+            if (m_splash)
+                m_splash->showMessage(tr("Initializing user interface..."));
+
             auto winMgr = icore->windowSystem();
             auto handle = winMgr->createWindow("home");
 
@@ -134,10 +140,9 @@ namespace Core {
 
         void CorePlugin::waitSplash(QWidget *w) {
             // Get splash screen handle
-            auto splash = qobject_cast<QSplashScreen *>(ILoader::instance()->getFirstObject("choruskit_init_splash"));
-            if (splash) {
-                splash->finish(w);
-            }
+
+            if (m_splash)
+                m_splash->finish(w);
         }
 
     }

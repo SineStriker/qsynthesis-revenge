@@ -29,6 +29,8 @@ namespace IEMgr {
             void reloadStrings();
             void initActions();
 
+            void initImportButton();
+
         private:
             Core::ActionItem *importExportGroupItem;
 

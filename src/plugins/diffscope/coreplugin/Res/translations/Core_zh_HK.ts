@@ -66,6 +66,10 @@
         <source>Failed to load action configuration!</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Initializing user interface...</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>Core::Internal::DisplayPage</name>

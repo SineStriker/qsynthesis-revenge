@@ -32,29 +32,7 @@ namespace IEMgr::Internal {
         auto iWin = windowHandle();
 
         initActions();
-
-        // Test add button
-        {
-            importButton = nullptr;
-
-            auto buttonsLayout = iWin->widget("core.recentWidget.buttonsLayout");
-            if (buttonsLayout) {
-                QAbstractButton *button;
-
-                bool res = QMetaObject::invokeMethod(buttonsLayout, "addButton", Qt::DirectConnection,
-                                                     Q_RETURN_ARG(QAbstractButton *, button), // Ret
-                                                     Q_ARG(QString, "import-button")          // Arg
-                );
-
-                if (res) {
-                    button->setObjectName("import-button");
-                    connect(button, &QAbstractButton::clicked, this, &IEMgrAddOn::_q_importButtonClicked);
-                    importButton = button;
-
-                    qIDec->installTheme(importButton, {"IEMgr_AddOns"});
-                }
-            }
-        }
+        initImportButton();
 
         qIDec->installLocale(this, {{}}, _LOC(IEMgrAddOn, this));
     }
@@ -116,6 +94,35 @@ namespace IEMgr::Internal {
             exportProjectItem,
             exportAudioItem,
         });
+    }
+
+    void IEMgrAddOn::initImportButton() {
+        // Test add button
+        importButton = nullptr;
+
+        // Get object
+        auto buttonsLayout = windowHandle()->widget("core.recentWidget.buttonsLayout");
+        if (!buttonsLayout) {
+            return;
+        }
+
+        QAbstractButton *button;
+
+        // Invoke method
+        bool res = QMetaObject::invokeMethod(buttonsLayout, "addButton", Qt::DirectConnection,
+                                             Q_RETURN_ARG(QAbstractButton *, button), // Ret
+                                             Q_ARG(QString, "import-button")          // Arg
+        );
+        if (!res) {
+            return;
+        }
+
+        // Subsequent settings
+        button->setObjectName("import-button");
+        connect(button, &QAbstractButton::clicked, this, &IEMgrAddOn::_q_importButtonClicked);
+        importButton = button;
+
+        qIDec->installTheme(importButton, {"IEMgr_AddOns"});
     }
 
     void IEMgrAddOn::_q_importButtonClicked() {

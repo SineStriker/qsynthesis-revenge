@@ -251,12 +251,15 @@ int main_entry(int argc, char *argv[]) {
         }
     }
 
+#define TEST_HELP                                                                                                      \
+    if (showHelp) {                                                                                                    \
+        printHelp();                                                                                                   \
+        return 0;                                                                                                      \
+    }
+
     // Root privilege detection
     if (QMOs::isUserRoot() && !allowRoot) {
-        if (showHelp) {
-            printHelp();
-            return 0;
-        }
+        TEST_HELP
 
         QString msg = QCoreApplication::tr("You're trying to start %1 as the %2, which is "
                                            "extremely dangerous and therefore strongly not recommended.")
@@ -267,6 +270,7 @@ int main_entry(int argc, char *argv[]) {
 
     // Prepare to start application
     if (!host.createDataAndTempDirs()) {
+        TEST_HELP
         return -1;
     }
 
@@ -276,8 +280,8 @@ int main_entry(int argc, char *argv[]) {
     QString userSettingPath = host.appDataDir();
     QString systemSettingPath = host.shareDir() + "/" + qAppName();
 
-    loader.setSettingsPath(QSettings::UserScope,QString("%1/%2.settings.json").arg(userSettingPath, qAppName()));
-    loader.setSettingsPath(QSettings::SystemScope,QString("%1/%2.settings.json").arg(systemSettingPath, qAppName()));
+    loader.setSettingsPath(QSettings::UserScope, QString("%1/%2.settings.json").arg(userSettingPath, qAppName()));
+    loader.setSettingsPath(QSettings::SystemScope, QString("%1/%2.settings.json").arg(systemSettingPath, qAppName()));
 
     SplashScreen splash;
     g_splash = &splash;
@@ -370,6 +374,7 @@ int main_entry(int argc, char *argv[]) {
     }
 
     if (!coreplugin) {
+        TEST_HELP
         // QString nativePaths = QDir::toNativeSeparators(pluginPaths.join(QLatin1Char(',')));
         const QString reason = QCoreApplication::translate("Application", "Could not find Core plugin!");
         displayError(msgCoreLoadFailure(reason));
@@ -377,11 +382,13 @@ int main_entry(int argc, char *argv[]) {
     }
 
     if (!coreplugin->isEffectivelyEnabled()) {
+        TEST_HELP
         const QString reason = QCoreApplication::translate("Application", "Core plugin is disabled.");
         displayError(msgCoreLoadFailure(reason));
         return 1;
     }
     if (coreplugin->hasError()) {
+        TEST_HELP
         displayError(msgCoreLoadFailure(coreplugin->errorString()));
         return 1;
     }
