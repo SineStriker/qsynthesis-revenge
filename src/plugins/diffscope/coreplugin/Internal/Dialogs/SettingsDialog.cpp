@@ -1,5 +1,6 @@
 #include "SettingsDialog.h"
 
+#include "CoreApi/ILoader.h"
 #include "ICore.h"
 
 #include <QCollator>
@@ -11,6 +12,8 @@ namespace Core {
 
     static int TitleRole = Qt::UserRole + 1000;
     static int EntityRole = TitleRole + 1;
+
+    static const char settingCategoryC[] = "Core/SettingDialog";
 
     namespace Internal {
 
@@ -109,11 +112,37 @@ namespace Core {
 
             qIDec->installLocale(this, {{}}, _LOC(SettingsDialog, this));
 
-            resize(1280, 720);
-            topSplitter->setSizes({250, 1030});
+            // Init window sizes
+            {
+                auto obj = ILoader::instance()->settings()->value(settingCategoryC).toObject();
+
+                QSize winSize;
+                winSize.setWidth(obj.value("width").toInt());
+                winSize.setHeight(obj.value("height").toInt());
+
+                double r = obj.value("sideRatio").toDouble();
+
+                if (winSize.isEmpty() || r == 0) {
+                    // Adjust sizes
+                    resize(1280, 720);
+                    topSplitter->setSizes({250, 1030});
+                } else {
+                    resize(winSize);
+                    topSplitter->setSizes({int(width() * r), int(width() * (1 - r))});
+                }
+            }
         }
 
         SettingsDialog::~SettingsDialog() {
+
+            // Save window sizes
+            {
+                QJsonObject obj;
+                obj.insert("width", width());
+                obj.insert("height", height());
+                obj.insert("sideRatio", double(topSplitter->widget(0)->width()) / width());
+                ILoader::instance()->settings()->insert(settingCategoryC, obj);
+            }
         }
 
         void SettingsDialog::reloadStrings() {
