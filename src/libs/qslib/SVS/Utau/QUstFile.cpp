@@ -126,8 +126,7 @@ bool QUstFile::load(const QString &filename) {
                     QString charset = sectionVersion.charset;
                     if (!isUnicode) {
                         if (!charset.isEmpty()) {
-                            QTextCodec *newCodec =
-                                QTextCodec::codecForName(sectionVersion.charset.toLatin1());
+                            QTextCodec *newCodec = QTextCodec::codecForName(sectionVersion.charset.toLatin1());
                             if (newCodec) {
                                 in.setCodec(newCodec);
                             }
@@ -204,9 +203,8 @@ bool QUstFile::isEmpty() const {
 
 bool QUstFile::parseSectionName(const QString &str, QString &name) {
     if (str.startsWith(SECTION_BEGIN_MARK) && str.endsWith(SECTION_END_MARK)) {
-        name =
-            str.mid(int(strlen(SECTION_BEGIN_MARK)),
-                    str.size() - int(strlen(SECTION_BEGIN_MARK)) - int(strlen(SECTION_END_MARK)));
+        name = str.mid(int(strlen(SECTION_BEGIN_MARK)),
+                       str.size() - int(strlen(SECTION_BEGIN_MARK)) - int(strlen(SECTION_END_MARK)));
         return true;
     } else {
         return false;
@@ -253,6 +251,8 @@ bool QUstFile::parseSectionNote(const QStringList &sectionList, QUstNote &note) 
             }
         } else if (key == KEY_NAME_FLAGS) {
             note.flags = value; // Flags
+        } else if (key == KEY_NAME_LABEL) {
+            note.label = value; // Label
         } else if (key == KEY_NAME_INTENSITY) {
             if (isDouble) {
                 note.intensity = valueDouble; // Volume
@@ -301,8 +301,7 @@ bool QUstFile::parseSectionNote(const QStringList &sectionList, QUstNote &note) 
             if (isDouble) {
                 note.pbstart = valueDouble; // Mode1 Start
             }
-        } else if (key == KEY_NAME_PICHES || key == KEY_NAME_PITCHES ||
-                   key == KEY_NAME_PITCH_BEND) {
+        } else if (key == KEY_NAME_PICHES || key == KEY_NAME_PITCHES || key == KEY_NAME_PITCH_BEND) {
             note.pitches = QUtaUtils::StringsToDoubles(value.split(COMMA)); // Mode1 Pitch
         } else if (key == KEY_NAME_VBR) {
             note.vibrato = QUtaUtils::StringsToDoubles(value.split(COMMA)); // Vibrato
@@ -369,8 +368,7 @@ bool QUstFile::parseSectionSettings(const QStringList &sectionList, QUstSettings
         } else if (key == KEY_NAME_OUTPUT_FILE) {
             settings.outputFileName = value; // Output File Name
         } else if (key == KEY_NAME_VOICE_DIR) {
-            settings.voiceDirectory =
-                QUtaUtils::fromUSTVoiceDir(value, voiceDir); // Voice Directory
+            settings.voiceDirectory = QUtaUtils::fromUSTVoiceDir(value, voiceDir); // Voice Directory
         } else if (key == KEY_NAME_CACHE_DIR) {
             settings.cacheDirectory = value; // Cache Directory
         } else if (key == KEY_NAME_TOOL1) {
@@ -507,14 +505,12 @@ void QUstFile::writeSectionSettings(QTextStream &oStream) {
     oStream << KEY_NAME_TEMPO << "=" << sectionSettings.globalTempo << Qt::endl;
     oStream << KEY_NAME_TRACKS << "=" << VALUE_TRACKS_SINGLE << Qt::endl;
     oStream << KEY_NAME_PROJECT_NAME << "=" << sectionSettings.projectName << Qt::endl;
-    oStream << KEY_NAME_VOICE_DIR << "="
-            << QUtaUtils::toUSTVoiceDir(sectionSettings.voiceDirectory, voiceDir) << Qt::endl;
+    oStream << KEY_NAME_VOICE_DIR << "=" << QUtaUtils::toUSTVoiceDir(sectionSettings.voiceDirectory, voiceDir)
+            << Qt::endl;
     oStream << KEY_NAME_OUTPUT_FILE << "=" << sectionSettings.outputFileName << Qt::endl;
     oStream << KEY_NAME_CACHE_DIR << "=" << sectionSettings.cacheDirectory << Qt::endl;
-    oStream << KEY_NAME_TOOL1 << "=" << QUtaUtils::toUSTToolsDir(sectionSettings.wavtoolPath)
-            << Qt::endl;
-    oStream << KEY_NAME_TOOL2 << "=" << QUtaUtils::toUSTToolsDir(sectionSettings.resamplerPath)
-            << Qt::endl;
+    oStream << KEY_NAME_TOOL1 << "=" << QUtaUtils::toUSTToolsDir(sectionSettings.wavtoolPath) << Qt::endl;
+    oStream << KEY_NAME_TOOL2 << "=" << QUtaUtils::toUSTToolsDir(sectionSettings.resamplerPath) << Qt::endl;
 
     if (sectionSettings.isMode2) {
         oStream << KEY_NAME_MODE2 << "=" << VALUE_MODE2_ON << Qt::endl;
