@@ -43,9 +43,13 @@ namespace Core {
     void IWindowPrivate::_q_windowClosed(QWidget *w) {
         Q_Q(IWindow);
 
+        q->windowAboutToClose();
+
         emit q->aboutToClose();
 
         deleteAllAddOns();
+
+        q->windowClosed();
 
         emit q->closed();
 
@@ -218,6 +222,14 @@ namespace Core {
     }
 
     void IWindow::windowAddOnsFinished() {
+        // Do nothing
+    }
+
+    void IWindow::windowAboutToClose() {
+        // Do nothing
+    }
+
+    void IWindow::windowClosed() {
         // Do nothing
     }
 

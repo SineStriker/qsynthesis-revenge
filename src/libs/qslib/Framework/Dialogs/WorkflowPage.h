@@ -2,6 +2,7 @@
 #define WORKFLOWPAGE_H
 
 #include <QFrame>
+#include <QSplitter>
 
 #include "QsFrameworkGlobal.h"
 
@@ -31,6 +32,8 @@ namespace QsApi {
         };
         Q_ENUM(Button)
         Q_DECLARE_FLAGS(Buttons, Button)
+
+        QSplitter *splitter() const;
 
         QString title() const;
         void setTitle(const QString &title);

@@ -4,10 +4,17 @@
 #include <QCoreApplication>
 #include <QStyle>
 
+#include <QMMath.h>
+#include <QMView.h>
+
+#include <CoreApi/ILoader.h>
+
 #include "ICore.h"
 #include "QMDecorator.h"
 
 namespace Core {
+
+    static const char settingCategoryC[] = "Core/IHomeWindow";
 
     IHomeWindowPrivate::IHomeWindowPrivate() {
         // navFrame = nullptr;
@@ -16,10 +23,11 @@ namespace Core {
     void IHomeWindowPrivate::init() {
     }
 
+    IHomeWindowPrivate::~IHomeWindowPrivate() {
+    }
+
     void IHomeWindowPrivate::reloadStrings() {
         Q_Q(IHomeWindow);
-        auto win = q->window();
-
         q->setWindowTitle(tr("Welcome"));
         aboutButton->setText(tr("About %1").arg(qAppName()));
     }
@@ -71,12 +79,56 @@ namespace Core {
         qIDec->installTheme(win, {"Global", "HomeWindow"});
 
         d->mainMenuCtx = ICore::instance()->actionSystem()->context("home.MainMenu");
+
+        // Init window sizes
+        {
+            auto obj = ILoader::instance()->settings()->value(settingCategoryC).toObject();
+
+            QRect winRect;
+            winRect.setX(obj.value("x").toInt());
+            winRect.setY(obj.value("y").toInt());
+            winRect.setWidth(obj.value("width").toInt());
+            winRect.setHeight(obj.value("height").toInt());
+
+            double r = obj.value("sideRatio").toDouble();
+            bool isMax = obj.value("isMaximized").toBool();
+
+            if (winRect.size().isEmpty() || r == 0 || isMax) {
+                // Adjust sizes
+                win->resize(1200, 800);
+                QMView::centralizeWindow(win);
+                frame->splitter()->setSizes({250, 1000});
+                if (isMax) {
+                    win->showMaximized();
+                }
+            } else {
+                win->setGeometry(winRect);
+                frame->splitter()->setSizes({int(win->width() * r), int(win->width() * (1 - r))});
+            }
+        }
     }
 
     void IHomeWindow::windowAddOnsFinished() {
         Q_D(IHomeWindow);
         connect(d->mainMenuCtx, &ActionContext::stateChanged, d, &IHomeWindowPrivate::reloadMenuBar);
         d->reloadMenuBar();
+    }
+
+    void IHomeWindow::windowAboutToClose() {
+        Q_D(IHomeWindow);
+        auto win = window();
+
+        // Save window sizes
+        {
+            QJsonObject obj;
+            obj.insert("x", win->x());
+            obj.insert("y", win->y());
+            obj.insert("width", win->width());
+            obj.insert("height", win->height());
+            obj.insert("sideRatio", double(d->navFrame->splitter()->widget(0)->width()) / win->width());
+            obj.insert("isMaximized", win->isMaximized());
+            ILoader::instance()->settings()->insert(settingCategoryC, obj);
+        }
     }
 
     IHomeWindow::IHomeWindow(IHomeWindowPrivate &d, QObject *parent)

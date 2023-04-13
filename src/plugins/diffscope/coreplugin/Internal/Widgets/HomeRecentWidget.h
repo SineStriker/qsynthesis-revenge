@@ -1,6 +1,7 @@
 #ifndef HOMERECENTWIDGET_H
 #define HOMERECENTWIDGET_H
 
+#include <QButtonGroup>
 #include <QFrame>
 #include <QHash>
 #include <QLineEdit>
@@ -13,7 +14,11 @@
 #include "Widgets/FileListWidget.h"
 #include "Widgets/LinearScrollArea.h"
 
+#include "Interfaces/IButtonBar.h"
+
 namespace Core {
+
+    class HomeRecentTopButtonBar;
 
     /**
      * @brief Recent widget top frame
@@ -25,19 +30,30 @@ namespace Core {
         explicit HomeRecentTopFrame(QWidget *parent = nullptr);
         ~HomeRecentTopFrame();
 
+    public:
         void reloadStrings();
 
         Q_INVOKABLE QAbstractButton *addButton(const QString &id);
         Q_INVOKABLE void removeButton(const QString &id);
 
+        IButtonBar *buttonBar() const;
+
+    signals:
+        void newRequested();
+        void openRequested();
+
+    private:
         CTabButton *newButton;
         CTabButton *openButton;
-
         QLineEdit *searchBox;
 
         QMEqualBoxLayout *topLayout;
-
         QHash<QString, QAbstractButton *> externButtons;
+
+        // Interfaces
+        HomeRecentTopButtonBar *m_buttonBar;
+
+        friend class HomeRecentWidget;
     };
 
     /**

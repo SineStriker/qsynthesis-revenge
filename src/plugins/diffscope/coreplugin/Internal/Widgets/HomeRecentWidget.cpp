@@ -4,11 +4,29 @@
 
 namespace Core {
 
+    class HomeRecentTopButtonBar : public IButtonBar {
+    public:
+        HomeRecentTopFrame *frame;
+
+        explicit HomeRecentTopButtonBar(HomeRecentTopFrame *frame) : frame(frame) {
+            setParent(frame);
+        }
+
+        QAbstractButton *addButton(const QString &id) override {
+            return frame->addButton(id);
+        }
+
+        void removeButton(const QString &id) override {
+            frame->removeButton(id);
+        }
+    };
+
     /**
      * @brief Recent widget top frame
      */
     HomeRecentTopFrame::HomeRecentTopFrame(QWidget *parent) : QFrame(parent) {
         searchBox = new QLineEdit();
+        searchBox->setClearButtonEnabled(true);
         searchBox->setObjectName("search-box");
 
         newButton = new CTabButton();
@@ -30,6 +48,12 @@ namespace Core {
         setLayout(topLayout);
 
         qIDec->installLocale(this, {{}}, _LOC(HomeRecentTopFrame, this));
+
+        connect(newButton, &QAbstractButton::clicked, this, &HomeRecentTopFrame::newRequested);
+        connect(openButton, &QAbstractButton::clicked, this, &HomeRecentTopFrame::openRequested);
+
+        // init interface
+        m_buttonBar = new HomeRecentTopButtonBar(this);
     }
 
     HomeRecentTopFrame::~HomeRecentTopFrame() {
@@ -58,6 +82,10 @@ namespace Core {
             btn->deleteLater();
             externButtons.remove(id);
         }
+    }
+
+    IButtonBar *HomeRecentTopFrame::buttonBar() const {
+        return m_buttonBar;
     }
 
     /**

@@ -43,6 +43,7 @@ namespace Core {
             m_tree->setHeaderHidden(true);
 
             m_searchBox = new QLineEdit();
+            m_searchBox->setClearButtonEnabled(true);
 
             leftLayout = new QVBoxLayout();
             leftLayout->setMargin(0);
@@ -107,6 +108,9 @@ namespace Core {
             connect(sc, &SettingCatalog::pageRemoved, this, &SettingsDialog::_q_pageRemoved);
 
             qIDec->installLocale(this, {{}}, _LOC(SettingsDialog, this));
+
+            resize(1280, 720);
+            topSplitter->setSizes({250, 1030});
         }
 
         SettingsDialog::~SettingsDialog() {

@@ -47,11 +47,13 @@ namespace Core {
             recentWidgetButton = iWin->addNavWidget(recentWidget);
 
             auto recentTopWidget = recentWidget->topWidget;
-            connect(recentTopWidget->newButton, &QPushButton::clicked, this, &HomeWindowAddOn::_q_newButtonClicked);
-            connect(recentTopWidget->openButton, &QPushButton::clicked, this, &HomeWindowAddOn::_q_openButtonClicked);
+            connect(recentTopWidget, &HomeRecentTopFrame::newRequested, this, &HomeWindowAddOn::_q_newButtonClicked);
+            connect(recentTopWidget, &HomeRecentTopFrame::openRequested, this, &HomeWindowAddOn::_q_openButtonClicked);
 
-            // Add to object pool to accept buttons
+            // Use reflection to invoke
             iWin->addWidget("core.recentWidget.buttonsLayout", recentTopWidget);
+            // Use interface to invoke
+            iWin->addObject("core.recentWidget.buttonsLayoutInterface", recentTopWidget->buttonBar());
 
             qIDec->installLocale(this, {{}}, _LOC(HomeWindowAddOn, this));
         }

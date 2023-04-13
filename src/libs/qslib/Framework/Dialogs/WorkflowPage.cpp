@@ -86,6 +86,11 @@ namespace QsApi {
     WorkflowPage::~WorkflowPage() {
     }
 
+    QSplitter *WorkflowPage::splitter() const {
+        Q_D(const WorkflowPage);
+        return d->splitter;
+    }
+
     QString WorkflowPage::title() const {
         Q_D(const WorkflowPage);
         return d->titleLabel->text();
@@ -144,19 +149,19 @@ namespace QsApi {
         if (d->emptyWidget)
             return nullptr;
 
-        return  d->splitter->widget(0);
+        return d->splitter->widget(0);
     }
 
     void WorkflowPage::setSideWidget(QWidget *w) {
         Q_D(WorkflowPage);
 
-        auto org =  d->splitter->widget(0);
+        auto org = d->splitter->widget(0);
         delete org;
         d->emptyWidget = nullptr;
         d->splitter->insertWidget(0, w);
 
         d->splitter->setStretchFactor(0, 0);
-        d->splitter-> setStretchFactor(1, 1);
+        d->splitter->setStretchFactor(1, 1);
 
         w->show();
     }

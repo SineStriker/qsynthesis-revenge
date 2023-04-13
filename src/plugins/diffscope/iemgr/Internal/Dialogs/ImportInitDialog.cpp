@@ -34,7 +34,10 @@ namespace IEMgr::Internal {
 
         // Right
         pathLabel = new QLabel(tr("File Path:"));
+
         lineEdit = new QLineEdit();
+        lineEdit->setClearButtonEnabled(true);
+
         browseButton = new QPushButton(tr("Browse"));
 
         textButtonLayout = new QHBoxLayout();
@@ -74,6 +77,9 @@ namespace IEMgr::Internal {
         }
 
         setWindowTitle(tr("Import Project"));
+
+        resize(800, 500);
+        page->splitter()->setSizes({200, 600});
     }
 
     ImportInitDialog::~ImportInitDialog() {

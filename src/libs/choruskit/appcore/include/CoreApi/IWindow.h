@@ -71,6 +71,9 @@ namespace Core {
         virtual void setupWindow();
         virtual void windowAddOnsFinished();
 
+        virtual void windowAboutToClose();
+        virtual void windowClosed();
+
     protected:
         IWindow(IWindowPrivate &d, const QString &id, QObject *parent = nullptr);
         QScopedPointer<IWindowPrivate> d_ptr;

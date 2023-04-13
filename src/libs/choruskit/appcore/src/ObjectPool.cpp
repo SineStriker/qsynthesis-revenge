@@ -3,6 +3,8 @@
 
 #include <QDebug>
 
+#define DISABLE_WARNING_OBJECTS_LEFT
+
 namespace Core {
 
     ObjectPoolPrivate::ObjectPoolPrivate(ObjectPool *q) : q(q) {
@@ -28,13 +30,16 @@ namespace Core {
     }
 
     ObjectPool::~ObjectPool() {
+#ifndef DISABLE_WARNING_OBJECTS_LEFT
         if (!d->objects.empty()) {
-            qDebug() << "There are" << d->objects.size() << "objects left in the plugin manager pool.";
+            qDebug() << "There are" << d->objects.size() << "objects left in the object pool.";
+
             // Intentionally split debug info here, since in case the list contains
             // already deleted object we get at least the info about the number of objects;
             qDebug() << "The following objects left in the object pool of" << this << ":"
                      << QList<QObject *>(d->objects.begin(), d->objects.end());
         }
+#endif
     }
 
     void ObjectPool::addObject(QObject *obj) {

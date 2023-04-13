@@ -8,7 +8,7 @@
 #include <QDebug>
 #include <QMetaObject>
 
-// #include <extensionsystem/invoker.h>
+#include <coreplugin/Interfaces/IButtonBar.h>
 
 namespace IEMgr::Internal {
 
@@ -100,27 +100,44 @@ namespace IEMgr::Internal {
         // Test add button
         importButton = nullptr;
 
-        // Get object
-        auto buttonsLayout = windowHandle()->widget("core.recentWidget.buttonsLayout");
-        if (!buttonsLayout) {
-            return;
+        bool usingReflect = false;
+        if (usingReflect) {
+            // Get widget
+            auto buttonsLayout = windowHandle()->widget("core.recentWidget.buttonsLayout");
+            if (!buttonsLayout) {
+                return;
+            }
+
+            QAbstractButton *button;
+
+            // Invoke method
+            bool res = QMetaObject::invokeMethod(buttonsLayout, "addButton", Qt::DirectConnection,
+                                                 Q_RETURN_ARG(QAbstractButton *, button), // Ret
+                                                 Q_ARG(QString, "import-button")          // Arg
+            );
+            if (!res) {
+                return;
+            }
+
+            // Subsequent settings
+            button->setObjectName("import-button");
+            connect(button, &QAbstractButton::clicked, this, &IEMgrAddOn::_q_importButtonClicked);
+            importButton = button;
+        } else {
+            // Get object
+            auto buttonsLayout =
+                dynamic_cast<IButtonBar *>(windowHandle()->getFirstObject("core.recentWidget.buttonsLayoutInterface"));
+            if (!buttonsLayout) {
+                return;
+            }
+
+            QAbstractButton *button = buttonsLayout->addButton("import-button");
+
+            // Subsequent settings
+            button->setObjectName("import-button");
+            connect(button, &QAbstractButton::clicked, this, &IEMgrAddOn::_q_importButtonClicked);
+            importButton = button;
         }
-
-        QAbstractButton *button;
-
-        // Invoke method
-        bool res = QMetaObject::invokeMethod(buttonsLayout, "addButton", Qt::DirectConnection,
-                                             Q_RETURN_ARG(QAbstractButton *, button), // Ret
-                                             Q_ARG(QString, "import-button")          // Arg
-        );
-        if (!res) {
-            return;
-        }
-
-        // Subsequent settings
-        button->setObjectName("import-button");
-        connect(button, &QAbstractButton::clicked, this, &IEMgrAddOn::_q_importButtonClicked);
-        importButton = button;
 
         qIDec->installTheme(importButton, {"IEMgr_AddOns"});
     }
