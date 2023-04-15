@@ -1,12 +1,10 @@
 <RCC>
     <qresource prefix="/">
-        <file>themes/home.qss.in</file>
-        <file>themes/piano.qss.in</file>
         <file>svg/app/diffsinger.svg</file>
         <file>svg/home/info.svg</file>
         <file>svg/home/new-file.svg</file>
         <file>svg/home/open-file.svg</file>
-        <file>themes/global.qss.in</file>
+        <file>svg/menu-bar/more-line.svg</file>
         <file>core_actions.xml</file>
         <file>svg/checkbox/check-line.svg</file>
     </qresource>

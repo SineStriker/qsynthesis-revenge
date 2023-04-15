@@ -3,7 +3,7 @@
 
 #include <QString>
 
-#include "../QMCoreDecorator.h"
+#include "../QMCoreDecoratorV2.h"
 #include "../QMCoreConsole.h"
 
 class QMCORELIB_API QMCoreFactory {
@@ -11,7 +11,7 @@ public:
     virtual ~QMCoreFactory() = default;
 
 public:
-    virtual QMCoreDecorator *createDecorator(QObject *parent = nullptr);
+    virtual QMCoreDecoratorV2 *createDecorator(QObject *parent = nullptr);
     
     virtual QMCoreConsole *createConsole(QObject *parent = nullptr);
 };

@@ -1,0 +1,32 @@
+{
+    "config": {
+        "ratio": 0.8,
+        "priority": 10
+    },
+    "stylesheets": {
+        "Zhibin - Dark": {
+            "iemgr.ImportButton": {
+                "content": "qproperty-iconUp: svg(\":/svg/home/import-file.svg\", #FFFFFF);"
+            },
+            "IEMgr::ImportDialog": {
+                "file": "import-dialog-dark.qss"
+            }
+        },
+        "Zhibin - Light": {
+            "iemgr.ImportButton": {
+                "content": "qproperty-iconUp: svg(\":/svg/home/import-file.svg\", #FFFFFF);"
+            },
+            "IEMgr::ImportDialog": {
+                "file": "import-dialog-light.qss"
+            }
+        }
+    },
+    "widgets": {
+        "iemgr.ImportButton": [
+            "iemgr.ImportButton"
+        ],
+        "iemgr.ImportDialog": [
+            "IEMgr::ImportDialog"
+        ]
+    }
+}

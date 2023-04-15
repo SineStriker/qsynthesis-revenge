@@ -109,7 +109,7 @@ namespace QsApi {
     }
 
     QSize FileListWidget::contentsSize() const {
-        return static_cast<QListWidgetPrivate *>(QObject::d_ptr.data())->contentsSize();
+        return static_cast<QListWidgetPrivate *>(QListWidget::d_ptr.data())->contentsSize();
     }
 
     void FileListWidget::updateGeometries() {

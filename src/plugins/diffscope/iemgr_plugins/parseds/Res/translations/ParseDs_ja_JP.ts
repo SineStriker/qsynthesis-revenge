@@ -4,22 +4,22 @@
 <context>
     <name>IEMgr::Internal::DsWizard</name>
     <message>
-        <location filename="../../DsWizard.cpp" line="13"/>
+        <location filename="../../Internal/DsWizard.cpp" line="13"/>
         <source>OpenVPI Ds file</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../DsWizard.cpp" line="14"/>
+        <location filename="../../Internal/DsWizard.cpp" line="14"/>
         <source>OpenVPI DiffSinger command line synthesizer format.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../DsWizard.cpp" line="17"/>
+        <location filename="../../Internal/DsWizard.cpp" line="17"/>
         <source>OpenVPI</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../DsWizard.cpp" line="28"/>
+        <location filename="../../Internal/DsWizard.cpp" line="28"/>
         <source>OpenVPI Ds File</source>
         <translation type="unfinished"></translation>
     </message>
@@ -27,7 +27,7 @@
 <context>
     <name>IEMgr::Internal::ParseDs</name>
     <message>
-        <location filename="../../ParseDs.cpp" line="46"/>
+        <location filename="../../Internal/ParseDs.cpp" line="36"/>
         <source>Initializing OpenVPI Ds parser...</source>
         <translation type="unfinished"></translation>
     </message>

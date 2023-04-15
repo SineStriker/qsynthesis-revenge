@@ -5,8 +5,7 @@
 
 #include "CoreApi/ILoader.h"
 
-#include <QMDecorateDir.h>
-#include <QMDecorator.h>
+#include <QMDecoratorV2.h>
 #include <QMSystem.h>
 
 #include <extensionsystem/pluginspec.h>
@@ -21,13 +20,6 @@ namespace IEMgr {
 
     namespace Internal {
 
-        class ParseDsPrivate {
-        public:
-            QMDecorateDir dec;
-        };
-
-        static ParseDsPrivate *d = nullptr;
-
         ParseDs::ParseDs() {
         }
 
@@ -35,11 +27,9 @@ namespace IEMgr {
         }
 
         bool ParseDs::initialize(const QStringList &arguments, QString *errorMessage) {
-            auto &d = Internal::d;
-            d = new ParseDsPrivate();
-
-            d->dec.load(
-                QString("%1/share/%2.res.json").arg(QMFs::PathFindDirPath(pluginSpec()->filePath()), "ParseDs"));
+            // Add resources
+            qIDec->addTranslationPath(QMFs::PathFindDirPath(pluginSpec()->filePath()) + "/translations");
+            // qIDec->addThemePath(QMFs::PathFindDirPath(pluginSpec()->filePath()) +"/themes");
 
             auto splash = qobject_cast<QSplashScreen *>(ILoader::instance()->getFirstObject("choruskit_init_splash"));
             if (splash) {

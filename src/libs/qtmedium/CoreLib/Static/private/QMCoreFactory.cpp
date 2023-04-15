@@ -1,7 +1,7 @@
 #include "QMCoreFactory.h"
 
-QMCoreDecorator *QMCoreFactory::createDecorator(QObject *parent) {
-    return new QMCoreDecorator(parent);
+QMCoreDecoratorV2 *QMCoreFactory::createDecorator(QObject *parent) {
+    return new QMCoreDecoratorV2(parent);
 }
 
 QMCoreConsole *QMCoreFactory::createConsole(QObject *parent) {

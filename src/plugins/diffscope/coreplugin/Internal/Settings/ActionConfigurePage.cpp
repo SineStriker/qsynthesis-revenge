@@ -1,6 +1,6 @@
 #include "ActionConfigurePage.h"
 
-#include <QMDecorator.h>
+#include <QMDecoratorV2.h>
 
 #include <QLabel>
 
@@ -10,7 +10,7 @@ namespace Core::Internal {
         : ISettingPage("core.ActionConfigure", parent) {
         m_widget = nullptr;
 
-        qIDec->installLocale(this, {{}}, _LOC(ActionConfigurePage, this));
+        qIDec->installLocale(this, _LOC(ActionConfigurePage, this));
     }
 
     ActionConfigurePage::~ActionConfigurePage() {

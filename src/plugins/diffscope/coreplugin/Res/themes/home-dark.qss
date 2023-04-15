@@ -1,0 +1,162 @@
+/* Stylesheet Content */
+
+QWidget#home-window {
+    background-color: #1E1E1E;
+}
+
+CNavFrame#home-frame>QSplitter::handle {
+    background-color: transparent;
+    width: 0;
+}
+
+CNavFrame#home-frame>QSplitter>QFrame#left-frame {
+    background-color: #252526;
+    padding: 0;
+}
+
+CNavFrame#home-frame>QSplitter>QFrame#right-frame {
+    background-color: transparent;
+}
+
+
+/* Nav Buttons */
+
+CTabButton[type=home-nav-button] {
+    qproperty-iconSize: 20px 20px;
+    qproperty-spaceRatio: 0.2;
+    background-color: transparent;
+    color: #FFFFFF;
+    border: 4px solid transparent;
+    padding: 11px;
+    text-align: left;
+}
+
+CTabButton[type=home-nav-button]:hover,
+CTabButton[type=home-nav-button]:pressed {
+    background-color: rgba(255, 255, 255, 15%);
+}
+
+CTabButton[type=home-nav-button]:checked {
+    background-color: rgba(255, 255, 255, 5%);
+    border-left-color: #00B578;
+}
+
+
+/* Nav Bottom Buttons */
+
+CTabButton#home-about-button {
+    qproperty-iconUp: svg(":/svg/home/info.svg", #FFFFFF);
+}
+
+CTabButton[type=home-bottom-button] {
+    qproperty-iconSize: 20px 20px;
+    qproperty-spaceRatio: 0.2;
+    background-color: transparent;
+    color: #FFFFFF;
+    text-align: left;
+    padding: 15px;
+}
+
+CTabButton[type=home-bottom-button]:hover,
+CTabButton[type=home-bottom-button]:pressed {
+    background-color: rgba(255, 255, 255, 15%);
+}
+
+
+/* Home Recent Widget */
+
+Core--HomeRecentWidget>QSplitterHandle {
+    qproperty-enabled: false;
+}
+
+Core--HomeRecentWidget::handle {
+    background-color: #666666;
+    height: 1px;
+}
+
+Core--HomeRecentTopFrame {
+    qproperty-layoutSpacing: 10px;
+    padding: 15px;
+}
+
+Core--HomeRecentWidget>LinearScrollArea {
+    background-color: transparent;
+    padding: 0;
+    border-style: none;
+}
+
+Core--HomeRecentTopFrame>QLineEdit {
+    padding: 5px;
+}
+
+Core--HomeRecentTopFrame>CTabButton {
+    padding: 5px 10px;
+}
+
+
+/* Recent Top Buttons */
+
+Core--HomeRecentTopFrame>CTabButton#new-button {
+    qproperty-iconUp: svg(":/svg/home/new-file.svg", #FFFFFF);
+}
+
+Core--HomeRecentTopFrame>CTabButton#open-button {
+    qproperty-iconUp: svg(":/svg/home/open-file.svg", #FFFFFF);
+}
+
+Core--HomeRecentTopFrame>CTabButton[type=top-button] {
+    qproperty-iconSize: 20px 20px;
+    qproperty-spaceRatio: 0.2;
+    background-color: rgba(0, 181, 120, 30%);
+    color: #FFFFFF;
+    border-radius: 5px;
+    padding: 10px 25px;
+    text-align: left;
+}
+
+Core--HomeRecentTopFrame>CTabButton[type=top-button]:hover,
+Core--HomeRecentTopFrame>CTabButton[type=top-button]:pressed {
+    background-color: rgba(0, 181, 120, 50%);
+}
+
+Core--HomeRecentTopFrame>QLineEdit#search-box {
+    background-color: transparent;
+    color: #CCCCCC;
+    border: 2px solid #333333;
+    border-radius: 5px;
+    padding: 10px;
+}
+
+Core--HomeRecentTopFrame>QLineEdit#search-box:focus {
+    border-color: #666666;
+}
+
+
+/* FileListWidget */
+
+QFrame#home-recent-list-container {
+    padding: 20px;
+    background-color: transparent;
+}
+
+QFrame#home-recent-list-container>QLabel {
+    color: #CCCCCC;
+}
+
+QFrame#home-recent-list-container>FileListWidget {
+    border: none;
+    background-color: transparent;
+    qproperty-styleData: qvariants(/* styleData */
+    qtypeface(transparent, 1), /* idleType */
+    qtypeface(rgba(255, 255, 255, 5%), 1), /* selectType */
+    qtypeface(transparent, 1), /* underline */
+    qtypeface(#E0E0E0, 17px), /* fileType */
+    qtypeface(#909090, 15px), /* locType */
+    qtypeface(#909090, 15px), /* dateType */
+    qmargins(10px, 10px, 10px, 1px), /* fileMargins */
+    qmargins(10px, 1px, 10px, 10px), /* locMargins */
+    qmargins(10px, 10px, 20px, 10px), /* dateMargins */
+    qmargins(20px, 10px, 10px, 10px), /* iconMargins */
+    qmargins(3px, 10px, 3px, 10px), /* margins */
+    );
+}

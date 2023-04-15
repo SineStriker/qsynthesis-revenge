@@ -10,18 +10,16 @@
 
 #include "Window/ICoreWindowFactory.h"
 
-#include "QMDecorateDir.h"
-#include "QMDecorator.h"
+#include "QMDecoratorV2.h"
 #include "QMSystem.h"
 #include "QMView.h"
 
 #include <extensionsystem/pluginmanager.h>
 #include <extensionsystem/pluginspec.h>
 
-#include "CoreApi/ActionContext.h"
-#include "CoreApi/ActionSystem.h"
 #include "CoreApi/ILoader.h"
-#include "CoreApi/WindowSystem.h"
+
+#include "IStyleHelper.h"
 
 #include "Internal/Settings/ActionConfigurePage.h"
 #include "Internal/Settings/AppearanceTopPage.h"
@@ -33,14 +31,9 @@ namespace Core {
 
     namespace Internal {
 
-        class CorePluginPrivate {
-        public:
-            QMDecorateDir dec;
-        };
-
         static ICore *icore = nullptr;
 
-        static CorePluginPrivate *d = nullptr;
+        static IStyleHelper *istyle = nullptr;
 
         static QSplashScreen *m_splash = nullptr;
 
@@ -51,10 +44,9 @@ namespace Core {
         }
 
         bool CorePlugin::initialize(const QStringList &arguments, QString *errorMessage) {
-            auto &d = Internal::d;
-            d = new CorePluginPrivate();
-
-            d->dec.load(QString("%1/share/%2.res.json").arg(QMFs::PathFindDirPath(pluginSpec()->filePath()), "Core"));
+            // Add resources
+            qIDec->addTranslationPath(QMFs::PathFindDirPath(pluginSpec()->filePath()) +"/translations");
+            qIDec->addThemePath(QMFs::PathFindDirPath(pluginSpec()->filePath()) +"/themes");
 
             auto splash = qobject_cast<QSplashScreen *>(ILoader::instance()->getFirstObject("choruskit_init_splash"));
             if (splash) {
@@ -65,6 +57,8 @@ namespace Core {
 
             // Init ICore instance
             icore = new ICore(this);
+
+            istyle = new IStyleHelper(this);
 
             // Add basic actions
             auto actionMgr = icore->actionSystem();
@@ -101,10 +95,6 @@ namespace Core {
             auto docMgr = icore->documentSystem();
 
             docMgr->addDocType(new DspxSpec());
-
-            qIDec->addThemeTemplate("Global", ":/themes/global.qss.in");
-            qIDec->addThemeTemplate("HomeWindow", ":/themes/home.qss.in");
-            qIDec->addThemeTemplate("PianoWindow", ":/themes/piano.qss.in");
 
             return true;
         }

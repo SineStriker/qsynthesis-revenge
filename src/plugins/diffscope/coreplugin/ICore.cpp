@@ -1,9 +1,10 @@
 #include "ICore.h"
-#include "ICore_p.h"
 
-#include "QMConsole.h"
+#include <CoreApi/ICoreBase_p.h>
+#include <QMConsole.h>
 
 #include <QApplication>
+#include <QChildEvent>
 #include <QMessageBox>
 
 #include <extensionsystem/pluginmanager.h>
@@ -12,11 +13,15 @@
 
 namespace Core {
 
-    ICorePrivate::ICorePrivate() {
-    }
+    class ICorePrivate : ICoreBasePrivate {
+        Q_DECLARE_PUBLIC(ICore)
+    public:
+        ICorePrivate() {
+        }
 
-    void ICorePrivate::init() {
-    }
+        void init() {
+        }
+    };
 
     ICore *ICore::instance() {
         return qobject_cast<ICore *>(ICoreBase::instance());

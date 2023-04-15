@@ -18,20 +18,20 @@ public:
     bool isAboutToQuit;
     QSettings::Format settingsJsonFormat;
 
-    QHash<QString, QStringList> confValues;
-    QString confPrefix;
-
     QString appDataDir;
     QString tempDir;
     QString libDir;
     QString shareDir;
+
+    QStringList translationPaths;
+    QStringList themePaths;
 
     virtual QMCoreFactory *createFactory();
 
 private:
     QScopedPointer<QMCoreFactory> fac;
 
-    QMCoreDecorator *s_dec;
+    QMCoreDecoratorV2 *s_dec;
     QMCoreConsole *s_cs;
 };
 

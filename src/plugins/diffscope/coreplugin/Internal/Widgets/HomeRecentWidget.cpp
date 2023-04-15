@@ -1,6 +1,9 @@
 #include "HomeRecentWidget.h"
 
-#include <QMDecorator.h>
+#include "ICore.h"
+#include "IStyleHelper.h"
+
+#include <QMDecoratorV2.h>
 
 namespace Core {
 
@@ -29,6 +32,8 @@ namespace Core {
         searchBox->setClearButtonEnabled(true);
         searchBox->setObjectName("search-box");
 
+        IStyleHelper::autoPolishPopupMenu(searchBox);
+
         newButton = new CTabButton();
         newButton->setProperty("type", "top-button");
         newButton->setObjectName("new-button");
@@ -47,7 +52,7 @@ namespace Core {
 
         setLayout(topLayout);
 
-        qIDec->installLocale(this, {{}}, _LOC(HomeRecentTopFrame, this));
+        qIDec->installLocale(this, _LOC(HomeRecentTopFrame, this));
 
         connect(newButton, &QAbstractButton::clicked, this, &HomeRecentTopFrame::newRequested);
         connect(openButton, &QAbstractButton::clicked, this, &HomeRecentTopFrame::openRequested);
@@ -108,7 +113,7 @@ namespace Core {
         setStretchFactor(0, 0);
         setStretchFactor(1, 1);
 
-        qIDec->installLocale(this, {{}}, _LOC(HomeRecentWidget, this));
+        qIDec->installLocale(this, _LOC(HomeRecentWidget, this));
 
         connect(topWidget->searchBox, &QLineEdit::textChanged, this, &HomeRecentWidget::_q_searchTextChanged);
     }

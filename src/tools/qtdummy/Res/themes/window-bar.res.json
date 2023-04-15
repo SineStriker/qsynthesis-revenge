@@ -1,0 +1,23 @@
+{
+    "config": {
+        "ratio": 0.8,
+        "priority": 10
+    },
+    "stylesheets": {
+        "Zhibin - Dark": {
+            "QsApi::NativeWindow": {
+                "file": "window-bar-dark.qss"
+            }
+        },
+        "Zhibin - Light": {
+            "QsApi::NativeWindow": {
+                "file": "window-bar-light.qss"
+            }
+        }
+    },
+    "widgets": {
+        "qslib.NativeWindow": [
+            "QsApi::NativeWindow"
+        ]
+    }
+}

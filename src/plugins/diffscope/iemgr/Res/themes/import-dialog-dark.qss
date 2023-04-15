@@ -1,0 +1,63 @@
+/* Stylesheet Content */
+
+IEMgr--ImportDialog {
+    min-width: 400px;
+    background-color: white;
+    qproperty-maxInitHeight: 500px;
+    qproperty-layoutMargins: qmargins(20px);
+    qproperty-boxesLayoutMargins: qmargins(5px);
+    qproperty-boxesLayoutSpacing: 5px;
+    qproperty-buttonsLayoutMargins: qmargins(0, 20px, 0, 0);
+    qproperty-buttonsLayoutSpacing: 5px;
+}
+
+
+/* Tracks Widgets */
+
+QScrollArea#tracks-scroll {
+    background-color: transparent;
+}
+
+QWidget#tracks-widget {
+    background-color: transparent;
+}
+
+
+/* CheckBox */
+
+QWidget#tracks-widget>CCheckBox {
+    qproperty-layoutSpacing: 5px;
+}
+
+QWidget#tracks-widget>CCheckBox>CToolButton#box {
+    qproperty-iconUpChecked: svg(":/svg/checkbox/check-line.svg", #111111);
+    qproperty-iconSize: 12px 12px;
+    background-color: transparent;
+    border: 1px solid #111111;
+}
+
+QWidget#tracks-widget>CCheckBox>CToolButton#box:hover {
+    background-color: #CCCCCC;
+}
+
+QWidget#tracks-widget>CCheckBox>QLabel {
+    padding: 0 0 2px 0;
+}
+
+
+/* Codec Widget */
+
+QSplitter#codec-widget {
+    background-color: transparent;
+}
+
+QSplitter#codec-widget::handle {
+    background-color: transparent;
+}
+
+
+/* Tab Widget */
+
+QTabWidget#tab-widget {
+    background-color: transparent;
+}

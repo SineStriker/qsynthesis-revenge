@@ -1,7 +1,7 @@
 #include "ConfigurableDialog.h"
 #include "private/ConfigurableDialog_p.h"
 
-#include <QMDecorator.h>
+#include <QMDecoratorV2.h>
 
 namespace QsApi {
 
@@ -37,7 +37,7 @@ namespace QsApi {
         connect(cancelButton, &QPushButton::clicked, q, &ConfigurableDialog::reject);
         connect(applyButton, &QPushButton::clicked, this, &ConfigurableDialogPrivate::apply_helper);
 
-        qIDec->installLocale(this, {{}}, _LOC(ConfigurableDialogPrivate, this));
+        qIDec->installLocale(this, _LOC(ConfigurableDialogPrivate, this));
     }
 
     void ConfigurableDialogPrivate::reloadStrings() {

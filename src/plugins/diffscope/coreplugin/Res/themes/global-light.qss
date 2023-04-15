@@ -1,0 +1,64 @@
+/* Stylesheet Content */
+
+QWidget {
+    font-family: "Microsoft YaHei";
+    font-size: 15px;
+}
+
+CWindowBarV2>CToolButton#icon-button {
+    qproperty-iconUp: svg(":/svg/app/diffsinger.svg", transparent);
+}
+
+
+/* Menu Bar */
+
+QMenuBar[core-style=true] {
+    background-color: transparent;
+    border: none;
+    qproperty-extensionIcon: svg(":/svg/menu-bar/more-line.svg", white);
+}
+
+QMenuBar[core-style=true]>QToolButton#qt_menubar_ext_button:hover,
+QMenuBar[core-style=true]>QToolButton#qt_menubar_ext_button:pressed {
+    background-color: rgba(255, 255, 255, 10%);
+}
+
+QMenuBar[core-style=true]::item {
+    color: #CCCCCC;
+    border: none;
+    padding: 10px 12px;
+}
+
+QMenuBar[core-style=true]::item:selected {
+    background-color: rgba(255, 255, 255, 10%);
+}
+
+
+/* Old Menu */
+
+QMenu[core-style=true] {
+    padding: 5px;
+    background: #303030;
+    border: 1px solid transparent;
+}
+
+QMenu[core-style=true]::item {
+    padding: 6px 30px;
+    background: transparent;
+    color: #CCCCCC;
+}
+
+QMenu[core-style=true]::item:selected {
+    color: white;
+    background-color: #0060C0;
+}
+
+QMenu[core-style=true]::item:disabled {
+    color: #666666;
+}
+
+QMenu[core-style=true]::separator {
+    height: 1px;
+    background-color: #5B5B5B;
+    margin: 6px;
+}

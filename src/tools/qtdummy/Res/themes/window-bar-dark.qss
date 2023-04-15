@@ -1,0 +1,73 @@
+/* Stylesheet Content */
+
+CWindowBarV2 {
+    qproperty-titleMargin: 20px;
+}
+
+CWindowBarV2[bar-active=true] {
+    background-color: #3C3C3C;
+}
+
+CWindowBarV2[bar-active=false] {
+    background-color: #505050;
+}
+
+CWindowBarV2>QLabel#win-title-label {
+    padding: 0;
+    border: none;
+    color: #ECECEC;
+    background-color: transparent;
+    /* Limit window bar height */
+    min-height: 36px;
+}
+
+CWindowBarV2>CToolButton#min-button {
+    qproperty-iconUp: svg(":/svg/window-bar/minimize.svg", #FFFFFF);
+    qproperty-iconSize: 12px 12px;
+    min-width: 50px;
+    border: none;
+    padding: 0;
+    background-color: transparent;
+}
+
+CWindowBarV2>CToolButton#min-button:hover,
+CWindowBarV2>CToolButton#min-button:pressed {
+    background-color: rgba(0, 0, 0, 15%);
+}
+
+CWindowBarV2>CToolButton#max-button {
+    qproperty-iconUp: svg(":/svg/window-bar/maximize.svg", #FFFFFF);
+    qproperty-iconUpChecked: svg(":/svg/window-bar/maximize2.svg", #FFFFFF);
+    qproperty-iconSize: 12px 12px;
+    min-width: 50px;
+    border: none;
+    padding: 0;
+    background-color: transparent;
+}
+
+CWindowBarV2>CToolButton#max-button:hover,
+CWindowBarV2>CToolButton#max-button:pressed {
+    background-color: rgba(0, 0, 0, 15%);
+}
+
+CWindowBarV2>CToolButton#win-close-button {
+    qproperty-iconUp: svg(":/svg/window-bar/close.svg", #FFFFFF);
+    qproperty-iconSize: 12px 12px;
+    min-width: 50px;
+    border: none;
+    padding: 0;
+    background-color: transparent;
+}
+
+CWindowBarV2>CToolButton#win-close-button:hover,
+CWindowBarV2>CToolButton#win-close-button:pressed {
+    background-color: #e81123;
+}
+
+CWindowBarV2>CToolButton#icon-button {
+    qproperty-iconSize: 20px 20px;
+    min-width: 40px;
+    border: none;
+    padding: 0;
+    background-color: transparent;
+}

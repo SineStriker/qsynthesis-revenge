@@ -13,8 +13,6 @@ namespace IEMgr ::Internal {
 
         setCategory("score.XiaoIce");
         setDisplayCategory(tr("XiaoIce"));
-        
-        qDebug() << "bug fixed";
     }
 
     Svip3Wizard::~Svip3Wizard() {

@@ -1,0 +1,30 @@
+{
+    "config": {
+        "ratio": 0.8,
+        "priority": 5
+    },
+    "stylesheets": {
+        "Zhibin - Dark": {
+            "Global": {
+                "file": "global-dark.qss"
+            },
+            "Core::HomeWindow": {
+                "file": "home-dark.qss"
+            }
+        },
+        "Zhibin - Light": {
+            "Global": {
+                "file": "global-light.qss"
+            },
+            "Core::HomeWindow": {
+                "file": "home-light.qss"
+            }
+        }
+    },
+    "widgets": {
+        "core.HomeWindow": [
+            "Global",
+            "Core::HomeWindow"
+        ]
+    }
+}

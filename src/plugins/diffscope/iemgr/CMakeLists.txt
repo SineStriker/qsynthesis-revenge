@@ -33,9 +33,8 @@ ck_add_translations(${_plugin}_translations
 add_dependencies(${_plugin} ${_plugin}_translations_lrelease)
 
 ck_add_attaches(${_plugin}
-    SRC Res/IEMgr.res.json DEST share
-    SRC Res/themes/*.json DEST share/IEMgr.res/themes
-    SRC ${CMAKE_CURRENT_BINARY_DIR}/Res/translations DEST share/IEMgr.res
+    SRC Res/themes DEST .
+    SRC ${CMAKE_CURRENT_BINARY_DIR}/Res/translations DEST .
 )
 
 ck_install_headers(.)

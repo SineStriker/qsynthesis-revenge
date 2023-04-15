@@ -6,16 +6,15 @@
 #include <QLineEdit>
 #include <QMenuBar>
 #include <QMessageBox>
-#include <QPushButton>
-#include <QVBoxLayout>
 
 #include "Window/IHomeWindow.h"
 
 #include "Internal/Widgets/HomeRecentWidget.h"
 
 #include "ICore.h"
+#include "IStyleHelper.h"
 
-#include <QMDecorator.h>
+#include <QMDecoratorV2.h>
 
 #include <Internal/plugindialog.h>
 
@@ -55,7 +54,7 @@ namespace Core {
             // Use interface to invoke
             iWin->addObject("core.recentWidget.buttonsLayoutInterface", recentTopWidget->buttonBar());
 
-            qIDec->installLocale(this, {{}}, _LOC(HomeWindowAddOn, this));
+            qIDec->installLocale(this, _LOC(HomeWindowAddOn, this));
         }
 
         void HomeWindowAddOn::extensionsInitialized() {
@@ -82,9 +81,10 @@ namespace Core {
 
         void HomeWindowAddOn::initActions() {
             auto iWin = windowHandle();
+            auto win = iWin->window();
 
-            fileItem = new ActionItem("core.File", new QMenu(), this);
-            helpItem = new ActionItem("core.Help", new QMenu(), this);
+            fileItem = new ActionItem("core.File", IStyleHelper::createPolishedMenu(win), this);
+            helpItem = new ActionItem("core.Help", IStyleHelper::createPolishedMenu(win), this);
 
             openGroupItem = new ActionItem("core.OpenGroup", new QActionGroup(this), this);
             newFileItem = new ActionItem("core.NewFile", new QAction(), this);
