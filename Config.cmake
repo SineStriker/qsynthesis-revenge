@@ -27,11 +27,11 @@ ck_option(CONFIG_CURRENT_APP DiffScope)
 
 # Build
 ck_option(CONFIG_BUILD_TEST on)
-ck_option(CONFIG_ENABLE_BREAKPAD off)
 ck_option(CONFIG_ENABLE_DEVELOP off)
+ck_option(CONFIG_ENABLE_BREAKPAD off)
 
 # CMake
-ck_option(CONFIG_CMAKE_RANDOM_CONFIGURE_FILE off)
+# ck_option(CONFIG_CMAKE_RANDOM_CONFIGURE_FILE off)
 
 # Windows
 ck_option(CONFIG_WIN32_DEBUG on) # Enable debug by default

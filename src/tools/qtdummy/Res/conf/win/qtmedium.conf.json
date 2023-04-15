@@ -5,7 +5,10 @@
     "Plugins": [
         "lib/QsLib/plugins"
     ],
-    "Decorators": [
-        "share/qtdummy/qtdummy.res.json"
+    "Translations": [
+        "share/qtdummy/translations"
+    ],
+    "Themes": [
+        "share/qtdummy/themes"
     ]
 }

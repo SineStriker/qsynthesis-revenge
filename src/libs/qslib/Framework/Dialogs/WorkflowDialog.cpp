@@ -3,7 +3,6 @@
 
 #include <QResizeEvent>
 
-#include <QMDecorator.h>
 #include <QMView.h>
 
 namespace QsApi {

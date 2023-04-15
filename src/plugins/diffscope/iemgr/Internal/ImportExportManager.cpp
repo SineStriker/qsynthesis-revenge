@@ -5,8 +5,7 @@
 
 #include "CoreApi/ILoader.h"
 
-#include <QMDecorateDir.h>
-#include <QMDecorator.h>
+#include <QMDecoratorV2.h>
 #include <QMSystem.h>
 
 #include <coreplugin/ICore.h>
@@ -27,14 +26,8 @@ namespace IEMgr {
 
     namespace Internal {
 
-        class ImportExportManagerPrivate {
-        public:
-            QMDecorateDir dec;
-        };
 
         static IManager *imgr = nullptr;
-
-        static ImportExportManagerPrivate *d = nullptr;
 
         ImportExportManager::ImportExportManager() {
         }
@@ -43,10 +36,9 @@ namespace IEMgr {
         }
 
         bool ImportExportManager::initialize(const QStringList &arguments, QString *errorMessage) {
-            auto &d = Internal::d;
-            d = new ImportExportManagerPrivate();
-
-            d->dec.load(QString("%1/share/%2.res.json").arg(QMFs::PathFindDirPath(pluginSpec()->filePath()), "IEMgr"));
+            // Add resources
+            qIDec->addTranslationPath(QMFs::PathFindDirPath(pluginSpec()->filePath()) + "/translations");
+            qIDec->addThemePath(QMFs::PathFindDirPath(pluginSpec()->filePath()) + "/themes");
 
             auto splash = qobject_cast<QSplashScreen *>(ILoader::instance()->getFirstObject("choruskit_init_splash"));
             if (splash) {
@@ -75,9 +67,6 @@ namespace IEMgr {
             imgr->addWizard(new Internal::UstWizard());
             imgr->addWizard(new Internal::OpenSvipWizard());
             imgr->addWizard(new Internal::SvipWizard());
-
-            qIDec->addThemeTemplate("IEMgr_ImportDialog", ":/themes/import-dialog.qss.in");
-            qIDec->addThemeTemplate("IEMgr_AddOns", ":/themes/iemgr-addons.qss.in");
 
             return true;
         }

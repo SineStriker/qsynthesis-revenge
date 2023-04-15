@@ -6,7 +6,7 @@
 #include <QRandomGenerator>
 #include <QStyle>
 
-#include "QMDecorator.h"
+#include "QMDecoratorV2.h"
 
 CWindowBarV2::CWindowBarV2(QMenuBar *menuBar, QWidget *parent) : CBaseTitleBarV2(parent) {
     m_titleMargin = 20;
@@ -54,8 +54,8 @@ CWindowBarV2::CWindowBarV2(QMenuBar *menuBar, QWidget *parent) : CBaseTitleBarV2
 
     setTitleBarActive(true);
 
-    qIDec->installLocale(this, {{}}, std::bind(&CWindowBarV2::reloadStrings, this));
-    qIDec->installTheme(this, {"NativeWindow"});
+    qIDec->installLocale(this, std::bind(&CWindowBarV2::reloadStrings, this));
+    qIDec->installTheme(this, "qslib.NativeWindow");
 }
 
 CWindowBarV2::~CWindowBarV2() {

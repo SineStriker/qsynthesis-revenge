@@ -1,6 +1,6 @@
 #include "DisplayPage.h"
 
-#include <QMDecorator.h>
+#include <QMDecoratorV2.h>
 
 #include <QLabel>
 
@@ -11,7 +11,7 @@ namespace Core {
         DisplayPage::DisplayPage(QObject *parent) : ISettingPage("core.Display", parent) {
             m_widget = nullptr;
 
-            qIDec->installLocale(this, {{}}, _LOC(DisplayPage, this));
+            qIDec->installLocale(this, _LOC(DisplayPage, this));
         }
 
         DisplayPage::~DisplayPage() {

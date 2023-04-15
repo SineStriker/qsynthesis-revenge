@@ -4,7 +4,7 @@
 #include <QScrollBar>
 
 #include "QMConsole.h"
-#include "QMDecorator.h"
+#include "QMDecoratorV2.h"
 
 namespace IEMgr {
 
@@ -163,8 +163,8 @@ namespace IEMgr {
         connect(codecListWidget, &QListWidget::currentItemChanged, this, &ImportDialogPrivate::_q_currentCodecChanged);
         connect(nameListWidget, &QListWidget::currentItemChanged, this, &ImportDialogPrivate::_q_currentNameChanged);
 
-        qIDec->installLocale(q, {{}}, _LOC(ImportDialog, q));
-        qIDec->installTheme(q, {"IEMgr_ImportDialog"});
+        qIDec->installLocale(q, _LOC(ImportDialog, q));
+        qIDec->installTheme(q, "iemgr.ImportDialog");
 
         codecListWidget->setCurrentRow(Utf8EncodingIndex);
     }

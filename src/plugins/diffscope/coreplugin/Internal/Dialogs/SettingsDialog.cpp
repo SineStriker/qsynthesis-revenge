@@ -6,7 +6,7 @@
 #include <QCollator>
 #include <QLabel>
 
-#include <QMDecorator.h>
+#include <QMDecoratorV2.h>
 
 namespace Core {
 
@@ -110,7 +110,7 @@ namespace Core {
             connect(sc, &SettingCatalog::pageAdded, this, &SettingsDialog::_q_pageAdded);
             connect(sc, &SettingCatalog::pageRemoved, this, &SettingsDialog::_q_pageRemoved);
 
-            qIDec->installLocale(this, {{}}, _LOC(SettingsDialog, this));
+            qIDec->installLocale(this, _LOC(SettingsDialog, this));
 
             // Init window sizes
             {

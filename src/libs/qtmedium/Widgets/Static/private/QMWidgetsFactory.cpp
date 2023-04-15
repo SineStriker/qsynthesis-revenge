@@ -1,10 +1,10 @@
 #include "QMWidgetsFactory.h"
 
 #include "../QMConsole.h"
-#include "../QMDecorator.h"
+#include "../QMDecoratorV2.h"
 
-QMCoreDecorator *QMWidgetsFactory::createDecorator(QObject *parent) {
-    return new QMDecorator(parent);
+QMCoreDecoratorV2 *QMWidgetsFactory::createDecorator(QObject *parent) {
+    return new QMDecoratorV2(parent);
 }
 
 QMCoreConsole *QMWidgetsFactory::createConsole(QObject *parent) {

@@ -8,7 +8,6 @@
 
 #include "QMConsole.h"
 #include "QMCss.h"
-#include "QMDecorateDir.h"
 #include "QMSystem.h"
 #include "QMWidgetsHost.h"
 
@@ -184,7 +183,7 @@ int main_entry(int argc, char *argv[]) {
     QString corePluginNameC = "Core";
     QString pluginIID = QString("org.ChorusKit.%1.Plugin").arg(qAppName());
     QPixmap splashImage;
-    QStringList resourcesFiles{QString("%1/%2/%2.res.json").arg(host.shareDir(), qAppName())};
+    QStringList resourcesFiles; // Unused
 
     // Add qslib plugin dir
     // QApplication::addLibraryPath(host.libDir() + "/QsLib/plugins");
@@ -332,9 +331,9 @@ int main_entry(int argc, char *argv[]) {
     pluginManager.setPluginIID(pluginIID);
 
     pluginManager.setSettings(
-        new QSettings(QString("%1/%2.ini").arg(userSettingPath, qAppName()), QSettings::IniFormat));
+        new QSettings(QString("%1/%2.extensionSystem.ini").arg(userSettingPath, qAppName()), QSettings::IniFormat));
     pluginManager.setGlobalSettings(
-        new QSettings(QString("%1/%2.ini").arg(systemSettingPath, qAppName()), QSettings::IniFormat));
+        new QSettings(QString("%1/%2.extensionSystem.ini").arg(systemSettingPath, qAppName()), QSettings::IniFormat));
 
     QStringList pluginPaths = [&]() {
         QStringList rc;
@@ -447,15 +446,6 @@ int main_entry(int argc, char *argv[]) {
 
     // shutdown plugin manager on the exit
     QObject::connect(&a, &QApplication::aboutToQuit, &pluginManager, &PluginManager::shutdown);
-
-    // Load app decorator (If exists)
-    QList<QSharedPointer<QMDecorateDir>> decs;
-    for (const auto &file : qAsConst(resourcesFiles)) {
-        auto dec = QSharedPointer<QMDecorateDir>::create();
-        if (dec->load(file)) {
-            decs.append(dec);
-        }
-    }
 
     return a.exec();
 }

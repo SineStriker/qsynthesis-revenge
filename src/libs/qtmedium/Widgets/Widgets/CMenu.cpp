@@ -6,30 +6,14 @@
 #include <QDebug>
 #include <QFontMetrics>
 
-class CMenuPrivate {
-    Q_DECLARE_PUBLIC(CMenu)
-public:
-    CMenu *q_ptr;
-
-    QSvgUri m_subIcon;
-    QSvgUri m_subIconActive;
-    QSvgUri m_subIconDisabled;
-    QSize m_subIconMargins;
-
-    void init() {
-        Q_Q(CMenu);
-
-// Initialize Font
+CMenu::CMenu(QWidget *parent) : QMenu(parent) {
+    // Initialize Font
 #ifdef QS_NO_TAB_FOCUS
-        QS_REMOVE_TAB_FOCUS(this)
+    QS_REMOVE_TAB_FOCUS(this)
 #endif
-        q->setFont(qApp->font());
+    setFont(qApp->font());
 
-        m_subIconMargins = QSize(0, 0);
-    }
-};
-
-CMenu::CMenu(QWidget *parent) : CMenu(*new CMenuPrivate(), parent) {
+    m_subIconMargins = QSize(0, 0);
 }
 
 CMenu::CMenu(const QString &title, QWidget *parent) : CMenu(parent) {
@@ -41,49 +25,39 @@ CMenu::~CMenu() {
 }
 
 QSvgUri CMenu::subIcon() const {
-    Q_D(const CMenu);
-    return d->m_subIcon;
+    return m_subIcon;
 }
 
 void CMenu::setSubIcon(const QSvgUri &icon) {
-    Q_D(CMenu);
-    d->m_subIcon = icon;
+    m_subIcon = icon;
     update();
     emit styleChanged();
 }
 
 QSvgUri CMenu::subIconActive() const {
-    Q_D(const CMenu);
-    return d->m_subIconActive;
+    return m_subIconActive;
 }
 
 void CMenu::setSubIconActive(const QSvgUri &icon) {
-    Q_D(CMenu);
-    d->m_subIconActive = icon;
+    m_subIconActive = icon;
     update();
     emit styleChanged();
 }
 
 QSvgUri CMenu::subIconDisabled() const {
-    Q_D(const CMenu);
-    return d->m_subIconDisabled;
+    return m_subIconDisabled;
 }
 
 void CMenu::setSubIconDisabled(const QSvgUri &subIconDisabled) {
-    Q_D(CMenu);
-    d->m_subIconDisabled = subIconDisabled;
-    update();
-    emit styleChanged();
+    m_subIconDisabled = subIconDisabled;
 }
 
 QSize CMenu::subIconMargins() const {
-    Q_D(const CMenu);
-    return d->m_subIconMargins;
+    return m_subIconMargins;
 }
 
 void CMenu::setSubIconMargins(const QSize &margins) {
-    Q_D(CMenu);
-    d->m_subIconMargins = margins;
+    m_subIconMargins = margins;
     update();
     emit styleChanged();
 }
@@ -119,8 +93,8 @@ void CMenu::paintEvent(QPaintEvent *event) {
             scrollUpRect.setRect(leftmargin, topmargin, contentWidth, d->scrollerHeight());
 
         if (d->scroll->scrollFlags & QMenuPrivate::QMenuScroller::ScrollDown)
-            scrollDownRect.setRect(leftmargin, height() - d->scrollerHeight() - bottommargin, contentWidth,
-                                   d->scrollerHeight());
+            scrollDownRect.setRect(leftmargin, height() - d->scrollerHeight() - bottommargin,
+                                   contentWidth, d->scrollerHeight());
     }
 
     // calculate the tear off rect
@@ -143,7 +117,8 @@ void CMenu::paintEvent(QPaintEvent *event) {
         emptyArea -= QRegion(actionRect);
 
         QRect adjustedActionRect = actionRect;
-        if (!scrollUpTearOffRect.isEmpty() && adjustedActionRect.bottom() <= scrollUpTearOffRect.top())
+        if (!scrollUpTearOffRect.isEmpty() &&
+            adjustedActionRect.bottom() <= scrollUpTearOffRect.top())
             continue;
 
         if (!scrollDownRect.isEmpty() && adjustedActionRect.top() >= scrollDownRect.bottom())
@@ -172,10 +147,10 @@ void CMenu::paintEvent(QPaintEvent *event) {
 
         QIcon subIcon;
         if (action->menu()) {
-            Q_D(CMenu);
             subIcon = (opt.state & QStyle::State_Enabled)
-                          ? ((opt.state & QStyle::State_Selected) ? d->m_subIconActive.toIcon() : d->m_subIcon.toIcon())
-                          : d->m_subIconDisabled.toIcon();
+                          ? ((opt.state & QStyle::State_Selected) ? m_subIconActive.toIcon()
+                                                                  : m_subIcon.toIcon())
+                          : m_subIconDisabled.toIcon();
             if (subIcon.isNull()) {
                 opt.menuItemType = QStyleOptionMenuItem::SubMenu;
             }
@@ -185,11 +160,11 @@ void CMenu::paintEvent(QPaintEvent *event) {
 
         // Draw Right Arrow
         if (!subIcon.isNull()) {
-            Q_D(CMenu);
             int a = actionRect.height();
             QRect iconRegion(actionRect.right() - a, actionRect.top(), a, a);
-            QRect iconRect = iconRegion.adjusted(d->m_subIconMargins.width(), d->m_subIconMargins.height(),
-                                                 -d->m_subIconMargins.width(), -d->m_subIconMargins.height());
+            QRect iconRect =
+                iconRegion.adjusted(m_subIconMargins.width(), m_subIconMargins.height(),
+                                    -m_subIconMargins.width(), -m_subIconMargins.height());
             p.drawPixmap(iconRect, subIcon.pixmap(iconRect.size()));
         }
     }
@@ -268,7 +243,8 @@ void CMenu::initStyleOption(QStyleOptionMenuItem *option, const QAction *action)
     option->fontMetrics = QFontMetrics(option->font);
 
     if (d->currentAction && d->currentAction == action && !d->currentAction->isSeparator()) {
-        option->state |= QStyle::State_Selected | (mouseDown ? QStyle::State_Sunken : QStyle::State_None);
+        option->state |=
+            QStyle::State_Selected | (mouseDown ? QStyle::State_Sunken : QStyle::State_None);
     }
 
     option->menuHasCheckableItems = d->hasCheckableItems;
@@ -280,7 +256,6 @@ void CMenu::initStyleOption(QStyleOptionMenuItem *option, const QAction *action)
                                 : QStyleOptionMenuItem::NonExclusive;
         option->checked = action->isChecked();
     }
-
     if (action->menu()) {
         // option->menuItemType = QStyleOptionMenuItem::SubMenu; Ignore Right Arrow
         option->menuItemType = QStyleOptionMenuItem::Normal;
@@ -314,9 +289,4 @@ void CMenu::initStyleOption(QStyleOptionMenuItem *option, const QAction *action)
     option->tabWidth = tabWidth;
     option->maxIconWidth = d->maxIconWidth;
     option->menuRect = rect();
-}
-
-CMenu::CMenu(CMenuPrivate &d, QWidget *parent) : QMenu(parent), d_ptr(&d) {
-    d.q_ptr = this;
-    d.init();
 }

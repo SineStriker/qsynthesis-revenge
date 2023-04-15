@@ -3,11 +3,12 @@
 #include "CoreApi/IWindow.h"
 #include "IManager.h"
 
-#include <QMDecorator.h>
+#include <QMDecoratorV2.h>
 
 #include <QDebug>
 #include <QMetaObject>
 
+#include <coreplugin/IStyleHelper.h>
 #include <coreplugin/Interfaces/IButtonBar.h>
 
 namespace IEMgr::Internal {
@@ -34,7 +35,7 @@ namespace IEMgr::Internal {
         initActions();
         initImportButton();
 
-        qIDec->installLocale(this, {{}}, _LOC(IEMgrAddOn, this));
+        qIDec->installLocale(this, _LOC(IEMgrAddOn, this));
     }
 
     void IEMgrAddOn::extensionsInitialized() {
@@ -56,10 +57,11 @@ namespace IEMgr::Internal {
 
     void IEMgrAddOn::initActions() {
         auto iWin = windowHandle();
+        auto win = iWin->window();
 
         importExportGroupItem = new ActionItem("iemgr.ImportExportGroup", new QActionGroup(this), this);
 
-        importItem = new ActionItem("iemgr.Import", new QMenu(), this);
+        importItem = new ActionItem("iemgr.Import", IStyleHelper::createPolishedMenu(win), this);
         importProjectItem = new ActionItem("iemgr.ImportProject", new QAction(), this);
         importAudioItem = new ActionItem("iemgr.ImportAudio", new QAction(), this);
 
@@ -139,7 +141,7 @@ namespace IEMgr::Internal {
             importButton = button;
         }
 
-        qIDec->installTheme(importButton, {"IEMgr_AddOns"});
+        qIDec->installTheme(importButton, "iemgr.ImportButton");
     }
 
     void IEMgrAddOn::_q_importButtonClicked() {

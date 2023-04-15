@@ -14,19 +14,15 @@ namespace IEMgr {
         }
 
         bool ParseSvip3::initialize(const QStringList &arguments, QString *errorMessage) {
-            qDebug() << "ParseSvip3 initialized";
-
             IManager::instance()->addWizard(new Internal::Svip3Wizard());
 
             return true;
         }
 
         void ParseSvip3::extensionsInitialized() {
-            qDebug() << "ParseSvip3 extensionsInitialized";
         }
 
         bool ParseSvip3::delayedInitialize() {
-            qDebug() << "ParseSvip3 delayedInitialize";
             return true;
         }
 

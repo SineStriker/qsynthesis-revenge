@@ -1,7 +1,7 @@
 #include "WorkflowPage.h"
 #include "private/WorkflowPage_p.h"
 
-#include <QMDecorator.h>
+#include <QMDecoratorV2.h>
 
 namespace QsApi {
 
@@ -46,7 +46,7 @@ namespace QsApi {
         descriptionLabel->hide();
         emptyWidget->hide();
 
-        qIDec->installLocale(this, {{}}, _LOC(WorkflowPagePrivate, this));
+        qIDec->installLocale(this, _LOC(WorkflowPagePrivate, this));
     }
 
     void WorkflowPagePrivate::reloadStrings() {

@@ -1,6 +1,6 @@
 #include "AppearanceTopPage.h"
 
-#include <QMDecorator.h>
+#include <QMDecoratorV2.h>
 
 #include <QLabel>
 
@@ -11,7 +11,7 @@ namespace Core {
         AppearanceTopPage::AppearanceTopPage(QObject *parent) : ISettingPage("core.AppearanceTop", parent) {
             m_widget = nullptr;
 
-            qIDec->installLocale(this, {{}}, _LOC(AppearanceTopPage, this));
+            qIDec->installLocale(this, _LOC(AppearanceTopPage, this));
         }
 
         AppearanceTopPage::~AppearanceTopPage() {

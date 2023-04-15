@@ -90,6 +90,7 @@ See [Related Tools](./docs/related-tools.md) for dependencies for each plugin.
 + Sine Striker
 + [Arabaku](https://github.com/Arabaku)
 + [RigoLigoRLC](https://github.com/RigoLigoRLC)
++ [CrSjimo](https://github.com/CrSjimo)
 + [IceKyrin](https://github.com/IceKyrin)
 
 Welcome to commit pull requests.

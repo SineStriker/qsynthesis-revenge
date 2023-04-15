@@ -4,13 +4,13 @@
 #include <QCoreApplication>
 #include <QStyle>
 
+#include <QMDecoratorV2.h>
 #include <QMMath.h>
 #include <QMView.h>
 
 #include <CoreApi/ILoader.h>
 
 #include "ICore.h"
-#include "QMDecorator.h"
 
 namespace Core {
 
@@ -75,8 +75,8 @@ namespace Core {
 
         connect(aboutButton, &QAbstractButton::clicked, d, &IHomeWindowPrivate::_q_aboutButtonClicked);
 
-        qIDec->installLocale(this, {{}}, _LOC(IHomeWindowPrivate, d));
-        qIDec->installTheme(win, {"Global", "HomeWindow"});
+        qIDec->installLocale(this, _LOC(IHomeWindowPrivate, d));
+        qIDec->installTheme(win, "core.HomeWindow");
 
         d->mainMenuCtx = ICore::instance()->actionSystem()->context("home.MainMenu");
 

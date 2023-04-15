@@ -36,9 +36,8 @@ if(TRUE)
 
     ck_add_attaches(${PROJECT_NAME}
         SRC Res/conf/${CHORUSKIT_PLATFORM_SHORT}/qtmedium.conf.json DEST ${CHORUSKIT_RUNTIME_OUTPUT_DIR}
-        SRC Res/qtdummy.res.json DEST ${CHORUSKIT_SHARE_OUTPUT_DIR}/qtdummy
-        SRC Res/themes DEST ${CHORUSKIT_SHARE_OUTPUT_DIR}/qtdummy/qtdummy.res
-        SRC ${CMAKE_CURRENT_BINARY_DIR}/Res/translations DEST ${CHORUSKIT_SHARE_OUTPUT_DIR}/qtdummy/qtdummy.res
+        SRC Res/themes DEST ${CHORUSKIT_SHARE_OUTPUT_DIR}/qtdummy
+        SRC ${CMAKE_CURRENT_BINARY_DIR}/Res/translations DEST ${CHORUSKIT_SHARE_OUTPUT_DIR}/qtdummy
     )
 
     ck_add_attaches(${PROJECT_NAME}

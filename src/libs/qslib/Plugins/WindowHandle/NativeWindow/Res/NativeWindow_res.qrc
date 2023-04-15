@@ -6,6 +6,5 @@
         <file>svg/window-bar/maximize.svg</file>
         <file>svg/window-bar/maximize2.svg</file>
         <file>svg/window-bar/minimize.svg</file>
-        <file>themes/window-bar.qss.in</file>
     </qresource>
 </RCC>

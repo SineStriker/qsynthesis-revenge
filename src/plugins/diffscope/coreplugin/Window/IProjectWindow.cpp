@@ -3,7 +3,7 @@
 
 #include <QDebug>
 
-#include <QMDecorator.h>
+#include <QMDecoratorV2.h>
 
 #include "ICore.h"
 
@@ -34,8 +34,8 @@ namespace Core {
 
         auto win = window();
 
-        qIDec->installLocale(this, {{}}, _LOC(IProjectWindowPrivate, d));
-        qIDec->installTheme(win, {"Global", "ProjectWindow"});
+        qIDec->installLocale(this, _LOC(IProjectWindowPrivate, d));
+        qIDec->installTheme(win, "core.ProjectWindow");
 
         d->mainMenuCtx = ICore::instance()->actionSystem()->context("project.MainMenu");
     }

@@ -3,6 +3,15 @@
 
 #include <QMessageBox>
 
+QMConsolePrivate::QMConsolePrivate() {
+}
+
+QMConsolePrivate::~QMConsolePrivate() {
+}
+
+void QMConsolePrivate::init() {
+}
+
 QMConsole::QMConsole(QObject *parent) : QMConsole(*new QMConsolePrivate(), parent) {
 }
 
