@@ -52,9 +52,6 @@ void ThemeGuardV2::updateScreen() {
 
     w->setStyleSheet(allStylesheets);
 
-    qDebug() << w;
-    qDebug().noquote() << allStylesheets;
-
     needUpdate = false;
 }
 
@@ -74,14 +71,19 @@ void ThemeGuardV2::switchScreen(QScreen *screen) {
 
 bool ThemeGuardV2::eventFilter(QObject *obj, QEvent *event) {
     switch (event->type()) {
+        case QEvent::PolishRequest: {
+            if (needUpdate) {
+                updateScreen();
+            }
+            break;
+        }
         case QEvent::Show: {
             if (!winHandle) {
                 winHandle = w->window()->windowHandle();
                 connect(winHandle, &QWindow::screenChanged, this, &ThemeGuardV2::switchScreen);
 
-                if (needUpdate) {
-                    updateScreen();
-                }
+                // We cannot set stylesheet here because children may haven't initialized
+                // Possible problems: unexpected QLineEdit placeholder text color
             }
             break;
         }

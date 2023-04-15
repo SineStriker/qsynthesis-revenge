@@ -1,5 +1,6 @@
 #include "ICore.h"
 
+#include <CMenu.h>
 #include <CoreApi/ICoreBase_p.h>
 #include <QMConsole.h>
 
@@ -65,6 +66,44 @@ namespace Core {
         return code;
     }
 
+    class PopUpMenuWatcher : public QObject {
+    public:
+        explicit PopUpMenuWatcher(QWidget *parent = nullptr) : QObject(parent) {
+            parent->installEventFilter(this);
+        }
+
+    protected:
+        bool eventFilter(QObject *obj, QEvent *event) override {
+            if (obj == parent()) {
+                switch (event->type()) {
+                    case QEvent::ChildPolished: {
+                        auto e = static_cast<QChildEvent *>(event);
+                        auto child = e->child();
+                        if (child->inherits("QMenu") && child->property("core-style").isNull()) {
+                            auto menu = qobject_cast<QMenu *>(child);
+                            menu->setProperty("core-style", true);
+                            menu->style()->polish(menu);
+                        }
+                        break;
+                    }
+                    default:
+                        break;
+                }
+            }
+            return QObject::eventFilter(obj, event);
+        }
+    };
+
+    void ICore::autoPolishPopupMenu(QWidget *w) {
+        new PopUpMenuWatcher(w);
+    }
+
+    QMenu *ICore::createCoreMenu(QWidget *parent) {
+        auto menu = new CMenu(parent);
+        menu->setProperty("core-style", true);
+        return menu;
+    }
+
     ICore::ICore(QObject *parent) : ICore(*new ICorePrivate(), parent) {
     }
 
@@ -74,5 +113,6 @@ namespace Core {
     ICore::ICore(ICorePrivate &d, QObject *parent) : ICoreBase(d, parent) {
         d.init();
     }
+
 
 }

@@ -12,7 +12,6 @@
 #include "Internal/Widgets/HomeRecentWidget.h"
 
 #include "ICore.h"
-#include "IStyleHelper.h"
 
 #include <QMDecoratorV2.h>
 
@@ -49,15 +48,18 @@ namespace Core {
             connect(recentTopWidget, &HomeRecentTopFrame::newRequested, this, &HomeWindowAddOn::_q_newButtonClicked);
             connect(recentTopWidget, &HomeRecentTopFrame::openRequested, this, &HomeWindowAddOn::_q_openButtonClicked);
 
-            // Use reflection to invoke
-            iWin->addWidget("core.recentWidget.buttonsLayout", recentTopWidget);
-            // Use interface to invoke
-            iWin->addObject("core.recentWidget.buttonsLayoutInterface", recentTopWidget->buttonBar());
-
             qIDec->installLocale(this, _LOC(HomeWindowAddOn, this));
+
+            // Extension Point: add buttons to recent widget
+            iWin->addWidget("core.recentWidget.buttonBar", recentTopWidget);                       // Reflection
+            iWin->addObject("core.recentWidget.buttonBarInterface", recentTopWidget->buttonBar()); // InterfaceY
         }
 
         void HomeWindowAddOn::extensionsInitialized() {
+            auto iWin = qobject_cast<IHomeWindow *>(this->windowHandle());
+
+            iWin->removeWidget("core.recentWidget.buttonBar");
+            iWin->removeObjects("core.recentWidget.buttonBarInterface");
         }
 
         void HomeWindowAddOn::reloadStrings() {
@@ -83,8 +85,8 @@ namespace Core {
             auto iWin = windowHandle();
             auto win = iWin->window();
 
-            fileItem = new ActionItem("core.File", IStyleHelper::createPolishedMenu(win), this);
-            helpItem = new ActionItem("core.Help", IStyleHelper::createPolishedMenu(win), this);
+            fileItem = new ActionItem("core.File", ICore::createCoreMenu(win), this);
+            helpItem = new ActionItem("core.Help", ICore::createCoreMenu(win), this);
 
             openGroupItem = new ActionItem("core.OpenGroup", new QActionGroup(this), this);
             newFileItem = new ActionItem("core.NewFile", new QAction(), this);

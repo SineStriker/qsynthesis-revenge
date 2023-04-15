@@ -19,8 +19,6 @@
 
 #include "CoreApi/ILoader.h"
 
-#include "IStyleHelper.h"
-
 #include "Internal/Settings/ActionConfigurePage.h"
 #include "Internal/Settings/AppearanceTopPage.h"
 #include "Internal/Settings/DisplayPage.h"
@@ -32,8 +30,6 @@ namespace Core {
     namespace Internal {
 
         static ICore *icore = nullptr;
-
-        static IStyleHelper *istyle = nullptr;
 
         static QSplashScreen *m_splash = nullptr;
 
@@ -57,8 +53,6 @@ namespace Core {
 
             // Init ICore instance
             icore = new ICore(this);
-
-            istyle = new IStyleHelper(this);
 
             // Add basic actions
             auto actionMgr = icore->actionSystem();

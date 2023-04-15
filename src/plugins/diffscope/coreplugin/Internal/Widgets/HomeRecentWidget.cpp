@@ -1,7 +1,6 @@
 #include "HomeRecentWidget.h"
 
 #include "ICore.h"
-#include "IStyleHelper.h"
 
 #include <QMDecoratorV2.h>
 
@@ -32,7 +31,7 @@ namespace Core {
         searchBox->setClearButtonEnabled(true);
         searchBox->setObjectName("search-box");
 
-        IStyleHelper::autoPolishPopupMenu(searchBox);
+        ICore::autoPolishPopupMenu(searchBox);
 
         newButton = new CTabButton();
         newButton->setProperty("type", "top-button");

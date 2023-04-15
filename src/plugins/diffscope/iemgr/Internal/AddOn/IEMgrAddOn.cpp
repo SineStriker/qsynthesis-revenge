@@ -8,7 +8,7 @@
 #include <QDebug>
 #include <QMetaObject>
 
-#include <coreplugin/IStyleHelper.h>
+#include <coreplugin/ICore.h>
 #include <coreplugin/Interfaces/IButtonBar.h>
 
 namespace IEMgr::Internal {
@@ -61,7 +61,7 @@ namespace IEMgr::Internal {
 
         importExportGroupItem = new ActionItem("iemgr.ImportExportGroup", new QActionGroup(this), this);
 
-        importItem = new ActionItem("iemgr.Import", IStyleHelper::createPolishedMenu(win), this);
+        importItem = new ActionItem("iemgr.Import", ICore::createCoreMenu(win), this);
         importProjectItem = new ActionItem("iemgr.ImportProject", new QAction(), this);
         importAudioItem = new ActionItem("iemgr.ImportAudio", new QAction(), this);
 
@@ -105,15 +105,15 @@ namespace IEMgr::Internal {
         bool usingReflect = false;
         if (usingReflect) {
             // Get widget
-            auto buttonsLayout = windowHandle()->widget("core.recentWidget.buttonsLayout");
-            if (!buttonsLayout) {
+            auto buttonBar = windowHandle()->widget("core.recentWidget.buttonBar");
+            if (!buttonBar) {
                 return;
             }
 
             QAbstractButton *button;
 
             // Invoke method
-            bool res = QMetaObject::invokeMethod(buttonsLayout, "addButton", Qt::DirectConnection,
+            bool res = QMetaObject::invokeMethod(buttonBar, "addButton", Qt::DirectConnection,
                                                  Q_RETURN_ARG(QAbstractButton *, button), // Ret
                                                  Q_ARG(QString, "import-button")          // Arg
             );
@@ -127,13 +127,13 @@ namespace IEMgr::Internal {
             importButton = button;
         } else {
             // Get object
-            auto buttonsLayout =
-                dynamic_cast<IButtonBar *>(windowHandle()->getFirstObject("core.recentWidget.buttonsLayoutInterface"));
-            if (!buttonsLayout) {
+            auto buttonBar =
+                dynamic_cast<IButtonBar *>(windowHandle()->getFirstObject("core.recentWidget.buttonBarInterface"));
+            if (!buttonBar) {
                 return;
             }
 
-            QAbstractButton *button = buttonsLayout->addButton("import-button");
+            QAbstractButton *button = buttonBar->addButton("import-button");
 
             // Subsequent settings
             button->setObjectName("import-button");
