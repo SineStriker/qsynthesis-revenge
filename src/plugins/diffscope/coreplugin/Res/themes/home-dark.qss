@@ -18,6 +18,19 @@ CNavFrame#home-frame>QSplitter>QFrame#right-frame {
     background-color: transparent;
 }
 
+/* Top Buttons */
+
+CTabButton#home-title-button {
+    color: #CCCCCC;
+    font-size: 20px;
+    font-weight: bold;
+    qproperty-iconUp: svg(":/svg/app/diffsinger.svg");
+    qproperty-iconSize: 32px 32px;
+    qproperty-spaceRatio: 0.2;
+    padding: 20px;
+    background-color: transparent;
+    text-align: left;
+}
 
 /* Nav Buttons */
 
@@ -44,10 +57,6 @@ CTabButton[type=home-nav-button]:checked {
 
 /* Nav Bottom Buttons */
 
-CTabButton#home-about-button {
-    qproperty-iconUp: svg(":/svg/home/info.svg", #FFFFFF);
-}
-
 CTabButton[type=home-bottom-button] {
     qproperty-iconSize: 20px 20px;
     qproperty-spaceRatio: 0.2;
@@ -60,6 +69,13 @@ CTabButton[type=home-bottom-button] {
 CTabButton[type=home-bottom-button]:hover,
 CTabButton[type=home-bottom-button]:pressed {
     background-color: rgba(255, 255, 255, 15%);
+}
+
+CTabButton#home-about-button {
+    border-top: 1px solid rgba(255, 255, 255, 15%);
+    qproperty-iconUp: svg(":/svg/home/info.svg", #FFFFFF);
+    padding-top: 20px;
+    padding-bottom: 20px;
 }
 
 

@@ -65,12 +65,18 @@ namespace Core {
         frame->setObjectName("home-frame");
         setCentralWidget(frame);
 
+        auto titleButton = new CTabButton(qAppName());
+        titleButton->setObjectName("home-title-button");
+        titleButton->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
+        frame->setTopWidget(titleButton); //
+
         auto aboutButton = new CTabButton();
         aboutButton->setProperty("type", "home-bottom-button");
         aboutButton->setObjectName("home-about-button");
         frame->setBottomWidget(aboutButton);
 
         d->navFrame = frame;
+        d->titleButton = titleButton;
         d->aboutButton = aboutButton;
 
         connect(aboutButton, &QAbstractButton::clicked, d, &IHomeWindowPrivate::_q_aboutButtonClicked);

@@ -3,8 +3,8 @@
 
 #include <QPushButton>
 
-#include "CoreApi/ActionItem.h"
-#include "CoreApi/IWindowAddOn.h"
+#include <CoreApi/ActionItem.h>
+#include <CoreApi/IWindowAddOn.h>
 
 namespace Core {
 

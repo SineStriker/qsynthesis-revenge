@@ -26,6 +26,8 @@ namespace Core {
         ActionContext *mainMenuCtx;
 
         CNavFrame *navFrame;
+
+        CTabButton *titleButton;
         CTabButton *aboutButton;
 
     private:
