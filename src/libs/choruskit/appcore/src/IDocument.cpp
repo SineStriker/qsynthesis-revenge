@@ -34,6 +34,16 @@ namespace Core {
     IDocument::~IDocument() {
     }
 
+    QString IDocument::id() const {
+        Q_D(const IDocument);
+        return d->id;
+    }
+
+    DocumentSpec *IDocument::spec() const {
+        Q_D(const IDocument);
+        return d->spec;
+    }
+
     QString IDocument::errorMessage() const {
         Q_D(const IDocument);
         return d->errMsg;
@@ -62,7 +72,11 @@ namespace Core {
 
     QString IDocument::plainDisplayName() const {
         Q_D(const IDocument);
-        return d->preferredDisplayName.isEmpty() ? QFileInfo(d->filePath).fileName() : d->preferredDisplayName;
+        QString filename;
+        return d->preferredDisplayName.isEmpty() ? ((filename = QFileInfo(d->filePath).fileName()).isEmpty()
+                                                        ? QFileInfo(suggestedFileName()).baseName()
+                                                        : filename)
+                                                 : d->preferredDisplayName;
     }
 
     QString IDocument::preferredDisplayName() const {
@@ -132,7 +146,7 @@ namespace Core {
     }
 
     bool IDocument::isSaveAsAllowed() const {
-        return false;
+        return true;
     }
 
     IDocument::ReloadBehavior IDocument::reloadBehavior(IDocument::ChangeTrigger state,

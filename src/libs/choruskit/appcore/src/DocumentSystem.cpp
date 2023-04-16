@@ -108,6 +108,10 @@ namespace Core {
         doc->setParent(this);
         d->documents.append(doc->id(), doc);
 
+        for (const auto &ext : doc->supportedExtensions()) {
+            d->extensionsMap[ext].append(doc);
+        }
+
         return true;
     }
 
@@ -127,9 +131,19 @@ namespace Core {
             return false;
         }
 
-        auto document = it.value();
-        document->setParent(nullptr);
+        auto doc = it.value();
+        doc->setParent(nullptr);
         d->documents.erase(it);
+
+        for (const auto &ext : doc->supportedExtensions()) {
+            auto it2 = d->extensionsMap.find(ext);
+            if (it2 == d->extensionsMap.end())
+                continue;
+            auto &set = it2.value();
+            it2->remove(doc);
+            if (it2->isEmpty())
+                d->extensionsMap.erase(it2);
+        }
 
         return true;
     }
@@ -147,6 +161,11 @@ namespace Core {
     QStringList DocumentSystem::docTypeIds() const {
         Q_D(const DocumentSystem);
         return d->documents.keys();
+    }
+
+    QList<DocumentSpec *> DocumentSystem::supportedDocTypes(const QString &suffix) const {
+        Q_D(const DocumentSystem);
+        return d->extensionsMap.value(suffix, {}).values();
     }
 
     void _check_unique_file(const QString &name, QStringList &files) {
@@ -268,12 +287,12 @@ namespace Core {
         }
 
         auto filter =
-            spec->filter() + ";;" +
+            spec->saveFilter() + ";;" +
             QString("%1(%2)").arg(QApplication::translate("Core::DocumentSystem", "All Files"), QMOs::allFilesFilter());
 
         QString absoluteFilePath = document->filePath();
         const QFileInfo fi(absoluteFilePath);
-        QString path;
+        QString path = d->saveFileLastVisitDir;
         QString fileName;
         if (absoluteFilePath.isEmpty()) {
             fileName = document->suggestedFileName();
@@ -286,7 +305,7 @@ namespace Core {
         }
 
         return getSaveFileName(parent, QApplication::translate("Core::DocumentSystem", "Save As File"),
-                               path + QLatin1Char('/') + fileName, filter);
+                               (path + QLatin1Char('/') + fileName), filter);
     }
 
     DocumentSystem::DocumentSystem(DocumentSystemPrivate &d, QObject *parent) : DocumentWatcher(d, parent) {

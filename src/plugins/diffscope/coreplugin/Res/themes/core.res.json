@@ -10,6 +10,9 @@
             },
             "Core::HomeWindow": {
                 "file": "home-dark.qss"
+            },
+            "Core::ProjectWindow": {
+                "file": "project-dark.qss"
             }
         },
         "Zhibin - Light": {
@@ -18,6 +21,9 @@
             },
             "Core::HomeWindow": {
                 "file": "home-light.qss"
+            },
+            "Core::ProjectWindow": {
+                "file": "project-light.qss"
             }
         }
     },
@@ -25,6 +31,10 @@
         "core.HomeWindow": [
             "Global",
             "Core::HomeWindow"
+        ],
+        "core.ProjectWindow": [
+            "Global",
+            "Core::ProjectWindow"
         ]
     }
 }

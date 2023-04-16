@@ -98,6 +98,57 @@
     </message>
 </context>
 <context>
+    <name>Core::Internal::CoreWindowAddOn</name>
+    <message>
+        <source>File(&amp;F)</source>
+        <translation type="unfinished">文件(&amp;F)</translation>
+    </message>
+    <message>
+        <source>Help(&amp;H)</source>
+        <translation type="unfinished">帮助(&amp;H)</translation>
+    </message>
+    <message>
+        <source>Open Actions</source>
+        <translation type="unfinished">打开组</translation>
+    </message>
+    <message>
+        <source>New</source>
+        <translation type="unfinished">新建</translation>
+    </message>
+    <message>
+        <source>Open</source>
+        <translation type="unfinished">打开</translation>
+    </message>
+    <message>
+        <source>Preference Actions</source>
+        <translation type="unfinished">首选项组</translation>
+    </message>
+    <message>
+        <source>Settings</source>
+        <translation type="unfinished">设置</translation>
+    </message>
+    <message>
+        <source>About Actions</source>
+        <translation type="unfinished">关于组</translation>
+    </message>
+    <message>
+        <source>About Plugins</source>
+        <translation type="unfinished">关于插件</translation>
+    </message>
+    <message>
+        <source>About %1</source>
+        <translation type="unfinished">关于 %1</translation>
+    </message>
+    <message>
+        <source>About Qt</source>
+        <translation type="unfinished">关于 Qt</translation>
+    </message>
+    <message>
+        <source>!</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>Core::Internal::DisplayPage</name>
     <message>
         <source>Display</source>
@@ -115,7 +166,7 @@
     <name>Core::Internal::HomeWindowAddOn</name>
     <message>
         <source>File(&amp;F)</source>
-        <translation>文件(&amp;F)</translation>
+        <translation type="vanished">文件(&amp;F)</translation>
     </message>
     <message>
         <source>Edit(&amp;E)</source>
@@ -123,39 +174,39 @@
     </message>
     <message>
         <source>Help(&amp;H)</source>
-        <translation>帮助(&amp;H)</translation>
+        <translation type="vanished">帮助(&amp;H)</translation>
     </message>
     <message>
         <source>Open Actions</source>
-        <translation>打开组</translation>
+        <translation type="vanished">打开组</translation>
     </message>
     <message>
         <source>New</source>
-        <translation>新建</translation>
+        <translation type="vanished">新建</translation>
     </message>
     <message>
         <source>Open</source>
-        <translation>打开</translation>
+        <translation type="vanished">打开</translation>
     </message>
     <message>
         <source>Preference Actions</source>
-        <translation>首选项组</translation>
+        <translation type="vanished">首选项组</translation>
     </message>
     <message>
         <source>Settings</source>
-        <translation>设置</translation>
+        <translation type="vanished">设置</translation>
     </message>
     <message>
         <source>About Actions</source>
-        <translation>关于组</translation>
+        <translation type="vanished">关于组</translation>
     </message>
     <message>
         <source>About %1</source>
-        <translation>关于 %1</translation>
+        <translation type="vanished">关于 %1</translation>
     </message>
     <message>
         <source>About Qt</source>
-        <translation>关于 Qt</translation>
+        <translation type="vanished">关于 Qt</translation>
     </message>
     <message>
         <source>Recent</source>
@@ -163,7 +214,7 @@
     </message>
     <message>
         <source>About Plugins</source>
-        <translation>关于插件</translation>
+        <translation type="vanished">关于插件</translation>
     </message>
 </context>
 <context>

@@ -331,9 +331,9 @@ int main_entry(int argc, char *argv[]) {
     pluginManager.setPluginIID(pluginIID);
 
     pluginManager.setSettings(
-        new QSettings(QString("%1/%2.extensionSystem.ini").arg(userSettingPath, qAppName()), QSettings::IniFormat));
+        new QSettings(QString("%1/%2.plugins.ini").arg(userSettingPath, qAppName()), QSettings::IniFormat));
     pluginManager.setGlobalSettings(
-        new QSettings(QString("%1/%2.extensionSystem.ini").arg(systemSettingPath, qAppName()), QSettings::IniFormat));
+        new QSettings(QString("%1/%2.plugins.ini").arg(systemSettingPath, qAppName()), QSettings::IniFormat));
 
     QStringList pluginPaths = [&]() {
         QStringList rc;

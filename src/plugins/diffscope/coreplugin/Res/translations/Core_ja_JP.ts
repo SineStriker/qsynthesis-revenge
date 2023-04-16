@@ -72,21 +72,7 @@
     </message>
 </context>
 <context>
-    <name>Core::Internal::DisplayPage</name>
-    <message>
-        <source>Display</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>Core::Internal::DspxSpec</name>
-    <message>
-        <source>DiffScope Project Files</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>Core::Internal::HomeWindowAddOn</name>
+    <name>Core::Internal::CoreWindowAddOn</name>
     <message>
         <source>File(&amp;F)</source>
         <translation type="unfinished"></translation>
@@ -120,6 +106,10 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <source>About Plugins</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>About %1</source>
         <translation type="unfinished"></translation>
     </message>
@@ -128,11 +118,28 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Recent</source>
+        <source>!</source>
         <translation type="unfinished"></translation>
     </message>
+</context>
+<context>
+    <name>Core::Internal::DisplayPage</name>
     <message>
-        <source>About Plugins</source>
+        <source>Display</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>Core::Internal::DspxSpec</name>
+    <message>
+        <source>DiffScope Project Files</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>Core::Internal::HomeWindowAddOn</name>
+    <message>
+        <source>Recent</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

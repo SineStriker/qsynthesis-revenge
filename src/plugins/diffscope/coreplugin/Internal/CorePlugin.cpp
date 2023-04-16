@@ -23,7 +23,7 @@
 #include "Internal/Settings/AppearanceTopPage.h"
 #include "Internal/Settings/DisplayPage.h"
 
-#include "Internal/Documents/DspxDocument.h"
+#include "Internal/Documents/DspxSpec.h"
 
 namespace Core {
 
@@ -65,8 +65,8 @@ namespace Core {
             // Add basic windows and add-ons
             auto winMgr = icore->windowSystem();
 
-            winMgr->addWindow(new Internal::IHomeWindowFactory());
-            winMgr->addWindow(new Internal::IProjectWindowFactory());
+            winMgr->addWindow(new IHomeWindowFactory());
+            winMgr->addWindow(new IProjectWindowFactory());
 
             winMgr->addAddOn(new HomeWindowAddOnFactory());
             winMgr->addAddOn(new ProjectWindowAddOnFactory());

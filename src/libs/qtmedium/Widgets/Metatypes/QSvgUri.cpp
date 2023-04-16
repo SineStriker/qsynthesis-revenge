@@ -1,8 +1,8 @@
 #include "QSvgUri.h"
 #include "private/QMetaTypeUtils.h"
 
-#include "QMSystem.h"
 #include "CSvgIconEngine.h"
+#include "QMSystem.h"
 
 #include <QFileInfo>
 #include <QMimeDatabase>
@@ -13,8 +13,7 @@ QSvgUri::QSvgUri() {
 QSvgUri::QSvgUri(const QString &filename) : m_filename(filename) {
 }
 
-QSvgUri::QSvgUri(const QString &filename, const QColor &color)
-    : m_filename(filename), m_currentColor(color.name()) {
+QSvgUri::QSvgUri(const QString &filename, const QColor &color) : m_filename(filename), m_currentColor(color.name()) {
 }
 
 QSvgUri::~QSvgUri() {
@@ -22,8 +21,7 @@ QSvgUri::~QSvgUri() {
 
 QStringList QSvgUri::toStringList() const {
     return {MetaFunctionName(),
-            QString("%1,%2%3").arg(m_filename, QCssCustomValue_Svg_CurrentColor_Prefix,
-                                   m_currentColor)};
+            QString("%1,%2%3").arg(m_filename, QCssCustomValue_Svg_CurrentColor_Prefix, m_currentColor)};
 }
 
 QIcon QSvgUri::toIcon(int modes) const {
@@ -32,11 +30,10 @@ QIcon QSvgUri::toIcon(int modes) const {
         QString suffix = info.suffix();
 #if QT_CONFIG(mimetype)
         if (suffix.isEmpty()) {
-            suffix = QMimeDatabase()
-                         .mimeTypeForFile(info)
-                         .preferredSuffix(); // determination from contents
-#endif                                       // mimetype
+            suffix = QMimeDatabase().mimeTypeForFile(info).preferredSuffix(); // determination from contents
+#endif                                                                        // mimetype
         }
+
         if (info.isFile() && !suffix.compare("svg", Qt::CaseInsensitive)) {
             QIcon icon(new CSvgIconEngine(m_currentColor));
             icon.addFile(m_filename);
@@ -80,8 +77,7 @@ QSvgUri::operator QIcon() const {
 }
 
 QSvgUri QSvgUri::fromStringList(const QStringList &stringList) {
-    if (stringList.size() == 2 &&
-        !stringList.front().compare(MetaFunctionName(), Qt::CaseInsensitive)) {
+    if (stringList.size() == 2 && !stringList.front().compare(MetaFunctionName(), Qt::CaseInsensitive)) {
         QStringList content = stringList.back().split(',');
         if (!content.isEmpty()) {
             QString strFile = content.front();

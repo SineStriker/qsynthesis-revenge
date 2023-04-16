@@ -20,6 +20,12 @@ namespace Core {
             return "home";
         }
 
+        /**
+         * brief: Add a navigation widget
+         *
+         * @param w QWidget to show in tabs
+         * @return Sidebar button handle
+         */
         QAbstractButton *addNavWidget(QWidget *w);
 
     protected:

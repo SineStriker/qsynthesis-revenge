@@ -333,7 +333,7 @@ namespace Core {
                     while (unhandled) {
                         if (previousDeletedAnswer != PromptHandler::FileDeletedCloseAll) {
                             previousDeletedAnswer = promptHandler->fileDeletedPrompt(
-                                document->filePath(), trigger == IDocument::TriggerExternal,document->dialogParent());
+                                document->filePath(), trigger == IDocument::TriggerExternal, document->dialogParent());
                         }
                         switch (previousDeletedAnswer) {
                             case PromptHandler::FileDeletedSave:
@@ -616,7 +616,7 @@ namespace Core {
 
     QString DocumentWatcher::getSaveAsFileName(const IDocument *document, QWidget *parent) {
         return QFileDialog::getSaveFileName(
-            parent, QCoreApplication::translate("Core::DocumentWatcher", "Save As File"),
+            parent, QCoreApplication::translate("Core::DocumentWatcher", "Save As File"), {},
             QString("%1(%2)").arg(QApplication::translate("Core::PromptHandler", "All Files"), QMOs::allFilesFilter()));
     }
 

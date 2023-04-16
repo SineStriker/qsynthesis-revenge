@@ -4,6 +4,8 @@
 #include <QLabel>
 #include <QMenuBar>
 
+#include <QMDecoratorV2.h>
+
 #include "CoreApi/IWindow.h"
 
 namespace Core {
@@ -18,22 +20,28 @@ namespace Core {
             return new ProjectWindowAddOn(parent);
         }
 
-        ProjectWindowAddOn::ProjectWindowAddOn(QObject *parent) : IWindowAddOn(parent) {
+        ProjectWindowAddOn::ProjectWindowAddOn(QObject *parent) : CoreWindowAddOn(parent) {
         }
 
         ProjectWindowAddOn::~ProjectWindowAddOn() {
         }
 
         void ProjectWindowAddOn::initialize() {
-            auto iWin = this->windowHandle();
-            auto win = iWin->window();
+            CoreWindowAddOn::initialize();
 
-            auto label = new QLabel("123");
-            iWin->setCentralWidget(label);
-            iWin->menuBar()->addMenu(new QMenu("File(&F)"));
+            initActions();
+
+            qIDec->installLocale(this, _LOC(ProjectWindowAddOn, this));
         }
 
         void ProjectWindowAddOn::extensionsInitialized() {
+            CoreWindowAddOn::extensionsInitialized();
+        }
+
+        void ProjectWindowAddOn::reloadStrings() {
+        }
+
+        void ProjectWindowAddOn::initActions() {
         }
     }
 

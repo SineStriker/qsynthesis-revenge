@@ -20,7 +20,9 @@ namespace Core {
         QString id() const;
 
     public:
+        virtual QStringList supportedExtensions() const = 0;
         virtual QString filter() const = 0;
+        virtual QString saveFilter() const;
         virtual bool open(const QString &filename) = 0;
 
     protected:

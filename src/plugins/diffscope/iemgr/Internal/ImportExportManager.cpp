@@ -26,7 +26,6 @@ namespace IEMgr {
 
     namespace Internal {
 
-
         static IManager *imgr = nullptr;
 
         ImportExportManager::ImportExportManager() {
@@ -63,10 +62,10 @@ namespace IEMgr {
             winMgr->addAddOn(new IEMgrAddOnFactory());
 
             // Add wizards
-            imgr->addWizard(new Internal::MidiWizard());
-            imgr->addWizard(new Internal::UstWizard());
-            imgr->addWizard(new Internal::OpenSvipWizard());
-            imgr->addWizard(new Internal::SvipWizard());
+            imgr->addWizard(new MidiWizard());
+            imgr->addWizard(new UstWizard());
+            imgr->addWizard(new OpenSvipWizard());
+            imgr->addWizard(new SvipWizard());
 
             return true;
         }

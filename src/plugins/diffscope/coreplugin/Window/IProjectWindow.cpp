@@ -33,6 +33,8 @@ namespace Core {
         Q_D(IProjectWindow);
 
         auto win = window();
+        win->setObjectName("project-window");
+        win->setAcceptDrops(true);
 
         qIDec->installLocale(this, _LOC(IProjectWindowPrivate, d));
         qIDec->installTheme(win, "core.ProjectWindow");

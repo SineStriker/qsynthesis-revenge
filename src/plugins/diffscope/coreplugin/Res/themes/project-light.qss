@@ -1,0 +1,5 @@
+/* Stylesheet Content */
+
+QWidget#project-window {
+    background-color: #1E1E1E;
+}

@@ -157,6 +157,11 @@ namespace Core {
         return d->type;
     }
 
+    ActionSpec *ActionItem::spec() const {
+        Q_D(const ActionItem);
+        return d->spec;
+    }
+
     QAction *ActionItem::action() const {
         Q_D(const ActionItem);
         return d->action;

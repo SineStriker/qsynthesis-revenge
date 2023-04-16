@@ -4,7 +4,8 @@
 #include <QPushButton>
 
 #include <CoreApi/ActionItem.h>
-#include <CoreApi/IWindowAddOn.h>
+
+#include "CoreWindowAddOn.h"
 
 namespace Core {
 
@@ -16,7 +17,7 @@ namespace Core {
             IWindowAddOn *create(QObject *parent) override;
         };
 
-        class HomeWindowAddOn : public IWindowAddOn {
+        class HomeWindowAddOn : public CoreWindowAddOn {
             Q_OBJECT
         public:
             explicit HomeWindowAddOn(QObject *parent = nullptr);
@@ -25,25 +26,9 @@ namespace Core {
             void initialize() override;
             void extensionsInitialized() override;
 
-        public:
+        private:
             void reloadStrings();
             void initActions();
-
-        private:
-            ActionItem *fileItem;
-            ActionItem *helpItem;
-
-            ActionItem *openGroupItem;
-            ActionItem *newFileItem;
-            ActionItem *openFileItem;
-
-            ActionItem *preferenceGroupItem;
-            ActionItem *settingsItem;
-
-            ActionItem *aboutGroupItem;
-            ActionItem *aboutPluginsItem;
-            ActionItem *aboutAppItem;
-            ActionItem *aboutQtItem;
 
             QAbstractButton *recentWidgetButton;
 

@@ -1,5 +1,5 @@
-#ifndef CHORUSKIT_DSPXDOCUMENT_H
-#define CHORUSKIT_DSPXDOCUMENT_H
+#ifndef CHORUSKIT_DSPXSPEC_H
+#define CHORUSKIT_DSPXSPEC_H
 
 #include <CoreApi/DocumentSpec.h>
 
@@ -14,6 +14,7 @@ namespace Core {
             ~DspxSpec();
 
         public:
+            QStringList supportedExtensions() const override;
             QString filter() const override;
 
             bool open(const QString &filename) override;
@@ -23,4 +24,4 @@ namespace Core {
 
 } // Core
 
-#endif // CHORUSKIT_DSPXDOCUMENT_H
+#endif // CHORUSKIT_DSPXSPEC_H

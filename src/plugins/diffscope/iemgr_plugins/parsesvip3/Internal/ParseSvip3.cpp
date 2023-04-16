@@ -14,7 +14,7 @@ namespace IEMgr {
         }
 
         bool ParseSvip3::initialize(const QStringList &arguments, QString *errorMessage) {
-            IManager::instance()->addWizard(new Internal::Svip3Wizard());
+            IManager::instance()->addWizard(new Svip3Wizard());
 
             return true;
         }

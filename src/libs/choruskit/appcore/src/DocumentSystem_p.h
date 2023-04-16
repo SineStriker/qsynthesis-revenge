@@ -23,6 +23,7 @@ namespace Core {
         void saveSettings() const;
 
         QMChronMap<QString, DocumentSpec *> documents;
+        QHash<QString, QMChronSet<DocumentSpec *>> extensionsMap;
 
         QStringList m_recentFiles;
         QStringList m_recentDirs;

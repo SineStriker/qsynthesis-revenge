@@ -60,6 +60,7 @@ namespace Core {
 
         auto win = window();
         win->setObjectName("home-window");
+        win->setAcceptDrops(true);
 
         auto frame = new CNavFrame();
         frame->setObjectName("home-frame");

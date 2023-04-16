@@ -14,7 +14,7 @@
 #include <QMSystem.h>
 
 ThemeGuardV2::ThemeGuardV2(QWidget *w, QMDecoratorV2Private *parent)
-    : QObject(parent), w(w), d(parent), winHandle(nullptr), needUpdate(true) {
+    : QObject(parent), w(w), d(parent), winHandle(w->windowHandle()), needUpdate(true) {
     w->installEventFilter(this);
 }
 

@@ -1,7 +1,9 @@
 #ifndef PROJECTWINDOWADDON_H
 #define PROJECTWINDOWADDON_H
 
-#include "CoreApi/IWindowAddOn.h"
+#include "CoreApi/ActionItem.h"
+
+#include "CoreWindowAddOn.h"
 
 namespace Core {
 
@@ -13,7 +15,7 @@ namespace Core {
             IWindowAddOn *create(QObject *parent) override;
         };
 
-        class ProjectWindowAddOn : public IWindowAddOn {
+        class ProjectWindowAddOn : public CoreWindowAddOn {
             Q_OBJECT
         public:
             explicit ProjectWindowAddOn(QObject *parent = nullptr);
@@ -21,6 +23,10 @@ namespace Core {
 
             void initialize() override;
             void extensionsInitialized() override;
+
+        private:
+            void reloadStrings();
+            void initActions();
         };
 
     }

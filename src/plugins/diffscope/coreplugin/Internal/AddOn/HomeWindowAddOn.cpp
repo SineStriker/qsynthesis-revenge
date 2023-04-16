@@ -7,15 +7,13 @@
 #include <QMenuBar>
 #include <QMessageBox>
 
-#include "Window/IHomeWindow.h"
-
-#include "Internal/Widgets/HomeRecentWidget.h"
-
 #include "ICore.h"
+#include "Internal/Widgets/HomeRecentWidget.h"
+#include "Internal/plugindialog.h"
+#include "Window/IHomeWindow.h"
 
 #include <QMDecoratorV2.h>
 
-#include <Internal/plugindialog.h>
 
 namespace Core {
 
@@ -29,13 +27,15 @@ namespace Core {
             return new HomeWindowAddOn(parent);
         }
 
-        HomeWindowAddOn::HomeWindowAddOn(QObject *parent) : IWindowAddOn(parent) {
+        HomeWindowAddOn::HomeWindowAddOn(QObject *parent) : CoreWindowAddOn(parent) {
         }
 
         HomeWindowAddOn::~HomeWindowAddOn() {
         }
 
         void HomeWindowAddOn::initialize() {
+            CoreWindowAddOn::initialize();
+
             initActions();
 
             auto iWin = qobject_cast<IHomeWindow *>(this->windowHandle());
@@ -52,7 +52,7 @@ namespace Core {
 
             // Extension Point: add buttons to recent widget
             iWin->addWidget("core.recentWidget.buttonBar", recentTopWidget);                       // Reflection
-            iWin->addObject("core.recentWidget.buttonBarInterface", recentTopWidget->buttonBar()); // InterfaceY
+            iWin->addObject("core.recentWidget.buttonBarInterface", recentTopWidget->buttonBar()); // Interface
         }
 
         void HomeWindowAddOn::extensionsInitialized() {
@@ -60,85 +60,15 @@ namespace Core {
 
             iWin->removeWidget("core.recentWidget.buttonBar");
             iWin->removeObjects("core.recentWidget.buttonBarInterface");
+
+            CoreWindowAddOn::extensionsInitialized();
         }
 
         void HomeWindowAddOn::reloadStrings() {
-            fileItem->setText(tr("File(&F)"));
-            helpItem->setText(tr("Help(&H)"));
-
-            openGroupItem->setText(tr("Open Actions"));
-            newFileItem->setText(tr("New"));
-            openFileItem->setText(tr("Open"));
-
-            preferenceGroupItem->setText(tr("Preference Actions"));
-            settingsItem->setText(tr("Settings"));
-
-            aboutGroupItem->setText(tr("About Actions"));
-            aboutPluginsItem->setText(tr("About Plugins"));
-            aboutAppItem->setText(tr("About %1").arg(qAppName()));
-            aboutQtItem->setText(tr("About Qt"));
-
             recentWidgetButton->setText(tr("Recent"));
         }
 
         void HomeWindowAddOn::initActions() {
-            auto iWin = windowHandle();
-            auto win = iWin->window();
-
-            fileItem = new ActionItem("core.File", ICore::createCoreMenu(win), this);
-            helpItem = new ActionItem("core.Help", ICore::createCoreMenu(win), this);
-
-            openGroupItem = new ActionItem("core.OpenGroup", new QActionGroup(this), this);
-            newFileItem = new ActionItem("core.NewFile", new QAction(), this);
-            openFileItem = new ActionItem("core.OpenFile", new QAction(), this);
-
-            preferenceGroupItem = new ActionItem("core.PreferenceGroup", new QActionGroup(this), this);
-            settingsItem = new ActionItem("core.Settings", new QAction(), this);
-
-            aboutGroupItem = new ActionItem("core.AboutGroup", new QActionGroup(this), this);
-            aboutPluginsItem = new ActionItem("core.AboutPlugins", new QAction(this), this);
-            aboutAppItem = new ActionItem("core.AboutApp", new QAction(this), this);
-            aboutQtItem = new ActionItem("core.AboutQt", new QAction(this), this);
-
-            connect(newFileItem->action(), &QAction::triggered, this, [this]() {
-                //
-            });
-
-            connect(openFileItem->action(), &QAction::triggered, this, [this]() {
-                auto docMgr = ICore::instance()->documentSystem();
-                docMgr->openFileBrowse(docMgr->docType("core.Dspx"));
-            });
-
-            connect(settingsItem->action(), &QAction::triggered, this, [this]() {
-                ICore::instance()->showSettingsDialog("core.Settings", windowHandle()->window()); //
-            });
-
-            connect(aboutPluginsItem->action(), &QAction::triggered, this, [this]() {
-                Internal::PluginDialog dlg(windowHandle()->window());
-                dlg.exec();
-            });
-
-            connect(aboutAppItem->action(), &QAction::triggered, this, [this]() {
-                ICore::aboutApp(windowHandle()->window()); //
-            });
-
-            connect(aboutQtItem->action(), &QAction::triggered, this, [this]() {
-                QMessageBox::aboutQt(windowHandle()->window()); //
-            });
-
-            iWin->addActionItems({
-                fileItem,
-                helpItem,
-                openGroupItem,
-                newFileItem,
-                openFileItem,
-                preferenceGroupItem,
-                settingsItem,
-                aboutGroupItem,
-                aboutPluginsItem,
-                aboutAppItem,
-                aboutQtItem,
-            });
         }
 
         void HomeWindowAddOn::_q_newButtonClicked() {

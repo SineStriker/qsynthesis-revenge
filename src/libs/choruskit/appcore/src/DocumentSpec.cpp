@@ -24,6 +24,10 @@ namespace Core {
         return d->id;
     }
 
+    QString DocumentSpec::saveFilter() const {
+        return filter();
+    }
+
     DocumentSpec::DocumentSpec(DocumentSpecPrivate &d, const QString &id, QObject *parent)
         : QObject(parent), d_ptr(&d) {
         d.q_ptr = this;

@@ -40,7 +40,7 @@ namespace IEMgr {
             auto imgr = IEMgr::IManager::instance();
 
             // Add wizards
-            imgr->addWizard(new Internal::DsWizard());
+            imgr->addWizard(new DsWizard());
 
             return true;
         }

@@ -14,7 +14,6 @@ namespace QDspx {
         };
         QAS_JSON(Type)
 
-
         Type type;
 
         // 构造器

@@ -20,6 +20,23 @@
         </menu>
     </context>
 
-    <context id="project.MainMenu" prefix="project.">
+    <context id="project.MainMenu" prefix="core.">
+        <menu id="File">
+            <group id="OpenGroup">
+                <action id="NewFile" shortcut="Ctrl+N"/>
+                <action id="OpenFile" shortcut="Ctrl+O"/>
+            </group>
+            <group id="PreferenceGroup">
+                <action id="Settings"/>
+            </group>
+        </menu>
+
+        <menu id="Help">
+            <group id="AboutGroup">
+                <action id="AboutPlugins"/>
+                <action id="AboutApp"/>
+                <action id="AboutQt"/>
+            </group>
+        </menu>
     </context>
 </actionSystem>

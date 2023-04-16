@@ -6,7 +6,7 @@
 #include <QMenu>
 #include <QWidget>
 
-#include "CkAppCoreGlobal.h"
+#include "ActionSpec.h"
 
 namespace Core {
 
@@ -34,6 +34,7 @@ namespace Core {
 
         QString id() const;
         Type type() const;
+        ActionSpec *spec() const;
 
         QAction *action() const;
         QActionGroup *actionGroup() const;

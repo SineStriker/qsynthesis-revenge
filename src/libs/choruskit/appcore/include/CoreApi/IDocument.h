@@ -3,7 +3,7 @@
 
 #include <QObject>
 
-#include "CkAppCoreGlobal.h"
+#include "DocumentSpec.h"
 
 namespace Core {
 
@@ -23,6 +23,9 @@ namespace Core {
         enum ReloadBehavior { BehaviorAsk, BehaviorSilent };
 
         enum ReloadFlag { FlagReload, FlagIgnore };
+
+        QString id() const;
+        DocumentSpec *spec() const;
 
     public:
         virtual bool open(const QString &filename) = 0;
@@ -67,7 +70,6 @@ namespace Core {
 
         void aboutToReload();
         void reloadFinished(bool success);
-
         void closeRequested();
 
         void filePathChanged(const QString &oldName, const QString &newName);
