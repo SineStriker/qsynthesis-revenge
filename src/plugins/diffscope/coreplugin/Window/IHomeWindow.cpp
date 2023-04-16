@@ -86,6 +86,14 @@ namespace Core {
         qIDec->installTheme(win, "core.HomeWindow");
 
         d->mainMenuCtx = ICore::instance()->actionSystem()->context("home.MainMenu");
+    }
+
+    void IHomeWindow::windowAddOnsFinished() {
+        Q_D(IHomeWindow);
+        auto win = window();
+
+        connect(d->mainMenuCtx, &ActionContext::stateChanged, d, &IHomeWindowPrivate::reloadMenuBar);
+        d->reloadMenuBar();
 
         // Init window sizes
         {
@@ -104,21 +112,18 @@ namespace Core {
                 // Adjust sizes
                 win->resize(1200, 800);
                 QMView::centralizeWindow(win);
-                frame->splitter()->setSizes({250, 1000});
+                d->navFrame->splitter()->setSizes({250, 1000});
                 if (isMax) {
                     win->showMaximized();
                 }
             } else {
                 win->setGeometry(winRect);
-                frame->splitter()->setSizes({int(win->width() * r), int(win->width() * (1 - r))});
+                d->navFrame->splitter()->setSizes({int(win->width() * r), int(win->width() * (1 - r))});
             }
         }
-    }
 
-    void IHomeWindow::windowAddOnsFinished() {
-        Q_D(IHomeWindow);
-        connect(d->mainMenuCtx, &ActionContext::stateChanged, d, &IHomeWindowPrivate::reloadMenuBar);
-        d->reloadMenuBar();
+        // Set window maximized before all-ons initialized will cause wierd style polishing problems
+        // ...
     }
 
     void IHomeWindow::windowAboutToClose() {
