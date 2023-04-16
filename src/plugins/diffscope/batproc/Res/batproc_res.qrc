@@ -1,0 +1,9 @@
+<RCC>
+    <qresource prefix="/">
+        <file>batproc_actions.xml</file>
+    </qresource>
+    <qresource prefix="/scripts/">
+        <file>scripts/src/internal.js</file>
+        <file>scripts/src/test.js</file>
+    </qresource>
+</RCC>

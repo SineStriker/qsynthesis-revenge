@@ -6,3 +6,5 @@ add_subdirectory(coreplugin)
 add_subdirectory(iemgr)
 
 add_subdirectory(iemgr_plugins)
+
+add_subdirectory(batproc)

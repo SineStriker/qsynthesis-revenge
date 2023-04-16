@@ -1,0 +1,20 @@
+{
+    "Name": "batproc",
+    "DisplayName": "Batch Process",
+    "Version": "@PLUGIN_METADATA_VERSION@",
+    "CompatVersion": "@PLUGIN_METADATA_COMPAT_VERSION@",
+    "DisabledByDefault": false,
+    "HiddenByDefault": false,
+    "Vendor": "CrSjimo",
+    "Copyright": "Copyright (C) 2021 OpenVPI",
+    "License": [
+        "Apache 2.0"
+    ],
+    "Category": "Editing",
+    "Description": "Batch processing plugin for DiffScope.",
+    "Url": "https://www.baidu.com/",
+    "Required": true,
+    "Dependencies" : [
+        { "Name" : "Core", "Version" : "0.1.0" }
+    ]
+}
