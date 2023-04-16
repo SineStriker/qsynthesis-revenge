@@ -101,47 +101,47 @@
     <name>Core::Internal::CoreWindowAddOn</name>
     <message>
         <source>File(&amp;F)</source>
-        <translation type="unfinished">文件(&amp;F)</translation>
+        <translation>文件(&amp;F)</translation>
     </message>
     <message>
         <source>Help(&amp;H)</source>
-        <translation type="unfinished">帮助(&amp;H)</translation>
+        <translation>帮助(&amp;H)</translation>
     </message>
     <message>
         <source>Open Actions</source>
-        <translation type="unfinished">打开组</translation>
+        <translation>打开组</translation>
     </message>
     <message>
         <source>New</source>
-        <translation type="unfinished">新建</translation>
+        <translation>新建</translation>
     </message>
     <message>
         <source>Open</source>
-        <translation type="unfinished">打开</translation>
+        <translation>打开</translation>
     </message>
     <message>
         <source>Preference Actions</source>
-        <translation type="unfinished">首选项组</translation>
+        <translation>首选项组</translation>
     </message>
     <message>
         <source>Settings</source>
-        <translation type="unfinished">设置</translation>
+        <translation>设置</translation>
     </message>
     <message>
         <source>About Actions</source>
-        <translation type="unfinished">关于组</translation>
+        <translation>关于组</translation>
     </message>
     <message>
         <source>About Plugins</source>
-        <translation type="unfinished">关于插件</translation>
+        <translation>关于插件</translation>
     </message>
     <message>
         <source>About %1</source>
-        <translation type="unfinished">关于 %1</translation>
+        <translation>关于 %1</translation>
     </message>
     <message>
         <source>About Qt</source>
-        <translation type="unfinished">关于 Qt</translation>
+        <translation>关于 Qt</translation>
     </message>
     <message>
         <source>!</source>

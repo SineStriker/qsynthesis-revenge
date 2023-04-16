@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/">
+        <file>scriptmgr_actions.xml</file>
+    </qresource>
+</RCC>

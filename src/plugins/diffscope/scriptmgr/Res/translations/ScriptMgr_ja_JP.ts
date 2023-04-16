@@ -2,10 +2,10 @@
 <!DOCTYPE TS>
 <TS version="2.1" language="ja_JP">
 <context>
-    <name>JsRuntime::Internal::JsRuntimePlugin</name>
+    <name>ScriptMgr::Internal::BatchProcess</name>
     <message>
-        <location filename="../../Internal/BatProcPlugin.cpp" line="45"/>
-        <source>Initializing JavaScript runtime...</source>
+        <location filename="../../Internal/ScriptMgrPlugin.cpp" line="43"/>
+        <source>Initializing script manager...</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

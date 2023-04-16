@@ -3,9 +3,18 @@
 
 #include <extensionsystem/iplugin.h>
 
-#include "BatProcGlobal.h"
+#include "ScriptMgrGlobal.h"
 
-namespace BatPorc::Internal {
+namespace ScriptMgr::Internal {
+
+    class TestObject: public QObject {
+        Q_OBJECT
+    public slots:
+        QString f(const QStringList &list) {
+            qDebug() << list[0].toStdString().c_str();
+            return list[1];
+        }
+    };
 
     class BatchProcess : public ExtensionSystem::IPlugin {
         Q_OBJECT

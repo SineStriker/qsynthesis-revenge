@@ -10,7 +10,7 @@ ck_add_executable(${PROJECT_NAME})
 
 ck_target_components(${PROJECT_NAME}
     SOURCES ${_src}
-    QT_LINKS Core Gui Widgets Network Concurrent
+    QT_LINKS Core Gui Widgets Network Concurrent Qml
 )
 
 if(TRUE)

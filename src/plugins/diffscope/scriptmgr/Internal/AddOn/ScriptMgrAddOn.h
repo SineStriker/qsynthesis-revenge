@@ -1,25 +1,21 @@
-//
-// Created by Crs_1 on 2023/4/16.
-//
-
-#ifndef CHORUSKIT_BATPROCADDON_H
-#define CHORUSKIT_BATPROCADDON_H
+#ifndef CHORUSKIT_SCRIPTMGRADDON_H
+#define CHORUSKIT_SCRIPTMGRADDON_H
 
 #include "CoreApi/IWindowAddOn.h"
 
-namespace BatProc::Internal {
+namespace ScriptMgr::Internal {
 
-    class BatProcAddOnFactory : public Core::IWindowAddOnFactory {
+    class ScriptMgrAddOnFactory : public Core::IWindowAddOnFactory {
     public:
         bool predicate(Core::IWindow *handle) const override;
         Core::IWindowAddOn *create(QObject *parent) override;
     };
 
-    class BatProcAddOn : public Core::IWindowAddOn {
+    class ScriptMgrAddOn : public Core::IWindowAddOn {
         Q_OBJECT
     public:
-        explicit BatProcAddOn(QObject *parent = nullptr);
-        ~BatProcAddOn();
+        explicit ScriptMgrAddOn(QObject *parent = nullptr);
+        ~ScriptMgrAddOn();
 
         void initialize() override;
         void extensionsInitialized() override;
@@ -28,11 +24,10 @@ namespace BatProc::Internal {
         void reloadStrings();
         void loadBuiltInScripts();
         void loadUserScripts();
+
     private:
-
-
     };
 
 } // Internal
 
-#endif // CHORUSKIT_BATPROCADDON_H
+#endif // CHORUSKIT_SCRIPTMGRADDON_H

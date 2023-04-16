@@ -1,4 +1,4 @@
-project(batproc VERSION 0.1.0.0)
+project(scriptmgr VERSION 0.1.0.0)
 
 set(_res_dir Res)
 
@@ -8,14 +8,14 @@ ck_add_files(_src
 )
 
 configure_plugin(_plugin "CrSjimo"
-    MACRO_PREFIX BATPROC_
+    MACRO_PREFIX SCRIPTMGR
     METADATA_IN plugin.json.in
-    PLUGIN_NAME batproc
+    PLUGIN_NAME ScriptMgr
     # META_SUBDIRS plugins
 )
 
 ck_target_components(${_plugin} INCLUDE_CURRENT_PRIVATE INCLUDE_SUBDIRS_PRIVATE
-    SOURCES ${_src} ${_res_dir}/batproc_res.qrc
+    SOURCES ${_src} ${_res_dir}/scriptmgr_res.qrc
     QT_LINKS Core Widgets Network Qml
     LINKS QsSVS QsFramework ExtensionSystem DiffScope::coreplugin
     LINKS_PRIVATE QMidi QNrbfFormat
@@ -23,7 +23,7 @@ ck_target_components(${_plugin} INCLUDE_CURRENT_PRIVATE INCLUDE_SUBDIRS_PRIVATE
 )
 
 ck_add_translations(${_plugin}_translations
-    PREFIX BatProc
+    PREFIX ScriptMgr
     TARGETS ${_plugin}
     LOCALES zh_CN zh_HK ja_JP
     TS_DIR Res/translations
@@ -33,9 +33,8 @@ ck_add_translations(${_plugin}_translations
 add_dependencies(${_plugin} ${_plugin}_translations_lrelease)
 
 ck_add_attaches(${_plugin}
-    SRC Res/batproc.res.json DEST share
-    SRC Res/themes/*.json DEST share/batproc.res/themes
-    SRC ${CMAKE_CURRENT_BINARY_DIR}/Res/translations DEST share/batproc.res
+    SRC Res/scripts/src/* DEST scripts
+    SRC ${CMAKE_CURRENT_BINARY_DIR}/Res/translations DEST .
 )
 
 ck_install_headers(.)

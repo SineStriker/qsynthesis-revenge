@@ -5,15 +5,17 @@
 #ifndef CHORUSKIT_JSINTERNALOBJECTPRIVATE_H
 #define CHORUSKIT_JSINTERNALOBJECTPRIVATE_H
 
-namespace BatProc::Internal {
+namespace ScriptMgr::Internal {
 
     class JsInternalObjectPrivate {
         Q_DECLARE_PUBLIC(JsInternalObject);
+
     public:
-        explicit JsInternalObjectPrivate(QJSEngine *engine, BatProcAddOn *addOn);
+        explicit JsInternalObjectPrivate(QJSEngine *engine, ScriptMgrAddOn *addOn);
+
         JsInternalObject *q_ptr;
         QJSEngine *engine;
-        BatProcAddOn *addOn;
+        ScriptMgrAddOn *addOn;
     };
 
 } // Internal

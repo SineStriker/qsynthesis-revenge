@@ -2,13 +2,20 @@
 #include <QNetworkAccessManager>
 #include <QNetworkReply>
 
+#include <QJSEngine>
+
 int main(int argc, char *argv[]) {
     // Core, GUI
     QApplication a(argc, argv);
 
+    // Qml
+    QJSEngine myEngine;
+    QJSValue three = myEngine.evaluate("1 + 2");
+    qDebug() << "JSEngine result:" << three.toInt(); // 3
+
     // Network
     QString url = "http://qt-project.org";
-    
+
     QNetworkAccessManager manager;
 
     // A highlighted block

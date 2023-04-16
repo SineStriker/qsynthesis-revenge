@@ -1,19 +1,19 @@
 {
-    "Name": "batproc",
-    "DisplayName": "Batch Process",
+    "Name": "ScriptMgr",
+    "DisplayName": "Script Manager",
     "Version": "@PLUGIN_METADATA_VERSION@",
     "CompatVersion": "@PLUGIN_METADATA_COMPAT_VERSION@",
     "DisabledByDefault": false,
     "HiddenByDefault": false,
     "Vendor": "CrSjimo",
-    "Copyright": "Copyright (C) 2021 OpenVPI",
+    "Copyright": "Copyright (C) 2021 CrSjimo",
     "License": [
         "Apache 2.0"
     ],
     "Category": "Editing",
-    "Description": "Batch processing plugin for DiffScope.",
+    "Description": "Script manager plugin for DiffScope.",
     "Url": "https://www.baidu.com/",
-    "Required": true,
+    "Required": false,
     "Dependencies" : [
         { "Name" : "Core", "Version" : "0.1.0" }
     ]
