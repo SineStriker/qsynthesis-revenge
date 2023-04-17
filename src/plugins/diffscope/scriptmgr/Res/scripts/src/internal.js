@@ -46,10 +46,10 @@ var $ds = {
             return _internal.questionMsgBox(title, message, defaultButton);
         },
         prompt: (title, message) => {
-            let res =  _internal.form({
+            let res =  _internal.form(
                 title,
-                widgets: [{ type: 'TextBox', label: message }],
-            });
+                [{ type: 'TextBox', label: message }],
+            );
             if(res.result == 'Ok') {
                 return res.form[0];
             } else {

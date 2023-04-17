@@ -8,13 +8,13 @@ $ds.register('test', ['all'], new class extends $ds.Script {
         };
     }
     main() {
-        let res = $ds.dialogSystem.form({
-            title: this.tr('Test'),
-            widgets: [{
+        let res = $ds.dialogSystem.form(
+            this.tr('Test'),
+            [{
                 type: 'TextBox',
                 label: this.tr('Test')
             }],
-        });
+        );
         if (res.result == 'Ok') {
             $ds.dialogSystem.alert(this.tr('Test'), res.form[0]);
         }

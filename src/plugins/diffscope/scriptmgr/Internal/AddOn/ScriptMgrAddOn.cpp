@@ -30,7 +30,7 @@ namespace ScriptMgr {
         void ScriptMgrAddOn::initialize() {
             qIDec->installLocale(this, _LOC(ScriptMgrAddOn, this));
             qobject_cast<JsInternalObject *>(engine->globalObject().property("_internal").toQObject())->setAddOn(this);
-            qDebug(engine->evaluate("_internal.questionMsgBox('Test from JavaScript', '114514', 'Yes')").toString().toLocal8Bit());
+            qDebug(engine->evaluate("JSON.stringify(_internal.form('Test', [{type: 'TextBox', label: '111', defaultValue: '114514'}]))").toString().toLocal8Bit());
         }
 
         void ScriptMgrAddOn::extensionsInitialized() {

@@ -4,6 +4,4 @@
 
 #include "ScriptLoader.h"
 
-namespace ScriptMgr {
-    namespace Internal {} // ScriptMgr
-} // Internal
+using namespace ScriptMgr::Internal;

@@ -3,22 +3,31 @@ declare namespace $ds {
     interface TextBox {
         type: 'TextBox';
         label: string;
-        default?: string;
+        defaultValue?: string;
     }
     
     interface TextArea {
         type: 'TextArea';
         label: string;
-        default?: string
+        defaultValue?: string
+    }
+
+    interface NumberBox {
+        type: 'NumberBox';
+        label: string;
+        precision?: number;
+        min?: number;
+        max?: number;
+        defaultValue?: number;
     }
     
     interface Slider {
         type: 'Slider';
         label: string;
         precision?: number;
-        min?: number;
-        max?: number;
-        default?: number;
+        min: number;
+        max: number;
+        defaultValue?: number;
     }
     
     interface KeyNameBox {
@@ -26,7 +35,7 @@ declare namespace $ds {
         label: string;
         min?: number;
         max?: number;
-        default?: number;
+        defaultValue?: number;
     }
     
     interface TimeBox {
@@ -34,20 +43,20 @@ declare namespace $ds {
         label: string;
         format: 'MBT'|'HMS';
         relative?: boolean;
-        default?: number;
+        defaultValue?: number;
     }
     
     interface CheckBox {
         type: 'CheckBox';
         label: string;
-        default?: boolean;
+        defaultValue?: boolean;
     }
     
     interface Select {
         type: 'Select';
         label: string;
         options: string[];
-        default?: number;
+        defaultValue?: number;
     }
     
     interface Label {
@@ -55,10 +64,11 @@ declare namespace $ds {
         label: string;
     }
     
-    type FormWidget = TextBox | TextArea | Slider | KeyNameBox | TimeBox | CheckBox | Select | Label;
+    type FormWidget = TextBox | TextArea | NumberBox | Slider | KeyNameBox | TimeBox | CheckBox | Select | Label;
     
     type FormReturnType<T> = T extends TextBox ? string:
                          T extends TextArea ? string:
+                         T extends NumberBox ? number:
                          T extends Slider ? number:
                          T extends KeyNameBox ? number:
                          T extends TimeBox ? number:
@@ -66,17 +76,12 @@ declare namespace $ds {
                          T extends Select ? number:
                          T extends Label ? null:
                          never;
-    
-    interface FormDialog<T extends FormWidget[]> {
-        title: string;
-        widgets: T;
-    }
 
     namespace dialogSystem {
         function alert(title: string, message: string): void;
         function confirm(title: string, message: string, defaultButton: 'Yes'|'No'): boolean;
         function prompt(title: string, message: string): string;
-        function form<T extends $ds.FormWidget[]>(formDialog: $ds.FormDialog<T>): {
+        function form<T extends $ds.FormWidget[]>(title: string, widgets: T): {
             result: 'Ok'|'Cancel';
             form: {[K in keyof T]: $ds.FormReturnType<T[K]>};
         };

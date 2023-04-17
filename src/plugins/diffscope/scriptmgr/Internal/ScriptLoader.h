@@ -5,12 +5,10 @@
 #ifndef CHORUSKIT_SCRIPTLOADER_H
 #define CHORUSKIT_SCRIPTLOADER_H
 
-namespace ScriptMgr {
-    namespace Internal {
+namespace ScriptMgr::Internal {
 
-        class ScriptLoader {};
+    class ScriptLoader {};
 
-    } // ScriptMgr
 } // Internal
 
 #endif // CHORUSKIT_SCRIPTLOADER_H

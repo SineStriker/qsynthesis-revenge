@@ -5,17 +5,15 @@
 #ifndef CHORUSKIT_JSINTERNALOBJECT_H
 #define CHORUSKIT_JSINTERNALOBJECT_H
 
+#include <QFormLayout>
 #include <QJSEngine>
 
 #include "AddOn/ScriptMgrAddOn.h"
 
 namespace ScriptMgr::Internal {
 
-    class JsInternalObjectPrivate;
-
     class JsInternalObject : public QObject {
         Q_OBJECT
-        Q_DECLARE_PRIVATE(JsInternalObject);
     public:
         explicit JsInternalObject(QJSEngine *engine);
         void setAddOn(ScriptMgrAddOn *addOn);
@@ -25,13 +23,14 @@ namespace ScriptMgr::Internal {
         QString getLang();
         void infoMsgBox(const QString &title, const QString &message);
         bool questionMsgBox(const QString &title, const QString &message, const QString &defaultButton);
-        QJSValue form(const QJSValue &val);
+        QJSValue form(const QString &title, const QVariantList &widgets);
         void registerScript(const QString &id, int flags);
         void registerScriptSet(const QString &id, const QStringList &childrenId, int flags);
 
     protected:
-        explicit JsInternalObject(JsInternalObjectPrivate *d);
-        QScopedPointer<JsInternalObjectPrivate> d_ptr;
+        QJSEngine *engine;
+        ScriptMgrAddOn *addOn = nullptr;
+        bool _createFormWidget(QFormLayout &formLayout, const QVariantMap& widgetParams, QJSValue &ret, int index);
     };
 
 } // Internal
