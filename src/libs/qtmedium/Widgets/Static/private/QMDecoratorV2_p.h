@@ -8,6 +8,8 @@
 #include <QTranslator>
 #include <QWidget>
 
+#include "Collections/QMChronMap.h"
+
 #include "../QMDecoratorV2.h"
 #include "private/QMCoreDecoratorV2_p.h"
 

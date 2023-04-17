@@ -962,6 +962,7 @@ function(ck_add_executable _target)
     add_executable(${_target} ${FUNC_UNPARSED_ARGUMENTS})
     set_target_properties(${_target} PROPERTIES
         BUILD_RPATH "${CHORUSKIT_EXECUTABLE_RPATH}"
+        INSTALL_RPATH "${CHORUSKIT_EXECUTABLE_RPATH}"
         RUNTIME_OUTPUT_DIRECTORY ${CHORUSKIT_RUNTIME_OUTPUT_DIR}
     )
 
@@ -1106,6 +1107,7 @@ function(ck_add_library _target)
 
     set_target_properties(${_target} PROPERTIES
         BUILD_RPATH "${CHORUSKIT_LIBRARY_RPATH}"
+        INSTALL_RPATH "${CHORUSKIT_LIBRARY_RPATH}"
         RUNTIME_OUTPUT_DIRECTORY ${CHORUSKIT_RUNTIME_OUTPUT_DIR}
         LIBRARY_OUTPUT_DIRECTORY ${CHORUSKIT_LIBRARY_OUTPUT_DIR}
         ARCHIVE_OUTPUT_DIRECTORY ${CHORUSKIT_ARCHIVE_OUTPUT_DIR}
@@ -1273,6 +1275,7 @@ function(ck_configure_plugin _target)
     # Change rpath and output paths
     set_target_properties(${_target} PROPERTIES
         BUILD_RPATH "${_rpath}"
+        INSTALL_RPATH "${_rpath}"
         RUNTIME_OUTPUT_DIRECTORY ${_out_dir}
         LIBRARY_OUTPUT_DIRECTORY ${_out_dir}
         ARCHIVE_OUTPUT_DIRECTORY ${_out_dir}

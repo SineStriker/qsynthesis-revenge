@@ -27,25 +27,37 @@ void ThemeGuardV2::updateScreen() {
         return;
     }
 
-    auto map = d->stylesheetCaches.value(d->currentTheme, {});
-    if (map.isEmpty()) {
-        return;
-    }
-
-    QString allStylesheets;
-    for (const auto &id : qAsConst(ids)) {
-        for (const auto &key : d->nsMappings.value(id, {})) {
-            auto stylesheet = map.value(key, {});
-            if (stylesheet.isEmpty() || !screen) {
-                continue;
-            }
-            allStylesheets +=
-                QMDecoratorV2Private::replaceSizes(stylesheet, screen->logicalDotsPerInch() / QMOs::unitDpi(), true) +
-                "\n\n";
+    auto getStyleSheet = [&](const QString &theme) {
+        auto map = d->stylesheetCaches.value(theme, {});
+        if (map.isEmpty()) {
+            return QString();
         }
-    }
 
-    w->setStyleSheet(allStylesheets);
+        QString allStylesheets;
+        for (const auto &id : qAsConst(ids)) {
+            for (const auto &key : d->nsMappings.value(id, {})) {
+                auto stylesheet = map.value(key, {});
+                if (stylesheet.isEmpty()) {
+                    continue;
+                }
+                allStylesheets += QMDecoratorV2Private::replaceSizes(
+                                      stylesheet, screen->logicalDotsPerInch() / QMOs::unitDpi(), true) +
+                                  "\n\n";
+            }
+        }
+        return allStylesheets;
+    };
+
+    QString stylesheets = getStyleSheet("_common");
+    if (!stylesheets.isEmpty()) {
+        stylesheets += "\n\n";
+    }
+    stylesheets += getStyleSheet(d->currentTheme);
+
+    if (stylesheets.isEmpty())
+        return;
+
+    w->setStyleSheet(stylesheets);
 }
 
 void ThemeGuardV2::switchScreen(QScreen *screen) {
@@ -83,7 +95,8 @@ bool ThemeGuardV2::eventFilter(QObject *obj, QEvent *event) {
 void ThemeGuardV2::_q_logicalRatioChanged(double dpi) {
     Q_UNUSED(dpi)
 
-    updateScreen();
+    // Delay setting stylesheets
+    QTimer::singleShot(10, this, &ThemeGuardV2::updateScreen);
 }
 
 QMDecoratorV2Private::QMDecoratorV2Private() {
@@ -106,6 +119,47 @@ struct QssItem {
         return debug;
     }
 };
+
+template <class T>
+static T parsePlatform(const QJsonValue &val, bool(predicate)(const QJsonValue &), T(convert)(const QJsonValue &),
+                       const T &defaultValue = T{}) {
+    QStringList platformKeys{
+#ifdef Q_OS_WINDOWS
+        "win", "win32", "windows"
+#elif defined(Q_OS_LINUX)
+        "linux"
+#else
+        "mac", "macos", "macosx"
+#endif
+    };
+
+    if (predicate(val)) {
+        return convert(val);
+    }
+
+    auto obj = val.toObject();
+    for (auto it = obj.begin(); it != obj.end(); ++it) {
+        if (platformKeys.contains(it.key(), Qt::CaseInsensitive)) {
+            if (predicate(it.value())) {
+                return convert(it.value());
+            }
+            return defaultValue;
+        }
+    }
+    return defaultValue;
+};
+
+static double parsePlatformDouble(const QJsonValue &val, double defaultValue = 0) {
+    return parsePlatform<double>(
+        val, [](const QJsonValue &val) { return val.isDouble(); }, [](const QJsonValue &val) { return val.toDouble(); },
+        defaultValue);
+}
+
+static QString parsePlatformString(const QJsonValue &val, const QString &defaultValue = {}) {
+    return parsePlatform<QString>(
+        val, [](const QJsonValue &val) { return val.isString(); }, [](const QJsonValue &val) { return val.toString(); },
+        defaultValue);
+}
 
 void QMDecoratorV2Private::scanForThemes() const {
     stylesheetCaches.clear();
@@ -158,11 +212,18 @@ void QMDecoratorV2Private::scanForThemes() const {
         if (!value.isUndefined() && value.isObject()) {
             auto obj = value.toObject();
             value = obj.value("ratio");
-            if (!value.isUndefined() && value.isDouble())
-                ratio = value.toDouble();
+            if (!value.isUndefined()) {
+                auto _tmp = parsePlatformDouble(value);
+                if (_tmp > 0)
+                    ratio = _tmp;
+            }
+
             value = obj.value("priority");
-            if (!value.isUndefined() && value.isDouble())
-                priority = value.toDouble();
+            if (!value.isUndefined()) {
+                auto _tmp = parsePlatformDouble(value, -1);
+                if (_tmp >= 0)
+                    priority = _tmp;
+            }
         }
 
         auto parseStyleObject = [&](QMap<QString, QMap<double, QList<QssItem>>> &map, const QString &key,
@@ -170,31 +231,43 @@ void QMDecoratorV2Private::scanForThemes() const {
             QssItem item{ratio, {}, {}};
 
             auto it = obj.find("file");
-            if (it != obj.end() && it->isString()) {
-                QString fileName = it->toString();
-                if (QDir::isRelativePath(fileName)) {
-                    fileName = file.absolutePath() + "/" + fileName;
-                }
-                item.fileName = fileName;
-            } else {
-                it = obj.find("content");
-                if (it != obj.end() && it->isString()) {
-                    item.content = it->toString();
-                } else {
-                    return;
+            if (it != obj.end()) {
+                QString fileName = parsePlatformString(it.value());
+                if (!fileName.isEmpty()) {
+                    if (QDir::isRelativePath(fileName)) {
+                        fileName = file.absolutePath() + "/" + fileName;
+                    }
+                    item.fileName = fileName;
+                    goto out;
                 }
             }
 
+            it = obj.find("content");
+            if (it != obj.end()) {
+                QString content = parsePlatformString(it.value());
+                if (!content.isEmpty()) {
+                    item.content = content;
+                    goto out;
+                }
+            }
+
+            return;
+
+        out:
             it = obj.find("ratio");
-            if (it != obj.end() && it->isDouble()) {
-                item.ratio = it->toDouble();
+            if (it != obj.end()) {
+                auto _tmp = parsePlatformDouble(it.value());
+                if (_tmp > 0)
+                    item.ratio = _tmp;
             }
 
             auto _priority = priority;
 
             it = obj.find("priority");
-            if (it != obj.end() && it->isDouble()) {
-                _priority = it->toDouble();
+            if (it != obj.end()) {
+                auto _tmp = parsePlatformDouble(it.value(), -1);
+                if (_tmp >= 0)
+                    _priority = _tmp;
             }
 
             map[key][_priority].append(item);
