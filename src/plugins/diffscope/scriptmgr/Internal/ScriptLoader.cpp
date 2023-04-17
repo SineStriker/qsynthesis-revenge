@@ -8,16 +8,16 @@
 
 namespace ScriptMgr::Internal {
 
-    void ScriptLoader::registerAddon(ScriptMgrAddOn *addon) {
-    }
-
-    void ScriptLoader::reloadScripts() {
-    }
-
     static ScriptLoader *m_instance = nullptr;
 
     ScriptLoader *ScriptLoader::instance() {
         return m_instance;
+    }
+
+    void ScriptLoader::registerAddon(ScriptMgrAddOn *addon) {
+    }
+
+    void ScriptLoader::reloadScripts() {
     }
 
     ScriptLoader::ScriptLoader(QObject *parent) : QObject(parent) {
@@ -29,6 +29,6 @@ namespace ScriptMgr::Internal {
     }
 
     QString ScriptLoader::userScriptDir() {
-        return "";
+        return {};
     }
 }

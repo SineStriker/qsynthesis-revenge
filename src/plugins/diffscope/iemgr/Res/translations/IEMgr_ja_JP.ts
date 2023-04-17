@@ -74,7 +74,7 @@
     </message>
 </context>
 <context>
-    <name>IEMgr::Internal::ImportExportManager</name>
+    <name>IEMgr::Internal::IEMgrPlugin</name>
     <message>
         <source>Initializing import/export manager...</source>
         <translation type="unfinished"></translation>

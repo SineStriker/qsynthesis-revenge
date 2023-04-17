@@ -15,16 +15,21 @@ namespace ScriptMgr::Internal {
     class ScriptLoader: public QObject {
         Q_OBJECT
     public:
-        ~ScriptLoader();
-        void registerAddon(ScriptMgrAddOn *addon);
         static ScriptLoader *instance();
+
+        void registerAddon(ScriptMgrAddOn *addon);
         QString userScriptDir();
+
     public slots:
         void reloadScripts();
+
     protected:
-        friend class BatchProcess;
         explicit ScriptLoader(QObject *parent);
+        ~ScriptLoader();
+
         QSet<ScriptMgrAddOn *> addonRegistry;
+
+        friend class ScriptMgrPlugin;
     };
 
 } // Internal

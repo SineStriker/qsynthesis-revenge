@@ -4,6 +4,7 @@
 #include <QLoggingCategory>
 #include <QMainWindow>
 #include <QNetworkProxyFactory>
+#include <QProcess>
 #include <QTextStream>
 
 #include "QMConsole.h"
@@ -159,6 +160,43 @@ static inline void printHelp() {
 static inline QString msgCoreLoadFailure(const QString &why) {
     return QCoreApplication::translate("Application", "Failed to load core: %1").arg(why);
 }
+
+class Restarter {
+public:
+    Restarter(int argc, char *argv[]) {
+        Q_UNUSED(argc)
+        m_executable = QString::fromLocal8Bit(argv[0]);
+        m_workingPath = QDir::currentPath();
+    }
+
+    void setArguments(const QStringList &args) {
+        m_args = args;
+    }
+
+    QString executable() const {
+        return m_executable;
+    }
+    QStringList arguments() const {
+        return m_args;
+    }
+    QString workingPath() const {
+        return m_workingPath;
+    }
+
+    int restartOrExit(int exitCode) {
+        return qApp->property("restart").toBool() ? restart(exitCode) : exitCode;
+    }
+
+    int restart(int exitCode) {
+        QProcess::startDetached(m_executable, m_args, m_workingPath);
+        return exitCode;
+    }
+
+private:
+    QString m_executable;
+    QStringList m_args;
+    QString m_workingPath;
+};
 
 int main_entry(int argc, char *argv[]) {
     QApplication a(argc, argv);
@@ -446,5 +484,5 @@ int main_entry(int argc, char *argv[]) {
     // shutdown plugin manager on the exit
     QObject::connect(&a, &QApplication::aboutToQuit, &pluginManager, &PluginManager::shutdown);
 
-    return a.exec();
+    return Restarter(argc, argv).restartOrExit(a.exec());
 }

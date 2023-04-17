@@ -22,15 +22,15 @@ namespace ScriptMgr {
 
     namespace Internal {
 
-        BatchProcess::BatchProcess() {
+        ScriptMgrPlugin::ScriptMgrPlugin() {
         }
 
-        BatchProcess::~BatchProcess() {
+        ScriptMgrPlugin::~ScriptMgrPlugin() {
         }
 
         static ScriptLoader *scriptLoader = nullptr;
 
-        bool BatchProcess::initialize(const QStringList &arguments, QString *errorMessage) {
+        bool ScriptMgrPlugin::initialize(const QStringList &arguments, QString *errorMessage) {
             // Add resources
             qIDec->addTranslationPath(QMFs::PathFindDirPath(pluginSpec()->filePath()) + "/translations");
 
@@ -47,10 +47,10 @@ namespace ScriptMgr {
             return true;
         }
 
-        void BatchProcess::extensionsInitialized() {
+        void ScriptMgrPlugin::extensionsInitialized() {
         }
 
-        bool BatchProcess::delayedInitialize() {
+        bool ScriptMgrPlugin::delayedInitialize() {
             return true;
         }
 

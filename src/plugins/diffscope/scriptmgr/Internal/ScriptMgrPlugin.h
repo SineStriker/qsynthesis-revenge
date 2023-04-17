@@ -7,12 +7,12 @@
 
 namespace ScriptMgr::Internal {
 
-    class BatchProcess : public ExtensionSystem::IPlugin {
+    class ScriptMgrPlugin : public ExtensionSystem::IPlugin {
         Q_OBJECT
         Q_PLUGIN_METADATA(IID "org.ChorusKit.DiffScope.Plugin" FILE "plugin.json")
     public:
-        BatchProcess();
-        ~BatchProcess();
+        ScriptMgrPlugin();
+        ~ScriptMgrPlugin();
 
         bool initialize(const QStringList &arguments, QString *errorMessage) override;
         void extensionsInitialized() override;
