@@ -15,7 +15,7 @@ elseif(APPLE)
     set(CHORUSKIT_PLUGIN_RPATH_PATTERN "@loader_path;@loader_path/<rel>") # Plugins/_app/_plugin/xxx.dylib
 else()
     set(CHORUSKIT_SHARED_LIBRARY_PATTERN "*.so*")
-    set(CHORUSKIT_EXECUTABLE_RPATH "@ORIGIN/../lib")
-    set(CHORUSKIT_LIBRARY_RPATH "@ORIGIN")
-    set(CHORUSKIT_PLUGIN_RPATH_PATTERN "@ORIGIN;@ORIGIN/<rel>") # lib/_app/plugins/_plugin/xxx.so
+    set(CHORUSKIT_EXECUTABLE_RPATH "\$ORIGIN/../lib")
+    set(CHORUSKIT_LIBRARY_RPATH "\$ORIGIN")
+    set(CHORUSKIT_PLUGIN_RPATH_PATTERN "\$ORIGIN;\$ORIGIN/<rel>") # lib/_app/plugins/_plugin/xxx.so
 endif()

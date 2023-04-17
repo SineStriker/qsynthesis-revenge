@@ -4,6 +4,15 @@
         "priority": 5
     },
     "stylesheets": {
+        "_common": {
+            "Global": [
+                {
+                    "content": {
+                        "win": "QWidget { font-family: \"Microsoft YaHei\"; }"
+                    }
+                }
+            ]
+        },
         "Zhibin - Dark": {
             "Global": {
                 "file": "global-dark.qss"
