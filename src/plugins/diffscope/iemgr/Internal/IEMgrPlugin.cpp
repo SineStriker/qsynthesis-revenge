@@ -1,4 +1,4 @@
-#include "ImportExportManager.h"
+#include "IEMgrPlugin.h"
 
 #include <QApplication>
 #include <QThread>
@@ -28,13 +28,13 @@ namespace IEMgr {
 
         static IManager *imgr = nullptr;
 
-        ImportExportManager::ImportExportManager() {
+        IEMgrPlugin::IEMgrPlugin() {
         }
 
-        ImportExportManager::~ImportExportManager() {
+        IEMgrPlugin::~IEMgrPlugin() {
         }
 
-        bool ImportExportManager::initialize(const QStringList &arguments, QString *errorMessage) {
+        bool IEMgrPlugin::initialize(const QStringList &arguments, QString *errorMessage) {
             // Add resources
             qIDec->addTranslationPath(QMFs::PathFindDirPath(pluginSpec()->filePath()) + "/translations");
             qIDec->addThemePath(QMFs::PathFindDirPath(pluginSpec()->filePath()) + "/themes");
@@ -70,10 +70,10 @@ namespace IEMgr {
             return true;
         }
 
-        void ImportExportManager::extensionsInitialized() {
+        void IEMgrPlugin::extensionsInitialized() {
         }
 
-        bool ImportExportManager::delayedInitialize() {
+        bool IEMgrPlugin::delayedInitialize() {
             return true;
         }
 

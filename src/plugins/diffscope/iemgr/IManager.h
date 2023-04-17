@@ -8,7 +8,7 @@
 namespace IEMgr {
 
     namespace Internal {
-        class ImportExportManager;
+        class IEMgrPlugin;
     }
 
     class IManagerPrivate;
@@ -40,7 +40,7 @@ namespace IEMgr {
 
         QScopedPointer<IManagerPrivate> d_ptr;
 
-        friend class Internal::ImportExportManager;
+        friend class Internal::IEMgrPlugin;
     };
 
 }

@@ -9,12 +9,12 @@ namespace IEMgr {
 
     namespace Internal {
 
-        class ImportExportManager : public ExtensionSystem::IPlugin {
+        class IEMgrPlugin : public ExtensionSystem::IPlugin {
             Q_OBJECT
             Q_PLUGIN_METADATA(IID "org.ChorusKit.DiffScope.Plugin" FILE "plugin.json")
         public:
-            ImportExportManager();
-            ~ImportExportManager();
+            IEMgrPlugin();
+            ~IEMgrPlugin();
 
             bool initialize(const QStringList &arguments, QString *errorMessage) override;
             void extensionsInitialized() override;

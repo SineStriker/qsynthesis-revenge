@@ -7,6 +7,7 @@
 namespace Core {
 
     namespace Internal {
+
         class CorePlugin;
 
         class MainWindow : public QsApi::PlainWindow {
