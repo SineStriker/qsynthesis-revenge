@@ -11,7 +11,6 @@ namespace IEMgr {
 
     Q_D_LAYOUT_PROPERTY_DECLARE(buttons, Buttons, buttonsLayout, ImportDialog)
     Q_D_LAYOUT_PROPERTY_DECLARE(boxes, Boxes, boxesLayout, ImportDialog)
-    Q_D_PROPERTY_DECLARE(QPixelSize, maxInitHeight, MaxInitHeight, ImportDialog)
 
     ImportDialog::ImportDialog(QWidget *parent) : ImportDialog(*new ImportDialogPrivate(), parent) {
     }
@@ -74,6 +73,8 @@ namespace IEMgr {
         d->setCodecTabVisible(!(noTitle && noLyrics && noLabel));
 
         d->updateNameList();
+
+        adjustSize();
     }
 
     QList<int> ImportDialog::selectResult() const {

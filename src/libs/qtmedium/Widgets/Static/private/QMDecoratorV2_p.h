@@ -22,6 +22,7 @@ public:
     QWidget *w;
     QWindow *winHandle;
 
+    bool needUpdate;
     QPointer<QScreen> screen;
 
     // bool needUpdate;

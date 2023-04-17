@@ -3,7 +3,6 @@
 IEMgr--ImportDialog {
     min-width: 400px;
     background-color: white;
-    qproperty-maxInitHeight: 500px;
     qproperty-layoutMargins: qmargins(20px);
     qproperty-boxesLayoutMargins: qmargins(5px);
     qproperty-boxesLayoutSpacing: 5px;

@@ -66,9 +66,6 @@ namespace IEMgr {
         std::list<QAbstractButton *> queue;
         QHash<QAbstractButton *, std::list<QAbstractButton *>::iterator> queueMap;
 
-        bool firstShow;
-        int maxInitHeight;
-
         void updateEncoding();
         void updateNameList();
 

@@ -63,8 +63,6 @@ namespace IEMgr {
     void ImportDialogPrivate::init() {
         Q_Q(ImportDialog);
 
-        firstShow = true;
-        maxInitHeight = 0;
         codec = DEFAULT_CODEC;
 
         codecVisible = false;
@@ -178,7 +176,7 @@ namespace IEMgr {
             codecListWidget->setCurrentRow(Utf8EncodingIndex);
         }
 
-        if (_defaultCodecFailure){
+        if (_defaultCodecFailure) {
             codecListWidget->setCurrentRow(SystemEncodingIndex);
         }
     }
@@ -292,10 +290,6 @@ namespace IEMgr {
 
     void ImportDialogPrivate::_q_scrollRangeChanged(int min, int max) {
         Q_Q(ImportDialog);
-        if (firstShow) {
-            firstShow = false;
-            q->resize(q->width(), qMax(qMin(maxInitHeight, q->height() + max - min), q->height()));
-        }
     }
 
     void ImportDialogPrivate::_q_currentCodecChanged(QListWidgetItem *cur, QListWidgetItem *prev) {

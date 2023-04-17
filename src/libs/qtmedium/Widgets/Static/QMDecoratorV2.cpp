@@ -15,6 +15,7 @@
 
 ThemeGuardV2::ThemeGuardV2(QWidget *w, QMDecoratorV2Private *parent)
     : QObject(parent), w(w), d(parent), winHandle(w->windowHandle()) {
+    needUpdate = false;
     w->installEventFilter(this);
 }
 
@@ -24,6 +25,11 @@ ThemeGuardV2::~ThemeGuardV2() {
 void ThemeGuardV2::updateScreen() {
     if (!screen) {
         switchScreen(w->screen());
+        return;
+    }
+
+    if (!winHandle) {
+        needUpdate = true;
         return;
     }
 
@@ -57,6 +63,8 @@ void ThemeGuardV2::updateScreen() {
     if (stylesheets.isEmpty())
         return;
 
+    qDebug().noquote() << stylesheets;
+
     w->setStyleSheet(stylesheets);
 }
 
@@ -83,6 +91,10 @@ bool ThemeGuardV2::eventFilter(QObject *obj, QEvent *event) {
             if (!winHandle) {
                 winHandle = w->window()->windowHandle();
                 connect(winHandle, &QWindow::screenChanged, this, &ThemeGuardV2::switchScreen);
+
+                if (needUpdate) {
+                    updateScreen();
+                }
             }
             break;
         }

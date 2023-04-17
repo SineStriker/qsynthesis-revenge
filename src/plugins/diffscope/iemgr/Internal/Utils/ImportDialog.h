@@ -17,7 +17,6 @@ namespace IEMgr {
         Q_LAYOUT_PROPERTY_DELCARE
         Q_D_LAYOUT_PROPERTY(buttons, Buttons)
         Q_D_LAYOUT_PROPERTY(boxes, Boxes)
-        Q_D_PROPERTY(QPixelSize, maxInitHeight, MaxInitHeight)
         Q_DECLARE_PRIVATE(ImportDialog)
     public:
         explicit ImportDialog(QWidget *parent = nullptr);

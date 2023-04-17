@@ -13,6 +13,8 @@ CCheckBox::~CCheckBox() {
 }
 
 void CCheckBox::init() {
+    setAttribute(Qt::WA_StyledBackground);
+
     m_box = new CToolButton();
     m_box->setObjectName("box");
     m_box->setFocusPolicy(Qt::StrongFocus);
