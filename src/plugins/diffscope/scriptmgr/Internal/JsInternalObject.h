@@ -8,17 +8,15 @@
 #include <QFormLayout>
 #include <QJSEngine>
 
-#include "AddOn/ScriptMgrAddOn.h"
-
 namespace ScriptMgr::Internal {
+
+    class ScriptMgrAddOn;
 
     class JsInternalObject : public QObject {
         Q_OBJECT
     public:
-        explicit JsInternalObject(QJSEngine *engine, QObject *parent = nullptr);
+        explicit JsInternalObject(QJSEngine *engine, ScriptMgrAddOn *addOn);
         ~JsInternalObject();
-
-        void setAddOn(ScriptMgrAddOn *addOn);
 
     public slots:
         QString jsTr(const QString &text);
@@ -33,7 +31,7 @@ namespace ScriptMgr::Internal {
         QJSEngine *engine;
         ScriptMgrAddOn *addOn = nullptr;
 
-        bool _createFormWidget(QFormLayout &formLayout, const QVariantMap &widgetParams, QJSValue &ret, int index);
+        bool createFormWidget(QFormLayout &formLayout, const QVariantMap &widgetParams, QJSValue &ret, int index);
     };
 
 } // Internal

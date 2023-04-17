@@ -1,10 +1,14 @@
 #include "ScriptMgrAddOn.h"
 #include "JsInternalObject.h"
+#include "ScriptLoader.h"
 
 #include <QDebug>
 
 #include <CoreApi/IWindow.h>
+#include <QDir>
+#include <QFile>
 #include <QMDecoratorV2.h>
+#include <QMessageBox>
 
 namespace ScriptMgr {
 
@@ -17,13 +21,10 @@ namespace ScriptMgr {
         }
 
         Core::IWindowAddOn *ScriptMgrAddOnFactory::create(QObject *parent) {
-            return new ScriptMgrAddOn(engine);
+            return new ScriptMgrAddOn();
         }
 
-        ScriptMgrAddOnFactory::ScriptMgrAddOnFactory(QJSEngine *engine) : engine(engine) {
-        }
-
-        ScriptMgrAddOn::ScriptMgrAddOn(QJSEngine *engine, QObject *parent) : IWindowAddOn(parent), engine(engine) {
+        ScriptMgrAddOn::ScriptMgrAddOn(QObject *parent) : IWindowAddOn(parent) {
         }
 
         ScriptMgrAddOn::~ScriptMgrAddOn() {
@@ -31,12 +32,10 @@ namespace ScriptMgr {
 
         void ScriptMgrAddOn::initialize() {
             qIDec->installLocale(this, _LOC(ScriptMgrAddOn, this));
-
-            qobject_cast<JsInternalObject *>(engine->globalObject().property("_internal").toQObject())->setAddOn(this);
-            qDebug() << engine
-                            ->evaluate("JSON.stringify(_internal.form('Test', [{type: 'TextBox', label: '111', "
-                                       "defaultValue: '114514'}]))")
-                            .toString();
+            if(!initializeEngine()) {
+                criticalCannotInitializeEngine();
+                return;
+            }
         }
 
         void ScriptMgrAddOn::extensionsInitialized() {
@@ -45,11 +44,115 @@ namespace ScriptMgr {
         void ScriptMgrAddOn::reloadStrings() {
         }
 
-        void ScriptMgrAddOn::loadBuiltInScripts() {
+        bool ScriptMgrAddOn::initializeEngine() {
+            engine.globalObject().setProperty("_internal", engine.newQObject(new JsInternalObject(&engine, this)));
+            if(!loadScriptFile(":/scripts/internal.js")) {
+                return false;
+            }
+            loadScripts();
+            invoke("test"); //TODO this is a test
+            return true;
         }
 
-        void ScriptMgrAddOn::loadUserScripts() {
+        void ScriptMgrAddOn::loadScripts() {
+            QDir dir(":/scripts/");
+            for(const auto& filename: dir.entryList(QDir::Files)) {
+                if(filename == "internal.js") continue;
+                if(!loadScriptFile(":/scripts/" + filename)){
+                    warningCannotLoadFile(":/scripts/" + filename);
+                }
+            }
+            //TODO load user scripts
         }
 
+        void ScriptMgrAddOn::registerScript(const QString &id, int role) {
+
+        }
+
+        void ScriptMgrAddOn::registerScript(const QString &id, const QStringList &children, int role) {
+        }
+
+        QString ScriptMgrAddOn::getName(const QString &id) {
+            auto ret = engine.globalObject().property("_getName").call({id});
+            if(ret.isString()) {
+                return ret.toString();
+            } else {
+                if(ret.isError()) {
+                    alertJsUncaughtError(ret);
+                }
+                warningCannotGetName(id);
+                return id;
+            }
+        }
+
+        QString ScriptMgrAddOn::getName(const QString &id, int index) {
+            auto ret = engine.globalObject().property("_getName").call({id, index});
+            if(ret.isString()) {
+                return ret.toString();
+            } else {
+                if(ret.isError()) {
+                    alertJsUncaughtError(ret);
+                }
+                warningCannotGetName(id);
+                return id; //TODO child id
+            }
+        }
+
+        void ScriptMgrAddOn::invoke(const QString &id) {
+            auto ret = engine.globalObject().property("_invoke").call({id});
+            if(ret.isError()) {
+                alertJsUncaughtError(ret);
+                criticalScriptExecutionFailed(id);
+            }
+        }
+
+        void ScriptMgrAddOn::invoke(const QString &id, int index) {
+            auto ret = engine.globalObject().property("_invoke").call({id, index});
+            if(ret.isError()) {
+                alertJsUncaughtError(ret);
+                criticalScriptExecutionFailed(id, index);
+            }
+        }
+
+        bool ScriptMgrAddOn::loadScriptFile(const QString &path) {
+            QFile scriptFile(path);
+            if(!scriptFile.open(QIODevice::ReadOnly)) {
+                alertJsUncaughtError(engine.evaluate(QString("new Error(`Cannot open file '%1'.`)").arg(path)));
+                return false;
+            }
+            QTextStream stream(&scriptFile);
+            stream.setCodec("UTF-8");
+            auto ret =  engine.evaluate(scriptFile.readAll(), path);
+            if(ret.isError()) {
+                alertJsUncaughtError(ret);
+                return false;
+            }
+            return true;
+        }
+
+        void ScriptMgrAddOn::alertJsUncaughtError(const QJSValue& error) {
+            QString msg = tr("Uncaught error.") + "\n\n" + QString("%1:%2").arg(error.property("fileName").toString(), error.property("lineNumber").toString()) + "\n\n" + error.toString() + "\n\n" + error.property("stack").toString();
+            QMessageBox::warning(windowHandle()->window(), tr("JavaScript Error"), msg);
+        }
+
+        void ScriptMgrAddOn::warningCannotLoadFile(const QString &path) {
+            QMessageBox::warning(windowHandle()->window(), tr("Warning"), tr("Cannot load script file '%1'. The file is ignored.").arg(path));
+        }
+
+        void ScriptMgrAddOn::warningCannotGetName(const QString &id) {
+            QMessageBox::warning(windowHandle()->window(), tr("Warning"), tr("Cannot get name of script '%1'. Its name will be displayed as its id."));
+        }
+
+        void ScriptMgrAddOn::criticalCannotInitializeEngine() {
+            QMessageBox::critical(windowHandle()->window(), tr("Error"), tr("Unable to initialize JavaScript engine."));
+        }
+
+        void ScriptMgrAddOn::criticalScriptExecutionFailed(const QString &id) {
+            QMessageBox::critical(windowHandle()->window(), tr("Error"), tr("Script '%1' execution failed.").arg(getName(id)));
+        }
+
+        void ScriptMgrAddOn::criticalScriptExecutionFailed(const QString &id, int index) {
+            QMessageBox::critical(windowHandle()->window(), tr("Error"), tr("Script '%1' execution failed.").arg(getName(id, index)));
+        }
     }
 }

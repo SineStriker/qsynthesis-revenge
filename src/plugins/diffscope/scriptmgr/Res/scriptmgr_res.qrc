@@ -2,4 +2,8 @@
     <qresource prefix="/">
         <file>scriptmgr_actions.xml</file>
     </qresource>
+    <qresource prefix="/scripts">
+        <file alias="internal.js">scripts/src/internal.js</file>
+        <file alias="test.js">scripts/src/test.js</file>
+    </qresource>
 </RCC>

@@ -9,10 +9,11 @@
 #include <QFormLayout>
 #include <QLineEdit>
 #include <QMessageBox>
+#include "AddOn/ScriptMgrAddOn.h"
 
 namespace ScriptMgr::Internal {
 
-    JsInternalObject::JsInternalObject(QJSEngine *engine, QObject *parent) : QObject(parent), engine(engine) {
+    JsInternalObject::JsInternalObject(QJSEngine *engine, ScriptMgrAddOn *addOn) : engine(engine), addOn(addOn) {
     }
 
     JsInternalObject::~JsInternalObject() {
@@ -46,7 +47,7 @@ namespace ScriptMgr::Internal {
                                      QMessageBox::Yes | QMessageBox::No, defaultButtonFlag) == QMessageBox::Yes;
     }
 
-    bool JsInternalObject::_createFormWidget(QFormLayout &formLayout, const QVariantMap &widgetParams, QJSValue &ret,
+    bool JsInternalObject::createFormWidget(QFormLayout &formLayout, const QVariantMap &widgetParams, QJSValue &ret,
                                              int index) {
         if (!widgetParams.contains("type") || !widgetParams.value("type").canConvert(QVariant::String))
             return false;
@@ -55,6 +56,7 @@ namespace ScriptMgr::Internal {
         auto widgetType = widgetParams.value("type").toString();
         if (widgetType == "TextBox") {
             auto textBox = new QLineEdit;
+            ret.property("form").setProperty(index, "");
             connect(textBox, &QLineEdit::textChanged, this,
                     [=, &ret](const QString &text) { ret.property("form").setProperty(index, text); });
             if (widgetParams.contains("defaultValue") &&
@@ -80,7 +82,7 @@ namespace ScriptMgr::Internal {
                 engine->throwError(QJSValue::TypeError, "Invalid widget argument type");
                 return ret;
             }
-            if (!_createFormWidget(*formLayout, widget.toMap(), ret, i)) {
+            if (!createFormWidget(*formLayout, widget.toMap(), ret, i)) {
                 engine->throwError(QJSValue::TypeError, "Invalid widget argument type");
                 return ret;
             }
@@ -98,13 +100,11 @@ namespace ScriptMgr::Internal {
     }
 
     void JsInternalObject::registerScript(const QString &id, int flags) {
+        addOn->registerScript(id, flags);
     }
 
     void JsInternalObject::registerScriptSet(const QString &id, const QStringList &childrenId, int flags) {
-    }
-
-    void JsInternalObject::setAddOn(ScriptMgrAddOn *addOn) {
-        this->addOn = addOn;
+        addOn->registerScript(id, childrenId, flags);
     }
 
 }

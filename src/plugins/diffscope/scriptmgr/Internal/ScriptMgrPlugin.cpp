@@ -14,6 +14,7 @@
 
 #include "AddOn/ScriptMgrAddOn.h"
 #include "JsInternalObject.h"
+#include "ScriptLoader.h"
 
 namespace ScriptMgr {
 
@@ -21,19 +22,13 @@ namespace ScriptMgr {
 
     namespace Internal {
 
-        class BatchProcessPrivate {
-        public:
-            QJSEngine engine;
-        };
-
-        static BatchProcessPrivate *d = nullptr;
-
         BatchProcess::BatchProcess() {
         }
 
         BatchProcess::~BatchProcess() {
-            delete Internal::d;
         }
+
+        static ScriptLoader *scriptLoader = nullptr;
 
         bool BatchProcess::initialize(const QStringList &arguments, QString *errorMessage) {
             // Add resources
@@ -43,15 +38,11 @@ namespace ScriptMgr {
             if (splash) {
                 splash->showMessage(tr("Initializing script manager..."));
             }
-            // QThread::msleep(2000);
-
-            auto &d = Internal::d;
-            d = new BatchProcessPrivate();
-            d->engine.globalObject().setProperty("_internal", d->engine.newQObject(new JsInternalObject(&d->engine)));
 
             // Add basic windows and add-ons
+            scriptLoader = new ScriptLoader(this);
             auto winMgr = ICore::instance()->windowSystem();
-            winMgr->addAddOn(new ScriptMgrAddOnFactory(&d->engine));
+            winMgr->addAddOn(new ScriptMgrAddOnFactory());
 
             return true;
         }

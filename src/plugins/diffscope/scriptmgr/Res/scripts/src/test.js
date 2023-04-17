@@ -1,8 +1,10 @@
 "use strict";
 
-$ds.register('test', ['all'], new class extends $ds.Script {
+$ds.register(new class extends $ds.Script {
     info() {
         return {
+            id: 'test',
+            role: 'all',
             name: this.tr('Test'),
             requiredEditorVersion: '0.1.0',
         };
@@ -12,7 +14,8 @@ $ds.register('test', ['all'], new class extends $ds.Script {
             this.tr('Test'),
             [{
                 type: 'TextBox',
-                label: this.tr('Test')
+                label: this.tr('Test'),
+                defaultValue: '114514',
             }],
         );
         if (res.result == 'Ok') {
@@ -28,6 +31,10 @@ $ds.register('test', ['all'], new class extends $ds.Script {
                 ['Test', 'テスト']
             ]),
         };
-        return dict?.[lang].get(text);
+        if(dict[lang]) {
+            return dict[lang].get(text);
+        } else {
+            return undefined;
+        }
     }
 });

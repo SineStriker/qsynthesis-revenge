@@ -33,7 +33,6 @@ ck_add_translations(${_plugin}_translations
 add_dependencies(${_plugin} ${_plugin}_translations_lrelease)
 
 ck_add_attaches(${_plugin}
-    SRC Res/scripts/src/* DEST scripts
     SRC ${CMAKE_CURRENT_BINARY_DIR}/Res/translations DEST .
 )
 

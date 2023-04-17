@@ -134,5 +134,5 @@ declare namespace $ds {
     
     }
 
-    function register(id: string, role: string|string[], script: $ds._ScriptBase): void;
+    function register(script: $ds._ScriptBase): void;
 }
