@@ -36,16 +36,19 @@ namespace Core {
         win->setObjectName("project-window");
         win->setAcceptDrops(true);
 
-        qIDec->installLocale(this, _LOC(IProjectWindowPrivate, d));
-        qIDec->installTheme(win, "core.ProjectWindow");
-
         d->mainMenuCtx = ICore::instance()->actionSystem()->context("project.MainMenu");
     }
 
     void IProjectWindow::windowAddOnsFinished() {
         Q_D(IProjectWindow);
+
+        auto win = window();
+
         connect(d->mainMenuCtx, &ActionContext::stateChanged, d, &IProjectWindowPrivate::reloadMenuBar);
         d->reloadMenuBar();
+
+        qIDec->installLocale(this, _LOC(IProjectWindowPrivate, d));
+        qIDec->installTheme(win, "core.ProjectWindow");
     }
 
     IProjectWindow::IProjectWindow(IProjectWindowPrivate &d, QObject *parent)

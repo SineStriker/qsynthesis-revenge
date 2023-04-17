@@ -82,9 +82,6 @@ namespace Core {
 
         connect(aboutButton, &QAbstractButton::clicked, d, &IHomeWindowPrivate::_q_aboutButtonClicked);
 
-        qIDec->installLocale(this, _LOC(IHomeWindowPrivate, d));
-        qIDec->installTheme(win, "core.HomeWindow");
-
         d->mainMenuCtx = ICore::instance()->actionSystem()->context("home.MainMenu");
     }
 
@@ -94,6 +91,9 @@ namespace Core {
 
         connect(d->mainMenuCtx, &ActionContext::stateChanged, d, &IHomeWindowPrivate::reloadMenuBar);
         d->reloadMenuBar();
+
+        qIDec->installLocale(this, _LOC(IHomeWindowPrivate, d));
+        qIDec->installTheme(win, "core.HomeWindow");
 
         // Init window sizes
         {

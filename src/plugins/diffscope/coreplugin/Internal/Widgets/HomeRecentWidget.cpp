@@ -31,7 +31,9 @@ namespace Core {
         searchBox->setClearButtonEnabled(true);
         searchBox->setObjectName("search-box");
 
+#ifdef Q_OS_WINDOWS
         ICore::autoPolishPopupMenu(searchBox);
+#endif
 
         newButton = new CTabButton();
         newButton->setProperty("type", "top-button");

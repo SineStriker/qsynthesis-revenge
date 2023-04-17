@@ -83,7 +83,8 @@ bool ThemeGuardV2::eventFilter(QObject *obj, QEvent *event) {
 void ThemeGuardV2::_q_logicalRatioChanged(double dpi) {
     Q_UNUSED(dpi)
 
-    updateScreen();
+    // Delay setting stylesheets
+    QTimer::singleShot(10, this, &ThemeGuardV2::updateScreen);
 }
 
 QMDecoratorV2Private::QMDecoratorV2Private() {
