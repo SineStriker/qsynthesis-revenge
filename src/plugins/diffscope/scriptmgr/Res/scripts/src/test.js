@@ -14,7 +14,6 @@ $ds.register('test', ['all'], new class extends $ds.Script {
                 type: 'TextBox',
                 label: this.tr('Test')
             }],
-            buttons: 'OkCancel',
         });
         if (res.result == 'Ok') {
             $ds.dialogSystem.alert(this.tr('Test'), res.form[0]);

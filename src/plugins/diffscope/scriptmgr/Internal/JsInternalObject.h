@@ -17,17 +17,20 @@ namespace ScriptMgr::Internal {
         Q_OBJECT
         Q_DECLARE_PRIVATE(JsInternalObject);
     public:
-        explicit JsInternalObject(QJSEngine *engine, ScriptMgrAddOn *addOn);
+        explicit JsInternalObject(QJSEngine *engine);
+        void setAddOn(ScriptMgrAddOn *addOn);
 
     public slots:
         QString jsTr(const QString &text);
         QString getLang();
+        void infoMsgBox(const QString &title, const QString &message);
+        bool questionMsgBox(const QString &title, const QString &message, const QString &defaultButton);
         QJSValue form(const QJSValue &val);
         void registerScript(const QString &id, int flags);
         void registerScriptSet(const QString &id, const QStringList &childrenId, int flags);
 
     protected:
-        JsInternalObject(JsInternalObjectPrivate *d);
+        explicit JsInternalObject(JsInternalObjectPrivate *d);
         QScopedPointer<JsInternalObjectPrivate> d_ptr;
     };
 

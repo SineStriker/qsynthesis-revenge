@@ -5,11 +5,13 @@
 #include "JsInternalObject.h"
 #include "JsInternalObject_p.h"
 #include "QMCoreDecoratorV2.h"
+#include <QMessageBox>
+#include "CoreApi/IWindow.h"
 
 namespace ScriptMgr::Internal {
 
-    JsInternalObject::JsInternalObject(QJSEngine *engine, ScriptMgrAddOn *addOn)
-        : JsInternalObject(new JsInternalObjectPrivate(engine, addOn)) {
+    JsInternalObject::JsInternalObject(QJSEngine *engine)
+        : JsInternalObject(new JsInternalObjectPrivate(engine)) {
     }
 
     QString JsInternalObject::jsTr(const QString &text) {
@@ -18,6 +20,26 @@ namespace ScriptMgr::Internal {
 
     QString JsInternalObject::getLang() {
         return qIDec->locale();
+    }
+
+    void JsInternalObject::infoMsgBox(const QString &title, const QString &message) {
+        Q_D(JsInternalObject);
+        if(!d->addOn) {
+            d->engine->throwError(QJSValue::ReferenceError, "AddOn not initialized.");
+            return;
+        }
+        QMessageBox::information(d->addOn->windowHandle()->window(), title, message);
+    }
+
+    bool JsInternalObject::questionMsgBox(const QString &title, const QString &message, const QString &defaultButton) {
+        Q_D(JsInternalObject);
+        if(!d->addOn) {
+            d->engine->throwError(QJSValue::ReferenceError, "AddOn not initialized.");
+            return false;
+        }
+        auto defaultButtonFlag = QMessageBox::Yes;
+        if(defaultButton == "No") defaultButtonFlag = QMessageBox::No;
+        return QMessageBox::question(d->addOn->windowHandle()->window(), title, message, QMessageBox::Yes|QMessageBox::No, defaultButtonFlag) == QMessageBox::Yes;
     }
 
     QJSValue JsInternalObject::form(const QJSValue &val) {
@@ -34,9 +56,13 @@ namespace ScriptMgr::Internal {
     JsInternalObject::JsInternalObject(JsInternalObjectPrivate *d) : d_ptr(d) {
         d->q_ptr = this;
     }
+    void JsInternalObject::setAddOn(ScriptMgrAddOn *addOn) {
+        Q_D(JsInternalObject);
+        d->addOn = addOn;
+    }
 
-    JsInternalObjectPrivate::JsInternalObjectPrivate(QJSEngine *engine, ScriptMgrAddOn *addOn)
-        : engine(engine), addOn(addOn) {
+    JsInternalObjectPrivate::JsInternalObjectPrivate(QJSEngine *engine)
+        : engine(engine) {
     }
 
 }

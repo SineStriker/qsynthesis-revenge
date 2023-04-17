@@ -1,4 +1,5 @@
 #include "ScriptMgrAddOn.h"
+#include "JsInternalObject.h"
 
 #include <CoreApi/IWindow.h>
 #include <QMDecoratorV2.h>
@@ -10,14 +11,17 @@ namespace ScriptMgr {
     namespace Internal {
 
         bool ScriptMgrAddOnFactory::predicate(Core::IWindow *handle) const {
-            return handle->id() == "project";
+            return handle->id() == "project" || handle->id() == "home"; //TODO temporarily add to home
         }
 
         Core::IWindowAddOn *ScriptMgrAddOnFactory::create(QObject *parent) {
-            return new ScriptMgrAddOn();
+            return new ScriptMgrAddOn(engine);
         }
 
-        ScriptMgrAddOn::ScriptMgrAddOn(QObject *parent) : IWindowAddOn(parent) {
+        ScriptMgrAddOnFactory::ScriptMgrAddOnFactory(QJSEngine *engine): engine(engine) {
+        }
+
+        ScriptMgrAddOn::ScriptMgrAddOn(QJSEngine *engine, QObject *parent) : IWindowAddOn(parent), engine(engine) {
         }
 
         ScriptMgrAddOn::~ScriptMgrAddOn() {
@@ -25,6 +29,8 @@ namespace ScriptMgr {
 
         void ScriptMgrAddOn::initialize() {
             qIDec->installLocale(this, _LOC(ScriptMgrAddOn, this));
+            qobject_cast<JsInternalObject *>(engine->globalObject().property("_internal").toQObject())->setAddOn(this);
+            qDebug(engine->evaluate("_internal.questionMsgBox('Test from JavaScript', '114514', 'Yes')").toString().toLocal8Bit());
         }
 
         void ScriptMgrAddOn::extensionsInitialized() {

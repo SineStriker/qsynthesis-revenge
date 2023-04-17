@@ -40,24 +40,15 @@ var $ds = {
     dialogSystem: {
         form: _internal.form,
         alert: (title, message) => {
-            _internal.form({
-                title,
-                widgets: [{ type: 'Label', label: message }],
-                buttons: 'Ok',
-            });
+            _internal.infoMsgBox(title, message);
         },
-        confirm: (title, message) => {
-            return _internal.form({
-                title,
-                widgets: [{ type: 'Label', label: message }],
-                buttons: 'YesNo',
-            }).result == 'Yes';
+        confirm: (title, message, defaultButton) => {
+            return _internal.questionMsgBox(title, message, defaultButton);
         },
         prompt: (title, message) => {
             let res =  _internal.form({
                 title,
                 widgets: [{ type: 'TextBox', label: message }],
-                buttons: 'OkCancel',
             });
             if(res.result == 'Ok') {
                 return res.form[0];

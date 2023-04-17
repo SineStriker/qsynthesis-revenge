@@ -32,7 +32,7 @@ declare namespace $ds {
     interface TimeBox {
         type: 'TimeBox';
         label: string;
-        type: 'MBT'|'HMS';
+        format: 'MBT'|'HMS';
         relative?: boolean;
         default?: number;
     }
@@ -70,32 +70,31 @@ declare namespace $ds {
     interface FormDialog<T extends FormWidget[]> {
         title: string;
         widgets: T;
-        buttons: 'Ok' | 'OkCancel' | 'YesNo' | 'YesNoCancel'
     }
 
-    declare namespace dialogSystem {
-        declare function alert(title: string, message: string): void;
-        declare function confirm(title: string, message: string): boolean;
-        declare function prompt(title: string, message: string): string;
-        declare function form<T extends $ds.FormWidget[]>(formDialog: $ds.FormDialog<T>): {
-            result: 'Ok' | 'Yes' | 'No' | 'Cancel';
-            form: {[K in keyof T]: $ds.FormReturnType<T[K]>}
+    namespace dialogSystem {
+        function alert(title: string, message: string): void;
+        function confirm(title: string, message: string, defaultButton: 'Yes'|'No'): boolean;
+        function prompt(title: string, message: string): string;
+        function form<T extends $ds.FormWidget[]>(formDialog: $ds.FormDialog<T>): {
+            result: 'Ok'|'Cancel';
+            form: {[K in keyof T]: $ds.FormReturnType<T[K]>};
         };
     }
 
-    declare namespace actionSystem {
+    namespace actionSystem {
 
     }
 
-    declare namespace project {
+    namespace project {
 
     }
 
-    declare namespace utils {
+    namespace utils {
 
     }
 
-    declare abstract class _ScriptBase {
+    abstract class _ScriptBase {
 
         public tr(text: string): string;
 
@@ -110,13 +109,13 @@ declare namespace $ds {
 
     }
 
-    declare abstract class Script extends _ScriptBase {
+    abstract class Script extends _ScriptBase {
 
         public abstract main(): void;
 
     }
 
-    declare abstract class ScriptSet extends _ScriptBase {
+    abstract class ScriptSet extends _ScriptBase {
 
         public abstract main(index: number): void;
 

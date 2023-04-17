@@ -11,11 +11,11 @@ namespace ScriptMgr::Internal {
         Q_DECLARE_PUBLIC(JsInternalObject);
 
     public:
-        explicit JsInternalObjectPrivate(QJSEngine *engine, ScriptMgrAddOn *addOn);
+        explicit JsInternalObjectPrivate(QJSEngine *engine);
 
         JsInternalObject *q_ptr;
         QJSEngine *engine;
-        ScriptMgrAddOn *addOn;
+        ScriptMgrAddOn *addOn = nullptr;
     };
 
 } // Internal

@@ -13,6 +13,7 @@
 #include <extensionsystem/pluginspec.h>
 
 #include "AddOn/ScriptMgrAddOn.h"
+#include "JsInternalObject.h"
 
 namespace ScriptMgr {
 
@@ -47,12 +48,11 @@ namespace ScriptMgr {
             auto &d = Internal::d;
             d = new BatchProcessPrivate();
 
-            d->engine.globalObject().setProperty("$", d->engine.newQObject(new TestObject));
-            qDebug() << d->engine.evaluate("$.f(['114514', '1919810'])").toString().toStdString().c_str();
+            d->engine.globalObject().setProperty("_internal", d->engine.newQObject(new JsInternalObject(&d->engine)));
 
             // Add basic windows and add-ons
             auto winMgr = ICore::instance()->windowSystem();
-            winMgr->addAddOn(new ScriptMgrAddOnFactory());
+            winMgr->addAddOn(new ScriptMgrAddOnFactory(&d->engine));
 
             return true;
         }
