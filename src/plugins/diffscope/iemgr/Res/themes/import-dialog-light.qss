@@ -61,3 +61,9 @@ QSplitter#codec-widget::handle {
 QTabWidget#tab-widget {
     background-color: transparent;
 }
+
+/* Button */
+
+IEMgr--ImportDialog>CTabButton[type=done-button] {
+    padding: 6px 30px;
+}
