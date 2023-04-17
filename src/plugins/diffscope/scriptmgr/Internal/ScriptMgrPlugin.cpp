@@ -47,8 +47,8 @@ namespace ScriptMgr {
             auto &d = Internal::d;
             d = new BatchProcessPrivate();
 
-            d->engine.globalObject().setProperty("$", d->engine.newQObject(new TestObject));
-            qDebug() << d->engine.evaluate("$.f(['114514', '1919810'])").toString().toStdString().c_str();
+            // d->engine.globalObject().setProperty("$", d->engine.newQObject(new TestObject));
+            // qDebug() << d->engine.evaluate("$.f(['114514', '1919810'])").toString().toStdString().c_str();
 
             // Add basic windows and add-ons
             auto winMgr = ICore::instance()->windowSystem();

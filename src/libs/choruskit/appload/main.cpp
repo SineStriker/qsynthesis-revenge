@@ -267,9 +267,8 @@ int main_entry(int argc, char *argv[]) {
         return 0;
     }
 
-    // Prepare to start application
-    if (!host.createDataAndTempDirs()) {
-        TEST_HELP
+    // Prepare to start application (Skip if show help)
+    if (!showHelp && !host.createDataAndTempDirs()) {
         return -1;
     }
 
