@@ -14,7 +14,7 @@
 #include <QMSystem.h>
 
 ThemeGuardV2::ThemeGuardV2(QWidget *w, QMDecoratorV2Private *parent)
-    : QObject(parent), w(w), d(parent), winHandle(w->windowHandle()), needUpdate(true) {
+    : QObject(parent), w(w), d(parent), winHandle(w->windowHandle()) {
     w->installEventFilter(this);
 }
 
@@ -24,11 +24,6 @@ ThemeGuardV2::~ThemeGuardV2() {
 void ThemeGuardV2::updateScreen() {
     if (!screen) {
         switchScreen(w->screen());
-        return;
-    }
-
-    if (!winHandle) {
-        needUpdate = true;
         return;
     }
 
@@ -51,8 +46,6 @@ void ThemeGuardV2::updateScreen() {
     }
 
     w->setStyleSheet(allStylesheets);
-
-    needUpdate = false;
 }
 
 void ThemeGuardV2::switchScreen(QScreen *screen) {
@@ -72,18 +65,12 @@ void ThemeGuardV2::switchScreen(QScreen *screen) {
 bool ThemeGuardV2::eventFilter(QObject *obj, QEvent *event) {
     switch (event->type()) {
         case QEvent::PolishRequest: {
-            if (needUpdate) {
-                updateScreen();
-            }
             break;
         }
         case QEvent::Show: {
             if (!winHandle) {
                 winHandle = w->window()->windowHandle();
                 connect(winHandle, &QWindow::screenChanged, this, &ThemeGuardV2::switchScreen);
-
-                // We cannot set stylesheet here because children may haven't initialized
-                // Possible problems: unexpected QLineEdit placeholder text color
             }
             break;
         }

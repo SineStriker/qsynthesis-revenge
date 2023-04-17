@@ -1,7 +1,7 @@
 #include "ScriptMgrPlugin.h"
 
 #include <QApplication>
-#include <QJsEngine>
+#include <QJSEngine>
 #include <QThread>
 
 #include "CoreApi/ILoader.h"
@@ -48,6 +48,7 @@ namespace ScriptMgr {
             auto &d = Internal::d;
             d = new BatchProcessPrivate();
             d->engine.globalObject().setProperty("_internal", d->engine.newQObject(new JsInternalObject(&d->engine)));
+
             // Add basic windows and add-ons
             auto winMgr = ICore::instance()->windowSystem();
             winMgr->addAddOn(new ScriptMgrAddOnFactory(&d->engine));

@@ -7,12 +7,13 @@
 #include "QMEqualBoxLayout.h"
 #include <QPushButton>
 
-using namespace ScriptMgr::Internal;
+namespace ScriptMgr::Internal {
 
-JsFormDialog::JsFormDialog(QWidget *parent) : ConfigurableDialog(parent) {
+    JsFormDialog::JsFormDialog(QWidget *parent) : ConfigurableDialog(parent) {
+        setApplyButtonVisible(false);
+    }
 
-}
-
-JsFormDialog::~JsFormDialog() noexcept {
+    JsFormDialog::~JsFormDialog() noexcept {
+    }
 
 }

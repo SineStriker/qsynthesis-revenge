@@ -22,7 +22,7 @@ public:
 
     QPointer<QScreen> screen;
 
-    bool needUpdate;
+    // bool needUpdate;
 
     QStringList ids;
     QMDecoratorV2Private *d;

@@ -12,8 +12,10 @@
 
 namespace ScriptMgr::Internal {
 
-    JsInternalObject::JsInternalObject(QJSEngine *engine)
-        : engine(engine) {
+    JsInternalObject::JsInternalObject(QJSEngine *engine, QObject *parent) : QObject(parent), engine(engine) {
+    }
+
+    JsInternalObject::~JsInternalObject() {
     }
 
     QString JsInternalObject::jsTr(const QString &text) {
@@ -25,7 +27,7 @@ namespace ScriptMgr::Internal {
     }
 
     void JsInternalObject::infoMsgBox(const QString &title, const QString &message) {
-        if(!addOn) {
+        if (!addOn) {
             engine->throwError(QJSValue::ReferenceError, "AddOn not initialized.");
             return;
         }
@@ -33,25 +35,30 @@ namespace ScriptMgr::Internal {
     }
 
     bool JsInternalObject::questionMsgBox(const QString &title, const QString &message, const QString &defaultButton) {
-        if(!addOn) {
+        if (!addOn) {
             engine->throwError(QJSValue::ReferenceError, "AddOn not initialized.");
             return false;
         }
         auto defaultButtonFlag = QMessageBox::Yes;
-        if(defaultButton == "No") defaultButtonFlag = QMessageBox::No;
-        return QMessageBox::question(addOn->windowHandle()->window(), title, message, QMessageBox::Yes|QMessageBox::No, defaultButtonFlag) == QMessageBox::Yes;
+        if (defaultButton == "No")
+            defaultButtonFlag = QMessageBox::No;
+        return QMessageBox::question(addOn->windowHandle()->window(), title, message,
+                                     QMessageBox::Yes | QMessageBox::No, defaultButtonFlag) == QMessageBox::Yes;
     }
 
-    bool JsInternalObject::_createFormWidget(QFormLayout &formLayout, const QVariantMap& widgetParams, QJSValue& ret, int index) {
-        if(!widgetParams.contains("type") || !widgetParams.value("type").canConvert(QVariant::String)) return false;
-        if(!widgetParams.contains("label") || !widgetParams.value("label").canConvert(QVariant::String)) return false;
+    bool JsInternalObject::_createFormWidget(QFormLayout &formLayout, const QVariantMap &widgetParams, QJSValue &ret,
+                                             int index) {
+        if (!widgetParams.contains("type") || !widgetParams.value("type").canConvert(QVariant::String))
+            return false;
+        if (!widgetParams.contains("label") || !widgetParams.value("label").canConvert(QVariant::String))
+            return false;
         auto widgetType = widgetParams.value("type").toString();
-        if(widgetType == "TextBox") {
+        if (widgetType == "TextBox") {
             auto textBox = new QLineEdit;
-            connect(textBox, &QLineEdit::textChanged, this, [=, &ret](const QString &text) {
-                ret.property("form").setProperty(index, text);
-            });
-            if(widgetParams.contains("defaultValue") && widgetParams.value("defaultValue").canConvert(QVariant::String)) {
+            connect(textBox, &QLineEdit::textChanged, this,
+                    [=, &ret](const QString &text) { ret.property("form").setProperty(index, text); });
+            if (widgetParams.contains("defaultValue") &&
+                widgetParams.value("defaultValue").canConvert(QVariant::String)) {
                 textBox->setText(widgetParams.value("defaultValue").toString());
             }
             formLayout.addRow(widgetParams.value("label").toString(), textBox);
@@ -67,13 +74,13 @@ namespace ScriptMgr::Internal {
         auto formLayout = new QFormLayout;
         auto dlg = new JsFormDialog;
         dlg->setWindowTitle(title);
-        for(int i = 0; i < widgets.size(); i++) {
-            const auto& widget = widgets[i];
-            if(!widget.canConvert(QVariant::Map)) {
+        for (int i = 0; i < widgets.size(); i++) {
+            const auto &widget = widgets[i];
+            if (!widget.canConvert(QVariant::Map)) {
                 engine->throwError(QJSValue::TypeError, "Invalid widget argument type");
                 return ret;
             }
-            if(!_createFormWidget(*formLayout, widget.toMap(), ret, i)){
+            if (!_createFormWidget(*formLayout, widget.toMap(), ret, i)) {
                 engine->throwError(QJSValue::TypeError, "Invalid widget argument type");
                 return ret;
             }
@@ -82,7 +89,7 @@ namespace ScriptMgr::Internal {
         dlgWidget->setLayout(formLayout);
         dlg->setWidget(dlgWidget);
         auto res = dlg->exec();
-        if(res == QDialog::Accepted) {
+        if (res == QDialog::Accepted) {
             ret.setProperty("result", "Ok");
         } else {
             ret.setProperty("result", "Cancel");

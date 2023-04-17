@@ -4,4 +4,8 @@
 
 #include "ScriptLoader.h"
 
-using namespace ScriptMgr::Internal;
+namespace ScriptMgr::Internal {
+
+    //
+
+}

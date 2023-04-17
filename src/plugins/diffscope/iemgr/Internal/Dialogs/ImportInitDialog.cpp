@@ -100,7 +100,7 @@ namespace IEMgr::Internal {
     void ImportInitDialog::selectWizard(IEMgr::IWizardFactory *wizard) {
         page->setTitle(wizard->displayName());
         page->setDescription(wizard->description());
-        // lineEdit->clear();
+        lineEdit->clear();
 
         curWizard = wizard;
     }

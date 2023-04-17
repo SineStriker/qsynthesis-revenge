@@ -15,7 +15,9 @@ namespace ScriptMgr::Internal {
     class JsInternalObject : public QObject {
         Q_OBJECT
     public:
-        explicit JsInternalObject(QJSEngine *engine);
+        explicit JsInternalObject(QJSEngine *engine, QObject *parent = nullptr);
+        ~JsInternalObject();
+
         void setAddOn(ScriptMgrAddOn *addOn);
 
     public slots:
@@ -30,7 +32,8 @@ namespace ScriptMgr::Internal {
     protected:
         QJSEngine *engine;
         ScriptMgrAddOn *addOn = nullptr;
-        bool _createFormWidget(QFormLayout &formLayout, const QVariantMap& widgetParams, QJSValue &ret, int index);
+
+        bool _createFormWidget(QFormLayout &formLayout, const QVariantMap &widgetParams, QJSValue &ret, int index);
     };
 
 } // Internal

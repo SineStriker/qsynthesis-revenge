@@ -39,7 +39,7 @@ QMenuBar[core-style=true]::item:selected {
 QMenu[core-style=true] {
     padding: 5px;
     background: #303030;
-    border: 1px solid transparent;
+    border: 1.25px solid transparent;
 }
 
 QMenu[core-style=true]::item {
@@ -58,7 +58,7 @@ QMenu[core-style=true]::item:disabled {
 }
 
 QMenu[core-style=true]::separator {
-    height: 1px;
+    height: 1.25px;
     background-color: #5B5B5B;
     margin: 6px;
 }

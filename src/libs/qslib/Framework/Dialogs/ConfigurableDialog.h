@@ -23,6 +23,9 @@ namespace QsApi {
         QWidget *takeWidget();
         void setWidget(QWidget *w);
 
+        bool applyButtonVisible() const;
+        void setApplyButtonVisible(bool visible);
+
     protected:
         virtual void apply();
         virtual void finish();

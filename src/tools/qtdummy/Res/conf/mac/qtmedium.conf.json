@@ -1,11 +1,14 @@
 {
     "Prefix": "..",
-    "Libraries": "lib",
-    "Share": "share",
+    "Libraries": "Framework",
+    "Share": "Resources",
     "Plugins": [
-        "lib/QsLib/plugins"
+        "Framework/QsLib/plugins"
     ],
-    "Decorators": [
-        "share/qtdummy/qtdummy.res.json"
+    "Translations": [
+        "Resources/qtdummy/translations"
+    ],
+    "Themes": [
+        "Resources/qtdummy/themes"
     ]
 }

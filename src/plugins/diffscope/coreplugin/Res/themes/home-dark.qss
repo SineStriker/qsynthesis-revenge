@@ -29,6 +29,7 @@ CTabButton#home-title-button {
     qproperty-spaceRatio: 0.2;
     padding: 20px;
     background-color: transparent;
+    border: none;
     text-align: left;
 }
 
@@ -40,7 +41,7 @@ CTabButton[type=home-nav-button] {
     background-color: transparent;
     color: #FFFFFF;
     border: 4px solid transparent;
-    padding: 11px;
+    padding: 11.25px;
     text-align: left;
 }
 
@@ -72,7 +73,7 @@ CTabButton[type=home-bottom-button]:pressed {
 }
 
 CTabButton#home-about-button {
-    border-top: 1px solid rgba(255, 255, 255, 15%);
+    border-top: 1.25px solid rgba(255, 255, 255, 15%);
     qproperty-iconUp: svg(":/svg/home/info.svg", #FFFFFF);
     padding-top: 20px;
     padding-bottom: 20px;
@@ -87,7 +88,7 @@ Core--HomeRecentWidget>QSplitterHandle {
 
 Core--HomeRecentWidget::handle {
     background-color: #666666;
-    height: 1px;
+    height: 1.25px;
 }
 
 Core--HomeRecentTopFrame {
@@ -169,8 +170,8 @@ QFrame#home-recent-list-container>FileListWidget {
     qtypeface(#E0E0E0, 17px), /* fileType */
     qtypeface(#909090, 15px), /* locType */
     qtypeface(#909090, 15px), /* dateType */
-    qmargins(10px, 10px, 10px, 1px), /* fileMargins */
-    qmargins(10px, 1px, 10px, 10px), /* locMargins */
+    qmargins(10px, 10px, 10px, 1.25px), /* fileMargins */
+    qmargins(10px, 1.25px, 10px, 10px), /* locMargins */
     qmargins(10px, 10px, 20px, 10px), /* dateMargins */
     qmargins(20px, 10px, 10px, 10px), /* iconMargins */
     qmargins(3px, 10px, 3px, 10px), /* margins */

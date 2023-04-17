@@ -95,6 +95,16 @@ namespace QsApi {
         d->mainLayout->insertWidget(0, w);
     }
 
+    bool ConfigurableDialog::applyButtonVisible() const {
+        Q_D(const ConfigurableDialog);
+        return d->applyButton->isVisible();
+    }
+
+    void ConfigurableDialog::setApplyButtonVisible(bool visible) {
+        Q_D(ConfigurableDialog);
+        d->applyButton->setVisible(visible);
+    }
+
     void ConfigurableDialog::apply() {
     }
 
