@@ -43,6 +43,12 @@ namespace QsApi {
     public:
         inline PlanarModelIndex() noexcept : p(Point3D::createInvalid()), i(0), m(nullptr){};
 
+        Q_CONSTEXPR inline int layer() const {
+            return l;
+        }
+        Q_CONSTEXPR inline int serial() const {
+            return s;
+        }
         inline Point3D pos() const noexcept {
             return p;
         }
@@ -62,7 +68,6 @@ namespace QsApi {
             return reinterpret_cast<void *>(i);
         }
         inline PlanarModelIndex parent() const;
-        inline int layer() const;
         inline PlanarModelIndex sibling(const Point3D &pos) const;
         inline PlanarModelIndex sibling(int x, int y, int z = 0) const {
             return sibling({x, y, z});
@@ -88,13 +93,15 @@ namespace QsApi {
         }
 
     private:
-        inline PlanarModelIndex(const Point3D &p, void *ptr, const PlanarItemModel *model) noexcept
-            : p(p), i(reinterpret_cast<quintptr>(ptr)), m(model) {
+        inline PlanarModelIndex(int l, int s, const Point3D &p, void *ptr, const PlanarItemModel *model) noexcept
+            : l(l), s(s), p(p), i(reinterpret_cast<quintptr>(ptr)), m(model) {
         }
-        inline PlanarModelIndex(const Point3D &p, qintptr id, const PlanarItemModel *model) noexcept
-            : p(p), i(id), m(model) {
+        inline PlanarModelIndex(int l, int s, const Point3D &p, quintptr id, const PlanarItemModel *model) noexcept
+            : l(l), s(s), p(p), i(id), m(model) {
         }
 
+        int l;
+        int s;
         Point3D p;
         quintptr i;
         const PlanarItemModel *m;
@@ -120,7 +127,6 @@ namespace QsApi {
         virtual PlanarModelIndex index(int layer, const Point3D &pos, const PlanarModelIndex &parent = {}) const = 0;
 
         virtual PlanarModelIndex parent(const PlanarModelIndex &child) const = 0;
-        virtual int layer(const PlanarModelIndex &child) const = 0;
         virtual PlanarModelIndex sibling(const Point3D &pos, const PlanarModelIndex &idx) const;
 
         virtual QVariant data(const PlanarModelIndex &index, int role = Qt::DisplayRole) const = 0;
@@ -150,7 +156,7 @@ namespace QsApi {
                                                                                     Qt::MatchWrap)) const;
 
     signals:
-        void dataChanged(const QList<QModelIndex> &indexes, const QVector<int> &roles);
+        void dataChanged(const QList<PlanarModelIndex> &indexes, const QVector<int> &roles);
         void layerDataChanged(int layer, const QVector<int> &roles);
         void headerDataChanged(Qt::Orientation orientation, int first, int last, const QVector<int> &roles);
 
@@ -164,22 +170,22 @@ namespace QsApi {
 
         void itemsAboutToBeMoved(const PlanarModelIndex &sourceParent, int sourceLayer,
                                  const QList<Point3D> &sourcePositions, const PlanarModelIndex &destinationParent,
-                                 int destinationLayer, const QList<Point3D> destinationPositions, QPrivateSignal);
+                                 int destinationLayer, const QList<Point3D> &destinationPositions, QPrivateSignal);
 
         void itemMoved(const PlanarModelIndex &sourceParent, int sourceLayer, const QList<Point3D> &sourcePositions,
                        const PlanarModelIndex &destinationParent, int destinationLayer,
-                       const QList<Point3D> destinationPositions, QPrivateSignal);
+                       const QList<Point3D> &destinationPositions, QPrivateSignal);
 
-        void layersAboutToBeInserted(const QModelIndex &parent, int first, int last, QPrivateSignal);
-        void layersInserted(const QModelIndex &parent, int first, int last, QPrivateSignal);
+        void layersAboutToBeInserted(const PlanarModelIndex &parent, int first, int last, QPrivateSignal);
+        void layersInserted(const PlanarModelIndex &parent, int first, int last, QPrivateSignal);
 
-        void layersAboutToBeRemoved(const QModelIndex &parent, int first, int last, QPrivateSignal);
-        void layersRemoved(const QModelIndex &parent, int first, int last, QPrivateSignal);
+        void layersAboutToBeRemoved(const PlanarModelIndex &parent, int first, int last, QPrivateSignal);
+        void layersRemoved(const PlanarModelIndex &parent, int first, int last, QPrivateSignal);
 
-        void layersAboutToBeMoved(const QModelIndex &sourceParent, int sourceStart, int sourceEnd,
-                                  const QModelIndex &destinationParent, int destinationLayer, QPrivateSignal);
-        void layersMoved(const QModelIndex &parent, int start, int end, const QModelIndex &destination, int layer,
-                         QPrivateSignal);
+        void layersAboutToBeMoved(const PlanarModelIndex &sourceParent, int sourceStart, int sourceEnd,
+                                  const PlanarModelIndex &destinationParent, int destinationLayer, QPrivateSignal);
+        void layersMoved(const PlanarModelIndex &parent, int start, int end, const PlanarModelIndex &destination,
+                         int layer, QPrivateSignal);
 
         void modelAboutToBeReset(QPrivateSignal);
         void modelReset(QPrivateSignal);
@@ -196,17 +202,17 @@ namespace QsApi {
 
         void beginMoveItems(const PlanarModelIndex &sourceParent, int sourceLayer,
                             const QList<Point3D> &sourcePositions, const PlanarModelIndex &destinationParent,
-                            int destinationLayer, const QList<Point3D> destinationPositions);
+                            int destinationLayer, const QList<Point3D> &destinationPositions);
         void endMoveItems();
 
-        void beginInsertLayers(const QModelIndex &parent, int first, int last);
+        void beginInsertLayers(const PlanarModelIndex &parent, int first, int last);
         void endInsertLayers();
 
-        void beginRemoveLayers(const QModelIndex &parent, int first, int last);
+        void beginRemoveLayers(const PlanarModelIndex &parent, int first, int last);
         void endRemoveLayers();
 
-        bool beginMoveLayers(const QModelIndex &sourceParent, int sourceFirst, int sourceLast,
-                             const QModelIndex &destinationParent, int destinationLayer);
+        bool beginMoveLayers(const PlanarModelIndex &sourceParent, int sourceFirst, int sourceLast,
+                             const PlanarModelIndex &destinationParent, int destinationLayer);
         void endMoveLayers();
 
         void beginResetModel();
@@ -220,10 +226,6 @@ namespace QsApi {
 
     inline PlanarModelIndex PlanarModelIndex::parent() const {
         return m->parent(*this);
-    }
-
-    inline int PlanarModelIndex::layer() const {
-        return m->layer(*this);
     }
 
     inline PlanarModelIndex PlanarModelIndex::sibling(const Point3D &pos) const {

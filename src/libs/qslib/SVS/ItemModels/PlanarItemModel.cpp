@@ -13,6 +13,68 @@ namespace QsApi {
 
     void PlanarItemModelPrivate::init() {
     }
+    void PlanarItemModelPrivate::itemsAboutToBeInserted(const PlanarModelIndex &parent, int layer,
+                                                        const QList<Point3D> &positions) {
+    }
+    void PlanarItemModelPrivate::itemsInserted(const PlanarModelIndex &parent, int layer,
+                                               const QList<Point3D> &positions) {
+    }
+    void PlanarItemModelPrivate::itemsAboutToBeRemoved(const PlanarModelIndex &parent, int layer,
+                                                       const QList<Point3D> &positions) {
+    }
+    void PlanarItemModelPrivate::itemsRemoved(const PlanarModelIndex &parent, int layer,
+                                              const QList<Point3D> &positions) {
+    }
+    void PlanarItemModelPrivate::itemsAboutToBeMoved(const PlanarModelIndex &sourceParent, int sourceLayer,
+                                                     const QList<Point3D> &sourcePositions,
+                                                     const PlanarModelIndex &destinationParent, int destinationLayer,
+                                                     const QList<Point3D> &destinationPositions) {
+    }
+    void PlanarItemModelPrivate::itemMoved(const PlanarModelIndex &sourceParent, int sourceLayer,
+                                           const QList<Point3D> &sourcePositions,
+                                           const PlanarModelIndex &destinationParent, int destinationLayer,
+                                           const QList<Point3D> &destinationPositions) {
+    }
+    void PlanarItemModelPrivate::layersAboutToBeInserted(const PlanarModelIndex &parent, int first, int last) {
+    }
+    void PlanarItemModelPrivate::layersInserted(const PlanarModelIndex &parent, int first, int last) {
+    }
+    void PlanarItemModelPrivate::layersAboutToBeRemoved(const PlanarModelIndex &parent, int first, int last) {
+    }
+    void PlanarItemModelPrivate::layersRemoved(const PlanarModelIndex &parent, int first, int last) {
+    }
+    void PlanarItemModelPrivate::layersAboutToBeMoved(const PlanarModelIndex &sourceParent, int sourceStart,
+                                                      int sourceEnd, const PlanarModelIndex &destinationParent,
+                                                      int destinationLayer) {
+    }
+    void PlanarItemModelPrivate::layersMoved(const PlanarModelIndex &parent, int start, int end,
+                                             const PlanarModelIndex &destination, int layer) {
+    }
+
+    bool PlanarItemModelPrivate::allowMove(const PlanarModelIndex &srcParent, int start, int end,
+                                           const PlanarModelIndex &destinationParent, int destinationStart) const {
+        // Don't move the range within itself.
+        if (destinationParent == srcParent)
+            return !(destinationStart >= start && destinationStart <= end + 1);
+
+        auto destinationAncestor = destinationParent;
+        int pos = destinationAncestor.layer();
+        forever {
+            if (destinationAncestor == srcParent) {
+                if (pos >= start && pos <= end)
+                    return false;
+                break;
+            }
+
+            if (!destinationAncestor.isValid())
+                break;
+
+            pos = destinationAncestor.layer();
+            destinationAncestor = destinationAncestor.parent();
+        }
+
+        return true;
+    }
 
     PlanarItemModel::PlanarItemModel(QObject *parent) : PlanarItemModel(*new PlanarItemModelPrivate(), parent) {
     }
@@ -192,6 +254,10 @@ namespace QsApi {
     }
 
     void PlanarItemModel::beginInsertItems(const PlanarModelIndex &parent, int layer, const QList<Point3D> &positions) {
+        Q_D(PlanarItemModel);
+
+
+        d->itemsAboutToBeInserted(parent, layer, positions);
     }
 
     void PlanarItemModel::endInsertItems() {
@@ -206,26 +272,26 @@ namespace QsApi {
     void PlanarItemModel::beginMoveItems(const PlanarModelIndex &sourceParent, int sourceLayer,
                                          const QList<Point3D> &sourcePositions,
                                          const PlanarModelIndex &destinationParent, int destinationLayer,
-                                         const QList<Point3D> destinationPositions) {
+                                         const QList<Point3D> &destinationPositions) {
     }
 
     void PlanarItemModel::endMoveItems() {
     }
 
-    void PlanarItemModel::beginInsertLayers(const QModelIndex &parent, int first, int last) {
+    void PlanarItemModel::beginInsertLayers(const PlanarModelIndex &parent, int first, int last) {
     }
 
     void PlanarItemModel::endInsertLayers() {
     }
 
-    void PlanarItemModel::beginRemoveLayers(const QModelIndex &parent, int first, int last) {
+    void PlanarItemModel::beginRemoveLayers(const PlanarModelIndex &parent, int first, int last) {
     }
 
     void PlanarItemModel::endRemoveLayers() {
     }
 
-    bool PlanarItemModel::beginMoveLayers(const QModelIndex &sourceParent, int sourceFirst, int sourceLast,
-                                          const QModelIndex &destinationParent, int destinationLayer) {
+    bool PlanarItemModel::beginMoveLayers(const PlanarModelIndex &sourceParent, int sourceFirst, int sourceLast,
+                                          const PlanarModelIndex &destinationParent, int destinationLayer) {
         return false;
     }
 
