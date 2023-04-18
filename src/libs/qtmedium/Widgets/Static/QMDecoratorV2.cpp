@@ -63,7 +63,7 @@ void ThemeGuardV2::updateScreen() {
     if (stylesheets.isEmpty())
         return;
 
-    qDebug().noquote() << stylesheets;
+    // qDebug().noquote() << stylesheets;
 
     w->setStyleSheet(stylesheets);
 }
