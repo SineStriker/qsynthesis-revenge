@@ -8,6 +8,9 @@
 #include <QFormLayout>
 #include <QJSEngine>
 
+#define JS_PROP_ASSERT(obj, prop, type) (obj.contains(#prop) && obj.value(#prop).canConvert(QVariant::type))
+#define JS_PROP_AS(obj, prop, type) (obj.value(#prop).to##type())
+
 namespace ScriptMgr::Internal {
 
     class ScriptMgrAddOn;
@@ -30,8 +33,6 @@ namespace ScriptMgr::Internal {
     protected:
         QJSEngine *engine;
         ScriptMgrAddOn *addOn = nullptr;
-
-        bool createFormWidget(QFormLayout &formLayout, const QVariantMap &widgetParams, QJSValue &ret, int index);
     };
 
 } // Internal

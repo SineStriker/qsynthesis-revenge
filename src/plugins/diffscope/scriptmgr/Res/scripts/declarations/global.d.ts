@@ -18,15 +18,9 @@ declare namespace $ds {
         precision?: number;
         min?: number;
         max?: number;
-        defaultValue?: number;
-    }
-    
-    interface Slider {
-        type: 'Slider';
-        label: string;
-        precision?: number;
-        min: number;
-        max: number;
+        step?: number;
+        prefix?: string;
+        suffix?: string;
         defaultValue?: number;
     }
     
@@ -50,6 +44,10 @@ declare namespace $ds {
         type: 'CheckBox';
         label: string;
         defaultValue?: boolean;
+        bindings?: {
+            enable?: number[];
+            disable?: number[];
+        };
     }
     
     interface Select {
@@ -57,6 +55,11 @@ declare namespace $ds {
         label: string;
         options: string[];
         defaultValue?: number;
+        bindings?: {
+            index: number;
+            enable?: number[];
+            disable?: number[];
+        }[];
     }
     
     interface Label {

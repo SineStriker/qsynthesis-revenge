@@ -4,7 +4,7 @@ class _ScriptBase {
     locale(lang, text) { }
     tr(text) {
         let currentLocale = this.locale(_internal.getLang(), text);
-        if (currentLocale !== null) {
+        if (typeof(currentLocale) === 'string') {
             return currentLocale;
         } else {
             return _internal.jsTr(text);

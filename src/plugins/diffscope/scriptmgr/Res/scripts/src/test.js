@@ -13,13 +13,33 @@ $ds.register(new class extends $ds.Script {
         let res = $ds.dialogSystem.form(
             this.tr('Test'),
             [{
-                type: 'TextBox',
+                type: 'Select',
+                label: this.tr('Preset'),
+                options: ['1919810', '19260817', this.tr('Customize')],
+                bindings: [{
+                    index: 0,
+                    disable: [1],
+                }, {
+                    index: 1,
+                    disable: [1],
+                }, {
+                    index: 2,
+                    enable: [1],
+                }],
+            }, {
+                type: 'NumberBox',
                 label: this.tr('Test'),
-                defaultValue: '114514',
+                suffix: 'RMB',
+                step: 2,
+                defaultValue: 114514,
             }],
         );
         if (res.result == 'Ok') {
-            $ds.dialogSystem.alert(this.tr('Test'), res.form[0]);
+            let value;
+            if(res.form[0] == 0) value = 1919810;
+            else if(res.form[0] == 1) value = 19260817;
+            else value = res.form[1];
+            $ds.dialogSystem.alert(this.tr('Test'), value);
         }
     }
     locale(lang, text) {
