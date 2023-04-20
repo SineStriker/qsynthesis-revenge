@@ -18,7 +18,7 @@ namespace ScriptMgr::Internal {
         static ScriptLoader *instance();
 
         void registerAddon(ScriptMgrAddOn *addon);
-        QString userScriptDir();
+        QString userScriptDir() const;
 
     public slots:
         void reloadScripts();

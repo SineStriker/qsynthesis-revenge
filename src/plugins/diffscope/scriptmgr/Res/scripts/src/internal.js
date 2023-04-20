@@ -1,14 +1,15 @@
 "use strict";
 
 class _ScriptBase {
-    locale(lang, text) { }
+    locale() { }
     tr(text) {
-        let currentLocale = this.locale(_internal.getLang(), text);
-        if (typeof(currentLocale) === 'string') {
-            return currentLocale;
-        } else {
-            return _internal.jsTr(text);
-        }
+        let locale = this.locale();
+        if(!locale) return text;
+        let entry = locale[text];
+        if(!entry) return text;
+        let translation = entry[_internal.getLang()];
+        if (typeof(translation) !== 'string') return text;
+        return translation;
     }
 }
 
@@ -35,6 +36,8 @@ var _getName = (id, index) => {
         }
     }
 }
+
+var _tr = _q_tr_ext.qsTranslate;
 
 var $ds = {
     dialogSystem: {

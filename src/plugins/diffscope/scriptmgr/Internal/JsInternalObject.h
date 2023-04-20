@@ -22,11 +22,10 @@ namespace ScriptMgr::Internal {
         ~JsInternalObject();
 
     public slots:
-        QString jsTr(const QString &text);
-        QString getLang();
-        void infoMsgBox(const QString &title, const QString &message);
-        bool questionMsgBox(const QString &title, const QString &message, const QString &defaultButton);
-        QJSValue form(const QString &title, const QVariantList &widgets);
+        QString getLang() const;
+        void infoMsgBox(const QString &title, const QString &message) const;
+        bool questionMsgBox(const QString &title, const QString &message, const QString &defaultButton) const;
+        QJSValue form(const QString &title, const QVariantList &widgets) const;
         void registerScript(const QString &id, int flags);
         void registerScriptSet(const QString &id, const QStringList &childrenId, int flags);
 

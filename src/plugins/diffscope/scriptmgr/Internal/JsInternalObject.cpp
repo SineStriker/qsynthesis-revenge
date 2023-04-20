@@ -18,19 +18,15 @@ namespace ScriptMgr::Internal {
     JsInternalObject::~JsInternalObject() {
     }
 
-    QString JsInternalObject::jsTr(const QString &text) {
-        return tr(text.toLocal8Bit());
-    }
-
-    QString JsInternalObject::getLang() {
+    QString JsInternalObject::getLang() const {
         return qIDec->locale();
     }
 
-    void JsInternalObject::infoMsgBox(const QString &title, const QString &message) {
+    void JsInternalObject::infoMsgBox(const QString &title, const QString &message) const {
         QMessageBox::information(addOn->windowHandle()->window(), title, message);
     }
 
-    bool JsInternalObject::questionMsgBox(const QString &title, const QString &message, const QString &defaultButton) {
+    bool JsInternalObject::questionMsgBox(const QString &title, const QString &message, const QString &defaultButton) const {
         auto defaultButtonFlag = QMessageBox::Yes;
         if (defaultButton == "No")
             defaultButtonFlag = QMessageBox::No;
@@ -38,7 +34,7 @@ namespace ScriptMgr::Internal {
                                      QMessageBox::Yes | QMessageBox::No, defaultButtonFlag) == QMessageBox::Yes;
     }
 
-    QJSValue JsInternalObject::form(const QString &title, const QVariantList &widgets) {
+    QJSValue JsInternalObject::form(const QString &title, const QVariantList &widgets) const {
         auto dlg = new JsFormDialog(engine, addOn->windowHandle()->window());
         dlg->setWindowTitle(title);
         if(!dlg->addFormWidgets(widgets)) {

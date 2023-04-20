@@ -33,10 +33,10 @@ namespace ScriptMgr::Internal {
         };
         void registerScript(const QString &id, int role);
         void registerScript(const QString &id, const QStringList &children, int role);
-        QString getName(const QString &id);
-        QString getName(const QString &id, int index);
-        void invoke(const QString &id);
-        void invoke(const QString &id, int index);
+        QString getName(const QString &id) const;
+        QString getName(const QString &id, int index) const;
+        void invoke(const QString &id) const;
+        void invoke(const QString &id, int index) const;
 
     private:
         friend class ScriptLoader;
@@ -44,12 +44,12 @@ namespace ScriptMgr::Internal {
         QMChronMap<QString, QStringList> scriptSetRegistry;
         QMChronSet<QString> scriptRegistry;
         bool initializeEngine();
-        void alertJsUncaughtError(const QJSValue &error);
-        void warningCannotLoadFile(const QString &path);
-        void warningCannotGetName(const QString &id);
-        void criticalCannotInitializeEngine();
-        void criticalScriptExecutionFailed(const QString &id);
-        void criticalScriptExecutionFailed(const QString &id, int index);
+        void alertJsUncaughtError(const QJSValue &error) const;
+        void warningCannotLoadFile(const QString &path) const;
+        void warningCannotGetName(const QString &id) const;
+        void criticalCannotInitializeEngine() const;
+        void criticalScriptExecutionFailed(const QString &id) const;
+        void criticalScriptExecutionFailed(const QString &id, int index) const;
         bool loadScriptFile(const QString &path);
         void loadScripts();
     };

@@ -106,7 +106,11 @@ declare namespace $ds {
 
         public tr(text: string): string;
 
-        public abstract locale(lang: string, text:string): string | undefined | null;
+        public abstract locale(): {
+            [Source: string]: {
+                [Lang: string]: string
+            }
+        };
 
         public abstract info(): {
             id: string;

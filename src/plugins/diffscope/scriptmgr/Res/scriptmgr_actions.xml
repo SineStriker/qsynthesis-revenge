@@ -1,5 +1,37 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <actionSystem>
-    <context id="home.MainMenu" prefix="iemgr." mode="find">
+    <context id="project.MainMenu" prefix="scriptmgr." mode="find">
+        <menu id="BatchProcessMenu">
+            <rules>
+                <rule id="core.Edit" mode="append"/>
+            </rules>
+            <content>
+                <group id="BuiltInScripts">
+
+                </group>
+                <group id="UserScripts">
+
+                </group>
+                <group id="ScriptOperations">
+                    <action id="ReloadScripts"/>
+                    <action id="ScriptSettings"/>
+                </group>
+            </content>
+        </menu>
+    </context>
+    <context id="arrangement view" prefix="scriptmgr." mode="find"> <!--TODO context menu-->
+        <menu id="BatchProcessMenu">
+            <rules>
+                <rule id="some group" mode="insertBehind"/>
+            </rules>
+            <content>
+                <group id="BuiltInScriptsArrangement">
+
+                </group>
+                <group id="UserScriptsArrangement">
+
+                </group>
+            </content>
+        </menu>
     </context>
 </actionSystem>

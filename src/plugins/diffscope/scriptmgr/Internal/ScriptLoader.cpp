@@ -28,7 +28,7 @@ namespace ScriptMgr::Internal {
         m_instance = nullptr;
     }
 
-    QString ScriptLoader::userScriptDir() {
+    QString ScriptLoader::userScriptDir() const {
         return {};
     }
 }
