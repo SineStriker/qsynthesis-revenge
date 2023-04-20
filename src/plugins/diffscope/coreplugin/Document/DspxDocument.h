@@ -1,6 +1,8 @@
 #ifndef DSPXDOCUMENT_H
 #define DSPXDOCUMENT_H
 
+#include <QStandardItemModel>
+
 #include <CoreApi/IDocument.h>
 
 #include "coreplugin/CoreGlobal.h"

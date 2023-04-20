@@ -32,7 +32,7 @@ namespace ScriptMgr {
 
         bool ScriptMgrPlugin::initialize(const QStringList &arguments, QString *errorMessage) {
             // Add resources
-            qIDec->addTranslationPath(QMFs::PathFindDirPath(pluginSpec()->filePath()) + "/translations");
+            qIDec->addTranslationPath(pluginSpec()->location() + "/translations");
 
             auto splash = qobject_cast<QSplashScreen *>(ILoader::instance()->getFirstObject("choruskit_init_splash"));
             if (splash) {

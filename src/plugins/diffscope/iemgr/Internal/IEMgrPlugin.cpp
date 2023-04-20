@@ -36,8 +36,8 @@ namespace IEMgr {
 
         bool IEMgrPlugin::initialize(const QStringList &arguments, QString *errorMessage) {
             // Add resources
-            qIDec->addTranslationPath(QMFs::PathFindDirPath(pluginSpec()->filePath()) + "/translations");
-            qIDec->addThemePath(QMFs::PathFindDirPath(pluginSpec()->filePath()) + "/themes");
+            qIDec->addTranslationPath(pluginSpec()->location() + "/translations");
+            qIDec->addThemePath(pluginSpec()->location() + "/themes");
 
             auto splash = qobject_cast<QSplashScreen *>(ILoader::instance()->getFirstObject("choruskit_init_splash"));
             if (splash) {
