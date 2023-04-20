@@ -2,6 +2,80 @@
 <!DOCTYPE TS>
 <TS version="2.1" language="zh_HK">
 <context>
+    <name>JSScript</name>
+    <message>
+        <location filename="../scripts/src/transpose.js" line="8"/>
+        <location filename="../scripts/src/transpose.js" line="30"/>
+        <source>Transpose</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../scripts/src/transpose.js" line="11"/>
+        <source>Shift Up by an Octave</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../scripts/src/transpose.js" line="14"/>
+        <source>Shift Down by an Octave</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../scripts/src/transpose.js" line="17"/>
+        <source>Customize Transposition</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../scripts/src/transpose.js" line="20"/>
+        <location filename="../scripts/src/transpose.js" line="42"/>
+        <source>Shift Mode</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../scripts/src/transpose.js" line="33"/>
+        <source>Shift by</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../scripts/src/transpose.js" line="34"/>
+        <source> semitone(s)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../scripts/src/transpose.js" line="45"/>
+        <source>Current mode: </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../scripts/src/transpose.js" line="48"/>
+        <location filename="../scripts/src/transpose.js" line="59"/>
+        <source>Keynote</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../scripts/src/transpose.js" line="52"/>
+        <location filename="../scripts/src/transpose.js" line="63"/>
+        <source>Mode name</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../scripts/src/transpose.js" line="53"/>
+        <location filename="../scripts/src/transpose.js" line="64"/>
+        <source>Ionian (Major mode)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../scripts/src/transpose.js" line="53"/>
+        <location filename="../scripts/src/transpose.js" line="64"/>
+        <source>Aeolian (Minor mode)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../scripts/src/transpose.js" line="56"/>
+        <source>Target mode: </source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>ScriptMgr::Internal::ScriptMgrAddOn</name>
     <message>
         <location filename="../../Internal/AddOn/ScriptMgrAddOn.cpp" line="134"/>

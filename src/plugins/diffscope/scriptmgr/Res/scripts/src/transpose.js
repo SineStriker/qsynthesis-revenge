@@ -5,19 +5,19 @@ $ds.register(new class extends $ds.ScriptSet {
         return {
             id: 'transpose',
             role: ['pianoroll', 'arrangement'],
-            name: this.tr('Transpose'),
+            name: qsTranslate("JSScript", 'Transpose'),
             children: [{
                 id: 'plus_octave',
-                name: this.tr('Shift Up by an Octave')
+                name: qsTranslate("JSScript", 'Shift Up by an Octave')
             }, {
                 id: 'minus_octave',
-                name: this.tr('Shift Down by an Octave')
+                name: qsTranslate("JSScript", 'Shift Down by an Octave')
             }, {
                 id: 'customize',
-                name: this.tr('Customize Transposition')
+                name: qsTranslate("JSScript", 'Customize Transposition')
             }, {
                 id: 'shift_mode',
-                name: this.tr('Shift Mode')
+                name: qsTranslate("JSScript", 'Shift Mode')
             }],
             requiredEditorVersion: '0.1.0',
         };
@@ -27,11 +27,11 @@ $ds.register(new class extends $ds.ScriptSet {
         else if(index == 1) this._transpose(-12);
         else if(index == 2) {
             let res = $ds.dialogSystem.form(
-                this.tr('Transpose'),
+                qsTranslate("JSScript", 'Transpose'),
                 [{
                     type: 'NumberBox',
-                    label: this.tr('Shift by'),
-                    suffix: this.tr(' semitone(s)'),
+                    label: qsTranslate("JSScript", 'Shift by'),
+                    suffix: qsTranslate("JSScript", ' semitone(s)'),
                 }],
             );
             if(res.result == 'Ok') {
@@ -39,29 +39,29 @@ $ds.register(new class extends $ds.ScriptSet {
             }
         } else {
             let res = $ds.dialogSystem.form(
-                this.tr('Shift Mode'),
+                qsTranslate("JSScript", 'Shift Mode'),
                 [{
                     type: 'Label',
-                    label: this.tr('Current mode: '),
+                    label: qsTranslate("JSScript", 'Current mode: '),
                 }, {
                     type: 'Select',
-                    label: this.tr('Keynote'),
+                    label: qsTranslate("JSScript", 'Keynote'),
                     options: ['C', 'C#/Db', 'D', 'D#/Eb', 'E', 'F', 'F#/Gb', 'G', 'G#/Ab', 'A', 'A#/Bb', 'B'],
                 }, {
                     type: 'Select',
-                    label: this.tr('Mode name'),
-                    options: [this.tr('Ionian (Major mode)'), 'Dorian', 'Phrygian', 'Lydian', 'Mixolydian', this.tr('Aeolian (Minor mode)'), 'Locrian'],
+                    label: qsTranslate("JSScript", 'Mode name'),
+                    options: [qsTranslate("JSScript", 'Ionian (Major mode)'), 'Dorian', 'Phrygian', 'Lydian', 'Mixolydian', qsTranslate("JSScript", 'Aeolian (Minor mode)'), 'Locrian'],
                 }, {
                     type: 'Label',
-                    label: this.tr('Target mode: '),
+                    label: qsTranslate("JSScript", 'Target mode: '),
                 }, {
                     type: 'Select',
-                    label: this.tr('Keynote'),
+                    label: qsTranslate("JSScript", 'Keynote'),
                     options: ['C', 'C#/Db', 'D', 'D#/Eb', 'E', 'F', 'F#/Gb', 'G', 'G#/Ab', 'A', 'A#/Bb', 'B'],
                 }, {
                     type: 'Select',
-                    label: this.tr('Mode name'),
-                    options: [this.tr('Ionian (Major mode)'), 'Dorian', 'Phrygian', 'Lydian', 'Mixolydian', this.tr('Aeolian (Minor mode)'), 'Locrian'],
+                    label: qsTranslate("JSScript", 'Mode name'),
+                    options: [qsTranslate("JSScript", 'Ionian (Major mode)'), 'Dorian', 'Phrygian', 'Lydian', 'Mixolydian', qsTranslate("JSScript", 'Aeolian (Minor mode)'), 'Locrian'],
                 }],
             )
         }

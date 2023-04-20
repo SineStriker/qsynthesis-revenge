@@ -21,6 +21,15 @@ namespace QsApi {
     }
 
     AdditiveTreeItem::~AdditiveTreeItem() {
+        Q_D(AdditiveTreeItem);
+        if (d->model && !d->model->d_func()->is_destruct)
+            propagateModel(nullptr);
+
+        for (auto item : qAsConst(d->vector))
+            delete item;
+
+        for (auto item : qAsConst(d->set))
+            delete item;
     }
 
     QString AdditiveTreeItem::name() const {
@@ -54,7 +63,7 @@ namespace QsApi {
         d->properties[key] = value;
 
         if (d->model)
-            emit d->model->propertyChanged(this, key, oldValue, value);
+            d->model->d_func()->propertyChanged(this, key, oldValue, value);
     }
 
     QVariantHash AdditiveTreeItem::properties() const {
@@ -69,21 +78,20 @@ namespace QsApi {
         int newSize = start + len;
         if (newSize > d->bytes.size())
             d->bytes.resize(newSize);
-
         d->bytes.replace(start, len, bytes);
 
         if (d->model)
-            emit d->model->bytesSet(this, start, len, oldBytes, bytes);
+            d->model->d_func()->bytesSet(this, start, len, oldBytes, bytes);
     }
 
-    void AdditiveTreeItem::truncateBytes(int from) {
+    void AdditiveTreeItem::truncateBytes(int size) {
         Q_D(AdditiveTreeItem);
-        auto oldBytes = d->bytes.mid(from);
+        auto oldBytes = d->bytes.mid(size);
 
-        d->bytes.resize(from);
+        d->bytes.resize(size);
 
         if (d->model)
-            emit d->model->bytesTruncated(this, from, oldBytes);
+            d->model->d_func()->bytesTruncated(this, size, oldBytes);
     }
 
     QByteArray AdditiveTreeItem::bytes() const {
@@ -98,54 +106,84 @@ namespace QsApi {
 
     void AdditiveTreeItem::insertRows(int index, const QList<AdditiveTreeItem *> &items) {
         Q_D(AdditiveTreeItem);
-        d->vector.insert(d->vector.begin() + index, items.size(), nullptr);
-        for (int i = 0; i < items.size(); ++i) {
-            auto item = items[i];
+        QList<AdditiveTreeItem *> validItems;
+        for (const auto &item : items) {
+            if (item->model() || item->parent())
+                continue;
+            validItems.append(item);
+        }
+
+        d->vector.insert(d->vector.begin() + index, validItems.size(), nullptr);
+        for (int i = 0; i < validItems.size(); ++i) {
+            auto item = validItems[i];
             d->vector[index + i] = item;
+
+            item->d_func()->parent = this;
             if (d->model)
                 item->propagateModel(d->model);
         }
 
         if (d->model)
-            emit d->model->rowInserted(this, index, items);
+            d->model->d_func()->rowInserted(this, index, validItems);
     }
 
     void AdditiveTreeItem::moveRows(int index, int count, int dest) {
         Q_D(AdditiveTreeItem);
-
-        if (dest >= index && dest < index + count) {
+        count = qMin(count, d->vector.size() - index);
+        if (count <= 0 || count > d->vector.size() || (dest >= index && dest < index + count)) {
             return;
         }
-        count = qMin(count, d->vector.size() - index);
 
         QVector<AdditiveTreeItem *> tmp;
         tmp.resize(count);
         std::copy(d->vector.begin() + index, d->vector.begin() + index + count, tmp.begin());
-        // TODO: Copy items
+
+        int correctDest;
+        if (dest > index) {
+            correctDest = dest - count;
+            auto sz = correctDest - index;
+            for (int i = 0; i < sz; ++i) {
+                d->vector[index + i] = d->vector[index + count + i];
+            }
+        } else {
+            correctDest = dest;
+            auto sz = index - dest;
+            for (int i = sz - 1; i >= 0; --i) {
+                d->vector[dest + count + i] = d->vector[dest + i];
+            }
+        }
+
+        std::copy(tmp.begin(), tmp.end(), d->vector.begin() + correctDest);
 
         if (d->model)
-            emit d->model->rowMoved(this, index, count, dest);
+            d->model->d_func()->rowMoved(this, index, count, dest);
     }
 
     QList<AdditiveTreeItem *> AdditiveTreeItem::takeRows(int index, int count) {
         Q_D(AdditiveTreeItem);
         count = qMin(count, d->vector.size() - index);
+        if (count <= 0 || count > d->vector.size()) {
+            return {};
+        }
 
         QVector<AdditiveTreeItem *> tmp;
         tmp.resize(count);
         std::copy(d->vector.begin() + index, d->vector.begin() + index + count, tmp.begin());
 
-        for (const auto &item : qAsConst(tmp))
+        for (const auto &item : qAsConst(tmp)) {
+            item->d_func()->parent = nullptr;
             if (d->model)
                 item->propagateModel(nullptr);
+        }
 
         if (d->model)
-            emit d->model->rowRemoved(this, index, tmp.toList());
+            d->model->d_func()->rowRemoved(this, index, tmp.toList());
 
         return tmp.toList();
     }
 
     void AdditiveTreeItem::removeRows(int index, int count) {
+        qDeleteAll(takeRows(index, count));
     }
 
     AdditiveTreeItem *AdditiveTreeItem::itemAtRow(int row) const {
@@ -155,10 +193,17 @@ namespace QsApi {
 
     void AdditiveTreeItem::addUnique(AdditiveTreeItem *item) {
         Q_D(AdditiveTreeItem);
+        if (item->model() || item->parent())
+            return;
+
+        item->d_func()->parent = this;
+        if (d->model)
+            item->propagateModel(d->model);
+
         d->set.insert(item);
 
         if (d->model)
-            emit d->model->uniqueAdded(this, item);
+            d->model->d_func()->uniqueAdded(this, item);
     }
 
     bool AdditiveTreeItem::containsUnique(QsApi::AdditiveTreeItem *item) {
@@ -166,20 +211,27 @@ namespace QsApi {
         return d->set.contains(item);
     }
 
-    void AdditiveTreeItem::takeUnique(AdditiveTreeItem *item) {
+    bool AdditiveTreeItem::takeUnique(AdditiveTreeItem *item) {
         Q_D(AdditiveTreeItem);
+        if (item->parent() != this)
+            return false;
+
+        item->d_func()->parent = nullptr;
+        if (d->model)
+            item->propagateModel(nullptr);
+
         d->set.remove(item);
 
         if (d->model)
-            emit d->model->uniqueRemoved(this, item);
+            d->model->d_func()->uniqueRemoved(this, item);
+
+        return true;
     }
 
     void AdditiveTreeItem::removeUnique(AdditiveTreeItem *item) {
         Q_D(AdditiveTreeItem);
-        d->set.remove(item);
-
-        if (d->model)
-            emit d->model->uniqueRemoved(this, item);
+        if (takeUnique(item))
+            delete item;
     }
 
     QList<AdditiveTreeItem *> AdditiveTreeItem::uniqueItems() const {
@@ -201,11 +253,36 @@ namespace QsApi {
         // TODO: write
     }
 
+    AdditiveTreeItem *AdditiveTreeItem::clone() const {
+        Q_D(const AdditiveTreeItem);
+        auto item = new AdditiveTreeItem(d->name);
+
+        auto d2 = item->d_func();
+        d2->properties = d->properties;
+        d2->bytes = d->bytes;
+
+        d2->vector.reserve(d->vector.size());
+        for (auto &child : d->vector)
+            d2->vector.append(child->clone());
+
+        d2->set.reserve(d->set.size());
+        for (auto &child : d->set)
+            d2->set.insert(child->clone());
+
+        return item;
+    }
+
     void AdditiveTreeItem::propagateModel(AdditiveTreeModel *model) {
         Q_D(AdditiveTreeItem);
         auto &m_model = d->model;
-        if (!m_model && m_model != model) {
+        if (m_model != model) {
+            if (m_model) {
+                m_model->d_func()->removeIndex(d->index);
+            }
+            d->index = model ? model->d_func()->addIndex(this) : 0;
+
             m_model = model;
+
             for (auto item : qAsConst(d->vector))
                 item->propagateModel(model);
 
@@ -222,6 +299,7 @@ namespace QsApi {
     }
 
     AdditiveTreeModelPrivate::AdditiveTreeModelPrivate() {
+        is_destruct = false;
         inTransaction = false;
         dev = nullptr;
         maxIndex = 1;
@@ -234,10 +312,67 @@ namespace QsApi {
     void AdditiveTreeModelPrivate::init() {
     }
 
+    int AdditiveTreeModelPrivate::addIndex(AdditiveTreeItem *item) {
+        int idx = maxIndex++;
+        indexes.insert(idx, item);
+        return idx;
+    }
+
+    void AdditiveTreeModelPrivate::removeIndex(int index) {
+        indexes.remove(index);
+    }
+
+    void AdditiveTreeModelPrivate::propertyChanged(AdditiveTreeItem *item, const QString &key, const QVariant &oldValue,
+                                                   const QVariant &newValue) {
+        Q_Q(AdditiveTreeModel);
+        emit q->propertyChanged(item, key, oldValue, newValue);
+    }
+
+    void AdditiveTreeModelPrivate::bytesSet(AdditiveTreeItem *item, int start, int len, const QByteArray &oldBytes,
+                                            const QByteArray &newBytes) {
+        Q_Q(AdditiveTreeModel);
+        emit q->bytesSet(item, start, len, oldBytes, newBytes);
+    }
+
+    void AdditiveTreeModelPrivate::bytesTruncated(AdditiveTreeItem *item, int size, const QByteArray &oldBytes) {
+        Q_Q(AdditiveTreeModel);
+        emit q->bytesTruncated(item, size, oldBytes);
+    }
+
+    void AdditiveTreeModelPrivate::rowInserted(AdditiveTreeItem *parent, int index,
+                                               const QList<AdditiveTreeItem *> &items) {
+        Q_Q(AdditiveTreeModel);
+        emit q->rowInserted(parent, index, items);
+    }
+
+    void AdditiveTreeModelPrivate::rowMoved(AdditiveTreeItem *parent, int index, int count, int dest) {
+        Q_Q(AdditiveTreeModel);
+        emit q->rowMoved(parent, index, count, dest);
+    }
+
+    void AdditiveTreeModelPrivate::rowRemoved(AdditiveTreeItem *parent, int index,
+                                              const QList<AdditiveTreeItem *> &items) {
+        Q_Q(AdditiveTreeModel);
+        emit q->rowRemoved(parent, index, items);
+    }
+
+    void AdditiveTreeModelPrivate::uniqueAdded(AdditiveTreeItem *parent, AdditiveTreeItem *item) {
+        Q_Q(AdditiveTreeModel);
+        emit q->uniqueAdded(parent, item);
+    }
+
+    void AdditiveTreeModelPrivate::uniqueRemoved(AdditiveTreeItem *parent, AdditiveTreeItem *item) {
+        Q_Q(AdditiveTreeModel);
+        emit q->uniqueRemoved(parent, item);
+    }
+
     AdditiveTreeModel::AdditiveTreeModel(QObject *parent) : AdditiveTreeModel(*new AdditiveTreeModelPrivate(), parent) {
     }
 
     AdditiveTreeModel::~AdditiveTreeModel() {
+        Q_D(AdditiveTreeModel);
+        d->is_destruct = true;
+        delete d->rootItem;
     }
 
     void AdditiveTreeModel::record(QIODevice *dev) {
@@ -281,12 +416,9 @@ namespace QsApi {
         return QVariant();
     }
 
-    QString AdditiveTreeModel::indexFromItem(AdditiveTreeItem *item) const {
-        return QString();
-    }
-
     AdditiveTreeItem *AdditiveTreeModel::itemFromIndex(int index) const {
-        return nullptr;
+        Q_D(const AdditiveTreeModel);
+        return d->indexes.value(index, nullptr);
     }
 
     AdditiveTreeItem *AdditiveTreeModel::rootItem() const {
@@ -300,6 +432,11 @@ namespace QsApi {
             qWarning() << "AdditiveTreeModel::setRootItem(): Don't set root item in transaction";
             return;
         }
+
+        if (item->model() || item->parent())
+            return;
+
+        item->propagateModel(this);
         d->rootItem = item;
     }
 

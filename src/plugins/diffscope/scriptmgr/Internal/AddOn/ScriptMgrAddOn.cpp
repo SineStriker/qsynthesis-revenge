@@ -25,6 +25,7 @@ namespace ScriptMgr {
         }
 
         ScriptMgrAddOn::ScriptMgrAddOn(QObject *parent) : IWindowAddOn(parent) {
+            engine.installExtensions(QJSEngine::TranslationExtension);
         }
 
         ScriptMgrAddOn::~ScriptMgrAddOn() {

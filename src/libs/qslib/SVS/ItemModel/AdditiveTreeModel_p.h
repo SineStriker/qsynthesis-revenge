@@ -37,14 +37,32 @@ namespace QsApi {
         void init();
 
         AdditiveTreeModel *q_ptr;
+        bool is_destruct;
 
         bool inTransaction;
         QIODevice *dev;
 
-        QHash<int, AdditiveTreeModel *> indexes;
+        QHash<int, AdditiveTreeItem *> indexes;
         int maxIndex;
 
         AdditiveTreeItem *rootItem;
+
+        int addIndex(AdditiveTreeItem *item);
+        void removeIndex(int index);
+
+        void propertyChanged(AdditiveTreeItem *item, const QString &key, const QVariant &oldValue,
+                             const QVariant &newValue);
+
+        void bytesSet(AdditiveTreeItem *item, int start, int len, const QByteArray &oldBytes,
+                      const QByteArray &newBytes);
+        void bytesTruncated(AdditiveTreeItem *item, int size, const QByteArray &oldBytes);
+
+        void rowInserted(AdditiveTreeItem *parent, int index, const QList<AdditiveTreeItem *> &items);
+        void rowMoved(AdditiveTreeItem *parent, int index, int count, int dest);
+        void rowRemoved(AdditiveTreeItem *parent, int index, const QList<AdditiveTreeItem *> &items);
+
+        void uniqueAdded(AdditiveTreeItem *parent, AdditiveTreeItem *item);
+        void uniqueRemoved(AdditiveTreeItem *parent, AdditiveTreeItem *item);
     };
 
 }

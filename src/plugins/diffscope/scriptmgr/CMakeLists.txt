@@ -7,6 +7,11 @@ ck_add_files(_src
     PATTERNS *.h *.hpp *.cpp *.cc
 )
 
+ck_add_files(_script_src
+    DIRS ${_res_dir}/scripts
+    PATTERNS *.js
+)
+
 configure_plugin(_plugin "CrSjimo"
     MACRO_PREFIX SCRIPTMGR
     METADATA_IN plugin.json.in
@@ -25,6 +30,7 @@ ck_target_components(${_plugin} INCLUDE_CURRENT_PRIVATE INCLUDE_SUBDIRS_PRIVATE
 ck_add_translations(${_plugin}_translations
     PREFIX ScriptMgr
     TARGETS ${_plugin}
+    SOURCES ${_script_src}
     LOCALES zh_CN zh_HK ja_JP
     TS_DIR Res/translations
     QM_DIR ${CMAKE_CURRENT_BINARY_DIR}/Res/translations

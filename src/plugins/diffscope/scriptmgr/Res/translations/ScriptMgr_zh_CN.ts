@@ -2,6 +2,80 @@
 <!DOCTYPE TS>
 <TS version="2.1" language="zh_CN">
 <context>
+    <name>JSScript</name>
+    <message>
+        <location filename="../scripts/src/transpose.js" line="8"/>
+        <location filename="../scripts/src/transpose.js" line="30"/>
+        <source>Transpose</source>
+        <translation>变调</translation>
+    </message>
+    <message>
+        <location filename="../scripts/src/transpose.js" line="11"/>
+        <source>Shift Up by an Octave</source>
+        <translation>上移八度</translation>
+    </message>
+    <message>
+        <location filename="../scripts/src/transpose.js" line="14"/>
+        <source>Shift Down by an Octave</source>
+        <translation>下移八度</translation>
+    </message>
+    <message>
+        <location filename="../scripts/src/transpose.js" line="17"/>
+        <source>Customize Transposition</source>
+        <translation>自定义变调</translation>
+    </message>
+    <message>
+        <location filename="../scripts/src/transpose.js" line="20"/>
+        <location filename="../scripts/src/transpose.js" line="42"/>
+        <source>Shift Mode</source>
+        <translation>移动模式</translation>
+    </message>
+    <message>
+        <location filename="../scripts/src/transpose.js" line="33"/>
+        <source>Shift by</source>
+        <translation>移动</translation>
+    </message>
+    <message>
+        <location filename="../scripts/src/transpose.js" line="34"/>
+        <source> semitone(s)</source>
+        <translation>半音</translation>
+    </message>
+    <message>
+        <location filename="../scripts/src/transpose.js" line="45"/>
+        <source>Current mode: </source>
+        <translation>当前模式：</translation>
+    </message>
+    <message>
+        <location filename="../scripts/src/transpose.js" line="48"/>
+        <location filename="../scripts/src/transpose.js" line="59"/>
+        <source>Keynote</source>
+        <translation>音名</translation>
+    </message>
+    <message>
+        <location filename="../scripts/src/transpose.js" line="52"/>
+        <location filename="../scripts/src/transpose.js" line="63"/>
+        <source>Mode name</source>
+        <translation>模式名</translation>
+    </message>
+    <message>
+        <location filename="../scripts/src/transpose.js" line="53"/>
+        <location filename="../scripts/src/transpose.js" line="64"/>
+        <source>Ionian (Major mode)</source>
+        <translation>Ionian（主模式）</translation>
+    </message>
+    <message>
+        <location filename="../scripts/src/transpose.js" line="53"/>
+        <location filename="../scripts/src/transpose.js" line="64"/>
+        <source>Aeolian (Minor mode)</source>
+        <translation>Ionian（副模式）</translation>
+    </message>
+    <message>
+        <location filename="../scripts/src/transpose.js" line="56"/>
+        <source>Target mode: </source>
+        <translation>目标模式：</translation>
+    </message>
+</context>
+<context>
     <name>ScriptMgr::Internal::BatchProcess</name>
     <message>
         <source>Initializing script manager...</source>

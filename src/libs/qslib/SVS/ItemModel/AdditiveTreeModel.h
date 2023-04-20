@@ -34,7 +34,7 @@ namespace QsApi {
 
         // ByteArray
         void setBytes(int start, int len, const QByteArray &bytes);
-        void truncateBytes(int from);
+        void truncateBytes(int size);
         QByteArray bytes() const;
         int bytesSize() const;
 
@@ -48,13 +48,15 @@ namespace QsApi {
         // Map
         void addUnique(AdditiveTreeItem *item);
         bool containsUnique(AdditiveTreeItem *item);
-        void takeUnique(AdditiveTreeItem *item);
+        bool takeUnique(AdditiveTreeItem *item);
         void removeUnique(AdditiveTreeItem *item);
         QList<AdditiveTreeItem *> uniqueItems() const;
 
     public:
         virtual void read(QDataStream &in);
         virtual void write(QDataStream &out) const;
+
+        virtual AdditiveTreeItem *clone() const;
 
     protected:
         void propagateModel(AdditiveTreeModel *model);
@@ -84,17 +86,16 @@ namespace QsApi {
         void beginTransaction();
         void endTransaction(const QVariant &desc);
 
-        bool canUndo() const;
-        bool canRedo() const;
-
         void undo();
         void redo();
+
+        bool canUndo() const;
+        bool canRedo() const;
 
         QVariant undoDesc() const;
         QVariant redoDesc() const;
 
     public:
-        QString indexFromItem(AdditiveTreeItem *item) const;
         AdditiveTreeItem *itemFromIndex(int index) const;
 
         AdditiveTreeItem *rootItem() const;
@@ -106,7 +107,7 @@ namespace QsApi {
 
         void bytesSet(AdditiveTreeItem *item, int start, int len, const QByteArray &oldBytes,
                       const QByteArray &newBytes);
-        void bytesTruncated(AdditiveTreeItem *item, int from, const QByteArray &oldBytes);
+        void bytesTruncated(AdditiveTreeItem *item, int size, const QByteArray &oldBytes);
 
         void rowInserted(AdditiveTreeItem *parent, int index, const QList<AdditiveTreeItem *> &items);
         void rowMoved(AdditiveTreeItem *parent, int index, int count, int dest);
