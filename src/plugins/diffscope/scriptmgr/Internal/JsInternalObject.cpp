@@ -18,10 +18,6 @@ namespace ScriptMgr::Internal {
     JsInternalObject::~JsInternalObject() {
     }
 
-    QString JsInternalObject::jsTr(const QString &text) {
-        return tr(text.toLocal8Bit());
-    }
-
     QString JsInternalObject::getLang() {
         return qIDec->locale();
     }

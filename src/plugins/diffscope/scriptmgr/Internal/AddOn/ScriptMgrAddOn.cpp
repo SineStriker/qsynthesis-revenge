@@ -25,7 +25,6 @@ namespace ScriptMgr {
         }
 
         ScriptMgrAddOn::ScriptMgrAddOn(QObject *parent) : IWindowAddOn(parent) {
-            engine.installExtensions(QJSEngine::TranslationExtension);
         }
 
         ScriptMgrAddOn::~ScriptMgrAddOn() {
@@ -47,11 +46,13 @@ namespace ScriptMgr {
 
         bool ScriptMgrAddOn::initializeEngine() {
             engine.globalObject().setProperty("_internal", engine.newQObject(new JsInternalObject(&engine, this)));
+            engine.globalObject().setProperty("_q_tr_ext", engine.newObject());
+            engine.installExtensions(QJSEngine::TranslationExtension, engine.globalObject().property("_q_tr_ext"));
             if(!loadScriptFile(":/scripts/internal.js")) {
                 return false;
             }
             loadScripts();
-            invoke("transpose", 2); //TODO this is a test
+            invoke("transpose", 3); //TODO this is a test
             return true;
         }
 
@@ -145,7 +146,7 @@ namespace ScriptMgr {
         }
 
         void ScriptMgrAddOn::criticalCannotInitializeEngine() {
-            QMessageBox::critical(windowHandle()->window(), tr("Error"), tr("Unable to initialize JavaScript engine."));
+            QMessageBox::critical(windowHandle()->window(), tr("Error"), tr("Cannot initialize JavaScript engine."));
         }
 
         void ScriptMgrAddOn::criticalScriptExecutionFailed(const QString &id) {

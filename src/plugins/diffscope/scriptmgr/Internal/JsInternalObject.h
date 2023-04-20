@@ -22,7 +22,6 @@ namespace ScriptMgr::Internal {
         ~JsInternalObject();
 
     public slots:
-        QString jsTr(const QString &text);
         QString getLang();
         void infoMsgBox(const QString &title, const QString &message);
         bool questionMsgBox(const QString &title, const QString &message, const QString &defaultButton);
