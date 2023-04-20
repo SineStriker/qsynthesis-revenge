@@ -702,6 +702,8 @@ Add qt translation target.
         [PREFIX prefix]
         [TS_DIR dir]
         [QM_DIR dir]
+        [TS_OPTIONS options...]
+        [QM_OPTIONS options...]
     )
 
     Arguments:
@@ -716,7 +718,7 @@ Add qt translation target.
 function(ck_add_translations _target)
     set(options)
     set(oneValueArgs PREFIX TS_DIR QM_DIR)
-    set(multiValueArgs LOCALES SOURCES TARGETS TS_FILES)
+    set(multiValueArgs LOCALES SOURCES TARGETS TS_FILES TS_OPTIONS QM_OPTIONS)
     cmake_parse_arguments(FUNC "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
 
     # ----------------- Template Begin -----------------
@@ -755,6 +757,14 @@ function(ck_add_translations _target)
 
     set(_qm_depends)
 
+    if(FUNC_TS_OPTIONS)
+        set(_ts_options ${FUNC_TS_OPTIONS})
+    endif()
+
+    if(FUNC_QM_OPTIONS)
+        set(_qm_options ${FUNC_QM_OPTIONS})
+    endif()
+
     if(_src_files)
         if(FUNC_PREFIX)
             set(_prefix ${FUNC_PREFIX})
@@ -774,20 +784,23 @@ function(ck_add_translations _target)
             list(APPEND _ts_files ${_ts_dir}/${_prefix}_${_loc}.ts)
         endforeach()
 
+        # Include options
         set(_include_options)
 
         foreach(_inc ${_include_dirs})
             list(APPEND _include_options "-I${_inc}")
         endforeach()
 
-        if(_include_options)
-            list(PREPEND _include_options OPTIONS)
+        # list(APPEND _ts_options ${_include_options})
+
+        if(_ts_options)
+            list(PREPEND _ts_options OPTIONS)
         endif()
 
         _ck_add_lupdate_target(${_target}_lupdate
             INPUT ${_src_files}
             OUTPUT ${_ts_files}
-            # ${_include_options}
+            ${_ts_options}
             CREATE_ONCE
         )
 
@@ -817,9 +830,14 @@ function(ck_add_translations _target)
 
     set(_qm_target)
 
+    if(_qm_options)
+        list(PREPEND _qm_options OPTIONS)
+    endif()
+
     _ck_add_lrelease_target(${_target}_lrelease
         INPUT ${_ts_files} ${FUNC_TS_FILES}
         DESTINATION ${_qm_dir}
+        ${_qm_options}
         ${_qm_depends}
     )
 
