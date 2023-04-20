@@ -14,36 +14,6 @@ BaseContainer::BaseContainer(QWidget *parent) : QFrame(parent) {
 BaseContainer::~BaseContainer() {
 }
 
-QMargins BaseContainer::margins() const {
-    return m_margins;
-}
-
-void BaseContainer::setMargins(const QMargins &margins) {
-    m_margins = margins;
-    update();
-    emit marginsChanged();
-}
-
-QColor BaseContainer::wallpaper() const {
-    return m_wallpaper;
-}
-
-void BaseContainer::setWallpaper(const QColor &wallpaper) {
-    m_wallpaper = wallpaper;
-    update();
-    emit colorChanged();
-}
-
-QColor BaseContainer::borderColor() const {
-    return m_borderColor;
-}
-
-void BaseContainer::setBorderColor(const QColor &borderColor) {
-    m_borderColor = borderColor;
-    update();
-    emit colorChanged();
-}
-
 void BaseContainer::paintEvent(QPaintEvent *event) {
     Q_UNUSED(event)
 

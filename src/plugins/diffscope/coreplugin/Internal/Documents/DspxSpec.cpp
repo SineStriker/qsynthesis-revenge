@@ -25,6 +25,8 @@ namespace Core::Internal {
 
         ICore::instance()->windowSystem()->createWindow("project");
 
+        //
+
         return true;
     }
 

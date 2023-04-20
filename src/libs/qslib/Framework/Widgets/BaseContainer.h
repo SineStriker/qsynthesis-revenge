@@ -8,35 +8,15 @@
 
 class QSFRAMEWORK_API BaseContainer : public QFrame {
     Q_OBJECT
-
-    Q_PROPERTY(QMargins margins READ margins WRITE setMargins NOTIFY marginsChanged)
-    Q_PROPERTY(QColor borderColor READ borderColor WRITE setBorderColor NOTIFY colorChanged)
-    Q_PROPERTY(QColor wallpaper READ wallpaper WRITE setWallpaper NOTIFY colorChanged)
-
+    Q_PROPERTY_DECLARE(QMargins, margins, Margins)
+    Q_PROPERTY_DECLARE(QColor, borderColor, BorderColor)
+    Q_PROPERTY_DECLARE(QColor, wallpaper, Wallpaper)
 public:
     explicit BaseContainer(QWidget *parent = nullptr);
     ~BaseContainer();
 
-public:
-    QMargins margins() const;
-    void setMargins(const QMargins &margins);
-
-    QColor borderColor() const;
-    void setBorderColor(const QColor &borderColor);
-
-    QColor wallpaper() const;
-    void setWallpaper(const QColor &wallpaper);
-
-private:
-    QMargins m_margins;
-    QColor m_borderColor;
-    QColor m_wallpaper;
-
+protected:
     void paintEvent(QPaintEvent *event) override;
-
-signals:
-    void marginsChanged();
-    void colorChanged();
 };
 
 #endif // BASECONTAINER_H

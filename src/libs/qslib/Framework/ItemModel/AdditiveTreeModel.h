@@ -5,13 +5,13 @@
 #include <QObject>
 #include <QVariant>
 
-#include "QsSVSGlobal.h"
+#include "QsFrameworkGlobal.h"
 
 namespace QsApi {
 
     class AdditiveTreeItemPrivate;
 
-    class QSSVS_API AdditiveTreeItem {
+    class QSFRAMEWORK_API AdditiveTreeItem {
         Q_DECLARE_PRIVATE(AdditiveTreeItem)
     public:
         explicit AdditiveTreeItem(const QString &name);
@@ -23,6 +23,8 @@ namespace QsApi {
     public:
         QString name() const;
 
+        QJsonObject workspaceData() const;
+
         AdditiveTreeItem *parent() const;
         AdditiveTreeModel *model() const;
         int index() const;
@@ -33,22 +35,20 @@ namespace QsApi {
         QVariantHash properties() const;
 
         // ByteArray
-        void setBytes(int start, int len, const QByteArray &bytes);
+        void setBytes(int start, const QByteArray &bytes);
         void truncateBytes(int size);
         QByteArray bytes() const;
         int bytesSize() const;
 
         // Vector
-        void insertRows(int index, const QList<AdditiveTreeItem *> &items);
+        void insertRows(int index, const QVector<AdditiveTreeItem *> &items);
         void moveRows(int index, int count, int dest);
-        QList<AdditiveTreeItem *> takeRows(int index, int count);
         void removeRows(int index, int count);
         AdditiveTreeItem *itemAtRow(int row) const;
 
         // Map
         void addUnique(AdditiveTreeItem *item);
         bool containsUnique(AdditiveTreeItem *item);
-        bool takeUnique(AdditiveTreeItem *item);
         void removeUnique(AdditiveTreeItem *item);
         QList<AdditiveTreeItem *> uniqueItems() const;
 
@@ -68,7 +68,7 @@ namespace QsApi {
 
     class AdditiveTreeModelPrivate;
 
-    class QSSVS_API AdditiveTreeModel : public QObject {
+    class QSFRAMEWORK_API AdditiveTreeModel : public QObject {
         Q_OBJECT
         Q_DECLARE_PRIVATE(AdditiveTreeModel)
     public:
@@ -77,23 +77,7 @@ namespace QsApi {
 
         friend class AdditiveTreeItem;
         friend class AdditiveTreeItemPrivate;
-
-    public:
-        void record(QIODevice *dev);
-        static AdditiveTreeModel *recover(QIODevice *dev);
-
-    public:
-        void beginTransaction();
-        void endTransaction(const QVariant &desc);
-
-        void undo();
-        void redo();
-
-        bool canUndo() const;
-        bool canRedo() const;
-
-        QVariant undoDesc() const;
-        QVariant redoDesc() const;
+        friend class AdditiveTreeTransaction;
 
     public:
         AdditiveTreeItem *itemFromIndex(int index) const;
@@ -101,20 +85,25 @@ namespace QsApi {
         AdditiveTreeItem *rootItem() const;
         void setRootItem(AdditiveTreeItem *item);
 
+        AdditiveTreeTransaction *transaction() const;
+
     signals:
         void propertyChanged(AdditiveTreeItem *item, const QString &key, const QVariant &oldValue,
                              const QVariant &newValue);
 
-        void bytesSet(AdditiveTreeItem *item, int start, int len, const QByteArray &oldBytes,
-                      const QByteArray &newBytes);
-        void bytesTruncated(AdditiveTreeItem *item, int size, const QByteArray &oldBytes);
+        void bytesSet(AdditiveTreeItem *item, int start, const QByteArray &oldBytes, const QByteArray &newBytes);
+        void bytesTruncated(AdditiveTreeItem *item, int size, const QByteArray &oldBytes, int delta);
 
-        void rowInserted(AdditiveTreeItem *parent, int index, const QList<AdditiveTreeItem *> &items);
-        void rowMoved(AdditiveTreeItem *parent, int index, int count, int dest);
-        void rowRemoved(AdditiveTreeItem *parent, int index, const QList<AdditiveTreeItem *> &items);
+        void rowsInserted(AdditiveTreeItem *parent, int index, const QVector<AdditiveTreeItem *> &items);
+        void rowsMoved(AdditiveTreeItem *parent, int index, int count, int dest);
+        void rowsAboutToRemove(AdditiveTreeItem *parent, int index, const QVector<AdditiveTreeItem *> &items);
+        void rowsRemoved(AdditiveTreeItem *parent, int index, int count);
 
         void uniqueAdded(AdditiveTreeItem *parent, AdditiveTreeItem *item);
+        void uniqueAboutToRemove(AdditiveTreeItem *parent, AdditiveTreeItem *item);
         void uniqueRemoved(AdditiveTreeItem *parent, AdditiveTreeItem *item);
+
+        void rootChanged(AdditiveTreeItem *oldRoot, AdditiveTreeItem *newRoot);
 
     protected:
         AdditiveTreeModel(AdditiveTreeModelPrivate &d, QObject *parent = nullptr);
