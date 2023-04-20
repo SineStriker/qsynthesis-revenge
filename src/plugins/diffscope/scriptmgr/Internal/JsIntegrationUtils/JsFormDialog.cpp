@@ -230,7 +230,7 @@ namespace ScriptMgr::Internal {
         QMap<int, QList<int>> triggerEnableIndices;
         QMap<int, QList<int>> triggerDisableIndices;
         PARAM_OPTIONAL_IF(bindings, List)
-            for(auto bindingsEntry: bindingsProp) {
+            for(const auto& bindingsEntry: bindingsProp) {
                 if(!bindingsEntry.canConvert(QVariant::Map)) continue;
                 auto bindingsEntryMap = bindingsEntry.toMap();
                 if(!JS_PROP_ASSERT(bindingsEntryMap, index, Int)) continue;
