@@ -50,7 +50,7 @@ namespace ScriptMgr {
                 return false;
             }
             loadScripts();
-            invoke("test"); //TODO this is a test
+            invoke("transpose", 2); //TODO this is a test
             return true;
         }
 

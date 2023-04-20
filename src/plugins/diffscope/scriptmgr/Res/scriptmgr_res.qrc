@@ -4,6 +4,6 @@
     </qresource>
     <qresource prefix="/scripts">
         <file alias="internal.js">scripts/src/internal.js</file>
-        <file alias="test.js">scripts/src/test.js</file>
+        <file alias="transpose.js">scripts/src/transpose.js</file>
     </qresource>
 </RCC>
