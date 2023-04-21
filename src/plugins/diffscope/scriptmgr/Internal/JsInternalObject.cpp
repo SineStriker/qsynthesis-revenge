@@ -44,12 +44,13 @@ namespace ScriptMgr::Internal {
         return dlg->jsExec();
     }
 
-    void JsInternalObject::registerScript(const QString &id, int flags) {
-        addOn->registerScript(id, flags);
+    void JsInternalObject::registerScript(const QString &id, int flags, const QString &_shortcut) {
+        addOn->registerScript(id, flags, _shortcut);
     }
 
-    void JsInternalObject::registerScriptSet(const QString &id, const QStringList &childrenId, int flags) {
-        addOn->registerScript(id, childrenId, flags);
+    void JsInternalObject::registerScriptSet(const QString &id, const QStringList &childrenId, int flags,
+                                             const QStringList &_childrenShortcuts) {
+        addOn->registerScript(id, childrenId, flags, _childrenShortcuts);
     }
 
 }
