@@ -3,6 +3,7 @@
 
 #include "Collections/QMChronMap.h"
 #include "Collections/QMChronSet.h"
+#include "CoreApi/ActionItem.h"
 #include "CoreApi/IWindowAddOn.h"
 #include "JsInternalObject.h"
 #include <QJSEngine>
@@ -31,18 +32,19 @@ namespace ScriptMgr::Internal {
             Pianoroll = 0x02,
             Parameter = 0x04,
         };
-        void registerScript(const QString &id, int role);
-        void registerScript(const QString &id, const QStringList &children, int role);
+        void initializeActions();
+        void registerScript(const QString &id, int role, const QString &shortcut);
+        void registerScript(const QString &id, const QStringList &children, int role,
+                            const QStringList &childrenShortcuts);
         QString getName(const QString &id) const;
         QString getName(const QString &id, int index) const;
         void invoke(const QString &id) const;
         void invoke(const QString &id, int index) const;
 
-    private:
-        friend class ScriptLoader;
-        QJSEngine engine;
-        QMChronMap<QString, QStringList> scriptSetRegistry;
-        QMChronSet<QString> scriptRegistry;
+    signals:
+        void handleJsReloadStrings();
+
+    public:
         bool initializeEngine();
         void alertJsUncaughtError(const QJSValue &error) const;
         void warningCannotLoadFile(const QString &path) const;
@@ -52,6 +54,21 @@ namespace ScriptMgr::Internal {
         void criticalScriptExecutionFailed(const QString &id, int index) const;
         bool loadScriptFile(const QString &path);
         void loadScripts();
+
+    private:
+        friend class ScriptLoader;
+        QJSEngine engine;
+        QList<QString> userScriptIdRegistry;
+        bool builtInScriptInitialized = false;
+
+    private:
+        Core::ActionItem *batchProcessMainGroup;
+        Core::ActionItem *batchProcessMainMenu;
+        Core::ActionItem *builtInScriptsMainGroup;
+        Core::ActionItem *userScriptsMainGroup;
+        Core::ActionItem *scriptOperationsGroup;
+        Core::ActionItem *reloadScriptsAction;
+        Core::ActionItem *scriptSettingsAction;
     };
 
 } // Internal

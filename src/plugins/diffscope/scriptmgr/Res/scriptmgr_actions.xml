@@ -1,37 +1,24 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <actionSystem>
-    <context id="project.MainMenu" prefix="scriptmgr." mode="find">
-        <menu id="BatchProcessMenu">
+    <context id="home.MainMenu" prefix="scriptmgr." mode="find">
+        <group id="BatchProcessGroup">
             <rules>
-                <rule id="core.Edit" mode="append"/>
+                <rule id="core.File" mode="append"/>
             </rules>
             <content>
-                <group id="BuiltInScripts">
+                <menu id="BatchProcessMenu">
+                    <group id="BuiltInScripts">
 
-                </group>
-                <group id="UserScripts">
+                    </group>
+                    <group id="UserScripts">
 
-                </group>
-                <group id="ScriptOperations">
-                    <action id="ReloadScripts"/>
-                    <action id="ScriptSettings"/>
-                </group>
+                    </group>
+                    <group id="ScriptOperations">
+                        <action id="ReloadScripts"/>
+                        <action id="ScriptSettings"/>
+                    </group>
+                </menu>
             </content>
-        </menu>
-    </context>
-    <context id="arrangement view" prefix="scriptmgr." mode="find"> <!--TODO context menu-->
-        <menu id="BatchProcessMenu">
-            <rules>
-                <rule id="some group" mode="insertBehind"/>
-            </rules>
-            <content>
-                <group id="BuiltInScriptsArrangement">
-
-                </group>
-                <group id="UserScriptsArrangement">
-
-                </group>
-            </content>
-        </menu>
+        </group>
     </context>
 </actionSystem>

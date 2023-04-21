@@ -94,9 +94,9 @@ var $ds = {
         }
         _registry.set(script.info().id, script);
         if(script instanceof $ds.Script) {
-            _internal.registerScript(script.info().id, flags);
+            _internal.registerScript(script.info().id, flags, script.info()._shortcut);
         } else if(script instanceof $ds.ScriptSet) {
-            _internal.registerScriptSet(script.info().id, script.info().children.map(c => c.id), flags);
+            _internal.registerScriptSet(script.info().id, script.info().children.map(c => c.id), flags, script.info().children.map(c => c._shortcut));
         }
     }
 };

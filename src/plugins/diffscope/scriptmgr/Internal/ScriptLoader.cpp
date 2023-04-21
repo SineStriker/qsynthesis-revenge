@@ -15,9 +15,13 @@ namespace ScriptMgr::Internal {
     }
 
     void ScriptLoader::registerAddon(ScriptMgrAddOn *addon) {
+        addonRegistry.insert(addon);
     }
 
     void ScriptLoader::reloadScripts() {
+        for(auto addon: addonRegistry) {
+            addon->loadScripts();
+        }
     }
 
     ScriptLoader::ScriptLoader(QObject *parent) : QObject(parent) {
@@ -29,6 +33,6 @@ namespace ScriptMgr::Internal {
     }
 
     QString ScriptLoader::userScriptDir() const {
-        return {};
+        return "";
     }
 }

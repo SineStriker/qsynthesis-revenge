@@ -26,8 +26,9 @@ namespace ScriptMgr::Internal {
         void infoMsgBox(const QString &title, const QString &message) const;
         bool questionMsgBox(const QString &title, const QString &message, const QString &defaultButton) const;
         QJSValue form(const QString &title, const QVariantList &widgets) const;
-        void registerScript(const QString &id, int flags);
-        void registerScriptSet(const QString &id, const QStringList &childrenId, int flags);
+        void registerScript(const QString &id, int flags, const QString &_shortcut);
+        void registerScriptSet(const QString &id, const QStringList &childrenId, int flags,
+                               const QStringList &_childrenShortcuts);
 
     protected:
         QJSEngine *engine;

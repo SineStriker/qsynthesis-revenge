@@ -39,6 +39,12 @@ namespace ScriptMgr {
                 splash->showMessage(tr("Initializing script manager..."));
             }
 
+            auto actionMgr = ICore::instance()->actionSystem();
+            if (actionMgr->loadContexts(":/scriptmgr_actions.xml").isEmpty()) {
+                *errorMessage = tr("Failed to load action configuration!");
+                return false;
+            }
+
             // Add basic windows and add-ons
             scriptLoader = new ScriptLoader(this);
             auto winMgr = ICore::instance()->windowSystem();
