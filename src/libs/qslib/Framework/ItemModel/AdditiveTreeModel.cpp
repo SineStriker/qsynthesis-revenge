@@ -6,6 +6,7 @@
 
 #include <QMMath.h>
 
+#include <QDataStream>
 #include <QDebug>
 
 namespace QsApi {
@@ -299,18 +300,69 @@ namespace QsApi {
         return d->set.values();
     }
 
-    void AdditiveTreeItem::read(QDataStream &in) {
-        Q_D(AdditiveTreeItem);
-        if (d->model) {
-            qWarning() << "AdditiveTreeItem::read(): Don't read when the item is in a model";
-            return;
+    AdditiveTreeItem *AdditiveTreeItem::read(QDataStream &in) {
+        char sign[4];
+
+        in >> *((qint32 *) sign);
+        if (memcmp("ITEM", sign, 4) != 0) {
+            return nullptr;
         }
 
-        // TODO: read
+        QString name;
+        in >> name;
+
+        auto item = new AdditiveTreeItem(name);
+        auto d = item->d_func();
+
+        in >> d->oldIndex;
+        in >> d->properties;
+        in >> d->bytes;
+
+        int size;
+        in >> size;
+        d->vector.reserve(size);
+        for (int i = 0; i < size; ++i) {
+            auto child = read(in);
+            if (!child)
+                goto abort;
+            child->d_func()->parent = item;
+            d->vector.append(child);
+        }
+
+        in >> size;
+        d->set.reserve(size);
+        for (int i = 0; i < size; ++i) {
+            auto child = read(in);
+            if (!child)
+                goto abort;
+            child->d_func()->parent = item;
+            d->set.insert(child);
+        }
+
+        return item;
+
+    abort:
+        delete item;
+        return nullptr;
     }
 
     void AdditiveTreeItem::write(QDataStream &out) const {
+        Q_D(const AdditiveTreeItem);
         // TODO: write
+
+        out << *((qint32 *) "ITEM");
+        out << d->name;
+        out << d->oldIndex;
+        out << d->properties;
+        out << d->bytes;
+        out << d->vector.size();
+        for (const auto &item : d->vector) {
+            item->write(out);
+        }
+        out << d->set.size();
+        for (const auto &item : d->set) {
+            item->write(out);
+        }
     }
 
     AdditiveTreeItem *AdditiveTreeItem::clone() const {
@@ -322,12 +374,18 @@ namespace QsApi {
         d2->bytes = d->bytes;
 
         d2->vector.reserve(d->vector.size());
-        for (auto &child : d->vector)
-            d2->vector.append(child->clone());
+        for (auto &child : d->vector) {
+            auto newChild = child->clone();
+            newChild->d_func()->parent = item;
+            d2->vector.append(item);
+        }
 
         d2->set.reserve(d->set.size());
-        for (auto &child : d->set)
-            d2->set.insert(child->clone());
+        for (auto &child : d->set) {
+            auto newChild = child->clone();
+            newChild->d_func()->parent = item;
+            d2->set.insert(item);
+        }
 
         return item;
     }
@@ -342,7 +400,21 @@ namespace QsApi {
         if (m_model) {
             m_model->d_func()->removeIndex(d->index);
         } else {
-            d->index = model->d_func()->addIndex(this, model == d->oldModel ? d->oldIndex : -1);
+            // An item newly allocated: oldModel = nullptr, oldIndex = 0
+            // Added to any model with next highest index
+
+            // An item created by deserialization: oldModel = nullptr, oldIndex > 0
+            // Added to an empty model with old index, or other models with next highest index
+
+            // An item removed from other models: oldModel != nullptr != model, oldIndex > 0
+            // Added to current model with next highest index
+
+            // An item removed from current model: oldModel = model, oldIndex > 0
+            // Added to current model with old index
+
+            d->index = model->d_func()->addIndex(
+                this, d->oldModel ? (model == d->oldModel ? d->oldIndex : -1)
+                                  : ((d->oldIndex > 0 && !model->rootItem()) ? d->oldIndex : -1));
             d->oldIndex = d->index;
             d->oldModel = model;
         }
@@ -382,6 +454,7 @@ namespace QsApi {
     int AdditiveTreeModelPrivate::addIndex(AdditiveTreeItem *item, int idx) {
         int index = idx > 0 ? idx : maxIndex++;
         indexes.insert(index, item);
+        maxIndex = qMax(maxIndex, index);
         return index;
     }
 
@@ -414,9 +487,15 @@ namespace QsApi {
         if (item->model() || item->parent())
             return;
 
-        item->propagateModel(this);
-
         auto org = d->rootItem;
+
+        // Pre-Propagate
+        emit rootAboutToChange(org, item);
+
+        // Do change
+        d->indexes.clear();
+        d->rootItem = nullptr;
+        item->propagateModel(this);
         d->rootItem = item;
 
         // Add to transaction
@@ -425,7 +504,10 @@ namespace QsApi {
             transaction->d_func()->rootChanged(org, item);
 
         // Propagate signal
-        emit rootChanged(org, item);
+        emit rootChanged();
+
+        if (!transaction)
+            delete org;
     }
 
     AdditiveTreeTransaction *AdditiveTreeModel::transaction() const {

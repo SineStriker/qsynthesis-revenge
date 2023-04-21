@@ -19,6 +19,7 @@ namespace QsApi {
         void clearOld();
 
         AdditiveTreeItem *q_ptr;
+        QString name;
 
         AdditiveTreeItem *parent;
         AdditiveTreeModel *model;
@@ -27,7 +28,6 @@ namespace QsApi {
         AdditiveTreeModel *oldModel;
         int oldIndex;
 
-        QString name;
         QHash<QString, QVariant> properties;
         QByteArray bytes;
         QVector<AdditiveTreeItem *> vector;

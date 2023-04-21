@@ -53,10 +53,11 @@ namespace QsApi {
         QList<AdditiveTreeItem *> uniqueItems() const;
 
     public:
-        virtual void read(QDataStream &in);
-        virtual void write(QDataStream &out) const;
+        static AdditiveTreeItem *read(QDataStream &in);
 
-        virtual AdditiveTreeItem *clone() const;
+        void write(QDataStream &out) const;
+
+        AdditiveTreeItem *clone() const;
 
     protected:
         void propagateModel(AdditiveTreeModel *model);
@@ -103,7 +104,8 @@ namespace QsApi {
         void uniqueAboutToRemove(AdditiveTreeItem *parent, AdditiveTreeItem *item);
         void uniqueRemoved(AdditiveTreeItem *parent, AdditiveTreeItem *item);
 
-        void rootChanged(AdditiveTreeItem *oldRoot, AdditiveTreeItem *newRoot);
+        void rootAboutToChange(AdditiveTreeItem *oldRoot, AdditiveTreeItem *newRoot);
+        void rootChanged();
 
     protected:
         AdditiveTreeModel(AdditiveTreeModelPrivate &d, QObject *parent = nullptr);

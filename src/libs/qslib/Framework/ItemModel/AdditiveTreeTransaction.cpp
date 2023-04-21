@@ -96,7 +96,7 @@ namespace QsApi {
 
     void AdditiveTreeTransactionPrivate::rootChanged(AdditiveTreeItem *oldRoot, AdditiveTreeItem *newRoot) {
         auto op = new ATTData::RootChangeOp();
-        op->oldRoot = oldRoot->clone();
+        op->oldRoot = oldRoot;
         op->newRoot = newRoot->clone();
         data->operations.append(op);
     }

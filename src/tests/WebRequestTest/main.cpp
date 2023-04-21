@@ -4,47 +4,15 @@
 #include <QNetworkAccessManager>
 #include <QNetworkReply>
 
+#include <QDataStream>
+
 #include <QDebug>
 
 #include "Collections/QMChronMap.h"
 #include "Collections/QMChronSet.h"
 
-template <class T>
-bool moveArr(QVector<T> arr, int index, int count, int dest) {
-    count = qMin(count, arr.size() - index);
-    if (count <= 0 || count > arr.size() || (dest >= index && dest < index + count)) {
-        return false;
-    }
-
-    decltype(typename std::remove_reference<decltype(arr)>::type()) tmp;
-    tmp.resize(count);
-    std::copy(arr.begin() + index, arr.begin() + index + count, tmp.begin());
-
-    // Do change
-    int correctDest;
-    if (dest > index) {
-        correctDest = dest - count;
-        auto sz = correctDest - index;
-        for (int i = 0; i < sz; ++i) {
-            arr[index + i] = arr[index + count + i];
-        }
-    } else {
-        correctDest = dest;
-        auto sz = index - dest;
-        for (int i = sz - 1; i >= 0; --i) {
-            arr[dest + count + i] = arr[dest + i];
-        }
-    }
-    std::copy(tmp.begin(), tmp.end(), arr.begin() + correctDest);
-
-    return true;
-}
-
 int main(int argc, char *argv[]) {
     QApplication a(argc, argv);
-
-    QVector<int> arr0{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12};
-    moveArr(arr0, 2, 10000, 0);
 
     {
         QMChronSet<int> arr;
@@ -61,6 +29,33 @@ int main(int argc, char *argv[]) {
 
         qDebug() << *(arr.erase(arr.find(4)));
     }
+
+    QByteArray arr;
+    {
+        QDataStream out(&arr, QIODevice::WriteOnly);
+        out << QString("str1");
+        out << QString("str2");
+    }
+    {
+        QString str1;
+        QString str2;
+        QDataStream in(&arr, QIODevice::ReadOnly);
+        in >> str1 >> str2;
+        qDebug() << str1 << str2;
+    }
+
+    arr.clear();
+    {
+        QDataStream out(&arr, QIODevice::WriteOnly);
+        out << QMap<QString, int>{
+            {"a", 1},
+            {"b", 2},
+            {"c", 3}
+        };
+        qDebug() << arr;
+    }
+
+    QVariant var;
 
     QMChronMap<QString, QString> map;
     map.append("file", "1");
