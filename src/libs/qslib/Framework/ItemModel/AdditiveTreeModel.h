@@ -23,8 +23,6 @@ namespace QsApi {
     public:
         QString name() const;
 
-        QJsonObject workspaceData() const;
-
         AdditiveTreeItem *parent() const;
         AdditiveTreeModel *model() const;
         int index() const;
@@ -54,9 +52,7 @@ namespace QsApi {
 
     public:
         static AdditiveTreeItem *read(QDataStream &in);
-
         void write(QDataStream &out) const;
-
         AdditiveTreeItem *clone() const;
 
     protected:
@@ -78,15 +74,16 @@ namespace QsApi {
 
         friend class AdditiveTreeItem;
         friend class AdditiveTreeItemPrivate;
-        friend class AdditiveTreeTransaction;
 
     public:
+        int steps() const;
+        int currentStep() const;
+        void setCurrentStep(int step);
+
         AdditiveTreeItem *itemFromIndex(int index) const;
 
         AdditiveTreeItem *rootItem() const;
         void setRootItem(AdditiveTreeItem *item);
-
-        AdditiveTreeTransaction *transaction() const;
 
     signals:
         void propertyChanged(AdditiveTreeItem *item, const QString &key, const QVariant &oldValue,
@@ -106,6 +103,8 @@ namespace QsApi {
 
         void rootAboutToChange(AdditiveTreeItem *oldRoot, AdditiveTreeItem *newRoot);
         void rootChanged();
+
+        void stepChanged(int step);
 
     protected:
         AdditiveTreeModel(AdditiveTreeModelPrivate &d, QObject *parent = nullptr);
