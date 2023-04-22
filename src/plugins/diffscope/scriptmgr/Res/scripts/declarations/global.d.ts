@@ -44,10 +44,6 @@ declare namespace $ds {
         type: 'CheckBox';
         label: string;
         defaultValue?: boolean;
-        bindings?: {
-            enable?: number[];
-            disable?: number[];
-        };
     }
     
     interface Select {
@@ -55,11 +51,6 @@ declare namespace $ds {
         label: string;
         options: string[];
         defaultValue?: number;
-        bindings?: {
-            index: number;
-            enable?: number[];
-            disable?: number[];
-        }[];
     }
     
     interface Label {
@@ -84,7 +75,13 @@ declare namespace $ds {
         function alert(title: string, message: string): void;
         function confirm(title: string, message: string, defaultButton: 'Yes'|'No'): boolean;
         function prompt(title: string, message: string): string;
-        function form<T extends $ds.FormWidget[]>(title: string, widgets: T): {
+        function form<T extends $ds.FormWidget[]>(title: string, widgets: T, listener?: (handles: {
+            [K in keyof T]: {
+                value: readonly $ds.FormReturnType<T[K]>;
+                visible: boolean;
+                disabled: boolean;
+            };
+        }) => void): {
             result: 'Ok'|'Cancel';
             form: {[K in keyof T]: $ds.FormReturnType<T[K]>};
         };

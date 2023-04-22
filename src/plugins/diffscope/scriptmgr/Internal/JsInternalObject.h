@@ -25,7 +25,7 @@ namespace ScriptMgr::Internal {
         QString getLang() const;
         void infoMsgBox(const QString &title, const QString &message) const;
         bool questionMsgBox(const QString &title, const QString &message, const QString &defaultButton) const;
-        QJSValue form(const QString &title, const QVariantList &widgets) const;
+        QJSValue form(const QString &title, const QVariantList &widgets, QJSValue listener) const;
         void registerScript(const QString &id, int flags, const QString &_shortcut);
         void registerScriptSet(const QString &id, const QStringList &childrenId, int flags,
                                const QStringList &_childrenShortcuts);

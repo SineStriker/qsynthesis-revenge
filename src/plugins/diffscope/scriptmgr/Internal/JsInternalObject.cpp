@@ -34,8 +34,8 @@ namespace ScriptMgr::Internal {
                                      QMessageBox::Yes | QMessageBox::No, defaultButtonFlag) == QMessageBox::Yes;
     }
 
-    QJSValue JsInternalObject::form(const QString &title, const QVariantList &widgets) const {
-        auto dlg = new JsFormDialog(engine, addOn->windowHandle()->window());
+    QJSValue JsInternalObject::form(const QString &title, const QVariantList &widgets, QJSValue listener) const {
+        auto dlg = new JsFormDialog(engine, listener, addOn->windowHandle()->window());
         dlg->setWindowTitle(title);
         if(!dlg->addFormWidgets(widgets)) {
             engine->throwError(QJSValue::TypeError, "Invalid widget parameters.");

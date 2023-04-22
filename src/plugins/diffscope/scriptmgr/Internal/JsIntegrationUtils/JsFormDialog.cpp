@@ -22,7 +22,7 @@
 
 namespace ScriptMgr::Internal {
 
-    JsFormDialog::JsFormDialog(QJSEngine *engine, QWidget *parent) : ConfigurableDialog(parent) {
+    JsFormDialog::JsFormDialog(QJSEngine *engine, QJSValue listener, QWidget *parent) : ConfigurableDialog(parent), engine(engine), listener(listener) {
         setApplyButtonVisible(false);
         ret = engine->newObject();
         ret.setProperty("form", engine->newArray());
@@ -54,7 +54,55 @@ namespace ScriptMgr::Internal {
         return true;
     }
 
+    JsFormHandle::JsFormHandle(JsFormDialog *dlg): dlg(dlg) {
+    }
+    QJSValue JsFormHandle::value(int index) {
+        return dlg->ret.property("form").property(index);
+    }
+    bool JsFormHandle::disabled(int index) {
+        return !dlg->formWidgets[index]->isEnabled();
+    }
+    void JsFormHandle::setDisabled(int index, bool disabled) {
+        dlg->formWidgets[index]->setDisabled(disabled);
+    }
+    bool JsFormHandle::visible(int index) {
+        return dlg->formLayout->itemAt(index)->widget()->isVisible();
+    }
+    void JsFormHandle::setVisible(int index, bool visible) {
+        QLayoutItem *item;
+        item = dlg->formLayout->itemAt(index, QFormLayout::LabelRole);
+        if(item) item->widget()->setVisible(visible);
+        item = dlg->formLayout->itemAt(index, QFormLayout::SpanningRole);
+        if(item) item->widget()->setVisible(visible);
+        item = dlg->formLayout->itemAt(index, QFormLayout::FieldRole);
+        if(item) item->widget()->setVisible(visible);
+    }
+    QString JsFormHandle::label(int index) {
+        QLabel *widget;
+        widget = qobject_cast<QLabel *>(dlg->formLayout->itemAt(index)->widget());
+        if(widget) {
+            return widget->text();
+        } else {
+            return qobject_cast<QCheckBox *>(dlg->formLayout->itemAt(index, QFormLayout::FieldRole)->widget())->text();
+        }
+    }
+    void JsFormHandle::setLabel(int index, const QString &label) {
+        QLabel *widget;
+        widget = qobject_cast<QLabel *>(dlg->formLayout->itemAt(index)->widget());
+        if(widget) {
+            widget->setText(label);
+        } else {
+            qobject_cast<QCheckBox *>(dlg->formLayout->itemAt(index, QFormLayout::FieldRole)->widget())->setText(label);
+        }
+    }
+
     QJSValue JsFormDialog::jsExec() {
+        if(listener.isCallable()) {
+            connect(this, &JsFormDialog::formValueChanged, this, [=](){
+                listener.call({engine->newQObject(new JsFormHandle(this))});
+            });
+            emit formValueChanged();
+        }
         auto res = exec();
         if (res == QDialog::Accepted) {
             ret.setProperty("result", "Ok");
@@ -70,6 +118,7 @@ namespace ScriptMgr::Internal {
         auto textBox = new QLineEdit;
         connect(textBox, &QLineEdit::textChanged, this, [=](const QString &text) {
             ret.property("form").setProperty(index, text);
+            emit formValueChanged();
         });
 
         PARAM_OPTIONAL_IF(defaultValue, String)
@@ -88,6 +137,7 @@ namespace ScriptMgr::Internal {
         auto textArea = new QPlainTextEdit;
         connect(textArea, &QPlainTextEdit::textChanged, this, [=]() {
             ret.property("form").setProperty(index, textArea->toPlainText());
+            emit formValueChanged();
         });
 
         PARAM_OPTIONAL_IF(defaultValue, String)
@@ -116,6 +166,7 @@ namespace ScriptMgr::Internal {
         auto numberBox = new QDoubleSpinBox;
         connect(numberBox, QOverload<double>::of(&QDoubleSpinBox::valueChanged), this, [=](double value){
             ret.property("form").setProperty(index, value);
+            emit formValueChanged();
         });
 
         PARAM_OPTIONAL_IF(precision, Int)
@@ -170,36 +221,9 @@ namespace ScriptMgr::Internal {
         PARAM_REQUIRED(label, String);
         ret.property("form").setProperty(index, false);
         auto checkBox = new QCheckBox;
-        QList<int> triggerEnableIndices;
-        QList<int> triggerDisableIndices;
-        PARAM_OPTIONAL_IF(bindings, Map)
-            if(JS_PROP_ASSERT(bindingsProp, enable, List)) {
-                auto enableList = JS_PROP_AS(bindingsProp, enable, List);
-                for(const auto& enableIndex: enableList) {
-                    if(enableIndex.canConvert(QVariant::Int)) {
-                        triggerEnableIndices.push_back(enableIndex.toInt());
-                    }
-                }
-            }
-            if(JS_PROP_ASSERT(bindingsProp, disable, List)) {
-                auto disableList = JS_PROP_AS(bindingsProp, disable, List);
-                for(const auto& disableIndex: disableList) {
-                    if(disableIndex.canConvert(QVariant::Int)) {
-                        triggerDisableIndices.push_back(disableIndex.toInt());
-                    }
-                }
-            }
-        PARAM_OPTIONAL_ENDIF
         connect(checkBox, &QCheckBox::clicked, this, [=](bool checked){
             ret.property("form").setProperty(index, checked);
-            for(auto i: triggerEnableIndices) {
-                if(i >= formWidgets.size()) continue;
-                formWidgets[i]->setDisabled(!checked);
-            }
-            for(auto i: triggerDisableIndices) {
-                if(i >= formWidgets.size()) continue;
-                formWidgets[i]->setDisabled(checked);
-            }
+            emit formValueChanged();
         });
 
         PARAM_OPTIONAL_IF(defaultValue, Bool)
@@ -227,50 +251,9 @@ namespace ScriptMgr::Internal {
         auto select = new QComboBox;
         PARAM_REQUIRED(options, StringList);
         select->addItems(optionsProp);
-        QMap<int, QList<int>> triggerEnableIndices;
-        QMap<int, QList<int>> triggerDisableIndices;
-        PARAM_OPTIONAL_IF(bindings, List)
-            for(const auto& bindingsEntry: bindingsProp) {
-                if(!bindingsEntry.canConvert(QVariant::Map)) continue;
-                auto bindingsEntryMap = bindingsEntry.toMap();
-                if(!JS_PROP_ASSERT(bindingsEntryMap, index, Int)) continue;
-                auto triggerBy = JS_PROP_AS(bindingsEntryMap, index, Int);
-                triggerEnableIndices[triggerBy] = QList<int>();
-                triggerDisableIndices[triggerBy] = QList<int>();
-                if(JS_PROP_ASSERT(bindingsEntryMap, enable, List)) {
-                    auto enableList = JS_PROP_AS(bindingsEntryMap, enable, List);
-                    for(const auto& enableIndex: enableList) {
-                        if(enableIndex.canConvert(QVariant::Int)) {
-                            triggerEnableIndices[triggerBy].push_back(enableIndex.toInt());
-                        }
-                    }
-                }
-                if(JS_PROP_ASSERT(bindingsEntryMap, disable, List)) {
-                    auto disableList = JS_PROP_AS(bindingsEntryMap, disable, List);
-                    for(const auto& disableIndex: disableList) {
-                        if(disableIndex.canConvert(QVariant::Int)) {
-                            triggerDisableIndices[triggerBy].push_back(disableIndex.toInt());
-                        }
-                    }
-                }
-            }
-
-        PARAM_OPTIONAL_ENDIF
         connect(select, QOverload<int>::of(&QComboBox::currentIndexChanged), this, [=](int currentIndex){
             ret.property("form").setProperty(index, currentIndex);
-            if(triggerEnableIndices.contains(currentIndex)){
-                for(auto i: triggerEnableIndices[currentIndex]) {
-                    if(i >= formWidgets.size()) continue;
-                    formWidgets[i]->setDisabled(false);
-                }
-            }
-            if(triggerDisableIndices.contains(currentIndex)) {
-                for (auto i : triggerDisableIndices[currentIndex]) {
-                    if (i >= formWidgets.size())
-                        continue;
-                    formWidgets[i]->setDisabled(true);
-                }
-            }
+            emit formValueChanged();
         });
 
         PARAM_OPTIONAL_IF(defaultValue, Int)
