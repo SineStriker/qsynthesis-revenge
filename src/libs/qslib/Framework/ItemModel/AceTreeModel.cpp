@@ -41,8 +41,8 @@ namespace QsApi {
     AceTreeItemPrivate::AceTreeItemPrivate() {
         parent = nullptr;
         model = nullptr;
-        index = 0;
-        indexHint = 0;
+        m_index = 0;
+        m_indexHint = 0;
     }
 
     AceTreeItemPrivate::~AceTreeItemPrivate() {
@@ -81,17 +81,17 @@ namespace QsApi {
 
     int AceTreeItem::index() const {
         Q_D(const AceTreeItem);
-        return d->model ? d->index : 0;
+        return d->model ? d->m_index : 0;
     }
 
     bool AceTreeItem::isFree() const {
         Q_D(const AceTreeItem);
-        return !d->model && !d->parent && d->index == 0;
+        return !d->model && !d->parent && d->m_index == 0;
     }
 
     bool AceTreeItem::isObsolete() const {
         Q_D(const AceTreeItem);
-        return !d->model && d->index > 0;
+        return !d->model && d->m_index > 0;
     }
 
     QVariant AceTreeItem::property(const QString &key) const {
@@ -128,12 +128,12 @@ namespace QsApi {
 
     QByteArray AceTreeItem::bytes() const {
         Q_D(const AceTreeItem);
-        return d->bytes;
+        return d->byteArray;
     }
 
     int AceTreeItem::bytesSize() const {
         Q_D(const AceTreeItem);
-        return d->bytes.size();
+        return d->byteArray.size();
     }
 
     void AceTreeItem::insertRows(int index, const QVector<AceTreeItem *> &items) {
@@ -239,9 +239,8 @@ namespace QsApi {
 
     AceTreeItem *AceTreeItem::read(QDataStream &in) {
         char sign[4];
-
-        in >> *((qint32 *) sign);
-        if (memcmp("ITEM", sign, 4) != 0) {
+        in.readRawData(sign, sizeof(sign));
+        if (memcmp("item", sign, 4) != 0) {
             return nullptr;
         }
 
@@ -251,9 +250,10 @@ namespace QsApi {
         auto item = new AceTreeItem(name);
         auto d = item->d_func();
 
-        in >> d->indexHint;
+        in >> d->m_indexHint;
+        in >> d->name;
         in >> d->properties;
-        in >> d->bytes;
+        in >> d->byteArray;
 
         int size;
         in >> size;
@@ -280,7 +280,6 @@ namespace QsApi {
 
     abort:
         delete item;
-
         return nullptr;
     }
 
@@ -288,15 +287,17 @@ namespace QsApi {
         Q_D(const AceTreeItem);
         // TODO: write
 
-        out << *((qint32 *) "ITEM");
-        out << d->index;
+        out << "item";
+        out << d->m_index;
         out << d->name;
         out << d->properties;
-        out << d->bytes;
+        out << d->byteArray;
+
         out << d->vector.size();
         for (const auto &item : d->vector) {
             item->write(out);
         }
+
         out << d->set.size();
         for (const auto &item : d->set) {
             item->write(out);
@@ -309,7 +310,7 @@ namespace QsApi {
 
         auto d2 = item->d_func();
         d2->properties = d->properties;
-        d2->bytes = d->bytes;
+        d2->byteArray = d->byteArray;
 
         d2->vector.reserve(d->vector.size());
         for (auto &child : d->vector) {
@@ -336,11 +337,11 @@ namespace QsApi {
         }
 
         if (m_model) {
-            m_model->d_func()->removeIndex(d->index);
+            m_model->d_func()->removeIndex(d->m_index);
         } else {
             auto d2 = model->d_func();
-            d->index = d2->addIndex(this, (d2->internalChange && d->indexHint != 0) ? d->indexHint : d->index);
-            d->indexHint = 0;
+            d->m_index = d2->addIndex(this, (d2->internalChange && d->m_indexHint != 0) ? d->m_indexHint : d->m_index);
+            d->m_indexHint = 0;
         }
 
         m_model = model;
@@ -394,6 +395,67 @@ namespace QsApi {
         rootChanged(org, item);
     }
 
+    AceTreeItem *AceTreeModelPrivate::reset_helper() {
+        truncate(0);
+
+        auto func = [&](AceTreeItem *item) {
+            auto d = item->d_func();
+            d->model = nullptr;
+            d->m_index = 0;
+        };
+
+        AceTreeItemPrivate::propagateItems(rootItem, func);
+        indexes.clear();
+        maxIndex = 1;
+
+        auto org = rootItem;
+        rootItem = nullptr;
+
+        return org;
+    }
+
+    void AceTreeModelPrivate::setCurrentStep_helper(int step) {
+        Q_Q(AceTreeModel);
+
+        internalChange = true;
+
+        // Undo
+        while (stepIndex > step) {
+            if (!execute(operations.at(stepIndex - 1), true)) {
+                goto out;
+            }
+            stepIndex--;
+        }
+
+        // Redo
+        while (stepIndex < step) {
+            if (!execute(operations.at(stepIndex), false)) {
+                goto out;
+            }
+            stepIndex++;
+        }
+
+    out:
+        internalChange = false;
+
+        // Serialize
+        if (m_dev) {
+            QDataStream stream(m_dev);
+
+            // Change step in log
+            writeCurrentStep(stepIndex);
+
+            if (stream.status() != QDataStream::Ok) {
+                q->stopRecord();
+                emit q->recordError();
+            } else if (m_fileDev) {
+                m_fileDev->flush();
+            }
+        }
+
+        emit q->stepChanged(stepIndex);
+    }
+
     int AceTreeModelPrivate::addIndex(AceTreeItem *item, int idx) {
         int index = idx > 0 ? (maxIndex = qMax(maxIndex, idx), idx) : maxIndex++;
         indexes.insert(index, item);
@@ -404,15 +466,15 @@ namespace QsApi {
         indexes.remove(index);
     }
 
-    bool AceTreeItemPrivate::allowModify() {
-        Q_Q(AceTreeItem);
+    bool AceTreeItemPrivate::allowModify() const {
+        Q_Q(const AceTreeItem);
 
         if (model && model->d_func()->internalChange) {
             qWarning() << "AceTreeItem: modifying data during model's internal state switching is prohibited" << q;
             return false;
         }
 
-        if (!model && index > 0) {
+        if (!model && m_index > 0) {
             qWarning() << "AceTreeItem: the item is obsolete and not writable" << q;
             return false;
         }
@@ -441,13 +503,13 @@ namespace QsApi {
         Q_Q(AceTreeItem);
 
         auto len = bytes.size();
-        auto oldBytes = this->bytes.mid(start, len);
+        auto oldBytes = this->byteArray.mid(start, len);
 
         // Do change
         int newSize = start + len;
-        if (newSize > this->bytes.size())
-            this->bytes.resize(newSize);
-        this->bytes.replace(start, len, bytes);
+        if (newSize > this->byteArray.size())
+            this->byteArray.resize(newSize);
+        this->byteArray.replace(start, len, bytes);
 
         // Propagate signal
         if (model)
@@ -457,14 +519,14 @@ namespace QsApi {
     void AceTreeItemPrivate::truncateBytes_helper(int size) {
         Q_Q(AceTreeItem);
 
-        int len = size - bytes.size();
+        int len = size - byteArray.size();
         if (len == 0)
             return;
 
-        auto oldBytes = bytes.mid(size);
+        auto oldBytes = byteArray.mid(size);
 
         // Do change
-        bytes.resize(size);
+        byteArray.resize(size);
 
         // Propagate signal
         if (model)
@@ -561,7 +623,7 @@ namespace QsApi {
 
     void AceTreeModelPrivate::serializeOperation(QDataStream &stream, BaseOp *baseOp) {
         // Write begin sign
-        stream.device()->write(QByteArray("SEG "));
+        stream.writeRawData("SEG ", 4);
 
         stream << (int) baseOp->c;
         switch (baseOp->c) {
@@ -638,7 +700,7 @@ namespace QsApi {
     AceTreeModelPrivate::BaseOp *AceTreeModelPrivate::deserializeOperation(QDataStream &stream, QList<int> *ids) {
         // Read begin sign
         char sign[4];
-        stream.device()->read(sign, sizeof(sign));
+        stream.readRawData(sign, sizeof(sign));
         if (memcmp(sign, "SEG ", sizeof(sign)) != 0) {
             return nullptr;
         }
@@ -955,10 +1017,8 @@ namespace QsApi {
 
     void AceTreeModelPrivate::push(BaseOp *op) {
         Q_Q(AceTreeModel);
+        truncate(stepIndex);
 
-        while (operations.size() > stepIndex) {
-            delete operations.takeLast();
-        }
         operations.append(op);
         stepIndex++;
 
@@ -966,15 +1026,61 @@ namespace QsApi {
         if (m_dev) {
             QDataStream stream(m_dev);
 
-            qint64 pos = m_dev->pos();
-            m_dev->seek(offsets.countPos);
-            stream << stepIndex;
+            // Change step in log
+            writeCurrentStep(stepIndex);
 
-            m_dev->seek(pos);
             serializeOperation(stream, op);
+            offsets.begs.append(m_dev->pos());
+
+            if (stream.status() != QDataStream::Ok) {
+                q->stopRecord();
+                emit q->recordError();
+            } else if (m_fileDev) {
+                m_fileDev->flush();
+            }
         }
 
         emit q->stepChanged(stepIndex);
+    }
+
+    void AceTreeModelPrivate::truncate(int step) {
+        Q_Q(AceTreeModel);
+
+        // qDeleteAll(operations.rbegin(), operations.rend() - stepIndex);
+        // operations.resize(stepIndex);
+        while (operations.size() > step) {
+            delete operations.takeLast();
+        }
+        offsets.begs.resize(step);
+        stepIndex = step;
+
+        // Serialize
+        if (m_dev) {
+            QDataStream stream(m_dev);
+
+            // Change step in log
+            m_dev->seek(offsets.countPos);
+            stream << stepIndex;
+
+            // Restore pos
+            qint64 pos = offsets.begs.isEmpty() ? offsets.dataPos : offsets.begs.back();
+            m_dev->seek(pos);
+
+            if (stream.status() != QDataStream::Ok) {
+                q->stopRecord();
+                emit q->recordError();
+            } else if (m_fileDev) {
+                m_fileDev->resize(pos);
+                m_fileDev->flush();
+            }
+        }
+    }
+
+    void AceTreeModelPrivate::writeCurrentStep(int step) {
+        qint64 pos = m_dev->pos();
+        m_dev->seek(offsets.countPos);
+        m_dev->write(reinterpret_cast<char *>(&step), sizeof(step));
+        m_dev->seek(pos);
     }
 
     AceTreeModel::AceTreeModel(QObject *parent) : AceTreeModel(*new AceTreeModelPrivate(), parent) {
@@ -1001,58 +1107,54 @@ namespace QsApi {
         if (step > d->operations.size() || step == d->stepIndex || d->internalChange)
             return;
 
-        d->internalChange = true;
-
-        // Undo
-        while (d->stepIndex > step) {
-            if (!d->execute(d->operations.at(d->stepIndex - 1), true)) {
-                goto out;
-            }
-            d->stepIndex--;
-        }
-
-        // Redo
-        while (d->stepIndex < step) {
-            if (!d->execute(d->operations.at(d->stepIndex), false)) {
-                goto out;
-            }
-            d->stepIndex++;
-        }
-
-    out:
-        d->internalChange = false;
-
-        emit stepChanged(d->stepIndex);
+        d->setCurrentStep_helper(step);
     }
 
     void AceTreeModel::startRecord(QIODevice *dev) {
         Q_D(AceTreeModel);
+        if (d->m_dev)
+            stopRecord();
+
         d->m_dev = dev;
+        d->m_fileDev = qobject_cast<QFileDevice *>(dev); // Try QFileDevice
+
+        QDataStream stream(dev);
 
         d->offsets.startPos = dev->pos();
-        dev->write(QByteArray("AceTreeModel"));
+        stream.writeRawData("AceTreeModel", 12);
 
         d->offsets.countPos = dev->pos();
-        QDataStream stream(dev);
         stream << d->stepIndex;
 
+        d->offsets.dataPos = dev->pos();
+
         // Write all existing operations
-        for (int i = 0; i < d->stepIndex; ++i) {
+        for (int i = 0; i < d->operations.size(); ++i) {
             AceTreeModelPrivate::serializeOperation(stream, d->operations.at(i));
+
+            if (stream.status() != QDataStream::Ok) {
+                stopRecord();
+                emit recordError();
+                return;
+            }
+
+            d->offsets.begs.append(dev->pos());
         }
     }
 
     void AceTreeModel::stopRecord() {
         Q_D(AceTreeModel);
         d->m_dev = nullptr;
-        d->offsets = AceTreeModelPrivate::Offsets();
+        d->m_fileDev = nullptr;
+
+        d->offsets = {};
     }
 
     AceTreeModel *AceTreeModel::recover(const QByteArray &data) {
         QDataStream stream(data);
 
         char sign[12];
-        stream.device()->read(sign, sizeof(sign));
+        stream.readRawData(sign, sizeof(sign));
         if (memcmp(sign, "AceTreeModel", sizeof(sign)) != 0) {
             return nullptr;
         }
@@ -1067,7 +1169,7 @@ namespace QsApi {
             while (!stack.isEmpty()) {
                 auto top = stack.top();
                 auto d = top->d_func();
-                insertedItems.insert(d->indexHint, top);
+                insertedItems.insert(d->m_indexHint, top);
 
                 for (const auto &child : qAsConst(d->vector))
                     stack.push(child);
@@ -1151,6 +1253,10 @@ namespace QsApi {
         auto model = new AceTreeModel();
         model->d_func()->operations = std::move(operations);
         model->setCurrentStep(step);
+        if (model->currentStep() != step) {
+            delete model;
+            return nullptr;
+        }
 
         return model;
     }
@@ -1184,9 +1290,24 @@ namespace QsApi {
         d->setRootItem_helper(item);
     }
 
+    AceTreeItem *AceTreeModel::reset() {
+        Q_D(AceTreeModel);
+        if (d->internalChange) {
+            qWarning() << "AceTreeModel: taking root item during model's internal state switching is prohibited"
+                       << this;
+            return nullptr;
+        }
+
+        if (!d->rootItem)
+            return nullptr;
+
+        return d->reset_helper();
+    }
+
     AceTreeModel::AceTreeModel(AceTreeModelPrivate &d, QObject *parent) : QObject(parent), d_ptr(&d) {
         d.q_ptr = this;
 
         d.init();
     }
+
 }

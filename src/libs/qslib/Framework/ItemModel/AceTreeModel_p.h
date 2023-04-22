@@ -1,7 +1,9 @@
 #ifndef ACETREEMODELPRIVATE_H
 #define ACETREEMODELPRIVATE_H
 
+#include <QFileDevice>
 #include <QSet>
+#include <QStack>
 
 #include "AceTreeModel.h"
 
@@ -20,15 +22,15 @@ namespace QsApi {
 
         AceTreeItem *parent;
         AceTreeModel *model;
-        int index;
-        int indexHint; // Only for deserialization
+        int m_index;
+        int m_indexHint; // Only for deserialization
 
         QHash<QString, QVariant> properties;
-        QByteArray bytes;
+        QByteArray byteArray;
         QVector<AceTreeItem *> vector;
         QSet<AceTreeItem *> set;
 
-        bool allowModify();
+        bool allowModify() const;
 
         void setProperty_helper(const QString &key, const QVariant &value);
         void setBytes_helper(int start, const QByteArray &bytes);
@@ -38,6 +40,22 @@ namespace QsApi {
         void removeRows_helper(int index, int count);
         void addNode_helper(AceTreeItem *item);
         void removeNode_helper(AceTreeItem *item);
+
+        template <class Func>
+        static void propagateItems(AceTreeItem *item, Func f) {
+            QStack<AceTreeItem *> stack;
+            stack.push(item);
+            while (!stack.isEmpty()) {
+                auto top = stack.top();
+                auto d = top->d_func();
+                f(top);
+
+                for (const auto &child : qAsConst(d->vector))
+                    stack.push(child);
+                for (const auto &child : qAsConst(d->set))
+                    stack.push(child);
+            }
+        }
     };
 
     class AceTreeModelPrivate {
@@ -51,6 +69,8 @@ namespace QsApi {
         AceTreeModel *q_ptr;
 
         QIODevice *m_dev;
+        QFileDevice *m_fileDev;
+
         bool is_destruct;
 
         QHash<int, AceTreeItem *> indexes;
@@ -59,13 +79,15 @@ namespace QsApi {
         AceTreeItem *rootItem;
 
         void setRootItem_helper(AceTreeItem *item);
+        AceTreeItem *reset_helper();
+        void setCurrentStep_helper(int step);
 
         int addIndex(AceTreeItem *item, int idx = -1);
         void removeIndex(int index);
 
         // Operations
         enum Change {
-            PropertyChange,
+            PropertyChange = 0xC1,
             BytesSet,
             BytesTruncate,
             RowsInsert,
@@ -162,13 +184,18 @@ namespace QsApi {
         struct Offsets {
             qint64 startPos;
             qint64 countPos;
-            Offsets() : startPos(0), countPos(0) {
+            qint64 dataPos;
+            QVector<qint64> begs;
+            Offsets() : startPos(0), countPos(0), dataPos(0) {
             }
         };
         Offsets offsets;
 
         bool execute(BaseOp *baseOp, bool undo);
         void push(BaseOp *op);
+        void truncate(int step);
+
+        void writeCurrentStep(int step);
 
         static void serializeOperation(QDataStream &stream, BaseOp *baseOp);
         static BaseOp *deserializeOperation(QDataStream &stream, QList<int> *ids);

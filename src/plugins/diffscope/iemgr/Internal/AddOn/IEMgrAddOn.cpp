@@ -43,9 +43,11 @@ namespace IEMgr::Internal {
 
     void IEMgrAddOn::reloadStrings() {
         importExportGroupItem->setText(tr("Import/Export Actions"));
+
         importItem->setText(tr("Import"));
         importProjectItem->setText(tr("Import Project"));
         importAudioItem->setText(tr("Import Audio"));
+
         exportItem->setText(tr("Export"));
         exportProjectItem->setText(tr("Export Project"));
         exportAudioItem->setText(tr("Export Audio"));
@@ -65,7 +67,7 @@ namespace IEMgr::Internal {
         importProjectItem = new ActionItem("iemgr.ImportProject", new QAction(), this);
         importAudioItem = new ActionItem("iemgr.ImportAudio", new QAction(), this);
 
-        exportItem = new ActionItem("iemgr.Export", new QAction());
+        exportItem = new ActionItem("iemgr.Export", ICore::createCoreMenu(win), this);
         exportProjectItem = new ActionItem("iemgr.ExportProject", new QAction(), this);
         exportAudioItem = new ActionItem("iemgr.ExportAudio", new QAction(), this);
 

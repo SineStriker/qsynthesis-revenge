@@ -1,7 +1,6 @@
-#ifndef ADDITIVETREEMODEL_H
-#define ADDITIVETREEMODEL_H
+#ifndef ACETREEMODEL_H
+#define ACETREEMODEL_H
 
-#include <QFile>
 #include <QIODevice>
 #include <QObject>
 #include <QVariant>
@@ -101,6 +100,8 @@ namespace QsApi {
         AceTreeItem *rootItem() const;
         void setRootItem(AceTreeItem *item);
 
+        AceTreeItem *reset();
+
     signals:
         void propertyChanged(AceTreeItem *item, const QString &key, const QVariant &oldValue, const QVariant &newValue);
 
@@ -120,6 +121,7 @@ namespace QsApi {
         void rootChanged();
 
         void stepChanged(int step);
+        void recordError();
 
     protected:
         AceTreeModel(AceTreeModelPrivate &d, QObject *parent = nullptr);
@@ -152,4 +154,4 @@ namespace QsApi {
     }
 }
 
-#endif // ADDITIVETREEMODEL_H
+#endif // ACETREEMODEL_H
