@@ -135,22 +135,42 @@ namespace QsApi {
     }
 
     void AceTreeWidgetPrivate::_q_rowsMoved(AceTreeItem *parent, int index, int count, int dest) {
-    }
-
-    void AceTreeWidgetPrivate::_q_rowsAboutToRemove(AceTreeItem *parent, int index,
-                                                    const QVector<AceTreeItem *> &items) {
         auto parentItem = itemIndexes.value(parent, nullptr);
         if (!parentItem) {
             return;
         }
-        for (const auto &item : items)
-            removeItem(item);
 
         auto vectorItem = parentItem->child(0);
-        vectorItem->setText(1, QString::number(parent->rowCount()));
+        vectorItem->takeChildren();
+        for (int i = 0; i < parent->rowCount(); ++i) {
+            vectorItem->addChild(itemIndexes.value(parent->row(i)));
+        }
+    }
+
+    void AceTreeWidgetPrivate::_q_rowsAboutToRemove(AceTreeItem *parent, int index,
+                                                    const QVector<AceTreeItem *> &items) {
+        Q_Q(AceTreeWidget);
     }
 
     void AceTreeWidgetPrivate::_q_rowsRemoved(AceTreeItem *parent, int index, int count) {
+        auto parentItem = itemIndexes.value(parent, nullptr);
+        if (!parentItem) {
+            return;
+        }
+
+        auto vectorItem = parentItem->child(0);
+
+        QList<QTreeWidgetItem *> childItems;
+        for (int i = 0; i < count; ++i) {
+            auto childItem = vectorItem->child(index + i);
+            childItems.append(childItem);
+        }
+        for (const auto &item : qAsConst(childItems)) {
+            auto item1 = reinterpret_cast<AceTreeItem *>(item->data(0, Qt::UserRole + 1).value<intptr_t>());
+            removeItem(item1);
+        }
+
+        vectorItem->setText(1, QString::number(parent->rowCount()));
     }
 
     void AceTreeWidgetPrivate::_q_nodeAdded(AceTreeItem *parent, AceTreeItem *item) {
@@ -165,6 +185,9 @@ namespace QsApi {
     }
 
     void AceTreeWidgetPrivate::_q_nodeAboutToRemove(AceTreeItem *parent, AceTreeItem *item) {
+    }
+
+    void AceTreeWidgetPrivate::_q_nodeRemoved(AceTreeItem *parent, AceTreeItem *item) {
         auto parentItem = itemIndexes.value(parent, nullptr);
         if (!parentItem) {
             return;
@@ -174,9 +197,6 @@ namespace QsApi {
 
         auto setItem = parentItem->child(1);
         setItem->setText(1, QString::number(parent->nodeCount()));
-    }
-
-    void AceTreeWidgetPrivate::_q_nodeRemoved(AceTreeItem *parent, AceTreeItem *item) {
     }
 
     void AceTreeWidgetPrivate::_q_rootAboutToChange(AceTreeItem *oldRoot, AceTreeItem *newRoot) {
@@ -273,6 +293,34 @@ namespace QsApi {
             } else if (insetNode && action == insetNode) {
                 parentItem1->insertNode(addItem());
             }
+        } else if (button == Qt::MiddleButton) {
+            auto typeData = item->data(0, Qt::UserRole + 2).toString();
+            if (typeData != "vector") {
+                return;
+            }
+            auto parentItem1 =
+                reinterpret_cast<AceTreeItem *>(item->parent()->data(0, Qt::UserRole + 1).value<intptr_t>());
+            QInputDialog dlg(q);
+            dlg.setInputMode(QInputDialog::TextInput);
+            dlg.setLabelText("Range(format: idx cnt dest)");
+
+            int idx = -1;
+            int cnt = 0;
+            int dest = -1;
+            while (idx < 0 || cnt == 0 || dest < 0) {
+                if (dlg.exec() == QDialog::Accepted) {
+                    QStringList texts = dlg.textValue().split(" ");
+                    if (texts.size() >= 3) {
+                        idx = texts.at(0).toInt();
+                        cnt = texts.at(1).toInt();
+                        dest = texts.at(2).toInt();
+                    }
+                    continue;
+                }
+                return;
+            }
+
+            parentItem1->moveRows(idx, cnt, dest);
         }
     }
 

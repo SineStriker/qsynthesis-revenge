@@ -95,6 +95,11 @@ namespace QsApi {
         return !d->model && d->m_index > 0;
     }
 
+    bool AceTreeItem::isWritable() const {
+        Q_D(const AceTreeItem);
+        return d->model ? d->model->isWritable() : !isObsolete();
+    }
+
     QVariant AceTreeItem::property(const QString &key) const {
         Q_D(const AceTreeItem);
         return d->properties.value(key, {});
@@ -491,7 +496,7 @@ namespace QsApi {
         }
 
         if (!model && m_index > 0) {
-            qWarning() << "AceTreeItem: the item is obsolete and not writable" << q;
+            qWarning() << "AceTreeItem: the item is now obsolete" << q;
             return false;
         }
 
@@ -1119,6 +1124,11 @@ namespace QsApi {
             return;
 
         d->setCurrentStep_helper(step);
+    }
+
+    bool AceTreeModel::isWritable() const {
+        Q_D(const AceTreeModel);
+        return !d->internalChange;
     }
 
     void AceTreeModel::startRecord(QIODevice *dev) {

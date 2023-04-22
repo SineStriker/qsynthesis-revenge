@@ -28,6 +28,7 @@ namespace QsApi {
 
         bool isFree() const;
         bool isObsolete() const;
+        bool isWritable() const;
 
         // Properties
         QVariant property(const QString &key) const;
@@ -93,6 +94,8 @@ namespace QsApi {
         void setCurrentStep(int step);
         inline void nextStep();
         inline void previousStep();
+
+        bool isWritable() const;
 
         void startRecord(QIODevice *dev);
         void stopRecord();

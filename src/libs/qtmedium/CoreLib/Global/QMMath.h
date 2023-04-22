@@ -71,7 +71,7 @@ namespace QMMath {
     template <template <class> class Array, class T>
     bool arrayMove(Array<T> &arr, int index, int count, int dest) {
         count = qMin(count, arr.size() - index);
-        if (count <= 0 || count > arr.size() || (dest >= index && dest < index + count)) {
+        if (count <= 0 || count > arr.size() || (dest >= index && dest <= index + count)) {
             return false;
         }
 
