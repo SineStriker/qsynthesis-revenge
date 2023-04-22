@@ -41,7 +41,31 @@ var _tr = _q_tr_ext.qsTranslate;
 
 var $ds = {
     dialogSystem: {
-        form: _internal.form,
+        form: (title, widgets, listener) => {
+            return _internal.form(title, widgets, listener ? (rawHandle) => {
+                listener(widgets.map((v, i) => {
+                    let handle = {};
+                    Object.defineProperties(handle, {
+                        value: {
+                            get: () => rawHandle.value(i),
+                        },
+                        visible: {
+                            get: () => rawHandle.visible(i),
+                            set: v => { rawHandle.setVisible(i, v) },
+                        },
+                        disabled: {
+                            get: () => rawHandle.disabled(i),
+                            set: v => { rawHandle.setDisabled(i, v) },
+                        },
+                        label: {
+                            get: () => rawHandle.label(i),
+                            set: v => { rawHandle.setLabel(i, v) },
+                        },
+                    });
+                    return handle;
+                }));
+            } : undefined);
+        },
         alert: (title, message) => {
             _internal.infoMsgBox(title, message);
         },
