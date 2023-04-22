@@ -1,5 +1,6 @@
 #include "MainWindow.h"
 
+#include <QApplication>
 #include <QDebug>
 #include <QMenu>
 #include <QMenuBar>
@@ -10,34 +11,55 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
 
     auto model = m_treeWidget->model();
 
-    m_buffer.setBuffer(&m_data);
-    m_buffer.open(QIODevice::WriteOnly);
+    QString filename = qApp->applicationDirPath() + "/1.dat";
 
-    model->startRecord(&m_buffer);
+    //    m_buffer.setBuffer(&m_data);
+    //    m_buffer.open(QIODevice::WriteOnly);
+    //    model->startRecord(&m_buffer);
+
+    QsApi::AceTreeItem *root = nullptr;
+
+    {
+        QFile file(filename);
+        if (file.open(QIODevice::ReadOnly)) {
+            auto model1 = QsApi::AceTreeModel::recover(file.readAll());
+            file.close();
+            if (model1) {
+                qDebug() << "Recover success";
+                root = model1->reset();
+                delete model1;
+            }
+        }
+    }
+
+    m_file.setFileName(filename);
+    m_file.open(QIODevice::WriteOnly | QIODevice::Truncate);
+    model->startRecord(&m_file);
+
+    if (root) {
+        model->setRootItem(root);
+    } else {
+        auto listItem1 = new QsApi::AceTreeItem("Track");
+        auto setItem1 = new QsApi::AceTreeItem("Note");
+
+        auto rootItem = new QsApi::AceTreeItem("Root");
+        rootItem->setProperty("text", QLatin1String("YQ's god"));
+        rootItem->insertRows(0, {listItem1});
+        rootItem->insertNode(setItem1);
+
+        listItem1->setProperty("text", QLatin1String("aaa"));
+        setItem1->setProperty("text", QLatin1String("bbb"));
+
+        model->setRootItem(rootItem);
+        // rootItem->removeRow(0);
+    }
+
     connect(model, &QsApi::AceTreeModel::stepChanged, this, [this](int step) {
-        qDebug() << "step" << step;
-        qDebug() << m_data;
-
         QTreeWidgetItem *root;
         if ((root = m_treeWidget->topLevelItem(0))) {
             m_treeWidget->setItemExpandedRecursively(root, true);
         }
     });
-
-    auto listItem1 = new QsApi::AceTreeItem("Track");
-    auto setItem1 = new QsApi::AceTreeItem("Note");
-
-    auto rootItem = new QsApi::AceTreeItem("Root");
-    rootItem->setProperty("text", QLatin1String("YQ's god"));
-    rootItem->insertRows(0, {listItem1});
-    rootItem->insertNode(setItem1);
-
-    model->setRootItem(rootItem);
-
-    listItem1->setProperty("text", QLatin1String("aaa"));
-    setItem1->setProperty("text", QLatin1String("bbb"));
-
-    model->previousStep();
 
     auto editMenu = new QMenu("Edit(&E)");
     auto undoAction = editMenu->addAction("Undo");

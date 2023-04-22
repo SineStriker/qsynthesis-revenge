@@ -2,6 +2,7 @@
 #define CHORUSKIT_MAINWINDOW_H
 
 #include <QBuffer>
+#include <QFile>
 #include <QMainWindow>
 
 #include <Widgets/AceTreeWidget.h>
@@ -17,6 +18,8 @@ private:
 
     QBuffer m_buffer;
     QByteArray m_data;
+
+    QFile m_file;
 };
 
 #endif // CHORUSKIT_MAINWINDOW_H

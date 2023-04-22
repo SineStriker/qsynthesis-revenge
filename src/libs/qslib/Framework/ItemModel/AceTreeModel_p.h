@@ -46,7 +46,7 @@ namespace QsApi {
             QStack<AceTreeItem *> stack;
             stack.push(item);
             while (!stack.isEmpty()) {
-                auto top = stack.top();
+                auto top = stack.pop();
                 auto d = top->d_func();
                 f(top);
 
@@ -135,6 +135,7 @@ namespace QsApi {
             int id;
             int index;
             QVector<AceTreeItem *> items;
+            QByteArrayList serialized;
             RowsInsertRemoveOp(bool isInsert = false) : BaseOp(isInsert ? RowsInsert : RowsRemove), id(0), index(0) {
             }
             ~RowsInsertRemoveOp() {
@@ -157,6 +158,7 @@ namespace QsApi {
         struct NodeAddRemoveOp : public BaseOp {
             int id;
             AceTreeItem *item;
+            QByteArray serialized;
             NodeAddRemoveOp(bool isInsert = false) : BaseOp(isInsert ? NodeAdd : NodeRemove), id(0), item(nullptr) {
             }
             ~NodeAddRemoveOp() {

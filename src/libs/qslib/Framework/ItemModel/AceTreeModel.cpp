@@ -6,6 +6,7 @@
 #include <QDataStream>
 #include <QDebug>
 #include <QStack>
+#include <QTextCodec>
 
 namespace QsApi {
 
@@ -25,6 +26,54 @@ namespace QsApi {
         for (const auto &item : container)
             res.push_back(item->clone());
         return res;
+    }
+
+    static const char SIGN_TREE_MODEL[] = "ATM"
+                                          "TX"
+                                          "LOG";
+    static const char SIGN_TREE_ITEM[] = "item";
+    static const char SIGN_OPERATION[] = "SEG ";
+
+    static QDataStream &operator<<(QDataStream &stream, const QString &s) {
+        return stream << s.toUtf8();
+    }
+
+    static QDataStream &operator>>(QDataStream &stream, QString &s) {
+        QByteArray arr;
+        stream >> arr;
+        if (stream.status() == QDataStream::Ok) {
+            s = QString::fromUtf8(arr);
+        }
+        return stream;
+    }
+
+    static QDataStream &operator<<(QDataStream &stream, const QVariantHash &s) {
+        stream << s.size();
+        for (auto it = s.begin(); it != s.end(); ++it) {
+            QsApi::operator<<(stream, it.key());
+            stream << it.value();
+        }
+        return stream;
+    }
+
+    static QDataStream &operator>>(QDataStream &stream, QVariantHash &s) {
+        int size;
+        stream >> size;
+        s.reserve(size);
+        for (int i = 0; i < size; ++i) {
+            QString key;
+            QsApi::operator>>(stream, key);
+            if (stream.status() != QDataStream::Ok) {
+                break;
+            }
+            QVariant val;
+            stream >> val;
+            if (stream.status() != QDataStream::Ok) {
+                break;
+            }
+            s.insert(key, val);
+        }
+        return stream;
     }
 
     /**
@@ -257,42 +306,50 @@ namespace QsApi {
     }
 
     AceTreeItem *AceTreeItem::read(QDataStream &in) {
-        char sign[4];
+        char sign[sizeof(SIGN_TREE_ITEM) - 1];
         in.readRawData(sign, sizeof(sign));
-        if (memcmp("item", sign, 4) != 0) {
+        if (memcmp(SIGN_TREE_ITEM, sign, sizeof(sign)) != 0) {
             return nullptr;
         }
 
         QString name;
-        in >> name;
+        QsApi::operator>>(in, name);
 
         auto item = new AceTreeItem(name);
         auto d = item->d_func();
 
         in >> d->m_indexHint;
-        in >> d->name;
-        in >> d->properties;
+        QsApi::operator>>(in, d->properties);
         in >> d->byteArray;
 
-        int size;
-        in >> size;
-        d->vector.reserve(size);
-        for (int i = 0; i < size; ++i) {
-            auto child = read(in);
-            if (!child)
-                goto abort;
-            child->d_func()->parent = item;
-            d->vector.append(child);
-        }
+        if (in.status() != QDataStream::Ok) {
+            qWarning() << "AceTreeItem::read(): read item data failed";
+            goto abort;
+        } else {
+            int size;
+            in >> size;
+            d->vector.reserve(size);
+            for (int i = 0; i < size; ++i) {
+                auto child = read(in);
+                if (!child) {
+                    qWarning() << "AceTreeItem::read(): read vector item failed";
+                    goto abort;
+                }
+                child->d_func()->parent = item;
+                d->vector.append(child);
+            }
 
-        in >> size;
-        d->set.reserve(size);
-        for (int i = 0; i < size; ++i) {
-            auto child = read(in);
-            if (!child)
-                goto abort;
-            child->d_func()->parent = item;
-            d->set.insert(child);
+            in >> size;
+            d->set.reserve(size);
+            for (int i = 0; i < size; ++i) {
+                auto child = read(in);
+                if (!child) {
+                    qWarning() << "AceTreeItem::read(): read set item failed";
+                    goto abort;
+                }
+                child->d_func()->parent = item;
+                d->set.insert(child);
+            }
         }
 
         return item;
@@ -304,12 +361,11 @@ namespace QsApi {
 
     void AceTreeItem::write(QDataStream &out) const {
         Q_D(const AceTreeItem);
-        // TODO: write
 
-        out << "item";
+        out.writeRawData("item", 4);
+        QsApi::operator<<(out, d->name);
         out << d->m_index;
-        out << d->name;
-        out << d->properties;
+        QsApi::operator<<(out, d->properties);
         out << d->byteArray;
 
         out << d->vector.size();
@@ -417,7 +473,8 @@ namespace QsApi {
     AceTreeItem *AceTreeModelPrivate::reset_helper() {
         Q_Q(AceTreeModel);
 
-        truncate(0);
+        if (stepIndex != 0)
+            truncate(0);
 
         auto func = [&](AceTreeItem *item) {
             auto d = item->d_func();
@@ -644,13 +701,15 @@ namespace QsApi {
 
     void AceTreeModelPrivate::serializeOperation(QDataStream &stream, BaseOp *baseOp) {
         // Write begin sign
-        stream.writeRawData("SEG ", 4);
+        stream.writeRawData(SIGN_OPERATION, sizeof(SIGN_OPERATION) - 1);
 
         stream << (int) baseOp->c;
         switch (baseOp->c) {
             case PropertyChange: {
                 auto op = static_cast<PropertyChangeOp *>(baseOp);
-                stream << op->id << op->key << op->oldValue << op->newValue;
+                stream << op->id;
+                QsApi::operator<<(stream, op->key);
+                stream << op->oldValue << op->newValue;
                 break;
             }
             case BytesSet: {
@@ -668,13 +727,13 @@ namespace QsApi {
                 auto op = static_cast<RowsInsertRemoveOp *>(baseOp);
                 stream << op->id << op->index << op->items.size();
                 if (op->c == RowsInsert) {
-                    for (const auto &item : qAsConst(op->items)) {
-                        item->write(stream);
+                    for (const auto &item : qAsConst(op->serialized)) {
+                        stream.writeRawData(item.data(), item.size());
                     }
                 } else {
                     // Write id only
                     for (const auto &item : qAsConst(op->items)) {
-                        stream << item->index();
+                        stream << item->d_func()->m_index;
                     }
                 }
                 break;
@@ -689,10 +748,10 @@ namespace QsApi {
                 auto op = static_cast<NodeAddRemoveOp *>(baseOp);
                 stream << op->id;
                 if (op->c == NodeAdd) {
-                    op->item->write(stream);
+                    stream.writeRawData(op->serialized, op->serialized.size());
                 } else {
                     // Write id only
-                    stream << op->item->index();
+                    stream << op->item->d_func()->m_index;
                 }
                 break;
             }
@@ -700,11 +759,11 @@ namespace QsApi {
                 auto op = static_cast<RootChangeOp *>(baseOp);
 
                 // Write old root id
-                stream << (op->oldRoot ? op->oldRoot->index() : 0);
+                stream << (op->oldRoot ? op->oldRoot->d_func()->m_index : 0);
 
                 // Write new root id
                 if (op->newRoot) {
-                    stream << op->newRoot->index();
+                    stream << op->newRoot->d_func()->m_index;
 
                     // Write new root
                     op->newRoot->write(stream);
@@ -720,9 +779,9 @@ namespace QsApi {
 
     AceTreeModelPrivate::BaseOp *AceTreeModelPrivate::deserializeOperation(QDataStream &stream, QList<int> *ids) {
         // Read begin sign
-        char sign[4];
+        char sign[sizeof(SIGN_OPERATION) - 1];
         stream.readRawData(sign, sizeof(sign));
-        if (memcmp(sign, "SEG ", sizeof(sign)) != 0) {
+        if (memcmp(sign, SIGN_OPERATION, sizeof(sign)) != 0) {
             return nullptr;
         }
 
@@ -733,7 +792,9 @@ namespace QsApi {
         switch (c) {
             case PropertyChange: {
                 auto op = new PropertyChangeOp();
-                stream >> op->id >> op->key >> op->oldValue >> op->newValue;
+                stream >> op->id;
+                QsApi::operator>>(stream, op->key);
+                stream >> op->oldValue >> op->newValue;
                 res = op;
                 break;
             }
@@ -764,7 +825,6 @@ namespace QsApi {
                         }
                         op->items.append(item);
                     }
-                    res = op;
                 } else {
                     int id;
                     for (int i = 0; i < size; ++i) {
@@ -773,6 +833,7 @@ namespace QsApi {
                             ids->append(id);
                     }
                 }
+                res = op;
                 break;
             }
             case RowsMove: {
@@ -793,13 +854,13 @@ namespace QsApi {
                     } else {
                         op->item = item;
                     }
-                    res = op;
                 } else {
                     int id;
                     stream >> id;
                     if (ids)
                         ids->append(id);
                 }
+                res = op;
                 break;
             }
             case RootChange: {
@@ -841,7 +902,7 @@ namespace QsApi {
         Q_Q(AceTreeModel);
         if (!internalChange) {
             auto op = new PropertyChangeOp();
-            op->id = item->index();
+            op->id = item->d_func()->m_index;
             op->key = key;
             op->oldValue = oldValue;
             op->newValue = newValue;
@@ -855,7 +916,7 @@ namespace QsApi {
         Q_Q(AceTreeModel);
         if (!internalChange) {
             auto op = new BytesSetOp();
-            op->id = item->index();
+            op->id = item->d_func()->m_index;
             op->start = start;
             op->oldBytes = oldBytes;
             op->newBytes = newBytes;
@@ -868,7 +929,7 @@ namespace QsApi {
         Q_Q(AceTreeModel);
         if (!internalChange) {
             auto op = new BytesTruncateOp();
-            op->id = item->index();
+            op->id = item->d_func()->m_index;
             op->size = size;
             op->oldBytes = oldBytes;
             op->delta = delta;
@@ -881,9 +942,18 @@ namespace QsApi {
         Q_Q(AceTreeModel);
         if (!internalChange) {
             auto op = new RowsInsertRemoveOp(true);
-            op->id = parent->index();
+            op->id = parent->d_func()->m_index;
             op->index = index;
             op->items = items;
+
+            op->serialized.reserve(items.size());
+            for (const auto &item : items) {
+                QByteArray data;
+                QDataStream stream(&data, QIODevice::WriteOnly);
+                item->write(stream);
+                op->serialized.append(data);
+            }
+
             push(op);
         }
         emit q->rowsInserted(parent, index, items);
@@ -893,7 +963,7 @@ namespace QsApi {
         Q_Q(AceTreeModel);
         if (!internalChange) {
             auto op = new RowsMoveOp();
-            op->id = parent->index();
+            op->id = parent->d_func()->m_index;
             op->index = index;
             op->count = count;
             op->dest = dest;
@@ -906,7 +976,7 @@ namespace QsApi {
         Q_Q(AceTreeModel);
         if (!internalChange) {
             auto op = new RowsInsertRemoveOp(false);
-            op->id = parent->index();
+            op->id = parent->d_func()->m_index;
             op->index = index;
             op->items = items;
             push(op);
@@ -918,8 +988,16 @@ namespace QsApi {
         Q_Q(AceTreeModel);
         if (!internalChange) {
             auto op = new NodeAddRemoveOp(true);
-            op->id = parent->index();
+            op->id = parent->d_func()->m_index;
             op->item = item;
+
+            {
+                QByteArray data;
+                QDataStream stream(&data, QIODevice::WriteOnly);
+                item->write(stream);
+                op->serialized = data;
+            }
+
             push(op);
         }
         emit q->nodeAdded(parent, item);
@@ -929,7 +1007,7 @@ namespace QsApi {
         Q_Q(AceTreeModel);
         if (!internalChange) {
             auto op = new NodeAddRemoveOp(false);
-            op->id = parent->index();
+            op->id = parent->d_func()->m_index;
             op->item = item;
             push(op);
         }
@@ -1079,6 +1157,7 @@ namespace QsApi {
 
             // Change step in log
             m_dev->seek(offsets.countPos);
+
             stream << stepIndex;
 
             // Restore pos
@@ -1095,7 +1174,10 @@ namespace QsApi {
     void AceTreeModelPrivate::writeCurrentStep(int step) {
         qint64 pos = m_dev->pos();
         m_dev->seek(offsets.countPos);
-        m_dev->write(reinterpret_cast<char *>(&step), sizeof(step));
+
+        QDataStream stream(m_dev);
+        stream << step;
+
         m_dev->seek(pos);
     }
 
@@ -1142,7 +1224,7 @@ namespace QsApi {
         QDataStream stream(dev);
 
         d->offsets.startPos = dev->pos();
-        stream.writeRawData("AceTreeModel", 12);
+        stream.writeRawData(SIGN_TREE_MODEL, sizeof(SIGN_TREE_MODEL) - 1);
 
         d->offsets.countPos = dev->pos();
         stream << d->stepIndex;
@@ -1174,9 +1256,10 @@ namespace QsApi {
     AceTreeModel *AceTreeModel::recover(const QByteArray &data) {
         QDataStream stream(data);
 
-        char sign[12];
+        char sign[sizeof(SIGN_TREE_MODEL) - 1];
         stream.readRawData(sign, sizeof(sign));
-        if (memcmp(sign, "AceTreeModel", sizeof(sign)) != 0) {
+        if (memcmp(sign, SIGN_TREE_MODEL, sizeof(sign)) != 0) {
+            qDebug() << "AceTreeModel::recover(): read header sign failed";
             return nullptr;
         }
 
@@ -1188,7 +1271,7 @@ namespace QsApi {
             QStack<AceTreeItem *> stack;
             stack.push(item);
             while (!stack.isEmpty()) {
-                auto top = stack.top();
+                auto top = stack.pop();
                 auto d = top->d_func();
                 insertedItems.insert(d->m_indexHint, top);
 
@@ -1207,6 +1290,7 @@ namespace QsApi {
             QList<int> ids;
             auto baseOp = AceTreeModelPrivate::deserializeOperation(stream, &ids);
             if (!baseOp) {
+                qDebug() << "AceTreeModel::recover(): read operation failed";
                 goto op_abort;
             }
 
@@ -1223,6 +1307,7 @@ namespace QsApi {
                     for (const auto &id : qAsConst(ids)) {
                         auto removedItem = insertedItems.value(id, nullptr);
                         if (!removedItem) {
+                            qDebug() << "AceTreeModel::recover(): removed row not found";
                             goto op_abort;
                         }
                         op->items.append(removedItem);
@@ -1238,6 +1323,7 @@ namespace QsApi {
                     auto op = static_cast<AceTreeModelPrivate::NodeAddRemoveOp *>(baseOp);
                     auto removedItem = insertedItems.value(ids.front(), nullptr);
                     if (!removedItem) {
+                        qDebug() << "AceTreeModel::recover(): removed node not found";
                         goto op_abort;
                     }
                     op->item = removedItem;
@@ -1250,6 +1336,7 @@ namespace QsApi {
                     if (id != 0) {
                         op->oldRoot = insertedItems.value(id, nullptr);
                         if (!op->oldRoot) {
+                            qDebug() << "AceTreeModel::recover(): old root not found";
                             goto op_abort;
                         }
                     }
@@ -1261,6 +1348,7 @@ namespace QsApi {
                     break;
             }
 
+            operations.append(baseOp);
             continue;
 
         op_abort:
@@ -1275,6 +1363,7 @@ namespace QsApi {
         model->d_func()->operations = std::move(operations);
         model->setCurrentStep(step);
         if (model->currentStep() != step) {
+            qDebug() << "AceTreeModel::recover(): failed to reach given step";
             delete model;
             return nullptr;
         }
@@ -1330,5 +1419,4 @@ namespace QsApi {
 
         d.init();
     }
-
 }
