@@ -1,7 +1,7 @@
 #ifndef ADDITIVETREEWIDGET_H
 #define ADDITIVETREEWIDGET_H
 
-#include <QTreeWidget>
+#include <CTreeWidget.h>
 
 #include "ItemModel/AceTreeModel.h"
 
@@ -9,7 +9,7 @@ namespace QsApi {
 
     class AceTreeWidgetPrivate;
 
-    class QSFRAMEWORK_API AceTreeWidget : public QTreeWidget {
+    class QSFRAMEWORK_API AceTreeWidget : public CTreeWidget {
         Q_OBJECT
         Q_DECLARE_PRIVATE(AceTreeWidget)
     public:

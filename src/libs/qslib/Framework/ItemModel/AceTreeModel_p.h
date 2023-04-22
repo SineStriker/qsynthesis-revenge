@@ -138,9 +138,10 @@ namespace QsApi {
             RowsInsertRemoveOp(bool isInsert = false) : BaseOp(isInsert ? RowsInsert : RowsRemove), id(0), index(0) {
             }
             ~RowsInsertRemoveOp() {
-                for (const auto &item : qAsConst(items))
-                    if (item && !item->model())
-                        delete item;
+                if (c == RowsInsert)
+                    for (const auto &item : qAsConst(items))
+                        if (item && !item->model() && !item->parent())
+                            delete item;
             }
         };
 
@@ -159,8 +160,9 @@ namespace QsApi {
             NodeAddRemoveOp(bool isInsert = false) : BaseOp(isInsert ? NodeAdd : NodeRemove), id(0), item(nullptr) {
             }
             ~NodeAddRemoveOp() {
-                if (item && !item->model())
-                    delete item;
+                if (c == NodeAdd)
+                    if (item && !item->model() && !item->parent())
+                        delete item;
             }
         };
 
@@ -170,8 +172,8 @@ namespace QsApi {
             RootChangeOp() : BaseOp(RootChange), oldRoot(nullptr), newRoot(nullptr) {
             }
             ~RootChangeOp() {
-                if (oldRoot && !oldRoot->model())
-                    delete oldRoot;
+                // if (oldRoot && !oldRoot->model())
+                //    delete oldRoot;
                 if (newRoot && !newRoot->model())
                     delete newRoot;
             }
@@ -182,7 +184,7 @@ namespace QsApi {
         bool internalChange;
 
         struct Offsets {
-            qint64 startPos;
+            [[maybe_unused]] qint64 startPos;
             qint64 countPos;
             qint64 dataPos;
             QVector<qint64> begs;

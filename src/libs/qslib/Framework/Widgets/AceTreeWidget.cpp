@@ -3,6 +3,8 @@
 
 #include <QDebug>
 #include <QHeaderView>
+#include <QInputDialog>
+#include <QMenu>
 #include <QStack>
 
 namespace QsApi {
@@ -33,6 +35,8 @@ namespace QsApi {
         connect(m_model, &AceTreeModel::nodeRemoved, this, &AceTreeWidgetPrivate::_q_nodeRemoved);
         connect(m_model, &AceTreeModel::rootAboutToChange, this, &AceTreeWidgetPrivate::_q_rootAboutToChange);
         connect(m_model, &AceTreeModel::rootChanged, this, &AceTreeWidgetPrivate::_q_rootChanged);
+
+        connect(q, &CTreeWidget::itemClickedEx, this, &AceTreeWidgetPrivate::_q_itemClickedEx);
     }
 
     QTreeWidgetItem *AceTreeWidgetPrivate::buildItem(AceTreeItem *item) {
@@ -45,6 +49,7 @@ namespace QsApi {
         res->setText(2, item->bytes().toHex());
 
         auto vectorItem = new QTreeWidgetItem();
+        vectorItem->setData(0, Qt::UserRole + 2, "vector");
         vectorItem->setText(0, "Vector");
         vectorItem->setText(1, QString::number(item->rowCount()));
         for (int i = 0; i < item->rowCount(); ++i) {
@@ -52,6 +57,7 @@ namespace QsApi {
         }
 
         auto setItem = new QTreeWidgetItem();
+        setItem->setData(0, Qt::UserRole + 2, "set");
         setItem->setText(0, "Set");
         setItem->setText(1, QString::number(item->nodeCount()));
         for (const auto &child : item->nodes()) {
@@ -82,7 +88,7 @@ namespace QsApi {
             }
         }
 
-        delete item;
+        delete treeItem;
     }
 
     void AceTreeWidgetPrivate::_q_propertyChanged(AceTreeItem *item, const QString &key, const QVariant &oldValue,
@@ -152,10 +158,10 @@ namespace QsApi {
         if (!parentItem) {
             return;
         }
-        parentItem->addChild(buildItem(item));
 
         auto setItem = parentItem->child(1);
         setItem->setText(1, QString::number(parent->nodeCount()));
+        setItem->addChild(buildItem(item));
     }
 
     void AceTreeWidgetPrivate::_q_nodeAboutToRemove(AceTreeItem *parent, AceTreeItem *item) {
@@ -186,6 +192,90 @@ namespace QsApi {
         q->addTopLevelItem(item);
     }
 
+    void AceTreeWidgetPrivate::_q_itemClickedEx(QTreeWidgetItem *item, int column, Qt::MouseButton button) {
+        Q_Q(AceTreeWidget);
+
+        Q_UNUSED(column);
+
+        if (!item)
+            return;
+
+        auto addItem = [q]() -> AceTreeItem * {
+            QInputDialog dlg(q);
+            dlg.setInputMode(QInputDialog::TextInput);
+            dlg.setLabelText("Name");
+
+            QString text;
+            while (text.isEmpty()) {
+                if (dlg.exec() == QDialog::Accepted) {
+                    text = dlg.textValue();
+                    continue;
+                }
+                return nullptr;
+            }
+
+            return new AceTreeItem(text);
+        };
+
+        if (button == Qt::LeftButton) {
+            auto typeData = item->data(0, Qt::UserRole + 2).toString();
+            if (typeData == "vector") {
+                auto parentItem1 =
+                    reinterpret_cast<AceTreeItem *>(item->parent()->data(0, Qt::UserRole + 1).value<intptr_t>());
+                parentItem1->appendRow(addItem());
+            } else if (typeData == "set") {
+                auto parentItem1 =
+                    reinterpret_cast<AceTreeItem *>(item->parent()->data(0, Qt::UserRole + 1).value<intptr_t>());
+                parentItem1->addNode(addItem());
+            }
+        } else if (button == Qt::RightButton) {
+            auto parentItem = item->parent();
+            bool isRow = parentItem ? parentItem->data(0, Qt::UserRole + 2).toString() == "vector" : false;
+            bool isNode = (parentItem && !isRow) ? parentItem->data(0, Qt::UserRole + 2).toString() == "set" : false;
+
+            if (!isRow && !isNode && parentItem) {
+                return;
+            }
+
+            QMenu menu;
+
+            auto modifyText = menu.addAction("Modify text");
+            auto remove = menu.addAction("Remove");
+            auto insertBefore = isRow ? menu.addAction("Insert before") : nullptr;
+            auto insertAfter = isRow ? menu.addAction("Insert after") : nullptr;
+            auto insetNode = (isRow && isNode) ? menu.addAction("Insert") : nullptr;
+
+            auto item1 = reinterpret_cast<AceTreeItem *>(item->data(0, Qt::UserRole + 1).value<intptr_t>());
+            auto parentItem1 = item1->parent();
+
+            auto action = menu.exec(QCursor::pos());
+            if (modifyText && action == modifyText) {
+                QInputDialog dlg(q);
+                dlg.setInputMode(QInputDialog::TextInput);
+                dlg.setLabelText("Text");
+                int code = dlg.exec();
+                if (code == QDialog::Accepted) {
+                    auto text = dlg.textValue();
+                    item1->setProperty("text", text);
+                }
+            } else if (remove && action == remove) {
+                if (isRow) {
+                    parentItem1->removeRow(parentItem1->rowIndexOf(item1));
+                } else if (isNode) {
+                    parentItem1->removeNode(item1);
+                } else {
+                    m_model->setRootItem(nullptr);
+                }
+            } else if (insertBefore && action == insertBefore) {
+                parentItem1->insertRow(parentItem1->rowIndexOf(item1), addItem());
+            } else if (insertAfter && action == insertAfter) {
+                parentItem1->insertRow(parentItem1->rowIndexOf(item1) + 1, addItem());
+            } else if (insetNode && action == insetNode) {
+                parentItem1->insertNode(addItem());
+            }
+        }
+    }
+
     AceTreeWidget::AceTreeWidget(QWidget *parent) : AceTreeWidget(*new AceTreeWidgetPrivate(), parent) {
     }
 
@@ -197,7 +287,7 @@ namespace QsApi {
         return d->m_model;
     }
 
-    AceTreeWidget::AceTreeWidget(AceTreeWidgetPrivate &d, QWidget *parent) : QTreeWidget(parent), d_ptr(&d) {
+    AceTreeWidget::AceTreeWidget(AceTreeWidgetPrivate &d, QWidget *parent) : CTreeWidget(parent), d_ptr(&d) {
         d.q_ptr = this;
 
         d.init();

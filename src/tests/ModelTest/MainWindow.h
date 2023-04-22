@@ -17,8 +17,6 @@ private:
 
     QBuffer m_buffer;
     QByteArray m_data;
-
-    void _q_modelStepChanged(int step);
 };
 
 #endif // CHORUSKIT_MAINWINDOW_H

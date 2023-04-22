@@ -56,6 +56,7 @@ namespace QsApi {
 
     AceTreeItem::~AceTreeItem() {
         Q_D(AceTreeItem);
+
         auto model = d->model;
         if (model && !model->d_func()->is_destruct)
             propagateModel(nullptr);
@@ -116,6 +117,7 @@ namespace QsApi {
         Q_D(AceTreeItem);
         if (!d->allowModify())
             return;
+
         d->setBytes_helper(start, bytes);
     }
 
@@ -123,6 +125,7 @@ namespace QsApi {
         Q_D(AceTreeItem);
         if (!d->allowModify())
             return;
+
         d->truncateBytes_helper(size);
     }
 
@@ -145,6 +148,9 @@ namespace QsApi {
         QVector<AceTreeItem *> validItems;
         validItems.reserve(items.size());
         for (const auto &item : items) {
+            if (!item)
+                continue;
+
             if (!item->isFree()) {
                 qWarning() << "AceTreeItem::insertRows(): item is not free" << item;
                 continue;
@@ -184,7 +190,12 @@ namespace QsApi {
 
     AceTreeItem *AceTreeItem::row(int row) const {
         Q_D(const AceTreeItem);
-        return d->vector.size() > row ? d->vector.at(row) : nullptr;
+        return (row >= 0 && row < d->vector.size()) ? d->vector.at(row) : nullptr;
+    }
+
+    int AceTreeItem::rowIndexOf(QsApi::AceTreeItem *item) const {
+        Q_D(const AceTreeItem);
+        return (item && item->parent() == this) ? d->vector.indexOf(item) : -1;
     }
 
     int AceTreeItem::rowCount() const {
@@ -196,6 +207,9 @@ namespace QsApi {
         Q_D(AceTreeItem);
 
         if (!d->allowModify())
+            return;
+
+        if (!item)
             return;
 
         // Validate
@@ -396,6 +410,8 @@ namespace QsApi {
     }
 
     AceTreeItem *AceTreeModelPrivate::reset_helper() {
+        Q_Q(AceTreeModel);
+
         truncate(0);
 
         auto func = [&](AceTreeItem *item) {
@@ -410,6 +426,8 @@ namespace QsApi {
 
         auto org = rootItem;
         rootItem = nullptr;
+
+        emit q->stepChanged(0);
 
         return org;
     }
@@ -445,11 +463,9 @@ namespace QsApi {
             // Change step in log
             writeCurrentStep(stepIndex);
 
-            if (stream.status() != QDataStream::Ok) {
+            if (stream.status() != QDataStream::Ok || (m_fileDev && (!m_fileDev->flush()))) {
                 q->stopRecord();
                 emit q->recordError();
-            } else if (m_fileDev) {
-                m_fileDev->flush();
             }
         }
 
@@ -1032,11 +1048,9 @@ namespace QsApi {
             serializeOperation(stream, op);
             offsets.begs.append(m_dev->pos());
 
-            if (stream.status() != QDataStream::Ok) {
+            if (stream.status() != QDataStream::Ok || (m_fileDev && (!m_fileDev->flush()))) {
                 q->stopRecord();
                 emit q->recordError();
-            } else if (m_fileDev) {
-                m_fileDev->flush();
             }
         }
 
@@ -1066,12 +1080,9 @@ namespace QsApi {
             qint64 pos = offsets.begs.isEmpty() ? offsets.dataPos : offsets.begs.back();
             m_dev->seek(pos);
 
-            if (stream.status() != QDataStream::Ok) {
+            if (stream.status() != QDataStream::Ok || (m_fileDev && (!m_fileDev->resize(pos) || !m_fileDev->flush()))) {
                 q->stopRecord();
                 emit q->recordError();
-            } else if (m_fileDev) {
-                m_fileDev->resize(pos);
-                m_fileDev->flush();
             }
         }
     }
@@ -1104,7 +1115,7 @@ namespace QsApi {
 
     void AceTreeModel::setCurrentStep(int step) {
         Q_D(AceTreeModel);
-        if (step > d->operations.size() || step == d->stepIndex || d->internalChange)
+        if (step < 0 || step > d->operations.size() || step == d->stepIndex || d->internalChange)
             return;
 
         d->setCurrentStep_helper(step);

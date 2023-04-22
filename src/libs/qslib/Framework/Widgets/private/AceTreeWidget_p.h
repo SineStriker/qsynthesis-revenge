@@ -41,6 +41,8 @@ namespace QsApi {
 
         void _q_rootAboutToChange(AceTreeItem *oldRoot, AceTreeItem *newRoot);
         void _q_rootChanged();
+
+        void _q_itemClickedEx(QTreeWidgetItem *item, int column, Qt::MouseButton button);
     };
 
 }

@@ -9,6 +9,8 @@
 
 namespace QsApi {
 
+    class AceTreeModel;
+
     class AceTreeItemPrivate;
 
     class QSFRAMEWORK_API AceTreeItem {
@@ -16,9 +18,6 @@ namespace QsApi {
     public:
         explicit AceTreeItem(const QString &name);
         virtual ~AceTreeItem();
-
-        friend class AceTreeModel;
-        friend class AceTreeModelPrivate;
 
     public:
         QString name() const;
@@ -47,10 +46,12 @@ namespace QsApi {
         inline void appendRow(AceTreeItem *item);
         inline void appendRows(const QVector<AceTreeItem *> &items);
         inline void insertRow(int index, AceTreeItem *item);
+        inline void removeRow(int index);
         void insertRows(int index, const QVector<AceTreeItem *> &items);
         void moveRows(int index, int count, int dest);
         void removeRows(int index, int count);
         AceTreeItem *row(int row) const;
+        int rowIndexOf(AceTreeItem *item) const;
         int rowCount() const;
 
         // Set
@@ -72,6 +73,9 @@ namespace QsApi {
         AceTreeItem(AceTreeItemPrivate &d, const QString &name);
 
         QScopedPointer<AceTreeItemPrivate> d_ptr;
+
+        friend class AceTreeModel;
+        friend class AceTreeModelPrivate;
     };
 
     class AceTreeModelPrivate;
@@ -83,13 +87,12 @@ namespace QsApi {
         explicit AceTreeModel(QObject *parent = nullptr);
         ~AceTreeModel();
 
-        friend class AceTreeItem;
-        friend class AceTreeItemPrivate;
-
     public:
         int steps() const;
         int currentStep() const;
         void setCurrentStep(int step);
+        inline void nextStep();
+        inline void previousStep();
 
         void startRecord(QIODevice *dev);
         void stopRecord();
@@ -127,6 +130,9 @@ namespace QsApi {
         AceTreeModel(AceTreeModelPrivate &d, QObject *parent = nullptr);
 
         QScopedPointer<AceTreeModelPrivate> d_ptr;
+
+        friend class AceTreeItem;
+        friend class AceTreeItemPrivate;
     };
 
     inline void AceTreeItem::prependRow(AceTreeItem *item) {
@@ -149,9 +155,22 @@ namespace QsApi {
         insertRows(index, {item});
     }
 
+    inline void AceTreeItem::removeRow(int index) {
+        removeRows(index, 1);
+    }
+
     inline void AceTreeItem::insertNode(AceTreeItem *item) {
         addNode(item);
     }
+
+    inline void AceTreeModel::nextStep() {
+        setCurrentStep(currentStep() + 1);
+    }
+
+    inline void AceTreeModel::previousStep() {
+        setCurrentStep(currentStep() - 1);
+    }
+
 }
 
 #endif // ACETREEMODEL_H

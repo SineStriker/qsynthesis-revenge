@@ -1,6 +1,8 @@
 #include "MainWindow.h"
 
 #include <QDebug>
+#include <QMenu>
+#include <QMenuBar>
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
     m_treeWidget = new QsApi::AceTreeWidget();
@@ -12,7 +14,15 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
     m_buffer.open(QIODevice::WriteOnly);
 
     model->startRecord(&m_buffer);
-    connect(model, &QsApi::AceTreeModel::stepChanged, this, &MainWindow::_q_modelStepChanged);
+    connect(model, &QsApi::AceTreeModel::stepChanged, this, [this](int step) {
+        qDebug() << "step" << step;
+        qDebug() << m_data;
+
+        QTreeWidgetItem *root;
+        if ((root = m_treeWidget->topLevelItem(0))) {
+            m_treeWidget->setItemExpandedRecursively(root, true);
+        }
+    });
 
     auto listItem1 = new QsApi::AceTreeItem("Track");
     auto setItem1 = new QsApi::AceTreeItem("Note");
@@ -26,12 +36,27 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
 
     listItem1->setProperty("text", QLatin1String("aaa"));
     setItem1->setProperty("text", QLatin1String("bbb"));
+
+    model->previousStep();
+
+    auto editMenu = new QMenu("Edit(&E)");
+    auto undoAction = editMenu->addAction("Undo");
+    undoAction->setShortcut(QKeySequence::Undo);
+    auto redoAction = editMenu->addAction("Redo");
+    redoAction->setShortcuts({QKeySequence::Redo, QKeySequence("Ctrl+Shift+Z")});
+    menuBar()->addMenu(editMenu);
+
+    connect(undoAction, &QAction::triggered, this, [this] {
+        m_treeWidget->model()->previousStep(); //
+    });
+    connect(redoAction, &QAction::triggered, this, [this] {
+        m_treeWidget->model()->nextStep(); //
+    });
+
+    m_treeWidget->setColumnWidth(0, 300);
+
+    resize(800, 600);
 }
 
 MainWindow::~MainWindow() {
-}
-
-void MainWindow::_q_modelStepChanged(int step) {
-    qDebug() << "step" << step;
-    qDebug() << m_data;
 }
