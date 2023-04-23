@@ -13,7 +13,6 @@
 #include <extensionsystem/pluginspec.h>
 
 #include "AddOn/ScriptMgrAddOn.h"
-#include "JsInternalObject.h"
 #include "ScriptLoader.h"
 
 namespace ScriptMgr {

@@ -1,14 +1,13 @@
-//
-// Created by Crs_1 on 2023/4/16.
-//
-
 #include "JsInternalObject.h"
-#include "AddOn/ScriptMgrAddOn.h"
-#include "CoreApi/IWindow.h"
-#include "JsIntegrationUtils/JsFormDialog.h"
-#include "QMCoreDecoratorV2.h"
+
 #include <QLineEdit>
 #include <QMessageBox>
+
+#include "AddOn/ScriptMgrAddOn.h"
+#include "QMCoreDecoratorV2.h"
+#include "CoreApi/IWindow.h"
+
+#include "JsIntegrationUtils/JsFormDialog.h"
 
 namespace ScriptMgr::Internal {
 

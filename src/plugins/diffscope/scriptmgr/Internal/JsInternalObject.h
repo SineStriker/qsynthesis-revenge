@@ -1,7 +1,3 @@
-//
-// Created by Crs_1 on 2023/4/16.
-//
-
 #ifndef CHORUSKIT_JSINTERNALOBJECT_H
 #define CHORUSKIT_JSINTERNALOBJECT_H
 

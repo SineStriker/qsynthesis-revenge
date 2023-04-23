@@ -1,11 +1,5 @@
-//
-// Created by Crs_1 on 2023/4/17.
-//
-
 #include "JsFormDialog.h"
-#include "CTabButton.h"
-#include "JsInternalObject.h"
-#include "QMEqualBoxLayout.h"
+
 #include <QCheckBox>
 #include <QComboBox>
 #include <QDoubleSpinBox>
@@ -14,6 +8,10 @@
 #include <QMetaMethod>
 #include <QPlainTextEdit>
 #include <QPushButton>
+
+#include "QMEqualBoxLayout.h"
+
+#include "JsInternalObject.h"
 
 #define PARAM_OPTIONAL_IF(prop, type) if(JS_PROP_ASSERT(widgetParams, prop, type)) { auto prop##Prop = JS_PROP_AS(widgetParams, prop, type);
 #define PARAM_OPTIONAL_ELSE } else {
@@ -44,7 +42,6 @@ namespace ScriptMgr::Internal {
             PARAM_REQUIRED(type, String);
             bool successful;
             auto creatorMethodName = QString("create")+typeProp;
-            qDebug() << creatorMethodName;
             if(!QMetaObject::invokeMethod(this, creatorMethodName.toLocal8Bit(), Q_RETURN_ARG(bool, successful), Q_ARG(QVariantMap, widgetParams))) {
                 return false;
             }

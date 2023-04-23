@@ -1,14 +1,9 @@
-//
-// Created by Crs_1 on 2023/4/17.
-//
-
 #ifndef CHORUSKIT_SCRIPTLOADER_H
 #define CHORUSKIT_SCRIPTLOADER_H
 
-#include "AddOn/ScriptMgrAddOn.h"
-#include "Collections/QMChronMap.h"
-#include "Collections/QMChronSet.h"
 #include <QSet>
+
+#include "AddOn/ScriptMgrAddOn.h"
 
 namespace ScriptMgr::Internal {
 

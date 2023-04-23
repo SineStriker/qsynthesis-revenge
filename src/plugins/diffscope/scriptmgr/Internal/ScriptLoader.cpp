@@ -1,10 +1,4 @@
-//
-// Created by Crs_1 on 2023/4/17.
-//
-
 #include "ScriptLoader.h"
-
-#include <utility>
 
 namespace ScriptMgr::Internal {
 

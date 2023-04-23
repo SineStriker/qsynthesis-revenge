@@ -1,12 +1,12 @@
 #ifndef CHORUSKIT_SCRIPTMGRADDON_H
 #define CHORUSKIT_SCRIPTMGRADDON_H
 
-#include "Collections/QMChronMap.h"
-#include "Collections/QMChronSet.h"
+#include <QJSEngine>
+
 #include "CoreApi/ActionItem.h"
 #include "CoreApi/IWindowAddOn.h"
+
 #include "JsInternalObject.h"
-#include <QJSEngine>
 
 namespace ScriptMgr::Internal {
 
