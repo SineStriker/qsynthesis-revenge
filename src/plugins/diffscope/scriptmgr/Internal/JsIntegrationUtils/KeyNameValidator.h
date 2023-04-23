@@ -1,11 +1,8 @@
-//
-// Created by Crs_1 on 2023/4/23.
-//
-
 #ifndef CHORUSKIT_KEYNAMEVALIDATOR_H
 #define CHORUSKIT_KEYNAMEVALIDATOR_H
 
 #include <QIntValidator>
+
 namespace ScriptMgr::Internal {
 
     class KeyNameValidator: public QIntValidator {
@@ -32,6 +29,7 @@ namespace ScriptMgr::Internal {
         static QString toKeyName(int noteNumber, AccidentalType accidentalType = Sharp);
         static int toNoteNumber(const QString &keyName);
     private:
+        friend class KeyNameSpinBox;
         int b;
         int t;
         AccidentalType m_accidentalType;

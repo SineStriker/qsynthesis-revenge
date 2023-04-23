@@ -1,7 +1,3 @@
-//
-// Created by Crs_1 on 2023/4/23.
-//
-
 #include "KeyNameValidator.h"
 
 namespace ScriptMgr::Internal {
@@ -17,7 +13,24 @@ namespace ScriptMgr::Internal {
         return QString("%1 %2").arg(noteName, QString::number(octave));
     }
     int KeyNameValidator::toNoteNumber(const QString &keyName) {
-        return 0; //TODO
+        QRegExp rx("^([A-G])([#b]?) (\\d+)$");
+        if(rx.exactMatch(keyName)) {
+            auto keyChar = rx.cap(1).toUpper();
+            auto currentAcc = rx.cap(2);
+            auto octave = rx.cap(3).toInt();
+            if(octave > 10) return -1;
+            if(octave == 10) {
+                if(keyChar == "A" || keyChar == "B") return -1;
+                if(keyChar == "G" && !currentAcc.isEmpty()) return -1;
+            }
+            auto sharpKeyNames = QStringList({"C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"});
+            auto flatKeyNames = QStringList({"B#", "Db", "D", "Eb", "Fb", "E#", "Gb", "G", "Ab", "A", "Bb", "Cb"});
+            auto keyIndex = sharpKeyNames.indexOf(keyChar + currentAcc);
+            if(keyIndex == -1) keyIndex = flatKeyNames.indexOf(keyChar + currentAcc);
+            if(keyIndex == -1) return -1;
+            return octave * 12 + keyIndex;
+        }
+        return -1;
     }
 
     KeyNameValidator::KeyNameValidator(QObject *parent) : KeyNameValidator(0, 127, Sharp, parent) {
@@ -48,37 +61,48 @@ namespace ScriptMgr::Internal {
             auto keyChar = rx3.cap(1).toUpper();
             auto currentAcc = rx3.cap(2);
             auto octave = rx3.cap(3).toInt();
-            if(!validateAccidental(keyChar, currentAcc, m_accidentalType)) return Invalid;
-            if(octave > 10) return Invalid;
+            if(!validateAccidental(keyChar, currentAcc, m_accidentalType)) return Intermediate;
+            if(octave > 10) return Intermediate;
             if(octave == 10) {
-                if(keyChar == "A" || keyChar == "B") return Invalid;
-                if(keyChar == "G" && !currentAcc.isEmpty()) return Invalid;
+                if(keyChar == "A" || keyChar == "B") return Intermediate;
+                if(keyChar == "G" && currentAcc == "#") return Intermediate;
             }
             return Acceptable;
         } else if(rx2.exactMatch(input)) {
             auto keyChar = rx2.cap(1).toUpper();
             auto currentAcc = rx2.cap(2);
-            if(!validateAccidental(keyChar, currentAcc, m_accidentalType)) return Invalid;
+            if(!validateAccidental(keyChar, currentAcc, m_accidentalType)) return Intermediate;
             return Intermediate;
         } else if(rx1.exactMatch(input)) {
             return Intermediate;
+        } else if(input.isEmpty()) {
+            return Intermediate;
         } else {
-            return Invalid;
+            return Intermediate;
         }
     }
-    static QString convertEnharmonic(const QString &keyChar, const QString &currentAcc, KeyNameValidator::AccidentalType targetAcc) {
+    static QString convertEnharmonic(const QString &keyChar, const QString &currentAcc, int &octave, KeyNameValidator::AccidentalType targetAcc) {
         if(currentAcc.isEmpty()) return keyChar;
         if(currentAcc == "#" && targetAcc == KeyNameValidator::Sharp) {
             if(keyChar == "E") return "F";
-            if(keyChar == "B") return "C";
+            if(keyChar == "B") {
+                octave++;
+                return "C";
+            }
             return keyChar + "#";
         } else if(currentAcc == "b" && targetAcc == KeyNameValidator::Flat) {
             if(keyChar == "F") return "E";
-            if(keyChar == "C") return "B";
+            if(keyChar == "C") {
+                octave--;
+                return "B";
+            }
             return keyChar + "b";
         } else if(currentAcc == "#") {
             if(keyChar == "A") return "Bb";
-            if(keyChar == "B") return "C";
+            if(keyChar == "B") {
+                octave++;
+                return "C";
+            }
             if(keyChar == "C") return "Db";
             if(keyChar == "D") return "Eb";
             if(keyChar == "E") return "F";
@@ -87,32 +111,38 @@ namespace ScriptMgr::Internal {
         } else {
             if(keyChar == "A") return "G#";
             if(keyChar == "B") return "A#";
-            if(keyChar == "C") return "B";
+            if(keyChar == "C") {
+                octave--;
+                return "B";
+            }
             if(keyChar == "D") return "C#";
             if(keyChar == "E") return "D#";
             if(keyChar == "F") return "E";
             if(keyChar == "G") return "F#";
         }
+        return {}; //never
     }
 
     void KeyNameValidator::fixup(QString &input) const {
-        auto inputTrimmed = input.trimmed();
-        QRegExp numberRx("^\\d+$");
-        if(numberRx.exactMatch(inputTrimmed)) {
-            input = toKeyName(inputTrimmed.toInt(), m_accidentalType);
-            return;
-        }
-        QRegExp keyNameRx("^([A-Ga-g])([#b]?)\\s*(\\d+)$");
-        if(keyNameRx.exactMatch(inputTrimmed)) {
+        if(input.isEmpty()) return;
+        QRegExp keyNameRx("^([A-Ga-g])([#b]?)\\s*(\\d*)$");
+        if(keyNameRx.exactMatch(input)) {
             auto keyChar = keyNameRx.cap(1).toUpper();
             auto currentAcc = keyNameRx.cap(2);
             auto octave = keyNameRx.cap(3).toInt();
             octave = std::min(octave, 10);
             if(octave == 10) {
                 if(keyChar == "A" || keyChar == "B") keyChar = "G";
-                if(keyChar == "G" && !currentAcc.isEmpty()) currentAcc.clear();
+                if(keyChar == "G" && currentAcc == "#" ) {
+                    currentAcc.clear();
+                }
             }
-            input = QString("%1 %2").arg(convertEnharmonic(keyChar, currentAcc, m_accidentalType), QString::number(octave));
+            auto convertedKeyName = convertEnharmonic(keyChar, currentAcc, octave, m_accidentalType);
+            if(octave < 0) {
+                input = "C 0";
+                return;
+            }
+            input = QString("%1 %2").arg(convertedKeyName, QString::number(octave));
             return;
         }
     }
