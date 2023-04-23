@@ -5,36 +5,40 @@
 
 #include "QsFrameworkGlobal.h"
 
-class QSFRAMEWORK_API NoneScrollArea : public QFrame {
-    Q_OBJECT
-public:
-    explicit NoneScrollArea(QWidget *parent = nullptr);
-    virtual ~NoneScrollArea();
+namespace QsApi {
 
-public:
-    void setWidget(QWidget *widget);
-    QWidget *widget() const;
-    QWidget *takeWidget();
+    class QSFRAMEWORK_API NoneScrollArea : public QFrame {
+        Q_OBJECT
+    public:
+        explicit NoneScrollArea(QWidget *parent = nullptr);
+        ~NoneScrollArea();
 
-    void setPercentageX(double value);
-    void setPercentageY(double value);
+    public:
+        void setWidget(QWidget *widget);
+        QWidget *widget() const;
+        QWidget *takeWidget();
 
-    double percentageX();
-    double percentageY();
+        void setPercentageX(double value);
+        void setPercentageY(double value);
 
-    void setValueX(int value);
-    int valueX() const;
+        double percentageX();
+        double percentageY();
 
-    void setValueY(int value);
-    int valueY() const;
+        void setValueX(int value);
+        int valueX() const;
 
-protected:
-    QWidget *m_widget;
+        void setValueY(int value);
+        int valueY() const;
 
-    void resizeEvent(QResizeEvent *event) override;
+    protected:
+        QWidget *m_widget;
 
-signals:
-    void resized(QResizeEvent *);
-};
+        void resizeEvent(QResizeEvent *event) override;
+
+    signals:
+        void resized(const QSize &oldSize, const QSize &size);
+    };
+
+}
 
 #endif // NONESCROLLAREA_H

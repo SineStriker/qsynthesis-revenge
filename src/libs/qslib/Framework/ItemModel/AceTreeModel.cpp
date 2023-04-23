@@ -438,6 +438,7 @@ namespace QsApi {
     // Model
     AceTreeModelPrivate::AceTreeModelPrivate() {
         m_dev = nullptr;
+        m_fileDev = nullptr;
         is_destruct = false;
         maxIndex = 1;
         rootItem = nullptr;
@@ -1086,9 +1087,18 @@ namespace QsApi {
                 auto item = model->itemFromIndex(op->id);
                 if (!item)
                     goto obsolete;
-                if (undo)
-                    item->d_func()->moveRows_helper(op->dest - op->count, op->count, op->index);
-                else
+                if (undo) {
+                    int r_index;
+                    int r_dest;
+                    if (op->dest > op->index) {
+                        r_index = op->dest - op->count;
+                        r_dest = op->index;
+                    } else {
+                        r_index = op->dest;
+                        r_dest = op->index + op->count;
+                    }
+                    item->d_func()->moveRows_helper(r_index, op->count, r_dest);
+                } else
                     item->d_func()->moveRows_helper(op->index, op->count, op->dest);
                 break;
             }

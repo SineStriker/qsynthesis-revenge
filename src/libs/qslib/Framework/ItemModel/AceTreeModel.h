@@ -49,7 +49,8 @@ namespace QsApi {
         inline void insertRow(int index, AceTreeItem *item);
         inline void removeRow(int index);
         void insertRows(int index, const QVector<AceTreeItem *> &items);
-        void moveRows(int index, int count, int dest);
+        void moveRows(int index, int count, int dest);         // `dest`: destination index before move
+        inline void moveRows2(int index, int count, int dest); // `dest`: destination index after move
         void removeRows(int index, int count);
         AceTreeItem *row(int row) const;
         int rowIndexOf(AceTreeItem *item) const;
@@ -156,6 +157,10 @@ namespace QsApi {
 
     inline void AceTreeItem::insertRow(int index, AceTreeItem *item) {
         insertRows(index, {item});
+    }
+
+    inline void AceTreeItem::moveRows2(int index, int count, int dest) {
+        return moveRows(index, count, (dest <= index) ? dest : (dest + count));
     }
 
     inline void AceTreeItem::removeRow(int index) {
