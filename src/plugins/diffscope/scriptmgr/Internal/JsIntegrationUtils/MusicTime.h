@@ -3,16 +3,17 @@
 
 #include <QList>
 #include <QPair>
-#include <QScopedPointer>
+#include <QSharedData>
+
 namespace ScriptMgr::Internal {
 
     class MusicTimePrivate;
 
     class MusicTime {
-        Q_DECLARE_PRIVATE(MusicTime)
     public:
+        MusicTime();
+        ~MusicTime();
 
-        explicit MusicTime();
         MusicTime(double quartersPerBar, int tpqn, int measure, int beat, int tick);
         MusicTime(const QList<QPair<int, double>> &timeSignatures, int tpqn, int measure, int beat, int tick);
         MusicTime(const QList<QPair<int, double>> &timeSignatures, int tpqn, const QString &str);
@@ -37,7 +38,11 @@ namespace ScriptMgr::Internal {
         int tick() const;
         int totalTick() const;
 
-        inline int ticksTo(const MusicTime &t) const { if(!isValid() || !t.isValid()) return 0; return t.totalTick() - totalTick(); }
+        inline int ticksTo(const MusicTime &t) const {
+            if (!isValid() || !t.isValid())
+                return 0;
+            return t.totalTick() - totalTick();
+        }
 
         bool isValid() const;
         void fixToValid();
@@ -46,17 +51,39 @@ namespace ScriptMgr::Internal {
         QString toString() const;
         void fromString(const QString &str);
 
-        inline bool operator!=(const MusicTime &t) const { if(!isValid() || !t.isValid()) return true; return totalTick() != t.totalTick(); }
-        inline bool operator<(const MusicTime &t) const { if(!isValid() || !t.isValid()) return false; return totalTick() < t.totalTick(); }
-        inline bool operator<=(const MusicTime &t) const { if(!isValid() || !t.isValid()) return false; return totalTick() <= t.totalTick(); }
-        inline bool operator==(const MusicTime &t) const { if(!isValid() || !t.isValid()) return false; return totalTick() == t.totalTick(); }
-        inline bool operator>(const MusicTime &t) const { if(!isValid() || !t.isValid()) return false; return totalTick() > t.totalTick(); }
-        inline bool operator>=(const MusicTime &t) const { if(!isValid() || !t.isValid()) return false; return totalTick() >= t.totalTick(); }
+        inline bool operator!=(const MusicTime &t) const {
+            if (!isValid() || !t.isValid())
+                return true;
+            return totalTick() != t.totalTick();
+        }
+        inline bool operator<(const MusicTime &t) const {
+            if (!isValid() || !t.isValid())
+                return false;
+            return totalTick() < t.totalTick();
+        }
+        inline bool operator<=(const MusicTime &t) const {
+            if (!isValid() || !t.isValid())
+                return false;
+            return totalTick() <= t.totalTick();
+        }
+        inline bool operator==(const MusicTime &t) const {
+            if (!isValid() || !t.isValid())
+                return false;
+            return totalTick() == t.totalTick();
+        }
+        inline bool operator>(const MusicTime &t) const {
+            if (!isValid() || !t.isValid())
+                return false;
+            return totalTick() > t.totalTick();
+        }
+        inline bool operator>=(const MusicTime &t) const {
+            if (!isValid() || !t.isValid())
+                return false;
+            return totalTick() >= t.totalTick();
+        }
 
     private:
-        QScopedPointer<MusicTimePrivate> d_ptr;
-        explicit MusicTime(MusicTimePrivate *d);
-
+        QSharedDataPointer<MusicTimePrivate> d;
     };
 
 } // Internal

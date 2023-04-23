@@ -11,15 +11,17 @@
 
 namespace ScriptMgr::Internal {
 
-    class MusicTimePrivate {
-        Q_DECLARE_PUBLIC(MusicTime)
+    class MusicTimePrivate : public QSharedData {
     public:
-        MusicTime *q_ptr;
         QMap<int, double> timeSig;
         int tpqn;
         int measure;
         int beat;
         int tick;
+
+        MusicTimePrivate() : tpqn(480), measure(0), beat(-1), tick(-1) {
+            timeSig.insert(-std::numeric_limits<int>::lowest(), 4);
+        }
     };
 
 }

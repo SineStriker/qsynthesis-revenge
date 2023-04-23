@@ -146,7 +146,7 @@ namespace QsApi {
 
     bool AceTreeItem::isWritable() const {
         Q_D(const AceTreeItem);
-        return d->model ? d->model->isWritable() : !isObsolete();
+        return d->model ? d->model->isWritable() : (d->m_index == 0);
     }
 
     QVariant AceTreeItem::property(const QString &key) const {
@@ -569,7 +569,10 @@ namespace QsApi {
             properties.insert(key, value);
         } else {
             oldValue = it.value();
-            it.value() = value;
+            if (value.isNull() || !value.isValid())
+                properties.erase(it);
+            else
+                it.value() = value;
         }
 
         // Propagate signal
@@ -1243,6 +1246,9 @@ namespace QsApi {
 
             d->offsets.begs.append(dev->pos());
         }
+
+        if (d->m_fileDev)
+            d->m_fileDev->flush();
     }
 
     void AceTreeModel::stopRecord() {
