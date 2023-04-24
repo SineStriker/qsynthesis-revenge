@@ -173,6 +173,8 @@ namespace ScriptMgr {
             //TODO load user scripts
         }
 
+        static QSet<QString> registeredBuiltInActions;
+
         void ScriptMgrAddOn::registerScript(const QString &id, int role, const QString &shortcut) {
             if(builtInScriptInitialized) {
                 auto action = new QAction;
@@ -185,9 +187,14 @@ namespace ScriptMgr {
                 });
                 userScriptIdRegistry.append(id);
             } else {
-                auto actionSpec = new ActionSpec("scriptmgr." + id);
-                actionSpec->setShortcuts({shortcut});
-                ICore::instance()->actionSystem()->addAction(actionSpec);
+                if(!registeredBuiltInActions.contains(id)){
+                    registeredBuiltInActions.insert(id);
+                    auto actionSpec = new ActionSpec("scriptmgr." + id);
+                    actionSpec->setShortcuts({shortcut});
+                    ICore::instance()->actionSystem()->addAction(actionSpec);
+                    auto ctxActionItem = ICore::instance()->actionSystem()->context("home.MainMenu")->addAction("scriptmgr." + id, false); //TODO change to project
+                    ctxActionItem.setRules({ActionInsertRule("scriptmgr.BuiltInScripts", ActionInsertRule::Append)});
+                }
                 auto actionItem = new ActionItem("scriptmgr." + id, new QAction, this);
                 connect(this, &ScriptMgrAddOn::handleJsReloadStrings, this, [=](){
                     actionItem->setText(getName(id));
@@ -195,8 +202,6 @@ namespace ScriptMgr {
                 connect(actionItem->action(), &QAction::triggered, this, [=](){
                     invoke(id);
                 });
-                auto ctxActionItem = ICore::instance()->actionSystem()->context("home.MainMenu")->addAction("scriptmgr." + id, false); //TODO change to project
-                ctxActionItem.setRules({ActionInsertRule("scriptmgr.BuiltInScripts", ActionInsertRule::Append)});
                 windowHandle()->addActionItem(actionItem);
             }
         }
@@ -223,19 +228,27 @@ namespace ScriptMgr {
                 }
                 userScriptIdRegistry.append(id);
             } else {
-                ICore::instance()->actionSystem()->addAction(new ActionSpec("scriptmgr." + id));
+                if(!registeredBuiltInActions.contains(id)) {
+                    registeredBuiltInActions.insert(id);
+                    ICore::instance()->actionSystem()->addAction(new ActionSpec("scriptmgr." + id));
+                    auto ctxActionItem = ICore::instance()->actionSystem()->context("home.MainMenu")->addAction("scriptmgr." + id, true); //TODO change to project
+                    ctxActionItem.setRules({ActionInsertRule("scriptmgr.BuiltInScripts", ActionInsertRule::Append)});
+                    for(int i = 0; i < children.length(); i++) {
+                        const auto childId = "scriptmgr." + id + "." + children[i];
+                        auto childActionSpec = new ActionSpec(childId);
+                        childActionSpec->setShortcuts({childrenShortcuts[i]});
+                        ICore::instance()->actionSystem()->addAction(childActionSpec);
+                        auto childCtxActionItem = ICore::instance()->actionSystem()->context("home.MainMenu")->addAction(childId, false); //TODO change to project
+                        childCtxActionItem.setRules({ActionInsertRule("scriptmgr." + id, ActionInsertRule::Append)});
+                    }
+                }
                 auto actionItem = new ActionItem("scriptmgr." + id, ICore::createCoreMenu(windowHandle()->window()), this);
                 connect(this, &ScriptMgrAddOn::handleJsReloadStrings, this, [=](){
                     actionItem->setText(getName(id));
                 });
-                auto ctxActionItem = ICore::instance()->actionSystem()->context("home.MainMenu")->addAction("scriptmgr." + id, true); //TODO change to project
-                ctxActionItem.setRules({ActionInsertRule("scriptmgr.BuiltInScripts", ActionInsertRule::Append)});
                 windowHandle()->addActionItem(actionItem);
                 for(int i = 0; i < children.length(); i++) {
                     const auto childId = "scriptmgr." + id + "." + children[i];
-                    auto childActionSpec = new ActionSpec(childId);
-                    childActionSpec->setShortcuts({childrenShortcuts[i]});
-                    ICore::instance()->actionSystem()->addAction(childActionSpec);
                     auto childActionItem = new ActionItem(childId, new QAction, this);
                     connect(this, &ScriptMgrAddOn::handleJsReloadStrings, this, [=](){
                         childActionItem->setText(getName(id, i));
@@ -243,8 +256,6 @@ namespace ScriptMgr {
                     connect(childActionItem->action(), &QAction::triggered, this, [=](){
                         invoke(id, i);
                     });
-                    auto childCtxActionItem = ICore::instance()->actionSystem()->context("home.MainMenu")->addAction(childId, false); //TODO change to project
-                    childCtxActionItem.setRules({ActionInsertRule("scriptmgr." + id, ActionInsertRule::Append)});
                     windowHandle()->addActionItem(childActionItem);
                 }
             }
