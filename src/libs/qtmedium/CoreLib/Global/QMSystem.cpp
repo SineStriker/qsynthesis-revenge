@@ -156,7 +156,7 @@ int QMFs::rmPreNum(const QString &dirname, int prefix) {
 QString QMFs::removeTailSlashes(const QString &dirname) {
     QString path = dirname;
     while (!path.isEmpty() && (path.endsWith('/') || path.endsWith('\\'))) {
-        path = path.mid(0, path.size() - 1);
+        path.chop(1);
     }
     return path;
 }

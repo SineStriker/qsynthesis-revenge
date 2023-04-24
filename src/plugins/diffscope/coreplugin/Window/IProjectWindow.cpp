@@ -2,6 +2,7 @@
 #include "IProjectWindow_p.h"
 
 #include <QDebug>
+#include <QEvent>
 
 #include <QMDecoratorV2.h>
 
@@ -13,6 +14,8 @@ namespace Core {
     }
 
     void IProjectWindowPrivate::init() {
+        Q_Q(IProjectWindow);
+        m_doc = new DspxDocument(q);
     }
 
     void IProjectWindowPrivate::reloadStrings() {
@@ -21,6 +24,17 @@ namespace Core {
     void IProjectWindowPrivate::reloadMenuBar() {
         Q_Q(IProjectWindow);
         mainMenuCtx->buildMenuBarWithState(q->actionItems(), q->menuBar());
+    }
+
+    void IProjectWindowPrivate::_q_documentChanged() {
+        Q_Q(IProjectWindow);
+        q->setWindowModified(m_doc->isModified());
+        q->setWindowTitle(m_doc->displayName());
+    }
+
+    DspxDocument *IProjectWindow::doc() const {
+        Q_D(const IProjectWindow);
+        return d->m_doc;
     }
 
     IProjectWindow::IProjectWindow(QObject *parent) : IProjectWindow(*new IProjectWindowPrivate(), parent) {
@@ -37,6 +51,10 @@ namespace Core {
         win->setAcceptDrops(true);
 
         d->mainMenuCtx = ICore::instance()->actionSystem()->context("project.MainMenu");
+
+        // Close event
+        connect(d->m_doc, &IDocument::changed, d, &IProjectWindowPrivate::_q_documentChanged);
+        connect(d->m_doc, &IDocument::closeRequested, win, &QWidget::close);
     }
 
     void IProjectWindow::windowAddOnsFinished() {
@@ -49,6 +67,20 @@ namespace Core {
 
         qIDec->installLocale(this, _LOC(IProjectWindowPrivate, d));
         qIDec->installTheme(win, "core.ProjectWindow");
+    }
+
+    bool IProjectWindow::eventFilter(QObject *obj, QEvent *event) {
+        if (obj == window()) {
+            switch (event->type()) {
+                case QEvent::Close: {
+                    qDebug() << "close";
+                    break;
+                }
+                default:
+                    break;
+            }
+        }
+        return QObject::eventFilter(obj, event);
     }
 
     IProjectWindow::IProjectWindow(IProjectWindowPrivate &d, QObject *parent)

@@ -21,6 +21,7 @@ namespace Core {
         bool open(const QString &filename) override;
         bool save(const QString &filename) override;
 
+        QString defaultPath() const override;
         QString suggestedFileName() const override;
         bool isModified() const override;
         ReloadBehavior reloadBehavior(ChangeTrigger state, ChangeType type) const override;

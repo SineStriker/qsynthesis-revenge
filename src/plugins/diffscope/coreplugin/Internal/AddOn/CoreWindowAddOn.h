@@ -2,6 +2,7 @@
 #define CHORUSKIT_COREWINDOWADDON_H
 
 #include <CoreApi/ActionItem.h>
+#include <CoreApi/DocumentSpec.h>
 #include <CoreApi/IWindowAddOn.h>
 
 namespace Core {
@@ -22,6 +23,9 @@ namespace Core {
             void initActions();
 
         protected:
+            DocumentSpec *getSpec() const;
+
+        protected:
             ActionItem *fileItem;
             ActionItem *helpItem;
 
@@ -36,6 +40,9 @@ namespace Core {
             ActionItem *aboutPluginsItem;
             ActionItem *aboutAppItem;
             ActionItem *aboutQtItem;
+
+        protected slots:
+            void openFile(const QString &path);
         };
 
     }

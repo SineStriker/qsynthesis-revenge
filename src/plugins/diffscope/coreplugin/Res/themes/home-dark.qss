@@ -151,16 +151,18 @@ Core--HomeRecentTopFrame>QLineEdit#search-box:focus {
 
 /* FileListWidget */
 
-QFrame#home-recent-list-container {
+Core--HomeRecentBottomFrame {
     padding: 20px;
     background-color: transparent;
+    qproperty-fileIcon: url(":/images/dspx.png");
+    qproperty-iconSize: 40px 40px;
 }
 
-QFrame#home-recent-list-container>QLabel {
+Core--HomeRecentBottomFrame>QLabel {
     color: #CCCCCC;
 }
 
-QFrame#home-recent-list-container>FileListWidget {
+Core--HomeRecentBottomFrame>QsApi--FileListWidget {
     border: none;
     background-color: transparent;
     qproperty-styleData: qvariants(/* styleData */

@@ -24,6 +24,7 @@ namespace Core {
     }
 
     void DocumentWatcherPrivate::init() {
+        qApp->installEventFilter(this);
     }
 
     QFileSystemWatcher *DocumentWatcherPrivate::fileWatcher() {
@@ -61,12 +62,13 @@ namespace Core {
                 d->m_states.insert(fileName, FileState());
 
             auto watcher = isLink ? linkWatcher() : fileWatcher();
-            if (!watcher->files().contains(fileName))
-                watcher->addPath(fileName);
+            // if (!watcher->files().contains(fileName))
+            watcher->addPath(fileName);
 
             d->m_states[fileName].lastUpdatedState.insert(document, state);
+
+            d->m_documentsWithWatch[document].append(fileName); // inserts a new QStringList if not already there
         }
-        d->m_documentsWithWatch[document].append(fileName); // inserts a new QStringList if not already there
     }
 
     /* Adds the IDocument's file, and possibly it's final link target to both m_states
@@ -74,6 +76,10 @@ namespace Core {
        and adds a file watcher for each if not already done.
        (The added file names are guaranteed to be absolute and cleaned.) */
     void DocumentWatcherPrivate::addFileInfo(IDocument *document) {
+        // Patch: skip if not exist, until the instance has been set a valid path
+        if (!QMFs::isFileExist(document->filePath()))
+            return;
+
         const QString fixedName = DocumentWatcher::fixFileName(document->filePath(), DocumentWatcher::KeepLinks);
         const QString fixedResolvedName =
             DocumentWatcher::fixFileName(document->filePath(), DocumentWatcher::ResolveLinks);
@@ -115,6 +121,14 @@ namespace Core {
             d->m_states[fileName].expected.modified = fi.lastModified();
             d->m_states[fileName].expected.permissions = fi.permissions();
         }
+    }
+
+    bool DocumentWatcherPrivate::eventFilter(QObject *obj, QEvent *event) {
+        if (obj == qApp && event->type() == QEvent::ApplicationActivate) {
+            // activeWindow is not necessarily set yet, do checkForReload asynchronously
+            QTimer::singleShot(0, this, &DocumentWatcherPrivate::checkForReload);
+        }
+        return QObject::eventFilter(obj, event);
     }
 
     void DocumentWatcherPrivate::documentDestroyed(QObject *obj) {
@@ -341,7 +355,8 @@ namespace Core {
                                 unhandled = false;
                                 break;
                             case PromptHandler::FileDeletedSaveAs: {
-                                const QString &saveFileName = q->getSaveAsFileName(document, document->dialogParent());
+                                const QString &saveFileName =
+                                    q->getSaveAsFileName(document, {}, document->dialogParent());
                                 if (!saveFileName.isEmpty()) {
                                     documentsToSave.insert(document, saveFileName);
                                     unhandled = false;
@@ -358,11 +373,11 @@ namespace Core {
                 }
             }
             if (!success) {
-                QMessageBox::critical(
-                    document->dialogParent(), QApplication::translate("Core::DocumentWatcher", "File Error"),
-                    errorString.isEmpty() ? QApplication::translate("Core::DocumentWatcher", "Cannot reload %1")
-                                                .arg(QDir::toNativeSeparators(document->filePath()))
-                                          : errorString);
+                // QMessageBox::critical(
+                //     document->dialogParent(), QApplication::translate("Core::DocumentWatcher", "File Error"),
+                //     errorString.isEmpty() ? QApplication::translate("Core::DocumentWatcher", "Cannot reload %1")
+                //                                 .arg(QDir::toNativeSeparators(document->filePath()))
+                //                           : errorString);
             }
 
             d->m_blockedIDocument = nullptr;
@@ -564,6 +579,10 @@ namespace Core {
     }
 
     bool DocumentWatcher::saveDocument(IDocument *document, const QString &fileName, bool *isReadOnly) {
+        Q_D(DocumentWatcher);
+        // if (!d->m_documentsWithWatch.contains(document) && !d->m_documentsWithoutWatch.contains(document))
+        // return false;
+
         bool ret = true;
         QString effName = fileName.isEmpty() ? document->filePath() : fileName;
         expectFileChange(effName);                  // This only matters to other IDocuments which refer to this file
@@ -579,16 +598,17 @@ namespace Core {
                 }
                 *isReadOnly = false;
             }
-            QMessageBox::critical(document->dialogParent(),
-                                  QApplication::translate("Core::DocumentWatcher", "File Error"),
-                                  QApplication::translate("Core::DocumentWatcher", "Error while saving file: %1")
-                                      .arg(document->errorMessage()));
+            // QMessageBox::critical(document->dialogParent(),
+            //                       QApplication::translate("Core::DocumentWatcher", "File Error"),
+            //                       QApplication::translate("Core::DocumentWatcher", "Error while saving file: %1")
+            //                           .arg(document->errorMessage()));
         out:
             ret = false;
         }
 
         addDocument(document, addWatcher);
         unexpectFileChange(effName);
+
         return ret;
     }
 
@@ -614,9 +634,9 @@ namespace Core {
         return s;
     }
 
-    QString DocumentWatcher::getSaveAsFileName(const IDocument *document, QWidget *parent) {
+    QString DocumentWatcher::getSaveAsFileName(const IDocument *document, const QString &path, QWidget *parent) const {
         return QFileDialog::getSaveFileName(
-            parent, QCoreApplication::translate("Core::DocumentWatcher", "Save As File"), {},
+            parent, QCoreApplication::translate("Core::DocumentWatcher", "Save As File"), path,
             QString("%1(%2)").arg(QApplication::translate("Core::PromptHandler", "All Files"), QMOs::allFilesFilter()));
     }
 

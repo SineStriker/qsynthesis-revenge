@@ -32,7 +32,7 @@ namespace Core {
         virtual bool save(const QString &filename) = 0;
 
         QString errorMessage() const;
-        void setErrorMessage(const QString &message);
+        void setErrorMessage(const QString &message) const;
 
         QString filePath() const;
         virtual void setFilePath(const QString &path);

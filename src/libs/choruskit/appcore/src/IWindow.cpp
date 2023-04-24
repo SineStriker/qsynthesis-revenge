@@ -62,7 +62,7 @@ namespace Core {
 
         q->setWindow(w);
 
-        auto filter = new WindowCloseFilter(q->window());
+        auto filter = new WindowCloseFilter(this, q->window());
         connect(filter, &WindowCloseFilter::windowClosed, this, &IWindowPrivate::_q_windowClosed);
 
         // Setup window
@@ -208,6 +208,35 @@ namespace Core {
     }
 
     void IWindow::reloadActions() {
+    }
+
+    bool IWindow::hasDragFileHandler(const QString &suffix) {
+        Q_D(const IWindow);
+        if (suffix.isEmpty())
+            return false;
+        return d->dragFileHandlerMap.contains(suffix.toLower());
+    }
+
+    void IWindow::setDragFileHandler(const QString &suffix, QObject *obj, const char *member, int maxCount) {
+        Q_D(IWindow);
+
+        if (suffix.isEmpty())
+            return;
+
+        if (!obj || maxCount < 0) {
+            removeDragFileHandler(suffix);
+            return;
+        }
+        d->dragFileHandlerMap[suffix.toLower()] = {obj, member, maxCount};
+    }
+
+    void IWindow::removeDragFileHandler(const QString &suffix) {
+        Q_D(IWindow);
+
+        if (suffix.isEmpty())
+            return;
+
+        d->dragFileHandlerMap.remove(suffix.toLower());
     }
 
     IWindow::IWindow(const QString &id, QObject *parent) : IWindow(*new IWindowPrivate(), id, parent) {

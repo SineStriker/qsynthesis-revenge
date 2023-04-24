@@ -27,6 +27,7 @@ namespace Core {
 
         // recent files
         void addRecentFile(const QString &fileName);
+        void removeRecentFile(const QString &fileName);
         void clearRecentFiles();
         QStringList recentFiles() const;
 
@@ -36,6 +37,8 @@ namespace Core {
         QStringList recentDirs() const;
 
         bool openFileBrowse(DocumentSpec *spec, const QString &path = {}, QWidget *parent = nullptr) const;
+
+        bool saveFileBrowse(IDocument *doc, const QString &path = {}, QWidget *parent = nullptr) const;
 
     public:
         QString getOpenFileName(QWidget *parent, const QString &title, const QString &filters, const QString &path = {},
@@ -50,7 +53,7 @@ namespace Core {
                                 const QString &filter = QString(), QString *selectedFilter = nullptr) const;
 
     protected:
-        QString getSaveAsFileName(const IDocument *document, QWidget *parent) override;
+        QString getSaveAsFileName(const IDocument *document, const QString &path, QWidget *parent) const override;
 
     signals:
         void recentFilesChanged();

@@ -19,16 +19,16 @@ QTypeFace::~QTypeFace() {
 }
 
 void QTypeFace::init() {
+    m_defaultFont = true;
     m_font = QApplication::font();
 }
 
 QStringList QTypeFace::toStringList() const {
-    return {MetaFunctionName(),
-            QString("%1,%2%3,%4")
-                .arg(m_color.name(),
-                     (m_font.pixelSize() > 0) ? QString::number(m_font.pixelSize())
-                                              : QString::number(m_font.pointSizeF()),
-                     QLatin1String(PixelSizeUnit), m_font.toString())};
+    return {MetaFunctionName(), QString("%1,%2%3,%4")
+                                    .arg(m_color.name(),
+                                         (m_font.pixelSize() > 0) ? QString::number(m_font.pixelSize())
+                                                                  : QString::number(m_font.pointSizeF()),
+                                         QLatin1String(PixelSizeUnit), m_font.toString())};
 }
 
 QFont QTypeFace::font() const {
@@ -37,6 +37,11 @@ QFont QTypeFace::font() const {
 
 void QTypeFace::setFont(const QFont &font) {
     m_font = font;
+    m_defaultFont = false;
+}
+
+bool QTypeFace::isDefaultFont() const {
+    return m_defaultFont;
 }
 
 double QTypeFace::widthF() const {
@@ -56,8 +61,7 @@ void QTypeFace::setColor(const QColor &color) {
 }
 
 QTypeFace QTypeFace::fromStringList(const QStringList &stringList) {
-    if (stringList.size() == 2 &&
-        !stringList.front().compare(MetaFunctionName(), Qt::CaseInsensitive)) {
+    if (stringList.size() == 2 && !stringList.front().compare(MetaFunctionName(), Qt::CaseInsensitive)) {
         QStringList content = SplitStringByComma(stringList.back());
         for (auto it = content.begin(); it != content.end(); ++it) {
             *it = it->simplified();

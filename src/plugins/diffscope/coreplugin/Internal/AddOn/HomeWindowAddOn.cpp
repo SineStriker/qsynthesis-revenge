@@ -38,7 +38,7 @@ namespace Core {
 
             initActions();
 
-            auto iWin = qobject_cast<IHomeWindow *>(this->windowHandle());
+            auto iWin = windowHandle()->cast<IHomeWindow>();
 
             // Add recent widget
             auto recentWidget = new HomeRecentWidget();
@@ -48,6 +48,9 @@ namespace Core {
             connect(recentTopWidget, &HomeRecentTopFrame::newRequested, this, &HomeWindowAddOn::_q_newButtonClicked);
             connect(recentTopWidget, &HomeRecentTopFrame::openRequested, this, &HomeWindowAddOn::_q_openButtonClicked);
 
+            auto recentBottomWidget = recentWidget->bottomWidget;
+            connect(recentBottomWidget, &HomeRecentBottomFrame::openFileRequested, this, &HomeWindowAddOn::_q_openFileRequested);
+
             qIDec->installLocale(this, _LOC(HomeWindowAddOn, this));
 
             // Extension Point: add buttons to recent widget
@@ -56,7 +59,7 @@ namespace Core {
         }
 
         void HomeWindowAddOn::extensionsInitialized() {
-            auto iWin = qobject_cast<IHomeWindow *>(this->windowHandle());
+            auto iWin = windowHandle()->cast<IHomeWindow>();
 
             iWin->removeWidget("core.recentWidget.buttonBar");
             iWin->removeObjects("core.recentWidget.buttonBarInterface");
@@ -77,6 +80,10 @@ namespace Core {
 
         void HomeWindowAddOn::_q_openButtonClicked() {
             openFileItem->action()->trigger();
+        }
+
+        void HomeWindowAddOn::_q_openFileRequested(const QString &fileName) {
+            openFile(fileName);
         }
 
     }

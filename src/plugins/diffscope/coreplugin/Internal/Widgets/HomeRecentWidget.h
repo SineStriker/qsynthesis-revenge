@@ -4,6 +4,7 @@
 #include <QButtonGroup>
 #include <QFrame>
 #include <QHash>
+#include <QLabel>
 #include <QLineEdit>
 #include <QSplitter>
 #include <QVBoxLayout>
@@ -41,6 +42,7 @@ namespace Core {
     signals:
         void newRequested();
         void openRequested();
+        void textChanged(const QString &text);
 
     private:
         CTabButton *newButton;
@@ -52,8 +54,46 @@ namespace Core {
 
         // Interfaces
         HomeRecentTopButtonBar *m_buttonBar;
+    };
 
-        friend class HomeRecentWidget;
+    /**
+     * @brief Recent widget bottom frame
+     */
+
+    class HomeRecentBottomFrame : public QFrame {
+        Q_OBJECT
+        Q_LAYOUT_PROPERTY_DELCARE
+        Q_PROPERTY(QIcon fileIcon READ fileIcon WRITE setFileIcon NOTIFY iconChanged)
+        Q_PROPERTY(QSize iconSize READ iconSize WRITE setIconSize NOTIFY iconChanged)
+    public:
+        explicit HomeRecentBottomFrame(QWidget *parent = nullptr);
+        ~HomeRecentBottomFrame();
+
+    public:
+        void reloadStrings();
+        void reloadRecentFiles();
+
+        QIcon fileIcon() const;
+        void setFileIcon(const QIcon &icon);
+
+        QSize iconSize() const;
+        void setIconSize(const QSize &iconSize);
+
+    signals:
+        void iconChanged();
+        void openFileRequested(const QString &fileName);
+
+    private:
+        QVBoxLayout *bottomLayout;
+        QsApi::FileListWidget *fileWidget;
+        QLabel *emptyLabel;
+
+        QIcon m_fileIcon;
+        QSize m_iconSize;
+
+    private:
+        void _q_recentFilesChanged();
+        void _q_itemClickedEx(const QModelIndex &index, int button);
     };
 
     /**
@@ -68,9 +108,7 @@ namespace Core {
         void reloadStrings();
 
         HomeRecentTopFrame *topWidget;
-        LinearScrollArea *bottomWidget;
-
-        QsApi::FileListWidget *fileWidget;
+        HomeRecentBottomFrame *bottomWidget;
 
     private:
         void _q_searchTextChanged(const QString &text);

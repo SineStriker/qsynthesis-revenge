@@ -37,6 +37,13 @@ namespace Core {
 
         QHash<QString, QWidget *> widgetMap;
 
+        struct DragFileHandler {
+            QObject *obj;
+            const char *member;
+            int max;
+        };
+        QHash<QString, DragFileHandler> dragFileHandlerMap;
+
         void initAllAddOns();
         void deleteAllAddOns();
 

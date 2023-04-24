@@ -20,6 +20,8 @@ private:
 public:
     QStringList toStringList() const;
 
+    bool isDefaultFont() const;
+
     QFont font() const;
     void setFont(const QFont &font);
 
@@ -30,6 +32,7 @@ public:
     void setColor(const QColor &color);
 
 private:
+    bool m_defaultFont;
     QFont m_font;
     QColor m_color;
 

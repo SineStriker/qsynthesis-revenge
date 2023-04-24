@@ -1,8 +1,10 @@
 #include "DspxSpec.h"
 
 #include "ICore.h"
+#include "Window/IProjectWindow.h"
 
 #include <QDebug>
+#include <QMessageBox>
 
 namespace Core::Internal {
 
@@ -21,11 +23,16 @@ namespace Core::Internal {
     }
 
     bool DspxSpec::open(const QString &filename) {
-        qDebug() << "Open DSPX" << filename;
+        auto iWin = ICore::instance()->windowSystem()->createWindow("project")->cast<IProjectWindow>();
+        if (!iWin)
+            return false;
 
-        ICore::instance()->windowSystem()->createWindow("project");
-
-        //
+        auto doc = iWin->doc();
+        if (!doc->open(filename)) {
+            QMessageBox::critical(nullptr, tr("File Error"), doc->errorMessage());
+            iWin->window()->close();
+            return false;
+        }
 
         return true;
     }

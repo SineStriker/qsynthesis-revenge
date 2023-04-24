@@ -3,10 +3,12 @@
 #include <CMenu.h>
 #include <CoreApi/ICoreBase_p.h>
 #include <QMConsole.h>
+#include <QMSystem.h>
 
 #include <QApplication>
 #include <QChildEvent>
 #include <QMessageBox>
+#include <QScreen>
 
 #include <extensionsystem/pluginmanager.h>
 
@@ -37,13 +39,53 @@ namespace Core {
     }
 
     void ICore::aboutApp(QWidget *parent) {
-        QString title = tr("About %1").arg(qAppName());
-        QString text = tr("%1 %2, Copyright OpenVPI.").arg(mainTitle(), QApplication::applicationVersion());
-#ifdef Q_OS_WINDOWS
-        QMConsole::instance()->MsgBox(parent, QMConsole::Information, title, text);
-#else
-        QMessageBox::information(parent, title, text);
-#endif
+        double ratio = parent ? (parent->screen()->logicalDotsPerInch() / QMOs::unitDpi()) : 1;
+
+        QString copyrightInfo = tr("<p>Based on Qt version %1.<br>"
+                                   "Copyright 2019-%2 OpenVPI. All rights reserved.</p>")
+                                    .arg(QLatin1String(QT_VERSION_STR), QLatin1String(BUILD_YEAR));
+
+        QString buildInfo =
+            tr("<h3>Build Information</h3>"
+               "<p>"
+               "Version: %1<br>"
+               "Branch: %2<br>"
+               "Commit: %3<br>"
+               "Build date: %4<br>"
+               "Toolchain: %5"
+               "</p>")
+                .arg(qApp->applicationVersion(), QLatin1String(BUILD_GIT_BRANCH), QLatin1String(BUILD_GIT_COMMIT),
+                     QLatin1String(BUILD_DATETIME), QLatin1String(BUILD_COMPILER_INFO));
+
+        QString aboutInfo = tr("<h3>About</h3>"
+                               "<p>DiffScope is a kind of implementation of DiffSinger graphical editing tool, "
+                               "included in ChorusKit toolset.</p>");
+
+        QString licenseInfo = tr(
+            "<h3>License</h3>"
+            "<p>Licensed under the Apache License, Version 2.0.<br>"
+            R"(You may obtain a copy of the License at <a href="http://www.apache.org/licenses/LICENSE-2.0">apache.org/licenses</a>.</p>)"
+            "<p>This application is distributed "
+            "<b>AS IS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND</b>, either express or implied.</p>");
+
+        QString translatedTextAboutQtCaption =
+            tr("<h2>ChorusKit DiffScope</h2>%1%2%3%4").arg(copyrightInfo, buildInfo, aboutInfo, licenseInfo);
+
+        auto msgBox = new QMessageBox(parent);
+        msgBox->setAttribute(Qt::WA_DeleteOnClose);
+        msgBox->setWindowTitle(tr("About %1").arg(qAppName()));
+        msgBox->setText(translatedTextAboutQtCaption);
+
+        QIcon icon(":/svg/app/diffsinger.svg");
+        if (!icon.isNull())
+            msgBox->setIconPixmap(icon.pixmap(QSize(40, 40) * ratio));
+
+        auto layout = qobject_cast<QGridLayout *>(msgBox->layout());
+        if (layout) {
+            auto horizontalSpacer = new QSpacerItem(ratio * 500, 0, QSizePolicy::Minimum, QSizePolicy::Expanding);
+            layout->addItem(horizontalSpacer, layout->rowCount(), 0, 1, layout->columnCount());
+        }
+        msgBox->exec();
     }
 
     int ICore::showSettingsDialog(const QString &id, QWidget *parent) {

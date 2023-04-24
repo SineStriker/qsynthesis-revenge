@@ -49,8 +49,8 @@ namespace Core {
         return d->errMsg;
     }
 
-    void IDocument::setErrorMessage(const QString &message) {
-        Q_D(IDocument);
+    void IDocument::setErrorMessage(const QString &message) const {
+        Q_D(const IDocument);
         d->errMsg = message;
     }
 

@@ -60,6 +60,9 @@ namespace Core {
         // That makes the code easier
         IDocument *m_blockedIDocument;
 
+    protected:
+        bool eventFilter(QObject *obj, QEvent *event) override;
+
     private slots:
         void documentDestroyed(QObject *obj);
         void checkForNewFileName();

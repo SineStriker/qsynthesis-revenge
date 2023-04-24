@@ -1,10 +1,18 @@
 #include "HomeRecentWidget.h"
 
+#include <QDateTime>
+#include <QDir>
+#include <QFileInfo>
+
+#include <CMenu.h>
+#include <QMDecoratorV2.h>
+#include <QMSystem.h>
+
 #include "ICore.h"
 
-#include <QMDecoratorV2.h>
-
 namespace Core {
+
+    static const char dateFormat[] = "yyyy-MM-dd hh:mm";
 
     class HomeRecentTopButtonBar : public IButtonBar {
     public:
@@ -57,6 +65,7 @@ namespace Core {
 
         connect(newButton, &QAbstractButton::clicked, this, &HomeRecentTopFrame::newRequested);
         connect(openButton, &QAbstractButton::clicked, this, &HomeRecentTopFrame::openRequested);
+        connect(searchBox, &QLineEdit::textChanged, this, &HomeRecentTopFrame::textChanged);
 
         // init interface
         m_buttonBar = new HomeRecentTopButtonBar(this);
@@ -95,6 +104,137 @@ namespace Core {
     }
 
     /**
+     * @brief Recent widget bottom frame
+     */
+
+    HomeRecentBottomFrame::HomeRecentBottomFrame(QWidget *parent) : QFrame(parent) {
+        fileWidget = new QsApi::FileListWidget();
+        fileWidget->setObjectName("file-widget");
+
+        emptyLabel = new QLabel();
+        emptyLabel->setObjectName("empty-label");
+
+        bottomLayout = new QVBoxLayout();
+        bottomLayout->setMargin(0);
+        bottomLayout->setSpacing(0);
+
+        bottomLayout->addWidget(fileWidget);
+        bottomLayout->addWidget(emptyLabel);
+        bottomLayout->addStretch();
+
+        setLayout(bottomLayout);
+
+        qIDec->installLocale(this, _LOC(HomeRecentBottomFrame, this));
+
+        auto docMgr = ICore::instance()->documentSystem();
+        connect(docMgr, &DocumentSystem::recentFilesChanged, this, &HomeRecentBottomFrame::_q_recentFilesChanged);
+        connect(fileWidget, &QsApi::FileListWidget::itemClickedEx, this, &HomeRecentBottomFrame::_q_itemClickedEx);
+
+        // Reload recent files once
+        reloadRecentFiles();
+    }
+
+    HomeRecentBottomFrame::~HomeRecentBottomFrame() {
+    }
+
+    void HomeRecentBottomFrame::reloadStrings() {
+        emptyLabel->setText(tr("No data."));
+    }
+
+    void HomeRecentBottomFrame::reloadRecentFiles() {
+        auto docMgr = ICore::instance()->documentSystem();
+
+        fileWidget->clear();
+        for (const auto &fileName : docMgr->recentFiles()) {
+            QFileInfo info(fileName);
+            fileWidget->addItem(m_fileIcon, m_iconSize, QDir::Files, info.fileName(), info.absoluteFilePath(),
+                                info.lastModified().toString(dateFormat));
+        }
+
+        if (fileWidget->count() == 0) {
+            fileWidget->hide();
+            emptyLabel->show();
+        } else {
+            fileWidget->show();
+            emptyLabel->hide();
+        }
+    }
+
+    QIcon HomeRecentBottomFrame::fileIcon() const {
+        return m_fileIcon;
+    }
+
+    void HomeRecentBottomFrame::setFileIcon(const QIcon &icon) {
+        m_fileIcon = icon;
+        reloadRecentFiles();
+    }
+
+    QSize HomeRecentBottomFrame::iconSize() const {
+        return m_iconSize;
+    }
+
+    void HomeRecentBottomFrame::setIconSize(const QSize &iconSize) {
+        m_iconSize = iconSize;
+        reloadRecentFiles();
+    }
+
+    void HomeRecentBottomFrame::_q_recentFilesChanged() {
+        reloadRecentFiles();
+    }
+
+    void HomeRecentBottomFrame::_q_itemClickedEx(const QModelIndex &index, int button) {
+        int type = index.data(QsApi::FileListWidget::Type).toInt();
+        QString filename = index.data(QsApi::FileListWidget::Location).toString();
+        if (button == Qt::LeftButton) {
+            if (type == QDir::Files) {
+                emit openFileRequested(filename);
+            } else {
+                //
+            }
+        } else if (button == Qt::RightButton) {
+            auto &menu = *ICore::createCoreMenu(this);
+
+            QAction openAction(tr("Open(&O)"));
+            // QAction newWinAction(tr("Open in new window(&E)"));
+            QAction removeAction(tr("Remove from list(&R)"));
+            QAction revealAction;
+
+            menu.addAction(&openAction);
+            // menu.addAction(&newWinAction);
+            menu.addAction(&removeAction);
+
+            if (type == QDir::Files) {
+                revealAction.setText(tr("Show in %1(&S)").arg(QMOs::fileManagerName()));
+                menu.addSeparator();
+                menu.addAction(&revealAction);
+            } else if (type == QDir::Dirs) {
+                revealAction.setText(tr("Open in %1(&S)").arg(QMOs::fileManagerName()));
+                menu.addSeparator();
+                menu.addAction(&revealAction);
+            }
+
+            QAction *action = menu.exec(QCursor::pos());
+            if (action == &openAction) {
+                if (type == QDir::Files) {
+                    emit openFileRequested(filename);
+                } else {
+                    //
+                }
+            }
+            // else if (action == &newWinAction) {
+            //     qWindow->newWindow({filename}, qWindow);
+            // }
+            else if (action == &removeAction) {
+                ICore::instance()->documentSystem()->removeRecentFile(filename);
+            } else if (action == &revealAction) {
+                QMFs::reveal(filename);
+            }
+
+            delete &menu;
+        }
+    }
+
+    /**
      * @brief Recent widget
      */
     HomeRecentWidget::HomeRecentWidget(QWidget *parent) : QSplitter(Qt::Vertical, parent) {
@@ -102,8 +242,8 @@ namespace Core {
         topWidget->setObjectName("top-widget");
         topWidget->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Minimum);
 
-        bottomWidget = new LinearScrollArea(Qt::Vertical);
-        bottomWidget->setObjectName("bottom-widget");
+        bottomWidget = new HomeRecentBottomFrame();
+        bottomWidget->setObjectName("home-recent-list-container");
         bottomWidget->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Expanding);
 
         setChildrenCollapsible(false);
@@ -116,7 +256,7 @@ namespace Core {
 
         qIDec->installLocale(this, _LOC(HomeRecentWidget, this));
 
-        connect(topWidget->searchBox, &QLineEdit::textChanged, this, &HomeRecentWidget::_q_searchTextChanged);
+        connect(topWidget, &HomeRecentTopFrame::textChanged, this, &HomeRecentWidget::_q_searchTextChanged);
     }
 
     HomeRecentWidget::~HomeRecentWidget() {

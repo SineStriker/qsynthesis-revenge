@@ -36,11 +36,13 @@ namespace Core {
         bool removeDocument(IDocument *document);
         QList<IDocument *> modifiedDocuments() const;
 
+    public:
         void renamedFile(const QString &from, const QString &to);
 
         void expectFileChange(const QString &fileName);
         void unexpectFileChange(const QString &fileName);
 
+        // Never call the following function if the document is not in file pool
         bool saveDocument(IDocument *document, const QString &fileName = QString(), bool *isReadOnly = nullptr);
 
         /* Used to notify e.g. the code model to update the given files. Does *not*
@@ -53,7 +55,7 @@ namespace Core {
         static QString fixFileName(const QString &fileName, FixMode fixmode);
 
     protected:
-        virtual QString getSaveAsFileName(const IDocument *document, QWidget *parent);
+        virtual QString getSaveAsFileName(const IDocument *document, const QString &path, QWidget *parent) const;
 
     signals:
         /* Used to notify e.g. the code model to update the given files. Does *not*

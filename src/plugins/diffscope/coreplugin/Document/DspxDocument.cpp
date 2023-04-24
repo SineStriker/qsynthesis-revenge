@@ -1,6 +1,10 @@
 #include "DspxDocument.h"
 #include "DspxDocument_p.h"
 
+#include <QStandardPaths>
+
+#include <Dspx/QDspxModel.h>
+
 #include "ICore.h"
 
 namespace Core {
@@ -8,12 +12,20 @@ namespace Core {
     static int m_untitledIndex = 0;
 
     DspxDocumentPrivate::DspxDocumentPrivate() {
+        hasWatch = false;
     }
 
     DspxDocumentPrivate::~DspxDocumentPrivate() {
     }
 
     void DspxDocumentPrivate::init() {
+        Q_Q(DspxDocument);
+        ICore::instance()->documentSystem()->addDocument(q, true);
+    }
+
+    void DspxDocumentPrivate::unshiftToRecent() {
+        Q_Q(DspxDocument);
+        ICore::instance()->documentSystem()->addRecentFile(q->filePath());
     }
 
     DspxDocument::DspxDocument(QObject *parent) : DspxDocument(*new DspxDocumentPrivate(), parent) {
@@ -23,11 +35,37 @@ namespace Core {
     }
 
     bool DspxDocument::open(const QString &filename) {
-        return false;
+        Q_D(DspxDocument);
+
+        QDspxModel model;
+        if (!model.load(filename)) {
+            setErrorMessage(tr("Failed to open %1").arg(filename));
+            return false;
+        }
+
+        setFilePath(filename);
+        d->unshiftToRecent();
+
+        return true;
     }
 
     bool DspxDocument::save(const QString &filename) {
-        return false;
+        Q_D(DspxDocument);
+
+        QDspxModel model;
+        if (!model.save(filename)) {
+            setErrorMessage(tr("Failed to save %1").arg(filename));
+            return false;
+        }
+
+        setFilePath(filename);
+        d->unshiftToRecent();
+
+        return true;
+    }
+
+    QString DspxDocument::defaultPath() const {
+        return QStandardPaths::writableLocation(QStandardPaths::DesktopLocation);
     }
 
     QString DspxDocument::suggestedFileName() const {
@@ -47,7 +85,8 @@ namespace Core {
     }
 
     bool DspxDocument::reload(QString *errorString, IDocument::ReloadFlag flag, IDocument::ChangeType type) {
-        return false;
+        emit changed();
+        return true;
     }
 
     DspxDocument::DspxDocument(DspxDocumentPrivate &d, QObject *parent)

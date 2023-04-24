@@ -62,7 +62,18 @@ namespace QsApi {
             DECODE_STYLE(m_delegate->m_iconMargins, list.at(i++), QMargins);
             DECODE_STYLE(m_delegate->m_margins, list.at(i++), QMargins);
 
+            if (m_delegate->m_fileType.isDefaultFont()) {
+                m_delegate->m_fileType.setFont(q->font());
+            }
+            if (m_delegate->m_locType.isDefaultFont()) {
+                m_delegate->m_locType.setFont(q->font());
+            }
+            if (m_delegate->m_dateType.isDefaultFont()) {
+                m_delegate->m_dateType.setFont(q->font());
+            }
+
             q->update();
+
             emit q->styleDataChanged();
         }
     }

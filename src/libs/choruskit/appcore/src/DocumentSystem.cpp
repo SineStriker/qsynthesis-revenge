@@ -168,7 +168,7 @@ namespace Core {
         return d->extensionsMap.value(suffix, {}).values();
     }
 
-    void _check_unique_file(const QString &name, QStringList &files) {
+    void _modify_unique_file(const QString &name, QStringList &files, bool remove = false) {
         QString unifiedForm(DocumentSystem::fixFileName(name, DocumentSystem::KeepLinks));
         QMutableListIterator<QString> it(files);
         while (it.hasNext()) {
@@ -177,7 +177,9 @@ namespace Core {
             if (unifiedForm == recentUnifiedForm)
                 it.remove();
         }
-        files.prepend(name);
+
+        if (!remove)
+            files.prepend(name);
     }
 
     void DocumentSystem::addRecentFile(const QString &fileName) {
@@ -185,7 +187,16 @@ namespace Core {
 
         if (fileName.isEmpty())
             return;
-        _check_unique_file(fileName, d->m_recentFiles);
+        _modify_unique_file(fileName, d->m_recentFiles);
+        emit recentFilesChanged();
+    }
+
+    void DocumentSystem::removeRecentFile(const QString &fileName) {
+        Q_D(DocumentSystem);
+
+        if (fileName.isEmpty())
+            return;
+        _modify_unique_file(fileName, d->m_recentFiles, true);
         emit recentFilesChanged();
     }
 
@@ -205,7 +216,7 @@ namespace Core {
 
         if (fileName.isEmpty())
             return;
-        _check_unique_file(fileName, d->m_recentDirs);
+        _modify_unique_file(fileName, d->m_recentDirs);
         emit recentDirsChanged();
     }
 
@@ -230,6 +241,18 @@ namespace Core {
             return false;
         }
         return spec->open(path2);
+    }
+
+    bool DocumentSystem::saveFileBrowse(IDocument *doc, const QString &path, QWidget *parent) const {
+        Q_D(const DocumentSystem);
+        const QString &saveFileName = getSaveAsFileName(doc, path, parent);
+        if (!saveFileName.isEmpty()) {
+            if (d->m_documentsWithWatch.contains(doc) || d->m_documentsWithoutWatch.contains(doc))
+                return const_cast<DocumentSystem *>(this)->saveDocument(doc, saveFileName);
+            else
+                return doc->save(saveFileName);
+        }
+        return false;
     }
 
     QString DocumentSystem::getOpenFileName(QWidget *parent, const QString &title, const QString &filters,
@@ -279,9 +302,9 @@ namespace Core {
         return res;
     }
 
-    QString DocumentSystem::getSaveAsFileName(const IDocument *document, QWidget *parent) {
+    QString DocumentSystem::getSaveAsFileName(const IDocument *document, const QString &pathIn, QWidget *parent) const {
         Q_D(const DocumentSystem);
-        auto spec = document->d_ptr->spec;
+        auto spec = document->d_func()->spec;
         if (!spec) {
             return {};
         }
@@ -292,13 +315,15 @@ namespace Core {
 
         QString absoluteFilePath = document->filePath();
         const QFileInfo fi(absoluteFilePath);
-        QString path = d->saveFileLastVisitDir;
+        QString path = QMFs::isPathRelative(pathIn) ? d->saveFileLastVisitDir : QMFs::PathFindDirPath(pathIn);
         QString fileName;
         if (absoluteFilePath.isEmpty()) {
             fileName = document->suggestedFileName();
             const QString defaultPath = document->defaultPath();
             if (!defaultPath.isEmpty())
                 path = defaultPath;
+            if (fileName.isEmpty() && !pathIn.isEmpty())
+                fileName = QMFs::PathFindFileName(pathIn);
         } else {
             path = fi.absolutePath();
             fileName = fi.fileName();

@@ -15,7 +15,10 @@ namespace Core {
 
         DspxDocument *q_ptr;
 
+        bool hasWatch;
         mutable QString untitledFileName;
+
+        void unshiftToRecent();
     };
 
 }

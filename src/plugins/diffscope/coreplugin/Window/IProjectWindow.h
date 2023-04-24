@@ -1,6 +1,7 @@
 #ifndef IPROJECTWINDOW_H
 #define IPROJECTWINDOW_H
 
+#include "Document/DspxDocument.h"
 #include "ICoreWindow.h"
 
 namespace Core {
@@ -18,12 +19,16 @@ namespace Core {
             return "project";
         }
 
+        DspxDocument *doc() const;
+
     protected:
         explicit IProjectWindow(QObject *parent = nullptr);
         ~IProjectWindow();
 
         void setupWindow() override;
         void windowAddOnsFinished() override;
+
+        bool eventFilter(QObject *obj, QEvent *event) override;
 
     protected:
         IProjectWindow(IProjectWindowPrivate &d, QObject *parent = nullptr);

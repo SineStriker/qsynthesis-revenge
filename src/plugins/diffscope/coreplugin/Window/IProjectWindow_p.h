@@ -20,6 +20,11 @@ namespace Core {
         void reloadMenuBar();
 
         ActionContext *mainMenuCtx;
+
+        DspxDocument *m_doc;
+
+    private:
+        void _q_documentChanged();
     };
 
 }

@@ -567,11 +567,15 @@ namespace QsApi {
         QVariant oldValue;
         auto it = properties.find(key);
         if (it == properties.end()) {
+            if (value.isNull() || !value.isValid())
+                return;
             properties.insert(key, value);
         } else {
             oldValue = it.value();
             if (value.isNull() || !value.isValid())
                 properties.erase(it);
+            else if (oldValue == value)
+                return;
             else
                 it.value() = value;
         }

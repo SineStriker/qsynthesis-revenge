@@ -67,14 +67,11 @@ namespace Core::Internal {
 
         connect(openFileItem->action(), &QAction::triggered, this, [this]() {
             auto docMgr = ICore::instance()->documentSystem();
-
-            auto spec = docMgr->supportedDocTypes("dspx");
-            if (spec.isEmpty()) {
-                QMessageBox::critical(windowHandle()->window(), ICore::mainTitle(), tr("!"));
+            auto spec = getSpec();
+            if (!spec) {
                 return;
             }
-
-            if (docMgr->openFileBrowse(spec.front())) {
+            if (docMgr->openFileBrowse(spec)) {
                 windowHandle()->window()->close();
             }
         });
@@ -109,6 +106,28 @@ namespace Core::Internal {
             aboutAppItem,
             aboutQtItem,
         });
+
+        iWin->setDragFileHandler("dspx", this, "openFile");
+    }
+
+    DocumentSpec *CoreWindowAddOn::getSpec() const {
+        auto docMgr = ICore::instance()->documentSystem();
+        auto specs = docMgr->supportedDocTypes("dspx");
+        if (specs.isEmpty()) {
+            QMessageBox::critical(windowHandle()->window(), ICore::mainTitle(), tr("!"));
+            return nullptr;
+        }
+        return specs.front();
+    }
+
+    void CoreWindowAddOn::openFile(const QString &path) {
+        auto spec = getSpec();
+        if (!spec) {
+            return;
+        }
+        if (spec->open(path)) {
+            windowHandle()->window()->close();
+        }
     }
 
 }

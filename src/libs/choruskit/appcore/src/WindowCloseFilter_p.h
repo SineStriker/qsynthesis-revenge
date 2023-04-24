@@ -5,12 +5,15 @@
 
 namespace Core {
 
+    class IWindowPrivate;
+
     class WindowCloseFilter : public QObject {
         Q_OBJECT
     public:
-        explicit WindowCloseFilter(QWidget *w);
+        explicit WindowCloseFilter(IWindowPrivate *d, QWidget *w);
         ~WindowCloseFilter();
 
+        IWindowPrivate *d;
         QWidget *w;
 
     signals:

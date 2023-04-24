@@ -7,6 +7,8 @@
 #include <QThread>
 #include <QtConcurrent>
 
+#include <qtconcurrentthreadengine.h>
+
 QString func2(QString name) {
     qDebug() << name << "from" << QThread::currentThread();
     return name;
@@ -41,6 +43,9 @@ int main(int argc, char *argv[]) {
     QFuture<QString> fut2 = QtConcurrent::run(func2, QString("Thread 1")); // 2.参数2：向func函数传递的参数
     QString result2 = fut2.result();
     fut2.waitForFinished();
+
+    QtConcurrent::ThreadEngine<int> aa;
+    qDebug() << aa.isCanceled();
 
     return a.exec();
 }

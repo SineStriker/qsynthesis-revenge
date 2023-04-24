@@ -7,5 +7,6 @@
         <file>svg/menu-bar/more-line.svg</file>
         <file>core_actions.xml</file>
         <file>svg/checkbox/check-line.svg</file>
+        <file>images/dspx.png</file>
     </qresource>
 </RCC>

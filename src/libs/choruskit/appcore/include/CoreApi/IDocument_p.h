@@ -1,8 +1,8 @@
 #ifndef IDOCUMENTPRIVATE_H
 #define IDOCUMENTPRIVATE_H
 
-#include "IDocument.h"
 #include "DocumentSpec.h"
+#include "IDocument.h"
 
 namespace Core {
 
@@ -21,7 +21,7 @@ namespace Core {
         QString id;
         DocumentSpec *spec;
 
-        QString errMsg;
+        mutable QString errMsg;
 
         QString mimeType;
         QString filePath;

@@ -23,7 +23,7 @@
 #include "Internal/Settings/AppearanceTopPage.h"
 #include "Internal/Settings/DisplayPage.h"
 
-#include "Internal/Documents/DspxSpec.h"
+#include "Internal/Document/DspxSpec.h"
 
 namespace Core {
 

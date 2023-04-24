@@ -190,6 +190,7 @@ namespace Core {
 
         emit windowCreated(iWin);
 
+        // if (show)
         window->show();
 
         return iWin;

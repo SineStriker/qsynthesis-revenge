@@ -35,7 +35,7 @@ namespace Core {
         private:
             void _q_newButtonClicked();
             void _q_openButtonClicked();
-
+            void _q_openFileRequested(const QString &fileName);
         };
 
     }
