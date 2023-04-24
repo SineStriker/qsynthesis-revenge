@@ -3,87 +3,56 @@
 
 #include <QList>
 #include <QPair>
-#include <QSharedData>
 
 namespace ScriptMgr::Internal {
 
-    class MusicTimePrivate;
-
     class MusicTime {
     public:
-        MusicTime();
         ~MusicTime();
-
-        MusicTime(double quartersPerBar, int tpqn, int measure, int beat, int tick);
-        MusicTime(const QList<QPair<int, double>> &timeSignatures, int tpqn, int measure, int beat, int tick);
-        MusicTime(const QList<QPair<int, double>> &timeSignatures, int tpqn, const QString &str);
-        MusicTime(double quartersPerBar, int tpqn, const QString &str);
-
-        void setTimeSignatures(const QList<QPair<int, double>> &timeSignatureList);
-        QList<QPair<int, double>> timeSignatures() const;
-
-        void setTimeSignature(int barPos, double quartersPerBar);
-        void setTimeSignature(double quartersPerBar);
-        double timeSignature(int barPos) const;
-        int nearestTimeSignaturePosition(int barPos) const;
-
-        void setTpqn(int tpqn);
-        int tpqn() const;
-
-        bool setMbt(int measure, int beat, int tick);
-        void setTotalTick(int tick);
+        void setMbt(int measure, int beat, int tick);
 
         int measure() const;
         int beat() const;
         int tick() const;
-        int totalTick() const;
-
-        inline int ticksTo(const MusicTime &t) const {
-            if (!isValid() || !t.isValid())
-                return 0;
-            return t.totalTick() - totalTick();
+        inline int totalTick() const {
+            return m_tick;
         }
 
-        bool isValid() const;
-        void fixToValid();
-        bool isNull();
+        inline bool isNull() const {
+            return m_tick == -1;
+        };
 
         QString toString() const;
         void fromString(const QString &str);
 
+        double msec() const;
+
         inline bool operator!=(const MusicTime &t) const {
-            if (!isValid() || !t.isValid())
-                return true;
-            return totalTick() != t.totalTick();
+            return m_tick != t.m_tick;
         }
         inline bool operator<(const MusicTime &t) const {
-            if (!isValid() || !t.isValid())
-                return false;
-            return totalTick() < t.totalTick();
+            return m_tick < t.m_tick;
         }
         inline bool operator<=(const MusicTime &t) const {
-            if (!isValid() || !t.isValid())
-                return false;
-            return totalTick() <= t.totalTick();
+            return m_tick <= t.m_tick;
         }
         inline bool operator==(const MusicTime &t) const {
-            if (!isValid() || !t.isValid())
-                return false;
-            return totalTick() == t.totalTick();
+            return m_tick == t.m_tick;
         }
         inline bool operator>(const MusicTime &t) const {
-            if (!isValid() || !t.isValid())
-                return false;
-            return totalTick() > t.totalTick();
+            return m_tick > t.m_tick;
         }
         inline bool operator>=(const MusicTime &t) const {
-            if (!isValid() || !t.isValid())
-                return false;
-            return totalTick() >= t.totalTick();
+            return m_tick >= t.m_tick;
         }
-
     private:
-        QSharedDataPointer<MusicTimePrivate> d;
+        friend class MusicTimeManager;
+        MusicTimeManager *m_manager;
+        int m_tick = -1;
+    protected:
+        explicit MusicTime(MusicTimeManager *manager);
+        MusicTime(MusicTimeManager *manager, int measure, int beat, int tick);
+        MusicTime(MusicTimeManager *manager, const QString &str);
     };
 
 } // Internal
