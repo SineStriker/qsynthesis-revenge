@@ -21,6 +21,8 @@ public:
     QSvgUri extensionIcon() const;
     void setExtensionIcon(const QSvgUri &extensionIcon);
 
+    QMenu *extensionMenu() const;
+
 private:
     QSvgUri m_extensionIcon;
     QToolButton *m_extension;

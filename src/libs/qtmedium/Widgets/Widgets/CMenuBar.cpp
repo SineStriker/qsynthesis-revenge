@@ -13,13 +13,13 @@ CMenuBar::CMenuBar(QWidget *parent) : QMenuBar(parent) {
 
     m_extension = findChild<QToolButton *>(QLatin1String(EXTENSION_NAME));
     Q_ASSERT(m_extension);
-    m_extension->setMenu(new CMenu());
+    m_extension->setMenu(new CMenu(this));
 
 #ifdef QS_NO_TAB_FOCUS
     QS_REMOVE_TAB_FOCUS(m_extension)
 #endif
 
-    m_extension->setMenu(new CMenu());
+    //  m_extension->setMenu(new CMenu());
 }
 
 CMenuBar::~CMenuBar() {
@@ -33,4 +33,8 @@ void CMenuBar::setExtensionIcon(const QSvgUri &extensionIcon) {
     m_extensionIcon = extensionIcon;
     m_extension->setIcon(m_extensionIcon.toIcon());
     emit extensionIconChanged();
+}
+
+QMenu *CMenuBar::extensionMenu() const {
+    return m_extension->menu();
 }

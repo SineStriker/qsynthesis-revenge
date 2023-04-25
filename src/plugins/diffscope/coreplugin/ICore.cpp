@@ -47,6 +47,9 @@ namespace Core {
                                    "Copyright 2019-%2 OpenVPI. All rights reserved.</p>")
                                     .arg(QLatin1String(QT_VERSION_STR), QLatin1String(CHORUSKIT_BUILD_YEAR));
 
+        // const char *compiler =
+        //     qstrcmp("MSVC", CHORUSKIT_BUILD_COMPILER_ID) ? CHORUSKIT_BUILD_COMPILER_ID : "Microsoft Visual C++";
+
         QString buildInfo =
             tr("<h3>Build Information</h3>"
                "<p>"
