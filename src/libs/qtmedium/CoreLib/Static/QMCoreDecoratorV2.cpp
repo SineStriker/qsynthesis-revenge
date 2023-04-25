@@ -180,6 +180,8 @@ void QMCoreDecoratorV2::setLocale(const QString &locale) {
     for (const auto &item : qAsConst(d->localeSubscribers))
         for (const auto &updater : qAsConst(item))
             updater();
+
+    emit localeChanged(locale);
 }
 
 void QMCoreDecoratorV2::refreshLocale() {

@@ -49,6 +49,10 @@
         <source>Open in %1(&amp;S)</source>
         <translation>在%1中打开(&amp;S)</translation>
     </message>
+    <message>
+        <source>Nothing to show.</source>
+        <translation>没有可以显示的内容。</translation>
+    </message>
 </context>
 <context>
     <name>Core::HomeRecentTopFrame</name>
@@ -89,7 +93,7 @@
     </message>
     <message>
         <source>&lt;h3&gt;License&lt;/h3&gt;&lt;p&gt;Licensed under the Apache License, Version 2.0.&lt;br&gt;You may obtain a copy of the License at &lt;a href=&quot;http://www.apache.org/licenses/LICENSE-2.0&quot;&gt;apache.org/licenses&lt;/a&gt;.&lt;/p&gt;&lt;p&gt;This application is distributed &lt;b&gt;AS IS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND&lt;/b&gt;, either express or implied.&lt;/p&gt;</source>
-        <translation type="unfinished">&lt;h3&gt;许可&lt;/h3&gt;&lt;p&gt;本程序根据Apache协议版本2.0授权。&lt;br&gt;您可以在&lt;a href=&quot;http://www.apache.org/licenses/LICENSE-2.0&quot;&gt;apache.org/licenses&lt;/a&gt;中得到协议的一份副本。&lt;/p&gt;&lt;p&gt;本程序&lt;b&gt;以&quot;按原样&quot;为基础提供，不作任何形式的担保&lt;/b&gt;，无论担保是明示的还是暗示的。&lt;/p&gt;</translation>
+        <translation>&lt;h3&gt;许可&lt;/h3&gt;&lt;p&gt;本程序根据Apache协议版本2.0授权。&lt;br&gt;您可以在&lt;a href=&quot;http://www.apache.org/licenses/LICENSE-2.0&quot;&gt;apache.org/licenses&lt;/a&gt;中得到协议的一份副本。&lt;/p&gt;&lt;p&gt;本程序&lt;b&gt;以&quot;按原样&quot;为基础提供，不作任何形式的担保&lt;/b&gt;，无论担保是明示的还是暗示的。&lt;/p&gt;</translation>
     </message>
     <message>
         <source>&lt;h2&gt;ChorusKit DiffScope&lt;/h2&gt;%1%2%3%4</source>
@@ -201,6 +205,18 @@
         <source>!</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Open Recent</source>
+        <translation>打开最近的文件</translation>
+    </message>
+    <message>
+        <source>Clear recent list</source>
+        <translation>清除最近列表</translation>
+    </message>
+    <message>
+        <source>Null</source>
+        <translation>无</translation>
+    </message>
 </context>
 <context>
     <name>Core::Internal::DisplayPage</name>
@@ -217,7 +233,7 @@
     </message>
     <message>
         <source>File Error</source>
-        <translation type="unfinished"></translation>
+        <translation>文件错误</translation>
     </message>
 </context>
 <context>

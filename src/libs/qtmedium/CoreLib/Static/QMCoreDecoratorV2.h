@@ -29,6 +29,9 @@ public:
     void setLocale(const QString &locale);
     void refreshLocale();
 
+signals:
+    void localeChanged(const QString &locale);
+
 protected:
     QMCoreDecoratorV2(QMCoreDecoratorV2Private &d, QObject *parent = nullptr);
 

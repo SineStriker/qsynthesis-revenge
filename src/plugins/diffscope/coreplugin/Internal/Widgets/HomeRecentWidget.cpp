@@ -124,14 +124,14 @@ namespace Core {
 
         setLayout(bottomLayout);
 
-        qIDec->installLocale(this, _LOC(HomeRecentBottomFrame, this));
-
         auto docMgr = ICore::instance()->documentSystem();
         connect(docMgr, &DocumentSystem::recentFilesChanged, this, &HomeRecentBottomFrame::_q_recentFilesChanged);
         connect(fileWidget, &QsApi::FileListWidget::itemClickedEx, this, &HomeRecentBottomFrame::_q_itemClickedEx);
 
         // Reload recent files once
         reloadRecentFiles();
+
+        qIDec->installLocale(this, _LOC(HomeRecentBottomFrame, this));
     }
 
     HomeRecentBottomFrame::~HomeRecentBottomFrame() {

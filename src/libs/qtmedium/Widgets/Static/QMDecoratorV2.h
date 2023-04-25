@@ -33,6 +33,9 @@ public:
     void setTheme(const QString &theme);
     void refreshTheme();
 
+signals:
+    void themeChanged(const QString &theme);
+
 protected:
     QMDecoratorV2(QMDecoratorV2Private &d, QObject *parent = nullptr);
 };

@@ -32,6 +32,7 @@ namespace Core {
             ActionItem *openGroupItem;
             ActionItem *newFileItem;
             ActionItem *openFileItem;
+            ActionItem *openRecentItem;
 
             ActionItem *preferenceGroupItem;
             ActionItem *settingsItem;
@@ -42,7 +43,11 @@ namespace Core {
             ActionItem *aboutQtItem;
 
         protected slots:
+            void reloadRecentMenu();
             void openFile(const QString &path);
+
+        private:
+            void _q_recentFilesChanged();
         };
 
     }

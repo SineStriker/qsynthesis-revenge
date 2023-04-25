@@ -517,6 +517,8 @@ void QMDecoratorV2::setTheme(const QString &theme) {
     for (const auto &item : qAsConst(d->themeSubscribers)) {
         item->updateScreen();
     }
+
+    emit themeChanged(theme);
 }
 
 void QMDecoratorV2::refreshTheme() {

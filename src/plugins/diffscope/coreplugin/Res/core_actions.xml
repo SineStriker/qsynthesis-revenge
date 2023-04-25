@@ -5,6 +5,7 @@
             <group id="OpenGroup">
                 <action id="NewFile" shortcut="Ctrl+N"/>
                 <action id="OpenFile" shortcut="Ctrl+O"/>
+                <menu id="OpenRecent"/>
             </group>
             <group id="PreferenceGroup">
                 <action id="Settings"/>

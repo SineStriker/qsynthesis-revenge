@@ -34,6 +34,10 @@
         <source>Open in %1(&amp;S)</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Nothing to show.</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>Core::HomeRecentTopFrame</name>
@@ -169,6 +173,18 @@
     </message>
     <message>
         <source>!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Open Recent</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Clear recent list</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Null</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

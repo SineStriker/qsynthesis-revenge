@@ -1,6 +1,7 @@
 #include "CoreWindowAddOn.h"
 
 #include <QCoreApplication>
+#include <QDir>
 #include <QMessageBox>
 
 #include <QMDecoratorV2.h>
@@ -18,6 +19,10 @@ namespace Core::Internal {
 
     void CoreWindowAddOn::initialize() {
         initActions();
+        reloadRecentMenu();
+
+        auto docMgr = ICore::instance()->documentSystem();
+        connect(docMgr, &DocumentSystem::recentFilesChanged, this, &CoreWindowAddOn::_q_recentFilesChanged);
 
         qIDec->installLocale(this, _LOC(CoreWindowAddOn, this));
     }
@@ -32,6 +37,7 @@ namespace Core::Internal {
         openGroupItem->setText(tr("Open Actions"));
         newFileItem->setText(tr("New"));
         openFileItem->setText(tr("Open"));
+        openRecentItem->setText(tr("Open Recent"));
 
         preferenceGroupItem->setText(tr("Preference Actions"));
         settingsItem->setText(tr("Settings"));
@@ -52,6 +58,7 @@ namespace Core::Internal {
         openGroupItem = new ActionItem("core.OpenGroup", new QActionGroup(this), this);
         newFileItem = new ActionItem("core.NewFile", new QAction(), this);
         openFileItem = new ActionItem("core.OpenFile", new QAction(), this);
+        openRecentItem = new ActionItem("core.OpenRecent", ICore::createCoreMenu(win), this);
 
         preferenceGroupItem = new ActionItem("core.PreferenceGroup", new QActionGroup(this), this);
         settingsItem = new ActionItem("core.Settings", new QAction(), this);
@@ -99,6 +106,7 @@ namespace Core::Internal {
             openGroupItem,
             newFileItem,
             openFileItem,
+            openRecentItem,
             preferenceGroupItem,
             settingsItem,
             aboutGroupItem,
@@ -120,6 +128,52 @@ namespace Core::Internal {
         return specs.front();
     }
 
+    void CoreWindowAddOn::reloadRecentMenu() {
+        auto docMgr = ICore::instance()->documentSystem();
+        auto menu = openRecentItem->menu();
+
+        menu->clear();
+
+        int cnt = 0;
+        for (const auto &file : docMgr->recentFiles()) {
+            auto action = menu->addAction(QDir::toNativeSeparators(file));
+            action->setData(file);
+            connect(action, &QAction::triggered, this, [this]() {
+                openFile(qobject_cast<QAction *>(sender())->data().toString()); //
+            });
+            cnt++;
+            if (cnt >= 10)
+                break;
+        }
+
+        if (cnt > 0) {
+            menu->addSeparator();
+
+            auto action = new QAction(menu);
+            menu->addAction(action);
+
+            auto slot = [action](const QString &locale) {
+                action->setText(tr("Clear recent list")); //
+            };
+
+            connect(qIDec, &QMCoreDecoratorV2::localeChanged, action, slot);
+            connect(action, &QAction::triggered, docMgr, &DocumentSystem::clearRecentFiles);
+
+            slot(qIDec->locale());
+        } else {
+            auto action = new QAction(menu);
+            action->setDisabled(true);
+            menu->addAction(action);
+
+            auto slot = [action](const QString &locale) {
+                action->setText(tr("Null")); //
+            };
+
+            connect(qIDec, &QMCoreDecoratorV2::localeChanged, action, slot);
+            slot(qIDec->locale());
+        }
+    }
+
     void CoreWindowAddOn::openFile(const QString &path) {
         auto spec = getSpec();
         if (!spec) {
@@ -128,6 +182,10 @@ namespace Core::Internal {
         if (spec->open(path)) {
             windowHandle()->window()->close();
         }
+    }
+
+    void CoreWindowAddOn::_q_recentFilesChanged() {
+        reloadRecentMenu();
     }
 
 }
