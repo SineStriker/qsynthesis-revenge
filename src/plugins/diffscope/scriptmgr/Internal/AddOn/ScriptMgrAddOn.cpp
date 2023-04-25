@@ -12,6 +12,7 @@
 
 #include "JsIntegrationUtils/KeyNameSpinBox.h"
 #include "JsIntegrationUtils/KeyNameValidator.h"
+#include "JsIntegrationUtils/MusicTimeManager.h"
 #include "JsInternalObject.h"
 #include "ScriptLoader.h"
 
@@ -120,53 +121,8 @@ namespace ScriptMgr {
             //TODO this is a test
             auto testAction = new QAction;
             connect(testAction, &QAction::triggered, this, [=](){
-                KeyNameValidator validator;
-                qDebug() << KeyNameValidator::toKeyName(60);
-                qDebug() << KeyNameValidator::toKeyName(127);
-                qDebug() << KeyNameValidator::toKeyName(63);
-                qDebug() << KeyNameValidator::toNoteNumber("C 5");
-                qDebug() << KeyNameValidator::toNoteNumber("G 10");
-                qDebug() << KeyNameValidator::toNoteNumber("E 6");
-                qDebug() << KeyNameValidator::toNoteNumber("Fb 6");
-                qDebug() << KeyNameValidator::toNoteNumber("invalid");
-                QString s = "";
-                qDebug() << validator.validate(s, *(int*)(nullptr));
-                s = "G";
-                qDebug() << validator.validate(s, *(int*)(nullptr));
-                s = "G#";
-                qDebug() << validator.validate(s, *(int*)(nullptr));
-                s = "G# ";
-                qDebug() << validator.validate(s, *(int*)(nullptr));
-                s = "G# 1";
-                qDebug() << validator.validate(s, *(int*)(nullptr));
-                s = "G# 10";
-                qDebug() << validator.validate(s, *(int*)(nullptr));
-                validator.fixup(s);
-                qDebug() << s;
-                s = "C 10";
-                validator.fixup(s);
-                qDebug() << s;
-                s = "Fb10";
-                validator.fixup(s);
-                qDebug() << s;
-                s = "Cb 0";
-                validator.fixup(s);
-                qDebug() << s;
-                s = "B# 4";
-                validator.fixup(s);
-                qDebug() << s;
-                QDialog dlg(windowHandle()->window());
-                auto layout = new QVBoxLayout;
-                auto spinBox = new KeyNameSpinBox;
-                spinBox->setCorrectionMode(QAbstractSpinBox::CorrectToNearestValue);
-                auto label = new QLabel;
-                connect(spinBox, QOverload<int>::of(&KeyNameSpinBox::valueChanged), label, [=](int val){
-                    label->setText(QString::number(val));
-                });
-                layout->addWidget(spinBox);
-                layout->addWidget(label);
-                dlg.setLayout(layout);
-                dlg.exec();
+                MusicTimeManager mgr;
+                mgr.thisIsATest();
             });
             userScriptsMainGroup->actionGroup()->addAction(testAction);
 

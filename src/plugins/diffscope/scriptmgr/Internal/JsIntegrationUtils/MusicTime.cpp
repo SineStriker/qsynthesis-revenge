@@ -1,10 +1,15 @@
 #include "MusicTime.h"
+#include <QRegularExpression>
+#include <QTextStream>
+
+#include "MusicTimeManager_p.h"
 
 namespace ScriptMgr::Internal {
 
     MusicTime::~MusicTime() {
     }
-    void MusicTime::setMbt(int measure, int beat, int tick) {
+    bool MusicTime::setMbt(int measure, int beat, int tick) {
+        return false;
     }
     int MusicTime::measure() const {
         return 0;
@@ -16,18 +21,37 @@ namespace ScriptMgr::Internal {
         return 0;
     }
     QString MusicTime::toString() const {
-        return QString();
+        QTextStream t;
+        t << measure() + 1 << ":" << beat() + 1 << ":";
+        t.setFieldWidth(3);
+        t.setFieldAlignment(QTextStream::AlignRight);
+        t.setPadChar('0');
+        t << tick();
+        return t.readAll();
     }
-    void MusicTime::fromString(const QString &str) {
+    bool MusicTime::fromString(const QString &str) {
+        QRegularExpression rx(R"(^\s*(\d+)\s*[:\xff1a]?\s*(\d*)\s*[:\xff1a]?\s*(\d*)\s*$)");
+        auto match = rx.match(str);
+        if(!match.hasMatch()) return false;
+        setMbt(match.captured(1).toInt() - 1, match.captured(2).toInt() - 1, match.captured(3).toInt());
+        return true;
     }
     double MusicTime::msec() const {
         return 0;
     }
-    MusicTime::MusicTime(ScriptMgr::Internal::MusicTimeManager *manager) {
+    bool MusicTime::fromMsec(double msec) {
+        return false;
     }
-    MusicTime::MusicTime(ScriptMgr::Internal::MusicTimeManager *manager, int measure, int beat, int tick) {
+    MusicTime::MusicTime(ScriptMgr::Internal::MusicTimeManager *manager): m_manager(manager) {
     }
-    MusicTime::MusicTime(ScriptMgr::Internal::MusicTimeManager *manager, const QString &str) {
+    MusicTime::MusicTime(ScriptMgr::Internal::MusicTimeManager *manager, int measure, int beat, int tick): MusicTime(manager) {
+        setMbt(measure, beat, tick);
+    }
+    MusicTime::MusicTime(ScriptMgr::Internal::MusicTimeManager *manager, const QString &str): MusicTime(manager) {
+        fromString(str);
+    }
+    MusicTime::MusicTime(ScriptMgr::Internal::MusicTimeManager *manager, double msec): MusicTime(manager) {
+        fromMsec(msec);
     }
 
 } // Internal
