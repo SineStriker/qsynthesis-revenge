@@ -41,8 +41,9 @@ namespace QsApi {
         rect.adjust(m_margins.left(), m_margins.top(), -m_margins.right(), -m_margins.bottom());
 
         // Fetch data
-        QString filename = index.data(FileListWidget::Filename).toString();
-        QString location = QDir::toNativeSeparators(index.data(FileListWidget::Location).toString());
+        QFileInfo fileInfo(index.data(FileListWidget::Filename).toString());
+        QString filename = fileInfo.fileName();
+        QString location = QDir::toNativeSeparators(fileInfo.absolutePath());
         QString date = index.data(FileListWidget::Date).toString();
 
         QIcon icon = index.data(FileListWidget::Icon).value<QIcon>();

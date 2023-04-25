@@ -2,6 +2,40 @@
 <!DOCTYPE TS>
 <TS version="2.1" language="zh_HK">
 <context>
+    <name>Core::DspxDocument</name>
+    <message>
+        <source>Failed to open %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Failed to save %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>Core::HomeRecentBottomFrame</name>
+    <message>
+        <source>No data.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Open(&amp;O)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Remove from list(&amp;R)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Show in %1(&amp;S)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Open in %1(&amp;S)</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>Core::HomeRecentTopFrame</name>
     <message>
         <source>New</source>
@@ -23,7 +57,23 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>%1 %2, Copyright OpenVPI.</source>
+        <source>&lt;p&gt;Based on Qt version %1.&lt;br&gt;Copyright 2019-%2 OpenVPI. All rights reserved.&lt;/p&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&lt;h3&gt;Build Information&lt;/h3&gt;&lt;p&gt;Version: %1&lt;br&gt;Branch: %2&lt;br&gt;Commit: %3&lt;br&gt;Build date: %4&lt;br&gt;Toolchain: %5&lt;/p&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&lt;h3&gt;About&lt;/h3&gt;&lt;p&gt;DiffScope is a kind of implementation of DiffSinger graphical editing tool, included in ChorusKit toolset.&lt;/p&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&lt;h3&gt;License&lt;/h3&gt;&lt;p&gt;Licensed under the Apache License, Version 2.0.&lt;br&gt;You may obtain a copy of the License at &lt;a href=&quot;http://www.apache.org/licenses/LICENSE-2.0&quot;&gt;apache.org/licenses&lt;/a&gt;.&lt;/p&gt;&lt;p&gt;This application is distributed &lt;b&gt;AS IS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND&lt;/b&gt;, either express or implied.&lt;/p&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&lt;h2&gt;ChorusKit DiffScope&lt;/h2&gt;%1%2%3%4</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -133,6 +183,10 @@
     <name>Core::Internal::DspxSpec</name>
     <message>
         <source>DiffScope Project Files</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>File Error</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

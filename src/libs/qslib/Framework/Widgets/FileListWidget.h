@@ -27,20 +27,12 @@ namespace QsApi {
         explicit FileListWidget(QWidget *parent = nullptr);
         ~FileListWidget();
 
-        enum ItemData {
-            Filename = Qt::UserRole + 1,
-            Location,
-            Date,
-            Icon,
-            IconSize,
-            Type
-        };
+        enum ItemData { Filename = Qt::UserRole + 1, Date, Icon, IconSize, Type };
 
     public:
         void insertItem(int row, const QIcon &icon, const QSize &size, int type, const QString &filename,
-                        const QString &location, const QString &date);
-        void addItem(const QIcon &icon, const QSize &size, int type, const QString &filename, const QString &location,
-                     const QString &date);
+                        const QString &date);
+        void addItem(const QIcon &icon, const QSize &size, int type, const QString &filename, const QString &date);
 
     public:
         QTypeList styleData() const;

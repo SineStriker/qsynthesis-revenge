@@ -156,15 +156,15 @@
     <name>Core::DocumentWatcher</name>
     <message>
         <source>File Error</source>
-        <translation>文件错误</translation>
+        <translation type="vanished">文件错误</translation>
     </message>
     <message>
         <source>Cannot reload %1</source>
-        <translation>无法重新加载%1</translation>
+        <translation type="vanished">无法重新加载%1</translation>
     </message>
     <message>
         <source>Error while saving file: %1</source>
-        <translation>保存文件时发生错误：%1</translation>
+        <translation type="vanished">保存文件时发生错误：%1</translation>
     </message>
     <message>
         <source>Save As File</source>

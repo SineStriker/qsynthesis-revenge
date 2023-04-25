@@ -73,6 +73,10 @@ namespace Core {
         void reloadStrings();
         void reloadRecentFiles();
 
+        void setFilterKeyword(const QString &keyword);
+
+        // Style data
+    public:
         QIcon fileIcon() const;
         void setFileIcon(const QIcon &icon);
 
@@ -90,6 +94,12 @@ namespace Core {
 
         QIcon m_fileIcon;
         QSize m_iconSize;
+
+        QString m_keyword;
+
+    private:
+        void updateListFilter();
+        void updateEmptyLabel();
 
     private:
         void _q_recentFilesChanged();

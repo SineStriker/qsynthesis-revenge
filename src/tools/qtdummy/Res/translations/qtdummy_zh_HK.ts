@@ -128,18 +128,6 @@
 <context>
     <name>Core::DocumentWatcher</name>
     <message>
-        <source>File Error</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Cannot reload %1</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Error while saving file: %1</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Save As File</source>
         <translation type="unfinished"></translation>
     </message>

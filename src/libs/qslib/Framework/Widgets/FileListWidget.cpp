@@ -93,15 +93,14 @@ namespace QsApi {
     }
 
     void FileListWidget::addItem(const QIcon &icon, const QSize &size, int type, const QString &filename,
-                                 const QString &location, const QString &date) {
-        insertItem(count(), icon, size, type, filename, location, date);
+                                 const QString &date) {
+        insertItem(count(), icon, size, type, filename, date);
     }
 
     void FileListWidget::insertItem(int row, const QIcon &icon, const QSize &size, int type, const QString &filename,
-                                    const QString &location, const QString &date) {
+                                    const QString &date) {
         auto item = new QListWidgetItem();
         item->setData(FileListWidget::Filename, filename);
-        item->setData(FileListWidget::Location, location);
         item->setData(FileListWidget::Date, date);
         item->setData(FileListWidget::Icon, icon);
         item->setData(FileListWidget::IconSize, size);

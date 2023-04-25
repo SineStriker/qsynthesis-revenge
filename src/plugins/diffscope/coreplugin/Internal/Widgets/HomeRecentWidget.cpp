@@ -138,7 +138,7 @@ namespace Core {
     }
 
     void HomeRecentBottomFrame::reloadStrings() {
-        emptyLabel->setText(tr("No data."));
+        updateEmptyLabel();
     }
 
     void HomeRecentBottomFrame::reloadRecentFiles() {
@@ -147,17 +147,16 @@ namespace Core {
         fileWidget->clear();
         for (const auto &fileName : docMgr->recentFiles()) {
             QFileInfo info(fileName);
-            fileWidget->addItem(m_fileIcon, m_iconSize, QDir::Files, info.fileName(), info.absoluteFilePath(),
+            fileWidget->addItem(m_fileIcon, m_iconSize, QDir::Files, info.absoluteFilePath(),
                                 info.lastModified().toString(dateFormat));
         }
+        updateListFilter();
+    }
 
-        if (fileWidget->count() == 0) {
-            fileWidget->hide();
-            emptyLabel->show();
-        } else {
-            fileWidget->show();
-            emptyLabel->hide();
-        }
+    void HomeRecentBottomFrame::setFilterKeyword(const QString &keyword) {
+        m_keyword = keyword;
+        m_keyword.replace("\\", "/");
+        updateListFilter();
     }
 
     QIcon HomeRecentBottomFrame::fileIcon() const {
@@ -178,13 +177,41 @@ namespace Core {
         reloadRecentFiles();
     }
 
+    void HomeRecentBottomFrame::updateListFilter() {
+        int cnt = 0;
+        for (int i = 0; i < fileWidget->count(); ++i) {
+            auto item = fileWidget->item(i);
+
+            QString filename = item->data(QsApi::FileListWidget::Filename).toString();
+            bool visible = m_keyword.isEmpty() || filename.contains(m_keyword, Qt::CaseInsensitive);
+            item->setHidden(!visible);
+
+            if (visible) {
+                cnt++;
+            }
+        }
+
+        if (fileWidget->count() == 0 || cnt == 0) {
+            fileWidget->hide();
+            emptyLabel->show();
+            updateEmptyLabel();
+        } else {
+            fileWidget->show();
+            emptyLabel->hide();
+        }
+    }
+
+    void HomeRecentBottomFrame::updateEmptyLabel() {
+        emptyLabel->setText(fileWidget->count() == 0 ? tr("No data.") : tr("Nothing to show."));
+    }
+
     void HomeRecentBottomFrame::_q_recentFilesChanged() {
         reloadRecentFiles();
     }
 
     void HomeRecentBottomFrame::_q_itemClickedEx(const QModelIndex &index, int button) {
         int type = index.data(QsApi::FileListWidget::Type).toInt();
-        QString filename = index.data(QsApi::FileListWidget::Location).toString();
+        QString filename = index.data(QsApi::FileListWidget::Filename).toString();
         if (button == Qt::LeftButton) {
             if (type == QDir::Files) {
                 emit openFileRequested(filename);
@@ -266,7 +293,7 @@ namespace Core {
     }
 
     void HomeRecentWidget::_q_searchTextChanged(const QString &text) {
-        qDebug() << text;
+        bottomWidget->setFilterKeyword(text);
     }
 
 } // Core
