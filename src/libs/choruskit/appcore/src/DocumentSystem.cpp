@@ -163,6 +163,12 @@ namespace Core {
         return d->documents.keys();
     }
 
+    DocumentSpec *DocumentSystem::supportedDocType(const QString &suffix) const {
+        Q_D(const DocumentSystem);
+        auto tmp = d->extensionsMap.value(suffix, {}).values();
+        return tmp.isEmpty() ? nullptr : tmp.front();
+    }
+
     QList<DocumentSpec *> DocumentSystem::supportedDocTypes(const QString &suffix) const {
         Q_D(const DocumentSystem);
         return d->extensionsMap.value(suffix, {}).values();

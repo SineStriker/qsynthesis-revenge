@@ -74,7 +74,7 @@ namespace Core::Internal {
 
         connect(openFileItem->action(), &QAction::triggered, this, [this]() {
             auto docMgr = ICore::instance()->documentSystem();
-            auto spec = getSpec();
+            auto spec = docMgr->supportedDocType("dspx");
             if (!spec) {
                 return;
             }
@@ -116,16 +116,6 @@ namespace Core::Internal {
         });
 
         iWin->setDragFileHandler("dspx", this, "openFile");
-    }
-
-    DocumentSpec *CoreWindowAddOn::getSpec() const {
-        auto docMgr = ICore::instance()->documentSystem();
-        auto specs = docMgr->supportedDocTypes("dspx");
-        if (specs.isEmpty()) {
-            QMessageBox::critical(windowHandle()->window(), ICore::mainTitle(), tr("!"));
-            return nullptr;
-        }
-        return specs.front();
     }
 
     void CoreWindowAddOn::reloadRecentMenu() {
@@ -175,7 +165,8 @@ namespace Core::Internal {
     }
 
     void CoreWindowAddOn::openFile(const QString &path) {
-        auto spec = getSpec();
+        auto docMgr = ICore::instance()->documentSystem();
+        auto spec = docMgr->supportedDocType(QFileInfo(path).completeSuffix());
         if (!spec) {
             return;
         }

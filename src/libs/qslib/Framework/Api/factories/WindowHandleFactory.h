@@ -15,7 +15,7 @@ public:
     static QStringList keys();
     static QString requested();
     static IWindowHandle *create(const QString &key, QMainWindow *parent);
-    static IWindowHandle *create( QMainWindow *parent);
+    static IWindowHandle *create(QMainWindow *parent);
 };
 
 QSAPI_END_NAMESPACE

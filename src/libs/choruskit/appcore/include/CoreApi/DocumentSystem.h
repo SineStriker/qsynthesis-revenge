@@ -23,6 +23,7 @@ namespace Core {
         QList<DocumentSpec *> docTypes() const;
         QStringList docTypeIds() const;
 
+        DocumentSpec *supportedDocType(const QString &suffix) const;
         QList<DocumentSpec *> supportedDocTypes(const QString &suffix) const;
 
         // recent files

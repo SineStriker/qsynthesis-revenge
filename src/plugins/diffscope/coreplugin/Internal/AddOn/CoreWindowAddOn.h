@@ -23,9 +23,6 @@ namespace Core {
             void initActions();
 
         protected:
-            DocumentSpec *getSpec() const;
-
-        protected:
             ActionItem *fileItem;
             ActionItem *helpItem;
 
