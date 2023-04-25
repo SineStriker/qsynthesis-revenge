@@ -675,13 +675,13 @@ namespace Core {
 
         if (modified) {
             prompt = QCoreApplication::translate("Core::PromptHandler",
-                                                 "The unsaved file <i>%1</i> has changed outside. "
+                                                 "The unsaved file %1 has changed outside. "
                                                  "Do you want to reload it and discard your changes?");
         } else {
             prompt = QCoreApplication::translate("Core::PromptHandler",
-                                                 "The file <i>%1</i> has changed outside. Do you want to reload it?");
+                                                 "The file %1 has changed outside. Do you want to reload it?");
         }
-        prompt = prompt.arg(fileName);
+        prompt = prompt.arg(QDir::toNativeSeparators(fileName));
 
         QMessageBox msgbox(parent);
         msgbox.setStandardButtons(QMessageBox::Yes | QMessageBox::YesToAll | QMessageBox::Close | QMessageBox::No |
@@ -689,7 +689,7 @@ namespace Core {
         msgbox.setDefaultButton(QMessageBox::YesToAll);
         msgbox.setWindowTitle(title);
         msgbox.setText(prompt);
-        msgbox.setDetailedText(QDir::toNativeSeparators(fileName));
+        // msgbox.setDetailedText(QDir::toNativeSeparators(fileName));
 
         switch (msgbox.exec()) {
             case QMessageBox::Yes:
@@ -712,6 +712,7 @@ namespace Core {
         const QString title = QCoreApplication::translate("Core::PromptHandler", "File has been removed");
         QString msg;
         if (triggerExternally) {
+            // Unreachable code
             msg = QCoreApplication::translate("Core::PromptHandler",
                                               "The file %1 has been removed outside. "
                                               "Do you want to save it under a different name, or close "

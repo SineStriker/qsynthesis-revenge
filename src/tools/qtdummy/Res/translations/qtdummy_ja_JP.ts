@@ -143,14 +143,6 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>The unsaved file &lt;i&gt;%1&lt;/i&gt; has changed outside. Do you want to reload it and discard your changes?</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>The file &lt;i&gt;%1&lt;/i&gt; has changed outside. Do you want to reload it?</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>File has been removed</source>
         <translation type="unfinished"></translation>
     </message>
@@ -176,6 +168,14 @@
     </message>
     <message>
         <source>&amp;Save</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>The unsaved file %1 has changed outside. Do you want to reload it and discard your changes?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>The file %1 has changed outside. Do you want to reload it?</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

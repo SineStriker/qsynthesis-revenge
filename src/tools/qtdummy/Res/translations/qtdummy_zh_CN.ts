@@ -179,27 +179,27 @@
     </message>
     <message>
         <source>File Changed</source>
-        <translation>文件已被修改</translation>
+        <translation>文件已被更改</translation>
     </message>
     <message>
         <source>The unsaved file &lt;i&gt;%1&lt;/i&gt; has changed outside. Do you want to reload it and discard your changes?</source>
-        <translation type="unfinished"></translation>
+        <translation type="vanished">文件&lt;i&gt;%1&lt;/i&gt;已在外部被修改但尚未保存，您是希望重新载入，或是忽略外部更改？</translation>
     </message>
     <message>
         <source>The file &lt;i&gt;%1&lt;/i&gt; has changed outside. Do you want to reload it?</source>
-        <translation type="unfinished"></translation>
+        <translation type="vanished">文件&lt;i&gt;%1&lt;/i&gt;已在外部被更改，您希望重新载入它吗？</translation>
     </message>
     <message>
         <source>File has been removed</source>
-        <translation type="unfinished"></translation>
+        <translation>文件已被删除</translation>
     </message>
     <message>
         <source>The file %1 has been removed outside. Do you want to save it under a different name, or close the editor?</source>
-        <translation type="unfinished"></translation>
+        <translation>文件“%1”已在外部被删除，您是希望重新保存，或是关闭编辑器？</translation>
     </message>
     <message>
         <source>The file %1 was removed. Do you want to save it under a different name, or close the editor?</source>
-        <translation type="unfinished"></translation>
+        <translation>文件“%1”已被删除，您是希望重新保存，或是关闭编辑器？</translation>
     </message>
     <message>
         <source>&amp;Close</source>
@@ -216,6 +216,14 @@
     <message>
         <source>&amp;Save</source>
         <translation>保存(&amp;S)</translation>
+    </message>
+    <message>
+        <source>The unsaved file %1 has changed outside. Do you want to reload it and discard your changes?</source>
+        <translation>文件“%1”已在外部被更改但尚未保存，您是希望重新载入，或是忽略外部更改？</translation>
+    </message>
+    <message>
+        <source>The file %1 has changed outside. Do you want to reload it?</source>
+        <translation>文件“%1”已在外部被更改，您希望重新载入它吗？</translation>
     </message>
 </context>
 <context>
