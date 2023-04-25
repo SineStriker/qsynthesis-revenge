@@ -65,10 +65,6 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>&lt;h3&gt;Build Information&lt;/h3&gt;&lt;p&gt;Version: %1&lt;br&gt;Branch: %2&lt;br&gt;Commit: %3&lt;br&gt;Build date: %4&lt;br&gt;Toolchain: %5&lt;/p&gt;</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>&lt;h3&gt;About&lt;/h3&gt;&lt;p&gt;DiffScope is a kind of implementation of DiffSinger graphical editing tool, included in ChorusKit toolset.&lt;/p&gt;</source>
         <translation type="unfinished"></translation>
     </message>
@@ -78,6 +74,10 @@
     </message>
     <message>
         <source>&lt;h2&gt;ChorusKit DiffScope&lt;/h2&gt;%1%2%3%4</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&lt;h3&gt;Build Information&lt;/h3&gt;&lt;p&gt;Version: %1&lt;br&gt;Branch: %2&lt;br&gt;Commit: %3&lt;br&gt;Build date: %4&lt;br&gt;Toolchain: %5 %6 %7&lt;/p&gt;</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

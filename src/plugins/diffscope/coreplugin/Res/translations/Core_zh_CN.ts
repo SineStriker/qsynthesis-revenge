@@ -85,7 +85,7 @@
     </message>
     <message>
         <source>&lt;h3&gt;Build Information&lt;/h3&gt;&lt;p&gt;Version: %1&lt;br&gt;Branch: %2&lt;br&gt;Commit: %3&lt;br&gt;Build date: %4&lt;br&gt;Toolchain: %5&lt;/p&gt;</source>
-        <translation>&lt;h3&gt;构建信息&lt;/h3&gt;&lt;p&gt;版本：%1&lt;br&gt;分支：%2&lt;br&gt;提交：%3&lt;br&gt;构建日期：%4&lt;br&gt;工具链：%5&lt;/p&gt;</translation>
+        <translation type="vanished">&lt;h3&gt;构建信息&lt;/h3&gt;&lt;p&gt;版本：%1&lt;br&gt;分支：%2&lt;br&gt;提交：%3&lt;br&gt;构建日期：%4&lt;br&gt;工具链：%5&lt;/p&gt;</translation>
     </message>
     <message>
         <source>&lt;h3&gt;About&lt;/h3&gt;&lt;p&gt;DiffScope is a kind of implementation of DiffSinger graphical editing tool, included in ChorusKit toolset.&lt;/p&gt;</source>
@@ -98,6 +98,10 @@
     <message>
         <source>&lt;h2&gt;ChorusKit DiffScope&lt;/h2&gt;%1%2%3%4</source>
         <translation></translation>
+    </message>
+    <message>
+        <source>&lt;h3&gt;Build Information&lt;/h3&gt;&lt;p&gt;Version: %1&lt;br&gt;Branch: %2&lt;br&gt;Commit: %3&lt;br&gt;Build date: %4&lt;br&gt;Toolchain: %5 %6 %7&lt;/p&gt;</source>
+        <translation>&lt;h3&gt;构建信息&lt;/h3&gt;&lt;p&gt;版本：%1&lt;br&gt;分支：%2&lt;br&gt;提交：%3&lt;br&gt;构建日期：%4&lt;br&gt;工具链：%5 %6 %7&lt;/p&gt;</translation>
     </message>
 </context>
 <context>

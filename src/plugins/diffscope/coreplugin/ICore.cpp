@@ -14,6 +14,8 @@
 
 #include "Internal/Dialogs/SettingsDialog.h"
 
+#include "ChorusKitBuildInfo.h"
+
 namespace Core {
 
     class ICorePrivate : ICoreBasePrivate {
@@ -43,7 +45,7 @@ namespace Core {
 
         QString copyrightInfo = tr("<p>Based on Qt version %1.<br>"
                                    "Copyright 2019-%2 OpenVPI. All rights reserved.</p>")
-                                    .arg(QLatin1String(QT_VERSION_STR), QLatin1String(BUILD_YEAR));
+                                    .arg(QLatin1String(QT_VERSION_STR), QLatin1String(CHORUSKIT_BUILD_YEAR));
 
         QString buildInfo =
             tr("<h3>Build Information</h3>"
@@ -52,10 +54,12 @@ namespace Core {
                "Branch: %2<br>"
                "Commit: %3<br>"
                "Build date: %4<br>"
-               "Toolchain: %5"
+               "Toolchain: %5 %6 %7"
                "</p>")
-                .arg(qApp->applicationVersion(), QLatin1String(BUILD_GIT_BRANCH), QLatin1String(BUILD_GIT_COMMIT),
-                     QLatin1String(BUILD_DATETIME), QLatin1String(BUILD_COMPILER_INFO));
+                .arg(QApplication::applicationVersion(), QLatin1String(CHORUSKIT_GIT_BRANCH),
+                     QLatin1String(CHORUSKIT_GIT_COMMIT_HASH), QLatin1String(CHORUSKIT_BUILD_DATE_TIME),
+                     QLatin1String(CHORUSKIT_BUILD_COMPILER_ARCH), QLatin1String(CHORUSKIT_BUILD_COMPILER_ID),
+                     QLatin1String(CHORUSKIT_BUILD_COMPILER_VERSION));
 
         QString aboutInfo = tr("<h3>About</h3>"
                                "<p>DiffScope is a kind of implementation of DiffSinger graphical editing tool, "

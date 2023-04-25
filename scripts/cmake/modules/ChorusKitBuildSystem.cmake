@@ -125,6 +125,10 @@ function(ck_init_buildsystem)
             install(FILES ${_abs_file} DESTINATION ${_docs_path})
         endif()
     endforeach()
+
+    set(_header_dir ${CMAKE_BINARY_DIR}/tmp/choruskit_include)
+    _ck_configure_build_info_header(${_header_dir})
+    set(CHORUSKIT_BUILDINFO_INCLUDE_DIR ${_header_dir} PARENT_SCOPE)
 endfunction()
 
 #[[
@@ -792,7 +796,6 @@ function(ck_add_translations _target)
         endforeach()
 
         # list(APPEND _ts_options ${_include_options})
-
         if(_ts_options)
             list(PREPEND _ts_options OPTIONS)
         endif()

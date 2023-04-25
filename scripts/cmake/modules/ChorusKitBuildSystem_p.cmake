@@ -174,3 +174,46 @@ endfunction()
 # string(JOIN "\n" _script ${_scripts})
 # install(CODE ${_script})
 # endfunction()
+function(_ck_configure_build_info_header _dir)
+    # Configure build information header
+    set(_git_branch "unknown")
+    set(_git_hash "unknown")
+
+    find_package(Git QUIET)
+
+    if(GIT_FOUND)
+        # message(STATUS "Git found: ${GIT_EXECUTABLE}")
+        execute_process(
+            COMMAND ${GIT_EXECUTABLE} log -1 --pretty=format:%H
+            OUTPUT_VARIABLE _git_hash
+            OUTPUT_STRIP_TRAILING_WHITESPACE
+            ERROR_QUIET
+            WORKING_DIRECTORY
+            ${REPOSITORY_ROOT_DIR}
+        )
+
+        execute_process(
+            COMMAND ${GIT_EXECUTABLE} symbolic-ref --short -q HEAD
+            OUTPUT_VARIABLE _git_branch
+            OUTPUT_STRIP_TRAILING_WHITESPACE
+            ERROR_QUIET
+            WORKING_DIRECTORY
+            ${REPOSITORY_ROOT_DIR}
+        )
+    else()
+        message(STATUS "Git not found")
+    endif()
+
+    set(CHORUSKIT_BUILD_COMPILER_ID "${CMAKE_CXX_COMPILER_ID}")
+    set(CHORUSKIT_BUILD_COMPILER_VERSION "${CMAKE_CXX_COMPILER_VERSION}")
+    set(CHORUSKIT_BUILD_COMPILER_ARCH "${CMAKE_CXX_COMPILER_ARCHITECTURE_ID}")
+    string(TIMESTAMP CHORUSKIT_BUILD_DATE_TIME "%Y/%m/%d %H:%M:%S")
+    string(TIMESTAMP CHORUSKIT_BUILD_YEAR "%Y")
+    set(CHORUSKIT_GIT_COMMIT_HASH "${_git_hash}")
+    set(CHORUSKIT_GIT_BRANCH "${_git_branch}")
+
+    configure_file(${CHORUSKIT_CMAKE_MODULES_DIR}/ChorusKitBuildInfo.h.in
+        ${_dir}/ChorusKitBuildInfo.h
+        @ONLY
+    )
+endfunction()
