@@ -23,6 +23,14 @@
         <source>Loading plugins...</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>You&apos;re trying to start %1 as the %2, which is extremely dangerous and therefore strongly not recommended.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Please close the running application!</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>CScrollBar</name>
@@ -180,15 +188,7 @@
     </message>
 </context>
 <context>
-    <name>QCoreApplication</name>
-    <message>
-        <source>You&apos;re trying to start %1 as the %2, which is extremely dangerous and therefore strongly not recommended.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Please close the running application!</source>
-        <translation type="unfinished"></translation>
-    </message>
+    <name>QMSystem</name>
     <message>
         <source>Explorer</source>
         <translation type="unfinished"></translation>

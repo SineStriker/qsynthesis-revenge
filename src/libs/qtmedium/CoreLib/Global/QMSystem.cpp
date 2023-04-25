@@ -273,19 +273,19 @@ bool QMOs::isUserRoot() {
 
 QString QMOs::fileManagerName() {
 #ifdef Q_OS_WINDOWS
-    return QCoreApplication::tr("Explorer");
+    return QCoreApplication::translate("QMSystem", "Explorer");
 #elif defined(Q_OS_MAC)
-    return QCoreApplication::tr("Finder");
+    return QCoreApplication::translate("QMSystem", "Finder");
 #else
-    return QCoreApplication::tr("File Manager");
+    return QCoreApplication::translate("QMSystem", "File Manager");
 #endif
 }
 
 QString QMOs::rootUserName() {
 #if defined(Q_OS_WINDOWS)
-    return QCoreApplication::tr("Administrator");
+    return QCoreApplication::translate("QMSystem", "Administrator");
 #else
-    return QCoreApplication::tr("Root User");
+    return QCoreApplication::translate("QMSystem", "Root User");
 #endif
 }
 

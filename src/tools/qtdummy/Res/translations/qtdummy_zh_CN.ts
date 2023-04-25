@@ -35,6 +35,14 @@
         <source>Core plugin is disabled.</source>
         <translation>核心插件已被禁用。</translation>
     </message>
+    <message>
+        <source>You&apos;re trying to start %1 as the %2, which is extremely dangerous and therefore strongly not recommended.</source>
+        <translation>你正在尝试以%2身份运行 %1，此操作非常不安全，因此强烈不推荐。</translation>
+    </message>
+    <message>
+        <source>Please close the running application!</source>
+        <translation>请关闭正在运行中的程序！</translation>
+    </message>
 </context>
 <context>
     <name>CScrollBar</name>
@@ -195,11 +203,11 @@
     </message>
     <message>
         <source>The file %1 has been removed outside. Do you want to save it under a different name, or close the editor?</source>
-        <translation>文件“%1”已在外部被删除，您是希望重新保存，或是关闭编辑器？</translation>
+        <translation>文件 %1 已在外部被删除，您是希望重新保存，或是关闭编辑器？</translation>
     </message>
     <message>
         <source>The file %1 was removed. Do you want to save it under a different name, or close the editor?</source>
-        <translation>文件“%1”已被删除，您是希望重新保存，或是关闭编辑器？</translation>
+        <translation>文件 %1 已被删除，您是希望重新保存，或是关闭编辑器？</translation>
     </message>
     <message>
         <source>&amp;Close</source>
@@ -219,11 +227,11 @@
     </message>
     <message>
         <source>The unsaved file %1 has changed outside. Do you want to reload it and discard your changes?</source>
-        <translation>文件“%1”已在外部被更改但尚未保存，您是希望重新载入，或是忽略外部更改？</translation>
+        <translation>文件 %1 已在外部被更改但尚未保存，您是希望重新载入，或是忽略外部更改？</translation>
     </message>
     <message>
         <source>The file %1 has changed outside. Do you want to reload it?</source>
-        <translation>文件“%1”已在外部被更改，您希望重新载入它吗？</translation>
+        <translation>文件 %1 已在外部被更改，您希望重新载入它吗？</translation>
     </message>
 </context>
 <context>
@@ -325,7 +333,42 @@
     </message>
     <message>
         <source>Explorer</source>
+        <translation type="vanished">文件资源管理器</translation>
+    </message>
+    <message>
+        <source>File Manager</source>
+        <translation type="vanished">文件管理器</translation>
+    </message>
+    <message>
+        <source>Administrator</source>
+        <translation type="vanished">管理员</translation>
+    </message>
+    <message>
+        <source>Root User</source>
+        <translation type="vanished">Root用户</translation>
+    </message>
+    <message>
+        <source>You&apos;re trying to start %1 as the %2, which is extremely dangerous and isn&apos;t recommended.</source>
+        <translation type="vanished">你正在尝试以%2身份运行%1，此番操作非常不安全。请使用普通权限启动。</translation>
+    </message>
+    <message>
+        <source>You&apos;re trying to start %1 as the %2, which is extremely dangerous and therefore strongly not recommended.</source>
+        <translation type="vanished">你正在尝试以 %2 身份运行 %1，此操作非常不安全，因此强烈不推荐。</translation>
+    </message>
+    <message>
+        <source>Please close the running application!</source>
+        <translation type="vanished">请关闭正在运行中的程序！</translation>
+    </message>
+</context>
+<context>
+    <name>QMSystem</name>
+    <message>
+        <source>Explorer</source>
         <translation>文件资源管理器</translation>
+    </message>
+    <message>
+        <source>Finder</source>
+        <translation>访达</translation>
     </message>
     <message>
         <source>File Manager</source>
@@ -337,23 +380,7 @@
     </message>
     <message>
         <source>Root User</source>
-        <translation>Root用户</translation>
-    </message>
-    <message>
-        <source>You&apos;re trying to start %1 as the %2, which is extremely dangerous and isn&apos;t recommended.</source>
-        <translation type="vanished">你正在尝试以%2身份运行%1，此番操作非常不安全。请使用普通权限启动。</translation>
-    </message>
-    <message>
-        <source>You&apos;re trying to start %1 as the %2, which is extremely dangerous and therefore strongly not recommended.</source>
-        <translation>你正在尝试以%2身份运行%1，此操作非常不安全，因此强烈不推荐。</translation>
-    </message>
-    <message>
-        <source>Please close the running application!</source>
-        <translation>请关闭正在运行中的程序！</translation>
-    </message>
-    <message>
-        <source>Finder</source>
-        <translation></translation>
+        <translation>超级用户</translation>
     </message>
 </context>
 <context>

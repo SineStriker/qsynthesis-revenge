@@ -298,9 +298,10 @@ int main_entry(int argc, char *argv[]) {
     if (QMOs::isUserRoot() && !allowRoot) {
         TEST_HELP
 
-        QString msg = QCoreApplication::tr("You're trying to start %1 as the %2, which is "
-                                           "extremely dangerous and therefore strongly not recommended.")
-                          .arg(qAppName(), QMOs::rootUserName());
+        QString msg =
+            QCoreApplication::translate("Application", "You're trying to start %1 as the %2, which is "
+                                                       "extremely dangerous and therefore strongly not recommended.")
+                .arg(qAppName(), QMOs::rootUserName());
         qmCon->MsgBox(nullptr, QMCoreConsole::Warning, qAppName(), msg);
         return 0;
     }
@@ -444,7 +445,7 @@ int main_entry(int argc, char *argv[]) {
         qInfo() << "apploader: primary instance already running. PID:" << single.primaryPid();
 
         if (!vstiAddr.isEmpty()) {
-            displayError(QCoreApplication::tr("Please close the running application!"));
+            displayError(QCoreApplication::translate("Application", "Please close the running application!"));
             return 0;
         }
 

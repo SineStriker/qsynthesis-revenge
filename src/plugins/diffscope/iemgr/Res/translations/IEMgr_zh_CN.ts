@@ -85,11 +85,11 @@
     <name>IEMgr::Internal::IEMgrPlugin</name>
     <message>
         <source>Initializing import/export manager...</source>
-        <translation type="unfinished">初始化导入/导出管理器...</translation>
+        <translation>初始化导入/导出管理器...</translation>
     </message>
     <message>
         <source>Failed to load action configuration!</source>
-        <translation type="unfinished">无法加载菜单项配置信息！</translation>
+        <translation>无法加载菜单项配置信息！</translation>
     </message>
 </context>
 <context>

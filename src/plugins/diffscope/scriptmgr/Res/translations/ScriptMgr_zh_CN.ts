@@ -77,81 +77,81 @@
 <context>
     <name>ScriptMgr::Internal::ScriptMgrAddOn</name>
     <message>
-        <location filename="../../Internal/AddOn/ScriptMgrAddOn.cpp" line="52"/>
+        <location filename="../../Internal/AddOn/ScriptMgrAddOn.cpp" line="53"/>
         <source>Batch Process Actions</source>
         <translation>批处理组</translation>
     </message>
     <message>
-        <location filename="../../Internal/AddOn/ScriptMgrAddOn.cpp" line="53"/>
+        <location filename="../../Internal/AddOn/ScriptMgrAddOn.cpp" line="54"/>
         <source>&amp;Batch Process</source>
         <translation>批处理(&amp;B)</translation>
     </message>
     <message>
-        <location filename="../../Internal/AddOn/ScriptMgrAddOn.cpp" line="54"/>
+        <location filename="../../Internal/AddOn/ScriptMgrAddOn.cpp" line="55"/>
         <source>Built-in Script Actions</source>
         <translation>内建脚本组</translation>
     </message>
     <message>
-        <location filename="../../Internal/AddOn/ScriptMgrAddOn.cpp" line="55"/>
+        <location filename="../../Internal/AddOn/ScriptMgrAddOn.cpp" line="56"/>
         <source>User Script Actions</source>
         <translation>用户脚本组</translation>
     </message>
     <message>
-        <location filename="../../Internal/AddOn/ScriptMgrAddOn.cpp" line="56"/>
+        <location filename="../../Internal/AddOn/ScriptMgrAddOn.cpp" line="57"/>
         <source>Script Operation Actions</source>
         <translation>脚本操作组</translation>
     </message>
     <message>
-        <location filename="../../Internal/AddOn/ScriptMgrAddOn.cpp" line="57"/>
+        <location filename="../../Internal/AddOn/ScriptMgrAddOn.cpp" line="58"/>
         <source>Reload Scripts</source>
         <translation>重新加载脚本</translation>
     </message>
     <message>
-        <location filename="../../Internal/AddOn/ScriptMgrAddOn.cpp" line="58"/>
+        <location filename="../../Internal/AddOn/ScriptMgrAddOn.cpp" line="59"/>
         <source>Script Settings</source>
         <translation>脚本设置</translation>
     </message>
     <message>
-        <location filename="../../Internal/AddOn/ScriptMgrAddOn.cpp" line="323"/>
+        <location filename="../../Internal/AddOn/ScriptMgrAddOn.cpp" line="279"/>
         <source>Uncaught error.</source>
         <translation>未捕获的错误。</translation>
     </message>
     <message>
-        <location filename="../../Internal/AddOn/ScriptMgrAddOn.cpp" line="324"/>
+        <location filename="../../Internal/AddOn/ScriptMgrAddOn.cpp" line="280"/>
         <source>JavaScript Error</source>
         <translation>JavaScript 错误</translation>
     </message>
     <message>
-        <location filename="../../Internal/AddOn/ScriptMgrAddOn.cpp" line="328"/>
-        <location filename="../../Internal/AddOn/ScriptMgrAddOn.cpp" line="332"/>
+        <location filename="../../Internal/AddOn/ScriptMgrAddOn.cpp" line="284"/>
+        <location filename="../../Internal/AddOn/ScriptMgrAddOn.cpp" line="288"/>
         <source>Warning</source>
         <translation>警告</translation>
     </message>
     <message>
-        <location filename="../../Internal/AddOn/ScriptMgrAddOn.cpp" line="328"/>
+        <location filename="../../Internal/AddOn/ScriptMgrAddOn.cpp" line="284"/>
         <source>Cannot load script file &apos;%1&apos;. The file is ignored.</source>
         <translation>无法加载脚本文件“%1”。该文件将被忽略。</translation>
     </message>
     <message>
-        <location filename="../../Internal/AddOn/ScriptMgrAddOn.cpp" line="332"/>
+        <location filename="../../Internal/AddOn/ScriptMgrAddOn.cpp" line="288"/>
         <source>Cannot get name of script &apos;%1&apos;. Its name will be displayed as its id.</source>
         <translation>无法获取脚本“%1”的名称。它的名称将会被显示为它的 id。</translation>
     </message>
     <message>
-        <location filename="../../Internal/AddOn/ScriptMgrAddOn.cpp" line="336"/>
-        <location filename="../../Internal/AddOn/ScriptMgrAddOn.cpp" line="340"/>
-        <location filename="../../Internal/AddOn/ScriptMgrAddOn.cpp" line="344"/>
+        <location filename="../../Internal/AddOn/ScriptMgrAddOn.cpp" line="292"/>
+        <location filename="../../Internal/AddOn/ScriptMgrAddOn.cpp" line="296"/>
+        <location filename="../../Internal/AddOn/ScriptMgrAddOn.cpp" line="300"/>
         <source>Error</source>
         <translation>错误</translation>
     </message>
     <message>
-        <location filename="../../Internal/AddOn/ScriptMgrAddOn.cpp" line="336"/>
+        <location filename="../../Internal/AddOn/ScriptMgrAddOn.cpp" line="292"/>
         <source>Cannot initialize JavaScript engine.</source>
         <translation>无法初始化 JavaScript 引擎。</translation>
     </message>
     <message>
-        <location filename="../../Internal/AddOn/ScriptMgrAddOn.cpp" line="340"/>
-        <location filename="../../Internal/AddOn/ScriptMgrAddOn.cpp" line="344"/>
+        <location filename="../../Internal/AddOn/ScriptMgrAddOn.cpp" line="296"/>
+        <location filename="../../Internal/AddOn/ScriptMgrAddOn.cpp" line="300"/>
         <source>Script &apos;%1&apos; execution failed.</source>
         <translation>脚本“%1”执行失败。</translation>
     </message>
