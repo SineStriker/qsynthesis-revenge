@@ -12,4 +12,7 @@ namespace ScriptMgr::Internal {
     int MusicTimeSignature::ticksPerBar(int tpqn) const {
         return tpqn * m_numerator * 4 / m_denominator;
     }
+    int MusicTimeSignature::ticksPerBeat(int tpqn) const {
+        return tpqn * 4 / m_denominator;
+    }
 } // Internal

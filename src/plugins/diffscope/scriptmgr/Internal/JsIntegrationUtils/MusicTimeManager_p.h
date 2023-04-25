@@ -11,12 +11,17 @@ namespace ScriptMgr::Internal {
         MusicTimeManagerPrivate();
         ~MusicTimeManagerPrivate();
         MusicTimeManager *q_ptr;
-        int tpqn;
-        QMap<int, MusicTimeSignature> timeSignatureMap; //bar position -> time signature
-        QMap<int, int> measureMap; //tick position -> bar position
-        QMap<int, double> tempoMap; //tick position -> tempo
-        QMap<int, double> msecSumMap; //tick position -> msecs in total
-        void updateMeasureMap(int barFrom);
+        tick_t tpqn;
+        QMap<measure_t, MusicTimeSignature> timeSignatureMap; //bar position -> time signature
+        QMap<tick_t, measure_t> measureMap; //tick position -> bar position
+        QMap<measure_t, tick_t> revMeasureMap; // bar position -> tick position
+        QMap<tick_t, tempo_t> tempoMap; //tick position -> tempo
+        QMap<tick_t, msec_t> msecSumMap; //tick position -> msecs in total
+        QMap<msec_t, tick_t> revMsecSumMap; //msecs in total -> tick position
+        void updateMeasureMap(measure_t barFrom);
+        void updateMsecSumMap(tick_t tickFrom);
+        tick_t findNearestTickWithTimeSignature(tick_t tick) const;
+        msec_t findNearestMsecWithTempo(msec_t msec) const;
     };
 
 } // Internal

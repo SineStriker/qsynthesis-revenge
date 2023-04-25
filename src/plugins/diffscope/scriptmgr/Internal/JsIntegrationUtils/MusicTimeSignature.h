@@ -20,6 +20,7 @@ namespace ScriptMgr::Internal {
         bool isValid() const;
 
         int ticksPerBar(int tpqn) const;
+        int ticksPerBeat(int tpqn) const;
 
         inline QString toString() const {
             return QString("%1/%2").arg(QString::number(m_numerator), QString::number(m_denominator));

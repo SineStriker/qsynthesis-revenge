@@ -14,6 +14,7 @@ namespace ScriptMgr::Internal {
         int measure() const;
         int beat() const;
         int tick() const;
+        std::tuple<int, int, int> mbt() const;
         inline int totalTick() const {
             return m_tick;
         }
@@ -22,6 +23,7 @@ namespace ScriptMgr::Internal {
         bool fromString(const QString &str);
 
         double msec() const;
+        bool fromMsec(double msec);
 
         inline bool operator!=(const MusicTime &t) const {
             return m_tick != t.m_tick;
@@ -71,14 +73,13 @@ namespace ScriptMgr::Internal {
         }
     private:
         friend class MusicTimeManager;
-        MusicTimeManager *m_manager;
+        const MusicTimeManager *m_manager;
         int m_tick = 0;
     protected:
         explicit MusicTime(MusicTimeManager *manager);
         MusicTime(MusicTimeManager *manager, int measure, int beat, int tick);
         MusicTime(MusicTimeManager *manager, const QString &str);
         MusicTime(MusicTimeManager *manager, double msec);
-        bool fromMsec(double msec);
     };
 
 } // Internal
