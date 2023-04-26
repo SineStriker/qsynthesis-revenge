@@ -85,7 +85,7 @@ namespace ScriptMgr::Internal {
         auto refMsec = mgr_d->findNearestMsecWithTempo(msec);
         auto refTick = mgr_d->revMsecSumMap[refMsec];
         auto tempo = mgr_d->tempoMap[refTick];
-        auto deltaTick = (int)std::round((msec - refMsec) / (60.0 * 1000.0) * (mgr_d->tpqn * tempo));
+        auto deltaTick = (int)qRound((msec - refMsec) / (60.0 * 1000.0) * (mgr_d->tpqn * tempo));
         m_tick = refTick + deltaTick;
         return true;
     }

@@ -6,6 +6,8 @@
 
 namespace ScriptMgr::Internal {
 
+    class MusicTimeManager;
+
     class MusicTime {
     public:
         ~MusicTime();

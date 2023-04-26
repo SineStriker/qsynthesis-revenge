@@ -184,6 +184,8 @@ namespace IEMgr {
     void ImportDialogPrivate::updateEncoding() {
         auto codecItem = codecListWidget->currentItem();
         codec = codecItem ? QTextCodec::codecForName(codecItem->text().toLatin1()) : DEFAULT_CODEC;
+        if (!codec)
+            codec = DEFAULT_CODEC;
 
         for (int i = 0; i < nameListWidget->count(); ++i) {
             auto item = nameListWidget->item(i);
