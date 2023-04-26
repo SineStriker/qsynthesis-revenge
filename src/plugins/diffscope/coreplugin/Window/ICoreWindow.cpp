@@ -50,6 +50,13 @@ namespace Core {
         return new Internal::MainWindow(parent);
     }
 
+    void ICoreWindow::setupWindow() {
+        // #ifdef Q_OS_LINUX
+        //         window()->setWindowIcon(QIcon(":/svg/app/diffsinger.svg"));
+        // #endif
+        window()->setProperty("top-window", true);
+    }
+
     ICoreWindow::ICoreWindow(ICoreWindowPrivate &d, const QString &id, QObject *parent) : IWindow(d, id, parent) {
         d.init();
     }

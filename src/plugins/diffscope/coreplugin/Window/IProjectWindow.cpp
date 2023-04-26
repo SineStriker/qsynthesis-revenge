@@ -46,6 +46,8 @@ namespace Core {
     void IProjectWindow::setupWindow() {
         Q_D(IProjectWindow);
 
+        ICoreWindow::setupWindow();
+
         auto win = window();
         win->setObjectName("project-window");
         win->setAcceptDrops(true);

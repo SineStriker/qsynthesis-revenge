@@ -29,6 +29,8 @@ namespace Core {
 
         QWidget *createWindow(QWidget *parent) const override;
 
+        void setupWindow() override;
+
     protected:
         ICoreWindow(ICoreWindowPrivate &d, const QString &id, QObject *parent = nullptr);
 

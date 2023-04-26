@@ -987,6 +987,10 @@ function(ck_add_executable _target)
         RUNTIME_OUTPUT_DIRECTORY ${CHORUSKIT_RUNTIME_OUTPUT_DIR}
     )
 
+    if("${CMAKE_CXX_COMPILER_ID}" MATCHES "GNU")
+        target_link_options(${_target} PRIVATE "-no-pie")
+    endif()
+
     if(NOT FUNC_SKIP_INSTALL)
         install(TARGETS ${_target}
             DESTINATION "${CHORUSKIT_RELATIVE_RUNTIME_DIR}" OPTIONAL

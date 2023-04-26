@@ -58,6 +58,8 @@ namespace Core {
     void IHomeWindow::setupWindow() {
         Q_D(IHomeWindow);
 
+        ICoreWindow::setupWindow();
+
         auto win = window();
         win->setObjectName("home-window");
         win->setAcceptDrops(true);
