@@ -41,12 +41,6 @@ namespace Core {
     public:
         QString id() const;
 
-        template <class T>
-        inline T *cast() {
-            static_assert(std::is_base_of<IWindow, T>::value, "T should inherit from Core::IWindow");
-            return qobject_cast<T *>(this);
-        }
-
         void addWidget(const QString &id, QWidget *w);
         void removeWidget(const QString &id);
         QWidget *widget(const QString &id) const;
@@ -96,7 +90,26 @@ namespace Core {
         friend class WindowSystem;
         friend class WindowSystemPrivate;
         friend class IWindowFactory;
+
+    public:
+        template <class T>
+        inline T *cast();
+
+        template <class T>
+        inline const T *cast() const;
     };
+
+    template <class T>
+    inline T *IWindow::cast() {
+        static_assert(std::is_base_of<IWindow, T>::value, "T should inherit from Core::IWindow");
+        return qobject_cast<T *>(this);
+    }
+
+    template <class T>
+    inline const T *IWindow::cast() const {
+        static_assert(std::is_base_of<IWindow, T>::value, "T should inherit from Core::IWindow");
+        return qobject_cast<T *>(this);
+    }
 
 }
 

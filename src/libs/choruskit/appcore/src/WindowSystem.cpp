@@ -186,6 +186,8 @@ namespace Core {
         d->windowMap.insert(window, iWin);
 
         window->setAttribute(Qt::WA_DeleteOnClose);
+        connect(qApp, &QApplication::aboutToQuit, window, &QWidget::close); // Ensure closing window when quit
+
         iWin->d_ptr->setWindow(window, d);
 
         emit windowCreated(iWin);

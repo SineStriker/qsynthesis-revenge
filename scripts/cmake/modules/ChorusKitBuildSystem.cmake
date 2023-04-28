@@ -1188,6 +1188,7 @@ Add a plugin.
         COMPAT_VERSION: compatible version, default to 0.0.0.0
         PLUGIN_NAME: plugin output name, default to `PROJECT_NAME`
         PLUGIN_VERSION: plugin version, default to `0.1.0.0`
+        PLUGIN_VENDOR: plugin vendor, default to `ChorusKit`
         META_SUBDIRS: set "Subdirs" in generated json file
         META_ALL_FILES: set "AllFiles" in generated json file
         META_ALL_SUBDIRS: set "AllSubdirs" in generated json file
@@ -1196,7 +1197,7 @@ Add a plugin.
 ]] #
 function(ck_configure_plugin _target)
     set(options META_ALL_FILES META_ALL_SUBDIRS SKIP_INSTALL SKIP_EXPORT)
-    set(oneValueArgs PARENT CATEGORY METADATA_IN COMPAT_VERSION PLUGIN_NAME PLUGIN_VERSION)
+    set(oneValueArgs PARENT CATEGORY METADATA_IN COMPAT_VERSION PLUGIN_NAME PLUGIN_VERSION PLUGIN_VENDOR)
     set(multiValueArgs META_SUBDIRS)
     cmake_parse_arguments(FUNC "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
 
@@ -1221,6 +1222,12 @@ function(ck_configure_plugin _target)
         set(_version ${FUNC_PLUGIN_VERSION})
     else()
         set(_version "0.0.1.0")
+    endif()
+
+    if(FUNC_PLUGIN_VENDOR)
+        set(_vendor ${FUNC_PLUGIN_VENDOR})
+    else()
+        set(_vendor "ChorusKit")
     endif()
 
     if(FUNC_METADATA_IN)
@@ -1283,6 +1290,11 @@ function(ck_configure_plugin _target)
 
         ck_parse_version(_compat ${_compat_version})
         set(PLUGIN_METADATA_COMPAT_VERSION ${_compat_1}.${_compat_2}.${_compat_3}_${_compat_4})
+
+        set(PLUGIN_METADATA_VENDOR ${_vendor})
+
+        string(TIMESTAMP _year "%Y")
+        set(PLUGIN_METADATA_YEAR "${_year}")
 
         configure_file(
             ${_metadata_file}

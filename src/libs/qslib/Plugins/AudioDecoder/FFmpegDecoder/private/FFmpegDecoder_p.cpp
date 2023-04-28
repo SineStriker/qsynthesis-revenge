@@ -370,6 +370,7 @@ int FFmpegDecoderPrivate::decode(char *buf, int size) {
             av_frame_unref(frame);
             av_channel_layout_uninit(&out_ch_layout);
             error_on_channel_copy(-ret);
+            return -1;
 
         out_resample:
             av_frame_free(&resampled_frame);

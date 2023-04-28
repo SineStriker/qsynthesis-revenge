@@ -5,8 +5,8 @@
     "CompatVersion": "@PLUGIN_METADATA_COMPAT_VERSION@",
     "DisabledByDefault": false,
     "HiddenByDefault": false,
-    "Vendor": "FlutyDeer",
-    "Copyright": "Copyright (C) 2021 FlutyDeer",
+    "Vendor": "@PLUGIN_METADATA_VENDOR@",
+    "Copyright": "Copyright (C) @PLUGIN_METADATA_YEAR@ @PLUGIN_METADATA_VENDOR@",
     "License": [
         "Apache 2.0"
     ],

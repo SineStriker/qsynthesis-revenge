@@ -52,6 +52,7 @@ function(configure_plugin _plugin _author)
         CATEGORY ${_category}
         PLUGIN_NAME ${_name}
         PLUGIN_VERSION ${_version}
+        PLUGIN_VENDOR ${_author}
         ${FUNC_UNPARSED_ARGUMENTS}
     )
 
@@ -59,7 +60,7 @@ function(configure_plugin _plugin _author)
         NAME ${_name}
         VERSION ${_version}
         DESCRIPTION ${CURRENT_PLUGIN_DESC}
-        COPYRIGHT "Copyright ${_author}"
+        COPYRIGHT "Copyright ${CONFIG_START_YEAR}-${ROOT_CURRENT_YEAR} ${_author}"
     )
 
     set(${_plugin} ${_target} PARENT_SCOPE)
