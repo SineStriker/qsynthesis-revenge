@@ -4,6 +4,7 @@
 #include <QDirIterator>
 #include <QSplashScreen>
 #include <QThread>
+#include <QLoggingCategory>
 
 #include "AddOn/HomeWindowAddOn.h"
 #include "AddOn/ProjectWindowAddOn.h"
@@ -40,6 +41,8 @@ namespace Core {
         }
 
         bool CorePlugin::initialize(const QStringList &arguments, QString *errorMessage) {
+            // QLoggingCategory::setFilterRules("qt.gui.shortcutmap=true");
+
             // Add resources
             qIDec->addTranslationPath(pluginSpec()->location() +"/translations");
             qIDec->addThemePath(pluginSpec()->location() +"/themes");

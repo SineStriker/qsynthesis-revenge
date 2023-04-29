@@ -113,36 +113,16 @@ namespace Core {
             qIDec->installLocale(this, _LOC(SettingsDialog, this));
 
             // Init window sizes
-            {
-                auto obj = ILoader::instance()->settings()->value(settingCategoryC).toObject();
-
-                QSize winSize;
-                winSize.setWidth(obj.value("width").toInt());
-                winSize.setHeight(obj.value("height").toInt());
-
-                double r = obj.value("sideRatio").toDouble();
-
-                if (winSize.isEmpty() || r == 0) {
-                    // Adjust sizes
-                    resize(1280, 720);
-                    topSplitter->setSizes({250, 1030});
-                } else {
-                    resize(winSize);
-                    topSplitter->setSizes({int(width() * r), int(width() * (1 - r))});
-                }
-            }
+            auto winMgr = ICore::instance()->windowSystem();
+            winMgr->loadWindowGeometry(metaObject()->className(), this, {1280, 720});
+            winMgr->loadSplitterSizes(metaObject()->className(), topSplitter, {250, width() - 250});
         }
 
         SettingsDialog::~SettingsDialog() {
-
             // Save window sizes
-            {
-                QJsonObject obj;
-                obj.insert("width", width());
-                obj.insert("height", height());
-                obj.insert("sideRatio", double(topSplitter->widget(0)->width()) / width());
-                ILoader::instance()->settings()->insert(settingCategoryC, obj);
-            }
+            auto winMgr = ICore::instance()->windowSystem();
+            winMgr->saveSplitterSizes(metaObject()->className(), topSplitter);
+            winMgr->saveWindowGeometry(metaObject()->className(), this);
         }
 
         void SettingsDialog::reloadStrings() {

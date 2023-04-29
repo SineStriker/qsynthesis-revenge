@@ -7,6 +7,7 @@
 #include <QMDecoratorV2.h>
 
 #include "CoreApi/IWindow.h"
+#include "ICore.h"
 
 namespace Core {
 
@@ -39,9 +40,25 @@ namespace Core {
         }
 
         void ProjectWindowAddOn::reloadStrings() {
+            welcomeGroupItem->setText(tr("Welcome Actions"));
+            showHomeItem->setText(tr("Show Home"));
         }
 
         void ProjectWindowAddOn::initActions() {
+            auto iWin = windowHandle();
+            auto win = iWin->window();
+
+            welcomeGroupItem = new ActionItem("core.WelcomeGroup", new QActionGroup(this), this);
+            showHomeItem = new ActionItem("core.ShowHome", new QAction(), this);
+
+            connect(showHomeItem->action(), &QAction::triggered, this, [this]() {
+                ICore::showHome(); //
+            });
+
+            iWin->addActionItems({
+                welcomeGroupItem,
+                showHomeItem,
+            });
         }
     }
 

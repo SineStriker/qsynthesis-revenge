@@ -54,7 +54,7 @@ namespace Core {
         emit q->closed();
 
         q->setWindow(nullptr);
-        q->deleteLater();
+        delete q;
     }
 
     void IWindowPrivate::setWindow(QWidget *w, WindowSystemPrivate *d) {

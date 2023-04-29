@@ -108,7 +108,7 @@ void ThemeGuardV2::_q_logicalRatioChanged(double dpi) {
     Q_UNUSED(dpi)
 
     // Delay setting stylesheets
-    QTimer::singleShot(10, this, &ThemeGuardV2::updateScreen);
+    QTimer::singleShot(0, this, &ThemeGuardV2::updateScreen);
 }
 
 QMDecoratorV2Private::QMDecoratorV2Private() {

@@ -61,8 +61,10 @@ static QList<QTranslator *> installTranslation_helper(const QStringList &paths) 
     QList<QTranslator *> res;
     for (const auto &file : qAsConst(paths)) {
         auto t = new QTranslator(qApp);
-        if (!t->load(file))
+        if (!t->load(file)) {
+            delete t;
             continue;
+        }
         qApp->installTranslator(t);
         res.append(t);
     }
@@ -104,7 +106,7 @@ void QMCoreDecoratorV2::addTranslationPath(const QString &path) {
         return;
     }
 
-    // Support hot update when adding path
+    // Support incremental update when adding path
     auto map = scanTranslation_helper(path);
     d->qmFiles.insert(map);
 

@@ -26,6 +26,7 @@
             <group id="OpenGroup">
                 <action id="NewFile" shortcut="Ctrl+N"/>
                 <action id="OpenFile" shortcut="Ctrl+O"/>
+                <menu id="OpenRecent"/>
             </group>
             <group id="PreferenceGroup">
                 <action id="Settings"/>
@@ -33,6 +34,9 @@
         </menu>
 
         <menu id="Help">
+            <group id="WelcomeGroup">
+                <action id="ShowHome"/>
+            </group>
             <group id="AboutGroup">
                 <action id="AboutPlugins"/>
                 <action id="AboutApp"/>

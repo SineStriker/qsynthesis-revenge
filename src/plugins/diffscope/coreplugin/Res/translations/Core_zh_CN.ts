@@ -163,11 +163,11 @@
     <name>Core::Internal::CoreWindowAddOn</name>
     <message>
         <source>File(&amp;F)</source>
-        <translation>文件(&amp;F)</translation>
+        <translation type="vanished">文件(&amp;F)</translation>
     </message>
     <message>
         <source>Help(&amp;H)</source>
-        <translation>帮助(&amp;H)</translation>
+        <translation type="vanished">帮助(&amp;H)</translation>
     </message>
     <message>
         <source>Open Actions</source>
@@ -175,11 +175,11 @@
     </message>
     <message>
         <source>New</source>
-        <translation>新建</translation>
+        <translation type="vanished">新建</translation>
     </message>
     <message>
         <source>Open</source>
-        <translation>打开</translation>
+        <translation type="vanished">打开</translation>
     </message>
     <message>
         <source>Preference Actions</source>
@@ -187,7 +187,7 @@
     </message>
     <message>
         <source>Settings</source>
-        <translation>设置</translation>
+        <translation type="vanished">设置</translation>
     </message>
     <message>
         <source>About Actions</source>
@@ -199,15 +199,11 @@
     </message>
     <message>
         <source>About %1</source>
-        <translation>关于 %1</translation>
+        <translation type="vanished">关于 %1</translation>
     </message>
     <message>
         <source>About Qt</source>
         <translation>关于 Qt</translation>
-    </message>
-    <message>
-        <source>!</source>
-        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Open Recent</source>
@@ -220,6 +216,30 @@
     <message>
         <source>Null</source>
         <translation>无</translation>
+    </message>
+    <message>
+        <source>&amp;File</source>
+        <translation>文件(&amp;F)</translation>
+    </message>
+    <message>
+        <source>&amp;Help</source>
+        <translation>帮助(&amp;H)</translation>
+    </message>
+    <message>
+        <source>&amp;New</source>
+        <translation>新建(&amp;N)</translation>
+    </message>
+    <message>
+        <source>&amp;Open</source>
+        <translation>打开(&amp;O)</translation>
+    </message>
+    <message>
+        <source>Se&amp;ttings</source>
+        <translation>设置(&amp;T)</translation>
+    </message>
+    <message>
+        <source>&amp;About %1</source>
+        <translation>关于 %1(&amp;A)</translation>
     </message>
 </context>
 <context>
@@ -324,6 +344,17 @@
     <message>
         <source>Plugin Errors of %1</source>
         <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>Core::Internal::ProjectWindowAddOn</name>
+    <message>
+        <source>Welcome Actions</source>
+        <translation>欢迎组</translation>
+    </message>
+    <message>
+        <source>Show Home</source>
+        <translation>显示主页</translation>
     </message>
 </context>
 <context>

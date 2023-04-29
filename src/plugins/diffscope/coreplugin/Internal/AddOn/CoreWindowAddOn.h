@@ -41,7 +41,6 @@ namespace Core {
 
         protected slots:
             void reloadRecentMenu();
-            void openFile(const QString &path);
 
         private:
             void _q_recentFilesChanged();

@@ -1,15 +1,61 @@
 #include "WindowSystem.h"
 #include "WindowSystem_p.h"
 
+#include "ILoader.h"
 #include "IWindowAddOn_p.h"
 #include "IWindow_p.h"
 #include "WindowCloseFilter_p.h"
 
+#include <QMLinq.h>
+#include <QMMath.h>
+#include <QMView.h>
+
 #include <QApplication>
 #include <QCloseEvent>
 #include <QDebug>
+#include <QDesktopWidget>
+#include <QSplitter>
 
 namespace Core {
+
+    static const char settingCatalogC[] = "WindowSystem";
+
+    static const char winGeometryGroupC[] = "WindowGeometry";
+
+    static const char splitterSizesGroupC[] = "SplitterSizes";
+
+    WindowGeometry WindowGeometry::fromObject(const QJsonObject &obj) {
+        QRect winRect;
+        winRect.setX(obj.value("x").toInt());
+        winRect.setY(obj.value("y").toInt());
+        winRect.setWidth(obj.value("width").toInt());
+        winRect.setHeight(obj.value("height").toInt());
+
+        bool isMax = obj.value("isMaximized").toBool();
+
+        return {winRect, isMax};
+    }
+
+    QJsonObject WindowGeometry::toObject() const {
+        QJsonObject obj;
+        obj.insert("x", geometry.x());
+        obj.insert("y", geometry.y());
+        obj.insert("width", geometry.width());
+        obj.insert("height", geometry.height());
+        obj.insert("isMaximized", maximized);
+        return obj;
+    }
+
+    SplitterSizes SplitterSizes::fromObject(const QJsonObject &obj) {
+        return QMMath::toIntList(QMMath::arrayToStringList(obj.value("sizes").toArray()));
+    }
+
+    QJsonObject SplitterSizes::toObject() const {
+        return {
+            {"sizes", QJsonArray::fromStringList(QMLinq::Select<QList, QString>(
+                          sizes, [](int num) -> QString { return QString::number(num); }))}
+        };
+    }
 
     WindowSystemPrivate::WindowSystemPrivate() : q_ptr(nullptr) {
     }
@@ -18,6 +64,50 @@ namespace Core {
     }
 
     void WindowSystemPrivate::init() {
+        readSettings();
+    }
+
+    void WindowSystemPrivate::readSettings() {
+        winGeometries.clear();
+
+        auto settings = ILoader::instance()->settings();
+        auto obj = settings->value(settingCatalogC).toObject();
+
+        auto winPropsObj = obj.value(winGeometryGroupC).toObject();
+        for (auto it = winPropsObj.begin(); it != winPropsObj.end(); ++it) {
+            if (!it->isObject()) {
+                continue;
+            }
+            winGeometries.insert(it.key(), WindowGeometry::fromObject(it->toObject()));
+        }
+
+        auto spPropsObj = obj.value(splitterSizesGroupC).toObject();
+        for (auto it = spPropsObj.begin(); it != spPropsObj.end(); ++it) {
+            if (!it->isObject()) {
+                continue;
+            }
+            splitterSizes.insert(it.key(), SplitterSizes::fromObject(it->toObject()));
+        }
+    }
+
+    void WindowSystemPrivate::saveSettings() const {
+        auto settings = ILoader::instance()->settings();
+
+        QJsonObject winPropsObj;
+        for (auto it = winGeometries.begin(); it != winGeometries.end(); ++it) {
+            winPropsObj.insert(it.key(), it->toObject());
+        }
+
+        QJsonObject spPropsObj;
+        for (auto it = splitterSizes.begin(); it != splitterSizes.end(); ++it) {
+            spPropsObj.insert(it.key(), it->toObject());
+        }
+
+        QJsonObject obj;
+        obj.insert(winGeometryGroupC, winPropsObj);
+        obj.insert(splitterSizesGroupC, spPropsObj);
+
+        settings->insert(settingCatalogC, obj);
     }
 
     void WindowSystemPrivate::_q_iWindowClosed() {
@@ -66,6 +156,8 @@ namespace Core {
         Q_D(WindowSystem);
 
         m_instance = nullptr;
+
+        d->saveSettings();
 
         // Remove all managed factories
         for (auto &item : qAsConst(d->windowFactories)) {
@@ -216,6 +308,54 @@ namespace Core {
     IWindow *WindowSystem::firstWindow() const {
         Q_D(const WindowSystem);
         return d->iWindows.isEmpty() ? nullptr : *d->iWindows.begin();
+    }
+
+    void WindowSystem::loadWindowGeometry(const QString &id, QWidget *w, const QSize &fallback) const {
+        Q_D(const WindowSystem);
+
+        auto winProp = d->winGeometries.value(id, {});
+
+        const auto &winRect = winProp.geometry;
+        const auto &isMax = winProp.maximized;
+
+        bool isDialog = w->parentWidget() && (w->windowFlags() & Qt::Dialog);
+        if (winRect.size().isEmpty() || isMax) {
+            // Adjust sizes
+            w->resize(fallback.isValid() ? fallback : (QApplication::desktop()->size() * 0.75));
+            if (!isDialog) {
+                QMView::centralizeWindow(w);
+            }
+            if (isMax) {
+                w->showMaximized();
+            }
+        } else {
+            if (isDialog)
+                w->resize(winRect.size());
+            else
+                w->setGeometry(winRect);
+        }
+    }
+
+    void WindowSystem::saveWindowGeometry(const QString &id, QWidget *w) {
+        Q_D(WindowSystem);
+        d->winGeometries.insert(id, {w->geometry(), w->isMaximized()});
+    }
+
+    void WindowSystem::loadSplitterSizes(const QString &id, QSplitter *s, const QList<int> &fallback) const {
+        Q_D(const WindowSystem);
+
+        auto spProp = d->splitterSizes.value(id, {});
+        if (spProp.sizes.size() != s->count()) {
+            if (fallback.size() == s->count())
+                s->setSizes(fallback);
+        } else {
+            s->setSizes(spProp.sizes);
+        }
+    }
+
+    void WindowSystem::saveSplitterSizes(const QString &id, QSplitter *s) {
+        Q_D(WindowSystem);
+        d->splitterSizes.insert(id, {s->sizes()});
     }
 
     WindowSystem::WindowSystem(WindowSystemPrivate &d, QObject *parent) : QObject(parent), d_ptr(&d) {

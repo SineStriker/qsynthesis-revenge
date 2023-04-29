@@ -49,7 +49,8 @@ namespace Core {
             connect(recentTopWidget, &HomeRecentTopFrame::openRequested, this, &HomeWindowAddOn::_q_openButtonClicked);
 
             auto recentBottomWidget = recentWidget->bottomWidget;
-            connect(recentBottomWidget, &HomeRecentBottomFrame::openFileRequested, this, &HomeWindowAddOn::_q_openFileRequested);
+            connect(recentBottomWidget, &HomeRecentBottomFrame::openFileRequested, this,
+                    &HomeWindowAddOn::_q_openFileRequested);
 
             qIDec->installLocale(this, _LOC(HomeWindowAddOn, this));
 
@@ -83,7 +84,7 @@ namespace Core {
         }
 
         void HomeWindowAddOn::_q_openFileRequested(const QString &fileName) {
-            openFile(fileName);
+            windowHandle()->cast<ICoreWindow>()->openFile(fileName);
         }
 
     }

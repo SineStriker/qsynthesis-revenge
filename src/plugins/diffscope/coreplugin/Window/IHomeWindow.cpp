@@ -16,6 +16,8 @@ namespace Core {
 
     static const char settingCategoryC[] = "Core/IHomeWindow";
 
+    static IHomeWindow *m_instance = nullptr;
+
     IHomeWindowPrivate::IHomeWindowPrivate() {
         // navFrame = nullptr;
     }
@@ -42,6 +44,10 @@ namespace Core {
         ICore::aboutApp(q->window());
     }
 
+    IHomeWindow *IHomeWindow::instance() {
+        return m_instance;
+    }
+
     QAbstractButton *IHomeWindow::addNavWidget(QWidget *w) {
         Q_D(IHomeWindow);
         auto btn = d->navFrame->addWidget(w);
@@ -53,6 +59,7 @@ namespace Core {
     }
 
     IHomeWindow::~IHomeWindow() {
+        m_instance = nullptr;
     }
 
     void IHomeWindow::setupWindow() {
@@ -97,32 +104,10 @@ namespace Core {
         qIDec->installLocale(this, _LOC(IHomeWindowPrivate, d));
         qIDec->installTheme(win, "core.HomeWindow");
 
-        // Init window sizes
-        {
-            auto obj = ILoader::instance()->settings()->value(settingCategoryC).toObject();
-
-            QRect winRect;
-            winRect.setX(obj.value("x").toInt());
-            winRect.setY(obj.value("y").toInt());
-            winRect.setWidth(obj.value("width").toInt());
-            winRect.setHeight(obj.value("height").toInt());
-
-            double r = obj.value("sideRatio").toDouble();
-            bool isMax = obj.value("isMaximized").toBool();
-
-            if (winRect.size().isEmpty() || r == 0 || isMax) {
-                // Adjust sizes
-                win->resize(1200, 800);
-                QMView::centralizeWindow(win);
-                d->navFrame->splitter()->setSizes({250, 1000});
-                if (isMax) {
-                    win->showMaximized();
-                }
-            } else {
-                win->setGeometry(winRect);
-                d->navFrame->splitter()->setSizes({int(win->width() * r), int(win->width() * (1 - r))});
-            }
-        }
+        // Load window sizes
+        auto winMgr = ICore::instance()->windowSystem();
+        winMgr->loadWindowGeometry(metaObject()->className(), win, {1200, 800});
+        winMgr->loadSplitterSizes(metaObject()->className(), d->navFrame->splitter(), {250, win->width() - 250});
 
         // Set window maximized before all-ons initialized will cause wierd style polishing problems
         // ...
@@ -133,20 +118,15 @@ namespace Core {
         auto win = window();
 
         // Save window sizes
-        {
-            QJsonObject obj;
-            obj.insert("x", win->x());
-            obj.insert("y", win->y());
-            obj.insert("width", win->width());
-            obj.insert("height", win->height());
-            obj.insert("sideRatio", double(d->navFrame->splitter()->widget(0)->width()) / win->width());
-            obj.insert("isMaximized", win->isMaximized());
-            ILoader::instance()->settings()->insert(settingCategoryC, obj);
-        }
+        auto winMgr = ICore::instance()->windowSystem();
+        winMgr->saveSplitterSizes(metaObject()->className(), d->navFrame->splitter());
+        winMgr->saveWindowGeometry(metaObject()->className(), win);
     }
 
     IHomeWindow::IHomeWindow(IHomeWindowPrivate &d, QObject *parent)
         : ICoreWindow(d, IHomeWindow::WindowTypeID(), parent) {
+        m_instance = this;
+
         d.init();
     }
 

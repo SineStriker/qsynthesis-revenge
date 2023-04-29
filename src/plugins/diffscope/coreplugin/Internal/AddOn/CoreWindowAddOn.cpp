@@ -1,6 +1,7 @@
 #include "CoreWindowAddOn.h"
 
 #include <QCoreApplication>
+#include <QDebug>
 #include <QDir>
 #include <QMessageBox>
 
@@ -8,6 +9,7 @@
 
 #include "ICore.h"
 #include "Internal/plugindialog.h"
+#include "Window/ICoreWindow.h"
 
 namespace Core::Internal {
 
@@ -21,6 +23,10 @@ namespace Core::Internal {
         initActions();
         reloadRecentMenu();
 
+        // Add drag handler
+        auto iWin = windowHandle();
+        iWin->setDragFileHandler("dspx", iWin, "openFile");
+
         auto docMgr = ICore::instance()->documentSystem();
         connect(docMgr, &DocumentSystem::recentFilesChanged, this, &CoreWindowAddOn::_q_recentFilesChanged);
 
@@ -31,20 +37,20 @@ namespace Core::Internal {
     }
 
     void CoreWindowAddOn::reloadStrings() {
-        fileItem->setText(tr("File(&F)"));
-        helpItem->setText(tr("Help(&H)"));
+        fileItem->setText(tr("&File"));
+        helpItem->setText(tr("&Help"));
 
         openGroupItem->setText(tr("Open Actions"));
-        newFileItem->setText(tr("New"));
-        openFileItem->setText(tr("Open"));
+        newFileItem->setText(tr("&New"));
+        openFileItem->setText(tr("&Open"));
         openRecentItem->setText(tr("Open Recent"));
 
         preferenceGroupItem->setText(tr("Preference Actions"));
-        settingsItem->setText(tr("Settings"));
+        settingsItem->setText(tr("Se&ttings"));
 
         aboutGroupItem->setText(tr("About Actions"));
         aboutPluginsItem->setText(tr("About Plugins"));
-        aboutAppItem->setText(tr("About %1").arg(qAppName()));
+        aboutAppItem->setText(tr("&About %1").arg(qAppName()));
         aboutQtItem->setText(tr("About Qt"));
     }
 
@@ -70,6 +76,7 @@ namespace Core::Internal {
 
         connect(newFileItem->action(), &QAction::triggered, this, [this]() {
             //
+            qDebug() << "New";
         });
 
         connect(openFileItem->action(), &QAction::triggered, this, [this]() {
@@ -114,8 +121,6 @@ namespace Core::Internal {
             aboutAppItem,
             aboutQtItem,
         });
-
-        iWin->setDragFileHandler("dspx", this, "openFile");
     }
 
     void CoreWindowAddOn::reloadRecentMenu() {
@@ -129,7 +134,7 @@ namespace Core::Internal {
             auto action = menu->addAction(QDir::toNativeSeparators(file));
             action->setData(file);
             connect(action, &QAction::triggered, this, [this]() {
-                openFile(qobject_cast<QAction *>(sender())->data().toString()); //
+                windowHandle()->cast<ICoreWindow>()->openFile(qobject_cast<QAction *>(sender())->data().toString()); //
             });
             cnt++;
             if (cnt >= 10)
@@ -161,17 +166,6 @@ namespace Core::Internal {
 
             connect(qIDec, &QMCoreDecoratorV2::localeChanged, action, slot);
             slot(qIDec->locale());
-        }
-    }
-
-    void CoreWindowAddOn::openFile(const QString &path) {
-        auto docMgr = ICore::instance()->documentSystem();
-        auto spec = docMgr->supportedDocType(QFileInfo(path).completeSuffix());
-        if (!spec) {
-            return;
-        }
-        if (spec->open(path)) {
-            windowHandle()->window()->close();
         }
     }
 

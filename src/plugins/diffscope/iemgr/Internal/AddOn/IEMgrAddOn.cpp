@@ -45,12 +45,12 @@ namespace IEMgr::Internal {
         importExportGroupItem->setText(tr("Import/Export Actions"));
 
         importItem->setText(tr("Import"));
-        importProjectItem->setText(tr("Import Project"));
-        importAudioItem->setText(tr("Import Audio"));
+        importProjectItem->setText(tr("Import &Project"));
+        importAudioItem->setText(tr("Import &Audio"));
 
         exportItem->setText(tr("Export"));
-        exportProjectItem->setText(tr("Export Project"));
-        exportAudioItem->setText(tr("Export Audio"));
+        exportProjectItem->setText(tr("Export &Project"));
+        exportAudioItem->setText(tr("Export &Audio"));
 
         if (importButton) {
             importButton->setText(tr("Import"));

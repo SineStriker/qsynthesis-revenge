@@ -11,6 +11,27 @@
 
 namespace Core {
 
+    struct WindowGeometry {
+        QRect geometry;
+        bool maximized;
+        double ratio;
+
+        WindowGeometry() : maximized(false), ratio(0){};
+        WindowGeometry(const QRect &rect, bool max = false) : geometry(rect), maximized(max), ratio(0){};
+
+        static WindowGeometry fromObject(const QJsonObject &obj);
+        QJsonObject toObject() const;
+    };
+
+    struct SplitterSizes {
+        QList<int> sizes;
+
+        SplitterSizes(const QList<int> &sizes = {}) : sizes(sizes){};
+
+        static SplitterSizes fromObject(const QJsonObject &obj);
+        QJsonObject toObject() const;
+    };
+
     class WindowSystemPrivate : public QObject {
         Q_OBJECT
         Q_DECLARE_PUBLIC(WindowSystem)
@@ -20,6 +41,9 @@ namespace Core {
 
         void init();
 
+        void readSettings();
+        void saveSettings() const;
+
         WindowSystem *q_ptr;
 
         QMChronMap<QString, IWindowFactory *> windowFactories;
@@ -27,6 +51,9 @@ namespace Core {
 
         QMChronSet<IWindow *> iWindows;
         QHash<QWidget *, IWindow *> windowMap;
+
+        QHash<QString, WindowGeometry> winGeometries;
+        QHash<QString, SplitterSizes> splitterSizes;
 
     private:
         void _q_iWindowClosed();

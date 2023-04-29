@@ -42,6 +42,11 @@ namespace Core {
          */
         static int showSettingsDialog(const QString &id, QWidget *parent = nullptr);
 
+        /*
+         * brief Open HomeWindow instance
+         */
+        static void showHome();
+
     public:
         /**
          * brief: Automatically set any child popup menu's style property to update its style

@@ -239,10 +239,11 @@ namespace Core {
                 auto spec = new ActionSpec(id);
                 spec->setShortcuts(shortcuts);
                 q->addAction(spec);
-            } else {
-                auto &spec = it.value();
-                spec->setShortcuts(spec->shortcuts() + shortcuts);
             }
+            // else {
+            //     auto &spec = it.value();
+            //     spec->setShortcuts(spec->shortcuts() + shortcuts);
+            // }
         }
 
         for (const auto &child : qAsConst(children)) {

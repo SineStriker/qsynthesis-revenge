@@ -438,10 +438,27 @@ namespace Core {
         menuBar->clear();
 
         QHash<QString, ActionItem *> itemMap;
+        QSet<QKeySequence> keys;
 
         // Clear items and build map
         for (const auto item : items) {
             itemMap.insert(item->id(), item);
+
+            if (item->type() != ActionItem::Action) {
+                continue;
+            }
+
+            // Filter shortcuts
+            QList<QKeySequence> _keys = item->action()->shortcuts();
+            for (auto it = _keys.begin(); it != _keys.end();) {
+                if (keys.contains(*it)) {
+                    it = _keys.erase(it);
+                    continue;
+                }
+                keys.insert(*it);
+                it++;
+            }
+            item->action()->setShortcuts(_keys);
         }
 
         // Fill action group first

@@ -28,6 +28,8 @@ namespace Core {
         void setupWindow() override;
         void windowAddOnsFinished() override;
 
+        void windowAboutToClose() override;
+
         bool eventFilter(QObject *obj, QEvent *event) override;
 
     protected:

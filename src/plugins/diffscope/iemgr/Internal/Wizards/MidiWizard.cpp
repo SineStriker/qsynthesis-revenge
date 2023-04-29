@@ -319,7 +319,7 @@ namespace IEMgr ::Internal {
             ImportDialog::ImportOptions opt;
             opt.minTracks = markers.isEmpty() ? 1 : 0;
             opt.maxTracks = 32;
-            opt.labels = QMLinq::Select<QPair<qint32, QByteArray>, QByteArray>(
+            opt.labels = QMLinq::Select<QList, QByteArray>(
                 markers, [&](const QPair<qint32, QByteArray> &pair) { return pair.second; });
 
             QList<qint32> logicIndexList;

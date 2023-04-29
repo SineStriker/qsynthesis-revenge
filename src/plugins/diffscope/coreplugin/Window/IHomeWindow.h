@@ -20,6 +20,8 @@ namespace Core {
             return "home";
         }
 
+        static IHomeWindow *instance();
+
         /**
          * brief: Add a navigation widget
          *

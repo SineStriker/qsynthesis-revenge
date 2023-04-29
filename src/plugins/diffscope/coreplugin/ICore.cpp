@@ -1,18 +1,21 @@
 #include "ICore.h"
 
-#include <CMenu.h>
-#include <CoreApi/ICoreBase_p.h>
-#include <QMConsole.h>
-#include <QMSystem.h>
-
 #include <QApplication>
 #include <QChildEvent>
 #include <QMessageBox>
 #include <QScreen>
 
+#include <CMenu.h>
+#include <QMConsole.h>
+#include <QMSystem.h>
+#include <QMView.h>
+
+#include <CoreApi/ICoreBase_p.h>
+
 #include <extensionsystem/pluginmanager.h>
 
 #include "Internal/Dialogs/SettingsDialog.h"
+#include "Window/IHomeWindow.h"
 
 #include "ChorusKitBuildInfo.h"
 
@@ -113,6 +116,15 @@ namespace Core {
         }
 
         return code;
+    }
+
+    void ICore::showHome() {
+        auto inst = IHomeWindow::instance();
+        if (inst) {
+            QMView::bringWindowToForeground(inst->window());
+            return;
+        }
+        instance()->windowSystem()->createWindow("home");
     }
 
     class PopUpMenuWatcher : public QObject {

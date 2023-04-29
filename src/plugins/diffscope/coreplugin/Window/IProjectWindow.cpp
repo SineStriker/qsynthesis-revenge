@@ -69,6 +69,12 @@ namespace Core {
 
         qIDec->installLocale(this, _LOC(IProjectWindowPrivate, d));
         qIDec->installTheme(win, "core.ProjectWindow");
+
+        ICore::instance()->windowSystem()->loadWindowGeometry(metaObject()->className(), win, {1200, 800});
+    }
+
+    void IProjectWindow::windowAboutToClose() {
+        ICore::instance()->windowSystem()->saveWindowGeometry(metaObject()->className(), window());
     }
 
     bool IProjectWindow::eventFilter(QObject *obj, QEvent *event) {

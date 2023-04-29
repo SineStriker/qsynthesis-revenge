@@ -1,6 +1,8 @@
 #include "ICoreWindow.h"
 #include "ICoreWindow_p.h"
 
+#include <QFileInfo>
+
 #include "ICore.h"
 #include "Internal/Window/MainWindow.h"
 
@@ -38,6 +40,17 @@ namespace Core {
 
     QString ICoreWindow::correctWindowTitle(const QString &title) const {
         return IWindow::correctWindowTitle(ICore::displayTitle(title));
+    }
+
+    void ICoreWindow::openFile(const QString &path) {
+        auto docMgr = ICore::instance()->documentSystem();
+        auto spec = docMgr->supportedDocType(QFileInfo(path).completeSuffix());
+        if (!spec) {
+            return;
+        }
+        if (spec->open(path)) {
+            window()->close();
+        }
     }
 
     ICoreWindow::ICoreWindow(const QString &id, QObject *parent) : ICoreWindow(*new ICoreWindowPrivate(), id, parent) {

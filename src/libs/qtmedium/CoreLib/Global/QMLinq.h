@@ -26,32 +26,13 @@ namespace QMLinq {
      * @brief C# IEnumerable.Select
      *
      */
-    template <class T, class V, class Mapper>
-    QList<V> Select(const QList<T> &list, Mapper mapper) {
-        QList<V> res;
+
+    template <template <class> class Array2, class V, template <class> class Array1, class T, class Mapper>
+    Array2<V> Select(const Array1<T> &list, Mapper mapper) {
+        Array2<V> res;
         res.reserve(list.size());
         for (const auto &item : qAsConst(list)) {
             res.append(mapper(item));
-        }
-        return res;
-    }
-
-    template <class T, class V, class Mapper>
-    QList<V> Select(const QVector<T> &list, Mapper mapper) {
-        QList<V> res;
-        res.reserve(list.size());
-        for (const auto &item : qAsConst(list)) {
-            res.append(mapper(item));
-        }
-        return res;
-    }
-
-    template <class K, class V, class V2, class Mapper>
-    QList<V2> Select(const QMap<K, V> &map, Mapper mapper) {
-        QList<V2> res;
-        res.reserve(map.size());
-        for (auto it = map.begin(); it != map.end(); ++it) {
-            res.append(mapper(it.key(), it.value()));
         }
         return res;
     }
@@ -60,8 +41,8 @@ namespace QMLinq {
      * @brief C# IEnumerable.Any
      *
      */
-    template <class T, class Validator>
-    bool Any(const QList<T> &list, Validator validator) {
+    template <template <class> class Array, class T, class Validator>
+    bool Any(const Array<T> &list, Validator validator) {
         for (const auto &item : qAsConst(list)) {
             if (validator(item)) {
                 return true;
@@ -70,8 +51,8 @@ namespace QMLinq {
         return false;
     }
 
-    template <class T, class Validator>
-    bool All(const QList<T> &list, Validator validator) {
+    template <template <class> class Array, class T, class Validator>
+    bool All(const Array<T> &list, Validator validator) {
         for (const auto &item : qAsConst(list)) {
             if (!validator(item)) {
                 return false;
@@ -84,8 +65,8 @@ namespace QMLinq {
      * @brief C# IEnumerable.ForEach
      *
      */
-    template <class T, class Func>
-    void ForEach(const QList<T> &list, Func func) {
+    template <template <class> class Array, class T, class Func>
+    void ForEach(const Array<T> &list, Func func) {
         for (const auto &item : qAsConst(list)) {
             func(item);
         }

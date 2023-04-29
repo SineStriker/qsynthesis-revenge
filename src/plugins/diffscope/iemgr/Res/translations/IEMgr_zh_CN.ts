@@ -66,19 +66,35 @@
     </message>
     <message>
         <source>Import Project</source>
-        <translation>导入工程</translation>
+        <translation type="vanished">导入工程</translation>
     </message>
     <message>
         <source>Import Audio</source>
-        <translation>导入音频</translation>
+        <translation type="vanished">导入音频</translation>
     </message>
     <message>
         <source>Export Project</source>
-        <translation>导出工程</translation>
+        <translation type="vanished">导出工程</translation>
     </message>
     <message>
         <source>Export Audio</source>
-        <translation>导出音频</translation>
+        <translation type="vanished">导出音频</translation>
+    </message>
+    <message>
+        <source>Import &amp;Project</source>
+        <translation>导入工程(&amp;P)</translation>
+    </message>
+    <message>
+        <source>Import &amp;Audio</source>
+        <translation>导入音频(&amp;A)</translation>
+    </message>
+    <message>
+        <source>Export &amp;Project</source>
+        <translation>导出工程(&amp;P)</translation>
+    </message>
+    <message>
+        <source>Export &amp;Audio</source>
+        <translation>导出音频(&amp;A)</translation>
     </message>
 </context>
 <context>

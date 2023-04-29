@@ -7,7 +7,7 @@ ck_add_files(_src
     PATTERNS *.h *.hpp *.cpp *.cc
 )
 
-configure_plugin(_plugin "FlutyDeer"
+configure_plugin(_plugin "OpenVPI"
     MACRO_PREFIX IEMGR
     METADATA_IN plugin.json.in
     PLUGIN_NAME IEMgr

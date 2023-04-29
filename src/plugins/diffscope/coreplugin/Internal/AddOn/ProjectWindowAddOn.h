@@ -27,6 +27,10 @@ namespace Core {
         private:
             void reloadStrings();
             void initActions();
+
+        protected:
+            ActionItem *welcomeGroupItem;
+            ActionItem *showHomeItem;
         };
 
     }

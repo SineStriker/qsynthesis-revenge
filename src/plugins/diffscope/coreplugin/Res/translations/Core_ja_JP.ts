@@ -128,31 +128,11 @@
 <context>
     <name>Core::Internal::CoreWindowAddOn</name>
     <message>
-        <source>File(&amp;F)</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Help(&amp;H)</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Open Actions</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>New</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Open</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Preference Actions</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Settings</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -164,15 +144,7 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>About %1</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>About Qt</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>!</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -185,6 +157,30 @@
     </message>
     <message>
         <source>Null</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;File</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Help</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;New</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Open</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Se&amp;ttings</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;About %1</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -241,6 +237,17 @@
     </message>
     <message>
         <source>Plugin Errors of %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>Core::Internal::ProjectWindowAddOn</name>
+    <message>
+        <source>Welcome Actions</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Show Home</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
