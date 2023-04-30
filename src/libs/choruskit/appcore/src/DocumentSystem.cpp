@@ -405,7 +405,7 @@ namespace Core {
         layout->getItemPosition(index, &row, &column, &rowSpan, &columnSpan);
         layout->addWidget(listWidget, row + 1, column, rowSpan, columnSpan);
 
-        double ratio = parent ? (parent->screen()->logicalDotsPerInch() / QMOs::unitDpi()) : 1;
+        double ratio = (msgBox.screen()->logicalDotsPerInch() / QMOs::unitDpi());
         auto horizontalSpacer = new QSpacerItem(qMax<int>(ratio * 500, listWidget->sizeHint().width() + 100), 0,
                                                 QSizePolicy::Minimum, QSizePolicy::Expanding);
         layout->addItem(horizontalSpacer, layout->rowCount(), 0, 1, layout->columnCount());

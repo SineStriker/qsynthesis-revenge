@@ -118,7 +118,8 @@ namespace Core {
 
             // Check logs
             if (icore->documentSystem()->checkRemainingLogs(win) > 0) {
-                win->close();
+                if (qApp->property("closeHomeOnOpen").toBool())
+                    win->close();
             }
 
             return true;
@@ -126,11 +127,30 @@ namespace Core {
 
         QObject *CorePlugin::remoteCommand(const QStringList &options, const QString &workingDirectory,
                                            const QStringList &args) {
-            qDebug() << options;
-            qDebug() << workingDirectory;
-            qDebug() << args;
+            int cnt = 0;
+            for (const auto &arg : qAsConst(args)) {
+                QFileInfo info(arg);
+                if (info.isRelative()) {
+                    info.setFile(workingDirectory + "/" + arg);
+                }
 
-            QMView::bringWindowToForeground(icore->windowSystem()->firstWindow()->window());
+                if (!info.isFile()) {
+                    continue;
+                }
+
+                auto spec = icore->documentSystem()->supportedDocType(info.completeSuffix());
+                if (!spec)
+                    continue;
+
+                if (spec->open(info.canonicalFilePath())) {
+                    cnt++;
+                }
+            }
+
+            auto firstHandle = icore->windowSystem()->firstWindow();
+            if (firstHandle && cnt == 0) {
+                QMView::bringWindowToForeground(firstHandle->window());
+            }
 
             return nullptr;
         }

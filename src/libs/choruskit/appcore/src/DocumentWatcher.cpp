@@ -132,7 +132,7 @@ namespace Core {
     }
 
     void DocumentWatcherPrivate::documentDestroyed(QObject *obj) {
-        auto document = qobject_cast<IDocument *>(obj);
+        auto document = static_cast<IDocument *>(obj);
         // Check the special unwatched first:
         if (!m_documentsWithoutWatch.removeOne(document))
             removeFileInfo(document);

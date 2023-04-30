@@ -46,8 +46,6 @@ namespace Core {
     }
 
     void ICore::aboutApp(QWidget *parent) {
-        double ratio = parent ? (parent->screen()->logicalDotsPerInch() / QMOs::unitDpi()) : 1;
-
         QString copyrightInfo = tr("<p>Based on Qt version %1.<br>"
                                    "Copyright 2019-%2 OpenVPI. All rights reserved.</p>")
                                     .arg(QLatin1String(QT_VERSION_STR), QLatin1String(CHORUSKIT_BUILD_YEAR));
@@ -83,19 +81,20 @@ namespace Core {
         QString translatedTextAboutQtCaption =
             tr("<h2>ChorusKit DiffScope</h2>%1%2%3%4").arg(copyrightInfo, buildInfo, aboutInfo, licenseInfo);
 
-        auto msgBox = new QMessageBox(parent);
-        msgBox->setAttribute(Qt::WA_DeleteOnClose);
-        msgBox->setWindowTitle(tr("About %1").arg(qAppName()));
-        msgBox->setText(translatedTextAboutQtCaption);
+        QMessageBox msgBox(parent);
+        msgBox.setWindowTitle(tr("About %1").arg(qAppName()));
+        msgBox.setText(translatedTextAboutQtCaption);
+
+        double ratio = (msgBox.screen()->logicalDotsPerInch() / QMOs::unitDpi());
 
         QIcon icon(":/svg/app/diffsinger.svg");
         if (!icon.isNull())
-            msgBox->setIconPixmap(icon.pixmap(QSize(40, 40) * ratio));
+            msgBox.setIconPixmap(icon.pixmap(QSize(40, 40) * ratio));
 
-        auto layout = qobject_cast<QGridLayout *>(msgBox->layout());
+        auto layout = qobject_cast<QGridLayout *>(msgBox.layout());
         auto horizontalSpacer = new QSpacerItem(ratio * 500, 0, QSizePolicy::Minimum, QSizePolicy::Expanding);
         layout->addItem(horizontalSpacer, layout->rowCount(), 0, 1, layout->columnCount());
-        msgBox->exec();
+        msgBox.exec();
     }
 
     int ICore::showSettingsDialog(const QString &id, QWidget *parent) {

@@ -257,7 +257,8 @@ int main_entry(int argc, char *argv[]) {
     }
 
     if (splashImage.isNull()) {
-        splashImage = QPixmap(":/yqzhishen.png");
+        // splashImage = QPixmap(":/yqzhishen.png");
+        splashImage = QPixmap(":/A60.jpg");
     }
 
     // Parse command line

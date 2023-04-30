@@ -62,12 +62,12 @@ namespace Core::Internal {
         helpItem = new ActionItem("core.Help", ICore::createCoreMenu(win), this);
 
         openGroupItem = new ActionItem("core.OpenGroup", new QActionGroup(this), this);
-        newFileItem = new ActionItem("core.NewFile", new QAction(), this);
-        openFileItem = new ActionItem("core.OpenFile", new QAction(), this);
+        newFileItem = new ActionItem("core.NewFile", new QAction(this), this);
+        openFileItem = new ActionItem("core.OpenFile", new QAction(this), this);
         openRecentItem = new ActionItem("core.OpenRecent", ICore::createCoreMenu(win), this);
 
         preferenceGroupItem = new ActionItem("core.PreferenceGroup", new QActionGroup(this), this);
-        settingsItem = new ActionItem("core.Settings", new QAction(), this);
+        settingsItem = new ActionItem("core.Settings", new QAction(this), this);
 
         aboutGroupItem = new ActionItem("core.AboutGroup", new QActionGroup(this), this);
         aboutPluginsItem = new ActionItem("core.AboutPlugins", new QAction(this), this);

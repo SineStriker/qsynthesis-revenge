@@ -64,12 +64,12 @@ namespace IEMgr::Internal {
         importExportGroupItem = new ActionItem("iemgr.ImportExportGroup", new QActionGroup(this), this);
 
         importItem = new ActionItem("iemgr.Import", ICore::createCoreMenu(win), this);
-        importProjectItem = new ActionItem("iemgr.ImportProject", new QAction(), this);
-        importAudioItem = new ActionItem("iemgr.ImportAudio", new QAction(), this);
+        importProjectItem = new ActionItem("iemgr.ImportProject", new QAction(this), this);
+        importAudioItem = new ActionItem("iemgr.ImportAudio", new QAction(this), this);
 
         exportItem = new ActionItem("iemgr.Export", ICore::createCoreMenu(win), this);
-        exportProjectItem = new ActionItem("iemgr.ExportProject", new QAction(), this);
-        exportAudioItem = new ActionItem("iemgr.ExportAudio", new QAction(), this);
+        exportProjectItem = new ActionItem("iemgr.ExportProject", new QAction(this), this);
+        exportAudioItem = new ActionItem("iemgr.ExportAudio", new QAction(this), this);
 
         connect(importProjectItem->action(), &QAction::triggered, this, [this]() {
             IWizardContext ctx(windowHandle());

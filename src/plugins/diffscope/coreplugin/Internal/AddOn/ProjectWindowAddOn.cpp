@@ -49,7 +49,7 @@ namespace Core {
             auto win = iWin->window();
 
             welcomeGroupItem = new ActionItem("core.WelcomeGroup", new QActionGroup(this), this);
-            showHomeItem = new ActionItem("core.ShowHome", new QAction(), this);
+            showHomeItem = new ActionItem("core.ShowHome", new QAction(this), this);
 
             connect(showHomeItem->action(), &QAction::triggered, this, [this]() {
                 ICore::showHome(); //
