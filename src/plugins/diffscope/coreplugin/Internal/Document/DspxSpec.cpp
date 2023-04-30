@@ -10,6 +10,7 @@
 namespace Core::Internal {
 
     DspxSpec::DspxSpec(QObject *parent) : DocumentSpec("org.ChorusKit.dspx", parent) {
+        setIcon(QIcon(":/images/dspx.png"));
     }
 
     DspxSpec::~DspxSpec() {

@@ -147,7 +147,8 @@ namespace Core {
         fileWidget->clear();
         for (const auto &fileName : docMgr->recentFiles()) {
             QFileInfo info(fileName);
-            fileWidget->addItem(m_fileIcon, m_iconSize, QDir::Files, info.absoluteFilePath(),
+            auto spec = docMgr->supportedDocType(info.completeSuffix());
+            fileWidget->addItem(spec ? spec->icon() : QIcon(), m_iconSize, QDir::Files, info.absoluteFilePath(),
                                 info.lastModified().toString(dateFormat));
         }
         updateListFilter();
@@ -157,15 +158,6 @@ namespace Core {
         m_keyword = keyword;
         m_keyword.replace("\\", "/");
         updateListFilter();
-    }
-
-    QIcon HomeRecentBottomFrame::fileIcon() const {
-        return m_fileIcon;
-    }
-
-    void HomeRecentBottomFrame::setFileIcon(const QIcon &icon) {
-        m_fileIcon = icon;
-        reloadRecentFiles();
     }
 
     QSize HomeRecentBottomFrame::iconSize() const {

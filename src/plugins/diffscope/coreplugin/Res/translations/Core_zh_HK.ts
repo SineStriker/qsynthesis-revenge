@@ -191,7 +191,7 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Can&apos;t find the default editor of DiffScope project file!</source>
+        <source>Can&apos;t find the default editor of %1 project file!</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

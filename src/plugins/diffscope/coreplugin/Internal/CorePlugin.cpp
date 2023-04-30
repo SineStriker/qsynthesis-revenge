@@ -89,10 +89,13 @@ namespace Core {
             // Add document types
             auto docMgr = icore->documentSystem();
 
-            docMgr->addDocType(new DspxSpec());
+            auto dspxSpex = new DspxSpec();
+            docMgr->addDocType(dspxSpex);
+            docMgr->setPreferredDocTypeId("dspx", dspxSpex->id());
 
             // QLoggingCategory::setFilterRules("qt.gui.shortcutmap=true");
             qApp->setProperty("closeHomeOnOpen", true);
+            qApp->setProperty("projectSuffix", "dspx");
 
             return true;
         }

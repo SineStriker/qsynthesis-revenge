@@ -38,6 +38,16 @@ namespace Core {
         d->displayName = displayName;
     }
 
+    QIcon DocumentSpec::icon() const {
+        Q_D(const DocumentSpec);
+        return d->icon;
+    }
+
+    void DocumentSpec::setIcon(const QIcon &icon) {
+        Q_D(DocumentSpec);
+        d->icon = icon;
+    }
+
     QString DocumentSpec::saveFilter() const {
         return filter();
     }

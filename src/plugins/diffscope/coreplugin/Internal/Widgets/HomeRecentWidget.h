@@ -63,7 +63,6 @@ namespace Core {
     class HomeRecentBottomFrame : public QFrame {
         Q_OBJECT
         Q_LAYOUT_PROPERTY_DELCARE
-        Q_PROPERTY(QIcon fileIcon READ fileIcon WRITE setFileIcon NOTIFY iconChanged)
         Q_PROPERTY(QSize iconSize READ iconSize WRITE setIconSize NOTIFY iconChanged)
     public:
         explicit HomeRecentBottomFrame(QWidget *parent = nullptr);
@@ -77,9 +76,6 @@ namespace Core {
 
         // Style data
     public:
-        QIcon fileIcon() const;
-        void setFileIcon(const QIcon &icon);
-
         QSize iconSize() const;
         void setIconSize(const QSize &iconSize);
 
@@ -92,7 +88,6 @@ namespace Core {
         QsApi::FileListWidget *fileWidget;
         QLabel *emptyLabel;
 
-        QIcon m_fileIcon;
         QSize m_iconSize;
 
         QString m_keyword;

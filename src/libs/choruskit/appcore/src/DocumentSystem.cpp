@@ -184,13 +184,32 @@ namespace Core {
 
     DocumentSpec *DocumentSystem::supportedDocType(const QString &suffix) const {
         Q_D(const DocumentSystem);
-        auto tmp = d->extensionsMap.value(suffix, {}).values();
-        return tmp.isEmpty() ? nullptr : tmp.front();
+        auto id = preferredDocTypeId(suffix);
+        DocumentSpec *spec;
+        if (id.isEmpty() || !(spec = docType(id))) {
+            auto tmp = supportedDocTypes(suffix);
+            return tmp.isEmpty() ? nullptr : tmp.front();
+        }
+        return spec;
     }
 
     QList<DocumentSpec *> DocumentSystem::supportedDocTypes(const QString &suffix) const {
         Q_D(const DocumentSystem);
         return d->extensionsMap.value(suffix, {}).values();
+    }
+
+    QString DocumentSystem::preferredDocTypeId(const QString &suffix) const {
+        Q_D(const DocumentSystem);
+        return d->preferredExtensionIdMap.value(suffix);
+    }
+
+    void DocumentSystem::setPreferredDocTypeId(const QString &suffix, const QString &id) {
+        Q_D(DocumentSystem);
+        if (id.isEmpty()) {
+            d->preferredExtensionIdMap.remove(suffix);
+            return;
+        }
+        d->preferredExtensionIdMap.insert(suffix, id);
     }
 
     void _modify_unique_file(const QString &name, QStringList &files, bool remove = false) {

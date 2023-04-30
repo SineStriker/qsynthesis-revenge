@@ -81,12 +81,13 @@ namespace Core::Internal {
 
         connect(openFileItem->action(), &QAction::triggered, this, [this]() {
             auto docMgr = ICore::instance()->documentSystem();
-            auto spec = docMgr->docType("org.ChorusKit.dspx");
+            auto spec = docMgr->supportedDocType(qApp->property("projectSuffix").toString());
             if (!spec) {
                 QMessageBox::critical(windowHandle()->window(), ICore::mainTitle(),
-                                      tr("Can't find the default editor of DiffScope project file!"));
+                                      tr("Can't find the default editor of %1 project file!").arg(qAppName()));
                 return;
             }
+
             if (docMgr->openFileBrowse(spec)) {
                 if (qApp->property("closeHomeOnOpen").toBool())
                     windowHandle()->window()->close();

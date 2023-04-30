@@ -26,6 +26,9 @@ namespace Core {
         DocumentSpec *supportedDocType(const QString &suffix) const;
         QList<DocumentSpec *> supportedDocTypes(const QString &suffix) const;
 
+        QString preferredDocTypeId(const QString &suffix) const;
+        void setPreferredDocTypeId(const QString &suffix, const QString &id);
+
         // recent files
         void addRecentFile(const QString &fileName);
         void removeRecentFile(const QString &fileName);

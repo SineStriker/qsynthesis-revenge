@@ -154,7 +154,6 @@ Core--HomeRecentTopFrame>QLineEdit#search-box:focus {
 Core--HomeRecentBottomFrame {
     padding: 20px;
     background-color: transparent;
-    qproperty-fileIcon: url(":/images/dspx.png");
     qproperty-iconSize: 40px 40px;
 }
 

@@ -1,6 +1,8 @@
 #ifndef DOCUMENTSPECPRIVATE_H
 #define DOCUMENTSPECPRIVATE_H
 
+#include <QIcon>
+
 #include "DocumentSpec.h"
 
 namespace Core {
@@ -17,6 +19,7 @@ namespace Core {
 
         QString id;
         QString displayName;
+        QIcon icon;
     };
 
 }

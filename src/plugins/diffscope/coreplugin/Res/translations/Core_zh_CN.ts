@@ -250,7 +250,11 @@
     </message>
     <message>
         <source>Can&apos;t find the default editor of DiffScope project file!</source>
-        <translation type="unfinished">无法找到 DiffScope 工程文件的编辑器！</translation>
+        <translation type="obsolete">无法找到 DiffScope 工程文件的编辑器！</translation>
+    </message>
+    <message>
+        <source>Can&apos;t find the default editor of %1 project file!</source>
+        <translation>无法找到 %1 工程文件的编辑器！</translation>
     </message>
 </context>
 <context>

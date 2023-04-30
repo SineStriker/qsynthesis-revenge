@@ -26,6 +26,7 @@ namespace Core {
 
         QMChronMap<QString, DocumentSpec *> docSpecs;
         QHash<QString, QMChronSet<DocumentSpec *>> extensionsMap;
+        QHash<QString, QString> preferredExtensionIdMap;
 
         QStringList m_recentFiles;
         QStringList m_recentDirs;
