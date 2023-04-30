@@ -933,6 +933,40 @@ function(ck_add_attaches _target)
                     get_filename_component(_full_path ${_src_item} ABSOLUTE)
 
                     if(NOT _install_only)
+                        # set(_deps)
+
+                        # Only one
+                        # foreach(_item ${_full_path})
+                        #     if(NOT IS_ABSOLUTE ${_item})
+                        #         get_filename_component(_item ${_item} ABSOLUTE)
+                        #     endif()
+
+                        #     if(IS_DIRECTORY ${_item})
+                        #         get_filename_component(_name ${_item} NAME)
+                        #         file(GLOB_RECURSE _files ${_item}/*)
+                        #         list(APPEND _deps ${_files})
+                        #     elseif(EXISTS ${_item})
+                        #         file(GLOB _files ${_item})
+                        #         list(APPEND _deps ${_files})
+                        #     endif()
+                        # endforeach()
+
+                        # string(RANDOM LENGTH 8 _rand)
+                        # set(_copy_target ${_attach_target}_attach_${_rand})
+                        # set(_timestamp_file "${CMAKE_CURRENT_BINARY_DIR}/${_copy_target}.tmp")
+
+                        # add_custom_command(OUTPUT ${_timestamp_file}
+                        #     COMMAND ${CMAKE_COMMAND} -E touch ${_timestamp_file} # Make timestamp file
+                        #     COMMAND ${CMAKE_COMMAND}
+                        #     -D "src=${_full_path}"
+                        #     -D "dest=${_path}"
+                        #     -P "${CHOURSKIT_SCRIPTS_DIR}/CopyIfDifferent.cmake"
+                        #     DEPENDS ${_deps}
+                        # )
+
+                        # add_custom_target(${_copy_target} ALL DEPENDS ${_attach_target} ${_timestamp_file})
+
+                        # Add a post target to handle unexpected delete
                         add_custom_command(TARGET ${_attach_target} POST_BUILD
                             COMMAND ${CMAKE_COMMAND}
                             -D "src=${_full_path}"

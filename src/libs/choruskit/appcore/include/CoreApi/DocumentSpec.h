@@ -19,6 +19,9 @@ namespace Core {
     public:
         QString id() const;
 
+        QString displayName() const;
+        void setDisplayName(const QString &displayName);
+
     public:
         virtual QStringList supportedExtensions() const = 0;
         virtual QString filter() const = 0;

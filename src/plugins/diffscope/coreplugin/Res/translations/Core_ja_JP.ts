@@ -82,6 +82,13 @@
     </message>
 </context>
 <context>
+    <name>Core::ICoreWindow</name>
+    <message>
+        <source>Can&apos;t find editor of the file %1!</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>Core::IHomeWindowPrivate</name>
     <message>
         <source>Welcome</source>
@@ -181,6 +188,10 @@
     </message>
     <message>
         <source>&amp;About %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Can&apos;t find the default editor of DiffScope project file!</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

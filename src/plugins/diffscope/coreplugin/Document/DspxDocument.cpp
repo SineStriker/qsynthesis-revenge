@@ -81,7 +81,7 @@ namespace Core {
 
     IDocument::ReloadBehavior DspxDocument::reloadBehavior(IDocument::ChangeTrigger state,
                                                            IDocument::ChangeType type) const {
-        return IDocument::reloadBehavior(state, type);
+        return BehaviorSilent;
     }
 
     bool DspxDocument::reload(QString *errorString, IDocument::ReloadFlag flag, IDocument::ChangeType type) {

@@ -105,6 +105,13 @@
     </message>
 </context>
 <context>
+    <name>Core::ICoreWindow</name>
+    <message>
+        <source>Can&apos;t find editor of the file %1!</source>
+        <translation>无法找到 %1 的编辑器！</translation>
+    </message>
+</context>
+<context>
     <name>Core::IHomeWindow</name>
     <message>
         <source>Welcome</source>
@@ -240,6 +247,10 @@
     <message>
         <source>&amp;About %1</source>
         <translation>关于 %1(&amp;A)</translation>
+    </message>
+    <message>
+        <source>Can&apos;t find the default editor of DiffScope project file!</source>
+        <translation type="unfinished">无法找到 DiffScope 工程文件的编辑器！</translation>
     </message>
 </context>
 <context>

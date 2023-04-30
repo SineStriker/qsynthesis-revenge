@@ -81,8 +81,10 @@ namespace Core::Internal {
 
         connect(openFileItem->action(), &QAction::triggered, this, [this]() {
             auto docMgr = ICore::instance()->documentSystem();
-            auto spec = docMgr->supportedDocType("dspx");
+            auto spec = docMgr->docType("org.ChorusKit.dspx");
             if (!spec) {
+                QMessageBox::critical(windowHandle()->window(), ICore::mainTitle(),
+                                      tr("Can't find the default editor of DiffScope project file!"));
                 return;
             }
             if (docMgr->openFileBrowse(spec)) {

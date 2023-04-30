@@ -16,6 +16,7 @@ namespace Core {
         DocumentSpec *q_ptr;
 
         QString id;
+        QString displayName;
     };
 
 }

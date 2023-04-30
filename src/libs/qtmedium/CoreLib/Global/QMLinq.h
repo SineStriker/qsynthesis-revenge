@@ -11,12 +11,23 @@ namespace QMLinq {
      * @brief C# IEnumerable.Where
      *
      */
-    template <class T, class Selector>
-    QList<T> Where(const QList<T> &list, Selector selector) {
-        QList<T> res;
+    template <template <class> class Array, class T, class Selector>
+    Array<T> Where(const Array<T> &list, Selector selector) { // Same collection
+        Array<T> res;
         for (const auto &item : qAsConst(list)) {
             if (selector(item)) {
-                res.append(item);
+                res.push_back(item);
+            }
+        }
+        return res;
+    }
+
+    template <template <class> class Array2, template <class> class Array1, class T, class Selector>
+    Array2<T> Where(const Array1<T> &list, Selector selector) { // Different collection
+        Array2<T> res;
+        for (const auto &item : qAsConst(list)) {
+            if (selector(item)) {
+                res.push_back(item);
             }
         }
         return res;
@@ -27,12 +38,23 @@ namespace QMLinq {
      *
      */
 
+    template <class V, template <class> class Array, class T, class Mapper>
+    Array<V> Select(const Array<T> &list, Mapper mapper) { // Same collection
+        Array<V> res;
+        res.reserve(list.size());
+        for (const auto &item : qAsConst(list)) {
+            res.push_back(mapper(item));
+        }
+        return res;
+    }
+
+
     template <template <class> class Array2, class V, template <class> class Array1, class T, class Mapper>
-    Array2<V> Select(const Array1<T> &list, Mapper mapper) {
+    Array2<V> Select(const Array1<T> &list, Mapper mapper) { // Different collection
         Array2<V> res;
         res.reserve(list.size());
         for (const auto &item : qAsConst(list)) {
-            res.append(mapper(item));
+            res.push_back(mapper(item));
         }
         return res;
     }

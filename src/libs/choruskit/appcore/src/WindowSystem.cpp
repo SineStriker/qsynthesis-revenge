@@ -4,7 +4,6 @@
 #include "ILoader.h"
 #include "IWindowAddOn_p.h"
 #include "IWindow_p.h"
-#include "WindowCloseFilter_p.h"
 
 #include <QMLinq.h>
 #include <QMMath.h>
@@ -52,8 +51,8 @@ namespace Core {
 
     QJsonObject SplitterSizes::toObject() const {
         return {
-            {"sizes", QJsonArray::fromStringList(QMLinq::Select<QList, QString>(
-                          sizes, [](int num) -> QString { return QString::number(num); }))}
+            {"sizes", QJsonArray::fromStringList(
+                          QMLinq::Select<QString>(sizes, [](int num) -> QString { return QString::number(num); }))}
         };
     }
 

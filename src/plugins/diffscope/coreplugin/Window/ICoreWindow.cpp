@@ -1,7 +1,9 @@
 #include "ICoreWindow.h"
 #include "ICoreWindow_p.h"
 
+#include <QDir>
 #include <QFileInfo>
+#include <QMessageBox>
 
 #include "ICore.h"
 #include "Internal/Window/MainWindow.h"
@@ -43,12 +45,24 @@ namespace Core {
     }
 
     void ICoreWindow::openFile(const QString &path) {
-        auto docMgr = ICore::instance()->documentSystem();
-        auto spec = docMgr->supportedDocType(QFileInfo(path).completeSuffix());
-        if (!spec) {
+        QFileInfo info(path);
+        if (!info.isFile()) {
             return;
         }
-        if (spec->open(path)) {
+
+        auto docMgr = ICore::instance()->documentSystem();
+        auto specs = docMgr->supportedDocTypes(info.completeSuffix());
+        if (specs.isEmpty()) {
+            QMessageBox::critical(
+                window(), ICore::mainTitle(),
+                tr("Can't find editor of the file %1!").arg(QDir::toNativeSeparators(info.canonicalFilePath())));
+            return;
+        }
+
+        // TODO: add editor selection method
+        auto spec = specs.front();
+
+        if (spec->open(path) && id() == "home") {
             window()->close();
         }
     }

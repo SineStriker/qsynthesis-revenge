@@ -24,6 +24,16 @@ namespace Core {
         return d->id;
     }
 
+    QString DocumentSpec::displayName() const {
+        Q_D(const DocumentSpec);
+        return d->displayName;
+    }
+
+    void DocumentSpec::setDisplayName(const QString &displayName) {
+        Q_D(DocumentSpec);
+        d->displayName = displayName;
+    }
+
     QString DocumentSpec::saveFilter() const {
         return filter();
     }
