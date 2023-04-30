@@ -3,10 +3,38 @@
 
 #include <QDebug>
 #include <QFileInfo>
+#include <QSettings>
 
+#include <QMSystem.h>
+#include <QMWidgetsHost.h>
+
+#include "DocumentSystem_p.h"
 #include "ICoreBase.h"
 
 namespace Core {
+    LogDirectory::~LogDirectory() {
+        QMFs::rmDir(userLogDir);
+    }
+
+    QString LogDirectory::logDirectory() const {
+        if (!QMFs::isDirExist(userLogDir)) {
+            if (logDir.isNull())
+                logDir.reset(
+                    new QTemporaryDir(QString("%1/%2-XXXXXXXX").arg(DocumentSystemPrivate::logBaseDir(), prefix)));
+            return logDir->path();
+        }
+
+        return userLogDir;
+    }
+
+    void LogDirectory::setLogDirectory(const QString &dir) {
+        QFileInfo info(dir);
+        if (!info.isDir() || !info.isWritable())
+            return;
+
+        logDir.reset();
+        userLogDir = dir;
+    }
 
     IDocumentPrivate::IDocumentPrivate() {
     }
@@ -15,6 +43,8 @@ namespace Core {
     }
 
     void IDocumentPrivate::init() {
+        Q_Q(IDocument);
+        logDir.prefix = q->id();
         getSpec();
     }
 
@@ -24,8 +54,17 @@ namespace Core {
             qWarning() << "IDocument: document is not registered to Document:" << id;
             return false;
         }
-
         return true;
+    }
+
+    void IDocumentPrivate::updateLogDesc() {
+        Q_Q(IDocument);
+
+        QSettings settings(QDir(logDir.logDirectory()).filePath("desc.tmp.ini"), QSettings::IniFormat);
+        settings.beginGroup("File");
+        settings.setValue("Editor", q->id());
+        settings.setValue("Path", q->filePath());
+        settings.endGroup();
     }
 
     IDocument::IDocument(const QString &id, QObject *parent) : IDocument(*new IDocumentPrivate(), id, parent) {
@@ -42,6 +81,16 @@ namespace Core {
     DocumentSpec *IDocument::spec() const {
         Q_D(const IDocument);
         return d->spec;
+    }
+
+    QString IDocument::logDirectory() const {
+        Q_D(const IDocument);
+        return d->logDir.logDirectory();
+    }
+
+    void IDocument::setLogDirectory(const QString &dir) {
+        Q_D(IDocument);
+        d->logDir.setLogDirectory(dir);
     }
 
     QString IDocument::errorMessage() const {
@@ -66,6 +115,10 @@ namespace Core {
 
         auto oldName = d->filePath;
         d->filePath = path;
+
+        // Update descriptions in log file
+        d->updateLogDesc();
+
         emit filePathChanged(oldName, d->filePath);
         emit changed();
     }

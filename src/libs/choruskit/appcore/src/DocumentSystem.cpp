@@ -5,13 +5,20 @@
 
 #include "ILoader.h"
 
+#include <QMCoreHost.h>
 #include <QMMath.h>
 #include <QMSystem.h>
 
 #include <QApplication>
+#include <QCheckBox>
+#include <QDir>
 #include <QFileDialog>
 #include <QFileInfo>
+#include <QGridLayout>
 #include <QJsonArray>
+#include <QListWidget>
+#include <QMessageBox>
+#include <QScreen>
 
 namespace Core {
 
@@ -34,6 +41,8 @@ namespace Core {
 
     void DocumentSystemPrivate::init() {
         readSettings();
+
+        QMFs::mkDir(logBaseDir());
     }
 
     void DocumentSystemPrivate::readSettings() {
@@ -84,6 +93,10 @@ namespace Core {
         s->insert(settingCategoryC, obj);
     }
 
+    QString DocumentSystemPrivate::logBaseDir() {
+        return QString("%1/logs").arg(qmHost->tempDir());
+    }
+
     static DocumentSystem *m_instance = nullptr;
 
     DocumentSystem::DocumentSystem(QObject *parent) : DocumentSystem(*new DocumentSystemPrivate(), parent) {
@@ -101,12 +114,12 @@ namespace Core {
             qWarning() << "Core::DocumentSystem::addDocType(): trying to add null document";
             return false;
         }
-        if (d->documents.contains(doc->id())) {
+        if (d->docSpecs.contains(doc->id())) {
             qWarning() << "Core::DocumentSystem::addDocType(): trying to add duplicated document:" << doc->id();
             return false;
         }
         doc->setParent(this);
-        d->documents.append(doc->id(), doc);
+        d->docSpecs.append(doc->id(), doc);
 
         for (const auto &ext : doc->supportedExtensions()) {
             d->extensionsMap[ext].append(doc);
@@ -125,15 +138,15 @@ namespace Core {
 
     bool DocumentSystem::removeDocType(const QString &id) {
         Q_D(DocumentSystem);
-        auto it = d->documents.find(id);
-        if (it == d->documents.end()) {
+        auto it = d->docSpecs.find(id);
+        if (it == d->docSpecs.end()) {
             qWarning() << "Core::DocumentSystem::removeDocType(): document does not exist:" << id;
             return false;
         }
 
         auto doc = it.value();
         doc->setParent(nullptr);
-        d->documents.erase(it);
+        d->docSpecs.erase(it);
 
         for (const auto &ext : doc->supportedExtensions()) {
             auto it2 = d->extensionsMap.find(ext);
@@ -150,17 +163,17 @@ namespace Core {
 
     DocumentSpec *DocumentSystem::docType(const QString &id) const {
         Q_D(const DocumentSystem);
-        return d->documents.value(id, nullptr);
+        return d->docSpecs.value(id, nullptr);
     }
 
     QList<DocumentSpec *> DocumentSystem::docTypes() const {
         Q_D(const DocumentSystem);
-        return d->documents.values();
+        return d->docSpecs.values();
     }
 
     QStringList DocumentSystem::docTypeIds() const {
         Q_D(const DocumentSystem);
-        return d->documents.keys();
+        return d->docSpecs.keys();
     }
 
     DocumentSpec *DocumentSystem::supportedDocType(const QString &suffix) const {
@@ -308,6 +321,91 @@ namespace Core {
         return res;
     }
 
+    int DocumentSystem::checkRemainingLogs(QWidget *parent) const {
+        QDir baseDir(DocumentSystemPrivate::logBaseDir());
+        QFileInfoList fileInfos = baseDir.entryInfoList(QDir::Dirs | QDir::NoSymLinks | QDir::NoDotAndDotDot);
+
+        struct Remaining {
+            DocumentSpec *spec;
+            QString file;
+            QString logDir;
+        };
+
+        QList<Remaining> remaining;
+        for (const auto &item : qAsConst(fileInfos)) {
+            QDir dir(item.absoluteFilePath());
+            QSettings settings(dir.filePath("desc.tmp.ini"), QSettings::IniFormat);
+            settings.beginGroup("File");
+
+            QString id = settings.value("Editor").toString();
+            QString path = settings.value("Path").toString();
+
+            auto spec = docType(id);
+            if (spec && spec->canRecover() && !path.isEmpty()) {
+                remaining.append({spec, path, dir.path()});
+                continue;
+            }
+            dir.removeRecursively();
+        }
+
+        if (remaining.isEmpty())
+            return 0;
+
+        auto listWidget = new QListWidget();
+        for (const auto &item : qAsConst(remaining)) {
+            auto listItem = new QListWidgetItem();
+            listItem->setFlags(Qt::ItemIsEnabled | Qt::ItemIsUserCheckable);
+            listItem->setText(QDir::toNativeSeparators(item.file));
+            listItem->setCheckState(Qt::Checked);
+            listWidget->addItem(listItem);
+        }
+
+        auto allCheckbox = new QCheckBox(QApplication::translate("Core::DocumentSystem", "Restore all"));
+        connect(allCheckbox, &QCheckBox::toggled, listWidget, &QListWidget::setDisabled);
+
+        QMessageBox msgBox(parent);
+        msgBox.setText(QApplication::translate(
+            "Core::DocumentSystem",
+            "The following files have been detected that closed unexpectedly, would you like to restore them?"));
+        msgBox.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
+        msgBox.setCheckBox(allCheckbox);
+
+        auto layout = qobject_cast<QGridLayout *>(msgBox.layout());
+        int index = layout->indexOf(allCheckbox);
+        int row, column, rowSpan, columnSpan;
+        layout->getItemPosition(index, &row, &column, &rowSpan, &columnSpan);
+        layout->addWidget(listWidget, row + 1, column, rowSpan, columnSpan);
+
+        double ratio = parent ? (parent->screen()->logicalDotsPerInch() / QMOs::unitDpi()) : 1;
+        auto horizontalSpacer = new QSpacerItem(qMax<int>(ratio * 500, listWidget->sizeHint().width()), 0,
+                                                QSizePolicy::Minimum, QSizePolicy::Expanding);
+        layout->addItem(horizontalSpacer, layout->rowCount(), 0, 1, layout->columnCount());
+
+        int result = msgBox.exec();
+        if (result == QMessageBox::No) {
+            for (const auto &item : qAsConst(remaining)) {
+                QDir(item.logDir).removeRecursively();
+            }
+            return 0;
+        }
+
+        int cnt = 0;
+        for (int i = 0; i < listWidget->count(); ++i) {
+            auto listItem = listWidget->item(i);
+            auto item = remaining.at(i);
+            if (!allCheckbox->isChecked() && listItem->checkState() == Qt::Unchecked) {
+                QDir(item.logDir).removeRecursively();
+                continue;
+            }
+
+            if (item.spec->recover(item.logDir, item.file)) {
+                cnt++;
+            }
+        }
+
+        return cnt;
+    }
+
     QString DocumentSystem::getSaveAsFileName(const IDocument *document, const QString &pathIn, QWidget *parent) const {
         Q_D(const DocumentSystem);
         auto spec = document->d_func()->spec;
@@ -337,6 +435,18 @@ namespace Core {
 
         return getSaveFileName(parent, QApplication::translate("Core::DocumentSystem", "Save As File"),
                                (path + QLatin1Char('/') + fileName), filter);
+    }
+
+    void DocumentSystem::documentAdded(IDocument *document, bool addWatch) {
+        DocumentWatcher::documentAdded(document, addWatch);
+    }
+
+    void DocumentSystem::documentChanged(IDocument *document) {
+        DocumentWatcher::documentChanged(document);
+    }
+
+    void DocumentSystem::documentRemoved(IDocument *document) {
+        DocumentWatcher::documentRemoved(document);
     }
 
     DocumentSystem::DocumentSystem(DocumentSystemPrivate &d, QObject *parent) : DocumentWatcher(d, parent) {

@@ -91,10 +91,8 @@ namespace Core {
             msgBox->setIconPixmap(icon.pixmap(QSize(40, 40) * ratio));
 
         auto layout = qobject_cast<QGridLayout *>(msgBox->layout());
-        if (layout) {
-            auto horizontalSpacer = new QSpacerItem(ratio * 500, 0, QSizePolicy::Minimum, QSizePolicy::Expanding);
-            layout->addItem(horizontalSpacer, layout->rowCount(), 0, 1, layout->columnCount());
-        }
+        auto horizontalSpacer = new QSpacerItem(ratio * 500, 0, QSizePolicy::Minimum, QSizePolicy::Expanding);
+        layout->addItem(horizontalSpacer, layout->rowCount(), 0, 1, layout->columnCount());
         msgBox->exec();
     }
 

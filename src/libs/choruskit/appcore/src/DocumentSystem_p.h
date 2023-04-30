@@ -6,6 +6,8 @@
 #include <Collections/QMChronMap.h>
 #include <Collections/QMChronSet.h>
 
+#include <QMSystem.h>
+
 #include "DocumentWatcher_p.h"
 
 namespace Core {
@@ -22,7 +24,7 @@ namespace Core {
         void readSettings();
         void saveSettings() const;
 
-        QMChronMap<QString, DocumentSpec *> documents;
+        QMChronMap<QString, DocumentSpec *> docSpecs;
         QHash<QString, QMChronSet<DocumentSpec *>> extensionsMap;
 
         QStringList m_recentFiles;
@@ -31,6 +33,8 @@ namespace Core {
         mutable QString openFileLastVisitDir;
         mutable QString openDirLastVisitDir;
         mutable QString saveFileLastVisitDir;
+
+        static QString logBaseDir();
     };
 
 }

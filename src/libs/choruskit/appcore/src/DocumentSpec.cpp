@@ -38,6 +38,14 @@ namespace Core {
         return filter();
     }
 
+    bool DocumentSpec::canRecover() const {
+        return false;
+    }
+
+    bool DocumentSpec::recover(const QString &logDir, const QString &fileName) {
+        return false;
+    }
+
     DocumentSpec::DocumentSpec(DocumentSpecPrivate &d, const QString &id, QObject *parent)
         : QObject(parent), d_ptr(&d) {
         d.q_ptr = this;

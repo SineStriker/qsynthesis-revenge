@@ -2,9 +2,9 @@
 
 #include <QApplication>
 #include <QDirIterator>
+#include <QLoggingCategory>
 #include <QSplashScreen>
 #include <QThread>
-#include <QLoggingCategory>
 
 #include "AddOn/HomeWindowAddOn.h"
 #include "AddOn/ProjectWindowAddOn.h"
@@ -44,8 +44,8 @@ namespace Core {
             // QLoggingCategory::setFilterRules("qt.gui.shortcutmap=true");
 
             // Add resources
-            qIDec->addTranslationPath(pluginSpec()->location() +"/translations");
-            qIDec->addThemePath(pluginSpec()->location() +"/themes");
+            qIDec->addTranslationPath(pluginSpec()->location() + "/translations");
+            qIDec->addThemePath(pluginSpec()->location() + "/themes");
 
             auto splash = qobject_cast<QSplashScreen *>(ILoader::instance()->getFirstObject("choruskit_init_splash"));
             if (splash) {
@@ -109,7 +109,13 @@ namespace Core {
             auto winMgr = icore->windowSystem();
             auto handle = winMgr->createWindow("home");
 
-            waitSplash(handle->window());
+            auto win = handle->window();
+            waitSplash(win);
+
+            // Check logs
+            if (icore->documentSystem()->checkRemainingLogs(win) > 0) {
+                win->close();
+            }
 
             return true;
         }

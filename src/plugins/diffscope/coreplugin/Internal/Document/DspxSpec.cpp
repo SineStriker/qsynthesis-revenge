@@ -22,13 +22,34 @@ namespace Core::Internal {
         return QString("%1(%2)").arg(tr("DiffScope Project Files"), "*.dspx");
     }
 
-    bool DspxSpec::open(const QString &filename) {
+    bool DspxSpec::open(const QString &fileName) {
         auto iWin = ICore::instance()->windowSystem()->createWindow("project")->cast<IProjectWindow>();
         if (!iWin)
             return false;
 
         auto doc = iWin->doc();
-        if (!doc->open(filename)) {
+        if (!doc->open(fileName)) {
+            QMessageBox::critical(nullptr, tr("File Error"), doc->errorMessage());
+            iWin->window()->close();
+            return false;
+        }
+
+        return true;
+    }
+
+    bool DspxSpec::canRecover() const {
+        return true;
+    }
+
+    bool DspxSpec::recover(const QString &logDir, const QString &fileName) {
+        auto iWin = ICore::instance()->windowSystem()->createWindow("project")->cast<IProjectWindow>();
+        if (!iWin)
+            return false;
+
+        auto doc = iWin->doc();
+        doc->setLogDirectory(logDir);
+
+        if (!doc->open(fileName)) {
             QMessageBox::critical(nullptr, tr("File Error"), doc->errorMessage());
             iWin->window()->close();
             return false;

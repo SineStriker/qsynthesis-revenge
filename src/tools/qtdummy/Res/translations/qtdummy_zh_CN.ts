@@ -159,6 +159,14 @@
         <source>Save As File</source>
         <translation>文件另存为</translation>
     </message>
+    <message>
+        <source>Restore all</source>
+        <translation>恢复全部</translation>
+    </message>
+    <message>
+        <source>The following files have been detected that closed unexpectedly, would you like to restore them?</source>
+        <translation>检测到以下文件意外关闭，您是否希望恢复它们？</translation>
+    </message>
 </context>
 <context>
     <name>Core::DocumentWatcher</name>

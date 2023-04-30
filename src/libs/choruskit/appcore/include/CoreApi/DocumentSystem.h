@@ -53,8 +53,15 @@ namespace Core {
         QString getSaveFileName(QWidget *parent, const QString &title, const QString &path = {},
                                 const QString &filter = QString(), QString *selectedFilter = nullptr) const;
 
+    public:
+        int checkRemainingLogs(QWidget *parent = nullptr) const;
+
     protected:
         QString getSaveAsFileName(const IDocument *document, const QString &path, QWidget *parent) const override;
+
+        void documentAdded(IDocument *document, bool addWatch) override;
+        void documentChanged(IDocument *document) override;
+        void documentRemoved(IDocument *document) override;
 
     signals:
         void recentFilesChanged();

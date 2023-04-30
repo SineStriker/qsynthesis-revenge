@@ -57,6 +57,10 @@ namespace Core {
     protected:
         virtual QString getSaveAsFileName(const IDocument *document, const QString &path, QWidget *parent) const;
 
+        virtual void documentAdded(IDocument *document, bool addWatch);
+        virtual void documentChanged(IDocument *document);
+        virtual void documentRemoved(IDocument *document);
+
     signals:
         /* Used to notify e.g. the code model to update the given files. Does *not*
            lead to any editors to reload or any other editor manager actions. */

@@ -418,6 +418,8 @@ namespace Core {
             return;
 
         emit q->documentRenamed(doc, oldName, newName);
+
+        q->documentChanged(doc);
     }
 
     DocumentWatcher::DocumentWatcher(QObject *parent) : DocumentWatcher(*new DocumentWatcherPrivate(), parent) {
@@ -472,6 +474,7 @@ namespace Core {
                     connect(document, &QObject::destroyed, d, &DocumentWatcherPrivate::documentDestroyed);
                     connect(document, &IDocument::filePathChanged, d, &DocumentWatcherPrivate::filePathChanged);
                     d->m_documentsWithoutWatch.append(document);
+                    documentAdded(document, addWatcher);
                 }
             }
             return;
@@ -483,6 +486,7 @@ namespace Core {
                 connect(document, &QObject::destroyed, d, &DocumentWatcherPrivate::documentDestroyed);
                 connect(document, &IDocument::filePathChanged, d, &DocumentWatcherPrivate::filePathChanged);
                 d->addFileInfo(document);
+                documentAdded(document, addWatcher);
             }
         }
     }
@@ -505,6 +509,7 @@ namespace Core {
             disconnect(document, &IDocument::changed, d, &DocumentWatcherPrivate::checkForNewFileName);
         }
         disconnect(document, &QObject::destroyed, d, &DocumentWatcherPrivate::documentDestroyed);
+        documentRemoved(document);
 
         return addWatcher;
     }
@@ -638,6 +643,15 @@ namespace Core {
         return QFileDialog::getSaveFileName(
             parent, QCoreApplication::translate("Core::DocumentWatcher", "Save As File"), path,
             QString("%1(%2)").arg(QApplication::translate("Core::PromptHandler", "All Files"), QMOs::allFilesFilter()));
+    }
+
+    void DocumentWatcher::documentAdded(IDocument *document, bool addWatch) {
+    }
+
+    void DocumentWatcher::documentChanged(IDocument *document) {
+    }
+
+    void DocumentWatcher::documentRemoved(IDocument *document) {
     }
 
     DocumentWatcher::DocumentWatcher(DocumentWatcherPrivate &d, QObject *parent) : QObject(parent), d_ptr(&d) {

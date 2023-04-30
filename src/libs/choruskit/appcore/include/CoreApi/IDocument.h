@@ -27,6 +27,9 @@ namespace Core {
         QString id() const;
         DocumentSpec *spec() const;
 
+        QString logDirectory() const;
+        void setLogDirectory(const QString &dir); // Must be a writable directory
+
     public:
         virtual bool open(const QString &filename) = 0;
         virtual bool save(const QString &filename) = 0;
