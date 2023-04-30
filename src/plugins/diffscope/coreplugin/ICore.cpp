@@ -1,5 +1,7 @@
 #include "ICore.h"
 
+#include <csignal>
+
 #include <QApplication>
 #include <QChildEvent>
 #include <QMessageBox>

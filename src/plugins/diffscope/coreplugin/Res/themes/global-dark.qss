@@ -4,6 +4,10 @@ QWidget {
     font-size: 15px;
 }
 
+QWidget:focus {
+    outline: none;
+}
+
 CWindowBarV2>CToolButton#icon-button {
     qproperty-iconUp: svg(":/svg/app/diffsinger.svg", transparent);
 }

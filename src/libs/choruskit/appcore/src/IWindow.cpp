@@ -10,7 +10,8 @@
 
 namespace Core {
 
-    IWindowPrivate::IWindowPrivate() : q_ptr(nullptr) {
+    IWindowPrivate::IWindowPrivate() {
+        m_closed = false;
     }
 
     IWindowPrivate::~IWindowPrivate() {
@@ -42,6 +43,8 @@ namespace Core {
 
     void IWindowPrivate::_q_windowClosed(QWidget *w) {
         Q_Q(IWindow);
+
+        m_closed = true;
 
         q->windowAboutToClose();
 
@@ -267,6 +270,11 @@ namespace Core {
         d.id = id;
 
         d.init();
+    }
+
+    bool IWindow::isEffectivelyClosed() const {
+        Q_D(const IWindow);
+        return d->m_closed;
     }
 
 }

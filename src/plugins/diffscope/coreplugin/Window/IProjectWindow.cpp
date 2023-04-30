@@ -3,6 +3,7 @@
 
 #include <QDebug>
 #include <QEvent>
+#include <QMessageBox>
 
 #include <QMDecoratorV2.h>
 #include <QMView.h>
@@ -16,7 +17,9 @@ namespace Core {
 
     void IProjectWindowPrivate::init() {
         Q_Q(IProjectWindow);
+
         m_doc = new DspxDocument(q);
+        m_doc->setAutoRemoveLogDirectory(false);
     }
 
     void IProjectWindowPrivate::reloadStrings() {
@@ -81,21 +84,17 @@ namespace Core {
     }
 
     void IProjectWindow::windowAboutToClose() {
-        ICore::instance()->windowSystem()->saveWindowGeometry(metaObject()->className(), window());
-    }
+        Q_D(IProjectWindow);
 
-    bool IProjectWindow::eventFilter(QObject *obj, QEvent *event) {
-        if (obj == window()) {
-            switch (event->type()) {
-                case QEvent::Close: {
-                    qDebug() << "close";
-                    break;
-                }
-                default:
-                    break;
-            }
+        // *(int *) nullptr = 1;
+
+        // Windows should be all closed before quit signal arrives except a kill or interrupt signal
+        // is emitted, only when this function is called the log should be removed expectedly.
+        if (!d->m_doc->isModified()) {
+            d->m_doc->setAutoRemoveLogDirectory(true);
         }
-        return QObject::eventFilter(obj, event);
+
+        ICore::instance()->windowSystem()->saveWindowGeometry(metaObject()->className(), window());
     }
 
     IProjectWindow::IProjectWindow(IProjectWindowPrivate &d, QObject *parent)

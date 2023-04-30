@@ -10,7 +10,7 @@ namespace Core {
 
     class LogDirectory {
     public:
-        explicit LogDirectory(const QString &prefix = {}) : prefix(prefix) {
+        explicit LogDirectory(const QString &prefix = {}) : prefix(prefix), autoRemove(true) {
         }
 
         ~LogDirectory();
@@ -18,6 +18,7 @@ namespace Core {
         QString logDirectory() const;
         void setLogDirectory(const QString &dir);
 
+        bool autoRemove;
         QString prefix;
 
     private:

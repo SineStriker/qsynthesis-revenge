@@ -30,6 +30,9 @@ namespace Core {
         QString logDirectory() const;
         void setLogDirectory(const QString &dir); // Must be a writable directory
 
+        bool autoRemoveLogDirectory() const;
+        void setAutoRemoveLogDirectory(bool autoRemove);
+
     public:
         virtual bool open(const QString &filename) = 0;
         virtual bool save(const QString &filename) = 0;

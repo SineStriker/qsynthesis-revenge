@@ -1,6 +1,7 @@
 #include "IDocument.h"
 #include "IDocument_p.h"
 
+#include <QApplication>
 #include <QDebug>
 #include <QFileInfo>
 #include <QSettings>
@@ -13,7 +14,12 @@
 
 namespace Core {
     LogDirectory::~LogDirectory() {
-        QMFs::rmDir(userLogDir);
+        if (!autoRemove) {
+            if (!logDir.isNull())
+                logDir->setAutoRemove(false);
+        } else {
+            QMFs::rmDir(userLogDir);
+        }
     }
 
     QString LogDirectory::logDirectory() const {
@@ -91,6 +97,16 @@ namespace Core {
     void IDocument::setLogDirectory(const QString &dir) {
         Q_D(IDocument);
         d->logDir.setLogDirectory(dir);
+    }
+
+    bool IDocument::autoRemoveLogDirectory() const {
+        Q_D(const IDocument);
+        return d->logDir.autoRemove;
+    }
+
+    void IDocument::setAutoRemoveLogDirectory(bool autoRemove) {
+        Q_D(IDocument);
+        d->logDir.autoRemove = autoRemove;
     }
 
     QString IDocument::errorMessage() const {

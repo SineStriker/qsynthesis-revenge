@@ -92,6 +92,8 @@ namespace Core {
         friend class IWindowFactory;
 
     public:
+        bool isEffectivelyClosed() const;
+
         template <class T>
         inline T *cast();
 

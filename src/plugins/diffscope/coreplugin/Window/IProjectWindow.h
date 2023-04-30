@@ -30,8 +30,6 @@ namespace Core {
 
         void windowAboutToClose() override;
 
-        bool eventFilter(QObject *obj, QEvent *event) override;
-
     protected:
         IProjectWindow(IProjectWindowPrivate &d, QObject *parent = nullptr);
 

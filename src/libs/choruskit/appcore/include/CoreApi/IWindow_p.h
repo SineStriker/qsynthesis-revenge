@@ -31,6 +31,7 @@ namespace Core {
         IWindow *q_ptr;
 
         QString id;
+        bool m_closed;
 
         QHash<QString, ActionItem *> actionItemMap;
         std::list<IWindowAddOn *> addOns;
