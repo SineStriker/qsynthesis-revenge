@@ -88,7 +88,8 @@ namespace Core::Internal {
                 return;
             }
             if (docMgr->openFileBrowse(spec)) {
-                windowHandle()->window()->close();
+                if (qApp->property("closeHomeOnOpen").toBool())
+                    windowHandle()->window()->close();
             }
         });
 

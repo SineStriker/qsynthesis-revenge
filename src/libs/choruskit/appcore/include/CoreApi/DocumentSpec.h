@@ -26,7 +26,7 @@ namespace Core {
         virtual QStringList supportedExtensions() const = 0;
         virtual QString filter() const = 0;
         virtual QString saveFilter() const;
-        virtual bool open(const QString &fileName) = 0;
+        virtual bool open(const QString &fileName);
 
         virtual bool canRecover() const;
         virtual bool recover(const QString &logDir, const QString &fileName);

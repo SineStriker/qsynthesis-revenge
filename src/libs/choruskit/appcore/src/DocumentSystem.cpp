@@ -33,6 +33,8 @@ namespace Core {
     static const char openDirLastVisitDirC[] = "OpenDir";
     static const char saveFileLastVisitDirC[] = "SaveFile";
 
+    static const char selectAllWhenRecoverC[] = "SelectAllWhenRecover";
+
     DocumentSystemPrivate::DocumentSystemPrivate() {
     }
 
@@ -72,6 +74,8 @@ namespace Core {
         openFileLastVisitDir = lastVisitObj.value(openFileLastVisitDirC).toString();
         openDirLastVisitDir = lastVisitObj.value(openDirLastVisitDirC).toString();
         saveFileLastVisitDir = lastVisitObj.value(saveFileLastVisitDirC).toString();
+
+        selectAllWhenRecover = obj.value(selectAllWhenRecoverC).toBool();
     }
 
     void DocumentSystemPrivate::saveSettings() const {
@@ -89,6 +93,8 @@ namespace Core {
         lastVisitObj.insert(QLatin1String(openDirLastVisitDirC), openDirLastVisitDir);
         lastVisitObj.insert(QLatin1String(saveFileLastVisitDirC), saveFileLastVisitDir);
         obj.insert(lastVisitGroupC, lastVisitObj);
+
+        obj.insert(selectAllWhenRecoverC, selectAllWhenRecover);
 
         s->insert(settingCategoryC, obj);
     }
@@ -322,6 +328,8 @@ namespace Core {
     }
 
     int DocumentSystem::checkRemainingLogs(QWidget *parent) const {
+        Q_D(const DocumentSystem);
+
         QDir baseDir(DocumentSystemPrivate::logBaseDir());
         QFileInfoList fileInfos = baseDir.entryInfoList(QDir::Dirs | QDir::NoSymLinks | QDir::NoDotAndDotDot);
 
@@ -364,6 +372,8 @@ namespace Core {
         connect(allCheckbox, &QCheckBox::toggled, listWidget, &QListWidget::setDisabled);
 
         QMessageBox msgBox(parent);
+        // msgBox.setWindowFlag(Qt::MSWindowsFixedSizeDialogHint, false);
+        msgBox.setIcon(QMessageBox::Question);
         msgBox.setText(QApplication::translate(
             "Core::DocumentSystem",
             "The following files have been detected that closed unexpectedly, would you like to restore them?"));
@@ -377,11 +387,14 @@ namespace Core {
         layout->addWidget(listWidget, row + 1, column, rowSpan, columnSpan);
 
         double ratio = parent ? (parent->screen()->logicalDotsPerInch() / QMOs::unitDpi()) : 1;
-        auto horizontalSpacer = new QSpacerItem(qMax<int>(ratio * 500, listWidget->sizeHint().width()), 0,
+        auto horizontalSpacer = new QSpacerItem(qMax<int>(ratio * 500, listWidget->sizeHint().width() + 100), 0,
                                                 QSizePolicy::Minimum, QSizePolicy::Expanding);
         layout->addItem(horizontalSpacer, layout->rowCount(), 0, 1, layout->columnCount());
 
+        allCheckbox->setChecked(d->selectAllWhenRecover);
         int result = msgBox.exec();
+        d->selectAllWhenRecover = allCheckbox->isChecked();
+
         if (result == QMessageBox::No) {
             for (const auto &item : qAsConst(remaining)) {
                 QDir(item.logDir).removeRecursively();

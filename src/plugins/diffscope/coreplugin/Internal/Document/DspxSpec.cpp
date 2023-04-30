@@ -3,6 +3,7 @@
 #include "ICore.h"
 #include "Window/IProjectWindow.h"
 
+#include <QCoreApplication>
 #include <QDebug>
 #include <QMessageBox>
 
@@ -23,6 +24,9 @@ namespace Core::Internal {
     }
 
     bool DspxSpec::open(const QString &fileName) {
+        if (DocumentSpec::open(fileName))
+            return true;
+
         auto iWin = ICore::instance()->windowSystem()->createWindow("project")->cast<IProjectWindow>();
         if (!iWin)
             return false;
@@ -51,7 +55,10 @@ namespace Core::Internal {
 
         if (!doc->open(fileName)) {
             QMessageBox::critical(nullptr, tr("File Error"), doc->errorMessage());
-            iWin->window()->close();
+
+            if (qApp->property("closeHomeOnOpen").toBool())
+                iWin->window()->close();
+
             return false;
         }
 

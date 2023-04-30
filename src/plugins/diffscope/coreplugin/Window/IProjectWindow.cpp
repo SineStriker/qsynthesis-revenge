@@ -5,6 +5,7 @@
 #include <QEvent>
 
 #include <QMDecoratorV2.h>
+#include <QMView.h>
 
 #include "ICore.h"
 
@@ -32,6 +33,11 @@ namespace Core {
         q->setWindowTitle(m_doc->displayName());
     }
 
+    void IProjectWindowPrivate::_q_documentRaiseRequested() {
+        Q_Q(IProjectWindow);
+        QMView::bringWindowToForeground(q->window());
+    }
+
     DspxDocument *IProjectWindow::doc() const {
         Q_D(const IProjectWindow);
         return d->m_doc;
@@ -56,6 +62,7 @@ namespace Core {
 
         // Close event
         connect(d->m_doc, &IDocument::changed, d, &IProjectWindowPrivate::_q_documentChanged);
+        connect(d->m_doc, &IDocument::raiseRequested, d, &IProjectWindowPrivate::_q_documentRaiseRequested);
         connect(d->m_doc, &IDocument::closeRequested, win, &QWidget::close);
     }
 

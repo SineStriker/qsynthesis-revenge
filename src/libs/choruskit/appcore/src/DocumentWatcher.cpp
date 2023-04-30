@@ -531,6 +531,23 @@ namespace Core {
         return modified;
     }
 
+    IDocument *DocumentWatcher::searchDocument(const QString &filePath) const {
+        Q_D(const DocumentWatcher);
+
+        const QString &fixedFrom = fixFileName(filePath, ResolveLinks);
+        foreach (IDocument *document, d->m_documentsWithWatch.keys()) {
+            if (fixFileName(document->filePath(), ResolveLinks) == fixedFrom)
+                return document;
+        }
+
+        foreach (IDocument *document, d->m_documentsWithoutWatch) {
+            if (fixFileName(document->filePath(), ResolveLinks) == fixedFrom)
+                return document;
+        }
+
+        return nullptr;
+    }
+
     void DocumentWatcher::renamedFile(const QString &from, const QString &to) {
         Q_D(DocumentWatcher);
 

@@ -35,6 +35,7 @@ namespace Core {
         void addDocument(IDocument *document, bool addWatcher = true);
         bool removeDocument(IDocument *document);
         QList<IDocument *> modifiedDocuments() const;
+        IDocument *searchDocument(const QString &filePath) const;
 
     public:
         void renamedFile(const QString &from, const QString &to);

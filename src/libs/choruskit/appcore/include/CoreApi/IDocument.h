@@ -63,6 +63,8 @@ namespace Core {
         virtual ReloadBehavior reloadBehavior(ChangeTrigger state, ChangeType type) const;
 
         virtual bool reload(QString *errorString, ReloadFlag flag, ChangeType type) = 0;
+
+        virtual void raise();
         virtual void close();
 
         virtual QWidget *dialogParent() const;
@@ -73,6 +75,8 @@ namespace Core {
 
         void aboutToReload();
         void reloadFinished(bool success);
+
+        void raiseRequested();
         void closeRequested();
 
         void filePathChanged(const QString &oldName, const QString &newName);

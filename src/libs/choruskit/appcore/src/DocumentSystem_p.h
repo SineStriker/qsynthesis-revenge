@@ -33,6 +33,7 @@ namespace Core {
         mutable QString openFileLastVisitDir;
         mutable QString openDirLastVisitDir;
         mutable QString saveFileLastVisitDir;
+        mutable bool selectAllWhenRecover;
 
         static QString logBaseDir();
     };

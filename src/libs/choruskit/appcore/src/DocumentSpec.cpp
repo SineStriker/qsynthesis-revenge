@@ -1,6 +1,10 @@
 #include "DocumentSpec.h"
 #include "DocumentSpec_p.h"
 
+#include <QDebug>
+
+#include "ICoreBase.h"
+
 namespace Core {
 
     DocumentSpecPrivate::DocumentSpecPrivate() {
@@ -36,6 +40,15 @@ namespace Core {
 
     QString DocumentSpec::saveFilter() const {
         return filter();
+    }
+
+    bool DocumentSpec::open(const QString &fileName) {
+        auto doc = ICoreBase::instance()->documentSystem()->searchDocument(fileName);
+        if (doc) {
+            doc->raise();
+            return true;
+        }
+        return false;
     }
 
     bool DocumentSpec::canRecover() const {

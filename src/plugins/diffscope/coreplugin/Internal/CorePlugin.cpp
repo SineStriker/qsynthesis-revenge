@@ -41,8 +41,6 @@ namespace Core {
         }
 
         bool CorePlugin::initialize(const QStringList &arguments, QString *errorMessage) {
-            // QLoggingCategory::setFilterRules("qt.gui.shortcutmap=true");
-
             // Add resources
             qIDec->addTranslationPath(pluginSpec()->location() + "/translations");
             qIDec->addThemePath(pluginSpec()->location() + "/themes");
@@ -88,10 +86,13 @@ namespace Core {
                 sc->addPage(appearance);
             }
 
-            // Add mime types
+            // Add document types
             auto docMgr = icore->documentSystem();
 
             docMgr->addDocType(new DspxSpec());
+
+            // QLoggingCategory::setFilterRules("qt.gui.shortcutmap=true");
+            qApp->setProperty("closeHomeOnOpen", true);
 
             return true;
         }

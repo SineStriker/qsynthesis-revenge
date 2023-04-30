@@ -25,6 +25,7 @@ namespace Core {
 
     private:
         void _q_documentChanged();
+        void _q_documentRaiseRequested();
     };
 
 }

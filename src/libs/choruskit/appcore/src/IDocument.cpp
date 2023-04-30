@@ -217,6 +217,10 @@ namespace Core {
         return BehaviorAsk;
     }
 
+    void IDocument::raise() {
+        emit raiseRequested();
+    }
+
     void IDocument::close() {
         emit closeRequested();
     }

@@ -1,6 +1,7 @@
 #include "ICoreWindow.h"
 #include "ICoreWindow_p.h"
 
+#include <QApplication>
 #include <QDir>
 #include <QFileInfo>
 #include <QMessageBox>
@@ -63,7 +64,8 @@ namespace Core {
         auto spec = specs.front();
 
         if (spec->open(path) && id() == "home") {
-            window()->close();
+            if (qApp->property("closeHomeOnOpen").toBool())
+                window()->close();
         }
     }
 
