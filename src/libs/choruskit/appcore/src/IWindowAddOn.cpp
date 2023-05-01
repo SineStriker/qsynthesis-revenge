@@ -29,8 +29,13 @@ namespace Core {
         return d_ptr->iWin;
     }
 
+    bool IWindowAddOn::delayedInitialize() {
+        return false;
+    }
+
     IWindowAddOn::IWindowAddOn(IWindowAddOnPrivate &d, QObject *parent) : QObject(parent), d_ptr(&d) {
         d.q_ptr = this;
         d.init();
     }
+
 }

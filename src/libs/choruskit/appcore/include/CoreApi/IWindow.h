@@ -53,8 +53,6 @@ namespace Core {
         ActionItem *actionItem(const QString &id) const;
         QList<ActionItem *> actionItems() const;
 
-        void reloadActions();
-
         bool hasDragFileHandler(const QString &suffix);
         void setDragFileHandler(const QString &suffix, QObject *obj, const char *member, int maxCount = 0);
         void removeDragFileHandler(const QString &suffix);
@@ -63,6 +61,7 @@ namespace Core {
         void widgetAdded(const QString &id, QWidget *w);
         void aboutToRemoveWidget(const QString &id, QWidget *w);
 
+        void initializationDone();
         void aboutToClose();
         void closed();
 

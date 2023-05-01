@@ -69,15 +69,15 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>&lt;h3&gt;License&lt;/h3&gt;&lt;p&gt;Licensed under the Apache License, Version 2.0.&lt;br&gt;You may obtain a copy of the License at &lt;a href=&quot;http://www.apache.org/licenses/LICENSE-2.0&quot;&gt;apache.org/licenses&lt;/a&gt;.&lt;/p&gt;&lt;p&gt;This application is distributed &lt;b&gt;AS IS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND&lt;/b&gt;, either express or implied.&lt;/p&gt;</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>&lt;h2&gt;ChorusKit DiffScope&lt;/h2&gt;%1%2%3%4</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>&lt;h3&gt;Build Information&lt;/h3&gt;&lt;p&gt;Version: %1&lt;br&gt;Branch: %2&lt;br&gt;Commit: %3&lt;br&gt;Build date: %4&lt;br&gt;Toolchain: %5 %6 %7&lt;/p&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&lt;h3&gt;License&lt;/h3&gt;&lt;p&gt;Licensed under the Apache License, Version 2.0.&lt;br&gt;You may obtain a copy of the License at %1.&lt;/p&gt;&lt;p&gt;This application is distributed &lt;b&gt;AS IS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND&lt;/b&gt;, either express or implied.&lt;/p&gt;</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

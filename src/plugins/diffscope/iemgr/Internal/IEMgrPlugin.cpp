@@ -74,7 +74,7 @@ namespace IEMgr {
         }
 
         bool IEMgrPlugin::delayedInitialize() {
-            return true;
+            return false;
         }
 
     }

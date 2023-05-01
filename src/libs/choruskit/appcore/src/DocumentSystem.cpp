@@ -198,6 +198,11 @@ namespace Core {
         return d->extensionsMap.value(suffix, {}).values();
     }
 
+    QStringList DocumentSystem::supportedExtensions() const {
+        Q_D(const DocumentSystem);
+        return d->extensionsMap.keys();
+    }
+
     QString DocumentSystem::preferredDocTypeId(const QString &suffix) const {
         Q_D(const DocumentSystem);
         return d->preferredExtensionIdMap.value(suffix);
@@ -359,8 +364,12 @@ namespace Core {
         };
 
         QList<Remaining> remaining;
-        for (const auto &item : qAsConst(fileInfos)) {
-            QDir dir(item.absoluteFilePath());
+        for (const auto &info : qAsConst(fileInfos)) {
+            if (info.birthTime() > ILoader::atime()) {
+                continue;
+            }
+
+            QDir dir(info.absoluteFilePath());
             QSettings settings(dir.filePath("desc.tmp.ini"), QSettings::IniFormat);
             settings.beginGroup("File");
 
@@ -379,12 +388,12 @@ namespace Core {
             return 0;
 
         auto listWidget = new QListWidget();
-        for (const auto &item : qAsConst(remaining)) {
-            auto listItem = new QListWidgetItem();
-            listItem->setFlags(Qt::ItemIsEnabled | Qt::ItemIsUserCheckable);
-            listItem->setText(QDir::toNativeSeparators(item.file));
-            listItem->setCheckState(Qt::Checked);
-            listWidget->addItem(listItem);
+        for (const auto &rem : qAsConst(remaining)) {
+            auto item = new QListWidgetItem();
+            item->setFlags(Qt::ItemIsEnabled | Qt::ItemIsUserCheckable);
+            item->setText(QDir::toNativeSeparators(rem.file));
+            item->setCheckState(Qt::Checked);
+            listWidget->addItem(item);
         }
 
         auto allCheckbox = new QCheckBox(QApplication::translate("Core::DocumentSystem", "Restore all"));
@@ -415,22 +424,22 @@ namespace Core {
         d->selectAllWhenRecover = allCheckbox->isChecked();
 
         if (result == QMessageBox::No) {
-            for (const auto &item : qAsConst(remaining)) {
-                QDir(item.logDir).removeRecursively();
+            for (const auto &rem : qAsConst(remaining)) {
+                QDir(rem.logDir).removeRecursively();
             }
             return 0;
         }
 
         int cnt = 0;
         for (int i = 0; i < listWidget->count(); ++i) {
-            auto listItem = listWidget->item(i);
-            auto item = remaining.at(i);
-            if (!allCheckbox->isChecked() && listItem->checkState() == Qt::Unchecked) {
-                QDir(item.logDir).removeRecursively();
+            auto item = listWidget->item(i);
+            auto rem = remaining.at(i);
+            if (!allCheckbox->isChecked() && item->checkState() == Qt::Unchecked) {
+                QDir(rem.logDir).removeRecursively();
                 continue;
             }
 
-            if (item.spec->recover(item.logDir, item.file)) {
+            if (rem.spec->recover(rem.logDir, rem.file)) {
                 cnt++;
             }
         }

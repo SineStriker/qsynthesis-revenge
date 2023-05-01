@@ -49,7 +49,7 @@ namespace IEMgr {
         }
 
         bool ParseDs::delayedInitialize() {
-            return true;
+            return false;
         }
 
     }

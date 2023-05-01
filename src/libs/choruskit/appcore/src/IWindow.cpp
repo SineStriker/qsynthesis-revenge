@@ -8,6 +8,8 @@
 #include <QDebug>
 #include <QEvent>
 
+static const int DELAYED_INITIALIZE_INTERVAL = 5; // ms
+
 namespace Core {
 
     IWindowPrivate::IWindowPrivate() {
@@ -15,6 +17,7 @@ namespace Core {
     }
 
     IWindowPrivate::~IWindowPrivate() {
+        tryStopDelayedTimer();
     }
 
     void IWindowPrivate::init() {
@@ -31,6 +34,15 @@ namespace Core {
             // Call 2
             addOn->extensionsInitialized();
         }
+
+        // Delayed initialize
+        delayedInitializeQueue = addOns;
+
+        delayedInitializeTimer = new QTimer();
+        delayedInitializeTimer->setInterval(DELAYED_INITIALIZE_INTERVAL);
+        delayedInitializeTimer->setSingleShot(true);
+        connect(delayedInitializeTimer, &QTimer::timeout, this, &IWindowPrivate::nextDelayedInitialize);
+        delayedInitializeTimer->start();
     }
 
     void IWindowPrivate::deleteAllAddOns() {
@@ -41,8 +53,30 @@ namespace Core {
         }
     }
 
+    void IWindowPrivate::nextDelayedInitialize() {
+        Q_Q(IWindow);
+
+        while (!delayedInitializeQueue.empty()) {
+            auto addOn = delayedInitializeQueue.front();
+            delayedInitializeQueue.pop_front();
+
+            bool delay = addOn->delayedInitialize();
+            if (delay)
+                break; // do next delayedInitialize after a delay
+        }
+        if (delayedInitializeQueue.empty()) {
+            delete delayedInitializeTimer;
+            delayedInitializeTimer = nullptr;
+            emit q->initializationDone();
+        } else {
+            delayedInitializeTimer->start();
+        }
+    }
+
     void IWindowPrivate::_q_windowClosed(QWidget *w) {
         Q_Q(IWindow);
+
+        tryStopDelayedTimer();
 
         m_closed = true;
 
@@ -58,6 +92,17 @@ namespace Core {
 
         q->setWindow(nullptr);
         delete q;
+    }
+
+    void IWindowPrivate::tryStopDelayedTimer() {
+        // Stop delayed initializations
+        if (delayedInitializeTimer) {
+            if (delayedInitializeTimer->isActive()) {
+                delayedInitializeTimer->stop();
+            }
+            delete delayedInitializeTimer;
+            delayedInitializeTimer = nullptr;
+        }
     }
 
     void IWindowPrivate::setWindow(QWidget *w, WindowSystemPrivate *d) {
@@ -208,9 +253,6 @@ namespace Core {
     QList<ActionItem *> IWindow::actionItems() const {
         Q_D(const IWindow);
         return d->actionItemMap.values();
-    }
-
-    void IWindow::reloadActions() {
     }
 
     bool IWindow::hasDragFileHandler(const QString &suffix) {

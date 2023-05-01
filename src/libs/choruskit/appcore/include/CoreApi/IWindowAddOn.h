@@ -30,6 +30,7 @@ namespace Core {
     public:
         virtual void initialize() = 0;
         virtual void extensionsInitialized() = 0;
+        virtual bool delayedInitialize();
 
     protected:
         IWindowAddOn(IWindowAddOnPrivate &d, QObject *parent = nullptr);

@@ -25,6 +25,7 @@ namespace Core {
 
         DocumentSpec *supportedDocType(const QString &suffix) const;
         QList<DocumentSpec *> supportedDocTypes(const QString &suffix) const;
+        QStringList supportedExtensions() const;
 
         QString preferredDocTypeId(const QString &suffix) const;
         void setPreferredDocTypeId(const QString &suffix, const QString &id);

@@ -17,7 +17,6 @@ namespace Core {
         void init();
 
         void reloadStrings();
-        void reloadMenuBar();
 
         ActionContext *mainMenuCtx;
 

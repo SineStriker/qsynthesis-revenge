@@ -1,9 +1,12 @@
 #ifndef ICOREWINDOW_P_H
 #define ICOREWINDOW_P_H
 
-#include "CoreApi/IWindow_p.h"
+#include <QSet>
 
 #include "ICoreWindow.h"
+
+#include <CoreApi/ActionContext.h>
+#include <CoreApi/IWindow_p.h>
 
 namespace Core {
 
@@ -14,6 +17,11 @@ namespace Core {
         ICoreWindowPrivate();
 
         void init();
+
+        void reloadMenuBar();
+
+        ActionContext *mainMenuCtx;
+        QSet<QKeySequence> shortcutMap;
     };
 
 }

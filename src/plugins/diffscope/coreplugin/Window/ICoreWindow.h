@@ -23,6 +23,9 @@ namespace Core {
 
         QString correctWindowTitle(const QString &title) const override;
 
+    public:
+        bool hasShortcut(const QKeySequence &key) const;
+
     public slots:
         void openFile(const QString &path);
 
@@ -33,6 +36,7 @@ namespace Core {
         QWidget *createWindow(QWidget *parent) const override;
 
         void setupWindow() override;
+        void windowAddOnsFinished() override;
 
     protected:
         ICoreWindow(ICoreWindowPrivate &d, const QString &id, QObject *parent = nullptr);

@@ -34,11 +34,6 @@ namespace Core {
         aboutButton->setText(tr("About %1").arg(qAppName()));
     }
 
-    void IHomeWindowPrivate::reloadMenuBar() {
-        Q_Q(IHomeWindow);
-        mainMenuCtx->buildMenuBarWithState(q->actionItems(), q->menuBar());
-    }
-
     void IHomeWindowPrivate::_q_aboutButtonClicked() {
         Q_Q(IHomeWindow);
         ICore::aboutApp(q->window());
@@ -90,16 +85,14 @@ namespace Core {
         d->aboutButton = aboutButton;
 
         connect(aboutButton, &QAbstractButton::clicked, d, &IHomeWindowPrivate::_q_aboutButtonClicked);
-
-        d->mainMenuCtx = ICore::instance()->actionSystem()->context("home.MainMenu");
     }
 
     void IHomeWindow::windowAddOnsFinished() {
         Q_D(IHomeWindow);
-        auto win = window();
 
-        connect(d->mainMenuCtx, &ActionContext::stateChanged, d, &IHomeWindowPrivate::reloadMenuBar);
-        d->reloadMenuBar();
+        ICoreWindow::windowAddOnsFinished();
+
+        auto win = window();
 
         qIDec->installLocale(this, _LOC(IHomeWindowPrivate, d));
         qIDec->installTheme(win, "core.HomeWindow");

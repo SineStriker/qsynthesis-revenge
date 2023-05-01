@@ -6,6 +6,9 @@
 #include <QSplashScreen>
 #include <QThread>
 
+#include <private/qguiapplication_p.h>
+#include <private/qshortcutmap_p.h>
+
 #include "AddOn/HomeWindowAddOn.h"
 #include "AddOn/ProjectWindowAddOn.h"
 
@@ -95,7 +98,7 @@ namespace Core {
 
             // QLoggingCategory::setFilterRules("qt.gui.shortcutmap=true");
             qApp->setProperty("closeHomeOnOpen", true);
-            qApp->setProperty("projectSuffix", "dspx");
+            qApp->setProperty("projectDocTypeId", "org.ChorusKit.dspx");
 
             return true;
         }
@@ -104,25 +107,24 @@ namespace Core {
         }
 
         bool CorePlugin::delayedInitialize() {
-            // PluginDialog dlg(nullptr);
-            // dlg.exec();
-
             if (m_splash)
                 m_splash->showMessage(tr("Initializing user interface..."));
 
-            auto winMgr = icore->windowSystem();
-            auto handle = winMgr->createWindow("home");
+            QTimer::singleShot(0, this, [this]() {
+                auto winMgr = icore->windowSystem();
+                auto handle = winMgr->createWindow("home");
 
-            auto win = handle->window();
-            waitSplash(win);
+                auto win = handle->window();
+                waitSplash(win);
 
-            // Check logs
-            if (icore->documentSystem()->checkRemainingLogs(win) > 0) {
-                if (qApp->property("closeHomeOnOpen").toBool())
-                    win->close();
-            }
+                // Check logs
+                if (icore->documentSystem()->checkRemainingLogs(win) > 0) {
+                    if (qApp->property("closeHomeOnOpen").toBool())
+                        win->close();
+                }
+            });
 
-            return true;
+            return false;
         }
 
         QObject *CorePlugin::remoteCommand(const QStringList &options, const QString &workingDirectory,

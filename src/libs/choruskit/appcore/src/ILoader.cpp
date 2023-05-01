@@ -7,6 +7,8 @@
 #include <QFile>
 #include <QJsonDocument>
 
+Q_GLOBAL_STATIC_WITH_ARGS(QDateTime, m_atime, (QDateTime::currentDateTime()));
+
 namespace Core {
 
     ILoaderPrivate::ILoaderPrivate() {
@@ -56,6 +58,9 @@ namespace Core {
 
     ILoader::ILoader(QObject *parent) : ILoader(*new ILoaderPrivate(), parent) {
         m_instance = this;
+
+        // Must initialize `m_atime`
+        qDebug().noquote() << "ILoader: initialize at" << m_atime->toString("yyyy/MM/dd hh:mm:ss:zzz");
 
         connect(this, &ILoader::objectAdded, this, [&](const QString &id, QObject *obj) {
             qDebug().nospace() << "ILoader: object added (" << id << ", " << obj << ")"; //
@@ -155,6 +160,10 @@ namespace Core {
         }
 
         return res;
+    }
+
+    QDateTime ILoader::atime() {
+        return *m_atime;
     }
 
     ILoader::ILoader(ILoaderPrivate &d, QObject *parent) : ObjectPool(parent), d_ptr(&d) {

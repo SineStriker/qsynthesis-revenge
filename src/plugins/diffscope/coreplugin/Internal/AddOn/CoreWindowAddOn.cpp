@@ -23,11 +23,13 @@ namespace Core::Internal {
         initActions();
         reloadRecentMenu();
 
+        auto docMgr = ICore::instance()->documentSystem();
+
         // Add drag handler
         auto iWin = windowHandle();
-        iWin->setDragFileHandler("dspx", iWin, "openFile");
+        for (const auto &suffix : docMgr->supportedExtensions())
+            iWin->setDragFileHandler(suffix, iWin, "openFile");
 
-        auto docMgr = ICore::instance()->documentSystem();
         connect(docMgr, &DocumentSystem::recentFilesChanged, this, &CoreWindowAddOn::_q_recentFilesChanged);
 
         qIDec->installLocale(this, _LOC(CoreWindowAddOn, this));
@@ -81,7 +83,7 @@ namespace Core::Internal {
 
         connect(openFileItem->action(), &QAction::triggered, this, [this]() {
             auto docMgr = ICore::instance()->documentSystem();
-            auto spec = docMgr->supportedDocType(qApp->property("projectSuffix").toString());
+            auto spec = docMgr->docType(qApp->property("projectDocTypeId").toString());
             if (!spec) {
                 QMessageBox::critical(windowHandle()->window(), ICore::mainTitle(),
                                       tr("Can't find the default editor of %1 project file!").arg(qAppName()));

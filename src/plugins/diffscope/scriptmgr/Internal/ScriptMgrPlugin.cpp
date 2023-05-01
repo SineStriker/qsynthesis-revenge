@@ -56,7 +56,7 @@ namespace ScriptMgr {
         }
 
         bool ScriptMgrPlugin::delayedInitialize() {
-            return true;
+            return false;
         }
 
     }

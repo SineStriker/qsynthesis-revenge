@@ -1,6 +1,7 @@
 #ifndef ILOADER_H
 #define ILOADER_H
 
+#include <QDateTime>
 #include <QJsonObject>
 #include <QSettings>
 #include <QSplashScreen>
@@ -14,6 +15,7 @@ namespace Core {
     class CKAPPCORE_API ILoader : public ObjectPool {
         Q_OBJECT
         Q_DECLARE_PRIVATE(ILoader);
+
     public:
         explicit ILoader(QObject *parent = nullptr);
         ~ILoader();
@@ -28,6 +30,8 @@ namespace Core {
         void writeSettings() const;
 
         QJsonObject *settings(QSettings::Scope scope = QSettings::UserScope);
+
+        static QDateTime atime();
 
     protected:
         ILoader(ILoaderPrivate &d, QObject *parent = nullptr);

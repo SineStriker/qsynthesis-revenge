@@ -14,6 +14,8 @@
 
 #include <QMDecoratorV2.h>
 
+#include <private/qguiapplication_p.h>
+#include <private/qshortcutmap_p.h>
 
 namespace Core {
 
@@ -66,6 +68,10 @@ namespace Core {
             iWin->removeObjects("core.recentWidget.buttonBarInterface");
 
             CoreWindowAddOn::extensionsInitialized();
+        }
+
+        bool HomeWindowAddOn::delayedInitialize() {
+            return false;
         }
 
         void HomeWindowAddOn::reloadStrings() {

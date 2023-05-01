@@ -93,7 +93,7 @@
     </message>
     <message>
         <source>&lt;h3&gt;License&lt;/h3&gt;&lt;p&gt;Licensed under the Apache License, Version 2.0.&lt;br&gt;You may obtain a copy of the License at &lt;a href=&quot;http://www.apache.org/licenses/LICENSE-2.0&quot;&gt;apache.org/licenses&lt;/a&gt;.&lt;/p&gt;&lt;p&gt;This application is distributed &lt;b&gt;AS IS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND&lt;/b&gt;, either express or implied.&lt;/p&gt;</source>
-        <translation>&lt;h3&gt;许可&lt;/h3&gt;&lt;p&gt;本程序根据 Apache 协议版本 2.0 授权。&lt;br&gt;您可以在&lt;a href=&quot;http://www.apache.org/licenses/LICENSE-2.0&quot;&gt;apache.org/licenses&lt;/a&gt;中得到协议的一份副本。&lt;/p&gt;&lt;p&gt;本程序&lt;b&gt;以&quot;按原样&quot;为基础提供，不作任何形式的担保&lt;/b&gt;，无论担保是明示的还是暗示的。&lt;/p&gt;</translation>
+        <translation type="vanished">&lt;h3&gt;许可&lt;/h3&gt;&lt;p&gt;本程序根据 Apache 协议版本 2.0 授权。&lt;br&gt;您可以在&lt;a href=&quot;http://www.apache.org/licenses/LICENSE-2.0&quot;&gt;apache.org/licenses&lt;/a&gt;中得到协议的一份副本。&lt;/p&gt;&lt;p&gt;本程序&lt;b&gt;以&quot;按原样&quot;为基础提供，不作任何形式的担保&lt;/b&gt;，无论担保是明示的还是暗示的。&lt;/p&gt;</translation>
     </message>
     <message>
         <source>&lt;h2&gt;ChorusKit DiffScope&lt;/h2&gt;%1%2%3%4</source>
@@ -102,6 +102,10 @@
     <message>
         <source>&lt;h3&gt;Build Information&lt;/h3&gt;&lt;p&gt;Version: %1&lt;br&gt;Branch: %2&lt;br&gt;Commit: %3&lt;br&gt;Build date: %4&lt;br&gt;Toolchain: %5 %6 %7&lt;/p&gt;</source>
         <translation>&lt;h3&gt;构建信息&lt;/h3&gt;&lt;p&gt;版本：%1&lt;br&gt;分支：%2&lt;br&gt;提交：%3&lt;br&gt;构建日期：%4&lt;br&gt;工具链：%5 %6 %7&lt;/p&gt;</translation>
+    </message>
+    <message>
+        <source>&lt;h3&gt;License&lt;/h3&gt;&lt;p&gt;Licensed under the Apache License, Version 2.0.&lt;br&gt;You may obtain a copy of the License at %1.&lt;/p&gt;&lt;p&gt;This application is distributed &lt;b&gt;AS IS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND&lt;/b&gt;, either express or implied.&lt;/p&gt;</source>
+        <translation type="unfinished">&lt;h3&gt;许可&lt;/h3&gt;&lt;p&gt;本程序根据 Apache 协议版本 2.0 授权。&lt;br&gt;您可以在 %1 中得到协议的一份副本。&lt;/p&gt;&lt;p&gt;本程序&lt;b&gt;以&quot;按原样&quot;为基础提供，不作任何形式的担保&lt;/b&gt;，无论担保是明示的还是暗示的。&lt;/p&gt;</translation>
     </message>
 </context>
 <context>

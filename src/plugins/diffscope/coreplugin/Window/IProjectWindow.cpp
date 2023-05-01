@@ -25,11 +25,6 @@ namespace Core {
     void IProjectWindowPrivate::reloadStrings() {
     }
 
-    void IProjectWindowPrivate::reloadMenuBar() {
-        Q_Q(IProjectWindow);
-        mainMenuCtx->buildMenuBarWithState(q->actionItems(), q->menuBar());
-    }
-
     void IProjectWindowPrivate::_q_documentChanged() {
         Q_Q(IProjectWindow);
         q->setWindowModified(m_doc->isModified());
@@ -61,8 +56,6 @@ namespace Core {
         win->setObjectName("project-window");
         win->setAcceptDrops(true);
 
-        d->mainMenuCtx = ICore::instance()->actionSystem()->context("project.MainMenu");
-
         // Close event
         connect(d->m_doc, &IDocument::changed, d, &IProjectWindowPrivate::_q_documentChanged);
         connect(d->m_doc, &IDocument::raiseRequested, d, &IProjectWindowPrivate::_q_documentRaiseRequested);
@@ -71,6 +64,8 @@ namespace Core {
 
     void IProjectWindow::windowAddOnsFinished() {
         Q_D(IProjectWindow);
+
+        ICoreWindow::windowAddOnsFinished();
 
         auto win = window();
 

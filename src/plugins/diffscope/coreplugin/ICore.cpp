@@ -71,12 +71,13 @@ namespace Core {
                                "<p>DiffScope is a kind of implementation of DiffSinger graphical editing tool, "
                                "included in ChorusKit toolset.</p>");
 
-        QString licenseInfo = tr(
-            "<h3>License</h3>"
-            "<p>Licensed under the Apache License, Version 2.0.<br>"
-            R"(You may obtain a copy of the License at <a href="http://www.apache.org/licenses/LICENSE-2.0">apache.org/licenses</a>.</p>)"
-            "<p>This application is distributed "
-            "<b>AS IS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND</b>, either express or implied.</p>");
+        QString licenseInfo =
+            tr("<h3>License</h3>"
+               "<p>Licensed under the Apache License, Version 2.0.<br>"
+               R"(You may obtain a copy of the License at %1.</p>)"
+               "<p>This application is distributed "
+               "<b>AS IS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND</b>, either express or implied.</p>")
+                .arg("<a href=\"https://www.apache.org/licenses/LICENSE-2.0\">apache.org/licenses</a>");
 
         QString translatedTextAboutQtCaption =
             tr("<h2>ChorusKit DiffScope</h2>%1%2%3%4").arg(copyrightInfo, buildInfo, aboutInfo, licenseInfo);

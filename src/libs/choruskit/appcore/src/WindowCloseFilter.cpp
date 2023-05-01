@@ -11,7 +11,7 @@
 
 namespace Core {
 
-    void qtimer_single_shot_impl(QObject *obj, const char *member, const QString &s) {
+    static void qtimer_single_shot_impl(QObject *obj, const char *member, const QString &s) {
         QMetaObject::invokeMethod(obj, member, Qt::DirectConnection, Q_ARG(QString, s));
     }
 

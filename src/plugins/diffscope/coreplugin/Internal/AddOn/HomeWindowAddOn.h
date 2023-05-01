@@ -25,6 +25,7 @@ namespace Core {
 
             void initialize() override;
             void extensionsInitialized() override;
+            bool delayedInitialize() override;
 
         private:
             void reloadStrings();

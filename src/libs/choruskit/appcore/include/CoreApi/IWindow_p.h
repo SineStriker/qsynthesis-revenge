@@ -3,6 +3,7 @@
 
 #include <QHash>
 #include <QSet>
+#include <QTimer>
 
 #include "IWindow.h"
 #include "IWindowAddOn.h"
@@ -47,6 +48,12 @@ namespace Core {
 
         void initAllAddOns();
         void deleteAllAddOns();
+
+        QTimer *delayedInitializeTimer;
+        std::list<IWindowAddOn *> delayedInitializeQueue;
+
+        void nextDelayedInitialize();
+        void tryStopDelayedTimer();
 
     private:
         void _q_windowClosed(QWidget *w);
