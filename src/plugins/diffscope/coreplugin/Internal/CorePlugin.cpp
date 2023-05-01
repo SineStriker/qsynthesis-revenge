@@ -37,6 +37,34 @@ namespace Core {
 
         static QSplashScreen *m_splash = nullptr;
 
+        static int openFileFromCommand(QString workingDir, const QStringList &args) {
+            int cnt = 0;
+
+            if (workingDir.isEmpty())
+                workingDir = QDir::currentPath();
+
+            for (const auto &arg : qAsConst(args)) {
+                QFileInfo info(arg);
+                if (info.isRelative()) {
+                    info.setFile(workingDir + "/" + arg);
+                }
+
+                if (!info.isFile()) {
+                    continue;
+                }
+
+                auto spec = icore->documentSystem()->supportedDocType(info.completeSuffix());
+                if (!spec)
+                    continue;
+
+                if (spec->open(info.canonicalFilePath())) {
+                    cnt++;
+                }
+            }
+
+            return cnt;
+        }
+
         CorePlugin::CorePlugin() {
         }
 
@@ -118,7 +146,9 @@ namespace Core {
                 waitSplash(win);
 
                 // Check logs
-                if (icore->documentSystem()->checkRemainingLogs(win) > 0) {
+                if (icore->documentSystem()->checkRemainingLogs(win) +
+                        openFileFromCommand({}, qApp->arguments().mid(1)) >
+                    0) {
                     if (qApp->property("closeHomeOnOpen").toBool())
                         win->close();
                 }
@@ -129,26 +159,7 @@ namespace Core {
 
         QObject *CorePlugin::remoteCommand(const QStringList &options, const QString &workingDirectory,
                                            const QStringList &args) {
-            int cnt = 0;
-            for (const auto &arg : qAsConst(args)) {
-                QFileInfo info(arg);
-                if (info.isRelative()) {
-                    info.setFile(workingDirectory + "/" + arg);
-                }
-
-                if (!info.isFile()) {
-                    continue;
-                }
-
-                auto spec = icore->documentSystem()->supportedDocType(info.completeSuffix());
-                if (!spec)
-                    continue;
-
-                if (spec->open(info.canonicalFilePath())) {
-                    cnt++;
-                }
-            }
-
+            int cnt = openFileFromCommand(workingDirectory, args);
             auto firstHandle = icore->windowSystem()->firstWindow();
             if (firstHandle && cnt == 0) {
                 QMView::bringWindowToForeground(firstHandle->window());

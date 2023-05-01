@@ -69,9 +69,6 @@ namespace Core {
 
         auto win = window();
 
-        connect(d->mainMenuCtx, &ActionContext::stateChanged, d, &IProjectWindowPrivate::reloadMenuBar);
-        d->reloadMenuBar();
-
         qIDec->installLocale(this, _LOC(IProjectWindowPrivate, d));
         qIDec->installTheme(win, "core.ProjectWindow");
 

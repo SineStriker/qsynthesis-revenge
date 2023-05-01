@@ -285,11 +285,18 @@ namespace Core {
         auto filter =
             spec->filter() + ";;" +
             QString("%1(%2)").arg(QApplication::translate("Core::DocumentSystem", "All Files"), QMOs::allFilesFilter());
-        auto path2 = getOpenFileName(parent, {}, filter, path);
-        if (path2.isEmpty()) {
+        auto paths = getOpenFileNames(parent, {}, filter, path);
+        if (paths.isEmpty()) {
             return false;
         }
-        return spec->open(path2);
+
+        int cnt = 0;
+        for (const auto &item : qAsConst(paths)) {
+            if (spec->open(item))
+                cnt++;
+        }
+
+        return cnt > 0;
     }
 
     bool DocumentSystem::saveFileBrowse(IDocument *doc, const QString &path, QWidget *parent) const {
