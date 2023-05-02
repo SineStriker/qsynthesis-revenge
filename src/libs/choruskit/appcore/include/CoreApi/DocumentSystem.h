@@ -58,7 +58,9 @@ namespace Core {
                                 const QString &filter = QString(), QString *selectedFilter = nullptr) const;
 
     public:
-        int checkRemainingLogs(QWidget *parent = nullptr) const;
+        int checkRemainingLogs(QWidget *parent = nullptr) const; // TODO: remove
+
+        static QList<IDocumentSettings> remainingLogs();
 
     protected:
         QString getSaveAsFileName(const IDocument *document, const QString &path, QWidget *parent) const override;

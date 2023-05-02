@@ -19,6 +19,8 @@
 
 namespace Core {
 
+    // StyleSheet prefix: Core--
+
     class HomeRecentTopButtonBar;
 
     /**

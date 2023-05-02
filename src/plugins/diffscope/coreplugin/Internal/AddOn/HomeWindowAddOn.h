@@ -3,8 +3,6 @@
 
 #include <QPushButton>
 
-#include <CoreApi/ActionItem.h>
-
 #include "CoreWindowAddOn.h"
 
 namespace Core {
@@ -32,6 +30,7 @@ namespace Core {
             void initActions();
 
             QAbstractButton *recentWidgetButton;
+            QAbstractButton *recoveryWidgetButton;
 
         private:
             void _q_newButtonClicked();

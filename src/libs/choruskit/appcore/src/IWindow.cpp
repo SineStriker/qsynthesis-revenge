@@ -407,32 +407,6 @@ namespace Core {
 
     bool IWindow::hasShortcut(const QKeySequence &key) const {
         Q_D(const IWindow);
-        // if (d->m_shortcutsDirty) {
-        //
-        //     QList<QWidget *> menus;
-        //     decltype(d->shortcutsMap) map;
-        //
-        //     auto goThroughMenu = [&](QWidget *w) {
-        //         for (QAction *action : w->actions()) {
-        //             auto menu = action->menu();
-        //             if (menu) {
-        //                 menus.append(menu);
-        //             }
-        //             for (const auto &sh : action->shortcuts())
-        //                 map.insert(sh);
-        //         }
-        //     };
-        //
-        //     menus.reserve(d->shortcutContextWidgets.size());
-        //     menus << d->shortcutContextWidgets.values();
-        //
-        //     while (!menus.isEmpty()) {
-        //         goThroughMenu(menus.takeFirst());
-        //     }
-        //
-        //     d->shortcutsMap = std::move(map);
-        //     d->m_shortcutsDirty = false;
-        // }
         return d->shortcutMap.contains(key);
     }
 
@@ -440,6 +414,7 @@ namespace Core {
         Q_D(const IWindow);
         if (suffix.isEmpty())
             return false;
+
         return d->dragFileHandlerMap.contains(suffix.toLower());
     }
 
@@ -458,7 +433,6 @@ namespace Core {
 
     void IWindow::removeDragFileHandler(const QString &suffix) {
         Q_D(IWindow);
-
         if (suffix.isEmpty())
             return;
 

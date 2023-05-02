@@ -178,3 +178,13 @@ Core--HomeRecentBottomFrame>QsApi--FileListWidget {
     qmargins(3px, 10px, 3px, 10px), /* margins */
     );
 }
+
+/* Home Recovery Widget */
+
+Core--HomeRecoveryWidget {
+    padding: 20px;
+}
+
+Core--HomeRecoveryWidget>QLabel {
+    color: #CCCCCC;
+}

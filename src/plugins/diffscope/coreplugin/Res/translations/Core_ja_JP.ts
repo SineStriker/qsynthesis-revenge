@@ -55,6 +55,13 @@
     </message>
 </context>
 <context>
+    <name>Core::HomeRecoveryWidget</name>
+    <message>
+        <source>No data.</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>Core::ICore</name>
     <message>
         <source>About %1</source>
@@ -217,6 +224,10 @@
     <name>Core::Internal::HomeWindowAddOn</name>
     <message>
         <source>Recent</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Failure Recovery</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

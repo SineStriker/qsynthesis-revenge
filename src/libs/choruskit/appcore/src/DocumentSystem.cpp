@@ -377,11 +377,10 @@ namespace Core {
             }
 
             QDir dir(info.absoluteFilePath());
-            QSettings settings(dir.filePath("desc.tmp.ini"), QSettings::IniFormat);
-            settings.beginGroup("File");
+            IDocumentSettings settings(dir.path());
 
-            QString id = settings.value("Editor").toString();
-            QString path = settings.value("Path").toString();
+            const QString &id = settings.docType();
+            const QString &path = settings.fileName();
 
             auto spec = docType(id);
             if (spec && spec->canRecover() && !path.isEmpty()) {
@@ -452,6 +451,28 @@ namespace Core {
         }
 
         return cnt;
+    }
+
+    QList<IDocumentSettings> DocumentSystem::remainingLogs() {
+        if (!ILoader::instance())
+            return {};
+
+        static QList<IDocumentSettings> _logs = []() {
+            QDir baseDir(DocumentSystemPrivate::logBaseDir());
+            QFileInfoList fileInfos = baseDir.entryInfoList(QDir::Dirs | QDir::NoSymLinks | QDir::NoDotAndDotDot);
+
+            QList<IDocumentSettings> remaining;
+            for (const auto &info : qAsConst(fileInfos)) {
+                if (info.birthTime() >= ILoader::atime()) {
+                    continue;
+                }
+                remaining.append(IDocumentSettings(info.absoluteFilePath()));
+            }
+
+            return remaining;
+        }();
+
+        return _logs;
     }
 
     QString DocumentSystem::getSaveAsFileName(const IDocument *document, const QString &pathIn, QWidget *parent) const {

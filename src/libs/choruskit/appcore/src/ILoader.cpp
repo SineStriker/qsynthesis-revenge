@@ -7,8 +7,6 @@
 #include <QFile>
 #include <QJsonDocument>
 
-Q_GLOBAL_STATIC_WITH_ARGS(QDateTime, m_atime, (QDateTime::currentDateTime()));
-
 namespace Core {
 
     ILoaderPrivate::ILoaderPrivate() {
@@ -56,6 +54,8 @@ namespace Core {
 
     ILoader *m_instance = nullptr;
 
+    Q_GLOBAL_STATIC_WITH_ARGS(QDateTime, m_atime, (QDateTime::currentDateTime()));
+
     ILoader::ILoader(QObject *parent) : ILoader(*new ILoaderPrivate(), parent) {
         m_instance = this;
 
@@ -82,6 +82,10 @@ namespace Core {
 
     ILoader *ILoader::instance() {
         return m_instance;
+    }
+
+    QDateTime ILoader::atime() {
+        return *m_atime;
     }
 
     QString ILoader::settingsPath(QSettings::Scope scope) const {
@@ -160,10 +164,6 @@ namespace Core {
         }
 
         return res;
-    }
-
-    QDateTime ILoader::atime() {
-        return *m_atime;
     }
 
     ILoader::ILoader(ILoaderPrivate &d, QObject *parent) : ObjectPool(parent), d_ptr(&d) {

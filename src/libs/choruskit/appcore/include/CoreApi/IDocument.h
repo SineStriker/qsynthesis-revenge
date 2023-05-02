@@ -2,6 +2,7 @@
 #define IDOCUMENT_H
 
 #include <QObject>
+#include <QSharedData>
 
 #include "DocumentSpec.h"
 
@@ -90,6 +91,32 @@ namespace Core {
         QScopedPointer<IDocumentPrivate> d_ptr;
 
         friend class DocumentSystem;
+    };
+
+    class IDocumentSettingsData;
+
+    class CKAPPCORE_API IDocumentSettings {
+    public:
+        IDocumentSettings(const QString &dir = {});
+        ~IDocumentSettings();
+
+        IDocumentSettings(const IDocumentSettings &other);
+        IDocumentSettings(IDocumentSettings &&other) noexcept;
+
+    public:
+        QString dir() const;
+        void setDir(const QString &dir);
+
+        bool remove() const;
+
+        QString fileName() const;
+        void setFileName(const QString &fileName);
+
+        QString docType() const;
+        void setDocType(const QString &docType);
+
+    private:
+        QSharedDataPointer<IDocumentSettingsData> d;
     };
 
 }

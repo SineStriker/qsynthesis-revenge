@@ -146,12 +146,12 @@ namespace Core {
                 waitSplash(win);
 
                 // Check logs
-                if (icore->documentSystem()->checkRemainingLogs(win) +
-                        openFileFromCommand({}, qApp->arguments().mid(1)) >
-                    0) {
-                    if (qApp->property("closeHomeOnOpen").toBool())
-                        win->close();
-                }
+                // if (icore->documentSystem()->checkRemainingLogs(win) +
+                //         openFileFromCommand({}, qApp->arguments().mid(1)) >
+                //     0) {
+                //     if (qApp->property("closeHomeOnOpen").toBool())
+                //         win->close();
+                // }
             });
 
             return false;

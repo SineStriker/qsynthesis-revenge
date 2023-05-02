@@ -22,6 +22,8 @@ namespace Core {
 
         static ILoader *instance();
 
+        static QDateTime atime();
+
     public:
         QString settingsPath(QSettings::Scope scope) const;
         void setSettingsPath(QSettings::Scope scope, const QString &path);
@@ -30,8 +32,6 @@ namespace Core {
         void writeSettings() const;
 
         QJsonObject *settings(QSettings::Scope scope = QSettings::UserScope);
-
-        static QDateTime atime();
 
     protected:
         ILoader(ILoaderPrivate &d, QObject *parent = nullptr);

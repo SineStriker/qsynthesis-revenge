@@ -1,6 +1,8 @@
 #ifndef IDOCUMENTPRIVATE_H
 #define IDOCUMENTPRIVATE_H
 
+#include <QSettings>
+#include <QSharedPointer>
 #include <QTemporaryDir>
 
 #include "DocumentSpec.h"
@@ -52,6 +54,16 @@ namespace Core {
         bool temporary;
 
         LogDirectory logDir;
+    };
+
+    class IDocumentSettingsData : public QSharedData {
+    public:
+        QString dir;
+        QSharedPointer<QSettings> settings;
+
+        static inline QString descFile(const QString &dir) {
+            return QString("%1/desc.tmp.ini").arg(dir);
+        }
     };
 
 }

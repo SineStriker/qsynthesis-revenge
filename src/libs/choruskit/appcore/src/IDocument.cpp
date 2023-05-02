@@ -13,6 +13,7 @@
 #include "ICoreBase.h"
 
 namespace Core {
+
     LogDirectory::~LogDirectory() {
         if (!autoRemove) {
             if (!logDir.isNull())
@@ -66,11 +67,9 @@ namespace Core {
     void IDocumentPrivate::updateLogDesc() {
         Q_Q(IDocument);
 
-        QSettings settings(QDir(logDir.logDirectory()).filePath("desc.tmp.ini"), QSettings::IniFormat);
-        settings.beginGroup("File");
-        settings.setValue("Editor", q->id());
-        settings.setValue("Path", q->filePath());
-        settings.endGroup();
+        IDocumentSettings settings(logDir.logDirectory());
+        settings.setFileName(q->filePath());
+        settings.setDocType(q->id());
     }
 
     IDocument::IDocument(const QString &id, QObject *parent) : IDocument(*new IDocumentPrivate(), id, parent) {
@@ -254,6 +253,57 @@ namespace Core {
         d.id = id;
 
         d.init();
+    }
+
+    IDocumentSettings::IDocumentSettings(const QString &dir) : d(new IDocumentSettingsData()) {
+        setDir(dir);
+    }
+
+    IDocumentSettings::~IDocumentSettings() {
+    }
+
+    IDocumentSettings::IDocumentSettings(const IDocumentSettings &other) : d(new IDocumentSettingsData(*other.d)) {
+    }
+
+    IDocumentSettings::IDocumentSettings(IDocumentSettings &&other) noexcept : d(other.d) {
+    }
+
+    QString IDocumentSettings::dir() const {
+        return d->dir;
+    }
+
+    void IDocumentSettings::setDir(const QString &dir) {
+        if (!QMFs::isDirExist(dir)) {
+            d->dir.clear();
+            d->settings.clear();
+        } else {
+            d->dir = QFileInfo(dir).canonicalFilePath();
+            d->settings.reset(new QSettings(IDocumentSettingsData::descFile(d->dir), QSettings::IniFormat));
+        }
+    }
+
+    bool IDocumentSettings::remove() const {
+        return QMFs::rmFile(IDocumentSettingsData::descFile(d->dir));
+    }
+
+    QString IDocumentSettings::fileName() const {
+        return d->settings.isNull() ? QString() : d->settings->value("File/Path").toString();
+    }
+
+    void IDocumentSettings::setFileName(const QString &fileName) {
+        if (!d->settings)
+            return;
+        d->settings->setValue("File/Path", fileName);
+    }
+
+    QString IDocumentSettings::docType() const {
+        return d->settings.isNull() ? QString() : d->settings->value("File/Editor").toString();
+    }
+
+    void IDocumentSettings::setDocType(const QString &docType) {
+        if (!d->settings)
+            return;
+        d->settings->setValue("File/Editor", docType);
     }
 
 }
