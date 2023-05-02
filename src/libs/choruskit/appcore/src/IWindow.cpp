@@ -8,12 +8,28 @@
 #include <QDebug>
 #include <QEvent>
 
+#include <private/qwidget_p.h>
+
 static const int DELAYED_INITIALIZE_INTERVAL = 5; // ms
 
 namespace Core {
 
+    class QWidgetHacker : public QWidget {
+    public:
+        int actionCount() const {
+            auto d = static_cast<QWidgetPrivate *>(d_ptr.data());
+            return d->actions.count();
+        }
+
+        friend class IWindow;
+        friend class IWindowPrivate;
+    };
+
     IWindowPrivate::IWindowPrivate() {
         m_closed = false;
+        m_shortcutsDirty = false;
+        actionFilter = new WindowActionFilter(this);
+        connect(actionFilter, &WindowActionFilter::actionChanged, this, &IWindowPrivate::_q_actionChanged);
     }
 
     IWindowPrivate::~IWindowPrivate() {
@@ -92,6 +108,16 @@ namespace Core {
 
         q->setWindow(nullptr);
         delete q;
+    }
+
+    void IWindowPrivate::_q_actionChanged(QWidget *w) {
+        Q_UNUSED(w);
+
+        m_shortcutsDirty = true;
+    }
+
+    void IWindowPrivate::_q_actionWidgetDestroyed(QObject *obj) {
+        shortcutContextWidgets.remove(static_cast<QWidget *>(obj));
     }
 
     void IWindowPrivate::tryStopDelayedTimer() {
@@ -214,6 +240,12 @@ namespace Core {
             qWarning() << "Core::IWindow::addActionItem(): trying to add null action item";
             return;
         }
+
+        if (!item->spec()) {
+            qWarning() << "Core::IWindow::addActionItem(): trying to add unidentified item" << item->id();
+            return;
+        }
+
         if (d->actionItemMap.contains(item->id())) {
             qWarning() << "Core::IWindow::addActionItem(): trying to add duplicated action item:" << item->id();
             return;
@@ -253,6 +285,79 @@ namespace Core {
     QList<ActionItem *> IWindow::actionItems() const {
         Q_D(const IWindow);
         return d->actionItemMap.values();
+    }
+
+    void IWindow::addShortcutContext(QWidget *w) {
+        Q_D(IWindow);
+        if (!w) {
+            qWarning() << "Core::IWindow::addShortcutContext(): trying to add null widget";
+            return;
+        }
+
+        if (d->shortcutContextWidgets.contains(w)) {
+            qWarning() << "Core::IWindow::addShortcutContext(): trying to add duplicated widget:" << w;
+            return;
+        }
+
+        d->shortcutContextWidgets.append(w);
+        connect(w, &QObject::destroyed, d, &IWindowPrivate::_q_actionWidgetDestroyed);
+        w->installEventFilter(d->actionFilter);
+
+        if (static_cast<QWidgetHacker *>(w)->actionCount() > 0)
+            d->m_shortcutsDirty = true;
+    }
+
+    void IWindow::removeShortcutContext(QWidget *w) {
+        Q_D(IWindow);
+        auto it = d->shortcutContextWidgets.find(w);
+        if (it == d->shortcutContextWidgets.end()) {
+            qWarning() << "Core::IWindow::removeShortcutContext(): widget does not exist:" << w;
+            return;
+        }
+
+        w->removeEventFilter(d->actionFilter);
+        disconnect(w, &QObject::destroyed, d, &IWindowPrivate::_q_actionWidgetDestroyed);
+        d->shortcutContextWidgets.erase(it);
+
+        if (static_cast<QWidgetHacker *>(w)->actionCount() > 0)
+            d->m_shortcutsDirty = true;
+    }
+
+    QList<QWidget *> IWindow::shortcutContexts() const {
+        Q_D(const IWindow);
+        return d->shortcutContextWidgets.values();
+    }
+
+    bool IWindow::hasShortcut(const QKeySequence &key) const {
+        Q_D(const IWindow);
+        if (d->m_shortcutsDirty) {
+
+            QList<QWidget *> menus;
+            decltype(d->shortcutsMap) map;
+
+            auto goThroughMenu = [&](QWidget *w) {
+                for (QAction *action : w->actions()) {
+                    auto menu = action->menu();
+                    if (menu) {
+                        menus.append(menu);
+                    }
+                    for (const auto &sh : action->shortcuts())
+                        map.insert(sh);
+                }
+            };
+
+            menus.reserve(d->shortcutContextWidgets.size());
+            menus << d->shortcutContextWidgets.values();
+
+            while (!menus.isEmpty()) {
+                goThroughMenu(menus.takeFirst());
+            }
+
+            d->shortcutsMap = std::move(map);
+            d->m_shortcutsDirty = false;
+        }
+
+        return d->shortcutsMap.contains(key);
     }
 
     bool IWindow::hasDragFileHandler(const QString &suffix) {

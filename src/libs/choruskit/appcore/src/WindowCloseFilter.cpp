@@ -15,7 +15,7 @@ namespace Core {
         QMetaObject::invokeMethod(obj, member, Qt::DirectConnection, Q_ARG(QString, s));
     }
 
-    WindowCloseFilter::WindowCloseFilter(IWindowPrivate *d, QWidget *w) : QObject(w), d(d), w(w) {
+    WindowCloseFilter::WindowCloseFilter(IWindowPrivate *d, QWidget *w) : QObject(d), d(d), w(w) {
         w->installEventFilter(this);
     }
 
@@ -129,6 +129,26 @@ namespace Core {
                 default:
                     break;
             }
+        }
+        return QObject::eventFilter(obj, event);
+    }
+
+
+    WindowActionFilter::WindowActionFilter(IWindowPrivate *d) : QObject(d), d(d) {
+    }
+
+    WindowActionFilter::~WindowActionFilter() {
+    }
+
+    bool WindowActionFilter::eventFilter(QObject *obj, QEvent *event) {
+        switch (event->type()) {
+            case QEvent::ActionAdded:
+            case QEvent::ActionChanged:
+            case QEvent::ActionRemoved:
+                emit actionChanged(qobject_cast<QWidget *>(obj));
+                break;
+            default:
+                break;
         }
         return QObject::eventFilter(obj, event);
     }

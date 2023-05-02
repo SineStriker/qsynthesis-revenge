@@ -21,7 +21,6 @@ namespace Core {
         void reloadMenuBar();
 
         ActionContext *mainMenuCtx;
-        QSet<QKeySequence> shortcutMap;
     };
 
 }

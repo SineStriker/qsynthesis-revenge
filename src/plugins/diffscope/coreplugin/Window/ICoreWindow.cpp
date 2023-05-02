@@ -24,26 +24,6 @@ namespace Core {
         auto bar = q->menuBar();
 
         mainMenuCtx->buildMenuBarWithState(items, bar);
-
-        QList<QMenu *> menus;
-        decltype(shortcutMap) map;
-        auto goThroughMenu = [&](auto top) {
-            for (const auto &action : top->actions()) {
-                auto menu = action->menu();
-                if (menu) {
-                    menus.append(menu);
-                }
-                for (const auto &sh : action->shortcuts())
-                    map.insert(sh);
-            }
-        };
-
-        goThroughMenu(bar);
-        while (!menus.isEmpty()) {
-            goThroughMenu(menus.takeFirst());
-        }
-
-        shortcutMap = std::move(map);
     }
 
     QMenuBar *ICoreWindow::menuBar() const {
@@ -104,11 +84,6 @@ namespace Core {
     ICoreWindow::~ICoreWindow() {
     }
 
-    bool ICoreWindow::hasShortcut(const QKeySequence &key) const {
-        Q_D(const ICoreWindow);
-        return d->shortcutMap.contains(key);
-    }
-
     QWidget *ICoreWindow::createWindow(QWidget *parent) const {
         return new Internal::MainWindow(parent);
     }
@@ -117,6 +92,10 @@ namespace Core {
         Q_D(ICoreWindow);
 
         window()->setProperty("top-window", true);
+
+        // Add window and menubar as basic shortcut contexts
+        addShortcutContext(window());
+        addShortcutContext(menuBar());
 
         d->mainMenuCtx = ICore::instance()->actionSystem()->context(QString("%1.MainMenu").arg(id()));
     }

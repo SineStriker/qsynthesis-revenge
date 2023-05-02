@@ -53,6 +53,11 @@ namespace Core {
         ActionItem *actionItem(const QString &id) const;
         QList<ActionItem *> actionItems() const;
 
+        void addShortcutContext(QWidget *w);
+        void removeShortcutContext(QWidget *w);
+        QList<QWidget *> shortcutContexts() const;
+        bool hasShortcut(const QKeySequence &key) const;
+
         bool hasDragFileHandler(const QString &suffix);
         void setDragFileHandler(const QString &suffix, QObject *obj, const char *member, int maxCount = 0);
         void removeDragFileHandler(const QString &suffix);

@@ -23,9 +23,6 @@ namespace Core {
 
         QString correctWindowTitle(const QString &title) const override;
 
-    public:
-        bool hasShortcut(const QKeySequence &key) const;
-
     public slots:
         void openFile(const QString &path);
 

@@ -12,6 +12,7 @@ ck_add_library(${PROJECT_NAME} SHARED AUTOGEN)
 ck_target_components(${PROJECT_NAME}
     SOURCES ${_src}
     QT_LINKS Core Widgets Network
+    QT_INCLUDES_PRIVATE Core Gui Widgets
     LINKS QsFramework ExtensionSystem qBreakpad
     LINKS_PRIVATE SingleApplication
     INCLUDES ${_extra_includes}

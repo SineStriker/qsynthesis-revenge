@@ -7,7 +7,7 @@ namespace Core {
 
     class IWindow;
 
-    class CKAPPCORE_API IWindowAddOnPrivate {
+    class IWindowAddOnPrivate {
         Q_DECLARE_PUBLIC(IWindowAddOn)
     public:
         IWindowAddOnPrivate();

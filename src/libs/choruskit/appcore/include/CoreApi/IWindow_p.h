@@ -5,10 +5,14 @@
 #include <QSet>
 #include <QTimer>
 
+#include <Collections/QMChronSet.h>
+
 #include "IWindow.h"
 #include "IWindowAddOn.h"
 
 namespace Core {
+
+    class WindowActionFilter;
 
     class WindowSystemPrivate;
 
@@ -34,10 +38,15 @@ namespace Core {
         QString id;
         bool m_closed;
 
+        mutable bool m_shortcutsDirty;
+        mutable QSet<QKeySequence> shortcutsMap;
+        WindowActionFilter *actionFilter;
+
         QHash<QString, ActionItem *> actionItemMap;
         std::list<IWindowAddOn *> addOns;
 
         QHash<QString, QWidget *> widgetMap;
+        QMChronSet<QWidget *> shortcutContextWidgets;
 
         struct DragFileHandler {
             QObject *obj;
@@ -57,6 +66,8 @@ namespace Core {
 
     private:
         void _q_windowClosed(QWidget *w);
+        void _q_actionChanged(QWidget *w);
+        void _q_actionWidgetDestroyed(QObject *obj);
 
         friend class WindowSystem;
     };
