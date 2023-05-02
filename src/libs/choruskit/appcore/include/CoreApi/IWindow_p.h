@@ -5,6 +5,7 @@
 #include <QSet>
 #include <QTimer>
 
+#include <Collections/QMChronMap.h>
 #include <Collections/QMChronSet.h>
 
 #include "IWindow.h"
@@ -38,11 +39,12 @@ namespace Core {
         QString id;
         bool m_closed;
 
-        mutable bool m_shortcutsDirty;
-        mutable QSet<QKeySequence> shortcutsMap;
+        // mutable bool m_shortcutsDirty;
+        QHash<QKeySequence, QPair<QAction *, QWidget *>> shortcutMap;
+        QHash<QAction *, QList<QKeySequence>> actionKeyMap;
         WindowActionFilter *actionFilter;
 
-        QHash<QString, ActionItem *> actionItemMap;
+        QMChronMap<QString, ActionItem *> actionItemMap;
         std::list<IWindowAddOn *> addOns;
 
         QHash<QString, QWidget *> widgetMap;
@@ -61,13 +63,17 @@ namespace Core {
         QTimer *delayedInitializeTimer;
         std::list<IWindowAddOn *> delayedInitializeQueue;
 
-        void nextDelayedInitialize();
         void tryStopDelayedTimer();
+        void nextDelayedInitialize();
+
+        void shortcutContextAdded(QWidget *w);
+        void shortcutContextRemoved(QWidget *w);
+        void addAndFilterAction(QWidget *w, QAction *action);
 
     private:
         void _q_windowClosed(QWidget *w);
-        void _q_actionChanged(QWidget *w);
-        void _q_actionWidgetDestroyed(QObject *obj);
+        void _q_actionChanged(QWidget *w, int type, QAction *action);
+        void _q_shortcutContextDestroyed(QObject *obj);
 
         friend class WindowSystem;
     };

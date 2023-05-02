@@ -145,7 +145,8 @@ namespace Core {
             case QEvent::ActionAdded:
             case QEvent::ActionChanged:
             case QEvent::ActionRemoved:
-                emit actionChanged(qobject_cast<QWidget *>(obj));
+                emit actionChanged(qobject_cast<QWidget *>(obj), event->type(),
+                                   static_cast<QActionEvent *>(event)->action());
                 break;
             default:
                 break;

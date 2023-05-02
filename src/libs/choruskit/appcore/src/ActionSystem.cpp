@@ -167,7 +167,7 @@ namespace Core {
 
             QString key = ctx2.properties.value("shortcut");
             if (!key.isEmpty()) {
-                shortcuts.append(key);
+                shortcuts.append(QKeySequence(key));
             }
         }
 

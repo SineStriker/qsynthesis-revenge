@@ -79,6 +79,10 @@ namespace Core::Internal {
         connect(newFileItem->action(), &QAction::triggered, this, [this]() {
             //
             qDebug() << "New";
+
+            auto action = new QAction("Test");
+            action->setShortcut(QKeySequence("Ctrl+N"));
+            helpItem->menu()->addAction(action);
         });
 
         connect(openFileItem->action(), &QAction::triggered, this, [this]() {

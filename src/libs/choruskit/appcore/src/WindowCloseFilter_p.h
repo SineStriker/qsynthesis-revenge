@@ -32,7 +32,7 @@ namespace Core {
         IWindowPrivate *d;
 
     signals:
-        void actionChanged(QWidget *w);
+        void actionChanged(QWidget *w, int type, QAction *action);
 
     protected:
         bool eventFilter(QObject *obj, QEvent *event) override;

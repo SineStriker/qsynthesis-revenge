@@ -36,6 +36,11 @@ namespace Core {
         Type type() const;
         ActionSpec *spec() const;
 
+        inline bool isAction() const;
+        inline bool isActionGroup() const;
+        inline bool isMenu() const;
+        inline bool isWidget() const;
+
         QAction *action() const;
         QActionGroup *actionGroup() const;
         QMenu *menu() const;
@@ -63,6 +68,21 @@ namespace Core {
         QScopedPointer<ActionItemPrivate> d_ptr;
     };
 
+    bool ActionItem::isAction() const {
+        return type() == Action;
+    }
+
+    bool ActionItem::isActionGroup() const {
+        return type() == ActionGroup;
+    }
+
+    bool ActionItem::isMenu() const {
+        return type() == Menu;
+    }
+
+    bool ActionItem::isWidget() const {
+        return type() == Widget;
+    }
 }
 
 #endif // ACTIONITEM_H

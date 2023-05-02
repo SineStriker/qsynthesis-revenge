@@ -1,6 +1,10 @@
 #include "ActionContext.h"
 #include "ActionContext_p.h"
 
+#include <private/qkeysequence_p.h>
+
+#include <Collections/QMChronSet.h>
+
 #include "ActionItem.h"
 #include "ActionSystem.h"
 
@@ -438,29 +442,43 @@ namespace Core {
         menuBar->clear();
 
         QHash<QString, ActionItem *> itemMap;
-        QSet<QKeySequence> keys;
+        QSet<QKeySequence> keySet;
 
         // Clear items and build map
         for (const auto item : items) {
-            if (!item->spec())
+            if (!item || !item->spec())
                 continue;
 
             itemMap.insert(item->id(), item);
-            if (item->type() != ActionItem::Action) {
+            if (!item->isAction()) {
                 continue;
             }
 
             // Filter shortcuts
-            QList<QKeySequence> _keys = item->spec()->shortcuts();
-            for (auto it = _keys.begin(); it != _keys.end();) {
-                if (keys.contains(*it)) {
-                    it = _keys.erase(it);
+            QList<QKeySequence> keys;
+            QMChronSet<QKeySequence> duplicatedKeys;
+            for (const auto &sh : item->spec()->shortcuts()) {
+                // qDebug() << sh << sh.count() << sh.isEmpty() << QKeySequence("").isEmpty() << QKeySequence().isEmpty();
+                //                const auto d = sh.data_ptr();
+                //                for (int i = 0; i < 4; ++i)
+                //                    qDebug() << d->key[i];
+
+                if (sh.isEmpty())
+                    continue;
+
+                if (keySet.contains(sh)) {
+                    duplicatedKeys.append(sh);
                     continue;
                 }
-                keys.insert(*it);
-                it++;
+                keySet.insert(sh);
+                keys << sh;
             }
-            item->action()->setShortcuts(_keys);
+            item->action()->setShortcuts(keys);
+
+            if (!duplicatedKeys.isEmpty()) {
+                qDebug() << "Core::ActionContext::buildMenu(): duplicated shortcut detected" << item->id()
+                         << duplicatedKeys.values();
+            }
         }
 
         // Fill action group first

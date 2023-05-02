@@ -27,7 +27,7 @@ namespace Core {
 
     IWindowPrivate::IWindowPrivate() {
         m_closed = false;
-        m_shortcutsDirty = false;
+        // m_shortcutsDirty = false;
         actionFilter = new WindowActionFilter(this);
         connect(actionFilter, &WindowActionFilter::actionChanged, this, &IWindowPrivate::_q_actionChanged);
     }
@@ -37,98 +37,6 @@ namespace Core {
     }
 
     void IWindowPrivate::init() {
-    }
-
-    void IWindowPrivate::initAllAddOns() {
-        for (auto &addOn : qAsConst(addOns)) {
-            // Call 1
-            addOn->initialize();
-        }
-
-        for (auto it2 = addOns.rbegin(); it2 != addOns.rend(); ++it2) {
-            auto &addOn = *it2;
-            // Call 2
-            addOn->extensionsInitialized();
-        }
-
-        // Delayed initialize
-        delayedInitializeQueue = addOns;
-
-        delayedInitializeTimer = new QTimer();
-        delayedInitializeTimer->setInterval(DELAYED_INITIALIZE_INTERVAL);
-        delayedInitializeTimer->setSingleShot(true);
-        connect(delayedInitializeTimer, &QTimer::timeout, this, &IWindowPrivate::nextDelayedInitialize);
-        delayedInitializeTimer->start();
-    }
-
-    void IWindowPrivate::deleteAllAddOns() {
-        for (auto it2 = addOns.rbegin(); it2 != addOns.rend(); ++it2) {
-            auto &addOn = *it2;
-            // Call 1
-            delete addOn;
-        }
-    }
-
-    void IWindowPrivate::nextDelayedInitialize() {
-        Q_Q(IWindow);
-
-        while (!delayedInitializeQueue.empty()) {
-            auto addOn = delayedInitializeQueue.front();
-            delayedInitializeQueue.pop_front();
-
-            bool delay = addOn->delayedInitialize();
-            if (delay)
-                break; // do next delayedInitialize after a delay
-        }
-        if (delayedInitializeQueue.empty()) {
-            delete delayedInitializeTimer;
-            delayedInitializeTimer = nullptr;
-            emit q->initializationDone();
-        } else {
-            delayedInitializeTimer->start();
-        }
-    }
-
-    void IWindowPrivate::_q_windowClosed(QWidget *w) {
-        Q_Q(IWindow);
-
-        tryStopDelayedTimer();
-
-        m_closed = true;
-
-        q->windowAboutToClose();
-
-        emit q->aboutToClose();
-
-        deleteAllAddOns();
-
-        q->windowClosed();
-
-        emit q->closed();
-
-        q->setWindow(nullptr);
-        delete q;
-    }
-
-    void IWindowPrivate::_q_actionChanged(QWidget *w) {
-        Q_UNUSED(w);
-
-        m_shortcutsDirty = true;
-    }
-
-    void IWindowPrivate::_q_actionWidgetDestroyed(QObject *obj) {
-        shortcutContextWidgets.remove(static_cast<QWidget *>(obj));
-    }
-
-    void IWindowPrivate::tryStopDelayedTimer() {
-        // Stop delayed initializations
-        if (delayedInitializeTimer) {
-            if (delayedInitializeTimer->isActive()) {
-                delayedInitializeTimer->stop();
-            }
-            delete delayedInitializeTimer;
-            delayedInitializeTimer = nullptr;
-        }
     }
 
     void IWindowPrivate::setWindow(QWidget *w, WindowSystemPrivate *d) {
@@ -163,6 +71,167 @@ namespace Core {
 
         // Add-ons finished
         q->windowAddOnsFinished();
+    }
+
+    void IWindowPrivate::initAllAddOns() {
+        for (auto &addOn : qAsConst(addOns)) {
+            // Call 1
+            addOn->initialize();
+        }
+
+        for (auto it2 = addOns.rbegin(); it2 != addOns.rend(); ++it2) {
+            auto &addOn = *it2;
+            // Call 2
+            addOn->extensionsInitialized();
+        }
+
+        // Delayed initialize
+        delayedInitializeQueue = addOns;
+
+        delayedInitializeTimer = new QTimer();
+        delayedInitializeTimer->setInterval(DELAYED_INITIALIZE_INTERVAL);
+        delayedInitializeTimer->setSingleShot(true);
+        connect(delayedInitializeTimer, &QTimer::timeout, this, &IWindowPrivate::nextDelayedInitialize);
+        delayedInitializeTimer->start();
+    }
+
+    void IWindowPrivate::deleteAllAddOns() {
+        for (auto it2 = addOns.rbegin(); it2 != addOns.rend(); ++it2) {
+            auto &addOn = *it2;
+            // Call 1
+            delete addOn;
+        }
+    }
+
+    void IWindowPrivate::tryStopDelayedTimer() {
+        // Stop delayed initializations
+        if (delayedInitializeTimer) {
+            if (delayedInitializeTimer->isActive()) {
+                delayedInitializeTimer->stop();
+            }
+            delete delayedInitializeTimer;
+            delayedInitializeTimer = nullptr;
+        }
+    }
+
+    void IWindowPrivate::nextDelayedInitialize() {
+        Q_Q(IWindow);
+
+        while (!delayedInitializeQueue.empty()) {
+            auto addOn = delayedInitializeQueue.front();
+            delayedInitializeQueue.pop_front();
+
+            bool delay = addOn->delayedInitialize();
+            if (delay)
+                break; // do next delayedInitialize after a delay
+        }
+        if (delayedInitializeQueue.empty()) {
+            delete delayedInitializeTimer;
+            delayedInitializeTimer = nullptr;
+            emit q->initializationDone();
+        } else {
+            delayedInitializeTimer->start();
+        }
+    }
+
+    void IWindowPrivate::shortcutContextAdded(QWidget *w) {
+        for (const auto &action : w->actions()) {
+            addAndFilterAction(w, action);
+        }
+    }
+
+    void IWindowPrivate::shortcutContextRemoved(QWidget *w) {
+        // We cannot query widgets' actions because the widget maybe destroyed
+        QSet<QAction *> actions;
+        for (auto it = shortcutMap.begin(); it != shortcutMap.end();) {
+            if (it->second == w) {
+                actions.insert(it->first);
+                it = shortcutMap.erase(it);
+                continue;
+            }
+            it++;
+        }
+
+        for (const auto &action : qAsConst(actions)) {
+            actionKeyMap.remove(action);
+        }
+    }
+
+    void IWindowPrivate::addAndFilterAction(QWidget *w, QAction *action) {
+        QList<QKeySequence> keys;
+        QMChronSet<QKeySequence> duplicatedKeys;
+        for (const auto &sh : action->shortcuts()) {
+            if (sh.isEmpty())
+                continue;
+            if (shortcutMap.contains(sh)) {
+                duplicatedKeys.append(sh);
+                continue;
+            }
+            keys.append(sh);
+            shortcutMap.insert(sh, {action, w});
+        }
+        action->setShortcuts(keys);
+        actionKeyMap.insert(action, keys);
+
+        if (!duplicatedKeys.isEmpty()) {
+            qWarning() << "Core::IWindow: duplicated shortcuts detected" << w << action << duplicatedKeys.values();
+        }
+    }
+
+    void IWindowPrivate::_q_windowClosed(QWidget *w) {
+        Q_Q(IWindow);
+
+        Q_UNUSED(w);
+
+        tryStopDelayedTimer();
+
+        m_closed = true;
+
+        q->windowAboutToClose();
+
+        emit q->aboutToClose();
+
+        deleteAllAddOns();
+
+        q->windowClosed();
+
+        emit q->closed();
+
+        q->setWindow(nullptr);
+        delete q;
+    }
+
+    void IWindowPrivate::_q_actionChanged(QWidget *w, int type, QAction *action) {
+        Q_UNUSED(w);
+
+        switch (type) {
+            case QEvent::ActionAdded:
+                addAndFilterAction(w, action);
+                break;
+            case QEvent::ActionRemoved:
+                for (const auto &sh : action->shortcuts()) {
+                    shortcutMap.remove(sh);
+                }
+                actionKeyMap.remove(action);
+                break;
+            case QEvent::ActionChanged:
+                for (const auto &sh : actionKeyMap.value(action)) {
+                    shortcutMap.remove(sh);
+                }
+                addAndFilterAction(w, action);
+                break;
+            default:
+                break;
+        }
+    }
+
+    void IWindowPrivate::_q_shortcutContextDestroyed(QObject *obj) {
+        if (m_closed)
+            return;
+
+        auto w = static_cast<QWidget *>(obj);
+        shortcutContextRemoved(w);
+        shortcutContextWidgets.remove(w);
     }
 
     IWindowFactory::IWindowFactory(const QString &id, AvailableCreator creator) : d_ptr(new IWindowFactoryPrivate()) {
@@ -250,7 +319,11 @@ namespace Core {
             qWarning() << "Core::IWindow::addActionItem(): trying to add duplicated action item:" << item->id();
             return;
         }
-        d->actionItemMap.insert(item->id(), item);
+        d->actionItemMap.append(item->id(), item);
+
+        if (item->isMenu()) {
+            addShortcutContext(item->menu());
+        }
     }
 
     void IWindow::addActionItems(const QList<Core::ActionItem *> &items) {
@@ -274,7 +347,12 @@ namespace Core {
             qWarning() << "Core::IWindow::removeActionItem(): action item does not exist:" << id;
             return;
         }
+        auto item = it.value();
         d->actionItemMap.erase(it);
+
+        if (item->isMenu()) {
+            removeShortcutContext(item->menu());
+        }
     }
 
     ActionItem *IWindow::actionItem(const QString &id) const {
@@ -289,6 +367,7 @@ namespace Core {
 
     void IWindow::addShortcutContext(QWidget *w) {
         Q_D(IWindow);
+
         if (!w) {
             qWarning() << "Core::IWindow::addShortcutContext(): trying to add null widget";
             return;
@@ -300,11 +379,10 @@ namespace Core {
         }
 
         d->shortcutContextWidgets.append(w);
-        connect(w, &QObject::destroyed, d, &IWindowPrivate::_q_actionWidgetDestroyed);
-        w->installEventFilter(d->actionFilter);
+        connect(w, &QObject::destroyed, d, &IWindowPrivate::_q_shortcutContextDestroyed);
 
-        if (static_cast<QWidgetHacker *>(w)->actionCount() > 0)
-            d->m_shortcutsDirty = true;
+        d->shortcutContextAdded(w);
+        w->installEventFilter(d->actionFilter);
     }
 
     void IWindow::removeShortcutContext(QWidget *w) {
@@ -316,11 +394,10 @@ namespace Core {
         }
 
         w->removeEventFilter(d->actionFilter);
-        disconnect(w, &QObject::destroyed, d, &IWindowPrivate::_q_actionWidgetDestroyed);
-        d->shortcutContextWidgets.erase(it);
+        d->shortcutContextRemoved(w);
 
-        if (static_cast<QWidgetHacker *>(w)->actionCount() > 0)
-            d->m_shortcutsDirty = true;
+        disconnect(w, &QObject::destroyed, d, &IWindowPrivate::_q_shortcutContextDestroyed);
+        d->shortcutContextWidgets.erase(it);
     }
 
     QList<QWidget *> IWindow::shortcutContexts() const {
@@ -330,34 +407,33 @@ namespace Core {
 
     bool IWindow::hasShortcut(const QKeySequence &key) const {
         Q_D(const IWindow);
-        if (d->m_shortcutsDirty) {
-
-            QList<QWidget *> menus;
-            decltype(d->shortcutsMap) map;
-
-            auto goThroughMenu = [&](QWidget *w) {
-                for (QAction *action : w->actions()) {
-                    auto menu = action->menu();
-                    if (menu) {
-                        menus.append(menu);
-                    }
-                    for (const auto &sh : action->shortcuts())
-                        map.insert(sh);
-                }
-            };
-
-            menus.reserve(d->shortcutContextWidgets.size());
-            menus << d->shortcutContextWidgets.values();
-
-            while (!menus.isEmpty()) {
-                goThroughMenu(menus.takeFirst());
-            }
-
-            d->shortcutsMap = std::move(map);
-            d->m_shortcutsDirty = false;
-        }
-
-        return d->shortcutsMap.contains(key);
+        // if (d->m_shortcutsDirty) {
+        //
+        //     QList<QWidget *> menus;
+        //     decltype(d->shortcutsMap) map;
+        //
+        //     auto goThroughMenu = [&](QWidget *w) {
+        //         for (QAction *action : w->actions()) {
+        //             auto menu = action->menu();
+        //             if (menu) {
+        //                 menus.append(menu);
+        //             }
+        //             for (const auto &sh : action->shortcuts())
+        //                 map.insert(sh);
+        //         }
+        //     };
+        //
+        //     menus.reserve(d->shortcutContextWidgets.size());
+        //     menus << d->shortcutContextWidgets.values();
+        //
+        //     while (!menus.isEmpty()) {
+        //         goThroughMenu(menus.takeFirst());
+        //     }
+        //
+        //     d->shortcutsMap = std::move(map);
+        //     d->m_shortcutsDirty = false;
+        // }
+        return d->shortcutMap.contains(key);
     }
 
     bool IWindow::hasDragFileHandler(const QString &suffix) {
