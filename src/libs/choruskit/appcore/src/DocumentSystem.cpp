@@ -303,9 +303,13 @@ namespace Core {
         Q_D(const DocumentSystem);
         const QString &saveFileName = getSaveAsFileName(doc, path, parent);
         if (!saveFileName.isEmpty()) {
-            if (d->m_documentsWithWatch.contains(doc) || d->m_documentsWithoutWatch.contains(doc))
+            if (d->m_documentsWithWatch.contains(doc) || d->m_documentsWithoutWatch.contains(doc)) {
+                if (searchDocument(saveFileName)) {
+                    DocumentSystemPrivate::errorOnOverwrite(saveFileName, parent);
+                    return false;
+                }
                 return const_cast<DocumentSystem *>(this)->saveDocument(doc, saveFileName);
-            else
+            } else
                 return doc->save(saveFileName);
         }
         return false;

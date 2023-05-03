@@ -123,6 +123,12 @@ namespace Core {
         }
     }
 
+    void DocumentWatcherPrivate::errorOnOverwrite(const QString &fileName, QWidget *parent) {
+        QMessageBox::critical(parent, QApplication::translate("Core::DocumentWatcher", "File Error"),
+                              QApplication::translate("Core::DocumentWatcher", "%1 has been opened in the editor!")
+                                  .arg(QDir::toNativeSeparators(fileName)));
+    }
+
     bool DocumentWatcherPrivate::eventFilter(QObject *obj, QEvent *event) {
         if (obj == qApp && event->type() == QEvent::ApplicationActivate) {
             // activeWindow is not necessarily set yet, do checkForReload asynchronously
@@ -359,14 +365,7 @@ namespace Core {
                                     q->getSaveAsFileName(document, {}, document->dialogParent());
                                 if (!saveFileName.isEmpty()) {
                                     if (q->searchDocument(saveFileName)) {
-                                        QMessageBox::critical(
-                                            document->dialogParent(),
-                                            QApplication::translate("Core::DocumentWatcher", "File Error"),
-                                            errorString.isEmpty()
-                                                ? QApplication::translate("Core::DocumentWatcher",
-                                                                          "%1 has been opened in the editor!")
-                                                      .arg(QDir::toNativeSeparators(document->filePath()))
-                                                : errorString);
+                                        errorOnOverwrite(saveFileName, document->dialogParent());
                                     } else {
                                         documentsToSave.insert(document, saveFileName);
                                         unhandled = false;

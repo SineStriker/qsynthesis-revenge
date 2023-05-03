@@ -60,6 +60,8 @@ namespace Core {
         // That makes the code easier
         IDocument *m_blockedIDocument;
 
+        static void errorOnOverwrite(const QString &fileName, QWidget *parent);
+
     protected:
         bool eventFilter(QObject *obj, QEvent *event) override;
 
