@@ -94,9 +94,11 @@ namespace Core::Internal {
                 return;
             }
 
+            auto iWin = windowHandle();
             if (docMgr->openFileBrowse(spec)) {
-                if (qApp->property("closeHomeOnOpen").toBool())
-                    windowHandle()->window()->close();
+                if (qApp->property("closeHomeOnOpen").toBool() && iWin->id() == "home") {
+                    QTimer::singleShot(0, iWin->window(), &QWidget::close);
+                }
             }
         });
 

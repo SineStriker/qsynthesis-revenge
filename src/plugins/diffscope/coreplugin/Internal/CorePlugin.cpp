@@ -150,7 +150,7 @@ namespace Core {
                 //         openFileFromCommand({}, qApp->arguments().mid(1)) >
                 //     0) {
                 //     if (qApp->property("closeHomeOnOpen").toBool())
-                //         win->close();
+                //         QTimer::singleShot(0, win, &QWidget::close);
                 // }
             });
 

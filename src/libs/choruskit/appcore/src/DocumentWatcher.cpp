@@ -358,8 +358,19 @@ namespace Core {
                                 const QString &saveFileName =
                                     q->getSaveAsFileName(document, {}, document->dialogParent());
                                 if (!saveFileName.isEmpty()) {
-                                    documentsToSave.insert(document, saveFileName);
-                                    unhandled = false;
+                                    if (q->searchDocument(saveFileName)) {
+                                        QMessageBox::critical(
+                                            document->dialogParent(),
+                                            QApplication::translate("Core::DocumentWatcher", "File Error"),
+                                            errorString.isEmpty()
+                                                ? QApplication::translate("Core::DocumentWatcher",
+                                                                          "%1 has been opened in the editor!")
+                                                      .arg(QDir::toNativeSeparators(document->filePath()))
+                                                : errorString);
+                                    } else {
+                                        documentsToSave.insert(document, saveFileName);
+                                        unhandled = false;
+                                    }
                                 }
                                 break;
                             }
@@ -384,8 +395,10 @@ namespace Core {
         }
 
         // handle deleted files
-        for (const auto &item : qAsConst(documentsToClose))
+        for (const auto &item : qAsConst(documentsToClose)) {
+            q->removeDocument(item);
             item->close();
+        }
 
         QHashIterator<IDocument *, QString> it(documentsToSave);
         while (it.hasNext()) {
@@ -533,6 +546,9 @@ namespace Core {
 
     IDocument *DocumentWatcher::searchDocument(const QString &filePath) const {
         Q_D(const DocumentWatcher);
+
+        if (!QMFs::isFileExist(filePath))
+            return nullptr;
 
         const QString &fixedFrom = fixFileName(filePath, ResolveLinks);
         foreach (IDocument *document, d->m_documentsWithWatch.keys()) {

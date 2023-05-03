@@ -110,6 +110,7 @@ namespace Core {
     HomeRecentBottomFrame::HomeRecentBottomFrame(QWidget *parent) : QFrame(parent) {
         fileWidget = new QsApi::FileListWidget();
         fileWidget->setObjectName("file-widget");
+        fileWidget->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Expanding);
 
         emptyLabel = new QLabel();
         emptyLabel->setObjectName("empty-label");
@@ -121,6 +122,8 @@ namespace Core {
         bottomLayout->addWidget(fileWidget);
         bottomLayout->addWidget(emptyLabel);
         bottomLayout->addStretch();
+
+        bottomLayout->setStretchFactor(fileWidget, 1);
 
         setLayout(bottomLayout);
 
@@ -151,6 +154,7 @@ namespace Core {
             fileWidget->addItem(spec ? spec->icon() : QIcon(), m_iconSize, QDir::Files, info.absoluteFilePath(),
                                 info.lastModified().toString(dateFormat));
         }
+        // fileWidget->resize(fileWidget->width(), fileWidget->contentsSize().height());
         updateListFilter();
     }
 

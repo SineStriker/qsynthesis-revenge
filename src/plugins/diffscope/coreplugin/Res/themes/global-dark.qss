@@ -66,3 +66,86 @@ QMenu[core-style=true]::separator {
     background-color: #5B5B5B;
     margin: 6px;
 }
+
+/* QScrollBar */
+/* QScrollBar */
+
+CScrollArea {
+    border: none;
+    background-color: transparent;
+}
+
+CGraphicsView {
+    border: none;
+    background-color: transparent;
+}
+
+QScrollBar {
+    background: transparent;
+    margin: 0;
+}
+
+QScrollBar:vertical {
+    width: 10px;
+}
+
+QScrollBar:horizontal {
+    height: 10px;
+}
+
+QScrollBar::handle:vertical {
+    min-height: 40px;
+}
+
+QScrollBar::handle:horizontal {
+    min-width: 40px;
+}
+
+QScrollBar::handle {
+    background: rgba(255, 255, 255, 0.3);
+    border: 0px;
+    /* margin: 4px 4px 4px 4px; */
+}
+
+QScrollBar::handle:hover {
+    background: rgba(255, 255, 255, 0.5);
+}
+
+
+QScrollBar::handle:pressed {
+    background: rgba(255, 255, 255, 0.4);
+}
+
+QScrollBar::sub-page {
+    background: transparent;
+}
+
+QScrollBar::add-page {
+    background: transparent;
+}
+
+QScrollBar::up-arrow {
+    background: transparent;
+}
+
+QScrollBar::down-arrow {
+    background: transparent;
+}
+
+QScrollBar::left-arrow {
+    background: transparent;
+}
+
+QScrollBar::right-arrow {
+    background: transparent;
+}
+
+QScrollBar::sub-line {
+    background: transparent;
+    width: 0px;
+}
+
+QScrollBar::add-line {
+    background: transparent;
+    width: 0px;
+}

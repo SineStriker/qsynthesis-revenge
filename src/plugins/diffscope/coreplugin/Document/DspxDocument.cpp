@@ -81,6 +81,9 @@ namespace Core {
 
     IDocument::ReloadBehavior DspxDocument::reloadBehavior(IDocument::ChangeTrigger state,
                                                            IDocument::ChangeType type) const {
+        if (type == TypeRemoved) {
+            return BehaviorAsk;
+        }
         return BehaviorSilent;
     }
 

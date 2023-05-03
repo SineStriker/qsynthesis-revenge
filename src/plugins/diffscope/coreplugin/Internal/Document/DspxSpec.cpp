@@ -6,6 +6,7 @@
 #include <QCoreApplication>
 #include <QDebug>
 #include <QMessageBox>
+#include <QTimer>
 
 namespace Core::Internal {
 
@@ -58,7 +59,7 @@ namespace Core::Internal {
             QMessageBox::critical(nullptr, tr("File Error"), doc->errorMessage());
 
             if (qApp->property("closeHomeOnOpen").toBool())
-                iWin->window()->close();
+                QTimer::singleShot(0, iWin->window(), &QWidget::close);
 
             return false;
         }

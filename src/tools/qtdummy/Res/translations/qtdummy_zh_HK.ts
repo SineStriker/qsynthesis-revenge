@@ -147,6 +147,14 @@
         <source>Save As File</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>File Error</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>%1 has been opened in the editor!</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>Core::PromptHandler</name>

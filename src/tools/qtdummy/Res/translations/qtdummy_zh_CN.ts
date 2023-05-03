@@ -172,7 +172,7 @@
     <name>Core::DocumentWatcher</name>
     <message>
         <source>File Error</source>
-        <translation type="vanished">文件错误</translation>
+        <translation>文件错误</translation>
     </message>
     <message>
         <source>Cannot reload %1</source>
@@ -185,6 +185,10 @@
     <message>
         <source>Save As File</source>
         <translation>文件另存为</translation>
+    </message>
+    <message>
+        <source>%1 has been opened in the editor!</source>
+        <translation>%1 已在编辑器中打开！</translation>
     </message>
 </context>
 <context>
@@ -227,7 +231,7 @@
     </message>
     <message>
         <source>Save &amp;as...</source>
-        <translation>另存为...(&amp;A)</translation>
+        <translation type="unfinished">另存为(&amp;A)...</translation>
     </message>
     <message>
         <source>&amp;Save</source>
