@@ -57,19 +57,19 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Import &amp;Project</source>
+        <source>Import &amp;Project...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Import &amp;Audio</source>
+        <source>Import &amp;Audio...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Export &amp;Project</source>
+        <source>Export &amp;Project...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Export &amp;Audio</source>
+        <source>Export &amp;Audio...</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

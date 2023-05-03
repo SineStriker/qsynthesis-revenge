@@ -29,6 +29,13 @@ namespace Core {
             void initActions();
 
         protected:
+            ActionItem *saveGroupItem;
+            ActionItem *saveFileItem;
+            ActionItem *saveAsFileItem;
+
+            ActionItem *exitGroupItem;
+            ActionItem *closeFileItem;
+
             ActionItem *welcomeGroupItem;
             ActionItem *showHomeItem;
         };

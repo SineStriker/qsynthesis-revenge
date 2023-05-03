@@ -21,7 +21,7 @@
     <context id="project.MainMenu" prefix="iemgr." mode="find">
         <group id="ImportExportGroup">
             <rules>
-                <rule id="core.OpenGroup" mode="insertBehind"/>
+                <rule id="core.SaveGroup" mode="insertBehind"/>
             </rules>
             <content>
                 <menu id="Import">

@@ -186,19 +186,19 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>&amp;Open</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Se&amp;ttings</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>&amp;About %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Can&apos;t find the default editor of %1 project file!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Open...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Se&amp;ttings...</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -270,6 +270,26 @@
     </message>
     <message>
         <source>Show Home</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Save Actions</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Save</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Save &amp;As...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Exit Actions</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Close</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

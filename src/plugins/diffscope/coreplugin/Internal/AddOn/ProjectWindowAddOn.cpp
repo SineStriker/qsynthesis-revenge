@@ -4,12 +4,33 @@
 #include <QLabel>
 #include <QMenuBar>
 
+#include <QEvent>
 #include <QMDecoratorV2.h>
+#include <QMSystem.h>
 
 #include "CoreApi/IWindow.h"
 #include "ICore.h"
+#include "Window/IProjectWindow.h"
 
 namespace Core {
+
+    class LastWindowFilter : public QObject {
+    public:
+        LastWindowFilter() {
+            ICore::instance()->windowSystem()->installEventFilter(this);
+        }
+
+        ~LastWindowFilter() {
+        }
+
+        bool eventFilter(QObject *obj, QEvent *event) override {
+            if (event->type() == QEvent::Close) {
+                ICore::showHome();
+                event->ignore();
+            }
+            return QObject::eventFilter(obj, event);
+        }
+    };
 
     namespace Internal {
 
@@ -40,22 +61,63 @@ namespace Core {
         }
 
         void ProjectWindowAddOn::reloadStrings() {
+            saveGroupItem->setText(tr("Save Actions"));
+            saveFileItem->setText(tr("&Save"));
+            saveAsFileItem->setText(tr("Save &As..."));
+
+            exitGroupItem->setText(tr("Exit Actions"));
+            closeFileItem->setText(tr("Close"));
+
             welcomeGroupItem->setText(tr("Welcome Actions"));
             showHomeItem->setText(tr("Show Home"));
         }
 
         void ProjectWindowAddOn::initActions() {
-            auto iWin = windowHandle();
+            auto iWin = windowHandle()->cast<IProjectWindow>();
             auto win = iWin->window();
+
+            saveGroupItem = new ActionItem("core.SaveGroup", new QActionGroup(this), this);
+            saveFileItem = new ActionItem("core.SaveFile", new QAction(this), this);
+            saveAsFileItem = new ActionItem("core.SaveAsFile", new QAction(this), this);
+
+            exitGroupItem = new ActionItem("core.ExitGroup", new QActionGroup(this), this);
+            closeFileItem = new ActionItem("core.CloseFile", new QAction(this), this);
 
             welcomeGroupItem = new ActionItem("core.WelcomeGroup", new QActionGroup(this), this);
             showHomeItem = new ActionItem("core.ShowHome", new QAction(this), this);
+
+            connect(iWin->doc(), &IDocument::changed, this,
+                    [this, iWin]() { saveFileItem->setEnabled(iWin->doc()->isModified()); });
+
+            connect(saveAsFileItem->action(), &QAction::triggered, this, [this, iWin]() {
+                auto doc = iWin->doc();
+                auto filePath = doc->filePath();
+                if (!QMFs::isFileExist(filePath)) {
+                    saveAsFileItem->action()->trigger();
+                } else {
+                    ICore::instance()->documentSystem()->saveDocument(iWin->doc());
+                }
+            });
+
+            connect(saveAsFileItem->action(), &QAction::triggered, this, [this, iWin]() {
+                ICore::instance()->documentSystem()->saveFileBrowse(iWin->doc(), {}, iWin->window());
+            });
+
+            connect(closeFileItem->action(), &QAction::triggered, this, [this, win]() {
+                LastWindowFilter guard;
+                win->close();
+            });
 
             connect(showHomeItem->action(), &QAction::triggered, this, [this]() {
                 ICore::showHome(); //
             });
 
             iWin->addActionItems({
+                saveGroupItem,
+                saveFileItem,
+                saveAsFileItem,
+                exitGroupItem,
+                closeFileItem,
                 welcomeGroupItem,
                 showHomeItem,
             });

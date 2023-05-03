@@ -304,15 +304,22 @@ namespace Core {
         const QString &saveFileName = getSaveAsFileName(doc, path, parent);
         if (!saveFileName.isEmpty()) {
             if (d->m_documentsWithWatch.contains(doc) || d->m_documentsWithoutWatch.contains(doc)) {
-                if (searchDocument(saveFileName)) {
+                auto doc2 = searchDocument(saveFileName);
+                if (doc2) {
+                    if (doc2 == doc) {
+                        goto lab_save;
+                    }
                     DocumentSystemPrivate::errorOnOverwrite(saveFileName, parent);
                     return false;
                 }
                 return const_cast<DocumentSystem *>(this)->saveDocument(doc, saveFileName);
             } else
-                return doc->save(saveFileName);
+                goto lab_save;
         }
         return false;
+
+    lab_save:
+        return doc->save(saveFileName);
     }
 
     QString DocumentSystem::getOpenFileName(QWidget *parent, const QString &title, const QString &filters,

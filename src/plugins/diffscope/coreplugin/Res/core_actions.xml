@@ -28,8 +28,15 @@
                 <action id="OpenFile" shortcut="Ctrl+O"/>
                 <menu id="OpenRecent"/>
             </group>
+            <group id="SaveGroup">
+                <action id="SaveFile" shortcut="Ctrl+S"/>
+                <action id="SaveAsFile" shortcut="Ctrl+Shift+S"/>
+            </group>
             <group id="PreferenceGroup">
                 <action id="Settings"/>
+            </group>
+            <group id="ExitGroup">
+                <action id="CloseFile"/>
             </group>
         </menu>
 

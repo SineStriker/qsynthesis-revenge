@@ -114,6 +114,7 @@ namespace Core {
 
         auto iWin = qobject_cast<IWindow *>(sender());
         emit q->windowDestroyed(iWin);
+
         iWindows.remove(iWin);
         windowMap.remove(iWin->window());
 
@@ -126,6 +127,7 @@ namespace Core {
             for (auto w : QApplication::topLevelWidgets()) {
                 if (!w->isVisible() || w->parentWidget() || !w->testAttribute(Qt::WA_QuitOnClose))
                     continue;
+
                 lastWindowClosed = false;
                 break;
             }
@@ -139,7 +141,7 @@ namespace Core {
 
         QCloseEvent e;
         qApp->sendEvent(q, &e);
-        if (e.isAccepted()) {
+        if (e.isAccepted() && iWindows.isEmpty()) {
             // auto e2 = new QEvent(QEvent::Quit);
             // qApp->postEvent(qApp, e2);
             qApp->quit();

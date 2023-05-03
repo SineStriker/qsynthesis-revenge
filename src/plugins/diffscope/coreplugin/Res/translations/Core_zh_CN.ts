@@ -249,11 +249,11 @@
     </message>
     <message>
         <source>&amp;Open</source>
-        <translation>打开(&amp;O)</translation>
+        <translation type="vanished">打开(&amp;O)</translation>
     </message>
     <message>
         <source>Se&amp;ttings</source>
-        <translation>设置(&amp;T)</translation>
+        <translation type="vanished">设置(&amp;T)</translation>
     </message>
     <message>
         <source>&amp;About %1</source>
@@ -266,6 +266,14 @@
     <message>
         <source>Can&apos;t find the default editor of %1 project file!</source>
         <translation>无法找到 %1 工程文件的编辑器！</translation>
+    </message>
+    <message>
+        <source>&amp;Open...</source>
+        <translation>打开(&amp;O)...</translation>
+    </message>
+    <message>
+        <source>Se&amp;ttings...</source>
+        <translation>设置(&amp;T)...</translation>
     </message>
 </context>
 <context>
@@ -385,6 +393,26 @@
     <message>
         <source>Show Home</source>
         <translation>显示主页</translation>
+    </message>
+    <message>
+        <source>Save Actions</source>
+        <translation>保存组</translation>
+    </message>
+    <message>
+        <source>&amp;Save</source>
+        <translation>保存(&amp;S)</translation>
+    </message>
+    <message>
+        <source>Save &amp;As...</source>
+        <translation>另存为(&amp;A)...</translation>
+    </message>
+    <message>
+        <source>Exit Actions</source>
+        <translation>关闭组</translation>
+    </message>
+    <message>
+        <source>Close</source>
+        <translation type="unfinished">关闭</translation>
     </message>
 </context>
 <context>

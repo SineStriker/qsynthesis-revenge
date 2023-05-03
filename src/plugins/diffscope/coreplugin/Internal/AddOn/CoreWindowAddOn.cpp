@@ -44,11 +44,11 @@ namespace Core::Internal {
 
         openGroupItem->setText(tr("Open Actions"));
         newFileItem->setText(tr("&New"));
-        openFileItem->setText(tr("&Open"));
+        openFileItem->setText(tr("&Open..."));
         openRecentItem->setText(tr("Open Recent"));
 
         preferenceGroupItem->setText(tr("Preference Actions"));
-        settingsItem->setText(tr("Se&ttings"));
+        settingsItem->setText(tr("Se&ttings..."));
 
         aboutGroupItem->setText(tr("About Actions"));
         aboutPluginsItem->setText(tr("About Plugins"));

@@ -187,6 +187,9 @@ namespace Core {
 
         m_closed = true;
 
+        if (!w->isHidden())
+            w->hide();
+
         q->windowAboutToClose();
 
         emit q->aboutToClose();

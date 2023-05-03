@@ -22,9 +22,12 @@ namespace Core {
 
         DspxDocument *m_doc;
 
+        bool m_forceClose;
+
     private:
         void _q_documentChanged();
         void _q_documentRaiseRequested();
+        void _q_documentCloseRequested();
     };
 
 }

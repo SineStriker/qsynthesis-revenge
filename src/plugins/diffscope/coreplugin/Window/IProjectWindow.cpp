@@ -13,6 +13,7 @@
 namespace Core {
 
     IProjectWindowPrivate::IProjectWindowPrivate() {
+        m_forceClose = false;
     }
 
     void IProjectWindowPrivate::init() {
@@ -34,6 +35,13 @@ namespace Core {
     void IProjectWindowPrivate::_q_documentRaiseRequested() {
         Q_Q(IProjectWindow);
         QMView::bringWindowToForeground(q->window());
+    }
+
+    void IProjectWindowPrivate::_q_documentCloseRequested() {
+        Q_Q(IProjectWindow);
+
+        m_forceClose = true;
+        q->window()->close();
     }
 
     DspxDocument *IProjectWindow::doc() const {
@@ -59,7 +67,7 @@ namespace Core {
         // Close event
         connect(d->m_doc, &IDocument::changed, d, &IProjectWindowPrivate::_q_documentChanged);
         connect(d->m_doc, &IDocument::raiseRequested, d, &IProjectWindowPrivate::_q_documentRaiseRequested);
-        connect(d->m_doc, &IDocument::closeRequested, win, &QWidget::close);
+        connect(d->m_doc, &IDocument::closeRequested, d, &IProjectWindowPrivate::_q_documentCloseRequested);
     }
 
     void IProjectWindow::windowAddOnsFinished() {
@@ -82,7 +90,7 @@ namespace Core {
 
         // Windows should be all closed before quit signal arrives except a kill or interrupt signal
         // is emitted, only when this function is called the log should be removed expectedly.
-        if (!d->m_doc->isModified()) {
+        if (!d->m_doc->isModified() || d->m_forceClose) {
             d->m_doc->setAutoRemoveLogDirectory(true);
         }
 
