@@ -108,6 +108,21 @@ namespace Core {
         d->logDir.autoRemove = autoRemove;
     }
 
+    IDocument::ReloadBehavior IDocument::reloadBehavior(IDocument::ChangeTrigger state,
+                                                        IDocument::ChangeType type) const {
+        switch (type) {
+            case TypePermissions:
+                return BehaviorSilent;
+            case TypeContents:
+                if (state == TriggerInternal && !isModified())
+                    return BehaviorSilent;
+                break;
+            default:
+                break;
+        }
+        return BehaviorAsk;
+    }
+
     QString IDocument::errorMessage() const {
         Q_D(const IDocument);
         return d->errMsg;
@@ -215,21 +230,6 @@ namespace Core {
 
     bool IDocument::isSaveAsAllowed() const {
         return true;
-    }
-
-    IDocument::ReloadBehavior IDocument::reloadBehavior(IDocument::ChangeTrigger state,
-                                                        IDocument::ChangeType type) const {
-        switch (type) {
-            case TypePermissions:
-                return BehaviorSilent;
-            case TypeContents:
-                if (state == TriggerInternal && !isModified())
-                    return BehaviorSilent;
-                break;
-            default:
-                break;
-        }
-        return BehaviorAsk;
     }
 
     void IDocument::raise() {

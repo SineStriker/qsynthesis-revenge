@@ -38,6 +38,9 @@ namespace Core {
         virtual bool open(const QString &filename) = 0;
         virtual bool save(const QString &filename) = 0;
 
+        virtual ReloadBehavior reloadBehavior(ChangeTrigger state, ChangeType type) const;
+        virtual bool reload(ReloadFlag flag, ChangeType type) = 0;
+
         QString errorMessage() const;
         void setErrorMessage(const QString &message) const;
 
@@ -63,10 +66,6 @@ namespace Core {
 
         virtual bool isModified() const = 0;
         virtual bool isSaveAsAllowed() const;
-
-        virtual ReloadBehavior reloadBehavior(ChangeTrigger state, ChangeType type) const;
-
-        virtual bool reload(QString *errorString, ReloadFlag flag, ChangeType type) = 0;
 
         virtual void raise();
         virtual void close();

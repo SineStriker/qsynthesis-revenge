@@ -155,6 +155,22 @@
         <source>%1 has been opened in the editor!</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Cannot save %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Error while saving %1: %2</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Cannot reload %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Error while reloading %1: %2</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>Core::PromptHandler</name>

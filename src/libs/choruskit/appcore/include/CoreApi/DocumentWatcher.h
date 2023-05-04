@@ -43,7 +43,6 @@ namespace Core {
         void expectFileChange(const QString &fileName);
         void unexpectFileChange(const QString &fileName);
 
-        // Never call the following function if the document is not in file pool
         bool saveDocument(IDocument *document, const QString &fileName = QString(), bool *isReadOnly = nullptr);
 
         /* Used to notify e.g. the code model to update the given files. Does *not*

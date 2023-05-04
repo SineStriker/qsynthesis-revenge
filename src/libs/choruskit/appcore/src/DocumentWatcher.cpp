@@ -123,6 +123,46 @@ namespace Core {
         }
     }
 
+    bool DocumentWatcherPrivate::saveDocument_helper(IDocument *document, const QString &fileName, bool *isReadOnly) {
+        Q_Q(DocumentWatcher);
+
+        bool ret = true;
+        QString effName = fileName.isEmpty() ? document->filePath() : fileName;
+        q->expectFileChange(effName);                  // This only matters to other IDocuments which refer to this file
+        bool addWatcher = q->removeDocument(document); // So that our own IDocument gets no notification at all
+
+        if (!document->save(fileName)) {
+            if (isReadOnly) {
+                QFile ofi(effName);
+                // Check whether the existing file is writable
+                if (!ofi.open(QIODevice::ReadWrite) && ofi.open(QIODevice::ReadOnly)) {
+                    *isReadOnly = true;
+                    goto out;
+                }
+                *isReadOnly = false;
+            }
+
+            {
+                QString errorString = document->errorMessage();
+                QString filePath = QDir::toNativeSeparators(fileName);
+                QMessageBox::critical(
+                    document->dialogParent(), QApplication::translate("Core::DocumentWatcher", "File Error"),
+                    errorString.isEmpty()
+                        ? QApplication::translate("Core::DocumentWatcher", "Cannot save %1").arg(filePath)
+                        : QApplication::translate("Core::DocumentWatcher", "Error while saving %1: %2")
+                              .arg(filePath, errorString));
+            }
+
+        out:
+            ret = false;
+        }
+
+        q->addDocument(document, addWatcher);
+        q->unexpectFileChange(effName);
+
+        return ret;
+    }
+
     void DocumentWatcherPrivate::errorOnOverwrite(const QString &fileName, QWidget *parent) {
         QMessageBox::critical(parent, QApplication::translate("Core::DocumentWatcher", "File Error"),
                               QApplication::translate("Core::DocumentWatcher", "%1 has been opened in the editor!")
@@ -285,17 +325,16 @@ namespace Core {
             addFileInfo(document);
 
             bool success = true;
-            QString errorString;
             // we've got some modification
             // check if it's contents or permissions:
             if (type == IDocument::TypePermissions) {
                 // Only permission change
-                success = document->reload(&errorString, IDocument::FlagReload, IDocument::TypePermissions);
+                success = document->reload(IDocument::FlagReload, IDocument::TypePermissions);
                 // now we know it's a content change or file was removed
             } else if (defaultBehavior == DocumentWatcher::ReloadUnmodified && type == IDocument::TypeContents &&
                        !document->isModified()) {
                 // content change, but unmodified (and settings say to reload in this case)
-                success = document->reload(&errorString, IDocument::FlagReload, type);
+                success = document->reload(IDocument::FlagReload, type);
                 // file was removed, or it's a content change and the default behavior for
                 // unmodified files didn't kick in
             } else if (defaultBehavior == DocumentWatcher::ReloadUnmodified && type == IDocument::TypeRemoved &&
@@ -305,7 +344,7 @@ namespace Core {
                 documentsToClose << document;
             } else if (defaultBehavior == DocumentWatcher::IgnoreAll) {
                 // content change or removed, but settings say ignore
-                success = document->reload(&errorString, IDocument::FlagIgnore, type);
+                success = document->reload(IDocument::FlagIgnore, type);
                 // either the default behavior is to always ask,
                 // or the ReloadUnmodified default behavior didn't kick in,
                 // so do whatever the IDocument wants us to do
@@ -316,16 +355,16 @@ namespace Core {
                     if (type == IDocument::TypeRemoved)
                         documentsToClose << document;
                     else
-                        success = document->reload(&errorString, IDocument::FlagReload, type);
+                        success = document->reload(IDocument::FlagReload, type);
                     // IDocument wants us to ask
                 } else if (type == IDocument::TypeContents) {
                     // content change, IDocument wants to ask user
                     if (previousReloadAnswer == PromptHandler::ReloadNone) {
                         // answer already given, ignore
-                        success = document->reload(&errorString, IDocument::FlagIgnore, IDocument::TypeContents);
+                        success = document->reload(IDocument::FlagIgnore, IDocument::TypeContents);
                     } else if (previousReloadAnswer == PromptHandler::ReloadAll) {
                         // answer already given, reload
-                        success = document->reload(&errorString, IDocument::FlagReload, IDocument::TypeContents);
+                        success = document->reload(IDocument::FlagReload, IDocument::TypeContents);
                     } else {
                         // Ask about content change
                         previousReloadAnswer = promptHandler->reloadPrompt(document->filePath(), document->isModified(),
@@ -333,13 +372,11 @@ namespace Core {
                         switch (previousReloadAnswer) {
                             case PromptHandler::ReloadAll:
                             case PromptHandler::ReloadCurrent:
-                                success =
-                                    document->reload(&errorString, IDocument::FlagReload, IDocument::TypeContents);
+                                success = document->reload(IDocument::FlagReload, IDocument::TypeContents);
                                 break;
                             case PromptHandler::ReloadSkipCurrent:
                             case PromptHandler::ReloadNone:
-                                success =
-                                    document->reload(&errorString, IDocument::FlagIgnore, IDocument::TypeContents);
+                                success = document->reload(IDocument::FlagIgnore, IDocument::TypeContents);
                                 break;
                             case PromptHandler::CloseCurrent:
                                 documentsToClose << document;
@@ -383,11 +420,14 @@ namespace Core {
                 }
             }
             if (!success) {
-                // QMessageBox::critical(
-                //     document->dialogParent(), QApplication::translate("Core::DocumentWatcher", "File Error"),
-                //     errorString.isEmpty() ? QApplication::translate("Core::DocumentWatcher", "Cannot reload %1")
-                //                                 .arg(QDir::toNativeSeparators(document->filePath()))
-                //                           : errorString);
+                QString errorString = document->errorMessage();
+                QString filePath = QDir::toNativeSeparators(document->filePath());
+                QMessageBox::critical(
+                    document->dialogParent(), QApplication::translate("Core::DocumentWatcher", "File Error"),
+                    errorString.isEmpty()
+                        ? QApplication::translate("Core::DocumentWatcher", "Cannot reload %1").arg(filePath)
+                        : QApplication::translate("Core::DocumentWatcher", "Error while reloading %1: %2")
+                              .arg(filePath, errorString));
             }
 
             d->m_blockedIDocument = nullptr;
@@ -402,7 +442,8 @@ namespace Core {
         QHashIterator<IDocument *, QString> it(documentsToSave);
         while (it.hasNext()) {
             it.next();
-            q->saveDocument(it.key(), it.value());
+            saveDocument_helper(it.key(), it.value(), nullptr);
+
             // it.key()->checkPermissions();
         }
 
@@ -617,36 +658,28 @@ namespace Core {
 
     bool DocumentWatcher::saveDocument(IDocument *document, const QString &fileName, bool *isReadOnly) {
         Q_D(DocumentWatcher);
-        // if (!d->m_documentsWithWatch.contains(document) && !d->m_documentsWithoutWatch.contains(document))
-        // return false;
 
-        bool ret = true;
-        QString effName = fileName.isEmpty() ? document->filePath() : fileName;
-        expectFileChange(effName);                  // This only matters to other IDocuments which refer to this file
-        bool addWatcher = removeDocument(document); // So that our own IDocument gets no notification at all
+        auto &doc = document;
+        auto &saveFileName = fileName;
 
-        if (!document->save(fileName)) {
-            if (isReadOnly) {
-                QFile ofi(effName);
-                // Check whether the existing file is writable
-                if (!ofi.open(QIODevice::ReadWrite) && ofi.open(QIODevice::ReadOnly)) {
-                    *isReadOnly = true;
-                    goto out;
+        if (!saveFileName.isEmpty()) {
+            if (d->m_documentsWithWatch.contains(doc) || d->m_documentsWithoutWatch.contains(doc)) {
+                auto doc2 = searchDocument(saveFileName);
+                if (doc2) {
+                    if (doc2 == doc) {
+                        goto lab_save;
+                    }
+                    DocumentWatcherPrivate::errorOnOverwrite(saveFileName, doc->dialogParent());
+                    return false;
                 }
-                *isReadOnly = false;
-            }
-            // QMessageBox::critical(document->dialogParent(),
-            //                       QApplication::translate("Core::DocumentWatcher", "File Error"),
-            //                       QApplication::translate("Core::DocumentWatcher", "Error while saving file: %1")
-            //                           .arg(document->errorMessage()));
-        out:
-            ret = false;
+                return d->saveDocument_helper(doc, saveFileName, isReadOnly);
+            } else
+                goto lab_save;
         }
+        return false;
 
-        addDocument(document, addWatcher);
-        unexpectFileChange(effName);
-
-        return ret;
+    lab_save:
+        return doc->save(saveFileName);
     }
 
     void DocumentWatcher::notifyFilesChangedInternally(const QStringList &files) {

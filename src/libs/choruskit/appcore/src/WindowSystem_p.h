@@ -32,6 +32,8 @@ namespace Core {
         QJsonObject toObject() const;
     };
 
+    class WindowSizeTrimmer;
+
     class WindowSystemPrivate : public QObject {
         Q_OBJECT
         Q_DECLARE_PUBLIC(WindowSystem)

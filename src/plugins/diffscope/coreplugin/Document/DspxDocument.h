@@ -1,8 +1,6 @@
 #ifndef DSPXDOCUMENT_H
 #define DSPXDOCUMENT_H
 
-#include <QStandardItemModel>
-
 #include <CoreApi/IDocument.h>
 
 #include "coreplugin/CoreGlobal.h"
@@ -21,11 +19,12 @@ namespace Core {
         bool open(const QString &filename) override;
         bool save(const QString &filename) override;
 
+        ReloadBehavior reloadBehavior(ChangeTrigger state, ChangeType type) const override;
+        bool reload(ReloadFlag flag, ChangeType type) override;
+
         QString defaultPath() const override;
         QString suggestedFileName() const override;
         bool isModified() const override;
-        ReloadBehavior reloadBehavior(ChangeTrigger state, ChangeType type) const override;
-        bool reload(QString *errorString, ReloadFlag flag, ChangeType type) override;
 
     protected:
         DspxDocument(DspxDocumentPrivate &d, QObject *parent = nullptr);

@@ -312,7 +312,7 @@ namespace Core {
                     DocumentSystemPrivate::errorOnOverwrite(saveFileName, parent);
                     return false;
                 }
-                return const_cast<DocumentSystem *>(this)->saveDocument(doc, saveFileName);
+                return const_cast<DocumentSystemPrivate *>(d)->saveDocument_helper(doc, saveFileName, nullptr);
             } else
                 goto lab_save;
         }

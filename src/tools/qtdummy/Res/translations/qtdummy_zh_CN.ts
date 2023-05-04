@@ -176,7 +176,7 @@
     </message>
     <message>
         <source>Cannot reload %1</source>
-        <translation type="vanished">无法重新加载%1</translation>
+        <translation>无法重新加载 %1</translation>
     </message>
     <message>
         <source>Error while saving file: %1</source>
@@ -189,6 +189,18 @@
     <message>
         <source>%1 has been opened in the editor!</source>
         <translation>%1 已在编辑器中打开！</translation>
+    </message>
+    <message>
+        <source>Cannot save %1</source>
+        <translation>无法保存 %1</translation>
+    </message>
+    <message>
+        <source>Error while saving %1: %2</source>
+        <translation>保存 %1 时发生错误：%2</translation>
+    </message>
+    <message>
+        <source>Error while reloading %1: %2</source>
+        <translation>重新载入 %1 时发生错误：%2</translation>
     </message>
 </context>
 <context>
@@ -231,7 +243,7 @@
     </message>
     <message>
         <source>Save &amp;as...</source>
-        <translation type="unfinished">另存为(&amp;A)...</translation>
+        <translation>另存为(&amp;A)...</translation>
     </message>
     <message>
         <source>&amp;Save</source>

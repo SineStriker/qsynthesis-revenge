@@ -13,6 +13,7 @@
 #include <QCloseEvent>
 #include <QDebug>
 #include <QDesktopWidget>
+#include <QPointer>
 #include <QSplitter>
 
 namespace Core {
@@ -311,6 +312,58 @@ namespace Core {
         return d->iWindows.isEmpty() ? nullptr : *d->iWindows.begin();
     }
 
+    using WindowSizeTrimmers = QHash<QString, WindowSizeTrimmer *>;
+
+    Q_GLOBAL_STATIC(WindowSizeTrimmers, winSizeTrimmers)
+
+    class WindowSizeTrimmer : public QObject {
+    public:
+        WindowSizeTrimmer(const QString &id, QWidget *w) : QObject(w), id(id) {
+            winSizeTrimmers->insert(id, this);
+
+            widget = w;
+            m_pos = w->pos();
+            m_obsolete = false;
+            w->installEventFilter(this);
+        }
+
+        ~WindowSizeTrimmer() {
+            winSizeTrimmers->remove(id);
+        };
+
+        QPoint pos() const {
+            return m_pos;
+        }
+
+        void makeObsolete() {
+            m_obsolete = true;
+            deleteLater();
+        }
+
+        bool obsolete() const {
+            return m_obsolete;
+        }
+
+    protected:
+        bool eventFilter(QObject *obj, QEvent *event) override {
+            switch (event->type()) {
+                case QEvent::Move:
+                    if (widget->isVisible()) {
+                        makeObsolete();
+                    }
+                    break;
+                default:
+                    break;
+            }
+            return QObject::eventFilter(obj, event);
+        }
+
+        QPointer<QWidget> widget;
+        QString id;
+        QPoint m_pos;
+        bool m_obsolete;
+    };
+
     void WindowSystem::loadWindowGeometry(const QString &id, QWidget *w, const QSize &fallback) const {
         Q_D(const WindowSystem);
 
@@ -334,6 +387,26 @@ namespace Core {
                 w->resize(winRect.size());
             else
                 w->setGeometry(winRect);
+        }
+
+        auto addTrimmer = [&](bool move) {
+            if (!isDialog && !isMax) {
+                if (move) {
+                    QRect rect = w->geometry();
+                    w->setGeometry(QRect(rect.topLeft() + QPoint(40, 40), rect.size()));
+                }
+
+                new WindowSizeTrimmer(id, w);
+            }
+        };
+
+        // Check trimmers
+        auto trimmer = winSizeTrimmers->value(id, {});
+        if (trimmer && !trimmer->obsolete()) {
+            trimmer->makeObsolete();
+            addTrimmer(true);
+        } else {
+            addTrimmer(false);
         }
     }
 

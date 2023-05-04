@@ -87,7 +87,7 @@ namespace Core {
         return BehaviorSilent;
     }
 
-    bool DspxDocument::reload(QString *errorString, IDocument::ReloadFlag flag, IDocument::ChangeType type) {
+    bool DspxDocument::reload(IDocument::ReloadFlag flag, IDocument::ChangeType type) {
         emit changed();
         return true;
     }

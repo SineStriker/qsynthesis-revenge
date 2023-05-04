@@ -60,6 +60,8 @@ namespace Core {
         // That makes the code easier
         IDocument *m_blockedIDocument;
 
+        bool saveDocument_helper(IDocument *document, const QString &fileName, bool *isReadOnly);
+
         static void errorOnOverwrite(const QString &fileName, QWidget *parent);
 
     protected:
