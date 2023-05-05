@@ -101,11 +101,13 @@ namespace Core {
         d->mainMenuCtx = ICore::instance()->actionSystem()->context(QString("%1.MainMenu").arg(id()));
     }
 
-    void ICoreWindow::windowAddOnsFinished() {
+    void ICoreWindow::windowAddOnsInitialized() {
         Q_D(ICoreWindow);
-
         connect(d->mainMenuCtx, &ActionContext::stateChanged, d, &ICoreWindowPrivate::reloadMenuBar);
         d->reloadMenuBar();
+    }
+
+    void ICoreWindow::windowAddOnsFinished() {
     }
 
     ICoreWindow::ICoreWindow(ICoreWindowPrivate &d, const QString &id, QObject *parent) : IWindow(d, id, parent) {

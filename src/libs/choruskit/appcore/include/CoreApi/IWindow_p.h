@@ -57,7 +57,6 @@ namespace Core {
         };
         QHash<QString, DragFileHandler> dragFileHandlerMap;
 
-        void initAllAddOns();
         void deleteAllAddOns();
 
         QTimer *delayedInitializeTimer;

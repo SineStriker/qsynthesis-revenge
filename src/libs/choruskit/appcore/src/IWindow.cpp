@@ -67,18 +67,15 @@ namespace Core {
             addOns.push_back(addOn);
         }
 
-        initAllAddOns();
-
-        // Add-ons finished
-        q->windowAddOnsFinished();
-    }
-
-    void IWindowPrivate::initAllAddOns() {
+        // Initialize
         for (auto &addOn : qAsConst(addOns)) {
             // Call 1
             addOn->initialize();
         }
 
+        q->windowAddOnsInitialized();
+
+        // ExtensionsInitialized
         for (auto it2 = addOns.rbegin(); it2 != addOns.rend(); ++it2) {
             auto &addOn = *it2;
             // Call 2
@@ -93,6 +90,9 @@ namespace Core {
         delayedInitializeTimer->setSingleShot(true);
         connect(delayedInitializeTimer, &QTimer::timeout, this, &IWindowPrivate::nextDelayedInitialize);
         delayedInitializeTimer->start();
+
+        // Add-ons finished
+        q->windowAddOnsFinished();
     }
 
     void IWindowPrivate::deleteAllAddOns() {
@@ -450,6 +450,10 @@ namespace Core {
     }
 
     void IWindow::setupWindow() {
+        // Do nothing
+    }
+
+    void IWindow::windowAddOnsInitialized() {
         // Do nothing
     }
 

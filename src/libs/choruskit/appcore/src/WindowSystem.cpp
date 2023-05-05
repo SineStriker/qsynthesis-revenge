@@ -7,6 +7,7 @@
 
 #include <QMLinq.h>
 #include <QMMath.h>
+#include <QMSystem.h>
 #include <QMView.h>
 
 #include <QApplication>
@@ -14,6 +15,7 @@
 #include <QDebug>
 #include <QDesktopWidget>
 #include <QPointer>
+#include <QScreen>
 #include <QSplitter>
 
 namespace Core {
@@ -347,6 +349,13 @@ namespace Core {
     protected:
         bool eventFilter(QObject *obj, QEvent *event) override {
             switch (event->type()) {
+                    // case QEvent ::WindowStateChange: {
+                    //     auto e = static_cast<QWindowStateChangeEvent *>(event);
+                    //     if ((e->oldState() & Qt::WindowMaximized) || !(widget->windowState() & Qt::WindowMaximized))
+                    //     {
+                    //         break;
+                    //     }
+                    // }
                 case QEvent::Move:
                     if (widget->isVisible()) {
                         makeObsolete();
@@ -389,11 +398,13 @@ namespace Core {
                 w->setGeometry(winRect);
         }
 
+
+        double ratio = (w->screen()->logicalDotsPerInch() / QMOs::unitDpi());
         auto addTrimmer = [&](bool move) {
             if (!isDialog && !isMax) {
                 if (move) {
                     QRect rect = w->geometry();
-                    w->setGeometry(QRect(rect.topLeft() + QPoint(40, 40), rect.size()));
+                    w->setGeometry(QRect(rect.topLeft() + QPoint(30, 30) * ratio, rect.size()));
                 }
 
                 new WindowSizeTrimmer(id, w);

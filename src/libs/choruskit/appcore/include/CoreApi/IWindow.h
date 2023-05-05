@@ -77,6 +77,7 @@ namespace Core {
         virtual QWidget *createWindow(QWidget *parent) const = 0;
 
         virtual void setupWindow();
+        virtual void windowAddOnsInitialized();
         virtual void windowAddOnsFinished();
 
         virtual void windowAboutToClose();
