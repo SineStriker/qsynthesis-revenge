@@ -567,6 +567,11 @@ namespace Core {
         return addWatcher;
     }
 
+    bool DocumentWatcher::hasDocument(IDocument *document) const {
+        Q_D(const DocumentWatcher);
+        return d->m_documentsWithWatch.contains(document) || d->m_documentsWithoutWatch.contains(document);
+    }
+
     QList<IDocument *> DocumentWatcher::modifiedDocuments() const {
         Q_D(const DocumentWatcher);
         QList<IDocument *> modified;
@@ -663,7 +668,7 @@ namespace Core {
         auto &saveFileName = fileName;
 
         if (!saveFileName.isEmpty()) {
-            if (d->m_documentsWithWatch.contains(doc) || d->m_documentsWithoutWatch.contains(doc)) {
+            if (hasDocument(doc)) {
                 auto doc2 = searchDocument(saveFileName);
                 if (doc2) {
                     if (doc2 == doc) {

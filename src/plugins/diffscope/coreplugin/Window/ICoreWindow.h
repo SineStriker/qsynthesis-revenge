@@ -33,6 +33,7 @@ namespace Core {
         QWidget *createWindow(QWidget *parent) const override;
 
         void setupWindow() override;
+        void windowAddOnsInitialized() override;
         void windowAddOnsFinished() override;
 
     protected:

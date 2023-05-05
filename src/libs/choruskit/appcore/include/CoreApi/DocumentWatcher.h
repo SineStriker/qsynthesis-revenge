@@ -34,6 +34,7 @@ namespace Core {
         void addDocuments(const QList<IDocument *> &documents, bool addWatcher = true);
         void addDocument(IDocument *document, bool addWatcher = true);
         bool removeDocument(IDocument *document);
+        bool hasDocument(IDocument *document) const;
         QList<IDocument *> modifiedDocuments() const;
         IDocument *searchDocument(const QString &filePath) const;
 
