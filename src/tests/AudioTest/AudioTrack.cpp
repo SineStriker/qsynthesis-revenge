@@ -55,9 +55,6 @@ bool AudioTrack::setPos(quint64 pos) {
     }
     return flag;
 }
-bool AudioTrack::isSequential() {
-    return false;
-}
 quint32 AudioTrack::sampleRate() {
     return acceptableSampleRates()[0];
 }
@@ -71,10 +68,10 @@ bool AudioTrack::setSampleRate(quint32 sampleRate) {
     return true;
 }
 bool AudioTrack::isSampleRateChangeable() {
-    for(auto src: sources()) {
-        if(!src->isSampleRateChangeable()) return false;
-    };
-    return true;
+    const auto sourceList = sources();
+    return std::all_of(sourceList.begin(), sourceList.end(), [](auto src){
+        return src->isSampleRateChangeable();
+    });
 }
 quint16 AudioTrack::channelCount() {
     return m_channelCount;
@@ -93,6 +90,20 @@ bool AudioTrack::addSource(IAudioSource *src) {
     if(src->sampleRate() != sampleRate() && !src->isSampleRateChangeable()) return false;
     if(src->isSequential()) return false;
     src->setSampleRate(sampleRate());
-    src->setPos(pos());
     return AudioBus::addSource(src);
+}
+bool AudioTrack::open() {
+    const auto sourceList = sources();
+    return std::all_of(sourceList.begin(), sourceList.end(), [=](auto src){
+        if(src->open()) {
+            src->setPos(pos());
+            return true;
+        } else return false;
+    });
+}
+bool AudioTrack::close() {
+    const auto sourceList = sources();
+    return std::all_of(sourceList.begin(), sourceList.end(), [](auto src){
+        return src->close();
+    });
 }
