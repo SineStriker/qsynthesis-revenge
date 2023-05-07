@@ -24,6 +24,7 @@ int main(int argc, char *argv[]) {
     AudioTrack track(2, 48000);
     assert(track.addSource(&src1));
     track.addSource(&src2);
+    track.open();
     QFile f1("D:\\Downloads\\test_output_c1.pcm");
     QFile f2("D:\\Downloads\\test_output_c2.pcm");
     f1.open(QIODevice::WriteOnly);
@@ -35,5 +36,7 @@ int main(int argc, char *argv[]) {
         f1.write((char*)buf.buffer(0), 1024 * sizeof(float));
         f2.write((char*)buf.buffer(1), 1024 * sizeof(float));
     }
-    return 0;
+    auto testResampleFile = "D:\\Downloads\\test_resample.pcm";
+    const char* argv1[2] = {argv[0], testResampleFile};
+    return main1(2, const_cast<char **>(argv1));
 }

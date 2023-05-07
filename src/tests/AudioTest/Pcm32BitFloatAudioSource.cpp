@@ -38,17 +38,8 @@ quint64 Pcm32BitFloatAudioSource::pos() {
 bool Pcm32BitFloatAudioSource::setPos(quint64 pos) {
     return file.seek(pos * channelCount() * sizeof(float));
 }
-bool Pcm32BitFloatAudioSource::isSequential() {
-    return false;
-}
 quint32 Pcm32BitFloatAudioSource::sampleRate() {
     return m_sampleRate;
-}
-bool Pcm32BitFloatAudioSource::setSampleRate(quint32 sampleRate) {
-    return false;
-}
-bool Pcm32BitFloatAudioSource::isSampleRateChangeable() {
-    return false;
 }
 quint16 Pcm32BitFloatAudioSource::channelCount() {
     return m_channelCount;
@@ -56,11 +47,14 @@ quint16 Pcm32BitFloatAudioSource::channelCount() {
 quint64 Pcm32BitFloatAudioSource::readableSampleCount() {
     return file.bytesAvailable() / channelCount() / sizeof(float);
 }
-bool Pcm32BitFloatAudioSource::canRead(quint64 size) {
-    return readableSampleCount() >= size;
-}
 Pcm32BitFloatAudioSource::Pcm32BitFloatAudioSource(const QString &fileName, quint32 sampleRate, quint16 channelCount)
-    : m_sampleRate(sampleRate), m_channelCount(channelCount) {
-    file.setFileName(fileName);
-    file.open(QIODevice::ReadOnly);
+    : m_sampleRate(sampleRate), m_channelCount(channelCount), file(fileName) {
+
+}
+bool Pcm32BitFloatAudioSource::open() {
+    return file.open(QIODevice::ReadOnly);
+}
+bool Pcm32BitFloatAudioSource::close() {
+    file.close();
+    return true;
 }
