@@ -3,6 +3,7 @@
 
 #include "IDocument_p.h"
 
+#include "ICoreBase.h"
 #include "ILoader.h"
 
 #include <QMCoreHost.h>
@@ -292,7 +293,8 @@ namespace Core {
 
         int cnt = 0;
         for (const auto &item : qAsConst(paths)) {
-            if (spec->open(item))
+            IWindowContext ctx(parent ? ICoreBase::instance()->windowSystem()->findWindow(parent->window()) : nullptr);
+            if (spec->open(item, &ctx))
                 cnt++;
         }
 
@@ -456,7 +458,8 @@ namespace Core {
                 continue;
             }
 
-            if (rem.spec->recover(rem.logDir, rem.file)) {
+            IWindowContext ctx(parent ? ICoreBase::instance()->windowSystem()->findWindow(parent->window()) : nullptr);
+            if (rem.spec->recover(rem.logDir, rem.file, &ctx)) {
                 cnt++;
             }
         }

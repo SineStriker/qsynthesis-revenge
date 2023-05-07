@@ -37,7 +37,7 @@ namespace Core {
 
         static QSplashScreen *m_splash = nullptr;
 
-        static int openFileFromCommand(QString workingDir, const QStringList &args) {
+        static int openFileFromCommand(QString workingDir, const QStringList &args, IWindow *iWin) {
             int cnt = 0;
 
             if (workingDir.isEmpty())
@@ -57,7 +57,9 @@ namespace Core {
                 if (!spec)
                     continue;
 
-                if (spec->open(info.canonicalFilePath())) {
+
+                IWindowContext ctx(iWin);
+                if (spec->open(info.canonicalFilePath(), &ctx)) {
                     cnt++;
                 }
             }
@@ -159,8 +161,8 @@ namespace Core {
 
         QObject *CorePlugin::remoteCommand(const QStringList &options, const QString &workingDirectory,
                                            const QStringList &args) {
-            int cnt = openFileFromCommand(workingDirectory, args);
             auto firstHandle = icore->windowSystem()->firstWindow();
+            int cnt = openFileFromCommand(workingDirectory, args, firstHandle);
             if (firstHandle && cnt == 0) {
                 QMView::bringWindowToForeground(firstHandle->window());
             }

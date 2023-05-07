@@ -170,7 +170,10 @@ namespace Core {
             keys.append(sh);
             shortcutMap.insert(sh, {action, w});
         }
-        action->setShortcuts(keys);
+        action->blockSignals(true);
+        action->setShortcuts(keys); // Avoid recursive signal handling
+        action->blockSignals(false);
+
         actionKeyMap.insert(action, keys);
 
         if (!duplicatedKeys.isEmpty()) {

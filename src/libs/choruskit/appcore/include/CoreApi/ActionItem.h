@@ -10,8 +10,6 @@
 
 namespace Core {
 
-    class ActionSystem;
-
     class ActionItemPrivate;
 
     class CKAPPCORE_API ActionItem : public QObject {

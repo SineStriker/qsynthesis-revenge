@@ -3,7 +3,7 @@
 
 #include <QObject>
 
-#include "CkAppCoreGlobal.h"
+#include "IWindowContext.h"
 
 namespace Core {
 
@@ -29,10 +29,10 @@ namespace Core {
         virtual QStringList supportedExtensions() const = 0;
         virtual QString filter() const = 0;
         virtual QString saveFilter() const;
-        virtual bool open(const QString &fileName);
+        virtual bool open(const QString &fileName, IWindowContext *context);
 
         virtual bool canRecover() const;
-        virtual bool recover(const QString &logDir, const QString &fileName);
+        virtual bool recover(const QString &logDir, const QString &fileName, IWindowContext *context);
 
     protected:
         DocumentSpec(DocumentSpecPrivate &d, const QString &id, QObject *parent = nullptr);

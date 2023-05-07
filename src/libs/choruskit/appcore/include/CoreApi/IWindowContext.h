@@ -10,6 +10,7 @@ namespace Core {
     class IWindowContextPrivate;
 
     class CKAPPCORE_API IWindowContext : public QObject {
+        Q_OBJECT
         Q_DECLARE_PRIVATE(IWindowContext)
     public:
         explicit IWindowContext(Core::IWindow *winHandle, QObject *parent = nullptr);
