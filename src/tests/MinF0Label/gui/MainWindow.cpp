@@ -14,7 +14,7 @@
 #include <QPluginLoader>
 #include <QTime>
 
-#include <QJsonObject>
+#include <QJsonArray>
 
 //#include "Common/CodecArguments.h"
 //#include "Common/SampleFormat.h"
@@ -29,7 +29,7 @@ static QString audioFileToDsFile(const QString &filename) {
     QString suffix = info.suffix().toLower();
     QString name = info.fileName();
     return info.absolutePath() + "/" + name.mid(0, name.size() - suffix.size() - 1) +
-           (suffix != "wav" ? "_" + suffix : "") + ".lab";
+           (suffix != "wav" ? "_" + suffix : "") + ".ds";
 }
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
@@ -81,8 +81,11 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
     playerWidget->setObjectName("play-widget");
     playerWidget->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
 
-    textWidget = new TextWidget();
-    textWidget->setObjectName("text-widget");
+    f0Widget = new F0Widget();
+    f0Widget->setObjectName("f0-widget");
+
+    sentenceWidget = new QListWidget();
+    sentenceWidget->setObjectName("sentence-widget");
 
     fsModel = new QFileSystemModel();
     fsModel->setParent(this);
@@ -103,14 +106,19 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
 
     rightLayout = new QVBoxLayout();
     rightLayout->addWidget(playerWidget);
-    rightLayout->addWidget(textWidget);
+    rightLayout->addWidget(f0Widget);
 
     rightWidget = new QWidget();
     rightWidget->setLayout(rightLayout);
 
+    fsSentencesSplitter = new QSplitter();
+    fsSentencesSplitter->setObjectName("fs-sentences-splitter");
+    fsSentencesSplitter->addWidget(treeView);
+    fsSentencesSplitter->addWidget(sentenceWidget);
+
     mainSplitter = new QSplitter();
     mainSplitter->setObjectName("central-widget");
-    mainSplitter->addWidget(treeView);
+    mainSplitter->addWidget(fsSentencesSplitter);
     mainSplitter->addWidget(rightWidget);
     setCentralWidget(mainSplitter);
 
@@ -123,8 +131,10 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
     connect(playMenu, &QMenu::triggered, this, &MainWindow::_q_playMenuTriggered);
     connect(helpMenu, &QMenu::triggered, this, &MainWindow::_q_helpMenuTriggered);
 
-    connect(treeView->selectionModel(), &QItemSelectionModel::currentChanged, this,
-            &MainWindow::_q_treeCurrentChanged);
+    connect(treeView->selectionModel(), &QItemSelectionModel::currentChanged, this, &MainWindow::_q_treeCurrentChanged);
+    connect(sentenceWidget, &QListWidget::currentRowChanged, this, &MainWindow::_q_sentenceChanged);
+
+    connect(playerWidget, &PlayWidget::playheadChanged, f0Widget, &F0Widget::setPlayheadPos);
 
     reloadWindowTitle();
     resize(1280, 720);
@@ -134,10 +144,12 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
         QFile file(keyConfPath);
         if (file.open(QIODevice::WriteOnly)) {
             QJsonDocument doc;
-            doc.setObject(QJsonObject({{"open", browseAction->shortcut().toString()},
-                                       {"next", nextAction->shortcut().toString()},
-                                       {"prev", prevAction->shortcut().toString()},
-                                       {"play", playAction->shortcut().toString()}}));
+            doc.setObject(QJsonObject({
+                {"open", browseAction->shortcut().toString()},
+                {"next", nextAction->shortcut().toString()  },
+                {"prev", prevAction->shortcut().toString()  },
+                {"play", playAction->shortcut().toString()  }
+            }));
             file.write(doc.toJson());
             file.close();
         }
@@ -194,45 +206,86 @@ void MainWindow::openDirectory(const QString &dirname) {
 void MainWindow::openFile(const QString &filename) {
     QString content;
 
+    f0Widget->clear();
+    sentenceWidget->clear();
+    dsContent.clear();
+
     QString labFile = audioFileToDsFile(filename);
     QFile file(labFile);
     if (file.open(QIODevice::ReadOnly | QIODevice::Text)) {
         content = QString::fromUtf8(file.readAll());
+        loadDsContent(content);
+    } else {
+        f0Widget->setErrorStatusText("No DS file can be opened");
     }
 
-    textWidget->contentText->setPlainText(content);
+    // f0Widget->contentText->setPlainText(content);
 
     playerWidget->openFile(filename);
 }
 
 void MainWindow::saveFile(const QString &filename) {
-    QString labFile = audioFileToDsFile(filename);
+    // FIXME: WE DONT EVER SAVE TO DS FILES!!!
+}
 
-    QString content = textWidget->contentText->toPlainText();
-    if (content.isEmpty() && !QMFs::isFileExist(labFile)) {
+// TODO: Default select first segment or last?
+void MainWindow::loadDsContent(const QString &content) {
+    // Parse as JSON array
+    QJsonParseError err;
+    QJsonDocument doc = QJsonDocument::fromJson(content.toUtf8(), &err);
+
+    if (err.error != QJsonParseError::NoError || !doc.isArray()) {
+        f0Widget->setErrorStatusText(QString("Failed to parse JSON: %1").arg(err.errorString()));
         return;
     }
 
-    QFile file(labFile);
-    if (!file.open(QIODevice::WriteOnly | QIODevice::Text)) {
-        QMessageBox::critical(
-            this, qAppName(),
-            QString("Failed to write to file %1").arg(QMFs::PathFindFileName(labFile)));
-        ::exit(-1);
+    QJsonArray arr = doc.array();
+    if (arr.size() == 0) {
+        f0Widget->setErrorStatusText("Empty JSON array");
+        return;
     }
 
-    QTextStream in(&file);
-    in.setCodec(QTextCodec::codecForName("UTF-8"));
-    in << content;
+    // Import sentences
+    for (auto it = arr.begin(); it != arr.end(); ++it) {
+        QJsonObject obj = it->toObject();
+        if (obj.isEmpty()) {
+            continue;
+        }
+        QString text = obj.value("text").toString();
+        if (text.isEmpty()) {
+            continue;
+        }
+        QString noteDuration = obj.value("note_dur").toString();
+        if (noteDuration.isEmpty()) {
+            continue;
+        }
+        auto noteDur = noteDuration.split(' ', QString::SkipEmptyParts);
+        double offset = obj.value("offset").toDouble(-1);
+        if (offset == -1) {
+            continue;
+        }
 
-    file.close();
+        double dur = 0.0;
+        foreach (QString durStr, noteDur) {
+            dur += durStr.toDouble();
+        }
+
+        auto item = new QListWidgetItem(QString("%1-%2").arg(offset, 0, 'f', 2, QChar('0')).arg(text.replace(' ', "")));
+        item->setData(Qt::UserRole + 1, offset);
+        item->setData(Qt::UserRole + 2, dur);
+        sentenceWidget->addItem(item);
+
+        dsContent.append(obj);
+    }
+
+    // Set the initial sentence of the file
+    sentenceWidget->setCurrentRow(0);
 }
 
 void MainWindow::reloadWindowTitle() {
     setWindowTitle(dirname.isEmpty()
                        ? qAppName()
-                       : QString("%1 - %2").arg(
-                             qAppName(), QDir::toNativeSeparators(QMFs::PathFindFileName(dirname))));
+                       : QString("%1 - %2").arg(qAppName(), QDir::toNativeSeparators(QMFs::PathFindFileName(dirname))));
 }
 
 void MainWindow::dragEnterEvent(QDragEnterEvent *event) {
@@ -295,8 +348,7 @@ void MainWindow::_q_fileMenuTriggered(QAction *action) {
     if (action == browseAction) {
         playerWidget->setPlaying(false);
 
-        QString path = QFileDialog::getExistingDirectory(this, "Open Folder",
-                                                         QFileInfo(dirname).absolutePath());
+        QString path = QFileDialog::getExistingDirectory(this, "Open Folder", QFileInfo(dirname).absolutePath());
         if (path.isEmpty()) {
             return;
         }
@@ -325,8 +377,7 @@ void MainWindow::_q_playMenuTriggered(QAction *action) {
 
 void MainWindow::_q_helpMenuTriggered(QAction *action) {
     if (action == aboutAppAction) {
-        QMessageBox::information(this, qAppName(),
-                                 QString("%1 %2, Copyright OpenVPI.").arg(qAppName(), APP_VERSON));
+        QMessageBox::information(this, qAppName(), QString("%1 %2, Copyright OpenVPI.").arg(qAppName(), APP_VERSON));
     } else if (action == aboutQtAction) {
         QMessageBox::aboutQt(this);
     }
@@ -341,7 +392,16 @@ void MainWindow::_q_treeCurrentChanged(const QModelIndex &current, const QModelI
             saveFile(lastFile);
         }
         lastFile = info.absoluteFilePath();
-        textWidget->wordsText->clear();
         openFile(lastFile);
     }
+}
+
+
+void MainWindow::_q_sentenceChanged(int currentRow) {
+    if (currentRow < 0)
+        return;
+    f0Widget->setDsSentenceContent(dsContent[currentRow]);
+    auto item = sentenceWidget->item(currentRow);
+    double offset = item->data(Qt::UserRole + 1).toDouble(), dur = item->data(Qt::UserRole + 2).toDouble();
+    playerWidget->setRange(offset, offset + dur);
 }
