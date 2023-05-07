@@ -1,4 +1,6 @@
 
+#pragma once
+
 #include <QString>
 #include <qjsonstream.h>
 
@@ -13,10 +15,7 @@ struct DsSentence {
     QString f0_seq;
     QString f0_timestep;
 
-    DsSentence()
-        : text(""), ph_seq(""), ph_dur(""), ph_num(""), note_seq(""), note_dur(""), note_slur(""), f0_seq(""),
-          f0_timestep("") {
-    }
+    DsSentence() {}
     DsSentence(const QString &text, const QString &ph_seq, const QString &ph_dur, const QString &ph_num,
                const QString &note_seq, const QString &note_dur, const QString &note_slur, const QString &f0_seq,
                const QString &f0_timestep)

@@ -91,6 +91,7 @@ void F0Widget::clear() {
     hasError = false;
     errorStatusText = "";
     midiIntervals.clear();
+    f0Values.clear();
     // phonemeIntervals.clear();
     // textIntervals.clear();
     update();

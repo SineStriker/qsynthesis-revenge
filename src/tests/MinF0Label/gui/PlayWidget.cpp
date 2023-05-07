@@ -100,7 +100,7 @@ void PlayWidget::openFile(const QString &filename) {
     this->filename = filename;
 
     slider->setMinimum(0);
-    slider->setMaximum(decoder->TotalTime());
+    // slider->setMaximum(decoder->TotalTime());
 
     reloadSliderStatus();
 }
@@ -117,6 +117,8 @@ void PlayWidget::setPlaying(bool playing) {
     this->playing = playing;
 
     if (playing) {
+        if (decoder->CurrentTime() > rangeEnd)
+            decoder->SetCurrentTime(rangeBegin * 1000.0);
         playback->play();
 
         notifyTimerId = this->startTimer(20);
@@ -137,6 +139,7 @@ void PlayWidget::setRange(double start, double end) {
     qDebug() << "range" << start << end;
 
     slider->setMaximum((end - start) * 1000.0);
+    decoder->SetCurrentTime(start * 1000.0); // Sets before media is initialized, will crash
     reloadSliderStatus();
 }
 
@@ -281,7 +284,7 @@ void PlayWidget::_q_stopButtonClicked() {
     if (!decoder->isOpen()) {
         return;
     }
-    decoder->SetPosition(0);
+    decoder->SetCurrentTime(rangeBegin * 1000.0);
     setPlaying(false);
 }
 
@@ -297,7 +300,7 @@ void PlayWidget::_q_sliderReleased() {
 
     double percentage = double(slider->value()) / slider->maximum();
 
-    decoder->SetPosition(decoder->Length() * percentage);
+    decoder->SetCurrentTime((slider->value() + rangeBegin) * 1000.0);
     setPlaying(true);
 }
 
@@ -317,7 +320,7 @@ void PlayWidget::_q_playStateChanged() {
     if (playing != isPlaying) {
         if (decoder->Position() == decoder->Length()) {
             // Sound complete
-            decoder->SetPosition(0);
+            // decoder->SetPosition(0);
         }
         setPlaying(isPlaying);
     }

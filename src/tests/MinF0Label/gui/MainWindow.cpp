@@ -210,6 +210,8 @@ void MainWindow::openFile(const QString &filename) {
     sentenceWidget->clear();
     dsContent.clear();
 
+    playerWidget->openFile(filename);
+
     QString labFile = audioFileToDsFile(filename);
     QFile file(labFile);
     if (file.open(QIODevice::ReadOnly | QIODevice::Text)) {
@@ -220,8 +222,6 @@ void MainWindow::openFile(const QString &filename) {
     }
 
     // f0Widget->contentText->setPlainText(content);
-
-    playerWidget->openFile(filename);
 }
 
 void MainWindow::saveFile(const QString &filename) {
@@ -404,4 +404,5 @@ void MainWindow::_q_sentenceChanged(int currentRow) {
     auto item = sentenceWidget->item(currentRow);
     double offset = item->data(Qt::UserRole + 1).toDouble(), dur = item->data(Qt::UserRole + 2).toDouble();
     playerWidget->setRange(offset, offset + dur);
+    f0Widget->setPlayheadPos(0.0);
 }
