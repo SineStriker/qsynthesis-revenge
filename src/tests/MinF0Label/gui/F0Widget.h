@@ -44,7 +44,7 @@ protected:
         double duration;
         int pitch; // Semitone from A0
         QString text;
-        bool isSlur;
+        bool isSlur, isRest;
 
         // Required by IntervalTree
         bool operator<(const MiniNote &other) const {

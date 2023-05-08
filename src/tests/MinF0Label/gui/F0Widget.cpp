@@ -55,10 +55,13 @@ void F0Widget::setDsSentenceContent(const QJsonObject &content) {
     auto text = sentence.text.split(" ", QString::SkipEmptyParts);
     auto slur = sentence.note_slur.split(" ", QString::SkipEmptyParts);
 
-#if 0
+    QVector<bool> isRest(noteSeq.size(), false);
+
+#if 1
     // Give trailing rests in note_seq a valid pitch
     for (int i = noteSeq.size() - 1; i >= 0 && noteSeq[i] == "rest"; i--) {
         if (noteSeq[i] == "rest") {
+            isRest[i] = true;
             for (int j = i - 1; j >= 0; j--) {
                 if (noteSeq[j] != "rest") {
                     noteSeq[i] = noteSeq[j];
@@ -71,6 +74,7 @@ void F0Widget::setDsSentenceContent(const QJsonObject &content) {
     // Search from beginning of note_seq and give rests a valid pitch after it
     for (int i = 0; i < noteSeq.size(); i++) {
         if (noteSeq[i] == "rest") {
+            isRest[i] = true;
             for (int j = i + 1; j < noteSeq.size(); j++) {
                 if (noteSeq[j] != "rest") {
                     noteSeq[i] = noteSeq[j];
@@ -87,6 +91,7 @@ void F0Widget::setDsSentenceContent(const QJsonObject &content) {
         note.duration = noteDur[i].toDouble();
         note.pitch = NoteNameToMidiNote(noteSeq[i]);
         note.isSlur = slur[i].toInt();
+        note.isRest = isRest[i];
         midiIntervals.insert({noteBegin, noteBegin + note.duration, note});
         noteBegin += note.duration;
     }
@@ -201,8 +206,7 @@ void F0Widget::paintEvent(QPaintEvent *event) {
         painter.setClipRect(0, 0, w, h);
 
         painter.setPen(Qt::black);
-        double keyReferenceY =
-            h / 2 - (1 - ::fmod(centerPitch, 1)) * semitoneHeight; // Top of center pitch's key
+        double keyReferenceY = h / 2 - (1 - ::fmod(centerPitch, 1)) * semitoneHeight; // Top of center pitch's key
         int lowestPitch = ::floor(centerPitch) - ::ceil((h - keyReferenceY) / semitoneHeight);
         double lowestPitchY = keyReferenceY + (int(centerPitch - lowestPitch) + 0.5) * semitoneHeight;
 
@@ -224,7 +228,6 @@ void F0Widget::paintEvent(QPaintEvent *event) {
         // Midi notes
         auto leftTime = centerTime - w / 2 / secondWidth, rightTime = centerTime + w / 2 / secondWidth;
 
-        painter.setPen(Qt::black);
         static constexpr QColor NoteColors[] = {QColor(106, 164, 234), QColor(60, 113, 219)};
         for (auto i : midiIntervals.findOverlappingIntervals({leftTime, rightTime}, false)) {
             if (i.value.pitch == 0)
@@ -234,8 +237,17 @@ void F0Widget::paintEvent(QPaintEvent *event) {
                        i.value.duration * secondWidth, semitoneHeight);
             if (rec.bottom() < 0 || rec.top() > h)
                 continue;
-            painter.fillRect(rec, NoteColors[i.value.isSlur]);
-            painter.drawRect(rec);
+            if (!i.value.isRest) {
+                painter.setPen(Qt::black);
+                painter.fillRect(rec, NoteColors[i.value.isSlur]);
+                painter.drawRect(rec);
+            } else {
+                auto pen = painter.pen();
+                pen.setStyle(Qt::DashLine);
+                pen.setColor(NoteColors[0]);
+                painter.setPen(pen);
+                painter.drawRect(rec);
+            }
             // rec.adjust(NotePadding, NotePadding, -NotePadding, -NotePadding);
             // painter.drawText(rec, Qt::AlignVCenter | Qt::AlignLeft, i.value.text);
         }
