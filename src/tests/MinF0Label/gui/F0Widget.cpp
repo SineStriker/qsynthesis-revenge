@@ -6,6 +6,8 @@
 #include <QPainter>
 #include <QPainterPath>
 
+#include <cmath>
+
 
 #include "DsSentence.h"
 #include "F0Widget.h"

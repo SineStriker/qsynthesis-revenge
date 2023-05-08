@@ -38,5 +38,6 @@ int main(int argc, char *argv[]) {
     }
     auto testResampleFile = "D:\\Downloads\\test_resample.pcm";
     const char* argv1[2] = {argv[0], testResampleFile};
-    return main1(2, const_cast<char **>(argv1));
+    return 0;
+//    return main1(2, const_cast<char **>(argv1));
 }

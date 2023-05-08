@@ -102,6 +102,9 @@ namespace Core {
         IDocumentSettings(const IDocumentSettings &other);
         IDocumentSettings(IDocumentSettings &&other) noexcept;
 
+        IDocumentSettings &operator=(const Core::IDocumentSettings &other);
+        IDocumentSettings &operator=(Core::IDocumentSettings &&other);
+
     public:
         QString dir() const;
         void setDir(const QString &dir);

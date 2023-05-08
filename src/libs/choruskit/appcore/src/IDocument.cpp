@@ -268,6 +268,16 @@ namespace Core {
     IDocumentSettings::IDocumentSettings(IDocumentSettings &&other) noexcept : d(other.d) {
     }
 
+    IDocumentSettings &IDocumentSettings::operator=(const IDocumentSettings &other) {
+        d = new IDocumentSettingsData(*other.d);
+        return *this;
+    }
+
+    IDocumentSettings &IDocumentSettings::operator=(IDocumentSettings &&other) {
+        d = other.d;
+        return *this;
+    }
+
     QString IDocumentSettings::dir() const {
         return d->dir;
     }

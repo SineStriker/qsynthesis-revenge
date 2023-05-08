@@ -6,7 +6,7 @@
 #include <QMessageBox>
 
 #ifdef Q_OS_WINDOWS
-#include <Windows.h>
+#    include <Windows.h>
 #endif
 
 int main(int argc, char *argv[]) {
@@ -20,7 +20,7 @@ int main(int argc, char *argv[]) {
 #ifdef Q_OS_WINDOWS
         ::MessageBoxW(0, msg.toStdWString().data(), title.toStdWString().data(),
                       MB_OK | MB_TOPMOST | MB_SETFOREGROUND | MB_ICONWARNING);
-#elif Q_OS_LINUX
+#elif defined(Q_OS_LINUX)
         fputs(qPrintable(msg), stdout);
 #else
         QMessageBox::warning(nullptr, title, msg, QApplication::tr("Confirm"));
