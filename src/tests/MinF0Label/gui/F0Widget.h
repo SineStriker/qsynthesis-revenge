@@ -3,8 +3,8 @@
 
 #include "intervaltree.hpp"
 #include <QFrame>
+#include <QScrollBar>
 #include <tuple>
-
 
 class F0Widget : public QFrame {
     Q_OBJECT
@@ -16,6 +16,13 @@ public:
     void setErrorStatusText(const QString &text);
 
     void clear();
+
+    struct ReturnedDsString {
+        QString note_seq;
+        QString note_dur;
+        QString note_slur;
+    };
+    ReturnedDsString getSavedDsStrings();
 
 public slots:
     void setPlayheadPos(double pos);
@@ -30,6 +37,7 @@ protected:
 
     // Events
     void paintEvent(QPaintEvent *event) override;
+    void resizeEvent(QResizeEvent *event) override;
 
     // Stored DS file data
     struct MiniNote {
@@ -49,8 +57,9 @@ protected:
     double f0Timestep;
 
     // Size constants
-    static constexpr int KeyWidth = 60;
-    static constexpr int TimeAxisHeight = 40, MarkerAxisHeight = 25, TimelineHeight = TimeAxisHeight + MarkerAxisHeight;
+    static constexpr int KeyWidth = 60, ScrollBarWidth = 25;
+    static constexpr int TimeAxisHeight = 40, HorizontalScrollHeight = ScrollBarWidth,
+                         TimelineHeight = TimeAxisHeight + HorizontalScrollHeight;
     static constexpr int NotePadding = 4;
 
     // Display state
@@ -59,6 +68,20 @@ protected:
     std::tuple<double, double> pitchRange = {0.0, 0.0}, timeRange = {0.0, 0.0};
     double playheadPos = 0.0;
 
+    bool clampPitchToF0Bounds = true; // Also affects scroll bar range
+
     bool hasError;
     QString errorStatusText;
+
+    // Embedded widgets
+    QScrollBar *horizontalScrollBar, *verticalScrollBar;
+
+private:
+    // Private unified methods
+    void setTimeAxisCenterAndSyncScrollbar(double time);
+    void setF0CenterAndSyncScrollbar(double pitch);
+
+private slots:
+    void onHorizontalScroll(int value);
+    void onVerticalScroll(int value);
 };
