@@ -5,6 +5,8 @@
 #include <QApplication>
 #include <QMessageBox>
 
+#include "g2pglobal.h"
+
 #ifdef Q_OS_WINDOWS
 #    include <Windows.h>
 #endif
@@ -34,6 +36,9 @@ int main(int argc, char *argv[]) {
 
     // Set library loading info
     qApp->addLibraryPath(qApp->applicationDirPath() + "/../lib/QsLib/plugins/");
+
+    // Initialize g2p
+    IKg2p::setDictionaryPath(qApp->applicationDirPath() + "/../share/g2p/dict");
 
     MainWindow w;
     w.show();

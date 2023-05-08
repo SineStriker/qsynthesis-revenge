@@ -11,6 +11,7 @@ namespace IEMgr {
 
     class IEMGR_EXPORT IWizardContext : public Core::IWindowContext {
         Q_OBJECT
+        Q_DECLARE_PRIVATE(IWizardContext)
     public:
         explicit IWizardContext(Core::IWindow *winHandle, QObject *parent = nullptr);
         ~IWizardContext();
@@ -30,9 +31,6 @@ namespace IEMgr {
 
         Result result() const;
         void setResult(Result result);
-
-    private:
-        Q_DECLARE_PRIVATE(IWizardContext)
     };
 
 }

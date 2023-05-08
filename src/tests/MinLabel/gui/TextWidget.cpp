@@ -5,12 +5,7 @@
 #include <QDebug>
 #include <QMessageBox>
 
-static const char PinyinHelperFileName[] = "pinyintool.exe";
-
-TextWidget::TextWidget(QWidget *parent) : QWidget(parent) {
-    finished = false;
-    lastConvertAction = Replace;
-
+TextWidget::TextWidget(QWidget *parent) : QWidget(parent), g2p(new IKg2p::ZhG2p()) {
     wordsText = new QLineEdit();
     wordsText->setPlaceholderText("Enter mandarin here...");
 
@@ -53,81 +48,18 @@ TextWidget::TextWidget(QWidget *parent) : QWidget(parent) {
     connect(appendButton, &QPushButton::clicked, this, &TextWidget::_q_appendButtonClicked);
 
     connect(replaceAction, &QAction::triggered, this, &TextWidget::_q_replaceButtonClicked);
-
-    // Init pinyin helper
-    pinyin = new QProcess(this);
-    connect(pinyin, QOverload<int, QProcess::ExitStatus>::of(&QProcess::finished), this,
-            &TextWidget::handleProcessFinished);
-    connect(pinyin, &QProcess::errorOccurred, this, &TextWidget::handleReadError);
-    connect(pinyin, &QProcess::readyReadStandardOutput, this, &TextWidget::handleReadOutput);
-    connect(pinyin, &QProcess::readyReadStandardError, this, &TextWidget::handleReadError);
-
-    pinyin->setProgram(PinyinHelperFileName);
-    startTool();
 }
 
 TextWidget::~TextWidget() {
-    finished = true;
-    terminateTool();
 }
 
-void TextWidget::startTool() {
-    pinyin->start();
-    if (!pinyin->waitForStarted()) {
-        QMessageBox::critical(this, qAppName(),
-                              QString("Failed to load pinyin tool: %1!").arg(pinyin->program()));
-        ::exit(-1);
-    }
-}
-
-void TextWidget::terminateTool() {
-    pinyin->kill();
-    pinyin->waitForFinished();
-}
-
-void TextWidget::enterSentence() {
+QString TextWidget::sentence() const {
     QString words = wordsText->text();
     words.replace("\r\n", " ");
     words.replace("\n", " ");
-
-    QByteArray data = words.toUtf8() + "\n";
-    pinyin->write(data);
-    pinyin->waitForBytesWritten();
+    return words;
 }
 
-void TextWidget::handleProcessFinished(int exitCode, QProcess::ExitStatus exitStatus) {
-    Q_UNUSED(exitStatus);
-    if (!finished) {
-        QMessageBox::warning(this, qAppName(),
-                             QString("Pinyin tool exit with %1 unexpectedly! Try to restart.")
-                                 .arg(QString::number(exitCode)));
-        startTool();
-    }
-}
-
-void TextWidget::handleProcessError(QProcess::ProcessError error) {
-    Q_UNUSED(error);
-}
-
-void TextWidget::handleReadOutput() {
-    auto bytes = pinyin->readAllStandardOutput();
-    QString str = QString::fromUtf8(bytes).simplified();
-
-    switch (lastConvertAction) {
-        case Replace: {
-            contentText->setPlainText(str);
-            break;
-        };
-        case Append: {
-            QString org = contentText->toPlainText();
-            contentText->setPlainText(org.isEmpty() ? str : org + " " + str);
-            break;
-        }
-    }
-}
-
-void TextWidget::handleReadError() {
-}
 
 void TextWidget::_q_pasteButtonClicked() {
     auto board = QApplication::clipboard();
@@ -138,11 +70,12 @@ void TextWidget::_q_pasteButtonClicked() {
 }
 
 void TextWidget::_q_replaceButtonClicked() {
-    lastConvertAction = Replace;
-    enterSentence();
+    QString str = g2p->convert(sentence());
+    contentText->setPlainText(str);
 }
 
 void TextWidget::_q_appendButtonClicked() {
-    lastConvertAction = Append;
-    enterSentence();
+    QString str = g2p->convert(sentence());
+    QString org = contentText->toPlainText();
+    contentText->setPlainText(org.isEmpty() ? str : org + " " + str);
 }

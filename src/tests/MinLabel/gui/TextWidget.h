@@ -9,6 +9,8 @@
 #include <QVBoxLayout>
 #include <QWidget>
 
+#include "zhg2p.h"
+
 class TextWidget : public QWidget {
     Q_OBJECT
 public:
@@ -29,26 +31,10 @@ protected:
     QHBoxLayout *buttonsLayout;
     QVBoxLayout *mainLayout;
 
-    QProcess *pinyin;
-    bool finished;
-
-    enum ConvertAction {
-        Replace,
-        Append,
-    };
-
-    ConvertAction lastConvertAction;
+    QScopedPointer<IKg2p::ZhG2p> g2p;
 
 private:
-    void startTool();
-    void terminateTool();
-
-    void enterSentence();
-
-    void handleProcessFinished(int exitCode, QProcess::ExitStatus exitStatus);
-    void handleProcessError(QProcess::ProcessError error);
-    void handleReadOutput();
-    void handleReadError();
+    QString sentence() const;
 
     void _q_pasteButtonClicked();
     void _q_replaceButtonClicked();
