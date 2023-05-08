@@ -1,4 +1,4 @@
-project(MinF0Label VERSION 0.0.1.0)
+project(SlurCutter VERSION 0.0.1.0)
 
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTOUIC ON)
