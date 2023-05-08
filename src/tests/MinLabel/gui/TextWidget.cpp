@@ -5,7 +5,7 @@
 #include <QDebug>
 #include <QMessageBox>
 
-TextWidget::TextWidget(QWidget *parent) : QWidget(parent), g2p(new IKg2p::ZhG2p()) {
+TextWidget::TextWidget(QWidget *parent) : QWidget(parent), g2p(new IKg2p::ZhG2p()), g2p_jp(new IKg2p::JpG2p()) {
     wordsText = new QLineEdit();
     wordsText->setPlaceholderText("Enter mandarin here...");
 
@@ -31,10 +31,14 @@ TextWidget::TextWidget(QWidget *parent) : QWidget(parent), g2p(new IKg2p::ZhG2p(
     appendButton = new QPushButton("Append");
     appendButton->setProperty("type", "user");
 
+    languageCombo = new QComboBox();
+    languageCombo->addItems({"pinyin", "romaji"});
+
     buttonsLayout = new QHBoxLayout();
     buttonsLayout->setMargin(0);
     buttonsLayout->addWidget(replaceButton);
     buttonsLayout->addWidget(appendButton);
+    buttonsLayout->addWidget(languageCombo);
 
     mainLayout = new QVBoxLayout();
     mainLayout->addLayout(lineLayout);
@@ -70,12 +74,12 @@ void TextWidget::_q_pasteButtonClicked() {
 }
 
 void TextWidget::_q_replaceButtonClicked() {
-    QString str = g2p->convert(sentence());
+    QString str = languageCombo->currentIndex() == 0 ? g2p->convert(sentence()) : g2p_jp->kana2romaji(sentence());
     contentText->setPlainText(str);
 }
 
 void TextWidget::_q_appendButtonClicked() {
-    QString str = g2p->convert(sentence());
+    QString str = languageCombo->currentIndex() == 0 ? g2p->convert(sentence()) : g2p_jp->kana2romaji(sentence());
     QString org = contentText->toPlainText();
     contentText->setPlainText(org.isEmpty() ? str : org + " " + str);
 }
