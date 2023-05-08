@@ -76,6 +76,7 @@ void F0Widget::setDsSentenceContent(const QJsonObject &content) {
         MiniNote note;
         note.duration = noteDur[i].toDouble();
         note.pitch = NoteNameToMidiNote(noteSeq[i]);
+        note.isSlur = slur[i].toInt();
         midiIntervals.insert({noteBegin, noteBegin + note.duration, note});
         noteBegin += note.duration;
     }
@@ -168,11 +169,11 @@ void F0Widget::paintEvent(QPaintEvent *event) {
         }
 
         // Draw time axis and marker axis
-        QLinearGradient grad(0, 0, 0, TimeAxisHeight);
-        grad.setColorAt(0, QColor(60, 60, 60));
-        grad.setColorAt(1, QColor(40, 40, 40));
-        painter.fillRect(0, 0, w, TimeAxisHeight, grad);
-        painter.fillRect(0, TimeAxisHeight, w, MarkerAxisHeight, QColor(60, 60, 60));
+        QLinearGradient grad(0, MarkerAxisHeight, 0, TimeAxisHeight);
+        grad.setColorAt(0, QColor(40, 40, 40));
+        grad.setColorAt(1, QColor(60, 60, 60));
+        painter.fillRect(0, 0, w, MarkerAxisHeight, QColor(60, 60, 60));
+        painter.fillRect(0, MarkerAxisHeight, w, TimeAxisHeight, grad);
 
         // Draw piano roll. Find the lowest drawn key from the center pitch
         painter.translate(KeyWidth, TimelineHeight);
@@ -188,17 +189,19 @@ void F0Widget::paintEvent(QPaintEvent *event) {
 
         // Grid
         painter.setPen(QColor(80, 80, 80));
-        for (int i = 0; i < 128; i++) {
-            auto y = lowestPitchY + (i - lowestPitch) * semitoneHeight;
-            if (y < 0 || y > h)
-                continue;
-            painter.drawLine(0, y, w, y);
+        {
+            auto y = lowestPitchY;
+            while (y > 0) {
+                painter.drawLine(0, y, w, y);
+                y -= semitoneHeight;
+            }
         }
 
         // Midi notes
         auto leftTime = centerTime - w / 2 / secondWidth, rightTime = centerTime + w / 2 / secondWidth;
 
         painter.setPen(Qt::black);
+        static constexpr QColor NoteColors[] = {QColor(153, 217, 234), QColor(0, 150, 232)};
         for (auto i : midiIntervals.findOverlappingIntervals({leftTime, rightTime}, false)) {
             if (i.value.pitch == 0)
                 continue; // Skip rests (pitch 0)
@@ -207,7 +210,7 @@ void F0Widget::paintEvent(QPaintEvent *event) {
                        i.value.duration * secondWidth, semitoneHeight);
             if (rec.bottom() < 0 || rec.top() > h)
                 continue;
-            painter.fillRect(rec, QColor(200, 200, 255));
+            painter.fillRect(rec, NoteColors[i.value.isSlur]);
             // rec.adjust(NotePadding, NotePadding, -NotePadding, -NotePadding);
             // painter.drawText(rec, Qt::AlignVCenter | Qt::AlignLeft, i.value.text);
         }

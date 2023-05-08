@@ -117,14 +117,17 @@ void PlayWidget::setPlaying(bool playing) {
     this->playing = playing;
 
     if (playing) {
-        if (decoder->CurrentTime() > rangeEnd)
-            decoder->SetCurrentTime(rangeBegin * 1000.0);
+        if (decoder->CurrentTime() > rangeEnd * 1000.0 || decoder->CurrentTime() < rangeBegin * 1000.0)
+            decoder->SetCurrentTime((pauseAtTime = rangeBegin * 1000.0));
+        else
+            decoder->SetCurrentTime(pauseAtTime);
         playback->play();
+        lastObtainedTimePoint = std::chrono::steady_clock::now();
 
         notifyTimerId = this->startTimer(20);
     } else {
         playback->stop();
-
+        pauseAtTime = estimatedTimeMs();
         killTimer(notifyTimerId);
         notifyTimerId = 0;
     }
@@ -141,6 +144,12 @@ void PlayWidget::setRange(double start, double end) {
     slider->setMaximum((end - start) * 1000.0);
     decoder->SetCurrentTime(start * 1000.0); // Sets before media is initialized, will crash
     reloadSliderStatus();
+}
+
+uint64_t PlayWidget::estimatedTimeMs() {
+    return (lastObtainedTimeMs + std::chrono::duration_cast<std::chrono::milliseconds>(
+                                     std::chrono::steady_clock::now() - lastObtainedTimePoint)
+                                     .count());
 }
 
 void PlayWidget::timerEvent(QTimerEvent *event) {
@@ -243,19 +252,7 @@ void PlayWidget::reloadSliderStatus() {
     QTime time(0, 0, 0);
     timeLabel->setText(time.addMSecs(pos_msecs).toString("mm:ss") + "/" + time.addMSecs(len_msecs).toString("mm:ss"));
 
-    if (lastObtainedTimeMs == decoder->CurrentTime()) {
-        auto estimatedPos = (lastObtainedTimeMs + std::chrono::duration_cast<std::chrono::milliseconds>(
-                                                      std::chrono::steady_clock::now() - lastObtainedTimePoint)
-                                                      .count()) /
-                            1000.0;
-        if (estimatedPos > rangeEnd)
-            setPlaying(false);
-        emit playheadChanged(estimatedPos - rangeBegin);
-    } else {
-        lastObtainedTimeMs = decoder->CurrentTime();
-        lastObtainedTimePoint = std::chrono::steady_clock::now();
-        emit playheadChanged(lastObtainedTimeMs / 1000.0 - rangeBegin);
-    }
+    reloadFinePlayheadStatus();
 }
 
 void PlayWidget::reloadDeviceActionStatus() {
@@ -273,11 +270,29 @@ void PlayWidget::reloadDeviceActionStatus() {
     }
 }
 
+void PlayWidget::reloadFinePlayheadStatus(uint64_t timeMs) {
+    if (timeMs == UINT64_MAX) {
+        if (lastObtainedTimeMs == decoder->CurrentTime()) {
+            auto estimatedPos = estimatedTimeMs() / 1000.0;
+            if (estimatedPos > rangeEnd)
+                setPlaying(false);
+            emit playheadChanged(estimatedPos - rangeBegin);
+        } else {
+            lastObtainedTimeMs = decoder->CurrentTime();
+            lastObtainedTimePoint = std::chrono::steady_clock::now();
+            emit playheadChanged(lastObtainedTimeMs / 1000.0 - rangeBegin);
+        }
+    } else {
+        emit playheadChanged(timeMs / 1000.0 - rangeBegin);
+    }
+}
+
 void PlayWidget::_q_playButtonClicked() {
     if (!decoder->isOpen()) {
         return;
     }
     setPlaying(!playing);
+    reloadFinePlayheadStatus(pauseAtTime);
 }
 
 void PlayWidget::_q_stopButtonClicked() {
@@ -286,6 +301,7 @@ void PlayWidget::_q_stopButtonClicked() {
     }
     decoder->SetCurrentTime(rangeBegin * 1000.0);
     setPlaying(false);
+    reloadFinePlayheadStatus(rangeBegin * 1000.0);
 }
 
 void PlayWidget::_q_devButtonClicked() {
@@ -298,10 +314,13 @@ void PlayWidget::_q_sliderReleased() {
         return;
     }
 
-    double percentage = double(slider->value()) / slider->maximum();
+    // double percentage = double(slider->value()) / slider->maximum();
 
-    decoder->SetCurrentTime((slider->value() + rangeBegin) * 1000.0);
+    auto sliderPos = slider->value();
+    pauseAtTime = (sliderPos + rangeBegin * 1000.0);
+    decoder->SetCurrentTime(pauseAtTime);
     setPlaying(true);
+    reloadFinePlayheadStatus(sliderPos);
 }
 
 void PlayWidget::_q_deviceActionTriggered(QAction *action) {

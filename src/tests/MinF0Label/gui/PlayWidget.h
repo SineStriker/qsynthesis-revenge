@@ -63,12 +63,13 @@ protected:
 
 
     // Manually maintained time
-    uint64_t lastObtainedTimeMs = 0;
+    uint64_t lastObtainedTimeMs = 0, pauseAtTime = 0;
     std::chrono::time_point<std::chrono::steady_clock> lastObtainedTimePoint;
+    uint64_t estimatedTimeMs();
 
     // Limited time range
     double rangeBegin = 0.0, rangeEnd = 0.0;
-    
+
     void timerEvent(QTimerEvent *event) override;
 
 private:
@@ -79,6 +80,7 @@ private:
     void reloadButtonStatus();
     void reloadSliderStatus();
     void reloadDeviceActionStatus();
+    void reloadFinePlayheadStatus(uint64_t timeMs = UINT64_MAX);
 
     void _q_playButtonClicked();
     void _q_stopButtonClicked();
