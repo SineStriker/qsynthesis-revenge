@@ -4,38 +4,30 @@
 
 #include "AudioBuffer.h"
 
-AudioBuffer::AudioBuffer(quint16 channelCount, quint64 size): m_isOwnedByInternal(true), m_size(size) {
-    for(int i = 0; i < channelCount; i++) {
-        auto buf = new float[size];
-        std::fill(buf, buf + size, 0);
-        m_buffers.append(buf);
+
+AudioBufferList::AudioBufferList(quint16 channelCount, quint64 size) {
+    QVector::resize(channelCount);
+    resizeBuffer(size);
+}
+quint64 AudioBufferList::bufferSize() const {
+    QVector<int> bufSizeList(size());
+    std::transform(this->begin(), this->end(), bufSizeList.begin(), [](const auto &buf){ return buf.size(); });
+    return *std::min(bufSizeList.begin(), bufSizeList.end());
+}
+void AudioBufferList::clearBuffer() {
+    for(auto &buf: *this) {
+        buf.fill(0.0);
     }
 }
-AudioBuffer::AudioBuffer(const QList<float *>& buffers): m_buffers(buffers), m_isOwnedByInternal(false), m_size(buffers.size()) {
+void AudioBufferList::resize(int asize) {
+    auto prevSize = size();
+    auto bufSize = bufferSize();
+    QVector::resize(asize);
+    resizeBuffer(bufSize);
 }
-AudioBuffer::~AudioBuffer() {
-    if(m_isOwnedByInternal) {
-        for(auto buf: m_buffers) {
-            delete[] buf;
-        }
-    }
-}
-quint16 AudioBuffer::channelCount() const {
-    return m_buffers.size();
-}
-float *AudioBuffer::buffer(quint16 channel) {
-    if(channel >= m_size) return nullptr;
-    return m_buffers[channel];
-}
-const float *AudioBuffer::constBuffer(quint16 channel) const {
-    if(channel >= m_size) return nullptr;
-    return m_buffers[channel];
-}
-quint64 AudioBuffer::size() const {
-    return m_size;
-}
-void AudioBuffer::clear() {
-    for(auto buf: m_buffers) {
-        std::fill(buf, buf + m_size, 0);
+
+void AudioBufferList::resizeBuffer(quint64 size) {
+    for(auto &buf: *this) {
+        buf.resize(size);
     }
 }

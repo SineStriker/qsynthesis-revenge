@@ -11,17 +11,16 @@
 
 class AudioBus {
 public:
-    QList<quint32> acceptableSampleRates();
-    bool canAcceptSampleRate(quint32 sampleRate);
+    quint32 acceptableSampleRate() const;
     virtual bool addSource(IAudioSource *src);
-    QList<IAudioSource *> sources();
+    QList<IAudioSource *> sources() const;
     virtual bool removeSource(IAudioSource *source);
 protected:
-    void addAcceptableSampleRate(quint32 sampleRate);
-    void removeAcceptableSampleRate(quint32 sampleRate);
-private:
-    QSet<quint32> m_acceptableSampleRates;
+    void setAcceptableSampleRate(quint32 sampleRate);
     QMChronSet<IAudioSource *> m_sources;
+private:
+    quint32 m_acceptableSampleRate;
+
 };
 
 

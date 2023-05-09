@@ -4,29 +4,29 @@
 
 #include "IAudioSource.h"
 
-bool IAudioSource::setPos(quint64 pos) {
+
+bool IAudioSource::setReadMode(IAudioSource::ReadMode mode) {
     return false;
 }
-bool IAudioSource::isSequential() {
+IAudioSource::ReadMode IAudioSource::readMode() {
+    return IAudioSource::Immediate;
+}
+quint64 IAudioSource::pos() {
+    return 0;
+}
+bool IAudioSource::setPos(quint64 pos) {
     return false;
 }
 bool IAudioSource::setSampleRate(quint32 sampleRate) {
     return false;
-}
-bool IAudioSource::isSampleRateChangeable() {
-    return false;
-}
-bool IAudioSource::canRead(quint64 size) {
-    return size <= readableSampleCount();
 }
 bool IAudioSource::open() {
     if(!isSequential()) setPos(0);
     m_err.clear();
     return true;
 }
-bool IAudioSource::close() {
+void IAudioSource::close() {
     m_err.clear();
-    return true;
 }
 QString IAudioSource::lastError() {
     return m_err;
