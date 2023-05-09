@@ -287,6 +287,7 @@ void F0Widget::paintEvent(QPaintEvent *event) {
                              .arg(MidiNoteToNoteName(lowestPitch)));
 
         // Piano keys
+        auto prevfont = painter.font();
         do {
             lowestPitch++;
             lowestPitchY -= semitoneHeight;
@@ -294,8 +295,16 @@ void F0Widget::paintEvent(QPaintEvent *event) {
             auto color = keyColor[lowestPitch % 12];
             painter.fillRect(rec, color);
             painter.setPen(color == Qt::white ? Qt::black : Qt::white);
+            if (lowestPitch % 12 == 0) {
+                auto font = prevfont;
+                font.setBold(true);
+                painter.setFont(font);
+            } else {
+                painter.setFont(prevfont);
+            }
             painter.drawText(rec, Qt::AlignRight | Qt::AlignVCenter, MidiNoteToNoteName(lowestPitch));
         } while (lowestPitchY > 0 && lowestPitch <= 108);
+        painter.setFont(prevfont);
 
         painter.translate(0, -TimelineHeight);
         painter.setClipRect(0, 0, w, height());
