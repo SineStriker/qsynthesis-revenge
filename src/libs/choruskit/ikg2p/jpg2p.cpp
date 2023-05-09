@@ -1,7 +1,7 @@
 #include "jpg2p.h"
 #include "jpg2p_p.h"
-
 #include "zhg2p_p.h"
+#include <QDebug>
 
 #include "g2pglobal.h"
 
@@ -29,23 +29,25 @@ namespace IKg2p {
         QStringList convertedList;
         for (const QString &kana : kanaList) {
             QString convertedKana;
-            if (kana.size() == 1) {
-                QChar kanaChar = kana.at(0);
-                if (kanaType == KanaType::Katakana) {
-                    // target is Katakana
-                    if (kanaChar >= katakanaStart && kanaChar < katakanaStart + 0x5E) {
-                        // Hiragana->Katakana
-                        convertedKana = QChar(kanaChar.unicode() - katakanaStart + hiraganaStart);
+            QRegExp rx("[\u3040-\u309F\u30A0-\u30FF]+");
+            if (rx.exactMatch(kana)) {
+                for (QChar kanaChar : kana) {
+                    if (kanaType == KanaType::Hiragana) {
+                        // target is Hiragana
+                        if (kanaChar >= katakanaStart && kanaChar < katakanaStart + 0x5E) {
+                            // Katakana->Hiragana
+                            convertedKana += QChar(kanaChar.unicode() - katakanaStart + hiraganaStart);
+                        } else {
+                            convertedKana += kanaChar;
+                        }
                     } else {
-                        convertedKana = kanaChar;
-                    }
-                } else {
-                    // target is Hiragana
-                    if (kanaChar >= hiraganaStart && kanaChar < hiraganaStart + 0x5E) {
-                        // Katakana->Hiragana
-                        convertedKana = QChar(kanaChar.unicode() + katakanaStart - hiraganaStart);
-                    } else {
-                        convertedKana = kanaChar;
+                        // target is Katakana
+                        if (kanaChar >= hiraganaStart && kanaChar < hiraganaStart + 0x5E) {
+                            // Hiragana->Katakana
+                            convertedKana += QChar(kanaChar.unicode() + katakanaStart - hiraganaStart);
+                        } else {
+                            convertedKana += kanaChar;
+                        }
                     }
                 }
             } else {
@@ -56,25 +58,6 @@ namespace IKg2p {
         return convertedList;
     }
 
-    QString JpG2pPrivate::kana2romaji(const QStringList &kanaList) const {
-        QStringList inputList = convertKana(kanaList, KanaType::Katakana);
-        QStringList romajiList;
-        for (const QString &kana : inputList) {
-            QString romaji;
-            for (int i = 0; i < kana.length(); ++i) {
-                QString kanaChar = kana.mid(i, 1);
-                QString romajiChar = kanaToRomajiMap.value(kanaChar);
-                if (romajiChar.isEmpty()) {
-                    romaji.append(kanaChar);
-                } else {
-                    romaji.append(romajiChar);
-                }
-            }
-            romajiList.append(romaji);
-        }
-        return romajiList.join(" ");
-    }
-
     JpG2p::JpG2p(QObject *parent) : JpG2p(*new JpG2pPrivate(), parent) {
     }
 
@@ -83,20 +66,10 @@ namespace IKg2p {
 
     QString JpG2p::kana2romaji(const QStringList &kanaList) {
         Q_D(const JpG2p);
-        QStringList inputList = d->convertKana(kanaList, JpG2pPrivate::KanaType::Katakana);
+        QStringList inputList = d->convertKana(kanaList, JpG2pPrivate::KanaType::Hiragana);
         QStringList romajiList;
         for (const QString &kana : inputList) {
-            QString romaji;
-            for (int i = 0; i < kana.length(); ++i) {
-                QString kanaChar = kana.mid(i, 1);
-                QString romajiChar = d->kanaToRomajiMap.value(kanaChar, {});
-                if (romajiChar.isEmpty()) {
-                    romaji.append(kanaChar);
-                } else {
-                    romaji.append(romajiChar);
-                }
-            }
-            romajiList.append(romaji);
+            romajiList.append(d->kanaToRomajiMap.value(kana, kana));
         }
         return romajiList.join(" ");
     }

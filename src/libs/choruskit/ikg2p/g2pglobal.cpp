@@ -1,4 +1,5 @@
 #include "g2pglobal.h"
+#include <QDebug>
 
 namespace IKg2p {
 
@@ -19,28 +20,19 @@ namespace IKg2p {
 
     QStringList splitString(const QString &input) {
         QStringList res;
-        int len = input.length();
-        QString word = "";
-        for (int i = 0; i < len; i++) {
-            QChar ch = input.at(i);
-            if (ch.unicode() < 128 && ch.isLetter()) {
-                // joint english word
-                word += ch;
-            } else {
-                // add num/chinese
-                if (word.length() > 0) {
-                    res.append(word);
-                    word.clear();
-                }
-                if (ch != " ") {
-                    res.append(ch);
-                }
-            }
+
+        // negative lookahead:ッっ;letter,num,chinese,kana
+        QRegExp rx("(?![ッっー゜])([a-zA-Z]+|[0-9]|[\u4e00-\u9fa5]|[\u3040-\u309F\u30A0-\u30FF]["
+                   "ャュョゃゅょァィゥェォぁぃぅぇぉ]?)");
+
+        int pos = 0; // 记录匹配位置的变量
+
+        while ((pos = rx.indexIn(input, pos)) != -1) {
+            res.append(input.mid(pos, rx.matchedLength()));
+            pos += rx.matchedLength(); // 更新匹配位置
         }
-        // add last word
-        if (word.length() > 0) {
-            res.append(word);
-        }
+
+        //                qDebug() << res;
         return res;
     }
 
