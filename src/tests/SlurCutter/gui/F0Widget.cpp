@@ -20,6 +20,8 @@ F0Widget::F0Widget(QWidget *parent) : QFrame(parent) {
     assert(FrequencyToMidiNote(440.0) == 69.0);
     assert(FrequencyToMidiNote(110.0) == 45.0);
 
+    setMouseTracking(true);
+
     horizontalScrollBar = new QScrollBar(Qt::Horizontal, this);
     verticalScrollBar = new QScrollBar(Qt::Vertical, this);
     verticalScrollBar->setRange(60000, 60000);
@@ -90,7 +92,8 @@ void F0Widget::setDsSentenceContent(const QJsonObject &content) {
     for (int i = 0; i < noteSeq.size(); i++) {
         MiniNote note;
         note.duration = noteDur[i].toDouble();
-        note.pitch = NoteNameToMidiNote(noteSeq[i]);
+        note.pitch = NoteNameToMidiNote(noteSeq[i]); // TODO: Cents deviation
+        note.cents = NAN;
         note.isSlur = slur[i].toInt();
         note.isRest = isRest[i];
         midiIntervals.insert({noteBegin, noteBegin + note.duration, note});
@@ -170,9 +173,29 @@ double F0Widget::FrequencyToMidiNote(double freq) {
     return 69 + 12 * log2(freq / 440);
 }
 
-std::tuple<size_t, size_t> F0Widget::refF0IndexRange(double startTime, double endTime) {
+std::tuple<size_t, size_t> F0Widget::refF0IndexRange(double startTime, double endTime) const {
     return {std::min((size_t)::floor(std::max(0.0, startTime / f0Timestep)), (size_t) f0Values.size() - 1),
             std::min((size_t)::ceil(endTime / f0Timestep), (size_t) f0Values.size() - 1)};
+}
+
+
+bool F0Widget::mouseOnNote(const QPoint &mousePos, Intervals::Interval<double, MiniNote> *returnNote) const {
+    auto w = width() - KeyWidth - ScrollBarWidth, h = height() - TimelineHeight;
+    auto mouseTime = centerTime - w / 2 / secondWidth + (mousePos.x() - KeyWidth) / secondWidth;
+    auto mousePitch = centerPitch + h / 2 / semitoneHeight - (mousePos.y() - TimelineHeight) / semitoneHeight;
+
+    auto matchedNotes = midiIntervals.findOverlappingIntervals({mouseTime, mouseTime}, true);
+    if (matchedNotes.empty())
+        return false;
+
+    for (auto &i : matchedNotes) {
+        double pitch = i.value.pitch + (std::isnan(i.value.cents) ? 0 : i.value.cents / 100);
+        if (mousePitch >= pitch - 0.5 && mousePitch <= pitch + 0.5) {
+            if (returnNote)
+                *returnNote = i;
+            return true;
+        }
+    }
 }
 
 void F0Widget::paintEvent(QPaintEvent *event) {
@@ -252,6 +275,18 @@ void F0Widget::paintEvent(QPaintEvent *event) {
             // rec.adjust(NotePadding, NotePadding, -NotePadding, -NotePadding);
             // painter.drawText(rec, Qt::AlignVCenter | Qt::AlignLeft, i.value.text);
         }
+        Intervals::Interval<double, MiniNote> note{-1, -1};
+        if (mouseOnNote(mapFromGlobal(QCursor::pos()), &note)) {
+            auto rec = QRectF((note.low - leftTime) * secondWidth,
+                              lowestPitchY - (note.value.pitch - lowestPitch) * semitoneHeight,
+                              note.value.duration * secondWidth, semitoneHeight);
+            auto pen = painter.pen();
+            pen.setColor(QColor(255, 255, 255, 128));
+            pen.setStyle(Qt::SolidLine);
+            pen.setWidth(5);
+            painter.setPen(pen);
+            painter.drawRect(rec);
+        }
 
         // F0 Curve
         if (!f0Values.empty()) {
@@ -278,14 +313,21 @@ void F0Widget::paintEvent(QPaintEvent *event) {
         painter.setClipRect(0, 0, width(), h);
         w += KeyWidth;
 
+#if !defined(NDEBUG) && 1
         // Debug text
-        painter.setPen(Qt::white);
-        painter.drawText(KeyWidth, TimelineHeight,
-                         QString("CenterPitch %1 (%2)  LowestPitch %3 (%4)")
-                             .arg(centerPitch)
-                             .arg(MidiNoteToNoteName(centerPitch))
-                             .arg(lowestPitch)
-                             .arg(MidiNoteToNoteName(lowestPitch)));
+        {
+            auto mousePitch = centerPitch + h / 2 / semitoneHeight -
+                              (mapFromGlobal(QCursor::pos()).y() - TimelineHeight) / semitoneHeight;
+            painter.setPen(Qt::white);
+            painter.drawText(KeyWidth, TimelineHeight,
+                             QString("CenterPitch %1 (%2)  LowestPitch %3 (%4) MousePitch %5")
+                                 .arg(centerPitch)
+                                 .arg(MidiNoteToNoteName(centerPitch))
+                                 .arg(lowestPitch)
+                                 .arg(MidiNoteToNoteName(lowestPitch))
+                                 .arg(mousePitch));
+        }
+#endif
 
         // Piano keys
         auto prevfont = painter.font();
@@ -359,6 +401,15 @@ void F0Widget::wheelEvent(QWheelEvent *event) {
     }
 
     event->accept();
+}
+
+void F0Widget::mouseMoveEvent(QMouseEvent *event) {
+    update();
+
+    event->accept();
+}
+
+void F0Widget::contextMenuEvent(QContextMenuEvent *event) {
 }
 
 void F0Widget::setTimeAxisCenterAndSyncScrollbar(double time) {

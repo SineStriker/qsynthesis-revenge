@@ -4,6 +4,7 @@
 #include "intervaltree.hpp"
 #include <QFrame>
 #include <QScrollBar>
+#include <QMenu>
 #include <tuple>
 
 class F0Widget : public QFrame {
@@ -32,18 +33,24 @@ public slots:
     static double FrequencyToMidiNote(double f);
 
 protected:
+    struct MiniNote;
+
     // Protected methods
-    std::tuple<size_t, size_t> refF0IndexRange(double startTime, double endTime);
+    std::tuple<size_t, size_t> refF0IndexRange(double startTime, double endTime) const;
+    bool mouseOnNote(const QPoint &mousePos, Intervals::Interval<double, MiniNote>* returnNote = nullptr) const;
 
     // Events
     void paintEvent(QPaintEvent *event) override;
     void resizeEvent(QResizeEvent *event) override;
     void wheelEvent(QWheelEvent *event) override;
+    void contextMenuEvent(QContextMenuEvent *event) override;
+    void mouseMoveEvent(QMouseEvent *event) override;
 
     // Stored DS file data
     struct MiniNote {
         double duration;
         int pitch; // Semitone from A0
+        double cents; // nan if no cent deviation
         QString text;
         bool isSlur, isRest;
 
@@ -76,6 +83,8 @@ protected:
 
     // Embedded widgets
     QScrollBar *horizontalScrollBar, *verticalScrollBar;
+    QAction *bgMenuReloadSentence;
+    QAction *noteMenuMergeLeft;
 
 private:
     // Private unified methods
