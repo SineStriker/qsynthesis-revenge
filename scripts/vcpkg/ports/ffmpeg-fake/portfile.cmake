@@ -14,7 +14,7 @@ elseif(APPLE)
     endif()
 else()
     set(FILE_NAME ffmpeg-fake-linux-amd64-${LIB_VERSION}.zip)
-    set(FILE_CHECK_SUM 0)
+    set(FILE_CHECK_SUM 16399fae8d02d6120508cbea43122030b18c40e886a6ece802efd638c1c156d369a5a0d243099eb244fcb2a6683b6dfe0af75fa9d6b7b372bb7e600036ef95d3)
 endif()
 
 vcpkg_download_distfile(ARCHIVE
