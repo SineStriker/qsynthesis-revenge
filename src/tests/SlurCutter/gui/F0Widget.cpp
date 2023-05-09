@@ -5,6 +5,7 @@
 #include <QLinearGradient>
 #include <QPainter>
 #include <QPainterPath>
+#include <QWheelEvent>
 
 #include <cmath>
 
@@ -332,13 +333,41 @@ void F0Widget::resizeEvent(QResizeEvent *event) {
     QFrame::resizeEvent(event);
 }
 
+void F0Widget::wheelEvent(QWheelEvent *event) {
+    constexpr double ScrollFactorX = 10, ScrollFactorY = 2, WheelFactor = 0.1;
+    auto xDelta = event->angleDelta().x(), yDelta = event->angleDelta().y();
+    bool isMouseWheel = (xDelta == 0 && yDelta % 120 == 0);
+
+    if (isMouseWheel) {
+        xDelta = yDelta;
+    }
+
+    if (xDelta % 120 == 0)
+        xDelta *= WheelFactor;
+    if (yDelta % 120 == 0)
+        yDelta *= WheelFactor;
+
+    if (event->modifiers() & Qt::ControlModifier) {
+        // Zoom
+
+    } else {
+        if (event->modifiers() & Qt::ShiftModifier) {
+            setTimeAxisCenterAndSyncScrollbar(centerTime - (xDelta * ScrollFactorX) / secondWidth);
+        } else {
+            setF0CenterAndSyncScrollbar(centerPitch + (yDelta * ScrollFactorY) / semitoneHeight);
+        }
+    }
+
+    event->accept();
+}
+
 void F0Widget::setTimeAxisCenterAndSyncScrollbar(double time) {
     centerTime = std::clamp(time, std::get<0>(timeRange), std::get<1>(timeRange));
     horizontalScrollBar->setValue(centerTime * 1000);
 }
 
 void F0Widget::setF0CenterAndSyncScrollbar(double pitch) {
-    centerPitch = clampPitchToF0Bounds ? pitch : std::clamp(std::get<0>(pitchRange), std::get<1>(pitchRange), pitch);
+    centerPitch = clampPitchToF0Bounds ? std::clamp(pitch, std::get<0>(pitchRange), std::get<1>(pitchRange)) : pitch;
     verticalScrollBar->setValue(centerPitch * 100);
 }
 
