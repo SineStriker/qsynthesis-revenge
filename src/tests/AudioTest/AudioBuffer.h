@@ -5,22 +5,18 @@
 #ifndef CHORUSKIT_AUDIOBUFFER_H
 #define CHORUSKIT_AUDIOBUFFER_H
 
+#include <QVector>
 #include <QList>
 
-class AudioBuffer {
+class AudioBuffer: public QVector<float> {};
+
+class AudioBufferList: public QVector<AudioBuffer> {
 public:
-    AudioBuffer(quint16 channelCount, quint64 size);
-    AudioBuffer(const QList<float *>& buffers);
-    ~AudioBuffer();
-    quint16 channelCount() const;
-    float *buffer(quint16 channel);
-    const float *constBuffer(quint16 channel) const;
-    quint64 size() const;
-    void clear();
-private:
-    QList<float *> m_buffers;
-    bool m_isOwnedByInternal;
-    quint64 m_size;
+    AudioBufferList(quint16 channelCount, quint64 size);
+    quint64 bufferSize() const;
+    void clearBuffer();
+    void resize(int asize);
+    void resizeBuffer(quint64 size);
 };
 
 

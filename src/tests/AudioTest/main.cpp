@@ -19,8 +19,8 @@ int main(int argc, char *argv[]) {
 
 //    QString fileName = QApplication::arguments().at(1);
 
-    Pcm32BitFloatAudioSource src1("D:\\Downloads\\test_source1.pcm", 48000, 2);
-    Pcm32BitFloatAudioSource src2("D:\\Downloads\\test_source2.pcm", 48000, 2);
+    Pcm32BitFloatAudioSource src1("D:\\Downloads\\test_source1.pcm", 2, 48000);
+    Pcm32BitFloatAudioSource src2("D:\\Downloads\\test_source2.pcm", 2, 48000);
     AudioTrack track(2, 48000);
     assert(track.addSource(&src1));
     track.addSource(&src2);
@@ -29,12 +29,12 @@ int main(int argc, char *argv[]) {
     QFile f2("D:\\Downloads\\test_output_c2.pcm");
     f1.open(QIODevice::WriteOnly);
     f2.open(QIODevice::WriteOnly);
-    AudioBuffer buf(2, 1024);
+    AudioBufferList buf(2, 1024);
     for(int i = 0; i < 1048576 / 1024; i++) {
-        buf.clear();
-        track.read(&buf, 1024, IAudioSource::Immediate);
-        f1.write((char*)buf.buffer(0), 1024 * sizeof(float));
-        f2.write((char*)buf.buffer(1), 1024 * sizeof(float));
+        buf.clearBuffer();
+        track.read(buf, 1024);
+        f1.write((char*)buf[0].data(), 1024 * sizeof(float));
+        f2.write((char*)buf[1].data(), 1024 * sizeof(float));
     }
     auto testResampleFile = "D:\\Downloads\\test_resample.pcm";
     const char* argv1[2] = {argv[0], testResampleFile};

@@ -6,70 +6,62 @@
 
 #include "AudioTrack.h"
 
-quint64 AudioTrack::_read(AudioBuffer *buf, quint64 size, IAudioSource::ReadMode mode, bool isPeeking) {
-    if(buf->channelCount() < channelCount()) return -1;
-    if(buf->channelCount() > channelCount()) {
-        qWarning() << "Redundant buffer channels.";
+quint64 AudioTrack::_read(AudioBufferList &buf, quint64 size, quint64 offset, bool isPeeking) {
+    if(buf.size() != channelCount()) {
+        return -1;
     }
-    if(buf->size() < size) return -1;
-    if(buf->size() > size) {
-        qWarning() << "Redundant buffer size.";
+    if(buf.bufferSize() < size) {
+        return -1;
     }
-    if(mode == Immediate) {
-        for(auto src: sources()) {
-            if(!src->canRead(size)) {
-                size = src->readableSampleCount();
-            }
-        }
-    }
-    AudioBuffer tmpBuf(channelCount(), size);
-    for(auto src: sources()) {
+
+    AudioBufferList tmpBuf(channelCount(), size);
+    for(auto src: m_sources) {
         if(isPeeking) {
-            src->peek(&tmpBuf, size, mode);
+            size = std::min(size, src->peek(tmpBuf, size, offset));
         } else {
-            src->read(&tmpBuf, size, mode);
+            size = std::min(size, src->read(tmpBuf, size));
         }
         for(int i = 0; i < channelCount(); i++) {
             for(int j = 0; j < size; j++) {
-                buf->buffer(i)[j] += tmpBuf.buffer(i)[j];
+                buf[i][j] += tmpBuf[i][j];
             }
         }
     }
+    emit audioRead(buf, size);
     return size;
 }
 
-quint64 AudioTrack::read(AudioBuffer *buf, quint64 size, IAudioSource::ReadMode mode) {
-    return _read(buf, size, mode, false);
+quint64 AudioTrack::read(AudioBufferList &buf, quint64 size) {
+    return _read(buf, size, 0, false);
 }
-quint64 AudioTrack::peek(AudioBuffer *buf, quint64 size, IAudioSource::ReadMode mode) {
-    return _read(buf, size, mode, true);
+quint64 AudioTrack::peek(AudioBufferList &buf, quint64 size, quint64 offset) {
+    return _read(buf, size, offset, true);
 }
 quint64 AudioTrack::pos() {
     return m_pos;
 }
 bool AudioTrack::setPos(quint64 pos) {
-    m_pos = pos;
-    bool flag = true;
-    for(auto src: sources()) {
-        flag = flag && src->setPos(pos);
+    if(std::all_of(m_sources.begin(), m_sources.end(), [=](auto src){
+        return src->setPos(pos);
+    })) {
+        m_pos = pos;
+        return true;
     }
-    return flag;
+    return false;
 }
 quint32 AudioTrack::sampleRate() {
-    return acceptableSampleRates()[0];
+    return acceptableSampleRate();
 }
 bool AudioTrack::setSampleRate(quint32 sampleRate) {
     if(!isSampleRateChangeable()) return false;
     for(auto src: sources()) {
         src->setSampleRate(sampleRate);
     }
-    removeAcceptableSampleRate(acceptableSampleRates()[0]);
-    addAcceptableSampleRate(sampleRate);
+    setAcceptableSampleRate(sampleRate);
     return true;
 }
 bool AudioTrack::isSampleRateChangeable() {
-    const auto sourceList = sources();
-    return std::all_of(sourceList.begin(), sourceList.end(), [](auto src){
+    return std::all_of(m_sources.begin(), m_sources.end(), [](auto src){
         return src->isSampleRateChangeable();
     });
 }
@@ -79,11 +71,8 @@ quint16 AudioTrack::channelCount() {
 quint64 AudioTrack::readableSampleCount() {
     return 0;
 }
-bool AudioTrack::canRead(quint64 size) {
-    return false;
-}
 AudioTrack::AudioTrack(quint16 channelCount, quint32 sampleRate): m_channelCount(channelCount) {
-    addAcceptableSampleRate(sampleRate);
+    setAcceptableSampleRate(sampleRate);
 }
 bool AudioTrack::addSource(IAudioSource *src) {
     if(src->channelCount() != m_channelCount) return false;
@@ -93,17 +82,15 @@ bool AudioTrack::addSource(IAudioSource *src) {
     return AudioBus::addSource(src);
 }
 bool AudioTrack::open() {
-    const auto sourceList = sources();
-    return std::all_of(sourceList.begin(), sourceList.end(), [=](auto src){
-        if(src->open()) {
-            src->setPos(pos());
-            return true;
-        } else return false;
+    return std::all_of(m_sources.begin(), m_sources.end(), [=](auto src){
+        return src->open();
     });
 }
-bool AudioTrack::close() {
-    const auto sourceList = sources();
-    return std::all_of(sourceList.begin(), sourceList.end(), [](auto src){
-        return src->close();
+void AudioTrack::close() {
+    std::for_each(m_sources.begin(), m_sources.end(), [](auto src){
+        src->close();
     });
+}
+bool AudioTrack::isSequential() {
+    return false;
 }
