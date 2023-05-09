@@ -167,6 +167,7 @@ function(ck_init_vcpkg _vcpkg_dir _vcpkg_triplet)
 
         add_custom_command(
             OUTPUT ${_out_dll}
+            DEPENDS ${_dll}
             COMMAND ${CMAKE_COMMAND} -E make_directory ${_runtime_output_dir}
             COMMAND ${CMAKE_COMMAND} -E copy_if_different ${_dll} ${_runtime_output_dir}
         )
@@ -937,18 +938,18 @@ function(ck_add_attaches _target)
 
                         # Only one
                         # foreach(_item ${_full_path})
-                        #     if(NOT IS_ABSOLUTE ${_item})
-                        #         get_filename_component(_item ${_item} ABSOLUTE)
-                        #     endif()
+                        # if(NOT IS_ABSOLUTE ${_item})
+                        # get_filename_component(_item ${_item} ABSOLUTE)
+                        # endif()
 
-                        #     if(IS_DIRECTORY ${_item})
-                        #         get_filename_component(_name ${_item} NAME)
-                        #         file(GLOB_RECURSE _files ${_item}/*)
-                        #         list(APPEND _deps ${_files})
-                        #     elseif(EXISTS ${_item})
-                        #         file(GLOB _files ${_item})
-                        #         list(APPEND _deps ${_files})
-                        #     endif()
+                        # if(IS_DIRECTORY ${_item})
+                        # get_filename_component(_name ${_item} NAME)
+                        # file(GLOB_RECURSE _files ${_item}/*)
+                        # list(APPEND _deps ${_files})
+                        # elseif(EXISTS ${_item})
+                        # file(GLOB _files ${_item})
+                        # list(APPEND _deps ${_files})
+                        # endif()
                         # endforeach()
 
                         # string(RANDOM LENGTH 8 _rand)
@@ -956,12 +957,12 @@ function(ck_add_attaches _target)
                         # set(_timestamp_file "${CMAKE_CURRENT_BINARY_DIR}/${_copy_target}.tmp")
 
                         # add_custom_command(OUTPUT ${_timestamp_file}
-                        #     COMMAND ${CMAKE_COMMAND} -E touch ${_timestamp_file} # Make timestamp file
-                        #     COMMAND ${CMAKE_COMMAND}
-                        #     -D "src=${_full_path}"
-                        #     -D "dest=${_path}"
-                        #     -P "${CHOURSKIT_SCRIPTS_DIR}/CopyIfDifferent.cmake"
-                        #     DEPENDS ${_deps}
+                        # COMMAND ${CMAKE_COMMAND} -E touch ${_timestamp_file} # Make timestamp file
+                        # COMMAND ${CMAKE_COMMAND}
+                        # -D "src=${_full_path}"
+                        # -D "dest=${_path}"
+                        # -P "${CHOURSKIT_SCRIPTS_DIR}/CopyIfDifferent.cmake"
+                        # DEPENDS ${_deps}
                         # )
 
                         # add_custom_target(${_copy_target} ALL DEPENDS ${_attach_target} ${_timestamp_file})
@@ -1007,9 +1008,14 @@ endfunction()
 
 Add and executable.
 
+    ck_add_executable(<target>
+        [CONSOLE] [WINDOWS]
+        [SKIP_INSTALL]
+    )
+
 ]] #
 function(ck_add_executable _target)
-    set(options SKIP_INSTALL)
+    set(options CONSOLE WINDOWS SKIP_INSTALL)
     set(oneValueArgs)
     set(multiValueArgs)
     cmake_parse_arguments(FUNC "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
@@ -1023,6 +1029,16 @@ function(ck_add_executable _target)
 
     if("${CMAKE_CXX_COMPILER_ID}" MATCHES "GNU")
         target_link_options(${_target} PRIVATE "-no-pie")
+    endif()
+
+    if(FUNC_WINDOWS)
+        set_target_properties(${_target} PROPERTIES
+            WIN32_EXECUTABLE TRUE
+        )
+    elseif(FUNC_CONSOLE)
+        set_target_properties(${_target} PROPERTIES
+            WIN32_EXECUTABLE FALSE
+        )
     endif()
 
     if(NOT FUNC_SKIP_INSTALL)
@@ -1181,6 +1197,12 @@ function(ck_add_library _target)
             set(_archive)
         endif()
 
+        if(NOT WIN32)
+            set(_archive ${_archive}
+                LIBRARY DESTINATION "${CHORUSKIT_RELATIVE_LIBRARY_DIR}" OPTIONAL
+            )
+        endif()
+
         if(FUNC_SKIP_EXPORT)
             set(_export ChorusKitTargets_Private)
         else()
@@ -1190,7 +1212,6 @@ function(ck_add_library _target)
         install(TARGETS ${_target}
             EXPORT ${_export}
             RUNTIME DESTINATION "${CHORUSKIT_RELATIVE_RUNTIME_DIR}" OPTIONAL
-            LIBRARY DESTINATION "${CHORUSKIT_RELATIVE_LIBRARY_DIR}" OPTIONAL
             ${_archive}
         )
     endif()
@@ -1361,6 +1382,12 @@ function(ck_configure_plugin _target)
             set(_archive)
         endif()
 
+        if(NOT WIN32)
+            set(_archive ${_archive}
+                LIBRARY DESTINATION "${CHORUSKIT_RELATIVE_LIBRARY_DIR}" OPTIONAL
+            )
+        endif()
+
         if(FUNC_SKIP_EXPORT)
             set(_export ChorusKitTargets_Private)
         else()
@@ -1370,7 +1397,6 @@ function(ck_configure_plugin _target)
         install(TARGETS ${_target}
             EXPORT ${_export}
             RUNTIME DESTINATION "${_out_rel_path}" OPTIONAL
-            LIBRARY DESTINATION "${_out_rel_path}" OPTIONAL
             ${_archive}
         )
     endif()

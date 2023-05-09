@@ -70,11 +70,7 @@ namespace IEMgr {
         d->importWizards.clear();
     }
 
-    Core::IWindow *_getWindowHandle(QWidget *w) {
-        return Core::ICore::instance()->windowSystem()->findWindow(w->window());
-    }
-
-    void IManager::runImport(IWizardContext *context, QWidget *parent) {
+    void IManager::runImport(IWizardContext *context) {
         Q_D(IManager);
 
         if (!context->windowHandle() || d->running) {
@@ -82,7 +78,7 @@ namespace IEMgr {
         }
         d->running = true;
 
-        Internal::ImportInitDialog dlg(parent ? parent : context->windowHandle()->window());
+        Internal::ImportInitDialog dlg(context->window());
         if (!context->wizardId().isEmpty()) {
             auto wizard = d->importWizards.value(context->wizardId(), nullptr);
             if (wizard)
@@ -102,7 +98,7 @@ namespace IEMgr {
         d->running = false;
     }
 
-    void IManager::runExport(IWizardContext *context, QWidget *parent) {
+    void IManager::runExport(IWizardContext *context) {
         Q_D(IManager);
 
         if (!context->windowHandle() || d->running) {

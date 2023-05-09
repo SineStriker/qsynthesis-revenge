@@ -25,6 +25,11 @@ namespace Core {
         return d->iWin;
     }
 
+    QWidget *IWindowContext::window() const {
+        auto iWin = windowHandle();
+        return iWin ? iWin->window() : nullptr;
+    }
+
     QDateTime IWindowContext::dateTime() const {
         Q_D(const IWindowContext);
         return d->dt;

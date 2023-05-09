@@ -95,7 +95,8 @@ namespace Core::Internal {
             }
 
             auto iWin = windowHandle();
-            if (docMgr->openFileBrowse(spec)) {
+            IWindowContext ctx(iWin);
+            if (docMgr->openFileBrowse(&ctx, spec)) {
                 if (qApp->property("closeHomeOnOpen").toBool() && iWin->id() == "home") {
                     QTimer::singleShot(0, iWin->window(), &QWidget::close);
                 }

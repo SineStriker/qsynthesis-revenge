@@ -281,28 +281,28 @@ namespace Core {
         return d->m_recentDirs;
     }
 
-    bool DocumentSystem::openFileBrowse(DocumentSpec *spec, const QString &path, QWidget *parent) const {
+    bool DocumentSystem::openFileBrowse(IWindowContext *context, DocumentSpec *spec, const QString &path) const {
         Q_D(const DocumentSystem);
         auto filter =
             spec->filter() + ";;" +
             QString("%1(%2)").arg(QApplication::translate("Core::DocumentSystem", "All Files"), QMOs::allFilesFilter());
-        auto paths = getOpenFileNames(parent, {}, filter, path);
+        auto paths = getOpenFileNames(context->window(), {}, filter, path);
         if (paths.isEmpty()) {
             return false;
         }
 
         int cnt = 0;
         for (const auto &item : qAsConst(paths)) {
-            IWindowContext ctx(parent ? ICoreBase::instance()->windowSystem()->findWindow(parent->window()) : nullptr);
-            if (spec->open(item, &ctx))
+            if (spec->open(item, context))
                 cnt++;
         }
 
         return cnt > 0;
     }
 
-    bool DocumentSystem::saveFileBrowse(IDocument *doc, const QString &path, QWidget *parent) const {
+    bool DocumentSystem::saveFileBrowse(IWindowContext *context, IDocument *doc, const QString &path) const {
         Q_D(const DocumentSystem);
+        auto parent = context->window();
         const QString &saveFileName = getSaveAsFileName(doc, path, parent);
         if (!saveFileName.isEmpty()) {
             if (d->m_documentsWithWatch.contains(doc) || d->m_documentsWithoutWatch.contains(doc)) {

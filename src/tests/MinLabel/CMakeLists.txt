@@ -1,4 +1,4 @@
-project(MinLabel VERSION 0.0.1.6)
+project(MinLabel VERSION 0.0.1.7)
 
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTOUIC ON)
@@ -11,8 +11,8 @@ ck_add_files(_src
 )
 
 ck_add_executable(
-    ${PROJECT_NAME}
-    SKIP_INSTALL
+    ${PROJECT_NAME} ${ROOT_APPMAIN_TYPE}
+    # SKIP_INSTALL
 )
 
 ck_target_components(${PROJECT_NAME}

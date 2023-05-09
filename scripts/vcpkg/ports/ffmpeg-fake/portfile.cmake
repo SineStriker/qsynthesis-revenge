@@ -1,9 +1,9 @@
 set(LIB_PREFIX "https://github.com/SineStriker/ffmpeg-fake/releases/download")
-set(LIB_VERSION 0.0.4)
+set(LIB_VERSION 0.0.3)
 
 if(WIN32)
     set(FILE_NAME ffmpeg-fake-windows-amd64-${LIB_VERSION}.zip)
-    set(FILE_CHECK_SUM 8c607a3530fbe8402bc5aab51d350e54c24324d6480dab92ae2fbfd070c4718c30a523d971fd4d6c6f99281a8abfeea0650b4fb1392ac283a546a45d07263425)
+    set(FILE_CHECK_SUM 43e1a793e72332663eacad2473a8ee5be64f6e55faa5de1ce658c99478ac1e4739ec00cdd21bf0eac9f32487b62225f5cc3b977ce110b8ee8b5c83c7d6d5e69e)
 elseif(APPLE)
     if(VCPKG_OSX_ARCHITECTURES STREQUAL arm64)
         set(FILE_NAME ffmpeg-fake-mac-arm64-${LIB_VERSION}.zip)
@@ -14,7 +14,7 @@ elseif(APPLE)
     endif()
 else()
     set(FILE_NAME ffmpeg-fake-linux-amd64-${LIB_VERSION}.zip)
-    set(FILE_CHECK_SUM 389f37ce6bebc3595f4195986724d8e3d06b0d338e834f0c6332b24316abc352d2ee25fdfaa21069a57cbd8f560eefdaa5115397dcf8bca750073f04642fb254)
+    set(FILE_CHECK_SUM 0)
 endif()
 
 vcpkg_download_distfile(ARCHIVE

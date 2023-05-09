@@ -19,6 +19,8 @@ namespace Core {
     public:
         Core::IWindow *windowHandle() const;
 
+        QWidget *window() const;
+
         QDateTime dateTime() const;
 
     protected:
