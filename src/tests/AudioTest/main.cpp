@@ -2,6 +2,7 @@
 #include "Pcm32BitFloatAudioSource.h"
 #include <QApplication>
 #include <QDebug>
+#include <QWindow>
 
 extern "C" {
 #include "libavcodec/avcodec.h"
