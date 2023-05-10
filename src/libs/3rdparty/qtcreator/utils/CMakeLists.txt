@@ -11,7 +11,7 @@ endif()
 
 if(APPLE)
     list(APPEND _src fileutils_mac.mm)
-    set(_platform_flags "-framework Foundation")
+    set(_platform_link_flags "-framework Foundation")
 endif()
 
 if(QT_CREATOR_NO_FILENAME_LIST)
@@ -35,6 +35,7 @@ ck_target_components(${PROJECT_NAME}
     QT_LINKS ${_qt_libs}
     DEFINES_PRIVATE ${_defines}
     CCFLAGS ${_platform_flags}
+    LINKS ${_platform_link_flags}
     LINKS_PRIVATE ${_platform_libs}
 )
 
