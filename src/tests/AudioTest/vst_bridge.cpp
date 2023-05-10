@@ -47,8 +47,8 @@ extern "C" Q_DECL_EXPORT bool PlaybackProcessor(const PlaybackParameters *playba
     AudioBufferList buf(2, playbackParameters->bufferSize);
     auto ret = track->read(buf, playbackParameters->bufferSize);
     if(ret == playbackParameters->bufferSize) {
-        ::memcpy_s(outputs[0][0], playbackParameters->bufferSize * sizeof(float), buf[0].data(), playbackParameters->bufferSize * sizeof(float));
-        ::memcpy_s(outputs[0][1], playbackParameters->bufferSize * sizeof(float), buf[1].data(), playbackParameters->bufferSize * sizeof(float));
+        ::memcpy(outputs[0][0], buf[0].data(), playbackParameters->bufferSize * sizeof(float));
+        ::memcpy(outputs[0][1], buf[1].data(), playbackParameters->bufferSize * sizeof(float));
         return true;
     } else {
         track->setPos(0);
