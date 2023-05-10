@@ -14,13 +14,13 @@ public:
     Pcm32BitFloatAudioSource(const QString &fileName, quint16 channelCount, quint32 sampleRate);
     quint64 read(AudioBufferList &buf, quint64 size) override;
     quint64 peek(AudioBufferList &buf, quint64 size, quint64 offset) override;
-    quint64 pos() override;
+    quint64 pos() const override;
     bool setPos(quint64 pos) override;
-    bool isSequential() override;
-    quint32 sampleRate() override;
-    bool isSampleRateChangeable() override;
-    quint16 channelCount() override;
-    quint64 readableSampleCount() override;
+    bool isSequential() const override;
+    quint32 sampleRate() const override;
+    bool isSampleRateChangeable() const override;
+    quint16 channelCount() const override;
+    quint64 readableSampleCount() const override;
     bool open() override;
     void close() override;
 private:

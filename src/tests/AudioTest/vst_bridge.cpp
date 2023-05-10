@@ -23,6 +23,7 @@ extern "C" Q_DECL_EXPORT bool Initializer() {
     track->addSource(src1);
     track->addSource(src2);
     if(!track->open()) return false;
+    track->setVolume(0.5);
     vstMgr = new VstAudioOutputManager;
     vstMgr->output(0)->addSource(track);
     return true;

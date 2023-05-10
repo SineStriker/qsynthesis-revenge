@@ -14,7 +14,7 @@ public:
     quint32 acceptableSampleRate() const;
     virtual bool addSource(IAudioSource *src);
     QList<IAudioSource *> sources() const;
-    virtual bool removeSource(IAudioSource *source);
+    virtual bool removeSource(IAudioSource *src);
 protected:
     bool setAcceptableSampleRate(quint32 sampleRate);
     QMChronSet<IAudioSource *> m_sources;

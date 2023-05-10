@@ -23,7 +23,7 @@ quint64 AudioTrack::_read(AudioBufferList &buf, quint64 size, quint64 offset, bo
         }
         for(int i = 0; i < channelCount(); i++) {
             for(int j = 0; j < size; j++) {
-                buf[i][j] += tmpBuf[i][j];
+                buf[i][j] += tmpBuf[i][j] * m_volumeRates[i];
             }
         }
     }
@@ -37,7 +37,7 @@ quint64 AudioTrack::read(AudioBufferList &buf, quint64 size) {
 quint64 AudioTrack::peek(AudioBufferList &buf, quint64 size, quint64 offset) {
     return _read(buf, size, offset, true);
 }
-quint64 AudioTrack::pos() {
+quint64 AudioTrack::pos() const {
     return m_pos;
 }
 bool AudioTrack::setPos(quint64 pos) {
@@ -49,35 +49,32 @@ bool AudioTrack::setPos(quint64 pos) {
     }
     return false;
 }
-quint32 AudioTrack::sampleRate() {
+quint32 AudioTrack::sampleRate() const {
     return acceptableSampleRate();
 }
 bool AudioTrack::setSampleRate(quint32 sampleRate) {
-    if(!isSampleRateChangeable()) return false;
-    for(auto src: sources()) {
-        src->setSampleRate(sampleRate);
-    }
     return setAcceptableSampleRate(sampleRate);
 }
-bool AudioTrack::isSampleRateChangeable() {
+bool AudioTrack::isSampleRateChangeable() const {
     return std::all_of(m_sources.begin(), m_sources.end(), [](auto src){
         return src->isSampleRateChangeable();
     });
 }
-quint16 AudioTrack::channelCount() {
+quint16 AudioTrack::channelCount() const {
     return m_channelCount;
 }
-quint64 AudioTrack::readableSampleCount() {
+quint64 AudioTrack::readableSampleCount() const {
     return 0;
 }
 AudioTrack::AudioTrack(quint16 channelCount, quint32 sampleRate): m_channelCount(channelCount) {
     setAcceptableSampleRate(sampleRate);
+    m_volumeRates.resize(channelCount);
+    m_volumeRates.fill(1.0);
 }
 bool AudioTrack::addSource(IAudioSource *src) {
     if(src->channelCount() != m_channelCount) return false;
-    if(src->sampleRate() != sampleRate() && !src->isSampleRateChangeable()) return false;
     if(src->isSequential()) return false;
-    src->setSampleRate(sampleRate());
+    if(!src->setReadMode(m_readMode)) return false;
     return AudioBus::addSource(src);
 }
 bool AudioTrack::open() {
@@ -90,6 +87,27 @@ void AudioTrack::close() {
         src->close();
     });
 }
-bool AudioTrack::isSequential() {
+bool AudioTrack::isSequential() const {
     return false;
 }
+void AudioTrack::setVolume(const QVector<float> &rates) {
+    for(int i = 0; i < m_volumeRates.size(); i++) {
+        if(i >= rates.size()) break;
+        m_volumeRates[i] = rates[i];
+    }
+}
+void AudioTrack::setVolume(float rate) {
+    m_volumeRates.fill(rate);
+}
+QVector<float> AudioTrack::volume() {
+    return m_volumeRates;
+}
+IAudioSource::ReadMode AudioTrack::readMode() const {
+    return m_readMode;
+}
+bool AudioTrack::setReadMode(ReadMode mode) {
+    return std::all_of(m_sources.begin(), m_sources.end(), [=](auto src){
+        return src->setReadMode(mode);
+    });
+}
+

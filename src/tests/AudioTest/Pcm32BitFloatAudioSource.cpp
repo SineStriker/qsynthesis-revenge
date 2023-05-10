@@ -35,19 +35,19 @@ quint64 Pcm32BitFloatAudioSource::read(AudioBufferList &buf, quint64 size) {
 quint64 Pcm32BitFloatAudioSource::peek(AudioBufferList &buf, quint64 size, quint64 offset) {
     return _read(buf, size, offset, true);
 }
-quint64 Pcm32BitFloatAudioSource::pos() {
+quint64 Pcm32BitFloatAudioSource::pos() const {
     return rawToBufSize(file.pos(), channelCount());
 }
 bool Pcm32BitFloatAudioSource::setPos(quint64 pos) {
     return file.seek(bufSizeToRaw(pos, channelCount()));
 }
-quint32 Pcm32BitFloatAudioSource::sampleRate() {
+quint32 Pcm32BitFloatAudioSource::sampleRate() const {
     return m_sampleRate;
 }
-quint16 Pcm32BitFloatAudioSource::channelCount() {
+quint16 Pcm32BitFloatAudioSource::channelCount() const {
     return m_channelCount;
 }
-quint64 Pcm32BitFloatAudioSource::readableSampleCount() {
+quint64 Pcm32BitFloatAudioSource::readableSampleCount() const {
     return file.bytesAvailable() / channelCount() / sizeof(float);
 }
 Pcm32BitFloatAudioSource::Pcm32BitFloatAudioSource(const QString &fileName, quint16 channelCount, quint32 sampleRate)
@@ -60,9 +60,9 @@ bool Pcm32BitFloatAudioSource::open() {
 void Pcm32BitFloatAudioSource::close() {
     file.close();
 }
-bool Pcm32BitFloatAudioSource::isSequential() {
+bool Pcm32BitFloatAudioSource::isSequential() const {
     return false;
 }
-bool Pcm32BitFloatAudioSource::isSampleRateChangeable() {
+bool Pcm32BitFloatAudioSource::isSampleRateChangeable() const {
     return false;
 }

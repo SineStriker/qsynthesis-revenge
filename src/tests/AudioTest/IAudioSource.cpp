@@ -6,12 +6,12 @@
 
 
 bool IAudioSource::setReadMode(IAudioSource::ReadMode mode) {
-    return false;
+    return true;
 }
-IAudioSource::ReadMode IAudioSource::readMode() {
+IAudioSource::ReadMode IAudioSource::readMode() const {
     return IAudioSource::Immediate;
 }
-quint64 IAudioSource::pos() {
+quint64 IAudioSource::pos() const {
     return 0;
 }
 bool IAudioSource::setPos(quint64 pos) {
@@ -28,7 +28,7 @@ bool IAudioSource::open() {
 void IAudioSource::close() {
     m_err.clear();
 }
-QString IAudioSource::lastError() {
+QString IAudioSource::lastError() const {
     return m_err;
 }
 void IAudioSource::setLastError(const QString &err) {

@@ -8,11 +8,18 @@
 
 
 #include "AudioBus.h"
+#include "AudioTrack.h"
 class VstAudioOutput: public QObject, public AudioBus {
     Q_OBJECT
     friend class VstAudioOutputManager;
 public:
     explicit VstAudioOutput(QObject *parent = nullptr);
+    ~VstAudioOutput();
+    bool addSource(IAudioSource *src) override;
+    bool removeSource(IAudioSource *source) override;
+
+private:
+    AudioTrack *m_track;
 };
 
 

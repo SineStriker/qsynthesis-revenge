@@ -19,14 +19,8 @@ bool VstAudioOutputManager::vstProcess(const VstAudioOutputManager::PlaybackPara
     AudioBufferList buf(CHANNEL_COUNT, param->bufferSize);
     for(int i = 0; i < OUTPUT_COUNT; i++) {
         buf.clearBuffer();
-        quint64 size = param->bufferSize;
         auto vstOutput = m_outputs[i];
-        AudioBufferList tmpBuf(CHANNEL_COUNT, param->bufferSize);
-        for(auto src: vstOutput->m_sources) {
-            size = std::min(size, src->read(tmpBuf, size));
-            if(size < 0) return false;
-            for(int k = 0; k < CHANNEL_COUNT; k++) for(int j = 0; j < size; j++) buf[k][j] += tmpBuf[k][j];
-        }
+        auto size = vstOutput->m_track->read(buf, param->bufferSize);
         for(int k = 0; k < CHANNEL_COUNT; k++) {
             ::memcpy(outputs[i][k], buf[k].data(), size * sizeof(float));
             ::memset(outputs[i][k] + size, 0, (param->bufferSize - size) * sizeof(float));
@@ -36,13 +30,12 @@ bool VstAudioOutputManager::vstProcess(const VstAudioOutputManager::PlaybackPara
 }
 bool VstAudioOutputManager::vstProcessInitializer(bool isOffline, double sampleRate) {
     if(!std::all_of(m_outputs.begin(), m_outputs.end(), [=](VstAudioOutput *output){
-        return std::all_of(output->m_sources.begin(), output->m_sources.end(), [=](IAudioSource *src){
-            return src->setReadMode(isOffline ? IAudioSource::Synchronous : IAudioSource::Immediate);
-        });
+        return output->m_track->setReadMode(isOffline ? IAudioSource::Synchronous : IAudioSource::Immediate);
     })) return false;
     if(sampleRate != m_sampleRate) {
         if(!std::all_of(m_outputs.begin(), m_outputs.end(), [=](VstAudioOutput *output){
-            return output->setAcceptableSampleRate(sampleRate);
+            output->setAcceptableSampleRate(sampleRate);
+            return output->m_track->setSampleRate(sampleRate);
         })) return false;
         m_sampleRate = sampleRate;
     }
