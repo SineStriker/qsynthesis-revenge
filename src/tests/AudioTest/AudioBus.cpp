@@ -8,6 +8,7 @@ quint32 AudioBus::acceptableSampleRate() const {
     return m_acceptableSampleRate;
 }
 bool AudioBus::addSource(IAudioSource *src) {
+    //TODO check
     m_sources.append(src);
     return true;
 }
@@ -17,6 +18,8 @@ QList<IAudioSource *> AudioBus::sources() const {
 bool AudioBus::removeSource(IAudioSource *source) {
     return m_sources.remove(source);
 }
-void AudioBus::setAcceptableSampleRate(quint32 sampleRate) {
+bool AudioBus::setAcceptableSampleRate(quint32 sampleRate) {
     m_acceptableSampleRate = sampleRate;
+    //TODO set sample rate
+    return true;
 }

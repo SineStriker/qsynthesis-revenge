@@ -13,7 +13,7 @@ public:
         Immediate,
         Synchronous,
     };
-    virtual quint64 read(AudioBufferList &buf, quint64 size) = 0;
+    virtual quint64 read(AudioBufferList &buf, quint64 size) = 0; //TODO return value < 0 for error
     virtual quint64 peek(AudioBufferList &buf, quint64 size, quint64 offset) = 0;
     virtual bool setReadMode(ReadMode mode);
     virtual ReadMode readMode();

@@ -57,8 +57,7 @@ bool AudioTrack::setSampleRate(quint32 sampleRate) {
     for(auto src: sources()) {
         src->setSampleRate(sampleRate);
     }
-    setAcceptableSampleRate(sampleRate);
-    return true;
+    return setAcceptableSampleRate(sampleRate);
 }
 bool AudioTrack::isSampleRateChangeable() {
     return std::all_of(m_sources.begin(), m_sources.end(), [](auto src){
