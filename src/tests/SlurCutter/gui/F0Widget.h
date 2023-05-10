@@ -39,12 +39,20 @@ protected:
     std::tuple<size_t, size_t> refF0IndexRange(double startTime, double endTime) const;
     bool mouseOnNote(const QPoint &mousePos, Intervals::Interval<double, MiniNote>* returnNote = nullptr) const;
 
+    // Convenience methods
+    double pitchOnWidgetY(int y) const;
+    double timeOnWidgetX(int x) const;
+
+    // Data manipulation methods
+    void splitNoteUnderMouse();
+
     // Events
     void paintEvent(QPaintEvent *event) override;
     void resizeEvent(QResizeEvent *event) override;
     void wheelEvent(QWheelEvent *event) override;
     void contextMenuEvent(QContextMenuEvent *event) override;
     void mouseMoveEvent(QMouseEvent *event) override;
+    void mouseDoubleClickEvent(QMouseEvent *event) override;
 
     // Stored DS file data
     struct MiniNote {

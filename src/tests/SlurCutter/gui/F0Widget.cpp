@@ -181,8 +181,8 @@ std::tuple<size_t, size_t> F0Widget::refF0IndexRange(double startTime, double en
 
 bool F0Widget::mouseOnNote(const QPoint &mousePos, Intervals::Interval<double, MiniNote> *returnNote) const {
     auto w = width() - KeyWidth - ScrollBarWidth, h = height() - TimelineHeight;
-    auto mouseTime = centerTime - w / 2 / secondWidth + (mousePos.x() - KeyWidth) / secondWidth;
-    auto mousePitch = centerPitch + h / 2 / semitoneHeight - (mousePos.y() - TimelineHeight) / semitoneHeight;
+    auto mouseTime = timeOnWidgetX(mousePos.x());
+    auto mousePitch = pitchOnWidgetY(mousePos.y());
 
     auto matchedNotes = midiIntervals.findOverlappingIntervals({mouseTime, mouseTime}, true);
     if (matchedNotes.empty())
@@ -195,6 +195,36 @@ bool F0Widget::mouseOnNote(const QPoint &mousePos, Intervals::Interval<double, M
                 *returnNote = i;
             return true;
         }
+    }
+}
+
+double F0Widget::pitchOnWidgetY(int y) const {
+    auto h = height() - TimelineHeight;
+    return centerPitch + h / 2 / semitoneHeight - (y - TimelineHeight) / semitoneHeight;
+}
+
+double F0Widget::timeOnWidgetX(int x) const {
+    auto w = width() - KeyWidth - ScrollBarWidth;
+    return centerTime - w / 2 / secondWidth + (x - KeyWidth) / secondWidth;
+}
+
+void F0Widget::splitNoteUnderMouse() {
+    Intervals::Interval<double, MiniNote> noteInterval{-1, -1};
+    auto cursorPos = mapFromGlobal(QCursor::pos());
+
+    if (mouseOnNote(cursorPos, &noteInterval) && !noteInterval.value.isRest) {
+        auto time = timeOnWidgetX(cursorPos.x());
+
+        MiniNote leftNote{noteInterval.value}, rightNote{noteInterval.value};
+        leftNote.duration = time - noteInterval.low;
+        rightNote.duration = noteInterval.high - time;
+        rightNote.isSlur = true;
+
+        midiIntervals.remove(noteInterval);
+        midiIntervals.insert({noteInterval.low, time, leftNote});
+        midiIntervals.insert({time, noteInterval.high, rightNote});
+
+        update();
     }
 }
 
@@ -405,6 +435,12 @@ void F0Widget::wheelEvent(QWheelEvent *event) {
 
 void F0Widget::mouseMoveEvent(QMouseEvent *event) {
     update();
+
+    event->accept();
+}
+
+void F0Widget::mouseDoubleClickEvent(QMouseEvent *event) {
+    splitNoteUnderMouse();
 
     event->accept();
 }
