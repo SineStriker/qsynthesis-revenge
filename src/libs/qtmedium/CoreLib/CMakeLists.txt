@@ -6,7 +6,7 @@ project(QMCoreLib
 set(_platform_libs)
 
 if(APPLE)
-    list(APPEND _platform_libs ObjC)
+    list(APPEND _platform_libs "-framework CoreFoundation")
 endif()
 
 if(NOT WIN32)
