@@ -60,6 +60,7 @@ protected:
     QWidget *rightWidget;
 
     QString lastFile;
+    bool fileSwitchDirection = true; // true = next, false = prev
 
     // Cached DS file content
     // We only store DS's first layer of objects, anything else is parsed on the fly
@@ -68,7 +69,11 @@ protected:
 
     void openDirectory(const QString &dirname);
     void openFile(const QString &filename);
-    void saveFile(const QString &filename);
+    bool saveFile(const QString &filename);
+
+    void pullEditedMidi();
+    void switchFile(bool next);
+    void switchSentence(bool next);
 
     void loadDsContent(const QString &content);
     Q_SLOT void reloadDsSentenceRequested();

@@ -25,6 +25,7 @@ public:
         QString note_slur;
     };
     ReturnedDsString getSavedDsStrings();
+    bool empty();
 
 public slots:
     void setPlayheadPos(double pos);
@@ -79,6 +80,7 @@ protected:
             return duration < other.duration;
         }
     };
+    bool isEmpty = true;
     using MiniNoteInterval = Intervals::Interval<double, MiniNote>;
     Intervals::IntervalTree<double, MiniNote> midiIntervals;
     Intervals::IntervalTree<double> markerIntervals;

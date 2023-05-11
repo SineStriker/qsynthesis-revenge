@@ -131,6 +131,8 @@ void F0Widget::setDsSentenceContent(const QJsonObject &content) {
     verticalScrollBar->setMaximum(std::get<1>(pitchRange) * 100);
     verticalScrollBar->setMinimum(std::get<0>(pitchRange) * 100);
 
+    isEmpty = false;
+
     setF0CenterAndSyncScrollbar(f0Values.first());
 
     update();
@@ -147,9 +149,31 @@ void F0Widget::clear() {
     errorStatusText = "";
     midiIntervals.clear();
     f0Values.clear();
+    isEmpty = true;
     // phonemeIntervals.clear();
     // textIntervals.clear();
     update();
+}
+
+F0Widget::ReturnedDsString F0Widget::getSavedDsStrings() {
+    ReturnedDsString ret;
+    for (auto &i : midiIntervals.intervals()) {
+        ret.note_dur += QString::number(i.value.duration, 'g', 3) + ' ';
+        ret.note_slur += i.value.isSlur ? "1 " : "0 ";
+        ret.note_seq += i.value.isRest
+                            ? "rest "
+                            : (std::isnan(i.value.cents)
+                                   ? (MidiNoteToNoteName(i.value.pitch) + ' ')
+                                   : (PitchToNotePlusCentsString(i.value.pitch + 0.01 * i.value.cents) + ' '));
+    }
+    ret.note_dur = ret.note_dur.trimmed();
+    ret.note_seq = ret.note_seq.trimmed();
+    ret.note_slur = ret.note_slur.trimmed();
+    return ret;
+};
+
+bool F0Widget::empty() {
+    return isEmpty;
 }
 
 void F0Widget::setPlayheadPos(double time) {

@@ -225,11 +225,67 @@ void MainWindow::openFile(const QString &filename) {
     // f0Widget->contentText->setPlainText(content);
 }
 
-void MainWindow::saveFile(const QString &filename) {
-    // FIXME: WE DONT EVER SAVE TO DS FILES!!!
+bool MainWindow::saveFile(const QString &filename) {
+    QJsonArray docArr;
+    foreach (auto &i, dsContent) {
+        docArr.append(i);
+    }
+    QJsonDocument doc(docArr);
+    auto labFile = audioFileToDsFile(filename);
+    QFile file(labFile);
+    if (file.open(QIODevice::WriteOnly | QIODevice::Text)) {
+        file.write(doc.toJson(QJsonDocument::Indented));
+        return true;
+    } else {
+        QMessageBox::critical(this, "Save error",
+                              QString("Cannot open %1 to write!\n\n"
+                                      "File switch was not performed. If you were to address the save problem,\n"
+                                      "later you can switch file again and saving will be attempted again.")
+                                  .arg(file.fileName()));
+        return false;
+    }
 }
 
-// TODO: Default select first segment or last?
+void MainWindow::pullEditedMidi() {
+    if (currentRow < 0 || f0Widget->empty())
+        return;
+    auto &currentSentence = dsContent[currentRow];
+    auto editedSentence = f0Widget->getSavedDsStrings();
+
+    currentSentence["note_seq"] = editedSentence.note_seq;
+    currentSentence["note_slur"] = editedSentence.note_slur;
+    currentSentence["note_dur"] = editedSentence.note_dur;
+}
+
+void MainWindow::switchFile(bool next) {
+    fileSwitchDirection = next;
+    if (next) {
+        QKeyEvent e(QEvent::KeyPress, Qt::Key_Down, Qt::NoModifier);
+        QApplication::sendEvent(treeView, &e);
+    } else {
+        QKeyEvent e(QEvent::KeyPress, Qt::Key_Up, Qt::NoModifier);
+        QApplication::sendEvent(treeView, &e);
+    }
+}
+
+void MainWindow::switchSentence(bool next) {
+    if (next) {
+        if (currentRow == sentenceWidget->count() - 1) {
+            switchFile(next);
+        } else {
+            QKeyEvent e(QEvent::KeyPress, Qt::Key_Down, Qt::NoModifier);
+            QApplication::sendEvent(sentenceWidget, &e);
+        }
+    } else {
+        if (currentRow == 0) {
+            switchFile(next);
+        } else {
+            QKeyEvent e(QEvent::KeyPress, Qt::Key_Up, Qt::NoModifier);
+            QApplication::sendEvent(sentenceWidget, &e);
+        }
+    }
+}
+
 void MainWindow::loadDsContent(const QString &content) {
     // Parse as JSON array
     QJsonParseError err;
@@ -280,7 +336,8 @@ void MainWindow::loadDsContent(const QString &content) {
     }
 
     // Set the initial sentence of the file
-    sentenceWidget->setCurrentRow(0);
+    sentenceWidget->setCurrentRow(fileSwitchDirection ? 0 : (dsContent.size() - 1));
+    fileSwitchDirection = true; // Reset the direction state
 }
 
 void MainWindow::reloadDsSentenceRequested() {
@@ -367,11 +424,9 @@ void MainWindow::_q_fileMenuTriggered(QAction *action) {
 
 void MainWindow::_q_editMenuTriggered(QAction *action) {
     if (action == prevAction) {
-        QKeyEvent e(QEvent::KeyPress, Qt::Key_Up, Qt::NoModifier);
-        QApplication::sendEvent(treeView, &e);
+        switchSentence(false);
     } else if (action == nextAction) {
-        QKeyEvent e(QEvent::KeyPress, Qt::Key_Down, Qt::NoModifier);
-        QApplication::sendEvent(treeView, &e);
+        switchSentence(true);
     }
 }
 
@@ -390,12 +445,13 @@ void MainWindow::_q_helpMenuTriggered(QAction *action) {
 }
 
 void MainWindow::_q_treeCurrentChanged(const QModelIndex &current, const QModelIndex &previous) {
-    Q_UNUSED(previous);
-
+    pullEditedMidi();
     QFileInfo info = fsModel->fileInfo(current);
     if (info.isFile()) {
         if (QMFs::isFileExist(lastFile)) {
-            saveFile(lastFile);
+            if (!saveFile(lastFile)) {
+                return;
+            }
         }
         lastFile = info.absoluteFilePath();
         openFile(lastFile);
@@ -406,6 +462,7 @@ void MainWindow::_q_treeCurrentChanged(const QModelIndex &current, const QModelI
 void MainWindow::_q_sentenceChanged(int currentRow) {
     if (currentRow < 0)
         return;
+    pullEditedMidi();
     this->currentRow = currentRow;
     f0Widget->setDsSentenceContent(dsContent[currentRow]);
     auto item = sentenceWidget->item(currentRow);
