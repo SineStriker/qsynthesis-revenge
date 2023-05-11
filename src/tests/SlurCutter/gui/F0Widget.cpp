@@ -558,10 +558,15 @@ void F0Widget::wheelEvent(QWheelEvent *event) {
         xDelta = yDelta;
     }
 
-    if (event->modifiers() & Qt::ControlModifier) {
-        // Zoom
+    if (event->modifiers() & Qt::ControlModifier && !(event->modifiers() & Qt::ShiftModifier)) {
+        // Zoom vertical
         double level = yDelta / 12.0;
         semitoneHeight = std::pow(1.1, level) * semitoneHeight;
+        update();
+    } else if (event->modifiers() & Qt::ControlModifier && event->modifiers() & Qt::ShiftModifier) {
+        // Zoom time
+        double level = xDelta / 12.0;
+        secondWidth = std::pow(1.1, level) * secondWidth;
         update();
     } else {
         if (event->modifiers() & Qt::ShiftModifier) {
