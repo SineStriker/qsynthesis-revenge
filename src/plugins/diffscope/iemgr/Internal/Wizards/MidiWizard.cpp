@@ -1,5 +1,7 @@
 #include "MidiWizard.h"
 
+#include <QMessageBox>
+
 #include <set>
 
 #include <QMConsole.h>
@@ -107,9 +109,13 @@ namespace IEMgr ::Internal {
                     case QMidiEvent::Marker:
                         markers.append(qMakePair(e->tick(), data));
                         break;
-                    case QMidiEvent::TimeSignature:
-                        timeSign[e->tick()] = QPoint(data[0], 2 * data[1]);
+                    case QMidiEvent::TimeSignature: {
+                        QPoint sig(QPoint(data[0], 2 ^ data[1]));
+                        if (sig.x() == 0 || sig.y() == 0)
+                            break;
+                        timeSign[e->tick()] = sig;
                         break;
+                    }
                     default:
                         break;
                 }
@@ -163,6 +169,7 @@ namespace IEMgr ::Internal {
             qint32 trackIndex = i - midiFormat + 1;
 
             TrackNameAndLyrics cur;
+            cur.trackEnd = midi.trackEndTick(i);
 
             // 以track、channel、note为索引打包数据
             for (auto e : list) {
@@ -175,10 +182,6 @@ namespace IEMgr ::Internal {
                                 break;
                             case QMidiEvent::Lyric:
                                 cur.lyrics.insert(e->tick(), e->data());
-                                break;
-                            // End of Track
-                            case 0x2F:
-                                cur.trackEnd = e->tick();
                                 break;
                             default:
                                 break;
@@ -201,7 +204,6 @@ namespace IEMgr ::Internal {
                         break;
                 }
             }
-
             // Add
             trackNameAndLyrics.insert(trackIndex, cur);
         }
@@ -385,7 +387,7 @@ namespace IEMgr ::Internal {
             auto logicNotes = logicTrackNotes[logicID];
 
             int clipEnd = int(trackNameAndLyrics[tempIndex.track].trackEnd * scaleFactor);
-            QDspx::ClipTime clipTime(0, clipEnd);
+            QDspx::ClipTime clipTime(0, clipEnd, 0, clipEnd);
             clip->time = clipTime;
             clip->name = codec->toUnicode(logicTrackInfos[logicID].option.title);
 
@@ -412,7 +414,98 @@ namespace IEMgr ::Internal {
     }
 
     bool MidiWizard::save(const QString &filename, const QDspxModel &in, QWidget *parent) {
-        return false;
+        QMidiFile midi;
+        midi.setFileFormat(1);
+        midi.setDivisionType(QMidiFile::DivisionType::PPQ);
+        midi.setResolution(480);
+
+        QDspx::Timeline timeLine = in.content.timeline;
+        int trackNum = in.content.tracks.size();
+
+        // Tempo Map
+        midi.createTrack();
+
+        QTextCodec *codec = QTextCodec::codecForName("UTF-8");
+
+        // timeSignature
+        for (const auto &timeSignature : qAsConst(timeLine.timeSignatures)) {
+            QByteArray buf;
+            buf.resize(4);
+            buf[0] = int(timeSignature.num);
+            buf[1] = int(std::log2(timeSignature.den));
+            buf[2] = 24;
+            buf[3] = 8;
+            midi.createMetaEvent(0, timeSignature.pos, QMidiEvent::TimeSignature, buf);
+        };
+
+        // tempos
+        for (const auto &tempo : qAsConst(timeLine.tempos)) {
+            midi.createTempoEvent(0, tempo.pos, float(tempo.value));
+        };
+
+
+        // label
+        for (const auto &label : qAsConst(timeLine.labels)) {
+            midi.createMarkerEvent(0, label.pos, codec->fromUnicode(label.text));
+        };
+
+        // track
+        QList<QPair<int, QDspx::Note>> overlapNotes;
+        for (int trackId = 0; trackId < trackNum; trackId++) {
+            QDspx::Track track = in.content.tracks[trackId];
+            midi.createTrack();
+            midi.createMetaEvent(trackId + 1, 0, QMidiEvent::MetaNumbers::TrackName, codec->fromUnicode(track.name));
+
+
+            // clip
+            for (const auto &clip : qAsConst(track.clips)) {
+                if (clip->type == QDspx::Clip::Singing) {
+                    auto singingClip = clip.dynamicCast<QDspx::SingingClip>();
+
+                    int clipStart = singingClip->time.clipStart;
+                    int clipEnd = clipStart + singingClip->time.clipLen;
+                    int posCursor = clipStart;
+                    for (const auto &note : qAsConst(singingClip->notes)) {
+                        if (clipStart <= note.pos && note.pos < clipEnd) {
+                            if (posCursor > note.pos) {
+                                overlapNotes.append(qMakePair(trackId, note));
+                            };
+                            int noteEnd = note.pos + note.length;
+                            midi.createLyricEvent(trackId + 1, note.pos, codec->fromUnicode(note.lyric));
+                            midi.createNoteOnEvent(trackId + 1, note.pos, 0, note.keyNum, 64);
+                            midi.createNoteOffEvent(trackId + 1, std::min(noteEnd, clipEnd), 0, note.keyNum, 64);
+                            posCursor = std::max(posCursor, note.pos + note.length);
+                        };
+                    };
+                };
+            };
+        };
+
+        QString overlapWarn = tr("There are overlapped notes, continue to export?\n");
+        if (!overlapNotes.empty()) {
+            QMessageBox msgbox(parent);
+            msgbox.setWindowTitle(tr("Export Midi"));
+            msgbox.setText(overlapWarn);
+            msgbox.setInformativeText("");
+            msgbox.setStandardButtons(QMessageBox::Ok | QMessageBox::Cancel);
+            msgbox.setButtonText(QMessageBox::Ok, tr("Export"));
+            msgbox.setButtonText(QMessageBox::Cancel, tr("Abort"));
+            auto button = msgbox.exec();
+            switch (button) {
+                case QMessageBox::Ok:
+                    qDebug() << "Ok";
+                    break;
+                case QMessageBox::Cancel:
+                    qDebug() << "Cancel";
+                    return false;
+                default:
+                    return false;
+            }
+        };
+
+        midi.save(filename);
+
+        return true;
     }
 
 }
