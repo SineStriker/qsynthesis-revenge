@@ -3,9 +3,10 @@
 
 #include "intervaltree.hpp"
 #include <QFrame>
-#include <QScrollBar>
 #include <QMenu>
+#include <QScrollBar>
 #include <tuple>
+
 
 class F0Widget : public QFrame {
     Q_OBJECT
@@ -28,16 +29,19 @@ public:
 public slots:
     void setPlayheadPos(double pos);
 
+public:
     static int NoteNameToMidiNote(const QString &noteName);
     static QString MidiNoteToNoteName(int midiNote);
     static double FrequencyToMidiNote(double f);
+    static std::tuple<int, double> PitchToNoteAndCents(double pitch);
+    static QString PitchToNotePlusCentsString(double pitch);
 
 protected:
     struct MiniNote;
 
     // Protected methods
     std::tuple<size_t, size_t> refF0IndexRange(double startTime, double endTime) const;
-    bool mouseOnNote(const QPoint &mousePos, Intervals::Interval<double, MiniNote>* returnNote = nullptr) const;
+    bool mouseOnNote(const QPoint &mousePos, Intervals::Interval<double, MiniNote> *returnNote = nullptr) const;
 
     // Convenience methods
     double pitchOnWidgetY(int y) const;
@@ -45,6 +49,8 @@ protected:
 
     // Data manipulation methods
     void splitNoteUnderMouse();
+    void shiftDraggedNoteByPitch(double pitchDelta);
+    void setDraggedNotePitch(int pitch);
 
     // Events
     void paintEvent(QPaintEvent *event) override;
@@ -53,11 +59,13 @@ protected:
     void contextMenuEvent(QContextMenuEvent *event) override;
     void mouseMoveEvent(QMouseEvent *event) override;
     void mouseDoubleClickEvent(QMouseEvent *event) override;
+    void mousePressEvent(QMouseEvent *event) override;
+    void mouseReleaseEvent(QMouseEvent *event) override;
 
     // Stored DS file data
     struct MiniNote {
         double duration;
-        int pitch; // Semitone from A0
+        int pitch;    // Semitone from A0
         double cents; // nan if no cent deviation
         QString text;
         bool isSlur, isRest;
@@ -88,6 +96,18 @@ protected:
 
     bool hasError;
     QString errorStatusText;
+
+    // Data Manipulation State
+    QPoint draggingStartPos;
+    Qt::MouseButton draggingButton = Qt::MouseButton::NoButton;
+    std::tuple<double, double> draggingNoteInterval;
+    enum {
+        None,
+        Note
+    } draggingMode;
+    bool dragging = false;
+    bool draggingNoteInCents = false;
+    double draggingNoteStartPitch = 0.0, draggingNoteBeginCents = 0, draggingNoteBeginPitch = 0;
 
     // Embedded widgets
     QScrollBar *horizontalScrollBar, *verticalScrollBar;

@@ -1,4 +1,5 @@
 
+#include <QApplication>
 #include <QDebug>
 #include <QJsonDocument>
 #include <QJsonObject>
@@ -6,6 +7,7 @@
 #include <QPainter>
 #include <QPainterPath>
 #include <QWheelEvent>
+
 
 #include <cmath>
 
@@ -15,7 +17,7 @@
 #include "qjsonstream.h"
 
 
-F0Widget::F0Widget(QWidget *parent) : QFrame(parent) {
+F0Widget::F0Widget(QWidget *parent) : QFrame(parent), draggingNoteInterval(0, 0) {
     hasError = false;
     assert(FrequencyToMidiNote(440.0) == 69.0);
     assert(FrequencyToMidiNote(110.0) == 45.0);
@@ -173,6 +175,22 @@ double F0Widget::FrequencyToMidiNote(double freq) {
     return 69 + 12 * log2(freq / 440);
 }
 
+std::tuple<int, double> F0Widget::PitchToNoteAndCents(double pitch) {
+    if (pitch == 0)
+        return {0, 0};
+    int note = std::round(pitch);
+    double cents = (pitch - note) * 100;
+    return {note, cents};
+}
+
+QString F0Widget::PitchToNotePlusCentsString(double pitch) {
+    if (pitch == 0)
+        return "rest";
+    int note = std::round(pitch);
+    int cents = std::round((pitch - note) * 100);
+    return QString("%1%2%3").arg(MidiNoteToNoteName(note)).arg(cents >= 0 ? "+" : "").arg(cents);
+}
+
 std::tuple<size_t, size_t> F0Widget::refF0IndexRange(double startTime, double endTime) const {
     return {std::min((size_t)::floor(std::max(0.0, startTime / f0Timestep)), (size_t) f0Values.size() - 1),
             std::min((size_t)::ceil(endTime / f0Timestep), (size_t) f0Values.size() - 1)};
@@ -196,6 +214,7 @@ bool F0Widget::mouseOnNote(const QPoint &mousePos, Intervals::Interval<double, M
             return true;
         }
     }
+    return false;
 }
 
 double F0Widget::pitchOnWidgetY(int y) const {
@@ -226,6 +245,38 @@ void F0Widget::splitNoteUnderMouse() {
 
         update();
     }
+}
+
+void F0Widget::shiftDraggedNoteByPitch(double pitchDelta) {
+    auto intervals =
+        midiIntervals.findInnerIntervals({std::get<0>(draggingNoteInterval), std::get<1>(draggingNoteInterval)});
+    if (intervals.empty())
+        return;
+
+    auto &note = intervals[0].value;
+    double addedCents = draggingNoteInCents ? (std::isnan(note.cents) ? 0 : note.cents) : 0;
+    double semitoneDelta, newCents;
+    newCents = 100 * ::modf(pitchDelta + 0.01 * addedCents, &semitoneDelta);
+
+    note.cents = newCents;
+    note.pitch += semitoneDelta;
+
+    midiIntervals.remove(intervals[0]);
+    midiIntervals.insert(intervals[0]);
+}
+
+void F0Widget::setDraggedNotePitch(int pitch) {
+    auto intervals =
+        midiIntervals.findInnerIntervals({std::get<0>(draggingNoteInterval), std::get<1>(draggingNoteInterval)});
+    if (intervals.empty())
+        return;
+
+    auto &note = intervals[0].value;
+    note.pitch = pitch;
+    note.cents = NAN;
+
+    midiIntervals.remove(intervals[0]);
+    midiIntervals.insert(intervals[0]);
 }
 
 void F0Widget::paintEvent(QPaintEvent *event) {
@@ -286,15 +337,24 @@ void F0Widget::paintEvent(QPaintEvent *event) {
         for (auto i : midiIntervals.findOverlappingIntervals({leftTime, rightTime}, false)) {
             if (i.value.pitch == 0)
                 continue; // Skip rests (pitch 0)
-            auto rec =
-                QRectF((i.low - leftTime) * secondWidth, lowestPitchY - (i.value.pitch - lowestPitch) * semitoneHeight,
-                       i.value.duration * secondWidth, semitoneHeight);
+            auto rec = QRectF(
+                (i.low - leftTime) * secondWidth,
+                lowestPitchY - (i.value.pitch + (std::isnan(i.value.cents) ? 0 : i.value.cents) * 0.01 - lowestPitch) *
+                                   semitoneHeight,
+                i.value.duration * secondWidth, semitoneHeight);
             if (rec.bottom() < 0 || rec.top() > h)
                 continue;
             if (!i.value.isRest) {
                 painter.setPen(Qt::black);
                 painter.fillRect(rec, NoteColors[i.value.isSlur]);
                 painter.drawRect(rec);
+                if (!std::isnan(i.value.cents)) {
+                    painter.drawLine(rec.left(), rec.center().y(), rec.right(), rec.center().y());
+                    painter.setPen(Qt::white);
+                    painter.drawText(rec.topLeft() + QPointF(0, -3),
+                                     PitchToNotePlusCentsString(
+                                         i.value.pitch + 0.01 * (std::isnan(i.value.cents) ? 0 : i.value.cents)));
+                }
             } else {
                 auto pen = painter.pen();
                 pen.setStyle(Qt::DashLine);
@@ -305,11 +365,44 @@ void F0Widget::paintEvent(QPaintEvent *event) {
             // rec.adjust(NotePadding, NotePadding, -NotePadding, -NotePadding);
             // painter.drawText(rec, Qt::AlignVCenter | Qt::AlignLeft, i.value.text);
         }
+
+        // Drag box / hover box (Do not coexist)
         Intervals::Interval<double, MiniNote> note{-1, -1};
-        if (mouseOnNote(mapFromGlobal(QCursor::pos()), &note)) {
-            auto rec = QRectF((note.low - leftTime) * secondWidth,
-                              lowestPitchY - (note.value.pitch - lowestPitch) * semitoneHeight,
-                              note.value.duration * secondWidth, semitoneHeight);
+        if (dragging && draggingMode == Note) {
+            auto pos = mapFromGlobal(QCursor::pos());
+            auto mousePitch = pitchOnWidgetY(pos.y());
+            auto pen = painter.pen();
+            pen.setColor(Qt::white);
+            pen.setStyle(Qt::SolidLine);
+            pen.setWidth(0);
+            painter.setPen(pen);
+            auto noteLeft = (std::get<0>(draggingNoteInterval) - leftTime) * secondWidth,
+                 noteRight = (std::get<1>(draggingNoteInterval) - leftTime) * secondWidth;
+            painter.drawLine(noteLeft, 0, noteLeft, h);
+            painter.drawLine(noteRight, 0, noteRight, h);
+            if (draggingNoteInCents) {
+                auto dragPitch =
+                    mousePitch - draggingNoteStartPitch + draggingNoteBeginCents * 0.01 + draggingNoteBeginPitch;
+                auto rec = QRectF(noteLeft, lowestPitchY - (dragPitch - lowestPitch) * semitoneHeight,
+                                  noteRight - noteLeft, semitoneHeight);
+                painter.fillRect(rec, QColor(255, 255, 255, 60));
+                painter.drawLine(rec.left(), rec.center().y(), rec.right(), rec.center().y());
+                painter.drawRect(rec);
+                painter.drawText(rec.topLeft() + QPointF(0, -3), PitchToNotePlusCentsString(dragPitch));
+            } else {
+                auto dragPitch = ::floor(mousePitch + 0.5); // Key center pitch -> key bottom pitch
+                auto rec = QRectF(noteLeft, lowestPitchY - (dragPitch - lowestPitch) * semitoneHeight,
+                                  noteRight - noteLeft, semitoneHeight);
+                painter.fillRect(rec, QColor(255, 255, 255, 60));
+                painter.drawRect(rec);
+            }
+        } else if (mouseOnNote(mapFromGlobal(QCursor::pos()), &note)) {
+            auto rec =
+                QRectF((note.low - leftTime) * secondWidth,
+                       lowestPitchY - (note.value.pitch + (std::isnan(note.value.cents) ? 0 : note.value.cents) * 0.01 -
+                                       lowestPitch) *
+                                          semitoneHeight,
+                       note.value.duration * secondWidth, semitoneHeight);
             auto pen = painter.pen();
             pen.setColor(QColor(255, 255, 255, 128));
             pen.setStyle(Qt::SolidLine);
@@ -434,6 +527,22 @@ void F0Widget::wheelEvent(QWheelEvent *event) {
 }
 
 void F0Widget::mouseMoveEvent(QMouseEvent *event) {
+    if (draggingStartPos.x() >= 0) {
+        if (!dragging) {
+            // Start drag condition
+            if ((event->pos() - draggingStartPos).manhattanLength() >= QApplication::startDragDistance())
+                dragging = true;
+        } else {
+            if (draggingButton == Qt::LeftButton) {
+                if (draggingMode == Note) {
+                    // Drag note
+                    draggingNoteInCents = event->modifiers() & Qt::ShiftModifier;
+                }
+                update();
+            } else if (draggingButton == Qt::RightButton) {
+            }
+        }
+    }
     update();
 
     event->accept();
@@ -444,6 +553,46 @@ void F0Widget::mouseDoubleClickEvent(QMouseEvent *event) {
 
     event->accept();
 }
+
+void F0Widget::mousePressEvent(QMouseEvent *event) {
+    draggingStartPos = event->pos();
+    draggingButton = event->button();
+    Intervals::Interval<double, MiniNote> noteInterval{-1, -1};
+    if (mouseOnNote(event->pos(), &noteInterval) && !noteInterval.value.isRest) {
+        draggingMode = Note;
+        draggingNoteStartPitch = pitchOnWidgetY(event->y());
+        draggingNoteInterval = {noteInterval.low, noteInterval.high};
+        draggingNoteBeginCents = std::isnan(noteInterval.value.cents) ? 0 : noteInterval.value.cents;
+        draggingNoteBeginPitch = noteInterval.value.pitch;
+    } else
+        draggingMode = None;
+}
+
+void F0Widget::mouseReleaseEvent(QMouseEvent *event) {
+    // Commit changes
+    if (dragging) {
+        switch (draggingMode) {
+            case Note: {
+                if (draggingNoteInCents) {
+                    shiftDraggedNoteByPitch(pitchOnWidgetY(event->y()) - draggingNoteStartPitch);
+                } else {
+                    setDraggedNotePitch(pitchOnWidgetY(event->y()) + 0.5); // Key center pitch -> key bottom pitch
+                }
+                break;
+            }
+
+            case None:
+                break;
+        }
+    }
+
+    draggingStartPos = {-1, -1};
+    draggingButton = Qt::NoButton;
+    draggingMode = None;
+    dragging = false;
+    update();
+}
+
 
 void F0Widget::contextMenuEvent(QContextMenuEvent *event) {
 }
