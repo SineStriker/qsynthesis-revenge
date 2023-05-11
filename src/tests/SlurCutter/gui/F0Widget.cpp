@@ -43,6 +43,8 @@ F0Widget::F0Widget(QWidget *parent) : QFrame(parent), draggingNoteInterval(0, 0)
     connect(verticalScrollBar, &QScrollBar::valueChanged, this, &F0Widget::onVerticalScroll);
 
     connect(noteMenuMergeLeft, &QAction::triggered, this, &F0Widget::mergeCurrentSlurToLeftNode);
+
+    connect(bgMenuReloadSentence, &QAction::triggered, [=]() { emit requestReloadSentence(); });
 }
 
 F0Widget::~F0Widget() {
@@ -655,6 +657,10 @@ void F0Widget::contextMenuEvent(QContextMenuEvent *event) {
     if (mouseOnNote(event->pos(), &noteInterval) && !noteInterval.value.isRest && noteInterval.value.isSlur) {
         contextMenuNoteInterval = {noteInterval.low, noteInterval.high};
         noteMenu->exec(event->globalPos());
+    } else if (QRectF(KeyWidth, TimelineHeight, width() - KeyWidth - ScrollBarWidth, height() - TimelineHeight)
+                   .contains(event->pos())) {
+        // In piano roll but not on note
+        bgMenu->exec(event->globalPos());
     }
 }
 

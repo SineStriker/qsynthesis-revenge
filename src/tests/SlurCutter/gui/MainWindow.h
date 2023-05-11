@@ -64,12 +64,14 @@ protected:
     // Cached DS file content
     // We only store DS's first layer of objects, anything else is parsed on the fly
     QVector<QJsonObject> dsContent;
+    int currentRow = -1;
 
     void openDirectory(const QString &dirname);
     void openFile(const QString &filename);
     void saveFile(const QString &filename);
 
     void loadDsContent(const QString &content);
+    Q_SLOT void reloadDsSentenceRequested();
 
     void reloadWindowTitle();
 

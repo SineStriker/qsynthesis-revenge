@@ -133,6 +133,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
 
     connect(treeView->selectionModel(), &QItemSelectionModel::currentChanged, this, &MainWindow::_q_treeCurrentChanged);
     connect(sentenceWidget, &QListWidget::currentRowChanged, this, &MainWindow::_q_sentenceChanged);
+    connect(f0Widget, &F0Widget::requestReloadSentence, this, &MainWindow::reloadDsSentenceRequested);
 
     connect(playerWidget, &PlayWidget::playheadChanged, f0Widget, &F0Widget::setPlayheadPos);
 
@@ -282,6 +283,11 @@ void MainWindow::loadDsContent(const QString &content) {
     sentenceWidget->setCurrentRow(0);
 }
 
+void MainWindow::reloadDsSentenceRequested() {
+    if (currentRow >= 0)
+        f0Widget->setDsSentenceContent(dsContent[currentRow]);
+}
+
 void MainWindow::reloadWindowTitle() {
     setWindowTitle(dirname.isEmpty()
                        ? qAppName()
@@ -400,6 +406,7 @@ void MainWindow::_q_treeCurrentChanged(const QModelIndex &current, const QModelI
 void MainWindow::_q_sentenceChanged(int currentRow) {
     if (currentRow < 0)
         return;
+    this->currentRow = currentRow;
     f0Widget->setDsSentenceContent(dsContent[currentRow]);
     auto item = sentenceWidget->item(currentRow);
     double offset = item->data(Qt::UserRole + 1).toDouble(), dur = item->data(Qt::UserRole + 2).toDouble();

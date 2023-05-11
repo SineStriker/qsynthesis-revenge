@@ -29,6 +29,9 @@ public:
 public slots:
     void setPlayheadPos(double pos);
 
+signals:
+    void requestReloadSentence();
+
 public:
     static int NoteNameToMidiNote(const QString &noteName);
     static QString MidiNoteToNoteName(int midiNote);
