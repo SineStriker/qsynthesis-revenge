@@ -30,9 +30,19 @@ F0Widget::F0Widget(QWidget *parent) : QFrame(parent), draggingNoteInterval(0, 0)
     verticalScrollBar->setInvertedControls(true);
     verticalScrollBar->setInvertedAppearance(true);
 
+    noteMenu = new QMenu(this);
+    noteMenuMergeLeft = new QAction("&Merge to left", noteMenu);
+    noteMenu->addAction(noteMenuMergeLeft);
+
+    bgMenu = new QMenu(this);
+    bgMenuReloadSentence = new QAction("&Discard changes and reload current sentence");
+    bgMenu->addAction(bgMenuReloadSentence);
+
     // Connect signals
     connect(horizontalScrollBar, &QScrollBar::valueChanged, this, &F0Widget::onHorizontalScroll);
     connect(verticalScrollBar, &QScrollBar::valueChanged, this, &F0Widget::onVerticalScroll);
+
+    connect(noteMenuMergeLeft, &QAction::triggered, this, &F0Widget::mergeCurrentSlurToLeftNode);
 }
 
 F0Widget::~F0Widget() {
@@ -197,7 +207,7 @@ std::tuple<size_t, size_t> F0Widget::refF0IndexRange(double startTime, double en
 }
 
 
-bool F0Widget::mouseOnNote(const QPoint &mousePos, Intervals::Interval<double, MiniNote> *returnNote) const {
+bool F0Widget::mouseOnNote(const QPoint &mousePos, MiniNoteInterval *returnNote) const {
     auto w = width() - KeyWidth - ScrollBarWidth, h = height() - TimelineHeight;
     auto mouseTime = timeOnWidgetX(mousePos.x());
     auto mousePitch = pitchOnWidgetY(mousePos.y());
@@ -228,7 +238,7 @@ double F0Widget::timeOnWidgetX(int x) const {
 }
 
 void F0Widget::splitNoteUnderMouse() {
-    Intervals::Interval<double, MiniNote> noteInterval{-1, -1};
+    MiniNoteInterval noteInterval{-1, -1};
     auto cursorPos = mapFromGlobal(QCursor::pos());
 
     if (mouseOnNote(cursorPos, &noteInterval) && !noteInterval.value.isRest) {
@@ -278,6 +288,30 @@ void F0Widget::setDraggedNotePitch(int pitch) {
     midiIntervals.remove(intervals[0]);
     midiIntervals.insert(intervals[0]);
 }
+
+void F0Widget::mergeCurrentSlurToLeftNode(bool checked) {
+    Q_UNUSED(checked);
+
+    auto ctxintervals = midiIntervals.findOverlappingIntervals(
+        {std::get<0>(contextMenuNoteInterval), std::get<1>(contextMenuNoteInterval)}, false);
+    if (ctxintervals.empty())
+        return;
+    auto noteInterval = ctxintervals[0];
+
+    auto intervals = midiIntervals.findOverlappingIntervals({noteInterval.low - 0.1, noteInterval.low}, false);
+    if (intervals.empty())
+        return;
+    auto leftNode = intervals.back();
+
+    midiIntervals.remove(leftNode);
+    midiIntervals.remove(noteInterval);
+
+    leftNode.value.duration += noteInterval.value.duration;
+    leftNode.high = noteInterval.high;
+
+    midiIntervals.insert(leftNode);
+    update();
+};
 
 void F0Widget::paintEvent(QPaintEvent *event) {
     QPainter painter(this);
@@ -367,7 +401,7 @@ void F0Widget::paintEvent(QPaintEvent *event) {
         }
 
         // Drag box / hover box (Do not coexist)
-        Intervals::Interval<double, MiniNote> note{-1, -1};
+        MiniNoteInterval note{-1, -1};
         if (dragging && draggingMode == Note) {
             auto pos = mapFromGlobal(QCursor::pos());
             auto mousePitch = pitchOnWidgetY(pos.y());
@@ -504,17 +538,15 @@ void F0Widget::wheelEvent(QWheelEvent *event) {
     bool isMouseWheel = (xDelta == 0 && yDelta % 120 == 0);
 
     if (isMouseWheel) {
+        yDelta *= WheelFactor;
         xDelta = yDelta;
     }
 
-    if (xDelta % 120 == 0)
-        xDelta *= WheelFactor;
-    if (yDelta % 120 == 0)
-        yDelta *= WheelFactor;
-
     if (event->modifiers() & Qt::ControlModifier) {
         // Zoom
-
+        double level = yDelta / 12.0;
+        semitoneHeight = std::pow(1.1, level) * semitoneHeight;
+        update();
     } else {
         if (event->modifiers() & Qt::ShiftModifier) {
             setTimeAxisCenterAndSyncScrollbar(centerTime - (xDelta * ScrollFactorX) / secondWidth);
@@ -527,11 +559,13 @@ void F0Widget::wheelEvent(QWheelEvent *event) {
 }
 
 void F0Widget::mouseMoveEvent(QMouseEvent *event) {
-    if (draggingStartPos.x() >= 0) {
+    if (draggingStartPos.x() >= 0 && draggingMode != None) {
         if (!dragging) {
             // Start drag condition
-            if ((event->pos() - draggingStartPos).manhattanLength() >= QApplication::startDragDistance())
+            if ((event->pos() - draggingStartPos).manhattanLength() >= QApplication::startDragDistance()) {
                 dragging = true;
+                setCursor(Qt::SplitVCursor);
+            }
         } else {
             if (draggingButton == Qt::LeftButton) {
                 if (draggingMode == Note) {
@@ -557,14 +591,13 @@ void F0Widget::mouseDoubleClickEvent(QMouseEvent *event) {
 void F0Widget::mousePressEvent(QMouseEvent *event) {
     draggingStartPos = event->pos();
     draggingButton = event->button();
-    Intervals::Interval<double, MiniNote> noteInterval{-1, -1};
+    MiniNoteInterval noteInterval{-1, -1};
     if (mouseOnNote(event->pos(), &noteInterval) && !noteInterval.value.isRest) {
         draggingMode = Note;
         draggingNoteStartPitch = pitchOnWidgetY(event->y());
         draggingNoteInterval = {noteInterval.low, noteInterval.high};
         draggingNoteBeginCents = std::isnan(noteInterval.value.cents) ? 0 : noteInterval.value.cents;
         draggingNoteBeginPitch = noteInterval.value.pitch;
-        setCursor(Qt::SplitVCursor);
     } else
         draggingMode = None;
 }
@@ -597,6 +630,11 @@ void F0Widget::mouseReleaseEvent(QMouseEvent *event) {
 
 
 void F0Widget::contextMenuEvent(QContextMenuEvent *event) {
+    MiniNoteInterval noteInterval{-1, -1};
+    if (mouseOnNote(event->pos(), &noteInterval) && !noteInterval.value.isRest && noteInterval.value.isSlur) {
+        contextMenuNoteInterval = {noteInterval.low, noteInterval.high};
+        noteMenu->exec(event->globalPos());
+    }
 }
 
 void F0Widget::setTimeAxisCenterAndSyncScrollbar(double time) {

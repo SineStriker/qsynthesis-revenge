@@ -51,6 +51,7 @@ protected:
     void splitNoteUnderMouse();
     void shiftDraggedNoteByPitch(double pitchDelta);
     void setDraggedNotePitch(int pitch);
+    Q_SLOT void mergeCurrentSlurToLeftNode(bool checked);
 
     // Events
     void paintEvent(QPaintEvent *event) override;
@@ -75,6 +76,7 @@ protected:
             return duration < other.duration;
         }
     };
+    using MiniNoteInterval = Intervals::Interval<double, MiniNote>;
     Intervals::IntervalTree<double, MiniNote> midiIntervals;
     Intervals::IntervalTree<double> markerIntervals;
     QVector<double> f0Values;
@@ -98,9 +100,9 @@ protected:
     QString errorStatusText;
 
     // Data Manipulation State
-    QPoint draggingStartPos;
+    QPoint draggingStartPos = {-1, -1};
     Qt::MouseButton draggingButton = Qt::MouseButton::NoButton;
-    std::tuple<double, double> draggingNoteInterval;
+    std::tuple<double, double> draggingNoteInterval, contextMenuNoteInterval;
     enum {
         None,
         Note
@@ -111,7 +113,11 @@ protected:
 
     // Embedded widgets
     QScrollBar *horizontalScrollBar, *verticalScrollBar;
+    
+    QMenu *bgMenu;
     QAction *bgMenuReloadSentence;
+
+    QMenu *noteMenu;
     QAction *noteMenuMergeLeft;
 
 private:
