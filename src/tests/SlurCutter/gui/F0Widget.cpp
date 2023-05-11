@@ -104,8 +104,17 @@ void F0Widget::setDsSentenceContent(const QJsonObject &content) {
     for (int i = 0; i < noteSeq.size(); i++) {
         MiniNote note;
         note.duration = noteDur[i].toDouble();
-        note.pitch = NoteNameToMidiNote(noteSeq[i]); // TODO: Cents deviation
-        note.cents = NAN;
+        // Parse note pitch
+        auto notePitch = noteSeq[i];
+        if (notePitch.contains(QRegularExpression(R"((\+|\-))"))) {
+            auto splitPitch = notePitch.split(QRegularExpression(R"((\+|\-))"));
+            note.pitch = NoteNameToMidiNote(splitPitch[0]);
+            note.cents = splitPitch[1].toDouble();
+            note.cents *= (notePitch[splitPitch[0].length()] == '+' ? 1 : -1);
+        } else {
+            note.pitch = NoteNameToMidiNote(noteSeq[i]);
+            note.cents = NAN;
+        }
         note.isSlur = slur[i].toInt();
         note.isRest = isRest[i];
         midiIntervals.insert({noteBegin, noteBegin + note.duration, note});
@@ -366,9 +375,9 @@ void F0Widget::paintEvent(QPaintEvent *event) {
 
         // Midi notes
         auto leftTime = centerTime - w / 2 / secondWidth, rightTime = centerTime + w / 2 / secondWidth;
-
+        QVector<QPair<QPointF, QString>> deviatePitches;
         static constexpr QColor NoteColors[] = {QColor(106, 164, 234), QColor(60, 113, 219)};
-        for (auto i : midiIntervals.findOverlappingIntervals({leftTime, rightTime}, false)) {
+        for (auto &i : midiIntervals.findOverlappingIntervals({leftTime, rightTime}, false)) {
             if (i.value.pitch == 0)
                 continue; // Skip rests (pitch 0)
             auto rec = QRectF(
@@ -384,10 +393,11 @@ void F0Widget::paintEvent(QPaintEvent *event) {
                 painter.drawRect(rec);
                 if (!std::isnan(i.value.cents)) {
                     painter.drawLine(rec.left(), rec.center().y(), rec.right(), rec.center().y());
-                    painter.setPen(Qt::white);
-                    painter.drawText(rec.topLeft() + QPointF(0, -3),
-                                     PitchToNotePlusCentsString(
-                                         i.value.pitch + 0.01 * (std::isnan(i.value.cents) ? 0 : i.value.cents)));
+                    // Defer the drawing of deviation text to prevent the right side notes overlapping with them
+                    deviatePitches.append(
+                        {rec.topLeft() + QPointF(0, -3),
+                         PitchToNotePlusCentsString(i.value.pitch +
+                                                    0.01 * (std::isnan(i.value.cents) ? 0 : i.value.cents))});
                 }
             } else {
                 auto pen = painter.pen();
@@ -466,11 +476,17 @@ void F0Widget::paintEvent(QPaintEvent *event) {
             lowestPitchY -= semitoneHeight / 2;
         }
 
+        // Deviate pitch (Note+-Cents) text
+        painter.setPen(Qt::white);
+        foreach (auto &i, deviatePitches) {
+            painter.drawText(i.first, i.second);
+        }
+
         painter.translate(-KeyWidth, 0);
         painter.setClipRect(0, 0, width(), h);
         w += KeyWidth;
 
-#if !defined(NDEBUG) && 1
+#if !defined(NDEBUG) && 0
         // Debug text
         {
             auto mousePitch = centerPitch + h / 2 / semitoneHeight -
