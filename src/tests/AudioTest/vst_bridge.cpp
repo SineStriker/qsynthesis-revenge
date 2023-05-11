@@ -23,22 +23,24 @@ QWindow *win;
 class GuiThread: public QThread {
     Q_OBJECT
     void run() override {
-        if(!QApplication::instance()) {
-            int argc = 0;
-            const char *argv[1];
-            argv[0] = "a";
-            QApplication a(argc, (char**)argv);
-            win = new QWindow;
-            win->setFlag(Qt::WindowStaysOnTopHint, true);
-            connect(this, &GuiThread::showWindow, win, &QWindow::showNormal);
-            connect(this, &GuiThread::hideWindow, win, &QWindow::hide);
-            a.setQuitOnLastWindowClosed(false);
-            a.exec();
-        }
+        int argc = 1;
+        const char *argv[1];
+        argv[0] = "C:\\Users\\Crs_1\\qsynthesis-revenge\\out\\out-Windows-Debug\\bin\\AudioTest.dll";
+        QApplication a(argc, (char**)argv);
+        win = new QWindow;
+        win->setFlag(Qt::WindowStaysOnTopHint);
+        win->setFlag(Qt::WindowCloseButtonHint, false);
+        win->setFlag(Qt::WindowTitleHint);
+        connect(this, &GuiThread::showWindow, win, &QWindow::showNormal);
+        connect(this, &GuiThread::hideWindow, win, &QWindow::hide);
+        connect(this, &GuiThread::terminateApp, &a, &QApplication::quit);
+        a.setQuitOnLastWindowClosed(false);
+        a.exec();
     }
 signals:
     void showWindow();
     void hideWindow();
+    void terminateApp();
 };
 
 GuiThread *guiThread;
@@ -59,10 +61,12 @@ extern "C" Q_DECL_EXPORT bool Initializer() {
 }
 
 extern "C" Q_DECL_EXPORT bool Terminator() {
+    vstMgr->deleteLater();
     track->deleteLater();
     delete src1;
     delete src2;
-    vstMgr->deleteLater();
+    win->deleteLater();
+    emit guiThread->terminateApp();
     guiThread->deleteLater();
     return true;
 }
@@ -77,6 +81,7 @@ extern "C" Q_DECL_EXPORT void WindowCloser() {
 
 extern "C" Q_DECL_EXPORT bool PlaybackProcessor(const VstAudioOutputManager::PlaybackParameters *playbackParameters, bool isPlaying, int32_t numOutputs, float *const *const *outputs) {
     return vstMgr->vstProcess(playbackParameters, isPlaying, numOutputs, outputs);
+    return true;
 }
 
 extern "C" Q_DECL_EXPORT bool StateChangedCallback(qint64 size, const char *data) {
