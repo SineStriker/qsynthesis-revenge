@@ -1,11 +1,11 @@
 #include "jpg2p.h"
 #include "jpg2p_p.h"
-#include "zhg2p_p.h"
 #include <QDebug>
 
 #include "g2pglobal.h"
 
 namespace IKg2p {
+    // keep only letters
     static QString filterString(const QString &str) {
         QString words;
         for (const auto &ch : str) {
@@ -20,6 +20,8 @@ namespace IKg2p {
         }
         return words;
     }
+
+    // split RomajiStr to List
     static QStringList splitRomaji(const QString &input) {
         QString cleanStr = filterString(input);
         QStringList res;
@@ -41,15 +43,17 @@ namespace IKg2p {
     JpG2pPrivate::~JpG2pPrivate() {
     }
 
+    // load jp convert dict
     void JpG2pPrivate::init() {
         auto dict_dir = dictionaryPath();
-        ZhG2pPrivate::loadDict(dict_dir, "kana2romaji.txt", kanaToRomajiMap);
+        loadDict(dict_dir, "kana2romaji.txt", kanaToRomajiMap);
 
         for (auto it = kanaToRomajiMap.begin(); it != kanaToRomajiMap.end(); ++it) {
             romajiToKanaMap.insert(it.value(), it.key());
         }
     }
 
+    // convert Hiragana to Katakana
     QStringList JpG2pPrivate::convertKana(const QStringList &kanaList, KanaType kanaType) {
         const ushort hiraganaStart = 0x3041;
         const ushort katakanaStart = 0x30A1;
@@ -92,7 +96,7 @@ namespace IKg2p {
     JpG2p::~JpG2p() {
     }
 
-    QString JpG2p::kana2romaji(const QStringList &kanaList) {
+    QString JpG2p::kana2romaji(const QStringList &kanaList) const {
         Q_D(const JpG2p);
         QStringList inputList = d->convertKana(kanaList, JpG2pPrivate::KanaType::Hiragana);
         QStringList romajiList;
@@ -102,7 +106,7 @@ namespace IKg2p {
         return romajiList.join(" ");
     }
 
-    QString JpG2p::kana2romaji(const QString &kanaStr) {
+    QString JpG2p::kana2romaji(const QString &kanaStr) const {
         QStringList input = splitString(kanaStr);
         return kana2romaji(input);
     }
@@ -113,12 +117,12 @@ namespace IKg2p {
         d.init();
     }
 
-    QStringList JpG2p::romaji2kana(const QString &romajiStr) {
+    QStringList JpG2p::romaji2kana(const QString &romajiStr) const {
         QStringList input = splitRomaji(romajiStr);
         return romaji2kana(input);
     }
 
-    QStringList JpG2p::romaji2kana(const QStringList &romajiList) {
+    QStringList JpG2p::romaji2kana(const QStringList &romajiList) const {
         Q_D(const JpG2p);
         QStringList kanaList;
         for (const QString &romaji : romajiList) {

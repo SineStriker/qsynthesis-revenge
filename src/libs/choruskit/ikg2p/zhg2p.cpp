@@ -2,13 +2,11 @@
 #include "zhg2p_p.h"
 
 #include <QDebug>
-#include <QDir>
-#include <QFile>
 
 #include "g2pglobal.h"
 
 namespace IKg2p {
-
+    // reset pinyin to raw string
     static QString resetZH(const QStringList &input, const QStringList &res, QList<int> &positions) {
         QStringList result = input;
         for (int i = 0; i < positions.size(); i++) {
@@ -18,6 +16,7 @@ namespace IKg2p {
         return result.join(" ");
     }
 
+    // split the value of pinyin dictionary
     static void addString(const QString &text, QStringList &res) {
         QStringList temp = text.split(" ");
         for (auto &pinyin : qAsConst(temp)) {
@@ -25,11 +24,8 @@ namespace IKg2p {
         }
     }
 
+    // delete elements from the list
     static inline void removeElements(QStringList &list, int start, int n) {
-        //        list.removeAt(start);     // Remove the first element to be deleted
-        //        for (int i = 1; i < n; i++) {
-        //            list.removeAt(start); // Remove the remaining elements
-        //        }
         list.erase(list.begin() + start, list.begin() + start + n);
     }
 
@@ -39,6 +35,7 @@ namespace IKg2p {
     ZhG2pPrivate::~ZhG2pPrivate() {
     }
 
+    // load zh convert dict
     void ZhG2pPrivate::init() {
         auto dict_dir = dictionaryPath();
         loadDict(dict_dir, "phrases_map.txt", phrases_map);
@@ -60,6 +57,7 @@ namespace IKg2p {
         return word_dict.value(text, {});
     }
 
+    // get all chinese characters and positions in the list
     void ZhG2pPrivate::zhPosition(const QStringList &input, QStringList &res, QList<int> &positions) const {
         for (int i = 0; i < input.size(); i++) {
             if (word_dict.find(input.at(i)) != word_dict.end() || trans_dict.find(input.at(i)) != trans_dict.end()) {
@@ -69,25 +67,6 @@ namespace IKg2p {
         }
     }
 
-    bool ZhG2pPrivate::loadDict(const QString &dict_dir, const QString &fileName, QHash<QString, QString> &resultMap) {
-        QString file_path = QDir::cleanPath(dict_dir + "/" + fileName);
-        QFile file(file_path);
-        if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
-            qWarning() << fileName << " error: " << file.errorString();
-            return false;
-        }
-
-        while (!file.atEnd()) {
-            QString line = file.readLine().trimmed();
-            QStringList keyValuePair = line.split(":");
-            if (keyValuePair.count() == 2) {
-                QString key = keyValuePair[0];
-                QString value = keyValuePair[1];
-                resultMap[key] = value;
-            }
-        }
-        return true;
-    }
 
     ZhG2p::ZhG2p(QObject *parent) : ZhG2p(*new ZhG2pPrivate(), parent) {
     }

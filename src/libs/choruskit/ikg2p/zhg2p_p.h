@@ -27,7 +27,6 @@ namespace IKg2p {
         QString getDefaultPinyin(const QString &text) const;
         void zhPosition(const QStringList &input, QStringList &res, QList<int> &positions) const;
 
-        static bool loadDict(const QString &dict_dir, const QString &fileName, QHash<QString, QString> &resultMap);
     };
 
 }
