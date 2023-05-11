@@ -564,6 +564,7 @@ void F0Widget::mousePressEvent(QMouseEvent *event) {
         draggingNoteInterval = {noteInterval.low, noteInterval.high};
         draggingNoteBeginCents = std::isnan(noteInterval.value.cents) ? 0 : noteInterval.value.cents;
         draggingNoteBeginPitch = noteInterval.value.pitch;
+        setCursor(Qt::SplitVCursor);
     } else
         draggingMode = None;
 }
@@ -578,6 +579,7 @@ void F0Widget::mouseReleaseEvent(QMouseEvent *event) {
                 } else {
                     setDraggedNotePitch(pitchOnWidgetY(event->y()) + 0.5); // Key center pitch -> key bottom pitch
                 }
+                setCursor(Qt::ArrowCursor);
                 break;
             }
 
