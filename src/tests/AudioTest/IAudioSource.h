@@ -7,6 +7,8 @@
 
 #include "AudioBuffer.h"
 
+class AudioBus;
+
 class IAudioSource {
 public:
     enum ReadMode {
