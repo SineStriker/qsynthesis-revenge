@@ -3,7 +3,7 @@
 
 #include <QHash>
 
-#include "jpg2p_p.h"
+#include "jpg2p.h"
 
 namespace IKg2p {
 
@@ -22,9 +22,7 @@ namespace IKg2p {
 
         enum KanaType { Hiragana, Katakana };
 
-        QStringList convertKana(const QStringList &kanaList, KanaType kanaType) const;
-
-        QString kana2romaji(const QStringList &kanaList) const;
+        static QStringList convertKana(const QStringList &kanaList, KanaType kanaType);
     };
 }
 

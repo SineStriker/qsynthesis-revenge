@@ -6,6 +6,34 @@
 #include "g2pglobal.h"
 
 namespace IKg2p {
+    static QString filterString(const QString &str) {
+        QString words;
+        for (const auto &ch : str) {
+            auto u = ch.unicode();
+            if (u >= 128 || !ch.isLetter()) {
+                if (words.isEmpty() || words.back() != ' ') {
+                    words.append(' ');
+                }
+                continue;
+            }
+            words.append(ch);
+        }
+        return words;
+    }
+    static QStringList splitRomaji(const QString &input) {
+        QString cleanStr = filterString(input);
+        QStringList res;
+
+        // romaji
+        QRegExp rx("((?=[^aiueo])[a-z]){0,2}[aiueo]");
+        int pos = 0; // 记录匹配位置的变量
+
+        while ((pos = rx.indexIn(cleanStr, pos)) != -1) {
+            res.append(cleanStr.mid(pos, rx.matchedLength()));
+            pos += rx.matchedLength(); // 更新匹配位置
+        }
+        return res;
+    }
 
     JpG2pPrivate::JpG2pPrivate() {
     }
@@ -22,7 +50,7 @@ namespace IKg2p {
         }
     }
 
-    QStringList JpG2pPrivate::convertKana(const QStringList &kanaList, KanaType kanaType) const {
+    QStringList JpG2pPrivate::convertKana(const QStringList &kanaList, KanaType kanaType) {
         const ushort hiraganaStart = 0x3041;
         const ushort katakanaStart = 0x30A1;
 
@@ -83,5 +111,19 @@ namespace IKg2p {
         d.q_ptr = this;
 
         d.init();
+    }
+
+    QStringList JpG2p::romaji2kana(const QString &romajiStr) {
+        QStringList input = splitRomaji(romajiStr);
+        return romaji2kana(input);
+    }
+
+    QStringList JpG2p::romaji2kana(const QStringList &romajiList) {
+        Q_D(const JpG2p);
+        QStringList kanaList;
+        for (const QString &romaji : romajiList) {
+            kanaList.append(d->romajiToKanaMap.value(romaji, romaji));
+        }
+        return kanaList;
     }
 }

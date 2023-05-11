@@ -16,9 +16,11 @@ namespace IKg2p {
 
         QString kana2romaji(const QString &kanaStr);
         QString kana2romaji(const QStringList &kanaList);
+        QStringList romaji2kana(const QString &romajiStr);
+        QStringList romaji2kana(const QStringList &romajiList);
 
     protected:
-        JpG2p(JpG2pPrivate &d, QObject *parent = nullptr);
+        explicit JpG2p(JpG2pPrivate &d, QObject *parent = nullptr);
 
         QScopedPointer<JpG2pPrivate> d_ptr;
     };
