@@ -8,3 +8,5 @@ add_subdirectory(iemgr)
 add_subdirectory(parseds)
 
 add_subdirectory(scriptmgr)
+
+add_subdirectory(vst)
