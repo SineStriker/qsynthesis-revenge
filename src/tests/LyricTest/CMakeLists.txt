@@ -13,4 +13,5 @@ ck_target_components(${PROJECT_NAME}
     SOURCES ${_src}
     QT_LINKS Core Widgets Network
     LINKS QsFramework
+    LINKS_PRIVATE CkIKg2p
 )

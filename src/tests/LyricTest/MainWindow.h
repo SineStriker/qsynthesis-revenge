@@ -5,6 +5,7 @@
 #include <QFile>
 #include <QMainWindow>
 
+#include <QCheckBox>
 #include <QPushButton>
 #include <QRadioButton>
 #include <QTextEdit>
@@ -25,6 +26,7 @@ private:
     QRadioButton *m_radioBtnOption1;
     QRadioButton *m_radioBtnOption2;
     QButtonGroup *m_buttonGroup;
+    QCheckBox *m_checkBox;
 };
 
 #endif // CHORUSKIT_MAINWINDOW_H
