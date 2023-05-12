@@ -5,6 +5,9 @@ set(CMAKE_POLICY_DEFAULT_CMP0077 NEW)
 # ----------------------------------
 # Import base configuration
 # ----------------------------------
+set(ROOT_CMAKE_MODULE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../scripts/cmake)
+set(ROOT_VCPKG_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../vcpkg)
+
 if(NOT NOT_QT_CREATOR)
     set(CK_CONSOLE_ON_DEBUG off)
     set(CK_CONSOLE_ON_RELEASE off)
@@ -12,7 +15,7 @@ if(NOT NOT_QT_CREATOR)
 endif()
 
 set(CK_CMAKE_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR})
-include(../scripts/cmake/modules/ChorusKitAPI.cmake)
+include(${ROOT_CMAKE_MODULE_DIR}/ChorusKitAPI.cmake)
 
 # ----------------------------------
 # Main project
@@ -29,10 +32,10 @@ ck_init_buildsystem()
 
 # Tell vcpkg not to copy dlls automatically on Windows
 set(VCPKG_APPLOCAL_DEPS off)
-include(../vcpkg/scripts/buildsystems/vcpkg.cmake)
+include(${ROOT_VCPKG_DIR}/scripts/buildsystems/vcpkg.cmake)
 
 # Initialize vcpkg
-ck_init_vcpkg(../vcpkg ${VCPKG_TARGET_TRIPLET})
+ck_init_vcpkg(${ROOT_VCPKG_DIR} ${VCPKG_TARGET_TRIPLET})
 
 # ----------------------------------
 # Build configuration

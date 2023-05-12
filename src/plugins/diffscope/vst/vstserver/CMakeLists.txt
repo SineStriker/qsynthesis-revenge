@@ -1,18 +1,16 @@
 project(vstserver VERSION 0.0.0.0)
 
-set(CMAKE_AUTOMOC ON)
-set(CMAKE_AUTOUIC ON)
-set(CMAKE_AUTORCC ON)
+set(_library ${CURRENT_APPLICATION}__${PROJECT_NAME})
 
 ck_add_files(_src ALLDIRS PATTERNS *.h *.cpp)
 
-ck_add_library(${PROJECT_NAME} SHARED AUTOGEN
-    APPLICATION DiffScope
+ck_add_library(${_library} SHARED AUTOGEN
+    NAME ${PROJECT_NAME}
     VENDOR "CrSjimo"
-    DESCRIPTION "DiffScope VST server."
+    DESCRIPTION "${CURRENT_APPLICATION} VST server."
 )
 
-ck_target_components(${PROJECT_NAME}
+ck_target_components(${_library}
     AUTO_INCLUDE_CURRENT
     SOURCES ${_src}
     QT_LINKS Core Widgets Network

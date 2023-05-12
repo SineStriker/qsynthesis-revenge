@@ -164,7 +164,6 @@ Add a library, default to static library.
 
     ck_add_library(<target>
         [SHARED] [AUTOGEN] [SKIP_INSTALL] [SKIP_EXPORT]
-        [APPLICATION    app]
         [NAME           name] 
         [VERSION        version] 
         [DESCRIPTION    desc]
@@ -176,9 +175,19 @@ Add a library, default to static library.
 ]] #
 function(ck_add_library _target)
     set(options AUTOGEN SKIP_INSTALL SKIP_EXPORT)
-    set(oneValueArgs COPYRIGHT VENDOR APPLICATION)
+    set(oneValueArgs COPYRIGHT VENDOR)
     set(multiValueArgs)
     cmake_parse_arguments(FUNC "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
+
+    # Check target name (Try)
+    set(_ns)
+    set(_name)
+    _ck_parse_namespace(${_target} _ns _name)
+
+    if(NOT _ns OR NOT _name)
+        set(_ns)
+        set(_name)
+    endif()
 
     # Add Qt Moc
     if(FUNC_AUTOGEN)
@@ -187,6 +196,13 @@ function(ck_add_library _target)
 
     # Add library target and attach definitions
     _ck_add_library_internal(${_target} ${FUNC_UNPARSED_ARGUMENTS})
+
+    if(_ns)
+        add_library(${_ns}::${_name} ALIAS ${_target})
+
+        # Set parsed name as output name if not set
+        _ck_try_set_output_name(${_target} ${_name})
+    endif()
 
     # Get target type
     set(_shared off)
@@ -217,9 +233,7 @@ function(ck_add_library _target)
         endif()
     endif()
 
-    if(FUNC_APPLICATION)
-        set(_ns ${FUNC_APPLICATION})
-
+    if(_ns)
         if(APPLE)
             set(_build_output_dir $<TARGET_FILE:${_ns}>/Contents/Frameworks)
             set(_install_output_dir $<TARGET_FILE_NAME:${_ns}>/Contents/Frameworks)
