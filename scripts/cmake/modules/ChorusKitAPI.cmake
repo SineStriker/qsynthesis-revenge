@@ -164,6 +164,7 @@ Add a library, default to static library.
 
     ck_add_library(<target>
         [SHARED] [AUTOGEN] [SKIP_INSTALL] [SKIP_EXPORT]
+        [APPLICATION    app]
         [NAME           name] 
         [VERSION        version] 
         [DESCRIPTION    desc]
@@ -175,7 +176,7 @@ Add a library, default to static library.
 ]] #
 function(ck_add_library _target)
     set(options AUTOGEN SKIP_INSTALL SKIP_EXPORT)
-    set(oneValueArgs COPYRIGHT VENDOR)
+    set(oneValueArgs COPYRIGHT VENDOR APPLICATION)
     set(multiValueArgs)
     cmake_parse_arguments(FUNC "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
 
@@ -216,11 +217,39 @@ function(ck_add_library _target)
         endif()
     endif()
 
+    if(FUNC_APPLICATION)
+        set(_ns ${FUNC_APPLICATION})
+
+        if(APPLE)
+            set(_build_output_dir $<TARGET_FILE:${_ns}>/Contents/Frameworks)
+            set(_install_output_dir $<TARGET_FILE_NAME:${_ns}>/Contents/Frameworks)
+        else()
+            set(_build_output_dir ${CK_GLOBAL_LIBRARY_OUTPUT_PATH}/${_ns})
+            set(_install_output_dir ${CK_INSTALL_LIBRARY_OUTPUT_PATH}/${_ns})
+        endif()
+
+        # Set output directories
+        set_target_properties(${_target} PROPERTIES
+            RUNTIME_OUTPUT_DIRECTORY ${_build_output_dir}
+            LIBRARY_OUTPUT_DIRECTORY ${_build_output_dir}
+            ARCHIVE_OUTPUT_DIRECTORY ${_build_output_dir}
+        )
+
+        # Add target to global list
+        _ck_property_list_append(${_ns} LIBRARIES ${_target})
+    else()
+        set(_build_output_dir ${CK_GLOBAL_LIBRARY_OUTPUT_PATH}/ChorusKit)
+        set(_install_output_dir ${CK_INSTALL_LIBRARY_OUTPUT_PATH}/ChorusKit)
+
+        # Add target to global list
+        _ck_property_list_append(ChorusKit_Metadata LIBRARY_TARGETS ${_target})
+    endif()
+
     # Set output directories
     set_target_properties(${_target} PROPERTIES
         RUNTIME_OUTPUT_DIRECTORY ${CK_GLOBAL_RUNTIME_OUTPUT_PATH}
-        LIBRARY_OUTPUT_DIRECTORY ${CK_GLOBAL_LIBRARY_OUTPUT_PATH}/ChorusKit
-        ARCHIVE_OUTPUT_DIRECTORY ${CK_GLOBAL_LIBRARY_OUTPUT_PATH}/ChorusKit
+        LIBRARY_OUTPUT_DIRECTORY ${_build_output_dir}
+        ARCHIVE_OUTPUT_DIRECTORY ${_build_output_dir}
     )
 
     # Install target
@@ -236,8 +265,8 @@ function(ck_add_library _target)
                 install(TARGETS ${_target}
                     ${_export}
                     RUNTIME DESTINATION ${CK_INSTALL_RUNTIME_OUTPUT_PATH}
-                    LIBRARY DESTINATION ${CK_INSTALL_LIBRARY_OUTPUT_PATH}/ChorusKit
-                    ARCHIVE DESTINATION ${CK_INSTALL_LIBRARY_OUTPUT_PATH}/ChorusKit
+                    LIBRARY DESTINATION ${_install_output_dir}
+                    ARCHIVE DESTINATION ${_install_output_dir}
                 )
             elseif(_shared)
                 install(TARGETS ${_target}
@@ -249,13 +278,10 @@ function(ck_add_library _target)
             install(TARGETS ${_target}
                 ${_export}
                 RUNTIME DESTINATION ${CK_INSTALL_RUNTIME_OUTPUT_PATH}
-                LIBRARY DESTINATION ${CK_INSTALL_LIBRARY_OUTPUT_PATH}
+                LIBRARY DESTINATION ${_install_output_dir}
             )
         endif()
     endif()
-
-    # Add target to global list
-    _ck_property_list_append(ChorusKit_Metadata LIBRARY_TARGETS ${_target})
 endfunction()
 
 #[[
