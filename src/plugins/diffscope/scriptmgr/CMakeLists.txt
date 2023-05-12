@@ -1,6 +1,7 @@
 project(scriptmgr VERSION 0.1.0.0)
 
 set(_res_dir Res)
+set(_plugin ${CURRENT_APPLICATION}__${PROJECT_NAME})
 
 ck_add_files(_src
     ALLDIRS
@@ -12,11 +13,12 @@ ck_add_files(_script_src
     PATTERNS *.js
 )
 
-configure_plugin(_plugin "CrSjimo"
-    MACRO_PREFIX SCRIPTMGR
-    METADATA_IN plugin.json.in
-    PLUGIN_NAME ScriptMgr
-    # META_SUBDIRS plugins
+ck_add_application_plugin(${_plugin}
+    NAME ScriptMgr
+    COMPAT_VERSION 0.0.0.0
+    VENDOR "CrSjimo"
+    DESCRIPTION "${CURRENT_PLUGIN_DESC}"
+    PLUGIN_JSON plugin.json.in
 )
 
 ck_target_components(${_plugin} INCLUDE_CURRENT_PRIVATE INCLUDE_SUBDIRS_PRIVATE
@@ -37,9 +39,7 @@ ck_add_translations(${_plugin}_translations
     TS_OPTIONS "-tr-function-alias" "qsTranslate=_tr"
 )
 
-add_dependencies(${_plugin} ${_plugin}_translations_lrelease)
-
-ck_add_attaches(${_plugin}
+ck_add_attached_files(${_plugin}
     SRC ${CMAKE_CURRENT_BINARY_DIR}/Res/translations DEST .
 )
 

@@ -11,6 +11,7 @@ namespace Core {
 
     class CORE_EXPORT ICoreWindow : public IWindow {
         Q_OBJECT
+        Q_DECLARE_PRIVATE(ICoreWindow)
     public:
         QMenuBar *menuBar() const override;
         void setMenuBar(QMenuBar *menuBar) override;
@@ -38,8 +39,6 @@ namespace Core {
 
     protected:
         ICoreWindow(ICoreWindowPrivate &d, const QString &id, QObject *parent = nullptr);
-
-        Q_DECLARE_PRIVATE(ICoreWindow)
     };
 
 }

@@ -3,11 +3,9 @@ project(CkAppCore
     LANGUAGES CXX
 )
 
-set(_extra_includes)
-
 ck_add_files(_src ALLDIRS PATTERNS *.h *.cpp *.qrc)
 
-ck_add_library(${PROJECT_NAME} SHARED AUTOGEN)
+configure_library()
 
 ck_target_components(${PROJECT_NAME}
     SOURCES ${_src}
@@ -15,11 +13,6 @@ ck_target_components(${PROJECT_NAME}
     QT_INCLUDES_PRIVATE Core Gui Widgets
     LINKS QsFramework ExtensionSystem qBreakpad
     LINKS_PRIVATE SingleApplication
-    INCLUDES ${_extra_includes}
-    INCLUDES_PRIVATE include/CoreApi include/CoreControls src
+    INCLUDE_PRIVATE include/CoreApi include/CoreControls src
     AUTO_INCLUDE_DIRS include
 )
-
-ck_install_headers(.)
-
-configure_ck_library(${PROJECT_NAME})

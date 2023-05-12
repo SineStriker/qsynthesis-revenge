@@ -10,13 +10,12 @@ ck_add_files(_src
     PATTERNS *.h *.cpp res.qrc
 )
 
-ck_add_executable(
-    ${PROJECT_NAME} ${ROOT_APPMAIN_TYPE}
-    # SKIP_INSTALL
+ck_add_test(
+    ${PROJECT_NAME}
 )
 
 ck_target_components(${PROJECT_NAME}
-    INCLUDE_CURRENT
+    INCLUDE_CURRENT_PRIVATE
     SOURCES ${_src}
     QT_LINKS Core Widgets Network
     LINKS QsFramework

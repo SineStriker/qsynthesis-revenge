@@ -3,8 +3,6 @@ project(QsFramework
     LANGUAGES CXX
 )
 
-set(_extra_includes)
-
 ck_add_files(_src
     ALLDIRS
     PATTERNS *.h *.hpp *.cpp cc*.
@@ -19,6 +17,5 @@ ck_target_components(${PROJECT_NAME}
     QT_INCLUDES_PRIVATE Core Widgets
     LINKS QMWidgets QsMedia QsSVS
     LINKS_PRIVATE
-    INCLUDES ${_extra_includes}
     AUTO_INCLUDE_DIRS Global
 )

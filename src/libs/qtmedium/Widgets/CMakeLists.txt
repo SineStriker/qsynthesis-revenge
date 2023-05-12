@@ -3,8 +3,6 @@ project(QMWidgets
     LANGUAGES CXX
 )
 
-set(_extra_includes)
-
 ck_add_files(_src
     ALLDIRS
     PATTERNS *.h *.hpp *.cpp *.cc
@@ -18,7 +16,6 @@ ck_target_components(${PROJECT_NAME}
     QT_INCLUDES_PRIVATE Core Gui Widgets
     LINKS QMCoreLib
     LINKS_PRIVATE
-    INCLUDES ${_extra_includes}
     AUTO_INCLUDE_CURRENT
     AUTO_INCLUDE_DIRS Global Layout Metatypes Static Widgets ../..
     INCLUDE_SUBDIRS_PRIVATE

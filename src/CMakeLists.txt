@@ -5,45 +5,34 @@ set(CMAKE_POLICY_DEFAULT_CMP0077 NEW)
 # ----------------------------------
 # Import base configuration
 # ----------------------------------
-include(../Config.cmake)
+if(NOT NOT_QT_CREATOR)
+    set(CK_CONSOLE_ON_DEBUG off)
+    set(CK_CONSOLE_ON_RELEASE off)
+    set(CK_PROJECT_ROOT_DIR ${CMAKE_CURRENT_SOURCE_DIR}/..)
+endif()
+
+set(CK_CMAKE_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR})
+include(../scripts/cmake/modules/ChorusKitAPI.cmake)
 
 # ----------------------------------
 # Main project
 # ----------------------------------
-project(ChorusKit VERSION ${CONFIG_APP_VERSION} LANGUAGES CXX)
+project(ChorusKit VERSION ${CHORUSKIT_VERSION} LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # ----------------------------------
-# Root settings
-# ----------------------------------
-string(TOLOWER ${CONFIG_CURRENT_APP} ROOT_CURRENT_APP_LOWER)
-string(TIMESTAMP ROOT_CURRENT_YEAR %Y)
-
-set(ROOT_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR})
-set(ROOT_OPENVPI_COPYRIGHT "Copyright ${CONFIG_START_YEAR}-${ROOT_CURRENT_YEAR} OpenVPI Team")
-
-# ----------------------------------
 # Import vcpkg and libraries
 # ----------------------------------
-if(CONFIG_ENABLE_DEVELOP)
-    set(_dev DEV)
-else()
-    set(_dev)
-endif()
+ck_init_buildsystem()
 
-ck_init_buildsystem(
-    NAME "ChorusKit ${CONFIG_CURRENT_APP}"
-    VERSION ${PROJECT_VERSION}
-    DOCS ../LICENSE ../docs/redist/thirdparty
-    ${_dev}
-)
+# Tell vcpkg not to copy dlls automatically on Windows
+set(VCPKG_APPLOCAL_DEPS off)
+include(../vcpkg/scripts/buildsystems/vcpkg.cmake)
 
-set(VCPKG_APPLOCAL_DEPS off) # Tell vcpkg not to copy dlls automatically on Windows
-include(${REPOSITORY_VCPKG_DIR}/scripts/buildsystems/vcpkg.cmake)
-
-ck_init_vcpkg(${REPOSITORY_VCPKG_DIR} ${VCPKG_TARGET_TRIPLET})
+# Initialize vcpkg
+ck_init_vcpkg(../vcpkg ${VCPKG_TARGET_TRIPLET})
 
 # ----------------------------------
 # Build configuration
@@ -69,22 +58,15 @@ endif()
 
 # Add config macros
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
-    add_compile_definitions(CONFIG_ENABLE_DEBUG)
+    ck_add_definition(CONFIG_BUILD_DEBUG)
 endif()
 
-if(CONFIG_WIN32_MSGBOX_TOPMOST)
-    add_compile_definitions(CONFIG_WIN32_MSGBOX_TOPMOST)
+if(NOT WIN32)
+    ck_add_definition(CONFIG_DISABLE_FRAMELESS_HELPER)
 endif()
 
-if(CONFIG_ENABLE_BREAKPAD)
-    add_compile_definitions(CONFIG_ENABLE_BREAKPAD)
-endif()
-
-if((CONFIG_WIN32_DEBUG OR NOT_QT_CREATOR) AND(NOT CONFIG_WIN32_NO_DEBUG OR CMAKE_BUILD_TYPE STREQUAL "Debug"))
-    set(ROOT_APPMAIN_TYPE CONSOLE)
-else()
-    set(ROOT_APPMAIN_TYPE WINDOWS)
-endif()
+ck_add_definition(CONFIG_WIN32_MSGBOX_TOPMOST on)
+ck_add_definition(CONFIG_ENABLE_BREAKPAD off)
 
 # ----------------------------------
 # Add projects
@@ -93,9 +75,10 @@ add_subdirectory(apps)
 add_subdirectory(libs)
 add_subdirectory(tools)
 add_subdirectory(plugins)
+add_subdirectory(share)
 
 # Add tests
-if(CONFIG_BUILD_TEST)
+if(CK_BUILD_TEST)
     add_subdirectory(tests)
 endif()
 

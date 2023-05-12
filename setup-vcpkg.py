@@ -84,7 +84,7 @@ vcpkg_tasks: list[library_task] = [
     library_task("ffmpeg-fake", True),
     library_task("qnrbf", True),
     library_task("qastool", True),
-    library_task("breakpad"),
+    library_task("breakpad", True),
 ]
 
 

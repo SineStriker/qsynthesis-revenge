@@ -1,16 +1,19 @@
 project(parseds VERSION 0.1.0.0)
 
 set(_res_dir Res)
+set(_plugin ${CURRENT_APPLICATION}__${PROJECT_NAME})
 
 ck_add_files(_src
     ALLDIRS
     PATTERNS *.h *.hpp *.cpp *.cc
 )
 
-configure_plugin(_plugin "FlutyDeer"
-    MACRO_PREFIX PARSEDS
-    METADATA_IN plugin.json.in
-    PLUGIN_NAME ParseDs
+ck_add_application_plugin(${_plugin}
+    NAME ParseDs
+    COMPAT_VERSION 0.0.0.0
+    VENDOR "FlutyDeer"
+    DESCRIPTION "${CURRENT_PLUGIN_DESC}"
+    PLUGIN_JSON plugin.json.in
 )
 
 ck_target_components(${_plugin} INCLUDE_CURRENT_PRIVATE INCLUDE_SUBDIRS_PRIVATE
@@ -29,10 +32,7 @@ ck_add_translations(${_plugin}_translations
     QM_DIR ${CMAKE_CURRENT_BINARY_DIR}/Res/translations
 )
 
-add_dependencies(${_plugin} ${_plugin}_translations_lrelease)
-
-ck_add_attaches(${_plugin}
-    # SRC Res/themes DEST .
+ck_add_attached_files(${_plugin}
     SRC ${CMAKE_CURRENT_BINARY_DIR}/Res/translations DEST .
 )
 

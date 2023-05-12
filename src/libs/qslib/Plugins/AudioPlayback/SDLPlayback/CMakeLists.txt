@@ -12,7 +12,7 @@ ck_add_files(_src
 configure_plugin(_plugin "Sine Striker")
 
 ck_target_components(${_plugin}
-    INCLUDE_CURRENT
+    INCLUDE_CURRENT_PRIVATE
     SOURCES ${_src}
     QT_LINKS Core
     LINKS QsMedia

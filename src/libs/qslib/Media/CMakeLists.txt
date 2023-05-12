@@ -3,8 +3,6 @@ project(QsMedia
     LANGUAGES CXX
 )
 
-set(_extra_includes)
-
 ck_add_files(_src
     ALLDIRS
     PATTERNS *.h *.hpp *.cpp *.cc
@@ -18,6 +16,5 @@ ck_target_components(${PROJECT_NAME}
     QT_LINKS Core
     QT_INCLUDES_PRIVATE Core
     LINKS QMCoreLib
-    INCLUDES ${_extra_includes}
     AUTO_INCLUDE_DIRS Global
 )

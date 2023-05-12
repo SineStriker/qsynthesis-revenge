@@ -19,7 +19,7 @@
 #include "Internal/Dialogs/SettingsDialog.h"
 #include "Window/IHomeWindow.h"
 
-#include "ChorusKitBuildInfo.h"
+#include "choruskit_buildinfo.h"
 
 namespace Core {
 

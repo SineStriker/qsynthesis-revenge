@@ -157,6 +157,23 @@
         <source>A communications protocol for media interfaces.</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>There are overlapped notes, continue to export?
+</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Export Midi</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Export</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Abort</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>IEMgr::Internal::OpenSvipWizard</name>
@@ -212,6 +229,26 @@
     </message>
     <message>
         <source>Utau sequence text file.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Fail to open MIDI file!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>%1(%2): (%3 notes, %4)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>None</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Import MIDI file</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>This file doesn&apos;t contain any notes.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

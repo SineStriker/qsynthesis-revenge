@@ -25,9 +25,7 @@ if(QT_CREATOR_ENABLE_QML)
     list(APPEND _qt_libs Qml)
 endif()
 
-ck_add_library(${PROJECT_NAME} SHARED AUTOGEN
-    LIBRARY_MACRO QTCREATOR_UTILS_LIB
-)
+configure_qtc_library(${PROJECT_NAME} QTCREATOR_UTILS_LIB)
 
 ck_target_components(${PROJECT_NAME}
     AUTO_INCLUDE_CURRENT
@@ -38,5 +36,3 @@ ck_target_components(${PROJECT_NAME}
     LINKS ${_platform_link_flags}
     LINKS_PRIVATE ${_platform_libs}
 )
-
-configure_qtc_library(${PROJECT_NAME})

@@ -15,7 +15,7 @@ ck_add_files(_src
 configure_plugin(_plugin "Sine Striker")
 
 ck_target_components(${_plugin}
-    INCLUDE_CURRENT
+    INCLUDE_CURRENT_PRIVATE
     SOURCES ${_src} ${_res_dir}/NativeWindow_res.qrc
     QT_LINKS Widgets
     QT_INCLUDES_PRIVATE Core Widgets

@@ -6,12 +6,10 @@
 
 cmake_minimum_required(VERSION 3.17)
 
-include(Config.cmake)
-
 # ----------------------------------
 # Main project
 # ----------------------------------
-project(ChorusKit LANGUAGES C CXX VERSION ${CONFIG_APP_VERSION})
+project(ChorusKit LANGUAGES C CXX)
 
 set(NOT_QT_CREATOR on)
 

@@ -34,11 +34,19 @@ int main(int argc, char *argv[]) {
     f.setPointSize(9);
     a.setFont(f);
 
-    // Set library loading info
-    qApp->addLibraryPath(qApp->applicationDirPath() + "/../lib/QsLib/plugins/");
+// Set library loading info
+#ifdef Q_OS_MAC
+    qApp->addLibraryPath(qApp->applicationDirPath() + "/../Frameworks/ChorusKit/plugins");
+#else
+    qApp->addLibraryPath(qApp->applicationDirPath() + "/../lib/ChorusKit/plugins");
+#endif
 
     // Initialize g2p
-    IKg2p::setDictionaryPath(qApp->applicationDirPath() + "/../share/g2p/dict");
+#ifdef Q_OS_MAC
+    IKg2p::setDictionaryPath(qApp->applicationDirPath() + "/../Resources/ChorusKit/g2p/dict");
+#else
+    IKg2p::setDictionaryPath(qApp->applicationDirPath() + "/../share/ChorusKit/g2p/dict");
+#endif
 
     MainWindow w;
     w.show();

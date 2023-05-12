@@ -17,7 +17,7 @@ public:
     ~MainWindow();
 
 private slots:
-    void MainWindow::onConvertClicked();
+    void onConvertClicked();
 
 private:
     QTextEdit *m_textEditTop;

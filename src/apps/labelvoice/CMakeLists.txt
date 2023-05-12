@@ -1,6 +1,6 @@
 project(LabelVoice
     LANGUAGES CXX
-    VERSION ${CONFIG_APP_VERSION}
+    VERSION ${CHORUSKIT_VERSION}
 )
 
 include(Template.cmake)

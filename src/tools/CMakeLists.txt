@@ -1,1 +1,1 @@
-add_subdirectory(qtdummy)
+# add_subdirectory(qtdummy)

@@ -3,12 +3,12 @@
     "Libraries": "lib",
     "Share": "share",
     "Plugins": [
-        "lib/QsLib/plugins"
+        "lib/ChorusKit/plugins"
     ],
     "Translations": [
-        "share/qtdummy/translations"
+        "share/ChorusKit/translations"
     ],
     "Themes": [
-        "share/qtdummy/themes"
+        "share/ChorusKit/themes"
     ]
 }

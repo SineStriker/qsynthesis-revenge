@@ -6,7 +6,10 @@ include(../config.cmake)
 
 ck_add_files(_src ALLDIRS PATTERNS *.h *.cpp)
 
-ck_add_library(${PROJECT_NAME} SHARED AUTOGEN)
+ck_add_library(${PROJECT_NAME} SHARED AUTOGEN
+    DESCRIPTION "Cross-platform Qt crash handler"
+    COPYRIGHT "Copyright buzzySmile 2021"
+)
 
 ck_target_components(${PROJECT_NAME}
     SOURCES ${_src}
@@ -15,8 +18,4 @@ ck_target_components(${PROJECT_NAME}
     AUTO_INCLUDE_CURRENT
 )
 
-ck_target_res(${PROJECT_NAME}
-    VERSION ${PROJECT_VERSION}
-    DESCRIPTION "Cross-platform Qt crash handler"
-    COPYRIGHT "Copyright buzzySmile 2021"
-)
+ck_install_headers(.)

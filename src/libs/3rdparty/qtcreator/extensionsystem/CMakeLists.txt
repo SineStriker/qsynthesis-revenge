@@ -2,7 +2,7 @@ project(ExtensionSystem VERSION ${QT_CREATOR_VERSION} LANGUAGES CXX)
 
 ck_add_files(_src CURRENT DIRS newSettings PATTERNS *.h *.cpp *.ui *.qrc)
 
-ck_add_library(${PROJECT_NAME} SHARED AUTOGEN)
+configure_qtc_library(${PROJECT_NAME} EXTENSIONSYSTEM_LIBRARY)
 
 ck_target_components(${PROJECT_NAME}
     AUTO_INCLUDE_CURRENT
@@ -10,7 +10,5 @@ ck_target_components(${PROJECT_NAME}
     QT_LINKS Core Widgets
     LINKS Aggregation Utils
 )
-
-configure_qtc_library(${PROJECT_NAME})
 
 set_source_files_properties(pluginmanager.cpp PROPERTIES SKIP_AUTOMOC ON)

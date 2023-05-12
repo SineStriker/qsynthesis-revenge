@@ -6,17 +6,11 @@ project(QsLib
 # Set global variable for current project
 set(SUB_PROJECT ${PROJECT_NAME})
 set(SUB_VERSION ${PROJECT_VERSION})
-ck_get_short_version(SUB_VERSION_SHORT ${PROJECT_VERSION} 3)
-
-set(SUB_AUTHOR_NAME "QSynthesis Team")
-set(SUB_FILE_DESC "QSynthesis Library")
 
 function(configure_library)
-    ck_add_library(${PROJECT_NAME} SHARED AUTOGEN)
-    ck_target_res(${PROJECT_NAME}
-        VERSION ${PROJECT_VERSION}
-        DESCRIPTION ${SUB_FILE_DESC}
-        COPYRIGHT ${SUB_AUTHOR_NAME}
+    ck_add_library(${PROJECT_NAME} SHARED AUTOGEN
+        DESCRIPTION "QSynthesis Library"
+        VENDOR "QSynthesis Team"
     )
 endfunction()
 

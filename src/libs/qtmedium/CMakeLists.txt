@@ -8,15 +8,13 @@ set(SUB_PROJECT ${PROJECT_NAME})
 set(SUB_VERSION ${PROJECT_VERSION})
 set(SUB_VERSION_SHORT ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}.${PROJECT_VERSION_PATCH})
 
-set(SUB_AUTHOR_NAME "QSynthesis Team")
-set(SUB_FILE_DESC "Qt With Advanced Implementations")
+set(SUB_AUTHOR_NAME)
+set(SUB_FILE_DESC)
 
 function(configure_library)
-    ck_add_library(${PROJECT_NAME} SHARED AUTOGEN)
-    ck_target_res(${PROJECT_NAME}
-        VERSION ${PROJECT_VERSION}
-        DESCRIPTION ${SUB_FILE_DESC}
-        COPYRIGHT ${SUB_AUTHOR_NAME}
+    ck_add_library(${PROJECT_NAME} SHARED AUTOGEN
+        DESCRIPTION "Qt With Advanced Implementations"
+        VENDOR "QSynthesis Team"
     )
 endfunction()
 

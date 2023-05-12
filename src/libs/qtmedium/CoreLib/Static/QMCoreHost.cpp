@@ -63,7 +63,15 @@ void QMCoreHostPrivate::init() {
 
     // Read qtmedium.json
     {
-        QFile file(qApp->applicationDirPath() + "/qtmedium.conf.json");
+        QString appDir =
+#ifdef Q_OS_MAC
+            qApp->applicationDirPath() + "/../Resources"
+#else
+            qApp->applicationDirPath()
+#endif
+            ;
+
+        QFile file(appDir + "/qtmedium.conf.json");
         if (!file.open(QIODevice::ReadOnly)) {
             qDebug() << "qtmedium: configuration file not found";
             goto finish_conf;
@@ -103,7 +111,13 @@ void QMCoreHostPrivate::init() {
     }
 
 finish_conf:
-    QString appDir = qApp->applicationDirPath();
+    QString appDir =
+#ifdef Q_OS_MAC
+        qApp->applicationDirPath() + "/.."
+#else
+        qApp->applicationDirPath()
+#endif
+        ;
 
     auto prefix = confValues.value("Prefix", {appDir}).front();
     if (QMFs::isPathRelative(prefix)) {
@@ -111,7 +125,16 @@ finish_conf:
     }
     prefix = QFileInfo(prefix).canonicalFilePath();
 
-    libDir = confValues.value("Libraries", {"lib"}).front();
+    libDir = confValues
+                 .value("Libraries",
+                        {
+#ifdef Q_OS_MAC
+                            "Frameworks"
+#else
+                            "lib"
+#endif
+                        })
+                 .front();
     if (QMFs::isPathRelative(libDir)) {
         libDir = prefix + "/" + libDir;
     }

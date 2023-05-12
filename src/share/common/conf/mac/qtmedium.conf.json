@@ -1,0 +1,14 @@
+{
+    "Prefix": ".",
+    "Libraries": "Frameworks",
+    "Share": "Resources",
+    "Plugins": [
+        "Frameworks/QsLib/plugins"
+    ],
+    "Translations": [
+        "Resources/ChorusKit/translations"
+    ],
+    "Themes": [
+        "Resources/ChorusKit/themes"
+    ]
+}

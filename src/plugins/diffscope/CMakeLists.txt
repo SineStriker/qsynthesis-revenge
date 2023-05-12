@@ -1,5 +1,5 @@
-set(SUB_PROJECT DiffScope)
-set(CURRENT_PLUGIN_DESC "DiffScope Plugin")
+set(CURRENT_APPLICATION DiffScope)
+set(CURRENT_PLUGIN_DESC "${CURRENT_APPLICATION} Plugin")
 
 add_subdirectory(coreplugin)
 

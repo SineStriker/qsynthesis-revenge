@@ -12,9 +12,3 @@ ck_target_components(${PROJECT_NAME}
     QT_LINKS Core
     AUTO_INCLUDE_CURRENT
 )
-
-ck_add_attaches(${PROJECT_NAME}
-    SRC dict DEST ${CHORUSKIT_SHARE_OUTPUT_DIR}/g2p
-)
-
-ck_install_headers(.)

@@ -1,1 +1,1 @@
-add_subdirectory(${ROOT_CURRENT_APP_LOWER})
+add_subdirectory(diffscope)

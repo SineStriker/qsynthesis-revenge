@@ -1,7 +1,8 @@
 # Usage:
 # cmake
 # -D src=<files/dirs>
-# -P dest=<dir>
+# -D dest=<dir>
+# -P CopyIfDifferent.cmake
 
 # copy file or dir to dest if different
 
@@ -56,25 +57,38 @@ function(_copy_if_different _file _target_file)
     endif()
 endfunction()
 
+macro(_copy_dir _item)
+    get_filename_component(_name ${_item} NAME)
+    file(GLOB_RECURSE _files ${_item}/*)
+
+    foreach(_file ${_files})
+        file(RELATIVE_PATH _rel_path ${_item} ${_file})
+        _copy_if_different(${_file} ${_dest}/${_name}/${_rel_path})
+    endforeach()
+endmacro()
+
 foreach(_item ${src})
     if(NOT IS_ABSOLUTE ${_item})
         get_filename_component(_item ${_item} ABSOLUTE)
     endif()
 
     if(IS_DIRECTORY ${_item})
-        get_filename_component(_name ${_item} NAME)
-        file(GLOB_RECURSE _files ${_item}/*)
-
-        foreach(_file ${_files})
-            file(RELATIVE_PATH _rel_path ${_item} ${_file})
-            _copy_if_different(${_file} ${_dest}/${_name}/${_rel_path})
-        endforeach()
+        _copy_dir(${_item})
     else()
-        file(GLOB _files ${_item})
+        if(${_item} MATCHES ".+\\*\\*")
+            string(REPLACE "**" "*" _item ${_item})
+            file(GLOB _files LIST_DIRECTORIES TRUE ${_item})
+        else()
+            file(GLOB _files ${_item})
+        endif()
 
         foreach(_file ${_files})
-            get_filename_component(_name ${_file} NAME)
-            _copy_if_different(${_file} ${_dest}/${_name})
+            if(IS_DIRECTORY ${_file})
+                _copy_dir(${_file})
+            else()
+                get_filename_component(_name ${_file} NAME)
+                _copy_if_different(${_file} ${_dest}/${_name})
+            endif()
         endforeach()
     endif()
 endforeach()

@@ -5,16 +5,14 @@ project(CkAppLoad
 
 ck_add_files(_src ALLDIRS PATTERNS *.h *.cpp *.qrc)
 
-ck_add_library(${PROJECT_NAME} SHARED AUTOGEN)
+configure_library()
 
 ck_target_components(${PROJECT_NAME}
     SOURCES ${_src}
     QT_LINKS Core Widgets Network
     LINKS QsFramework ExtensionSystem qBreakpad CkAppCore qastool::core
     LINKS_PRIVATE SingleApplication
-    AUTO_INCLUDE_CURRENT
+    INCLUDE_PRIVATE .
 )
-
-configure_ck_library(${PROJECT_NAME})
 
 include(config/qasc.cmake)
