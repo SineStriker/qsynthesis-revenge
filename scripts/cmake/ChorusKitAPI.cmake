@@ -462,8 +462,6 @@ function(ck_add_application _target _entry_library)
         )
         set_target_properties(${_target} PROPERTIES
             RUNTIME_OUTPUT_DIRECTORY ${CK_MAIN_OUTPUT_PATH}
-#            RUNTIME_OUTPUT_NAME ${_target}
-#            OUTPUT_NAME "ChorusKit ${_target}"
         )
 
         # Install to .
@@ -804,6 +802,11 @@ function(ck_finish_build_system)
     get_target_property(_lib_list ChorusKit_Metadata LIBRARY_TARGETS)
     get_target_property(_lib_plugin_list ChorusKit_Metadata LIBRARY_PLUGIN_TARGETS)
 
+    # Add Deploy
+    if(CK_ENABLE_DEPLOY_QT)
+        _ck_deploy_qt_library()
+    endif()
+
     if(APPLE)
         # Add install command to copy shared files
         foreach(_item ${_app_list})
@@ -812,6 +815,16 @@ function(ck_finish_build_system)
                 DESTINATION ${_item}.app/Contents
             )
         endforeach()
+    endif()
+
+    if(NOT WIN32 AND Python_FOUND)
+        # Fix rpath
+        install(CODE "
+            message(STATUS \"Fixing runtime path\")
+            execute_process(
+                COMMAND \"${Python_EXECUTABLE}\" \"${CK_PYTHON_SCRIPTS_DIR}/fixrpath.py\" \"${CMAKE_INSTALL_PREFIX}\"
+                WORKING_DIRECTORY \"${CMAKE_INSTALL_PREFIX}\"
+            )")
     endif()
 
     if(CK_ENABLE_DEVEL)
@@ -1289,60 +1302,4 @@ function(ck_install_headers _dir)
             )
         ")
     endif()
-endfunction()
-
-function(ck_deploy_qt_library)
-    set(options)
-    set(oneValueArgs)
-    set(multiValueArgs TARGETS)
-    cmake_parse_arguments(FUNC "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
-
-    if(APPLE)
-        set(_lib_dir $${CK_INSTALL_LIBRARY_OUTPUT_PATH}/Qt)
-    else()
-        if(WIN32)
-            set(_lib_dir ${CK_INSTALL_RUNTIME_OUTPUT_PATH})
-        else()
-            set(_lib_dir ${CK_INSTALL_LIBRARY_OUTPUT_PATH}/Qt/lib)
-        endif()
-    endif()
-
-    set(_plugins_dir ${CK_INSTALL_LIBRARY_OUTPUT_PATH}/Qt/plugins)
-
-    if(LINUX)
-        if(NOT Python_EXECUTABLE OR NOT QT_QMAKE_EXECUTABLE)
-            return()
-        endif()
-
-        set(_cmd "\"${Python_EXECUTABLE}\" \"${CK_PYTHON_SCRIPTS_DIR}/linuxdeployqt.py\" --qmake \"${QT_QMAKE_EXECUTABLE}\"")
-    else()
-        if(NOT QT_DEPLOY_EXECUTABLE)
-            return()
-        endif()
-
-        set(_cmd "\"${QT_DEPLOY_EXECUTABLE}\"")
-    endif()
-
-    foreach(_target ${FUNC_TARGETS})
-        if(APPLE)
-            set(_deploy_target $<TARGET_BUNDLE_DIR:${_target}>)
-        else()
-            set(_deploy_target $<TARGET_FILE:${_target}>)
-        endif()
-        install(CODE "
-            message(STATUS \"Deploying ${_deploy_target}\")
-            execute_process(
-                COMMAND ${_cmd}
-                --libdir \"${_lib_dir}\"
-                --plugindir \"${_plugins_dir}\"
-                --no-translations
-                --no-system-d3d-compiler
-                --no-compiler-runtime
-                --no-opengl-sw
-                --force
-                --verbose 0
-                \"${_deploy_target}\"
-                WORKING_DIRECTORY \"${CMAKE_INSTALL_PREFIX}\"
-            )")
-    endforeach()
 endfunction()

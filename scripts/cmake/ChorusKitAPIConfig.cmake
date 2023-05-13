@@ -9,6 +9,7 @@ ck_option(CK_CURRENT_VERSION 0.0.1.8)
 
 # Mode
 ck_option(CK_ENABLE_DEVEL off)
+ck_option(CK_ENABLE_DEPLOY_QT on)
 
 # CMake
 ck_option(CK_CMAKE_RANDOM_LENGTH 8)

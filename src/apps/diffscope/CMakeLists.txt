@@ -29,5 +29,3 @@ ck_add_application_files(${PROJECT_NAME}
     SRC share/${CK_PLATFORM_LOWER}/** DEST .
     SRC doc/* DEST doc/DiffScope
 )
-
-file(GENERATE OUTPUT ${CMAKE_BINARY_DIR}/foo.txt CONTENT $<PATH:GET_FILENAME,$<TARGET_BUNDLE_DIR:${PROJECT_NAME}>>)

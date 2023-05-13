@@ -708,3 +708,66 @@ function(_ck_dist_shared_for_application _item)
         )
     endif()
 endfunction()
+
+function(_ck_deploy_qt_library)
+    if(WIN32)
+        if(NOT QT_DEPLOY_EXECUTABLE)
+            return()
+        endif()
+
+        set(_lib_dir ${CK_INSTALL_RUNTIME_OUTPUT_PATH})
+    else()
+        if(NOT Python_EXECUTABLE)
+            return()
+        endif()
+
+        if(LINUX)
+            set(_lib_dir ${CK_INSTALL_LIBRARY_OUTPUT_PATH}/Qt/lib)
+        else()
+            set(_lib_dir $${CK_INSTALL_LIBRARY_OUTPUT_PATH}/Qt)
+        endif()
+    endif()
+
+    set(_plugins_dir ${CK_INSTALL_LIBRARY_OUTPUT_PATH}/Qt/plugins)
+
+    # Join target command
+    set(_targets_cmd)
+    get_target_property(_deploy_targets ChorusKit_Metadata DEPLOY_TARGETS)
+
+    foreach(_target ${_deploy_targets})
+        if(APPLE)
+            set(_targets_cmd "${_targets_cmd}\"$<TARGET_BUNDLE_DIR:${_target}>\" ")
+        else()
+            set(_targets_cmd "${_targets_cmd}\"$<TARGET_FILE:${_target}>\" ")
+        endif()
+    endforeach()
+
+    if(WIN32)
+        install(CODE "
+            message(STATUS \"Deploying targets: ${_deploy_targets}\")
+            execute_process(
+                COMMAND \"${QT_DEPLOY_EXECUTABLE}\"
+                --libdir \"${_lib_dir}\"
+                --plugindir \"${_plugins_dir}\"
+                --no-translations
+                --no-system-d3d-compiler
+                --no-compiler-runtime
+                --no-opengl-sw
+                --force
+                --verbose 0
+                ${_targets_cmd}
+                WORKING_DIRECTORY \"${CMAKE_INSTALL_PREFIX}\"
+            )")
+    else()
+        install(CODE "
+            message(STATUS \"Deploying targets: ${_deploy_targets}\")
+            execute_process(
+                COMMAND \"${Python_EXECUTABLE}\" \"${CK_PYTHON_SCRIPTS_DIR}/unixdeployqt.py\"
+                --qmake \"${QT_QMAKE_EXECUTABLE}\"
+                --libdir \"${_lib_dir}\"
+                --plugindir \"${_plugins_dir}\"
+                ${_targets_cmd}
+                WORKING_DIRECTORY \"${CMAKE_INSTALL_PREFIX}\"
+            )")
+    endif()
+endfunction()
