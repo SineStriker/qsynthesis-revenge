@@ -212,6 +212,9 @@ function(ck_add_library _target)
     if(_ns)
         add_library(${_ns}::${_name} ALIAS ${_target})
 
+        # Add target level dependency
+        add_dependencies(${_ns} ${_target})
+
         # Set parsed name as output name if not set
         _ck_try_set_output_name(${_target} ${_name})
     endif()
@@ -522,7 +525,7 @@ endfunction()
 Add an application plugin, name must be in the form of XXX__XXX.
 
     ck_add_application_plugin(<target>
-        [SKIP_EXPORT]
+        [SKIP_EXPORT]   [NO_PLUGIN_JSON]
         [CATEGORY       category]
         [NAME           name] 
         [VERSION        version] 
@@ -556,6 +559,9 @@ function(ck_add_application_plugin _target)
     _ck_add_library_internal(${_target} SHARED ${FUNC_UNPARSED_ARGUMENTS})
     add_library(${_ns}::${_name} ALIAS ${_target})
 
+    # Add target level dependency
+    add_dependencies(${_ns} ${_target})
+
     # Set parsed name as output name if not set
     _ck_try_set_output_name(${_target} ${_name})
 
@@ -575,6 +581,8 @@ function(ck_add_application_plugin _target)
     # Configure plugin json if specified
     if(FUNC_PLUGIN_JSON)
         ck_configure_plugin_metadata(${_target} ${FUNC_PLUGIN_JSON} ${FUNC_UNPARSED_ARGUMENTS})
+    elseif(NOT FUNC_NO_PLUGIN_JSON AND EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/plugin.json.in)
+        ck_configure_plugin_metadata(${_target} plugin.json.in ${FUNC_UNPARSED_ARGUMENTS})
     endif()
 
     # Configure plugin desc file

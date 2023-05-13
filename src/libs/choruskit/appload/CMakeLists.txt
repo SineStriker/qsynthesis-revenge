@@ -5,7 +5,10 @@ project(CkAppLoad
 
 ck_add_files(_src ALLDIRS PATTERNS *.h *.cpp *.qrc)
 
-configure_library()
+configure_library(
+    SHARED AUTOGEN
+    VENDOR "Sine Striker"
+)
 
 ck_target_components(${PROJECT_NAME}
     SOURCES ${_src}

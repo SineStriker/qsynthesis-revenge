@@ -16,6 +16,9 @@ function(configure_library)
         DESCRIPTION "Qt With Advanced Implementations"
         VENDOR "QSynthesis Team"
     )
+    set_target_properties(${PROJECT_NAME} PROPERTIES
+        QT_TRANSLATE TRUE
+    )
 endfunction()
 
 add_subdirectory(CoreLib)

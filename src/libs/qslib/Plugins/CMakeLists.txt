@@ -12,6 +12,9 @@ function(configure_plugin _plugin _author)
         SKIP_EXPORT
     )
     set(${_plugin} ${_target} PARENT_SCOPE)
+    set_target_properties(${_target} PROPERTIES
+        QT_TRANSLATE TRUE
+    )
 endfunction()
 
 add_subdirectory(AudioDecoder)

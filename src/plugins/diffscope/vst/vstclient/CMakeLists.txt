@@ -13,7 +13,6 @@ ck_add_application_plugin(${_plugin}
     COMPAT_VERSION 0.0.0.0
     VENDOR "CrSjimo"
     DESCRIPTION "${CURRENT_PLUGIN_DESC}"
-    PLUGIN_JSON plugin.json.in
     MACRO_PREFIX VST
 )
 

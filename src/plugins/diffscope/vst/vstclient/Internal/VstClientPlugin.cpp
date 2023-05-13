@@ -50,7 +50,6 @@ namespace Vst {
 
             // Add basic windows and add-ons
 
-
             return true;
         }
 
@@ -59,6 +58,11 @@ namespace Vst {
 
         bool VstClientPlugin::delayedInitialize() {
             return false;
+        }
+
+        QObject *VstClientPlugin::remoteCommand(const QStringList &options, const QString &workingDirectory,
+                                                const QStringList &args) {
+            return nullptr;
         }
 
     }

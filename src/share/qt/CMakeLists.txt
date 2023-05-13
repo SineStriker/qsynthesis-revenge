@@ -1,4 +1,4 @@
-project(qt_shared)
+project(qt_share)
 
 # Add translations for libraries
 file(GLOB _ts_files translations/*.ts)

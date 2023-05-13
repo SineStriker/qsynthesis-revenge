@@ -13,7 +13,6 @@ ck_add_application_plugin(${_plugin}
     COMPAT_VERSION 0.0.0.0
     VENDOR "Sine Striker"
     DESCRIPTION "${CURRENT_PLUGIN_DESC}"
-    PLUGIN_JSON plugin.json.in
 )
 
 ck_target_components(${_plugin}

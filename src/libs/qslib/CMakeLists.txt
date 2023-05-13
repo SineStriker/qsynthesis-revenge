@@ -12,6 +12,9 @@ function(configure_library)
         DESCRIPTION "QSynthesis Library"
         VENDOR "QSynthesis Team"
     )
+    set_target_properties(${PROJECT_NAME} PROPERTIES
+        QT_TRANSLATE TRUE
+    )
 endfunction()
 
 add_subdirectory(SVS)

@@ -2,6 +2,7 @@
 
 #include <QApplication>
 #include <QDirIterator>
+#include <QFileOpenEvent>
 #include <QLoggingCategory>
 #include <QSplashScreen>
 #include <QThread>
@@ -129,6 +130,9 @@ namespace Core {
             qApp->setProperty("closeHomeOnOpen", true);
             qApp->setProperty("projectDocTypeId", "org.ChorusKit.dspx");
 
+            // Handle FileOpenEvent
+            qApp->installEventFilter(this);
+
             return true;
         }
 
@@ -146,13 +150,12 @@ namespace Core {
                 auto win = handle->window();
                 waitSplash(win);
 
-                // Check logs
-                // if (icore->documentSystem()->checkRemainingLogs(win) +
-                //         openFileFromCommand({}, qApp->arguments().mid(1)) >
-                //     0) {
-                //     if (qApp->property("closeHomeOnOpen").toBool())
-                //         QTimer::singleShot(0, win, &QWidget::close);
-                // }
+                // Open files
+                if (openFileFromCommand({}, ExtensionSystem::PluginManager::arguments(), handle) > 0) {
+                    if (qApp->property("closeHomeOnOpen").toBool()) {
+                        QTimer::singleShot(0, win, &QWidget::close);
+                    }
+                }
             });
 
             return false;
@@ -165,13 +168,19 @@ namespace Core {
             if (firstHandle && cnt == 0) {
                 QMView::bringWindowToForeground(firstHandle->window());
             }
-
             return nullptr;
+        }
+
+        bool CorePlugin::eventFilter(QObject *obj, QEvent *event) {
+            if (event->type() == QEvent::FileOpen) {
+                openFileFromCommand({}, {static_cast<QFileOpenEvent *>(event)->file()},
+                                    icore->windowSystem()->firstWindow());
+            }
+            return QObject::eventFilter(obj, event);
         }
 
         void CorePlugin::waitSplash(QWidget *w) {
             // Get splash screen handle
-
             if (m_splash)
                 m_splash->finish(w);
         }
