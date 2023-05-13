@@ -43,9 +43,7 @@ if(QT_FOUND)
     endif()
 
     if(LINUX)
-        find_program(QT_DEPLOY_EXECUTABLE NAMES linuxdeployqt)
-
-        # We have deploy qt tool in the repository, no need to warn
+        message(STATUS "Qt deploy: ${CK_PYTHON_SCRIPTS_DIR}/linuxdeployqt.py")
     elseif(QT_QMAKE_EXECUTABLE)
         get_filename_component(QT_BIN_DIRECTORY "${QT_QMAKE_EXECUTABLE}" DIRECTORY)
         find_program(QT_DEPLOY_EXECUTABLE NAMES windeployqt macdeployqt HINTS "${QT_BIN_DIRECTORY}")

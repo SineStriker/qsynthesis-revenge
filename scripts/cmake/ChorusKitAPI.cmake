@@ -1283,10 +1283,6 @@ function(ck_deploy_qt_library)
     set(multiValueArgs TARGETS)
     cmake_parse_arguments(FUNC "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
 
-    if(NOT QT_DEPLOY_EXECUTABLE)
-        return()
-    endif()
-
     if(APPLE)
         set(_lib_dir $${CK_INSTALL_LIBRARY_OUTPUT_PATH}/Qt)
     else()
@@ -1299,10 +1295,24 @@ function(ck_deploy_qt_library)
 
     set(_plugins_dir ${CK_INSTALL_LIBRARY_OUTPUT_PATH}/Qt/plugins)
 
+    if(LINUX)
+        if(NOT Python_EXECUTABLE OR NOT QT_QMAKE_EXECUTABLE)
+            return()
+        endif()
+
+        set(_cmd "\"${Python_EXECUTABLE}\" \"${CK_PYTHON_SCRIPTS_DIR}/linuxdeployqt.py\" --qmake \"${QT_QMAKE_EXECUTABLE}\"")
+    else()
+        if(NOT QT_DEPLOY_EXECUTABLE)
+            return()
+        endif()
+
+        set(_cmd "\"${QT_DEPLOY_EXECUTABLE}\"")
+    endif()
+
     foreach(_target ${FUNC_TARGETS})
         install(CODE "
             execute_process(
-                COMMAND \"${QT_DEPLOY_EXECUTABLE}\"
+                COMMAND ${_cmd}
                 --libdir \"${_lib_dir}\"
                 --plugindir \"${_plugins_dir}\"
                 --no-translations
