@@ -1,26 +1,9 @@
+include_guard(GLOBAL)
 
 include(${CMAKE_CURRENT_LIST_DIR}/ChorusKitUtils.cmake)
 
-# ----------------------------------
-# Build system configuration
-# ----------------------------------
-# Metadata
-ck_option(CK_CURRENT_VERSION 0.0.1.8)
-
-# Mode
-ck_option(CK_ENABLE_DEVEL off)
-ck_option(CK_ENABLE_DEPLOY_QT on)
-
-# CMake
-ck_option(CK_CMAKE_RANDOM_LENGTH 8)
-ck_option(CK_CMAKE_SOURCE_DIR ${CMAKE_SOURCE_DIR})
-ck_option(CK_PROJECT_ROOT_DIR ${CMAKE_SOURCE_DIR})
-
-# Build
-ck_option(CK_BUILD_TEST on)
-ck_option(CK_ENABLE_BREAKPAD off)
-ck_option(CK_CONSOLE_ON_DEBUG on)
-ck_option(CK_CONSOLE_ON_RELEASE off)
+set(CK_CMAKE_MODULES_DIR ${CMAKE_CURRENT_LIST_DIR})
+set(CK_CMAKE_SCRIPTS_DIR ${CMAKE_CURRENT_LIST_DIR}/commands)
 
 # ----------------------------------
 # Build system configuration
@@ -68,9 +51,44 @@ else()
     endif()
 endif()
 
-message(STATUS "Host system: ${CK_PLATFORM_NAME}, ${CMAKE_HOST_SYSTEM}")
-
 # Install
 set(CK_INSTALL_INCLUDE_DIR include/ChorusKit)
-set(CK_INSTALL_CMAKE_DIR lib/cmake)
+set(CK_INSTALL_CMAKE_DIR lib/cmake/ChorusKit)
 set(CK_INSTALL_EXPORT ChorusKitTargets)
+
+# ----------------------------------
+# Public configuration
+# ----------------------------------
+# Metadata
+ck_option(CK_CURRENT_VERSION 0.0.1.8)
+
+# CMake
+ck_option(CK_CMAKE_SOURCE_DIR ${CMAKE_SOURCE_DIR})
+ck_option(CK_PROJECT_ROOT_DIR ${CMAKE_SOURCE_DIR})
+
+# Build
+ck_option(CK_CONSOLE_ON_DEBUG on)
+ck_option(CK_CONSOLE_ON_RELEASE off)
+
+# ----------------------------------
+# Repository configuration
+# ----------------------------------
+if(NOT CHORUSKIT_REPOSITORY)
+    return()
+endif()
+
+set(CK_PYTHON_SCRIPTS_DIR ${CMAKE_CURRENT_LIST_DIR}/../python)
+
+# Mode
+ck_option(CK_ENABLE_DEVEL off)
+ck_option(CK_ENABLE_DEPLOY_QT on)
+ck_option(CK_ENABLE_VCPKG_DEPS on)
+
+# CMake
+ck_option(CK_CMAKE_RANDOM_LENGTH 8)
+
+# Build
+ck_option(CK_BUILD_TEST on)
+ck_option(CK_ENABLE_BREAKPAD off)
+
+message(STATUS "Host system: ${CK_PLATFORM_NAME}, ${CMAKE_HOST_SYSTEM}")

@@ -1,9 +1,10 @@
 #include "MidiWizard.h"
 
+#include <QCoreApplication>
 #include <QMessageBox>
 
-#include <set>
 #include <cmath>
+#include <set>
 
 #include <QMConsole.h>
 #include <QMLinq.h>
@@ -22,7 +23,7 @@ namespace IEMgr ::Internal {
         setDescription(tr("A communications protocol for media interfaces."));
 
         setCategory("score.SimpleScore");
-        setDisplayCategory(tr("Simple Score"));
+        setDisplayCategory(IWizardFactory::tr("Simple Score"));
     }
 
     MidiWizard::~MidiWizard() {

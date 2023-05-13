@@ -23,7 +23,7 @@ namespace IEMgr ::Internal {
         setDescription(tr("Utau sequence text file."));
 
         setCategory("score.SimpleScore");
-        setDisplayCategory(tr("Simple Score"));
+        setDisplayCategory(IWizardFactory::tr("Simple Score"));
     }
 
     UstWizard::~UstWizard() {

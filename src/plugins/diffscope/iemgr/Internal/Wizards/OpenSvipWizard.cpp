@@ -7,7 +7,7 @@ namespace IEMgr ::Internal {
         setDescription(tr("OpenSVIP converter intermediate model."));
 
         setCategory("score.OpenVPI");
-        setDisplayCategory(tr("OpenVPI"));
+        setDisplayCategory(IWizardFactory::tr("OpenVPI"));
     }
 
     OpenSvipWizard::~OpenSvipWizard() {

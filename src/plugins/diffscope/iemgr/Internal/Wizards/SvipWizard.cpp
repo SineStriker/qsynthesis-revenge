@@ -11,7 +11,7 @@ namespace IEMgr ::Internal {
         setDescription(tr("XStudio 2.0 project file."));
 
         setCategory("score.XiaoIce");
-        setDisplayCategory(tr("XiaoIce"));
+        setDisplayCategory(IWizardFactory::tr("XiaoIce"));
     }
 
     SvipWizard::~SvipWizard() {

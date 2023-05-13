@@ -60,6 +60,23 @@ function(ck_get_short_version _var _version _count)
 endfunction()
 
 #[[
+Tell if there are any generator expressions in the string.
+
+    ck_get_short_version(<string> <output>)
+]] #
+function(ck_has_genex _str _out)
+    string(GENEX_STRIP "${_str}" _no_genex)
+
+    if("${_str}" STREQUAL "${_no_genex}")
+        set(_res off)
+    else()
+        set(_res on)
+    endif()
+
+    set(${_out} ${_res} PARENT_SCOPE)
+endfunction()
+
+#[[
 Get subdirectories' names or paths.
 
     ck_get_subdirs(<list>  

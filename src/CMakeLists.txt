@@ -14,6 +14,7 @@ if(NOT NOT_QT_CREATOR)
     set(CK_PROJECT_ROOT_DIR ${CMAKE_CURRENT_SOURCE_DIR}/..)
 endif()
 
+set(CHORUSKIT_REPOSITORY on)
 set(CK_CMAKE_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR})
 include(${ROOT_CMAKE_MODULE_DIR}/ChorusKitAPI.cmake)
 
@@ -51,7 +52,7 @@ endif()
 find_package(SDL2 REQUIRED)
 find_package(yaml-cpp REQUIRED)
 find_package(ffmpeg-fake REQUIRED NAMES FFmpeg)
-find_package(QuaZip NAMES quazip QuaZip-Qt5 QuaZip-Qt6 REQUIRED)
+find_package(QuaZip REQUIRED NAMES quazip QuaZip-Qt5 QuaZip-Qt6)
 find_package(QNrbf REQUIRED)
 find_package(QasTool REQUIRED)
 

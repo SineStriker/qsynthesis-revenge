@@ -173,7 +173,7 @@
     <name>IEMgr::Internal::MidiWizard</name>
     <message>
         <source>Simple Score</source>
-        <translation>简单谱面</translation>
+        <translation type="vanished">简单谱面</translation>
     </message>
     <message>
         <source>Standard Midi Files</source>
@@ -234,11 +234,11 @@
     </message>
     <message>
         <source>Export</source>
-        <translation type="unfinished">导出</translation>
+        <translation>导出</translation>
     </message>
     <message>
         <source>Abort</source>
-        <translation type="unfinished"></translation>
+        <translation>中止</translation>
     </message>
 </context>
 <context>
@@ -250,10 +250,6 @@
     <message>
         <source>OpenSVIP converter intermediate model.</source>
         <translation>OpenSVPI转换器中间模型。</translation>
-    </message>
-    <message>
-        <source>OpenVPI</source>
-        <translation></translation>
     </message>
     <message>
         <source>OpenSVIP Json Files</source>
@@ -272,7 +268,7 @@
     </message>
     <message>
         <source>XiaoIce</source>
-        <translation>小冰</translation>
+        <translation type="vanished">小冰</translation>
     </message>
     <message>
         <source>XStudio Svip Files</source>
@@ -283,7 +279,7 @@
     <name>IEMgr::Internal::UstWizard</name>
     <message>
         <source>Simple Score</source>
-        <translation>简单谱面</translation>
+        <translation type="vanished">简单谱面</translation>
     </message>
     <message>
         <source>Utau Sequence Texts</source>
@@ -299,23 +295,38 @@
     </message>
     <message>
         <source>Fail to open MIDI file!</source>
-        <translation type="unfinished">无法打开MIDI文件！</translation>
+        <translation>无法打开MIDI文件！</translation>
     </message>
     <message>
         <source>%1(%2): (%3 notes, %4)</source>
-        <translation type="unfinished">%1(%2)：(%3个音符，%4)</translation>
+        <translation>%1(%2)：(%3个音符，%4)</translation>
     </message>
     <message>
         <source>None</source>
-        <translation type="unfinished">无</translation>
+        <translation>无</translation>
     </message>
     <message>
         <source>Import MIDI file</source>
-        <translation type="unfinished">导入MIDI文件</translation>
+        <translation>导入MIDI文件</translation>
     </message>
     <message>
         <source>This file doesn&apos;t contain any notes.</source>
-        <translation type="unfinished">此文件中不存在音符。</translation>
+        <translation>此文件中不存在音符。</translation>
+    </message>
+</context>
+<context>
+    <name>IWizardFactory</name>
+    <message>
+        <source>Simple Score</source>
+        <translation>简单谱面</translation>
+    </message>
+    <message>
+        <source>XiaoIce</source>
+        <translation>小冰</translation>
+    </message>
+    <message>
+        <source>OpenVPI</source>
+        <translation></translation>
     </message>
 </context>
 </TS>

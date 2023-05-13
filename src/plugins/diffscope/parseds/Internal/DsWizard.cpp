@@ -14,7 +14,7 @@ namespace IEMgr ::Internal {
         setDescription(tr("OpenVPI DiffSinger command line synthesizer format."));
 
         setCategory("score.OpenVPI");
-        setDisplayCategory(tr("OpenVPI"));
+        setDisplayCategory(IWizardFactory::tr("OpenVPI"));
     }
 
     DsWizard::~DsWizard() {

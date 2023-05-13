@@ -106,10 +106,6 @@
 <context>
     <name>IEMgr::Internal::MidiWizard</name>
     <message>
-        <source>Simple Score</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Standard Midi Files</source>
         <translation type="unfinished"></translation>
     </message>
@@ -186,10 +182,6 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>OpenVPI</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>OpenSVIP Json Files</source>
         <translation type="unfinished"></translation>
     </message>
@@ -205,20 +197,12 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>XiaoIce</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>XStudio Svip Files</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
     <name>IEMgr::Internal::UstWizard</name>
-    <message>
-        <source>Simple Score</source>
-        <translation type="unfinished"></translation>
-    </message>
     <message>
         <source>Utau Sequence Texts</source>
         <translation type="unfinished"></translation>
@@ -249,6 +233,21 @@
     </message>
     <message>
         <source>This file doesn&apos;t contain any notes.</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>IWizardFactory</name>
+    <message>
+        <source>Simple Score</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>XiaoIce</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>OpenVPI</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

@@ -4,7 +4,7 @@
 <context>
     <name>Vst::Internal::VstClientPlugin</name>
     <message>
-        <location filename="../../Internal/VstClientPlugin.cpp" line="36"/>
+        <location filename="../../Internal/VstClientPlugin.cpp" line="37"/>
         <source>Initializing vst support...</source>
         <translation>初始化 vst 支持...</translation>
     </message>

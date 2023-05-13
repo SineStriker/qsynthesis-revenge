@@ -18,11 +18,6 @@
         <translation>OpenVPI DiffSinger命令行合成器格式。</translation>
     </message>
     <message>
-        <location filename="../../Internal/DsWizard.cpp" line="17"/>
-        <source>OpenVPI</source>
-        <translation></translation>
-    </message>
-    <message>
         <location filename="../../Internal/DsWizard.cpp" line="28"/>
         <source>OpenVPI Ds File</source>
         <translation>OpenVPI Ds文件</translation>
@@ -34,6 +29,14 @@
         <location filename="../../Internal/ParseDs.cpp" line="36"/>
         <source>Initializing OpenVPI Ds parser...</source>
         <translation>初始化OpenVPI Ds解析器...</translation>
+    </message>
+</context>
+<context>
+    <name>IWizardFactory</name>
+    <message>
+        <location filename="../../Internal/DsWizard.cpp" line="17"/>
+        <source>OpenVPI</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>

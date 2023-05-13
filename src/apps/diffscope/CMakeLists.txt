@@ -26,6 +26,20 @@ ck_add_application_files(${PROJECT_NAME}
 
 ck_add_application_files(${PROJECT_NAME}
     SKIP_BUILD BASE_SHARE_DIR
-    SRC share/${CK_PLATFORM_LOWER}/** DEST .
     SRC doc/* DEST doc/DiffScope
 )
+
+if(WIN32)
+    # Add windows icons
+    ck_add_application_files(${PROJECT_NAME}
+        SKIP_BUILD
+        SRC share/win-icons/* DEST icons
+    )
+elseif(APPLE)
+else()
+    # Add linux files
+    ck_add_application_files(${PROJECT_NAME}
+        SKIP_BUILD
+        SRC share/applications share/icons DEST .
+    )
+endif()

@@ -28,11 +28,19 @@ public:
     QString tempDir() const;
     void setTempDir(const QString &dir);
 
+    // Default: ${appPath}/../lib on Windows/Linux, ${appPath}/../Frameworks on Mac
     QString libDir() const;
     void setLibDir(const QString &dir);
 
+    // Default: ${appPath}/../share on Windows/Linux, ${appPath}/../Resources on Mac
     QString shareDir() const;
     void setShareDir(const QString &dir);
+
+    // ${shareDir}/${appName} on Windows/Linux, ${shareDir} on Mac
+    QString appShareDir() const;
+
+    // ${libDir}/${appName}/plugins on Windows/Linux, ${appPath}/../Plugins on Mac
+    QString appPluginsDir() const;
 
     bool createDataAndTempDirs() const;
 

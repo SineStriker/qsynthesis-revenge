@@ -61,11 +61,12 @@ void QMCoreHostPrivate::init() {
 
     QHash<QString, QStringList> confValues;
 
+    QString appUpDir = QDir::cleanPath(qApp->applicationDirPath() + "/..");
     // Read qtmedium.json
     {
         QString appDir =
 #ifdef Q_OS_MAC
-            qApp->applicationDirPath() + "/../Resources"
+            QDir::cleanPath(appUpDir + "/Resources")
 #else
             qApp->applicationDirPath()
 #endif
@@ -113,13 +114,13 @@ void QMCoreHostPrivate::init() {
 finish_conf:
     QString appDir =
 #ifdef Q_OS_MAC
-        qApp->applicationDirPath() + "/.."
+        appUpDir
 #else
         qApp->applicationDirPath()
 #endif
         ;
 
-    auto prefix = confValues.value("Prefix", {appDir}).front();
+    auto prefix = confValues.value("Prefix", {appUpDir}).front();
     if (QMFs::isPathRelative(prefix)) {
         prefix = appDir + "/" + prefix;
     }
@@ -252,6 +253,24 @@ QString QMCoreHost::shareDir() const {
 void QMCoreHost::setShareDir(const QString &dir) {
     Q_D(QMCoreHost);
     d->shareDir = dir;
+}
+
+QString QMCoreHost::appShareDir() const {
+    return shareDir()
+#ifndef Q_OS_MAC
+           + "/" + qAppName()
+#endif
+        ;
+}
+
+QString QMCoreHost::appPluginsDir() const {
+    return
+#ifdef Q_OS_MAC
+        QDir::cleanPath(qApp->applicationDirPath() + "/../Plugins")
+#else
+        libDir() + "/" + qAppName() + "/plugins"
+#endif
+            ;
 }
 
 bool QMCoreHost::createDataAndTempDirs() const {

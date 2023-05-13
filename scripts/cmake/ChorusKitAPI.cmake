@@ -8,10 +8,6 @@ set(CHORUSKIT_VERSION 0.0.1.9)
 set(CK_QT_VERSION_MIN 5.15.2)
 set(CK_DEV_START_YEAR 2019)
 
-set(CK_CMAKE_MODULES_DIR ${CMAKE_CURRENT_LIST_DIR})
-set(CK_CMAKE_SCRIPTS_DIR ${CMAKE_CURRENT_LIST_DIR}/commands)
-set(CK_PYTHON_SCRIPTS_DIR ${CMAKE_CURRENT_LIST_DIR}/../python)
-
 # ----------------------------------
 # ChorusKit API
 # ----------------------------------
@@ -28,8 +24,11 @@ function(ck_init_buildsystem)
     set(multiValueArgs)
     cmake_parse_arguments(FUNC "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
 
-    if(APPLE AND CK_ENABLE_DEVEL)
-        message(FATAL_ERROR "ck_init_buildsystem: Develop mode is not support on Mac.")
+    # if(APPLE AND CK_ENABLE_DEVEL)
+    # message(FATAL_ERROR "ck_init_buildsystem: Develop mode is not support on Mac.")
+    # endif()
+    if(NOT CHORUSKIT_REPOSITORY AND CK_ENABLE_DEVEL)
+        message(FATAL_ERROR "ck_init_buildsystem: Develop mode is not support outside ChorusKit repository.")
     endif()
 
     # Store data during configuration
@@ -51,7 +50,7 @@ Add target to copy vcpkg dependencies on Windows.
     ck_init_vcpkg(<vcpkg_dir> <vcpkg_triplet>)
 ]] #
 function(ck_init_vcpkg _vcpkg_dir _vcpkg_triplet)
-    if(NOT WIN32)
+    if(NOT WIN32 OR NOT CK_ENABLE_VCPKG_DEPS)
         return()
     endif()
 
@@ -220,12 +219,7 @@ function(ck_add_library _target)
     endif()
 
     # Get target type
-    set(_shared off)
-    get_target_property(_type ${_target} TYPE)
-
-    if(${_type} STREQUAL SHARED_LIBRARY)
-        set(_shared on)
-    endif()
+    _ck_check_shared_library(${_target} _shared)
 
     # Add windows rc file
     if(WIN32)
@@ -251,27 +245,14 @@ function(ck_add_library _target)
     if(_ns)
         if(APPLE)
             set(_build_output_dir $<TARGET_BUNDLE_DIR:${_ns}>/Contents/Frameworks)
-            set(_install_output_dir ${_ns}.app/Contents/Frameworks)
+            set(_install_output_dir $<TARGET_FILE_NAME:${_ns}>.app/Contents/Frameworks)
         else()
             set(_build_output_dir ${CK_GLOBAL_LIBRARY_OUTPUT_PATH}/${_ns})
             set(_install_output_dir ${CK_INSTALL_LIBRARY_OUTPUT_PATH}/${_ns})
         endif()
-
-        # Set output directories
-        set_target_properties(${_target} PROPERTIES
-            RUNTIME_OUTPUT_DIRECTORY ${_build_output_dir}
-            LIBRARY_OUTPUT_DIRECTORY ${_build_output_dir}
-            ARCHIVE_OUTPUT_DIRECTORY ${_build_output_dir}
-        )
-
-        # Add target to global list
-        _ck_property_list_append(${_ns} LIBRARIES ${_target})
     else()
         set(_build_output_dir ${CK_GLOBAL_LIBRARY_OUTPUT_PATH}/ChorusKit)
         set(_install_output_dir ${CK_INSTALL_LIBRARY_OUTPUT_PATH}/ChorusKit)
-
-        # Add target to global list
-        _ck_property_list_append(ChorusKit_Metadata LIBRARY_TARGETS ${_target})
     endif()
 
     # Set output directories
@@ -303,6 +284,14 @@ function(ck_add_library _target)
                 LIBRARY DESTINATION ${_install_output_dir}
             )
         endif()
+    endif()
+
+    if(_ns)
+        # Add target to global list
+        _ck_property_list_append(${_ns} LIBRARIES ${_target})
+    else()
+        # Add target to global list
+        _ck_property_list_append(ChorusKit_Metadata LIBRARY_TARGETS ${_target})
     endif()
 endfunction()
 
@@ -447,12 +436,6 @@ function(ck_add_application _target _entry_library)
     string(TIMESTAMP _year "%Y")
     set(_copyright "Copyright ${CK_DEV_START_YEAR}-${_year} OpenVPI")
 
-    if(FUNC_SKIP_EXPORT OR NOT CK_ENABLE_DEVEL)
-        set(_export)
-    else()
-        set(_export EXPORT ${CK_INSTALL_EXPORT})
-    endif()
-
     if(APPLE)
         # Add mac bundle
         _ck_attach_mac_bundle(${_target}
@@ -462,12 +445,7 @@ function(ck_add_application _target _entry_library)
         )
         set_target_properties(${_target} PROPERTIES
             RUNTIME_OUTPUT_DIRECTORY ${CK_MAIN_OUTPUT_PATH}
-        )
-
-        # Install to .
-        install(TARGETS ${_target}
-            ${_export}
-            DESTINATION . OPTIONAL
+            OUTPUT_NAME "ChorusKit ${_target}"
         )
     else()
         if(WIN32)
@@ -491,7 +469,21 @@ function(ck_add_application _target _entry_library)
         _ck_create_win_shortcut(${_target} ${CK_MAIN_OUTPUT_PATH}
             OUTPUT_NAME "ChorusKit ${_target}"
         )
+    endif()
 
+    if(FUNC_SKIP_EXPORT OR NOT CK_ENABLE_DEVEL)
+        set(_export)
+    else()
+        set(_export EXPORT ${CK_INSTALL_EXPORT})
+    endif()
+
+    if(APPLE)
+        # Install to .
+        install(TARGETS ${_target}
+            ${_export}
+            DESTINATION . OPTIONAL
+        )
+    else()
         # Install to bin
         install(TARGETS ${_target}
             ${_export}
@@ -580,8 +572,13 @@ function(ck_add_application_plugin _target)
     _ck_set_value(_category FUNC_CATEGORY ${PROJECT_NAME})
 
     if(APPLE)
-        set(_build_output_dir $<TARGET_BUNDLE_DIR:${_ns}>/Contents/Plugins/${_category})
-        set(_install_output_dir ${_ns}.app/Contents/Plugins/${_category})
+        if(CHORUSKIT_REPOSITORY)
+            set(_build_output_dir ${CK_MAIN_OUTPUT_PATH}/${_ns}/plugins/${_category})
+        else()
+            set(_build_output_dir $<TARGET_BUNDLE_DIR:${_ns}>/Contents/Plugins/${_category})
+        endif()
+
+        set(_install_output_dir $<TARGET_FILE_NAME:${_ns}>.app/Contents/Plugins/${_category})
     else()
         set(_build_output_dir ${CK_GLOBAL_LIBRARY_OUTPUT_PATH}/${_ns}/plugins/${_category})
         set(_install_output_dir ${CK_INSTALL_LIBRARY_OUTPUT_PATH}/${_ns}/plugins/${_category})
@@ -798,6 +795,10 @@ function(ck_finish_build_system)
     # Generate build info header
     _ck_configure_build_info_header("${CK_HEADERS_OUTPUT_PATH}/choruskit_buildinfo.h")
 
+    if(NOT CHORUSKIT_REPOSITORY)
+        return()
+    endif()
+
     get_target_property(_app_list ChorusKit_Metadata APPLICATION_TARGETS)
     get_target_property(_lib_list ChorusKit_Metadata LIBRARY_TARGETS)
     get_target_property(_lib_plugin_list ChorusKit_Metadata LIBRARY_PLUGIN_TARGETS)
@@ -812,17 +813,18 @@ function(ck_finish_build_system)
         foreach(_item ${_app_list})
             install(
                 DIRECTORY ${CK_GLOBAL_LIBRARY_OUTPUT_PATH} ${CK_GLOBAL_SHARE_OUTPUT_PATH}
-                DESTINATION ${_item}.app/Contents
+                DESTINATION $<TARGET_FILE_NAME:${_item}>.app/Contents
             )
         endforeach()
     endif()
 
-    if(NOT WIN32 AND Python_FOUND)
-        # Fix rpath
+    # Fix rpath and post deploy
+    if(Python_FOUND)
+        set(_script "${CK_PYTHON_SCRIPTS_DIR}/postdeploy.py")
         install(CODE "
-            message(STATUS \"Fixing runtime path\")
+            message(STATUS \"Post deploy: run ${_script}\")
             execute_process(
-                COMMAND \"${Python_EXECUTABLE}\" \"${CK_PYTHON_SCRIPTS_DIR}/fixrpath.py\" \"${CMAKE_INSTALL_PREFIX}\"
+                COMMAND \"${Python_EXECUTABLE}\" \"${_script}\" \"${CMAKE_INSTALL_PREFIX}\"
                 WORKING_DIRECTORY \"${CMAKE_INSTALL_PREFIX}\"
             )")
     endif()
@@ -1014,6 +1016,12 @@ function(ck_add_translations _target)
     # Collect source files
     if(FUNC_TARGETS)
         foreach(_item ${FUNC_TARGETS})
+            get_target_property(_type ${_item} TYPE)
+
+            if(${_type} STREQUAL "UTILITY")
+                continue()
+            endif()
+
             set(_tmp_files)
             get_target_property(_tmp_files ${_item} SOURCES)
             list(FILTER _tmp_files INCLUDE REGEX ".+\\.(cpp|cc)")
@@ -1283,23 +1291,25 @@ Install all headers in specified directory.
     ck_install_headers(_dir)
 ]] #
 function(ck_install_headers _dir)
-    if(CK_ENABLE_DEVEL)
-        get_filename_component(_abs_dir ${_dir} ABSOLUTE)
-
-        file(RELATIVE_PATH _rel_path ${CK_CMAKE_SOURCE_DIR} ${_abs_dir})
-        set(_dest "${CK_INSTALL_INCLUDE_DIR}/${_rel_path}")
-        install(DIRECTORY ${_abs_dir}/.
-            DESTINATION "${_dest}"
-            FILES_MATCHING REGEX ".+\\.(h|hpp)"
-        )
-
-        # Remove empty directories
-        install(CODE "
-            execute_process(
-                COMMAND \"${CMAKE_COMMAND}\"
-                -D \"dir=${CMAKE_INSTALL_PREFIX}/${_dest}\"
-                -P \"${CK_CMAKE_SCRIPTS_DIR}/RemoveEmptyDirs.cmake\"
-            )
-        ")
+    if(NOT CK_ENABLE_DEVEL)
+        return()
     endif()
+
+    get_filename_component(_abs_dir ${_dir} ABSOLUTE)
+
+    file(RELATIVE_PATH _rel_path ${CK_CMAKE_SOURCE_DIR} ${_abs_dir})
+    set(_dest "${CK_INSTALL_INCLUDE_DIR}/${_rel_path}")
+    install(DIRECTORY ${_abs_dir}/.
+        DESTINATION "${_dest}"
+        FILES_MATCHING REGEX ".+\\.(h|hpp)"
+    )
+
+    # Remove empty directories
+    install(CODE "
+        execute_process(
+            COMMAND \"${CMAKE_COMMAND}\"
+            -D \"dir=${CMAKE_INSTALL_PREFIX}/${_dest}\"
+            -P \"${CK_CMAKE_SCRIPTS_DIR}/RemoveEmptyDirs.cmake\"
+        )
+    ")
 endfunction()

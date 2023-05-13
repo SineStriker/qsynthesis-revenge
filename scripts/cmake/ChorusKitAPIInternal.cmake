@@ -1,63 +1,67 @@
+include_guard(GLOBAL)
+
 include(${CMAKE_CURRENT_LIST_DIR}/ChorusKitAPIConfig.cmake)
 
-if(WIN32)
-    set(CK_SHARED_LIBRARY_PATTERN "*.dll")
-elseif(APPLE)
-    set(CK_SHARED_LIBRARY_PATTERN "*.dylib")
-else()
-    set(CK_SHARED_LIBRARY_PATTERN "*.so*")
-endif()
-
-# Git
-find_package(Git QUIET)
-
-if(Git_FOUND)
-    message(STATUS "Git found: ${GIT_EXECUTABLE}")
-else()
-    message(WARNING "Git not found")
-endif()
-
-# Python
-find_package(Python QUIET)
-
-if(Python_FOUND)
-    message(STATUS "Python found: ${Python_EXECUTABLE}")
-else()
-    message(WARNING "Python not found")
-endif()
-
-# Find Qt tools
-find_package(QT NAMES Qt6 Qt5 COMPONENTS Core QUIET)
-find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Core QUIET)
-
-if(QT_FOUND)
-    if(NOT DEFINED QT_QMAKE_EXECUTABLE)
-        get_target_property(QT_QMAKE_EXECUTABLE Qt::qmake IMPORTED_LOCATION)
-    endif()
-
-    if(EXISTS "${QT_QMAKE_EXECUTABLE}")
-        message(STATUS "Qmake found: ${QT_QMAKE_EXECUTABLE}")
+if(CHORUSKIT_REPOSITORY)
+    if(WIN32)
+        set(CK_SHARED_LIBRARY_PATTERN "*.dll")
+    elseif(APPLE)
+        set(CK_SHARED_LIBRARY_PATTERN "*.dylib")
     else()
-        set(QT_QMAKE_EXECUTABLE)
-        message(WARNING "Qmake not found")
+        set(CK_SHARED_LIBRARY_PATTERN "*.so*")
     endif()
 
-    if(LINUX)
-        message(STATUS "Qt deploy: ${CK_PYTHON_SCRIPTS_DIR}/linuxdeployqt.py")
-    elseif(QT_QMAKE_EXECUTABLE)
-        get_filename_component(QT_BIN_DIRECTORY "${QT_QMAKE_EXECUTABLE}" DIRECTORY)
-        find_program(QT_DEPLOY_EXECUTABLE NAMES windeployqt macdeployqt HINTS "${QT_BIN_DIRECTORY}")
+    # Git
+    find_package(Git QUIET)
 
-        if(EXISTS "${QT_DEPLOY_EXECUTABLE}")
-            message(STATUS "Qt deploy found: ${QT_DEPLOY_EXECUTABLE}")
-        else()
-            set(QT_DEPLOY_EXECUTABLE)
-            message(WARNING "Qt deploy not found")
+    if(Git_FOUND)
+        message(STATUS "Git found: ${GIT_EXECUTABLE}")
+    else()
+        message(WARNING "Git not found")
+    endif()
+
+    # Python
+    find_package(Python QUIET)
+
+    if(Python_FOUND)
+        message(STATUS "Python found: ${Python_EXECUTABLE}")
+    else()
+        message(WARNING "Python not found")
+    endif()
+
+    # Find Qt tools
+    find_package(QT NAMES Qt6 Qt5 COMPONENTS Core QUIET)
+    find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Core QUIET)
+
+    if(QT_FOUND)
+        if(NOT DEFINED QT_QMAKE_EXECUTABLE)
+            get_target_property(QT_QMAKE_EXECUTABLE Qt::qmake IMPORTED_LOCATION)
         endif()
-    endif()
 
-else()
-    message(WARNING "QtCore component not found")
+        if(EXISTS "${QT_QMAKE_EXECUTABLE}")
+            message(STATUS "Qmake found: ${QT_QMAKE_EXECUTABLE}")
+        else()
+            set(QT_QMAKE_EXECUTABLE)
+            message(WARNING "Qmake not found")
+        endif()
+
+        if(LINUX)
+            message(STATUS "Qt deploy: ${CK_PYTHON_SCRIPTS_DIR}/linuxdeployqt.py")
+        elseif(QT_QMAKE_EXECUTABLE)
+            get_filename_component(QT_BIN_DIRECTORY "${QT_QMAKE_EXECUTABLE}" DIRECTORY)
+            find_program(QT_DEPLOY_EXECUTABLE NAMES windeployqt macdeployqt HINTS "${QT_BIN_DIRECTORY}")
+
+            if(EXISTS "${QT_DEPLOY_EXECUTABLE}")
+                message(STATUS "Qt deploy found: ${QT_DEPLOY_EXECUTABLE}")
+            else()
+                set(QT_DEPLOY_EXECUTABLE)
+                message(WARNING "Qt deploy not found")
+            endif()
+        endif()
+
+    else()
+        message(WARNING "QtCore component not found")
+    endif()
 endif()
 
 # ----------------------------------
@@ -76,6 +80,34 @@ function(_ck_parse_namespace _nested _key _val)
         set(${_key} ${CMAKE_MATCH_1} PARENT_SCOPE)
         set(${_val} ${CMAKE_MATCH_2} PARENT_SCOPE)
     endif()
+endfunction()
+
+function(_ck_convert_target_to_alias _out)
+    set(_res)
+
+    foreach(_item ${ARGN})
+        _ck_parse_namespace(${_item} _key _val)
+
+        if(_key AND _val)
+            list(APPEND _res ${_key}::${_val})
+            continue()
+        endif()
+
+        list(APPEND _res ${_item})
+    endforeach()
+
+    set(${_out} ${_res} PARENT_SCOPE)
+endfunction()
+
+function(_ck_check_shared_library _target _out)
+    set(_res off)
+    get_target_property(_type ${_target} TYPE)
+
+    if(${_type} STREQUAL SHARED_LIBRARY)
+        set(_res on)
+    endif()
+
+    set(${_out} ${_res} PARENT_SCOPE)
 endfunction()
 
 function(_ck_resolve_src_dest _args _result _error)
@@ -150,7 +182,9 @@ function(_ck_add_copy_command _target _base_dir _src _dest)
     set(multiValueArgs)
     cmake_parse_arguments(FUNC "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
 
-    if(${_dest} MATCHES ".*\\$.*")
+    ck_has_genex(${_dest} _has_genex)
+
+    if(_has_genex)
         set(_path ${_dest})
     else()
         if(IS_ABSOLUTE ${_dest})
@@ -606,7 +640,9 @@ function(_ck_add_lupdate_target _target)
             set(_options_filtered)
 
             foreach(_opt ${_LUPDATE_OPTIONS})
-                if(_opt MATCHES ".*\\\$.*")
+                ck_has_genex(${_opt} _has_genex)
+
+                if(_has_genex)
                     continue()
                 endif()
 
@@ -742,9 +778,12 @@ function(_ck_deploy_qt_library)
         endif()
     endforeach()
 
+    _ck_convert_target_to_alias(_alias_targets ${_deploy_targets})
+
     if(WIN32)
         install(CODE "
-            message(STATUS \"Deploying targets: ${_deploy_targets}\")
+            message(STATUS \"Deploying: run ${QT_DEPLOY_EXECUTABLE}\")
+            message(STATUS \"Targets: ${_alias_targets}\")
             execute_process(
                 COMMAND \"${QT_DEPLOY_EXECUTABLE}\"
                 --libdir \"${_lib_dir}\"
@@ -759,10 +798,12 @@ function(_ck_deploy_qt_library)
                 WORKING_DIRECTORY \"${CMAKE_INSTALL_PREFIX}\"
             )")
     else()
+        set(_script "${CK_PYTHON_SCRIPTS_DIR}/unixdeployqt.py")
         install(CODE "
-            message(STATUS \"Deploying targets: ${_deploy_targets}\")
+            message(STATUS \"Deploying: run ${_script}\")
+            message(STATUS \"Targets: ${_alias_targets}\")
             execute_process(
-                COMMAND \"${Python_EXECUTABLE}\" \"${CK_PYTHON_SCRIPTS_DIR}/unixdeployqt.py\"
+                COMMAND \"${Python_EXECUTABLE}\" \"${_script}\"
                 --qmake \"${QT_QMAKE_EXECUTABLE}\"
                 --libdir \"${_lib_dir}\"
                 --plugindir \"${_plugins_dir}\"
