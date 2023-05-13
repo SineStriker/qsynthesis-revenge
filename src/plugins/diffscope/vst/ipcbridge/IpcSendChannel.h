@@ -5,16 +5,18 @@
 #ifndef CHORUSKIT_IPCSENDCHANNEL_H
 #define CHORUSKIT_IPCSENDCHANNEL_H
 
-#include "IpcChannel.h"
+#include "IpcServer.h"
 
 namespace Vst {
 
-    class IpcSendChannel : public IpcChannel {
+    class IpcSendChannel : public QObject {
         Q_OBJECT
     public:
-        explicit IpcSendChannel(const QString &key, QObject *parent = nullptr);
+        explicit IpcSendChannel(IpcConnect *ipcConnect);
         QByteArray send(quint8 signal, const QByteArray &data = {});
         bool allocate(int size);
+    private:
+        IpcConnect *ipcConnect;
     };
 
 } // Vst

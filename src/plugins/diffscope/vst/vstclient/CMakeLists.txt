@@ -21,8 +21,7 @@ ck_target_components(${_plugin}
     INCLUDE_CURRENT_PRIVATE INCLUDE_SUBDIRS_PRIVATE
     SOURCES ${_src} ${_res_dir}/vstclient_res.qrc
     QT_LINKS Core Widgets Network
-    LINKS QsSVS QsFramework ExtensionSystem DiffScope::coreplugin
-    LINKS_PRIVATE
+    LINKS QsSVS QsFramework ExtensionSystem DiffScope::coreplugin DiffScope::ipcbridge
     AUTO_INCLUDE_CURRENT
 )
 

@@ -1,4 +1,4 @@
-project(vstserver VERSION 0.0.0.0)
+project(ipcbridge VERSION 0.0.0.0)
 
 set(_library ${CURRENT_APPLICATION}__${PROJECT_NAME})
 
@@ -14,7 +14,7 @@ ck_target_components(${_library}
     AUTO_INCLUDE_CURRENT
     SOURCES ${_src}
     QT_LINKS Core Widgets Network
-    LINKS QsFramework DiffScope::ipcbridge
+    LINKS QsFramework
 )
 
 ck_install_headers(.)

@@ -5,17 +5,19 @@
 #ifndef CHORUSKIT_IPCRECEIVECHANNEL_H
 #define CHORUSKIT_IPCRECEIVECHANNEL_H
 
-#include "IpcChannel.h"
+#include "IpcServer.h"
 namespace Vst {
 
-    class IpcReceiveChannel: public IpcChannel {
+    class IpcReceiveChannel: public QObject {
         Q_OBJECT
     public:
-        explicit IpcReceiveChannel(const QString &key, QObject *parent = nullptr);
+        explicit IpcReceiveChannel(IpcConnect *ipcConnect);
     signals:
         void received(quint8 signal, const QByteArray &data, QByteArray &ret);
     private slots:
         void _received();
+    private:
+        IpcConnect *ipcConnect;
     };
 
 } // Vst

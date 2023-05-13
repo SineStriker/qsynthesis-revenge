@@ -23,18 +23,29 @@ namespace Vst {
             Connected,
         };
         explicit DiffScopeEditor();
+
         bool start();
         void stop();
         Status status();
+
+        IpcServer *mainServer();
+        IpcServer *processingServer();
+        IpcServer *dirtySettingServer();
+
         IpcSendChannel *mainChannel();
         IpcSendChannel *processingChannel();
         IpcReceiveChannel *dirtySettingChannel();
+    signals:
+        void statusChanged(Status status);
     private:
         Status m_status = Disconnected;
         QProcess proc;
-        IpcSendChannel *m_mainChannel;
-        IpcSendChannel *m_processingChannel;
-        IpcReceiveChannel *m_dirtySettingChannel;
+        IpcServer *m_mainServer = nullptr;
+        IpcServer *m_processingServer = nullptr;
+        IpcServer *m_dirtySettingServer = nullptr;
+        IpcSendChannel *m_mainChannel = nullptr;
+        IpcSendChannel *m_processingChannel = nullptr;
+        IpcReceiveChannel *m_dirtySettingChannel = nullptr;
     };
 
 } // Vst

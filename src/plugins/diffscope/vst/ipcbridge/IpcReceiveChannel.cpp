@@ -3,22 +3,19 @@
 //
 
 #include "IpcReceiveChannel.h"
+#include "IpcConnect.h"
 #include <QDataStream>
-
-const quint8 DETACH_SHARED_MEMORY_SIGNAL = 0xff;
-const quint8 ATTACH_SHARED_MEMORY_SIGNAL = 0xfe;
-const quint32 HEADER_REQUEST = 0x11451400;
-const quint32 HEADER_RESPONSE = 0x19260817;
+#include "IpcGlobal.h"
 
 namespace Vst {
-    IpcReceiveChannel::IpcReceiveChannel(const QString &key, QObject *parent) : IpcChannel(key, parent) {
-        connect(this, &IpcReceiveChannel::connected, this, [=](){
-            sharedMemory.attach();
-            connect(socket, &QLocalSocket::readyRead, this, &IpcReceiveChannel::_received);
+    IpcReceiveChannel::IpcReceiveChannel(IpcConnect *ipcConnect) : QObject(ipcConnect), ipcConnect(ipcConnect) {
+        connect(ipcConnect, &IpcConnect::connected, this, [=](){
+            ipcConnect->sharedMemory.attach();
+            connect(ipcConnect->socket, &QLocalSocket::readyRead, this, &IpcReceiveChannel::_received);
         });
     }
     void IpcReceiveChannel::_received() {
-        auto request = socket->readAll();
+        auto request = ipcConnect->socket->readAll();
         if(request.size() < 5) return;
         QDataStream incoming(request);
         quint32 header;
@@ -26,9 +23,9 @@ namespace Vst {
         incoming >> header >> signal;
         if(header != HEADER_REQUEST) return;
         if(signal == DETACH_SHARED_MEMORY_SIGNAL) {
-            sharedMemory.detach();
+            ipcConnect->sharedMemory.detach();
         } else if(signal == ATTACH_SHARED_MEMORY_SIGNAL) {
-            sharedMemory.attach();
+            ipcConnect->sharedMemory.attach();
         } else {
             QByteArray payload;
             incoming >> payload;
@@ -37,7 +34,7 @@ namespace Vst {
             QByteArray response;
             QDataStream outgoing(&response, QIODevice::WriteOnly);
             outgoing << HEADER_RESPONSE << ret;
-            socket->write(response);
+            ipcConnect->socket->write(response);
         }
     }
 } // Vst

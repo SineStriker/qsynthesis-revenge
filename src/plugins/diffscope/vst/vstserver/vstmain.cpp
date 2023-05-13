@@ -4,6 +4,7 @@
 #include <QSharedMemory>
 
 #include "DiffScopeEditor.h"
+#include "IpcConnect.h"
 
 #define VST_EXPORT extern "C" Q_DECL_EXPORT
 using namespace Vst;
@@ -67,17 +68,17 @@ VST_EXPORT bool PlaybackProcessor(const PlaybackParameters *playbackParameters, 
     bool success;
     in >> success;
     if(!success) return false;
-    diffScopeEditor->mainChannel()->lockSharedMemory();
+    diffScopeEditor->processingServer()->lockSharedMemory();
     for(int i = 0; i < numOutputs; i++) {
         for(int j = 0; j < 2; j++) {
             memcpy(
                 outputs[i][j],
-                (float *)diffScopeEditor->mainChannel()->sharedData() + (i * 2 + j) * playbackParameters->bufferSize,
+                (float *)diffScopeEditor->processingServer()->sharedData() + (i * 2 + j) * playbackParameters->bufferSize,
                 playbackParameters->bufferSize * sizeof(float)
             );
         }
     }
-    diffScopeEditor->mainChannel()->unlockSharedMemory();
+    diffScopeEditor->processingServer()->unlockSharedMemory();
     return true;
 }
 
@@ -104,6 +105,15 @@ VST_EXPORT void DirtySetterBinder(void (*setDirty)(bool)) {
     });
 }
 
-VST_EXPORT bool ProcessInitializer(bool isOffline, double sampleRate) { //TODO max buffer size
-    return true;
+VST_EXPORT bool ProcessInitializer(bool isOffline, qint32 maxBufferSize, double sampleRate) { //TODO max buffer size
+    diffScopeEditor->mainChannel()->allocate(maxBufferSize * 2 * 16);
+    QByteArray args;
+    QDataStream out(&args, QIODevice::WriteOnly);
+    out << isOffline << maxBufferSize << sampleRate;
+    auto ret = diffScopeEditor->mainChannel()->send(PROCESS_INITIALIZE_SIGNAL, args);
+    if(ret.size() < 1) return false;
+    QDataStream in(ret);
+    bool success;
+    in >> success;
+    return success;
 }

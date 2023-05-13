@@ -3,6 +3,7 @@
 //
 
 #include "DiffScopeEditor.h"
+#include "IpcConnect.h"
 
 const QString VST_UUID = "77F6E993-671E-4283-99BE-C1CD1FF5C09E";
 
@@ -16,23 +17,30 @@ namespace Vst {
         if(!configFile.canReadLine()) return false;
         QString path = configFile.readLine();
         if(!QFileInfo(path).isExecutable()) return false;
-        m_mainChannel = new IpcSendChannel(VST_UUID, this);
-        m_processingChannel = new IpcSendChannel(VST_UUID + "processing", this);
-        m_dirtySettingChannel = new IpcReceiveChannel(VST_UUID + "dirty_setting", this);
+        m_mainServer = new IpcServer(VST_UUID, this);
+        m_processingServer = new IpcServer(VST_UUID + "processing", this);
+        m_dirtySettingServer = new IpcServer(VST_UUID + "dirty_setting", this);
+        m_mainChannel = new IpcSendChannel(m_mainServer);
+        m_processingChannel = new IpcSendChannel(m_processingServer);
+        m_dirtySettingChannel = new IpcReceiveChannel(m_dirtySettingServer);
         auto argv = QStringList({"vst", VST_UUID});
         proc.setProgram(path);
         proc.setArguments(argv);
         connect(&proc, QOverload<int, QProcess::ExitStatus>::of(&QProcess::finished), [=](int exitCode, QProcess::ExitStatus exitStatus){
             m_status = Disconnected;
+            emit statusChanged(m_status);
         });
-        connect(m_mainChannel, &IpcSendChannel::connected, this, [=](){
+        connect(m_mainServer, &IpcConnect::connected, this, [=](){
             m_status = Connected;
+            emit statusChanged(m_status);
         });
-        connect(m_mainChannel, &IpcSendChannel::disconnected, this, [=](){
+        connect(m_mainServer, &IpcConnect::disconnected, this, [=](){
             m_status = Disconnected;
+            emit statusChanged(m_status);
         });
         if(proc.startDetached()) {
             m_status = Pending;
+            emit statusChanged(m_status);
             return true;
         } else {
             return false;
@@ -41,12 +49,21 @@ namespace Vst {
     DiffScopeEditor::DiffScopeEditor() {
     }
     void DiffScopeEditor::stop() {
-        if(m_mainChannel) m_mainChannel->abort();
-        if(m_processingChannel) m_processingChannel->abort();
-        if(m_dirtySettingChannel) m_dirtySettingChannel->abort();
+        if(m_mainServer) m_mainServer->abort();
+        if(m_processingServer) m_processingServer->abort();
+        if(m_dirtySettingServer) m_dirtySettingServer->abort();
     }
     DiffScopeEditor::Status DiffScopeEditor::status() {
         return m_status;
+    }
+    IpcServer *DiffScopeEditor::mainServer() {
+        return m_mainServer;
+    }
+    IpcServer *DiffScopeEditor::processingServer() {
+        return m_processingServer;
+    }
+    IpcServer *DiffScopeEditor::dirtySettingServer() {
+        return m_dirtySettingServer;
     }
     IpcSendChannel *DiffScopeEditor::mainChannel() {
         return m_mainChannel;

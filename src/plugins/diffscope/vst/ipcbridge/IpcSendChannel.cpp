@@ -3,27 +3,24 @@
 //
 
 #include "IpcSendChannel.h"
-#include "IpcChannel.h"
+#include "IpcConnect.h"
+#include "IpcServer.h"
 #include <QDataStream>
-
-const quint8 DETACH_SHARED_MEMORY_SIGNAL = 0xff;
-const quint8 ATTACH_SHARED_MEMORY_SIGNAL = 0xfe;
-const quint32 HEADER_REQUEST = 0x11451400;
-const quint32 HEADER_RESPONSE = 0x19260817;
+#include "IpcGlobal.h"
 
 namespace Vst {
-    IpcSendChannel::IpcSendChannel(const QString &key, QObject *parent) : IpcChannel(key, parent) {
-        sharedMemory.create(1024);
+    IpcSendChannel::IpcSendChannel(IpcConnect *ipcConnect) : QObject(ipcConnect), ipcConnect(ipcConnect) {
+        ipcConnect->sharedMemory.create(1024);
     }
     QByteArray IpcSendChannel::send(quint8 signal, const QByteArray &data) {
-        QMutexLocker locker(&mutex);
-        if(!socket) return {};
+        QMutexLocker locker(&ipcConnect->mutex);
+        if(!ipcConnect->socket) return {};
         QByteArray request;
         QDataStream outgoing(&request, QIODevice::WriteOnly);
         outgoing << HEADER_REQUEST << signal << data;
-        socket->write(request);
-        socket->waitForReadyRead();
-        auto response = socket->readAll();
+        ipcConnect->socket->write(request);
+        ipcConnect->socket->waitForReadyRead();
+        auto response = ipcConnect->socket->readAll();
         QDataStream incoming(response);
         quint32 header;
         incoming >> header;
@@ -33,15 +30,15 @@ namespace Vst {
         return payload;
     }
     bool IpcSendChannel::allocate(int size) {
-        QMutexLocker locker(&mutex);
-        if(!sharedMemory.isAttached()) {
-            return sharedMemory.create(size);
+        QMutexLocker locker(&ipcConnect->mutex);
+        if(!ipcConnect->sharedMemory.isAttached()) {
+            return ipcConnect->sharedMemory.create(size);
         } else {
-            sharedMemory.lock();
+            ipcConnect->sharedMemory.lock();
             send(DETACH_SHARED_MEMORY_SIGNAL);
-            sharedMemory.unlock();
-            sharedMemory.detach();
-            if(sharedMemory.create(size)) {
+            ipcConnect->sharedMemory.unlock();
+            ipcConnect->sharedMemory.detach();
+            if(ipcConnect->sharedMemory.create(size)) {
                 send(ATTACH_SHARED_MEMORY_SIGNAL);
                 return true;
             } else {

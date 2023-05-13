@@ -4,6 +4,8 @@
 #include <QThread>
 
 #include "CoreApi/ILoader.h"
+#include "IpcClient.h"
+#include "IpcReceiveChannel.h"
 
 #include <QMDecoratorV2.h>
 #include <QMSystem.h>
@@ -33,6 +35,12 @@ namespace Vst {
             if (splash) {
                 splash->showMessage(tr("Initializing vst support..."));
             }
+
+            auto *ipcClient = new IpcClient("77F6E993-671E-4283-99BE-C1CD1FF5C09E", this);
+            auto *ipcReceiveChannel = new IpcReceiveChannel(ipcClient);
+            connect(ipcReceiveChannel, &IpcReceiveChannel::received, this, [=](quint8 signal, const QByteArray &payload, QByteArray &ret){
+                qDebug() << payload;
+            });
 
             auto actionMgr = ICore::instance()->actionSystem();
 

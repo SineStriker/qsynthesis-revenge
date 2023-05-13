@@ -1,9 +1,9 @@
 //
-// Created by Crs_1 on 2023/5/12.
+// Created by Crs_1 on 2023/5/13.
 //
 
-#ifndef CHORUSKIT_IPCCHANNEL_H
-#define CHORUSKIT_IPCCHANNEL_H
+#ifndef CHORUSKIT_IPCCONNECT_H
+#define CHORUSKIT_IPCCONNECT_H
 
 #include <QLocalServer>
 #include <QLocalSocket>
@@ -11,22 +11,25 @@
 #include <QSharedMemory>
 namespace Vst {
 
-    class IpcChannel: public QObject {
+    class IpcSendChannel;
+    class IpcReceiveChannel;
+
+    class IpcConnect : public QObject {
         Q_OBJECT
     public:
-        explicit IpcChannel(const QString &key, QObject *parent = nullptr);
-        ~IpcChannel();
-        void abort();
+        explicit IpcConnect(const QString &key, QObject *parent = nullptr);
         bool lockSharedMemory();
         bool unlockSharedMemory();
         void *sharedData();
+        virtual void abort() = 0;
         const void *sharedData() const;
     signals:
         void connected();
         void disconnected();
     protected:
+        friend class IpcSendChannel;
+        friend class IpcReceiveChannel;
         QString key;
-        QLocalServer server;
         QLocalSocket *socket = nullptr;
         QSharedMemory sharedMemory;
         QMutex mutex;
@@ -34,4 +37,4 @@ namespace Vst {
 
 } // Vst
 
-#endif // CHORUSKIT_IPCCHANNEL_H
+#endif // CHORUSKIT_IPCCONNECT_H
