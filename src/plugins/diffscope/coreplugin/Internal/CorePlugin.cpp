@@ -57,7 +57,6 @@ namespace Core {
                 if (!spec)
                     continue;
 
-
                 IWindowContext ctx(iWin);
                 if (spec->open(info.canonicalFilePath(), &ctx)) {
                     cnt++;

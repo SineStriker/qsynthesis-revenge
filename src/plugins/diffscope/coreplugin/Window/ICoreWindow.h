@@ -24,8 +24,8 @@ namespace Core {
 
         QString correctWindowTitle(const QString &title) const override;
 
-    public slots:
-        void openFile(const QString &path);
+    public:
+        Q_INVOKABLE void openFile(const QString &path);
 
     protected:
         ICoreWindow(const QString &id, QObject *parent = nullptr);

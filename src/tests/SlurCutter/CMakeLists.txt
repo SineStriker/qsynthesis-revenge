@@ -11,7 +11,7 @@ ck_add_files(_src
 )
 
 ck_add_test(
-    ${PROJECT_NAME}
+    ${PROJECT_NAME} NO_SKIP_INSTALL
 )
 
 ck_target_components(${PROJECT_NAME}

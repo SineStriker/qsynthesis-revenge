@@ -2,6 +2,8 @@
 #include "factories/WindowHandleFactory.h"
 #include "private/PlainWindow_p.h"
 
+#include "choruskit_config.h"
+
 #include <QCoreApplication>
 
 namespace QsApi {
@@ -18,10 +20,14 @@ namespace QsApi {
 
     void PlainWindowPrivate::init() {
         Q_Q(PlainWindow);
+#ifdef CONFIG_DISABLE_FRAMELESS_HELPER
+        winHandle = nullptr;
+#else
         winHandle = WindowHandleFactory::create(q);
         if (winHandle) {
             winHandle->setup();
         }
+#endif
         q->setWindowTitle(qAppName());
     }
 

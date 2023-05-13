@@ -18,4 +18,5 @@ ck_target_components(${PROJECT_NAME}
     LINKS QMWidgets QsMedia QsSVS
     LINKS_PRIVATE
     AUTO_INCLUDE_DIRS Global
+    INCLUDE_PRIVATE ${CK_HEADERS_OUTPUT_PATH}
 )

@@ -28,6 +28,10 @@ function(ck_init_buildsystem)
     set(multiValueArgs)
     cmake_parse_arguments(FUNC "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
 
+    if(APPLE AND CK_ENABLE_DEVEL)
+        message(FATAL_ERROR "ck_init_buildsystem: Develop mode is not support on Mac.")
+    endif()
+
     # Store data during configuration
     add_custom_target(ChorusKit_Metadata)
 
@@ -129,11 +133,11 @@ endfunction()
 Add test target, won't be installed.
 
     ck_add_test(<target> [sources]
-        [CONSOLE] [WINDOWS]
+        [CONSOLE] [WINDOWS] [NO_SKIP_INSTALL] [SKIP_EXPORT]
     )
 ]] #
 function(ck_add_test _target)
-    set(options CONSOLE WINDOWS)
+    set(options CONSOLE WINDOWS NO_SKIP_INSTALL SKIP_EXPORT)
     set(oneValueArgs)
     set(multiValueArgs)
     cmake_parse_arguments(FUNC "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
@@ -149,13 +153,20 @@ function(ck_add_test _target)
         endif()
     endif()
 
-    if(APPLE)
-        set_target_properties(${_target} PROPERTIES
-            RUNTIME_OUTPUT_DIRECTORY ${CK_MAIN_OUTPUT_PATH}
-        )
-    else()
-        set_target_properties(${_target} PROPERTIES
-            RUNTIME_OUTPUT_DIRECTORY ${CK_GLOBAL_RUNTIME_OUTPUT_PATH}
+    set_target_properties(${_target} PROPERTIES
+        RUNTIME_OUTPUT_DIRECTORY ${CK_GLOBAL_RUNTIME_OUTPUT_PATH}
+    )
+
+    if(FUNC_NO_SKIP_INSTALL)
+        if(FUNC_SKIP_EXPORT OR NOT CK_ENABLE_DEVEL)
+            set(_export)
+        else()
+            set(_export EXPORT ${CK_INSTALL_EXPORT})
+        endif()
+
+        install(TARGETS ${_target}
+            ${_export}
+            RUNTIME DESTINATION ${CK_INSTALL_RUNTIME_OUTPUT_PATH} OPTIONAL
         )
     endif()
 endfunction()
