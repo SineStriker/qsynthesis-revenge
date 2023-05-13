@@ -17,13 +17,13 @@ DiffScopeEditor *diffScopeEditor;
 
 VST_EXPORT bool Initializer() {
     diffScopeEditor = new DiffScopeEditor;
-    diffScopeEditor->start();
-    return true;
+    return diffScopeEditor->start();
 }
 
 VST_EXPORT bool Terminator() {
     diffScopeEditor->stop();
     diffScopeEditor->deleteLater();
+    diffScopeEditor = nullptr;
     return true;
 }
 
@@ -83,16 +83,33 @@ VST_EXPORT bool PlaybackProcessor(const PlaybackParameters *playbackParameters, 
 }
 
 VST_EXPORT bool StateChangedCallback(qint64 size, const char *data) {
+    QByteArray args;
+    QDataStream out(&args, QIODevice::WriteOnly);
+    out << QByteArray(data, size);
+    auto ret = diffScopeEditor->mainChannel()->send(STATE_CHANGED_SIGNAL, args);
+    if(ret.size() < 1) return false;
+    QDataStream in(ret);
+    bool success;
+    in >> success;
+    return success;
+}
+
+VST_EXPORT bool StateWillSaveCallback(qint64 &size, const char *&data) {
+    auto ret = diffScopeEditor->mainChannel()->send(STATE_SAVE_SIGNAL);
+    if(ret.size() < sizeof(bool) + sizeof(quint64)) return false;
+    QDataStream in(ret);
+    bool success;
+    in >> success;
+    if(!success) return false;
+    QByteArray content;
+    in >> content;
+    size = content.size();
+    data = content.constData();
     return true;
 }
 
-VST_EXPORT bool StateWillSaveCallback(qint64 &size, char *&data) {
-    size = 0;
-    return true;
-}
+VST_EXPORT void StateSavedAsyncCallback(const char* dataToFree) {
 
-VST_EXPORT void StateSavedAsyncCallback(uint8_t* dataToFree) {
-    return;
 }
 
 VST_EXPORT void DirtySetterBinder(void (*setDirty)(bool)) {

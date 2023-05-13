@@ -19,6 +19,7 @@ namespace Vst {
         QDataStream outgoing(&request, QIODevice::WriteOnly);
         outgoing << HEADER_REQUEST << signal << data;
         ipcConnect->socket->write(request);
+        ipcConnect->socket->flush();
         ipcConnect->socket->waitForReadyRead();
         auto response = ipcConnect->socket->readAll();
         QDataStream incoming(response);

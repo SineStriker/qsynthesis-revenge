@@ -8,6 +8,12 @@ namespace Vst {
     IpcClient::IpcClient(const QString &key, QObject *parent) : IpcConnect(key, parent) {
         socket = new QLocalSocket(this);
         socket->setServerName(key);
+        connect(socket, &QLocalSocket::connected, this, [=](){
+            emit connected();
+        });
+        connect(socket, &QLocalSocket::disconnected, this, [=](){
+            emit disconnected();
+        });
     }
     IpcClient::~IpcClient() {
     }

@@ -11,3 +11,5 @@ add_subdirectory(MinLabel)
 add_subdirectory(SlurCutter)
 
 add_subdirectory(LyricTest)
+
+add_subdirectory(VstTest)

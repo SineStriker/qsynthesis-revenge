@@ -6,6 +6,7 @@
 #include "CoreApi/ILoader.h"
 #include "IpcClient.h"
 #include "IpcReceiveChannel.h"
+#include "IpcSendChannel.h"
 
 #include <QMDecoratorV2.h>
 #include <QMSystem.h>
@@ -39,8 +40,11 @@ namespace Vst {
             auto *ipcClient = new IpcClient("77F6E993-671E-4283-99BE-C1CD1FF5C09E", this);
             auto *ipcReceiveChannel = new IpcReceiveChannel(ipcClient);
             connect(ipcReceiveChannel, &IpcReceiveChannel::received, this, [=](quint8 signal, const QByteArray &payload, QByteArray &ret){
-                qDebug() << payload;
+                qDebug() << signal << payload;
+                ret = payload;
+                std::reverse(ret.begin(), ret.end());
             });
+            qDebug() << "ipc client" << ipcClient->open();
 
             auto actionMgr = ICore::instance()->actionSystem();
 

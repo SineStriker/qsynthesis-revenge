@@ -35,6 +35,7 @@ namespace Vst {
             QDataStream outgoing(&response, QIODevice::WriteOnly);
             outgoing << HEADER_RESPONSE << ret;
             ipcConnect->socket->write(response);
+            ipcConnect->socket->flush();
         }
     }
 } // Vst

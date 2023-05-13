@@ -14,7 +14,6 @@ namespace Vst {
         configFile.open(QIODevice::ReadOnly);
         configFile.readLine();
         configFile.readLine();
-        if(!configFile.canReadLine()) return false;
         QString path = configFile.readLine();
         if(!QFileInfo(path).isExecutable()) return false;
         m_mainServer = new IpcServer(VST_UUID, this);
