@@ -250,8 +250,8 @@ function(ck_add_library _target)
 
     if(_ns)
         if(APPLE)
-            set(_build_output_dir $<TARGET_FILE:${_ns}>/Contents/Frameworks)
-            set(_install_output_dir $<TARGET_FILE_NAME:${_ns}>/Contents/Frameworks)
+            set(_build_output_dir $<TARGET_BUNDLE_DIR:${_ns}>/Contents/Frameworks)
+            set(_install_output_dir ${_ns}.app/Contents/Frameworks)
         else()
             set(_build_output_dir ${CK_GLOBAL_LIBRARY_OUTPUT_PATH}/${_ns})
             set(_install_output_dir ${CK_INSTALL_LIBRARY_OUTPUT_PATH}/${_ns})
@@ -289,21 +289,14 @@ function(ck_add_library _target)
     endif()
 
     if(NOT FUNC_SKIP_INSTALL)
-        if(WIN32)
-            if(CK_ENABLE_DEVEL)
-                install(TARGETS ${_target}
-                    ${_export}
-                    RUNTIME DESTINATION ${CK_INSTALL_RUNTIME_OUTPUT_PATH}
-                    LIBRARY DESTINATION ${_install_output_dir}
-                    ARCHIVE DESTINATION ${_install_output_dir}
-                )
-            elseif(_shared)
-                install(TARGETS ${_target}
-                    ${_export}
-                    RUNTIME DESTINATION ${CK_INSTALL_RUNTIME_OUTPUT_PATH}
-                )
-            endif()
-        else()
+        if(CK_ENABLE_DEVEL)
+            install(TARGETS ${_target}
+                ${_export}
+                RUNTIME DESTINATION ${CK_INSTALL_RUNTIME_OUTPUT_PATH}
+                LIBRARY DESTINATION ${_install_output_dir}
+                ARCHIVE DESTINATION ${_install_output_dir}
+            )
+        elseif(_shared)
             install(TARGETS ${_target}
                 ${_export}
                 RUNTIME DESTINATION ${CK_INSTALL_RUNTIME_OUTPUT_PATH}
@@ -387,20 +380,13 @@ function(ck_add_library_plugin _target _category)
         set(_export EXPORT ${CK_INSTALL_EXPORT})
     endif()
 
-    if(WIN32)
-        if(CK_ENABLE_DEVEL)
-            install(TARGETS ${_target}
-                ${_export}
-                RUNTIME DESTINATION ${_install_output_dir}
-                LIBRARY DESTINATION ${_install_output_dir}
-                ARCHIVE DESTINATION ${_install_output_dir}
-            )
-        else()
-            install(TARGETS ${_target}
-                ${_export}
-                RUNTIME DESTINATION ${_install_output_dir}
-            )
-        endif()
+    if(CK_ENABLE_DEVEL)
+        install(TARGETS ${_target}
+            ${_export}
+            RUNTIME DESTINATION ${_install_output_dir}
+            LIBRARY DESTINATION ${_install_output_dir}
+            ARCHIVE DESTINATION ${_install_output_dir}
+        )
     else()
         install(TARGETS ${_target}
             ${_export}
@@ -476,7 +462,8 @@ function(ck_add_application _target _entry_library)
         )
         set_target_properties(${_target} PROPERTIES
             RUNTIME_OUTPUT_DIRECTORY ${CK_MAIN_OUTPUT_PATH}
-            OUTPUT_NAME "ChorusKit ${_target}"
+#            RUNTIME_OUTPUT_NAME ${_target}
+#            OUTPUT_NAME "ChorusKit ${_target}"
         )
 
         # Install to .
@@ -595,8 +582,8 @@ function(ck_add_application_plugin _target)
     _ck_set_value(_category FUNC_CATEGORY ${PROJECT_NAME})
 
     if(APPLE)
-        set(_build_output_dir $<TARGET_FILE:${_ns}>/Contents/Plugins/${_category})
-        set(_install_output_dir $<TARGET_FILE_NAME:${_ns}>/Contents/Plugins/${_category})
+        set(_build_output_dir $<TARGET_BUNDLE_DIR:${_ns}>/Contents/Plugins/${_category})
+        set(_install_output_dir ${_ns}.app/Contents/Plugins/${_category})
     else()
         set(_build_output_dir ${CK_GLOBAL_LIBRARY_OUTPUT_PATH}/${_ns}/plugins/${_category})
         set(_install_output_dir ${CK_INSTALL_LIBRARY_OUTPUT_PATH}/${_ns}/plugins/${_category})
@@ -616,20 +603,13 @@ function(ck_add_application_plugin _target)
         set(_export EXPORT ${CK_INSTALL_EXPORT})
     endif()
 
-    if(WIN32)
-        if(CK_ENABLE_DEVEL)
-            install(TARGETS ${_target}
-                ${_export}
-                RUNTIME DESTINATION ${_install_output_dir}
-                LIBRARY DESTINATION ${_install_output_dir}
-                ARCHIVE DESTINATION ${_install_output_dir}
-            )
-        else()
-            install(TARGETS ${_target}
-                ${_export}
-                RUNTIME DESTINATION ${_install_output_dir}
-            )
-        endif()
+    if(CK_ENABLE_DEVEL)
+        install(TARGETS ${_target}
+            ${_export}
+            RUNTIME DESTINATION ${_install_output_dir}
+            LIBRARY DESTINATION ${_install_output_dir}
+            ARCHIVE DESTINATION ${_install_output_dir}
+        )
     else()
         install(TARGETS ${_target}
             ${_export}
@@ -751,7 +731,7 @@ function(ck_add_application_files _target)
     endif()
 
     if(APPLE)
-        set(_share_dir "$<TARGET_FILE:${_target}>/Contents/Resources")
+        set(_share_dir "$<TARGET_BUNDLE_DIR:${_target}>/Contents/Resources")
     else()
         if(FUNC_BASE_SHARE_DIR)
             set(_share_dir ${CK_GLOBAL_SHARE_OUTPUT_PATH})
@@ -829,7 +809,7 @@ function(ck_finish_build_system)
         foreach(_item ${_app_list})
             install(
                 DIRECTORY ${CK_GLOBAL_LIBRARY_OUTPUT_PATH} ${CK_GLOBAL_SHARE_OUTPUT_PATH}
-                DESTINATION $<TARGET_FILE_NAME:${_item}>/Contents
+                DESTINATION ${_item}.app/Contents
             )
         endforeach()
     endif()
@@ -1344,8 +1324,13 @@ function(ck_deploy_qt_library)
     endif()
 
     foreach(_target ${FUNC_TARGETS})
+        if(APPLE)
+            set(_deploy_target $<TARGET_BUNDLE_DIR:${_target}>)
+        else()
+            set(_deploy_target $<TARGET_FILE:${_target}>)
+        endif()
         install(CODE "
-            message(STATUS \"Deploying $<TARGET_FILE:${_target}>\")
+            message(STATUS \"Deploying ${_deploy_target}\")
             execute_process(
                 COMMAND ${_cmd}
                 --libdir \"${_lib_dir}\"
@@ -1356,7 +1341,7 @@ function(ck_deploy_qt_library)
                 --no-opengl-sw
                 --force
                 --verbose 0
-                \"$<TARGET_FILE:${_target}>\"
+                \"${_deploy_target}\"
                 WORKING_DIRECTORY \"${CMAKE_INSTALL_PREFIX}\"
             )")
     endforeach()

@@ -232,8 +232,12 @@ int main_entry(int argc, char *argv[]) {
 
     // Load configuration
     LoadConfig configFile;
-    if (configFile.load(QString("%1/%2/config.json").arg(host.shareDir(), qAppName()))) {
-        QString configDir = host.shareDir() + "/" + qAppName();
+    QString configDir = host.shareDir()
+#ifndef Q_OS_MAC
+                        + "/" + qAppName()
+#endif
+        ;
+    if (configFile.load(QString("%1/config.json").arg(configDir))) {
         if (!configFile.pluginIID.isEmpty()) {
             pluginIID = configFile.pluginIID;
         }
@@ -316,7 +320,11 @@ int main_entry(int argc, char *argv[]) {
     Core::ILoader loader;
 
     QString userSettingPath = host.appDataDir();
-    QString systemSettingPath = host.shareDir() + "/" + qAppName();
+    QString systemSettingPath = host.shareDir()
+#ifndef Q_OS_MAC
+                                + "/" + qAppName()
+#endif
+        ;
 
     loader.setSettingsPath(QSettings::UserScope, QString("%1/%2.settings.json").arg(userSettingPath, qAppName()));
     loader.setSettingsPath(QSettings::SystemScope, QString("%1/%2.settings.json").arg(systemSettingPath, qAppName()));
@@ -376,7 +384,11 @@ int main_entry(int argc, char *argv[]) {
 
     QStringList pluginPaths = [&]() {
         QStringList rc;
+#ifdef Q_OS_MAC
+        QFileInfo info(QString("%1/../Plugins").arg(QApplication::applicationDirPath()));
+#else
         QFileInfo info(QString("%1/%2/plugins").arg(host.libDir(), qAppName()));
+#endif
         if (info.isDir()) {
             rc += info.absoluteFilePath();
         }

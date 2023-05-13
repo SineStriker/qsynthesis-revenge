@@ -695,7 +695,7 @@ function(_ck_dist_shared_for_application _item)
 
     if(APPLE)
         # Add post build event of making soft link for shared files
-        set(_base_dir $<TARGET_FILE:${_item}>/Contents)
+        set(_base_dir $<TARGET_BUNDLE_DIR:${_item}>/Contents)
         add_custom_command(TARGET ${_item} POST_BUILD
 
             # Remove previous links

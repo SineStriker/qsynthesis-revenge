@@ -3,6 +3,7 @@
 #include <QMessageBox>
 
 #include <set>
+#include <cmath>
 
 #include <QMConsole.h>
 #include <QMLinq.h>
