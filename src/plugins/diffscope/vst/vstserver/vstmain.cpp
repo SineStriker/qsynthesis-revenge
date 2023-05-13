@@ -1,7 +1,9 @@
 #include <QDataStream>
+#include <QEventLoop>
 #include <QLocalServer>
 #include <QLocalSocket>
 #include <QSharedMemory>
+#include <QThread>
 
 #include "DiffScopeEditor.h"
 #include "IpcConnect.h"
@@ -14,10 +16,18 @@ VST_EXPORT bool SingletonChecker() {
 }
 
 DiffScopeEditor *diffScopeEditor;
+QThread workThread;
 
 VST_EXPORT bool Initializer() {
     diffScopeEditor = new DiffScopeEditor;
-    return diffScopeEditor->start();
+    diffScopeEditor->moveToThread(&workThread);
+    QEventLoop eventLoop;
+    QObject::connect(diffScopeEditor, &DiffScopeEditor::statusChanged, &eventLoop, [&](int status){
+        if(status != DiffScopeEditor::Pending) eventLoop.exit(status);
+    });
+    workThread.start();
+    QMetaObject::invokeMethod(diffScopeEditor, "start");
+    return eventLoop.exec() == DiffScopeEditor::Connected;
 }
 
 VST_EXPORT bool Terminator() {
@@ -68,7 +78,6 @@ VST_EXPORT bool PlaybackProcessor(const PlaybackParameters *playbackParameters, 
     bool success;
     in >> success;
     if(!success) return false;
-    diffScopeEditor->processingServer()->lockSharedMemory();
     for(int i = 0; i < numOutputs; i++) {
         for(int j = 0; j < 2; j++) {
             memcpy(
@@ -78,7 +87,6 @@ VST_EXPORT bool PlaybackProcessor(const PlaybackParameters *playbackParameters, 
             );
         }
     }
-    diffScopeEditor->processingServer()->unlockSharedMemory();
     return true;
 }
 
@@ -123,14 +131,15 @@ VST_EXPORT void DirtySetterBinder(void (*setDirty)(bool)) {
 }
 
 VST_EXPORT bool ProcessInitializer(bool isOffline, qint32 maxBufferSize, double sampleRate) { //TODO max buffer size
-    diffScopeEditor->mainChannel()->allocate(maxBufferSize * 2 * 16);
+    diffScopeEditor->processingChannel()->allocate(maxBufferSize * 2 * 16 * sizeof(float));
     QByteArray args;
     QDataStream out(&args, QIODevice::WriteOnly);
     out << isOffline << maxBufferSize << sampleRate;
-    auto ret = diffScopeEditor->mainChannel()->send(PROCESS_INITIALIZE_SIGNAL, args);
-    if(ret.size() < 1) return false;
-    QDataStream in(ret);
-    bool success;
-    in >> success;
-    return success;
+//    auto ret = diffScopeEditor->mainChannel()->send(PROCESS_INITIALIZE_SIGNAL, args);
+//    if(ret.size() < 1) return false;
+//    QDataStream in(ret);
+//    bool success;
+//    in >> success;
+//    return success;
+    return true;
 }

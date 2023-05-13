@@ -10,7 +10,7 @@
 
 namespace Vst {
     IpcSendChannel::IpcSendChannel(IpcConnect *ipcConnect) : QObject(ipcConnect), ipcConnect(ipcConnect) {
-        ipcConnect->sharedMemory.create(1024);
+        ipcConnect->sharedMemory.create(1);
     }
     QByteArray IpcSendChannel::send(quint8 signal, const QByteArray &data) {
         QMutexLocker locker(&ipcConnect->mutex);
@@ -35,9 +35,7 @@ namespace Vst {
         if(!ipcConnect->sharedMemory.isAttached()) {
             return ipcConnect->sharedMemory.create(size);
         } else {
-            ipcConnect->sharedMemory.lock();
             send(DETACH_SHARED_MEMORY_SIGNAL);
-            ipcConnect->sharedMemory.unlock();
             ipcConnect->sharedMemory.detach();
             if(ipcConnect->sharedMemory.create(size)) {
                 send(ATTACH_SHARED_MEMORY_SIGNAL);

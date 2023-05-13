@@ -23,9 +23,6 @@ namespace Vst {
             Connected,
         };
         explicit DiffScopeEditor();
-
-        bool start();
-        void stop();
         Status status();
 
         IpcServer *mainServer();
@@ -35,6 +32,9 @@ namespace Vst {
         IpcSendChannel *mainChannel();
         IpcSendChannel *processingChannel();
         IpcReceiveChannel *dirtySettingChannel();
+    public slots:
+        void start();
+        void stop();
     signals:
         void statusChanged(Status status);
     private:

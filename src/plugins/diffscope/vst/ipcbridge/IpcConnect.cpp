@@ -5,7 +5,7 @@
 #include "IpcConnect.h"
 #include "IpcServer.h"
 #include <QDataStream>
-Vst::IpcConnect::IpcConnect(const QString &key, QObject *parent): QObject(parent), key(key) {
+Vst::IpcConnect::IpcConnect(const QString &key, QObject *parent): QObject(parent), key(key), mutex(QMutex::Recursive) {
     sharedMemory.setKey(key);
 }
 bool Vst::IpcConnect::lockSharedMemory() {

@@ -8,14 +8,14 @@
 const QString VST_UUID = "77F6E993-671E-4283-99BE-C1CD1FF5C09E";
 
 namespace Vst {
-    bool DiffScopeEditor::start()  {
-        if(proc.isOpen()) return true;
+    void DiffScopeEditor::start()  {
+        if(proc.isOpen()) emit statusChanged(m_status);
         QFile configFile(QMFs::appDataPath() + "/ChorusKit/DiffScope/vstconfig.txt");
         configFile.open(QIODevice::ReadOnly);
         configFile.readLine();
         configFile.readLine();
         QString path = configFile.readLine();
-        if(!QFileInfo(path).isExecutable()) return false;
+        if(!QFileInfo(path).isExecutable()) emit statusChanged(m_status);
         m_mainServer = new IpcServer(VST_UUID, this);
         m_processingServer = new IpcServer(VST_UUID + "processing", this);
         m_dirtySettingServer = new IpcServer(VST_UUID + "dirty_setting", this);
@@ -29,20 +29,20 @@ namespace Vst {
             m_status = Disconnected;
             emit statusChanged(m_status);
         });
-        connect(m_mainServer, &IpcConnect::connected, this, [=](){
+        connect(m_mainServer, &IpcServer::connected, this, [=](){
             m_status = Connected;
             emit statusChanged(m_status);
         });
-        connect(m_mainServer, &IpcConnect::disconnected, this, [=](){
+        connect(m_mainServer, &IpcServer::disconnected, this, [=](){
             m_status = Disconnected;
             emit statusChanged(m_status);
         });
         if(proc.startDetached()) {
             m_status = Pending;
             emit statusChanged(m_status);
-            return true;
         } else {
-            return false;
+            m_status = Disconnected;
+            emit statusChanged(m_status);
         }
     }
     DiffScopeEditor::DiffScopeEditor() {
