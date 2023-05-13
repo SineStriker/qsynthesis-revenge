@@ -25,7 +25,7 @@ ck_add_application_files(${PROJECT_NAME}
 )
 
 ck_add_application_files(${PROJECT_NAME}
-    SKIP_BUILD
-    SRC share/${CK_PLATFORM_LOWER}/** DEST ..
-    SRC doc/* DEST ../doc/DiffScope
+    SKIP_BUILD BASE_SHARE_DIR
+    SRC share/${CK_PLATFORM_LOWER}/** DEST .
+    SRC doc/* DEST doc/DiffScope
 )

@@ -705,12 +705,13 @@ endfunction()
 Add a resources copying command after building the application.
 
     ck_add_application_files(<target>
+        [SKIP_BUILD] [SKIP_INSTALL] [BASE_SHARE_DIR]
         SRC <files1...> DEST <dir1>
         SRC <files2...> DEST <dir2> ...
     )
 ]] #
 function(ck_add_application_files _target)
-    set(options SKIP_BUILD SKIP_INSTALL)
+    set(options SKIP_BUILD SKIP_INSTALL BASE_SHARE_DIR)
     set(oneValueArgs)
     set(multiValueArgs)
     cmake_parse_arguments(FUNC "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
@@ -733,7 +734,11 @@ function(ck_add_application_files _target)
     if(APPLE)
         set(_share_dir "$<TARGET_FILE:${_target}>/Contents/Resources")
     else()
-        set(_share_dir ${CK_GLOBAL_SHARE_OUTPUT_PATH}/${_target})
+        if(FUNC_BASE_SHARE_DIR)
+            set(_share_dir ${CK_GLOBAL_SHARE_OUTPUT_PATH})
+        else()
+            set(_share_dir ${CK_GLOBAL_SHARE_OUTPUT_PATH}/${_target})
+        endif()
     endif()
 
     foreach(_item ${_result})
