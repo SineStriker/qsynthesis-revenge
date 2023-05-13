@@ -74,6 +74,18 @@ void F0Widget::setDsSentenceContent(const QJsonObject &content) {
 
     QVector<bool> isRest(noteSeq.size(), false);
 
+    // Sanity check
+    if (noteDur.size() - noteSeq.size() + slur.size() != noteDur.size()) {
+        setErrorStatusText(QString("Invalid DS file! Inconsistent element count\n"
+                                   "note_dur: %1\n"
+                                   "note_seq: %2\n"
+                                   "slur: %3")
+                               .arg(noteDur.size())
+                               .arg(noteSeq.size())
+                               .arg(slur.size()));
+        return;
+    }
+
 #if 1
     // Give trailing rests in note_seq a valid pitch
     for (int i = noteSeq.size() - 1; i >= 0 && noteSeq[i] == "rest"; i--) {
