@@ -11,6 +11,8 @@ foreach(_target ${_all_targets})
     endif()
 endforeach()
 
+ck_deploy_qt_library(TARGETS ${_targets})
+
 ck_add_translations(${PROJECT_NAME}_translations
     PREFIX common
     TARGETS ${_targets}

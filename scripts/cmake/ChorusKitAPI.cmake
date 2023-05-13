@@ -10,6 +10,7 @@ set(CK_DEV_START_YEAR 2019)
 
 set(CK_CMAKE_MODULES_DIR ${CMAKE_CURRENT_LIST_DIR})
 set(CK_CMAKE_SCRIPTS_DIR ${CMAKE_CURRENT_LIST_DIR}/commands)
+set(CK_PYTHON_SCRIPTS_DIR ${CMAKE_CURRENT_LIST_DIR}/../python)
 
 # ----------------------------------
 # ChorusKit API
@@ -834,8 +835,6 @@ function(ck_finish_build_system)
             DESTINATION ${CK_INSTALL_CMAKE_DIR}
         )
     endif()
-
-    _ck_deploy_project()
 endfunction()
 
 #[[
@@ -1276,4 +1275,44 @@ function(ck_install_headers _dir)
             )
         ")
     endif()
+endfunction()
+
+function(ck_deploy_qt_library)
+    set(options)
+    set(oneValueArgs)
+    set(multiValueArgs TARGETS)
+    cmake_parse_arguments(FUNC "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
+
+    if(NOT QT_DEPLOY_EXECUTABLE)
+        return()
+    endif()
+
+    if(APPLE)
+        set(_lib_dir $${CK_INSTALL_LIBRARY_OUTPUT_PATH}/Qt)
+    else()
+        if(WIN32)
+            set(_lib_dir ${CK_INSTALL_RUNTIME_OUTPUT_PATH})
+        else()
+            set(_lib_dir ${CK_INSTALL_LIBRARY_OUTPUT_PATH}/Qt/lib)
+        endif()
+    endif()
+
+    set(_plugins_dir ${CK_INSTALL_LIBRARY_OUTPUT_PATH}/Qt/plugins)
+
+    foreach(_target ${FUNC_TARGETS})
+        install(CODE "
+            execute_process(
+                COMMAND \"${QT_DEPLOY_EXECUTABLE}\"
+                --libdir \"${_lib_dir}\"
+                --plugindir \"${_plugins_dir}\"
+                --no-translations
+                --no-system-d3d-compiler
+                --no-compiler-runtime
+                --no-opengl-sw
+                --force
+                --verbose 0
+                \"$<TARGET_FILE:${_target}>\"
+                WORKING_DIRECTORY \"${CMAKE_INSTALL_PREFIX}\"
+            )")
+    endforeach()
 endfunction()

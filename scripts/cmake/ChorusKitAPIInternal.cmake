@@ -8,6 +8,63 @@ else()
     set(CK_SHARED_LIBRARY_PATTERN "*.so*")
 endif()
 
+# Git
+find_package(Git QUIET)
+
+if(Git_FOUND)
+    message(STATUS "Git found: ${GIT_EXECUTABLE}")
+else()
+    message(WARNING "Git not found")
+endif()
+
+# Python
+find_package(Python QUIET)
+
+if(Python_FOUND)
+    message(STATUS "Python found: ${Python_EXECUTABLE}")
+else()
+    message(WARNING "Python not found")
+endif()
+
+# Find Qt tools
+find_package(QT NAMES Qt6 Qt5 COMPONENTS Core QUIET)
+find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Core QUIET)
+
+if(QT_FOUND)
+    if(NOT DEFINED QT_QMAKE_EXECUTABLE)
+        get_target_property(QT_QMAKE_EXECUTABLE Qt::qmake IMPORTED_LOCATION)
+    endif()
+
+    if(EXISTS "${QT_QMAKE_EXECUTABLE}")
+        message(STATUS "Qmake found: ${QT_QMAKE_EXECUTABLE}")
+    else()
+        set(QT_QMAKE_EXECUTABLE)
+        message(WARNING "Qmake not found")
+    endif()
+
+    if(LINUX)
+        find_program(QT_DEPLOY_EXECUTABLE NAMES linuxdeployqt)
+
+        # We have deploy qt tool in the repository, no need to warn
+    elseif(QT_QMAKE_EXECUTABLE)
+        get_filename_component(QT_BIN_DIRECTORY "${QT_QMAKE_EXECUTABLE}" DIRECTORY)
+        find_program(QT_DEPLOY_EXECUTABLE NAMES windeployqt macdeployqt HINTS "${QT_BIN_DIRECTORY}")
+
+        if(EXISTS "${QT_DEPLOY_EXECUTABLE}")
+            message(STATUS "Qt deploy found: ${QT_DEPLOY_EXECUTABLE}")
+        else()
+            set(QT_DEPLOY_EXECUTABLE)
+            message(WARNING "Qt deploy not found")
+        endif()
+    endif()
+
+else()
+    message(WARNING "QtCore component not found")
+endif()
+
+# ----------------------------------
+# ChorusKit Private API
+# ----------------------------------
 macro(_ck_set_cmake_autoxxx _val)
     set(CMAKE_AUTOMOC ${_val})
     set(CMAKE_AUTOUIC ${_val})
@@ -166,10 +223,7 @@ function(_ck_configure_build_info_header _file)
     set(_git_branch "unknown")
     set(_git_hash "unknown")
 
-    find_package(Git QUIET)
-
-    if(GIT_FOUND)
-        message(STATUS "Git found: ${GIT_EXECUTABLE}")
+    if(Git_FOUND)
         execute_process(
             COMMAND ${GIT_EXECUTABLE} log -1 --pretty=format:%H
             OUTPUT_VARIABLE _git_hash
@@ -187,8 +241,6 @@ function(_ck_configure_build_info_header _file)
             WORKING_DIRECTORY
             ${CK_PROJECT_ROOT_DIR}
         )
-    else()
-        message(STATUS "Git not found")
     endif()
 
     set(_compiler_name unknown)
@@ -662,15 +714,5 @@ function(_ck_dist_shared_for_application _item)
             DIRECTORY ${CK_GLOBAL_LIBRARY_OUTPUT_PATH} ${CK_GLOBAL_SHARE_OUTPUT_PATH}
             DESTINATION $<TARGET_FILE_NAME:${_item}>/Contents
         )
-    endif()
-endfunction()
-
-function(_ck_deploy_project)
-    find_package(Python QUIET)
-
-    if(Python_FOUND)
-        message(STATUS "Python found: ${Python_EXECUTABLE}")
-    else()
-        message(STATUS "Python not found")
     endif()
 endfunction()
