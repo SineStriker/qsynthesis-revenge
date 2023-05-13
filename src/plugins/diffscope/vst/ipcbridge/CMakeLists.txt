@@ -4,7 +4,7 @@ set(_library ${CURRENT_APPLICATION}__${PROJECT_NAME})
 
 ck_add_files(_src ALLDIRS PATTERNS *.h *.cpp)
 
-ck_add_library(${_library} SHARED AUTOGEN
+ck_add_library(${_library} AUTOGEN
     NAME ${PROJECT_NAME}
     VENDOR "CrSjimo"
     DESCRIPTION "${CURRENT_APPLICATION} VST server."
