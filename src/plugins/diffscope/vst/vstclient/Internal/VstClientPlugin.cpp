@@ -38,14 +38,12 @@ namespace Vst {
 
             auto *ipcClient = new IpcClient("77F6E993-671E-4283-99BE-C1CD1FF5C09E", this);
             auto *ipcReceiveChannel = new IpcReceiveChannel(ipcClient);
-            connect(ipcReceiveChannel, &IpcReceiveChannel::received, this, [=](quint8 signal, const QByteArray &payload, QByteArray &ret){
-                qDebug() << payload;
-            });
+            connect(ipcReceiveChannel, &IpcReceiveChannel::received, this,
+                    [=](quint8 signal, const QByteArray &payload, QByteArray &ret) { qDebug() << payload; });
 
             auto actionMgr = ICore::instance()->actionSystem();
 
             // Add basic windows and add-ons
-
 
             return true;
         }
@@ -55,6 +53,11 @@ namespace Vst {
 
         bool VstClientPlugin::delayedInitialize() {
             return false;
+        }
+
+        QObject *VstClientPlugin::remoteCommand(const QStringList &options, const QString &workingDirectory,
+                                                const QStringList &args) {
+            return nullptr;
         }
 
     }

@@ -13,6 +13,13 @@
     "Category": "Audio",
     "Description": "VST support for DiffScope.",
     "Url": "https://www.baidu.com/",
+    "Arguments" : [
+        {
+            "Name" : "-vstkey",
+            "Parameter" : "key",
+            "Description" : "Attach to vst server"
+        }
+    ],
     "Required": false,
     "Dependencies" : [
         { "Name" : "Core", "Version" : "0.1.0" }

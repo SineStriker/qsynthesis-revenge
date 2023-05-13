@@ -212,6 +212,9 @@ function(ck_add_library _target)
     if(_ns)
         add_library(${_ns}::${_name} ALIAS ${_target})
 
+        # Add target level dependency
+        add_dependencies(${_ns} ${_target})
+
         # Set parsed name as output name if not set
         _ck_try_set_output_name(${_target} ${_name})
     endif()
@@ -555,6 +558,9 @@ function(ck_add_application_plugin _target)
     # Add library target and attach definitions
     _ck_add_library_internal(${_target} SHARED ${FUNC_UNPARSED_ARGUMENTS})
     add_library(${_ns}::${_name} ALIAS ${_target})
+
+    # Add target level dependency
+    add_dependencies(${_ns} ${_target})
 
     # Set parsed name as output name if not set
     _ck_try_set_output_name(${_target} ${_name})
