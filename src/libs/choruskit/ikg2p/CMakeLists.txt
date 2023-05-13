@@ -5,7 +5,10 @@ ck_add_files(_src
     PATTERNS *.h *.cpp
 )
 
-ck_add_library(${PROJECT_NAME} AUTOGEN)
+configure_library(
+    AUTOGEN
+    VENDOR "IceKyrin"
+)
 
 ck_target_components(${PROJECT_NAME}
     SOURCES ${_src}

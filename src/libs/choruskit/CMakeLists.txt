@@ -1,7 +1,10 @@
 function(configure_library)
-    ck_add_library(${PROJECT_NAME} SHARED AUTOGEN
+    ck_add_library(${PROJECT_NAME} AUTOGEN
         DESCRIPTION "ChorusKit Common Libraries"
-        VENDOR "OpenVPI"
+        ${ARGN}
+    )
+    set_target_properties(${PROJECT_NAME} PROPERTIES
+        QT_TRANSLATE TRUE
     )
 endfunction()
 

@@ -2,16 +2,11 @@
 <!DOCTYPE TS>
 <TS version="2.1" language="zh_CN">
 <context>
-    <name>ScriptMgr::Internal::VstClientPlugin</name>
+    <name>Vst::Internal::VstClientPlugin</name>
     <message>
-        <location filename="../../Internal/VstClientPlugin.cpp" line="38"/>
-        <source>Initializing script manager...</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../../Internal/VstClientPlugin.cpp" line="43"/>
-        <source>Failed to load action configuration!</source>
-        <translation type="unfinished"></translation>
+        <location filename="../../Internal/VstClientPlugin.cpp" line="36"/>
+        <source>Initializing vst support...</source>
+        <translation>初始化 vst 支持...</translation>
     </message>
 </context>
 </TS>

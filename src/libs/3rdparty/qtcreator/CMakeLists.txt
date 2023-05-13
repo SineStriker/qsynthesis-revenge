@@ -11,7 +11,11 @@ function(configure_qtc_library _name _library_macro)
         COPYRIGHT "Copyright The Qt Company Ltd."
         LIBRARY_MACRO ${_library_macro}
     )
-    set_target_properties(${PROJECT_NAME} PROPERTIES OUTPUT_NAME ${_name}36)
+    set_target_properties(${PROJECT_NAME} PROPERTIES
+        OUTPUT_NAME ${_name}36
+        QT_TRANSLATE TRUE
+        VENDOR qtcreator
+    )
     target_compile_definitions(${_name} PRIVATE _UNICODE UNICODE)
 endfunction()
 

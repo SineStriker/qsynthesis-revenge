@@ -4,18 +4,40 @@ project(common)
 ck_collect_targets(_all_targets DIR ${CK_CMAKE_SOURCE_DIR}/libs SHARED)
 
 set(_targets)
+set(_qtc_targets)
 
 foreach(_target ${_all_targets})
-    if(_target MATCHES "Qs.*|QM.*|Ck.*")
-        list(APPEND _targets ${_target})
+    get_target_property(_translate ${_target} QT_TRANSLATE)
+
+    if(NOT _translate)
+        continue()
     endif()
+
+    get_target_property(_vendor ${_target} VENDOR)
+
+    if(_vendor)
+        list(APPEND _qtc_targets ${_target})
+        continue()
+    endif()
+
+    list(APPEND _targets ${_target})
 endforeach()
 
 ck_deploy_qt_library(TARGETS ${_targets})
 
+# ChorusKit
 ck_add_translations(${PROJECT_NAME}_translations
     PREFIX common
     TARGETS ${_targets}
+    LOCALES zh_CN zh_HK ja_JP
+    TS_DIR translations
+    QM_DIR ${CMAKE_CURRENT_BINARY_DIR}/translations
+)
+
+# Qt Creator
+ck_add_translations(qtcreator_translations
+    PREFIX qtcreator
+    TARGETS ${_qtc_targets}
     LOCALES zh_CN zh_HK ja_JP
     TS_DIR translations
     QM_DIR ${CMAKE_CURRENT_BINARY_DIR}/translations
