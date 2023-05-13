@@ -15,6 +15,13 @@ using namespace Vst;
 
 extern "C" Q_DECL_EXPORT void Initializer();
 extern "C" Q_DECL_EXPORT void Terminator();
+extern "C" Q_DECL_EXPORT void ProcessInitializer(bool isOffline, qint32 maxBufferSize, double sampleRate);
+struct PlaybackParameters {
+    double sampleRate;
+    qint64 position;
+    qint32 bufferSize;
+};
+extern "C" Q_DECL_EXPORT bool PlaybackProcessor(const PlaybackParameters *playbackParameters, bool isPlaying, int32_t numOutputs, float *const *const *outputs);
 
 int main(int argc, char **argv) {
     QApplication a(argc, argv);
@@ -25,9 +32,15 @@ int main(int argc, char **argv) {
     auto *layout = new QVBoxLayout;
     auto *lineEdit = new QLineEdit;
     auto *btn = new QPushButton;
-    QObject::connect(btn, &QPushButton::clicked, [=](){
-        auto ret = ipcSendChannel->send(42, lineEdit->text().toLocal8Bit());
-        qDebug() << ret;
+    float **p1[16];
+    float *p2[2 * 16];
+    float buf[4096 * 2 * 16];
+    QObject::connect(btn, &QPushButton::clicked, [&](){
+        for(int i = 0; i < 16; i++)p1[i] = &p2[2 * i];
+        for(int i = 0; i < 2 * 16; i++)p2[i] = &buf[4096 * i];
+        PlaybackParameters param = {48000, 0, 4096};
+        PlaybackProcessor(&param, false, 1, p1);
+        qDebug() << buf[20] << buf[40];
     });
     layout->addWidget(lineEdit);
     layout->addWidget(btn);
@@ -35,5 +48,6 @@ int main(int argc, char **argv) {
     w->setCentralWidget(widget);
     w->show();
     Initializer();
+    ProcessInitializer(false, 4096, 48000);
     a.exec();
 }

@@ -12,6 +12,8 @@
 #include <QSharedMemory>
 namespace Vst {
 
+    class DiffScopeEditor;
+
     class IpcServer : public IpcConnect {
         Q_OBJECT
     public:
@@ -19,6 +21,7 @@ namespace Vst {
         ~IpcServer();
         void abort() override;
     protected:
+        friend class DiffScopeEditor;
         QLocalServer server;
     };
 

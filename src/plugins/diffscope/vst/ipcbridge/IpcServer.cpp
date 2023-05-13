@@ -16,11 +16,11 @@ void Vst::IpcServer::abort() {
     }
 }
 Vst::IpcServer::IpcServer(const QString &key, QObject *parent): IpcConnect(key, parent) {
-    IpcServer::server.setMaxPendingConnections(1);
-    IpcServer::server.listen(key);
+    server.setMaxPendingConnections(1);
+    server.listen(key);
     connect(&server, &QLocalServer::newConnection, this, [=](){
-        socket = IpcServer::server.nextPendingConnection();
-        IpcServer::server.close();
+        socket = server.nextPendingConnection();
+        server.close();
         connect(socket, &QLocalSocket::disconnected, this, [=](){ emit disconnected(); });
         emit connected();
     });
