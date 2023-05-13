@@ -28,5 +28,6 @@ ck_target_components(${PROJECT_NAME}
     LINKS_PRIVATE ${_platform_libs}
     AUTO_INCLUDE_CURRENT
     AUTO_INCLUDE_DIRS Global Static ../..
+    INCLUDE_PRIVATE ${CK_HEADERS_OUTPUT_PATH}
     INCLUDE_SUBDIRS_PRIVATE
 )

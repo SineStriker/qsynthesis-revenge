@@ -706,11 +706,5 @@ function(_ck_dist_shared_for_application _item)
             COMMAND ln -s ${CK_GLOBAL_LIBRARY_OUTPUT_PATH}/* ${_base_dir}/Frameworks
             COMMAND ln -s ${CK_GLOBAL_SHARE_OUTPUT_PATH}/* ${_base_dir}/Resources
         )
-
-        # Add install command to copy shared files
-        install(
-            DIRECTORY ${CK_GLOBAL_LIBRARY_OUTPUT_PATH} ${CK_GLOBAL_SHARE_OUTPUT_PATH}
-            DESTINATION $<TARGET_FILE_NAME:${_item}>/Contents
-        )
     endif()
 endfunction()

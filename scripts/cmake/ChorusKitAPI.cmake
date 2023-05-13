@@ -805,6 +805,16 @@ function(ck_finish_build_system)
     get_target_property(_lib_list ChorusKit_Metadata LIBRARY_TARGETS)
     get_target_property(_lib_plugin_list ChorusKit_Metadata LIBRARY_PLUGIN_TARGETS)
 
+    if(APPLE)
+        # Add install command to copy shared files
+        foreach(_item ${_app_list})
+            install(
+                DIRECTORY ${CK_GLOBAL_LIBRARY_OUTPUT_PATH} ${CK_GLOBAL_SHARE_OUTPUT_PATH}
+                DESTINATION $<TARGET_FILE_NAME:${_item}>/Contents
+            )
+        endforeach()
+    endif()
+
     if(CK_ENABLE_DEVEL)
         include(GNUInstallDirs)
         include(CMakePackageConfigHelpers)
@@ -1316,6 +1326,7 @@ function(ck_deploy_qt_library)
 
     foreach(_target ${FUNC_TARGETS})
         install(CODE "
+            message(STATUS \"Deploying $<TARGET_FILE:${_target}>\")
             execute_process(
                 COMMAND ${_cmd}
                 --libdir \"${_lib_dir}\"

@@ -1,26 +1,28 @@
 #include "QMCoreConsole.h"
 #include "private/QMCoreConsole_p.h"
 
+#include "choruskit_config.h"
+
 Q_SINGLETON_DECLARE(QMCoreConsole);
 
 #ifdef Q_OS_WINDOWS
-#include <Windows.h>
+#    include <Windows.h>
 #elif defined(Q_OS_MACOS)
-#include <CoreFoundation/CoreFoundation.h>
-#include <objc/message.h>
-#include <objc/runtime.h>
-#define cls objc_getClass
-#define sel sel_getUid
+#    include <CoreFoundation/CoreFoundation.h>
+#    include <objc/message.h>
+#    include <objc/runtime.h>
+#    define cls objc_getClass
+#    define sel sel_getUid
 
 typedef id (*_object_message_send)(id, SEL, ...);
 typedef id (*_class_message_send)(Class, SEL, ...);
 
-#define _msg ((_object_message_send) objc_msgSend)
-#define _cls_msg ((_class_message_send) objc_msgSend)
+#    define _msg     ((_object_message_send) objc_msgSend)
+#    define _cls_msg ((_class_message_send) objc_msgSend)
 
 typedef id (*_MethodImp)(id, SEL, ...);
 typedef _MethodImp (*_get_method_imp)(Class, SEL);
-#define _method ((_get_method_imp) class_getMethodImplementation)
+#    define _method  ((_get_method_imp) class_getMethodImplementation)
 #endif
 
 QMCoreConsolePrivate::QMCoreConsolePrivate() {
@@ -36,7 +38,7 @@ void QMCoreConsolePrivate::init() {
 
 void QMCoreConsolePrivate::osMessageBox_helper(void *winHandle, QMCoreConsole::MessageBoxFlag flag,
                                                const QString &title, const QString &text) {
-#ifdef Q_OS_WINDOWS
+#    ifdef Q_OS_WINDOWS
     int winFlag;
     switch (flag) {
         case QMCoreConsole::Critical:
@@ -53,14 +55,13 @@ void QMCoreConsolePrivate::osMessageBox_helper(void *winHandle, QMCoreConsole::M
             break;
     };
 
-    ::MessageBoxW(static_cast<HWND>(winHandle), text.toStdWString().data(),
-                  title.toStdWString().data(),
+    ::MessageBoxW(static_cast<HWND>(winHandle), text.toStdWString().data(), title.toStdWString().data(),
                   MB_OK
-#ifdef CONFIG_WIN32_MSGBOX_TOPMOST
+#        ifdef CONFIG_WIN32_MSGBOX_TOPMOST
                       | MB_TOPMOST
-#endif
+#        endif
                       | MB_SETFOREGROUND | winFlag);
-#else
+#    else
     Class alert = cls("NSAlert");
     id alertObj = _cls_msg(alert, sel("alloc"));
     alertObj = _msg(alertObj, sel("init"));
@@ -81,7 +82,7 @@ void QMCoreConsolePrivate::osMessageBox_helper(void *winHandle, QMCoreConsole::M
     _msg(alertObj, sel("setMessageText:"), text.toCFString());
     _msg(alertObj, sel("setInformativeText:"), title.toCFString());
     _msg(alertObj, sel("runModal"), 0);
-#endif
+#    endif
 }
 
 #endif
@@ -95,7 +96,7 @@ QMCoreConsole::~QMCoreConsole() {
 void QMCoreConsole::MsgBox(QObject *parent, QMCoreConsole::MessageBoxFlag flag, const QString &title,
                            const QString &text) {
     Q_UNUSED(parent);
-    
+
 #if defined(Q_OS_WINDOWS) || defined(Q_OS_MAC)
     Q_D(QMCoreConsole);
     d->osMessageBox_helper(nullptr, flag, title, text);

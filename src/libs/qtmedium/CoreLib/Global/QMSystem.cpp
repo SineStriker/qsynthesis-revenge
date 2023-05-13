@@ -1,5 +1,7 @@
 #include "QMSystem.h"
 
+#include "choruskit_config.h"
+
 #include <QCoreApplication>
 #include <QDirIterator>
 #include <QProcess>
