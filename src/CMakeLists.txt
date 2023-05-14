@@ -31,9 +31,18 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 # ----------------------------------
 ck_init_buildsystem()
 
+# Try get vcpkg
+set(_vcpkg_file ${ROOT_VCPKG_DIR}/scripts/buildsystems/vcpkg.cmake)
+
+if(NOT EXISTS ${_vcpkg_file})
+    message(WARNING "VCPKG not found, try to get it")
+    include(${CK_PROJECT_ROOT_DIR}/scripts/vcpkg/SetupVcpkg.cmake)
+endif()
+
 # Tell vcpkg not to copy dlls automatically on Windows
 set(VCPKG_APPLOCAL_DEPS off)
-include(${ROOT_VCPKG_DIR}/scripts/buildsystems/vcpkg.cmake)
+include(${_vcpkg_file})
+unset(_vcpkg_file)
 
 # Initialize vcpkg
 ck_init_vcpkg(${ROOT_VCPKG_DIR} ${VCPKG_TARGET_TRIPLET})

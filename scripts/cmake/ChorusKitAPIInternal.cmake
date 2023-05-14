@@ -45,20 +45,19 @@ if(CHORUSKIT_REPOSITORY)
             message(WARNING "Qmake not found")
         endif()
 
-        if(LINUX)
-            message(STATUS "Qt deploy: ${CK_PYTHON_SCRIPTS_DIR}/linuxdeployqt.py")
-        elseif(QT_QMAKE_EXECUTABLE)
-            get_filename_component(QT_BIN_DIRECTORY "${QT_QMAKE_EXECUTABLE}" DIRECTORY)
-            find_program(QT_DEPLOY_EXECUTABLE NAMES windeployqt macdeployqt HINTS "${QT_BIN_DIRECTORY}")
+    # if(LINUX)
+    # message(STATUS "Qt deploy: ${CK_PYTHON_SCRIPTS_DIR}/linuxdeployqt.py")
+    # elseif(QT_QMAKE_EXECUTABLE)
+    # get_filename_component(QT_BIN_DIRECTORY "${QT_QMAKE_EXECUTABLE}" DIRECTORY)
+    # find_program(QT_DEPLOY_EXECUTABLE NAMES windeployqt macdeployqt HINTS "${QT_BIN_DIRECTORY}")
 
-            if(EXISTS "${QT_DEPLOY_EXECUTABLE}")
-                message(STATUS "Qt deploy found: ${QT_DEPLOY_EXECUTABLE}")
-            else()
-                set(QT_DEPLOY_EXECUTABLE)
-                message(WARNING "Qt deploy not found")
-            endif()
-        endif()
-
+    # if(EXISTS "${QT_DEPLOY_EXECUTABLE}")
+    # message(STATUS "Qt deploy found: ${QT_DEPLOY_EXECUTABLE}")
+    # else()
+    # set(QT_DEPLOY_EXECUTABLE)
+    # message(WARNING "Qt deploy not found")
+    # endif()
+    # endif()
     else()
         message(WARNING "QtCore component not found")
     endif()
@@ -86,6 +85,8 @@ function(_ck_convert_target_to_alias _out)
     set(_res)
 
     foreach(_item ${ARGN})
+        set(_key)
+        set(_val)
         _ck_parse_namespace(${_item} _key _val)
 
         if(_key AND _val)
@@ -215,6 +216,7 @@ function(_ck_add_copy_command _target _base_dir _src _dest)
                     -D \"src=${_full_path}\"
                     -D \"dest=${CMAKE_INSTALL_PREFIX}/\${_rel_path}\"
                     -P \"${CK_CMAKE_SCRIPTS_DIR}/CopyIfDifferent.cmake\"
+                    COMMAND_ERROR_IS_FATAL ANY
                 )
             ")
         endif()
@@ -263,6 +265,7 @@ function(_ck_configure_build_info_header _file)
             ERROR_QUIET
             WORKING_DIRECTORY
             ${CK_PROJECT_ROOT_DIR}
+            COMMAND_ERROR_IS_FATAL ANY
         )
 
         execute_process(
@@ -272,6 +275,7 @@ function(_ck_configure_build_info_header _file)
             ERROR_QUIET
             WORKING_DIRECTORY
             ${CK_PROJECT_ROOT_DIR}
+            COMMAND_ERROR_IS_FATAL ANY
         )
     endif()
 
@@ -341,17 +345,6 @@ function(_ck_configure_plugin_desc _file)
     set(_content "${_content}\n}")
 
     file(GENERATE OUTPUT ${_file} CONTENT ${_content})
-endfunction()
-
-function(_ck_property_list_append _target _prop)
-    get_target_property(_list ${_target} ${_prop})
-
-    if(NOT _list)
-        set(_list)
-    endif()
-
-    list(APPEND _list ${ARGN})
-    set_target_properties(${_target} PROPERTIES ${_prop} "${_list}")
 endfunction()
 
 macro(_ck_set_value _key _maybe_value _default)
@@ -657,6 +650,7 @@ function(_ck_add_lupdate_target _target)
                 COMMAND ${_lupdate_exe} ${_options_filtered} "@${_ts_lst_file}" -ts ${_ts_file}
                 WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
                 OUTPUT_VARIABLE _null
+                COMMAND_ERROR_IS_FATAL ANY
             )
         endif()
 
@@ -746,22 +740,16 @@ function(_ck_dist_shared_for_application _item)
 endfunction()
 
 function(_ck_deploy_qt_library)
+    if(NOT Python_EXECUTABLE OR NOT QT_QMAKE_EXECUTABLE)
+        return()
+    endif()
+
     if(WIN32)
-        if(NOT QT_DEPLOY_EXECUTABLE)
-            return()
-        endif()
-
         set(_lib_dir ${CK_INSTALL_RUNTIME_OUTPUT_PATH})
+    elseif(APPLE)
+        set(_lib_dir $${CK_INSTALL_LIBRARY_OUTPUT_PATH}/Qt)
     else()
-        if(NOT Python_EXECUTABLE)
-            return()
-        endif()
-
-        if(LINUX)
-            set(_lib_dir ${CK_INSTALL_LIBRARY_OUTPUT_PATH}/Qt/lib)
-        else()
-            set(_lib_dir $${CK_INSTALL_LIBRARY_OUTPUT_PATH}/Qt)
-        endif()
+        set(_lib_dir ${CK_INSTALL_LIBRARY_OUTPUT_PATH}/Qt/lib)
     endif()
 
     set(_plugins_dir ${CK_INSTALL_LIBRARY_OUTPUT_PATH}/Qt/plugins)
@@ -780,35 +768,17 @@ function(_ck_deploy_qt_library)
 
     _ck_convert_target_to_alias(_alias_targets ${_deploy_targets})
 
-    if(WIN32)
-        install(CODE "
-            message(STATUS \"Deploying: run ${QT_DEPLOY_EXECUTABLE}\")
-            message(STATUS \"Targets: ${_alias_targets}\")
-            execute_process(
-                COMMAND \"${QT_DEPLOY_EXECUTABLE}\"
-                --libdir \"${_lib_dir}\"
-                --plugindir \"${_plugins_dir}\"
-                --no-translations
-                --no-system-d3d-compiler
-                --no-compiler-runtime
-                --no-opengl-sw
-                --force
-                --verbose 0
-                ${_targets_cmd}
-                WORKING_DIRECTORY \"${CMAKE_INSTALL_PREFIX}\"
-            )")
-    else()
-        set(_script "${CK_PYTHON_SCRIPTS_DIR}/unixdeployqt.py")
-        install(CODE "
-            message(STATUS \"Deploying: run ${_script}\")
-            message(STATUS \"Targets: ${_alias_targets}\")
-            execute_process(
-                COMMAND \"${Python_EXECUTABLE}\" \"${_script}\"
-                --qmake \"${QT_QMAKE_EXECUTABLE}\"
-                --libdir \"${_lib_dir}\"
-                --plugindir \"${_plugins_dir}\"
-                ${_targets_cmd}
-                WORKING_DIRECTORY \"${CMAKE_INSTALL_PREFIX}\"
-            )")
-    endif()
+    set(_script "${CK_PYTHON_SCRIPTS_DIR}/deployqt.py")
+    install(CODE "
+        message(STATUS \"Deploying: Run ${_script}\")
+        message(STATUS \"Targets: ${_alias_targets}\")
+        execute_process(
+            COMMAND \"${Python_EXECUTABLE}\" \"${_script}\"
+            --qmake \"${QT_QMAKE_EXECUTABLE}\"
+            --libdir \"${_lib_dir}\"
+            --plugindir \"${_plugins_dir}\"
+            ${_targets_cmd}
+            WORKING_DIRECTORY \"${CMAKE_INSTALL_PREFIX}\"
+            COMMAND_ERROR_IS_FATAL ANY
+        )")
 endfunction()

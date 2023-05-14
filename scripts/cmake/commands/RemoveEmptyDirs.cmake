@@ -25,7 +25,7 @@ while(_search_dirs)
             list(APPEND _search_dirs ${_parent})
         endif()
 
-        message("Remove empty directory ${_curdir}")
+        message(STATUS "Remove empty directory ${_curdir}")
         file(REMOVE_RECURSE ${_curdir})
         continue()
     endif()

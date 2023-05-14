@@ -23,7 +23,8 @@ foreach(_target ${_all_targets})
     list(APPEND _targets ${_target})
 endforeach()
 
-set_target_properties(ChorusKit_Metadata PROPERTIES DEPLOY_TARGETS "${_targets}")
+# ck_property_list_append(ChorusKit_Metadata DEPLOY_TARGETS ${_targets} ${_qtc_targets})
+set_target_properties(ChorusKit_Metadata PROPERTIES DEPLOY_TARGETS "${_targets};${_qtc_targets}")
 
 # ChorusKit
 ck_add_translations(${PROJECT_NAME}_translations

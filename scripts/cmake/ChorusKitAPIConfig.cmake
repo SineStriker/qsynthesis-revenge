@@ -91,4 +91,5 @@ ck_option(CK_CMAKE_RANDOM_LENGTH 8)
 ck_option(CK_BUILD_TEST on)
 ck_option(CK_ENABLE_BREAKPAD off)
 
+message(STATUS "Build Type: ${CMAKE_BUILD_TYPE}")
 message(STATUS "Host system: ${CK_PLATFORM_NAME}, ${CMAKE_HOST_SYSTEM}")

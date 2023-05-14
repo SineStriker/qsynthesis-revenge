@@ -50,7 +50,7 @@ Add target to copy vcpkg dependencies on Windows.
     ck_init_vcpkg(<vcpkg_dir> <vcpkg_triplet>)
 ]] #
 function(ck_init_vcpkg _vcpkg_dir _vcpkg_triplet)
-    if(NOT WIN32 OR NOT CK_ENABLE_VCPKG_DEPS)
+    if(NOT CK_ENABLE_VCPKG_DEPS)
         return()
     endif()
 
@@ -64,34 +64,36 @@ function(ck_init_vcpkg _vcpkg_dir _vcpkg_triplet)
 
     if(WIN32)
         set(_bin_dir ${_vcpkg_installed_dir}/${_vcpkg_triplet}${_vcpkg_triplet_suffix}/bin)
-        set(_runtime_output_dir ${CK_GLOBAL_RUNTIME_OUTPUT_PATH})
-        set(_install_dir bin)
+        set(_build_dir ${CK_GLOBAL_RUNTIME_OUTPUT_PATH})
+        set(_install_dir ${CK_INSTALL_RUNTIME_OUTPUT_PATH})
     else()
         set(_bin_dir ${_vcpkg_installed_dir}/${_vcpkg_triplet}${_vcpkg_triplet_suffix}/lib)
-        set(_runtime_output_dir ${CK_GLOBAL_LIBRARY_OUTPUT_PATH})
-        set(_install_dir lib)
+        set(_build_dir ${CK_GLOBAL_LIBRARY_OUTPUT_PATH})
+        set(_install_dir ${CK_INSTALL_LIBRARY_OUTPUT_PATH})
     endif()
 
     set(_prebuilt_dlls)
     file(GLOB _dlls ${_bin_dir}/${CK_SHARED_LIBRARY_PATTERN})
 
-    foreach(_dll ${_dlls})
-        get_filename_component(_name ${_dll} NAME)
-        set(_out_dll ${_runtime_output_dir}/${_name})
+    if(WIN32)
+        foreach(_dll ${_dlls})
+            get_filename_component(_name ${_dll} NAME)
+            set(_out_dll ${_build_dir}/${_name})
 
-        add_custom_command(
-            OUTPUT ${_out_dll}
-            DEPENDS ${_dll}
-            COMMAND ${CMAKE_COMMAND} -E make_directory ${_runtime_output_dir}
-            COMMAND ${CMAKE_COMMAND} -E copy_if_different ${_dll} ${_runtime_output_dir}
-        )
+            add_custom_command(
+                OUTPUT ${_out_dll}
+                DEPENDS ${_dll}
+                COMMAND ${CMAKE_COMMAND} -E make_directory ${_build_dir}
+                COMMAND ${CMAKE_COMMAND} -E copy_if_different ${_dll} ${_build_dir}
+            )
 
-        list(APPEND _prebuilt_dlls ${_out_dll})
+            list(APPEND _prebuilt_dlls ${_out_dll})
+        endforeach()
 
-        install(FILES ${_dll} DESTINATION ${_install_dir})
-    endforeach()
+        add_custom_target(ChorusKit_SetupVcpkgDeps ALL DEPENDS ${_prebuilt_dlls})
+    endif()
 
-    add_custom_target(ChorusKit_SetupVcpkgDeps ALL DEPENDS ${_prebuilt_dlls})
+    install(FILES ${_dlls} DESTINATION ${_install_dir})
 endfunction()
 
 #[[
@@ -125,7 +127,7 @@ function(ck_add_definition)
     endif()
 
     # Add definition to global list
-    _ck_property_list_append(ChorusKit_Metadata CONFIG_DEFINITIONS "${_def}")
+    ck_property_list_append(ChorusKit_Metadata CONFIG_DEFINITIONS "${_def}")
 endfunction()
 
 #[[
@@ -288,10 +290,10 @@ function(ck_add_library _target)
 
     if(_ns)
         # Add target to global list
-        _ck_property_list_append(${_ns} LIBRARIES ${_target})
+        ck_property_list_append(${_ns} LIBRARIES ${_target})
     else()
         # Add target to global list
-        _ck_property_list_append(ChorusKit_Metadata LIBRARY_TARGETS ${_target})
+        ck_property_list_append(ChorusKit_Metadata LIBRARY_TARGETS ${_target})
     endif()
 endfunction()
 
@@ -385,7 +387,7 @@ function(ck_add_library_plugin _target _category)
     endif()
 
     # Add target to global list
-    _ck_property_list_append(ChorusKit_Metadata LIBRARY_PLUGIN_TARGETS ${_target})
+    ck_property_list_append(ChorusKit_Metadata LIBRARY_PLUGIN_TARGETS ${_target})
 endfunction()
 
 #[[
@@ -495,7 +497,7 @@ function(ck_add_application _target _entry_library)
     _ck_dist_shared_for_application(${_target})
 
     # Add target to global list
-    _ck_property_list_append(ChorusKit_Metadata APPLICATION_TARGETS ${_target})
+    ck_property_list_append(ChorusKit_Metadata APPLICATION_TARGETS ${_target})
 endfunction()
 
 #[[
@@ -615,7 +617,7 @@ function(ck_add_application_plugin _target)
     endif()
 
     # Add plugin to target's plugin list
-    _ck_property_list_append(${_ns} PLUGINS ${_name})
+    ck_property_list_append(${_ns} PLUGINS ${_name})
 endfunction()
 
 #[[
@@ -823,10 +825,11 @@ function(ck_finish_build_system)
     if(Python_FOUND)
         set(_script "${CK_PYTHON_SCRIPTS_DIR}/postdeploy.py")
         install(CODE "
-            message(STATUS \"Post deploy: run ${_script}\")
+            message(STATUS \"Post deploy: Run ${_script}\")
             execute_process(
                 COMMAND \"${Python_EXECUTABLE}\" \"${_script}\" \"${CMAKE_INSTALL_PREFIX}\"
                 WORKING_DIRECTORY \"${CMAKE_INSTALL_PREFIX}\"
+                COMMAND_ERROR_IS_FATAL ANY
             )")
     endif()
 
@@ -1311,6 +1314,7 @@ function(ck_install_headers _dir)
             COMMAND \"${CMAKE_COMMAND}\"
             -D \"dir=${CMAKE_INSTALL_PREFIX}/${_dest}\"
             -P \"${CK_CMAKE_SCRIPTS_DIR}/RemoveEmptyDirs.cmake\"
+            COMMAND_ERROR_IS_FATAL ANY
         )
     ")
 endfunction()

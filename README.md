@@ -20,6 +20,11 @@ All applications in this toolset are free softwares and aim to provide the commu
 + QVogenClient
     + Third-party edition of [Vogen.Client](https://github.com/aqtq314/Vogen.Client). -->
 
+### Simple Tools
+
++ MinLabel
++ SlurCutter
+
 ## Supported Platforms
 
 + Microsoft Windows (Vista ~ 11)
@@ -30,12 +35,12 @@ All applications in this toolset are free softwares and aim to provide the commu
 
 ### Requirements
 
-| Component | Requirement |              Detailed                |
+| Component | Requirement |               Detailed               |
 |:---------:|:-----------:|:------------------------------------:|
-|    Qt     |   >=5.15    |   Core, Gui, Widgets, Svg, Network   |
-| Compiler  |   >=C++17   |        MSVC 2019, GCC, Clang         |
-|   CMake   |   >=3.17    |        >=3.20 is recommended         |
-|  Python   |   >=3.6     |                  /                   |
+|    Qt     |   \>=5.15   |   Core, Gui, Widgets, Svg, Network   |
+| Compiler  |  \>=C++17   |        MSVC 2019, GCC, Clang         |
+|   CMake   |   \>=3.17   |        >=3.20 is recommended         |
+|  Python   |   \>=3.6    |                  /                   |
 
 
 On Windows, compiling with MinGW is not tested.
@@ -64,7 +69,7 @@ For detailed information, see [Related Tools](./docs/related-tools.md).
     + GNU LGPL v2.1
 + [Zlib](http://www.zlib.net)
     + Zlib License
-+ [IntelliJ IDEA](https://github.com/JetBrains/intellij-community)
++ [IntelliJ IDEA](https://github.com/JetBrains/intellij-community) (fsnotifier)
     + Apache 2.0 License
 + [OpenSVIP](https://github.com/yqzhishen/opensvip)
     + MIT License

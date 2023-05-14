@@ -23,6 +23,22 @@ macro(ck_option _name)
 endmacro()
 
 #[[
+Add elements to a target's property.
+
+    ck_property_list_append(<target> <property> <elements...>)
+]] #
+function(ck_property_list_append _target _prop)
+    get_target_property(_list ${_target} ${_prop})
+
+    if(NOT _list)
+        set(_list)
+    endif()
+
+    list(APPEND _list ${ARGN})
+    set_target_properties(${_target} PROPERTIES ${_prop} "${_list}")
+endfunction()
+
+#[[
 Parse version and create seq vars with specified prefix.
 
     ck_parse_version(<prefix> <version>)

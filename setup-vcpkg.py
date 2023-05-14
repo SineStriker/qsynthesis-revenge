@@ -5,6 +5,7 @@ from __future__ import annotations
 import os
 import sys
 import platform
+import subprocess
 
 import enum
 import argparse
@@ -68,7 +69,8 @@ class library_task:
             cmds.append(f"--overlay-ports={library_task.overlay_ports}")
         if self.use_overlay_triplets:
             cmds.append(f"--overlay-triplets={library_task.overlay_triplets}")
-        return os.system(str(" ").join(cmds))
+        # return os.system(str(" ").join(cmds))
+        return subprocess.run(args=cmds).returncode
 
 
 # Vcpkg repo
@@ -107,23 +109,8 @@ def main():
         "--deploy", help="Build and deploy the project.", type=str, default="", metavar="<out dir>")
     args = parser.parse_args()
 
-    # Determine os and arch
-    os_name = platform.system().lower()
-    arch_name = platform.machine().lower()
-
-    # vcpkg calls macOS as osx, change it on the fly
-    if os_name == "darwin":
-        os_name = "osx"
-
-    if arch_name == "i386" or arch_name == "x86":
-        arch_name = "x86"
-    elif arch_name == "amd64" or arch_name == "x86_64":
-        arch_name = "x64"
-    elif arch_name == "arm64":
-        pass
-    else:
-        print(f"Unsupported architecture {arch_name}!")
-        sys.exit(-1)
+    # Get platform
+    os_name, arch_name = get_platform()
 
     # Determine file extension name
     if os_name == 'windows':
@@ -164,7 +151,7 @@ def main():
         import scripts.python.vcpkg_init as tmp
         if args.init:
             tmp.generate()
-            sys.exit(-1)
+            sys.exit(0)
 
         if not tmp.load():
             sys.exit(-1)
