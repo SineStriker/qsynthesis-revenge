@@ -1,21 +1,23 @@
-#ifndef CHORUSKIT_MAINWINDOW_H
-#define CHORUSKIT_MAINWINDOW_H
+#ifndef CHORUSKIT_G2PWIDEGET_H
+#define CHORUSKIT_G2PWIDEGET_H
 
-#include <QBuffer>
-#include <QFile>
-#include <QMainWindow>
-
+#include <QButtonGroup>
 #include <QCheckBox>
+#include <QDebug>
 #include <QPushButton>
 #include <QRadioButton>
+#include <QTableWidget>
 #include <QTextEdit>
+#include <QVBoxLayout>
+#include <QWidget>
 
-class MainWindow : public QMainWindow {
+class G2pWidget : public QWidget {
     Q_OBJECT
 public:
-    explicit MainWindow(QWidget *parent = nullptr);
-    ~MainWindow();
-private:
+    explicit G2pWidget(QWidget *parent = nullptr);
+    ~G2pWidget();
+
+protected:
     QTextEdit *m_textEditTop;
     QTextEdit *m_textEditBottom;
     QPushButton *m_buttonConvert;
@@ -24,6 +26,11 @@ private:
     QRadioButton *m_radioBtnOption2;
     QButtonGroup *m_buttonGroup;
     QCheckBox *m_checkBox;
+private:
+    void convertLyric();
+    void reorderLyric();
 };
 
-#endif // CHORUSKIT_MAINWINDOW_H
+
+
+#endif // CHORUSKIT_G2PWIDEGET_H
