@@ -11,8 +11,8 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
     m_textEditTop = new QTextEdit(this);
     m_textEditBottom = new QTextEdit(this);
     m_buttonConvert = new QPushButton("转换", this);
+    m_buttonReorder = new QPushButton("填词", this);
 
-    connect(m_buttonConvert, &QPushButton::clicked, this, &MainWindow::onConvertClicked);
 
     m_radioBtnOption1 = new QRadioButton("按字（单词）隔开", this);
     m_radioBtnOption2 = new QRadioButton("按字符隔开", this);
@@ -35,26 +35,34 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
     layout->addLayout(hLayout);
 
     layout->addWidget(m_buttonConvert);
+    layout->addWidget(m_buttonReorder);
     layout->addWidget(m_textEditBottom);
 
     auto *widget = new QWidget(this);
     widget->setLayout(layout);
     setCentralWidget(widget);
     resize(800, 600);
+
+    connect(m_buttonConvert, &QPushButton::clicked, this, [this] {
+        QString rawStr = m_textEditTop->toPlainText();
+        QString res;
+        auto cleanStr = m_checkBox->isChecked() ? IKg2p::CleanLyric::filterTextInParentheses(rawStr) : rawStr;
+        if (m_radioBtnOption1->isChecked()) {
+            qDebug() << "按字词隔开:";
+            res = IKg2p::CleanLyric::splitLyricAsWord(cleanStr).join(" ");
+        } else if (m_radioBtnOption2->isChecked()) {
+            qDebug() << "按字符隔开:";
+            res = IKg2p::CleanLyric::splitLyricAsChar(cleanStr).join(" ");
+        }
+        m_textEditBottom->setPlainText(res);
+    });
+
+    connect(m_buttonReorder, &QPushButton::clicked, this, [this] {
+        QString rawStr = m_textEditBottom->toPlainText();
+        QString res = IKg2p::CleanLyric::reOrder(rawStr, {1, 2, 3, 4, 5, 6, 7, 8, 9});
+        m_textEditBottom->setPlainText(res);
+    });
 }
 
 MainWindow::~MainWindow() {
-}
-
-void MainWindow::onConvertClicked() {
-    QString rawStr = m_textEditTop->toPlainText();
-
-    auto cleanStr = m_checkBox->isChecked() ? IKg2p::CleanLyric::filterTextInParentheses(rawStr) : rawStr;
-    if (m_radioBtnOption1->isChecked()) {
-        qDebug() << "按字词隔开:";
-        m_textEditBottom->setPlainText(IKg2p::CleanLyric::splitLyricAsWord(cleanStr).join(" "));
-    } else if (m_radioBtnOption2->isChecked()) {
-        qDebug() << "按字符隔开:";
-        m_textEditBottom->setPlainText(IKg2p::CleanLyric::splitLyricAsChar(cleanStr).join(" "));
-    }
 }

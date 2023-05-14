@@ -15,14 +15,11 @@ class MainWindow : public QMainWindow {
 public:
     explicit MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
-
-private slots:
-    void onConvertClicked();
-
 private:
     QTextEdit *m_textEditTop;
     QTextEdit *m_textEditBottom;
     QPushButton *m_buttonConvert;
+    QPushButton *m_buttonReorder;
     QRadioButton *m_radioBtnOption1;
     QRadioButton *m_radioBtnOption2;
     QButtonGroup *m_buttonGroup;
