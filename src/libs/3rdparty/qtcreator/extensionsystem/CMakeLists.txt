@@ -2,7 +2,7 @@ project(ExtensionSystem VERSION ${QT_CREATOR_VERSION} LANGUAGES CXX)
 
 ck_add_files(_src CURRENT DIRS newSettings PATTERNS *.h *.cpp *.ui *.qrc)
 
-configure_qtc_library(${PROJECT_NAME} EXTENSIONSYSTEM_LIBRARY)
+configure_qtc_library(${PROJECT_NAME})
 
 ck_target_components(${PROJECT_NAME}
     AUTO_INCLUDE_CURRENT

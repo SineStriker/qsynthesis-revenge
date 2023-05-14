@@ -25,7 +25,7 @@ if(QT_CREATOR_ENABLE_QML)
     list(APPEND _qt_libs Qml)
 endif()
 
-configure_qtc_library(${PROJECT_NAME} QTCREATOR_UTILS_LIB)
+configure_qtc_library(${PROJECT_NAME} LIBRARY_MACRO QTCREATOR_UTILS_LIB)
 
 ck_target_components(${PROJECT_NAME}
     AUTO_INCLUDE_CURRENT

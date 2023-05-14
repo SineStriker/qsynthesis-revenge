@@ -26,7 +26,7 @@ ck_add_application_files(${PROJECT_NAME}
 
 ck_add_application_files(${PROJECT_NAME}
     SKIP_BUILD BASE_SHARE_DIR
-    SRC doc/* DEST doc/DiffScope
+    SRC doc/* DEST doc/${PROJECT_NAME}
 )
 
 if(WIN32)

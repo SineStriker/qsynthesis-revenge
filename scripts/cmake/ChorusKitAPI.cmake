@@ -542,10 +542,11 @@ function(ck_add_application_plugin _target)
     # Set parsed name as output name if not set
     _ck_try_set_output_name(${_target} ${_name})
 
+    _ck_set_value(_vendor FUNC_VENDOR "OpenVPI")
+
     if(WIN32)
         string(TIMESTAMP _year "%Y")
 
-        _ck_set_value(_vendor FUNC_VENDOR "OpenVPI")
         set(_copyright "Copyright ${CK_DEV_START_YEAR}-${_year} ${_vendor}")
 
         # Add windows rc file
@@ -557,9 +558,9 @@ function(ck_add_application_plugin _target)
 
     # Configure plugin json if specified
     if(FUNC_PLUGIN_JSON)
-        ck_configure_plugin_metadata(${_target} ${FUNC_PLUGIN_JSON} ${FUNC_UNPARSED_ARGUMENTS})
+        ck_configure_plugin_metadata(${_target} ${FUNC_PLUGIN_JSON} ${FUNC_UNPARSED_ARGUMENTS} VENDOR ${_vendor})
     elseif(NOT FUNC_NO_PLUGIN_JSON AND EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/plugin.json.in)
-        ck_configure_plugin_metadata(${_target} plugin.json.in ${FUNC_UNPARSED_ARGUMENTS})
+        ck_configure_plugin_metadata(${_target} plugin.json.in ${FUNC_UNPARSED_ARGUMENTS} VENDOR ${_vendor})
     endif()
 
     # Configure plugin desc file
