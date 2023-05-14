@@ -9,7 +9,7 @@ add_library(${PROJECT_NAME} STATIC
     singleapplication.cpp
     singleapplication_p.h
     singleapplication_p.cpp
-)
+        )
 add_library(${PROJECT_NAME}::${PROJECT_NAME} ALIAS ${PROJECT_NAME})
 
 if(NOT QT_DEFAULT_MAJOR_VERSION)
