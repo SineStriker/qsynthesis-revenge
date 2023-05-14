@@ -16,13 +16,13 @@ function(_fix_vcpkg_json)
 
     get_filename_component(_qt5_dir ${_target_file} DIRECTORY)
 
+    # Generate setup-vcpkg.json
+    set(_setup_vcpkg_json ${CK_PROJECT_ROOT_DIR}/setup-vcpkg.json)
+
     # Remove if exists
     if(EXISTS ${ROOT_VCPKG_DIR})
         file(REMOVE_RECURSE ${ROOT_VCPKG_DIR})
     endif()
-
-    # Generate setup-vcpkg.json
-    set(_setup_vcpkg_json ${CK_PROJECT_ROOT_DIR}/setup-vcpkg.json)
 
     if(NOT EXISTS ${_setup_vcpkg_json})
         execute_process(

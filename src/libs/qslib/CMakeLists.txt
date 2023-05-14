@@ -15,6 +15,7 @@ function(configure_library)
     set_target_properties(${PROJECT_NAME} PROPERTIES
         QT_TRANSLATE TRUE
     )
+    ck_add_deploy_targets(${PROJECT_NAME})
 endfunction()
 
 add_subdirectory(SVS)

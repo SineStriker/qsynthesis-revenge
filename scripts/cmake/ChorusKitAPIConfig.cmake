@@ -77,6 +77,16 @@ if(NOT CHORUSKIT_REPOSITORY)
     return()
 endif()
 
+# Create timestamp file
+# set(CK_CONFIGURE_TIMESTAMP_FILE ${CMAKE_BINARY_DIR}/tmp/timestamp)
+
+# if(EXISTS ${CK_CONFIGURE_TIMESTAMP_FILE})
+#     file(REMOVE ${CK_CONFIGURE_TIMESTAMP_FILE})
+# endif()
+
+# file(WRITE ${CK_CONFIGURE_TIMESTAMP_FILE} "1")
+
+# Set variables
 set(CK_PYTHON_SCRIPTS_DIR ${CMAKE_CURRENT_LIST_DIR}/../python)
 
 # Mode

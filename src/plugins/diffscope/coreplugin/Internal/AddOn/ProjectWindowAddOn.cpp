@@ -12,25 +12,9 @@
 #include "ICore.h"
 #include "Window/IProjectWindow.h"
 
+#include "Internal/Utils/LastWindowFilter.h"
+
 namespace Core {
-
-    class LastWindowFilter : public QObject {
-    public:
-        LastWindowFilter() {
-            ICore::instance()->windowSystem()->installEventFilter(this);
-        }
-
-        ~LastWindowFilter() {
-        }
-
-        bool eventFilter(QObject *obj, QEvent *event) override {
-            if (event->type() == QEvent::Close) {
-                ICore::showHome();
-                event->ignore();
-            }
-            return QObject::eventFilter(obj, event);
-        }
-    };
 
     namespace Internal {
 

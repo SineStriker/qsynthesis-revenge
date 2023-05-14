@@ -131,6 +131,15 @@ function(ck_add_definition)
 endfunction()
 
 #[[
+Add targets to deploy Qt libraries and plugins.
+
+    ck_add_deploy_targets(<targets...>)
+]] #
+function(ck_add_deploy_targets)
+    ck_property_list_append(ChorusKit_Metadata DEPLOY_TARGETS ${ARGN})
+endfunction()
+
+#[[
 Add test target, won't be installed.
 
     ck_add_test(<target> [sources]
@@ -143,7 +152,7 @@ function(ck_add_test _target)
     set(multiValueArgs)
     cmake_parse_arguments(FUNC "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
 
-    if (FUNC_AUTOGEN)
+    if(FUNC_AUTOGEN)
         _ck_set_cmake_autoxxx(on)
     endif()
 

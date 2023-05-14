@@ -17,6 +17,7 @@ function(configure_qtc_library _name)
         VENDOR qtcreator
     )
     target_compile_definitions(${_name} PRIVATE _UNICODE UNICODE)
+    ck_add_deploy_targets(${PROJECT_NAME})
 endfunction()
 
 add_subdirectory(aggregation)

@@ -30,6 +30,8 @@
 
 #include "Internal/Document/DspxSpec.h"
 
+#include "Internal/Utils/LastWindowFilter.h"
+
 namespace Core {
 
     namespace Internal {
@@ -145,16 +147,16 @@ namespace Core {
 
             QTimer::singleShot(0, this, [this]() {
                 auto winMgr = icore->windowSystem();
-                auto handle = winMgr->createWindow("home");
 
-                auto win = handle->window();
-                waitSplash(win);
+                LastWindowFilter guard;
 
                 // Open files
-                if (openFileFromCommand({}, ExtensionSystem::PluginManager::arguments(), handle) > 0) {
-                    if (qApp->property("closeHomeOnOpen").toBool()) {
-                        QTimer::singleShot(0, win, &QWidget::close);
-                    }
+                openFileFromCommand({}, ExtensionSystem::PluginManager::arguments(), nullptr);
+
+                if (winMgr->count() == 0) {
+                    waitSplash(winMgr->createWindow("home")->window());
+                } else {
+                    waitSplash(winMgr->firstWindow()->window());
                 }
             });
 
