@@ -134,14 +134,18 @@ endfunction()
 Add test target, won't be installed.
 
     ck_add_test(<target> [sources]
-        [CONSOLE] [WINDOWS] [NO_SKIP_INSTALL] [SKIP_EXPORT]
+        [AUTOGEN] [CONSOLE] [WINDOWS] [NO_SKIP_INSTALL] [SKIP_EXPORT]
     )
 ]] #
 function(ck_add_test _target)
-    set(options CONSOLE WINDOWS NO_SKIP_INSTALL SKIP_EXPORT)
+    set(options AUTOGEN CONSOLE WINDOWS NO_SKIP_INSTALL SKIP_EXPORT)
     set(oneValueArgs)
     set(multiValueArgs)
     cmake_parse_arguments(FUNC "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
+
+    if (FUNC_AUTOGEN)
+        _ck_set_cmake_autoxxx(on)
+    endif()
 
     add_executable(${_target} ${FUNC_UNPARSED_ARGUMENTS})
 
