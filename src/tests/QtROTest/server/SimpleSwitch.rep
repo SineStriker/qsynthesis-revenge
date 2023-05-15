@@ -1,0 +1,4 @@
+class SimpleSwitch
+{
+    SLOT(int work(int a, int b));
+};
