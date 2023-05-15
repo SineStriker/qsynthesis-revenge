@@ -29,6 +29,20 @@ def copydir(dir: str, dest: str):
     shutil.copytree(dir, path)
 
 
+def copyfile(src: str, dest_dir: str):
+    name = os.path.basename(src)
+    path = f"{dest_dir}/{name}"
+    if os.path.isfile(path):
+        os.remove(path)
+    elif os.path.isdir(path):
+        shutil.rmtree(path)
+    if os.path.isfile(dest_dir):
+        os.remove(dest_dir)
+    if not os.path.exists(dest_dir):
+        os.makedirs(dest_dir)
+    shutil.copyfile(src, os.path.join(dest_dir, name))
+
+
 def get_platform() -> tuple[str, str]:
     # Determine os and arch
     os_name = platform.system().lower()

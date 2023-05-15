@@ -589,9 +589,9 @@ function(ck_add_application_plugin _target)
 
     if(APPLE)
         if(CHORUSKIT_REPOSITORY)
-            set(_build_output_dir ${CK_MAIN_OUTPUT_PATH}/${_ns}/plugins/${_category})
-        else()
             set(_build_output_dir $<TARGET_BUNDLE_DIR:${_ns}>/Contents/Plugins/${_category})
+        else()
+            set(_build_output_dir ${CK_MAIN_OUTPUT_PATH}/${_ns}/plugins/${_category})
         endif()
 
         set(_install_output_dir $<TARGET_FILE_NAME:${_ns}>.app/Contents/Plugins/${_category})
