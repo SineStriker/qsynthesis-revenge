@@ -56,8 +56,8 @@ void QMCoreHostPrivate::init() {
     Q_Q(QMCoreHost);
 
     // Init basic directories
-    appDataDir = QMFs::appDataPath() + "/ChorusKit/" + qAppName();
-    tempDir = QDir::tempPath() + "/ChorusKit/" + qAppName();
+    appDataDir = QMFs::appDataPath() + "/ChorusKit/" + qApp->applicationName();
+    tempDir = QDir::tempPath() + "/ChorusKit/" + qApp->applicationName();
 
     QHash<QString, QStringList> confValues;
 
@@ -258,7 +258,7 @@ void QMCoreHost::setShareDir(const QString &dir) {
 QString QMCoreHost::appShareDir() const {
     return shareDir()
 #ifndef Q_OS_MAC
-           + "/" + qAppName()
+           + "/" + qApp->applicationName()
 #endif
         ;
 }
@@ -268,7 +268,7 @@ QString QMCoreHost::appPluginsDir() const {
 #ifdef Q_OS_MAC
         QDir::cleanPath(qApp->applicationDirPath() + "/../Plugins")
 #else
-        libDir() + "/" + qAppName() + "/plugins"
+        libDir() + "/" + qApp->applicationName() + "/plugins"
 #endif
             ;
 }
@@ -277,7 +277,7 @@ bool QMCoreHost::createDataAndTempDirs() const {
     auto func = [](const QString &path) {
         qDebug() << "qmcorehost:" << (QMFs::isDirExist(path) ? "find" : "create") << "directory" << path;
         if (!QMFs::mkDir(path)) {
-            qmCon->MsgBox(nullptr, QMCoreConsole::Critical, qAppName(),
+            qmCon->MsgBox(nullptr, QMCoreConsole::Critical, qApp->applicationName(),
                           QString("Failed to create %1 directory!").arg(QMFs::PathFindFileName(path)));
             return false;
         }

@@ -28,7 +28,7 @@ namespace QsApi {
             winHandle->setup();
         }
 #endif
-        q->setWindowTitle(qAppName());
+        q->setWindowTitle(qApp->applicationName());
     }
 
     PlainWindow::PlainWindow(QWidget *parent) : PlainWindow(*new PlainWindowPrivate(), parent) {

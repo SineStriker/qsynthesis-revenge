@@ -83,7 +83,7 @@ namespace Core {
             tr("<h2>ChorusKit DiffScope</h2>%1%2%3%4").arg(copyrightInfo, buildInfo, aboutInfo, licenseInfo);
 
         QMessageBox msgBox(parent);
-        msgBox.setWindowTitle(tr("About %1").arg(qAppName()));
+        msgBox.setWindowTitle(tr("About %1").arg(qApp->applicationName()));
         msgBox.setText(translatedTextAboutQtCaption);
 
         double ratio = (msgBox.screen()->logicalDotsPerInch() / QMOs::unitDpi());

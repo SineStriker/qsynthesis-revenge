@@ -87,7 +87,7 @@ static inline void displayError(const QString &t) {
 #ifndef USE_NATIVE_MESSAGEBOX
     QMessageBox msgbox;
     msgbox.setIcon(QMessageBox::Critical);
-    msgbox.setWindowTitle(qAppName());
+    msgbox.setWindowTitle(qApp->applicationName());
     msgbox.setText(toHtml(t));
     msgbox.show();
     if (g_splash) {
@@ -98,7 +98,7 @@ static inline void displayError(const QString &t) {
     if (g_splash) {
         g_splash->close();
     }
-    qmCon->MsgBox(nullptr, QMConsole::Critical, qAppName(), t);
+    qmCon->MsgBox(nullptr, QMConsole::Critical, qApp->applicationName(), t);
 #endif
     QMOs::exitApp(-1);
 }
@@ -107,7 +107,7 @@ static inline void displayHelpText(const QString &t) {
 #ifndef USE_NATIVE_MESSAGEBOX
     QMessageBox msgbox;
     msgbox.setIcon(QMessageBox::Information);
-    msgbox.setWindowTitle(qAppName());
+    msgbox.setWindowTitle(qApp->applicationName());
     msgbox.setText(toHtml(t));
     msgbox.show();
     if (g_splash) {
@@ -118,7 +118,7 @@ static inline void displayHelpText(const QString &t) {
     if (g_splash) {
         g_splash->close();
     }
-    qmCon->MsgBox(nullptr, QMConsole::Information, qAppName(), t);
+    qmCon->MsgBox(nullptr, QMConsole::Information, qApp->applicationName(), t);
 #endif
 
     QMOs::exitApp(0);
@@ -127,7 +127,7 @@ static inline void displayHelpText(const QString &t) {
 static inline void printVersion(const PluginSpec *coreplugin) {
     QString version;
     QTextStream str(&version);
-    str << '\n' << qAppName() << ' ' << coreplugin->version() << " based on Qt " << qVersion() << "\n\n";
+    str << '\n' << qApp->applicationName() << ' ' << coreplugin->version() << " based on Qt " << qVersion() << "\n\n";
     PluginManager::formatPluginVersions(str);
     str << '\n' << coreplugin->copyright() << '\n';
     displayHelpText(version);
@@ -137,7 +137,7 @@ static inline void printHelp() {
     QString help;
     QTextStream str(&help);
 
-    str << "Usage: " << qAppName() << fixedOptionsC;
+    str << "Usage: " << qApp->applicationName() << fixedOptionsC;
     formatOption(str, {HELP_OPTION1, HELP_OPTION2}, {}, "Display this help");
     formatOption(str, {VERSION_OPTION1, VERSION_OPTION2}, {}, "Display application version");
     formatOption(str,
@@ -218,8 +218,9 @@ int main_entry(int argc, char *argv[]) {
 
     QMWidgetsHost host;
 
+    Q_ASSERT(qApp->applicationName() == a.applicationName());
     QString corePluginNameC = "Core";
-    QString pluginIID = QString("org.ChorusKit.%1.Plugin").arg(qAppName());
+    QString pluginIID = QString("org.ChorusKit.%1.Plugin").arg(qApp->applicationName());
     QPixmap splashImage;
     QStringList resourcesFiles; // Unused
 
@@ -302,8 +303,8 @@ int main_entry(int argc, char *argv[]) {
         QString msg =
             QCoreApplication::translate("Application", "You're trying to start %1 as the %2, which is "
                                                        "extremely dangerous and therefore strongly not recommended.")
-                .arg(qAppName(), QMOs::rootUserName());
-        qmCon->MsgBox(nullptr, QMCoreConsole::Warning, qAppName(), msg);
+                .arg(qApp->applicationName(), QMOs::rootUserName());
+        qmCon->MsgBox(nullptr, QMCoreConsole::Warning, qApp->applicationName(), msg);
         return 0;
     }
 
@@ -318,8 +319,8 @@ int main_entry(int argc, char *argv[]) {
     QString userSettingPath = host.appDataDir();
     QString systemSettingPath = host.appShareDir();
 
-    loader.setSettingsPath(QSettings::UserScope, QString("%1/%2.settings.json").arg(userSettingPath, qAppName()));
-    loader.setSettingsPath(QSettings::SystemScope, QString("%1/%2.settings.json").arg(systemSettingPath, qAppName()));
+    loader.setSettingsPath(QSettings::UserScope, QString("%1/%2.settings.json").arg(userSettingPath, qApp->applicationName()));
+    loader.setSettingsPath(QSettings::SystemScope, QString("%1/%2.settings.json").arg(systemSettingPath, qApp->applicationName()));
 
     SplashScreen splash;
     g_splash = &splash;
@@ -370,9 +371,9 @@ int main_entry(int argc, char *argv[]) {
     pluginManager.setPluginIID(pluginIID);
 
     pluginManager.setSettings(
-        new QSettings(QString("%1/%2.plugins.ini").arg(userSettingPath, qAppName()), QSettings::IniFormat));
+        new QSettings(QString("%1/%2.plugins.ini").arg(userSettingPath, qApp->applicationName()), QSettings::IniFormat));
     pluginManager.setGlobalSettings(
-        new QSettings(QString("%1/%2.plugins.ini").arg(systemSettingPath, qAppName()), QSettings::IniFormat));
+        new QSettings(QString("%1/%2.plugins.ini").arg(systemSettingPath, qApp->applicationName()), QSettings::IniFormat));
 
     QStringList pluginPaths = [&]() {
         QStringList rc;

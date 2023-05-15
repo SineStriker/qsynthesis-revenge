@@ -52,7 +52,7 @@ namespace Core::Internal {
 
         aboutGroupItem->setText(tr("About Actions"));
         aboutPluginsItem->setText(tr("About Plugins"));
-        aboutAppItem->setText(tr("&About %1").arg(qAppName()));
+        aboutAppItem->setText(tr("&About %1").arg(qApp->applicationName()));
         aboutQtItem->setText(tr("About Qt"));
     }
 
@@ -90,7 +90,7 @@ namespace Core::Internal {
             auto spec = docMgr->docType(qApp->property("projectDocTypeId").toString());
             if (!spec) {
                 QMessageBox::critical(windowHandle()->window(), ICore::mainTitle(),
-                                      tr("Can't find the default editor of %1 project file!").arg(qAppName()));
+                                      tr("Can't find the default editor of %1 project file!").arg(qApp->applicationName()));
                 return;
             }
 

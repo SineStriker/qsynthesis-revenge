@@ -15,7 +15,7 @@
 void showCrash() {
     QString text = "Unexpected exception happens, ready to crash!";
 #ifdef Q_OS_WINDOWS
-    ::MessageBoxW(nullptr, text.toStdWString().data(), qAppName().toStdWString().data(),
+    ::MessageBoxW(nullptr, text.toStdWString().data(), qApp->applicationName().toStdWString().data(),
                   MB_OK | MB_TOPMOST | MB_ICONERROR);
 #else
     fprintf(stderr, "%s\n", text.toStdString().data());

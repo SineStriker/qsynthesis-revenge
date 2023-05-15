@@ -97,7 +97,7 @@ void PlayWidget::openFile(const QString &filename) {
                            QsMedia::AV_SAMPLE_FMT_FLT,
                            2
     } )) {
-        QMessageBox::critical(this, qAppName(), "Failed to initialize decoder!");
+        QMessageBox::critical(this, qApp->applicationName(), "Failed to initialize decoder!");
         return;
     }
 
@@ -159,27 +159,27 @@ void PlayWidget::initPlugins() {
 
     if (!decoder_plugin || !playback_plugin) {
         QMessageBox::critical(
-            this, qAppName(),
+            this, qApp->applicationName(),
             QString("Failed to load plugins: %1!").arg(decoderLoader.errorString()));
         goto out;
     }
 
     decoder = decoder_plugin->create({}, this);
     if (!decoder) {
-        QMessageBox::critical(this, qAppName(), QString("Failed to create decoder object!"));
+        QMessageBox::critical(this, qApp->applicationName(), QString("Failed to create decoder object!"));
         goto out2;
     }
     
     playback = playback_plugin->create({}, this);
     if (!playback) {
-        QMessageBox::critical(this, qAppName(), QString("Failed to create playback object!"));
+        QMessageBox::critical(this, qApp->applicationName(), QString("Failed to create playback object!"));
         goto out2;
     }
 
 
     if (!playback->setup(QsMedia::PlaybackArguments{ 44100, 2, 1024 })) {
         QMessageBox::critical(
-            this, qAppName(),
+            this, qApp->applicationName(),
             QString("Failed to load playback: %1!").arg(playbackLoader.errorString()));
         goto out;
     }
@@ -288,7 +288,7 @@ void PlayWidget::_q_sliderReleased() {
 
 void PlayWidget::_q_deviceActionTriggered(QAction *action) {
     if (playing) {
-        QMessageBox::warning(this, qAppName(), "Stop sound first!");
+        QMessageBox::warning(this, qApp->applicationName(), "Stop sound first!");
     } else {
         QString dev = action->data().toString();
         playback->setDevice(dev);

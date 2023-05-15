@@ -278,7 +278,7 @@ namespace IEMgr {
         }
 
         if (idxes.size() < opt.minTracks) {
-            qmCon->MsgBox(q, QMConsole::Warning, qAppName(), tr("Please select at least one track!"));
+            qmCon->MsgBox(q, QMConsole::Warning, qApp->applicationName(), tr("Please select at least one track!"));
             return;
         }
         trackIndexs = std::move(idxes);

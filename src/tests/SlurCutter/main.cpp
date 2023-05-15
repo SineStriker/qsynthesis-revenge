@@ -13,10 +13,10 @@ int main(int argc, char *argv[]) {
     QApplication a(argc, argv);
 
     if (QMOs::isUserRoot() && !a.arguments().contains("--allow-root")) {
-        QString title = qAppName();
+        QString title = qApp->applicationName();
         QString msg = QString("You're trying to start %1 as the %2, which may cause "
                               "security problem and isn't recommended.")
-                          .arg(qAppName(), "Administrator");
+                          .arg(qApp->applicationName(), "Administrator");
 #ifdef Q_OS_WINDOWS
         ::MessageBoxW(0, msg.toStdWString().data(), title.toStdWString().data(),
                       MB_OK | MB_TOPMOST | MB_SETFOREGROUND | MB_ICONWARNING);

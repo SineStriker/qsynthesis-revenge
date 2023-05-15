@@ -10,7 +10,7 @@
 
 static inline QString id_format() {
     return QString("application/%1.pid%2.data")
-        .arg(qAppName(), QString::number(qApp->applicationPid()));
+        .arg(qApp->applicationName(), QString::number(qApp->applicationPid()));
 }
 
 QScrollableTabWidget::QScrollableTabWidget(QWidget *parent)

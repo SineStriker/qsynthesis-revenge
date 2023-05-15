@@ -63,7 +63,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
     playMenu = new QMenu("Playback(&P)", this);
     playMenu->addAction(playAction);
 
-    aboutAppAction = new QAction(QString("About %1").arg(qAppName()), this);
+    aboutAppAction = new QAction(QString("About %1").arg(qApp->applicationName()), this);
     aboutQtAction = new QAction("About Qt", this);
 
     helpMenu = new QMenu("Help(&H)", this);
@@ -216,7 +216,7 @@ void MainWindow::saveFile(const QString &filename) {
     QFile file(labFile);
     if (!file.open(QIODevice::WriteOnly | QIODevice::Text)) {
         QMessageBox::critical(
-            this, qAppName(),
+            this, qApp->applicationName(),
             QString("Failed to write to file %1").arg(QMFs::PathFindFileName(labFile)));
         ::exit(-1);
     }
@@ -230,9 +230,9 @@ void MainWindow::saveFile(const QString &filename) {
 
 void MainWindow::reloadWindowTitle() {
     setWindowTitle(dirname.isEmpty()
-                       ? qAppName()
+                       ? qApp->applicationName()
                        : QString("%1 - %2").arg(
-                             qAppName(), QDir::toNativeSeparators(QMFs::PathFindFileName(dirname))));
+                             qApp->applicationName(), QDir::toNativeSeparators(QMFs::PathFindFileName(dirname))));
 }
 
 void MainWindow::dragEnterEvent(QDragEnterEvent *event) {
@@ -325,8 +325,8 @@ void MainWindow::_q_playMenuTriggered(QAction *action) {
 
 void MainWindow::_q_helpMenuTriggered(QAction *action) {
     if (action == aboutAppAction) {
-        QMessageBox::information(this, qAppName(),
-                                 QString("%1 %2, Copyright OpenVPI.").arg(qAppName(), APP_VERSON));
+        QMessageBox::information(this, qApp->applicationName(),
+                                 QString("%1 %2, Copyright OpenVPI.").arg(qApp->applicationName(), APP_VERSON));
     } else if (action == aboutQtAction) {
         QMessageBox::aboutQt(this);
     }

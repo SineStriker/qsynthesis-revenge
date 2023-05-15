@@ -173,7 +173,7 @@ QString QMFs::appDataPath() {
 #else
     path = QStandardPaths::writableLocation(QStandardPaths::AppConfigLocation);
 #endif
-    slashName = Slash + qAppName();
+    slashName = Slash + qApp->applicationName();
     if (path.endsWith(slashName)) {
         path.chop(slashName.size());
     }

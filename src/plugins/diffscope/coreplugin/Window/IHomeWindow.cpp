@@ -31,7 +31,7 @@ namespace Core {
     void IHomeWindowPrivate::reloadStrings() {
         Q_Q(IHomeWindow);
         q->setWindowTitle(tr("Welcome"));
-        aboutButton->setText(tr("About %1").arg(qAppName()));
+        aboutButton->setText(tr("About %1").arg(qApp->applicationName()));
     }
 
     void IHomeWindowPrivate::_q_aboutButtonClicked() {
@@ -70,7 +70,7 @@ namespace Core {
         frame->setObjectName("home-frame");
         setCentralWidget(frame);
 
-        auto titleButton = new CTabButton(qAppName());
+        auto titleButton = new CTabButton(qApp->applicationName());
         titleButton->setObjectName("home-title-button");
         titleButton->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
         frame->setTopWidget(titleButton); //
