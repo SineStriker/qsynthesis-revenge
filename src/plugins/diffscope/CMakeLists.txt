@@ -10,3 +10,5 @@ add_subdirectory(parseds)
 add_subdirectory(scriptmgr)
 
 add_subdirectory(vst)
+
+add_subdirectory(templateplg)

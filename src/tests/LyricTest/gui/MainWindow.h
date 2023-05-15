@@ -1,7 +1,6 @@
 #ifndef CHORUSKIT_MAINWINDOW_H
 #define CHORUSKIT_MAINWINDOW_H
 
-#include "ConfigWidget.h"
 #include "G2pWidget.h"
 #include "TableWidget.h"
 #include <QBuffer>
@@ -19,7 +18,6 @@ private:
     QTabWidget *m_tabWidget;
     TableWidget *m_tableWidget;
     G2pWidget *m_g2pWidget;
-    ConfigWidget *m_configWidget;
 };
 
 #endif // CHORUSKIT_MAINWINDOW_H

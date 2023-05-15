@@ -1,0 +1,13 @@
+{
+  "插件名称": "xxx",
+  "工具栏": {
+    "自动对齐": true,
+    "定时保存": false,
+    "背景颜色": "blue",
+    "测试": {
+      "title": true,
+      "tool": false,
+      "back": "red"
+    }
+  }
+}
