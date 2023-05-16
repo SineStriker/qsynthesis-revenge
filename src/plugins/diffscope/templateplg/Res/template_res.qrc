@@ -1,5 +1,6 @@
 <RCC>
     <qresource prefix="/">
         <file>configs/config.json</file>
+        <file>template_actions.xml</file>
     </qresource>
 </RCC>

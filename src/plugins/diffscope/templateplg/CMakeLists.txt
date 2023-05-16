@@ -29,7 +29,7 @@ ck_add_application_plugin(${_plugin}
 # ExtensionSystem: the parent class of the plugin; coreplugin: the core plugin
 ck_target_components(${_plugin} INCLUDE_CURRENT_PRIVATE INCLUDE_SUBDIRS_PRIVATE
         SOURCES ${_src} ${_res_dir}/template_res.qrc
-        QT_LINKS Core Widgets Gui Network
+        QT_LINKS Core Widgets Gui Network Qml
         LINKS QsSVS QsFramework ExtensionSystem DiffScope::coreplugin
         AUTO_INCLUDE_CURRENT
         )

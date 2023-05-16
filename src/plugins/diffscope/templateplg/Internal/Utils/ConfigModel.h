@@ -14,15 +14,16 @@
 #include <QVariant>
 
 namespace TemplatePlg {
-    class ConfigModel : public QStandardItemModel {
-        Q_OBJECT
-    public:
-        explicit ConfigModel(QObject *parent = nullptr);
-        void loadJsonFile(const QString &filePath);
+    namespace Internal {
+        class ConfigModel : public QStandardItemModel {
+            Q_OBJECT
+        public:
+            explicit ConfigModel(QObject *parent = nullptr);
+            void loadJsonFile(const QString &filePath);
 
-    private:
-        void populateModel(QStandardItem *parentItem, const QJsonObject &jsonObject);
-    };
-
+        private:
+            void populateModel(QStandardItem *parentItem, const QJsonObject &jsonObject);
+        };
+    }
 }
 #endif // CHORUSKIT_CONFIGMODEL_H

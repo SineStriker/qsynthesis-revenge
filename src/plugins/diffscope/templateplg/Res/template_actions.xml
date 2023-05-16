@@ -1,16 +1,13 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <actionSystem>
     <context id="home.MainMenu" prefix="template." mode="find">
-        <group id="BatchProcessGroup">
+        <group id="TmplGroup">
             <rules>
                 <rule id="core.File" mode="append"/>
             </rules>
             <content>
-                <menu id="BatchProcessMenu">
-                    <group id="ScriptOperations">
-                        <action id="ReloadScripts"/>
-                        <action id="ScriptSettings"/>
-                    </group>
+                <menu id="TmplMenu">
+                    <action id="TmplImport"/>
                 </menu>
             </content>
         </group>

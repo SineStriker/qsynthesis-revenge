@@ -4,29 +4,30 @@
 #include <CoreApi/ISettingPage.h>
 
 namespace TemplatePlg {
-    using namespace Core;
-    class ConfigPage : public ISettingPage {
-        Q_OBJECT
-    public:
-        explicit ConfigPage(QObject *parent = nullptr);
-        ~ConfigPage();
+    namespace Internal {
+        using namespace Core;
+        class ConfigPage : public ISettingPage {
+            Q_OBJECT
+        public:
+            explicit ConfigPage(QObject *parent = nullptr);
+            ~ConfigPage();
 
-        void reloadStrings();
+            void reloadStrings();
 
-    public:
-        QString sortKeyword() const override;
+        public:
+            QString sortKeyword() const override;
 
-        bool matches(const QString &word) const override;
-        QWidget *widget() override;
+            bool matches(const QString &word) const override;
+            QWidget *widget() override;
 
-        bool accept() override;
-        void finish() override;
+            bool accept() override;
+            void finish() override;
 
-    private:
-        QWidget *m_widget;
-    };
+        private:
+            QWidget *m_widget;
+        };
 
-
+    }
 
 }
 
