@@ -1,7 +1,6 @@
 #include "TemplatePlg.h"
 
 #include "AddOn/TmplAddOn.h"
-#include "CoreApi/ICoreBase.h"
 #include "CoreApi/ILoader.h"
 #include "CoreApi/SettingCatalog.h"
 #include "Settings/ConfigPage.h"
@@ -44,10 +43,10 @@ namespace TemplatePlg {
 
             // Add Setting Page
             auto configPage = new ConfigPage();
-            ICoreBase::instance()->settingCatalog()->addPage(configPage);
+            ICore::instance()->settingCatalog()->addPage(configPage);
 
             auto jsonConfigPage = new JsonConfigPage();
-            ICoreBase::instance()->settingCatalog()->addPage(jsonConfigPage);
+            ICore::instance()->settingCatalog()->addPage(jsonConfigPage);
 
             // Add basic windows and add-ons
             auto winMgr = ICore::instance()->windowSystem();
