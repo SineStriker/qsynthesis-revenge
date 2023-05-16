@@ -28,13 +28,13 @@ namespace TemplatePlg {
             void reloadStrings();
             void initActions();
 
+        private slots:
+            void _q_tmplButtonClicked();
+
         private:
             Core::ActionItem *templateGroupItem;
-
             Core::ActionItem *tmplMenu;
             Core::ActionItem *tmplImpItem;
-
-            void _q_tmplImpItemButtonClicked();
         };
 
     }

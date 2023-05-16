@@ -1,5 +1,5 @@
 #include "TmplAddOn.h"
-
+#include "Dialogs/TmplDialog.h"
 #include <QMDecoratorV2.h>
 
 #include <QDebug>
@@ -48,15 +48,20 @@ namespace TemplatePlg {
             auto iWin = windowHandle();
             auto win = iWin->window();
 
+            //            // Add dialog
+            //            TmplDialog dialog(win, tr("Info"), tr("Are you sure you want to delete it?"), tr("ok"),
+            //            tr("cancel")); if (dialog.exec() == QDialog::Accepted) {
+            //                qDebug() << "TmplAddOn: TmplDialog select ok";
+            //            } else {
+            //                qDebug() << "TmplAddOn: TmplDialog select cancel";
+            //            }
+
             templateGroupItem = new ActionItem("template.TmplGroup", new QActionGroup(this), this);
 
             tmplMenu = new ActionItem("template.TmplMenu", ICore::createCoreMenu(win), this);
             tmplImpItem = new ActionItem("template.TmplImport", new QAction(this), this);
 
-            connect(tmplImpItem->action(), &QAction::triggered, this, [this]() {
-                //
-                qDebug() << "tmplImpItem clicked";
-            });
+            connect(tmplImpItem->action(), &QAction::triggered, this, &TmplAddOn::_q_tmplButtonClicked);
 
             iWin->addActionItems({
                 templateGroupItem,
@@ -65,8 +70,8 @@ namespace TemplatePlg {
             });
         }
 
-        void TmplAddOn::_q_tmplImpItemButtonClicked() {
-            tmplImpItem->action()->trigger();
+        void TmplAddOn::_q_tmplButtonClicked() {
+            qDebug() << "TmplAddOn: The template import button has been clicked";
         }
     }
 }
