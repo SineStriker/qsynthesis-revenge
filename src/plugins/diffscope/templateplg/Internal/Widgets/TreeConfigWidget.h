@@ -32,8 +32,6 @@ namespace TemplatePlg {
             QLineEdit *m_value;
             QComboBox *m_childType;
             QComboBox *m_type;
-            QPushButton *m_up;
-            QPushButton *m_down;
             QPushButton *m_addButton;
             QPushButton *m_removeButton;
             QPushButton *m_saveButton;
@@ -50,8 +48,6 @@ namespace TemplatePlg {
             void createConfig();
             void loadConfig(const QJsonArray &config, QTreeWidgetItem *parent = nullptr);
             bool saveConfig();
-            void on_btnUp_clicked();
-            void on_btnDown_clicked();
         };
 
     }

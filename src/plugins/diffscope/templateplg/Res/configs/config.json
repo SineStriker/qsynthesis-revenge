@@ -11,10 +11,42 @@
             {
                 "en": "ww",
                 "type": "Group",
+                "value": [
+                    {
+                        "en": "color",
+                        "en_value": [
+                            "red",
+                            "yellow"
+                        ],
+                        "index": 0,
+                        "type": "QComboBox",
+                        "zh": "颜色",
+                        "zh_value": [
+                            "红色",
+                            "黄色"
+                        ]
+                    }
+                ],
                 "zh": "A"
+            },
+            {
+                "en": "spinbox",
+                "index": 8,
+                "type": "QSpinBox",
+                "value": [
+                    2,
+                    10,
+                    1
+                ],
+                "zh": "旋钮"
             }
         ],
         "zh": "编辑"
+    },
+    {
+        "en": "",
+        "type": "Group",
+        "zh": "xx"
     },
     {
         "en": "test",

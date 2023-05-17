@@ -5,6 +5,7 @@
 #include <QListView>
 #include <QLocale>
 #include <QMessageBox>
+#include <QSpinBox>
 #include <QVBoxLayout>
 
 namespace TemplatePlg {
@@ -65,22 +66,16 @@ namespace TemplatePlg {
                 m_type->addItem("QCheckBox");
                 m_type->addItem("QComboBox");
                 m_type->addItem("QLineEdit");
+                m_type->addItem("QSpinBox");
                 controlLayout->addWidget(m_control_label);
                 controlLayout->addWidget(m_type);
                 buttonLayout->addLayout(controlLayout);
-
-                auto moveLayout = new QHBoxLayout();
-                m_up = new QPushButton("↑", this);
-                m_down = new QPushButton("↓", this);
-                moveLayout->addWidget(m_up);
-                moveLayout->addWidget(m_down);
 
                 m_addButton = new QPushButton("add", this);
                 m_removeButton = new QPushButton("remove", this);
                 m_saveButton = new QPushButton("save", this);
                 m_loadButton = new QPushButton("load", this);
 
-                buttonLayout->addLayout(moveLayout);
                 buttonLayout->addWidget(m_addButton);
                 buttonLayout->addWidget(m_removeButton);
                 buttonLayout->addWidget(m_loadButton);
@@ -88,8 +83,6 @@ namespace TemplatePlg {
 
                 treeLayout->addLayout(buttonLayout);
 
-                connect(m_up, &QPushButton::clicked, this, &TreeConfigWidget::on_btnUp_clicked);
-                connect(m_down, &QPushButton::clicked, this, &TreeConfigWidget::on_btnDown_clicked);
                 connect(m_addButton, &QPushButton::clicked, this, &TreeConfigWidget::addTableRow);
                 connect(m_removeButton, &QPushButton::clicked, this, &TreeConfigWidget::removeTableRow);
                 connect(m_loadButton, &QPushButton::clicked, this, &TreeConfigWidget::createConfig);
@@ -105,7 +98,9 @@ namespace TemplatePlg {
                 mainLayout->addWidget(m_saveButton);
                 loadConfig(readJsonFile(configPath));
             }
-
+            m_treeWidget->setDragEnabled(true);                             // 开启拖拽功能
+            m_treeWidget->setDragDropMode(QAbstractItemView::InternalMove); // 设置控件内部移动
+            m_treeWidget->setDefaultDropAction(Qt::MoveAction);
             connect(m_saveButton, &QPushButton::clicked, this, &TreeConfigWidget::saveConfig);
             m_treeWidget->expandAll();
             this->setLayout(mainLayout);
@@ -163,6 +158,15 @@ namespace TemplatePlg {
                 case 3: {
                     auto *frame = new QLineEdit();
                     frame->setText(value);
+                    m_treeWidget->setItemWidget(child, 2, frame);
+                    break;
+                }
+                case 4: {
+                    auto *frame = new QSpinBox();
+                    auto values = value.split(";");
+                    frame->setMinimum(values[0].toInt());
+                    frame->setMaximum(values[1].toInt());
+                    frame->setSingleStep(values[2].toInt());
                     m_treeWidget->setItemWidget(child, 2, frame);
                     break;
                 }
@@ -224,6 +228,14 @@ namespace TemplatePlg {
                     childJson["en_value"] = QJsonArray::fromStringList(cbList);
                     childJson["index"] =
                         cb->currentIndex() < count / 2 ? cb->currentIndex() : cb->currentIndex() - (count / 2);
+                } else if (QLineEdit *lineEdit = qobject_cast<QLineEdit *>(itemWidget)) {
+                    type = "QLineEdit";
+                    childJson["value"] = qobject_cast<QLineEdit *>(itemWidget)->text();
+                } else if (QSpinBox *spinBox = qobject_cast<QSpinBox *>(itemWidget)) {
+                    auto sb = qobject_cast<QSpinBox *>(itemWidget);
+                    type = "QSpinBox";
+                    childJson["index"] = sb->value();
+                    childJson["value"] = QJsonArray() << sb->minimum() << sb->maximum() << sb->singleStep();
                 } else {
                     type = "Group";
                 }
@@ -307,6 +319,16 @@ namespace TemplatePlg {
                     QLineEdit *lineEdit = new QLineEdit(m_treeWidget);
                     lineEdit->setText(it->toObject().value("value").toString());
                     m_treeWidget->setItemWidget(item, 2, lineEdit);
+                } else if (type == "QSpinBox") {
+                    // Insert QLineEdit for QLineEdit type
+                    QSpinBox *spinBox = new QSpinBox(m_treeWidget);
+                    int index = it->toObject().value("index").toInt();
+                    QStringList values = it->toObject().value("value").toVariant().toStringList();
+                    spinBox->setMinimum(values[0].toInt());
+                    spinBox->setMaximum(values[1].toInt());
+                    spinBox->setSingleStep(values[2].toInt());
+                    spinBox->setValue(index);
+                    m_treeWidget->setItemWidget(item, 2, spinBox);
                 }
 
                 if (parent) {
@@ -348,42 +370,6 @@ namespace TemplatePlg {
                 QFileDialog::getOpenFileName(nullptr, "Open File", "", "Json Files (*.json);;All Files (*)");
             loadConfig(readJsonFile(developConfigPath));
             m_treeWidget->expandAll();
-        }
-
-        // move item up
-        void TreeConfigWidget::on_btnUp_clicked() {
-            QTreeWidgetItem *item = m_treeWidget->currentItem();
-            if (item) {
-                QTreeWidgetItem *parent = item->parent();
-                int index = parent ? parent->indexOfChild(item) : m_treeWidget->indexOfTopLevelItem(item);
-                if (index > 0) {
-                    if (parent == nullptr) {
-                        m_treeWidget->takeTopLevelItem(index);
-                        m_treeWidget->insertTopLevelItem(index - 1, item);
-                    } else {
-                        parent->takeChild(index); // 先将当前选中项从父项中移除
-                        parent->insertChild(index - 1, item);
-                    }
-                }
-                m_treeWidget->setCurrentItem(item);
-            }
-        }
-
-        // move item down
-        void TreeConfigWidget::on_btnDown_clicked() {
-            QTreeWidgetItem *item = m_treeWidget->currentItem();
-            if (item) {
-                QTreeWidgetItem *parent = item->parent();
-                int index = parent ? parent->indexOfChild(item) : m_treeWidget->indexOfTopLevelItem(item);
-                if (parent == nullptr && index < m_treeWidget->topLevelItemCount() - 1) {
-                    m_treeWidget->takeTopLevelItem(index);
-                    m_treeWidget->insertTopLevelItem(index + 1, item);
-                } else if (parent != nullptr && index < parent->childCount() - 1) {
-                    parent->takeChild(index);
-                    parent->insertChild(index + 1, item);
-                }
-                m_treeWidget->setCurrentItem(item);
-            }
         }
 
         QString TreeConfigWidget::getLocalLanguage() {
