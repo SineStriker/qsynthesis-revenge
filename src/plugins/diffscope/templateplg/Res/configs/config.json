@@ -53,6 +53,12 @@
         "type": "Group",
         "value": [
             {
+                "en": "lineEdit",
+                "type": "QLineEdit",
+                "value": "xxx",
+                "zh": "文本栏"
+            },
+            {
                 "en": "",
                 "type": "QCheckBox",
                 "value": false,
@@ -63,6 +69,24 @@
                 "type": "QCheckBox",
                 "value": true,
                 "zh": "选项2"
+            },
+            {
+                "en": "",
+                "type": "QCheckBox",
+                "value": false,
+                "zh": "选项3"
+            },
+            {
+                "en": "",
+                "type": "QCheckBox",
+                "value": true,
+                "zh": "选项4"
+            },
+            {
+                "en": "",
+                "type": "QCheckBox",
+                "value": false,
+                "zh": "选项5"
             }
         ],
         "zh": "测试"

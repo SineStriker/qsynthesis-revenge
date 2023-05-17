@@ -28,10 +28,12 @@ namespace TemplatePlg {
             QTreeWidget *m_treeWidget;
             QVBoxLayout *mainLayout;
             QLineEdit *m_name;
-            QLineEdit *m_enname;
+            QLineEdit *m_enName;
             QLineEdit *m_value;
             QComboBox *m_childType;
             QComboBox *m_type;
+            QPushButton *m_up;
+            QPushButton *m_down;
             QPushButton *m_addButton;
             QPushButton *m_removeButton;
             QPushButton *m_saveButton;
@@ -40,14 +42,17 @@ namespace TemplatePlg {
         private:
             QString getLocalLanguage();
             QJsonArray readJsonFile(QString filePath);
-            QJsonArray createJsonFromTree(QTreeWidget *treeWidget, QTreeWidgetItem *item = nullptr);
+            QJsonObject itemToJson(QTreeWidgetItem *item);
+            QJsonArray createJsonFromTree(QTreeWidgetItem *item = nullptr);
+            void loadConfig(const QJsonArray &config, int insertIndex = -1, QTreeWidgetItem *parent = nullptr);
 
         private slots:
             void addTableRow();
             void removeTableRow();
             void createConfig();
-            void loadConfig(const QJsonArray &config, QTreeWidgetItem *parent = nullptr);
             bool saveConfig();
+            void on_btnUp_clicked();
+            void on_btnDown_clicked();
         };
 
     }
