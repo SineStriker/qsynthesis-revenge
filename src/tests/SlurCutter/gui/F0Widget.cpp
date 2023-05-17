@@ -75,15 +75,20 @@ void F0Widget::setDsSentenceContent(const QJsonObject &content) {
     QVector<bool> isRest(noteSeq.size(), false);
 
     // Sanity check
-    if (noteDur.size() - noteSeq.size() + slur.size() != noteDur.size()) {
+    if (noteDur.size() != noteSeq.size()) {
         setErrorStatusText(QString("Invalid DS file! Inconsistent element count\n"
                                    "note_dur: %1\n"
                                    "note_seq: %2\n"
-                                   "slur: %3")
+                                   "slur(optional): %3")
                                .arg(noteDur.size())
                                .arg(noteSeq.size())
                                .arg(slur.size()));
         return;
+    }
+
+    // note_slur is optional. When there's not enough elements in it, consider it invalid and clear it.
+    if (slur.size() < noteDur.size()) {
+        slur.clear();
     }
 
 #if 1
@@ -129,7 +134,7 @@ void F0Widget::setDsSentenceContent(const QJsonObject &content) {
             note.pitch = NoteNameToMidiNote(noteSeq[i]);
             note.cents = NAN;
         }
-        note.isSlur = slur[i].toInt();
+        note.isSlur = slur.empty() ? 0 : slur[i].toInt();
         note.isRest = isRest[i];
         midiIntervals.insert({noteBegin, noteBegin + note.duration, note});
         noteBegin += note.duration;
