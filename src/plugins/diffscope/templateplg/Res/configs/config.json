@@ -1,34 +1,38 @@
-{
-    "0": {
+[
+    {
+        "en": "",
+        "type": "Group",
+        "zh": "xx"
+    },
+    {
+        "en": "edit",
+        "type": "Group",
+        "value": [
+            {
+                "en": "ww",
+                "type": "Group",
+                "zh": "A"
+            }
+        ],
+        "zh": "编辑"
+    },
+    {
         "en": "test",
         "type": "Group",
-        "zh": "测试"
-    },
-    "1": {
-        "en": "toolbar",
-        "type": "Group",
-        "value": {
-            "0": {
+        "value": [
+            {
                 "en": "",
                 "type": "QCheckBox",
                 "value": false,
-                "zh": "选项1"
+                "zh": "选项"
             },
-            "1": {
+            {
                 "en": "",
-                "en_value": [
-                    "xx",
-                    "ds"
-                ],
-                "index": 2,
-                "type": "QComboBox",
-                "zh": "下拉框",
-                "zh_value": [
-                    "12",
-                    "fva"
-                ]
+                "type": "QCheckBox",
+                "value": true,
+                "zh": "选项2"
             }
-        },
-        "zh": "工具栏"
+        ],
+        "zh": "测试"
     }
-}
+]

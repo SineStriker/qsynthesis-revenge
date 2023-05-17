@@ -45,7 +45,7 @@ namespace TemplatePlg {
             auto configPage = new ConfigPage();
             ICore::instance()->settingCatalog()->addPage(configPage);
 
-            auto jsonConfigPage = new TreeConfigPage(pluginSpec()->location() + "/configs/config.json");
+            auto jsonConfigPage = new TreeConfigPage(pluginSpec()->location() + "/configs/config.json", true);
             ICore::instance()->settingCatalog()->addPage(jsonConfigPage);
 
             // Add basic windows and add-ons

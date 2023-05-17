@@ -1,5 +1,6 @@
 #include "TreeConfigWidget.h"
 #include <QFile>
+#include <QFileDialog>
 #include <QJsonDocument>
 #include <QListView>
 #include <QLocale>
@@ -16,6 +17,7 @@ namespace TemplatePlg {
             m_treeWidget = new QTreeWidget(this);
             m_treeWidget->setColumnCount(3);
             m_treeWidget->setHeaderLabels({"中文名", "EnName", "值"});
+            m_treeWidget->setEditTriggers(QAbstractItemView::DoubleClicked);
             treeLayout->addWidget(m_treeWidget);
 
             if (configGen) {
@@ -67,17 +69,30 @@ namespace TemplatePlg {
                 controlLayout->addWidget(m_type);
                 buttonLayout->addLayout(controlLayout);
 
+                auto moveLayout = new QHBoxLayout();
+                m_up = new QPushButton("↑", this);
+                m_down = new QPushButton("↓", this);
+                moveLayout->addWidget(m_up);
+                moveLayout->addWidget(m_down);
+
                 m_addButton = new QPushButton("add", this);
                 m_removeButton = new QPushButton("remove", this);
                 m_saveButton = new QPushButton("save", this);
+                m_loadButton = new QPushButton("load", this);
 
+                buttonLayout->addLayout(moveLayout);
                 buttonLayout->addWidget(m_addButton);
                 buttonLayout->addWidget(m_removeButton);
+                buttonLayout->addWidget(m_loadButton);
                 buttonLayout->addWidget(m_saveButton);
+
                 treeLayout->addLayout(buttonLayout);
 
+                connect(m_up, &QPushButton::clicked, this, &TreeConfigWidget::on_btnUp_clicked);
+                connect(m_down, &QPushButton::clicked, this, &TreeConfigWidget::on_btnDown_clicked);
                 connect(m_addButton, &QPushButton::clicked, this, &TreeConfigWidget::addTableRow);
                 connect(m_removeButton, &QPushButton::clicked, this, &TreeConfigWidget::removeTableRow);
+                connect(m_loadButton, &QPushButton::clicked, this, &TreeConfigWidget::createConfig);
                 mainLayout->addLayout(treeLayout);
             } else {
                 if (getLocalLanguage() == "Chinese") {
@@ -88,10 +103,10 @@ namespace TemplatePlg {
                 m_saveButton = new QPushButton("save", this);
                 mainLayout->addLayout(treeLayout);
                 mainLayout->addWidget(m_saveButton);
+                loadConfig(readJsonFile(configPath));
             }
 
             connect(m_saveButton, &QPushButton::clicked, this, &TreeConfigWidget::saveConfig);
-            loadConfig(readJsonFile());
             m_treeWidget->expandAll();
             this->setLayout(mainLayout);
         }
@@ -104,9 +119,9 @@ namespace TemplatePlg {
             auto itemEnName = m_enname->text();
             auto value = m_value->text();
 
-
             auto *Label = new QLabel();
             QTreeWidgetItem *child = new QTreeWidgetItem(QStringList() << itemName << itemEnName);
+            child->setFlags(child->flags() | Qt::ItemIsEditable);
             m_treeWidget->setItemWidget(child, 2, Label);
 
             QTreeWidgetItem *selectedItem = m_treeWidget->currentItem();
@@ -172,8 +187,8 @@ namespace TemplatePlg {
             }
         }
 
-        QJsonObject TreeConfigWidget::createJsonFromTree(QTreeWidget *treeWidget, QTreeWidgetItem *item) {
-            QJsonObject json;
+        QJsonArray TreeConfigWidget::createJsonFromTree(QTreeWidget *treeWidget, QTreeWidgetItem *item) {
+            QJsonArray json;
 
             // 如果item为空，则从根节点开始遍历
             if (!item) {
@@ -218,45 +233,43 @@ namespace TemplatePlg {
                 // 如果当前节点是一个组，则递归遍历它的子节点
                 if (type == "Group" && childItem->childCount()) {
                     childJson["value"] = createJsonFromTree(treeWidget, childItem);
-                    json[QString::number(i)] = childJson;
+                    json.insert(i, childJson);
                 } else {
-                    json[QString::number(i)] = childJson;
+                    json.insert(i, childJson);
                 }
             }
 
             return json;
         }
 
-        QJsonObject TreeConfigWidget::readJsonFile() {
-            QFile file(configPath);
+        QJsonArray TreeConfigWidget::readJsonFile(QString filePath) {
+            QFile file(filePath);
             if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
-                // Failed to open file
-                return QJsonObject();
+                qDebug() << "Failed to open file: " << filePath;
+                return QJsonArray();
             }
 
             QByteArray jsonData = file.readAll();
             QJsonDocument jsonDoc = QJsonDocument::fromJson(jsonData);
-
-            if (jsonDoc.isNull() || !jsonDoc.isObject()) {
-                // Failed to parse JSON
-                return QJsonObject();
+            if (!jsonDoc.isArray()) {
+                qDebug() << "Invalid JSON format: " << filePath;
+                return QJsonArray();
             }
 
-            return jsonDoc.object();
+            return jsonDoc.array();
         }
 
-        void TreeConfigWidget::loadConfig(const QJsonObject &config, QTreeWidgetItem *parent) {
+        void TreeConfigWidget::loadConfig(const QJsonArray &config, QTreeWidgetItem *parent) {
             for (auto it = config.begin(); it != config.end(); ++it) {
-                const QString &key = it.key();
-                const QJsonValue &value = it.value();
-
                 QTreeWidgetItem *item = new QTreeWidgetItem(parent);
-
+                if (configGen) {
+                    item->setFlags(item->flags() | Qt::ItemIsEditable);
+                }
                 // Set zh and en columns
-                item->setText(0, value.toObject().value("zh").toString());
-                item->setText(1, value.toObject().value("en").toString());
+                item->setText(0, it->toObject().value("zh").toString());
+                item->setText(1, it->toObject().value("en").toString());
 
-                QString type = value.toObject().value("type").toString();
+                QString type = it->toObject().value("type").toString();
                 if (type == "Group") {
                     // Insert Qlabel for Group type
                     QLabel *label = new QLabel(m_treeWidget);
@@ -264,10 +277,10 @@ namespace TemplatePlg {
                 } else if (type == "QComboBox") {
                     // Insert QComboBox for QComboBox type
                     QComboBox *comboBox = new QComboBox(m_treeWidget);
-                    int index = value.toObject().value("index").toInt();
+                    int index = it->toObject().value("index").toInt();
 
-                    QStringList zhValues = value.toObject().value("zh_value").toVariant().toStringList();
-                    QStringList enValues = value.toObject().value("en_value").toVariant().toStringList();
+                    QStringList zhValues = it->toObject().value("zh_value").toVariant().toStringList();
+                    QStringList enValues = it->toObject().value("en_value").toVariant().toStringList();
                     QListView *view = qobject_cast<QListView *>(comboBox->view());
                     comboBox->addItems(zhValues);
                     comboBox->addItems(enValues);
@@ -287,12 +300,12 @@ namespace TemplatePlg {
                 } else if (type == "QCheckBox") {
                     // Insert QCheckBox for QCheckBox type
                     QCheckBox *checkBox = new QCheckBox(m_treeWidget);
-                    checkBox->setChecked(value.toObject().value("value").toBool());
+                    checkBox->setChecked(it->toObject().value("value").toBool());
                     m_treeWidget->setItemWidget(item, 2, checkBox);
                 } else if (type == "QLineEdit") {
                     // Insert QLineEdit for QLineEdit type
                     QLineEdit *lineEdit = new QLineEdit(m_treeWidget);
-                    lineEdit->setText(value.toObject().value("value").toString());
+                    lineEdit->setText(it->toObject().value("value").toString());
                     m_treeWidget->setItemWidget(item, 2, lineEdit);
                 }
 
@@ -304,14 +317,15 @@ namespace TemplatePlg {
 
                 if (type == "Group") {
                     // Recursively load child items
-                    loadConfig(value["value"].toObject(), item);
+                    loadConfig(it->toObject().value("value").toArray(), item);
                 }
             }
         }
 
         bool TreeConfigWidget::saveConfig() {
-            QJsonObject configJson = createJsonFromTree(m_treeWidget);
-            QFile file(configPath);
+            QJsonArray configJson = createJsonFromTree(m_treeWidget);
+            auto filePath = configGen ? developConfigPath : configPath;
+            QFile file(filePath);
             if (!file.open(QIODevice::WriteOnly | QIODevice::Text)) {
                 // Failed to open file
                 return false;
@@ -327,6 +341,49 @@ namespace TemplatePlg {
 
             //    qDebug() << configJson;
             return true;
+        }
+
+        void TreeConfigWidget::createConfig() {
+            developConfigPath =
+                QFileDialog::getOpenFileName(nullptr, "Open File", "", "Json Files (*.json);;All Files (*)");
+            loadConfig(readJsonFile(developConfigPath));
+            m_treeWidget->expandAll();
+        }
+
+        // move item up
+        void TreeConfigWidget::on_btnUp_clicked() {
+            QTreeWidgetItem *item = m_treeWidget->currentItem();
+            if (item) {
+                QTreeWidgetItem *parent = item->parent();
+                int index = parent ? parent->indexOfChild(item) : m_treeWidget->indexOfTopLevelItem(item);
+                if (index > 0) {
+                    if (parent == nullptr) {
+                        m_treeWidget->takeTopLevelItem(index);
+                        m_treeWidget->insertTopLevelItem(index - 1, item);
+                    } else {
+                        parent->takeChild(index); // 先将当前选中项从父项中移除
+                        parent->insertChild(index - 1, item);
+                    }
+                }
+                m_treeWidget->setCurrentItem(item);
+            }
+        }
+
+        // move item down
+        void TreeConfigWidget::on_btnDown_clicked() {
+            QTreeWidgetItem *item = m_treeWidget->currentItem();
+            if (item) {
+                QTreeWidgetItem *parent = item->parent();
+                int index = parent ? parent->indexOfChild(item) : m_treeWidget->indexOfTopLevelItem(item);
+                if (parent == nullptr && index < m_treeWidget->topLevelItemCount() - 1) {
+                    m_treeWidget->takeTopLevelItem(index);
+                    m_treeWidget->insertTopLevelItem(index + 1, item);
+                } else if (parent != nullptr && index < parent->childCount() - 1) {
+                    parent->takeChild(index);
+                    parent->insertChild(index + 1, item);
+                }
+                m_treeWidget->setCurrentItem(item);
+            }
         }
 
         QString TreeConfigWidget::getLocalLanguage() {
