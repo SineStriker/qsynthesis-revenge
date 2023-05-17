@@ -10,11 +10,6 @@ ck_add_files(_src
         PATTERNS *.h *.hpp *.cpp *.cc
         )
 
-# Add additional resources
-ck_add_files(_config_src
-        DIRS ${_res_dir}/config
-        PATTERNS *.js
-        )
 
 # NAME: plugin name; COMPAT_VERSION: version; VENDOR: author
 ck_add_application_plugin(${_plugin}
@@ -46,6 +41,7 @@ ck_add_translations(${_plugin}_translations
 
 ck_add_attached_files(${_plugin}
         SRC ${CMAKE_CURRENT_BINARY_DIR}/Res/translations DEST .
+        SRC Res/configs DEST .
         )
 
 ck_install_headers(.)

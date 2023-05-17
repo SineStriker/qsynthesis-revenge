@@ -4,7 +4,7 @@
 #include "CoreApi/ILoader.h"
 #include "CoreApi/SettingCatalog.h"
 #include "Settings/ConfigPage.h"
-#include "Settings/JsonConfigPage.h"
+#include "Settings/TreeConfigPage.h"
 #include <QApplication>
 #include <QMDecoratorV2.h>
 #include <QMSystem.h>
@@ -45,7 +45,7 @@ namespace TemplatePlg {
             auto configPage = new ConfigPage();
             ICore::instance()->settingCatalog()->addPage(configPage);
 
-            auto jsonConfigPage = new JsonConfigPage();
+            auto jsonConfigPage = new TreeConfigPage(pluginSpec()->location() + "/configs/config.json");
             ICore::instance()->settingCatalog()->addPage(jsonConfigPage);
 
             // Add basic windows and add-ons

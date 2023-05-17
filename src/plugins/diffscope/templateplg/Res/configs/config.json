@@ -1,13 +1,34 @@
 {
-  "插件名称": "xxx",
-  "工具栏": {
-    "自动对齐": true,
-    "定时保存": false,
-    "背景颜色": "blue",
-    "测试": {
-      "title": true,
-      "tool": false,
-      "back": "red"
+    "0": {
+        "en": "test",
+        "type": "Group",
+        "zh": "测试"
+    },
+    "1": {
+        "en": "toolbar",
+        "type": "Group",
+        "value": {
+            "0": {
+                "en": "",
+                "type": "QCheckBox",
+                "value": false,
+                "zh": "选项1"
+            },
+            "1": {
+                "en": "",
+                "en_value": [
+                    "xx",
+                    "ds"
+                ],
+                "index": 2,
+                "type": "QComboBox",
+                "zh": "下拉框",
+                "zh_value": [
+                    "12",
+                    "fva"
+                ]
+            }
+        },
+        "zh": "工具栏"
     }
-  }
 }
