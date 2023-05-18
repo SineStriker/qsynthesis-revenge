@@ -218,5 +218,13 @@
         <source>save config</source>
         <translation>保存设置</translation>
     </message>
+    <message>
+        <source>Successfully saved</source>
+        <translation>保存成功</translation>
+    </message>
+    <message>
+        <source>Successfully saved!</source>
+        <translation>保存成功！</translation>
+    </message>
 </context>
 </TS>

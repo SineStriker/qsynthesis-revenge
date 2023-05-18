@@ -17,9 +17,21 @@ namespace TemplatePlg {
             : configPath(configDir + "config.json"), uiPath(configDir + "config.treeui"), configGen(configGen),
               m_language(getLocalLanguage()), QWidget(parent) {
             m_instance = this;
+            m_widget = createWidget();
+            m_widget->setParent(parent);
+        }
 
-            mainLayout = new QVBoxLayout(this);
+        TreeConfigWidget::~TreeConfigWidget() {
+            m_instance = nullptr;
+        }
 
+        QWidget *TreeConfigWidget::configWidget() {
+            return createWidget();
+        }
+
+        QWidget *TreeConfigWidget::createWidget() {
+            auto mainWidget = new QWidget;
+            mainLayout = new QVBoxLayout(mainWidget);
             auto treeLayout = treeWidgetBox();
             auto bottomLayout = bottomButtonBox();
 
@@ -51,10 +63,7 @@ namespace TemplatePlg {
             mainLayout->addLayout(treeLayout);
             mainLayout->addLayout(bottomLayout);
             m_treeWidget->expandAll();
-        }
-
-        TreeConfigWidget::~TreeConfigWidget() {
-            m_instance = nullptr;
+            return mainWidget;
         }
 
         QHBoxLayout *TreeConfigWidget::treeWidgetBox() {

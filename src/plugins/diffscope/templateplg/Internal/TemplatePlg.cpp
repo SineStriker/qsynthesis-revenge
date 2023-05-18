@@ -51,11 +51,11 @@ namespace TemplatePlg {
             // And then, clicking the save button will save the treeui (ui) and create config.json (config information).
             // Finally, set false to enter application mode.
             config = new TreeConfigWidget(pluginSpec()->location() + "/configs/", false);
-            auto jsonConfigPage = new TreeConfigPage(config);
+            auto jsonConfigPage = new TreeConfigPage();
             ICore::instance()->settingCatalog()->addPage(jsonConfigPage);
 
 
-            qDebug() << "TreeConfig:" << config->readConfig("edit/spinbox");
+            //            qDebug() << "TreeConfig:" << config->readConfig("edit/spinbox");
 
             // Add basic windows and add-ons
             auto winMgr = ICore::instance()->windowSystem();

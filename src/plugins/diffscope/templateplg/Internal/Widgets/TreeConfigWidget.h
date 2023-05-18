@@ -21,6 +21,7 @@ namespace TemplatePlg {
             explicit TreeConfigWidget(QString configDir, bool configGen = false, QWidget *parent = nullptr);
             ~TreeConfigWidget();
             static TreeConfigWidget *Instance();
+            QWidget *configWidget();
             QVariant readConfig(const QString path, QString type = "index");
 
         protected:
@@ -31,6 +32,7 @@ namespace TemplatePlg {
             bool configGen;
             QString m_language;
 
+            QWidget *m_widget;
             QTreeWidget *m_treeWidget;
             QVBoxLayout *mainLayout;
             QLineEdit *m_name;
@@ -49,6 +51,7 @@ namespace TemplatePlg {
             QPushButton *m_saveButton;
 
         private:
+            QWidget *createWidget();
             QHBoxLayout *treeWidgetBox();
             QVBoxLayout *developButtonBox();
             QHBoxLayout *bottomButtonBox();
