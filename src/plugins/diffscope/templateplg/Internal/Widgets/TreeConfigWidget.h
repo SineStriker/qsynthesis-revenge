@@ -29,6 +29,7 @@ namespace TemplatePlg {
             QVBoxLayout *mainLayout;
             QLineEdit *m_name;
             QLineEdit *m_enName;
+            QLabel *m_format;
             QLineEdit *m_value;
             QComboBox *m_childType;
             QComboBox *m_type;
@@ -42,11 +43,11 @@ namespace TemplatePlg {
         private:
             QString getLocalLanguage();
             QJsonArray readJsonFile(QString filePath);
-            QJsonObject itemToJson(QTreeWidgetItem *item);
-            QJsonArray createJsonFromTree(QTreeWidgetItem *item = nullptr);
+            QJsonArray createJsonFromTree(QTreeWidget *treeWidget, QTreeWidgetItem *item = nullptr);
             void loadConfig(const QJsonArray &config, int insertIndex = -1, QTreeWidgetItem *parent = nullptr);
 
         private slots:
+            void on_format_Changed(int index);
             void addTableRow();
             void removeTableRow();
             void createConfig();

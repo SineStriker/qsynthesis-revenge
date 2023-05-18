@@ -45,6 +45,8 @@ namespace TemplatePlg {
             auto configPage = new ConfigPage();
             ICore::instance()->settingCatalog()->addPage(configPage);
 
+            // First, set false and create "plugin/Res/configurations/config. json".
+            // After loading and saving the configuration in the settings window, set true to enter application mode
             auto jsonConfigPage = new TreeConfigPage(pluginSpec()->location() + "/configs/config.json", true);
             ICore::instance()->settingCatalog()->addPage(jsonConfigPage);
 

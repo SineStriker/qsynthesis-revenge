@@ -14,73 +14,86 @@ namespace TemplatePlg {
             : configPath(configPath), configGen(configGen), QWidget(parent) {
             mainLayout = new QVBoxLayout(this);
 
-            auto treeLayout = new QHBoxLayout(this);
-            m_treeWidget = new QTreeWidget(this);
+            auto treeLayout = new QHBoxLayout();
+            m_treeWidget = new QTreeWidget();
             m_treeWidget->setColumnCount(3);
-            m_treeWidget->setHeaderLabels({"中文名", "EnName", "值"});
             m_treeWidget->setEditTriggers(QAbstractItemView::DoubleClicked);
             treeLayout->addWidget(m_treeWidget);
 
+            if (getLocalLanguage() == "Chinese") {
+                m_treeWidget->setHeaderLabels({"属性", "英文属性", "值"});
+            } else {
+                m_treeWidget->setHeaderLabels({"zh Key", "Key", "Value"});
+            }
+
             if (configGen) {
-                auto buttonLayout = new QVBoxLayout(this);
+                auto buttonLayout = new QVBoxLayout();
 
                 // zh name
                 auto nameLayout = new QHBoxLayout();
-                auto m_name_label = new QLabel("name", this);
-                m_name = new QLineEdit(this);
+                auto m_name_label = new QLabel(tr("Key"));
+                m_name = new QLineEdit();
                 nameLayout->addWidget(m_name_label);
                 nameLayout->addWidget(m_name);
                 buttonLayout->addLayout(nameLayout);
 
                 // en name
                 auto enNameLayout = new QHBoxLayout();
-                auto m_enName_label = new QLabel("en_name", this);
-                m_enName = new QLineEdit(this);
+                auto m_enName_label = new QLabel(tr("En Key"));
+                m_enName = new QLineEdit();
                 enNameLayout->addWidget(m_enName_label);
                 enNameLayout->addWidget(m_enName);
                 buttonLayout->addLayout(enNameLayout);
 
+                // format
+                auto formatLayout = new QHBoxLayout();
+                auto m_format_label = new QLabel(tr("Format Expected"));
+                m_format = new QLabel();
+                formatLayout->addWidget(m_format_label);
+                formatLayout->addWidget(m_format);
+                buttonLayout->addLayout(formatLayout);
+
                 // value
                 auto valueLayout = new QHBoxLayout();
-                auto m_value_label = new QLabel("value", this);
-                m_value = new QLineEdit(this);
+                auto m_value_label = new QLabel(tr("Value"));
+                m_value = new QLineEdit();
                 valueLayout->addWidget(m_value_label);
                 valueLayout->addWidget(m_value);
                 buttonLayout->addLayout(valueLayout);
 
                 // childType
                 auto childLayout = new QHBoxLayout();
-                auto m_child_label = new QLabel("childType:", this);
-                m_childType = new QComboBox(this);
-                m_childType->addItem("Top");
-                m_childType->addItem("Child");
+                auto m_child_label = new QLabel(tr("Insert Hierarchy"));
+                m_childType = new QComboBox();
+                m_childType->addItem(tr("Top"));
+                m_childType->addItem(tr("Child"));
                 childLayout->addWidget(m_child_label);
                 childLayout->addWidget(m_childType);
                 buttonLayout->addLayout(childLayout);
 
                 // controlType
                 auto controlLayout = new QHBoxLayout();
-                auto m_control_label = new QLabel("controlType:", this);
-                m_type = new QComboBox(this);
-                m_type->addItem("Group");
-                m_type->addItem("QCheckBox");
-                m_type->addItem("QComboBox");
-                m_type->addItem("QLineEdit");
-                m_type->addItem("QSpinBox");
+                auto m_control_label = new QLabel(tr("Control Type"));
+                m_type = new QComboBox();
+                m_type->addItem(tr("Group"));
+                m_type->addItem(tr("QCheckBox"));
+                m_type->addItem(tr("QComboBox"));
+                m_type->addItem(tr("QLineEdit"));
+                m_type->addItem(tr("QSpinBox"));
                 controlLayout->addWidget(m_control_label);
                 controlLayout->addWidget(m_type);
                 buttonLayout->addLayout(controlLayout);
 
                 auto moveLayout = new QHBoxLayout();
-                m_up = new QPushButton("↑", this);
-                m_down = new QPushButton("↓", this);
+                m_up = new QPushButton("↑");
+                m_down = new QPushButton("↓");
                 moveLayout->addWidget(m_up);
                 moveLayout->addWidget(m_down);
 
-                m_addButton = new QPushButton("add", this);
-                m_removeButton = new QPushButton("remove", this);
-                m_saveButton = new QPushButton("save", this);
-                m_loadButton = new QPushButton("load", this);
+                m_addButton = new QPushButton(tr("add"));
+                m_removeButton = new QPushButton(tr("remove"));
+                m_saveButton = new QPushButton(tr("save"));
+                m_loadButton = new QPushButton(tr("load"));
 
                 buttonLayout->addLayout(moveLayout);
                 buttonLayout->addWidget(m_addButton);
@@ -90,6 +103,8 @@ namespace TemplatePlg {
 
                 treeLayout->addLayout(buttonLayout);
 
+                connect(m_type, QOverload<int>::of(&QComboBox::currentIndexChanged), this,
+                        &TreeConfigWidget::on_format_Changed);
                 connect(m_up, &QPushButton::clicked, this, &TreeConfigWidget::on_btnUp_clicked);
                 connect(m_down, &QPushButton::clicked, this, &TreeConfigWidget::on_btnDown_clicked);
                 connect(m_addButton, &QPushButton::clicked, this, &TreeConfigWidget::addTableRow);
@@ -102,17 +117,44 @@ namespace TemplatePlg {
                 } else {
                     m_treeWidget->hideColumn(0);
                 }
-                m_saveButton = new QPushButton("save", this);
+                m_saveButton = new QPushButton(tr("save"));
                 mainLayout->addLayout(treeLayout);
                 mainLayout->addWidget(m_saveButton);
                 loadConfig(readJsonFile(configPath));
             }
             connect(m_saveButton, &QPushButton::clicked, this, &TreeConfigWidget::saveConfig);
             m_treeWidget->expandAll();
-            this->setLayout(mainLayout);
         }
 
         TreeConfigWidget::~TreeConfigWidget() {
+        }
+
+        void TreeConfigWidget::on_format_Changed(int index) {
+            qDebug() << index;
+            switch (index) {
+                case 0: {
+                    m_format->setText(tr("null"));
+                    break;
+                }
+                case 1: {
+                    m_format->setText(tr("bool"));
+                    break;
+                }
+                case 2: {
+                    m_format->setText("中文;中文;En;En");
+                    break;
+                }
+                case 3: {
+                    m_format->setText(tr("lineEditValue"));
+                    break;
+                }
+                case 4: {
+                    m_format->setText(tr("min;max;step(int)"));
+                    break;
+                }
+                default:
+                    break;
+            }
         }
 
         void TreeConfigWidget::addTableRow() {
@@ -140,6 +182,7 @@ namespace TemplatePlg {
                 }
                 case 1: {
                     auto *frame = new QCheckBox();
+                    frame->setChecked(QVariant(value).toBool());
                     m_treeWidget->setItemWidget(child, 2, frame);
                     break;
                 }
@@ -153,9 +196,9 @@ namespace TemplatePlg {
                         m_treeWidget->setItemWidget(child, 2, frame);
                     } else {
                         QMessageBox mb;
-                        mb.setText(
+                        mb.setText(tr(
                             "Please input\r\n\"Chinese; Chinese; English; English\" in the following format to ensure "
-                            "that the items are even numbers, and click addButton again.");
+                            "that the items are even numbers, and click addButton again."));
                         mb.exec();
                     }
                     break;
@@ -196,17 +239,17 @@ namespace TemplatePlg {
             }
         }
 
-        QJsonArray TreeConfigWidget::createJsonFromTree(QTreeWidgetItem *item) {
+        QJsonArray TreeConfigWidget::createJsonFromTree(QTreeWidget *treeWidget, QTreeWidgetItem *item) {
             QJsonArray json;
             // root item
             if (!item) {
-                item = m_treeWidget->invisibleRootItem();
+                item = treeWidget->invisibleRootItem();
             }
             // child item
             for (int i = 0; i < item->childCount(); i++) {
                 QTreeWidgetItem *childItem = item->child(i);
                 QString type;
-                auto itemWidget = m_treeWidget->itemWidget(childItem, 2);
+                auto itemWidget = treeWidget->itemWidget(childItem, 2);
 
                 QJsonObject childJson;
                 childJson["zh"] = childItem->text(0);
@@ -245,7 +288,7 @@ namespace TemplatePlg {
 
                 childJson["type"] = type;
                 if (type == "Group" && childItem->childCount()) {
-                    childJson["value"] = createJsonFromTree(childItem);
+                    childJson["value"] = createJsonFromTree(treeWidget, childItem);
                     json.insert(i, childJson);
                 } else {
                     json.insert(i, childJson);
@@ -353,7 +396,7 @@ namespace TemplatePlg {
         }
 
         bool TreeConfigWidget::saveConfig() {
-            QJsonArray configJson = createJsonFromTree();
+            QJsonArray configJson = createJsonFromTree(m_treeWidget);
             auto filePath = configGen ? developConfigPath : configPath;
             QFile file(filePath);
             if (!file.open(QIODevice::WriteOnly | QIODevice::Text)) {
@@ -387,7 +430,7 @@ namespace TemplatePlg {
                 int index = parent ? parent->indexOfChild(item) : m_treeWidget->indexOfTopLevelItem(item);
                 if (index > 0) {
                     QJsonArray data;
-                    data.insert(0, createJsonFromTree(parent).at(index).toObject());
+                    data.insert(0, createJsonFromTree(m_treeWidget, parent).at(index).toObject());
                     if (parent == nullptr) {
                         m_treeWidget->takeTopLevelItem(index);
                     } else {
@@ -408,7 +451,7 @@ namespace TemplatePlg {
                 QTreeWidgetItem *parent = item->parent();
                 int index = parent ? parent->indexOfChild(item) : m_treeWidget->indexOfTopLevelItem(item);
                 QJsonArray data;
-                data.insert(0, createJsonFromTree(parent).at(index).toObject());
+                data.insert(0, createJsonFromTree(m_treeWidget, parent).at(index).toObject());
                 auto maxIndex = parent ? parent->childCount() - 1 : m_treeWidget->topLevelItemCount() - 1;
                 if (index < maxIndex) {
                     if (parent == nullptr) {
