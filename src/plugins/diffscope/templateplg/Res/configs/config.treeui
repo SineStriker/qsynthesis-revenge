@@ -32,14 +32,14 @@
                 "zh": "A"
             },
             {
-                "en": "spinbox",
-                "index": 8,
-                "type": "QSpinBox",
-                "value": [
+                "content": [
                     2,
                     10,
                     1
                 ],
+                "en": "spinbox",
+                "type": "QSpinBox",
+                "value": 8,
                 "zh": "旋钮"
             }
         ],

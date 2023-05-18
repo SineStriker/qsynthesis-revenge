@@ -21,7 +21,7 @@ namespace TemplatePlg {
 
         TmplPlg::~TmplPlg() {
         }
-
+        static TreeConfigWidget *config = nullptr;
         // Plugin Initialize
         bool TmplPlg::initialize(const QStringList &arguments, QString *errorMessage) {
             // Add resources
@@ -42,16 +42,20 @@ namespace TemplatePlg {
                 return false;
             }
 
-            // First, set false and create "plugin/Res/configurations/config.json".
-            // After loading and saving the configuration in the settings window, set true to enter application mode
-            auto config = new TreeConfigWidget(pluginSpec()->location() + "/configs/", true);
-
             // Add Setting Page
             auto configPage = new ConfigPage();
             ICore::instance()->settingCatalog()->addPage(configPage);
 
-            auto jsonConfigPage = new TreeConfigPage();
+            // First, set true and create "plugin/Res/configurations/config.treeui"(Empty file with treeui suffix).
+            // After, clicking the "create treeui" to load config.treeui and creat config ui in the settings window.
+            // And then, clicking the save button will save the treeui (ui) and create config.json (config information).
+            // Finally, set false to enter application mode.
+            config = new TreeConfigWidget(pluginSpec()->location() + "/configs/", false);
+            auto jsonConfigPage = new TreeConfigPage(config);
             ICore::instance()->settingCatalog()->addPage(jsonConfigPage);
+
+
+            qDebug() << "TreeConfig:" << config->readConfig("edit/spinbox");
 
             // Add basic windows and add-ons
             auto winMgr = ICore::instance()->windowSystem();

@@ -10,6 +10,7 @@
 #include <QJsonObject>
 #include <QLabel>
 #include <QLineEdit>
+#include <QMessageBox>
 #include <QSpinBox>
 
 namespace TemplatePlg {
@@ -25,7 +26,7 @@ namespace TemplatePlg {
         protected:
             QString uiPath;
             QString configPath;
-            QString developConfigPath;
+            QString developUiPath;
             QJsonObject configModel;
             bool configGen;
             QString m_language;
@@ -52,7 +53,9 @@ namespace TemplatePlg {
             QVBoxLayout *developButtonBox();
             QHBoxLayout *bottomButtonBox();
             QString getLocalLanguage();
+            QMessageBox *messageBox(QString title, QString text);
             QJsonArray readJsonFile(QString filePath);
+            bool saveJsonFile(QString filePath, QJsonArray configJson);
             QJsonArray createJsonFromTree(QTreeWidget *treeWidget, QTreeWidgetItem *item = nullptr);
             QJsonObject JsonArrayToJsonObject(const QJsonArray &jsonArray);
             void loadConfig(const QJsonObject configObj, QTreeWidget *treeWidget, QTreeWidgetItem *item = nullptr);
@@ -62,8 +65,7 @@ namespace TemplatePlg {
             void on_format_Changed(int index);
             void addTableRow();
             void removeTableRow();
-
-            bool saveConfig();
+            bool on_save_clicked();
             void on_btnUp_clicked();
             void on_btnDown_clicked();
             void on_default_clicked();

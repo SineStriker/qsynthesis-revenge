@@ -102,12 +102,11 @@
     <name>TemplatePlg::Internal::TreeConfigWidget</name>
     <message>
         <source>Key</source>
-        <translation>属性名</translation>
+        <translation>属性</translation>
     </message>
     <message>
         <source>En Key</source>
-        <translatorcomment>英文属性名</translatorcomment>
-        <translation></translation>
+        <translation>英文属性</translation>
     </message>
     <message>
         <source>Format Expected</source>
@@ -163,11 +162,11 @@
     </message>
     <message>
         <source>save</source>
-        <translation>保存</translation>
+        <translation type="vanished">保存</translation>
     </message>
     <message>
         <source>load</source>
-        <translation>加载</translation>
+        <translation type="vanished">加载</translation>
     </message>
     <message>
         <source>null</source>
@@ -190,6 +189,34 @@
 &quot;Chinese; Chinese; English; English&quot; in the following format to ensure that the items are even numbers, and click addButton again.</source>
         <translation>请按照以下格式输入
 “中文;中文;英文;英文”，确保条目为偶数个，然后再次单击addButton。</translation>
+    </message>
+    <message>
+        <source>creat treeui</source>
+        <translation>创建ui</translation>
+    </message>
+    <message>
+        <source>save ui&amp;config info</source>
+        <translation>保存ui&amp;设置信息</translation>
+    </message>
+    <message>
+        <source>File not exist!</source>
+        <translation>文件不存在！</translation>
+    </message>
+    <message>
+        <source>The setting information file (config. json) does not exist, use default settings!</source>
+        <translation>设置信息文件（config.json）不存在，使用默认设置！</translation>
+    </message>
+    <message>
+        <source>default config</source>
+        <translation>默认设置</translation>
+    </message>
+    <message>
+        <source>load config</source>
+        <translation>载入设置</translation>
+    </message>
+    <message>
+        <source>save config</source>
+        <translation>保存设置</translation>
     </message>
 </context>
 </TS>

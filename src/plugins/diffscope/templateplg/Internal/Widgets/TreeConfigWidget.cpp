@@ -21,22 +21,33 @@ namespace TemplatePlg {
             mainLayout = new QVBoxLayout(this);
 
             auto treeLayout = treeWidgetBox();
+            auto bottomLayout = bottomButtonBox();
 
             if (configGen) {
                 auto buttonLayout = developButtonBox();
+                m_defaultButton->setText(tr("creat treeui"));
+                m_saveButton->setText(tr("save ui&config info"));
                 treeLayout->addLayout(buttonLayout);
             } else {
-                configModel = JsonArrayToJsonObject(readJsonFile(configPath));
+                insertUi(readJsonFile(uiPath));
+                if (QFile::exists(configPath)) {
+                    loadConfig(JsonArrayToJsonObject(readJsonFile(configPath)), m_treeWidget);
+                    configModel = JsonArrayToJsonObject(createJsonFromTree(m_treeWidget));
+                } else {
+                    auto m_box = messageBox(
+                        tr("File not exist!"),
+                        tr("The setting information file (config. json) does not exist, use default settings!"));
+                    m_box->exec();
+                    saveJsonFile(configPath, createJsonFromTree(m_treeWidget));
+                }
+
                 if (m_language == "Chinese") {
                     m_treeWidget->hideColumn(1);
                 } else {
                     m_treeWidget->hideColumn(0);
                 }
-                insertUi(readJsonFile(uiPath));
             }
 
-
-            auto bottomLayout = bottomButtonBox();
             mainLayout->addLayout(treeLayout);
             mainLayout->addLayout(bottomLayout);
             m_treeWidget->expandAll();
@@ -83,7 +94,7 @@ namespace TemplatePlg {
             // format
             auto formatLayout = new QHBoxLayout();
             auto m_format_label = new QLabel(tr("Format Expected"));
-            m_format = new QLabel();
+            m_format = new QLabel(tr("null"));
             formatLayout->addWidget(m_format_label);
             formatLayout->addWidget(m_format);
             buttonLayout->addLayout(formatLayout);
@@ -143,16 +154,16 @@ namespace TemplatePlg {
 
         QHBoxLayout *TreeConfigWidget::bottomButtonBox() {
             auto bottomLayout = new QHBoxLayout();
-            m_defaultButton = new QPushButton(tr("default"));
-            m_loadButton = new QPushButton(tr("load"));
-            m_saveButton = new QPushButton(tr("save"));
+            m_defaultButton = new QPushButton(tr("default config"));
+            m_loadButton = new QPushButton(tr("load config"));
+            m_saveButton = new QPushButton(tr("save config"));
             bottomLayout->addWidget(m_defaultButton);
             bottomLayout->addWidget(m_loadButton);
             bottomLayout->addWidget(m_saveButton);
 
             connect(m_defaultButton, &QPushButton::clicked, this, &TreeConfigWidget::on_default_clicked);
             connect(m_loadButton, &QPushButton::clicked, this, &TreeConfigWidget::on_loadConfig_clicked);
-            connect(m_saveButton, &QPushButton::clicked, this, &TreeConfigWidget::saveConfig);
+            connect(m_saveButton, &QPushButton::clicked, this, &TreeConfigWidget::on_save_clicked);
             return bottomLayout;
         }
 
@@ -405,7 +416,7 @@ namespace TemplatePlg {
                     // Insert QLineEdit for QLineEdit type
                     QSpinBox *spinBox = new QSpinBox(m_treeWidget);
                     int index = it->toObject().value("index").toInt();
-                    QStringList values = it->toObject().value("value").toVariant().toStringList();
+                    QStringList values = it->toObject().value("content").toVariant().toStringList();
                     spinBox->setRange(values[0].toInt(), values[1].toInt());
                     spinBox->setSingleStep(values[2].toInt());
                     spinBox->setValue(index);
@@ -419,9 +430,7 @@ namespace TemplatePlg {
             }
         }
 
-        bool TreeConfigWidget::saveConfig() {
-            QJsonArray configJson = createJsonFromTree(m_treeWidget);
-            auto filePath = configGen ? developConfigPath : configPath;
+        bool TreeConfigWidget::saveJsonFile(QString filePath, QJsonArray configJson) {
             QFile file(filePath);
             if (!file.open(QIODevice::WriteOnly | QIODevice::Text)) {
                 // Failed to open file
@@ -429,7 +438,22 @@ namespace TemplatePlg {
             }
             QJsonDocument jsonDoc(configJson);
             file.write(jsonDoc.toJson());
-            configModel = JsonArrayToJsonObject(readJsonFile(filePath));
+            return true;
+        }
+
+        bool TreeConfigWidget::on_save_clicked() {
+            QJsonArray configJson = createJsonFromTree(m_treeWidget);
+            bool res = saveJsonFile(configPath, configJson);
+            if (res) {
+                auto m_box = messageBox(tr("Successfully saved"), tr("Successfully saved!"));
+                m_box->exec();
+            }
+            if (configGen) {
+                saveJsonFile(developUiPath, configJson);
+                saveJsonFile(developUiPath.replace(".treeui", ".json"), configJson);
+                saveJsonFile(configPath.replace(".json", ".treeui"), configJson);
+            }
+            configModel = JsonArrayToJsonObject(readJsonFile(configPath));
             return true;
         }
 
@@ -529,13 +553,11 @@ namespace TemplatePlg {
             for (int i = 0; i < item->childCount(); i++) {
                 QTreeWidgetItem *childItem = item->child(i);
                 QString key = childItem->text(1);
-                qDebug() << key;
                 if (configObj.contains(key)) {
                     QJsonObject childJson = configObj.value(key).toObject();
                     auto itemWidget = treeWidget->itemWidget(childItem, 2);
                     QString childType = childJson["type"].toString();
 
-                    qDebug() << "contains:" << key << childType;
                     if (qobject_cast<QCheckBox *>(itemWidget) && childType == "QCheckBox") {
                         qobject_cast<QCheckBox *>(itemWidget)->setChecked(childJson["value"].toBool());
                     } else if (qobject_cast<QComboBox *>(itemWidget) && childType == "QComboBox") {
@@ -546,7 +568,6 @@ namespace TemplatePlg {
                             cb->setCurrentIndex(index);
                         }
                     } else if (qobject_cast<QLineEdit *>(itemWidget) && childType == "QLineEdit") {
-                        qDebug() << "change:" << key << childJson["value"].toString();
                         qobject_cast<QLineEdit *>(itemWidget)->setText(childJson["value"].toString());
                     } else if (qobject_cast<QSpinBox *>(itemWidget) && childType == "QSpinBox") {
                         auto sb = qobject_cast<QSpinBox *>(itemWidget);
@@ -562,9 +583,13 @@ namespace TemplatePlg {
 
         void TreeConfigWidget::on_default_clicked() {
             qDeleteAll(m_treeWidget->invisibleRootItem()->takeChildren());
-            developConfigPath =
-                QFileDialog::getOpenFileName(nullptr, "Open File", "", "Tree Ui Files (*.treeui);;All Files (*)");
-            insertUi(readJsonFile(developConfigPath));
+            if (configGen) {
+                developUiPath =
+                    QFileDialog::getOpenFileName(nullptr, "Open File", "", "Tree Ui Files (*.treeui);;All Files (*)");
+                insertUi(readJsonFile(developUiPath));
+            } else {
+                insertUi(readJsonFile(uiPath));
+            }
             m_treeWidget->expandAll();
         }
 
@@ -574,5 +599,13 @@ namespace TemplatePlg {
             loadConfig(configObj, m_treeWidget);
             m_treeWidget->expandAll();
         }
+
+        QMessageBox *TreeConfigWidget::messageBox(QString title, QString text) {
+            auto m_box = new QMessageBox;
+            m_box->setWindowTitle(title);
+            m_box->setText(text);
+            return m_box;
+        }
+
     }
 }

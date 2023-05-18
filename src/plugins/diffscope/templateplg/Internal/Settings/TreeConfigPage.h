@@ -1,6 +1,7 @@
 #ifndef CHORUSKIT_TREECONFIGPAGE_H
 #define CHORUSKIT_TREECONFIGPAGE_H
 
+#include "../Widgets/TreeConfigWidget.h"
 #include <CoreApi/ISettingPage.h>
 
 namespace TemplatePlg {
@@ -9,7 +10,7 @@ namespace TemplatePlg {
         class TreeConfigPage : public ISettingPage {
             Q_OBJECT
         public:
-            explicit TreeConfigPage(QObject *parent = nullptr);
+            explicit TreeConfigPage(TreeConfigWidget *config, QObject *parent = nullptr);
             ~TreeConfigPage();
 
             void reloadStrings();
@@ -25,8 +26,7 @@ namespace TemplatePlg {
 
         private:
             QWidget *m_widget;
-            QString configPath;
-            bool configGen;
+            TreeConfigWidget *m_config;
         };
     }
 
