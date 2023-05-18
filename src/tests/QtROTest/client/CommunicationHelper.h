@@ -30,18 +30,43 @@ public:
     explicit CommunicationHelper();
     ~CommunicationHelper();
     void start();
-    QVariant invokeSync(const std::function<QVariant()>& fx);
-    QVariant invokeSync(Awaiter &awaiter, const std::function<void()>& fx);
-    template <typename R>
-    bool connect(const QString &address) {
+    template <typename T>
+    T invokeSync(const std::function<T()>& fx) {
         Awaiter awaiter;
-        return invokeSync(awaiter, [=, &awaiter](){
-            if(!m_repNode->connectToNode(QUrl(address))) emit awaiter.finished(true);
+        awaiter.moveToThread(m_appThread.data());
+        QMetaObject::invokeMethod(&awaiter, "call", Q_ARG(std::function<QVariant()>, fx));
+        QMutexLocker locker(&awaiter.m_mutex);
+        while(!awaiter.m_isFinished) {
+            awaiter.m_condition.wait(&awaiter.m_mutex);
+        }
+        return awaiter.m_ret.value<T>();
+    }
+    template <typename T>
+    QVariant invokeSync(Awaiter &awaiter, const std::function<void()>& fx) {
+        awaiter.moveToThread(m_appThread.data());
+        QMetaObject::invokeMethod(&awaiter, "callBySignal", Q_ARG(std::function<void()>, fx));
+        QMutexLocker locker(&awaiter.m_mutex);
+        while(!awaiter.m_isFinished) {
+            awaiter.m_condition.wait(&awaiter.m_mutex);
+        }
+        return awaiter.m_ret.value<T>();
+    }
+    template <typename R>
+    bool connect(const QString &address, int timeout, const std::function<bool()>& waitingFailedCallback) {
+        return invokeSync<bool>([=](){
+            if(!m_repNode->connectToNode(QUrl(address))) return false;
             m_rep.reset(m_repNode->acquire<R>());
-            QObject::connect(m_rep.data(), &QRemoteObjectReplica::initialized, [&awaiter](){
-                emit awaiter.finished(true);
-            });
-        }).toBool();
+            for(;;) {
+                if(!m_rep->waitForSource(timeout)) {
+                    if(!waitingFailedCallback()) return false;
+                } else break;
+            }
+            return true;
+        });
+    }
+    template <typename R>
+    bool connect(const QString &address, int timeout) {
+        return connect<R>(address, timeout, [](){ return false; });
     }
     template <typename R>
     R* replica() {

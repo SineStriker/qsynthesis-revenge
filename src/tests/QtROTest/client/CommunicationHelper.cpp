@@ -14,25 +14,6 @@ CommunicationHelper::CommunicationHelper(): m_app(new QCoreApplication(_appArgc,
 void CommunicationHelper::start() {
     m_appThread->start();
 }
-QVariant CommunicationHelper::invokeSync(const std::function<QVariant()>& fx) {
-    Awaiter awaiter;
-    awaiter.moveToThread(m_appThread.data());
-    QMetaObject::invokeMethod(&awaiter, "call", Q_ARG(std::function<QVariant()>, fx));
-    QMutexLocker locker(&awaiter.m_mutex);
-    while(!awaiter.m_isFinished) {
-        awaiter.m_condition.wait(&awaiter.m_mutex);
-    }
-    return awaiter.m_ret;
-}
-QVariant CommunicationHelper::invokeSync(Awaiter &awaiter, const std::function<void()> &fx) {
-   awaiter.moveToThread(m_appThread.data());
-   QMetaObject::invokeMethod(&awaiter, "callBySignal", Q_ARG(std::function<void()>, fx));
-   QMutexLocker locker(&awaiter.m_mutex);
-   while(!awaiter.m_isFinished) {
-        awaiter.m_condition.wait(&awaiter.m_mutex);
-   }
-   return awaiter.m_ret;
-}
 CommunicationHelper::~CommunicationHelper() {
     m_app->quit();
     m_appThread->quit();
