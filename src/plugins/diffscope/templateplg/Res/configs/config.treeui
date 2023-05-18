@@ -39,8 +39,14 @@
                 ],
                 "en": "spinbox",
                 "type": "QSpinBox",
-                "value": 8,
+                "value": 2,
                 "zh": "旋钮"
+            },
+            {
+                "en": "file",
+                "type": "QFileDialog",
+                "value": "D:/projects/qsynthesis-revenge/src/plugins/diffscope/templateplg/Res/configs/config.treeui",
+                "zh": "file"
             }
         ],
         "zh": "编辑"

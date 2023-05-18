@@ -226,5 +226,9 @@
         <source>Successfully saved!</source>
         <translation>保存成功！</translation>
     </message>
+    <message>
+        <source>QFileDialog</source>
+        <translation>文件对话框</translation>
+    </message>
 </context>
 </TS>

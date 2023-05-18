@@ -74,7 +74,7 @@ namespace TemplatePlg {
             treeLayout->addWidget(m_treeWidget);
 
             if (m_language == "Chinese") {
-                m_treeWidget->setHeaderLabels({"属性", "英文属性", "值"});
+                m_treeWidget->setHeaderLabels({tr("Key"), tr("En Key"), tr("Value")});
             } else {
                 m_treeWidget->setHeaderLabels({"zh Key", "Key", "Value"});
             }
@@ -135,6 +135,7 @@ namespace TemplatePlg {
             m_type->addItem(tr("QComboBox"));
             m_type->addItem(tr("QLineEdit"));
             m_type->addItem(tr("QSpinBox"));
+            m_type->addItem(tr("QFileDialog"));
             controlLayout->addWidget(m_control_label);
             controlLayout->addWidget(m_type);
             buttonLayout->addLayout(controlLayout);
@@ -198,6 +199,11 @@ namespace TemplatePlg {
                     m_format->setText(tr("min;max;step(int)"));
                     break;
                 }
+                case 5: {
+                    m_format->setText(tr("null"));
+                    break;
+                }
+
                 default:
                     break;
             }
@@ -264,6 +270,21 @@ namespace TemplatePlg {
                     m_treeWidget->setItemWidget(child, 2, frame);
                     break;
                 }
+                case 5: {
+                    QWidget *widget = new QWidget();
+                    QHBoxLayout *layout = new QHBoxLayout();
+                    QPushButton *button = new QPushButton("...");
+                    QLineEdit *lineEdit = new QLineEdit();
+                    layout->addWidget(lineEdit);
+                    layout->addWidget(button);
+                    widget->setLayout(layout);
+                    QObject::connect(button, &QPushButton::clicked, [=]() {
+                        QString fileName = QFileDialog::getOpenFileName(nullptr, "Open File", "", "All Files (*)");
+                        lineEdit->setText(fileName);
+                    });
+                    m_treeWidget->setItemWidget(child, 2, widget);
+                    break;
+                }
                 default:
                     break;
             }
@@ -328,6 +349,10 @@ namespace TemplatePlg {
                     type = "QSpinBox";
                     childJson["value"] = sb->value();
                     childJson["content"] = QJsonArray() << sb->minimum() << sb->maximum() << sb->singleStep();
+                } else if (qobject_cast<QWidget *>(itemWidget)->findChild<QLineEdit *>()) {
+                    auto lineEdit = qobject_cast<QWidget *>(itemWidget)->findChild<QLineEdit *>();
+                    type = "QFileDialog";
+                    childJson["value"] = lineEdit->text();
                 } else {
                     type = "Group";
                 }
@@ -430,6 +455,20 @@ namespace TemplatePlg {
                     spinBox->setSingleStep(values[2].toInt());
                     spinBox->setValue(index);
                     m_treeWidget->setItemWidget(item, 2, spinBox);
+                } else if (type == "QFileDialog") {
+                    QWidget *widget = new QWidget();
+                    QHBoxLayout *layout = new QHBoxLayout();
+                    QPushButton *button = new QPushButton("...");
+                    QLineEdit *lineEdit = new QLineEdit();
+                    layout->addWidget(lineEdit);
+                    layout->addWidget(button);
+                    widget->setLayout(layout);
+                    QObject::connect(button, &QPushButton::clicked, [=]() {
+                        QString fileName = QFileDialog::getOpenFileName(nullptr, "Open File", "", "All Files (*)");
+                        lineEdit->setText(fileName);
+                    });
+                    lineEdit->setText(it->toObject().value("value").toString());
+                    m_treeWidget->setItemWidget(item, 2, widget);
                 }
 
                 if (type == "Group") {
@@ -581,6 +620,9 @@ namespace TemplatePlg {
                     } else if (qobject_cast<QSpinBox *>(itemWidget) && childType == "QSpinBox") {
                         auto sb = qobject_cast<QSpinBox *>(itemWidget);
                         sb->setValue(childJson["value"].toInt());
+                    } else if (qobject_cast<QWidget *>(itemWidget) && childType == "QFileDialog") {
+                        auto fd = qobject_cast<QWidget *>(itemWidget)->findChild<QLineEdit *>();
+                        fd->setText(childJson["value"].toString());
                     } else {
                         if (childItem->childCount()) {
                             loadConfig(childJson, treeWidget, childItem);
