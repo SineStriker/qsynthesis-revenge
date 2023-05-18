@@ -20,7 +20,7 @@
                             "red",
                             "yellow"
                         ],
-                        "index": 0,
+                        "index": 1,
                         "type": "QComboBox",
                         "zh": "颜色",
                         "zh_value": [
@@ -65,7 +65,7 @@
             {
                 "en": "",
                 "type": "QCheckBox",
-                "value": false,
+                "value": true,
                 "zh": "选项"
             },
             {
@@ -77,7 +77,7 @@
             {
                 "en": "option3",
                 "type": "QCheckBox",
-                "value": false,
+                "value": true,
                 "zh": "选项3"
             },
             {
@@ -89,7 +89,7 @@
             {
                 "en": "",
                 "type": "QCheckBox",
-                "value": false,
+                "value": true,
                 "zh": "选项5"
             }
         ],
@@ -98,7 +98,7 @@
     {
         "en": "text",
         "type": "QLineEdit",
-        "value": "1",
+        "value": "10",
         "zh": "文本"
     }
 ]

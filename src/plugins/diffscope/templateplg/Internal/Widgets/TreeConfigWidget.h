@@ -48,20 +48,26 @@ namespace TemplatePlg {
             QPushButton *m_saveButton;
 
         private:
+            QHBoxLayout *treeWidgetBox();
+            QVBoxLayout *developButtonBox();
+            QHBoxLayout *bottomButtonBox();
             QString getLocalLanguage();
             QJsonArray readJsonFile(QString filePath);
             QJsonArray createJsonFromTree(QTreeWidget *treeWidget, QTreeWidgetItem *item = nullptr);
             QJsonObject JsonArrayToJsonObject(const QJsonArray &jsonArray);
+            void loadConfig(const QJsonObject configObj, QTreeWidget *treeWidget, QTreeWidgetItem *item = nullptr);
             void insertUi(const QJsonArray &config, int insertIndex = -1, QTreeWidgetItem *parent = nullptr);
 
         private slots:
             void on_format_Changed(int index);
             void addTableRow();
             void removeTableRow();
-            void createConfig();
+
             bool saveConfig();
             void on_btnUp_clicked();
             void on_btnDown_clicked();
+            void on_default_clicked();
+            void on_loadConfig_clicked();
         };
 
     }
