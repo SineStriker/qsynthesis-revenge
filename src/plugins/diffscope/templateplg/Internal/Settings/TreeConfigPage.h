@@ -9,7 +9,7 @@ namespace TemplatePlg {
         class TreeConfigPage : public ISettingPage {
             Q_OBJECT
         public:
-            explicit TreeConfigPage(QString configPath, bool configGen, QObject *parent = nullptr);
+            explicit TreeConfigPage(QObject *parent = nullptr);
             ~TreeConfigPage();
 
             void reloadStrings();

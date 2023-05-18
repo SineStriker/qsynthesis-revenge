@@ -5,6 +5,7 @@
 #include "CoreApi/SettingCatalog.h"
 #include "Settings/ConfigPage.h"
 #include "Settings/TreeConfigPage.h"
+#include "Widgets/TreeConfigWidget.h"
 #include <QApplication>
 #include <QMDecoratorV2.h>
 #include <QMSystem.h>
@@ -41,13 +42,15 @@ namespace TemplatePlg {
                 return false;
             }
 
+            // First, set false and create "plugin/Res/configurations/config.json".
+            // After loading and saving the configuration in the settings window, set true to enter application mode
+            auto config = new TreeConfigWidget(pluginSpec()->location() + "/configs/", true);
+
             // Add Setting Page
             auto configPage = new ConfigPage();
             ICore::instance()->settingCatalog()->addPage(configPage);
 
-            // First, set false and create "plugin/Res/configurations/config. json".
-            // After loading and saving the configuration in the settings window, set true to enter application mode
-            auto jsonConfigPage = new TreeConfigPage(pluginSpec()->location() + "/configs/config.json", true);
+            auto jsonConfigPage = new TreeConfigPage();
             ICore::instance()->settingCatalog()->addPage(jsonConfigPage);
 
             // Add basic windows and add-ons

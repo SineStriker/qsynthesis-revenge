@@ -5,8 +5,7 @@
 
 namespace TemplatePlg {
     namespace Internal {
-        TreeConfigPage::TreeConfigPage(QString configPath, bool configGen, QObject *parent)
-            : configPath(configPath), configGen(configGen), ISettingPage("core.JsonConfig", parent) {
+        TreeConfigPage::TreeConfigPage(QObject *parent) : ISettingPage("core.JsonConfig", parent) {
             m_widget = nullptr;
             qIDec->installLocale(this, _LOC(TreeConfigPage, this));
         }
@@ -29,7 +28,7 @@ namespace TemplatePlg {
 
         QWidget *TreeConfigPage::widget() {
             if (!m_widget) {
-                m_widget = new TreeConfigWidget(configPath, configGen);
+                m_widget = TreeConfigWidget::Instance();
             }
             return m_widget;
         }

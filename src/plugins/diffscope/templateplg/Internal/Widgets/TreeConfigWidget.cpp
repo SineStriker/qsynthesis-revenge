@@ -10,8 +10,14 @@
 
 namespace TemplatePlg {
     namespace Internal {
-        TreeConfigWidget::TreeConfigWidget(QString configPath, bool configGen, QWidget *parent)
-            : configPath(configPath), configGen(configGen), QWidget(parent) {
+
+        static TreeConfigWidget *m_instance = nullptr;
+
+        TreeConfigWidget::TreeConfigWidget(QString configDir, bool configGen, QWidget *parent)
+            : configPath(configDir + "config.json"), uiPath(configDir + "config.treeui"), configGen(configGen),
+              m_language(getLocalLanguage()), QWidget(parent) {
+            m_instance = this;
+
             mainLayout = new QVBoxLayout(this);
 
             auto treeLayout = new QHBoxLayout();
@@ -20,7 +26,7 @@ namespace TemplatePlg {
             m_treeWidget->setEditTriggers(QAbstractItemView::DoubleClicked);
             treeLayout->addWidget(m_treeWidget);
 
-            if (getLocalLanguage() == "Chinese") {
+            if (m_language == "Chinese") {
                 m_treeWidget->setHeaderLabels({"属性", "英文属性", "值"});
             } else {
                 m_treeWidget->setHeaderLabels({"zh Key", "Key", "Value"});
@@ -92,14 +98,10 @@ namespace TemplatePlg {
 
                 m_addButton = new QPushButton(tr("add"));
                 m_removeButton = new QPushButton(tr("remove"));
-                m_saveButton = new QPushButton(tr("save"));
-                m_loadButton = new QPushButton(tr("load"));
 
                 buttonLayout->addLayout(moveLayout);
                 buttonLayout->addWidget(m_addButton);
                 buttonLayout->addWidget(m_removeButton);
-                buttonLayout->addWidget(m_loadButton);
-                buttonLayout->addWidget(m_saveButton);
 
                 treeLayout->addLayout(buttonLayout);
 
@@ -109,28 +111,39 @@ namespace TemplatePlg {
                 connect(m_down, &QPushButton::clicked, this, &TreeConfigWidget::on_btnDown_clicked);
                 connect(m_addButton, &QPushButton::clicked, this, &TreeConfigWidget::addTableRow);
                 connect(m_removeButton, &QPushButton::clicked, this, &TreeConfigWidget::removeTableRow);
-                connect(m_loadButton, &QPushButton::clicked, this, &TreeConfigWidget::createConfig);
-                mainLayout->addLayout(treeLayout);
             } else {
-                if (getLocalLanguage() == "Chinese") {
+                configModel = JsonArrayToJsonObject(readJsonFile(configPath));
+                if (m_language == "Chinese") {
                     m_treeWidget->hideColumn(1);
                 } else {
                     m_treeWidget->hideColumn(0);
                 }
-                m_saveButton = new QPushButton(tr("save"));
-                mainLayout->addLayout(treeLayout);
-                mainLayout->addWidget(m_saveButton);
-                loadConfig(readJsonFile(configPath));
+                insertUi(readJsonFile(uiPath));
             }
+
+
+            auto bottomLayout = new QHBoxLayout();
+            m_defaultButton = new QPushButton(tr("default"));
+            m_loadButton = new QPushButton(tr("load"));
+            m_saveButton = new QPushButton(tr("save"));
+            bottomLayout->addWidget(m_defaultButton);
+            bottomLayout->addWidget(m_loadButton);
+            bottomLayout->addWidget(m_saveButton);
+
+            mainLayout->addLayout(treeLayout);
+            mainLayout->addLayout(bottomLayout);
+
+            connect(m_defaultButton, &QPushButton::clicked, this, &TreeConfigWidget::createConfig);
+            connect(m_loadButton, &QPushButton::clicked, this, &TreeConfigWidget::createConfig);
             connect(m_saveButton, &QPushButton::clicked, this, &TreeConfigWidget::saveConfig);
             m_treeWidget->expandAll();
         }
 
         TreeConfigWidget::~TreeConfigWidget() {
+            m_instance = nullptr;
         }
 
         void TreeConfigWidget::on_format_Changed(int index) {
-            qDebug() << index;
             switch (index) {
                 case 0: {
                     m_format->setText(tr("null"));
@@ -280,8 +293,8 @@ namespace TemplatePlg {
                 } else if (qobject_cast<QSpinBox *>(itemWidget)) {
                     auto sb = qobject_cast<QSpinBox *>(itemWidget);
                     type = "QSpinBox";
-                    childJson["index"] = sb->value();
-                    childJson["value"] = QJsonArray() << sb->minimum() << sb->maximum() << sb->singleStep();
+                    childJson["value"] = sb->value();
+                    childJson["content"] = QJsonArray() << sb->minimum() << sb->maximum() << sb->singleStep();
                 } else {
                     type = "Group";
                 }
@@ -289,10 +302,10 @@ namespace TemplatePlg {
                 childJson["type"] = type;
                 if (type == "Group" && childItem->childCount()) {
                     childJson["value"] = createJsonFromTree(treeWidget, childItem);
-                    json.insert(i, childJson);
-                } else {
-                    json.insert(i, childJson);
+                } else if (type == "Group" && childItem->childCount() == 0) {
+                    childJson["value"] = QJsonArray();
                 }
+                json.insert(i, childJson);
             }
 
             return json;
@@ -315,7 +328,7 @@ namespace TemplatePlg {
             return jsonDoc.array();
         }
 
-        void TreeConfigWidget::loadConfig(const QJsonArray &config, int insertIndex, QTreeWidgetItem *parent) {
+        void TreeConfigWidget::insertUi(const QJsonArray &config, int insertIndex, QTreeWidgetItem *parent) {
             for (auto it = config.begin(); it != config.end(); ++it) {
                 QTreeWidgetItem *item = new QTreeWidgetItem();
                 // must insert item before setting it
@@ -352,12 +365,12 @@ namespace TemplatePlg {
                     QListView *view = qobject_cast<QListView *>(comboBox->view());
                     comboBox->addItems(zhValues);
                     comboBox->addItems(enValues);
-                    if (!configGen && getLocalLanguage() == "Chinese") {
+                    if (!configGen && m_language == "Chinese") {
                         for (int c_i = 0; c_i < zhValues.size(); c_i++) {
                             view->setRowHidden(c_i + zhValues.size(), true);
                         }
                         index = index < zhValues.size() ? index : index - zhValues.size();
-                    } else if (!configGen && getLocalLanguage() == "English") {
+                    } else if (!configGen && m_language != "Chinese") {
                         for (int c_i = 0; c_i < zhValues.size(); c_i++) {
                             view->setRowHidden(c_i, true);
                         }
@@ -380,17 +393,15 @@ namespace TemplatePlg {
                     QSpinBox *spinBox = new QSpinBox(m_treeWidget);
                     int index = it->toObject().value("index").toInt();
                     QStringList values = it->toObject().value("value").toVariant().toStringList();
-                    spinBox->setMinimum(values[0].toInt());
-                    spinBox->setMaximum(values[1].toInt());
+                    spinBox->setRange(values[0].toInt(), values[1].toInt());
                     spinBox->setSingleStep(values[2].toInt());
                     spinBox->setValue(index);
                     m_treeWidget->setItemWidget(item, 2, spinBox);
                 }
 
-
                 if (type == "Group") {
                     // recursively load child items
-                    loadConfig(it->toObject().value("value").toArray(), -1, item);
+                    insertUi(it->toObject().value("value").toArray(), -1, item);
                 }
             }
         }
@@ -403,7 +414,6 @@ namespace TemplatePlg {
                 // Failed to open file
                 return false;
             }
-
             QJsonDocument jsonDoc(configJson);
             file.write(jsonDoc.toJson());
             return true;
@@ -412,7 +422,7 @@ namespace TemplatePlg {
         void TreeConfigWidget::createConfig() {
             developConfigPath =
                 QFileDialog::getOpenFileName(nullptr, "Open File", "", "Json Files (*.json);;All Files (*)");
-            loadConfig(readJsonFile(developConfigPath));
+            insertUi(readJsonFile(developConfigPath));
             m_treeWidget->expandAll();
         }
 
@@ -436,7 +446,7 @@ namespace TemplatePlg {
                     } else {
                         parent->takeChild(index);
                     }
-                    loadConfig(data, index - 1, parent);
+                    insertUi(data, index - 1, parent);
                     auto cItem = parent ? parent->child(index - 1) : m_treeWidget->topLevelItem(index - 1);
                     m_treeWidget->setCurrentItem(cItem);
                     m_treeWidget->expandItem(cItem);
@@ -456,16 +466,51 @@ namespace TemplatePlg {
                 if (index < maxIndex) {
                     if (parent == nullptr) {
                         m_treeWidget->takeTopLevelItem(index);
-                        loadConfig(data, index + 1, parent);
+                        insertUi(data, index + 1, parent);
                     } else {
                         parent->takeChild(index);
-                        loadConfig(data, index + 1, parent);
+                        insertUi(data, index + 1, parent);
                     }
                     auto cItem = parent ? parent->child(index + 1) : m_treeWidget->topLevelItem(index + 1);
                     m_treeWidget->setCurrentItem(cItem);
                     m_treeWidget->expandItem(cItem);
                 }
             }
+        }
+
+        QJsonObject TreeConfigWidget::JsonArrayToJsonObject(const QJsonArray &jsonArray) {
+            QJsonObject jsonObject;
+
+            for (const auto &jsonValue : jsonArray) {
+                const auto &subJsonObject = jsonValue.toObject();
+                const QString &key = subJsonObject["en"].toString();
+
+                if (subJsonObject["type"].toString() == "Group") {
+                    jsonObject[key] = JsonArrayToJsonObject(subJsonObject["value"].toArray());
+                } else {
+                    jsonObject[key] = subJsonObject;
+                }
+            }
+            return jsonObject;
+        }
+
+        QVariant TreeConfigWidget::readConfig(const QString path, QString type) {
+            QStringList pathList = path.split("/");
+            QJsonValue jsonValue = configModel;
+            for (const auto &pathItem : pathList) {
+                jsonValue = jsonValue.toObject()[pathItem];
+            }
+            if (jsonValue["type"] == "QComboBox") {
+                return type == "index"
+                           ? QVariant(jsonValue["index"])
+                           : QVariant(jsonValue["en_value"].toVariant().toStringList()[jsonValue["index"].toInt()]);
+            } else {
+                return QVariant(jsonValue["value"]);
+            }
+        }
+
+        TreeConfigWidget *TreeConfigWidget::Instance() {
+            return m_instance;
         }
 
     }

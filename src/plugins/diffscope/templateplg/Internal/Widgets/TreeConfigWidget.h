@@ -17,13 +17,18 @@ namespace TemplatePlg {
         class TreeConfigWidget : public QWidget {
             Q_OBJECT
         public:
-            explicit TreeConfigWidget(QString configPath, bool configGen = false, QWidget *parent = nullptr);
+            explicit TreeConfigWidget(QString configDir, bool configGen = false, QWidget *parent = nullptr);
             ~TreeConfigWidget();
+            static TreeConfigWidget *Instance();
+            QVariant readConfig(const QString path, QString type = "index");
 
         protected:
+            QString uiPath;
             QString configPath;
             QString developConfigPath;
+            QJsonObject configModel;
             bool configGen;
+            QString m_language;
 
             QTreeWidget *m_treeWidget;
             QVBoxLayout *mainLayout;
@@ -37,14 +42,17 @@ namespace TemplatePlg {
             QPushButton *m_down;
             QPushButton *m_addButton;
             QPushButton *m_removeButton;
-            QPushButton *m_saveButton;
+
+            QPushButton *m_defaultButton;
             QPushButton *m_loadButton;
+            QPushButton *m_saveButton;
 
         private:
             QString getLocalLanguage();
             QJsonArray readJsonFile(QString filePath);
             QJsonArray createJsonFromTree(QTreeWidget *treeWidget, QTreeWidgetItem *item = nullptr);
-            void loadConfig(const QJsonArray &config, int insertIndex = -1, QTreeWidgetItem *parent = nullptr);
+            QJsonObject JsonArrayToJsonObject(const QJsonArray &jsonArray);
+            void insertUi(const QJsonArray &config, int insertIndex = -1, QTreeWidgetItem *parent = nullptr);
 
         private slots:
             void on_format_Changed(int index);
