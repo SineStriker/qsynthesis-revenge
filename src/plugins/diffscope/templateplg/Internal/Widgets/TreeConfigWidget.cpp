@@ -19,6 +19,7 @@ namespace TemplatePlg {
               m_language(TreeJsonUtil::getLocalLanguage()), QWidget(parent) {
             m_instance = this;
             m_widget = createWidget();
+            m_treeWidget->setHorizontalScrollMode(QTreeView::ScrollPerPixel);
             m_widget->setParent(parent);
         }
 
@@ -28,6 +29,21 @@ namespace TemplatePlg {
 
         QWidget *TreeConfigWidget::configWidget() {
             return createWidget();
+        }
+
+        QHBoxLayout *TreeConfigWidget::treeWidgetBox() {
+            auto treeLayout = new QHBoxLayout();
+            m_treeWidget = new QTreeWidget();
+            m_treeWidget->setColumnCount(3);
+            m_treeWidget->setEditTriggers(QAbstractItemView::DoubleClicked);
+            treeLayout->addWidget(m_treeWidget);
+
+            if (m_language == "Chinese") {
+                m_treeWidget->setHeaderLabels({tr("Key"), tr("En Key"), tr("Value"), tr("Remark"), tr("En Remark")});
+            } else {
+                m_treeWidget->setHeaderLabels({"zh Key", "Key", "Value", "Remark", "En Remark"});
+            }
+            return treeLayout;
         }
 
         QWidget *TreeConfigWidget::createWidget() {
@@ -40,6 +56,7 @@ namespace TemplatePlg {
                 auto devWidget = new TreeDevWidget(m_treeWidget);
                 m_defaultButton->setText(tr("creat treeui"));
                 m_saveButton->setText(tr("save ui&config info"));
+                devWidget->setMaximumWidth(300);
                 treeLayout->addWidget(devWidget);
             } else {
                 TreeJsonUtil::TreeFromFile(uiPath, configGen, m_treeWidget);
@@ -55,8 +72,10 @@ namespace TemplatePlg {
                 }
                 if (m_language == "Chinese") {
                     m_treeWidget->hideColumn(1);
+                    m_treeWidget->hideColumn(4);
                 } else {
                     m_treeWidget->hideColumn(0);
+                    m_treeWidget->hideColumn(3);
                 }
             }
 
@@ -64,21 +83,6 @@ namespace TemplatePlg {
             mainLayout->addLayout(bottomLayout);
             m_treeWidget->expandAll();
             return mainWidget;
-        }
-
-        QHBoxLayout *TreeConfigWidget::treeWidgetBox() {
-            auto treeLayout = new QHBoxLayout();
-            m_treeWidget = new QTreeWidget();
-            m_treeWidget->setColumnCount(3);
-            m_treeWidget->setEditTriggers(QAbstractItemView::DoubleClicked);
-            treeLayout->addWidget(m_treeWidget);
-
-            if (m_language == "Chinese") {
-                m_treeWidget->setHeaderLabels({tr("Key"), tr("En Key"), tr("Value")});
-            } else {
-                m_treeWidget->setHeaderLabels({"zh Key", "Key", "Value"});
-            }
-            return treeLayout;
         }
 
         QHBoxLayout *TreeConfigWidget::bottomButtonBox() {
@@ -151,7 +155,9 @@ namespace TemplatePlg {
                         auto cb = qobject_cast<QComboBox *>(itemWidget);
                         auto cbList = childJson["en_value"].toVariant().toStringList();
                         auto index = cb->findText(cbList[childJson["index"].toInt()]);
-                        if (index != -1) {
+                        if (index != -1 && m_language == "Chinese") {
+                            cb->setCurrentIndex(index - cbList.size());
+                        } else if (index != 1) {
                             cb->setCurrentIndex(index);
                         }
                     } else if (qobject_cast<QLineEdit *>(itemWidget) && childType == "QLineEdit") {

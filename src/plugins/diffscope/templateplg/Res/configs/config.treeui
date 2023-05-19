@@ -1,6 +1,7 @@
 [
     {
         "en": "",
+        "remark": ";",
         "type": "Group",
         "value": [
         ],
@@ -8,10 +9,12 @@
     },
     {
         "en": "edit",
+        "remark": ";",
         "type": "Group",
         "value": [
             {
                 "en": "ww",
+                "remark": ";",
                 "type": "Group",
                 "value": [
                     {
@@ -21,6 +24,7 @@
                             "yellow"
                         ],
                         "index": 0,
+                        "remark": ";",
                         "type": "QComboBox",
                         "zh": "颜色",
                         "zh_value": [
@@ -38,12 +42,14 @@
                     1
                 ],
                 "en": "spinbox",
+                "remark": ";",
                 "type": "QSpinBox",
                 "value": 2,
                 "zh": "旋钮"
             },
             {
                 "en": "file",
+                "remark": ";",
                 "type": "QFileDialog",
                 "value": "D:/projects/qsynthesis-revenge/src/plugins/diffscope/templateplg/Res/configs/config.treeui",
                 "zh": "file"
@@ -53,40 +59,47 @@
     },
     {
         "en": "test",
+        "remark": ";",
         "type": "Group",
         "value": [
             {
                 "en": "lineEdit",
+                "remark": ";",
                 "type": "QLineEdit",
                 "value": "xxx",
                 "zh": "文本栏"
             },
             {
                 "en": "",
+                "remark": ";",
                 "type": "QCheckBox",
                 "value": false,
                 "zh": "选项"
             },
             {
                 "en": "",
+                "remark": ";",
                 "type": "QCheckBox",
                 "value": true,
                 "zh": "选项2"
             },
             {
                 "en": "option3",
+                "remark": ";",
                 "type": "QCheckBox",
                 "value": false,
                 "zh": "选项3"
             },
             {
                 "en": "x",
+                "remark": ";",
                 "type": "QCheckBox",
                 "value": true,
                 "zh": "选项4"
             },
             {
                 "en": "",
+                "remark": ";",
                 "type": "QCheckBox",
                 "value": false,
                 "zh": "选项5"
@@ -96,6 +109,7 @@
     },
     {
         "en": "text",
+        "remark": ";",
         "type": "QLineEdit",
         "value": "12",
         "zh": "文本"

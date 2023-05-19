@@ -82,6 +82,7 @@ namespace TemplatePlg {
                 QJsonObject childJson;
                 childJson["zh"] = childItem->text(0);
                 childJson["en"] = childItem->text(1);
+                childJson["remark"] = childItem->text(3) + ";" + childItem->text(4);
 
                 if (qobject_cast<QCheckBox *>(itemWidget)) {
                     type = "QCheckBox";
@@ -165,6 +166,9 @@ namespace TemplatePlg {
                 // set zh and en columns
                 item->setText(0, it->toObject().value("zh").toString());
                 item->setText(1, it->toObject().value("en").toString());
+                auto remarks = it->toObject().value("remark").toString().split(";");
+                item->setText(3, remarks[0]);
+                item->setText(4, remarks[1]);
 
                 QString type = it->toObject().value("type").toString();
                 if (type == "Group") {

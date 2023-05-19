@@ -1,24 +1,10 @@
 #ifndef CHORUSKIT_TREEDEVWIDGET_H
 #define CHORUSKIT_TREEDEVWIDGET_H
 
+#include <QLabel>
 #include "QPushButton"
 #include "QTreeWidget"
-#include <QCheckBox>
 #include <QComboBox>
-#include <QFile>
-#include <QFileDialog>
-#include <QHBoxLayout>
-#include <QJsonArray>
-#include <QJsonDocument>
-#include <QJsonObject>
-#include <QLabel>
-#include <QLineEdit>
-#include <QListView>
-#include <QLocale>
-#include <QMessageBox>
-#include <QSpinBox>
-#include <QTreeWidget>
-#include <QVBoxLayout>
 
 namespace TemplatePlg {
     namespace Internal {
@@ -31,12 +17,16 @@ namespace TemplatePlg {
         private:
             void moveItem(bool up);
             QTreeWidget *m_treeWidget;
+
             QLineEdit *m_name;
             QLineEdit *m_enName;
             QLabel *m_format;
             QLineEdit *m_value;
+            QLineEdit *m_remark;
+
             QComboBox *m_childType;
             QComboBox *m_type;
+
             QPushButton *m_up;
             QPushButton *m_down;
             QPushButton *m_addButton;

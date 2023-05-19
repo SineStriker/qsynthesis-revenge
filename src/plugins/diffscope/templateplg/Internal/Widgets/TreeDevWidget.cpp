@@ -1,6 +1,16 @@
 #include "TreeDevWidget.h"
 #include "../Utils/TreeJsonUtil.h"
 
+#include <QCheckBox>
+#include <QFile>
+#include <QHBoxLayout>
+#include <QJsonArray>
+#include <QLineEdit>
+#include <QLocale>
+#include <QMessageBox>
+#include <QSpinBox>
+#include <QTreeWidget>
+
 namespace TemplatePlg {
     namespace Internal {
         TreeDevWidget::TreeDevWidget(QTreeWidget *m_treeWidget, QWidget *parent)
@@ -39,6 +49,14 @@ namespace TemplatePlg {
             valueLayout->addWidget(m_value);
             buttonLayout->addLayout(valueLayout);
 
+            // tip
+            auto tipLayout = new QVBoxLayout();
+            auto m_tip_label = new QLabel(tr("Remark(format: Zh;En)"));
+            m_remark = new QLineEdit();
+            tipLayout->addWidget(m_tip_label);
+            tipLayout->addWidget(m_remark);
+            buttonLayout->addLayout(tipLayout);
+
             // childType
             auto childLayout = new QHBoxLayout();
             auto m_child_label = new QLabel(tr("Insert Hierarchy"));
@@ -63,6 +81,7 @@ namespace TemplatePlg {
             controlLayout->addWidget(m_type);
             buttonLayout->addLayout(controlLayout);
 
+            // moveButton
             auto moveLayout = new QHBoxLayout();
             m_up = new QPushButton("↑");
             m_down = new QPushButton("↓");
@@ -76,6 +95,7 @@ namespace TemplatePlg {
             buttonLayout->addWidget(m_addButton);
             buttonLayout->addWidget(m_removeButton);
 
+            // slots
             connect(m_type, QOverload<int>::of(&QComboBox::currentIndexChanged), this,
                     &TreeDevWidget::on_format_Changed);
             connect(m_up, &QPushButton::clicked, this, &TreeDevWidget::on_btnUp_clicked);
@@ -118,9 +138,27 @@ namespace TemplatePlg {
             auto itemName = m_name->text();
             auto itemEnName = m_enName->text();
             auto value = m_value->text();
+            auto remark = m_remark->text();
+
+            QStringList remarks;
+
+            if (remark.contains(";")) {
+                remarks = remark.split(";");
+                if (remarks.size() != 2) {
+                    auto m_box =
+                        TreeJsonUtil::messageBox(tr("Warning"), tr("The remark format must be: Chinese;English"));
+                    m_box->text();
+                    return;
+                }
+            } else {
+                remarks << ""
+                        << "";
+            }
+
 
             auto *Label = new QLabel();
-            QTreeWidgetItem *child = new QTreeWidgetItem(QStringList() << itemName << itemEnName);
+            QTreeWidgetItem *child =
+                new QTreeWidgetItem(QStringList() << itemName << itemEnName << "" << remarks[0] << remarks[1]);
             child->setFlags(child->flags() | Qt::ItemIsEditable);
             m_treeWidget->setItemWidget(child, 2, Label);
 
