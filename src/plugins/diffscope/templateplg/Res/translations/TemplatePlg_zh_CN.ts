@@ -238,6 +238,14 @@
         <source>En Remark</source>
         <translation>英文注释</translation>
     </message>
+    <message>
+        <source>Info</source>
+        <translation>信息</translation>
+    </message>
+    <message>
+        <source>The default settings have been restored. Please manually click the save button to confirm the modification.</source>
+        <translation>已恢复默认设置，请手动点击保存按钮以确认修改。</translation>
+    </message>
 </context>
 <context>
     <name>TemplatePlg::Internal::TreeDevWidget</name>
@@ -259,7 +267,7 @@
     </message>
     <message>
         <source>Value</source>
-        <translation>值</translation>
+        <translation type="vanished">值</translation>
     </message>
     <message>
         <source>Insert Hierarchy</source>
@@ -303,7 +311,7 @@
     </message>
     <message>
         <source>Remark(format: Zh;En)</source>
-        <translation>注释（格式: 中文;英文）</translation>
+        <translation type="vanished">注释（格式: 中文;英文）</translation>
     </message>
     <message>
         <source>add</source>
@@ -323,7 +331,7 @@
     </message>
     <message>
         <source>min;max;step(int)</source>
-        <translation>最小值;最大值;步长（整数，英文分号隔开）</translation>
+        <translation>最小值;最大值;步长（整数）</translation>
     </message>
     <message>
         <source>Warning</source>
@@ -338,6 +346,18 @@
     <message>
         <source>The remark format must be: Chinese;English</source>
         <translation>注释格式必须为： 中文;英文</translation>
+    </message>
+    <message>
+        <source>Remark(format: Zh;En or null)</source>
+        <translation>注释（格式: 中文;英文 或留空）</translation>
+    </message>
+    <message>
+        <source>ZH;ZH;En;En</source>
+        <translation>中文;中文;英文;英文</translation>
+    </message>
+    <message>
+        <source>Unchecked item cannot add sub items</source>
+        <translation>未选中item时不得添加子项</translation>
     </message>
 </context>
 </TS>

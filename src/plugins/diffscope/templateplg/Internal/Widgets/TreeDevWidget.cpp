@@ -16,6 +16,7 @@ namespace TemplatePlg {
         TreeDevWidget::TreeDevWidget(QTreeWidget *m_treeWidget, QWidget *parent)
             : m_treeWidget(m_treeWidget), QWidget(parent) {
             auto buttonLayout = new QVBoxLayout();
+            buttonLayout->addStretch();
 
             // zh name
             auto nameLayout = new QHBoxLayout();
@@ -38,24 +39,25 @@ namespace TemplatePlg {
             auto m_format_label = new QLabel(tr("Format Expected"));
             m_format = new QLabel(tr("null"));
             formatLayout->addWidget(m_format_label);
+            formatLayout->addStretch();
             formatLayout->addWidget(m_format);
+            formatLayout->addStretch();
             buttonLayout->addLayout(formatLayout);
 
             // value
             auto valueLayout = new QHBoxLayout();
-            auto m_value_label = new QLabel(tr("Value"));
             m_value = new QLineEdit();
-            valueLayout->addWidget(m_value_label);
             valueLayout->addWidget(m_value);
             buttonLayout->addLayout(valueLayout);
 
             // tip
             auto tipLayout = new QVBoxLayout();
-            auto m_tip_label = new QLabel(tr("Remark(format: Zh;En)"));
+            auto m_tip_label = new QLabel(tr("Remark(format: Zh;En or null)"));
             m_remark = new QLineEdit();
             tipLayout->addWidget(m_tip_label);
             tipLayout->addWidget(m_remark);
             buttonLayout->addLayout(tipLayout);
+            buttonLayout->addStretch();
 
             // childType
             auto childLayout = new QHBoxLayout();
@@ -94,6 +96,7 @@ namespace TemplatePlg {
             buttonLayout->addLayout(moveLayout);
             buttonLayout->addWidget(m_addButton);
             buttonLayout->addWidget(m_removeButton);
+            buttonLayout->addStretch();
 
             // slots
             connect(m_type, QOverload<int>::of(&QComboBox::currentIndexChanged), this,
@@ -116,7 +119,7 @@ namespace TemplatePlg {
                     break;
                 }
                 case 2: {
-                    m_format->setText("中文;中文;En;En");
+                    m_format->setText(tr("ZH;ZH;En;En"));
                     break;
                 }
                 case 3: {
@@ -166,7 +169,13 @@ namespace TemplatePlg {
             if (!m_childType->currentIndex()) {
                 m_treeWidget->addTopLevelItem(child);
             } else {
-                selectedItem->addChild(child);
+                if (selectedItem) {
+                    selectedItem->addChild(child);
+                } else {
+                    auto m_box = TreeJsonUtil::messageBox(tr("Warning"), tr("Unchecked item cannot add sub items"));
+                    m_box->exec();
+                    return;
+                }
             }
 
             switch (m_type->currentIndex()) {

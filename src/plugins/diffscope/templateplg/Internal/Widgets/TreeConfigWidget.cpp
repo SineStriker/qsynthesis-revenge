@@ -1,11 +1,15 @@
 #include "TreeConfigWidget.h"
 #include "TreeDevWidget.h"
+
+#include <QCheckBox>
+#include <QComboBox>
 #include <QFile>
 #include <QFileDialog>
-#include <QJsonDocument>
+#include <QJsonArray>
+#include <QLabel>
+#include <QLineEdit>
 #include <QListView>
 #include <QLocale>
-#include <QMessageBox>
 #include <QSpinBox>
 #include <QVBoxLayout>
 
@@ -100,27 +104,16 @@ namespace TemplatePlg {
             return bottomLayout;
         }
 
-        bool TreeConfigWidget::on_save_clicked() {
-            QJsonArray configJson = TreeJsonUtil::JsonArrayFromTree(m_treeWidget);
-            bool res = TreeJsonUtil::JsonArrayToFile(configPath, configJson);
-            if (res) {
-                auto m_box = TreeJsonUtil::messageBox(tr("Successfully saved"), tr("Successfully saved!"));
-                m_box->exec();
-            }
-            if (configGen) {
-                TreeJsonUtil::JsonArrayToFile(developUiPath, configJson);
-                TreeJsonUtil::JsonArrayToFile(developUiPath.replace(".treeui", ".json"), configJson);
-                TreeJsonUtil::JsonArrayToFile(configPath.replace(".json", ".treeui"), configJson);
-            }
-            configModel = TreeJsonUtil::JsonObjectFromFile(configPath);
-            return true;
-        }
-
         QVariant TreeConfigWidget::readConfig(const QString path, QString type) {
-            QStringList pathList = path.split("/");
+            QStringList pathList = path.contains("/") ? path.split("/") : QStringList() << path;
             QJsonValue jsonValue = configModel;
             for (const auto &pathItem : pathList) {
-                jsonValue = jsonValue.toObject()[pathItem];
+                auto jsonObj = jsonValue.toObject();
+                if (jsonObj.contains(pathItem)) {
+                    jsonValue = jsonValue[pathItem];
+                } else {
+                    return QVariant();
+                }
             }
             if (jsonValue["type"] == "QComboBox") {
                 return type == "index"
@@ -183,10 +176,15 @@ namespace TemplatePlg {
                 developUiPath =
                     QFileDialog::getOpenFileName(nullptr, "Open File", "", "Tree Ui Files (*.treeui);;All Files (*)");
                 TreeJsonUtil::TreeFromFile(developUiPath, configGen, m_treeWidget);
+                m_treeWidget->expandAll();
             } else {
                 TreeJsonUtil::TreeFromFile(uiPath, configGen, m_treeWidget);
+                m_treeWidget->expandAll();
+                auto m_box =
+                    TreeJsonUtil::messageBox(tr("Info"), tr("The default settings have been restored. Please manually "
+                                                            "click the save button to confirm the modification."));
+                m_box->exec();
             }
-            m_treeWidget->expandAll();
         }
 
         void TreeConfigWidget::on_loadConfig_clicked() {
@@ -195,7 +193,21 @@ namespace TemplatePlg {
             m_treeWidget->expandAll();
         }
 
-
+        bool TreeConfigWidget::on_save_clicked() {
+            QJsonArray configJson = TreeJsonUtil::JsonArrayFromTree(m_treeWidget);
+            bool res = TreeJsonUtil::JsonArrayToFile(configPath, configJson);
+            if (res) {
+                auto m_box = TreeJsonUtil::messageBox(tr("Successfully saved"), tr("Successfully saved!"));
+                m_box->exec();
+            }
+            if (configGen) {
+                TreeJsonUtil::JsonArrayToFile(developUiPath, configJson);
+                TreeJsonUtil::JsonArrayToFile(developUiPath.replace(".treeui", ".json"), configJson);
+                TreeJsonUtil::JsonArrayToFile(configPath.replace(".json", ".treeui"), configJson);
+            }
+            configModel = TreeJsonUtil::JsonObjectFromFile(configPath);
+            return true;
+        }
 
     }
 }

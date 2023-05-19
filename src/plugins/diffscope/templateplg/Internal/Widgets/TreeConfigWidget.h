@@ -2,17 +2,11 @@
 #define CHORUSKIT_TREECONFIGWIDGET_H
 
 #include "../Utils/TreeJsonUtil.h"
+
 #include "QPushButton"
 #include "QTreeWidget"
-#include <QCheckBox>
-#include <QComboBox>
 #include <QHBoxLayout>
-#include <QJsonArray>
 #include <QJsonObject>
-#include <QLabel>
-#include <QLineEdit>
-#include <QMessageBox>
-#include <QSpinBox>
 
 namespace TemplatePlg {
     namespace Internal {
@@ -44,9 +38,7 @@ namespace TemplatePlg {
         private:
             QWidget *createWidget();
             QHBoxLayout *treeWidgetBox();
-            QVBoxLayout *developButtonBox();
             QHBoxLayout *bottomButtonBox();
-            QString getLocalLanguage();
             void loadConfig(const QJsonObject configObj, QTreeWidget *treeWidget, QTreeWidgetItem *item = nullptr);
 
         private slots:

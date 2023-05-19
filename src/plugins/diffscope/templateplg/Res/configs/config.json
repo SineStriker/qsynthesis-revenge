@@ -1,11 +1,11 @@
 [
     {
-        "en": "",
+        "en": "item",
         "remark": ";",
         "type": "Group",
         "value": [
         ],
-        "zh": "xx"
+        "zh": "条目"
     },
     {
         "en": "edit",
@@ -13,7 +13,7 @@
         "type": "Group",
         "value": [
             {
-                "en": "ww",
+                "en": "GroupA",
                 "remark": ";",
                 "type": "Group",
                 "value": [
@@ -33,7 +33,7 @@
                         ]
                     }
                 ],
-                "zh": "A"
+                "zh": "A组"
             },
             {
                 "content": [
@@ -42,7 +42,7 @@
                     1
                 ],
                 "en": "spinbox",
-                "remark": ";",
+                "remark": "2-10，整数;xxx",
                 "type": "QSpinBox",
                 "value": 2,
                 "zh": "旋钮"
@@ -70,14 +70,14 @@
                 "zh": "文本栏"
             },
             {
-                "en": "",
+                "en": "op1",
                 "remark": ";",
                 "type": "QCheckBox",
                 "value": false,
                 "zh": "选项"
             },
             {
-                "en": "",
+                "en": "op2",
                 "remark": ";",
                 "type": "QCheckBox",
                 "value": true,
@@ -91,14 +91,14 @@
                 "zh": "选项3"
             },
             {
-                "en": "x",
+                "en": "op4",
                 "remark": ";",
                 "type": "QCheckBox",
                 "value": true,
                 "zh": "选项4"
             },
             {
-                "en": "",
+                "en": "op5",
                 "remark": ";",
                 "type": "QCheckBox",
                 "value": false,
