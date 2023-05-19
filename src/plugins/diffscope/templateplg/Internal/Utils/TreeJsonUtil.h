@@ -1,6 +1,9 @@
 #ifndef CHORUSKIT_TREEJSONUTIL_H
 #define CHORUSKIT_TREEJSONUTIL_H
 
+#include "../Widgets/TreeConfigWidget.h"
+#include "../Widgets/TreeDevWidget.h"
+
 #include <QFile>
 #include <QJsonArray>
 #include <QJsonDocument>
@@ -11,7 +14,9 @@
 namespace TemplatePlg {
     namespace Internal {
         class TreeJsonUtil {
-        public:
+            friend class TreeDevWidget;
+            friend class TreeConfigWidget;
+        private:
             static QString getLocalLanguage();
             static QWidget *qFileWidget(QString text = NULL);
             static QMessageBox *messageBox(QString title, QString text);

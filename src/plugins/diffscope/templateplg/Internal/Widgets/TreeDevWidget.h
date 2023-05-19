@@ -1,20 +1,22 @@
 #ifndef CHORUSKIT_TREEDEVWIDGET_H
 #define CHORUSKIT_TREEDEVWIDGET_H
 
-#include <QLabel>
-#include "QPushButton"
-#include "QTreeWidget"
+#include "../Widgets/TreeConfigWidget.h"
+
 #include <QComboBox>
+#include <QLabel>
+#include <QPushButton>
+#include <QTreeWidget>
 
 namespace TemplatePlg {
     namespace Internal {
         class TreeDevWidget : public QWidget {
             Q_OBJECT
-        public:
+            friend class TreeConfigWidget;
+        private:
             TreeDevWidget(QTreeWidget *m_treeWidget, QWidget *parent = nullptr);
             ~TreeDevWidget();
 
-        private:
             void moveItem(bool up);
             QTreeWidget *m_treeWidget;
 

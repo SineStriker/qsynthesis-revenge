@@ -16,6 +16,7 @@ namespace TemplatePlg {
             explicit TreeConfigWidget(QString pluginId, QString configDir, bool configGen = false,
                                       QWidget *parent = nullptr);
             ~TreeConfigWidget();
+
             static TreeConfigWidget *Instance(QString pluginId);
             QWidget *configWidget();
             QVariant readConfig(const QString path, QString type = "index");
