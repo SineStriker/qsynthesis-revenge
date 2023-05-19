@@ -52,13 +52,6 @@
         "zh": "编辑"
     },
     {
-        "en": "",
-        "type": "Group",
-        "value": [
-        ],
-        "zh": "xx"
-    },
-    {
         "en": "test",
         "type": "Group",
         "value": [
@@ -104,7 +97,7 @@
     {
         "en": "text",
         "type": "QLineEdit",
-        "value": "1",
+        "value": "12",
         "zh": "文本"
     }
 ]

@@ -43,20 +43,13 @@
                 "zh": "旋钮"
             },
             {
-                "en": "",
+                "en": "file",
                 "type": "QFileDialog",
                 "value": "D:/projects/qsynthesis-revenge/src/plugins/diffscope/templateplg/Res/configs/config.treeui",
                 "zh": "file"
             }
         ],
         "zh": "编辑"
-    },
-    {
-        "en": "",
-        "type": "Group",
-        "value": [
-        ],
-        "zh": "xx"
     },
     {
         "en": "test",
@@ -104,7 +97,7 @@
     {
         "en": "text",
         "type": "QLineEdit",
-        "value": "1",
+        "value": "12",
         "zh": "文本"
     }
 ]

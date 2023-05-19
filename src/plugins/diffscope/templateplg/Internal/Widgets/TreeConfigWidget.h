@@ -1,6 +1,7 @@
 #ifndef CHORUSKIT_TREECONFIGWIDGET_H
 #define CHORUSKIT_TREECONFIGWIDGET_H
 
+#include "../Utils/TreeJsonUtil.h"
 #include "QPushButton"
 #include "QTreeWidget"
 #include <QCheckBox>
@@ -35,16 +36,6 @@ namespace TemplatePlg {
             QWidget *m_widget;
             QTreeWidget *m_treeWidget;
             QVBoxLayout *mainLayout;
-            QLineEdit *m_name;
-            QLineEdit *m_enName;
-            QLabel *m_format;
-            QLineEdit *m_value;
-            QComboBox *m_childType;
-            QComboBox *m_type;
-            QPushButton *m_up;
-            QPushButton *m_down;
-            QPushButton *m_addButton;
-            QPushButton *m_removeButton;
 
             QPushButton *m_defaultButton;
             QPushButton *m_loadButton;
@@ -56,21 +47,10 @@ namespace TemplatePlg {
             QVBoxLayout *developButtonBox();
             QHBoxLayout *bottomButtonBox();
             QString getLocalLanguage();
-            QMessageBox *messageBox(QString title, QString text);
-            QJsonArray readJsonFile(QString filePath);
-            bool saveJsonFile(QString filePath, QJsonArray configJson);
-            QJsonArray createJsonFromTree(QTreeWidget *treeWidget, QTreeWidgetItem *item = nullptr);
-            QJsonObject JsonArrayToJsonObject(const QJsonArray &jsonArray);
             void loadConfig(const QJsonObject configObj, QTreeWidget *treeWidget, QTreeWidgetItem *item = nullptr);
-            void insertUi(const QJsonArray &config, int insertIndex = -1, QTreeWidgetItem *parent = nullptr);
 
         private slots:
-            void on_format_Changed(int index);
-            void addTableRow();
-            void removeTableRow();
             bool on_save_clicked();
-            void on_btnUp_clicked();
-            void on_btnDown_clicked();
             void on_default_clicked();
             void on_loadConfig_clicked();
         };
