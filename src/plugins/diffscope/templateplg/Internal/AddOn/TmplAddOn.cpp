@@ -68,7 +68,7 @@ namespace TemplatePlg {
         }
 
         void TmplAddOn::_q_tmplButtonClicked() {
-            auto config = TreeConfigWidget::Instance("core.tmpl");
+            auto config = TreeConfigWidget::instance("core.tmpl");
             qDebug() << "TreeConfig:" << config->readConfig("edit/spinbox");
             qDebug() << "TmplAddOn: The template import button has been clicked";
         }

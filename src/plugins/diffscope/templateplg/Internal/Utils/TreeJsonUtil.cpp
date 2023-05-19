@@ -17,7 +17,7 @@
 
 namespace TemplatePlg {
     namespace Internal {
-        QJsonArray TreeJsonUtil::JsonArrayFromFile(const QString filePath) {
+        QJsonArray TreeJsonUtil::jsonArrayFromFile(const QString &filePath) {
             QFile file(filePath);
             if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
                 qDebug() << "Failed to open file: " << filePath;
@@ -32,11 +32,11 @@ namespace TemplatePlg {
             return jsonDoc.array();
         }
 
-        QJsonObject TreeJsonUtil::JsonObjectFromFile(const QString filePath) {
-            return JsonArrayToJsonObject(JsonArrayFromFile(filePath));
+        QJsonObject TreeJsonUtil::jsonObjectFromFile(const QString &filePath) {
+            return jsonArrayToJsonObject(jsonArrayFromFile(filePath));
         }
 
-        bool TreeJsonUtil::JsonArrayToFile(const QString filePath, const QJsonArray configJson) {
+        bool TreeJsonUtil::jsonArrayToFile(const QString &filePath, const QJsonArray &configJson) {
             QFile file(filePath);
             if (!file.open(QIODevice::WriteOnly | QIODevice::Text)) {
                 // Failed to open file
@@ -47,11 +47,11 @@ namespace TemplatePlg {
             return true;
         }
 
-        bool TreeJsonUtil::TreeToFile(const QString filePath, QTreeWidget *treeWidget) {
-            return JsonArrayToFile(filePath, JsonArrayFromTree(treeWidget));
+        bool TreeJsonUtil::TreeToFile(const QString &filePath, QTreeWidget *treeWidget) {
+            return jsonArrayToFile(filePath, jsonArrayFromTree(treeWidget));
         }
 
-        QJsonObject TreeJsonUtil::JsonArrayToJsonObject(const QJsonArray &jsonArray) {
+        QJsonObject TreeJsonUtil::jsonArrayToJsonObject(const QJsonArray &jsonArray) {
             QJsonObject jsonObject;
 
             for (const auto &jsonValue : jsonArray) {
@@ -59,7 +59,7 @@ namespace TemplatePlg {
                 const QString &key = subJsonObject["en"].toString();
 
                 if (subJsonObject["type"].toString() == "Group") {
-                    jsonObject[key] = JsonArrayToJsonObject(subJsonObject["value"].toArray());
+                    jsonObject[key] = jsonArrayToJsonObject(subJsonObject["value"].toArray());
                 } else {
                     jsonObject[key] = subJsonObject;
                 }
@@ -67,7 +67,7 @@ namespace TemplatePlg {
             return jsonObject;
         }
 
-        QJsonArray TreeJsonUtil::JsonArrayFromTree(QTreeWidget *treeWidget, QTreeWidgetItem *item) {
+        QJsonArray TreeJsonUtil::jsonArrayFromTree(QTreeWidget *treeWidget, QTreeWidgetItem *item) {
             QJsonArray json;
             // root item
             if (!item) {
@@ -121,7 +121,7 @@ namespace TemplatePlg {
 
                 childJson["type"] = type;
                 if (type == "Group" && childItem->childCount()) {
-                    childJson["value"] = JsonArrayFromTree(treeWidget, childItem);
+                    childJson["value"] = jsonArrayFromTree(treeWidget, childItem);
                 } else if (type == "Group" && childItem->childCount() == 0) {
                     childJson["value"] = QJsonArray();
                 }
@@ -131,8 +131,8 @@ namespace TemplatePlg {
             return json;
         }
 
-        QJsonObject TreeJsonUtil::JsonObjectFromTree(QTreeWidget *treeWidget, QTreeWidgetItem *item) {
-            return JsonArrayToJsonObject(JsonArrayFromTree(treeWidget, item));
+        QJsonObject TreeJsonUtil::jsonObjectFromTree(QTreeWidget *treeWidget, QTreeWidgetItem *item) {
+            return jsonArrayToJsonObject(jsonArrayFromTree(treeWidget, item));
         }
 
         QString TreeJsonUtil::getLocalLanguage() {
@@ -172,10 +172,10 @@ namespace TemplatePlg {
 
                 QString type = it->toObject().value("type").toString();
                 if (type == "Group") {
-                    QLabel *label = new QLabel(treeWidget);
+                    auto *label = new QLabel(treeWidget);
                     treeWidget->setItemWidget(item, 2, label);
                 } else if (type == "QComboBox") {
-                    QComboBox *comboBox = new QComboBox(treeWidget);
+                    auto *comboBox = new QComboBox(treeWidget);
                     int index = it->toObject().value("index").toInt();
 
                     QStringList zhValues = it->toObject().value("zh_value").toVariant().toStringList();
@@ -198,17 +198,17 @@ namespace TemplatePlg {
                     treeWidget->setItemWidget(item, 2, comboBox);
                 } else if (type == "QCheckBox") {
                     // Insert QCheckBox for QCheckBox type
-                    QCheckBox *checkBox = new QCheckBox(treeWidget);
+                    auto *checkBox = new QCheckBox(treeWidget);
                     checkBox->setChecked(it->toObject().value("value").toBool());
                     treeWidget->setItemWidget(item, 2, checkBox);
                 } else if (type == "QLineEdit") {
                     // Insert QLineEdit for QLineEdit type
-                    QLineEdit *lineEdit = new QLineEdit(treeWidget);
+                    auto *lineEdit = new QLineEdit(treeWidget);
                     lineEdit->setText(it->toObject().value("value").toString());
                     treeWidget->setItemWidget(item, 2, lineEdit);
                 } else if (type == "QSpinBox") {
                     // Insert QLineEdit for QLineEdit type
-                    QSpinBox *spinBox = new QSpinBox(treeWidget);
+                    auto *spinBox = new QSpinBox(treeWidget);
                     int index = it->toObject().value("index").toInt();
                     QStringList values = it->toObject().value("content").toVariant().toStringList();
                     spinBox->setRange(values[0].toInt(), values[1].toInt());
@@ -227,16 +227,16 @@ namespace TemplatePlg {
             }
         }
 
-        void TreeJsonUtil::TreeFromFile(const QString filePath, bool configGen, QTreeWidget *treeWidget) {
-            TreeFromJsonArray(JsonArrayFromFile(filePath), -1, configGen, treeWidget);
+        void TreeJsonUtil::TreeFromFile(const QString &filePath, bool configGen, QTreeWidget *treeWidget) {
+            TreeFromJsonArray(jsonArrayFromFile(filePath), -1, configGen, treeWidget);
         }
 
-        QWidget *TreeJsonUtil::qFileWidget(QString text) {
-            QWidget *widget = new QWidget();
-            QHBoxLayout *layout = new QHBoxLayout();
-            QPushButton *button = new QPushButton("...");
-            QLineEdit *lineEdit = new QLineEdit();
-            if (text != NULL) {
+        QWidget *TreeJsonUtil::qFileWidget(const QString &text) {
+            auto *widget = new QWidget();
+            auto *layout = new QHBoxLayout();
+            auto *button = new QPushButton("...");
+            auto *lineEdit = new QLineEdit();
+            if (text != "") {
                 lineEdit->setText(text);
             }
             layout->addWidget(lineEdit);
@@ -247,13 +247,6 @@ namespace TemplatePlg {
                 lineEdit->setText(fileName);
             });
             return widget;
-        }
-
-        QMessageBox *TreeJsonUtil::messageBox(QString title, QString text) {
-            auto m_box = new QMessageBox;
-            m_box->setWindowTitle(title);
-            m_box->setText(text);
-            return m_box;
         }
     }
 } // TemplatePlg

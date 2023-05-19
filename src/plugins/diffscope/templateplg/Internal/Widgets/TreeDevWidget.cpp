@@ -1,5 +1,4 @@
 #include "TreeDevWidget.h"
-#include "../Utils/TreeJsonUtil.h"
 
 #include <QCheckBox>
 #include <QFile>
@@ -100,11 +99,11 @@ namespace TemplatePlg {
 
             // slots
             connect(m_type, QOverload<int>::of(&QComboBox::currentIndexChanged), this,
-                    &TreeDevWidget::on_format_Changed);
-            connect(m_up, &QPushButton::clicked, this, &TreeDevWidget::on_btnUp_clicked);
-            connect(m_down, &QPushButton::clicked, this, &TreeDevWidget::on_btnDown_clicked);
-            connect(m_addButton, &QPushButton::clicked, this, &TreeDevWidget::on_add_clicked);
-            connect(m_removeButton, &QPushButton::clicked, this, &TreeDevWidget::on_remove_clicked);
+                    &TreeDevWidget::_q_formatChanged);
+            connect(m_up, &QPushButton::clicked, this, &TreeDevWidget::_q_btnUpClicked);
+            connect(m_down, &QPushButton::clicked, this, &TreeDevWidget::_q_btnDownClicked);
+            connect(m_addButton, &QPushButton::clicked, this, &TreeDevWidget::_q_addClicked);
+            connect(m_removeButton, &QPushButton::clicked, this, &TreeDevWidget::_q_removeClicked);
 
             setLayout(buttonLayout);
         }
@@ -112,7 +111,7 @@ namespace TemplatePlg {
         TreeDevWidget::~TreeDevWidget() {
         }
 
-        void TreeDevWidget::on_format_Changed(int index) {
+        void TreeDevWidget::_q_formatChanged(int index) {
             switch (index) {
                 case 1: {
                     m_format->setText(tr("bool"));
@@ -137,7 +136,7 @@ namespace TemplatePlg {
             }
         }
 
-        void TreeDevWidget::on_add_clicked() {
+        void TreeDevWidget::_q_addClicked() {
             auto itemName = m_name->text();
             auto itemEnName = m_enName->text();
             auto value = m_value->text();
@@ -148,9 +147,8 @@ namespace TemplatePlg {
             if (remark.contains(";")) {
                 remarks = remark.split(";");
                 if (remarks.size() != 2) {
-                    auto m_box =
-                        TreeJsonUtil::messageBox(tr("Warning"), tr("The remark format must be: Chinese;English"));
-                    m_box->text();
+                    QMessageBox msg;
+                    msg.information(this, tr("Warning"), tr("The remark format must be: Chinese;English"));
                     return;
                 }
             } else {
@@ -172,8 +170,8 @@ namespace TemplatePlg {
                 if (selectedItem) {
                     selectedItem->addChild(child);
                 } else {
-                    auto m_box = TreeJsonUtil::messageBox(tr("Warning"), tr("Unchecked item cannot add sub items"));
-                    m_box->exec();
+                    QMessageBox msg;
+                    msg.information(this, tr("Warning"), tr("Unchecked item cannot add sub items"));
                     return;
                 }
             }
@@ -194,11 +192,11 @@ namespace TemplatePlg {
                         }
                         m_treeWidget->setItemWidget(child, 2, frame);
                     } else {
-                        auto m_box = TreeJsonUtil::messageBox(
-                            tr("Warning"), tr("Please input\r\n\"Chinese; Chinese; English; English\" in the "
-                                              "following format to ensure "
-                                              "that the items are even numbers, and click addButton again."));
-                        m_box->exec();
+                        QMessageBox msg;
+                        msg.information(this, tr("Warning"),
+                                        tr("Please input\r\n\"Chinese; Chinese; English; English\" in the "
+                                           "following format to ensure "
+                                           "that the items are even numbers, and click addButton again."));
                     }
                     break;
                 }
@@ -230,7 +228,7 @@ namespace TemplatePlg {
             m_treeWidget->resizeColumnToContents(1);
         }
 
-        void TreeDevWidget::on_remove_clicked() {
+        void TreeDevWidget::_q_removeClicked() {
             QTreeWidgetItem *selectedItem = m_treeWidget->currentItem();
             if (selectedItem != nullptr) {
                 QTreeWidgetItem *parentItem = selectedItem->parent();
@@ -244,12 +242,12 @@ namespace TemplatePlg {
         }
 
         // move item up
-        void TreeDevWidget::on_btnUp_clicked() {
+        void TreeDevWidget::_q_btnUpClicked() {
             moveItem(true);
         }
 
         // move item down
-        void TreeDevWidget::on_btnDown_clicked() {
+        void TreeDevWidget::_q_btnDownClicked() {
             moveItem(false);
         }
 
@@ -260,7 +258,7 @@ namespace TemplatePlg {
                 QTreeWidgetItem *parent = item->parent();
                 auto maxIndex = parent ? parent->childCount() - 1 : m_treeWidget->topLevelItemCount() - 1;
                 int index = parent ? parent->indexOfChild(item) : m_treeWidget->indexOfTopLevelItem(item);
-                data.insert(0, TreeJsonUtil::JsonArrayFromTree(m_treeWidget, parent).at(index).toObject());
+                data.insert(0, TreeJsonUtil::jsonArrayFromTree(m_treeWidget, parent).at(index).toObject());
                 if ((up && index > 0) || (!up && index < maxIndex)) {
                     auto insertIndex = up ? index - 1 : index + 1;
                     if (parent == nullptr) {

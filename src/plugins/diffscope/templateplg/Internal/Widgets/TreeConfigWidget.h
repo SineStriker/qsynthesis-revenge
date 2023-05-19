@@ -3,23 +3,23 @@
 
 #include "../Utils/TreeJsonUtil.h"
 
-#include "QPushButton"
-#include "QTreeWidget"
 #include <QHBoxLayout>
 #include <QJsonObject>
+#include <QPushButton>
+#include <QTreeWidget>
 
 namespace TemplatePlg {
     namespace Internal {
         class TreeConfigWidget : public QWidget {
             Q_OBJECT
         public:
-            explicit TreeConfigWidget(QString pluginId, QString configDir, bool configGen = false,
+            explicit TreeConfigWidget(const QString &pluginId, const QString &configDir, bool configGen = false,
                                       QWidget *parent = nullptr);
             ~TreeConfigWidget();
 
-            static TreeConfigWidget *Instance(QString pluginId);
+            static TreeConfigWidget *instance(const QString &pluginId);
             QWidget *configWidget();
-            QVariant readConfig(const QString path, QString type = "index");
+            QVariant readConfig(const QString &path, QString type = "index");
 
         protected:
             QString pluginId;
@@ -42,12 +42,12 @@ namespace TemplatePlg {
             QWidget *createWidget();
             QHBoxLayout *treeWidgetBox();
             QHBoxLayout *bottomButtonBox();
-            void loadConfig(const QJsonObject configObj, QTreeWidget *treeWidget, QTreeWidgetItem *item = nullptr);
+            void loadConfig(const QJsonObject &configObj, QTreeWidget *treeWidget, QTreeWidgetItem *item = nullptr);
 
         private slots:
-            bool on_save_clicked();
-            void on_default_clicked();
-            void on_loadConfig_clicked();
+            bool _q_saveClicked();
+            void _q_defaultClicked();
+            void _q_loadConfigClicked();
         };
 
     }

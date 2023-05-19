@@ -35,11 +35,11 @@ namespace TemplatePlg {
             QPushButton *m_removeButton;
 
         private slots:
-            void on_format_Changed(int index);
-            void on_add_clicked();
-            void on_remove_clicked();
-            void on_btnUp_clicked();
-            void on_btnDown_clicked();
+            void _q_formatChanged(int index);
+            void _q_addClicked();
+            void _q_removeClicked();
+            void _q_btnUpClicked();
+            void _q_btnDownClicked();
         };
     }
 }
