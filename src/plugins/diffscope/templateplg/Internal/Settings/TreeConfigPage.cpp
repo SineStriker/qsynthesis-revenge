@@ -26,7 +26,7 @@ namespace TemplatePlg {
 
         QWidget *TreeConfigPage::widget() {
             if (!m_widget) {
-                m_widget = TreeConfigWidget::Instance()->configWidget();
+                m_widget = TreeConfigWidget::Instance("core.tmpl")->configWidget();
             }
             return m_widget;
         }

@@ -90,6 +90,10 @@
         <source>Failed to load action configuration!</source>
         <translation>加载action设置失败！</translation>
     </message>
+    <message>
+        <source>template plugin</source>
+        <translation>模板插件</translation>
+    </message>
 </context>
 <context>
     <name>TemplatePlg::Internal::TreeConfigPage</name>
@@ -204,7 +208,7 @@
     </message>
     <message>
         <source>The setting information file (config. json) does not exist, use default settings!</source>
-        <translation>设置信息文件（config.json）不存在，使用默认设置！</translation>
+        <translation type="vanished">设置信息文件（config.json）不存在，使用默认设置！</translation>
     </message>
     <message>
         <source>default config</source>
@@ -245,6 +249,18 @@
     <message>
         <source>The default settings have been restored. Please manually click the save button to confirm the modification.</source>
         <translation>已恢复默认设置，请手动点击保存按钮以确认修改。</translation>
+    </message>
+    <message>
+        <source>Warning</source>
+        <translation>警告</translation>
+    </message>
+    <message>
+        <source>: The configuration interface (config.treeui) is missing. Please download and install this plugin again.</source>
+        <translation>： 配置界面（config.treeui）丢失，请重新下载安装本插件。</translation>
+    </message>
+    <message>
+        <source>: The setting information file (config.json) does not exist, use default settings!</source>
+        <translation>： 配置信息文件（config.json）丢失，使用默认配置！</translation>
     </message>
 </context>
 <context>

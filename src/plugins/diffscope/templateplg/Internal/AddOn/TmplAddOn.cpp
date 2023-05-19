@@ -1,8 +1,7 @@
 #include "TmplAddOn.h"
-#include "Dialogs/TmplDialog.h"
-#include <QMDecoratorV2.h>
 #include "../Widgets/TreeConfigWidget.h"
 #include <QDebug>
+#include <QMDecoratorV2.h>
 #include <QMetaObject>
 
 #include <coreplugin/ICore.h>
@@ -28,8 +27,6 @@ namespace TemplatePlg {
         }
 
         void TmplAddOn::initialize() {
-            auto iWin = windowHandle();
-
             initActions();
 
             qIDec->installLocale(this, _LOC(TmplAddOn, this));
@@ -71,7 +68,7 @@ namespace TemplatePlg {
         }
 
         void TmplAddOn::_q_tmplButtonClicked() {
-            auto config = TreeConfigWidget::Instance();
+            auto config = TreeConfigWidget::Instance("core.tmpl");
             qDebug() << "TreeConfig:" << config->readConfig("edit/spinbox");
             qDebug() << "TmplAddOn: The template import button has been clicked";
         }

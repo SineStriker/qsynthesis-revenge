@@ -13,13 +13,15 @@ namespace TemplatePlg {
         class TreeConfigWidget : public QWidget {
             Q_OBJECT
         public:
-            explicit TreeConfigWidget(QString configDir, bool configGen = false, QWidget *parent = nullptr);
+            explicit TreeConfigWidget(QString pluginId, QString configDir, bool configGen = false,
+                                      QWidget *parent = nullptr);
             ~TreeConfigWidget();
-            static TreeConfigWidget *Instance();
+            static TreeConfigWidget *Instance(QString pluginId);
             QWidget *configWidget();
             QVariant readConfig(const QString path, QString type = "index");
 
         protected:
+            QString pluginId;
             QString uiPath;
             QString configPath;
             QString developUiPath;

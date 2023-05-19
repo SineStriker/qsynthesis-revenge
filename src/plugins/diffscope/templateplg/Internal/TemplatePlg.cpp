@@ -44,7 +44,7 @@ namespace TemplatePlg {
             // After, clicking the "create treeui" to load config.treeui and creat config ui in the settings window.
             // And then, clicking the save button will save the treeui (ui) and create config.json (config information).
             // Finally, set false to enter application mode.
-            config = new TreeConfigWidget(pluginSpec()->location() + "/configs/", true);
+            config = new TreeConfigWidget(tr("core.tmpl"), pluginSpec()->location() + "/configs/", true);
 
             // Add Setting Page
             auto jsonConfigPage = new TreeConfigPage();

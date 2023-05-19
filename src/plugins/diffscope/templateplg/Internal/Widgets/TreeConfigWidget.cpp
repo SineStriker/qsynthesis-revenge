@@ -15,20 +15,18 @@
 
 namespace TemplatePlg {
     namespace Internal {
-
-        static TreeConfigWidget *m_instance = nullptr;
-
-        TreeConfigWidget::TreeConfigWidget(QString configDir, bool configGen, QWidget *parent)
-            : configPath(configDir + "config.json"), uiPath(configDir + "config.treeui"), configGen(configGen),
-              m_language(TreeJsonUtil::getLocalLanguage()), QWidget(parent) {
-            m_instance = this;
+        static QHash<QString, TreeConfigWidget *> m_instances;
+        TreeConfigWidget::TreeConfigWidget(QString pluginId, QString configDir, bool configGen, QWidget *parent)
+            : pluginId(pluginId), configPath(configDir + "config.json"), uiPath(configDir + "config.treeui"),
+              configGen(configGen), m_language(TreeJsonUtil::getLocalLanguage()), QWidget(parent) {
+            m_instances.insert(pluginId, this);
             m_widget = createWidget();
             m_treeWidget->setHorizontalScrollMode(QTreeView::ScrollPerPixel);
             m_widget->setParent(parent);
         }
 
         TreeConfigWidget::~TreeConfigWidget() {
-            m_instance = nullptr;
+            m_instances.clear();
         }
 
         QWidget *TreeConfigWidget::configWidget() {
@@ -63,14 +61,22 @@ namespace TemplatePlg {
                 devWidget->setMaximumWidth(300);
                 treeLayout->addWidget(devWidget);
             } else {
-                TreeJsonUtil::TreeFromFile(uiPath, configGen, m_treeWidget);
+                if (QFile::exists(uiPath)) {
+                    TreeJsonUtil::TreeFromFile(uiPath, configGen, m_treeWidget);
+                } else {
+                    auto m_box = TreeJsonUtil::messageBox(
+                        tr("Warning"), pluginId + tr(": The configuration interface (config.treeui) is missing. "
+                                                     "Please download and install this plugin again."));
+                    m_box->exec();
+                }
                 if (QFile::exists(configPath)) {
                     loadConfig(TreeJsonUtil::JsonObjectFromFile(configPath), m_treeWidget);
                     configModel = TreeJsonUtil::JsonObjectFromTree(m_treeWidget);
                 } else {
                     auto m_box = TreeJsonUtil::messageBox(
                         tr("File not exist!"),
-                        tr("The setting information file (config. json) does not exist, use default settings!"));
+                        pluginId +
+                            tr(": The setting information file (config.json) does not exist, use default settings!"));
                     m_box->exec();
                     TreeJsonUtil::TreeToFile(configPath, m_treeWidget);
                 }
@@ -124,8 +130,12 @@ namespace TemplatePlg {
             }
         }
 
-        TreeConfigWidget *TreeConfigWidget::Instance() {
-            return m_instance;
+        TreeConfigWidget *TreeConfigWidget::Instance(QString pluginId) {
+            if (m_instances.contains(pluginId)) {
+                return m_instances.value(pluginId);
+            } else {
+                return nullptr;
+            }
         }
 
         void TreeConfigWidget::loadConfig(const QJsonObject configObj, QTreeWidget *treeWidget, QTreeWidgetItem *item) {
