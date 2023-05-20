@@ -1,4 +1,5 @@
 #include "CommunicationHelper.h"
+#include "CommunicationHelper_p.h"
 #include "rep_SimpleSwitch_replica.h"
 #include <QCoreApplication>
 #include <QEventLoop>
@@ -29,13 +30,12 @@ void anotherCallback() {
 int main(int argc, char *argv[])
 {
     helper.start();
-    helper.connect<SimpleSwitchReplica>("local:switch", 2000, [](){
-        std::cout << "Retry? ";
-        std::string s;
-        std::cin >> s;
-        return s[0] == 'y';
-    });
-    std::cerr << "connected" << std::endl;
+    reconnect:
+    if(helper.connect<SimpleSwitchReplica>("local:switch", 2000)) std::cerr << "connected" << std::endl;
+    else {
+        std::cerr << "connect timeout" << std::endl;
+        goto reconnect;
+    }
     std::thread thread(&anotherCallback);
     thread.detach();
     auto ret = helper.invokeSync<int>([&](){

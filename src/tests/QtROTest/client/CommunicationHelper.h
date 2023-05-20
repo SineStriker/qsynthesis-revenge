@@ -10,22 +10,29 @@
 Q_DECLARE_METATYPE(std::function<QVariant()>)
 Q_DECLARE_METATYPE(std::function<void()>)
 
+class AwaiterPrivate;
+
+class CommunicationHelperPrivate;
+
 class Awaiter: public QObject {
     Q_OBJECT
+    Q_DECLARE_PRIVATE(Awaiter)
+    friend class CommunicationHelper;
 public:
+    explicit Awaiter();
     Q_INVOKABLE void call(std::function<QVariant()> fx);
     Q_INVOKABLE void callBySignal(std::function<void()> fx);
+    void wait();
+    QVariant returnValue();
 public slots:
-    void finished(const QVariant &val);
+    void finish(const QVariant &val);
 private:
-    friend class CommunicationHelper;
-    bool m_isFinished = false;
-    QVariant m_ret;
-    QMutex m_mutex;
-    QWaitCondition m_condition;
+    explicit Awaiter(AwaiterPrivate *d);
+    QScopedPointer<AwaiterPrivate> d_ptr;
 };
 
 class CommunicationHelper {
+    Q_DECLARE_PRIVATE(CommunicationHelper)
 public:
     explicit CommunicationHelper();
     ~CommunicationHelper();
@@ -35,47 +42,33 @@ public:
         Awaiter awaiter;
         awaiter.moveToThread(m_appThread.data());
         QMetaObject::invokeMethod(&awaiter, "call", Q_ARG(std::function<QVariant()>, fx));
-        QMutexLocker locker(&awaiter.m_mutex);
-        while(!awaiter.m_isFinished) {
-            awaiter.m_condition.wait(&awaiter.m_mutex);
-        }
-        return awaiter.m_ret.value<T>();
+        awaiter.wait();
+        return awaiter.returnValue().value<T>();
     }
     template <typename T>
     QVariant invokeSync(Awaiter &awaiter, const std::function<void()>& fx) {
         awaiter.moveToThread(m_appThread.data());
         QMetaObject::invokeMethod(&awaiter, "callBySignal", Q_ARG(std::function<void()>, fx));
-        QMutexLocker locker(&awaiter.m_mutex);
-        while(!awaiter.m_isFinished) {
-            awaiter.m_condition.wait(&awaiter.m_mutex);
-        }
-        return awaiter.m_ret.value<T>();
-    }
-    template <typename R>
-    bool connect(const QString &address, int timeout, const std::function<bool()>& waitingFailedCallback) {
-        return invokeSync<bool>([=](){
-            if(!m_repNode->connectToNode(QUrl(address))) return false;
-            m_rep.reset(m_repNode->acquire<R>());
-            for(;;) {
-                if(!m_rep->waitForSource(timeout)) {
-                    if(!waitingFailedCallback()) return false;
-                } else break;
-            }
-            return true;
-        });
+        awaiter.wait();
+        return awaiter.returnValue().value<T>();
     }
     template <typename R>
     bool connect(const QString &address, int timeout) {
-        return connect<R>(address, timeout, [](){ return false; });
+        return invokeSync<bool>([=](){
+            if(!m_repNode->connectToNode(QUrl(address))) return false;
+            m_rep.reset(m_repNode->acquire<R>());
+            return m_rep->waitForSource(timeout);
+        });
     }
     template <typename R>
     R* replica() {
         return dynamic_cast<R *>(m_rep.data());
     }
 private:
-    QScopedPointer<QRemoteObjectNode, QScopedPointerDeleteLater> m_repNode;
+    explicit CommunicationHelper(CommunicationHelperPrivate *d);
+    QScopedPointer<CommunicationHelperPrivate> d_ptr;
     QScopedPointer<QRemoteObjectReplica, QScopedPointerDeleteLater> m_rep;
-    QScopedPointer<QCoreApplication, QScopedPointerDeleteLater> m_app;
+    QScopedPointer<QRemoteObjectNode, QScopedPointerDeleteLater> m_repNode;
     QScopedPointer<QThread, QScopedPointerDeleteLater> m_appThread;
 };
 
