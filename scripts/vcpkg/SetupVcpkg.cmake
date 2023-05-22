@@ -2,6 +2,10 @@ if(${CMAKE_VERSION} VERSION_LESS "3.19")
     return()
 endif()
 
+if(APPLE)
+    return()
+endif()
+
 if(NOT Python_FOUND)
     return()
 endif()

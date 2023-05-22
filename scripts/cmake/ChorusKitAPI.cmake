@@ -474,15 +474,15 @@ function(ck_add_application _target _entry_library)
                 ICO ${FUNC_ICO}
                 ${FUNC_UNPARSED_ARGUMENTS}
             )
+
+            # Add shortcut
+            _ck_create_win_shortcut(${_target} ${CK_MAIN_OUTPUT_PATH}
+                OUTPUT_NAME "ChorusKit ${_target}"
+            )
         endif()
 
         set_target_properties(${_target} PROPERTIES
             RUNTIME_OUTPUT_DIRECTORY ${CK_GLOBAL_RUNTIME_OUTPUT_PATH}
-        )
-
-        # Add shortcut
-        _ck_create_win_shortcut(${_target} ${CK_MAIN_OUTPUT_PATH}
-            OUTPUT_NAME "ChorusKit ${_target}"
         )
     endif()
 

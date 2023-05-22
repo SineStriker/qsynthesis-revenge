@@ -33,9 +33,9 @@ if(CHORUSKIT_REPOSITORY)
     find_package(QT NAMES Qt6 Qt5 COMPONENTS Core QUIET)
     find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Core QUIET)
 
-    if(QT_FOUND)
+    if(TARGET Qt${QT_VERSION_MAJOR}::qmake)
         if(NOT DEFINED QT_QMAKE_EXECUTABLE)
-            get_target_property(QT_QMAKE_EXECUTABLE Qt::qmake IMPORTED_LOCATION)
+            get_target_property(QT_QMAKE_EXECUTABLE Qt${QT_VERSION_MAJOR}::qmake IMPORTED_LOCATION)
         endif()
 
         if(EXISTS "${QT_QMAKE_EXECUTABLE}")
