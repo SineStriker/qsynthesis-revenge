@@ -148,11 +148,12 @@ namespace Core {
             QTimer::singleShot(0, this, [this]() {
                 auto winMgr = icore->windowSystem();
 
+                // If all files are failed to open, the guard will create a home window
                 LastWindowFilter guard;
 
                 // Open files
                 openFileFromCommand({}, ExtensionSystem::PluginManager::arguments(), nullptr);
-
+                
                 if (winMgr->count() == 0) {
                     waitSplash(winMgr->createWindow("home")->window());
                 } else {
