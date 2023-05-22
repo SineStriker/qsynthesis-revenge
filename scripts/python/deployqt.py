@@ -2,6 +2,8 @@
 
 # Usage: python deployqt.py [--qmake path] [--libdir dir] [--plugindir dir] [--verbose] <binaries>
 
+from __future__ import annotations
+
 import argparse
 import os
 import re

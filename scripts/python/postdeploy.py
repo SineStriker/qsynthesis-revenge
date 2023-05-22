@@ -2,6 +2,8 @@
 
 # Usage: python postdeploy.py <dir>
 
+from __future__ import annotations
+
 import sys
 
 from utils import *
@@ -23,6 +25,10 @@ def main():
     if os_name == "windows":
         # Nothing to do on Windows
         sys.exit(0)
+    elif os_name == "osx":
+        print("MacOS")
+    else:
+        print("Linux")
 
 
 if __name__ == "__main__":
