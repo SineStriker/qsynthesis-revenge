@@ -321,6 +321,36 @@ namespace Core {
         d->autoDelete = autoDelete;
     }
 
+    QString ActionItem::commandCategory() const {
+        Q_D(const ActionItem);
+        return d->commandCategory;
+    }
+
+    void ActionItem::setCommandCategory(const QString &commandCategory) {
+        Q_D(ActionItem);
+        d->commandCategory = commandCategory;
+    }
+
+    QString ActionItem::originalCommandName() const {
+        Q_D(const ActionItem);
+        return d->originalCommandName;
+    }
+
+    void ActionItem::setOriginalCommandName(const QString &originalCommandName) {
+        Q_D(ActionItem);
+        d->originalCommandName = originalCommandName;
+    }
+
+    QString ActionItem::commandName() const {
+        Q_D(const ActionItem);
+        return d->commandName;
+    }
+
+    void ActionItem::setCommandName(const QString &commandName) {
+        Q_D(ActionItem);
+        d->commandName = commandName;
+    }
+
     bool ActionItem::autoDeleteGlobal() {
         return m_autoDelete;
     }

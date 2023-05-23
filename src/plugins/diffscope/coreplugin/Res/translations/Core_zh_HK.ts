@@ -13,55 +13,6 @@
     </message>
 </context>
 <context>
-    <name>Core::HomeRecentBottomFrame</name>
-    <message>
-        <source>No data.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Open(&amp;O)</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Remove from list(&amp;R)</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Show in %1(&amp;S)</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Open in %1(&amp;S)</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Nothing to show.</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>Core::HomeRecentTopFrame</name>
-    <message>
-        <source>New</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Open</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Search for files</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>Core::HomeRecoveryWidget</name>
-    <message>
-        <source>No data.</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
     <name>Core::ICore</name>
     <message>
         <source>About %1</source>
@@ -217,6 +168,55 @@
     </message>
     <message>
         <source>File Error</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>Core::Internal::HomeRecentBottomFrame</name>
+    <message>
+        <source>No data.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Nothing to show.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Open(&amp;O)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Remove from list(&amp;R)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Show in %1(&amp;S)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Open in %1(&amp;S)</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>Core::Internal::HomeRecentTopFrame</name>
+    <message>
+        <source>New</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Open</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Search for files</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>Core::Internal::HomeRecoveryWidget</name>
+    <message>
+        <source>No data.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

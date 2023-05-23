@@ -81,46 +81,46 @@ CTabButton#home-about-button {
 
 /* Home Recent Widget */
 
-Core--HomeRecentWidget>QSplitterHandle {
+Core--Internal--HomeRecentWidget>QSplitterHandle {
     qproperty-enabled: false;
 }
 
-Core--HomeRecentWidget::handle {
+Core--Internal--HomeRecentWidget::handle {
     background-color: #666666;
     height: 1px;
 }
 
-Core--HomeRecentTopFrame {
+Core--Internal--HomeRecentTopFrame {
     qproperty-layoutSpacing: 10px;
     padding: 15px;
 }
 
-Core--HomeRecentWidget>LinearScrollArea {
+Core--Internal--HomeRecentWidget>LinearScrollArea {
     background-color: transparent;
     padding: 0;
     border-style: none;
 }
 
-Core--HomeRecentTopFrame>QLineEdit {
+Core--Internal--HomeRecentTopFrame>QLineEdit {
     padding: 5px;
 }
 
-Core--HomeRecentTopFrame>CTabButton {
+Core--Internal--HomeRecentTopFrame>CTabButton {
     padding: 5px 10px;
 }
 
 
 /* Recent Top Buttons */
 
-Core--HomeRecentTopFrame>CTabButton#new-button {
+Core--Internal--HomeRecentTopFrame>CTabButton#new-button {
     qproperty-iconUp: svg(":/svg/home/new-file.svg", #FFFFFF);
 }
 
-Core--HomeRecentTopFrame>CTabButton#open-button {
+Core--Internal--HomeRecentTopFrame>CTabButton#open-button {
     qproperty-iconUp: svg(":/svg/home/open-file.svg", #FFFFFF);
 }
 
-Core--HomeRecentTopFrame>CTabButton[type=top-button] {
+Core--Internal--HomeRecentTopFrame>CTabButton[type=top-button] {
     qproperty-iconSize: 20px 20px;
     qproperty-spaceRatio: 0.2;
     background-color: rgba(0, 181, 120, 30%);
@@ -130,12 +130,12 @@ Core--HomeRecentTopFrame>CTabButton[type=top-button] {
     text-align: left;
 }
 
-Core--HomeRecentTopFrame>CTabButton[type=top-button]:hover,
-Core--HomeRecentTopFrame>CTabButton[type=top-button]:pressed {
+Core--Internal--HomeRecentTopFrame>CTabButton[type=top-button]:hover,
+Core--Internal--HomeRecentTopFrame>CTabButton[type=top-button]:pressed {
     background-color: rgba(0, 181, 120, 50%);
 }
 
-Core--HomeRecentTopFrame>QLineEdit#search-box {
+Core--Internal--HomeRecentTopFrame>QLineEdit#search-box {
     background-color: transparent;
     color: #CCCCCC;
     border: 2px solid #333333;
@@ -143,7 +143,7 @@ Core--HomeRecentTopFrame>QLineEdit#search-box {
     padding: 10px;
 }
 
-Core--HomeRecentTopFrame>QLineEdit#search-box:focus {
+Core--Internal--HomeRecentTopFrame>QLineEdit#search-box:focus {
     border-color: #666666;
 }
 

@@ -17,9 +17,9 @@
 
 #include "Interfaces/IButtonBar.h"
 
-namespace Core {
+namespace Core::Internal {
 
-    // StyleSheet prefix: Core--
+    // StyleSheet prefix: Core--Internal--
 
     class HomeRecentTopButtonBar;
 

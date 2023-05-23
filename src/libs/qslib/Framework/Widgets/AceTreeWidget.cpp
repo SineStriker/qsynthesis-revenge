@@ -1,5 +1,5 @@
 #include "AceTreeWidget.h"
-#include "private/AceTreeWidget_p.h"
+#include "AceTreeWidget_p.h"
 
 #include <QDebug>
 #include <QHeaderView>

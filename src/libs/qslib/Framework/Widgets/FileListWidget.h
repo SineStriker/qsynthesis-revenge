@@ -16,8 +16,6 @@ namespace QsApi {
 
     class FileListWidgetPrivate;
 
-    class FileListItemDelegate;
-
     class QSFRAMEWORK_API FileListWidget : public QListWidget {
         Q_OBJECT
         Q_DECLARE_PRIVATE(FileListWidget)
@@ -26,13 +24,6 @@ namespace QsApi {
     public:
         explicit FileListWidget(QWidget *parent = nullptr);
         ~FileListWidget();
-
-        enum ItemData { Filename = Qt::UserRole + 1, Date, Icon, IconSize, Type };
-
-    public:
-        void insertItem(int row, const QIcon &icon, const QSize &size, int type, const QString &filename,
-                        const QString &date);
-        void addItem(const QIcon &icon, const QSize &size, int type, const QString &filename, const QString &date);
 
     public:
         QTypeList styleData() const;

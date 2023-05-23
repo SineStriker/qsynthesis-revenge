@@ -31,49 +31,49 @@
     <name>Core::HomeRecentBottomFrame</name>
     <message>
         <source>No data.</source>
-        <translation>没有数据。</translation>
+        <translation type="vanished">没有数据。</translation>
     </message>
     <message>
         <source>Open(&amp;O)</source>
-        <translation>打开(&amp;O)</translation>
+        <translation type="vanished">打开(&amp;O)</translation>
     </message>
     <message>
         <source>Remove from list(&amp;R)</source>
-        <translation>从列表中删除(&amp;R)</translation>
+        <translation type="vanished">从列表中删除(&amp;R)</translation>
     </message>
     <message>
         <source>Show in %1(&amp;S)</source>
-        <translation>在%1中显示(&amp;S)</translation>
+        <translation type="vanished">在%1中显示(&amp;S)</translation>
     </message>
     <message>
         <source>Open in %1(&amp;S)</source>
-        <translation>在%1中打开(&amp;S)</translation>
+        <translation type="vanished">在%1中打开(&amp;S)</translation>
     </message>
     <message>
         <source>Nothing to show.</source>
-        <translation>没有可以显示的内容。</translation>
+        <translation type="vanished">没有可以显示的内容。</translation>
     </message>
 </context>
 <context>
     <name>Core::HomeRecentTopFrame</name>
     <message>
         <source>New</source>
-        <translation>新建</translation>
+        <translation type="vanished">新建</translation>
     </message>
     <message>
         <source>Open</source>
-        <translation>打开</translation>
+        <translation type="vanished">打开</translation>
     </message>
     <message>
         <source>Search for files</source>
-        <translation>搜索文件</translation>
+        <translation type="vanished">搜索文件</translation>
     </message>
 </context>
 <context>
     <name>Core::HomeRecoveryWidget</name>
     <message>
         <source>No data.</source>
-        <translation>没有数据。</translation>
+        <translation type="vanished">没有数据。</translation>
     </message>
 </context>
 <context>
@@ -292,6 +292,55 @@
     <message>
         <source>File Error</source>
         <translation>文件错误</translation>
+    </message>
+</context>
+<context>
+    <name>Core::Internal::HomeRecentBottomFrame</name>
+    <message>
+        <source>No data.</source>
+        <translation type="unfinished">没有数据。</translation>
+    </message>
+    <message>
+        <source>Nothing to show.</source>
+        <translation type="unfinished">没有可以显示的内容。</translation>
+    </message>
+    <message>
+        <source>Open(&amp;O)</source>
+        <translation type="unfinished">打开(&amp;O)</translation>
+    </message>
+    <message>
+        <source>Remove from list(&amp;R)</source>
+        <translation type="unfinished">从列表中删除(&amp;R)</translation>
+    </message>
+    <message>
+        <source>Show in %1(&amp;S)</source>
+        <translation type="unfinished">在%1中显示(&amp;S)</translation>
+    </message>
+    <message>
+        <source>Open in %1(&amp;S)</source>
+        <translation type="unfinished">在%1中打开(&amp;S)</translation>
+    </message>
+</context>
+<context>
+    <name>Core::Internal::HomeRecentTopFrame</name>
+    <message>
+        <source>New</source>
+        <translation type="unfinished">新建</translation>
+    </message>
+    <message>
+        <source>Open</source>
+        <translation type="unfinished">打开</translation>
+    </message>
+    <message>
+        <source>Search for files</source>
+        <translation type="unfinished">搜索文件</translation>
+    </message>
+</context>
+<context>
+    <name>Core::Internal::HomeRecoveryWidget</name>
+    <message>
+        <source>No data.</source>
+        <translation type="unfinished">没有数据。</translation>
     </message>
 </context>
 <context>

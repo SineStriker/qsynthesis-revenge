@@ -8,9 +8,9 @@
 #include <QMWidgetsMacros.h>
 #include <QPixelSize.h>
 
-namespace Core {
+namespace Core::Internal {
 
-    // StyleSheet prefix: Core--
+    // StyleSheet prefix: Core--Internal--
 
     class HomeRecoveryWidget : public QFrame {
         Q_OBJECT

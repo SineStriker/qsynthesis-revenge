@@ -1,18 +1,9 @@
 #include "FileListWidget.h"
+#include "FileListWidget_p.h"
+
 #include "QMarginsImpl.h"
 
-#include "private/FileListItemDelegate.h"
-#include "private/FileListWidget_p.h"
-
 #include <private/qlistwidget_p.h>
-
-#define DECODE_STYLE(VAR, VARIANT, TYPE)                                                                               \
-    {                                                                                                                  \
-        QVariant var = VARIANT;                                                                                        \
-        if (var.convert(qMetaTypeId<TYPE>())) {                                                                        \
-            VAR = var.value<TYPE>();                                                                                   \
-        }                                                                                                              \
-    }
 
 namespace QsApi {
 
@@ -28,20 +19,26 @@ namespace QsApi {
         q->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Minimum);
         q->setSelectionMode(QAbstractItemView::SingleSelection);
 
-        m_delegate = new FileListItemDelegate(this);
+        m_delegate = new TitleListItemDelegate(this);
         q->setItemDelegate(m_delegate);
 
-        connect(m_delegate, &FileListItemDelegate::clicked, this, &FileListWidgetPrivate::_q_delegateClicked);
+        connect(m_delegate, &TitleListItemDelegate::clicked, this, &FileListWidgetPrivate::_q_delegateClicked);
     }
 
     QTypeList FileListWidgetPrivate::styleData_helper() const {
         return {
-            QVariant::fromValue(m_delegate->m_idleType),    QVariant::fromValue(m_delegate->m_selectType),
-            QVariant::fromValue(m_delegate->m_underline),   QVariant::fromValue(m_delegate->m_fileType),
-            QVariant::fromValue(m_delegate->m_locType),     QVariant::fromValue(m_delegate->m_dateType),
-            QVariant::fromValue(m_delegate->m_fileMargins), QVariant::fromValue(m_delegate->m_locMargins),
-            QVariant::fromValue(m_delegate->m_dateMargins), QVariant::fromValue(m_delegate->m_iconMargins),
-            QVariant::fromValue(m_delegate->m_margins),
+            QVariant::fromValue(m_delegate->idleShape()),
+            QVariant::fromValue(m_delegate->selectShape()),
+            QVariant::fromValue(m_delegate->underlineShape()),
+            QVariant::fromValue(m_delegate->titleShape()),
+            QVariant::fromValue(m_delegate->subtitleShape()),
+            QVariant::fromValue(m_delegate->descriptionShape()),
+
+            QVariant::fromValue(m_delegate->titleMargins()),
+            QVariant::fromValue(m_delegate->subtitleMargins()),
+            QVariant::fromValue(m_delegate->descriptionMargins()),
+            QVariant::fromValue(m_delegate->iconMargins()),
+            QVariant::fromValue(m_delegate->margins()),
         };
     }
 
@@ -50,26 +47,35 @@ namespace QsApi {
         if (list.size() >= 11) {
             int i = 0;
 
-            DECODE_STYLE(m_delegate->m_idleType, list.at(i++), QTypeFace);
-            DECODE_STYLE(m_delegate->m_selectType, list.at(i++), QTypeFace);
-            DECODE_STYLE(m_delegate->m_underline, list.at(i++), QTypeFace);
-            DECODE_STYLE(m_delegate->m_fileType, list.at(i++), QTypeFace);
-            DECODE_STYLE(m_delegate->m_locType, list.at(i++), QTypeFace);
-            DECODE_STYLE(m_delegate->m_dateType, list.at(i++), QTypeFace);
-            DECODE_STYLE(m_delegate->m_fileMargins, list.at(i++), QMargins);
-            DECODE_STYLE(m_delegate->m_locMargins, list.at(i++), QMargins);
-            DECODE_STYLE(m_delegate->m_dateMargins, list.at(i++), QMargins);
-            DECODE_STYLE(m_delegate->m_iconMargins, list.at(i++), QMargins);
-            DECODE_STYLE(m_delegate->m_margins, list.at(i++), QMargins);
+            decodeStyle<QTypeFace>(list.at(i++), &TitleListItemDelegate::setIdleShape);
+            decodeStyle<QTypeFace>(list.at(i++), &TitleListItemDelegate::setSelectShape);
+            decodeStyle<QTypeFace>(list.at(i++), &TitleListItemDelegate::setUnderlineShape);
+            decodeStyle<QTypeFace>(list.at(i++), &TitleListItemDelegate::setTitleShape);
+            decodeStyle<QTypeFace>(list.at(i++), &TitleListItemDelegate::setSubtitleShape);
+            decodeStyle<QTypeFace>(list.at(i++), &TitleListItemDelegate::setDescriptionShape);
 
-            if (m_delegate->m_fileType.isDefaultFont()) {
-                m_delegate->m_fileType.setFont(q->font());
+            decodeStyle<QMargins>(list.at(i++), &TitleListItemDelegate::setTitleMargins);
+            decodeStyle<QMargins>(list.at(i++), &TitleListItemDelegate::setSubtitleMargins);
+            decodeStyle<QMargins>(list.at(i++), &TitleListItemDelegate::setDescriptionMargins);
+            decodeStyle<QMargins>(list.at(i++), &TitleListItemDelegate::setIconMargins);
+            decodeStyle<QMargins>(list.at(i++), &TitleListItemDelegate::setMargins);
+
+            auto shape = m_delegate->titleShape();
+            if (shape.isDefaultFont()) {
+                shape.setFont(q->font());
+                m_delegate->setTitleShape(shape);
             }
-            if (m_delegate->m_locType.isDefaultFont()) {
-                m_delegate->m_locType.setFont(q->font());
+
+            shape = m_delegate->subtitleShape();
+            if (shape.isDefaultFont()) {
+                shape.setFont(q->font());
+                m_delegate->setSubtitleShape(shape);
             }
-            if (m_delegate->m_dateType.isDefaultFont()) {
-                m_delegate->m_dateType.setFont(q->font());
+
+            shape = m_delegate->descriptionShape();
+            if (shape.isDefaultFont()) {
+                shape.setFont(q->font());
+                m_delegate->setDescriptionShape(shape);
             }
 
             q->update();
@@ -90,22 +96,6 @@ namespace QsApi {
     }
 
     FileListWidget::~FileListWidget() {
-    }
-
-    void FileListWidget::addItem(const QIcon &icon, const QSize &size, int type, const QString &filename,
-                                 const QString &date) {
-        insertItem(count(), icon, size, type, filename, date);
-    }
-
-    void FileListWidget::insertItem(int row, const QIcon &icon, const QSize &size, int type, const QString &filename,
-                                    const QString &date) {
-        auto item = new QListWidgetItem();
-        item->setData(FileListWidget::Filename, filename);
-        item->setData(FileListWidget::Date, date);
-        item->setData(FileListWidget::Icon, icon);
-        item->setData(FileListWidget::IconSize, size);
-        item->setData(FileListWidget::Type, type);
-        QListWidget::insertItem(row, item);
     }
 
     QTypeList FileListWidget::styleData() const {

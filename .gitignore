@@ -92,8 +92,8 @@ out/
 CMakeSettings.json
 /vcpkg
 /data
+/*.natvis
 
 *.sublime-*
 setup-vcpkg.json
 setup-vcpkg-temp*
-*.natvis

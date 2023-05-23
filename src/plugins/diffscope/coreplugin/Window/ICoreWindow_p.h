@@ -3,10 +3,12 @@
 
 #include <QSet>
 
-#include "ICoreWindow.h"
+#include <Widgets/CommandPalette.h>
 
 #include <CoreApi/ActionContext.h>
 #include <CoreApi/IWindow_p.h>
+
+#include "ICoreWindow.h"
 
 namespace Core {
 
@@ -21,6 +23,8 @@ namespace Core {
         void reloadMenuBar();
 
         ActionContext *mainMenuCtx;
+
+        QsApi::CommandPalette *cp;
     };
 
 }

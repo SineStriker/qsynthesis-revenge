@@ -32,6 +32,10 @@ namespace Core {
         QPointer<QMenu> menu;
         QPointer<QWidget> widget;
 
+        QString commandCategory;
+        QString commandName;
+        QString originalCommandName;
+
     private:
         void _q_actionDisplayNameChanged(const QString &displayName);
         void _q_actionDescriptionChanged(const QString &description);

@@ -193,7 +193,6 @@ endfunction()
 
 #[[
 Add a library, default to static library.
-If the target name is in the form of XXX__XXX, it will be recognize as an application's private library.
 
     ck_add_library(<target>
         [SHARED] [AUTOGEN] [SKIP_INSTALL] [SKIP_EXPORT]
@@ -205,6 +204,9 @@ If the target name is in the form of XXX__XXX, it will be recognize as an applic
         [TYPE_MACRO     macro]
         [LIBRARY_MACRO  macro]
     )
+
+    If the target name is in the form of XXX__XXX, it will be recognize as an application's private library,
+    and an alias target(Replace "_" with ":") will be created.
 
     SHARED: build shared library, otherwise build static library if not set
     AUTOGEN: set CMAKE_AUTOMOC, CMAKE_AUTOUIC, CMAKE_AUTORCC
@@ -333,7 +335,7 @@ function(ck_add_library _target)
 endfunction()
 
 #[[
-Add a library plugin, target name must be in the form of XXX__XXX.
+Add a library plugin.
 
     ck_add_library_plugin(<target>
         [SKIP_EXPORT]
@@ -345,6 +347,8 @@ Add a library plugin, target name must be in the form of XXX__XXX.
         [TYPE_MACRO     macro]
         [LIBRARY_MACRO  macro]
     )
+
+    The target name must be in the form of XXX__XXX, and an alias target(Replace "_" with ":") will be created.
 
     Check `ck_add_library` for arguments' usage.
 ]] #
@@ -544,7 +548,7 @@ function(ck_add_application _target _entry_library)
 endfunction()
 
 #[[
-Add an application plugin, target name must be in the form of XXX__XXX.
+Add an application plugin.
 
     ck_add_application_plugin(<target>
         [SKIP_EXPORT]   [NO_PLUGIN_JSON]
@@ -559,6 +563,8 @@ Add an application plugin, target name must be in the form of XXX__XXX.
         [TYPE_MACRO     macro]
         [LIBRARY_MACRO  macro]
     )
+
+    The target name must be in the form of XXX__XXX, and an alias target(Replace "_" with ":") will be created.
 
     NO_PLUGIN_JSON: skip configuring the plugin.json.in
     CATEGORY: set the sub-directory name for plugin to output, which is same as `PROJECT_NAME` by default
@@ -670,7 +676,7 @@ function(ck_add_application_plugin _target)
 endfunction()
 
 #[[
-Add an application plugin, name must be in the form of XXX::XXX.
+Configure plugin metadata json.
 
     ck_configure_plugin_metadata(<target>
         [NAME               name            ] 

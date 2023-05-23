@@ -57,6 +57,16 @@ namespace Core {
         void setAutoDelete(bool autoDelete);
 
     public:
+        QString commandCategory() const;
+        void setCommandCategory(const QString &commandCategory);
+
+        QString originalCommandName() const;
+        void setOriginalCommandName(const QString &originalCommandName);
+
+        QString commandName() const;
+        void setCommandName(const QString &commandName);
+
+    public:
         static bool autoDeleteGlobal();
         static void setAutoDeleteGlobal(bool autoDelete);
 

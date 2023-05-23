@@ -7,7 +7,7 @@
 
 #include "ICore.h"
 
-namespace Core {
+namespace Core::Internal {
 
     HomeRecoveryWidget::HomeRecoveryWidget(QWidget *parent) : QFrame(parent) {
         listWidget = new QListWidget();

@@ -3,16 +3,21 @@
 #include "QMCss.h"
 #include "private/QMetaTypeUtils.h"
 
+#include <private/qfont_p.h>
+
 #include <QApplication>
 
 QTypeFace::QTypeFace() {
     init();
 }
 
+QTypeFace::QTypeFace(const QColor &color, int pixelSize) {
+}
+
 QTypeFace::QTypeFace(const QColor &color, double width) {
     init();
     setColor(color);
-    setWidthF(width);
+    setPointSize(width);
 }
 
 QTypeFace::~QTypeFace() {
@@ -21,6 +26,10 @@ QTypeFace::~QTypeFace() {
 void QTypeFace::init() {
     m_defaultFont = true;
     m_font = QApplication::font();
+
+    m_pixelSize = m_font.pixelSize();
+    m_pointSize = m_font.pointSizeF();
+    m_weight = m_font.weight();
 }
 
 QStringList QTypeFace::toStringList() const {
@@ -36,20 +45,43 @@ QFont QTypeFace::font() const {
 }
 
 void QTypeFace::setFont(const QFont &font) {
-    m_font = font;
     m_defaultFont = false;
+    m_font = font;
+
+    m_pixelSize = m_font.pixelSize();
+    m_pointSize = m_font.pointSizeF();
+    m_weight = m_font.weight();
 }
 
 bool QTypeFace::isDefaultFont() const {
     return m_defaultFont;
 }
 
-double QTypeFace::widthF() const {
-    return m_font.pointSizeF();
+double QTypeFace::pixelSize() const {
+    return m_pixelSize;
 }
 
-void QTypeFace::setWidthF(double width) {
-    m_font.setPointSizeF(width);
+void QTypeFace::setPixelSize(double pixelSize) {
+    m_pixelSize = pixelSize;
+    m_font.setPixelSize(pixelSize > 0 ? pixelSize : 1);
+}
+
+double QTypeFace::pointSize() const {
+    return m_pointSize;
+}
+
+void QTypeFace::setPointSize(double pointSize) {
+    m_pointSize = pointSize;
+    m_font.setPointSizeF(pointSize > 0 ? pointSize : 1);
+}
+
+double QTypeFace::weight() const {
+    return m_weight;
+}
+
+void QTypeFace::setWeight(double weight) {
+    m_weight = weight;
+    m_font.setWeight((weight > 0 && weight < 100) ? weight : 1);
 }
 
 QColor QTypeFace::color() const {
@@ -63,8 +95,8 @@ void QTypeFace::setColor(const QColor &color) {
 QTypeFace QTypeFace::fromStringList(const QStringList &stringList) {
     if (stringList.size() == 2 && !stringList.front().compare(MetaFunctionName(), Qt::CaseInsensitive)) {
         QStringList content = SplitStringByComma(stringList.back());
-        for (auto it = content.begin(); it != content.end(); ++it) {
-            *it = it->simplified();
+        for (auto &item : content) {
+            item = item.simplified();
         }
         if (!content.isEmpty()) {
             QTypeFace tf;
@@ -94,32 +126,28 @@ QTypeFace QTypeFace::fromStringList(const QStringList &stringList) {
                 }
             }
             if (content.size() > 2) {
-                QString strWeight = content.at(2);
+                const QString &strWeight = content.at(2);
                 bool isNum;
-                int num = strWeight.toDouble(&isNum);
+                int num = strWeight.toInt(&isNum);
                 if (isNum) {
                     weight = num;
                 }
             }
             if (pixelSize > 0) {
-                tf.m_font.setPixelSize(pixelSize);
+                tf.setPixelSize(pixelSize);
             } else if (pointSize > 0) {
-                tf.m_font.setPointSizeF(pointSize);
+                tf.setPointSize(pointSize);
             }
             if (weight > 0) {
-                tf.m_font.setWeight(weight);
+                tf.setWeight(weight);
             }
             return tf;
         }
     }
-    return QTypeFace();
+
+    return {};
 }
 
 QLatin1String QTypeFace::MetaFunctionName() {
     return QLatin1String(QCssCustomValue_TypeFace);
-}
-
-QDebug operator<<(QDebug debug, const QTypeFace &tf) {
-    debug.noquote().nospace() << "QTypeFace(" << tf.m_color << ", " << tf.m_font << ")";
-    return debug;
 }

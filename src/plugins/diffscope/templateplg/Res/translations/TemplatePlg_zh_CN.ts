@@ -92,7 +92,11 @@
     </message>
     <message>
         <source>template plugin</source>
-        <translation>模板插件</translation>
+        <translation type="vanished">模板插件</translation>
+    </message>
+    <message>
+        <source>core.tmpl</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -196,7 +200,7 @@
     </message>
     <message>
         <source>creat treeui</source>
-        <translation>创建ui</translation>
+        <translation type="vanished">创建ui</translation>
     </message>
     <message>
         <source>save ui&amp;config info</source>
@@ -261,6 +265,10 @@
     <message>
         <source>: The setting information file (config.json) does not exist, use default settings!</source>
         <translation>： 配置信息文件（config.json）丢失，使用默认配置！</translation>
+    </message>
+    <message>
+        <source>create treeui</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>

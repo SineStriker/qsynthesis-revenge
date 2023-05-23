@@ -20,13 +20,14 @@ namespace Core::Internal {
     }
 
     void CoreWindowAddOn::initialize() {
+        auto iWin = windowHandle();
+
         initActions();
         reloadRecentMenu();
 
         auto docMgr = ICore::instance()->documentSystem();
 
         // Add drag handler
-        auto iWin = windowHandle();
         for (const auto &suffix : docMgr->supportedExtensions())
             iWin->setDragFileHandler(suffix, iWin, "openFile");
 

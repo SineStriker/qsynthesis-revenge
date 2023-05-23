@@ -92,13 +92,17 @@ namespace Core {
     void ICoreWindow::setupWindow() {
         Q_D(ICoreWindow);
 
-        window()->setProperty("top-window", true);
+        auto win = window();
+        win->setProperty("top-window", true);
 
         // Add window and menubar as basic shortcut contexts
-        addShortcutContext(window());
+        addShortcutContext(win);
         addShortcutContext(menuBar());
 
         d->mainMenuCtx = ICore::instance()->actionSystem()->context(QString("%1.MainMenu").arg(id()));
+
+        // Init command palette
+        d->cp = new QsApi::CommandPalette(win);
     }
 
     void ICoreWindow::windowAddOnsInitialized() {

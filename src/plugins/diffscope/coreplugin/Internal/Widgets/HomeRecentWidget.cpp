@@ -1,5 +1,7 @@
 #include "HomeRecentWidget.h"
 
+#include "QsFrameworkNamespace.h"
+
 #include <QDateTime>
 #include <QDir>
 #include <QFileInfo>
@@ -10,7 +12,7 @@
 
 #include "ICore.h"
 
-namespace Core {
+namespace Core::Internal {
 
     static const char dateFormat[] = "yyyy-MM-dd hh:mm";
 
@@ -151,8 +153,15 @@ namespace Core {
         for (const auto &fileName : docMgr->recentFiles()) {
             QFileInfo info(fileName);
             auto spec = docMgr->supportedDocType(info.completeSuffix());
-            fileWidget->addItem(spec ? spec->icon() : QIcon(), m_iconSize, QDir::Files, info.absoluteFilePath(),
-                                info.lastModified().toString(dateFormat));
+
+            auto item = new QListWidgetItem();
+            item->setData(Qt::DecorationRole, spec ? spec->icon() : QIcon());
+            item->setData(QsApi::IconSizeRole, m_iconSize);
+            item->setData(Qt::DisplayRole, QDir::toNativeSeparators(info.absoluteFilePath()));
+            item->setData(QsApi::SubtitleRole, QDir::toNativeSeparators(info.absolutePath()));
+            item->setData(QsApi::DescriptionRole, info.lastModified().toString(dateFormat));
+
+            fileWidget->addItem(item);
         }
         // fileWidget->resize(fileWidget->width(), fileWidget->contentsSize().height());
         updateListFilter();
@@ -178,7 +187,7 @@ namespace Core {
         for (int i = 0; i < fileWidget->count(); ++i) {
             auto item = fileWidget->item(i);
 
-            QString filename = item->data(QsApi::FileListWidget::Filename).toString();
+            QString filename = item->data(Qt::DisplayRole).toString();
             bool visible = m_keyword.isEmpty() || filename.contains(m_keyword, Qt::CaseInsensitive);
             item->setHidden(!visible);
 
@@ -206,8 +215,8 @@ namespace Core {
     }
 
     void HomeRecentBottomFrame::_q_itemClickedEx(const QModelIndex &index, int button) {
-        int type = index.data(QsApi::FileListWidget::Type).toInt();
-        QString filename = index.data(QsApi::FileListWidget::Filename).toString();
+        int type = QDir::Files;
+        QString filename = index.data(Qt::DisplayRole).toString();
         if (button == Qt::LeftButton) {
             if (type == QDir::Files) {
                 emit openFileRequested(filename);
