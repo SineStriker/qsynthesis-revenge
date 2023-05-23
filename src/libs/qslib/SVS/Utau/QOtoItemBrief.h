@@ -21,14 +21,7 @@ public:
     bool operator==(const QOtoItemBrief &oCorrect) const;
     bool operator!=(const QOtoItemBrief &oCorrect) const;
 
-    friend QDebug operator<<(QDebug debug, const QOtoItemBrief &item) {
-        QString info =
-            QString("QCorrectGenon(pre:%1;ove:%2;stp:%3)")
-                .arg(QString::number(item.PreUtterance), QString::number(item.VoiceOverlap),
-                     QString::number(item.StartPoint));
-        debug.noquote() << info;
-        return debug;
-    }
+    friend QDebug operator<<(QDebug debug, const QOtoItemBrief &item);
 };
 
 #endif // QOTOITEMBRIEF_H

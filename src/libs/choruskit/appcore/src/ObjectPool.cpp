@@ -8,18 +8,22 @@
 namespace Core {
 
     ObjectPoolPrivate::ObjectPoolPrivate(ObjectPool *q) : q(q) {
-        connect(q, &ObjectPool::objectAdded, [this](const QString &id, QObject *obj) {
-            Q_UNUSED(id)
-            connect(obj, &QObject::destroyed, this, &ObjectPoolPrivate::_q_objectDestroyed);
-        });
+        connect(q, &ObjectPool::objectAdded, [this](const QString &id, QObject *obj) { Q_UNUSED(id) });
 
-        connect(q, &ObjectPool::aboutToRemoveObject, [this](const QString &id, QObject *obj) {
-            Q_UNUSED(id)
-            disconnect(obj, &QObject::destroyed, this, &ObjectPoolPrivate::_q_objectDestroyed);
-        });
+        connect(q, &ObjectPool::aboutToRemoveObject, [this](const QString &id, QObject *obj) { Q_UNUSED(id) });
     }
 
     ObjectPoolPrivate::~ObjectPoolPrivate() {
+    }
+
+    void ObjectPoolPrivate::objectAdded(const QString &id, QObject *obj) {
+        emit q->objectAdded(id, obj);
+        connect(obj, &QObject::destroyed, this, &ObjectPoolPrivate::_q_objectDestroyed);
+    }
+
+    void ObjectPoolPrivate::aboutToRemoveObject(const QString &id, QObject *obj) {
+        disconnect(obj, &QObject::destroyed, this, &ObjectPoolPrivate::_q_objectDestroyed);
+        emit q->aboutToRemoveObject(id, obj);
     }
 
     void ObjectPoolPrivate::_q_objectDestroyed() {
@@ -70,7 +74,7 @@ namespace Core {
             d->objectIndexes.insert(obj, {id, it});
         }
 
-        emit objectAdded(id, obj);
+        d->objectAdded(id, obj);
     }
 
     void ObjectPool::addObjects(const QString &id, const QList<QObject *> &objs) {
@@ -93,7 +97,7 @@ namespace Core {
             id = it.value().id;
         }
 
-        emit aboutToRemoveObject(id, obj);
+        d->aboutToRemoveObject(id, obj);
 
         {
             QWriteLocker locker(&d->objectListLock);
@@ -132,7 +136,7 @@ namespace Core {
         }
 
         for (const auto &obj : qAsConst(objs)) {
-            emit aboutToRemoveObject(id, obj);
+            d->aboutToRemoveObject(id, obj);
         }
 
         {

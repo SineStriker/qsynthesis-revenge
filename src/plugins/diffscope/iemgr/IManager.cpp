@@ -70,38 +70,40 @@ namespace IEMgr {
         d->importWizards.clear();
     }
 
-    void IManager::runImport(IWizardContext *context) {
+    void IManager::runImport(QWidget *parent, const QString &wizardId, const QString &path) {
         Q_D(IManager);
 
-        if (!context->windowHandle() || d->running) {
+        auto iWin = Core::ICore::instance()->windowSystem()->findWindow(parent);
+        if (!iWin || d->running) {
             return;
         }
         d->running = true;
 
-        Internal::ImportInitDialog dlg(context->window());
-        if (!context->wizardId().isEmpty()) {
-            auto wizard = d->importWizards.value(context->wizardId(), nullptr);
+        Internal::ImportInitDialog dlg(iWin->window());
+        if (!wizardId.isEmpty()) {
+            auto wizard = d->importWizards.value(wizardId, nullptr);
             if (wizard)
                 dlg.selectWizard(wizard);
         }
 
-        if (!context->path().isEmpty()) {
-            dlg.setCurrentPath(context->path());
+        if (!path.isEmpty()) {
+            dlg.setCurrentPath(path);
         }
 
         int code;
         do {
             code = dlg.exec();
-        } while (code == QDialog::Accepted && (context->setPath(dlg.currentPath()),
-                  !dlg.currentWizard()->runWizard(IWizardFactory::ImportProject, context)));
+        } while (code == QDialog::Accepted &&
+                 !dlg.currentWizard()->runWizard(IWizardFactory::ImportProject, dlg.currentPath(), parent));
 
         d->running = false;
     }
 
-    void IManager::runExport(IWizardContext *context) {
+    void IManager::runExport(QWidget *parent, const QString &wizardId, const QString &path) {
         Q_D(IManager);
 
-        if (!context->windowHandle() || d->running) {
+        auto iWin = Core::ICore::instance()->windowSystem()->findWindow(parent);
+        if (!iWin || d->running) {
             return;
         }
         d->running = true;

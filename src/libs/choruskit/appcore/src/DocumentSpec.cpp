@@ -52,8 +52,7 @@ namespace Core {
         return filter();
     }
 
-    bool DocumentSpec::open(const QString &fileName, IWindowContext *context) {
-        Q_UNUSED(context);
+    bool DocumentSpec::open(const QString &fileName) {
         auto doc = ICoreBase::instance()->documentSystem()->searchDocument(fileName);
         if (doc) {
             doc->raise();
@@ -66,10 +65,9 @@ namespace Core {
         return false;
     }
 
-    bool DocumentSpec::recover(const QString &logDir, const QString &fileName, IWindowContext *context) {
+    bool DocumentSpec::recover(const QString &logDir, const QString &fileName) {
         Q_UNUSED(logDir);
         Q_UNUSED(fileName);
-        Q_UNUSED(context);
         return false;
     }
 

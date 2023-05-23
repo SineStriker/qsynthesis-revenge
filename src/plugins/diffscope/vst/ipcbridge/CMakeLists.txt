@@ -17,4 +17,4 @@ ck_target_components(${_library}
     LINKS QsFramework
 )
 
-ck_install_headers(.)
+ck_install_headers()

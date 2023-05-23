@@ -13,5 +13,3 @@ add_subdirectory(appload)
 add_subdirectory(appcore)
 
 add_subdirectory(ikg2p)
-
-ck_install_headers(.)

@@ -25,8 +25,8 @@ namespace Core::Internal {
         return QString("%1(%2)").arg(tr("DiffScope Project Files"), "*.dspx");
     }
 
-    bool DspxSpec::open(const QString &fileName, IWindowContext *context) {
-        if (DocumentSpec::open(fileName, context))
+    bool DspxSpec::open(const QString &fileName) {
+        if (DocumentSpec::open(fileName))
             return true;
 
         auto iWin = ICore::instance()->windowSystem()->createWindow("project")->cast<IProjectWindow>();
@@ -47,7 +47,7 @@ namespace Core::Internal {
         return true;
     }
 
-    bool DspxSpec::recover(const QString &logDir, const QString &fileName, IWindowContext *context) {
+    bool DspxSpec::recover(const QString &logDir, const QString &fileName) {
         auto iWin = ICore::instance()->windowSystem()->createWindow("project")->cast<IProjectWindow>();
         if (!iWin)
             return false;

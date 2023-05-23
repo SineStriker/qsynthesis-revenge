@@ -56,4 +56,4 @@ ck_target_components(${PROJECT_NAME}
     AUTO_INCLUDE_DIRS src
 )
 
-ck_install_headers(.)
+ck_install_headers()

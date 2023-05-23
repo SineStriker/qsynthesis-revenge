@@ -19,3 +19,5 @@ ck_target_components(${PROJECT_NAME}
     INCLUDE_PRIVATE include/CoreApi include/CoreControls src
     AUTO_INCLUDE_DIRS include
 )
+
+ck_install_headers()

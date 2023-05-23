@@ -28,11 +28,18 @@ bool QOtoItemBrief::isEmpty() const {
 }
 
 bool QOtoItemBrief::operator==(const QOtoItemBrief &oCorrect) const {
-    return equalDouble(PreUtterance, oCorrect.PreUtterance) &&
-           equalDouble(VoiceOverlap, oCorrect.VoiceOverlap) &&
+    return equalDouble(PreUtterance, oCorrect.PreUtterance) && equalDouble(VoiceOverlap, oCorrect.VoiceOverlap) &&
            equalDouble(StartPoint, oCorrect.StartPoint);
 }
 
 bool QOtoItemBrief::operator!=(const QOtoItemBrief &oCorrect) const {
     return !((*this) == oCorrect);
+}
+
+QDebug operator<<(QDebug debug, const QOtoItemBrief &item) {
+    QString info = QString("QOtoItemBrief(pre:%1;ove:%2;stp:%3)")
+                       .arg(QString::number(item.PreUtterance), QString::number(item.VoiceOverlap),
+                            QString::number(item.StartPoint));
+    debug.noquote() << info;
+    return debug;
 }

@@ -16,11 +16,11 @@ function(configure_library)
         QT_TRANSLATE TRUE
     )
     ck_add_deploy_targets(${PROJECT_NAME})
+
+    ck_install_headers()
 endfunction()
 
 add_subdirectory(SVS)
 add_subdirectory(Media)
 add_subdirectory(Framework)
 add_subdirectory(Plugins)
-
-ck_install_headers(.)

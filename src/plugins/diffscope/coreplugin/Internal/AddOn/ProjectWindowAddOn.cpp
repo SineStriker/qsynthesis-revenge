@@ -84,8 +84,7 @@ namespace Core {
             });
 
             connect(saveAsFileItem->action(), &QAction::triggered, this, [this, iWin]() {
-                IWindowContext ctx(iWin);
-                ICore::instance()->documentSystem()->saveFileBrowse(&ctx, iWin->doc());
+                ICore::instance()->documentSystem()->saveFileBrowse(iWin->window(), iWin->doc());
             });
 
             connect(closeFileItem->action(), &QAction::triggered, this, [this, win]() {

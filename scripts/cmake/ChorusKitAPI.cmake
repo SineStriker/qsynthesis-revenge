@@ -45,7 +45,7 @@ function(ck_init_buildsystem)
 endfunction()
 
 #[[
-Add target to copy vcpkg dependencies on Windows.
+Add target to copy vcpkg dependencies when building or installing.
 
     ck_init_vcpkg(<vcpkg_dir> <vcpkg_triplet>)
 ]] #
@@ -145,6 +145,12 @@ Add test target, won't be installed.
     ck_add_test(<target> [sources]
         [AUTOGEN] [CONSOLE] [WINDOWS] [NO_SKIP_INSTALL] [SKIP_EXPORT]
     )
+
+    AUTOGEN: set CMAKE_AUTOMOC, CMAKE_AUTOUIC, CMAKE_AUTORCC
+    CONSOLE: build console application on Windows
+    WINDOWS: build windows application on Windows
+    NO_SKIP_INSTALL: install the test target, which won't be installed by default
+    SKIP_EXPORT: skip export the test target to installed cmake package
 ]] #
 function(ck_add_test _target)
     set(options AUTOGEN CONSOLE WINDOWS NO_SKIP_INSTALL SKIP_EXPORT)
@@ -187,6 +193,7 @@ endfunction()
 
 #[[
 Add a library, default to static library.
+If the target name is in the form of XXX__XXX, it will be recognize as an application's private library.
 
     ck_add_library(<target>
         [SHARED] [AUTOGEN] [SKIP_INSTALL] [SKIP_EXPORT]
@@ -198,6 +205,21 @@ Add a library, default to static library.
         [TYPE_MACRO     macro]
         [LIBRARY_MACRO  macro]
     )
+
+    SHARED: build shared library, otherwise build static library if not set
+    AUTOGEN: set CMAKE_AUTOMOC, CMAKE_AUTOUIC, CMAKE_AUTORCC
+    SKIP_INSTALL: skip install the test target
+    SKIP_EXPORT: skip export the test target to installed cmake package
+    NAME: set output file name and name property in Windows RC, which is same as target name by default
+    VERSION: set version property in Windows RC, which is same as `PROJECT_VERSION` by default
+    DESCRIPTION: set description property in Windows RC, which is same as target name by default
+    VENDOR: set vendor with default copyright string in Windows RC, which would be `OpenVPI` by defult
+    COPYRIGHT: set custom copyright string in Windows RC, and VENDOR will be ignored
+    MACRO_PREFIX: set a prefered prefix to define library type macro and library internal macro,
+                  otherwise the fallback prefix is same as NAME value if NAME is set,
+                  otherwise the fallback prefix is same as target name
+    TYPE_MACRO: set custom library type macro, otherwise the fallback is `prefix`_STATIC or `prefix`_SHARED
+    LIBRARY_MACRO: set custom library internal macro, otherwise the fallback is `prefix`_LIBRARY
 ]] #
 function(ck_add_library _target)
     set(options AUTOGEN SKIP_INSTALL SKIP_EXPORT)
@@ -311,7 +333,7 @@ function(ck_add_library _target)
 endfunction()
 
 #[[
-Add a library plugin, name must be in the form of XXX__XXX.
+Add a library plugin, target name must be in the form of XXX__XXX.
 
     ck_add_library_plugin(<target>
         [SKIP_EXPORT]
@@ -323,6 +345,8 @@ Add a library plugin, name must be in the form of XXX__XXX.
         [TYPE_MACRO     macro]
         [LIBRARY_MACRO  macro]
     )
+
+    Check `ck_add_library` for arguments' usage.
 ]] #
 function(ck_add_library_plugin _target _category)
     set(options SKIP_EXPORT)
@@ -413,6 +437,12 @@ Add an application, need to specify an entry library.
         [DESCRIPTION    desc]
         [ENTRY_NAME     name]
     )
+
+    ICO: set Windows icon file (Required)
+    ICNS: set Mac icon file (Required)
+    ENTRY_NAME: set a custom function name to pass "argc" and "argv", the default is "main_entry"
+
+    Check `ck_add_library` for arguments' usage.
 ]] #
 function(ck_add_application _target _entry_library)
     set(options SKIP_EXPORT)
@@ -514,21 +544,27 @@ function(ck_add_application _target _entry_library)
 endfunction()
 
 #[[
-Add an application plugin, name must be in the form of XXX__XXX.
+Add an application plugin, target name must be in the form of XXX__XXX.
 
     ck_add_application_plugin(<target>
         [SKIP_EXPORT]   [NO_PLUGIN_JSON]
         [CATEGORY       category]
+        [PLUGIN_JSON    plugin.json.in]
+        [COMPAT_VERSION compat_version]
         [NAME           name] 
         [VERSION        version] 
         [DESCRIPTION    desc]
         [VENDOR         vendor]
-        [PLUGIN_JSON    plugin.json.in]
-        [COMPAT_VERSION compat_version]
         [MACRO_PREFIX   prefix]
         [TYPE_MACRO     macro]
         [LIBRARY_MACRO  macro]
     )
+
+    NO_PLUGIN_JSON: skip configuring the plugin.json.in
+    CATEGORY: set the sub-directory name for plugin to output, which is same as `PROJECT_NAME` by default
+    PLUGIN_JSON: set the custom plugin.json.in file to configure, otherwise configure the plugin.json.in in currect directory
+
+    Check `ck_add_library` and `ck_configure_plugin_metadata` for arguments' usage.
 ]] #
 function(ck_add_application_plugin _target)
     set(options SKIP_EXPORT)
@@ -642,6 +678,11 @@ Add an application plugin, name must be in the form of XXX::XXX.
         [COMPAT_VERSION     compat_version  ]
         [VENDOR             vendor          ]
     )
+
+    NAME: to be removed
+    COMPAT_VERSION: set the PLUGIN_METADATA_COMPAT_VERSION variable as compatible version
+    VERSION: set the PLUGIN_METADATA_VERSION variable as version
+    VENDOR: set the PLUGIN_METADATA_VENDOR variable as vendor
 ]] #
 function(ck_configure_plugin_metadata _target _plugin_json)
     set(options)
@@ -650,7 +691,7 @@ function(ck_configure_plugin_metadata _target _plugin_json)
     cmake_parse_arguments(FUNC "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
 
     # Set plugin metadata
-    _ck_set_value(_name FUNC_NAME ${PROJECT_NAME})
+    _ck_set_value(_name FUNC_NAME ${PROJECT_NAME}) # to be removed
     _ck_set_value(_version FUNC_VERSION ${PROJECT_VERSION})
     _ck_set_value(_compat_version FUNC_COMPAT_VERSION "0.0.0.0")
     _ck_set_value(_vendor FUNC_VENDOR "ChorusKit")
@@ -719,6 +760,14 @@ Add a resources copying command after building the application.
         SRC <files1...> DEST <dir1>
         SRC <files2...> DEST <dir2> ...
     )
+
+    SKIP_BUILD: don't execute copy command when building
+    SKIP_INSTALL: don't execute copy command when installing
+    BASE_SHARE_DIR: use "share" directory as the base directory if destination is a relative path,
+                    otherwise the base directory is set as "share/`target`"
+    
+    SRC: source files or directories, use "*" to collect all items in directory
+    DEST: destination directory, can be a generator expression
 ]] #
 function(ck_add_application_files _target)
     set(options SKIP_BUILD SKIP_INSTALL BASE_SHARE_DIR)
@@ -764,6 +813,9 @@ Add a resources copying command for whole project.
         SRC <files1...> DEST <dir1>
         SRC <files2...> DEST <dir2> ...
     )
+
+    SRC: source files or directories, use "*" to collect all items in directory
+    DEST: destination directory, can be a generator expression
 ]] #
 function(ck_add_shared_files)
     set(options SKIP_BUILD SKIP_INSTALL)
@@ -1305,11 +1357,24 @@ endfunction()
 #[[
 Install all headers in specified directory.
 
-    ck_install_headers(_dir)
+    ck_install_headers([directory])
+
+    The default directory is current directory.
 ]] #
-function(ck_install_headers _dir)
+function(ck_install_headers)
     if(NOT CK_ENABLE_DEVEL)
         return()
+    endif()
+
+    set(_dir)
+
+    foreach(_item ${ARGN})
+        set(_dir ${_item})
+        break()
+    endforeach()
+
+    if(NOT _dir)
+        set(_dir .)
     endif()
 
     get_filename_component(_abs_dir ${_dir} ABSOLUTE)

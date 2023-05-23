@@ -42,4 +42,4 @@ ck_add_attached_files(${_plugin}
     SRC Res/configs DEST .
 )
 
-ck_install_headers(.)
+ck_install_headers()

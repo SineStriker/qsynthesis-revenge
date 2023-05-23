@@ -3,6 +3,8 @@
 
 #include "DspxDocument.h"
 
+#include <Collections/QMChronSet.h>
+
 namespace Core {
 
     class DspxDocumentPrivate {
@@ -17,6 +19,9 @@ namespace Core {
 
         bool hasWatch;
         mutable QString untitledFileName;
+
+        QMChronSet<IDspxObserver *> observers;
+        QsApi::AceTreeModel *model;
 
         void unshiftToRecent();
     };

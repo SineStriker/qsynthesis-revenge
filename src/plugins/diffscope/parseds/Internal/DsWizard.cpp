@@ -28,7 +28,7 @@ namespace IEMgr ::Internal {
         return QString("%1(%2)").arg(tr("OpenVPI Ds File"), "*.ds") + ";;" + IWizardFactory::filter(feature);
     }
 
-    bool DsWizard::runWizard(Feature feature, IWizardContext *context) {
+    bool DsWizard::runWizard(Feature feature, const QString &path, QWidget *parent) {
         switch (feature) {
             case IWizardFactory::ImportProject: {
                 qDebug() << "import ds";

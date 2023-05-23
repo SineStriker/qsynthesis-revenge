@@ -11,11 +11,11 @@ set(ROOT_VCPKG_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../vcpkg)
 if(NOT NOT_QT_CREATOR)
     set(CK_CONSOLE_ON_DEBUG off)
     set(CK_CONSOLE_ON_RELEASE off)
-    set(CK_PROJECT_ROOT_DIR ${CMAKE_CURRENT_SOURCE_DIR}/..)
+    set(CK_PROJECT_ROOT_DIR ${CMAKE_CURRENT_SOURCE_DIR}/..) # Must be set
 endif()
 
-set(CHORUSKIT_REPOSITORY on)
-set(CK_CMAKE_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR})
+set(CHORUSKIT_REPOSITORY on) # Must be set
+set(CK_CMAKE_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}) # Must be set
 include(${ROOT_CMAKE_MODULE_DIR}/ChorusKitAPI.cmake)
 
 # ----------------------------------

@@ -41,9 +41,9 @@ namespace Core {
         void clearRecentDirs();
         QStringList recentDirs() const;
 
-        bool openFileBrowse(IWindowContext *context, DocumentSpec *spec, const QString &path = {}) const;
+        bool openFileBrowse(QWidget *parent, DocumentSpec *spec, const QString &path = {}) const;
 
-        bool saveFileBrowse(IWindowContext *context, IDocument *doc, const QString &path = {}) const;
+        bool saveFileBrowse(QWidget *parent, IDocument *doc, const QString &path = {}) const;
 
     public:
         QString getOpenFileName(QWidget *parent, const QString &title, const QString &filters, const QString &path = {},

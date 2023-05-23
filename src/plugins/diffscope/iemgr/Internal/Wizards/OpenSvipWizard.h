@@ -5,7 +5,7 @@
 
 namespace IEMgr {
 
-    namespace Internal{
+    namespace Internal {
 
         class OpenSvipWizard : public IWizardFactory {
             Q_OBJECT
@@ -16,7 +16,7 @@ namespace IEMgr {
         public:
             Features features() const override;
             QString filter(Feature feature) const override;
-            bool runWizard(Feature feature, IWizardContext *context) override;
+            bool runWizard(Feature feature, const QString &path, QWidget *parent) override;
         };
 
     }

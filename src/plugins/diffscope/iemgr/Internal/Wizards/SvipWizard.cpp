@@ -26,10 +26,10 @@ namespace IEMgr ::Internal {
         return {ImportProject | ExportProject};
     }
 
-    bool SvipWizard::runWizard(Feature feature, IWizardContext *context) {
+    bool SvipWizard::runWizard(Feature feature, const QString &path, QWidget *parent) {
         switch (feature) {
             case IWizardFactory::ImportProject: {
-                QFile file(context->path());
+                QFile file(path);
                 if (!file.open(QIODevice::ReadOnly)) {
                     return false;
                 }

@@ -46,11 +46,11 @@ namespace IEMgr ::Internal {
         return QString("%1(%2)").arg(tr("Standard Midi Files"), suffixes) + ";;" + IWizardFactory::filter(feature);
     }
 
-    bool MidiWizard::runWizard(Feature feature, IWizardContext *context) {
+    bool MidiWizard::runWizard(Feature feature, const QString &path, QWidget *parent) {
         switch (feature) {
             case IWizardFactory::ImportProject: {
                 QDspxModel model;
-                if (!load(context->path(), &model, context->windowHandle()->window())) {
+                if (!load(path, &model, parent)) {
                     return false;
                 }
                 qDebug() << model.content.tracks.size();

@@ -2,8 +2,10 @@
 #define DSPXDOCUMENT_H
 
 #include <CoreApi/IDocument.h>
+#include <ItemModel/AceTreeModel.h>
 
 #include "coreplugin/CoreGlobal.h"
+#include "coreplugin/Interfaces/IDspxObserver.h"
 
 namespace Core {
 
@@ -16,6 +18,12 @@ namespace Core {
         explicit DspxDocument(QObject *parent = nullptr);
         ~DspxDocument();
 
+        bool addObserver(IDspxObserver *observer);
+        bool removeObserver(IDspxObserver *observer);
+
+        QsApi::AceTreeModel *model() const;
+
+    public:
         bool open(const QString &filename) override;
         bool save(const QString &filename) override;
 

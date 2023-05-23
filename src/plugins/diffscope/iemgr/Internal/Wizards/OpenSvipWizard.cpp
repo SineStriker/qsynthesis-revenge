@@ -22,11 +22,13 @@ namespace IEMgr ::Internal {
         return {ImportProject | ExportProject};
     }
 
-    bool OpenSvipWizard::runWizard(Feature feature, IWizardContext *context) {
+    bool OpenSvipWizard::runWizard(Feature feature, const QString &path, QWidget *parent) {
         switch (feature) {
             case IWizardFactory::ImportProject:
                 break;
             case IWizardFactory::ExportProject:
+                break;
+            default:
                 break;
         }
         return false;

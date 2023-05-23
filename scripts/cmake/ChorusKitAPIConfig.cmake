@@ -60,7 +60,8 @@ set(CK_INSTALL_EXPORT ChorusKitTargets)
 # Public configuration
 # ----------------------------------
 # Metadata
-ck_option(CK_CURRENT_VERSION 0.0.1.8)
+# ck_option(CK_CURRENT_VERSION 0.0.1.8)
+ck_option(CHORUSKIT_REPOSITORY off)
 
 # CMake
 ck_option(CK_CMAKE_SOURCE_DIR ${CMAKE_SOURCE_DIR})
@@ -81,7 +82,7 @@ endif()
 # set(CK_CONFIGURE_TIMESTAMP_FILE ${CMAKE_BINARY_DIR}/tmp/timestamp)
 
 # if(EXISTS ${CK_CONFIGURE_TIMESTAMP_FILE})
-#     file(REMOVE ${CK_CONFIGURE_TIMESTAMP_FILE})
+# file(REMOVE ${CK_CONFIGURE_TIMESTAMP_FILE})
 # endif()
 
 # file(WRITE ${CK_CONFIGURE_TIMESTAMP_FILE} "1")
@@ -101,5 +102,12 @@ ck_option(CK_CMAKE_RANDOM_LENGTH 8)
 ck_option(CK_BUILD_TEST on)
 ck_option(CK_ENABLE_BREAKPAD off)
 
-message(STATUS "Build Type: ${CMAKE_BUILD_TYPE}")
+# Messages
+if(CK_ENABLE_DEVEL)
+    set(CK_INSTALL_MODE devel)
+else()
+    set(CK_INSTALL_MODE application)
+endif()
+
+message(STATUS "Build Type: ${CMAKE_BUILD_TYPE}, ${CK_INSTALL_MODE}")
 message(STATUS "Host system: ${CK_PLATFORM_NAME}, ${CMAKE_HOST_SYSTEM}")

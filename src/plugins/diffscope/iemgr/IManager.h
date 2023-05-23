@@ -27,8 +27,8 @@ namespace IEMgr {
         void clearWizards();
 
     public:
-        void runImport(IWizardContext *context);
-        void runExport(IWizardContext *context);
+        void runImport(QWidget *parent, const QString &wizardId = {}, const QString &path = {});
+        void runExport(QWidget *parent, const QString &wizardId = {}, const QString &path = {});
 
         bool isRunning() const;
 

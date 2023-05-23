@@ -281,28 +281,27 @@ namespace Core {
         return d->m_recentDirs;
     }
 
-    bool DocumentSystem::openFileBrowse(IWindowContext *context, DocumentSpec *spec, const QString &path) const {
+    bool DocumentSystem::openFileBrowse(QWidget *parent, DocumentSpec *spec, const QString &path) const {
         Q_D(const DocumentSystem);
         auto filter =
             spec->filter() + ";;" +
             QString("%1(%2)").arg(QApplication::translate("Core::DocumentSystem", "All Files"), QMOs::allFilesFilter());
-        auto paths = getOpenFileNames(context->window(), {}, filter, path);
+        auto paths = getOpenFileNames(parent, {}, filter, path);
         if (paths.isEmpty()) {
             return false;
         }
 
         int cnt = 0;
         for (const auto &item : qAsConst(paths)) {
-            if (spec->open(item, context))
+            if (spec->open(item))
                 cnt++;
         }
 
         return cnt > 0;
     }
 
-    bool DocumentSystem::saveFileBrowse(IWindowContext *context, IDocument *doc, const QString &path) const {
+    bool DocumentSystem::saveFileBrowse(QWidget *parent, IDocument *doc, const QString &path) const {
         Q_D(const DocumentSystem);
-        auto parent = context->window();
         const QString &saveFileName = getSaveAsFileName(doc, path, parent);
         if (!saveFileName.isEmpty()) {
             if (d->m_documentsWithWatch.contains(doc) || d->m_documentsWithoutWatch.contains(doc)) {
@@ -458,8 +457,7 @@ namespace Core {
                 continue;
             }
 
-            IWindowContext ctx(parent ? ICoreBase::instance()->windowSystem()->findWindow(parent->window()) : nullptr);
-            if (rem.spec->recover(rem.logDir, rem.file, &ctx)) {
+            if (rem.spec->recover(rem.logDir, rem.file)) {
                 cnt++;
             }
         }

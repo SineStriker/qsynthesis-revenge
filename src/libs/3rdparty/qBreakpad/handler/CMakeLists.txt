@@ -18,4 +18,4 @@ ck_target_components(${PROJECT_NAME}
     AUTO_INCLUDE_CURRENT
 )
 
-ck_install_headers(.)
+ck_install_headers()

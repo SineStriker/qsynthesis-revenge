@@ -31,6 +31,9 @@ namespace Core {
 
         mutable QReadWriteLock objectListLock;
 
+        void objectAdded(const QString &id, QObject *obj);
+        void aboutToRemoveObject(const QString &id, QObject *obj);
+
         void _q_objectDestroyed();
     };
 

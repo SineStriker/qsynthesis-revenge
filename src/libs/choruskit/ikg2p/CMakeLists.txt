@@ -15,3 +15,5 @@ ck_target_components(${PROJECT_NAME}
     QT_LINKS Core
     AUTO_INCLUDE_CURRENT
 )
+
+ck_install_headers()

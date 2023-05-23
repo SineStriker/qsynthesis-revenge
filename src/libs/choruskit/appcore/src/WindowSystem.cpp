@@ -296,6 +296,9 @@ namespace Core {
 
     IWindow *WindowSystem::findWindow(QWidget *window) const {
         Q_D(const WindowSystem);
+        if (!window)
+            return nullptr;
+        window = window->window();
         return d->windowMap.value(window, nullptr);
     }
 

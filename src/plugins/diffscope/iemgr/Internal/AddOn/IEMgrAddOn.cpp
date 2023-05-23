@@ -71,18 +71,16 @@ namespace IEMgr::Internal {
         exportProjectItem = new ActionItem("iemgr.ExportProject", new QAction(this), this);
         exportAudioItem = new ActionItem("iemgr.ExportAudio", new QAction(this), this);
 
-        connect(importProjectItem->action(), &QAction::triggered, this, [this]() {
-            IWizardContext ctx(windowHandle());
-            IManager::instance()->runImport(&ctx); //
+        connect(importProjectItem->action(), &QAction::triggered, this, [iWin]() {
+            IManager::instance()->runImport(iWin->window(), {}, {}); //
         });
 
-        connect(importAudioItem->action(), &QAction::triggered, this, [this]() {
+        connect(importAudioItem->action(), &QAction::triggered, this, [iWin]() {
             //
         });
 
-        connect(exportProjectItem->action(), &QAction::triggered, this, [this]() {
-            IWizardContext ctx(windowHandle());
-            IManager::instance()->runExport(&ctx); //
+        connect(exportProjectItem->action(), &QAction::triggered, this, [iWin]() {
+            IManager::instance()->runExport(iWin->window(), {}, {}); //
         });
 
         connect(exportAudioItem->action(), &QAction::triggered, this, [this]() {

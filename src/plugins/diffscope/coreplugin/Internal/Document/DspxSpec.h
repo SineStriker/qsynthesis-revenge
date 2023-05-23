@@ -17,10 +17,10 @@ namespace Core {
             QStringList supportedExtensions() const override;
             QString filter() const override;
 
-            bool open(const QString &fileName, IWindowContext *context) override;
+            bool open(const QString &fileName) override;
 
             bool canRecover() const override;
-            bool recover(const QString &logDir, const QString &fileName, IWindowContext *context);
+            bool recover(const QString &logDir, const QString &fileName);
         };
 
     }

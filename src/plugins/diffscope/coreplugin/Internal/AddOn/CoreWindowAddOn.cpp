@@ -85,18 +85,17 @@ namespace Core::Internal {
             helpItem->menu()->addAction(action);
         });
 
-        connect(openFileItem->action(), &QAction::triggered, this, [this]() {
+        connect(openFileItem->action(), &QAction::triggered, this, [iWin, this]() {
             auto docMgr = ICore::instance()->documentSystem();
             auto spec = docMgr->docType(qApp->property("projectDocTypeId").toString());
             if (!spec) {
-                QMessageBox::critical(windowHandle()->window(), ICore::mainTitle(),
-                                      tr("Can't find the default editor of %1 project file!").arg(qApp->applicationName()));
+                QMessageBox::critical(
+                    iWin->window(), ICore::mainTitle(),
+                    tr("Can't find the default editor of %1 project file!").arg(qApp->applicationName()));
                 return;
             }
 
-            auto iWin = windowHandle();
-            IWindowContext ctx(iWin);
-            if (docMgr->openFileBrowse(&ctx, spec)) {
+            if (docMgr->openFileBrowse(iWin->window(), spec)) {
                 if (qApp->property("closeHomeOnOpen").toBool() && iWin->id() == "home") {
                     QTimer::singleShot(0, iWin->window(), &QWidget::close);
                 }

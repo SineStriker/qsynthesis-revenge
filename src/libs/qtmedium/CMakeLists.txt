@@ -19,9 +19,9 @@ function(configure_library)
     set_target_properties(${PROJECT_NAME} PROPERTIES
         QT_TRANSLATE TRUE
     )
+
+    ck_install_headers()
 endfunction()
 
 add_subdirectory(CoreLib)
 add_subdirectory(Widgets)
-
-ck_install_headers(.)

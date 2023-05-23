@@ -42,4 +42,4 @@ ck_add_attached_files(${_plugin}
     SRC ${CMAKE_CURRENT_BINARY_DIR}/Res/translations DEST .
 )
 
-ck_install_headers(.)
+ck_install_headers()

@@ -40,7 +40,7 @@ All applications in this toolset are free softwares and aim to provide the commu
 |    Qt     |   \>=5.15   |   Core, Gui, Widgets, Svg, Network   |
 | Compiler  |  \>=C++17   |        MSVC 2019, GCC, Clang         |
 |   CMake   |   \>=3.17   |        >=3.20 is recommended         |
-|  Python   |   \>=3.6    |                  /                   |
+|  Python   |   \>=3.8    |                  /                   |
 
 
 On Windows, compiling with MinGW is not tested.

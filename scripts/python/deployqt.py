@@ -33,9 +33,9 @@ def main():
         if args.verbose:
             print(va_args)
 
-    print("Selected plugins destination:", args.plugindir)
-    print("Selected libraries destination:", args.libdir)
-    print("Working directory:", os.getcwd())
+    print_verbose("Selected plugins destination:", args.plugindir)
+    print_verbose("Selected libraries destination:", args.libdir)
+    print_verbose("Working directory:", os.getcwd())
 
     # Get platform
     os_name, arch_name = get_platform()

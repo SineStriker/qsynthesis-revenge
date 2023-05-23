@@ -2,6 +2,7 @@ include_guard(GLOBAL)
 
 include(${CMAKE_CURRENT_LIST_DIR}/ChorusKitAPIConfig.cmake)
 
+# Find python, git, qmake for further usage
 if(CHORUSKIT_REPOSITORY)
     if(WIN32)
         set(CK_SHARED_LIBRARY_PATTERN "*.dll")
@@ -44,20 +45,6 @@ if(CHORUSKIT_REPOSITORY)
             set(QT_QMAKE_EXECUTABLE)
             message(WARNING "Qmake not found")
         endif()
-
-    # if(LINUX)
-    # message(STATUS "Qt deploy: ${CK_PYTHON_SCRIPTS_DIR}/linuxdeployqt.py")
-    # elseif(QT_QMAKE_EXECUTABLE)
-    # get_filename_component(QT_BIN_DIRECTORY "${QT_QMAKE_EXECUTABLE}" DIRECTORY)
-    # find_program(QT_DEPLOY_EXECUTABLE NAMES windeployqt macdeployqt HINTS "${QT_BIN_DIRECTORY}")
-
-    # if(EXISTS "${QT_DEPLOY_EXECUTABLE}")
-    # message(STATUS "Qt deploy found: ${QT_DEPLOY_EXECUTABLE}")
-    # else()
-    # set(QT_DEPLOY_EXECUTABLE)
-    # message(WARNING "Qt deploy not found")
-    # endif()
-    # endif()
     else()
         message(WARNING "QtCore component not found")
     endif()
@@ -460,7 +447,7 @@ function(_ck_attach_mac_bundle _target)
     cmake_parse_arguments(FUNC "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
 
     _ck_set_value(_app_name FUNC_NAME ${_target})
-    _ck_set_value(_app_version FUNC_VERSION "0.0.0.0")
+    _ck_set_value(_app_version FUNC_VERSION "${PROJECT_VERSION}")
     _ck_set_value(_app_desc FUNC_DESCRIPTION ${_app_name})
     _ck_set_value(_app_copyright FUNC_COPYRIGHT ${_target})
 

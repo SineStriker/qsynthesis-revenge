@@ -72,8 +72,7 @@ namespace Core {
         // TODO: add editor selection method
         auto spec = specs.front();
 
-        IWindowContext ctx(this);
-        if (spec->open(path, &ctx)) {
+        if (spec->open(path)) {
             if (qApp->property("closeHomeOnOpen").toBool() && id() == "home") {
                 QTimer::singleShot(0, window(), &QWidget::close);
             }
