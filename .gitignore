@@ -91,6 +91,7 @@ cache
 out/
 CMakeSettings.json
 /vcpkg
+/data
 
 *.sublime-*
 setup-vcpkg.json
