@@ -159,6 +159,7 @@ namespace Core {
 
         QList<ActionInsertRule> rules;
         QList<QKeySequence> shortcuts;
+        QString commandName;
         bool isGroup = ctx2.name == "menu" || ctx2.name == "group";
         if (!isGroup) {
             if (ctx2.name != "action") {
@@ -168,6 +169,11 @@ namespace Core {
             QString key = ctx2.properties.value("shortcut");
             if (!key.isEmpty()) {
                 shortcuts.append(QKeySequence(key));
+            }
+
+            key = ctx2.properties.value("command");
+            if (!key.isEmpty() && commandName.isEmpty()) {
+                commandName = key;
             }
         }
 
@@ -238,6 +244,7 @@ namespace Core {
             if (it == actions.end()) {
                 auto spec = new ActionSpec(id);
                 spec->setShortcuts(shortcuts);
+                spec->setCommandName(commandName);
                 q->addAction(spec);
             }
             // else {

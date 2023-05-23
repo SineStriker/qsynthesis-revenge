@@ -13,6 +13,8 @@ public:
     QTypeFace();
     QTypeFace(const QColor &color, int pixelSize);
     QTypeFace(const QColor &color, double pointSize);
+    QTypeFace(const QList<QColor> &colors, int pixelSize);
+    QTypeFace(const QList<QColor> &colors, double pointSize);
     ~QTypeFace();
 
 private:
@@ -35,12 +37,21 @@ public:
     double weight() const;
     void setWeight(double weight);
 
+    QList<QColor> colors() const;
+    void setColors(const QList<QColor> &colors);
+
+    inline void setColor(const QColor &color) {
+        setColors({color});
+    }
+
     QColor color() const;
-    void setColor(const QColor &color);
+    QColor color2() const;
+    QColor color3() const;
 
 private:
     QFont m_font;
-    QColor m_color;
+
+    QList<QColor> m_colors;
 
     bool m_defaultFont;
     double m_pixelSize;
@@ -53,7 +64,7 @@ public:
     static QLatin1String MetaFunctionName();
 
     friend QDebug operator<<(QDebug debug, const QTypeFace &tf) {
-        debug.noquote().nospace() << "QTypeFace(" << tf.m_color << ", " << tf.m_font << ")";
+        debug.noquote().nospace() << "QTypeFace(" << tf.colors() << ", " << tf.m_font << ")";
         return debug;
     }
 };

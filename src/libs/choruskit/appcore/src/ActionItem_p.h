@@ -34,11 +34,9 @@ namespace Core {
 
         QString commandCategory;
         QString commandName;
-        QString originalCommandName;
+        QString commandDesc;
 
     private:
-        void _q_actionDisplayNameChanged(const QString &displayName);
-        void _q_actionDescriptionChanged(const QString &description);
         void _q_actionShortcutsChanged(const QList<QKeySequence> &shortcuts);
     };
 

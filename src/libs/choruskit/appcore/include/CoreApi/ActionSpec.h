@@ -20,18 +20,13 @@ namespace Core {
     public:
         QString id() const;
 
-        QString displayName() const;
-        void setDisplayName(const QString &displayName);
-
-        QString description() const;
-        void setDescription(const QString &description);
+        QString commandName() const;
+        void setCommandName(const QString &name);
 
         QList<QKeySequence> shortcuts() const;
         void setShortcuts(const QList<QKeySequence> &shortcuts);
 
     signals:
-        void displayNameChanged(const QString &displayName);
-        void descriptionChanged(const QString &description);
         void shortcutsChanged(const QList<QKeySequence> &shortcuts);
 
     protected:

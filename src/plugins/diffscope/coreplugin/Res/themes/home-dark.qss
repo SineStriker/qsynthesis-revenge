@@ -18,6 +18,7 @@ CNavFrame#home-frame>QSplitter>QFrame#right-frame {
     background-color: transparent;
 }
 
+
 /* Top Buttons */
 
 CTabButton#home-title-button {
@@ -32,6 +33,7 @@ CTabButton#home-title-button {
     border: none;
     text-align: left;
 }
+
 
 /* Nav Buttons */
 
@@ -165,19 +167,19 @@ Core--Internal--HomeRecentBottomFrame>QsApi--FileListWidget {
     border: none;
     background-color: transparent;
     qproperty-styleData: qvariants(/* styleData */
-    qtypeface(transparent, 1), /* idleType */
-    qtypeface(rgba(255, 255, 255, 5%), 1), /* selectType */
+    qtypeface((transparent, rgba(255, 255, 255, 10%)), 1), /* idleType */
     qtypeface(transparent, 1), /* underline */
-    qtypeface(#E0E0E0, 17px), /* fileType */
+    qtypeface(#E0E0E0, 15px), /* fileType */
     qtypeface(#909090, 15px), /* locType */
     qtypeface(#909090, 15px), /* dateType */
-    qmargins(10px, 10px, 10px, 1.25px), /* fileMargins */
-    qmargins(10px, 1.25px, 10px, 10px), /* locMargins */
+    qmargins(10px, 5px, 10px, 1.25px), /* fileMargins */
+    qmargins(10px, 1.25px, 10px, 5px), /* locMargins */
     qmargins(10px, 10px, 20px, 10px), /* dateMargins */
     qmargins(20px, 10px, 10px, 10px), /* iconMargins */
-    qmargins(3px, 10px, 3px, 10px), /* margins */
+    qmargins(3px, 5px, 3px, 5px), /* margins */
     );
 }
+
 
 /* Home Recovery Widget */
 

@@ -1,7 +1,8 @@
 #ifndef ICOREWINDOW_H
 #define ICOREWINDOW_H
 
-#include "CoreApi/IWindow.h"
+#include <CoreApi/IWindow.h>
+#include <Widgets/CommandPalette.h>
 
 #include "coreplugin/CoreGlobal.h"
 
@@ -22,14 +23,16 @@ namespace Core {
         QStatusBar *statusBar() const override;
         void setStatusBar(QStatusBar *statusBar) override;
 
-        QString correctWindowTitle(const QString &title) const override;
-
     public:
+        QsApi::CommandPalette *commandPalette() const;
+
         Q_INVOKABLE void openFile(const QString &path);
 
     protected:
         ICoreWindow(const QString &id, QObject *parent = nullptr);
         ~ICoreWindow();
+
+        QString correctWindowTitle(const QString &title) const override;
 
         QWidget *createWindow(QWidget *parent) const override;
 

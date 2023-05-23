@@ -4,12 +4,12 @@
         "priority": 10
     },
     "stylesheets": {
-        "Zhibin - Dark": {
+        "Visual Studio Code - Dark": {
             "QsApi::NativeWindow": {
                 "file": "window-bar-dark.qss"
             }
         },
-        "Zhibin - Light": {
+        "Visual Studio Code - Light": {
             "QsApi::NativeWindow": {
                 "file": "window-bar-light.qss"
             }

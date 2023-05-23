@@ -15,8 +15,7 @@ namespace QsApi {
 
         TitleListItemDelegate *q_ptr;
 
-        QTypeFace m_idleType;
-        QTypeFace m_selectType;
+        QTypeFace m_backgroundType;
         QTypeFace m_underline;
 
         QTypeFace m_fileType;

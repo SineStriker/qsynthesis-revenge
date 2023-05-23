@@ -57,11 +57,8 @@ namespace Core {
         void setAutoDelete(bool autoDelete);
 
     public:
-        QString commandCategory() const;
-        void setCommandCategory(const QString &commandCategory);
-
-        QString originalCommandName() const;
-        void setOriginalCommandName(const QString &originalCommandName);
+        QString commandDescription() const;
+        void setCommandDescription(const QString &originalCommandName);
 
         QString commandName() const;
         void setCommandName(const QString &commandName);

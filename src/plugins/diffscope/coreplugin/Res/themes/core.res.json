@@ -14,7 +14,7 @@
                 }
             ]
         },
-        "Zhibin - Dark": {
+        "Visual Studio Code - Dark": {
             "Global": {
                 "file": "global-dark.qss"
             },
@@ -25,7 +25,7 @@
                 "file": "project-dark.qss"
             }
         },
-        "Zhibin - Light": {
+        "Visual Studio Code - Light": {
             "Global": {
                 "file": "global-light.qss"
             },

@@ -12,13 +12,29 @@ QTypeFace::QTypeFace() {
 }
 
 QTypeFace::QTypeFace(const QColor &color, int pixelSize) {
-}
-
-QTypeFace::QTypeFace(const QColor &color, double width) {
     init();
     setColor(color);
-    setPointSize(width);
+    setPixelSize(pixelSize);
 }
+
+QTypeFace::QTypeFace(const QColor &color, double pointSize) {
+    init();
+    setColor(color);
+    setPointSize(pointSize);
+}
+
+QTypeFace::QTypeFace(const QList<QColor> &colors, int pixelSize) {
+    init();
+    setColors(colors);
+    setPixelSize(pixelSize);
+}
+
+QTypeFace::QTypeFace(const QList<QColor> &colors, double pointSize) {
+    init();
+    setColors(colors);
+    setPointSize(pointSize);
+}
+
 
 QTypeFace::~QTypeFace() {
 }
@@ -34,7 +50,7 @@ void QTypeFace::init() {
 
 QStringList QTypeFace::toStringList() const {
     return {MetaFunctionName(), QString("%1,%2%3,%4")
-                                    .arg(m_color.name(),
+                                    .arg(color().name(),
                                          (m_font.pixelSize() > 0) ? QString::number(m_font.pixelSize())
                                                                   : QString::number(m_font.pointSizeF()),
                                          QLatin1String(PixelSizeUnit), m_font.toString())};
@@ -84,12 +100,24 @@ void QTypeFace::setWeight(double weight) {
     m_font.setWeight((weight > 0 && weight < 100) ? weight : 1);
 }
 
-QColor QTypeFace::color() const {
-    return m_color;
+QList<QColor> QTypeFace::colors() const {
+    return m_colors;
 }
 
-void QTypeFace::setColor(const QColor &color) {
-    m_color = color;
+void QTypeFace::setColors(const QList<QColor> &colors) {
+    m_colors = colors;
+}
+
+QColor QTypeFace::color() const {
+    return m_colors.isEmpty() ? QColor() : m_colors.front();
+}
+
+QColor QTypeFace::color2() const {
+    return m_colors.size() < 2 ? color() : m_colors.at(1);
+}
+
+QColor QTypeFace::color3() const {
+    return m_colors.size() < 3 ? color2() : m_colors.at(2);
 }
 
 QTypeFace QTypeFace::fromStringList(const QStringList &stringList) {
@@ -101,11 +129,21 @@ QTypeFace QTypeFace::fromStringList(const QStringList &stringList) {
         if (!content.isEmpty()) {
             QTypeFace tf;
 
-            QString strColor = content.front();
+            QString strColor = content.front().simplified();
+            if (strColor.startsWith('(') && strColor.endsWith(')')) {
+                QStringList colorStrings = SplitStringByComma(strColor.mid(1, strColor.size() - 2));
+                QList<QColor> colors;
+                for (const auto &item : qAsConst(colorStrings)) {
+                    colors.append(QMCss::CssStringToColor(item.simplified()));
+                }
+                tf.setColors(colors);
+            } else {
+                tf.setColors({QMCss::CssStringToColor(strColor)});
+            }
+
             int pixelSize = -1;
             double pointSize = -1;
             int weight = -1;
-            tf.setColor(QMCss::CssStringToColor(strColor));
 
             if (content.size() > 1) {
                 QString strPixel = content.at(1);

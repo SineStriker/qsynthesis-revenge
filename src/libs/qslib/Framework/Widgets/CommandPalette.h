@@ -5,9 +5,10 @@
 #include <QVBoxLayout>
 
 #include <QPixelSize.h>
+#include <QTypeList.h>
 
-#include "Widgets/BaseContainer.h"
 #include "QsFrameworkGlobal.h"
+#include "Widgets/BaseContainer.h"
 
 namespace QsApi {
 
@@ -17,6 +18,7 @@ namespace QsApi {
         Q_OBJECT
         Q_DECLARE_PRIVATE(CommandPalette)
         Q_LAYOUT_PROPERTY_DELCARE
+        Q_PROPERTY(QTypeList styleData READ styleData WRITE setStyleData NOTIFY styleDataChanged)
 
     public:
         explicit CommandPalette(QWidget *parent = nullptr);
@@ -33,19 +35,31 @@ namespace QsApi {
         int currentRow() const;
         void setCurrentRow(int row);
 
+        QString filterHint() const;
+        void setFilterHint(const QString &hint);
+
         QString filterKeyword() const;
         void setFilterKeyword(const QString &keyword);
 
+    public:
+        QTypeList styleData() const;
+        void setStyleData(const QTypeList &list);
+
     public slots:
+        void start();
         void activate(int index);
         void abandon();
 
     signals:
         void activated(int index);
-        void abandoned();
+        void itemActivated(QListWidgetItem *item);
+
+        void currentRowChanged(int role);
+        void currentItemChanged(QListWidgetItem *item);
 
         void filterKeywordChanged(const QString &text);
-        void currentRowChanged(int role);
+
+        void styleDataChanged();
 
     protected:
         bool event(QEvent *event) override;

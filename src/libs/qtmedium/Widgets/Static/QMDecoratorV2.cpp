@@ -118,7 +118,7 @@ QMDecoratorV2Private::~QMDecoratorV2Private() {
 }
 
 void QMDecoratorV2Private::init() {
-    currentTheme = "Zhibin - Dark";
+    currentTheme = "Visual Studio Code - Dark";
 }
 
 struct QssItem {

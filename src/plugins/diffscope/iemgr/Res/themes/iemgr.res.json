@@ -4,7 +4,7 @@
         "priority": 10
     },
     "stylesheets": {
-        "Zhibin - Dark": {
+        "Visual Studio Code - Dark": {
             "iemgr.ImportButton": {
                 "content": "qproperty-iconUp: svg(\":/svg/home/import-file.svg\", #FFFFFF);"
             },
@@ -12,7 +12,7 @@
                 "file": "import-dialog-dark.qss"
             }
         },
-        "Zhibin - Light": {
+        "Visual Studio Code - Light": {
             "iemgr.ImportButton": {
                 "content": "qproperty-iconUp: svg(\":/svg/home/import-file.svg\", #FFFFFF);"
             },

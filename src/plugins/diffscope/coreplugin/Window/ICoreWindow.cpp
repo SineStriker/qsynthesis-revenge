@@ -50,8 +50,9 @@ namespace Core {
         qobject_cast<Internal::MainWindow *>(window())->setStatusBar(statusBar);
     }
 
-    QString ICoreWindow::correctWindowTitle(const QString &title) const {
-        return IWindow::correctWindowTitle(ICore::displayTitle(title));
+    QsApi::CommandPalette *ICoreWindow::commandPalette() const {
+        Q_D(const ICoreWindow);
+        return d->cp;
     }
 
     void ICoreWindow::openFile(const QString &path) {
@@ -83,6 +84,10 @@ namespace Core {
     }
 
     ICoreWindow::~ICoreWindow() {
+    }
+
+    QString ICoreWindow::correctWindowTitle(const QString &title) const {
+        return IWindow::correctWindowTitle(ICore::displayTitle(title));
     }
 
     QWidget *ICoreWindow::createWindow(QWidget *parent) const {

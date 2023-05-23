@@ -201,6 +201,10 @@ private:
 int main_entry(int argc, char *argv[]) {
     QApplication a(argc, argv);
 
+#ifdef Q_OS_WINDOWS
+    a.setFont(QFont("Microsoft YaHei"));
+#endif
+
     // Get application information from env
     QString hint;
     QString vstiAddr;
@@ -319,8 +323,10 @@ int main_entry(int argc, char *argv[]) {
     QString userSettingPath = host.appDataDir();
     QString systemSettingPath = host.appShareDir();
 
-    loader.setSettingsPath(QSettings::UserScope, QString("%1/%2.settings.json").arg(userSettingPath, qApp->applicationName()));
-    loader.setSettingsPath(QSettings::SystemScope, QString("%1/%2.settings.json").arg(systemSettingPath, qApp->applicationName()));
+    loader.setSettingsPath(QSettings::UserScope,
+                           QString("%1/%2.settings.json").arg(userSettingPath, qApp->applicationName()));
+    loader.setSettingsPath(QSettings::SystemScope,
+                           QString("%1/%2.settings.json").arg(systemSettingPath, qApp->applicationName()));
 
     SplashScreen splash;
     g_splash = &splash;
@@ -370,10 +376,10 @@ int main_entry(int argc, char *argv[]) {
     PluginManager pluginManager;
     pluginManager.setPluginIID(pluginIID);
 
-    pluginManager.setSettings(
-        new QSettings(QString("%1/%2.plugins.ini").arg(userSettingPath, qApp->applicationName()), QSettings::IniFormat));
-    pluginManager.setGlobalSettings(
-        new QSettings(QString("%1/%2.plugins.ini").arg(systemSettingPath, qApp->applicationName()), QSettings::IniFormat));
+    pluginManager.setSettings(new QSettings(QString("%1/%2.plugins.ini").arg(userSettingPath, qApp->applicationName()),
+                                            QSettings::IniFormat));
+    pluginManager.setGlobalSettings(new QSettings(
+        QString("%1/%2.plugins.ini").arg(systemSettingPath, qApp->applicationName()), QSettings::IniFormat));
 
     QStringList pluginPaths = [&]() {
         QStringList rc;

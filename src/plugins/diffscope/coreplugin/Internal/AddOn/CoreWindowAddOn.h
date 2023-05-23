@@ -5,6 +5,8 @@
 #include <CoreApi/DocumentSpec.h>
 #include <CoreApi/IWindowAddOn.h>
 
+#include <Collections/QMChronSet.h>
+
 namespace Core {
 
     namespace Internal {
@@ -22,6 +24,8 @@ namespace Core {
             void reloadStrings();
             void initActions();
 
+            QMChronSet<ActionItem *> mostRecentActions;
+
         protected:
             ActionItem *fileItem;
             ActionItem *helpItem;
@@ -38,6 +42,10 @@ namespace Core {
             ActionItem *aboutPluginsItem;
             ActionItem *aboutAppItem;
             ActionItem *aboutQtItem;
+
+            ActionItem *welcomeGroupItem;
+            ActionItem *showHomeItem;
+            ActionItem *findActionItem;
 
         protected slots:
             void reloadRecentMenu();

@@ -15,13 +15,13 @@ namespace QsApi {
 
         void init();
 
-        QTypeList styleData_helper() const;
-        void setStyleData_helper(const QTypeList &list);
-
         FileListWidget *q_ptr;
 
         TitleListItemDelegate *m_delegate;
         QSize oldContentsSize;
+
+        QTypeList styleData_helper() const;
+        void setStyleData_helper(const QTypeList &list);
 
         template <class T>
         inline void decodeStyle(const QVariant &var, void (TitleListItemDelegate::*func)(const T &)) {

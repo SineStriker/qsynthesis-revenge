@@ -27,8 +27,7 @@ namespace QsApi {
 
     QTypeList FileListWidgetPrivate::styleData_helper() const {
         return {
-            QVariant::fromValue(m_delegate->idleShape()),
-            QVariant::fromValue(m_delegate->selectShape()),
+            QVariant::fromValue(m_delegate->backgroundShape()),
             QVariant::fromValue(m_delegate->underlineShape()),
             QVariant::fromValue(m_delegate->titleShape()),
             QVariant::fromValue(m_delegate->subtitleShape()),
@@ -44,11 +43,10 @@ namespace QsApi {
 
     void FileListWidgetPrivate::setStyleData_helper(const QTypeList &list) {
         Q_Q(FileListWidget);
-        if (list.size() >= 11) {
+        if (list.size() >= 10) {
             int i = 0;
 
-            decodeStyle<QTypeFace>(list.at(i++), &TitleListItemDelegate::setIdleShape);
-            decodeStyle<QTypeFace>(list.at(i++), &TitleListItemDelegate::setSelectShape);
+            decodeStyle<QTypeFace>(list.at(i++), &TitleListItemDelegate::setBackgroundShape);
             decodeStyle<QTypeFace>(list.at(i++), &TitleListItemDelegate::setUnderlineShape);
             decodeStyle<QTypeFace>(list.at(i++), &TitleListItemDelegate::setTitleShape);
             decodeStyle<QTypeFace>(list.at(i++), &TitleListItemDelegate::setSubtitleShape);
@@ -59,24 +57,6 @@ namespace QsApi {
             decodeStyle<QMargins>(list.at(i++), &TitleListItemDelegate::setDescriptionMargins);
             decodeStyle<QMargins>(list.at(i++), &TitleListItemDelegate::setIconMargins);
             decodeStyle<QMargins>(list.at(i++), &TitleListItemDelegate::setMargins);
-
-            auto shape = m_delegate->titleShape();
-            if (shape.isDefaultFont()) {
-                shape.setFont(q->font());
-                m_delegate->setTitleShape(shape);
-            }
-
-            shape = m_delegate->subtitleShape();
-            if (shape.isDefaultFont()) {
-                shape.setFont(q->font());
-                m_delegate->setSubtitleShape(shape);
-            }
-
-            shape = m_delegate->descriptionShape();
-            if (shape.isDefaultFont()) {
-                shape.setFont(q->font());
-                m_delegate->setDescriptionShape(shape);
-            }
 
             q->update();
 

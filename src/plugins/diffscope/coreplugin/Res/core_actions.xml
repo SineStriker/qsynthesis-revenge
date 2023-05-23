@@ -3,20 +3,24 @@
     <context id="home.MainMenu" prefix="core.">
         <menu id="File">
             <group id="OpenGroup">
-                <action id="NewFile" shortcut="Ctrl+N"/>
-                <action id="OpenFile" shortcut="Ctrl+O"/>
+                <action id="NewFile" command="Create: New File" shortcut="Ctrl+N"/>
+                <action id="OpenFile" command="File: Open File" shortcut="Ctrl+O"/>
                 <menu id="OpenRecent"/>
             </group>
             <group id="PreferenceGroup">
-                <action id="Settings"/>
+                <action id="Settings" command="Preferences: Settings"/>
             </group>
         </menu>
 
         <menu id="Help">
+            <group id="WelcomeGroup">
+                <action id="ShowHome" command="Show Home"/>
+                <action id="FindAction" command="Show All Actions" shortcut="Ctrl+Shift+P"/>
+            </group>
             <group id="AboutGroup">
-                <action id="AboutPlugins"/>
-                <action id="AboutApp"/>
-                <action id="AboutQt"/>
+                <action id="AboutPlugins" command="About: About Plugins"/>
+                <action id="AboutApp" command="About: About Application"/>
+                <action id="AboutQt" command="About: About Qt"/>
             </group>
         </menu>
     </context>
@@ -24,30 +28,31 @@
     <context id="project.MainMenu" prefix="core.">
         <menu id="File">
             <group id="OpenGroup">
-                <action id="NewFile" shortcut="Ctrl+N"/>
-                <action id="OpenFile" shortcut="Ctrl+O"/>
+                <action id="NewFile" command="Create: New File" shortcut="Ctrl+N"/>
+                <action id="OpenFile" command="File: Open File" shortcut="Ctrl+O"/>
                 <menu id="OpenRecent"/>
             </group>
             <group id="SaveGroup">
-                <action id="SaveFile" shortcut="Ctrl+S"/>
-                <action id="SaveAsFile" shortcut="Ctrl+Shift+S"/>
+                <action id="SaveFile" command="File: Save File" shortcut="Ctrl+S"/>
+                <action id="SaveAsFile" command="File: Save As File" shortcut="Ctrl+Shift+S"/>
             </group>
             <group id="PreferenceGroup">
-                <action id="Settings"/>
+                <action id="Settings" command="Preferences: Settings"/>
             </group>
             <group id="ExitGroup">
-                <action id="CloseFile"/>
+                <action id="CloseFile" command="File: Close File"/>
             </group>
         </menu>
 
         <menu id="Help">
             <group id="WelcomeGroup">
-                <action id="ShowHome"/>
+                <action id="ShowHome" command="Show Home"/>
+                <action id="FindAction" command="Show All Actions" shortcut="Ctrl+Shift+P"/>
             </group>
             <group id="AboutGroup">
-                <action id="AboutPlugins"/>
-                <action id="AboutApp"/>
-                <action id="AboutQt"/>
+                <action id="AboutPlugins" command="About: About Plugins"/>
+                <action id="AboutApp" command="About: About Application"/>
+                <action id="AboutQt" command="About: About Qt"/>
             </group>
         </menu>
     </context>

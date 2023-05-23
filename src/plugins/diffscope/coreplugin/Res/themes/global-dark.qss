@@ -67,7 +67,10 @@ QMenu[core-style=true]::separator {
     margin: 6px;
 }
 
+
 /* QScrollBar */
+
+
 /* QScrollBar */
 
 CScrollArea {
@@ -111,7 +114,6 @@ QScrollBar::handle:hover {
     background: rgba(255, 255, 255, 0.5);
 }
 
-
 QScrollBar::handle:pressed {
     background: rgba(255, 255, 255, 0.4);
 }
@@ -148,4 +150,54 @@ QScrollBar::sub-line {
 QScrollBar::add-line {
     background: transparent;
     width: 0px;
+}
+
+
+/* CommandPalette */
+
+QsApi--CommandPalette {
+    background-color: transparent;
+    min-width: 600px;
+    min-height: 400px;
+    qproperty-layoutMargins: 10px;
+    qproperty-layoutSpacing: 12px;
+    qproperty-wallpaper: #252526;
+    qproperty-margins: qmargins(0, 0, 0, 0);
+    /* border-top: 10px solid qlineargradient(y0:0, y1:1, stop: 0 #ECECEC, stop: 1 transparent); */
+    border-top: none;
+    border-left: 8px solid qlineargradient(x0: 0, x1: 1, stop: 0 rgba(0, 0, 0, 25%), stop: 1 transparent);
+    border-bottom: 8px solid qlineargradient(y0: 0, y1: 1, stop: 0 transparent, stop: 1 rgba(0, 0, 0, 25%));
+    border-right: 8px solid qlineargradient(x0: 0, x1: 1, stop: 0 transparent, stop: 1 rgba(0, 0, 0, 25%));
+    qproperty-styleData: qvariants(/* styleData */
+    qtypeface((transparent, rgba(255, 255, 255, 10%), rgba(0, 96, 192, 25%)), 1), /* idleType */
+    qtypeface(transparent, 1), /* underline */
+    qtypeface((#CCCCCC, white), 15px), /* fileType */
+    qtypeface((#909090, #CCCCCC), 15px), /* locType */
+    qtypeface((#909090, #CCCCCC), 15px), /* dateType */
+    qmargins(10px, 5px, 10px, 1.25px), /* fileMargins */
+    qmargins(10px, 1.25px, 10px, 5px), /* locMargins */
+    qmargins(10px, 10px, 20px, 10px), /* dateMargins */
+    qmargins(0), /* iconMargins */
+    qmargins(0), /* margins */
+    );
+}
+
+QsApi--CommandPalette>QListWidget {
+    border: none;
+    outline: 0;
+    background-color: transparent;
+}
+
+QsApi--CommandPalette>QLineEdit {
+    padding: 3px 3px;
+}
+
+QsApi--CommandPalette>QLineEdit {
+    border: 1px solid transparent;
+    color: #CCCCCC;
+    background-color: #3C3C3C;
+}
+
+QsApi--CommandPalette>QLineEdit:focus {
+    border-color: #167FD2;
 }

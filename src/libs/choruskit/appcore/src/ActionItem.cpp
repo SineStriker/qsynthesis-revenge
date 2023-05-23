@@ -28,26 +28,14 @@ namespace Core {
             return false;
         }
 
-        connect(spec, &ActionSpec::displayNameChanged, this, &ActionItemPrivate::_q_actionDisplayNameChanged);
-        connect(spec, &ActionSpec::descriptionChanged, this, &ActionItemPrivate::_q_actionDescriptionChanged);
+        commandName = spec->commandName();
+
         connect(spec, &ActionSpec::shortcutsChanged, this, &ActionItemPrivate::_q_actionShortcutsChanged);
         if (type == ActionItem::Action) {
             action->setShortcuts(spec->shortcuts());
         }
 
         return true;
-    }
-
-    void ActionItemPrivate::_q_actionDisplayNameChanged(const QString &displayName) {
-        if (id == this->id) {
-            //
-        }
-    }
-
-    void ActionItemPrivate::_q_actionDescriptionChanged(const QString &description) {
-        if (id == this->id) {
-            //
-        }
     }
 
     void ActionItemPrivate::_q_actionShortcutsChanged(const QList<QKeySequence> &shortcuts) {
@@ -321,24 +309,14 @@ namespace Core {
         d->autoDelete = autoDelete;
     }
 
-    QString ActionItem::commandCategory() const {
+    QString ActionItem::commandDescription() const {
         Q_D(const ActionItem);
-        return d->commandCategory;
+        return d->commandDesc;
     }
 
-    void ActionItem::setCommandCategory(const QString &commandCategory) {
+    void ActionItem::setCommandDescription(const QString &originalCommandName) {
         Q_D(ActionItem);
-        d->commandCategory = commandCategory;
-    }
-
-    QString ActionItem::originalCommandName() const {
-        Q_D(const ActionItem);
-        return d->originalCommandName;
-    }
-
-    void ActionItem::setOriginalCommandName(const QString &originalCommandName) {
-        Q_D(ActionItem);
-        d->originalCommandName = originalCommandName;
+        d->commandDesc = originalCommandName;
     }
 
     QString ActionItem::commandName() const {

@@ -1,6 +1,8 @@
 #include "CommandPalette.h"
 #include "CommandPalette_p.h"
 
+#include "QMarginsImpl.h"
+
 #include <QApplication>
 #include <QDateTime>
 #include <QDebug>
@@ -20,11 +22,14 @@ namespace QsApi {
     void CommandPalettePrivate::init() {
         Q_Q(CommandPalette);
 
-        clickHandled = true;
+        noClickOutsideEventToHandle = true;
         paletteActive = false;
 
         m_lineEdit = new QLineEdit();
+        m_lineEdit->setObjectName("search-box");
+
         m_listWidget = new QListWidget();
+        m_listWidget->setObjectName("item-list");
 
         m_layout = new QVBoxLayout(q);
         m_layout->addWidget(m_lineEdit);
@@ -38,9 +43,13 @@ namespace QsApi {
         m_lineEdit->installEventFilter(this);
         m_listWidget->installEventFilter(this);
 
+        m_delegate = new TitleListItemDelegate(this);
+        m_listWidget->setItemDelegate(m_delegate);
+
         connect(m_lineEdit, &QLineEdit::textChanged, this, &CommandPalettePrivate::_q_textChanged);
         connect(m_listWidget, &QListWidget::currentRowChanged, this, &CommandPalettePrivate::_q_currentRowChanged);
-        connect(m_listWidget, &QListWidget::itemClicked, this, &CommandPalettePrivate::_q_itemClicked);
+        connect(m_listWidget, &QListWidget::currentItemChanged, this, &CommandPalettePrivate::_q_currentItemChanged);
+        connect(m_delegate, &TitleListItemDelegate::clicked, this, &CommandPalettePrivate::_q_delegateClicked);
 
         q->hide();
     }
@@ -59,6 +68,7 @@ namespace QsApi {
         }
 
         adjustPalette();
+        m_lineEdit->setFocus();
     }
 
     void CommandPalettePrivate::hidePalette() {
@@ -86,33 +96,80 @@ namespace QsApi {
             return;
         }
 
+        q->raise();
         q->adjustSize();
         q->resize(w->width() / 2, w->height() / 2);
-        q->move((w->width() - q->width()) / 2, w->y());
+        q->move((w->width() - q->width()) / 2, 0);
+    }
+
+    void CommandPalettePrivate::clearPalette() {
+        m_lineEdit->clear();
+        m_lineEdit->setPlaceholderText({});
+        m_listWidget->clear();
+    }
+
+    QTypeList CommandPalettePrivate::styleData_helper() const {
+        return {
+            QVariant::fromValue(m_delegate->backgroundShape()),
+            QVariant::fromValue(m_delegate->underlineShape()),
+            QVariant::fromValue(m_delegate->titleShape()),
+            QVariant::fromValue(m_delegate->subtitleShape()),
+            QVariant::fromValue(m_delegate->descriptionShape()),
+
+            QVariant::fromValue(m_delegate->titleMargins()),
+            QVariant::fromValue(m_delegate->subtitleMargins()),
+            QVariant::fromValue(m_delegate->descriptionMargins()),
+            QVariant::fromValue(m_delegate->iconMargins()),
+            QVariant::fromValue(m_delegate->margins()),
+        };
+    }
+
+    void CommandPalettePrivate::setStyleData_helper(const QTypeList &list) {
+        Q_Q(CommandPalette);
+        if (list.size() >= 10) {
+            int i = 0;
+
+            decodeStyle<QTypeFace>(list.at(i++), &TitleListItemDelegate::setBackgroundShape);
+            decodeStyle<QTypeFace>(list.at(i++), &TitleListItemDelegate::setUnderlineShape);
+            decodeStyle<QTypeFace>(list.at(i++), &TitleListItemDelegate::setTitleShape);
+            decodeStyle<QTypeFace>(list.at(i++), &TitleListItemDelegate::setSubtitleShape);
+            decodeStyle<QTypeFace>(list.at(i++), &TitleListItemDelegate::setDescriptionShape);
+
+            decodeStyle<QMargins>(list.at(i++), &TitleListItemDelegate::setTitleMargins);
+            decodeStyle<QMargins>(list.at(i++), &TitleListItemDelegate::setSubtitleMargins);
+            decodeStyle<QMargins>(list.at(i++), &TitleListItemDelegate::setDescriptionMargins);
+            decodeStyle<QMargins>(list.at(i++), &TitleListItemDelegate::setIconMargins);
+            decodeStyle<QMargins>(list.at(i++), &TitleListItemDelegate::setMargins);
+
+            q->update();
+
+            emit q->styleDataChanged();
+        }
     }
 
     bool CommandPalettePrivate::eventFilter(QObject *obj, QEvent *event) {
         Q_Q(CommandPalette);
 
-        if (obj == qApp) {
-            if (event->type() == QEvent::MouseButtonRelease) {
-                if (clickHandled) {
-                    clickHandled = false;
+        if (event->type() == QEvent::MouseButtonPress) {
+            auto e = static_cast<QMouseEvent *>(event);
+            if (q->isVisible() && !q->rect().contains(q->mapFromGlobal(e->globalPos()))) {
+                if (noClickOutsideEventToHandle) {
+                    noClickOutsideEventToHandle = false;
 
-                    auto e = static_cast<QMouseEvent *>(event);
-                    if (q->isVisible() && !q->rect().contains(q->mapFromGlobal(e->globalPos()))) {
-                        QTimer::singleShot(0, this, [this]() {
-                            // 点击了非 QWidget 的区域，执行关闭操作
-                            qDebug() << "Clicked outside the widget, closing..." << QDateTime::currentDateTime();
+                    QTimer::singleShot(0, this, [this, q]() {
+                        // 点击了非 QWidget 的区域，执行关闭操作
+                        // qDebug() << "Clicked outside the widget, closing..." << QDateTime::currentDateTime();
 
-                            hidePalette();
+                        q->abandon();
 
-                            clickHandled = true;
-                        });
-                    }
+                        noClickOutsideEventToHandle = true;
+                    });
                 }
+                goto out;
             }
-        } else if (obj == q->parentWidget()) {
+        }
+
+        if (obj == q->parentWidget()) {
             if (event->type() == QEvent::Resize) {
                 adjustPalette();
             }
@@ -157,6 +214,7 @@ namespace QsApi {
             }
         }
 
+    out:
         return QObject::eventFilter(obj, event);
     }
 
@@ -167,7 +225,7 @@ namespace QsApi {
         for (int i = 0; i < m_listWidget->count(); i++) {
             auto item = m_listWidget->item(i);
             if (text.isEmpty() || item->text().contains(text, Qt::CaseInsensitive) ||
-                item->data(QsApi::DescriptionRole).toString().contains(text, Qt::CaseInsensitive)) {
+                item->data(QsApi::SubtitleRole).toString().contains(text, Qt::CaseInsensitive)) {
                 if (!firstVisibleItem)
                     firstVisibleItem = item;
                 m_listWidget->item(i)->setHidden(false);
@@ -188,7 +246,23 @@ namespace QsApi {
         emit q->currentRowChanged(row);
     }
 
-    void CommandPalettePrivate::_q_itemClicked(QListWidgetItem *item) {
+    void CommandPalettePrivate::_q_currentItemChanged(QListWidgetItem *cur, QListWidgetItem *prev) {
+        Q_Q(CommandPalette);
+        emit q->currentItemChanged(cur);
+    }
+
+    void CommandPalettePrivate::_q_delegateClicked(const QModelIndex &index, int button) {
+        Q_Q(CommandPalette);
+        if (button != Qt::LeftButton) {
+            return;
+        }
+
+        auto idx = index.row();
+        if (idx >= 0) {
+            emit q->activate(idx);
+        } else {
+            emit q->abandon();
+        }
     }
 
     CommandPalette::CommandPalette(QWidget *parent) : CommandPalette(*new CommandPalettePrivate(), parent) {
@@ -232,6 +306,16 @@ namespace QsApi {
         d->m_listWidget->setCurrentRow(row);
     }
 
+    QString CommandPalette::filterHint() const {
+        Q_D(const CommandPalette);
+        return d->m_lineEdit->placeholderText();
+    }
+
+    void CommandPalette::setFilterHint(const QString &hint) {
+        Q_D(CommandPalette);
+        d->m_lineEdit->setPlaceholderText(hint);
+    }
+
     QString CommandPalette::filterKeyword() const {
         Q_D(const CommandPalette);
         return d->m_lineEdit->text();
@@ -242,15 +326,36 @@ namespace QsApi {
         d->m_lineEdit->setText(keyword);
     }
 
+    QTypeList CommandPalette::styleData() const {
+        Q_D(const CommandPalette);
+        return d->styleData_helper();
+    }
+
+    void CommandPalette::setStyleData(const QTypeList &list) {
+        Q_D(CommandPalette);
+        d->setStyleData_helper(list);
+    }
+
+    void CommandPalette::start() {
+        show();
+    }
+
     void CommandPalette::activate(int index) {
+        Q_D(CommandPalette);
+        if (!d->paletteActive) {
+            return;
+        }
+
+        hide();
         emit activated(index);
+        emit itemActivated(d->m_listWidget->item(index));
+        d->clearPalette();
     }
 
     void CommandPalette::abandon() {
         Q_D(CommandPalette);
-        d->m_lineEdit->clear();
-        d->m_listWidget->clear();
-        emit abandoned();
+
+        activate(-1);
     }
 
     bool CommandPalette::event(QEvent *event) {

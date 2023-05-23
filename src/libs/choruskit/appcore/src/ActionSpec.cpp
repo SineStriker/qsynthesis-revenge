@@ -23,26 +23,14 @@ namespace Core {
         return d->id;
     }
 
-    QString ActionSpec::displayName() const {
+    QString ActionSpec::commandName() const {
         Q_D(const ActionSpec);
-        return d->displayName;
+        return d->commandName;
     }
 
-    void ActionSpec::setDisplayName(const QString &displayName) {
+    void ActionSpec::setCommandName(const QString &name) {
         Q_D(ActionSpec);
-        d->displayName = displayName;
-        emit displayNameChanged(displayName);
-    }
-
-    QString ActionSpec::description() const {
-        Q_D(const ActionSpec);
-        return d->description;
-    }
-
-    void ActionSpec::setDescription(const QString &description) {
-        Q_D(ActionSpec);
-        d->description = description;
-        emit descriptionChanged(description);
+        d->commandName = name;
     }
 
     QList<QKeySequence> ActionSpec::shortcuts() const {

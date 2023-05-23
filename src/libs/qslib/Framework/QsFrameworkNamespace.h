@@ -12,6 +12,7 @@ namespace QsApi {
         DescriptionRole,
         CategoryRole,
         IconSizeRole,
+        ObjectPointerRole,
     };
 
     Q_ENUM_NS(Role)

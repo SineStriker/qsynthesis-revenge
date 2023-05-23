@@ -23,8 +23,7 @@ namespace QsApi {
         void paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const override;
 
     public:
-        QTypeFace idleShape() const;
-        QTypeFace selectShape() const;
+        QTypeFace backgroundShape() const;
         QTypeFace underlineShape() const;
 
         QTypeFace titleShape() const;
@@ -38,8 +37,7 @@ namespace QsApi {
         QMargins iconMargins() const;
         QMargins margins() const;
 
-        void setIdleShape(const QTypeFace &shape);
-        void setSelectShape(const QTypeFace &shape);
+        void setBackgroundShape(const QTypeFace &shape);
         void setUnderlineShape(const QTypeFace &shape);
         void setTitleShape(const QTypeFace &shape);
         void setSubtitleShape(const QTypeFace &shape);

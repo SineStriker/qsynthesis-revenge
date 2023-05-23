@@ -68,7 +68,9 @@ namespace Core {
 
         auto frame = new CNavFrame();
         frame->setObjectName("home-frame");
+
         setCentralWidget(frame);
+        d->cp->setParent(frame);
 
         auto titleButton = new CTabButton(qApp->applicationName());
         titleButton->setObjectName("home-title-button");

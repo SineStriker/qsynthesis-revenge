@@ -11,7 +11,7 @@
 namespace QsApi {
 
     TitleListItemDelegatePrivate::TitleListItemDelegatePrivate() {
-        m_selectType = QTypeFace(Qt::transparent, 1.0);
+        m_backgroundType = QTypeFace(Qt::transparent, 1.0);
         m_underline = QTypeFace(Qt::lightGray, 1.0);
 
         m_dateBackType = QTypeFace(Qt::transparent, 0.0);
@@ -62,6 +62,36 @@ namespace QsApi {
 
         QRect rect = option.rect;
         rect.adjust(d->m_margins.left(), d->m_margins.top(), -d->m_margins.right(), -d->m_margins.bottom());
+
+        // Color
+        QColor backgroundColor;
+        QColor underlineColor;
+        QColor fileColor;
+        QColor locColor;
+        QColor dateColor;
+        QColor dateBackColor;
+        if (option.state & QStyle::State_Selected) {
+            backgroundColor = d->m_backgroundType.color3();
+            underlineColor = d->m_underline.color3();
+            fileColor = d->m_fileType.color3();
+            locColor = d->m_locType.color3();
+            dateColor = d->m_dateType.color3();
+            dateBackColor = d->m_dateBackType.color3();
+        } else if (option.state & QStyle::State_MouseOver) {
+            backgroundColor = d->m_backgroundType.color2();
+            underlineColor = d->m_underline.color2();
+            fileColor = d->m_fileType.color2();
+            locColor = d->m_locType.color2();
+            dateColor = d->m_dateType.color2();
+            dateBackColor = d->m_dateBackType.color2();
+        } else {
+            backgroundColor = d->m_backgroundType.color();
+            underlineColor = d->m_underline.color();
+            fileColor = d->m_fileType.color();
+            locColor = d->m_locType.color();
+            dateColor = d->m_dateType.color();
+            dateBackColor = d->m_dateBackType.color();
+        }
 
         // Fetch data
         QString filename = index.data(Qt::DisplayRole).toString();
@@ -133,11 +163,7 @@ namespace QsApi {
 
         // Status
         painter->setPen(Qt::NoPen);
-        if (option.state & QStyle::State_Selected || option.state & QStyle::State_MouseOver) {
-            painter->setBrush(d->m_selectType.color());
-        } else {
-            painter->setBrush(d->m_idleType.color());
-        }
+        painter->setBrush(backgroundColor);
         painter->drawRect(rect);
 
         // Icon
@@ -146,7 +172,7 @@ namespace QsApi {
         }
 
         painter->setFont(dateFont);
-        painter->setBrush(d->m_dateBackType.color());
+        painter->setBrush(dateBackColor);
 
         // Last open time background
         {
@@ -158,7 +184,7 @@ namespace QsApi {
             painter->drawRoundedRect(dst, r, r);
         }
 
-        painter->setPen(d->m_dateType.color());
+        painter->setPen(dateColor);
 
         // Last open time
         {
@@ -174,7 +200,7 @@ namespace QsApi {
         }
 
         painter->setFont(fileFont);
-        painter->setPen(d->m_fileType.color());
+        painter->setPen(fileColor);
 
         // Filename
         {
@@ -190,7 +216,7 @@ namespace QsApi {
         }
 
         painter->setFont(locFont);
-        painter->setPen(d->m_locType.color());
+        painter->setPen(locColor);
 
         // Address
         {
@@ -205,18 +231,13 @@ namespace QsApi {
             painter->drawText(dst, Qt::AlignLeft | Qt::AlignVCenter, text);
         }
 
-        painter->setPen(QPen(d->m_underline.color(), d->m_underline.pointSize()));
+        painter->setPen(QPen(underlineColor, d->m_underline.pointSize()));
         painter->drawLine(rect.bottomLeft(), rect.bottomRight());
     }
 
-    QTypeFace TitleListItemDelegate::idleShape() const {
+    QTypeFace TitleListItemDelegate::backgroundShape() const {
         Q_D(const TitleListItemDelegate);
-        return d->m_idleType;
-    }
-
-    QTypeFace TitleListItemDelegate::selectShape() const {
-        Q_D(const TitleListItemDelegate);
-        return d->m_selectType;
+        return d->m_backgroundType;
     }
 
     QTypeFace TitleListItemDelegate::underlineShape() const {
@@ -269,14 +290,9 @@ namespace QsApi {
         return d->m_margins;
     }
 
-    void TitleListItemDelegate::setIdleShape(const QTypeFace &shape) {
+    void TitleListItemDelegate::setBackgroundShape(const QTypeFace &shape) {
         Q_D(TitleListItemDelegate);
-        d->m_idleType = shape;
-    }
-
-    void TitleListItemDelegate::setSelectShape(const QTypeFace &shape) {
-        Q_D(TitleListItemDelegate);
-        d->m_selectType = shape;
+        d->m_backgroundType = shape;
     }
 
     void TitleListItemDelegate::setUnderlineShape(const QTypeFace &shape) {

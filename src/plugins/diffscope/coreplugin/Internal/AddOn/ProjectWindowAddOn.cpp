@@ -51,9 +51,6 @@ namespace Core {
 
             exitGroupItem->setText(tr("Exit Actions"));
             closeFileItem->setText(tr("Close"));
-
-            welcomeGroupItem->setText(tr("Welcome Actions"));
-            showHomeItem->setText(tr("Show Home"));
         }
 
         void ProjectWindowAddOn::initActions() {
@@ -66,9 +63,6 @@ namespace Core {
 
             exitGroupItem = new ActionItem("core.ExitGroup", new QActionGroup(this), this);
             closeFileItem = new ActionItem("core.CloseFile", new QAction(this), this);
-
-            welcomeGroupItem = new ActionItem("core.WelcomeGroup", new QActionGroup(this), this);
-            showHomeItem = new ActionItem("core.ShowHome", new QAction(this), this);
 
             connect(iWin->doc(), &IDocument::changed, this,
                     [this, iWin]() { saveFileItem->setEnabled(iWin->doc()->isModified()); });
@@ -92,18 +86,12 @@ namespace Core {
                 win->close();
             });
 
-            connect(showHomeItem->action(), &QAction::triggered, this, [this]() {
-                ICore::showHome(); //
-            });
-
             iWin->addActionItems({
                 saveGroupItem,
                 saveFileItem,
                 saveAsFileItem,
                 exitGroupItem,
                 closeFileItem,
-                welcomeGroupItem,
-                showHomeItem,
             });
         }
     }

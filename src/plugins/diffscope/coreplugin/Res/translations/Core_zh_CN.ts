@@ -275,6 +275,22 @@
         <source>Se&amp;ttings...</source>
         <translation>设置(&amp;T)...</translation>
     </message>
+    <message>
+        <source>Welcome Actions</source>
+        <translation>欢迎组</translation>
+    </message>
+    <message>
+        <source>Show Home</source>
+        <translation>显示主页</translation>
+    </message>
+    <message>
+        <source>&amp;Find Action...</source>
+        <translation>查找命令(&amp;F)...</translation>
+    </message>
+    <message>
+        <source>Search for action</source>
+        <translation type="unfinished">查找命令</translation>
+    </message>
 </context>
 <context>
     <name>Core::Internal::DisplayPage</name>
@@ -298,49 +314,49 @@
     <name>Core::Internal::HomeRecentBottomFrame</name>
     <message>
         <source>No data.</source>
-        <translation type="unfinished">没有数据。</translation>
+        <translation>没有数据。</translation>
     </message>
     <message>
         <source>Nothing to show.</source>
-        <translation type="unfinished">没有可以显示的内容。</translation>
+        <translation>没有可以显示的内容。</translation>
     </message>
     <message>
         <source>Open(&amp;O)</source>
-        <translation type="unfinished">打开(&amp;O)</translation>
+        <translation>打开(&amp;O)</translation>
     </message>
     <message>
         <source>Remove from list(&amp;R)</source>
-        <translation type="unfinished">从列表中删除(&amp;R)</translation>
+        <translation>从列表中删除(&amp;R)</translation>
     </message>
     <message>
         <source>Show in %1(&amp;S)</source>
-        <translation type="unfinished">在%1中显示(&amp;S)</translation>
+        <translation>在%1中显示(&amp;S)</translation>
     </message>
     <message>
         <source>Open in %1(&amp;S)</source>
-        <translation type="unfinished">在%1中打开(&amp;S)</translation>
+        <translation>在%1中打开(&amp;S)</translation>
     </message>
 </context>
 <context>
     <name>Core::Internal::HomeRecentTopFrame</name>
     <message>
         <source>New</source>
-        <translation type="unfinished">新建</translation>
+        <translation>新建</translation>
     </message>
     <message>
         <source>Open</source>
-        <translation type="unfinished">打开</translation>
+        <translation>打开</translation>
     </message>
     <message>
         <source>Search for files</source>
-        <translation type="unfinished">搜索文件</translation>
+        <translation>搜索文件</translation>
     </message>
 </context>
 <context>
     <name>Core::Internal::HomeRecoveryWidget</name>
     <message>
         <source>No data.</source>
-        <translation type="unfinished">没有数据。</translation>
+        <translation>没有数据。</translation>
     </message>
 </context>
 <context>
@@ -437,11 +453,11 @@
     <name>Core::Internal::ProjectWindowAddOn</name>
     <message>
         <source>Welcome Actions</source>
-        <translation>欢迎组</translation>
+        <translation type="vanished">欢迎组</translation>
     </message>
     <message>
         <source>Show Home</source>
-        <translation>显示主页</translation>
+        <translation type="vanished">显示主页</translation>
     </message>
     <message>
         <source>Save Actions</source>

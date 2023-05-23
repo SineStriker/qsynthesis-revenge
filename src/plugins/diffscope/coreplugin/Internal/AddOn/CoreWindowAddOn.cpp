@@ -11,6 +11,8 @@
 #include "Internal/plugindialog.h"
 #include "Window/ICoreWindow.h"
 
+#include "QsFrameworkNamespace.h"
+
 namespace Core::Internal {
 
     CoreWindowAddOn::CoreWindowAddOn(QObject *parent) : IWindowAddOn(parent) {
@@ -51,6 +53,10 @@ namespace Core::Internal {
         preferenceGroupItem->setText(tr("Preference Actions"));
         settingsItem->setText(tr("Se&ttings..."));
 
+        welcomeGroupItem->setText(tr("Welcome Actions"));
+        showHomeItem->setText(tr("Show Home"));
+        findActionItem->setText(tr("&Find Action..."));
+
         aboutGroupItem->setText(tr("About Actions"));
         aboutPluginsItem->setText(tr("About Plugins"));
         aboutAppItem->setText(tr("&About %1").arg(qApp->applicationName()));
@@ -58,7 +64,7 @@ namespace Core::Internal {
     }
 
     void CoreWindowAddOn::initActions() {
-        auto iWin = windowHandle();
+        auto iWin = windowHandle()->cast<ICoreWindow>();
         auto win = iWin->window();
 
         fileItem = new ActionItem("core.File", ICore::createCoreMenu(win), this);
@@ -77,16 +83,20 @@ namespace Core::Internal {
         aboutAppItem = new ActionItem("core.AboutApp", new QAction(this), this);
         aboutQtItem = new ActionItem("core.AboutQt", new QAction(this), this);
 
+        welcomeGroupItem = new ActionItem("core.WelcomeGroup", new QActionGroup(this), this);
+        showHomeItem = new ActionItem("core.ShowHome", new QAction(this), this);
+        findActionItem = new ActionItem("core.FindAction", new QAction(this), this);
+
         connect(newFileItem->action(), &QAction::triggered, this, [this]() {
             //
             qDebug() << "New";
 
-            auto action = new QAction("Test");
-            action->setShortcut(QKeySequence("Ctrl+N"));
-            helpItem->menu()->addAction(action);
+            //            auto action = new QAction("Test");
+            //            action->setShortcut(QKeySequence("Ctrl+N"));
+            //            helpItem->menu()->addAction(action);
         });
 
-        connect(openFileItem->action(), &QAction::triggered, this, [iWin, this]() {
+        connect(openFileItem->action(), &QAction::triggered, this, [iWin]() {
             auto docMgr = ICore::instance()->documentSystem();
             auto spec = docMgr->docType(qApp->property("projectDocTypeId").toString());
             if (!spec) {
@@ -103,21 +113,97 @@ namespace Core::Internal {
             }
         });
 
-        connect(settingsItem->action(), &QAction::triggered, this, [this]() {
-            ICore::instance()->showSettingsDialog("core.Settings", windowHandle()->window()); //
+        connect(settingsItem->action(), &QAction::triggered, this, [win]() {
+            ICore::instance()->showSettingsDialog("core.Settings", win); //
         });
 
-        connect(aboutPluginsItem->action(), &QAction::triggered, this, [this]() {
-            Internal::PluginDialog dlg(windowHandle()->window());
+        connect(aboutPluginsItem->action(), &QAction::triggered, this, [win]() {
+            Internal::PluginDialog dlg(win);
             dlg.exec();
         });
 
-        connect(aboutAppItem->action(), &QAction::triggered, this, [this]() {
-            ICore::aboutApp(windowHandle()->window()); //
+        connect(aboutAppItem->action(), &QAction::triggered, this, [win]() {
+            ICore::aboutApp(win); //
         });
 
-        connect(aboutQtItem->action(), &QAction::triggered, this, [this]() {
-            QMessageBox::aboutQt(windowHandle()->window()); //
+        connect(aboutQtItem->action(), &QAction::triggered, this, [win]() {
+            QMessageBox::aboutQt(win); //
+        });
+
+        connect(showHomeItem->action(), &QAction::triggered, this, [this]() {
+            ICore::showHome(); //
+        });
+
+        connect(findActionItem->action(), &QAction::triggered, this, [iWin, this]() {
+            auto cp = iWin->commandPalette();
+            if (cp->isVisible()) {
+                cp->abandon();
+            }
+
+            auto actionItems = mostRecentActions.values();
+            for (const auto &ai : iWin->actionItems()) {
+                if (mostRecentActions.contains(ai)) {
+                    continue;
+                }
+                actionItems.append(ai);
+            }
+
+            for (const auto &ai : qAsConst(actionItems)) {
+                if (!ai->isAction()) {
+                    continue;
+                }
+
+                auto item = new QListWidgetItem();
+
+                QString category;
+                QString text = ai->commandName();
+                if (text.isEmpty()) {
+                    text = ai->id();
+                }
+                QString desc = ai->commandDescription();
+                if (desc.isEmpty()) {
+                    desc = ai->text();
+                }
+
+                // If text contains colon
+                int index = text.indexOf(':');
+                if (index >= 0) {
+                    category = text.left(index).trimmed();
+                    if (!category.isEmpty()) {
+                        text = category + ": " + text.mid(index + 1).trimmed();
+                        desc.prepend(category + ": ");
+                    }
+                }
+
+                item->setText(desc);
+                item->setData(QsApi::SubtitleRole, text);
+                item->setData(QsApi::ObjectPointerRole, QVariant::fromValue(intptr_t(ai)));
+
+                cp->addItem(item);
+            }
+
+            cp->setFilterHint(tr("Search for action"));
+            cp->setCurrentRow(0);
+            cp->start();
+
+            auto obj = new QObject();
+            connect(cp, &QsApi::CommandPalette::itemActivated, obj, [obj, this](QListWidgetItem *item) {
+                delete obj;
+
+                if (!item) {
+                    return;
+                }
+
+                auto ai = reinterpret_cast<ActionItem *>(item->data(QsApi::ObjectPointerRole).value<intptr_t>());
+                if (!ai) {
+                    return;
+                }
+
+                mostRecentActions.remove(ai);
+                mostRecentActions.prepend(ai);
+
+                QTimer::singleShot(0, ai->action(), &QAction::trigger);
+            });
         });
 
         iWin->addActionItems({
@@ -133,6 +219,9 @@ namespace Core::Internal {
             aboutPluginsItem,
             aboutAppItem,
             aboutQtItem,
+            welcomeGroupItem,
+            showHomeItem,
+            findActionItem,
         });
     }
 

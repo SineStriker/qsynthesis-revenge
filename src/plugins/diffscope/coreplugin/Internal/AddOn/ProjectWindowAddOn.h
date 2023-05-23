@@ -35,9 +35,6 @@ namespace Core {
 
             ActionItem *exitGroupItem;
             ActionItem *closeFileItem;
-
-            ActionItem *welcomeGroupItem;
-            ActionItem *showHomeItem;
         };
 
     }

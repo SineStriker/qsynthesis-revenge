@@ -64,6 +64,12 @@ namespace Core {
         win->setObjectName("project-window");
         win->setAcceptDrops(true);
 
+        auto w = new Internal::ProjectWidget();
+        w->setObjectName("project-widget");
+
+        setCentralWidget(w);
+        d->cp->setParent(w);
+
         // Close event
         connect(d->m_doc, &IDocument::changed, d, &IProjectWindowPrivate::_q_documentChanged);
         connect(d->m_doc, &IDocument::raiseRequested, d, &IProjectWindowPrivate::_q_documentRaiseRequested);
