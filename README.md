@@ -98,7 +98,7 @@ See [Related Tools](./docs/related-tools.md) for dependencies for each plugin.
 + [Arabaku](https://github.com/Arabaku)
 + [RigoLigoRLC](https://github.com/RigoLigoRLC)
 + [CrSjimo](https://github.com/CrSjimo)
-+ [IceKyrin](https://github.com/IceKyrin)
++ [wolfgitpr](https://github.com/wolfgitpr)
 
 Welcome to commit pull requests.
 
