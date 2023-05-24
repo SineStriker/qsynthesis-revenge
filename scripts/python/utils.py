@@ -21,17 +21,17 @@ def rmdir(dir: str):
         shutil.rmtree(dir)
 
 
-def copydir(dir: str, dest: str):
+def copydir(dir: str, dest: str, symlinks: bool = False):
     name = os.path.basename(dir)
     path = f"{dest}/{name}"
     if os.path.isfile(path):
         os.remove(path)
     elif os.path.isdir(path):
         shutil.rmtree(path)
-    shutil.copytree(dir, path)
+    shutil.copytree(dir, path, symlinks=symlinks)
 
 
-def copyfile(src: str, dest_dir: str):
+def copyfile(src: str, dest_dir: str, follow_symlinks: bool = True):
     name = os.path.basename(src)
     path = f"{dest_dir}/{name}"
     if os.path.isfile(path):
@@ -42,7 +42,7 @@ def copyfile(src: str, dest_dir: str):
         os.remove(dest_dir)
     if not os.path.exists(dest_dir):
         os.makedirs(dest_dir)
-    shutil.copyfile(src, os.path.join(dest_dir, name))
+    shutil.copyfile(src, os.path.join(dest_dir, name), follow_symlinks=follow_symlinks)
 
 
 def get_platform() -> tuple[str, str]:

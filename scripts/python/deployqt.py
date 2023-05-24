@@ -74,10 +74,13 @@ def main():
 
     elif os_name == "osx":
         # Obtain Qt library dependencies of the required libraries
+        qtlibs_path = subprocess.check_output([args.qmake, "-query", "QT_INSTALL_LIBS"]).strip().decode('utf-8')
+        print_verbose(f"Qt Libraries path: {qtlibs_path}")
+
         qtdeps = set()
         for libname in args.files:
             otool_exc = ["otool", "-L", libname]
-            regex = re.compile(r'^\s*(?P<qt>.+Qt\w+\.framework).+\s\(.+$')
+            regex = re.compile(r'^\s*(?P<qt_prefix>.+)(?P<qt>Qt\w+\.framework)(?P<qt_suffix>.+)\s\(.+$')
 
             # Call otool.
             output = subprocess.check_output(otool_exc).decode('utf-8')
@@ -87,7 +90,9 @@ def main():
             for line in output.splitlines():
                 match = regex.match(line)
                 if match:
-                    dependencies.append(match.group('qt'))
+                    qt_framework_name = match.group('qt')
+                    qt_framework_fullpath = os.path.join(qtlibs_path, qt_framework_name)
+                    dependencies.append(qt_framework_fullpath)
 
             qtdeps = qtdeps.union(set(dependencies))
         if args.debug:
@@ -96,7 +101,7 @@ def main():
 
         for qt_framework in qtdeps:
             print_verbose(f"  Copying {qt_framework}...")
-            copydir(qt_framework, args.libdir)
+            copydir(qt_framework, args.libdir, symlinks=True)
 
         # Query Qt Plugins path
         qtplugins_path = subprocess.check_output([args.qmake, "-query", "QT_INSTALL_PLUGINS"]).strip().decode('utf-8')
@@ -107,12 +112,12 @@ def main():
 
         for plugin_src in plugin_list:
             print_verbose(f"  Copying {plugin_src}...")
-            copydir(f"{qtplugins_path}/{plugin_src}", f"{args.plugindir}")
+            copydir(f"{qtplugins_path}/{plugin_src}", f"{args.plugindir}", symlinks=True)
 
         for plugin_dylib in plugin_dylib_list:
             print_verbose(f"  Copying {plugin_dylib}...")
             base_dir = os.path.dirname(f"{args.plugindir}/{plugin_dylib}")
-            copyfile(f"{qtplugins_path}/{plugin_dylib}", base_dir)
+            copyfile(f"{qtplugins_path}/{plugin_dylib}", base_dir, follow_symlinks=False)
 
     else:
         print("Linux")
