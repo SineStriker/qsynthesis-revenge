@@ -120,6 +120,10 @@ QColor QTypeFace::color3() const {
     return m_colors.size() < 3 ? color2() : m_colors.at(2);
 }
 
+QColor QTypeFace::color4() const {
+    return m_colors.size() < 4 ? color3() : m_colors.at(3);
+}
+
 QTypeFace QTypeFace::fromStringList(const QStringList &stringList) {
     if (stringList.size() == 2 && !stringList.front().compare(MetaFunctionName(), Qt::CaseInsensitive)) {
         QStringList content = SplitStringByComma(stringList.back());
@@ -145,9 +149,9 @@ QTypeFace QTypeFace::fromStringList(const QStringList &stringList) {
             double pointSize = -1;
             int weight = -1;
 
+            QLatin1String px(PixelSizeUnit);
             if (content.size() > 1) {
                 QString strPixel = content.at(1);
-                QLatin1String px(PixelSizeUnit);
                 if (strPixel.endsWith(px, Qt::CaseInsensitive)) {
                     strPixel.chop(px.size());
                     bool isNum;
@@ -164,19 +168,23 @@ QTypeFace QTypeFace::fromStringList(const QStringList &stringList) {
                 }
             }
             if (content.size() > 2) {
-                const QString &strWeight = content.at(2);
+                QString strWeight = content.at(2);
+                if (strWeight.endsWith(px, Qt::CaseInsensitive)) {
+                    strWeight.chop(px.size());
+                }
+
                 bool isNum;
                 int num = strWeight.toInt(&isNum);
                 if (isNum) {
                     weight = num;
                 }
             }
-            if (pixelSize > 0) {
+            if (pixelSize >= 0) {
                 tf.setPixelSize(pixelSize);
-            } else if (pointSize > 0) {
+            } else if (pointSize >= 0) {
                 tf.setPointSize(pointSize);
             }
-            if (weight > 0) {
+            if (weight >= 0) {
                 tf.setWeight(weight);
             }
             return tf;

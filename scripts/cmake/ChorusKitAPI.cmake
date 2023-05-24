@@ -3,7 +3,7 @@ include_guard(GLOBAL)
 # ----------------------------------
 # Project information
 # ----------------------------------
-set(CHORUSKIT_VERSION 0.0.1.9)
+set(CHORUSKIT_VERSION 0.0.1.10)
 
 set(CK_QT_VERSION_MIN 5.15.2)
 set(CK_DEV_START_YEAR 2019)

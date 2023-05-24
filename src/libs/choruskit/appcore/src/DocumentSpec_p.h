@@ -19,6 +19,7 @@ namespace Core {
 
         QString id;
         QString displayName;
+        QString description;
         QIcon icon;
     };
 

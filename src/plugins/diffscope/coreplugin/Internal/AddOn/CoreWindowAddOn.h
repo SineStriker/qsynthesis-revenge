@@ -1,11 +1,11 @@
 #ifndef CHORUSKIT_COREWINDOWADDON_H
 #define CHORUSKIT_COREWINDOWADDON_H
 
+#include <Collections/QMChronSet.h>
+
 #include <CoreApi/ActionItem.h>
 #include <CoreApi/DocumentSpec.h>
 #include <CoreApi/IWindowAddOn.h>
-
-#include <Collections/QMChronSet.h>
 
 namespace Core {
 
@@ -23,8 +23,6 @@ namespace Core {
         private:
             void reloadStrings();
             void initActions();
-
-            QMChronSet<ActionItem *> mostRecentActions;
 
         protected:
             ActionItem *fileItem;

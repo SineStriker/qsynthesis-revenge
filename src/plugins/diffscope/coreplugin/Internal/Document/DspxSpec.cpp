@@ -12,6 +12,8 @@ namespace Core::Internal {
 
     DspxSpec::DspxSpec(QObject *parent) : DocumentSpec("org.ChorusKit.dspx", parent) {
         setIcon(QIcon(":/images/dspx.png"));
+        setDisplayName(tr("OpenVPI DiffSinger Editor"));
+        setDescription(tr("Built-in"));
     }
 
     DspxSpec::~DspxSpec() {

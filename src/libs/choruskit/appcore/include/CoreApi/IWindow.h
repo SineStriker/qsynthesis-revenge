@@ -70,6 +70,9 @@ namespace Core {
         void aboutToClose();
         void closed();
 
+        void shortcutAboutToCome(QAction *action);
+        void actionTriggered(QAction *action);
+
     protected:
         explicit IWindow(const QString &id, QObject *parent = nullptr);
         ~IWindow();

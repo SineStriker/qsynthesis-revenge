@@ -154,4 +154,18 @@ namespace Core {
         return QObject::eventFilter(obj, event);
     }
 
+    ShortcutFilter::ShortcutFilter(IWindowPrivate *d) {
+    }
+
+    ShortcutFilter::~ShortcutFilter() {
+    }
+
+    bool ShortcutFilter::eventFilter(QObject *obj, QEvent *event) {
+        QAction *action;
+        if (event->type() == QEvent::Shortcut && (action = qobject_cast<QAction *>(obj))) {
+            emit shortcutAboutToCome(action);
+        }
+        return QObject::eventFilter(obj, event);
+    }
+
 }

@@ -38,6 +38,16 @@ namespace Core {
         d->displayName = displayName;
     }
 
+    QString DocumentSpec::description() const {
+        Q_D(const DocumentSpec);
+        return d->description;
+    }
+
+    void DocumentSpec::setDescription(const QString &description) {
+        Q_D(DocumentSpec);
+        d->description = description;
+    }
+
     QIcon DocumentSpec::icon() const {
         Q_D(const DocumentSpec);
         return d->icon;

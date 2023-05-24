@@ -47,6 +47,17 @@
     </message>
 </context>
 <context>
+    <name>Core::ICoreWindowPrivate</name>
+    <message>
+        <source>Search for action</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Select editor for &quot;%1&quot;</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>Core::IHomeWindowPrivate</name>
     <message>
         <source>Welcome</source>
@@ -164,10 +175,6 @@
         <source>&amp;Find Action...</source>
         <translation type="unfinished"></translation>
     </message>
-    <message>
-        <source>Search for action</source>
-        <translation type="unfinished"></translation>
-    </message>
 </context>
 <context>
     <name>Core::Internal::DisplayPage</name>
@@ -184,6 +191,14 @@
     </message>
     <message>
         <source>File Error</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>OpenVPI DiffSinger Editor</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Built-in</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

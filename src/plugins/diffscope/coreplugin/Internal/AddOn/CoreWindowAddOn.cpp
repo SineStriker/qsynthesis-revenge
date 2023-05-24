@@ -134,76 +134,8 @@ namespace Core::Internal {
             ICore::showHome(); //
         });
 
-        connect(findActionItem->action(), &QAction::triggered, this, [iWin, this]() {
-            auto cp = iWin->commandPalette();
-            if (cp->isVisible()) {
-                cp->abandon();
-            }
-
-            auto actionItems = mostRecentActions.values();
-            for (const auto &ai : iWin->actionItems()) {
-                if (mostRecentActions.contains(ai)) {
-                    continue;
-                }
-                actionItems.append(ai);
-            }
-
-            for (const auto &ai : qAsConst(actionItems)) {
-                if (!ai->isAction()) {
-                    continue;
-                }
-
-                auto item = new QListWidgetItem();
-
-                QString category;
-                QString text = ai->commandName();
-                if (text.isEmpty()) {
-                    text = ai->id();
-                }
-                QString desc = ai->commandDescription();
-                if (desc.isEmpty()) {
-                    desc = ai->text();
-                }
-
-                // If text contains colon
-                int index = text.indexOf(':');
-                if (index >= 0) {
-                    category = text.left(index).trimmed();
-                    if (!category.isEmpty()) {
-                        text = category + ": " + text.mid(index + 1).trimmed();
-                        desc.prepend(category + ": ");
-                    }
-                }
-
-                item->setText(desc);
-                item->setData(QsApi::SubtitleRole, text);
-                item->setData(QsApi::ObjectPointerRole, QVariant::fromValue(intptr_t(ai)));
-
-                cp->addItem(item);
-            }
-
-            cp->setFilterHint(tr("Search for action"));
-            cp->setCurrentRow(0);
-            cp->start();
-
-            auto obj = new QObject();
-            connect(cp, &QsApi::CommandPalette::itemActivated, obj, [obj, this](QListWidgetItem *item) {
-                delete obj;
-
-                if (!item) {
-                    return;
-                }
-
-                auto ai = reinterpret_cast<ActionItem *>(item->data(QsApi::ObjectPointerRole).value<intptr_t>());
-                if (!ai) {
-                    return;
-                }
-
-                mostRecentActions.remove(ai);
-                mostRecentActions.prepend(ai);
-
-                QTimer::singleShot(0, ai->action(), &QAction::trigger);
-            });
+        connect(findActionItem->action(), &QAction::triggered, this, [iWin]() {
+            iWin->showAllActions();
         });
 
         iWin->addActionItems({

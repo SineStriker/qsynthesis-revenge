@@ -47,6 +47,7 @@ public:
     QColor color() const;
     QColor color2() const;
     QColor color3() const;
+    QColor color4() const;
 
 private:
     QFont m_font;

@@ -123,6 +123,17 @@
     </message>
 </context>
 <context>
+    <name>Core::ICoreWindowPrivate</name>
+    <message>
+        <source>Search for action</source>
+        <translation>查找命令</translation>
+    </message>
+    <message>
+        <source>Select editor for &quot;%1&quot;</source>
+        <translation type="unfinished">为"%1"选择编辑器</translation>
+    </message>
+</context>
+<context>
     <name>Core::IHomeWindow</name>
     <message>
         <source>Welcome</source>
@@ -289,7 +300,7 @@
     </message>
     <message>
         <source>Search for action</source>
-        <translation type="unfinished">查找命令</translation>
+        <translation type="obsolete">查找命令</translation>
     </message>
 </context>
 <context>
@@ -308,6 +319,14 @@
     <message>
         <source>File Error</source>
         <translation>文件错误</translation>
+    </message>
+    <message>
+        <source>OpenVPI DiffSinger Editor</source>
+        <translation>OpenVPI DiffSinger 编辑器</translation>
+    </message>
+    <message>
+        <source>Built-in</source>
+        <translation>内置</translation>
     </message>
 </context>
 <context>

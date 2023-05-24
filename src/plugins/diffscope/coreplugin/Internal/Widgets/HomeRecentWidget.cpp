@@ -155,9 +155,9 @@ namespace Core::Internal {
             auto spec = docMgr->supportedDocType(info.completeSuffix());
 
             auto item = new QListWidgetItem();
-            item->setData(Qt::DecorationRole, spec ? spec->icon() : QIcon());
+            item->setData(QsApi::DecorationRole, spec ? spec->icon() : QIcon());
             item->setData(QsApi::IconSizeRole, m_iconSize);
-            item->setData(Qt::DisplayRole, QDir::toNativeSeparators(info.absoluteFilePath()));
+            item->setData(QsApi::DisplayRole, QDir::toNativeSeparators(info.absoluteFilePath()));
             item->setData(QsApi::SubtitleRole, QDir::toNativeSeparators(info.absolutePath()));
             item->setData(QsApi::DescriptionRole, info.lastModified().toString(dateFormat));
 

@@ -26,10 +26,13 @@ namespace Core {
     };
 
     IWindowPrivate::IWindowPrivate() {
+        Q_Q(IWindow);
+
         m_closed = false;
         // m_shortcutsDirty = false;
-        actionFilter = new WindowActionFilter(this);
-        connect(actionFilter, &WindowActionFilter::actionChanged, this, &IWindowPrivate::_q_actionChanged);
+
+        actionFilter = nullptr;
+        shortcutFilter = nullptr;
     }
 
     IWindowPrivate::~IWindowPrivate() {
@@ -44,8 +47,14 @@ namespace Core {
 
         q->setWindow(w);
 
-        auto filter = new WindowCloseFilter(this, q->window());
-        connect(filter, &WindowCloseFilter::windowClosed, this, &IWindowPrivate::_q_windowClosed);
+        actionFilter = new WindowActionFilter(this);
+        connect(actionFilter, &WindowActionFilter::actionChanged, this, &IWindowPrivate::_q_actionChanged);
+
+        shortcutFilter = new ShortcutFilter(this);
+        connect(shortcutFilter, &ShortcutFilter::shortcutAboutToCome, q, &IWindow::shortcutAboutToCome);
+
+        closeFilter = new WindowCloseFilter(this, q->window());
+        connect(closeFilter, &WindowCloseFilter::windowClosed, this, &IWindowPrivate::_q_windowClosed);
 
         // Setup window
         q->setupWindow();
@@ -240,6 +249,11 @@ namespace Core {
         shortcutContextWidgets.remove(w);
     }
 
+    void IWindowPrivate::_q_actionTriggered() {
+        Q_Q(IWindow);
+        emit q->actionTriggered(qobject_cast<QAction *>(sender()));
+    }
+
     IWindowFactory::IWindowFactory(const QString &id, AvailableCreator creator) : d_ptr(new IWindowFactoryPrivate()) {
         d_ptr->id = id;
         d_ptr->creator = creator;
@@ -327,7 +341,11 @@ namespace Core {
         }
         d->actionItemMap.append(item->id(), item);
 
-        if (item->isMenu()) {
+        if (item->isAction()) {
+            auto action = item->action();
+            action->installEventFilter(d->shortcutFilter);
+            connect(action, &QAction::triggered, d, &IWindowPrivate::_q_actionTriggered);
+        } else if (item->isMenu()) {
             addShortcutContext(item->menu());
         }
     }
@@ -356,7 +374,11 @@ namespace Core {
         auto item = it.value();
         d->actionItemMap.erase(it);
 
-        if (item->isMenu()) {
+        if (item->isAction()) {
+            auto action = item->action();
+            action->removeEventFilter(d->shortcutFilter);
+            disconnect(action, &QAction::triggered, d, &IWindowPrivate::_q_actionTriggered);
+        } else if (item->isMenu()) {
             removeShortcutContext(item->menu());
         }
     }

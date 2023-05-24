@@ -1,6 +1,8 @@
 #ifndef ICOREWINDOW_H
 #define ICOREWINDOW_H
 
+#include <QPointer>
+
 #include <CoreApi/IWindow.h>
 #include <Widgets/CommandPalette.h>
 
@@ -27,6 +29,8 @@ namespace Core {
         QsApi::CommandPalette *commandPalette() const;
 
         Q_INVOKABLE void openFile(const QString &path);
+
+        Q_INVOKABLE void showAllActions();
 
     protected:
         ICoreWindow(const QString &id, QObject *parent = nullptr);

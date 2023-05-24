@@ -1,14 +1,80 @@
 #include "TitleListItemDelegate.h"
 #include "TitleListItemDelegate_p.h"
 
-#include <QDir>
-#include <QFileInfo>
 #include <QMouseEvent>
 #include <QPainter>
 
 #include "QsFrameworkNamespace.h"
 
 namespace QsApi {
+
+    struct TextBlock {
+        QString text;
+        bool highlight;
+    };
+
+    static QList<TextBlock> extractTextBlocks(const QString &text) {
+        QList<TextBlock> res;
+        QStringList list = text.split('`');
+        for (int i = 0; i < list.size(); ++i) {
+            const auto &item = list.at(i);
+            if (item.isEmpty()) {
+                continue;
+            }
+            res.append({item, bool(i & 0b1)});
+        }
+        return res;
+    }
+
+    static QSize richTextSize(const QFontMetrics &fm, const QList<TextBlock> &blocks, double ratio) {
+        double extend = fm.height() * ratio;
+        double spaceWidth = fm.horizontalAdvance(' ');
+
+        double width = 0;
+        for (const auto &block : blocks) {
+            if (block.highlight) {
+                width += spaceWidth + 2 * extend;
+            }
+            width += fm.horizontalAdvance(block.text);
+        }
+
+        return {int(width), int(fm.height() + 2 * extend)};
+    }
+
+    static void drawRichTexts(QPainter *painter, const QPoint &start, const QList<TextBlock> &blocks,
+                              const QColor &foreground, const QColor &background, const QColor &textColor, double ratio,
+                              int radius) {
+        const auto &fm = painter->fontMetrics();
+
+        double extend = fm.height() * ratio;
+        double spaceWidth = fm.horizontalAdvance(' ');
+
+        double height = fm.height() + 2 * extend;
+        double currentWidth = 0;
+        for (const auto &block : blocks) {
+            double width = 0;
+            if (block.highlight) {
+                currentWidth += spaceWidth / 2;
+                width += 2 * extend;
+            }
+            width += fm.horizontalAdvance(block.text);
+
+            QRectF dst(start + QPointF(currentWidth, 0), QSizeF(width, height));
+            if (block.highlight) {
+                currentWidth += spaceWidth / 2;
+                painter->setPen(Qt::transparent);
+                painter->setBrush(background);
+                painter->drawRoundedRect(dst, radius, radius);
+
+                painter->setPen(foreground);
+            } else {
+                painter->setPen(textColor);
+            }
+            painter->drawText(dst, Qt::AlignHCenter | Qt::AlignVCenter, block.text);
+
+            currentWidth += width;
+        }
+    }
 
     TitleListItemDelegatePrivate::TitleListItemDelegatePrivate() {
         m_backgroundType = QTypeFace(Qt::transparent, 1.0);
@@ -40,12 +106,16 @@ namespace QsApi {
     QSize TitleListItemDelegate::sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const {
         Q_D(const TitleListItemDelegate);
 
+        QString location = index.data(QsApi::SubtitleRole).toString();
+
         QSize size = QStyledItemDelegate::sizeHint(option, index);
         int iconHeight =
             index.data(QsApi::IconSizeRole).toSize().height() + d->m_iconMargins.top() + d->m_iconMargins.bottom();
-        int midHeight = QFontMetrics(d->m_fileType.font()).height() + QFontMetrics(d->m_locType.font()).height() +
-                        d->m_fileMargins.top() + d->m_fileMargins.bottom() + d->m_locMargins.top() +
-                        d->m_locMargins.bottom();
+        int midHeight =
+            QFontMetrics(d->m_fileType.font()).height() + d->m_fileMargins.top() + d->m_fileMargins.bottom() +
+            (location.isEmpty()
+                 ? 0
+                 : (QFontMetrics(d->m_locType.font()).height() + d->m_locMargins.top() + d->m_locMargins.bottom()));
         int dateHeight =
             QFontMetrics(d->m_dateType.font()).height() + d->m_dateMargins.top() + d->m_dateMargins.bottom();
         int h = qMax(iconHeight, qMax(midHeight, dateHeight));
@@ -70,7 +140,15 @@ namespace QsApi {
         QColor locColor;
         QColor dateColor;
         QColor dateBackColor;
-        if (option.state & QStyle::State_Selected) {
+
+        if (!(option.state & QStyle::State_Enabled)) {
+            backgroundColor = d->m_backgroundType.color4();
+            underlineColor = d->m_underline.color4();
+            fileColor = d->m_fileType.color4();
+            locColor = d->m_locType.color4();
+            dateColor = d->m_dateType.color4();
+            dateBackColor = d->m_dateBackType.color4();
+        } else if (option.state & QStyle::State_Selected) {
             backgroundColor = d->m_backgroundType.color3();
             underlineColor = d->m_underline.color3();
             fileColor = d->m_fileType.color3();
@@ -94,11 +172,11 @@ namespace QsApi {
         }
 
         // Fetch data
-        QString filename = index.data(Qt::DisplayRole).toString();
+        QString filename = index.data(QsApi::DisplayRole).toString();
         QString location = index.data(QsApi::SubtitleRole).toString();
         QString date = index.data(QsApi::DescriptionRole).toString();
 
-        auto icon = index.data(Qt::DecorationRole).value<QIcon>();
+        auto icon = index.data(QsApi::DecorationRole).value<QIcon>();
         QSize iconSize = index.data(QsApi::IconSizeRole).toSize();
 
         // Calculate size
@@ -116,9 +194,14 @@ namespace QsApi {
 
         int fileFontHeight = fileFontM.height();
         int locFontHeight = locFontM.height();
-        int dateFontHeight = dateFontM.height();
 
-        int dateWidth = dateFontM.horizontalAdvance(date);
+        auto ratio = d->m_dateBackType.pointSize();
+        int radius = d->m_dateBackType.weight();
+        auto dateTextBlocks = extractTextBlocks(date);
+
+        auto dateSize = dateTextBlocks.isEmpty() ? QSize() : richTextSize(dateFontM, dateTextBlocks, ratio);
+        int dateFontHeight = dateSize.height();
+        int dateWidth = dateSize.width();
 
         int iconHeight =
             index.data(QsApi::IconSizeRole).toSize().height() + d->m_iconMargins.top() + d->m_iconMargins.bottom();
@@ -171,32 +254,11 @@ namespace QsApi {
             painter->drawPixmap(iconRect, icon.pixmap(iconSize));
         }
 
-        painter->setFont(dateFont);
-        painter->setBrush(dateBackColor);
-
-        // Last open time background
-        {
-            QRect dst = dateRect;
-            auto r = d->m_dateBackType.weight();
-            const QFontMetrics &fm = dateFontM;
-            int adjust = (d->m_dateBackType.pointSize() - 1.0) * fm.height();
-            dst.adjust(-adjust, -adjust, adjust, adjust);
-            painter->drawRoundedRect(dst, r, r);
-        }
-
-        painter->setPen(dateColor);
-
         // Last open time
-        {
-            QString text = date;
-            const QRect &dst = dateRect;
-            const QFontMetrics &fm = dateFontM;
-
-            int width = fm.horizontalAdvance(text);
-            if (width > dst.width()) {
-                text = fm.elidedText(text, Qt::ElideRight, dst.width());
-            }
-            painter->drawText(dst, Qt::AlignLeft | Qt::AlignVCenter, text);
+        if (!dateSize.isEmpty()) {
+            painter->setFont(dateFont);
+            drawRichTexts(painter, dateRect.topLeft(), dateTextBlocks, dateColor, dateBackColor, dateColor, ratio,
+                          radius);
         }
 
         painter->setFont(fileFont);
@@ -231,8 +293,10 @@ namespace QsApi {
             painter->drawText(dst, Qt::AlignLeft | Qt::AlignVCenter, text);
         }
 
-        painter->setPen(QPen(underlineColor, d->m_underline.pointSize()));
-        painter->drawLine(rect.bottomLeft(), rect.bottomRight());
+        if (index.data(QsApi::SeparatorRole).toBool()) {
+            painter->setPen(QPen(underlineColor, d->m_underline.pointSize()));
+            painter->drawLine(rect.bottomLeft(), rect.bottomRight());
+        }
     }
 
     QTypeFace TitleListItemDelegate::backgroundShape() const {

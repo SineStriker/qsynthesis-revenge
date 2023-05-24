@@ -32,6 +32,7 @@ namespace QsApi {
             QVariant::fromValue(m_delegate->titleShape()),
             QVariant::fromValue(m_delegate->subtitleShape()),
             QVariant::fromValue(m_delegate->descriptionShape()),
+            QVariant::fromValue(m_delegate->descriptionBackShape()),
 
             QVariant::fromValue(m_delegate->titleMargins()),
             QVariant::fromValue(m_delegate->subtitleMargins()),
@@ -43,7 +44,7 @@ namespace QsApi {
 
     void FileListWidgetPrivate::setStyleData_helper(const QTypeList &list) {
         Q_Q(FileListWidget);
-        if (list.size() >= 10) {
+        if (list.size() >= 11) {
             int i = 0;
 
             decodeStyle<QTypeFace>(list.at(i++), &TitleListItemDelegate::setBackgroundShape);
@@ -51,6 +52,7 @@ namespace QsApi {
             decodeStyle<QTypeFace>(list.at(i++), &TitleListItemDelegate::setTitleShape);
             decodeStyle<QTypeFace>(list.at(i++), &TitleListItemDelegate::setSubtitleShape);
             decodeStyle<QTypeFace>(list.at(i++), &TitleListItemDelegate::setDescriptionShape);
+            decodeStyle<QTypeFace>(list.at(i++), &TitleListItemDelegate::setDescriptionBackShape);
 
             decodeStyle<QMargins>(list.at(i++), &TitleListItemDelegate::setTitleMargins);
             decodeStyle<QMargins>(list.at(i++), &TitleListItemDelegate::setSubtitleMargins);

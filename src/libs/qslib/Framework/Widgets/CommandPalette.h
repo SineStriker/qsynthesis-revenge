@@ -52,7 +52,7 @@ namespace QsApi {
 
     signals:
         void activated(int index);
-        void itemActivated(QListWidgetItem *item);
+        void finished(QListWidgetItem *item);
 
         void currentRowChanged(int role);
         void currentItemChanged(QListWidgetItem *item);

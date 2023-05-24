@@ -115,6 +115,7 @@ namespace QsApi {
             QVariant::fromValue(m_delegate->titleShape()),
             QVariant::fromValue(m_delegate->subtitleShape()),
             QVariant::fromValue(m_delegate->descriptionShape()),
+            QVariant::fromValue(m_delegate->descriptionBackShape()),
 
             QVariant::fromValue(m_delegate->titleMargins()),
             QVariant::fromValue(m_delegate->subtitleMargins()),
@@ -134,6 +135,7 @@ namespace QsApi {
             decodeStyle<QTypeFace>(list.at(i++), &TitleListItemDelegate::setTitleShape);
             decodeStyle<QTypeFace>(list.at(i++), &TitleListItemDelegate::setSubtitleShape);
             decodeStyle<QTypeFace>(list.at(i++), &TitleListItemDelegate::setDescriptionShape);
+            decodeStyle<QTypeFace>(list.at(i++), &TitleListItemDelegate::setDescriptionBackShape);
 
             decodeStyle<QMargins>(list.at(i++), &TitleListItemDelegate::setTitleMargins);
             decodeStyle<QMargins>(list.at(i++), &TitleListItemDelegate::setSubtitleMargins);
@@ -273,6 +275,7 @@ namespace QsApi {
 
     void CommandPalette::insertItem(int index, QListWidgetItem *item) {
         Q_D(CommandPalette);
+
         d->m_listWidget->insertItem(index, item);
     }
 
@@ -347,8 +350,9 @@ namespace QsApi {
         }
 
         hide();
-        emit activated(index);
-        emit itemActivated(d->m_listWidget->item(index));
+        if (index >= 0)
+            emit activated(index);
+        emit finished(d->m_listWidget->item(index));
         d->clearPalette();
     }
 

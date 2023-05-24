@@ -22,6 +22,9 @@ namespace Core {
         QString displayName() const;
         void setDisplayName(const QString &displayName);
 
+        QString description() const;
+        void setDescription(const QString &description);
+
         QIcon icon() const;
         void setIcon(const QIcon &icon);
 

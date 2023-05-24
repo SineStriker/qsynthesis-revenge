@@ -172,6 +172,7 @@ Core--Internal--HomeRecentBottomFrame>QsApi--FileListWidget {
     qtypeface(#E0E0E0, 15px), /* fileType */
     qtypeface(#909090, 15px), /* locType */
     qtypeface(#909090, 15px), /* dateType */
+    qtypeface(transparent, 0, 0), /* dateBackType */
     qmargins(10px, 5px, 10px, 1.25px), /* fileMargins */
     qmargins(10px, 1.25px, 10px, 5px), /* locMargins */
     qmargins(10px, 10px, 20px, 10px), /* dateMargins */

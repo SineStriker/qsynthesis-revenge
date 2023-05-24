@@ -13,7 +13,11 @@
 
 namespace Core {
 
+    class ShortcutFilter;
+
     class WindowActionFilter;
+
+    class WindowCloseFilter;
 
     class WindowSystemPrivate;
 
@@ -42,7 +46,9 @@ namespace Core {
         // mutable bool m_shortcutsDirty;
         QHash<QKeySequence, QPair<QAction *, QWidget *>> shortcutMap;
         QHash<QAction *, QList<QKeySequence>> actionKeyMap;
+        WindowCloseFilter *closeFilter;
         WindowActionFilter *actionFilter;
+        ShortcutFilter *shortcutFilter;
 
         QMChronMap<QString, ActionItem *> actionItemMap;
         std::list<IWindowAddOn *> addOns;
@@ -73,6 +79,7 @@ namespace Core {
         void _q_windowClosed(QWidget *w);
         void _q_actionChanged(QWidget *w, int type, QAction *action);
         void _q_shortcutContextDestroyed(QObject *obj);
+        void _q_actionTriggered();
 
         friend class WindowSystem;
     };
