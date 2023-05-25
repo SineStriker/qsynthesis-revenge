@@ -20,8 +20,8 @@ namespace Core {
 
     static const char settingCatalogC[] = "ICoreWindow/RecentActions";
 
-    using _MOST_RECENT_ACTIONS = QHash<QString, QMChronSet<QString>>;
-    Q_GLOBAL_STATIC(_MOST_RECENT_ACTIONS, mostRecentActionsGlobal);
+    using MOST_RECENT_ACTIONS = QMChronSet<QString>;
+    Q_GLOBAL_STATIC(MOST_RECENT_ACTIONS, mostRecentActionsGlobal);
 
     static void removeAllAccelerateKeys(QString &text) {
         // 第一步：去掉带括号的加速键
@@ -36,23 +36,22 @@ namespace Core {
         cp = nullptr;
         mainMenuCtx = nullptr;
 
+        auto actionMgr = ICore::instance()->actionSystem();
         if (!mostRecentActionsGlobal.exists()) {
             // Read settings
             auto settings = ILoader::instance()->settings();
-            auto obj = settings->value(settingCatalogC).toObject();
+            auto arr = settings->value(settingCatalogC).toArray();
 
-            for (auto it = obj.begin(); it != obj.end(); ++it) {
-                if (!it->isArray()) {
+            for (const auto &item : qAsConst(arr)) {
+                if (!item.isString()) {
                     continue;
                 }
 
-                QMChronSet<QString> &set = (*mostRecentActionsGlobal)[it.key()];
-                for (const auto &item : it->toArray()) {
-                    if (!item.isString()) {
-                        continue;
-                    }
-                    set.append(item.toString());
+                QString id = item.toString();
+                if (!actionMgr->action(id)) {
+                    continue;
                 }
+                mostRecentActionsGlobal->append(id);
             }
         }
     }
@@ -61,12 +60,12 @@ namespace Core {
         // Save settings
         auto settings = ILoader::instance()->settings();
 
-        QJsonObject obj;
-        for (auto it = mostRecentActionsGlobal->begin(); it != mostRecentActionsGlobal->end(); ++it) {
-            obj.insert(it.key(), QJsonArray::fromStringList(it->values()));
+        QJsonArray arr;
+        for (const auto &item : qAsConst(*mostRecentActionsGlobal)) {
+            arr.append(item);
         }
 
-        settings->insert(settingCatalogC, obj);
+        settings->insert(settingCatalogC, arr);
     }
 
     void ICoreWindowPrivate::init() {
@@ -87,11 +86,10 @@ namespace Core {
         // Remove obsolete
         QList<ActionItem *> actionItems;
 
-        auto &mostRecentActions = (*mostRecentActionsGlobal)[q->id()];
-        for (auto it = mostRecentActions.begin(); it != mostRecentActions.end(); ++it) {
-            auto ai = actionItemMap.value(*it);
+        auto &mostRecentActions = *mostRecentActionsGlobal;
+        for (const auto &item : qAsConst(mostRecentActions)) {
+            auto ai = actionItemMap.value(item);
             if (!ai) {
-                mostRecentActions.erase(it);
                 continue;
             }
             actionItems.append(ai);
@@ -161,7 +159,12 @@ namespace Core {
             }
 
             item->setText(desc);
-            item->setData(QsApi::SubtitleRole, text);
+            if (qIDec->locale().startsWith("en_", Qt::CaseInsensitive)) {
+                item->setText(text);
+            } else {
+                item->setText(desc);
+                item->setData(QsApi::SubtitleRole, text);
+            }
             item->setData(QsApi::DescriptionRole, extra);
             item->setData(QsApi::ObjectPointerRole, QVariant::fromValue(intptr_t(ai)));
             item->setData(QsApi::AlignmentRole, int(Qt::AlignTop));
@@ -185,7 +188,7 @@ namespace Core {
                 return;
             }
 
-            auto &mostRecentActions = (*mostRecentActionsGlobal)[q->id()];
+            auto &mostRecentActions = *mostRecentActionsGlobal;
             mostRecentActions.remove(ai->id());
             mostRecentActions.prepend(ai->id());
 
@@ -242,14 +245,22 @@ namespace Core {
         Q_Q(ICoreWindow);
         cp->abandon();
 
-        for (const auto &theme : qIDec->themes()) {
+        auto themes = qIDec->themes();
+        std::sort(themes.begin(), themes.end());
+
+        QListWidgetItem *curItem = nullptr;
+        for (const auto &theme : qAsConst(themes)) {
             auto item = new QListWidgetItem();
             item->setText(theme);
             cp->addItem(item);
+
+            if (theme == qIDec->theme()){
+                curItem = item;
+            }
         }
 
         cp->setFilterHint(tr("Select color theme (Press Up/Down to preview)"));
-        cp->setCurrentRow(0);
+        cp->setCurrentItem(curItem);
         cp->start();
 
         QString orgTheme = qIDec->theme();

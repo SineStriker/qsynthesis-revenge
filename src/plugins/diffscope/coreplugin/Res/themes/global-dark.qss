@@ -177,9 +177,9 @@ QsApi--CommandPalette {
     qtypeface((#CCCCCC, white), 12px), /* dateType */
     qtypeface((#3794F9, white), 15px), /* dateHighlightType */
     qrectstyle(2px, 2px, 2px, rgba(255, 255, 255, 7.5%)), /* dateBackType */
-    qmargins(10px, 1.25px, 10px, 1.25px), /* fileMargins */
-    qmargins(10px, 1.25px, 10px, 1.25px), /* locMargins */
-    qmargins(10px, 10px, 10px, 10px), /* dateMargins */
+    qmargins(1.25px, 10px), /* fileMargins */
+    qmargins(1.25px, 10px), /* locMargins */
+    qmargins(0, 10px), /* dateMargins */
     qmargins(0), /* iconMargins */
     qmargins(3.75px, 0) /* padding */
     qmargins(0), /* margins */

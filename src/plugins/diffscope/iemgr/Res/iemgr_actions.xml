@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8" ?>
+<?xml version="1.0" encoding="UTF-8"?>
 <actionSystem>
     <context id="home.MainMenu" prefix="iemgr." mode="find">
         <group id="ImportExportGroup">
@@ -25,12 +25,12 @@
             </rules>
             <content>
                 <menu id="Import">
-                    <action id="ImportProject" command="Import: Import Project"/>
-                    <action id="ImportAudio" command="Import: Export Audio"/>
+                    <action id="ImportProject"/>
+                    <action id="ImportAudio"/>
                 </menu>
                 <menu id="Export">
-                    <action id="ExportProject" command="Export: Export Project"/>
-                    <action id="ExportAudio" command="Export: Export Audio"/>
+                    <action id="ExportProject"/>
+                    <action id="ExportAudio"/>
                 </menu>
             </content>
         </group>

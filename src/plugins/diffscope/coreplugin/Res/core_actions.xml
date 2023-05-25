@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8" ?>
+<?xml version="1.0" encoding="UTF-8"?>
 <actionSystem>
     <context id="home.MainMenu" prefix="core.">
         <menu id="File">
@@ -9,7 +9,8 @@
             </group>
             <menu id="PreferenceMenu">
                 <action id="Settings" command="Preferences: Settings" shortcut="Ctrl+,"/>
-                <action id="ColorThemes" command="Preferences: Color Themes" shortcut="Ctrl+K,Ctrl+T"/>
+                <action id="ColorThemes" command="Preferences: Color Themes"
+                        shortcut="Ctrl+K,Ctrl+T"/>
             </menu>
         </menu>
 
@@ -29,8 +30,8 @@
     <context id="project.MainMenu" prefix="core.">
         <menu id="File">
             <group id="OpenGroup">
-                <action id="NewFile" command="Create: New File" shortcut="Ctrl+N"/>
-                <action id="OpenFile" command="File: Open File" shortcut="Ctrl+O"/>
+                <action id="NewFile"/>
+                <action id="OpenFile"/>
                 <menu id="OpenRecent"/>
             </group>
             <group id="SaveGroup">
@@ -38,8 +39,8 @@
                 <action id="SaveAsFile" command="File: Save As File" shortcut="Ctrl+Shift+S"/>
             </group>
             <menu id="PreferenceMenu">
-                <action id="Settings" command="Preferences: Settings" shortcut="Ctrl+,"/>
-                <action id="ColorThemes" command="Preferences: Color Themes" shortcut="Ctrl+K,Ctrl+T"/>
+                <action id="Settings"/>
+                <action id="ColorThemes"/>
             </menu>
             <group id="ExitGroup">
                 <action id="CloseFile" command="File: Close File"/>
@@ -48,13 +49,13 @@
 
         <menu id="Help">
             <group id="WelcomeGroup">
-                <action id="ShowHome" command="Show Home"/>
-                <action id="FindAction" command="Show All Actions" shortcut="Ctrl+Shift+P"/>
+                <action id="ShowHome"/>
+                <action id="FindAction"/>
             </group>
             <group id="AboutGroup">
-                <action id="AboutPlugins" command="About: About Plugins"/>
-                <action id="AboutApp" command="About: About Application"/>
-                <action id="AboutQt" command="About: About Qt"/>
+                <action id="AboutPlugins"/>
+                <action id="AboutApp"/>
+                <action id="AboutQt"/>
             </group>
         </menu>
     </context>

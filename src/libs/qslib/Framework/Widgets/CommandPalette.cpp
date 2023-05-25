@@ -272,6 +272,9 @@ namespace QsApi {
 
     void CommandPalette::setCurrentItem(QListWidgetItem *item) {
         Q_D(CommandPalette);
+        if (!item) {
+            return;
+        }
         d->m_listWidget->setCurrentItem(item);
     }
 
