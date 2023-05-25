@@ -36,11 +36,18 @@ F0Widget::F0Widget(QWidget *parent) : QFrame(parent), draggingNoteInterval(0, 0)
 
     bgMenu = new QMenu(this);
     bgMenuReloadSentence = new QAction("&Discard changes and reload current sentence");
+    bgMenu_OptionPrompt = new QAction("Options");
     bgMenuSnapByDefault = new QAction("&Snap to piano keys by default");
-    bgMenuShowPitchTextOverlay = new QAction("&Show pitch text overlay");
+    bgMenuShowPitchTextOverlay = new QAction("Show pitch text &overlay");
+    auto boldMenuItemFont = bgMenu_OptionPrompt->font();
+    boldMenuItemFont.setBold(true);
+    bgMenu_OptionPrompt->setFont(boldMenuItemFont);
+    bgMenu_OptionPrompt->setDisabled(true);
     bgMenuShowPitchTextOverlay->setCheckable(true);
     bgMenuSnapByDefault->setCheckable(true);
     bgMenu->addAction(bgMenuReloadSentence);
+    bgMenu->addSeparator();
+    bgMenu->addAction(bgMenu_OptionPrompt);
     bgMenu->addAction(bgMenuSnapByDefault);
     bgMenu->addAction(bgMenuShowPitchTextOverlay);
 

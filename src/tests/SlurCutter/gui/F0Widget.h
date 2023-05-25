@@ -126,6 +126,7 @@ protected:
     
     QMenu *bgMenu;
     QAction *bgMenuReloadSentence;
+    QAction *bgMenu_OptionPrompt;
     QAction *bgMenuSnapByDefault;
     QAction *bgMenuShowPitchTextOverlay;
 
