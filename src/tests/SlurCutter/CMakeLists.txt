@@ -25,4 +25,4 @@ ffmpeg_link_all(${PROJECT_NAME} PRIVATE)
 
 target_compile_definitions(${PROJECT_NAME} PRIVATE APP_VERSON="${PROJECT_VERSION}")
 
-include(qasc_dssentence.cmake)
+include(qasc_exec.cmake)

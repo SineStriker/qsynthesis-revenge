@@ -36,7 +36,13 @@ F0Widget::F0Widget(QWidget *parent) : QFrame(parent), draggingNoteInterval(0, 0)
 
     bgMenu = new QMenu(this);
     bgMenuReloadSentence = new QAction("&Discard changes and reload current sentence");
+    bgMenuSnapByDefault = new QAction("&Snap to piano keys by default");
+    bgMenuShowPitchTextOverlay = new QAction("&Show pitch text overlay");
+    bgMenuShowPitchTextOverlay->setCheckable(true);
+    bgMenuSnapByDefault->setCheckable(true);
     bgMenu->addAction(bgMenuReloadSentence);
+    bgMenu->addAction(bgMenuSnapByDefault);
+    bgMenu->addAction(bgMenuShowPitchTextOverlay);
 
     // Connect signals
     connect(horizontalScrollBar, &QScrollBar::valueChanged, this, &F0Widget::onHorizontalScroll);
@@ -45,6 +51,14 @@ F0Widget::F0Widget(QWidget *parent) : QFrame(parent), draggingNoteInterval(0, 0)
     connect(noteMenuMergeLeft, &QAction::triggered, this, &F0Widget::mergeCurrentSlurToLeftNode);
 
     connect(bgMenuReloadSentence, &QAction::triggered, [=]() { emit requestReloadSentence(); });
+    connect(bgMenuShowPitchTextOverlay, &QAction::triggered, [=]() {
+        showPitchTextOverlay = bgMenuShowPitchTextOverlay->isChecked();
+        update();
+    });
+    connect(bgMenuSnapByDefault, &QAction::triggered, [=]() {
+        snapToKey = bgMenuSnapByDefault->isChecked();
+        update();
+    });
 }
 
 F0Widget::~F0Widget() {
@@ -159,6 +173,21 @@ void F0Widget::setErrorStatusText(const QString &text) {
     hasError = true;
     errorStatusText = text;
     update();
+}
+
+void F0Widget::loadConfig(const SlurCutterCfg &cfg) {
+    bgMenuShowPitchTextOverlay->setChecked(cfg.showPitchTextOverlay);
+    bgMenuSnapByDefault->setChecked(cfg.snapToKeys);
+
+    snapToKey = cfg.snapToKeys;
+    showPitchTextOverlay = cfg.showPitchTextOverlay;
+
+    update();
+}
+
+void F0Widget::pullConfig(SlurCutterCfg &cfg) const {
+    cfg.showPitchTextOverlay = bgMenuShowPitchTextOverlay->isChecked();
+    cfg.snapToKeys = bgMenuSnapByDefault->isChecked();
 }
 
 void F0Widget::clear() {
@@ -529,8 +558,8 @@ void F0Widget::paintEvent(QPaintEvent *event) {
         painter.setClipRect(0, 0, width(), h);
         w += KeyWidth;
 
-#if !defined(NDEBUG) && 0
         // Debug text
+        if (showPitchTextOverlay)
         {
             auto mousePitch = centerPitch + h / 2 / semitoneHeight -
                               (mapFromGlobal(QCursor::pos()).y() - TimelineHeight) / semitoneHeight;
@@ -543,7 +572,6 @@ void F0Widget::paintEvent(QPaintEvent *event) {
                                  .arg(MidiNoteToNoteName(lowestPitch))
                                  .arg(mousePitch));
         }
-#endif
 
         // Piano keys
         auto prevfont = painter.font();
@@ -635,6 +663,7 @@ void F0Widget::mouseMoveEvent(QMouseEvent *event) {
                 if (draggingMode == Note) {
                     // Drag note
                     draggingNoteInCents = event->modifiers() & Qt::ShiftModifier;
+                    if (!snapToKey) draggingNoteInCents = !draggingNoteInCents;
                 }
                 update();
             } else if (draggingButton == Qt::RightButton) {

@@ -1,4 +1,5 @@
 #include "MainWindow.h"
+#include "SlurCutterCfg.h"
 
 #include <QApplication>
 #include <QDebug>
@@ -15,11 +16,12 @@
 #include <QTime>
 
 #include <QJsonArray>
+#include <qasglobal.h>
 
-//#include "Common/CodecArguments.h"
-//#include "Common/SampleFormat.h"
+// #include "Common/CodecArguments.h"
+// #include "Common/SampleFormat.h"
 
-//#include "MathHelper.h"
+// #include "MathHelper.h"
 #include "QMSystem.h"
 
 // https://iconduck.com/icons
@@ -140,56 +142,49 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
     reloadWindowTitle();
     resize(1280, 720);
 
-    QString keyConfPath = qApp->applicationDirPath() + "/keys.json";
-    if (qApp->arguments().contains("--reset-keys")) {
+    QString keyConfPath = qApp->applicationDirPath() + "/slurcutter_config.json";
+    QFile rfile(keyConfPath);
+    if (!rfile.open(QIODevice::ReadOnly) || qApp->arguments().contains("--reset-keys")) {
         QFile file(keyConfPath);
         if (file.open(QIODevice::WriteOnly)) {
-            QJsonDocument doc;
-            doc.setObject(QJsonObject({
-                {"open", browseAction->shortcut().toString()},
-                {"next", nextAction->shortcut().toString()  },
-                {"prev", prevAction->shortcut().toString()  },
-                {"play", playAction->shortcut().toString()  }
-            }));
-            file.write(doc.toJson());
-            file.close();
+            SlurCutterCfg cfg;
+            QAS::JsonStream stream;
+            cfg.open = browseAction->shortcut().toString();
+            cfg.next = nextAction->shortcut().toString();
+            cfg.prev = prevAction->shortcut().toString();
+            cfg.play = playAction->shortcut().toString();
+            file.write(QJsonDocument(qAsClassToJson(cfg)).toJson());
         }
-    } else {
+    }
+    {
         // Read actions
-        do {
-            QFile file(keyConfPath);
-            if (!file.open(QIODevice::ReadOnly)) {
-                break;
-            }
+        rfile.close();
+        if (rfile.open(QIODevice::ReadOnly)) {
             QJsonParseError err;
-            QJsonDocument doc = QJsonDocument::fromJson(file.readAll(), &err);
+            QJsonDocument doc = QJsonDocument::fromJson(rfile.readAll(), &err);
 
-            file.close();
+            rfile.close();
 
-            if (err.error != QJsonParseError::NoError || !doc.isObject()) {
-                break;
+            QAS::JsonStream stream(doc.object());
+            if (err.error == QJsonParseError::NoError && doc.isObject()) {
+                stream >> cfg;
             }
+        }
 
-            QJsonObject obj = doc.object();
-            {
-                auto it = obj.find("open");
-                if (it != obj.end()) {
-                    browseAction->setShortcut(QKeySequence(it.value().toString()));
-                }
-                it = obj.find("next");
-                if (it != obj.end()) {
-                    nextAction->setShortcut(QKeySequence(it.value().toString()));
-                }
-                it = obj.find("prev");
-                if (it != obj.end()) {
-                    prevAction->setShortcut(QKeySequence(it.value().toString()));
-                }
-                it = obj.find("play");
-                if (it != obj.end()) {
-                    playAction->setShortcut(QKeySequence(it.value().toString()));
-                }
-            }
-        } while (0);
+        if (!cfg.open.isEmpty()) {
+            browseAction->setShortcut(QKeySequence(cfg.open));
+        }
+        if (!cfg.next.isEmpty()) {
+            nextAction->setShortcut(QKeySequence(cfg.next));
+        }
+        if (!cfg.prev.isEmpty()) {
+            prevAction->setShortcut(QKeySequence(cfg.prev));
+        }
+        if (!cfg.play.isEmpty()) {
+            playAction->setShortcut(QKeySequence(cfg.play));
+        }
+
+        f0Widget->loadConfig(cfg);
     }
 }
 
@@ -348,7 +343,8 @@ void MainWindow::reloadDsSentenceRequested() {
 void MainWindow::reloadWindowTitle() {
     setWindowTitle(dirname.isEmpty()
                        ? qApp->applicationName()
-                       : QString("%1 - %2").arg(qApp->applicationName(), QDir::toNativeSeparators(QMFs::PathFindFileName(dirname))));
+                       : QString("%1 - %2").arg(qApp->applicationName(),
+                                                QDir::toNativeSeparators(QMFs::PathFindFileName(dirname))));
 }
 
 void MainWindow::dragEnterEvent(QDragEnterEvent *event) {
@@ -400,6 +396,20 @@ void MainWindow::dropEvent(QDropEvent *event) {
     }
 }
 
+void MainWindow::closeEvent(QCloseEvent *event) {
+    // Pull and save config
+    f0Widget->pullConfig(cfg);
+    QString keyConfPath = qApp->applicationDirPath() + "/slurcutter_config.json";
+    QFile file(keyConfPath);
+    QAS::JsonStream stream;
+    if (file.open(QIODevice::WriteOnly)) {
+        file.write(QJsonDocument(qAsClassToJson(cfg)).toJson());
+    }
+
+    // Quit
+    event->accept();
+}
+
 void MainWindow::initStyleSheet() {
     QFile file(":/res/app.qss");
     if (file.open(QIODevice::ReadOnly | QIODevice::Text)) {
@@ -438,7 +448,8 @@ void MainWindow::_q_playMenuTriggered(QAction *action) {
 
 void MainWindow::_q_helpMenuTriggered(QAction *action) {
     if (action == aboutAppAction) {
-        QMessageBox::information(this, qApp->applicationName(), QString("%1 %2, Copyright OpenVPI.").arg(qApp->applicationName(), APP_VERSON));
+        QMessageBox::information(this, qApp->applicationName(),
+                                 QString("%1 %2, Copyright OpenVPI.").arg(qApp->applicationName(), APP_VERSON));
     } else if (action == aboutQtAction) {
         QMessageBox::aboutQt(this);
     }

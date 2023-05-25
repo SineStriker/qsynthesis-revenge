@@ -67,6 +67,9 @@ protected:
     QVector<QJsonObject> dsContent;
     int currentRow = -1;
 
+    // Cached application configuration
+    SlurCutterCfg cfg;
+
     void openDirectory(const QString &dirname);
     void openFile(const QString &filename);
     bool saveFile(const QString &filename);
@@ -82,6 +85,7 @@ protected:
 
     void dragEnterEvent(QDragEnterEvent *event) override;
     void dropEvent(QDropEvent *event) override;
+    void closeEvent(QCloseEvent *event) override;
 
 private:
     void initStyleSheet();

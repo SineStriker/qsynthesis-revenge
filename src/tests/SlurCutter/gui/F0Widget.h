@@ -2,6 +2,7 @@
 #pragma once
 
 #include "intervaltree.hpp"
+#include "SlurCutterCfg.h"
 #include <QFrame>
 #include <QMenu>
 #include <QScrollBar>
@@ -16,6 +17,8 @@ public:
 
     void setDsSentenceContent(const QJsonObject &content);
     void setErrorStatusText(const QString &text);
+    void loadConfig(const SlurCutterCfg &cfg);
+    void pullConfig(SlurCutterCfg &cfg) const;
 
     void clear();
 
@@ -99,7 +102,9 @@ protected:
     std::tuple<double, double> pitchRange = {0.0, 0.0}, timeRange = {0.0, 0.0};
     double playheadPos = 0.0;
 
-    bool clampPitchToF0Bounds = true; // Also affects scroll bar range
+    bool clampPitchToF0Bounds = true; // Also affects scroll bar range // TODO: INCOMPLETE
+    bool snapToKey = true;
+    bool showPitchTextOverlay = false;
 
     bool hasError;
     QString errorStatusText;
@@ -121,6 +126,8 @@ protected:
     
     QMenu *bgMenu;
     QAction *bgMenuReloadSentence;
+    QAction *bgMenuSnapByDefault;
+    QAction *bgMenuShowPitchTextOverlay;
 
     QMenu *noteMenu;
     QAction *noteMenuMergeLeft;
