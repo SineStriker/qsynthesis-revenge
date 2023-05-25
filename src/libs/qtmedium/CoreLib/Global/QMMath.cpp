@@ -6,11 +6,22 @@
 
 #include <cstdio>
 
+QString QMMath::removeSideQuote(const QString &token) {
+    auto str = token;
+    if (str.front() == '\"') {
+        str.remove(0, 1);
+    }
+    if (str.back() == '\"') {
+        str.remove(str.size() - 1, 1);
+    }
+    return str;
+}
+
 QList<int> QMMath::toIntList(const QStringList &list) {
     QList<int> res;
-    for (auto it = list.begin(); it != list.end(); ++it) {
+    for (const auto &item : list) {
         bool isNum;
-        int num = it->toInt(&isNum);
+        int num = item.toInt(&isNum);
         if (!isNum) {
             return {};
         }

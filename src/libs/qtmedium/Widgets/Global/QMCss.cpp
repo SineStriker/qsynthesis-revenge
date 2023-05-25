@@ -10,8 +10,7 @@ QStringList QMCss::extractFunctionToStringList(const QString &str, bool *ok) {
         if (ok) {
             *ok = true;
         }
-        res = QStringList(
-            {str.mid(0, leftParen), str.mid(leftParen + 1, rightParen - leftParen - 1)});
+        res = QStringList({str.mid(0, leftParen), str.mid(leftParen + 1, rightParen - leftParen - 1)});
     } else {
         if (ok) {
             *ok = false;
@@ -22,7 +21,7 @@ QStringList QMCss::extractFunctionToStringList(const QString &str, bool *ok) {
 
 QColor QMCss::CssStringToColor(const QString &str) {
     if (str.isEmpty()) {
-        return QColor();
+        return Qt::transparent;
     }
 
     QCss::Declaration dec;

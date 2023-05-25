@@ -10,6 +10,14 @@
 namespace QMMath {
 
     /**
+     * @brief Remove begin and end quote of a string
+     *
+     * @param token String
+     * @return
+     */
+    QMCORELIB_API QString removeSideQuote(const QString &token);
+
+    /**
      * @brief Convert a list of string to a list of int, skip if fail
      *
      * @param list String list

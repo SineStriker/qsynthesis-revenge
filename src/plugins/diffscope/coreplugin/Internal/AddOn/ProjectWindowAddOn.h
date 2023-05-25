@@ -35,6 +35,22 @@ namespace Core {
 
             ActionItem *exitGroupItem;
             ActionItem *closeFileItem;
+
+            ActionItem *timerGroupItem;
+            ActionItem *timerLabelItem;
+
+            ActionItem *quantizeGroupItem;
+            ActionItem *quantizeSelectorItem;
+
+            ActionItem *playControlGroupItem;
+            ActionItem *playItem;
+            ActionItem *stopItem;
+            ActionItem *moveToStartItem;
+            ActionItem *moveToEndItem;
+
+            ActionItem *playAssistGroupItem;
+            ActionItem *metronomeItem;
+            ActionItem *loopPlayItem;
         };
 
     }

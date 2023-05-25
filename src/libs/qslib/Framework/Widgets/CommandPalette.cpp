@@ -212,8 +212,17 @@ namespace QsApi {
             m_listWidget->item(i)->setHidden(!find);
         }
 
-        if (firstVisibleItem && m_listWidget->currentItem() && m_listWidget->currentItem()->isHidden()) {
-            m_listWidget->setCurrentItem(firstVisibleItem);
+        if (!m_listWidget->currentItem() || m_listWidget->currentItem()->isHidden()) {
+            if (firstVisibleItem) {
+                m_listWidget->setCurrentItem(firstVisibleItem);
+            } else {
+                m_listWidget->clearSelection();
+            }
+        } else {
+            // Explicitly reselect current item
+            auto item = m_listWidget->currentItem();
+            m_listWidget->clearSelection();
+            m_listWidget->setCurrentItem(item);
         }
 
         emit q->filterKeywordChanged(text);

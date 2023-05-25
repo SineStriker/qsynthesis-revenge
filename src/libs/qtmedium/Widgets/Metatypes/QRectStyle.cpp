@@ -2,6 +2,7 @@
 #include "private/QMetaTypeUtils.h"
 
 #include "QMCss.h"
+#include "QMMath.h"
 
 #include <QDebug>
 
@@ -72,11 +73,11 @@ QRectStyle QRectStyle::fromStringList(const QStringList &stringList) {
                 QStringList colorStrings = SplitStringByComma(strColor.mid(1, strColor.size() - 2));
                 QList<QColor> colors;
                 for (const auto &item : qAsConst(colorStrings)) {
-                    colors.append(QMCss::CssStringToColor(item.simplified()));
+                    colors.append(QMCss::CssStringToColor(QMMath::removeSideQuote(item.simplified())));
                 }
                 res.m_colors = colors;
             } else {
-                res.m_colors = {QMCss::CssStringToColor(strColor)};
+                res.m_colors = {QMCss::CssStringToColor(QMMath::removeSideQuote(strColor))};
             }
         }
     }

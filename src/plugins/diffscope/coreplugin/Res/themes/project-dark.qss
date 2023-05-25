@@ -3,3 +3,60 @@
 QWidget#project-window {
     background-color: #1E1E1E;
 }
+
+QToolBar#main-toolbar {
+    padding: 5px;
+    spacing: 5px;
+    qproperty-iconSize: 20px 20px;
+}
+
+QToolBar#main-toolbar>QToolBarSeparator {
+    max-height: 18px;
+}
+
+QToolBar#main-toolbar::separator {
+    width: 2.5px;
+    margin: 0 5px;
+    background-color: rgba(255, 255, 255, 7.5%);
+}
+
+QToolBar#main-toolbar>QLabel {
+    padding: 5px;
+    font-weight: bold;
+    color: white;
+}
+
+QToolBar#main-toolbar>QToolButton {
+    padding: 5px;
+    border: none;
+    background-color: transparent;
+}
+
+QToolBar#main-toolbar>QToolButton:hover {
+    background-color: rgba(255, 255, 255, 20%);
+}
+
+QToolBar#main-toolbar>QToolButton#play {
+    qproperty-iconUp: svg(":/svg/main-toolbar/play-line.svg", "${project.toolbar.iconColor}");
+    qproperty-iconUpChecked: svg(":/svg/main-toolbar/pause-line.svg", "${project.toolbar.iconColor}");
+}
+
+QToolBar#main-toolbar>QToolButton#stop {
+    qproperty-iconUp: svg(":/svg/main-toolbar/stop-line.svg", "${project.toolbar.iconColor}");
+}
+
+QToolBar#main-toolbar>QToolButton#moveToStart {
+    qproperty-iconUp: svg(":/svg/main-toolbar/move-start-line.svg", "${project.toolbar.iconColor}");
+}
+
+QToolBar#main-toolbar>QToolButton#moveToEnd {
+    qproperty-iconUp: svg(":/svg/main-toolbar/move-end-line.svg", "${project.toolbar.iconColor}");
+}
+
+QToolBar#main-toolbar>QToolButton#metronome {
+    qproperty-iconUp: svg(":/svg/main-toolbar/metronome-line.svg", "${project.toolbar.iconColor}");
+}
+
+QToolBar#main-toolbar>QToolButton#loopPlay {
+    qproperty-iconUp: svg(":/svg/main-toolbar/loop-line.svg", "${project.toolbar.iconColor}");
+}

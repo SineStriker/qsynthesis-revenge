@@ -8,5 +8,12 @@
         <file>core_actions.xml</file>
         <file>svg/checkbox/check-line.svg</file>
         <file>images/dspx.png</file>
+        <file>svg/main-toolbar/play-line.svg</file>
+        <file>svg/main-toolbar/pause-line.svg</file>
+        <file>svg/main-toolbar/stop-line.svg</file>
+        <file>svg/main-toolbar/move-start-line.svg</file>
+        <file>svg/main-toolbar/move-end-line.svg</file>
+        <file>svg/main-toolbar/loop-line.svg</file>
+        <file>svg/main-toolbar/metronome-line.svg</file>
     </qresource>
 </RCC>

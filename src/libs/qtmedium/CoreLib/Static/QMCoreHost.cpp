@@ -178,6 +178,19 @@ finish_conf:
         themePaths.append(path);
     }
 
+    QStringList fonts = confValues.value("Fonts", {});
+    for (auto path : qAsConst(fonts)) {
+        if (QMFs::isPathRelative(path)) {
+            path = prefix + "/" + path;
+        }
+        fontPaths.append(path);
+    }
+
+    QStringList appFonts = confValues.value("AppFont", {});
+    if (!appFonts.isEmpty()) {
+        appFont = appFonts.first();
+    }
+
     // Init factory
     fac.reset(createFactory());
 

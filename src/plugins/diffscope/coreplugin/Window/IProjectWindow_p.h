@@ -1,6 +1,8 @@
 #ifndef IPROJECTWINDOW_P_H
 #define IPROJECTWINDOW_P_H
 
+#include <QToolBar>
+
 #include <CoreApi/ActionContext.h>
 
 #include "ICoreWindow_p.h"
@@ -19,13 +21,16 @@ namespace Core {
 
         void reloadStrings();
 
-        ActionContext *mainMenuCtx;
+        void reloadMainToolbar();
+        ActionContext *mainToolbarCtx;
 
         DspxDocument *m_doc;
 
         bool m_forceClose;
 
+        QFrame *m_centralWidget;
         Internal::ProjectWidget *m_projectWidget;
+        QToolBar *m_toolbar;
 
     private:
         void _q_documentChanged();

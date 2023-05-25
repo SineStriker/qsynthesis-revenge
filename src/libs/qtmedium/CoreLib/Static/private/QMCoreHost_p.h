@@ -25,6 +25,8 @@ public:
 
     QStringList translationPaths;
     QStringList themePaths;
+    QStringList fontPaths;
+    QString appFont;
 
     virtual QMCoreFactory *createFactory();
 

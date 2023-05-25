@@ -5,10 +5,12 @@
     },
     "variables": {
         "Visual Studio Code - Dark": {
-            "Core::Internal::HomeRecentTopFrame::IconColor": "#FFFFFF"
+            "core.recent.button.iconColor": "#FFFFFF",
+            "project.toolbar.iconColor": "#FFFFFF"
         },
         "Visual Studio Code - Light": {
-            "Core::Internal::HomeRecentTopFrame::IconColor": "#FFFFFF"
+            "core.recent.button.iconColor": "#FFFFFF",
+            "project.toolbar.iconColor": "#FFFFFF"
         }
     },
     "stylesheets": {
@@ -16,7 +18,7 @@
             "Global": [
                 {
                     "content": {
-                        "win": "QWidget { font-family: \"Microsoft YaHei\"; }",
+                        "win": "/* QWidget { font-family: \"Microsoft YaHei\"; } */",
                         "linux": "QWidget[top-window=true] { qproperty-windowIcon: url(\":/svg/app/diffsinger\"); }"
                     }
                 }

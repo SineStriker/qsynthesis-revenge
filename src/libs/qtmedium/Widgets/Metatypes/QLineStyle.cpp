@@ -2,6 +2,7 @@
 #include "private/QMetaTypeUtils.h"
 
 #include "QMCss.h"
+#include "QMMath.h"
 
 #include <QDebug>
 
@@ -14,8 +15,7 @@ QLineStyle::QLineStyle(Qt::PenStyle style) : QPen(style) {
 QLineStyle::QLineStyle(const QColor &color) : QPen(color) {
 }
 
-QLineStyle::QLineStyle(const QBrush &brush, qreal width, Qt::PenStyle s, Qt::PenCapStyle c,
-                       Qt::PenJoinStyle j)
+QLineStyle::QLineStyle(const QBrush &brush, qreal width, Qt::PenStyle s, Qt::PenCapStyle c, Qt::PenJoinStyle j)
     : QPen(brush, width, s, c, j) {
 }
 
@@ -28,21 +28,19 @@ QLineStyle::~QLineStyle() {
 QStringList QLineStyle::toStringList() const {
     return {MetaFunctionName(),
             QString("%1%2,%3,%4,%5,%6")
-                .arg(QString::number(widthF()), QLatin1String(PixelSizeUnit),
-                     QLatin1String(color().name().toLatin1()), LineStyleToString(style()),
-                     CapStyleToString(capStyle()), JoinStyleToString(joinStyle()))};
+                .arg(QString::number(widthF()), QLatin1String(PixelSizeUnit), QLatin1String(color().name().toLatin1()),
+                     LineStyleToString(style()), CapStyleToString(capStyle()), JoinStyleToString(joinStyle()))};
 }
 
 QLineStyle QLineStyle::fromStringList(const QStringList &stringList) {
     QLineStyle res;
-    if (stringList.size() == 2 &&
-        (!stringList.front().compare(MetaFunctionName(), Qt::CaseInsensitive)
-         /*||!stringList.front().compare(QLatin1String(QCssCustomValue_Pen_2),
-Qt::CaseInsensitive)*/
-         )) {
+    if (stringList.size() == 2 && (!stringList.front().compare(MetaFunctionName(), Qt::CaseInsensitive)
+                                   /*||!stringList.front().compare(QLatin1String(QCssCustomValue_Pen_2),
+                          Qt::CaseInsensitive)*/
+                                   )) {
         QStringList valueList = SplitStringByComma(stringList.back());
         for (int i = 0; i < valueList.size(); ++i) {
-            const QString &val = valueList.at(i).simplified();
+            const QString &val = QMMath::removeSideQuote(valueList.at(i).simplified());
             switch (i) {
                 case 0: {
                     res.setBrush(QBrush(QMCss::CssStringToColor(val)));
@@ -100,8 +98,7 @@ QLatin1String QLineStyle::MetaFunctionName() {
 QDebug operator<<(QDebug debug, const QLineStyle &pen) {
     debug.nospace() << QString("QLineStyle(%1%2,%3,%4,%5,%6)")
                            .arg(QString::number(pen.widthF()), QLatin1String(PixelSizeUnit),
-                                QLatin1String(pen.color().name().toLatin1()),
-                                LineStyleToString(pen.style()), CapStyleToString(pen.capStyle()),
-                                JoinStyleToString(pen.joinStyle()));
+                                QLatin1String(pen.color().name().toLatin1()), LineStyleToString(pen.style()),
+                                CapStyleToString(pen.capStyle()), JoinStyleToString(pen.joinStyle()));
     return debug;
 }

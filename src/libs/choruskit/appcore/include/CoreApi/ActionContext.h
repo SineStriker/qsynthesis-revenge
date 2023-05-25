@@ -4,6 +4,7 @@
 
 #include <QMenuBar>
 #include <QSet>
+#include <QToolBar>
 
 #include "CkAppCoreGlobal.h"
 
@@ -85,7 +86,7 @@ namespace Core {
 
         void buildMenuBarWithState(const QList<ActionItem *> &items, QMenuBar *menuBar) const;
         void buildMenuWithState(const QList<ActionItem *> &items, QMenu *menu) const;
-        // void buildToolBarWithState(const QList<ActionItem *> &items)
+        void buildToolBarWithState(const QList<ActionItem *> &items, QToolBar *toolBar) const;
 
     signals:
         void titleChanged(const QString &title);

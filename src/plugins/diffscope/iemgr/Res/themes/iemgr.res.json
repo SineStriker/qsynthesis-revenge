@@ -6,7 +6,7 @@
     "stylesheets": {
         "Visual Studio Code - Dark": {
             "iemgr.ImportButton": {
-                "content": "qproperty-iconUp: svg(\":/svg/home/import-file.svg\", ${Core::Internal::HomeRecentTopFrame::IconColor});"
+                "content": "qproperty-iconUp: svg(\":/svg/home/import-file.svg\", ${core.recent.button.iconColor});"
             },
             "IEMgr::ImportDialog": {
                 "file": "import-dialog-dark.qss"
@@ -14,7 +14,7 @@
         },
         "Visual Studio Code - Light": {
             "iemgr.ImportButton": {
-                "content": "qproperty-iconUp: svg(\":/svg/home/import-file.svg\", ${Core::Internal::HomeRecentTopFrame::IconColor});"
+                "content": "qproperty-iconUp: svg(\":/svg/home/import-file.svg\", ${core.recent.button.iconColor});"
             },
             "IEMgr::ImportDialog": {
                 "file": "import-dialog-light.qss"

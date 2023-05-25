@@ -1,6 +1,8 @@
 #include "QColorList.h"
-#include "QMCss.h"
 #include "private/QMetaTypeUtils.h"
+
+#include "QMCss.h"
+#include "QMMath.h"
 
 #include <QDebug>
 
@@ -22,7 +24,7 @@ QColorList QColorList::fromStringList(const QStringList &stringList) {
     if (stringList.size() == 2 && !stringList.front().compare(MetaFunctionName(), Qt::CaseInsensitive)) {
         QStringList valueList = SplitStringByComma(stringList.back());
         for (const auto &i : valueList) {
-            QString str = i.simplified();
+            QString str = QMMath::removeSideQuote(i.simplified());
             res.append(QMCss::CssStringToColor(str));
         }
     }

@@ -3,7 +3,12 @@
 
 #include <QDebug>
 #include <QEvent>
+#include <QLabel>
 #include <QMessageBox>
+#include <QVBoxLayout>
+
+#include <CToolBar.h>
+#include <CToolButton.h>
 
 #include <QMDecoratorV2.h>
 #include <QMView.h>
@@ -24,6 +29,14 @@ namespace Core {
     }
 
     void IProjectWindowPrivate::reloadStrings() {
+    }
+
+    void IProjectWindowPrivate::reloadMainToolbar() {
+        Q_Q(ICoreWindow);
+        auto items = q->actionItems();
+        auto bar = m_toolbar;
+
+        mainToolbarCtx->buildToolBarWithState(items, bar);
     }
 
     void IProjectWindowPrivate::_q_documentChanged() {
@@ -49,6 +62,11 @@ namespace Core {
         return d->m_doc;
     }
 
+    QToolBar *IProjectWindow::mainToolbar() const {
+        Q_D(const IProjectWindow);
+        return d->m_toolbar;
+    }
+
     IProjectWindow::IProjectWindow(QObject *parent) : IProjectWindow(*new IProjectWindowPrivate(), parent) {
     }
 
@@ -64,11 +82,29 @@ namespace Core {
         win->setObjectName("project-window");
         win->setAcceptDrops(true);
 
-        auto w = new Internal::ProjectWidget();
-        w->setObjectName("project-widget");
+        d->mainToolbarCtx = ICore::instance()->actionSystem()->context("project.MainToolbar");
 
-        setCentralWidget(w);
-        d->cp->setParent(w);
+        auto &centralWidget = d->m_centralWidget = new QFrame();
+        centralWidget->setObjectName("central-widget");
+
+        auto &toolbar = d->m_toolbar = new CToolBar();
+        toolbar->setObjectName("main-toolbar");
+        toolbar->setMovable(false);
+        toolbar->setFloatable(false);
+        toolbar->setOrientation(Qt::Horizontal);
+
+        auto &projectWidget = d->m_projectWidget = new Internal::ProjectWidget();
+        projectWidget->setObjectName("project-widget");
+
+        auto layout = new QVBoxLayout();
+        layout->setMargin(0);
+        layout->setSpacing(0);
+        layout->addWidget(toolbar);
+        layout->addWidget(projectWidget);
+        centralWidget->setLayout(layout);
+
+        setCentralWidget(centralWidget);
+        d->cp->setParent(centralWidget);
 
         // Close event
         connect(d->m_doc, &IDocument::changed, d, &IProjectWindowPrivate::_q_documentChanged);
@@ -80,6 +116,9 @@ namespace Core {
         Q_D(IProjectWindow);
 
         ICoreWindow::windowAddOnsFinished();
+
+        connect(d->mainToolbarCtx, &ActionContext::stateChanged, d, &IProjectWindowPrivate::reloadMainToolbar);
+        d->reloadMainToolbar();
 
         auto win = window();
 

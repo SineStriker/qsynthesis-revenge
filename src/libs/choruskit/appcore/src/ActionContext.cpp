@@ -372,29 +372,12 @@ namespace Core {
                 group->addAction(item->menu()->menuAction());
                 break;
             }
-                // case ActionItem::ActionGroup: {
-                //     for (const auto &action : item->actionGroup()->actions()) {
-                //         group->addAction(action);
-                //     }
-                //     break;
-                // }
             case ActionItem::Action: {
                 group->addAction(item->action());
                 break;
             }
-            default:
-                break;
-        }
-    }
-
-    static void insertMenuBar(QMenuBar *menuBar, ActionItem *item) {
-        switch (item->type()) {
-            case ActionItem::Menu: {
-                menuBar->addMenu(item->menu());
-                break;
-            }
-            case ActionItem::Action: {
-                menuBar->addAction(item->action());
+            case ActionItem::Widget: {
+                group->addAction(item->widgetAction());
                 break;
             }
             default:
@@ -402,17 +385,20 @@ namespace Core {
         }
     }
 
-    static void insertMenu(QMenu *menu, ActionItem *item) {
+    template <class Menu>
+    static void insertMenu(Menu *menu, ActionItem *item) {
+        auto empty = menu->actions().isEmpty();
         auto sep = [&]() {
-            if (menu->property("last_insert").toString() == "group" || item->type() == ActionItem::ActionGroup) {
+            if (menu->property("last_insert").toString() == "group" || (item->type() == ActionItem::ActionGroup && !empty)) {
                 menu->addSeparator();
             }
+            empty = false;
         };
 
         switch (item->type()) {
             case ActionItem::Menu:
                 sep();
-                menu->addMenu(item->menu());
+                menu->addAction(item->menu()->menuAction());
                 menu->setProperty("last_insert", "menu");
                 break;
             case ActionItem::ActionGroup: {
@@ -429,14 +415,19 @@ namespace Core {
                 menu->setProperty("last_insert", "action");
                 break;
             }
+            case ActionItem::Widget: {
+                sep();
+                menu->addAction(item->widgetAction());
+                menu->setProperty("last_insert", "action");
+                break;
+            }
             default:
                 break;
         }
     }
 
     template <class Menu>
-    static void buildMenu(const QList<ActionItem *> &items, Menu *menuBar, const QMap<QString, QStringList> &state,
-                          void(insertion)(Menu *, ActionItem *)) {
+    static void buildMenu(const QList<ActionItem *> &items, Menu *menuBar, const QMap<QString, QStringList> &state) {
         if (!menuBar)
             return;
         menuBar->clear();
@@ -458,7 +449,8 @@ namespace Core {
             QList<QKeySequence> keys;
             QMChronSet<QKeySequence> duplicatedKeys;
             for (const auto &sh : item->spec()->shortcuts()) {
-                // qDebug() << sh << sh.count() << sh.isEmpty() << QKeySequence("").isEmpty() << QKeySequence().isEmpty();
+                // qDebug() << sh << sh.count() << sh.isEmpty() << QKeySequence("").isEmpty() <<
+                // QKeySequence().isEmpty();
                 //                const auto d = sh.data_ptr();
                 //                for (int i = 0; i < 4; ++i)
                 //                    qDebug() << d->key[i];
@@ -530,7 +522,7 @@ namespace Core {
                     auto childItem = itemMap.value(childId, nullptr);
                     if (!childItem)
                         continue;
-                    insertion(menuBar, childItem);
+                    insertMenu(menuBar, childItem);
                 }
             } else {
                 auto item = itemMap.value(id, nullptr);
@@ -557,11 +549,15 @@ namespace Core {
     }
 
     void ActionContext::buildMenuBarWithState(const QList<ActionItem *> &items, QMenuBar *menuBar) const {
-        buildMenu(items, menuBar, state(), insertMenuBar);
+        buildMenu(items, menuBar, state());
     }
 
     void ActionContext::buildMenuWithState(const QList<ActionItem *> &items, QMenu *menu) const {
-        buildMenu(items, menu, state(), insertMenu);
+        buildMenu(items, menu, state());
+    }
+
+    void Core::ActionContext::buildToolBarWithState(const QList<ActionItem *> &items, QToolBar *toolBar) const {
+        buildMenu(items, toolBar, state());
     }
 
     ActionContext::ActionContext(ActionContextPrivate &d, const QString &id, QObject *parent)

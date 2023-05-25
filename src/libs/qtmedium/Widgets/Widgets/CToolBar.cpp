@@ -1,10 +1,108 @@
 #include "CToolBar.h"
+#include "CToolButton.h"
 
-#include <QHBoxLayout>
+#include <QActionEvent>
+#include <QChildEvent>
+#include <QDebug>
+#include <QLayoutItem>
+#include <QMainWindow>
+#include <QMetaProperty>
 #include <QStyle>
+#include <QTimer>
+#include <QToolBar>
 #include <QWidgetAction>
 
+#include <private/qtoolbar_p.h>
+#include <private/qtoolbarlayout_p.h>
 #include <private/qwidgetaction_p.h>
+
+QToolBarItem::QToolBarItem(QWidget *widget) : QWidgetItem(widget), action(nullptr), customWidget(false) {
+}
+
+bool QToolBarItem::isEmpty() const {
+    return action == nullptr || !action->isVisible();
+}
+
+class HackToolBarLayout : public QLayout {
+public:
+    bool expanded, animating;
+
+    void insertAction(int index, QAction *action);
+    int indexOf(QAction *action) const;
+    using QLayout::indexOf; // bring back the hidden members
+
+private:
+    QList<QToolBarItem *> items;
+
+    QToolBarItem *createItem(QAction *action);
+};
+
+void HackToolBarLayout::insertAction(int index, QAction *action) {
+    index = qMax(0, index);
+    index = qMin(items.count(), index);
+
+    QToolBarItem *item = createItem(action);
+    if (item) {
+        items.insert(index, item);
+        invalidate();
+    }
+}
+
+int HackToolBarLayout::indexOf(QAction *action) const {
+    for (int i = 0; i < items.count(); ++i) {
+        if (items.at(i)->action == action)
+            return i;
+    }
+    return -1;
+}
+
+QToolBarItem *HackToolBarLayout::createItem(QAction *action) {
+    bool customWidget = false;
+    bool standardButtonWidget = false;
+    QWidget *widget = nullptr;
+    auto tb = qobject_cast<QToolBar *>(parentWidget());
+    if (!tb)
+        return (QToolBarItem *) nullptr;
+
+    if (auto widgetAction = qobject_cast<QWidgetAction *>(action)) {
+        widget = widgetAction->requestWidget(tb);
+        if (widget != nullptr) {
+            widget->setAttribute(Qt::WA_LayoutUsesWidgetRect);
+            customWidget = true;
+        }
+    } else if (action->isSeparator()) {
+        // Never reach here
+    }
+
+    if (!widget) {
+        auto button = new CToolButton(tb);
+        button->setAutoRaise(true);
+        button->setFocusPolicy(Qt::NoFocus);
+        button->setIconSize(tb->iconSize());
+        button->setToolButtonStyle(tb->toolButtonStyle());
+        QObject::connect(tb, SIGNAL(iconSizeChanged(QSize)), button, SLOT(setIconSize(QSize)));
+        QObject::connect(tb, SIGNAL(toolButtonStyleChanged(Qt::ToolButtonStyle)), button,
+                         SLOT(setToolButtonStyle(Qt::ToolButtonStyle)));
+        button->setDefaultAction(action);
+        QObject::connect(button, SIGNAL(triggered(QAction *)), tb, SIGNAL(actionTriggered(QAction *)));
+        widget = button;
+        standardButtonWidget = true;
+
+        // Copy object name and properties
+        button->setObjectName(action->objectName());
+        for (const auto &key : action->dynamicPropertyNames()) {
+            button->setProperty(key, action->property(key));
+        }
+    }
+
+    widget->hide();
+    QToolBarItem *result = new QToolBarItem(widget);
+    if (standardButtonWidget)
+        result->setAlignment(Qt::AlignJustify);
+    result->customWidget = customWidget;
+    result->action = action;
+    return result;
+}
 
 class HackAction : public QAction {
 public:
@@ -13,108 +111,36 @@ public:
     }
 };
 
-class CToolBarPrivate {
-public:
-    CToolBar *q;
+CToolBar::CToolBar(const QString &title, QWidget *parent) : QToolBar(title, parent) {
+}
 
-    QSize iconSize;
-    QHBoxLayout *layout;
-
-    CToolBarPrivate(CToolBar *q) : q(q) {
-        layout = new QHBoxLayout();
-        q->setLayout(layout);
-    }
-};
-
-
-CToolBar::CToolBar(QWidget *parent) : QFrame(parent), d(new CToolBarPrivate(this)) {
+CToolBar::CToolBar(QWidget *parent) : QToolBar(parent) {
 }
 
 CToolBar::~CToolBar() {
-    delete d;
-}
-
-void CToolBar::clear() {
-    auto actions = this->actions();
-    for (const auto &action : qAsConst(actions)) {
-        removeAction(action);
-    }
-}
-
-QAction *CToolBar::addSeparator() {
-    auto action = new QAction(this);
-    action->setSeparator(true);
-    addAction(action);
-    return action;
-}
-
-QAction *CToolBar::insertSeparator(QAction *before) {
-    auto action = new QAction(this);
-    action->setSeparator(true);
-    insertAction(before, action);
-    return action;
-}
-
-QAction *CToolBar::addWidget(QWidget *widget) {
-    auto action = new QWidgetAction(this);
-    action->setDefaultWidget(widget);
-    reinterpret_cast<HackAction *>(action)->d_func()->autoCreated = true;
-    addAction(action);
-    return action;
-}
-
-QAction *CToolBar::insertWidget(QAction *before, QWidget *widget) {
-    auto action = new QWidgetAction(this);
-    action->setDefaultWidget(widget);
-    reinterpret_cast<HackAction *>(action)->d_func()->autoCreated = true;
-    insertAction(before, action);
-    return action;
-}
-
-QSize CToolBar::iconSize() const {
-    return d->iconSize;
-}
-
-void CToolBar::setIconSize(const QSize &iconSize) {
-    QSize sz = iconSize;
-    if (!sz.isValid()) {
-        const int metric = style()->pixelMetric(QStyle::PM_ToolBarIconSize, nullptr, this);
-        sz = QSize(metric, metric);
-    }
-    if (d->iconSize != sz) {
-        d->iconSize = sz;
-        emit iconSizeChanged(d->iconSize);
-    }
-    // d->layout->invalidate();
 }
 
 void CToolBar::actionEvent(QActionEvent *event) {
     QAction *action = event->action();
-    auto widgetAction = qobject_cast<QWidgetAction *>(action);
+    auto d = reinterpret_cast<QToolBarPrivate *>(d_ptr.data());
+    auto widgetAction = reinterpret_cast<HackAction *>(qobject_cast<QWidgetAction *>(action));
+    auto layout = reinterpret_cast<HackToolBarLayout *>(d->layout);
 
     switch (event->type()) {
         case QEvent::ActionAdded: {
-            if (widgetAction != nullptr && reinterpret_cast<HackAction *>(widgetAction)->d_func()->autoCreated)
-                widgetAction->setParent(this);
-
-            // int index = d->layout->count();
-            // d->layout->insertAction(index, action);
+            if (!action->isSeparator() && !widgetAction) {
+                int index = layout->count();
+                if (event->before()) {
+                    index = layout->indexOf(event->before());
+                    Q_ASSERT_X(index != -1, "QToolBar::insertAction", "internal error");
+                }
+                layout->insertAction(index, action);
+                return;
+            }
             break;
         }
-
-        case QEvent::ActionChanged:
-            d->layout->invalidate();
-            break;
-
-        case QEvent::ActionRemoved: {
-            //            int index = d->layout->indexOf(action);
-            //            if (index != -1) {
-            //                delete d->layout->takeAt(index);
-            //            }
-            break;
-        }
-
         default:
             break;
     }
+    QToolBar::actionEvent(event);
 }

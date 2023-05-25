@@ -2,6 +2,7 @@
 #include "private/QMetaTypeUtils.h"
 
 #include "CSvgIconEngine.h"
+#include "QMMath.h"
 #include "QMSystem.h"
 
 #include <QFileInfo>
@@ -49,7 +50,7 @@ QIcon QSvgUri::toIcon(int modes) const {
             return icon;
         }
     }
-    return QIcon();
+    return {};
 }
 
 QString QSvgUri::filename() const {
@@ -88,7 +89,7 @@ QSvgUri QSvgUri::fromStringList(const QStringList &stringList) {
             QSvgUri uri;
             uri.setFilename(strFile);
             if (content.size() > 1) {
-                QString strData = content.at(1).simplified();
+                QString strData = QMMath::removeSideQuote(content.at(1).simplified());
                 if (strData.isEmpty()) {
                     return QSvgUri();
                 }

@@ -2,6 +2,8 @@ cmake_minimum_required(VERSION 3.17)
 
 set(CMAKE_POLICY_DEFAULT_CMP0077 NEW)
 
+project(ChorusKit LANGUAGES CXX)
+
 # ----------------------------------
 # Import base configuration
 # ----------------------------------
@@ -21,7 +23,6 @@ include(${ROOT_CMAKE_MODULE_DIR}/ChorusKitAPI.cmake)
 # ----------------------------------
 # Main project
 # ----------------------------------
-project(ChorusKit VERSION ${CHORUSKIT_VERSION} LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)

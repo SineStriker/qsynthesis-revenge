@@ -53,6 +53,15 @@ namespace Core {
             closeFileItem->setText(tr("Close"));
         }
 
+        static QAction *createToolBarAction(QObject *parent, const QString &name, const QString &type = {}) {
+            auto action = new QAction(parent);
+            action->setObjectName(name);
+            if (!type.isEmpty()) {
+                action->setProperty("type", type);
+            }
+            return action;
+        }
+
         void ProjectWindowAddOn::initActions() {
             auto iWin = windowHandle()->cast<IProjectWindow>();
             auto win = iWin->window();
@@ -64,8 +73,32 @@ namespace Core {
             exitGroupItem = new ActionItem("core.ExitGroup", new QActionGroup(this), this);
             closeFileItem = new ActionItem("core.CloseFile", new QAction(this), this);
 
-            connect(iWin->doc(), &IDocument::changed, this,
-                    [this, iWin]() { saveFileItem->setEnabled(iWin->doc()->isModified()); });
+            timerGroupItem = new ActionItem("core.TimerGroup", new QActionGroup(this), this);
+            timerLabelItem = new ActionItem("core.TimerLabel", new QLabel("00:00.000"), this);
+
+            quantizeGroupItem = new ActionItem("core.QuantizeGroup", new QActionGroup(this), this);
+            quantizeSelectorItem = new ActionItem("core.QuantizeSelector", new QLabel("1/4"), this);
+
+            playControlGroupItem = new ActionItem("core.PlayControlGroup", new QActionGroup(this), this);
+            playItem = new ActionItem("core.Play", createToolBarAction(this, "play"), this);
+            stopItem = new ActionItem("core.Stop", createToolBarAction(this, "stop"), this);
+            moveToStartItem = new ActionItem("core.MoveToStart", createToolBarAction(this, "moveToStart"), this);
+            moveToEndItem = new ActionItem("core.MoveToEnd", createToolBarAction(this, "moveToEnd"), this);
+
+            playAssistGroupItem = new ActionItem("core.PlayAssistGroup", new QActionGroup(this), this);
+            metronomeItem = new ActionItem("core.Metronome", createToolBarAction(this, "metronome"), this);
+            loopPlayItem = new ActionItem("core.LoopPlay", createToolBarAction(this, "loopPlay"), this);
+
+            playControlGroupItem->actionGroup()->setExclusionPolicy(QActionGroup::ExclusionPolicy::None);
+            playItem->action()->setCheckable(true);
+
+            playAssistGroupItem->actionGroup()->setExclusionPolicy(QActionGroup::ExclusionPolicy::None);
+            metronomeItem->action()->setCheckable(true);
+            loopPlayItem->action()->setCheckable(true);
+
+            connect(iWin->doc(), &IDocument::changed, this, [this, iWin]() {
+                saveFileItem->setEnabled(iWin->doc()->isModified()); //
+            });
 
             connect(saveAsFileItem->action(), &QAction::triggered, this, [this, iWin]() {
                 auto doc = iWin->doc();
@@ -78,7 +111,7 @@ namespace Core {
             });
 
             connect(saveAsFileItem->action(), &QAction::triggered, this, [this, iWin]() {
-                ICore::instance()->documentSystem()->saveFileBrowse(iWin->window(), iWin->doc());
+                ICore::instance()->documentSystem()->saveFileBrowse(iWin->window(), iWin->doc()); //
             });
 
             connect(closeFileItem->action(), &QAction::triggered, this, [this, win]() {
@@ -86,12 +119,53 @@ namespace Core {
                 win->close();
             });
 
+            connect(playItem->action(), &QAction::triggered, this, [this, win]() {
+                qDebug() << (playItem->action()->isChecked() ? "Stop" : "Play"); //
+            });
+
+            connect(stopItem->action(), &QAction::triggered, this, [this, win]() {
+                qDebug() << "Stop"; //
+            });
+
+            connect(moveToStartItem->action(), &QAction::triggered, this, [this, win]() {
+                qDebug() << "Move To Start"; //
+            });
+
+            connect(moveToEndItem->action(), &QAction::triggered, this, [this, win]() {
+                qDebug() << "Move To End"; //
+            });
+
+            connect(metronomeItem->action(), &QAction::triggered, this, [this, win]() {
+                qDebug() << "Metronome" << metronomeItem->action()->isChecked(); //
+            });
+
+            connect(loopPlayItem->action(), &QAction::triggered, this, [this, win]() {
+                qDebug() << "Loop Play" << loopPlayItem->action()->isChecked(); //
+            });
+
             iWin->addActionItems({
                 saveGroupItem,
                 saveFileItem,
                 saveAsFileItem,
+
                 exitGroupItem,
                 closeFileItem,
+
+                timerGroupItem,
+                timerLabelItem,
+
+                quantizeGroupItem,
+                quantizeSelectorItem,
+
+                playControlGroupItem,
+                playItem,
+                stopItem,
+                moveToStartItem,
+                moveToEndItem,
+
+                playAssistGroupItem,
+                metronomeItem,
+                loopPlayItem,
             });
         }
     }

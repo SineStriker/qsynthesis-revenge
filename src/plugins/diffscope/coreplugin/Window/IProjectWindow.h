@@ -21,6 +21,8 @@ namespace Core {
 
         DspxDocument *doc() const;
 
+        QToolBar *mainToolbar() const;
+
     protected:
         explicit IProjectWindow(QObject *parent = nullptr);
         ~IProjectWindow();

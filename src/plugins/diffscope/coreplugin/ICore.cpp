@@ -6,6 +6,9 @@
 #include <QChildEvent>
 #include <QMessageBox>
 #include <QScreen>
+#include <QTimer>
+#include <QToolBar>
+#include <QToolButton>
 
 #include <CMenu.h>
 #include <QMConsole.h>
@@ -135,21 +138,19 @@ namespace Core {
 
     protected:
         bool eventFilter(QObject *obj, QEvent *event) override {
-            if (obj == parent()) {
-                switch (event->type()) {
-                    case QEvent::ChildPolished: {
-                        auto e = static_cast<QChildEvent *>(event);
-                        auto child = e->child();
-                        if (child->inherits("QMenu") && child->property("core-style").isNull()) {
-                            auto menu = qobject_cast<QMenu *>(child);
-                            menu->setProperty("core-style", true);
-                            menu->style()->polish(menu);
-                        }
-                        break;
+            if (event->type() == QEvent::ChildAdded) {
+                auto e = static_cast<QChildEvent *>(event);
+                auto child = e->child();
+                QTimer::singleShot(0, child, [child]() {
+                    QMenu *menu;
+                    if ((menu = qobject_cast<QMenu *>(child))) {
+                        menu->setProperty("core-style", true);
+                        menu->style()->polish(menu);
+
+                        auto e = new QEvent(QEvent::Polish);
+                        qApp->postEvent(menu, e);
                     }
-                    default:
-                        break;
-                }
+                });
             }
             return QObject::eventFilter(obj, event);
         }

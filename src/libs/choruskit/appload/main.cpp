@@ -201,10 +201,6 @@ private:
 int main_entry(int argc, char *argv[]) {
     QApplication a(argc, argv);
 
-#ifdef Q_OS_WINDOWS
-    a.setFont(QFont("Microsoft YaHei"));
-#endif
-
     // Get application information from env
     QString hint;
     QString vstiAddr;

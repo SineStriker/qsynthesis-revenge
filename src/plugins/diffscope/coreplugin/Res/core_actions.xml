@@ -59,4 +59,23 @@
             </group>
         </menu>
     </context>
+
+    <context id="project.MainToolbar" prefix="core.">
+        <group id="TimerGroup">
+            <action id="TimerLabel"/>
+        </group>
+        <group id="QuantizeGroup">
+            <action id="QuantizeSelector"/>
+        </group>
+        <group id="PlayControlGroup">
+            <action id="Play" command="Playback: Play" shortcut="SPACE"/>
+            <action id="Stop" command="Playback: Stop" shortcut="F7"/>
+            <action id="MoveToStart" command="Playback: Move To Start"/>
+            <action id="MoveToEnd" command="Playback: Move To End"/>
+        </group>
+        <group id="PlayAssistGroup">
+            <action id="Metronome" command="Playback: Metronome"/>
+            <action id="LoopPlay" command="Playback: Loop Play"/>
+        </group>
+    </context>
 </actionSystem>
