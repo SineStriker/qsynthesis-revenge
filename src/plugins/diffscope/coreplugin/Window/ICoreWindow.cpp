@@ -6,6 +6,10 @@
 #include <QFileInfo>
 #include <QMessageBox>
 
+#include <QMMath.h>
+
+#include <CoreApi/ILoader.h>
+
 #include "ICore.h"
 #include "Internal/Window/MainWindow.h"
 
@@ -13,17 +17,55 @@
 
 namespace Core {
 
+    static const char settingCatalogC[] = "ICoreWindow/RecentActions";
+
+    using _MOST_RECENT_ACTIONS = QHash<QString, QMChronSet<QString>>;
+    Q_GLOBAL_STATIC(_MOST_RECENT_ACTIONS, mostRecentActionsGlobal);
+
     static void removeAllAccelerateKeys(QString &text) {
         // 第一步：去掉带括号的加速键
         QRegularExpression regex1("\\(&[^)]+\\)");
-        text = text.replace(regex1, "");
+        text = text.replace(regex1, QString());
 
         // 第二步：去掉剩余的加速键符号
-        text = text.replace("&", "");
+        text = text.replace("&", QString());
     }
 
     ICoreWindowPrivate::ICoreWindowPrivate() {
+        cp = nullptr;
         mainMenuCtx = nullptr;
+
+        if (!mostRecentActionsGlobal.exists()) {
+            // Read settings
+            auto settings = ILoader::instance()->settings();
+            auto obj = settings->value(settingCatalogC).toObject();
+
+            for (auto it = obj.begin(); it != obj.end(); ++it) {
+                if (!it->isArray()) {
+                    continue;
+                }
+
+                QMChronSet<QString> &set = (*mostRecentActionsGlobal)[it.key()];
+                for (const auto &item : it->toArray()) {
+                    if (!item.isString()) {
+                        continue;
+                    }
+                    set.append(item.toString());
+                }
+            }
+        }
+    }
+
+    ICoreWindowPrivate::~ICoreWindowPrivate() {
+        // Save settings
+        auto settings = ILoader::instance()->settings();
+
+        QJsonObject obj;
+        for (auto it = mostRecentActionsGlobal->begin(); it != mostRecentActionsGlobal->end(); ++it) {
+            obj.insert(it.key(), QJsonArray::fromStringList(it->values()));
+        }
+
+        settings->insert(settingCatalogC, obj);
     }
 
     void ICoreWindowPrivate::init() {
@@ -42,18 +84,21 @@ namespace Core {
         cp->abandon();
 
         // Remove obsolete
+        QList<ActionItem *> actionItems;
+
+        auto &mostRecentActions = (*mostRecentActionsGlobal)[q->id()];
         for (auto it = mostRecentActions.begin(); it != mostRecentActions.end(); ++it) {
-            if (it->isNull() || !actionItemMap.value((*it)->id())) {
+            auto ai = actionItemMap.value(*it);
+            if (!ai) {
                 mostRecentActions.erase(it);
+                continue;
             }
+            actionItems.append(ai);
         }
 
-        QList<ActionItem *> actionItems;
-        for (const auto &ai : qAsConst(mostRecentActions)) {
-            actionItems.append(ai.data());
-        }
+        bool recent = !actionItems.isEmpty();
         for (const auto &ai : actionItemMap.values()) {
-            if (mostRecentActions.contains(ai)) {
+            if (mostRecentActions.contains(ai->id())) {
                 continue;
             }
             actionItems.append(ai);
@@ -100,17 +145,25 @@ namespace Core {
                 for (const auto &seqItem : qAsConst(seqs)) {
                     auto keys = seqItem.split('+');
                     for (auto &key : keys) {
-                        key = "` " + key + " `";
+                        key = "<quote> " + key + " </quote>";
                     }
                     seqsText.append(keys.join('+'));
                 }
                 extra = seqsText.join(' ');
             }
 
+            if (recent) {
+                recent = false;
+                if (!extra.isEmpty())
+                    extra += " ";
+                extra += QString("<highlight>%1</highlight>").arg(tr("Recently Used"));
+            }
+
             item->setText(desc);
             item->setData(QsApi::SubtitleRole, text);
             item->setData(QsApi::DescriptionRole, extra);
             item->setData(QsApi::ObjectPointerRole, QVariant::fromValue(intptr_t(ai)));
+            item->setData(QsApi::AlignmentRole, int(Qt::AlignTop));
 
             cp->addItem(item);
         }
@@ -120,7 +173,7 @@ namespace Core {
         cp->start();
 
         auto obj = new QObject();
-        connect(cp, &QsApi::CommandPalette::finished, obj, [obj, this](QListWidgetItem *item) {
+        connect(cp, &QsApi::CommandPalette::finished, obj, [obj, q](QListWidgetItem *item) {
             delete obj;
             if (!item) {
                 return;
@@ -131,8 +184,9 @@ namespace Core {
                 return;
             }
 
-            mostRecentActions.remove(ai);
-            mostRecentActions.prepend(ai);
+            auto &mostRecentActions = (*mostRecentActionsGlobal)[q->id()];
+            mostRecentActions.remove(ai->id());
+            mostRecentActions.prepend(ai->id());
 
             QTimer::singleShot(0, ai->action(), &QAction::trigger);
         });
@@ -287,10 +341,6 @@ namespace Core {
 
     ICoreWindow::ICoreWindow(ICoreWindowPrivate &d, const QString &id, QObject *parent) : IWindow(d, id, parent) {
         d.init();
-    }
-
-    uint qHash(const QPointer<ActionItem> &key, uint seed) {
-        return qHash(key.data(), seed);
     }
 
 }

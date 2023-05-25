@@ -36,6 +36,20 @@ public:
         m_map = std::move(other.m_map);
     }
 
+    QMChronSet &operator=(const QMChronSet &other) {
+        clear();
+        for (const auto &item : other.m_list) {
+            append(item);
+        }
+        return *this;
+    }
+
+    QMChronSet &operator=(QMChronSet &&other) noexcept {
+        m_list = std::move(other.m_list);
+        m_map = std::move(other.m_map);
+        return *this;
+    }
+
     QMChronSet(std::initializer_list<K> list) : QMChronSet(list.begin(), list.end()) {
     }
 

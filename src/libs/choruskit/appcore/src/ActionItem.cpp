@@ -52,6 +52,10 @@ namespace Core {
             qWarning() << "Core::ActionItem(): trying to wrap null action";
             return;
         }
+        if (!qstrcmp(action->metaObject()->className(), "QWidgetAction")) {
+            qWarning() << "Core::ActionItem(): trying to add widget action which is not supported";
+            return;
+        }
         d->type = Action;
         d->action = action;
 
@@ -101,7 +105,8 @@ namespace Core {
             return;
         }
         d->type = Widget;
-        d->widget = widget;
+        d->widget = new QWidgetAction(this);
+        d->widget->setDefaultWidget(widget);
 
         if (!d->getSpec()) {
             return;
@@ -131,6 +136,10 @@ namespace Core {
             }
             if (obj && !obj->parent()) {
                 obj->deleteLater();
+            }
+        } else {
+            if (d->type == Widget) {
+                d->widget->releaseWidget(d->widget->defaultWidget());
             }
         }
     }
@@ -167,6 +176,11 @@ namespace Core {
 
     QWidget *ActionItem::widget() const {
         Q_D(const ActionItem);
+        return d->widget->defaultWidget();
+    }
+
+    QWidgetAction *ActionItem::widgetAction() const {
+        Q_D(const ActionItem);
         return d->widget;
     }
 
@@ -184,7 +198,7 @@ namespace Core {
                 res = d->menu->icon();
                 break;
             case Widget:
-                res = d->widget->windowIcon();
+                res = d->widget->defaultWidget()->windowIcon();
                 break;
             default:
                 break;
@@ -205,7 +219,7 @@ namespace Core {
                 d->menu->setIcon(icon);
                 break;
             case Widget:
-                d->widget->setWindowIcon(icon);
+                d->widget->defaultWidget()->setWindowIcon(icon);
                 break;
             default:
                 break;
@@ -227,7 +241,7 @@ namespace Core {
                 res = d->menu->title();
                 break;
             case Widget:
-                res = d->widget->windowTitle();
+                res = d->widget->defaultWidget()->windowTitle();
                 break;
             default:
                 break;
@@ -248,7 +262,7 @@ namespace Core {
                 d->menu->setTitle(text);
                 break;
             case Widget:
-                d->widget->setWindowTitle(text);
+                d->widget->defaultWidget()->setWindowTitle(text);
                 break;
             default:
                 break;

@@ -32,6 +32,20 @@ public:
         m_map = std::move(other.m_map);
     }
 
+    QMChronMap &operator=(const QMChronMap &other) {
+        clear();
+        for (const auto &item : other.m_list) {
+            append(item.first, item.second);
+        }
+        return *this;
+    }
+
+    QMChronMap &operator=(QMChronMap &&other) noexcept {
+        m_list = std::move(other.m_list);
+        m_map = std::move(other.m_map);
+        return *this;
+    }
+
     QMChronMap(std::initializer_list<std::pair<K, T>> list) {
         for (typename std::initializer_list<std::pair<K, T>>::const_iterator it = list.begin(); it != list.end(); ++it)
             append(it->first, it->second);

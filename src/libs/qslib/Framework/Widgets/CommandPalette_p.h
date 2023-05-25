@@ -35,16 +35,6 @@ namespace QsApi {
         void adjustPalette();
         void clearPalette();
 
-        QTypeList styleData_helper() const;
-        void setStyleData_helper(const QTypeList &list);
-
-        template <class T>
-        inline void decodeStyle(const QVariant &var, void (TitleListItemDelegate::*func)(const T &)) {
-            if (var.canConvert<T>()) {
-                (m_delegate->*func)(var.value<T>());
-            }
-        }
-
     protected:
         bool eventFilter(QObject *obj, QEvent *event) override;
 

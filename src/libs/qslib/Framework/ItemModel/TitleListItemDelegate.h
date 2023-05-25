@@ -3,7 +3,10 @@
 
 #include <QStyledItemDelegate>
 
+#include <QLineStyle.h>
+#include <QRectStyle.h>
 #include <QTypeFace.h>
+#include <QTypeList.h>
 
 #include "QsFrameworkGlobal.h"
 
@@ -23,32 +26,8 @@ namespace QsApi {
         void paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const override;
 
     public:
-        QTypeFace backgroundShape() const;
-        QTypeFace underlineShape() const;
-
-        QTypeFace titleShape() const;
-        QTypeFace subtitleShape() const;
-        QTypeFace descriptionShape() const;
-        QTypeFace descriptionBackShape() const;
-
-        QMargins titleMargins() const;
-        QMargins subtitleMargins() const;
-        QMargins descriptionMargins() const;
-        QMargins iconMargins() const;
-        QMargins margins() const;
-
-        void setBackgroundShape(const QTypeFace &shape);
-        void setUnderlineShape(const QTypeFace &shape);
-        void setTitleShape(const QTypeFace &shape);
-        void setSubtitleShape(const QTypeFace &shape);
-        void setDescriptionShape(const QTypeFace &shape);
-        void setDescriptionBackShape(const QTypeFace &shape);
-
-        void setTitleMargins(const QMargins &margins);
-        void setSubtitleMargins(const QMargins &margins);
-        void setDescriptionMargins(const QMargins &margins);
-        void setIconMargins(const QMargins &margins);
-        void setMargins(const QMargins &margins);
+        QTypeList styleData() const;
+        void setStyleData(const QTypeList &list);
 
     signals:
         void clicked(const QModelIndex &index, int button);

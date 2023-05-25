@@ -5,6 +5,7 @@
 #include <QActionGroup>
 #include <QMenu>
 #include <QWidget>
+#include <QWidgetAction>
 
 #include "ActionSpec.h"
 
@@ -42,7 +43,9 @@ namespace Core {
         QAction *action() const;
         QActionGroup *actionGroup() const;
         QMenu *menu() const;
+
         QWidget *widget() const;
+        QWidgetAction *widgetAction() const;
 
         QIcon icon() const;
         void setIcon(const QIcon &icon);

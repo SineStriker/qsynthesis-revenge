@@ -130,7 +130,11 @@
     </message>
     <message>
         <source>Select editor for &quot;%1&quot;</source>
-        <translation type="unfinished">为"%1"选择编辑器</translation>
+        <translation>为&quot;%1&quot;选择编辑器</translation>
+    </message>
+    <message>
+        <source>Recently Used</source>
+        <translation>最近使用</translation>
     </message>
 </context>
 <context>

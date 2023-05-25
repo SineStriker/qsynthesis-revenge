@@ -130,12 +130,12 @@
     <message>
         <location filename="../../Internal/AddOn/ScriptMgrAddOn.cpp" line="284"/>
         <source>Cannot load script file &apos;%1&apos;. The file is ignored.</source>
-        <translation>无法加载脚本文件"%1"。该文件将被忽略。</translation>
+        <translation>无法加载脚本文件&quot;%1&quot;。该文件将被忽略。</translation>
     </message>
     <message>
         <location filename="../../Internal/AddOn/ScriptMgrAddOn.cpp" line="288"/>
         <source>Cannot get name of script &apos;%1&apos;. Its name will be displayed as its id.</source>
-        <translation>无法获取脚本"%1"的名称。它的名称将会被显示为它的 id。</translation>
+        <translation>无法获取脚本&quot;%1&quot;的名称。它的名称将会被显示为它的 id。</translation>
     </message>
     <message>
         <location filename="../../Internal/AddOn/ScriptMgrAddOn.cpp" line="292"/>
@@ -153,7 +153,7 @@
         <location filename="../../Internal/AddOn/ScriptMgrAddOn.cpp" line="296"/>
         <location filename="../../Internal/AddOn/ScriptMgrAddOn.cpp" line="300"/>
         <source>Script &apos;%1&apos; execution failed.</source>
-        <translation>脚本"%1"执行失败。</translation>
+        <translation>脚本&quot;%1&quot;执行失败。</translation>
     </message>
 </context>
 <context>

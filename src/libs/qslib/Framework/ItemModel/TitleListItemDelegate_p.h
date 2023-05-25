@@ -1,6 +1,8 @@
 #ifndef TITLELISTITEMDELEGATEPRIVATE_H
 #define TITLELISTITEMDELEGATEPRIVATE_H
 
+#include <QTypeList.h>
+
 #include "TitleListItemDelegate.h"
 
 namespace QsApi {
@@ -16,12 +18,13 @@ namespace QsApi {
         TitleListItemDelegate *q_ptr;
 
         QTypeFace m_backgroundType;
-        QTypeFace m_underline;
+        QLineStyle m_underline;
 
         QTypeFace m_fileType;
         QTypeFace m_locType;
         QTypeFace m_dateType;
-        QTypeFace m_dateBackType;
+        QTypeFace m_dateHighlightType;
+        QRectStyle m_dateBackType;
 
         QMargins m_fileMargins;
         QMargins m_locMargins;
@@ -29,6 +32,17 @@ namespace QsApi {
         QMargins m_margins;
 
         QMargins m_iconMargins;
+
+        [[nodiscard]] QTypeList styleData_helper() const;
+        void setStyleData_helper(const QTypeList &list);
+
+        template <class T>
+        inline void decodeStyle(const QVariant &var, void (TitleListItemDelegate::*func)(const T &)) {
+            Q_Q(TitleListItemDelegate);
+            if (var.canConvert<T>()) {
+                (q->*func)(var.value<T>());
+            }
+        }
     };
 
 }

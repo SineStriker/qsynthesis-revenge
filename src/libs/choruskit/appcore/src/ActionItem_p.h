@@ -30,7 +30,7 @@ namespace Core {
         QPointer<QAction> action;
         QPointer<QActionGroup> actionGroup;
         QPointer<QMenu> menu;
-        QPointer<QWidget> widget;
+        QPointer<QWidgetAction> widget;
 
         QString commandCategory;
         QString commandName;

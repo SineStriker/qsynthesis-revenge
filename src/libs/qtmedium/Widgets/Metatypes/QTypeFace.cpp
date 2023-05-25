@@ -49,11 +49,12 @@ void QTypeFace::init() {
 }
 
 QStringList QTypeFace::toStringList() const {
-    return {MetaFunctionName(), QString("%1,%2%3,%4")
-                                    .arg(color().name(),
-                                         (m_font.pixelSize() > 0) ? QString::number(m_font.pixelSize())
-                                                                  : QString::number(m_font.pointSizeF()),
-                                         QLatin1String(PixelSizeUnit), m_font.toString())};
+    return {
+        MetaFunctionName(),
+        QString("%1,%2%3,%4,%5")
+            .arg(color().name(),
+                 (m_font.pixelSize() > 0) ? QString::number(m_font.pixelSize()) : QString::number(m_font.pointSizeF()),
+                 QLatin1String(PixelSizeUnit), QString::number(m_font.weight()), m_font.family())};
 }
 
 QFont QTypeFace::font() const {
@@ -133,7 +134,7 @@ QTypeFace QTypeFace::fromStringList(const QStringList &stringList) {
         if (!content.isEmpty()) {
             QTypeFace tf;
 
-            QString strColor = content.front().simplified();
+            const QString &strColor = content.front().simplified();
             if (strColor.startsWith('(') && strColor.endsWith(')')) {
                 QStringList colorStrings = SplitStringByComma(strColor.mid(1, strColor.size() - 2));
                 QList<QColor> colors;
@@ -151,7 +152,7 @@ QTypeFace QTypeFace::fromStringList(const QStringList &stringList) {
 
             QLatin1String px(PixelSizeUnit);
             if (content.size() > 1) {
-                QString strPixel = content.at(1);
+                QString strPixel = content.at(1).simplified();
                 if (strPixel.endsWith(px, Qt::CaseInsensitive)) {
                     strPixel.chop(px.size());
                     bool isNum;
@@ -168,7 +169,7 @@ QTypeFace QTypeFace::fromStringList(const QStringList &stringList) {
                 }
             }
             if (content.size() > 2) {
-                QString strWeight = content.at(2);
+                QString strWeight = content.at(2).simplified();
                 if (strWeight.endsWith(px, Qt::CaseInsensitive)) {
                     strWeight.chop(px.size());
                 }
@@ -178,6 +179,9 @@ QTypeFace QTypeFace::fromStringList(const QStringList &stringList) {
                 if (isNum) {
                     weight = num;
                 }
+            }
+            if (content.size() > 3) {
+                tf.m_font.setFamily(content.at(3).simplified());
             }
             if (pixelSize >= 0) {
                 tf.setPixelSize(pixelSize);

@@ -25,47 +25,6 @@ namespace QsApi {
         connect(m_delegate, &TitleListItemDelegate::clicked, this, &FileListWidgetPrivate::_q_delegateClicked);
     }
 
-    QTypeList FileListWidgetPrivate::styleData_helper() const {
-        return {
-            QVariant::fromValue(m_delegate->backgroundShape()),
-            QVariant::fromValue(m_delegate->underlineShape()),
-            QVariant::fromValue(m_delegate->titleShape()),
-            QVariant::fromValue(m_delegate->subtitleShape()),
-            QVariant::fromValue(m_delegate->descriptionShape()),
-            QVariant::fromValue(m_delegate->descriptionBackShape()),
-
-            QVariant::fromValue(m_delegate->titleMargins()),
-            QVariant::fromValue(m_delegate->subtitleMargins()),
-            QVariant::fromValue(m_delegate->descriptionMargins()),
-            QVariant::fromValue(m_delegate->iconMargins()),
-            QVariant::fromValue(m_delegate->margins()),
-        };
-    }
-
-    void FileListWidgetPrivate::setStyleData_helper(const QTypeList &list) {
-        Q_Q(FileListWidget);
-        if (list.size() >= 11) {
-            int i = 0;
-
-            decodeStyle<QTypeFace>(list.at(i++), &TitleListItemDelegate::setBackgroundShape);
-            decodeStyle<QTypeFace>(list.at(i++), &TitleListItemDelegate::setUnderlineShape);
-            decodeStyle<QTypeFace>(list.at(i++), &TitleListItemDelegate::setTitleShape);
-            decodeStyle<QTypeFace>(list.at(i++), &TitleListItemDelegate::setSubtitleShape);
-            decodeStyle<QTypeFace>(list.at(i++), &TitleListItemDelegate::setDescriptionShape);
-            decodeStyle<QTypeFace>(list.at(i++), &TitleListItemDelegate::setDescriptionBackShape);
-
-            decodeStyle<QMargins>(list.at(i++), &TitleListItemDelegate::setTitleMargins);
-            decodeStyle<QMargins>(list.at(i++), &TitleListItemDelegate::setSubtitleMargins);
-            decodeStyle<QMargins>(list.at(i++), &TitleListItemDelegate::setDescriptionMargins);
-            decodeStyle<QMargins>(list.at(i++), &TitleListItemDelegate::setIconMargins);
-            decodeStyle<QMargins>(list.at(i++), &TitleListItemDelegate::setMargins);
-
-            q->update();
-
-            emit q->styleDataChanged();
-        }
-    }
-
     void FileListWidgetPrivate::_q_delegateClicked(const QModelIndex &index, int button) {
         Q_Q(FileListWidget);
         emit q->itemClickedEx(index, button);
@@ -82,12 +41,15 @@ namespace QsApi {
 
     QTypeList FileListWidget::styleData() const {
         Q_D(const FileListWidget);
-        return d->styleData_helper();
+        return d->m_delegate->styleData();
     }
 
     void FileListWidget::setStyleData(const QTypeList &list) {
         Q_D(FileListWidget);
-        d->setStyleData_helper(list);
+        d->m_delegate->setStyleData(list);
+        update();
+
+        emit styleDataChanged();
     }
 
     QSize FileListWidget::contentsSize() const {

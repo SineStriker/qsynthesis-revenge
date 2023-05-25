@@ -20,16 +20,6 @@ namespace QsApi {
         TitleListItemDelegate *m_delegate;
         QSize oldContentsSize;
 
-        QTypeList styleData_helper() const;
-        void setStyleData_helper(const QTypeList &list);
-
-        template <class T>
-        inline void decodeStyle(const QVariant &var, void (TitleListItemDelegate::*func)(const T &)) {
-            if (var.canConvert<T>()) {
-                (m_delegate->*func)(var.value<T>());
-            }
-        }
-
     private:
         void _q_delegateClicked(const QModelIndex &index, int button);
     };

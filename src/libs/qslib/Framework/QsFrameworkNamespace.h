@@ -19,6 +19,7 @@ namespace QsApi {
         SeparatorRole,
         IconSizeRole,
         ObjectPointerRole,
+        AlignmentRole,
 
         UserRole = Qt::UserRole + 4000,
     };

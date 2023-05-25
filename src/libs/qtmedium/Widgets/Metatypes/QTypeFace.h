@@ -52,12 +52,12 @@ public:
 private:
     QFont m_font;
 
-    QList<QColor> m_colors;
-
     bool m_defaultFont;
     double m_pixelSize;
     double m_pointSize;
     double m_weight;
+
+    QList<QColor> m_colors;
 
 public:
     static QTypeFace fromStringList(const QStringList &stringList);

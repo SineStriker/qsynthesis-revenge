@@ -108,47 +108,6 @@ namespace QsApi {
         m_listWidget->clear();
     }
 
-    QTypeList CommandPalettePrivate::styleData_helper() const {
-        return {
-            QVariant::fromValue(m_delegate->backgroundShape()),
-            QVariant::fromValue(m_delegate->underlineShape()),
-            QVariant::fromValue(m_delegate->titleShape()),
-            QVariant::fromValue(m_delegate->subtitleShape()),
-            QVariant::fromValue(m_delegate->descriptionShape()),
-            QVariant::fromValue(m_delegate->descriptionBackShape()),
-
-            QVariant::fromValue(m_delegate->titleMargins()),
-            QVariant::fromValue(m_delegate->subtitleMargins()),
-            QVariant::fromValue(m_delegate->descriptionMargins()),
-            QVariant::fromValue(m_delegate->iconMargins()),
-            QVariant::fromValue(m_delegate->margins()),
-        };
-    }
-
-    void CommandPalettePrivate::setStyleData_helper(const QTypeList &list) {
-        Q_Q(CommandPalette);
-        if (list.size() >= 10) {
-            int i = 0;
-
-            decodeStyle<QTypeFace>(list.at(i++), &TitleListItemDelegate::setBackgroundShape);
-            decodeStyle<QTypeFace>(list.at(i++), &TitleListItemDelegate::setUnderlineShape);
-            decodeStyle<QTypeFace>(list.at(i++), &TitleListItemDelegate::setTitleShape);
-            decodeStyle<QTypeFace>(list.at(i++), &TitleListItemDelegate::setSubtitleShape);
-            decodeStyle<QTypeFace>(list.at(i++), &TitleListItemDelegate::setDescriptionShape);
-            decodeStyle<QTypeFace>(list.at(i++), &TitleListItemDelegate::setDescriptionBackShape);
-
-            decodeStyle<QMargins>(list.at(i++), &TitleListItemDelegate::setTitleMargins);
-            decodeStyle<QMargins>(list.at(i++), &TitleListItemDelegate::setSubtitleMargins);
-            decodeStyle<QMargins>(list.at(i++), &TitleListItemDelegate::setDescriptionMargins);
-            decodeStyle<QMargins>(list.at(i++), &TitleListItemDelegate::setIconMargins);
-            decodeStyle<QMargins>(list.at(i++), &TitleListItemDelegate::setMargins);
-
-            q->update();
-
-            emit q->styleDataChanged();
-        }
-    }
-
     bool CommandPalettePrivate::eventFilter(QObject *obj, QEvent *event) {
         Q_Q(CommandPalette);
 
@@ -331,12 +290,15 @@ namespace QsApi {
 
     QTypeList CommandPalette::styleData() const {
         Q_D(const CommandPalette);
-        return d->styleData_helper();
+        return d->m_delegate->styleData();
     }
 
     void CommandPalette::setStyleData(const QTypeList &list) {
         Q_D(CommandPalette);
-        d->setStyleData_helper(list);
+        d->m_delegate->setStyleData(list);
+        update();
+
+        emit styleDataChanged();
     }
 
     void CommandPalette::start() {

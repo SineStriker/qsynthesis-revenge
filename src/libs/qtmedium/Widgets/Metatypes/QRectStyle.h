@@ -1,7 +1,8 @@
 #ifndef QRECTSTYLE_H
 #define QRECTSTYLE_H
 
-#include <QPen>
+#include <QColor>
+#include <QMetaType>
 #include <QRect>
 #include <QString>
 
@@ -17,19 +18,31 @@ private:
 public:
     QStringList toStringList() const;
 
-    QPen pen() const;
-    void setPen(const QPen &pen);
+    QRectF rect() const;
+    void setRect(const QRectF &rect);
 
-    QBrush brush() const;
-    void setBrush(const QBrush &brush);
+    QMarginsF margins() const;
 
     double radius() const;
     void setRadius(double radius);
 
+    QList<QColor> colors() const;
+    void setColors(const QList<QColor> &colors);
+
+    inline void setColor(const QColor &color) {
+        setColors({color});
+    }
+
+    QColor color() const;
+    QColor color2() const;
+    QColor color3() const;
+    QColor color4() const;
+
 protected:
-    QPen m_pen;
-    QBrush m_brush;
+    QRectF m_rect;
     double m_radius;
+
+    QList<QColor> m_colors;
 
 public:
     static QRectStyle fromStringList(const QStringList &stringList);

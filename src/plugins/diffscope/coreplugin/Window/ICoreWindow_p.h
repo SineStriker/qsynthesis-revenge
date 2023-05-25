@@ -18,6 +18,7 @@ namespace Core {
         Q_DECLARE_PUBLIC(ICoreWindow)
     public:
         ICoreWindowPrivate();
+        ~ICoreWindowPrivate();
 
         void init();
 
@@ -27,14 +28,10 @@ namespace Core {
 
         QsApi::CommandPalette *cp;
 
-        QMChronSet<QPointer<ActionItem>> mostRecentActions;
-
         void showAllActions_helper();
         void selectEditor_helper(QList<DocumentSpec *> &specs, const QString &path);
         void openEditor(DocumentSpec *spec, const QString &path);
     };
-
-    uint qHash(const QPointer<ActionItem> &key, uint seed = 0);
 
 }
 

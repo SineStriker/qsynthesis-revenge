@@ -8,29 +8,21 @@ QStringList QColorList::toStringList() const {
     QStringList res;
     res.append(MetaFunctionName());
 
-    QString val;
-    if (!isEmpty()) {
-        auto it = begin();
-        val.append(it->name());
-        it++;
-
-        for (; it != end(); ++it) {
-            val.append(',');
-            val.append(it->name());
-        }
+    QStringList colors;
+    for (const auto &item : *this) {
+        colors.append(item.name());
     }
+    res.append(colors.join(','));
 
-    res.append(val);
     return res;
 }
 
 QColorList QColorList::fromStringList(const QStringList &stringList) {
     QColorList res;
-    if (stringList.size() == 2 &&
-        !stringList.front().compare(MetaFunctionName(), Qt::CaseInsensitive)) {
+    if (stringList.size() == 2 && !stringList.front().compare(MetaFunctionName(), Qt::CaseInsensitive)) {
         QStringList valueList = SplitStringByComma(stringList.back());
-        for (int i = 0; i < valueList.size(); ++i) {
-            QString str = valueList.at(i).simplified();
+        for (const auto &i : valueList) {
+            QString str = i.simplified();
             res.append(QMCss::CssStringToColor(str));
         }
     }

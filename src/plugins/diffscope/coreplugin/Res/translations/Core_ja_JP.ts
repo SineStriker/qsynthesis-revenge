@@ -56,6 +56,10 @@
         <source>Select editor for &quot;%1&quot;</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Recently Used</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>Core::IHomeWindowPrivate</name>

@@ -1,6 +1,8 @@
 #include "TitleListItemDelegate.h"
 #include "TitleListItemDelegate_p.h"
 
+#include "QMarginsImpl.h"
+
 #include <QMouseEvent>
 #include <QPainter>
 
@@ -10,65 +12,96 @@ namespace QsApi {
 
     struct TextBlock {
         QString text;
-        bool highlight;
+        bool isHighlight;
+        bool isQuote;
     };
 
-    static QList<TextBlock> extractTextBlocks(const QString &text) {
-        QList<TextBlock> res;
-        QStringList list = text.split('`');
-        for (int i = 0; i < list.size(); ++i) {
-            const auto &item = list.at(i);
-            if (item.isEmpty()) {
-                continue;
+    QList<TextBlock> processString(const QString &inputString) {
+        QList<TextBlock> result;
+
+        QRegularExpression tagRegex("<(highlight|quote)>(.*?)</\\1>");
+
+        int currentIndex = 0;
+        QRegularExpressionMatch match;
+        while ((match = tagRegex.match(inputString, currentIndex)).hasMatch()) {
+            int tagStart = match.capturedStart();
+            int tagEnd = match.capturedEnd();
+            QString blockText = inputString.mid(currentIndex, tagStart - currentIndex);
+
+            if (!blockText.isEmpty())
+                result.append({blockText, false, false});
+
+            QString tagName = match.captured(1);
+            if (tagName == "highlight") {
+                result.append({match.captured(2), true, false});
+            } else if (tagName == "quote") {
+                result.append({match.captured(2), false, true});
             }
-            res.append({item, bool(i & 0b1)});
+
+            currentIndex = tagEnd;
         }
-        return res;
+
+        if (currentIndex < inputString.length()) {
+            QString remainingText = inputString.mid(currentIndex);
+            result.append({remainingText, false, false});
+        }
+
+        return result;
     }
 
-    static QSize richTextSize(const QFontMetrics &fm, const QList<TextBlock> &blocks, double ratio) {
-        double extend = fm.height() * ratio;
+    static QSize richTextSize(const QFontMetrics &fm, const QFontMetrics &fmH, const QList<TextBlock> &blocks,
+                              const QRectF &rect) {
         double spaceWidth = fm.horizontalAdvance(' ');
 
         double width = 0;
         for (const auto &block : blocks) {
-            if (block.highlight) {
-                width += spaceWidth + 2 * extend;
+            if (block.isHighlight) {
+                width += fmH.horizontalAdvance(block.text);
+                continue;
+            }
+            if (block.isQuote) {
+                width += spaceWidth + 2 * rect.width();
             }
             width += fm.horizontalAdvance(block.text);
         }
 
-        return {int(width), int(fm.height() + 2 * extend)};
+        return {int(width), int(fm.height() + 2 * rect.height())};
     }
 
-    static void drawRichTexts(QPainter *painter, const QPoint &start, const QList<TextBlock> &blocks,
-                              const QColor &foreground, const QColor &background, const QColor &textColor, double ratio,
-                              int radius) {
-        const auto &fm = painter->fontMetrics();
+    static void drawRichTexts(QPainter *painter, const QFont &font, const QFont &fontH, const QPoint &start,
+                              const QList<TextBlock> &blocks, const QColor &foreground, const QColor &background,
+                              const QColor &highlightColor, const QRectF &rect, double radius) {
+        const auto &fm = QFontMetrics(font);
+        const auto &fmH = QFontMetrics(fontH);
 
-        double extend = fm.height() * ratio;
         double spaceWidth = fm.horizontalAdvance(' ');
-
-        double height = fm.height() + 2 * extend;
+        double height = fm.height() + 2 * rect.height();
         double currentWidth = 0;
         for (const auto &block : blocks) {
             double width = 0;
-            if (block.highlight) {
-                currentWidth += spaceWidth / 2;
-                width += 2 * extend;
+            if (block.isHighlight) {
+                painter->setFont(fontH);
+                width += fmH.horizontalAdvance(block.text);
+            } else {
+                painter->setFont(font);
+                if (block.isQuote) {
+                    currentWidth += spaceWidth / 2;
+                    width += 2 * rect.width();
+                }
+                width += fm.horizontalAdvance(block.text);
             }
-            width += fm.horizontalAdvance(block.text);
 
             QRectF dst(start + QPointF(currentWidth, 0), QSizeF(width, height));
-            if (block.highlight) {
-                currentWidth += spaceWidth / 2;
-                painter->setPen(Qt::transparent);
-                painter->setBrush(background);
-                painter->drawRoundedRect(dst, radius, radius);
-
-                painter->setPen(foreground);
+            if (block.isHighlight) {
+                painter->setPen(highlightColor);
             } else {
-                painter->setPen(textColor);
+                if (block.isQuote) {
+                    currentWidth += spaceWidth / 2;
+                    painter->setPen(Qt::transparent);
+                    painter->setBrush(background);
+                    painter->drawRoundedRect(dst, radius, radius);
+                }
+                painter->setPen(foreground);
             }
             painter->drawText(dst, Qt::AlignHCenter | Qt::AlignVCenter, block.text);
 
@@ -78,10 +111,9 @@ namespace QsApi {
 
     TitleListItemDelegatePrivate::TitleListItemDelegatePrivate() {
         m_backgroundType = QTypeFace(Qt::transparent, 1.0);
-        m_underline = QTypeFace(Qt::lightGray, 1.0);
+        m_underline = QLineStyle(Qt::lightGray, 1.0);
 
-        m_dateBackType = QTypeFace(Qt::transparent, 0.0);
-        m_dateBackType.setWeight(0);
+        m_dateBackType = QRectStyle();
 
         m_fileMargins = QMargins(5, 5, 5, 5);
         m_locMargins = QMargins(5, 5, 5, 5);
@@ -94,6 +126,46 @@ namespace QsApi {
     }
 
     void TitleListItemDelegatePrivate::init() {
+    }
+
+    QTypeList TitleListItemDelegatePrivate::styleData_helper() const {
+        return {
+            QVariant::fromValue(m_backgroundType), QVariant::fromValue(m_underline),
+            QVariant::fromValue(m_fileType),       QVariant::fromValue(m_locType),
+            QVariant::fromValue(m_dateType),       QVariant::fromValue(m_dateHighlightType),
+            QVariant::fromValue(m_dateBackType),
+
+            QVariant::fromValue(m_fileMargins),    QVariant::fromValue(m_locMargins),
+            QVariant::fromValue(m_dateMargins),    QVariant::fromValue(m_iconMargins),
+            QVariant::fromValue(m_margins),
+        };
+    }
+
+    void TitleListItemDelegatePrivate::setStyleData_helper(const QTypeList &list) {
+        auto decodeStyle = [](const QVariant &var, auto &val) {
+            using Type = decltype(typename std::remove_reference<decltype(val)>::type());
+            if (var.canConvert<Type>()) {
+                val = var.value<Type>();
+            }
+        };
+
+        if (list.size() >= 12) {
+            int i = 0;
+
+            decodeStyle(list.at(i++), m_backgroundType);
+            decodeStyle(list.at(i++), m_underline);
+            decodeStyle(list.at(i++), m_fileType);
+            decodeStyle(list.at(i++), m_locType);
+            decodeStyle(list.at(i++), m_dateType);
+            decodeStyle(list.at(i++), m_dateHighlightType);
+            decodeStyle(list.at(i++), m_dateBackType);
+
+            decodeStyle(list.at(i++), m_fileMargins);
+            decodeStyle(list.at(i++), m_locMargins);
+            decodeStyle(list.at(i++), m_dateMargins);
+            decodeStyle(list.at(i++), m_iconMargins);
+            decodeStyle(list.at(i++), m_margins);
+        }
     }
 
     TitleListItemDelegate::TitleListItemDelegate(QObject *parent)
@@ -139,28 +211,30 @@ namespace QsApi {
         QColor fileColor;
         QColor locColor;
         QColor dateColor;
+        QColor dateHighlightColor;
         QColor dateBackColor;
 
+        underlineColor = d->m_underline.color();
         if (!(option.state & QStyle::State_Enabled)) {
             backgroundColor = d->m_backgroundType.color4();
-            underlineColor = d->m_underline.color4();
             fileColor = d->m_fileType.color4();
             locColor = d->m_locType.color4();
             dateColor = d->m_dateType.color4();
+            dateHighlightColor = d->m_dateHighlightType.color4();
             dateBackColor = d->m_dateBackType.color4();
         } else if (option.state & QStyle::State_Selected) {
             backgroundColor = d->m_backgroundType.color3();
-            underlineColor = d->m_underline.color3();
             fileColor = d->m_fileType.color3();
             locColor = d->m_locType.color3();
             dateColor = d->m_dateType.color3();
+            dateHighlightColor = d->m_dateHighlightType.color3();
             dateBackColor = d->m_dateBackType.color3();
         } else if (option.state & QStyle::State_MouseOver) {
             backgroundColor = d->m_backgroundType.color2();
-            underlineColor = d->m_underline.color2();
             fileColor = d->m_fileType.color2();
             locColor = d->m_locType.color2();
             dateColor = d->m_dateType.color2();
+            dateHighlightColor = d->m_dateHighlightType.color2();
             dateBackColor = d->m_dateBackType.color2();
         } else {
             backgroundColor = d->m_backgroundType.color();
@@ -168,6 +242,7 @@ namespace QsApi {
             fileColor = d->m_fileType.color();
             locColor = d->m_locType.color();
             dateColor = d->m_dateType.color();
+            dateHighlightColor = d->m_dateHighlightType.color();
             dateBackColor = d->m_dateBackType.color();
         }
 
@@ -179,10 +254,13 @@ namespace QsApi {
         auto icon = index.data(QsApi::DecorationRole).value<QIcon>();
         QSize iconSize = index.data(QsApi::IconSizeRole).toSize();
 
+        Qt::AlignmentFlag dateVAlign = static_cast<Qt::AlignmentFlag>(index.data(QsApi::AlignmentRole).toInt());
+
         // Calculate size
         QFont fileFont = d->m_fileType.font();
         QFont locFont = d->m_locType.font();
         QFont dateFont = d->m_dateType.font();
+        QFont dateHighlightFont = d->m_dateHighlightType.font();
 
         //    fileFont.setStyleStrategy(QFont::PreferAntialias);
         //    locFont.setStyleStrategy(QFont::PreferAntialias);
@@ -191,15 +269,17 @@ namespace QsApi {
         QFontMetrics fileFontM(fileFont);
         QFontMetrics locFontM(locFont);
         QFontMetrics dateFontM(dateFont);
+        QFontMetrics dateHighlightFontM(dateHighlightFont);
 
         int fileFontHeight = fileFontM.height();
         int locFontHeight = locFontM.height();
 
-        auto ratio = d->m_dateBackType.pointSize();
-        int radius = d->m_dateBackType.weight();
-        auto dateTextBlocks = extractTextBlocks(date);
+        double radius = d->m_dateBackType.radius();
+        auto dateTextBlocks = processString(date);
 
-        auto dateSize = dateTextBlocks.isEmpty() ? QSize() : richTextSize(dateFontM, dateTextBlocks, ratio);
+        auto dateSize = dateTextBlocks.isEmpty()
+                            ? QSize()
+                            : richTextSize(dateFontM, dateHighlightFontM, dateTextBlocks, d->m_dateBackType.rect());
         int dateFontHeight = dateSize.height();
         int dateWidth = dateSize.width();
 
@@ -256,9 +336,21 @@ namespace QsApi {
 
         // Last open time
         if (!dateSize.isEmpty()) {
+            QPoint start = dateRect.topLeft();
+            switch (dateVAlign) {
+                case Qt::AlignTop:
+                    start.setY(fileRect.center().y() - dateRect.height() / 2);
+                    break;
+                case Qt::AlignBottom:
+                    start.setY(locRect.center().y() - dateRect.height() / 2);
+                    break;
+                default:
+                    break;
+            }
+
             painter->setFont(dateFont);
-            drawRichTexts(painter, dateRect.topLeft(), dateTextBlocks, dateColor, dateBackColor, dateColor, ratio,
-                          radius);
+            drawRichTexts(painter, dateFont, dateHighlightFont, start, dateTextBlocks, dateColor, dateBackColor,
+                          dateHighlightColor, d->m_dateBackType.rect(), radius);
         }
 
         painter->setFont(fileFont);
@@ -294,119 +386,18 @@ namespace QsApi {
         }
 
         if (index.data(QsApi::SeparatorRole).toBool()) {
-            painter->setPen(QPen(underlineColor, d->m_underline.pointSize()));
+            painter->setPen(QPen(underlineColor, d->m_underline.widthF()));
             painter->drawLine(rect.bottomLeft(), rect.bottomRight());
         }
     }
 
-    QTypeFace TitleListItemDelegate::backgroundShape() const {
+    QTypeList TitleListItemDelegate::styleData() const {
         Q_D(const TitleListItemDelegate);
-        return d->m_backgroundType;
+        return d->styleData_helper();
     }
-
-    QTypeFace TitleListItemDelegate::underlineShape() const {
-        Q_D(const TitleListItemDelegate);
-        return d->m_underline;
-    }
-
-    QTypeFace TitleListItemDelegate::titleShape() const {
-        Q_D(const TitleListItemDelegate);
-        return d->m_fileType;
-    }
-
-    QTypeFace TitleListItemDelegate::subtitleShape() const {
-        Q_D(const TitleListItemDelegate);
-        return d->m_locType;
-    }
-
-    QTypeFace TitleListItemDelegate::descriptionShape() const {
-        Q_D(const TitleListItemDelegate);
-        return d->m_dateType;
-    }
-
-    QTypeFace TitleListItemDelegate::descriptionBackShape() const {
-        Q_D(const TitleListItemDelegate);
-        return d->m_dateBackType;
-    }
-
-    QMargins TitleListItemDelegate::titleMargins() const {
-        Q_D(const TitleListItemDelegate);
-        return d->m_fileMargins;
-    }
-
-    QMargins TitleListItemDelegate::subtitleMargins() const {
-        Q_D(const TitleListItemDelegate);
-        return d->m_locMargins;
-    }
-
-    QMargins TitleListItemDelegate::descriptionMargins() const {
-        Q_D(const TitleListItemDelegate);
-        return d->m_locMargins;
-    }
-
-    QMargins TitleListItemDelegate::iconMargins() const {
-        Q_D(const TitleListItemDelegate);
-        return d->m_iconMargins;
-    }
-
-    QMargins TitleListItemDelegate::margins() const {
-        Q_D(const TitleListItemDelegate);
-        return d->m_margins;
-    }
-
-    void TitleListItemDelegate::setBackgroundShape(const QTypeFace &shape) {
+    void TitleListItemDelegate::setStyleData(const QTypeList &list) {
         Q_D(TitleListItemDelegate);
-        d->m_backgroundType = shape;
-    }
-
-    void TitleListItemDelegate::setUnderlineShape(const QTypeFace &shape) {
-        Q_D(TitleListItemDelegate);
-        d->m_underline = shape;
-    }
-
-    void TitleListItemDelegate::setTitleShape(const QTypeFace &shape) {
-        Q_D(TitleListItemDelegate);
-        d->m_fileType = shape;
-    }
-
-    void TitleListItemDelegate::setSubtitleShape(const QTypeFace &shape) {
-        Q_D(TitleListItemDelegate);
-        d->m_locType = shape;
-    }
-
-    void TitleListItemDelegate::setDescriptionShape(const QTypeFace &shape) {
-        Q_D(TitleListItemDelegate);
-        d->m_dateType = shape;
-    }
-
-    void TitleListItemDelegate::setDescriptionBackShape(const QTypeFace &shape) {
-        Q_D(TitleListItemDelegate);
-        d->m_dateBackType = shape;
-    }
-
-    void TitleListItemDelegate::setTitleMargins(const QMargins &margins) {
-        Q_D(TitleListItemDelegate);
-        d->m_fileMargins = margins;
-    }
-
-    void TitleListItemDelegate::setSubtitleMargins(const QMargins &margins) {
-        Q_D(TitleListItemDelegate);
-        d->m_locMargins = margins;
-    }
-
-    void TitleListItemDelegate::setDescriptionMargins(const QMargins &margins) {
-        Q_D(TitleListItemDelegate);
-        d->m_dateMargins = margins;
-    }
-
-    void TitleListItemDelegate::setIconMargins(const QMargins &margins) {
-        Q_D(TitleListItemDelegate);
-        d->m_iconMargins = margins;
-    }
-
-    void TitleListItemDelegate::setMargins(const QMargins &margins) {
-        Q_D(TitleListItemDelegate);
-        d->m_margins = margins;
+        d->setStyleData_helper(list);
     }
 
     bool TitleListItemDelegate::editorEvent(QEvent *event, QAbstractItemModel *model,

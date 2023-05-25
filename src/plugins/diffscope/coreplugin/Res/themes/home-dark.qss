@@ -168,11 +168,12 @@ Core--Internal--HomeRecentBottomFrame>QsApi--FileListWidget {
     background-color: transparent;
     qproperty-styleData: qvariants(/* styleData */
     qtypeface((transparent, rgba(255, 255, 255, 10%)), 1), /* idleType */
-    qtypeface(transparent, 1), /* underline */
+    qpen(transparent, 1), /* underline */
     qtypeface(#E0E0E0, 15px), /* fileType */
     qtypeface(#909090, 15px), /* locType */
     qtypeface(#909090, 15px), /* dateType */
-    qtypeface(transparent, 0, 0), /* dateBackType */
+    qtypeface(transparent, 15px), /* dateHighlightType */
+    qrectstyle(0, 0, 0, transparent), /* dateBackType */
     qmargins(10px, 5px, 10px, 1.25px), /* fileMargins */
     qmargins(10px, 1.25px, 10px, 5px), /* locMargins */
     qmargins(10px, 10px, 20px, 10px), /* dateMargins */
