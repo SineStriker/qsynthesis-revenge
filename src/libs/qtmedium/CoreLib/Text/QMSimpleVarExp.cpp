@@ -8,7 +8,9 @@
 
 static const char Slash = '/';
 
-QMSimpleVarExp::QMSimpleVarExp() : QMSimpleVarExp("\\$\\{(\\w+)\\}") {
+static const char DefaultPattern[] = R"(\$\{(\w+)\})";
+
+QMSimpleVarExp::QMSimpleVarExp() : QMSimpleVarExp(DefaultPattern) {
 }
 
 QMSimpleVarExp::QMSimpleVarExp(const QString &pattern) : Pattern(pattern) {
@@ -53,7 +55,8 @@ void QMSimpleVarExp::clear() {
     Variables.clear();
 }
 
-static QString dfs(QString s, const QRegularExpression &reg, const QHash<QString, QString> &vars) {
+static QString dfs(QString s, const QRegularExpression &reg, const QHash<QString, QString> &vars,
+                   bool recursive = true) {
     QRegularExpressionMatch match;
     int index = 0;
     bool hasMatch = false;
@@ -68,6 +71,7 @@ static QString dfs(QString s, const QRegularExpression &reg, const QHash<QString
         } else {
             val = it.value();
         }
+
         s.replace(index, match.captured(0).size(), val);
     }
     if (!hasMatch) {
@@ -92,4 +96,9 @@ QHash<QString, QString> QMSimpleVarExp::SystemValues() {
         {"APPPATH",      qApp->applicationDirPath()                                            },
         {"APPNAME",      qApp->applicationName()                                               },
     };
+}
+
+QString QMSimpleVarExp::EvaluateVariables(const QString &s, const QHash<QString, QString> &dict, const QString &pattern,
+                                          bool recursive) {
+    return dfs(s, QRegularExpression(pattern.isEmpty() ? DefaultPattern : pattern), dict, recursive);
 }

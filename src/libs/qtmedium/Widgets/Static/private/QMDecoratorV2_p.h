@@ -58,6 +58,7 @@ public:
     mutable bool themeFilesDirty;
     mutable QMap<QString, QMap<QString, QString>> stylesheetCaches;
     mutable QHash<QString, QStringList> nsMappings;
+    mutable QHash<QString, QHash<QString, QString>> variables;
 
     static QString replaceSizes(const QString &stylesheet, double ratio, bool rounding);
     static QString removeAllComments(QString data);

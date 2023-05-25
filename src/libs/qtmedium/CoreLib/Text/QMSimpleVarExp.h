@@ -26,6 +26,9 @@ public:
 
 public:
     static QHash<QString, QString> SystemValues();
+
+    static QString EvaluateVariables(const QString &s, const QHash<QString, QString> &dict, const QString &pattern = {},
+                                     bool recursive = false);
 };
 
 #endif // QMSIMPLEVAREXP_H

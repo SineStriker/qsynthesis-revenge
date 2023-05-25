@@ -12,6 +12,7 @@
 #include <QWindow>
 
 #include <QMSystem.h>
+#include <Text/QMSimpleVarExp.h>
 
 ThemeGuardV2::ThemeGuardV2(QWidget *w, QMDecoratorV2Private *parent)
     : QObject(parent), w(w), d(parent), winHandle(w->windowHandle()) {
@@ -46,11 +47,18 @@ void ThemeGuardV2::updateScreen() {
                 if (stylesheet.isEmpty()) {
                     continue;
                 }
+
+                // Evaluate variables
+                stylesheet =
+                    QMSimpleVarExp::EvaluateVariables(stylesheet, d->variables.value(theme, {}), R"(\$\{([^\}]+)\})");
+
+                // Zoom
                 allStylesheets += QMDecoratorV2Private::replaceSizes(
                                       stylesheet, screen->logicalDotsPerInch() / QMOs::unitDpi(), true) +
                                   "\n\n";
             }
         }
+
         return allStylesheets;
     };
 
@@ -176,6 +184,7 @@ static QString parsePlatformString(const QJsonValue &val, const QString &default
 void QMDecoratorV2Private::scanForThemes() const {
     stylesheetCaches.clear();
     nsMappings.clear();
+    variables.clear();
 
     QFileInfoList searchFiles;
     for (const auto &path : qAsConst(themePaths)) {
@@ -197,6 +206,7 @@ void QMDecoratorV2Private::scanForThemes() const {
     // theme - [ namespace - [ priority - items] ]
     QMap<QString, QMap<QString, QMap<double, QList<QssItem>>>> tmp;
 
+    QHash<QString, QHash<QString, double>> variablesPriorities;
     for (const auto &file : searchFiles) {
         QFile f(file.absoluteFilePath());
         if (!f.open(QIODevice::ReadOnly)) {
@@ -235,6 +245,53 @@ void QMDecoratorV2Private::scanForThemes() const {
                 auto _tmp = parsePlatformDouble(value, -1);
                 if (_tmp >= 0)
                     priority = _tmp;
+            }
+        }
+
+        value = objDoc.value("variables");
+        if (!value.isUndefined() && value.isObject()) {
+            auto obj = value.toObject();
+            for (auto it0 = obj.begin(); it0 != obj.end(); ++it0) {
+                if (!it0->isObject()) {
+                    continue;
+                }
+                auto themeObj = it0->toObject();
+                if (themeObj.isEmpty()) {
+                    continue;
+                }
+
+                const auto &themeKey = it0.key();
+                auto &priorityMap = variablesPriorities[themeKey];
+                auto &variableMap = variables[themeKey];
+
+                for (auto it = themeObj.begin(); it != themeObj.end(); ++it) {
+                    const auto &key = it.key();
+                    QString val;
+                    double _priority = priority;
+
+                    if (it->isObject()) {
+                        auto varObj = it->toObject();
+                        value = varObj.value("priority");
+                        if (value.isDouble()) {
+                            priority = value.toDouble();
+                        }
+                        value = varObj.value("value");
+                        if (value.isString()) {
+                            val = value.toString();
+                        }
+                    } else if (it->isString()) {
+                        val = it->toString();
+                    }
+
+                    auto it2 = priorityMap.find(key);
+                    if (it2 == priorityMap.end()) {
+                        priorityMap.insert(key, _priority);
+                        variableMap[key] = val;
+                    } else if (it2.value() > _priority) {
+                        it2.value() = _priority;
+                        variableMap[key] = val;
+                    }
+                }
             }
         }
 

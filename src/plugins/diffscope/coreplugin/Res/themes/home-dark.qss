@@ -116,11 +116,11 @@ Core--Internal--HomeRecentTopFrame>CTabButton {
 /* Recent Top Buttons */
 
 Core--Internal--HomeRecentTopFrame>CTabButton#new-button {
-    qproperty-iconUp: svg(":/svg/home/new-file.svg", #FFFFFF);
+    qproperty-iconUp: svg(":/svg/home/new-file.svg", ${Core::Internal::HomeRecentTopFrame::IconColor});
 }
 
 Core--Internal--HomeRecentTopFrame>CTabButton#open-button {
-    qproperty-iconUp: svg(":/svg/home/open-file.svg", #FFFFFF);
+    qproperty-iconUp: svg(":/svg/home/open-file.svg", ${Core::Internal::HomeRecentTopFrame::IconColor});
 }
 
 Core--Internal--HomeRecentTopFrame>CTabButton[type=top-button] {

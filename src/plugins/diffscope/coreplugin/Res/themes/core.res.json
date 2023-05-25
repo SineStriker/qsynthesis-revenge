@@ -3,6 +3,14 @@
         "ratio": 0.8,
         "priority": 5
     },
+    "variables": {
+        "Visual Studio Code - Dark": {
+            "Core::Internal::HomeRecentTopFrame::IconColor": "#FFFFFF"
+        },
+        "Visual Studio Code - Light": {
+            "Core::Internal::HomeRecentTopFrame::IconColor": "#FFFFFF"
+        }
+    },
     "stylesheets": {
         "_common": {
             "Global": [

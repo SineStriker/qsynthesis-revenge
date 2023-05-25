@@ -110,7 +110,7 @@ namespace Core {
             }
 
             auto action = ai->action();
-            if (!action->isVisible() || !action->isEnabled()) {
+            if (!action->isEnabled()) {
                 continue;
             }
 
