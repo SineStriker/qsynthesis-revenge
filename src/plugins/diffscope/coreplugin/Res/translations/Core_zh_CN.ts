@@ -136,6 +136,10 @@
         <source>Recently Used</source>
         <translation>最近使用</translation>
     </message>
+    <message>
+        <source>Select color theme (Press Up/Down to preview)</source>
+        <translation type="unfinished">选择颜色主题 (按上下箭头键预览)</translation>
+    </message>
 </context>
 <context>
     <name>Core::IHomeWindow</name>
@@ -216,7 +220,7 @@
     </message>
     <message>
         <source>Preference Actions</source>
-        <translation>首选项组</translation>
+        <translation type="vanished">首选项组</translation>
     </message>
     <message>
         <source>Settings</source>
@@ -305,6 +309,14 @@
     <message>
         <source>Search for action</source>
         <translation type="obsolete">查找命令</translation>
+    </message>
+    <message>
+        <source>Preferences</source>
+        <translation>首选项</translation>
+    </message>
+    <message>
+        <source>&amp;Color Themes...</source>
+        <translation>颜色主题(&amp;C)...</translation>
     </message>
 </context>
 <context>

@@ -60,6 +60,10 @@
         <source>Recently Used</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Select color theme (Press Up/Down to preview)</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>Core::IHomeWindowPrivate</name>
@@ -109,10 +113,6 @@
     <name>Core::Internal::CoreWindowAddOn</name>
     <message>
         <source>Open Actions</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Preference Actions</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -177,6 +177,14 @@
     </message>
     <message>
         <source>&amp;Find Action...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Preferences</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Color Themes...</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

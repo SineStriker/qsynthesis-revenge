@@ -50,8 +50,9 @@ namespace Core::Internal {
         openFileItem->setText(tr("&Open..."));
         openRecentItem->setText(tr("Open Recent"));
 
-        preferenceGroupItem->setText(tr("Preference Actions"));
+        preferenceMenuItem->setText(tr("Preferences"));
         settingsItem->setText(tr("Se&ttings..."));
+        colorThemesItem->setText(tr("&Color Themes..."));
 
         welcomeGroupItem->setText(tr("Welcome Actions"));
         showHomeItem->setText(tr("Show Home"));
@@ -75,8 +76,9 @@ namespace Core::Internal {
         openFileItem = new ActionItem("core.OpenFile", new QAction(this), this);
         openRecentItem = new ActionItem("core.OpenRecent", ICore::createCoreMenu(win), this);
 
-        preferenceGroupItem = new ActionItem("core.PreferenceGroup", new QActionGroup(this), this);
+        preferenceMenuItem = new ActionItem("core.PreferenceMenu", ICore::createCoreMenu(win), this);
         settingsItem = new ActionItem("core.Settings", new QAction(this), this);
+        colorThemesItem = new ActionItem("core.ColorThemes", new QAction(this), this);
 
         aboutGroupItem = new ActionItem("core.AboutGroup", new QActionGroup(this), this);
         aboutPluginsItem = new ActionItem("core.AboutPlugins", new QAction(this), this);
@@ -117,6 +119,10 @@ namespace Core::Internal {
             ICore::instance()->showSettingsDialog("core.Settings", win); //
         });
 
+        connect(colorThemesItem->action(), &QAction::triggered, this, [iWin]() {
+            iWin->selectColorThemes();
+        });
+
         connect(aboutPluginsItem->action(), &QAction::triggered, this, [win]() {
             Internal::PluginDialog dlg(win);
             dlg.exec();
@@ -134,9 +140,7 @@ namespace Core::Internal {
             ICore::showHome(); //
         });
 
-        connect(findActionItem->action(), &QAction::triggered, this, [iWin]() {
-            iWin->showAllActions();
-        });
+        connect(findActionItem->action(), &QAction::triggered, this, [iWin]() { iWin->showAllActions(); });
 
         iWin->addActionItems({
             fileItem,
@@ -145,8 +149,9 @@ namespace Core::Internal {
             newFileItem,
             openFileItem,
             openRecentItem,
-            preferenceGroupItem,
+            preferenceMenuItem,
             settingsItem,
+            colorThemesItem,
             aboutGroupItem,
             aboutPluginsItem,
             aboutAppItem,

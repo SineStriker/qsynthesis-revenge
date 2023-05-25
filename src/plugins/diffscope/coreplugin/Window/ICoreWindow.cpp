@@ -6,6 +6,7 @@
 #include <QFileInfo>
 #include <QMessageBox>
 
+#include <QMDecoratorV2.h>
 #include <QMMath.h>
 
 #include <CoreApi/ILoader.h>
@@ -140,7 +141,7 @@ namespace Core {
             QString extra;
             QKeySequence seq = action->shortcut();
             if (!seq.isEmpty()) {
-                auto seqs = seq.toString(QKeySequence::PortableText).split(' ');
+                auto seqs = seq.toString(QKeySequence::PortableText).split(", ");
                 QStringList seqsText;
                 for (const auto &seqItem : qAsConst(seqs)) {
                     auto keys = seqItem.split('+');
@@ -149,7 +150,7 @@ namespace Core {
                     }
                     seqsText.append(keys.join('+'));
                 }
-                extra = seqsText.join(' ');
+                extra = seqsText.join("  ");
             }
 
             if (recent) {
@@ -237,6 +238,42 @@ namespace Core {
         });
     }
 
+    void ICoreWindowPrivate::selectColorThemes_helper() {
+        Q_Q(ICoreWindow);
+        cp->abandon();
+
+        for (const auto &theme : qIDec->themes()) {
+            auto item = new QListWidgetItem();
+            item->setText(theme);
+            cp->addItem(item);
+        }
+
+        cp->setFilterHint(tr("Select color theme (Press Up/Down to preview)"));
+        cp->setCurrentRow(0);
+        cp->start();
+
+        QString orgTheme = qIDec->theme();
+
+        auto obj = new QObject();
+        connect(cp, &QsApi::CommandPalette::currentItemChanged, obj, [](QListWidgetItem *item) {
+            if (!item) {
+                return;
+            }
+            QString theme = item->text();
+            qIDec->setTheme(theme);
+        });
+
+        connect(cp, &QsApi::CommandPalette::finished, obj, [obj, orgTheme](QListWidgetItem *item) {
+            delete obj;
+            if (!item) {
+                qIDec->setTheme(orgTheme);
+                return;
+            }
+            QString theme = item->text();
+            qIDec->setTheme(theme);
+        });
+    }
+
     void ICoreWindowPrivate::openEditor(DocumentSpec *spec, const QString &path) {
         Q_Q(ICoreWindow);
         if (spec->open(path)) {
@@ -298,6 +335,11 @@ namespace Core {
     void ICoreWindow::showAllActions() {
         Q_D(ICoreWindow);
         d->showAllActions_helper();
+    }
+
+    void ICoreWindow::selectColorThemes() {
+        Q_D(ICoreWindow);
+        d->selectColorThemes_helper();
     }
 
     ICoreWindow::ICoreWindow(const QString &id, QObject *parent) : ICoreWindow(*new ICoreWindowPrivate(), id, parent) {

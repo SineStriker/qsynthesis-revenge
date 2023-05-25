@@ -17,7 +17,7 @@ namespace QsApi {
 
         TitleListItemDelegate *q_ptr;
 
-        QTypeFace m_backgroundType;
+        QRectStyle m_backgroundType;
         QLineStyle m_underline;
 
         QTypeFace m_fileType;
@@ -30,6 +30,7 @@ namespace QsApi {
         QMargins m_locMargins;
         QMargins m_dateMargins;
         QMargins m_margins;
+        QMargins m_padding;
 
         QMargins m_iconMargins;
 

@@ -110,7 +110,7 @@ namespace QsApi {
     }
 
     TitleListItemDelegatePrivate::TitleListItemDelegatePrivate() {
-        m_backgroundType = QTypeFace(Qt::transparent, 1.0);
+        m_backgroundType = QRectStyle();
         m_underline = QLineStyle(Qt::lightGray, 1.0);
 
         m_dateBackType = QRectStyle();
@@ -137,7 +137,7 @@ namespace QsApi {
 
             QVariant::fromValue(m_fileMargins),    QVariant::fromValue(m_locMargins),
             QVariant::fromValue(m_dateMargins),    QVariant::fromValue(m_iconMargins),
-            QVariant::fromValue(m_margins),
+            QVariant::fromValue(m_padding),        QVariant::fromValue(m_margins),
         };
     }
 
@@ -149,7 +149,7 @@ namespace QsApi {
             }
         };
 
-        if (list.size() >= 12) {
+        if (list.size() >= 13) {
             int i = 0;
 
             decodeStyle(list.at(i++), m_backgroundType);
@@ -164,6 +164,7 @@ namespace QsApi {
             decodeStyle(list.at(i++), m_locMargins);
             decodeStyle(list.at(i++), m_dateMargins);
             decodeStyle(list.at(i++), m_iconMargins);
+            decodeStyle(list.at(i++), m_padding);
             decodeStyle(list.at(i++), m_margins);
         }
     }
@@ -178,20 +179,26 @@ namespace QsApi {
     QSize TitleListItemDelegate::sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const {
         Q_D(const TitleListItemDelegate);
 
-        QString location = index.data(QsApi::SubtitleRole).toString();
+        auto icon = index.data(QsApi::DecorationRole).value<QIcon>();
+        auto location = index.data(QsApi::SubtitleRole).toString();
+        auto date = index.data(QsApi::DescriptionRole).toString();
 
         QSize size = QStyledItemDelegate::sizeHint(option, index);
-        int iconHeight =
-            index.data(QsApi::IconSizeRole).toSize().height() + d->m_iconMargins.top() + d->m_iconMargins.bottom();
+        int iconHeight = icon.isNull() ? 0
+                                       : (index.data(QsApi::IconSizeRole).toSize().height() + d->m_iconMargins.top() +
+                                          d->m_iconMargins.bottom());
         int midHeight =
             QFontMetrics(d->m_fileType.font()).height() + d->m_fileMargins.top() + d->m_fileMargins.bottom() +
             (location.isEmpty()
                  ? 0
                  : (QFontMetrics(d->m_locType.font()).height() + d->m_locMargins.top() + d->m_locMargins.bottom()));
         int dateHeight =
-            QFontMetrics(d->m_dateType.font()).height() + d->m_dateMargins.top() + d->m_dateMargins.bottom();
+            date.isEmpty()
+                ? 0
+                : (QFontMetrics(d->m_dateType.font()).height() + d->m_dateMargins.top() + d->m_dateMargins.bottom());
+
         int h = qMax(iconHeight, qMax(midHeight, dateHeight));
-        h += d->m_margins.bottom() + d->m_margins.top();
+        h += d->m_margins.top() + d->m_margins.bottom() + d->m_padding.top() + d->m_padding.bottom();
         if (size.height() < h) {
             size.setHeight(h);
         }
@@ -204,6 +211,9 @@ namespace QsApi {
 
         QRect rect = option.rect;
         rect.adjust(d->m_margins.left(), d->m_margins.top(), -d->m_margins.right(), -d->m_margins.bottom());
+
+        QRect backgroundRect = rect;
+        rect.adjust(d->m_padding.left(), d->m_padding.top(), -d->m_padding.right(), -d->m_padding.bottom());
 
         // Color
         QColor backgroundColor;
@@ -253,6 +263,12 @@ namespace QsApi {
 
         auto icon = index.data(QsApi::DecorationRole).value<QIcon>();
         QSize iconSize = index.data(QsApi::IconSizeRole).toSize();
+        if (icon.isNull()) {
+            iconSize = QSize(0, 0);
+        }
+
+        QMargins iconMargins = icon.isNull() ? QMargins() : d->m_iconMargins;
+        QMargins locMargins = location.isEmpty() ? QMargins() : d->m_locMargins;
 
         Qt::AlignmentFlag dateVAlign = static_cast<Qt::AlignmentFlag>(index.data(QsApi::AlignmentRole).toInt());
 
@@ -262,17 +278,13 @@ namespace QsApi {
         QFont dateFont = d->m_dateType.font();
         QFont dateHighlightFont = d->m_dateHighlightType.font();
 
-        //    fileFont.setStyleStrategy(QFont::PreferAntialias);
-        //    locFont.setStyleStrategy(QFont::PreferAntialias);
-        //    dateFont.setStyleStrategy(QFont::PreferAntialias);
-
         QFontMetrics fileFontM(fileFont);
         QFontMetrics locFontM(locFont);
         QFontMetrics dateFontM(dateFont);
         QFontMetrics dateHighlightFontM(dateHighlightFont);
 
         int fileFontHeight = fileFontM.height();
-        int locFontHeight = locFontM.height();
+        int locFontHeight = location.isEmpty() ? 0 : locFontM.height();
 
         double radius = d->m_dateBackType.radius();
         auto dateTextBlocks = processString(date);
@@ -283,25 +295,24 @@ namespace QsApi {
         int dateFontHeight = dateSize.height();
         int dateWidth = dateSize.width();
 
-        int iconHeight =
-            index.data(QsApi::IconSizeRole).toSize().height() + d->m_iconMargins.top() + d->m_iconMargins.bottom();
+        int iconHeight = index.data(QsApi::IconSizeRole).toSize().height() + iconMargins.top() + iconMargins.bottom();
         int midHeight = fileFontHeight + d->m_fileMargins.top() + d->m_fileMargins.bottom() + locFontHeight +
-                        d->m_locMargins.top() + d->m_locMargins.bottom();
+                        locMargins.top() + locMargins.bottom();
         int dateHeight = dateFontHeight + d->m_dateMargins.top() + d->m_dateMargins.bottom();
 
         int realHeight = rect.height();
 
         QRect iconRect;
-        iconRect.setTop(rect.top() + (realHeight - iconHeight) / 2 + d->m_iconMargins.top());
-        iconRect.setLeft(d->m_iconMargins.left());
+        iconRect.setTop(rect.top() + (realHeight - iconHeight) / 2 + iconMargins.top());
+        iconRect.setLeft(rect.left() + iconMargins.left());
         iconRect.setSize(iconSize);
 
-        int iconRight = iconRect.right() + d->m_iconMargins.right();
+        int iconRight = iconRect.right() + iconMargins.right();
         int wordsWidth = rect.width() - iconRight;
 
         QRect dateRect;
         dateRect.setTop(rect.top() + (realHeight - dateHeight) / 2 + d->m_dateMargins.top());
-        dateRect.setRight(rect.width() - d->m_dateMargins.right());
+        dateRect.setRight(rect.right() - d->m_dateMargins.right());
         dateRect.setLeft(
             qMax(iconRect.right() + wordsWidth / 2 + d->m_dateMargins.left(), dateRect.right() - dateWidth));
         dateRect.setHeight(dateFontHeight);
@@ -317,9 +328,9 @@ namespace QsApi {
         int fileBottom = fileRect.bottom() + d->m_fileMargins.bottom();
 
         QRect locRect;
-        locRect.setTop(fileBottom + d->m_locMargins.top());
-        locRect.setLeft(iconRight + d->m_locMargins.left());
-        locRect.setRight(dateLeft - d->m_locMargins.right());
+        locRect.setTop(fileBottom + locMargins.top());
+        locRect.setLeft(iconRight + locMargins.left());
+        locRect.setRight(dateLeft - locMargins.right());
         locRect.setHeight(locFontHeight);
 
         painter->setRenderHint(QPainter::Antialiasing);
@@ -327,7 +338,7 @@ namespace QsApi {
         // Status
         painter->setPen(Qt::NoPen);
         painter->setBrush(backgroundColor);
-        painter->drawRect(rect);
+        painter->drawRoundedRect(backgroundRect, d->m_backgroundType.radius(), d->m_backgroundType.radius());
 
         // Icon
         if (!icon.isNull()) {
@@ -373,7 +384,7 @@ namespace QsApi {
         painter->setPen(locColor);
 
         // Address
-        {
+        if (!location.isEmpty()) {
             QString text = location;
             const QRect &dst = locRect;
             const QFontMetrics &fm = locFontM;

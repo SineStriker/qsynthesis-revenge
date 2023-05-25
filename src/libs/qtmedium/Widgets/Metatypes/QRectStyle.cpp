@@ -101,7 +101,7 @@ void QRectStyle::setColors(const QList<QColor> &colors) {
 }
 
 QColor QRectStyle::color() const {
-    return m_colors.isEmpty() ? QColor() : m_colors.front();
+    return m_colors.isEmpty() ? Qt::transparent : m_colors.front();
 }
 
 QColor QRectStyle::color2() const {

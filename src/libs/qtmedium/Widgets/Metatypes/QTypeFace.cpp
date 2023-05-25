@@ -110,7 +110,7 @@ void QTypeFace::setColors(const QList<QColor> &colors) {
 }
 
 QColor QTypeFace::color() const {
-    return m_colors.isEmpty() ? QColor() : m_colors.front();
+    return m_colors.isEmpty() ? Qt::transparent : m_colors.front();
 }
 
 QColor QTypeFace::color2() const {

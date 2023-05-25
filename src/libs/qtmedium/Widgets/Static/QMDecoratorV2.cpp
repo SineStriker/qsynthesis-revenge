@@ -553,7 +553,9 @@ QStringList QMDecoratorV2::themes() const {
     if (d->themeFilesDirty) {
         d->scanForThemes();
     }
-    return d->stylesheetCaches.keys();
+    QStringList res = d->stylesheetCaches.keys();
+    res.removeOne("_common");
+    return res;
 }
 
 QString QMDecoratorV2::theme() const {

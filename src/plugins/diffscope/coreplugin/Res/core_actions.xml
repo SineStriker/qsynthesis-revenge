@@ -7,9 +7,10 @@
                 <action id="OpenFile" command="File: Open File" shortcut="Ctrl+O"/>
                 <menu id="OpenRecent"/>
             </group>
-            <group id="PreferenceGroup">
-                <action id="Settings" command="Preferences: Settings"/>
-            </group>
+            <menu id="PreferenceMenu">
+                <action id="Settings" command="Preferences: Settings" shortcut="Ctrl+,"/>
+                <action id="ColorThemes" command="Preferences: Color Themes" shortcut="Ctrl+K,Ctrl+T"/>
+            </menu>
         </menu>
 
         <menu id="Help">
@@ -36,9 +37,10 @@
                 <action id="SaveFile" command="File: Save File" shortcut="Ctrl+S"/>
                 <action id="SaveAsFile" command="File: Save As File" shortcut="Ctrl+Shift+S"/>
             </group>
-            <group id="PreferenceGroup">
-                <action id="Settings" command="Preferences: Settings"/>
-            </group>
+            <menu id="PreferenceMenu">
+                <action id="Settings" command="Preferences: Settings" shortcut="Ctrl+,"/>
+                <action id="ColorThemes" command="Preferences: Color Themes" shortcut="Ctrl+K,Ctrl+T"/>
+            </menu>
             <group id="ExitGroup">
                 <action id="CloseFile" command="File: Close File"/>
             </group>

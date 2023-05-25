@@ -32,6 +32,8 @@ namespace Core {
 
         Q_INVOKABLE void showAllActions();
 
+        Q_INVOKABLE void selectColorThemes();
+
     protected:
         ICoreWindow(const QString &id, QObject *parent = nullptr);
         ~ICoreWindow();

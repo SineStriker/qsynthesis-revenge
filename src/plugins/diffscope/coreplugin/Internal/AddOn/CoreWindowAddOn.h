@@ -33,8 +33,9 @@ namespace Core {
             ActionItem *openFileItem;
             ActionItem *openRecentItem;
 
-            ActionItem *preferenceGroupItem;
+            ActionItem *preferenceMenuItem;
             ActionItem *settingsItem;
+            ActionItem *colorThemesItem;
 
             ActionItem *aboutGroupItem;
             ActionItem *aboutPluginsItem;

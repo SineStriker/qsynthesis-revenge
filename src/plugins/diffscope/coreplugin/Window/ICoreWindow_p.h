@@ -30,6 +30,7 @@ namespace Core {
 
         void showAllActions_helper();
         void selectEditor_helper(QList<DocumentSpec *> &specs, const QString &path);
+        void selectColorThemes_helper();
         void openEditor(DocumentSpec *spec, const QString &path);
     };
 

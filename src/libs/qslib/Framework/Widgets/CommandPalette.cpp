@@ -183,16 +183,33 @@ namespace QsApi {
         Q_Q(CommandPalette);
 
         QListWidgetItem *firstVisibleItem = nullptr;
+
+        QString trimmed = text.trimmed();
+        QStringList keywords = trimmed.split(' ');
         for (int i = 0; i < m_listWidget->count(); i++) {
             auto item = m_listWidget->item(i);
-            if (text.isEmpty() || item->text().contains(text, Qt::CaseInsensitive) ||
-                item->data(QsApi::SubtitleRole).toString().contains(text, Qt::CaseInsensitive)) {
-                if (!firstVisibleItem)
-                    firstVisibleItem = item;
-                m_listWidget->item(i)->setHidden(false);
+            bool find = false;
+
+            if (trimmed.isEmpty()) {
+                find = true;
             } else {
-                m_listWidget->item(i)->setHidden(true);
+                for (const auto &keyword : qAsConst(keywords)) {
+                    if (keyword.isEmpty()) {
+                        continue;
+                    }
+
+                    if (item->text().contains(keyword, Qt::CaseInsensitive) ||
+                        item->data(QsApi::SubtitleRole).toString().contains(keyword, Qt::CaseInsensitive)) {
+                        find = true;
+                    }
+                }
             }
+
+            if (!firstVisibleItem && find) {
+                firstVisibleItem = item;
+            }
+
+            m_listWidget->item(i)->setHidden(!find);
         }
 
         if (firstVisibleItem && m_listWidget->currentItem() && m_listWidget->currentItem()->isHidden()) {
