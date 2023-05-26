@@ -36,6 +36,12 @@ int main(int argc, char *argv[])
         std::cerr << "connect timeout" << std::endl;
         goto reconnect;
     }
+    helper.invokeAsync<int>([&](){
+        auto ret = helper.replica<SimpleSwitchReplica>()->work(114, 514);
+        ret.waitForFinished();
+        return ret.returnValue();
+    }, [](int val){ std::cerr << val << std::endl; });
+    std::cerr << "aaaa" << std::endl;
     std::thread thread(&anotherCallback);
     thread.detach();
     auto ret = helper.invokeSync<int>([&](){

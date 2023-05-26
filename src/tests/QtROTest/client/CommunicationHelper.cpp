@@ -54,6 +54,7 @@ void Awaiter::finish(const QVariant &val) {
     d->setRet(val);
     d->finish();
     d->mutex.unlock();
+    emit finished(val);
 }
 void Awaiter::wait() {
     Q_D(Awaiter);
