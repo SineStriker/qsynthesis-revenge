@@ -175,4 +175,21 @@ namespace Core {
         return nullptr;
     }
 
+    QVariant ObjectPool::globalAttribute(const QString &id) const {
+        QReadLocker locker(&d->globalAttributeLock);
+        return d->globalAttributeMap.value(id, {});
+    }
+
+    void ObjectPool::setGlobalAttribute(const QString &id, const QVariant &var) {
+        {
+            QWriteLocker locker(&d->globalAttributeLock);
+            if (var.isNull() || !var.isValid()) {
+                d->globalAttributeMap.remove(id);
+            } else {
+                d->globalAttributeMap.insert(id, var);
+            }
+        }
+        emit globalAttributeChanged(id, var);
+    }
+
 }

@@ -10,5 +10,9 @@
     ],
     "Themes": [
         "share/ChorusKit/themes"
-    ]
+    ],
+    "AppFont": {
+        "Family": "Microsoft YaHei",
+        "Size": 12
+    }
 }

@@ -51,6 +51,14 @@ namespace Core {
 
             exitGroupItem->setText(tr("Exit Actions"));
             closeFileItem->setText(tr("Close"));
+
+            playItem->setText(tr("Play"));
+            stopItem->setText(tr("Stop"));
+            moveToStartItem->setText(tr("Move to Start"));
+            moveToEndItem->setText(tr("Move to End"));
+
+            metronomeItem->setText(tr("Metronome"));
+            loopPlayItem->setText(tr("Loop Play"));
         }
 
         static QAction *createToolBarAction(QObject *parent, const QString &name, const QString &type = {}) {
@@ -86,8 +94,8 @@ namespace Core {
             moveToEndItem = new ActionItem("core.MoveToEnd", createToolBarAction(this, "moveToEnd"), this);
 
             playAssistGroupItem = new ActionItem("core.PlayAssistGroup", new QActionGroup(this), this);
-            metronomeItem = new ActionItem("core.Metronome", createToolBarAction(this, "metronome"), this);
-            loopPlayItem = new ActionItem("core.LoopPlay", createToolBarAction(this, "loopPlay"), this);
+            metronomeItem = new ActionItem("core.Metronome", createToolBarAction(this, "metronome", "assist"), this);
+            loopPlayItem = new ActionItem("core.LoopPlay", createToolBarAction(this, "loopPlay", "assist"), this);
 
             playControlGroupItem->actionGroup()->setExclusionPolicy(QActionGroup::ExclusionPolicy::None);
             playItem->action()->setCheckable(true);

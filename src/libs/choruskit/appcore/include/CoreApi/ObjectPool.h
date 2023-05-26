@@ -77,9 +77,14 @@ namespace Core {
             return 0;
         }
 
+        QVariant globalAttribute(const QString &id) const;
+        void setGlobalAttribute(const QString &id, const QVariant &var);
+
     signals:
         void objectAdded(const QString &id, QObject *obj);
         void aboutToRemoveObject(const QString &id, QObject *obj);
+
+        void globalAttributeChanged(const QString &id, const QVariant &var);
 
     protected:
         QScopedPointer<ObjectPoolPrivate> d;

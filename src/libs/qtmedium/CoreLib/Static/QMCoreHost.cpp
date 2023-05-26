@@ -92,6 +92,16 @@ void QMCoreHostPrivate::init() {
         auto obj = doc.object();
         for (auto it = obj.begin(); it != obj.end(); ++it) {
             QStringList res;
+
+            if (it.key() == "AppFont") {
+                if (it->isString()) {
+                    appFont.insert("Family", it->toString());
+                } else if (it->isObject()) {
+                    appFont = it->toObject();
+                }
+                continue;
+            }
+
             if (it->isArray()) {
                 auto arr = it->toArray();
                 for (const auto &item : qAsConst(arr)) {
@@ -184,11 +194,6 @@ finish_conf:
             path = prefix + "/" + path;
         }
         fontPaths.append(path);
-    }
-
-    QStringList appFonts = confValues.value("AppFont", {});
-    if (!appFonts.isEmpty()) {
-        appFont = appFonts.first();
     }
 
     // Init factory

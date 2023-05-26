@@ -31,6 +31,10 @@ namespace Core {
 
         mutable QReadWriteLock objectListLock;
 
+        QHash<QString, QVariant> globalAttributeMap;
+
+        mutable QReadWriteLock globalAttributeLock;
+
         void objectAdded(const QString &id, QObject *obj);
         void aboutToRemoveObject(const QString &id, QObject *obj);
 

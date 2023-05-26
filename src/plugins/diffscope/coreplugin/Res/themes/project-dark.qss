@@ -30,10 +30,11 @@ QToolBar#main-toolbar>QToolButton {
     padding: 5px;
     border: none;
     background-color: transparent;
+    border-radius: 4px;
 }
 
 QToolBar#main-toolbar>QToolButton:hover {
-    background-color: rgba(255, 255, 255, 20%);
+    background-color: rgba(35, 50, 51, 50%);
 }
 
 QToolBar#main-toolbar>QToolButton#play {
@@ -59,4 +60,8 @@ QToolBar#main-toolbar>QToolButton#metronome {
 
 QToolBar#main-toolbar>QToolButton#loopPlay {
     qproperty-iconUp: svg(":/svg/main-toolbar/loop-line.svg", "${project.toolbar.iconColor}");
+}
+
+QToolBar#main-toolbar>QToolButton[type=assist]:checked {
+    background-color: rgba(35, 50, 51, 100%);
 }

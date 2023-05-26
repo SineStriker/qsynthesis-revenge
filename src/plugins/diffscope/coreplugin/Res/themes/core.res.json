@@ -18,7 +18,7 @@
             "Global": [
                 {
                     "content": {
-                        "win": "/* QWidget { font-family: \"Microsoft YaHei\"; } */",
+                        "win": "/* QWidget { font-size: \"Microsoft YaHei\"; } */",
                         "linux": "QWidget[top-window=true] { qproperty-windowIcon: url(\":/svg/app/diffsinger\"); }"
                     }
                 }

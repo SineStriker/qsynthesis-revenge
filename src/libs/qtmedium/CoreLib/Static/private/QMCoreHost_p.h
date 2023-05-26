@@ -1,6 +1,8 @@
 #ifndef QMCOREHOST_P_H
 #define QMCOREHOST_P_H
 
+#include <QJsonObject>
+
 #include "../QMCoreHost.h"
 
 #include "QMCoreFactory.h"
@@ -26,7 +28,7 @@ public:
     QStringList translationPaths;
     QStringList themePaths;
     QStringList fontPaths;
-    QString appFont;
+    QJsonObject appFont;
 
     virtual QMCoreFactory *createFactory();
 
