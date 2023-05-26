@@ -12,15 +12,18 @@
 #include <QMessageBox>
 #include <QMimeData>
 #include <QPluginLoader>
+#include <QStatusBar>
 #include <QTime>
+
 
 #include <QJsonObject>
 
-//#include "Common/CodecArguments.h"
-//#include "Common/SampleFormat.h"
+// #include "Common/CodecArguments.h"
+// #include "Common/SampleFormat.h"
 
-//#include "MathHelper.h"
+// #include "MathHelper.h"
 #include "QMSystem.h"
+#include "qasglobal.h"
 
 // https://iconduck.com/icons
 
@@ -30,6 +33,14 @@ static QString audioFileToDsFile(const QString &filename) {
     QString name = info.fileName();
     return info.absolutePath() + "/" + name.mid(0, name.size() - suffix.size() - 1) +
            (suffix != "wav" ? "_" + suffix : "") + ".lab";
+}
+
+static QString audioFileToTextFile(const QString &filename) {
+    QFileInfo info(filename);
+    QString suffix = info.suffix().toLower();
+    QString name = info.fileName();
+    return info.absolutePath() + "/" + name.mid(0, name.size() - suffix.size() - 1) +
+           (suffix != "wav" ? "_" + suffix : "") + ".txt";
 }
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
@@ -75,6 +86,12 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
     bar->addMenu(editMenu);
     bar->addMenu(playMenu);
     bar->addMenu(helpMenu);
+
+    // Status bar
+    checkPreserveText = new QCheckBox("Preserve text", this);
+
+    auto status = statusBar();
+    status->addWidget(checkPreserveText);
 
     // Init widgets
     playerWidget = new PlayWidget();
@@ -123,60 +140,49 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
     connect(playMenu, &QMenu::triggered, this, &MainWindow::_q_playMenuTriggered);
     connect(helpMenu, &QMenu::triggered, this, &MainWindow::_q_helpMenuTriggered);
 
-    connect(treeView->selectionModel(), &QItemSelectionModel::currentChanged, this,
-            &MainWindow::_q_treeCurrentChanged);
+    connect(treeView->selectionModel(), &QItemSelectionModel::currentChanged, this, &MainWindow::_q_treeCurrentChanged);
 
     reloadWindowTitle();
     resize(1280, 720);
 
-    QString keyConfPath = qApp->applicationDirPath() + "/keys.json";
-    if (qApp->arguments().contains("--reset-keys")) {
+    QString keyConfPath = qApp->applicationDirPath() + "/minlabel_config.json";
+    QJsonDocument cfgDoc;
+    try {
+        if (qApp->arguments().contains("--reset-keys")) {
+            throw std::exception();
+        }
+
+        QFile file(keyConfPath);
+        if (!file.open(QIODevice::ReadOnly)) {
+            throw std::exception();
+        }
+
+        QJsonParseError err;
+        cfgDoc = QJsonDocument::fromJson(file.readAll(), &err);
+
+        file.close();
+
+        if (err.error != QJsonParseError::NoError || !cfgDoc.isObject()) {
+            throw std::exception();
+        }
+
+        QAS::JsonStream stream(cfgDoc.object());
+        stream >> cfg;
+        applyConfig();
+    } catch (...) {
         QFile file(keyConfPath);
         if (file.open(QIODevice::WriteOnly)) {
-            QJsonDocument doc;
-            doc.setObject(QJsonObject({{"open", browseAction->shortcut().toString()},
-                                       {"next", nextAction->shortcut().toString()},
-                                       {"prev", prevAction->shortcut().toString()},
-                                       {"play", playAction->shortcut().toString()}}));
-            file.write(doc.toJson());
+            cfg.open = browseAction->shortcut().toString();
+            cfg.next = nextAction->shortcut().toString();
+            cfg.prev = prevAction->shortcut().toString();
+            cfg.play = playAction->shortcut().toString();
+            cfg.preserveText = false;
+            applyConfig();
+            file.write(QJsonDocument(qAsClassToJson(cfg)).toJson());
             file.close();
+        } else {
+            QMessageBox::critical(this, qApp->applicationName(), "Failed to create config file.");
         }
-    } else {
-        // Read actions
-        do {
-            QFile file(keyConfPath);
-            if (!file.open(QIODevice::ReadOnly)) {
-                break;
-            }
-            QJsonParseError err;
-            QJsonDocument doc = QJsonDocument::fromJson(file.readAll(), &err);
-
-            file.close();
-
-            if (err.error != QJsonParseError::NoError || !doc.isObject()) {
-                break;
-            }
-
-            QJsonObject obj = doc.object();
-            {
-                auto it = obj.find("open");
-                if (it != obj.end()) {
-                    browseAction->setShortcut(QKeySequence(it.value().toString()));
-                }
-                it = obj.find("next");
-                if (it != obj.end()) {
-                    nextAction->setShortcut(QKeySequence(it.value().toString()));
-                }
-                it = obj.find("prev");
-                if (it != obj.end()) {
-                    prevAction->setShortcut(QKeySequence(it.value().toString()));
-                }
-                it = obj.find("play");
-                if (it != obj.end()) {
-                    playAction->setShortcut(QKeySequence(it.value().toString()));
-                }
-            }
-        } while (0);
     }
 }
 
@@ -192,15 +198,23 @@ void MainWindow::openDirectory(const QString &dirname) {
 }
 
 void MainWindow::openFile(const QString &filename) {
-    QString content;
+    QString labContent, txtContent;
 
     QString labFile = audioFileToDsFile(filename);
     QFile file(labFile);
     if (file.open(QIODevice::ReadOnly | QIODevice::Text)) {
-        content = QString::fromUtf8(file.readAll());
+        labContent = QString::fromUtf8(file.readAll());
     }
+    textWidget->contentText->setPlainText(labContent);
 
-    textWidget->contentText->setPlainText(content);
+    if(checkPreserveText->isChecked()) {
+        QString txtFile = audioFileToTextFile(filename);
+        QFile file(txtFile);
+        if (file.open(QIODevice::ReadOnly | QIODevice::Text)) {
+            txtContent = QString::fromUtf8(file.readAll());
+        }
+        textWidget->wordsText->setText(txtContent);
+    }
 
     playerWidget->openFile(filename);
 }
@@ -208,22 +222,41 @@ void MainWindow::openFile(const QString &filename) {
 void MainWindow::saveFile(const QString &filename) {
     QString labFile = audioFileToDsFile(filename);
 
-    QString content = textWidget->contentText->toPlainText();
-    if (content.isEmpty() && !QMFs::isFileExist(labFile)) {
+    QString labContent = textWidget->contentText->toPlainText();
+    if (labContent.isEmpty() && !QMFs::isFileExist(labFile)) {
         return;
     }
 
     QFile file(labFile);
     if (!file.open(QIODevice::WriteOnly | QIODevice::Text)) {
-        QMessageBox::critical(
-            this, qApp->applicationName(),
-            QString("Failed to write to file %1").arg(QMFs::PathFindFileName(labFile)));
+        QMessageBox::critical(this, qApp->applicationName(),
+                              QString("Failed to write to file %1").arg(QMFs::PathFindFileName(labFile)));
         ::exit(-1);
     }
 
     QTextStream in(&file);
     in.setCodec(QTextCodec::codecForName("UTF-8"));
-    in << content;
+    in << labContent;
+
+    // Preserve text
+    if (checkPreserveText->isChecked()) {
+        QString txtFile = audioFileToTextFile(filename);
+        QString txtContent = textWidget->wordsText->text();
+        if (txtContent.isEmpty() && !QMFs::isFileExist(txtFile)) {
+            return;
+        }
+
+        QFile file(txtFile);
+        if (!file.open(QIODevice::WriteOnly | QIODevice::Text)) {
+            QMessageBox::critical(this, qApp->applicationName(),
+                                  QString("Failed to write to file %1").arg(QMFs::PathFindFileName(txtFile)));
+            ::exit(-1);
+        }
+
+        QTextStream in(&file);
+        in.setCodec(QTextCodec::codecForName("UTF-8"));
+        in << txtContent;
+    }
 
     file.close();
 }
@@ -231,8 +264,8 @@ void MainWindow::saveFile(const QString &filename) {
 void MainWindow::reloadWindowTitle() {
     setWindowTitle(dirname.isEmpty()
                        ? qApp->applicationName()
-                       : QString("%1 - %2").arg(
-                             qApp->applicationName(), QDir::toNativeSeparators(QMFs::PathFindFileName(dirname))));
+                       : QString("%1 - %2").arg(qApp->applicationName(),
+                                                QDir::toNativeSeparators(QMFs::PathFindFileName(dirname))));
 }
 
 void MainWindow::dragEnterEvent(QDragEnterEvent *event) {
@@ -284,6 +317,21 @@ void MainWindow::dropEvent(QDropEvent *event) {
     }
 }
 
+void MainWindow::closeEvent(QCloseEvent *event) {
+    // Pull and save config
+    QString keyConfPath = qApp->applicationDirPath() + "/minlabel_config.json";
+    QFile file(keyConfPath);
+
+    cfg.preserveText = checkPreserveText->isChecked();
+    
+    if (file.open(QIODevice::WriteOnly)) {
+        file.write(QJsonDocument(qAsClassToJson(cfg)).toJson());
+    }
+
+    // Quit
+    event->accept();
+}
+
 void MainWindow::initStyleSheet() {
     QFile file(":/res/app.qss");
     if (file.open(QIODevice::ReadOnly | QIODevice::Text)) {
@@ -291,12 +339,19 @@ void MainWindow::initStyleSheet() {
     }
 }
 
+void MainWindow::applyConfig() {
+    browseAction->setShortcut(QKeySequence(cfg.open));
+    prevAction->setShortcut(QKeySequence(cfg.prev));
+    nextAction->setShortcut(QKeySequence(cfg.next));
+    playAction->setShortcut(QKeySequence(cfg.play));
+    checkPreserveText->setChecked(cfg.preserveText);
+}
+
 void MainWindow::_q_fileMenuTriggered(QAction *action) {
     if (action == browseAction) {
         playerWidget->setPlaying(false);
 
-        QString path = QFileDialog::getExistingDirectory(this, "Open Folder",
-                                                         QFileInfo(dirname).absolutePath());
+        QString path = QFileDialog::getExistingDirectory(this, "Open Folder", QFileInfo(dirname).absolutePath());
         if (path.isEmpty()) {
             return;
         }

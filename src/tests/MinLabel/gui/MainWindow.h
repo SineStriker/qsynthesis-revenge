@@ -13,9 +13,11 @@
 #include <QSlider>
 #include <QSplitter>
 #include <QTreeWidget>
+#include <QCheckBox>
 
 #include "PlayWidget.h"
 #include "TextWidget.h"
+#include "inc/MinLabelCfg.h"
 
 #include "Api/IAudioDecoder.h"
 #include "Api/IAudioPlayback.h"
@@ -41,6 +43,8 @@ protected:
     QAction *aboutAppAction;
     QAction *aboutQtAction;
 
+    QCheckBox *checkPreserveText;
+
     int notifyTimerId;
     bool playing;
     QString dirname;
@@ -58,6 +62,8 @@ protected:
 
     QString lastFile;
 
+    MinLabelCfg cfg;
+
     void openDirectory(const QString &dirname);
     void openFile(const QString &filename);
     void saveFile(const QString &filename);
@@ -66,9 +72,11 @@ protected:
 
     void dragEnterEvent(QDragEnterEvent *event) override;
     void dropEvent(QDropEvent *event) override;
+    void closeEvent(QCloseEvent *event) override;
 
 private:
     void initStyleSheet();
+    void applyConfig();
 
     void _q_fileMenuTriggered(QAction *action);
     void _q_editMenuTriggered(QAction *action);

@@ -6,7 +6,7 @@ set(CMAKE_AUTORCC ON)
 
 ck_add_files(_src
     CURRENT
-    DIRS gui
+    DIRS gui inc
     PATTERNS *.h *.cpp res.qrc
 )
 
@@ -25,3 +25,5 @@ ck_target_components(${PROJECT_NAME}
 ffmpeg_link_all(${PROJECT_NAME} PRIVATE)
 
 target_compile_definitions(${PROJECT_NAME} PRIVATE APP_VERSON="${PROJECT_VERSION}")
+
+include(qasc_exec.cmake)
