@@ -1,5 +1,7 @@
 project(vstclient VERSION 0.1.0.0)
 
+ck_find_qt_module(RemoteObjects)
+
 set(_res_dir Res)
 set(_plugin ${CURRENT_APPLICATION}__${PROJECT_NAME})
 
@@ -7,6 +9,8 @@ ck_add_files(_src
     ALLDIRS
     PATTERNS *.h *.hpp *.cpp *.cc
 )
+
+qt5_generate_repc(_src ../VstBridge.rep SOURCE)
 
 ck_add_application_plugin(${_plugin}
     NAME VstClient
@@ -19,9 +23,10 @@ ck_add_application_plugin(${_plugin}
 ck_target_components(${_plugin}
     INCLUDE_CURRENT_PRIVATE INCLUDE_SUBDIRS_PRIVATE
     SOURCES ${_src} ${_res_dir}/vstclient_res.qrc
-    QT_LINKS Core Widgets Network
-    LINKS QsSVS QsFramework ExtensionSystem DiffScope::coreplugin DiffScope::ipcbridge
+    QT_LINKS Core Widgets Network RemoteObjects
+    LINKS QsSVS QsFramework ExtensionSystem DiffScope::coreplugin
     AUTO_INCLUDE_CURRENT
+    INCLUDE_PRIVATE ${CMAKE_CURRENT_BINARY_DIR}
 )
 
 ck_add_translations(${_plugin}_translations

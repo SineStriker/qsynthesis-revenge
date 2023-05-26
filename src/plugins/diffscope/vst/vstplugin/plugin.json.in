@@ -15,8 +15,7 @@
     "Url": "https://www.baidu.com/",
     "Arguments" : [
         {
-            "Name" : "-vstkey",
-            "Parameter" : "key",
+            "Name" : "-vst",
             "Description" : "Attach to vst server"
         }
     ],

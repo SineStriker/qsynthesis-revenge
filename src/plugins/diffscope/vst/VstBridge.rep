@@ -1,0 +1,4 @@
+class VstBridge {
+    SLOT(void testProcess(int64_t pos, int32_t size));
+};
+

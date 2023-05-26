@@ -14,7 +14,7 @@ int main(int argc, char *argv[])
 
     SimpleSwitch srcSwitch; // create simple switch
 
-    QRemoteObjectHost srcNode(QUrl(QStringLiteral("local:switch"))); // create host node without Registry
+    QRemoteObjectHost srcNode(QUrl(QStringLiteral("local:77F6E993-671E-4283-99BE-C1CD1FF5CO9E"))); // create host node without Registry
     srcNode.enableRemoting(&srcSwitch); // enable remoting/sharing
 
     QObject::connect(&srcSwitch, &SimpleSwitch::newValue, [=](int val){

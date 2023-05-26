@@ -1,5 +1,3 @@
-add_subdirectory(ipcbridge)
+add_subdirectory(vstplugin)
 
-add_subdirectory(vstclient)
-
-add_subdirectory(vstserver)
+add_subdirectory(vstbridge)

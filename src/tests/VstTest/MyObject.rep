@@ -1,3 +1,0 @@
-class MyObject {
-    SLOT(int work(int a, int b))
-}
