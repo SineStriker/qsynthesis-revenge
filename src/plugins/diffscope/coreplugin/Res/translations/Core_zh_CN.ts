@@ -148,6 +148,14 @@
         <source>On</source>
         <translation>开</translation>
     </message>
+    <message>
+        <source>Select action in &quot;%1&quot;</source>
+        <translation>选择&quot;%1&quot;中的命令</translation>
+    </message>
+    <message>
+        <source>Menu</source>
+        <translation>菜单</translation>
+    </message>
 </context>
 <context>
     <name>Core::IHomeWindow</name>

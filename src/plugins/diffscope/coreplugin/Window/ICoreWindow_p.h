@@ -31,6 +31,8 @@ namespace Core {
         void showAllActions_helper();
         void selectEditor_helper(QList<DocumentSpec *> &specs, const QString &path);
         void selectColorThemes_helper();
+        void showMenuInPalette_helper(QMenu *menu, QMenu *menuToDelete);
+
         void openEditor(DocumentSpec *spec, const QString &path);
     };
 

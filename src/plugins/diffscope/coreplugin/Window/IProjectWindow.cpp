@@ -32,9 +32,9 @@ namespace Core {
     }
 
     void IProjectWindowPrivate::reloadMainToolbar() {
-        Q_Q(ICoreWindow);
+        Q_Q(IProjectWindow);
         auto items = q->actionItems();
-        auto bar = m_toolbar;
+        auto bar = q->mainToolbar();
 
         mainToolbarCtx->buildToolBarWithState(items, bar);
     }
@@ -64,7 +64,12 @@ namespace Core {
 
     QToolBar *IProjectWindow::mainToolbar() const {
         Q_D(const IProjectWindow);
-        return d->m_toolbar;
+        return d->m_projectWidget->mainToolbar();
+    }
+
+    CDockFrame *IProjectWindow::mainDock() const {
+        Q_D(const IProjectWindow);
+        return d->m_projectWidget->mainDock();
     }
 
     IProjectWindow::IProjectWindow(QObject *parent) : IProjectWindow(*new IProjectWindowPrivate(), parent) {
@@ -84,26 +89,7 @@ namespace Core {
 
         d->mainToolbarCtx = ICore::instance()->actionSystem()->context("project.MainToolbar");
 
-        auto &centralWidget = d->m_centralWidget = new QFrame();
-        centralWidget->setObjectName("central-widget");
-
-        auto &toolbar = d->m_toolbar = new CToolBar();
-        toolbar->setObjectName("main-toolbar");
-        toolbar->setMovable(false);
-        toolbar->setFloatable(false);
-        toolbar->setOrientation(Qt::Horizontal);
-        toolbar->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Minimum);
-
-        auto &projectWidget = d->m_projectWidget = new Internal::ProjectWidget();
-        projectWidget->setObjectName("project-widget");
-
-        auto layout = new QVBoxLayout();
-        layout->setMargin(0);
-        layout->setSpacing(0);
-        layout->addWidget(toolbar);
-        layout->addWidget(projectWidget, 1);
-        centralWidget->setLayout(layout);
-
+        auto &centralWidget = d->m_projectWidget = new Internal::ProjectWidget();
         setCentralWidget(centralWidget);
         d->cp->setParent(centralWidget);
 

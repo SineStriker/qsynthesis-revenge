@@ -89,9 +89,11 @@ namespace Core::Internal {
         showHomeItem = new ActionItem("core.ShowHome", new QAction(this), this);
         findActionItem = new ActionItem("core.FindAction", new QAction(this), this);
 
-        connect(newFileItem->action(), &QAction::triggered, this, [this]() {
+        connect(newFileItem->action(), &QAction::triggered, this, [this, iWin]() {
             //
             qDebug() << "New";
+
+            iWin->showMenuInPalette(fileItem->menu(), false);
 
             //            auto action = new QAction("Test");
             //            action->setShortcut(QKeySequence("Ctrl+N"));
@@ -119,9 +121,7 @@ namespace Core::Internal {
             ICore::instance()->showSettingsDialog("core.Settings", win); //
         });
 
-        connect(colorThemesItem->action(), &QAction::triggered, this, [iWin]() {
-            iWin->selectColorThemes();
-        });
+        connect(colorThemesItem->action(), &QAction::triggered, this, [iWin]() { iWin->selectColorThemes(); });
 
         connect(aboutPluginsItem->action(), &QAction::triggered, this, [win]() {
             Internal::PluginDialog dlg(win);

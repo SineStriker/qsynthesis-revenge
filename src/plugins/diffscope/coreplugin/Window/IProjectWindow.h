@@ -1,6 +1,8 @@
 #ifndef IPROJECTWINDOW_H
 #define IPROJECTWINDOW_H
 
+#include <CDockFrame.h>
+
 #include "Document/DspxDocument.h"
 #include "ICoreWindow.h"
 
@@ -22,6 +24,8 @@ namespace Core {
         DspxDocument *doc() const;
 
         QToolBar *mainToolbar() const;
+
+        CDockFrame *mainDock() const;
 
     protected:
         explicit IProjectWindow(QObject *parent = nullptr);

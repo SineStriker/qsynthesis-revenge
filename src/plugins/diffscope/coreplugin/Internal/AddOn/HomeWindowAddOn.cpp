@@ -85,6 +85,7 @@ namespace Core {
         }
 
         void HomeWindowAddOn::initActions() {
+            showHomeItem->action()->setEnabled(false);
         }
 
         void HomeWindowAddOn::_q_newButtonClicked() {

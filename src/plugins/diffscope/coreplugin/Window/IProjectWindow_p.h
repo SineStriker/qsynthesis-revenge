@@ -28,9 +28,7 @@ namespace Core {
 
         bool m_forceClose;
 
-        QFrame *m_centralWidget;
         Internal::ProjectWidget *m_projectWidget;
-        QToolBar *m_toolbar;
 
     private:
         void _q_documentChanged();

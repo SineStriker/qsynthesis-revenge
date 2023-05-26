@@ -398,7 +398,7 @@ namespace QsApi {
 
         if (index.data(QsApi::SeparatorRole).toBool()) {
             painter->setPen(QPen(underlineColor, d->m_underline.widthF()));
-            painter->drawLine(rect.bottomLeft(), rect.bottomRight());
+            painter->drawLine(backgroundRect.bottomLeft(), backgroundRect.bottomRight());
         }
     }
 

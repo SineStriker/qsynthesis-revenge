@@ -23,13 +23,14 @@ namespace Core {
     using MOST_RECENT_ACTIONS = QMChronSet<QString>;
     Q_GLOBAL_STATIC(MOST_RECENT_ACTIONS, mostRecentActionsGlobal);
 
-    static void removeAllAccelerateKeys(QString &text) {
+    static QString removeAllAccelerateKeys(QString text) {
         // 第一步：去掉带括号的加速键
         QRegularExpression regex1("\\(&[^)]+\\)");
         text = text.replace(regex1, QString());
 
         // 第二步：去掉剩余的加速键符号
         text = text.replace("&", QString());
+        return text;
     }
 
     ICoreWindowPrivate::ICoreWindowPrivate() {
@@ -79,6 +80,22 @@ namespace Core {
         mainMenuCtx->buildMenuBarWithState(items, bar);
     }
 
+    static QString keySequenceToRichText(const QKeySequence &seq) {
+        if (!seq.isEmpty()) {
+            auto seqs = seq.toString(QKeySequence::PortableText).split(", ");
+            QStringList seqsText;
+            for (const auto &seqItem : qAsConst(seqs)) {
+                auto keys = seqItem.split('+');
+                for (auto &key : keys) {
+                    key = "<quote> " + key + " </quote>";
+                }
+                seqsText.append(keys.join('+'));
+            }
+            return seqsText.join("  ");
+        }
+        return {};
+    }
+
     void ICoreWindowPrivate::showAllActions_helper() {
         Q_Q(ICoreWindow);
         cp->abandon();
@@ -122,8 +139,7 @@ namespace Core {
             }
             QString desc = ai->commandDescription();
             if (desc.isEmpty()) {
-                desc = (ai->text());
-                removeAllAccelerateKeys(desc);
+                desc = removeAllAccelerateKeys(ai->text());
             }
 
             // If text contains colon
@@ -145,20 +161,7 @@ namespace Core {
                 desc.append(" (" + checkedDesc + ")");
             }
 
-            QString extra;
-            QKeySequence seq = action->shortcut();
-            if (!seq.isEmpty()) {
-                auto seqs = seq.toString(QKeySequence::PortableText).split(", ");
-                QStringList seqsText;
-                for (const auto &seqItem : qAsConst(seqs)) {
-                    auto keys = seqItem.split('+');
-                    for (auto &key : keys) {
-                        key = "<quote> " + key + " </quote>";
-                    }
-                    seqsText.append(keys.join('+'));
-                }
-                extra = seqsText.join("  ");
-            }
+            QString extra = keySequenceToRichText(action->shortcut());
 
             if (recent) {
                 recent = false;
@@ -203,8 +206,6 @@ namespace Core {
 
             QTimer::singleShot(0, ai->action(), &QAction::trigger);
         });
-
-        connect(q, &IWindow::shortcutAboutToCome, obj, [this]() { cp->abandon(); });
     }
 
     void ICoreWindowPrivate::selectEditor_helper(QList<DocumentSpec *> &specs, const QString &path) {
@@ -294,6 +295,75 @@ namespace Core {
         });
     }
 
+    void ICoreWindowPrivate::showMenuInPalette_helper(QMenu *menu, QMenu *menuToDelete) {
+        cp->abandon();
+
+        QListWidgetItem *lastItem = nullptr;
+        for (const auto &action : menu->actions()) {
+            QString desc;
+            if (action->isSeparator()) {
+                if (lastItem) {
+                    lastItem->setData(QsApi::SeparatorRole, true);
+                }
+                continue;
+            } else if (action->menu()) {
+                desc = tr("Menu");
+            } else {
+                desc = keySequenceToRichText(action->shortcut());
+            }
+
+            auto item = new QListWidgetItem();
+            item->setText(removeAllAccelerateKeys(action->text()));
+            item->setData(QsApi::DescriptionRole, desc);
+            item->setData(QsApi::ObjectPointerRole, QVariant::fromValue(intptr_t(action)));
+
+            cp->addItem(item);
+            lastItem = item;
+        }
+
+        if (!lastItem) {
+            return;
+        }
+
+        cp->setFilterHint(tr("Select action in \"%1\"").arg(removeAllAccelerateKeys(menu->title())));
+        cp->setCurrentRow(0);
+        cp->start();
+
+        auto obj = new QObject();
+        connect(cp, &QsApi::CommandPalette::finished, obj, [obj, menuToDelete, this](QListWidgetItem *item) {
+            bool handled = true;
+
+            {
+                delete obj;
+                if (!item) {
+                    handled = false;
+                    goto out;
+                }
+
+                auto action = reinterpret_cast<QAction *>(item->data(QsApi::ObjectPointerRole).value<intptr_t>());
+                if (!action) {
+                    handled = false;
+                    goto out;
+                }
+
+                if (action->menu()) {
+                    QTimer::singleShot(0, action, [action, menuToDelete, this]() {
+                        showMenuInPalette_helper(action->menu(), menuToDelete);
+                    });
+                } else {
+                    QTimer::singleShot(0, action, [action, menuToDelete]() {
+                        action->trigger();
+                        delete menuToDelete;
+                    });
+                }
+            }
+
+        out:
+            if (!handled)
+                delete menuToDelete;
+        });
+    }
+
     void ICoreWindowPrivate::openEditor(DocumentSpec *spec, const QString &path) {
         Q_Q(ICoreWindow);
         if (spec->open(path)) {
@@ -362,6 +432,15 @@ namespace Core {
         d->selectColorThemes_helper();
     }
 
+    void ICoreWindow::showMenuInPalette(QMenu *menu, bool deleteLater) {
+        Q_D(ICoreWindow);
+        if (!menu) {
+            return;
+        }
+
+        d->showMenuInPalette_helper(menu, deleteLater ? menu : nullptr);
+    }
+
     ICoreWindow::ICoreWindow(const QString &id, QObject *parent) : ICoreWindow(*new ICoreWindowPrivate(), id, parent) {
     }
 
@@ -396,6 +475,9 @@ namespace Core {
         Q_D(ICoreWindow);
         connect(d->mainMenuCtx, &ActionContext::stateChanged, d, &ICoreWindowPrivate::reloadMenuBar);
         d->reloadMenuBar();
+
+        // Shortcut will cause immediate close of command palette
+        connect(this, &IWindow::shortcutAboutToCome, d->cp, &QsApi::CommandPalette::abandon);
     }
 
     void ICoreWindow::windowAddOnsFinished() {

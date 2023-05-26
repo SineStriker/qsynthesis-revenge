@@ -171,7 +171,7 @@ QsApi--CommandPalette {
     border-right: 8px solid qlineargradient(x0: 0, x1: 1, stop: 0 transparent, stop: 1 rgba(0, 0, 0, 25%));
     qproperty-styleData: qvariants(/* styleData */
     qrectstyle(3.75px, (transparent, rgba(255, 255, 255, 10%), rgba(0, 96, 192, 25%))), /* idleType */
-    qpen(rgba(0, 0, 0, 5%), 1), /* underline */
+    qpen(rgba(255, 255, 255, 7.5%), 1), /* underline */
     qtypeface((#CCCCCC, white), 15px), /* fileType */
     qtypeface((#909090, #CCCCCC), 15px), /* locType */
     qtypeface((#CCCCCC, white), 12px), /* dateType */

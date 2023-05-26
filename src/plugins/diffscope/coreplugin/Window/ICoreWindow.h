@@ -34,6 +34,8 @@ namespace Core {
 
         Q_INVOKABLE void selectColorThemes();
 
+        Q_INVOKABLE void showMenuInPalette(QMenu *menu, bool deleteLater);
+
     protected:
         ICoreWindow(const QString &id, QObject *parent = nullptr);
         ~ICoreWindow();

@@ -72,6 +72,14 @@
         <source>On</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Select action in &quot;%1&quot;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Menu</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>Core::IHomeWindowPrivate</name>
