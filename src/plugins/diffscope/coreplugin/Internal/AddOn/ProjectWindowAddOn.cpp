@@ -53,6 +53,8 @@ namespace Core {
             closeFileItem->setText(tr("Close"));
 
             playItem->setText(tr("Play"));
+            playItem->setCommandCheckedDescription(qMakePair(tr("Play"), tr("Pause")));
+
             stopItem->setText(tr("Stop"));
             moveToStartItem->setText(tr("Move to Start"));
             moveToEndItem->setText(tr("Move to End"));
@@ -61,11 +63,11 @@ namespace Core {
             loopPlayItem->setText(tr("Loop Play"));
         }
 
-        static QAction *createToolBarAction(QObject *parent, const QString &name, const QString &type = {}) {
+        static QAction *createToolBarAction(QObject *parent, const QString &name, bool selectable = false) {
             auto action = new QAction(parent);
             action->setObjectName(name);
-            if (!type.isEmpty()) {
-                action->setProperty("type", type);
+            if (selectable) {
+                action->setProperty("selectable", true);
             }
             return action;
         }
@@ -94,8 +96,8 @@ namespace Core {
             moveToEndItem = new ActionItem("core.MoveToEnd", createToolBarAction(this, "moveToEnd"), this);
 
             playAssistGroupItem = new ActionItem("core.PlayAssistGroup", new QActionGroup(this), this);
-            metronomeItem = new ActionItem("core.Metronome", createToolBarAction(this, "metronome", "assist"), this);
-            loopPlayItem = new ActionItem("core.LoopPlay", createToolBarAction(this, "loopPlay", "assist"), this);
+            metronomeItem = new ActionItem("core.Metronome", createToolBarAction(this, "metronome", true), this);
+            loopPlayItem = new ActionItem("core.LoopPlay", createToolBarAction(this, "loopPlay", true), this);
 
             playControlGroupItem->actionGroup()->setExclusionPolicy(QActionGroup::ExclusionPolicy::None);
             playItem->action()->setCheckable(true);
@@ -127,29 +129,22 @@ namespace Core {
                 win->close();
             });
 
-            connect(playItem->action(), &QAction::triggered, this, [this, win]() {
-                qDebug() << (playItem->action()->isChecked() ? "Stop" : "Play"); //
+            connect(stopItem->action(), &QAction::triggered, this, [this, iWin]() {
+                iWin->requestGlobalEvent("playback.stop");
+                iWin->setGlobalAttribute("playback.playing", false);
             });
 
-            connect(stopItem->action(), &QAction::triggered, this, [this, win]() {
-                qDebug() << "Stop"; //
+            connect(moveToStartItem->action(), &QAction::triggered, this, [this, iWin]() {
+                iWin->requestGlobalEvent("playback.moveToStart"); //
             });
 
-            connect(moveToStartItem->action(), &QAction::triggered, this, [this, win]() {
-                qDebug() << "Move To Start"; //
+            connect(moveToEndItem->action(), &QAction::triggered, this, [this, iWin]() {
+                iWin->requestGlobalEvent("playback.moveToEnd"); //
             });
 
-            connect(moveToEndItem->action(), &QAction::triggered, this, [this, win]() {
-                qDebug() << "Move To End"; //
-            });
-
-            connect(metronomeItem->action(), &QAction::triggered, this, [this, win]() {
-                qDebug() << "Metronome" << metronomeItem->action()->isChecked(); //
-            });
-
-            connect(loopPlayItem->action(), &QAction::triggered, this, [this, win]() {
-                qDebug() << "Loop Play" << loopPlayItem->action()->isChecked(); //
-            });
+            iWin->addCheckable("playback.playing", playItem->action());
+            iWin->addCheckable("playback.metronome", metronomeItem->action());
+            iWin->addCheckable("playback.loopPlay", loopPlayItem->action());
 
             iWin->addActionItems({
                 saveGroupItem,

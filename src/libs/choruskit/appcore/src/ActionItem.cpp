@@ -343,6 +343,16 @@ namespace Core {
         d->commandName = commandName;
     }
 
+    QPair<QString, QString> ActionItem::commandCheckedDescription() const {
+        Q_D(const ActionItem);
+        return d->commandCheckedDesc;
+    }
+
+    void ActionItem::setCommandCheckedDescription(const QPair<QString, QString> &commandCheckedDescription) {
+        Q_D(ActionItem);
+        d->commandCheckedDesc = commandCheckedDescription;
+    }
+
     bool ActionItem::autoDeleteGlobal() {
         return m_autoDelete;
     }

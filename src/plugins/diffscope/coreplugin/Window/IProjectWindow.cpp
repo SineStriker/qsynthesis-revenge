@@ -92,6 +92,7 @@ namespace Core {
         toolbar->setMovable(false);
         toolbar->setFloatable(false);
         toolbar->setOrientation(Qt::Horizontal);
+        toolbar->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Minimum);
 
         auto &projectWidget = d->m_projectWidget = new Internal::ProjectWidget();
         projectWidget->setObjectName("project-widget");
@@ -100,7 +101,7 @@ namespace Core {
         layout->setMargin(0);
         layout->setSpacing(0);
         layout->addWidget(toolbar);
-        layout->addWidget(projectWidget);
+        layout->addWidget(projectWidget, 1);
         centralWidget->setLayout(layout);
 
         setCentralWidget(centralWidget);

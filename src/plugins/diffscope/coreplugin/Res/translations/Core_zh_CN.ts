@@ -138,7 +138,15 @@
     </message>
     <message>
         <source>Select color theme (Press Up/Down to preview)</source>
-        <translation type="unfinished">选择颜色主题 (按上下箭头键预览)</translation>
+        <translation>选择颜色主题 (按上下箭头键预览)</translation>
+    </message>
+    <message>
+        <source>Off</source>
+        <translation>关</translation>
+    </message>
+    <message>
+        <source>On</source>
+        <translation>开</translation>
     </message>
 </context>
 <context>
@@ -513,6 +521,34 @@
     <message>
         <source>Close</source>
         <translation>关闭</translation>
+    </message>
+    <message>
+        <source>Play</source>
+        <translation>播放</translation>
+    </message>
+    <message>
+        <source>Pause</source>
+        <translation>暂停</translation>
+    </message>
+    <message>
+        <source>Stop</source>
+        <translation>停止</translation>
+    </message>
+    <message>
+        <source>Move to Start</source>
+        <translation>移动到开始</translation>
+    </message>
+    <message>
+        <source>Move to End</source>
+        <translation>移动到结束</translation>
+    </message>
+    <message>
+        <source>Metronome</source>
+        <translation>节拍器</translation>
+    </message>
+    <message>
+        <source>Loop Play</source>
+        <translation>循环播放</translation>
     </message>
 </context>
 <context>

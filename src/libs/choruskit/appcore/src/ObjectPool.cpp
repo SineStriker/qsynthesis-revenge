@@ -2,15 +2,13 @@
 #include "ObjectPool_p.h"
 
 #include <QDebug>
+#include <QMetaMethod>
 
 #define DISABLE_WARNING_OBJECTS_LEFT
 
 namespace Core {
 
     ObjectPoolPrivate::ObjectPoolPrivate(ObjectPool *q) : q(q) {
-        connect(q, &ObjectPool::objectAdded, [this](const QString &id, QObject *obj) { Q_UNUSED(id) });
-
-        connect(q, &ObjectPool::aboutToRemoveObject, [this](const QString &id, QObject *obj) { Q_UNUSED(id) });
     }
 
     ObjectPoolPrivate::~ObjectPoolPrivate() {
@@ -26,8 +24,108 @@ namespace Core {
         emit q->aboutToRemoveObject(id, obj);
     }
 
+    void ObjectPoolPrivate::setGlobalAttribute_helper(const QString &id, const QVariant &var, bool checkUnchanged,
+                                                      bool ignoreCheckable) {
+        QVariant org;
+        {
+            QWriteLocker locker(&globalAttributeLock);
+
+            auto it = globalAttributeMap.find(id);
+            if (it != globalAttributeMap.end()) {
+                org = it.value();
+                if (var.isNull() || !var.isValid()) {
+                    globalAttributeMap.erase(it);
+                } else {
+                    it.value() = var;
+                }
+            } else {
+                if (var.isNull() || !var.isValid()) {
+                    // ...
+                } else {
+                    globalAttributeMap.insert(id, var);
+                }
+            }
+
+            if (checkUnchanged && var == org) {
+                return;
+            }
+        }
+
+        if (!ignoreCheckable) {
+            QReadLocker locker(&globalAttributeLock);
+            // Find possible checkable
+            auto it2 = checkableMap2.find(id);
+            if (it2 != checkableMap2.end()) {
+                const auto &checkable = it2.value();
+                locker.unlock();
+
+                // call setChecked
+                QMetaObject::invokeMethod(checkable.obj, "setChecked", Qt::AutoConnection,
+                                          Q_ARG(bool, checkable.reverse ^ var.toBool()));
+            }
+        }
+        emit q->globalAttributeChanged(id, var, org);
+    }
+
+    void ObjectPoolPrivate::removeCheckable_helper(const QString &id, bool disconnect) {
+        QWriteLocker locker(&globalAttributeLock);
+
+        auto it = checkableMap2.find(id);
+        if (it == checkableMap2.end()) {
+            return;
+        }
+        auto obj = it->obj;
+
+        checkableMap1.remove(obj);
+        checkableMap2.erase(it);
+
+        if (!disconnect) {
+            return;
+        }
+
+        QObject::disconnect(obj, SIGNAL(toggled(bool)), this, SLOT(_q_checkableToggled(bool)));
+        QObject::disconnect(obj, &QObject::destroyed, this, &ObjectPoolPrivate::_q_checkableDestroyed);
+    }
+
+    void ObjectPoolPrivate::removeCheckable_helper(QObject *obj, bool disconnect) {
+        QWriteLocker locker(&globalAttributeLock);
+
+        auto it = checkableMap1.find(obj);
+        if (it == checkableMap1.end()) {
+            return;
+        }
+        auto id = it->id;
+        auto reverse = it->reverse;
+
+        checkableMap1.erase(it);
+        checkableMap2.remove(id);
+
+        if (!disconnect) {
+            return;
+        }
+
+        QObject::disconnect(obj, SIGNAL(toggled(bool)), this, SLOT(_q_checkableToggled(bool)));
+        QObject::disconnect(obj, &QObject::destroyed, this, &ObjectPoolPrivate::_q_checkableDestroyed);
+    }
+
     void ObjectPoolPrivate::_q_objectDestroyed() {
         q->removeObject(sender());
+    }
+
+    void ObjectPoolPrivate::_q_checkableToggled(bool checked) {
+        Checkable checkable;
+        {
+            QReadLocker locker(&globalAttributeLock);
+            checkable = checkableMap1.value(sender(), {});
+            if (checkable.id.isEmpty()) {
+                return;
+            }
+        }
+        setGlobalAttribute_helper(checkable.id, checkable.reverse ^ checked, true, true);
+    }
+
+    void ObjectPoolPrivate::_q_checkableDestroyed() {
+        removeCheckable_helper(sender(), false);
     }
 
     ObjectPool::ObjectPool(QObject *parent) : QObject(parent), d(new ObjectPoolPrivate(this)) {
@@ -180,16 +278,40 @@ namespace Core {
         return d->globalAttributeMap.value(id, {});
     }
 
-    void ObjectPool::setGlobalAttribute(const QString &id, const QVariant &var) {
+    void ObjectPool::setGlobalAttribute(const QString &id, const QVariant &var, bool checkUnchanged) {
+        d->setGlobalAttribute_helper(id, var, checkUnchanged, false);
+    }
+
+    void ObjectPool::addCheckable(const QString &id, QObject *obj, bool reverse) {
         {
-            QWriteLocker locker(&d->globalAttributeLock);
-            if (var.isNull() || !var.isValid()) {
-                d->globalAttributeMap.remove(id);
-            } else {
-                d->globalAttributeMap.insert(id, var);
+            QReadLocker locker(&d->globalAttributeLock);
+            if (d->checkableMap2.contains(id)) {
+                return;
             }
         }
-        emit globalAttributeChanged(id, var);
+        {
+            QWriteLocker locker(&d->globalAttributeLock);
+
+            d->checkableMap1.insert(obj, {id, obj, reverse});
+            d->checkableMap2.insert(id, {id, obj, reverse});
+
+            connect(obj, SIGNAL(toggled(bool)), d.data(), SLOT(_q_checkableToggled(bool)));
+            connect(obj, &QObject::destroyed, d.data(), &ObjectPoolPrivate::_q_checkableDestroyed);
+        }
+
+        d->setGlobalAttribute_helper(id, reverse ^ obj->property("checked").toBool(), true, true);
+    }
+
+    void ObjectPool::removeCheckable(const QString &id) {
+        d->removeCheckable_helper(id, true);
+    }
+
+    void ObjectPool::removeCheckable(QObject *obj) {
+        d->removeCheckable_helper(obj, true);
+    }
+
+    void ObjectPool::requestGlobalEvent(const QString &id, const QVariantHash &args) {
+        emit globalEventRequested(id, args);
     }
 
 }

@@ -35,6 +35,7 @@ namespace Core {
         QString commandCategory;
         QString commandName;
         QString commandDesc;
+        QPair<QString, QString> commandCheckedDesc;
 
     private:
         void _q_actionShortcutsChanged(const QList<QKeySequence> &shortcuts);

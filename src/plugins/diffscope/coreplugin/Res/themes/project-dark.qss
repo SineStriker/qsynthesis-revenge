@@ -62,6 +62,6 @@ QToolBar#main-toolbar>QToolButton#loopPlay {
     qproperty-iconUp: svg(":/svg/main-toolbar/loop-line.svg", "${project.toolbar.iconColor}");
 }
 
-QToolBar#main-toolbar>QToolButton[type=assist]:checked {
+QToolBar#main-toolbar>QToolButton[selectable=true]:checked {
     background-color: rgba(35, 50, 51, 100%);
 }

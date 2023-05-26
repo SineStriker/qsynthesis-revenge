@@ -136,6 +136,15 @@ namespace Core {
                 }
             }
 
+            if (action->isCheckable()) {
+                QString checkedDesc = action->isChecked() ? ai->commandCheckedDescription().second
+                                                          : ai->commandCheckedDescription().first;
+                if (checkedDesc.isEmpty()) {
+                    checkedDesc = action->isChecked() ? tr("Off") : tr("On");
+                }
+                desc.append(" (" + checkedDesc + ")");
+            }
+
             QString extra;
             QKeySequence seq = action->shortcut();
             if (!seq.isEmpty()) {
@@ -254,7 +263,7 @@ namespace Core {
             item->setText(theme);
             cp->addItem(item);
 
-            if (theme == qIDec->theme()){
+            if (theme == qIDec->theme()) {
                 curItem = item;
             }
         }

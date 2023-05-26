@@ -64,6 +64,14 @@
         <source>Select color theme (Press Up/Down to preview)</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Off</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>On</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>Core::IHomeWindowPrivate</name>
@@ -325,6 +333,34 @@
     </message>
     <message>
         <source>Close</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Play</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Pause</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Stop</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Move to Start</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Move to End</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Metronome</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Loop Play</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

@@ -66,6 +66,9 @@ namespace Core {
         QString commandName() const;
         void setCommandName(const QString &commandName);
 
+        QPair<QString, QString> commandCheckedDescription() const;
+        void setCommandCheckedDescription(const QPair<QString, QString> &commandCheckedDescription);
+
     public:
         static bool autoDeleteGlobal();
         static void setAutoDeleteGlobal(bool autoDelete);

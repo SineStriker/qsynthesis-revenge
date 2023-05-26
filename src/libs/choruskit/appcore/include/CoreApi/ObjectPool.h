@@ -2,6 +2,7 @@
 #define OBJECTPOOL_H
 
 #include <QReadWriteLock>
+#include <QVariant>
 #include <QWidget>
 
 #include "CkAppCoreGlobal.h"
@@ -78,13 +79,20 @@ namespace Core {
         }
 
         QVariant globalAttribute(const QString &id) const;
-        void setGlobalAttribute(const QString &id, const QVariant &var);
+        void setGlobalAttribute(const QString &id, const QVariant &var, bool checkUnchanged = true);
+
+        void addCheckable(const QString &id, QObject *obj, bool reverse = false);
+        void removeCheckable(const QString &id);
+        void removeCheckable(QObject *obj);
+
+        void requestGlobalEvent(const QString &id, const QVariantHash &args = {});
 
     signals:
         void objectAdded(const QString &id, QObject *obj);
         void aboutToRemoveObject(const QString &id, QObject *obj);
 
-        void globalAttributeChanged(const QString &id, const QVariant &var);
+        void globalAttributeChanged(const QString &id, const QVariant &var, const QVariant &orgVar = {});
+        void globalEventRequested(const QString &id, const QVariantHash &args);
 
     protected:
         QScopedPointer<ObjectPoolPrivate> d;
