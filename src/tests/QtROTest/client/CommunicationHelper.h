@@ -24,6 +24,8 @@ public:
     Q_INVOKABLE void callBySignal(std::function<void()> fx);
     void wait();
     QVariant returnValue();
+signals:
+    void finished(const QVariant &val);
 public slots:
     void finish(const QVariant &val);
 private:
@@ -37,6 +39,7 @@ public:
     explicit CommunicationHelper();
     ~CommunicationHelper();
     void start();
+
     template <typename T>
     T invokeSync(const std::function<T()>& fx) {
         Awaiter awaiter;
@@ -45,6 +48,21 @@ public:
         awaiter.wait();
         return awaiter.returnValue().value<T>();
     }
+
+    template <typename T>
+    void invokeAsync(const std::function<T()>& fx, const std::function<void(const T&)>& callback) {
+        auto awaiter = new Awaiter;
+        awaiter->moveToThread(m_appThread.data());
+        QMetaObject::invokeMethod(awaiter, "callBySignal", Q_ARG(std::function<void()>, [=](){
+            auto ret = fx();
+            awaiter->finish(QVariant(ret));
+        }));
+        QObject::connect(awaiter, &Awaiter::finished, awaiter, [=](QVariant val){
+            callback(val.value<T>());
+            awaiter->deleteLater();
+        });
+    }
+
     template <typename T>
     QVariant invokeSync(Awaiter &awaiter, const std::function<void()>& fx) {
         awaiter.moveToThread(m_appThread.data());
