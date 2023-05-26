@@ -3,6 +3,7 @@
 //
 
 #include "VstBridge.h"
+#include <QSharedMemory>
 
 namespace Vst {
 
@@ -13,8 +14,14 @@ namespace Vst {
         }
     }
 
-    void VstBridge::testProcess(int64_t pos, int32_t size) {
+    static QSharedMemory sbuf("77F6E993-671E-4283-99BE-C1CD1FF5C09E");
 
+    bool VstBridge::testProcess(int64_t pos, int32_t size) {
+        if(!sbuf.isAttached()) sbuf.attach();
+        sbuf.lock();
+        sineWave(48000, pos, size, static_cast<float *>(sbuf.data()));
+        sbuf.unlock();
+        return true;
     }
     VstBridge::VstBridge(QObject *parent): VstBridgeSource(parent) {
     }

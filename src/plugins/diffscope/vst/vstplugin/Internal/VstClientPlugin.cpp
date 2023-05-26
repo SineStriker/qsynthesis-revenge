@@ -39,7 +39,7 @@ namespace Vst {
                 splash->showMessage(tr("Initializing vst support..."));
             }
 
-            auto srcNode = new QRemoteObjectHost(QUrl("local:77F6E993-671E-4283-99BE-C1CD1FF5CO9E"), this);
+            auto srcNode = new QRemoteObjectHost(QUrl("local:77F6E993-671E-4283-99BE-C1CD1FF5C09E"), this);
             auto vstBridge = new VstBridge(this);
             srcNode->enableRemoting(vstBridge);
 

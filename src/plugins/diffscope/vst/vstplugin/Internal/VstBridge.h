@@ -15,7 +15,7 @@ namespace Vst {
         explicit VstBridge(QObject *parent = nullptr);
 
     private:
-        void testProcess(int64_t pos, int32_t size) override;
+        bool testProcess(int64_t pos, int32_t size) override;
     };
 
 } // Vst
