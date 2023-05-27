@@ -4,6 +4,7 @@
 #include <QApplication>
 #include <QDir>
 #include <QFileInfo>
+#include <QLocale>
 #include <QMessageBox>
 
 #include <QMDecoratorV2.h>
@@ -295,6 +296,51 @@ namespace Core {
         });
     }
 
+    void ICoreWindowPrivate::selectTranslations_helper() {
+        Q_Q(ICoreWindow);
+        cp->abandon();
+
+        auto locales = qIDec->locales();
+        std::sort(locales.begin(), locales.end());
+
+        QListWidgetItem *curItem = nullptr;
+        for (const auto &loc : qAsConst(locales)) {
+            auto item = new QListWidgetItem();
+
+            QLocale locale(loc);
+
+            QString languageName = locale.nativeLanguageName();
+            QString countryName = locale.nativeCountryName();
+            QString text = (languageName.isEmpty() || countryName.isEmpty())
+                               ? loc
+                               : QString("%1 (%2)").arg(languageName, countryName);
+
+            item->setText(text);
+            item->setData(QsApi::SubtitleRole, loc);
+            cp->addItem(item);
+
+            if (loc == qIDec->locale()) {
+                curItem = item;
+            }
+        }
+
+        cp->setFilterHint(tr("Select locale and language"));
+        cp->setCurrentItem(curItem);
+        cp->start();
+
+        QString orgLoc = qIDec->locale();
+
+        auto obj = new QObject();
+        connect(cp, &QsApi::CommandPalette::finished, obj, [obj, orgLoc](QListWidgetItem *item) {
+            delete obj;
+            if (!item) {
+                return;
+            }
+            QString loc = item->data(QsApi::SubtitleRole).toString();
+            qIDec->setLocale(loc);
+        });
+    }
+
     void ICoreWindowPrivate::showMenuInPalette_helper(QMenu *menu, QMenu *menuToDelete) {
         cp->abandon();
 
@@ -430,6 +476,11 @@ namespace Core {
     void ICoreWindow::selectColorThemes() {
         Q_D(ICoreWindow);
         d->selectColorThemes_helper();
+    }
+
+    void ICoreWindow::selectTranslations() {
+        Q_D(ICoreWindow);
+        d->selectTranslations_helper();
     }
 
     void ICoreWindow::showMenuInPalette(QMenu *menu, bool deleteLater) {

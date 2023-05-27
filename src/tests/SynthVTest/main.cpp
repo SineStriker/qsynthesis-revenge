@@ -5,6 +5,7 @@
 #include <QScrollArea>
 #include <QVBoxLayout>
 
+#include <QMWidgetsHost.h>
 #include <Widgets/SynthVSplitter.h>
 
 class MySplitter : public QsApi::SynthVSplitter {
@@ -36,6 +37,8 @@ protected:
 
 int main(int argc, char *argv[]) {
     QApplication app(argc, argv);
+
+    QMWidgetsHost host;
 
     QMainWindow w;
 
@@ -81,12 +84,13 @@ QLabel#panel {
 }
 
 QWidget#screen {
+    border: none;
     font-size: 50px;
     font-weight: bold;
 }
 
 QsApi--SynthVSplitterHandle {
-    qproperty-handleHeight: 10;
+    qproperty-handleHeight: 3px;
 }
 
 QsApi--SynthVSplitterHandle>QPushButton#titleBar{

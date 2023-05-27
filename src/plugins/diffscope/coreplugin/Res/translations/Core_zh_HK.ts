@@ -80,6 +80,10 @@
         <source>Menu</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Select locale and language</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>Core::IHomeWindowPrivate</name>
@@ -201,6 +205,10 @@
     </message>
     <message>
         <source>&amp;Color Themes...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Locales And Languages...</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

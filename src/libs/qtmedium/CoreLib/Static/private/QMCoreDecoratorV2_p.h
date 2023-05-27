@@ -19,6 +19,8 @@ public:
 
     void scanTranslations() const;
 
+    void insertTranslationFiles_helper(const QMap<QString, QStringList> &map) const;
+
     QMCoreDecoratorV2 *q_ptr;
 
     QSet<QString> translationPaths;

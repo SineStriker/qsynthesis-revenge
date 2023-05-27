@@ -62,6 +62,8 @@ namespace Core {
         if (!d->getSpec()) {
             return;
         }
+
+        action->setProperty("action-id", id);
     }
 
     ActionItem::ActionItem(const QString &id, QActionGroup *actionGroup, QObject *parent)
@@ -78,6 +80,8 @@ namespace Core {
         if (!d->getSpec()) {
             return;
         }
+
+        actionGroup->setProperty("action-id", id);
     }
 
     ActionItem::ActionItem(const QString &id, QMenu *menu, QObject *parent)
@@ -94,6 +98,8 @@ namespace Core {
         if (!d->getSpec()) {
             return;
         }
+
+        menu->setProperty("action-id", id);
     }
 
     ActionItem::ActionItem(const QString &id, QWidget *widget, QObject *parent)
@@ -111,6 +117,8 @@ namespace Core {
         if (!d->getSpec()) {
             return;
         }
+
+        widget->setProperty("action-id", id);
     }
 
     ActionItem::~ActionItem() {

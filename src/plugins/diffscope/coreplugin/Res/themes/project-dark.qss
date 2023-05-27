@@ -62,6 +62,14 @@ QToolBar#main-toolbar>QToolButton#loopPlay {
     qproperty-iconUp: svg(":/svg/main-toolbar/loop-line.svg", "${project.toolbar.iconColor}");
 }
 
+QToolBar#main-toolbar>QToolButton[action-id="core.FindAction"] {
+    qproperty-iconUp: svg(":/svg/main-toolbar/search-line.svg", "${project.toolbar.iconColor}");
+}
+
+QToolBar#main-toolbar>QToolButton[action-id="core.Settings"] {
+    qproperty-iconUp: svg(":/svg/main-toolbar/setting-line.svg", "${project.toolbar.iconColor}");
+}
+
 QToolBar#main-toolbar>QToolButton[selectable=true]:checked {
     background-color: rgba(35, 50, 51, 100%);
 }

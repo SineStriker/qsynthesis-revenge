@@ -293,6 +293,29 @@ namespace QsApi {
         delete d->layout->takeAt(index);
     }
 
+    void SynthVSplitter::moveWidget(int from, int to) {
+        Q_D(SynthVSplitter);
+        if ((to == from || to == from + 1) || from >= count()) {
+            return;
+        }
+
+        to = qMin(count() - 1, to);
+        if (to < 0) {
+            return;
+        }
+
+        if (to > from) {
+            to -= 1;
+        }
+
+        auto w1 = d->layout->itemAt(from * 2)->widget();
+        auto w2 = d->layout->itemAt(from * 2 + 1)->widget();
+        d->layout->removeWidget(w1);
+        d->layout->removeWidget(w2);
+        d->layout->insertWidget(to * 2, w1);
+        d->layout->insertWidget(to * 2 + 1, w2);
+    }
+
     QWidget *SynthVSplitter::widget(int index) const {
         Q_D(const SynthVSplitter);
         return d->layout->itemAt(qMin(index * 2, d->layout->count() - 1))->widget();
@@ -505,13 +528,13 @@ namespace QsApi {
         delete d;
     }
 
-    int SynthVSplitterHandle::handleHeight() {
+    QPixelSize SynthVSplitterHandle::handleHeight() {
         return d->m_handleHeight;
     }
 
-    void SynthVSplitterHandle::setHandleHeight(int h) {
-        d->m_handleHeight = h;
-        d->entity->setFixedHeight(h);
+    void SynthVSplitterHandle::setHandleHeight(const QPixelSize &h) {
+        d->m_handleHeight = h.value();
+        d->entity->setFixedHeight(d->m_handleHeight);
         updateGeometry();
     }
 

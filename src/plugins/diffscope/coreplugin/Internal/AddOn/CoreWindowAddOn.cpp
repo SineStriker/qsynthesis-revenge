@@ -53,6 +53,7 @@ namespace Core::Internal {
         preferenceMenuItem->setText(tr("Preferences"));
         settingsItem->setText(tr("Se&ttings..."));
         colorThemesItem->setText(tr("&Color Themes..."));
+        languagesItem->setText(tr("&Locales And Languages..."));
 
         welcomeGroupItem->setText(tr("Welcome Actions"));
         showHomeItem->setText(tr("Show Home"));
@@ -79,6 +80,7 @@ namespace Core::Internal {
         preferenceMenuItem = new ActionItem("core.PreferenceMenu", ICore::createCoreMenu(win), this);
         settingsItem = new ActionItem("core.Settings", new QAction(this), this);
         colorThemesItem = new ActionItem("core.ColorThemes", new QAction(this), this);
+        languagesItem = new ActionItem("core.Languages", new QAction(this), this);
 
         aboutGroupItem = new ActionItem("core.AboutGroup", new QActionGroup(this), this);
         aboutPluginsItem = new ActionItem("core.AboutPlugins", new QAction(this), this);
@@ -121,7 +123,13 @@ namespace Core::Internal {
             ICore::instance()->showSettingsDialog("core.Settings", win); //
         });
 
-        connect(colorThemesItem->action(), &QAction::triggered, this, [iWin]() { iWin->selectColorThemes(); });
+        connect(colorThemesItem->action(), &QAction::triggered, this, [iWin]() {
+            iWin->selectColorThemes(); //
+        });
+
+        connect(languagesItem->action(), &QAction::triggered, this, [iWin]() {
+            iWin->selectTranslations(); //
+        });
 
         connect(aboutPluginsItem->action(), &QAction::triggered, this, [win]() {
             Internal::PluginDialog dlg(win);
@@ -152,6 +160,7 @@ namespace Core::Internal {
             preferenceMenuItem,
             settingsItem,
             colorThemesItem,
+            languagesItem,
             aboutGroupItem,
             aboutPluginsItem,
             aboutAppItem,

@@ -75,10 +75,19 @@ void QMCoreDecoratorV2Private::scanTranslations() const {
     qmFiles.clear();
 
     for (const auto &path : qAsConst(translationPaths)) {
-        qmFiles.insert(scanTranslation_helper(path));
+        insertTranslationFiles_helper(scanTranslation_helper(path));
     }
 
     qmFilesDirty = false;
+}
+
+void QMCoreDecoratorV2Private::insertTranslationFiles_helper(const QMap<QString, QStringList> &map) const {
+    for (auto it = map.begin(); it != map.end(); ++it) {
+        if (it->isEmpty()) {
+            continue;
+        }
+        qmFiles[it.key()].append(it.value());
+    }
 }
 
 void QMCoreDecoratorV2Private::_q_localeSubscriberDestroyed() {
@@ -108,7 +117,7 @@ void QMCoreDecoratorV2::addTranslationPath(const QString &path) {
 
     // Support incremental update when adding path
     auto map = scanTranslation_helper(path);
-    d->qmFiles.insert(map);
+    d->insertTranslationFiles_helper(map);
 
     // Install new translators
     auto it = map.find(d->currentLocale);

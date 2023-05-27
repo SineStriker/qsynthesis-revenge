@@ -152,9 +152,15 @@ namespace Core {
         Q_Q(ActionSystem);
 
         const auto &ctx2 = *ele;
-        QString id = prefix + ctx2.properties.value("id");
+        QString id = ctx2.properties.value("id");
         if (id.isEmpty()) {
             return;
+        }
+
+        if (id.startsWith('^')) {
+            id.remove(0, 1);
+        } else {
+            id.prepend(prefix);
         }
 
         QList<ActionInsertRule> rules;

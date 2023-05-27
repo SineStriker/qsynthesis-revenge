@@ -289,6 +289,7 @@ namespace QsApi {
             return;
         }
         d->m_listWidget->setCurrentItem(item);
+        d->m_listWidget->scrollToItem(item);
     }
 
     int CommandPalette::currentRow() const {

@@ -36,6 +36,7 @@ namespace Core {
             ActionItem *preferenceMenuItem;
             ActionItem *settingsItem;
             ActionItem *colorThemesItem;
+            ActionItem *languagesItem;
 
             ActionItem *aboutGroupItem;
             ActionItem *aboutPluginsItem;

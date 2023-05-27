@@ -15,5 +15,7 @@
         <file>svg/main-toolbar/move-end-line.svg</file>
         <file>svg/main-toolbar/loop-line.svg</file>
         <file>svg/main-toolbar/metronome-line.svg</file>
+        <file>svg/main-toolbar/search-line.svg</file>
+        <file>svg/main-toolbar/setting-line.svg</file>
     </qresource>
 </RCC>

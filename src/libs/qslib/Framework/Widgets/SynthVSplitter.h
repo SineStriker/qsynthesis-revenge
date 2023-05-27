@@ -5,6 +5,8 @@
 #include <QFrame>
 #include <QSplitter>
 
+#include <QPixelSize.h>
+
 #include "QsFrameworkGlobal.h"
 
 namespace QsApi {
@@ -23,6 +25,7 @@ namespace QsApi {
         void addWidget(QWidget *w);
         void insertWidget(int index, QWidget *w);
         void removeWidget(QWidget *w);
+        void moveWidget(int from, int to);
 
         QWidget *widget(int index) const;
         int indexOf(QWidget *w) const;
@@ -54,13 +57,13 @@ namespace QsApi {
 
     class SynthVSplitterHandle : public QFrame {
         Q_OBJECT
-        Q_PROPERTY(int handleHeight READ handleHeight WRITE setHandleHeight)
+        Q_PROPERTY(QPixelSize handleHeight READ handleHeight WRITE setHandleHeight)
     public:
         explicit SynthVSplitterHandle(SynthVSplitter *parent);
         ~SynthVSplitterHandle();
 
-        int handleHeight();
-        void setHandleHeight(int h);
+        QPixelSize handleHeight();
+        void setHandleHeight(const QPixelSize &h);
 
         QSize sizeHint() const override;
 

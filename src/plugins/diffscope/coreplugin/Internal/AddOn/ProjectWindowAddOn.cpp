@@ -3,6 +3,7 @@
 #include <QDebug>
 #include <QLabel>
 #include <QMenuBar>
+#include <QPushButton>
 
 #include <QEvent>
 #include <QMDecoratorV2.h>
@@ -72,6 +73,13 @@ namespace Core {
             return action;
         }
 
+        static QWidget *createStretch() {
+            auto w = new QWidget();
+            w->setDisabled(true);
+            w->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+            return w;
+        }
+
         void ProjectWindowAddOn::initActions() {
             auto iWin = windowHandle()->cast<IProjectWindow>();
             auto win = iWin->window();
@@ -98,6 +106,11 @@ namespace Core {
             playAssistGroupItem = new ActionItem("core.PlayAssistGroup", new QActionGroup(this), this);
             metronomeItem = new ActionItem("core.Metronome", createToolBarAction(this, "metronome", true), this);
             loopPlayItem = new ActionItem("core.LoopPlay", createToolBarAction(this, "loopPlay", true), this);
+
+            mainToolbarStretchItem = new ActionItem("core.MainToolbarStretch", createStretch(), this);
+            mainToolbarStretchItem->setProperty("start-of-layout", true);
+
+            mainToolbarHelpGroupItem = new ActionItem("core.MainToolbarHelpGroup", new QActionGroup(this), this);
 
             playControlGroupItem->actionGroup()->setExclusionPolicy(QActionGroup::ExclusionPolicy::None);
             playItem->action()->setCheckable(true);
@@ -169,6 +182,9 @@ namespace Core {
                 playAssistGroupItem,
                 metronomeItem,
                 loopPlayItem,
+
+                mainToolbarStretchItem,
+                mainToolbarHelpGroupItem,
             });
         }
     }

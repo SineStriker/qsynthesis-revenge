@@ -51,6 +51,9 @@ namespace Core {
             ActionItem *playAssistGroupItem;
             ActionItem *metronomeItem;
             ActionItem *loopPlayItem;
+
+            ActionItem *mainToolbarStretchItem;
+            ActionItem *mainToolbarHelpGroupItem;
         };
 
     }

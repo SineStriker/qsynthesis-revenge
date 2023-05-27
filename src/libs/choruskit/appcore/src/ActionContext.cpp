@@ -387,9 +387,16 @@ namespace Core {
 
     template <class Menu>
     static void insertMenu(Menu *menu, ActionItem *item) {
-        auto empty = menu->actions().isEmpty();
+        bool isStartOfLayout = item->property("start-of-layout").toBool();
+        bool empty = menu->property("last_insert").toString().isEmpty();
+        if (isStartOfLayout || !empty && menu->actions().isEmpty()) {
+            menu->setProperty("last_insert", QString());
+            empty = true;
+        }
+
         auto sep = [&]() {
-            if (menu->property("last_insert").toString() == "group" || (item->type() == ActionItem::ActionGroup && !empty)) {
+            if (menu->property("last_insert").toString() == "group" ||
+                (item->type() == ActionItem::ActionGroup && !empty)) {
                 menu->addSeparator();
             }
             empty = false;
@@ -423,6 +430,10 @@ namespace Core {
             }
             default:
                 break;
+        }
+
+        if (item->property("start-of-layout").toBool()) {
+            menu->setProperty("last_insert", QString());
         }
     }
 

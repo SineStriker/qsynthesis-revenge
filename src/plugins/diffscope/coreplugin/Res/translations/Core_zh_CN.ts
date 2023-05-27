@@ -156,6 +156,10 @@
         <source>Menu</source>
         <translation>菜单</translation>
     </message>
+    <message>
+        <source>Select locale and language</source>
+        <translation>选择地区和语言</translation>
+    </message>
 </context>
 <context>
     <name>Core::IHomeWindow</name>
@@ -333,6 +337,10 @@
     <message>
         <source>&amp;Color Themes...</source>
         <translation>颜色主题(&amp;C)...</translation>
+    </message>
+    <message>
+        <source>&amp;Locales And Languages...</source>
+        <translation>地区和语言(&amp;L)...</translation>
     </message>
 </context>
 <context>

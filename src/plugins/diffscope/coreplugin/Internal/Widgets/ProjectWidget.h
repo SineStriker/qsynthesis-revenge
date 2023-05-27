@@ -7,6 +7,7 @@
 #include <QVBoxLayout>
 
 #include <CDockFrame.h>
+#include <Widgets/SynthVSplitter.h>
 
 namespace Core::Internal {
 
@@ -25,10 +26,11 @@ namespace Core::Internal {
         }
 
     private:
+        QVBoxLayout *m_layout;
+
         QToolBar *m_toolbar;
         CDockFrame *m_frame;
-
-        QVBoxLayout *m_layout;
+        QsApi::SynthVSplitter *m_piano;
     };
 
 }

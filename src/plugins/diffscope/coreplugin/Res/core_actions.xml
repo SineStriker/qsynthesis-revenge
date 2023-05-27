@@ -11,6 +11,8 @@
                 <action id="Settings" command="Preferences: Settings" shortcut="Ctrl+,"/>
                 <action id="ColorThemes" command="Preferences: Color Themes"
                         shortcut="Ctrl+K,Ctrl+T"/>
+                <action id="Languages" command="Preferences: Languages"
+                        shortcut="Ctrl+K,Ctrl+L"/>
             </menu>
         </menu>
 
@@ -41,6 +43,7 @@
             <menu id="PreferenceMenu">
                 <action id="Settings"/>
                 <action id="ColorThemes"/>
+                <action id="Languages"/>
             </menu>
             <group id="ExitGroup">
                 <action id="CloseFile" command="File: Close File"/>
@@ -76,6 +79,14 @@
         <group id="PlayAssistGroup">
             <action id="Metronome" command="Playback: Metronome"/>
             <action id="LoopPlay" command="Playback: Loop Play"/>
+        </group>
+
+        <!--    Stretch    -->
+        <action id="MainToolbarStretch"/>
+
+        <group id="MainToolbarHelpGroup">
+            <action id="FindAction"/>
+            <action id="Settings"/>
         </group>
     </context>
 </actionSystem>
