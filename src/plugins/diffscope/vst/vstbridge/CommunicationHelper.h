@@ -44,6 +44,7 @@ namespace Vst {
         explicit CommunicationHelper();
         ~CommunicationHelper();
         void start();
+        void stop();
 
         template <typename T>
         T invokeSync(const std::function<T()> &fx) {
@@ -85,7 +86,7 @@ namespace Vst {
             });
         }
         template <typename R>
-        void connectAsync(const QString &address, int timeout, const std::function<void(bool)> &callback) {
+        void connectAsync(const QString &address, const std::function<void(bool)> &callback) {
             auto awaiter = new Awaiter;
             awaiter->moveToThread(m_appThread.data());
             QMetaObject::invokeMethod(awaiter, "callBySignal", Q_ARG(std::function<void()>, [=]() {

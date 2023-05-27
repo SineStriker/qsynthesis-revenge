@@ -16,7 +16,7 @@
     "Arguments" : [
         {
             "Name" : "-vst",
-            "Description" : "Attach to vst server"
+            "Description" : "Start in vst mode. DO NOT USE THIS OPTION."
         }
     ],
     "Required": false,

@@ -27,6 +27,10 @@ namespace Vst {
     void CommunicationHelper::start() {
         m_appThread->start();
     }
+    void CommunicationHelper::stop() {
+        QCoreApplication::quit();
+        m_appThread->quit();
+    }
     CommunicationHelper::~CommunicationHelper() {
         Q_D(CommunicationHelper);
         d->app->quit();
