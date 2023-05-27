@@ -59,6 +59,8 @@ int main(int argc, char *argv[]) {
     s->addWidget(label3);
 
     auto area = new QScrollArea();
+    area->setFrameStyle(QFrame::NoFrame);
+
     auto bigWidget = new QPushButton("AAA\n\nBBB", area);
     bigWidget->setObjectName("screen");
     bigWidget->setFixedSize(1000, 1000);
@@ -97,11 +99,6 @@ QsApi--SynthVSplitterHandle>QPushButton#titleBar:hover{
     background-color: rgba(0, 0, 0, 10%);
 }
 
-/* QsApi--SynthVSplitterHandle>QWidget#entity {
-    background-color: red;
-    border: 2px solid green;
-} */
-
 QPushButton {
     color: black;
     background-color: green;
@@ -113,6 +110,80 @@ QPushButton:hover {
 
 QPushButton:pressed {
     background-color: yellow;
+}
+
+
+
+
+
+
+QScrollBar {
+    background: transparent;
+    margin: 0;
+}
+
+QScrollBar:vertical {
+    width: 10px;
+}
+
+QScrollBar:horizontal {
+    height: 10px;
+}
+
+QScrollBar::handle:vertical {
+    min-height: 40px;
+}
+
+QScrollBar::handle:horizontal {
+    min-width: 40px;
+}
+
+QScrollBar::handle {
+    background: rgba(255, 255, 255, 0.3);
+    border: 0px;
+    /* margin: 4px 4px 4px 4px; */
+}
+
+QScrollBar::handle:hover {
+    background: rgba(255, 255, 255, 0.5);
+}
+
+QScrollBar::handle:pressed {
+    background: rgba(255, 255, 255, 0.4);
+}
+
+QScrollBar::sub-page {
+    background: transparent;
+}
+
+QScrollBar::add-page {
+    background: transparent;
+}
+
+QScrollBar::up-arrow {
+    background: transparent;
+}
+
+QScrollBar::down-arrow {
+    background: transparent;
+}
+
+QScrollBar::left-arrow {
+    background: transparent;
+}
+
+QScrollBar::right-arrow {
+    background: transparent;
+}
+
+QScrollBar::sub-line {
+    background: transparent;
+    width: 0px;
+}
+
+QScrollBar::add-line {
+    background: transparent;
+    width: 0px;
 }
 
 )");
