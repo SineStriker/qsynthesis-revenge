@@ -2,6 +2,7 @@
 #define SYNTHVSPLITTERPRIVATE_H
 
 #include <QAbstractScrollArea>
+#include <QDebug>
 #include <QScrollBar>
 #include <QSplitter>
 #include <QVBoxLayout>
@@ -31,7 +32,8 @@ namespace QsApi {
         void updateScrollBar();
         void updateScrollBarGeometry_helper(bool *needH, bool *needV);
 
-        void normalizeDelta();
+        void normalizeItems();
+        SynthVLayoutItem *findResizableItem(SynthVSplitterHandle *handle);
 
         SynthVSplitter *q_ptr;
 
@@ -55,34 +57,24 @@ namespace QsApi {
         void _q_spacerGeometryChanged(const QRect &rect);
     };
 
-    class SynthVSplitterHandle : public QFrame {
-        Q_OBJECT
-        Q_PROPERTY(int handleHeight READ handleHeight WRITE setHandleHeight)
+    class SynthVSplitterHandlePrivate {
     public:
-        explicit SynthVSplitterHandle(QWidget *w, SynthVLayoutItem *item, SynthVSplitterPrivate *d,
-                                      SynthVSplitter *parent);
-        ~SynthVSplitterHandle();
+        SynthVSplitterHandlePrivate(SynthVSplitter *s, SynthVSplitterHandle *q);
 
-        QSize sizeHint() const override;
+        void init();
 
-        int handleHeight();
-        void setHandleHeight(int h);
+        void correctEntity();
 
-    protected:
-        void paintEvent(QPaintEvent *e) override;
-        void mousePressEvent(QMouseEvent *e) override;
-        void mouseMoveEvent(QMouseEvent *e) override;
-        void mouseReleaseEvent(QMouseEvent *e) override;
-        bool event(QEvent *event) override;
+        void mousePressEvent(QMouseEvent *e);
+        void mouseMoveEvent(QMouseEvent *e);
+        void mouseReleaseEvent(QMouseEvent *e);
 
-    private:
-        QWidget *w;
-        SynthVLayoutItem *item;
+        SynthVSplitterHandle *q;
 
-        SynthVSplitterPrivate *d;
         SynthVSplitter *s;
 
         int m_handleHeight;
+        QWidget *entity;
 
         bool hover;
         bool pressed;
@@ -92,20 +84,27 @@ namespace QsApi {
         int orgMinDelta;
         int orgMaxDelta;
 
+        SynthVLayoutItem *currentItem;
+
         int mouseOffset;
     };
 
-    class SynthVLayoutItem : public QWidgetItemV2 {
+    class SynthVLayoutItem : public QWidgetItem {
     public:
-        explicit SynthVLayoutItem(QWidget *w) : QWidgetItemV2(w), delta(0) {
+        explicit SynthVLayoutItem(QWidget *w) : QWidgetItem(w), delta(0) {
         }
 
         QSize sizeHint() const override {
-            return QWidgetItemV2::sizeHint() + QSize(0, delta);
+            // isVisible() is false during the showing process
+            return (!wid->testAttribute(Qt::WA_WState_Hidden)) ? fixedSizeHint() : realSizeHint();
+        }
+
+        QSize fixedSizeHint() const {
+            return QWidgetItem::sizeHint() + QSize(0, delta);
         }
 
         QSize realSizeHint() const {
-            return QWidgetItemV2::sizeHint();
+            return QWidgetItem::sizeHint();
         }
 
         int delta;

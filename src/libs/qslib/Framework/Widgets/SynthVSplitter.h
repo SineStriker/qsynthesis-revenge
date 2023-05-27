@@ -11,6 +11,8 @@ namespace QsApi {
 
     class SynthVSplitterPrivate;
 
+    class SynthVSplitterHandle;
+
     class QSFRAMEWORK_API SynthVSplitter : public QFrame {
         Q_OBJECT
         Q_DECLARE_PRIVATE(SynthVSplitter)
@@ -35,12 +37,43 @@ namespace QsApi {
         void setScrollArea(QAbstractScrollArea *area);
 
     protected:
+        virtual SynthVSplitterHandle *createHandle(QWidget *w);
+
         void resizeEvent(QResizeEvent *event) override;
 
     protected:
         SynthVSplitter(SynthVSplitterPrivate &d, QWidget *parent = nullptr);
 
         QScopedPointer<SynthVSplitterPrivate> d_ptr;
+
+        friend class SynthVSplitterHandle;
+        friend class SynthVSplitterHandlePrivate;
+    };
+
+    class SynthVSplitterHandlePrivate;
+
+    class SynthVSplitterHandle : public QFrame {
+        Q_OBJECT
+        Q_PROPERTY(int handleHeight READ handleHeight WRITE setHandleHeight)
+    public:
+        explicit SynthVSplitterHandle(SynthVSplitter *parent);
+        ~SynthVSplitterHandle();
+
+        int handleHeight();
+        void setHandleHeight(int h);
+
+        QSize sizeHint() const override;
+
+    protected:
+        void resizeEvent(QResizeEvent *event) override;
+        bool event(QEvent *event) override;
+        bool eventFilter(QObject *obj, QEvent *event) override;
+
+    private:
+        SynthVSplitterHandlePrivate *d;
+
+        friend class SynthVSplitter;
+        friend class SynthVSplitterPrivate;
     };
 
 } // namespace QsApi

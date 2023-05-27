@@ -180,7 +180,7 @@ namespace QsApi {
         *needV = needv;
     }
 
-    void SynthVSplitterPrivate::normalizeDelta() {
+    void SynthVSplitterPrivate::normalizeItems() {
         bool needFix = false;
         for (int i = 0; i < layout->count() - 1; i += 2) {
             auto item = static_cast<SynthVLayoutItem *>(layout->itemAt(i));
@@ -188,6 +188,7 @@ namespace QsApi {
             if (!w->isVisible()) {
                 continue;
             }
+
             if (w->height() < item->sizeHint().height()) {
                 needFix = true;
                 item->delta = w->height() - item->realSizeHint().height();
@@ -197,6 +198,23 @@ namespace QsApi {
         if (needFix) {
             layout->invalidate();
         }
+    }
+
+    SynthVLayoutItem *SynthVSplitterPrivate::findResizableItem(SynthVSplitterHandle *handle) {
+        int index = layout->indexOf(handle);
+        if (index < 0) {
+            return nullptr;
+        }
+
+        int i = index - 1;
+        for (; i >= 0; i -= 2) {
+            auto item = static_cast<SynthVLayoutItem *>(layout->itemAt(i));
+            if (item->widget()->isVisible()) {
+                return item;
+            }
+        }
+
+        return nullptr;
     }
 
     bool SynthVSplitterPrivate::eventFilter(QObject *obj, QEvent *event) {
@@ -237,7 +255,7 @@ namespace QsApi {
         insertWidget(count(), w);
     }
 
-    static SynthVLayoutItem *m_tmpItem;
+    static SynthVLayoutItem *m_tmpItem = nullptr;
 
     void SynthVSplitter::insertWidget(int index, QWidget *w) {
         Q_D(SynthVSplitter);
@@ -255,7 +273,8 @@ namespace QsApi {
 
         QLayoutPrivate::widgetItemFactoryMethod = org;
 
-        d->layout->insertWidget(index * 2 + 1, new SynthVSplitterHandle(w, m_tmpItem, d, this));
+        auto handle = createHandle(w);
+        d->layout->insertWidget(index * 2 + 1, handle);
 
         m_tmpItem = nullptr;
     }
@@ -298,7 +317,7 @@ namespace QsApi {
         Q_D(const SynthVSplitter);
         QSize super = QFrame::sizeHint();
         QSize area = d->area ? d->area->sizeHint() : QSize(0, 0);
-        return QSize(qMax(super.width(), area.width()), qMax(super.height(), area.height()));
+        return {qMax(super.width(), area.width()), qMax(super.height(), area.height())};
     }
 
     QAbstractScrollArea *SynthVSplitter::scrollArea() const {
@@ -376,6 +395,11 @@ namespace QsApi {
         d->vbar->raise();
     }
 
+    SynthVSplitterHandle *SynthVSplitter::createHandle(QWidget *w) {
+        Q_UNUSED(w);
+        return new SynthVSplitterHandle(this);
+    }
+
     void SynthVSplitter::resizeEvent(QResizeEvent *event) {
         Q_D(SynthVSplitter);
 
@@ -390,65 +414,67 @@ namespace QsApi {
         d.init();
     }
 
-    SynthVSplitterHandle::SynthVSplitterHandle(QWidget *w, SynthVLayoutItem *item, SynthVSplitterPrivate *d,
-                                               SynthVSplitter *parent)
-        : QFrame(parent), w(w), item(item), d(d), s(parent) {
+    // Handle
+    SynthVSplitterHandlePrivate::SynthVSplitterHandlePrivate(SynthVSplitter *s, SynthVSplitterHandle *q) : q(q), s(s) {
         m_handleHeight = 6;
-
         hover = false;
         pressed = false;
 
-        setCursor(Qt::SplitVCursor);
-        setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
+        currentItem = nullptr;
     }
 
-    SynthVSplitterHandle::~SynthVSplitterHandle() {
+    void SynthVSplitterHandlePrivate::init() {
+        entity = new QWidget();
+        entity->setObjectName("entity");
+        entity->setAttribute(Qt::WA_StyledBackground);
+        entity->setCursor(Qt::SplitVCursor);
+        entity->setFixedHeight(m_handleHeight);
+
+        entity->setParent(q);
+        entity->installEventFilter(q);
+
+        q->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
     }
 
-    QSize SynthVSplitterHandle::sizeHint() const {
-        return QSize(QFrame::sizeHint().width(), m_handleHeight);
-    }
-
-    int SynthVSplitterHandle::handleHeight() {
-        return m_handleHeight;
-    }
-
-    void SynthVSplitterHandle::setHandleHeight(int h) {
-        m_handleHeight = h;
-        updateGeometry();
-    }
-
-    void SynthVSplitterHandle::paintEvent(QPaintEvent *e) {
-        Q_UNUSED(e);
-        return QFrame::paintEvent(e);
-    }
-
-    void SynthVSplitterHandle::mousePressEvent(QMouseEvent *e) {
-        if (e->button() == Qt::LeftButton) {
-            d->normalizeDelta();
-
-            orgY = y();
-            orgDelta = item->delta;
-            orgMinDelta = item->widget()->minimumHeight() - item->widget()->height();
-            orgMaxDelta =
-                qMin(item->widget()->maximumHeight() - item->widget()->height(), d->spacer->geometry().height());
-            mouseOffset = parentWidget()->mapFromGlobal(e->globalPos()).y();
-            pressed = true;
-            update();
+    void SynthVSplitterHandlePrivate::correctEntity() {
+        if (entity->geometry() != q->rect()) {
+            entity->setGeometry(q->rect());
         }
     }
 
-    void SynthVSplitterHandle::mouseMoveEvent(QMouseEvent *e) {
+
+    void SynthVSplitterHandlePrivate::mousePressEvent(QMouseEvent *e) {
+        if (e->button() == Qt::LeftButton) {
+            currentItem = s->d_func()->findResizableItem(q);
+            if (!currentItem) {
+                return;
+            }
+
+            s->d_func()->normalizeItems();
+
+            orgY = q->y();
+            orgDelta = currentItem->delta;
+            orgMinDelta = currentItem->widget()->minimumHeight() - currentItem->widget()->height();
+            orgMaxDelta = qMin(currentItem->widget()->maximumHeight() - currentItem->widget()->height(),
+                               s->d_func()->spacer->geometry().height());
+            mouseOffset = q->parentWidget()->mapFromGlobal(e->globalPos()).y();
+            pressed = true;
+
+            q->update();
+        }
+    }
+
+    void SynthVSplitterHandlePrivate::mouseMoveEvent(QMouseEvent *e) {
         if (!(e->buttons() & Qt::LeftButton))
             return;
 
-        if (!w->isVisible()) {
+        if (!currentItem) {
             return;
         }
 
-        int pos = parentWidget()->mapFromGlobal(e->globalPos()).y() - mouseOffset;
+        int pos = q->parentWidget()->mapFromGlobal(e->globalPos()).y() - mouseOffset;
 
-        auto layout = static_cast<QBoxLayout *>(parentWidget()->layout());
+        auto layout = static_cast<QBoxLayout *>(q->parentWidget()->layout());
 
         int delta = -pos;
 
@@ -457,32 +483,93 @@ namespace QsApi {
         if (delta < orgMinDelta)
             delta = orgMinDelta;
 
-        item->delta = orgDelta + delta;
+        currentItem->delta = orgDelta + delta;
 
         layout->invalidate();
     }
 
-    void SynthVSplitterHandle::mouseReleaseEvent(QMouseEvent *e) {
+    void SynthVSplitterHandlePrivate::mouseReleaseEvent(QMouseEvent *e) {
         if (e->button() == Qt::LeftButton) {
+            currentItem = nullptr;
             pressed = false;
-            update();
+            q->update();
         }
+    }
+
+    SynthVSplitterHandle::SynthVSplitterHandle(SynthVSplitter *parent)
+        : QFrame(parent), d(new SynthVSplitterHandlePrivate(parent, this)) {
+        d->init();
+    }
+
+    SynthVSplitterHandle::~SynthVSplitterHandle() {
+        delete d;
+    }
+
+    int SynthVSplitterHandle::handleHeight() {
+        return d->m_handleHeight;
+    }
+
+    void SynthVSplitterHandle::setHandleHeight(int h) {
+        d->m_handleHeight = h;
+        d->entity->setFixedHeight(h);
+        updateGeometry();
+    }
+
+    QSize SynthVSplitterHandle::sizeHint() const {
+        auto super = QFrame::sizeHint();
+        return {super.width(), qMax(d->m_handleHeight, super.height())};
+    }
+
+    void SynthVSplitterHandle::resizeEvent(QResizeEvent *event) {
+        d->correctEntity();
+        QWidget::resizeEvent(event);
     }
 
     bool SynthVSplitterHandle::event(QEvent *event) {
         switch (event->type()) {
-            case QEvent::HoverEnter:
-                hover = true;
-                update();
+            case QEvent::ChildAdded: {
+                auto e = static_cast<QChildEvent *>(event);
+                auto child = e->child();
+                if (child->isWidgetType() && child != d->entity) {
+                    d->entity->raise();
+                }
                 break;
-            case QEvent::HoverLeave:
-                hover = false;
-                update();
-                break;
+            }
             default:
                 break;
         }
         return QFrame::event(event);
+    }
+
+    bool SynthVSplitterHandle::eventFilter(QObject *obj, QEvent *event) {
+        if (obj == d->entity) {
+            switch (event->type()) {
+                case QEvent::MouseButtonPress:
+                    d->mousePressEvent(static_cast<QMouseEvent *>(event));
+                    break;
+                case QEvent::MouseMove:
+                    d->mouseMoveEvent(static_cast<QMouseEvent *>(event));
+                    break;
+                case QEvent::MouseButtonRelease:
+                    d->mouseReleaseEvent(static_cast<QMouseEvent *>(event));
+                    break;
+                case QEvent::HoverEnter:
+                    d->hover = true;
+                    update();
+                    break;
+                case QEvent::HoverLeave:
+                    d->hover = false;
+                    update();
+                    break;
+                case QEvent::Move:
+                case QEvent::Resize:
+                    d->correctEntity();
+                    break;
+                default:
+                    break;
+            }
+        }
+        return QObject::eventFilter(obj, event);
     }
 
 } // namespace QsApi

@@ -7,7 +7,6 @@
 
 #include "CommunicationHelper.h"
 #include "ParameterTypes.h"
-#include "rep_SimpleSwitch_replica.h"
 #include "rep_VstBridge_replica.h"
 
 #define VST_EXPORT extern "C" Q_DECL_EXPORT
