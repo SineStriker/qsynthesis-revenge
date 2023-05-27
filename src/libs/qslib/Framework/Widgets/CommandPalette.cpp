@@ -67,6 +67,8 @@ namespace QsApi {
             w->installEventFilter(this);
         }
 
+        m_listWidget->setVisible(m_listWidget->count() > 0);
+
         adjustPalette();
         m_lineEdit->setFocus();
     }
@@ -140,7 +142,7 @@ namespace QsApi {
                 switch (keyEvent->key()) {
                     case Qt::Key_Up:
                     case Qt::Key_Down: {
-                        if (obj != m_listWidget) {
+                        if (obj != m_listWidget && m_listWidget->isVisible()) {
                             m_listWidget->setFocus();
                             QApplication::sendEvent(m_listWidget, keyEvent);
                             return true;
@@ -152,6 +154,8 @@ namespace QsApi {
                         int index = m_listWidget->currentRow();
                         if (index >= 0 && index < m_listWidget->count()) {
                             q->activate(index);
+                        } else {
+                            q->activate(0);
                         }
                         return true;
                         break;
@@ -341,8 +345,7 @@ namespace QsApi {
         }
 
         hide();
-        if (index >= 0)
-            emit activated(index);
+        emit activated(index);
         emit finished(d->m_listWidget->item(index));
         d->clearPalette();
     }

@@ -5,11 +5,11 @@
     },
     "variables": {
         "Visual Studio Code - Dark": {
-            "core.recent.button.iconColor": "#FFFFFF",
+            "home.recent.topButtons.iconColor": "#FFFFFF",
             "project.toolbar.iconColor": "#FFFFFF"
         },
         "Visual Studio Code - Light": {
-            "core.recent.button.iconColor": "#FFFFFF",
+            "home.recent.topButtons.iconColor": "#FFFFFF",
             "project.toolbar.iconColor": "#FFFFFF"
         }
     },
