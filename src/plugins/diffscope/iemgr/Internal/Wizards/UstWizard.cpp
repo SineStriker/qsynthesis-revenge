@@ -1,32 +1,38 @@
 #include "UstWizard.h"
 
-#include "Utau/QUstFile.h"
-#include <QMessageBox>
-
 #include <set>
 
-#include <QMConsole.h>
-#include <QMLinq.h>
-#include <coreplugin/ICore.h>
-
-#include "Utau/Utils/QUtaUtils.h"
-
-#include "Internal/Utils/ImportDialog.h"
+#include <QApplication>
 #include <QDebug>
 #include <QFile>
+#include <QMessageBox>
 #include <QTextStream>
+
+#include "Utau/QUstFile.h"
+#include "Utau/Utils/QUtaUtils.h"
+
+#include <QMConsole.h>
+#include <QMDecoratorV2.h>
+#include <QMLinq.h>
+
+#include <coreplugin/ICore.h>
+
+#include "Internal/Utils/ImportDialog.h"
 
 namespace IEMgr ::Internal {
 
     UstWizard::UstWizard(QObject *parent) : IWizardFactory("iemgr.UstWizard", parent) {
-        setDisplayName(tr("UST file"));
-        setDescription(tr("Utau sequence text file."));
-
         setCategory("score.SimpleScore");
-        setDisplayCategory(IWizardFactory::tr("Simple Score"));
+        qIDec->installLocale(this, _LOC(UstWizard, this));
     }
 
     UstWizard::~UstWizard() {
+    }
+
+    void UstWizard::reloadStrings() {
+        setDisplayName(tr("UST file"));
+        setDescription(tr("Utau sequence text file."));
+        setDisplayCategory(QApplication::translate("IEMgr::WizardCategory", "Simple Score"));
     }
 
     QString UstWizard::filter(Feature feature) const {
@@ -189,6 +195,10 @@ namespace IEMgr ::Internal {
         *out = std::move(model);
 
         return true;
+    }
+
+    bool UstWizard::save(const QString &filename, const QDspxModel &in, QWidget *parent) {
+        return false;
     }
 
 }

@@ -1,16 +1,23 @@
 #include "OpenSvipWizard.h"
 
+#include <QApplication>
+
+#include <QMDecoratorV2.h>
+
 namespace IEMgr ::Internal {
 
     OpenSvipWizard::OpenSvipWizard(QObject *parent) : IWizardFactory("iemgr.OpenSvipWizard", parent) {
-        setDisplayName(tr("OpenSVIP model"));
-        setDescription(tr("OpenSVIP converter intermediate model."));
-
         setCategory("score.OpenVPI");
-        setDisplayCategory(IWizardFactory::tr("OpenVPI"));
+        qIDec->installLocale(this, _LOC(OpenSvipWizard, this));
     }
 
     OpenSvipWizard::~OpenSvipWizard() {
+    }
+
+    void OpenSvipWizard::reloadStrings() {
+        setDisplayName(tr("OpenSVIP model"));
+        setDescription(tr("OpenSVIP converter intermediate model."));
+        setDisplayCategory(QApplication::translate("IEMgr::WizardCategory", "OpenVPI"));
     }
 
     QString OpenSvipWizard::filter(Feature feature) const {

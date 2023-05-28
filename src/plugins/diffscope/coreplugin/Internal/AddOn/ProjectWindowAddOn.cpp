@@ -1,11 +1,12 @@
 #include "ProjectWindowAddOn.h"
 
+#include <QApplication>
 #include <QDebug>
+#include <QEvent>
 #include <QLabel>
 #include <QMenuBar>
 #include <QPushButton>
 
-#include <QEvent>
 #include <QMDecoratorV2.h>
 #include <QMSystem.h>
 

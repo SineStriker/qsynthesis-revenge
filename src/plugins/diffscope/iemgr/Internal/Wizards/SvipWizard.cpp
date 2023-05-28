@@ -1,20 +1,26 @@
 #include "SvipWizard.h"
 
-#include <QNrbfStream.h>
-
+#include <QApplication>
 #include <QFile>
+
+#include <QMDecoratorV2.h>
+
+#include <QNrbfStream.h>
 
 namespace IEMgr ::Internal {
 
     SvipWizard::SvipWizard(QObject *parent) : IWizardFactory("iemgr.SvipWizard", parent) {
-        setDisplayName(tr("SVIP file"));
-        setDescription(tr("XStudio 2.0 project file."));
-
         setCategory("score.XiaoIce");
-        setDisplayCategory(IWizardFactory::tr("XiaoIce"));
+        qIDec->installLocale(this, _LOC(SvipWizard, this));
     }
 
     SvipWizard::~SvipWizard() {
+    }
+
+    void SvipWizard::reloadStrings() {
+        setDisplayName(tr("SVIP file"));
+        setDescription(tr("XStudio 2.0 project file."));
+        setDisplayCategory(QApplication::translate("IEMgr::WizardCategory", "XiaoIce"));
     }
 
     QString SvipWizard::filter(Feature feature) const {

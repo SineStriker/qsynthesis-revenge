@@ -4,17 +4,17 @@
 <context>
     <name>IEMgr::Internal::DsWizard</name>
     <message>
-        <location filename="../../Internal/DsWizard.cpp" line="13"/>
+        <location filename="../../Internal/DsWizard.cpp" line="22"/>
         <source>OpenVPI Ds file</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Internal/DsWizard.cpp" line="14"/>
+        <location filename="../../Internal/DsWizard.cpp" line="23"/>
         <source>OpenVPI DiffSinger command line synthesizer format.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Internal/DsWizard.cpp" line="28"/>
+        <location filename="../../Internal/DsWizard.cpp" line="32"/>
         <source>OpenVPI Ds File</source>
         <translation type="unfinished"></translation>
     </message>
@@ -30,7 +30,7 @@
 <context>
     <name>IWizardFactory</name>
     <message>
-        <location filename="../../Internal/DsWizard.cpp" line="17"/>
+        <location filename="../../Internal/DsWizard.cpp" line="24"/>
         <source>OpenVPI</source>
         <translation type="unfinished"></translation>
     </message>

@@ -1,6 +1,7 @@
 #include "DsWizard.h"
 
 #include <QMConsole.h>
+#include <QMDecoratorV2.h>
 #include <QMLinq.h>
 
 #include <coreplugin/ICore.h>
@@ -10,14 +11,17 @@
 namespace IEMgr ::Internal {
 
     DsWizard::DsWizard(QObject *parent) : IWizardFactory("iemgr.DsWizard", parent) {
-        setDisplayName(tr("OpenVPI Ds file"));
-        setDescription(tr("OpenVPI DiffSinger command line synthesizer format."));
-
         setCategory("score.OpenVPI");
-        setDisplayCategory(IWizardFactory::tr("OpenVPI"));
+        qIDec->installLocale(this, _LOC(DsWizard, this));
     }
 
     DsWizard::~DsWizard() {
+    }
+
+    void DsWizard::reloadStrings() {
+        setDisplayName(tr("OpenVPI Ds file"));
+        setDescription(tr("OpenVPI DiffSinger command line synthesizer format."));
+        setDisplayCategory(IWizardFactory::tr("OpenVPI"));
     }
 
     IWizardFactory::Features DsWizard::features() const {

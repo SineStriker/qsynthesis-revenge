@@ -21,6 +21,8 @@ namespace Core {
 
     static const char settingCatalogC[] = "ICoreWindow/RecentActions";
 
+    static const char americanEnglishLocale[] = "en_US";
+
     using MOST_RECENT_ACTIONS = QMChronSet<QString>;
     Q_GLOBAL_STATIC(MOST_RECENT_ACTIONS, mostRecentActionsGlobal);
 
@@ -121,6 +123,7 @@ namespace Core {
             actionItems.append(ai);
         }
 
+        bool isEn = !qIDec->locale().compare(americanEnglishLocale, Qt::CaseInsensitive);
         for (const auto &ai : qAsConst(actionItems)) {
             if (!ai->isAction()) {
                 continue;
@@ -150,7 +153,7 @@ namespace Core {
                 category = text.left(index).trimmed();
                 if (!category.isEmpty()) {
                     text = category + ": " + text.mid(index + 1).trimmed();
-                    desc.prepend(category + ": ");
+                    desc.prepend(QApplication::translate("Core::CommandCategory", category.toLatin1()) + ": ");
                 }
             }
 
@@ -160,7 +163,7 @@ namespace Core {
                 if (checkedDesc.isEmpty()) {
                     checkedDesc = action->isChecked() ? tr("Off") : tr("On");
                 }
-                desc.append(" (" + checkedDesc + ")");
+                (isEn ? text : desc).append(" (" + checkedDesc + ")");
             }
 
             QString extra = keySequenceToRichText(action->shortcut());
@@ -173,7 +176,7 @@ namespace Core {
             }
 
             item->setText(desc);
-            if (qIDec->locale().startsWith("en_", Qt::CaseInsensitive)) {
+            if (isEn) {
                 item->setText(text);
             } else {
                 item->setText(desc);
@@ -294,6 +297,8 @@ namespace Core {
             }
             QString theme = item->text();
             qIDec->setTheme(theme);
+
+            ILoader::instance()->settings()->insert("Theme", theme);
         });
     }
 
@@ -302,6 +307,9 @@ namespace Core {
         cp->abandon();
 
         auto locales = qIDec->locales();
+        if (!locales.contains(americanEnglishLocale)) {
+            locales.append(americanEnglishLocale);
+        }
         std::sort(locales.begin(), locales.end());
 
         QListWidgetItem *curItem = nullptr;
@@ -339,6 +347,8 @@ namespace Core {
             }
             QString loc = item->data(QsApi::SubtitleRole).toString();
             qIDec->setLocale(loc);
+
+            ILoader::instance()->settings()->insert("Translation", loc);
         });
     }
 
@@ -348,8 +358,7 @@ namespace Core {
         auto docMgr = ICore::instance()->documentSystem();
 
         auto addFiles = [&]() {
-            for (const auto &file : docMgr->recentFiles()){
-
+            for (const auto &file : docMgr->recentFiles()) {
             }
         };
 

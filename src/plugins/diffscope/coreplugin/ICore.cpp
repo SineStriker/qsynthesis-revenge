@@ -14,7 +14,9 @@
 #include <QMConsole.h>
 #include <QMSystem.h>
 #include <QMView.h>
+#include <QMDecoratorV2.h>
 
+#include <CoreApi/ILoader.h>
 #include <CoreApi/ICoreBase_p.h>
 
 #include <extensionsystem/pluginmanager.h>

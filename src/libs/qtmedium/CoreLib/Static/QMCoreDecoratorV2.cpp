@@ -155,6 +155,7 @@ QStringList QMCoreDecoratorV2::locales() const {
     if (d->qmFilesDirty) {
         d->scanTranslations();
     }
+
     return d->qmFiles.keys();
 }
 
@@ -181,12 +182,10 @@ void QMCoreDecoratorV2::setLocale(const QString &locale) {
 
     // Install new translators
     auto it = d->qmFiles.find(locale);
-    if (it == d->qmFiles.end()) {
-        return;
+    if (it != d->qmFiles.end()) {
+        auto translators = installTranslation_helper(it.value());
+        d->translators.append(translators);
     }
-
-    auto translators = installTranslation_helper(it.value());
-    d->translators.append(translators);
 
     for (const auto &item : qAsConst(d->localeSubscribers))
         for (const auto &updater : qAsConst(item))

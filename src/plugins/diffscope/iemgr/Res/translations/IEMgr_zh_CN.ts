@@ -2,6 +2,17 @@
 <!DOCTYPE TS>
 <TS version="2.1" language="zh_CN">
 <context>
+    <name>Core::CommandCategory</name>
+    <message>
+        <source>Import</source>
+        <translation>导入</translation>
+    </message>
+    <message>
+        <source>Export</source>
+        <translation>导出</translation>
+    </message>
+</context>
+<context>
     <name>IEMgr::IWizardFactory</name>
     <message>
         <source>All Files</source>
@@ -226,11 +237,12 @@
     <message>
         <source>There are overlapped notes, continue to export?
 </source>
-        <translation type="unfinished"></translation>
+        <translation>存在重叠音符，是否继续导出？
+</translation>
     </message>
     <message>
         <source>Export Midi</source>
-        <translation type="unfinished"></translation>
+        <translation>导出 Midi</translation>
     </message>
     <message>
         <source>Export</source>
@@ -315,7 +327,7 @@
     </message>
 </context>
 <context>
-    <name>IWizardFactory</name>
+    <name>IEMgr::WizardCategory</name>
     <message>
         <source>Simple Score</source>
         <translation>简单谱面</translation>
@@ -327,6 +339,17 @@
     <message>
         <source>OpenVPI</source>
         <translation></translation>
+    </message>
+</context>
+<context>
+    <name>IWizardFactory</name>
+    <message>
+        <source>Simple Score</source>
+        <translation type="vanished">简单谱面</translation>
+    </message>
+    <message>
+        <source>XiaoIce</source>
+        <translation type="vanished">小冰</translation>
     </message>
 </context>
 </TS>

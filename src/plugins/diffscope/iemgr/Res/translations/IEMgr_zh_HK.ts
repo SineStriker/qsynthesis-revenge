@@ -2,6 +2,17 @@
 <!DOCTYPE TS>
 <TS version="2.1" language="zh_HK">
 <context>
+    <name>Core::CommandCategory</name>
+    <message>
+        <source>Import</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Export</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>IEMgr::IWizardFactory</name>
     <message>
         <source>All Files</source>
@@ -237,7 +248,7 @@
     </message>
 </context>
 <context>
-    <name>IWizardFactory</name>
+    <name>IEMgr::WizardCategory</name>
     <message>
         <source>Simple Score</source>
         <translation type="unfinished"></translation>

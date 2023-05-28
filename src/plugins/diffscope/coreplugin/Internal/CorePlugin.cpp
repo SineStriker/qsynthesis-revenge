@@ -187,6 +187,18 @@ namespace Core {
                 m_splash->finish(w);
         }
 
+        // This scope is only to expose strings to Qt translation tool
+        static void _qt_translation_CommandCategory() {
+            QApplication::translate("Core::CommandCategory", "Create");
+            QApplication::translate("Core::CommandCategory", "File");
+            QApplication::translate("Core::CommandCategory", "Preferences");
+            QApplication::translate("Core::CommandCategory", "Edit");
+            QApplication::translate("Core::CommandCategory", "View");
+            QApplication::translate("Core::CommandCategory", "Playback");
+            QApplication::translate("Core::CommandCategory", "Help");
+            QApplication::translate("Core::CommandCategory", "About");
+        }
+
     }
 
 }

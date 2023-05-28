@@ -15,6 +15,8 @@ namespace IEMgr {
             explicit UstWizard(QObject *parent = nullptr);
             ~UstWizard();
 
+            void reloadStrings();
+
         public:
             Features features() const override;
             QString filter(Feature feature) const override;

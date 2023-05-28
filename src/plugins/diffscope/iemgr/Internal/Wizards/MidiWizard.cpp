@@ -1,12 +1,13 @@
 #include "MidiWizard.h"
 
-#include <QCoreApplication>
+#include <QApplication>
 #include <QMessageBox>
 
 #include <cmath>
 #include <set>
 
 #include <QMConsole.h>
+#include <QMDecoratorV2.h>
 #include <QMLinq.h>
 
 #include <coreplugin/ICore.h>
@@ -19,14 +20,17 @@
 namespace IEMgr ::Internal {
 
     MidiWizard::MidiWizard(QObject *parent) : IWizardFactory("iemgr.MidiWizard", parent) {
-        setDisplayName(tr("Midi file"));
-        setDescription(tr("A communications protocol for media interfaces."));
-
         setCategory("score.SimpleScore");
-        setDisplayCategory(IWizardFactory::tr("Simple Score"));
+        qIDec->installLocale(this, _LOC(MidiWizard, this));
     }
 
     MidiWizard::~MidiWizard() {
+    }
+
+    void MidiWizard::reloadStrings() {
+        setDisplayName(tr("Midi file"));
+        setDescription(tr("A communications protocol for media interfaces."));
+        setDisplayCategory(QApplication::translate("IEMgr::WizardCategory", "Simple Score"));
     }
 
     IWizardFactory::Features MidiWizard::features() const {

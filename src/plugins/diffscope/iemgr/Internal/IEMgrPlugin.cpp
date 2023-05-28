@@ -77,6 +77,12 @@ namespace IEMgr {
             return false;
         }
 
+        // This scope is only to expose strings to Qt translation tool
+        static void _qt_translation_CommandCategory() {
+            QApplication::translate("Core::CommandCategory", "Import");
+            QApplication::translate("Core::CommandCategory", "Export");
+        }
+
     }
 
 }

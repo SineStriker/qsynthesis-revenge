@@ -13,6 +13,8 @@ namespace IEMgr {
             explicit SvipWizard(QObject *parent = nullptr);
             ~SvipWizard();
 
+            void reloadStrings();
+
         public:
             Features features() const override;
             QString filter(Feature feature) const override;

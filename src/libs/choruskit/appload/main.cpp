@@ -9,6 +9,7 @@
 
 #include "QMConsole.h"
 #include "QMCss.h"
+#include "QMDecoratorV2.h"
 #include "QMSystem.h"
 #include "QMWidgetsHost.h"
 
@@ -323,6 +324,20 @@ int main_entry(int argc, char *argv[]) {
                            QString("%1/%2.settings.json").arg(userSettingPath, qApp->applicationName()));
     loader.setSettingsPath(QSettings::SystemScope,
                            QString("%1/%2.settings.json").arg(systemSettingPath, qApp->applicationName()));
+
+    // Restore language and themes
+    {
+        auto settings = loader.settings();
+        auto value = settings->value("Translation");
+        if (value.isString()) {
+            qIDec->setLocale(value.toString());
+        }
+
+        value = settings->value("Theme");
+        if (value.isString()) {
+            qIDec->setTheme(value.toString());
+        }
+    }
 
     SplashScreen splash;
     g_splash = &splash;

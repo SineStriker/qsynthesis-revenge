@@ -1,6 +1,6 @@
 #include "CoreWindowAddOn.h"
 
-#include <QCoreApplication>
+#include <QApplication>
 #include <QDebug>
 #include <QDir>
 #include <QMessageBox>
