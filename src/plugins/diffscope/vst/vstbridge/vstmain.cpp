@@ -31,6 +31,9 @@ static bool checkSingleton(VstHandle *h) {
 
     h->guardSharedMemory.reset(new QSharedMemory(GLOBAL_UUID + QString("guard")));
     isPrimary = h->guardSharedMemory->create(1);
+    if(!isPrimary) {
+        assert(!h->guardSharedMemory->isAttached());
+    }
     sema.release();
     return isPrimary;
 }
@@ -94,9 +97,11 @@ VST_EXPORT bool Initializer (VstHandle *h) {
 }
 
 VST_EXPORT void Terminator (VstHandle *h) {
-    h->ch->stop();
     h->sbuf.detach();
     releaseSingleton(h);
+}
+
+VST_EXPORT void HandleDeleter (VstHandle *h) {
     delete h;
 }
 

@@ -10,34 +10,35 @@ namespace Vst {
     static int _appArgc = 0;
     static char _appArgv[1] = "";
 
-    void CommunicationHelperPrivate::init() {
-        Q_Q(CommunicationHelper);
-        app.reset(new QCoreApplication(_appArgc, (char **) &_appArgv));
-        app->moveToThread(q->m_appThread.data());
+    QScopedPointer<CommunicationHelper::AppContainer> CommunicationHelper::m_container;
+
+    CommunicationHelper::AppContainer::~AppContainer() {
+        appThread->quit();
+        appThread->wait();
     }
 
-    CommunicationHelper::CommunicationHelper() : CommunicationHelper(new CommunicationHelperPrivate) {
-    }
-    CommunicationHelper::CommunicationHelper(CommunicationHelperPrivate *d)
-        : d_ptr(d), m_repNode(new QRemoteObjectNode), m_appThread(new QThread) {
-        d->q_ptr = this;
-        d->init();
-        m_repNode->moveToThread(m_appThread.data());
+    CommunicationHelper::CommunicationHelper()
+        : m_repNode(new QRemoteObjectNode) {
+        if(m_container.isNull()) {
+            m_container.reset(new AppContainer);
+            m_container->appThread.reset(new QThread);
+            m_container->app.reset(new QCoreApplication(_appArgc, (char **) &_appArgv));
+            m_container->app->moveToThread(m_container->appThread.data());
+        }
+        m_repNode->moveToThread(m_container->appThread.data());
     }
     void CommunicationHelper::start() {
-        m_appThread->start();
+        m_container->appThread->start();
     }
     void CommunicationHelper::stop() {
         QCoreApplication::quit();
-        m_appThread->quit();
+        m_container->appThread->quit();
     }
     CommunicationHelper::~CommunicationHelper() {
-        Q_D(CommunicationHelper);
-        d->app->quit();
-        m_appThread->quit();
+
     }
     QThread *CommunicationHelper::appThread() {
-        return m_appThread.data();
+        return m_container->appThread.data();
     }
 
     void AwaiterPrivate::setRet(const QVariant &val) {

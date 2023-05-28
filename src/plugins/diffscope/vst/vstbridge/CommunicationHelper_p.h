@@ -20,12 +20,5 @@ namespace Vst {
         void finish();
     };
 
-    class CommunicationHelperPrivate {
-        Q_DECLARE_PUBLIC(CommunicationHelper)
-        CommunicationHelper *q_ptr;
-        QScopedPointer<QCoreApplication> app;
-        void init();
-    };
-
 }
 #endif // CHORUSKIT_COMMUNICATIONHELPER_P_H

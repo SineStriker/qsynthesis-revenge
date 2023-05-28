@@ -14,8 +14,6 @@ namespace Vst {
 
     class AwaiterPrivate;
 
-    class CommunicationHelperPrivate;
-
     class Awaiter : public QObject {
         Q_OBJECT
         Q_DECLARE_PRIVATE(Awaiter)
@@ -39,7 +37,6 @@ namespace Vst {
     };
 
     class CommunicationHelper {
-        Q_DECLARE_PRIVATE(CommunicationHelper)
     public:
         explicit CommunicationHelper();
         ~CommunicationHelper();
@@ -49,7 +46,7 @@ namespace Vst {
         template <typename T>
         T invokeSync(const std::function<T()> &fx) {
             Awaiter awaiter;
-            awaiter.moveToThread(m_appThread.data());
+            awaiter.moveToThread(m_container->appThread.data());
             QMetaObject::invokeMethod(&awaiter, "call", Q_ARG(std::function<QVariant()>, fx));
             awaiter.wait();
             return awaiter.returnValue().value<T>();
@@ -58,7 +55,7 @@ namespace Vst {
         template <typename T>
         void invokeAsync(const std::function<T()> &fx, const std::function<void(const T &)> &callback) {
             auto awaiter = new Awaiter;
-            awaiter->moveToThread(m_appThread.data());
+            awaiter->moveToThread(m_container->appThread.data());
             QMetaObject::invokeMethod(awaiter, "callBySignal", Q_ARG(std::function<void()>, [=]() {
                 auto ret = fx();
                 awaiter->finish(QVariant(ret));
@@ -71,7 +68,7 @@ namespace Vst {
 
         template <typename T>
         QVariant invokeSync(Awaiter &awaiter, const std::function<void()> &fx) {
-            awaiter.moveToThread(m_appThread.data());
+            awaiter.moveToThread(m_container->appThread.data());
             QMetaObject::invokeMethod(&awaiter, "callBySignal", Q_ARG(std::function<void()>, fx));
             awaiter.wait();
             return awaiter.returnValue().value<T>();
@@ -88,7 +85,7 @@ namespace Vst {
         template <typename R>
         void connectAsync(const QString &address, const std::function<void(bool)> &callback) {
             auto awaiter = new Awaiter;
-            awaiter->moveToThread(m_appThread.data());
+            awaiter->moveToThread(m_container->appThread.data());
             QMetaObject::invokeMethod(awaiter, "callBySignal", Q_ARG(std::function<void()>, [=]() {
                 if(!m_repNode->connectToNode(QUrl(address))) {
                     awaiter->finish(false);
@@ -111,11 +108,15 @@ namespace Vst {
         QThread *appThread();
 
     private:
-        explicit CommunicationHelper(CommunicationHelperPrivate *d);
-        QScopedPointer<CommunicationHelperPrivate> d_ptr;
         QScopedPointer<QRemoteObjectReplica, QScopedPointerDeleteLater> m_rep;
         QScopedPointer<QRemoteObjectNode, QScopedPointerDeleteLater> m_repNode;
-        QScopedPointer<QThread, QScopedPointerDeleteLater> m_appThread;
+        class AppContainer {
+        public:
+           QScopedPointer<QThread> appThread;
+            QScopedPointer<QCoreApplication> app;
+            ~AppContainer();
+        };
+        static QScopedPointer<AppContainer> m_container;
     };
 
 }
