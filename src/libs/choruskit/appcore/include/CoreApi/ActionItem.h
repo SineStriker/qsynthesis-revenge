@@ -60,11 +60,11 @@ namespace Core {
         void setAutoDelete(bool autoDelete);
 
     public:
-        QString commandDescription() const;
-        void setCommandDescription(const QString &originalCommandName);
-
         QString commandName() const;
-        void setCommandName(const QString &commandName);
+        QString commandDisplayName() const;
+
+        QString commandSpecificName() const;
+        void setCommandSpecificName(const QString &commandSpecificName);
 
         QPair<QString, QString> commandCheckedDescription() const;
         void setCommandCheckedDescription(const QPair<QString, QString> &commandCheckedDescription);

@@ -30,11 +30,15 @@ namespace Core {
 
         Q_INVOKABLE void openFile(const QString &path);
 
+        Q_INVOKABLE void openDirectory(const QString &path);
+
         Q_INVOKABLE void showAllActions();
 
         Q_INVOKABLE void selectColorThemes();
 
         Q_INVOKABLE void selectTranslations();
+
+        Q_INVOKABLE void selectRecentFiles(bool dirsAtTop = false);
 
         Q_INVOKABLE void showMenuInPalette(QMenu *menu, bool deleteLater);
 

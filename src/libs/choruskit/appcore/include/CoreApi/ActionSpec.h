@@ -23,6 +23,9 @@ namespace Core {
         QString commandName() const;
         void setCommandName(const QString &name);
 
+        QString commandDisplayName() const;
+        void setCommandDisplayName(const QString &displayName);
+
         QList<QKeySequence> shortcuts() const;
         void setShortcuts(const QList<QKeySequence> &shortcuts);
 

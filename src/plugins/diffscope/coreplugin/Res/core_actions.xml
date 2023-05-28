@@ -11,15 +11,15 @@
                 <action id="Settings" command="Preferences: Settings" shortcut="Ctrl+,"/>
                 <action id="ColorThemes" command="Preferences: Color Themes"
                         shortcut="Ctrl+K,Ctrl+T"/>
-                <action id="Languages" command="Preferences: Languages"
+                <action id="Languages" command="Preferences: Locales And Languages"
                         shortcut="Ctrl+K,Ctrl+L"/>
             </menu>
         </menu>
 
         <menu id="Help">
             <group id="WelcomeGroup">
-                <action id="ShowHome" command="Show Home"/>
-                <action id="FindAction" command="Show All Actions" shortcut="Ctrl+Shift+P"/>
+                <action id="ShowHome" command="Help: Show Home"/>
+                <action id="FindAction" command="Help: Show All Actions" shortcut="Ctrl+Shift+P"/>
             </group>
             <group id="AboutGroup">
                 <action id="AboutPlugins" command="About: About Plugins"/>

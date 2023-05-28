@@ -107,6 +107,7 @@ namespace Core {
             metronomeItem = new ActionItem("core.Metronome", createToolBarAction(this, "metronome", true), this);
             loopPlayItem = new ActionItem("core.LoopPlay", createToolBarAction(this, "loopPlay", true), this);
 
+            // Stretch Item
             mainToolbarStretchItem = new ActionItem("core.MainToolbarStretch", createStretch(), this);
             mainToolbarStretchItem->setProperty("start-of-layout", true);
 

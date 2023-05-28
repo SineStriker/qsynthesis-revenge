@@ -30,11 +30,9 @@ namespace Core {
         QPointer<QAction> action;
         QPointer<QActionGroup> actionGroup;
         QPointer<QMenu> menu;
-        QPointer<QWidgetAction> widget;
+        QPointer<QWidgetAction> widgetAction;
 
-        QString commandCategory;
-        QString commandName;
-        QString commandDesc;
+        QString specificName;
         QPair<QString, QString> commandCheckedDesc;
 
     private:

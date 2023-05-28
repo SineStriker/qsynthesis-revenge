@@ -32,9 +32,13 @@ namespace Core {
         void selectEditor_helper(QList<DocumentSpec *> &specs, const QString &path);
         void selectColorThemes_helper();
         void selectTranslations_helper();
+        void selectRecentFiles_helper(bool dirsAtTop);
         void showMenuInPalette_helper(QMenu *menu, QMenu *menuToDelete);
 
         void openEditor(DocumentSpec *spec, const QString &path);
+
+    protected:
+        bool eventFilter(QObject *obj, QEvent *event) override;
     };
 
 }

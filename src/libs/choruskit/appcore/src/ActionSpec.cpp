@@ -33,6 +33,16 @@ namespace Core {
         d->commandName = name;
     }
 
+    QString ActionSpec::commandDisplayName() const {
+        Q_D(const ActionSpec);
+        return d->commandDisplayName;
+    }
+
+    void ActionSpec::setCommandDisplayName(const QString &displayName) {
+        Q_D(ActionSpec);
+        d->commandDisplayName = displayName;
+    }
+
     QList<QKeySequence> ActionSpec::shortcuts() const {
         Q_D(const ActionSpec);
         return d->shortcuts;

@@ -133,14 +133,15 @@ namespace Core {
 
             auto item = new QListWidgetItem();
 
+            QString desc = ai->commandDisplayName();
+            if (desc.isEmpty()) {
+                desc = removeAllAccelerateKeys(ai->text());
+            }
+
             QString category;
             QString text = ai->commandName();
             if (text.isEmpty()) {
                 text = ai->id();
-            }
-            QString desc = ai->commandDescription();
-            if (desc.isEmpty()) {
-                desc = removeAllAccelerateKeys(ai->text());
             }
 
             // If text contains colon
@@ -341,6 +342,22 @@ namespace Core {
         });
     }
 
+    void ICoreWindowPrivate::selectRecentFiles_helper(bool dirsAtTop) {
+        cp->abandon();
+
+        auto docMgr = ICore::instance()->documentSystem();
+
+        auto addFiles = [&]() {
+            for (const auto &file : docMgr->recentFiles()){
+
+            }
+        };
+
+        auto addDirs = [&]() {
+
+        };
+    }
+
     void ICoreWindowPrivate::showMenuInPalette_helper(QMenu *menu, QMenu *menuToDelete) {
         cp->abandon();
 
@@ -419,6 +436,21 @@ namespace Core {
         }
     }
 
+    bool ICoreWindowPrivate::eventFilter(QObject *obj, QEvent *event) {
+        Q_Q(ICoreWindow);
+        auto win = q->window();
+        if (obj == win) {
+            switch (event->type()) {
+                case QEvent::WindowDeactivate:
+                    cp->abandon();
+                    break;
+                default:
+                    break;
+            }
+        }
+        return QObject::eventFilter(obj, event);
+    }
+
     QMenuBar *ICoreWindow::menuBar() const {
         return qobject_cast<Internal::MainWindow *>(window())->menuBar();
     }
@@ -468,6 +500,10 @@ namespace Core {
         d->selectEditor_helper(specs, path);
     }
 
+    void ICoreWindow::openDirectory(const QString &path) {
+        // TODO: add open directory support
+    }
+
     void ICoreWindow::showAllActions() {
         Q_D(ICoreWindow);
         d->showAllActions_helper();
@@ -481,6 +517,11 @@ namespace Core {
     void ICoreWindow::selectTranslations() {
         Q_D(ICoreWindow);
         d->selectTranslations_helper();
+    }
+
+    void ICoreWindow::selectRecentFiles(bool dirsAtTop) {
+        Q_D(ICoreWindow);
+        d->selectRecentFiles_helper(dirsAtTop);
     }
 
     void ICoreWindow::showMenuInPalette(QMenu *menu, bool deleteLater) {
@@ -520,6 +561,8 @@ namespace Core {
 
         // Init command palette
         d->cp = new QsApi::CommandPalette(win);
+
+        win->installEventFilter(d);
     }
 
     void ICoreWindow::windowAddOnsInitialized() {

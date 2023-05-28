@@ -28,8 +28,6 @@ namespace Core {
             return false;
         }
 
-        commandName = spec->commandName();
-
         connect(spec, &ActionSpec::shortcutsChanged, this, &ActionItemPrivate::_q_actionShortcutsChanged);
         if (type == ActionItem::Action) {
             action->setShortcuts(spec->shortcuts());
@@ -100,6 +98,7 @@ namespace Core {
         }
 
         menu->setProperty("action-id", id);
+        menu->menuAction()->setProperty("action-id", id);
     }
 
     ActionItem::ActionItem(const QString &id, QWidget *widget, QObject *parent)
@@ -111,14 +110,18 @@ namespace Core {
             return;
         }
         d->type = Widget;
-        d->widget = new QWidgetAction(this);
-        d->widget->setDefaultWidget(widget);
 
         if (!d->getSpec()) {
             return;
         }
 
+        auto wa = new QWidgetAction(this);
+        wa->setDefaultWidget(widget);
+
         widget->setProperty("action-id", id);
+        wa->setProperty("action-id", id);
+
+        d->widgetAction = wa;
     }
 
     ActionItem::~ActionItem() {
@@ -137,7 +140,7 @@ namespace Core {
                     obj = d->menu;
                     break;
                 case Widget:
-                    obj = d->widget;
+                    obj = d->widgetAction;
                     break;
                 default:
                     break;
@@ -147,7 +150,7 @@ namespace Core {
             }
         } else {
             if (d->type == Widget) {
-                d->widget->releaseWidget(d->widget->defaultWidget());
+                d->widgetAction->releaseWidget(d->widgetAction->defaultWidget());
             }
         }
     }
@@ -184,12 +187,12 @@ namespace Core {
 
     QWidget *ActionItem::widget() const {
         Q_D(const ActionItem);
-        return d->widget->defaultWidget();
+        return d->widgetAction->defaultWidget();
     }
 
     QWidgetAction *ActionItem::widgetAction() const {
         Q_D(const ActionItem);
-        return d->widget;
+        return d->widgetAction;
     }
 
     QIcon ActionItem::icon() const {
@@ -206,7 +209,7 @@ namespace Core {
                 res = d->menu->icon();
                 break;
             case Widget:
-                res = d->widget->defaultWidget()->windowIcon();
+                res = d->widgetAction->icon();
                 break;
             default:
                 break;
@@ -227,7 +230,7 @@ namespace Core {
                 d->menu->setIcon(icon);
                 break;
             case Widget:
-                d->widget->defaultWidget()->setWindowIcon(icon);
+                d->widgetAction->setIcon(icon);
                 break;
             default:
                 break;
@@ -249,7 +252,7 @@ namespace Core {
                 res = d->menu->title();
                 break;
             case Widget:
-                res = d->widget->defaultWidget()->windowTitle();
+                res = d->widgetAction->text();
                 break;
             default:
                 break;
@@ -270,7 +273,7 @@ namespace Core {
                 d->menu->setTitle(text);
                 break;
             case Widget:
-                d->widget->defaultWidget()->setWindowTitle(text);
+                d->widgetAction->setText(text);
                 break;
             default:
                 break;
@@ -292,7 +295,7 @@ namespace Core {
                 res = d->menu->isEnabled();
                 break;
             case Widget:
-                res = d->widget->isEnabled();
+                res = d->widgetAction->isEnabled();
                 break;
             default:
                 break;
@@ -314,7 +317,7 @@ namespace Core {
                 d->menu->setEnabled(enabled);
                 break;
             case Widget:
-                d->widget->setEnabled(enabled);
+                d->widgetAction->setEnabled(enabled);
                 break;
             default:
                 break;
@@ -331,24 +334,27 @@ namespace Core {
         d->autoDelete = autoDelete;
     }
 
-    QString ActionItem::commandDescription() const {
-        Q_D(const ActionItem);
-        return d->commandDesc;
-    }
-
-    void ActionItem::setCommandDescription(const QString &originalCommandName) {
-        Q_D(ActionItem);
-        d->commandDesc = originalCommandName;
-    }
-
     QString ActionItem::commandName() const {
         Q_D(const ActionItem);
-        return d->commandName;
+        return d->spec ? d->spec->commandName() : QString();
     }
 
-    void ActionItem::setCommandName(const QString &commandName) {
+    QString ActionItem::commandDisplayName() const {
+        Q_D(const ActionItem);
+        if (!d->specificName.isEmpty())
+            return d->specificName;
+
+        return d->spec ? d->spec->commandDisplayName() : QString();
+    }
+
+    QString ActionItem::commandSpecificName() const {
+        Q_D(const ActionItem);
+        return d->specificName;
+    }
+
+    void ActionItem::setCommandSpecificName(const QString &commandSpecificName) {
         Q_D(ActionItem);
-        d->commandName = commandName;
+        d->specificName = commandSpecificName;
     }
 
     QPair<QString, QString> ActionItem::commandCheckedDescription() const {

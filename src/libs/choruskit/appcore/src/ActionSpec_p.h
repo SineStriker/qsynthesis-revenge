@@ -16,8 +16,8 @@ namespace Core {
         ActionSpec *q_ptr;
 
         QString id;
-        QString displayName;
         QString commandName;
+        QString commandDisplayName;
         QList<QKeySequence> shortcuts;
     };
 
