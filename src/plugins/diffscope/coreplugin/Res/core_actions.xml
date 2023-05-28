@@ -23,7 +23,7 @@
             </group>
             <group id="AboutGroup">
                 <action id="AboutPlugins" command="About: About Plugins"/>
-                <action id="AboutApp" command="About: About Application"/>
+                <action id="AboutApp" command="About: About ${APPNAME}"/>
                 <action id="AboutQt" command="About: About Qt"/>
             </group>
         </menu>

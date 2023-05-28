@@ -23,6 +23,7 @@ namespace Core {
 
     void ActionSystemPrivate::init() {
         readSettings();
+        configVars.addHash(QMSimpleVarExp::SystemValues());
     }
 
     static ActionSystem *m_instance = nullptr;
@@ -179,7 +180,7 @@ namespace Core {
 
             key = ctx2.properties.value("command");
             if (!key.isEmpty() && commandName.isEmpty()) {
-                commandName = key;
+                commandName = configVars.parse(key);
             }
         }
 

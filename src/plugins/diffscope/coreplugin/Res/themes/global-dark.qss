@@ -174,7 +174,7 @@ QsApi--CommandPalette {
     qpen(rgba(255, 255, 255, 7.5%), 1), /* underline */
     qtypeface((#CCCCCC, white), 15px), /* fileType */
     qtypeface((#909090, #CCCCCC), 15px), /* locType */
-    qtypeface((#CCCCCC, white), 12px), /* dateType */
+    qtypeface((#CCCCCC, white), 15px), /* dateType */
     qtypeface((#3794F9, white), 15px), /* dateHighlightType */
     qrectstyle(2px, 2px, 2px, rgba(255, 255, 255, 7.5%)), /* dateBackType */
     qmargins(1.25px, 10px), /* fileMargins */

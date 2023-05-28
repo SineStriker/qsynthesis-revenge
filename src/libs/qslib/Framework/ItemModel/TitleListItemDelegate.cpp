@@ -14,9 +14,10 @@ namespace QsApi {
         QString text;
         bool isHighlight;
         bool isQuote;
+        double ratio;
     };
 
-    QList<TextBlock> processString(const QString &inputString) {
+    QList<TextBlock> processString1(const QString &inputString, double ratio) {
         QList<TextBlock> result;
 
         QRegularExpression tagRegex("<(highlight|quote)>(.*?)</\\1>");
@@ -29,13 +30,13 @@ namespace QsApi {
             QString blockText = inputString.mid(currentIndex, tagStart - currentIndex);
 
             if (!blockText.isEmpty())
-                result.append({blockText, false, false});
+                result.append({blockText, false, false, ratio});
 
             QString tagName = match.captured(1);
             if (tagName == "highlight") {
-                result.append({match.captured(2), true, false});
+                result.append({match.captured(2), true, false, ratio});
             } else if (tagName == "quote") {
-                result.append({match.captured(2), false, true});
+                result.append({match.captured(2), false, true, ratio});
             }
 
             currentIndex = tagEnd;
@@ -43,48 +44,90 @@ namespace QsApi {
 
         if (currentIndex < inputString.length()) {
             QString remainingText = inputString.mid(currentIndex);
-            result.append({remainingText, false, false});
+            result.append({remainingText, false, false, ratio});
         }
 
         return result;
     }
 
-    static QSize richTextSize(const QFontMetrics &fm, const QFontMetrics &fmH, const QList<TextBlock> &blocks,
-                              const QRectF &rect) {
-        double spaceWidth = fm.horizontalAdvance(' ');
+    QList<TextBlock> processString(const QString &inputString) {
+        QList<TextBlock> result;
 
-        double width = 0;
-        for (const auto &block : blocks) {
-            if (block.isHighlight) {
-                width += fmH.horizontalAdvance(block.text);
-                continue;
+        QRegularExpression tagRegex("<(x[\\d.]+)>(.*?)</\\1>");
+
+        int currentIndex = 0;
+        QRegularExpressionMatch match;
+        while ((match = tagRegex.match(inputString, currentIndex)).hasMatch()) {
+            int tagStart = match.capturedStart();
+            int tagEnd = match.capturedEnd();
+            QString blockText = inputString.mid(currentIndex, tagStart - currentIndex);
+
+            if (!blockText.isEmpty()) {
+                result.append(processString1(blockText, 1));
             }
-            if (block.isQuote) {
-                width += spaceWidth + 2 * rect.width();
-            }
-            width += fm.horizontalAdvance(block.text);
+
+            QString tagName = match.captured(1);
+            double ratio = tagName.midRef(1).toDouble();
+            if (ratio == 0)
+                ratio = 1;
+            result.append(processString1(match.captured(2), ratio));
+
+            currentIndex = tagEnd;
         }
 
-        return {int(width), int(fm.height() + 2 * rect.height())};
+        if (currentIndex < inputString.length()) {
+            QString remainingText = inputString.mid(currentIndex);
+            result.append(processString1(remainingText, 1));
+        }
+
+        return result;
+    }
+
+    static QSize richTextSize(const QFont &font, const QFont &fontH, const QList<TextBlock> &blocks,
+                              const QRectF &rect) {
+
+        double width = 0;
+        double height = 0;
+        for (const auto &block : blocks) {
+            auto f = block.isHighlight ? fontH : font;
+            f.setPixelSize(f.pixelSize() * block.ratio);
+            auto fm = QFontMetrics(f);
+
+            if (block.isHighlight) {
+                width += fm.horizontalAdvance(block.text);
+            } else {
+                if (block.isQuote) {
+                    double spaceWidth = fm.horizontalAdvance(' ');
+                    width += spaceWidth + 2 * rect.width();
+                }
+                width += fm.horizontalAdvance(block.text);
+            }
+            height = qMax<double>(fm.height(), height);
+        }
+
+        return {int(width), int(height + 2 * rect.height())};
     }
 
     static void drawRichTexts(QPainter *painter, const QFont &font, const QFont &fontH, const QPoint &start,
                               const QList<TextBlock> &blocks, const QColor &foreground, const QColor &background,
-                              const QColor &highlightColor, const QRectF &rect, double radius) {
-        const auto &fm = QFontMetrics(font);
-        const auto &fmH = QFontMetrics(fontH);
+                              const QColor &highlightColor, const QRectF &rect, double radius, int height) {
 
-        double spaceWidth = fm.horizontalAdvance(' ');
-        double height = fm.height() + 2 * rect.height();
         double currentWidth = 0;
         for (const auto &block : blocks) {
             double width = 0;
+            double spaceWidth = 0;
+
+            // Get current font metrics
+            auto f = block.isHighlight ? fontH : font;
+            f.setPixelSize(f.pixelSize() * block.ratio);
+            auto fm = QFontMetrics(f);
+            painter->setFont(f);
+
             if (block.isHighlight) {
-                painter->setFont(fontH);
-                width += fmH.horizontalAdvance(block.text);
+                width += fm.horizontalAdvance(block.text);
             } else {
-                painter->setFont(font);
                 if (block.isQuote) {
+                    spaceWidth = fm.horizontalAdvance(' ');
                     currentWidth += spaceWidth / 2;
                     width += 2 * rect.width();
                 }
@@ -280,8 +323,6 @@ namespace QsApi {
 
         QFontMetrics fileFontM(fileFont);
         QFontMetrics locFontM(locFont);
-        QFontMetrics dateFontM(dateFont);
-        QFontMetrics dateHighlightFontM(dateHighlightFont);
 
         int fileFontHeight = fileFontM.height();
         int locFontHeight = location.isEmpty() ? 0 : locFontM.height();
@@ -291,7 +332,7 @@ namespace QsApi {
 
         auto dateSize = dateTextBlocks.isEmpty()
                             ? QSize()
-                            : richTextSize(dateFontM, dateHighlightFontM, dateTextBlocks, d->m_dateBackType.rect());
+                            : richTextSize(dateFont, dateHighlightFont, dateTextBlocks, d->m_dateBackType.rect());
         int dateFontHeight = dateSize.height();
         int dateWidth = dateSize.width();
 
@@ -361,7 +402,7 @@ namespace QsApi {
 
             painter->setFont(dateFont);
             drawRichTexts(painter, dateFont, dateHighlightFont, start, dateTextBlocks, dateColor, dateBackColor,
-                          dateHighlightColor, d->m_dateBackType.rect(), radius);
+                          dateHighlightColor, d->m_dateBackType.rect(), radius, dateFontHeight);
         }
 
         painter->setFont(fileFont);

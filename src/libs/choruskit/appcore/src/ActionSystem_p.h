@@ -3,6 +3,7 @@
 
 #include "ActionSystem.h"
 #include "Collections/QMChronMap.h"
+#include "Text/QMSimpleVarExp.h"
 
 #include <Serialization/QMXmlAdaptor.h>
 
@@ -23,6 +24,8 @@ namespace Core {
                               ActionContext *context);
 
         ActionSystem *q_ptr;
+
+        QMSimpleVarExp configVars;
 
         QMChronMap<QString, ActionSpec *> actions;
         QMChronMap<QString, ActionContext *> contexts;

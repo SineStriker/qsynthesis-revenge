@@ -94,7 +94,7 @@ namespace Core {
                 }
                 seqsText.append(keys.join('+'));
             }
-            return seqsText.join("  ");
+            return "<x0.8>" + seqsText.join("  ") + "</x0.8>";
         }
         return {};
     }
@@ -325,7 +325,8 @@ namespace Core {
                                : QString("%1 (%2)").arg(languageName, countryName);
 
             item->setText(text);
-            item->setData(QsApi::SubtitleRole, loc);
+            item->setData(QsApi::DescriptionRole, QString("<x0.9>%1</x0.9>").arg(loc));
+            item->setData(Qt::UserRole + 1, loc);
             cp->addItem(item);
 
             if (loc == qIDec->locale()) {
@@ -345,7 +346,7 @@ namespace Core {
             if (!item) {
                 return;
             }
-            QString loc = item->data(QsApi::SubtitleRole).toString();
+            QString loc = item->data(Qt::UserRole + 1).toString();
             qIDec->setLocale(loc);
 
             ILoader::instance()->settings()->insert("Translation", loc);
