@@ -14,9 +14,9 @@ namespace Vst {
     };
 
     struct Callbacks {
-        void (*setDirty)();
-        void (*setError)(const char *error);
-        void (*setStatus)(const char *status);
+        void (*setDirty)(void *eh);
+        void (*setError)(void *eh, const char *error);
+        void (*setStatus)(void *eh, const char *status);
     };
 
 }

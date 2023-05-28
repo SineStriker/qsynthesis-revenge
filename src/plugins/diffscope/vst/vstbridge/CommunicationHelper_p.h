@@ -23,7 +23,7 @@ namespace Vst {
     class CommunicationHelperPrivate {
         Q_DECLARE_PUBLIC(CommunicationHelper)
         CommunicationHelper *q_ptr;
-        QScopedPointer<QCoreApplication, QScopedPointerDeleteLater> app;
+        QScopedPointer<QCoreApplication> app;
         void init();
     };
 
