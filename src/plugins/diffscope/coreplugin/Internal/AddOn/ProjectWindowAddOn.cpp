@@ -47,12 +47,28 @@ namespace Core {
         }
 
         void ProjectWindowAddOn::reloadStrings() {
+            editItem->setText(tr("&Edit"));
+
             saveGroupItem->setText(tr("Save Actions"));
             saveFileItem->setText(tr("&Save"));
             saveAsFileItem->setText(tr("Save &As..."));
 
             exitGroupItem->setText(tr("Exit Actions"));
             closeFileItem->setText(tr("Close"));
+
+            undoGroupItem->setText(tr("Undo Actions"));
+            undoItem->setText(tr("&Undo"));
+            redoItem->setText(tr("&Redo"));
+
+            editGroupItem->setText(tr("Edit Actions"));
+            cutItem->setText(tr("Cu&t"));
+            copyItem->setText(tr("&Copy"));
+            pasteItem->setText(tr("&Paste"));
+            deleteItem->setText(tr("&Delete"));
+
+            selectGroupItem->setText(tr("Select Actions"));
+            selectAllItem->setText(tr("Select &All"));
+            deselectItem->setText(tr("Deselect"));
 
             playItem->setText(tr("Play"));
             playItem->setCommandCheckedDescription(qMakePair(tr("Play"), tr("Pause")));
@@ -85,6 +101,9 @@ namespace Core {
             auto iWin = windowHandle()->cast<IProjectWindow>();
             auto win = iWin->window();
 
+            editItem = new ActionItem("core.Edit", ICore::createCoreMenu(win), this);
+
+            // File
             saveGroupItem = new ActionItem("core.SaveGroup", new QActionGroup(this), this);
             saveFileItem = new ActionItem("core.SaveFile", new QAction(this), this);
             saveAsFileItem = new ActionItem("core.SaveAsFile", new QAction(this), this);
@@ -92,6 +111,22 @@ namespace Core {
             exitGroupItem = new ActionItem("core.ExitGroup", new QActionGroup(this), this);
             closeFileItem = new ActionItem("core.CloseFile", new QAction(this), this);
 
+            // Edit
+            undoGroupItem = new ActionItem("core.UndoGroup", new QActionGroup(this), this);
+            undoItem = new ActionItem("core.Undo", new QAction(this), this);
+            redoItem = new ActionItem("core.Redo", new QAction(this), this);
+
+            editGroupItem = new ActionItem("core.EditGroup", new QActionGroup(this), this);
+            cutItem = new ActionItem("core.Cut", new QAction(this), this);
+            copyItem = new ActionItem("core.Copy", new QAction(this), this);
+            pasteItem = new ActionItem("core.Paste", new QAction(this), this);
+            deleteItem = new ActionItem("core.Delete", new QAction(this), this);
+
+            selectGroupItem = new ActionItem("core.SelectGroup", new QActionGroup(this), this);
+            selectAllItem = new ActionItem("core.SelectAll", new QAction(this), this);
+            deselectItem = new ActionItem("core.Deselect", new QAction(this), this);
+
+            // Toolbar
             timerGroupItem = new ActionItem("core.TimerGroup", new QActionGroup(this), this);
             timerLabelItem = new ActionItem("core.TimerLabel", new QLabel("00:00.000"), this);
 
@@ -110,9 +145,13 @@ namespace Core {
 
             // Stretch Item
             mainToolbarStretchItem = new ActionItem("core.MainToolbarStretch", createStretch(), this);
-            mainToolbarStretchItem->setProperty("start-of-layout", true);
+            mainToolbarStretchItem->setProperty("is-stretch", true);
 
             mainToolbarHelpGroupItem = new ActionItem("core.MainToolbarHelpGroup", new QActionGroup(this), this);
+
+            // Set properties
+            undoItem->setProperty("no-command-palette", true);
+            redoItem->setProperty("no-command-palette", true);
 
             playControlGroupItem->actionGroup()->setExclusionPolicy(QActionGroup::ExclusionPolicy::None);
             playItem->action()->setCheckable(true);
@@ -162,12 +201,28 @@ namespace Core {
             iWin->addCheckable("playback.loopPlay", loopPlayItem->action());
 
             iWin->addActionItems({
+                editItem,
+
                 saveGroupItem,
                 saveFileItem,
                 saveAsFileItem,
 
                 exitGroupItem,
                 closeFileItem,
+
+                undoGroupItem,
+                undoItem,
+                redoItem,
+
+                editGroupItem,
+                cutItem,
+                copyItem,
+                pasteItem,
+                deleteItem,
+
+                selectGroupItem,
+                selectAllItem,
+                deselectItem,
 
                 timerGroupItem,
                 timerLabelItem,

@@ -387,7 +387,7 @@ namespace Core {
 
     template <class Menu>
     static void insertMenu(Menu *menu, ActionItem *item) {
-        bool isStartOfLayout = item->property("start-of-layout").toBool();
+        bool isStartOfLayout = item->property("is-stretch").toBool();
         bool empty = menu->property("last_insert").toString().isEmpty();
         if (isStartOfLayout || !empty && menu->actions().isEmpty()) {
             menu->setProperty("last_insert", QString());
@@ -432,7 +432,7 @@ namespace Core {
                 break;
         }
 
-        if (item->property("start-of-layout").toBool()) {
+        if (item->property("is-stretch").toBool()) {
             menu->setProperty("last_insert", QString());
         }
     }
@@ -460,12 +460,6 @@ namespace Core {
             QList<QKeySequence> keys;
             QMChronSet<QKeySequence> duplicatedKeys;
             for (const auto &sh : item->spec()->shortcuts()) {
-                // qDebug() << sh << sh.count() << sh.isEmpty() << QKeySequence("").isEmpty() <<
-                // QKeySequence().isEmpty();
-                //                const auto d = sh.data_ptr();
-                //                for (int i = 0; i < 4; ++i)
-                //                    qDebug() << d->key[i];
-
                 if (sh.isEmpty())
                     continue;
 
@@ -479,8 +473,8 @@ namespace Core {
             item->action()->setShortcuts(keys);
 
             if (!duplicatedKeys.isEmpty()) {
-                qDebug() << "Core::ActionContext::buildMenu(): duplicated shortcut detected" << item->id()
-                         << duplicatedKeys.values();
+                qDebug() << "Core::ActionContext::buildMenu(): building" << menuBar
+                         << " but duplicated shortcut detected" << item->id() << duplicatedKeys.values();
             }
         }
 

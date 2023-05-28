@@ -601,6 +601,54 @@
         <source>Loop Play</source>
         <translation>循环播放</translation>
     </message>
+    <message>
+        <source>&amp;Edit</source>
+        <translation>编辑(&amp;E)</translation>
+    </message>
+    <message>
+        <source>Undo Actions</source>
+        <translation>撤销组</translation>
+    </message>
+    <message>
+        <source>&amp;Undo</source>
+        <translation>撤销(&amp;U)</translation>
+    </message>
+    <message>
+        <source>&amp;Redo</source>
+        <translation>重做(&amp;R)</translation>
+    </message>
+    <message>
+        <source>Edit Actions</source>
+        <translation>编辑组</translation>
+    </message>
+    <message>
+        <source>Cu&amp;t</source>
+        <translation>剪切(&amp;T)</translation>
+    </message>
+    <message>
+        <source>&amp;Copy</source>
+        <translation>复制(&amp;C)</translation>
+    </message>
+    <message>
+        <source>&amp;Paste</source>
+        <translation>粘贴(&amp;P)</translation>
+    </message>
+    <message>
+        <source>&amp;Delete</source>
+        <translation>删除(&amp;D)</translation>
+    </message>
+    <message>
+        <source>Select Actions</source>
+        <translation>选择组</translation>
+    </message>
+    <message>
+        <source>Select &amp;All</source>
+        <translation>选择全部(&amp;A)</translation>
+    </message>
+    <message>
+        <source>Deselect</source>
+        <translation>取消选择</translation>
+    </message>
 </context>
 <context>
     <name>Core::Internal::SettingsDialog</name>

@@ -125,7 +125,7 @@ namespace Core {
 
         bool isEn = !qIDec->locale().compare(americanEnglishLocale, Qt::CaseInsensitive);
         for (const auto &ai : qAsConst(actionItems)) {
-            if (!ai->isAction()) {
+            if (!ai->isAction() || ai->property("no-command-palette").toBool()) {
                 continue;
             }
 

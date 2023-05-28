@@ -5008,15 +5008,15 @@ Please turn one of those options off.</source>
     </message>
     <message>
         <source>Ins</source>
-        <translation>插入 (Ins)</translation>
+        <translation>Ins</translation>
     </message>
     <message>
         <source>Del</source>
-        <translation>删除 (Del)</translation>
+        <translation>Del</translation>
     </message>
     <message>
         <source>Pause</source>
-        <translation>暂停 (Pause)</translation>
+        <translation>Pause</translation>
     </message>
     <message>
         <source>Print</source>

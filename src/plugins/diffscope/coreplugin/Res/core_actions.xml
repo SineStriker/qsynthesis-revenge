@@ -50,6 +50,23 @@
             </group>
         </menu>
 
+        <menu id="Edit">
+            <group id="UndoGroup">
+                <action id="Undo" command="Edit: Undo" shortcut="Ctrl+Z"/>
+                <action id="Redo" command="Edit: Redo" shortcut="Ctrl+Shift+Z"/>
+            </group>
+            <group id="EditGroup">
+                <action id="Cut" command="Edit: Cut" shortcut="Ctrl+X"/>
+                <action id="Copy" command="Edit: Copy" shortcut="Ctrl+C"/>
+                <action id="Paste" command="Edit: Paste" shortcut="Ctrl+V"/>
+                <action id="Delete" command="Edit: Delete" shortcut="Del"/>
+            </group>
+            <group id="SelectGroup">
+                <action id="SelectAll" command="Edit: Select All" shortcut="Ctrl+A"/>
+                <action id="Deselect" command="Edit: Deselect"/>
+            </group>
+        </menu>
+
         <menu id="Help">
             <group id="WelcomeGroup">
                 <action id="ShowHome"/>

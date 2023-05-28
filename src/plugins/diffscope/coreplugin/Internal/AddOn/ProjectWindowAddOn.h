@@ -29,12 +29,28 @@ namespace Core {
             void initActions();
 
         protected:
+            ActionItem *editItem;
+
             ActionItem *saveGroupItem;
             ActionItem *saveFileItem;
             ActionItem *saveAsFileItem;
 
             ActionItem *exitGroupItem;
             ActionItem *closeFileItem;
+
+            ActionItem *undoGroupItem;
+            ActionItem *undoItem;
+            ActionItem *redoItem;
+
+            ActionItem *editGroupItem;
+            ActionItem *cutItem;
+            ActionItem *copyItem;
+            ActionItem *pasteItem;
+            ActionItem *deleteItem;
+
+            ActionItem *selectGroupItem;
+            ActionItem *selectAllItem;
+            ActionItem *deselectItem;
 
             ActionItem *timerGroupItem;
             ActionItem *timerLabelItem;
