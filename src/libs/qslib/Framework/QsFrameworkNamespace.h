@@ -20,6 +20,8 @@ namespace QsApi {
         IconSizeRole,
         ObjectPointerRole,
         AlignmentRole,
+        InternalDataRole,
+        KeywordRole,
 
         UserRole = Qt::UserRole + 4000,
     };

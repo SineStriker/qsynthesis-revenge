@@ -203,7 +203,8 @@ namespace QsApi {
                     }
 
                     if (item->text().contains(keyword, Qt::CaseInsensitive) ||
-                        item->data(QsApi::SubtitleRole).toString().contains(keyword, Qt::CaseInsensitive)) {
+                        item->data(QsApi::SubtitleRole).toString().contains(keyword, Qt::CaseInsensitive) ||
+                        item->data(QsApi::KeywordRole).toString().contains(keyword, Qt::CaseInsensitive)) {
                         find = true;
                     }
                 }

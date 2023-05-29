@@ -235,15 +235,15 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Preferences</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>&amp;Color Themes...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>&amp;Locales And Languages...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>&amp;Preferences</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

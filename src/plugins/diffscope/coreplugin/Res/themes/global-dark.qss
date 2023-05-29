@@ -157,7 +157,7 @@ QScrollBar::add-line {
 
 QsApi--CommandPalette {
     background-color: transparent;
-    min-width: 400px;
+    min-width: 450px;
     max-width: 750px;
     min-height: 400px;
     qproperty-layoutMargins: qmargins(10px, 10px, 10px, 0);

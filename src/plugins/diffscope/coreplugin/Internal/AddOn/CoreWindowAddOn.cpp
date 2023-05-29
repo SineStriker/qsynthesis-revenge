@@ -50,7 +50,7 @@ namespace Core::Internal {
         openFileItem->setText(tr("&Open..."));
         openRecentItem->setText(tr("Open Recent"));
 
-        preferenceMenuItem->setText(tr("Preferences"));
+        preferenceMenuItem->setText(tr("&Preferences"));
         settingsItem->setText(tr("Se&ttings..."));
         colorThemesItem->setText(tr("&Color Themes..."));
         languagesItem->setText(tr("&Locales And Languages..."));

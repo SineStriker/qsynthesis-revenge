@@ -325,18 +325,42 @@ int main_entry(int argc, char *argv[]) {
     loader.setSettingsPath(QSettings::SystemScope,
                            QString("%1/%2.settings.json").arg(systemSettingPath, qApp->applicationName()));
 
+#ifdef CONFIG_ENABLE_BREAKPAD
+    // Prepare to load plugins
+    QBreakpadInstance.setDumpPath(qmHost->appDataDir() + "/crashes");
+#endif
+
+    // Make sure we honor the system's proxy settings
+    QNetworkProxyFactory::setUseSystemConfiguration(true);
+
+    // Don't show plugin manager debug info
+    QLoggingCategory::setFilterRules(QLatin1String("qtc.*.debug=false"));
+
+    QSettings::setPath(QSettings::IniFormat, QSettings::UserScope, userSettingPath);
+    QSettings::setPath(QSettings::IniFormat, QSettings::SystemScope, systemSettingPath);
+
+    PluginManager pluginManager;
+    pluginManager.setPluginIID(pluginIID);
+
+    pluginManager.setSettings(new QSettings(QString("%1/%2.plugins.ini").arg(userSettingPath, qApp->applicationName()),
+                                            QSettings::IniFormat));
+    pluginManager.setGlobalSettings(new QSettings(
+        QString("%1/%2.plugins.ini").arg(systemSettingPath, qApp->applicationName()), QSettings::IniFormat));
+
     // Restore language and themes
     {
-        auto settings = loader.settings();
+        auto settings = PluginManager::settings();
+        settings->beginGroup("Preferences");
         auto value = settings->value("Translation");
-        if (value.isString()) {
+        if (value.type() == QVariant::String) {
             qIDec->setLocale(value.toString());
         }
 
         value = settings->value("Theme");
-        if (value.isString()) {
+        if (value.type() == QVariant::String) {
             qIDec->setTheme(value.toString());
         }
+        settings->endGroup();
     }
 
     SplashScreen splash;
@@ -367,30 +391,8 @@ int main_entry(int argc, char *argv[]) {
     // Don't know why drawing text blocks so much time, so we show splash first and then show texts
     splash.showTexts();
 
-#ifdef CONFIG_ENABLE_BREAKPAD
-    // Prepare to load plugins
-    QBreakpadInstance.setDumpPath(qmHost->appDataDir() + "/crashes");
-#endif
-
-    // Make sure we honor the system's proxy settings
-    QNetworkProxyFactory::setUseSystemConfiguration(true);
-
-    // Don't show plugin manager debug info
-    QLoggingCategory::setFilterRules(QLatin1String("qtc.*.debug=false"));
-
-    QSettings::setPath(QSettings::IniFormat, QSettings::UserScope, userSettingPath);
-    QSettings::setPath(QSettings::IniFormat, QSettings::SystemScope, systemSettingPath);
-
     // Update loader text
     splash.showMessage(QCoreApplication::translate("Application", "Searching plugins..."));
-
-    PluginManager pluginManager;
-    pluginManager.setPluginIID(pluginIID);
-
-    pluginManager.setSettings(new QSettings(QString("%1/%2.plugins.ini").arg(userSettingPath, qApp->applicationName()),
-                                            QSettings::IniFormat));
-    pluginManager.setGlobalSettings(new QSettings(
-        QString("%1/%2.plugins.ini").arg(systemSettingPath, qApp->applicationName()), QSettings::IniFormat));
 
     QStringList pluginPaths = [&]() {
         QStringList rc;

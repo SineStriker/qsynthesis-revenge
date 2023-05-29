@@ -367,7 +367,7 @@
     </message>
     <message>
         <source>Preferences</source>
-        <translation>首选项</translation>
+        <translation type="vanished">首选项</translation>
     </message>
     <message>
         <source>&amp;Color Themes...</source>
@@ -376,6 +376,10 @@
     <message>
         <source>&amp;Locales And Languages...</source>
         <translation>地区和语言(&amp;L)...</translation>
+    </message>
+    <message>
+        <source>&amp;Preferences</source>
+        <translation>首选项(&amp;P)</translation>
     </message>
 </context>
 <context>

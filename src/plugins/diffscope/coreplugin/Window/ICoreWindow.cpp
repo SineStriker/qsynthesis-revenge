@@ -7,6 +7,8 @@
 #include <QLocale>
 #include <QMessageBox>
 
+#include <extensionsystem/pluginmanager.h>
+
 #include <QMDecoratorV2.h>
 #include <QMMath.h>
 
@@ -298,7 +300,7 @@ namespace Core {
             QString theme = item->text();
             qIDec->setTheme(theme);
 
-            ILoader::instance()->settings()->insert("Theme", theme);
+            ExtensionSystem::PluginManager::settings()->setValue("Preferences/Theme", theme);
         });
     }
 
@@ -326,7 +328,8 @@ namespace Core {
 
             item->setText(text);
             item->setData(QsApi::DescriptionRole, QString("<x0.9>%1</x0.9>").arg(loc));
-            item->setData(Qt::UserRole + 1, loc);
+            item->setData(QsApi::KeywordRole, loc);
+            item->setData(QsApi::InternalDataRole, loc);
             cp->addItem(item);
 
             if (loc == qIDec->locale()) {
@@ -346,10 +349,10 @@ namespace Core {
             if (!item) {
                 return;
             }
-            QString loc = item->data(Qt::UserRole + 1).toString();
+            QString loc = item->data(QsApi::InternalDataRole).toString();
             qIDec->setLocale(loc);
 
-            ILoader::instance()->settings()->insert("Translation", loc);
+            ExtensionSystem::PluginManager::settings()->setValue("Preferences/Translation", loc);
         });
     }
 
