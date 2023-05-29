@@ -3,6 +3,7 @@
 #include <csignal>
 
 #include <QApplication>
+#include "QStyleFactory"
 #include <QChildEvent>
 #include <QMessageBox>
 #include <QScreen>
@@ -169,6 +170,8 @@ namespace Core {
     }
 
     ICore::ICore(QObject *parent) : ICore(*new ICorePrivate(), parent) {
+        auto style = QStyleFactory::create("fusion");
+        QApplication::setStyle(style);
     }
 
     ICore::~ICore() {
