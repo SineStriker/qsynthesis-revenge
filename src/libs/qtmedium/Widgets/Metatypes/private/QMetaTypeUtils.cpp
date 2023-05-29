@@ -16,8 +16,7 @@ Qt::PenStyle StringToLineStyle(const QString &str, bool *ok) {
         style = Qt::DotLine;
     } else if (!str.compare(QLatin1String(QCssCustomValue_Pen_Line_DashDot), Qt::CaseInsensitive)) {
         style = Qt::DashDotLine;
-    } else if (!str.compare(QLatin1String(QCssCustomValue_Pen_Line_DashDotDot),
-                            Qt::CaseInsensitive)) {
+    } else if (!str.compare(QLatin1String(QCssCustomValue_Pen_Line_DashDotDot), Qt::CaseInsensitive)) {
         style = Qt::DashDotDotLine;
     } else {
         success = false;
@@ -31,27 +30,27 @@ Qt::PenStyle StringToLineStyle(const QString &str, bool *ok) {
 QLatin1String LineStyleToString(Qt::PenStyle style) {
     QLatin1String res;
     switch (style) {
-    case Qt::NoPen:
-        res = QLatin1String(QCssCustomValue_Pen_Line_None);
-        break;
-    case Qt::SolidLine:
-        res = QLatin1String(QCssCustomValue_Pen_Line_Solid);
-        break;
-    case Qt::DashLine:
-        res = QLatin1String(QCssCustomValue_Pen_Line_Dash);
-        break;
-    case Qt::DotLine:
-        res = QLatin1String(QCssCustomValue_Pen_Line_Dot);
-        break;
-    case Qt::DashDotLine:
-        res = QLatin1String(QCssCustomValue_Pen_Line_DashDot);
-        break;
-    case Qt::DashDotDotLine:
-        res = QLatin1String(QCssCustomValue_Pen_Line_DashDotDot);
-        break;
-    default:
-        res = QLatin1String(QCssCustomValue_Pen_Line_None);
-        break;
+        case Qt::NoPen:
+            res = QLatin1String(QCssCustomValue_Pen_Line_None);
+            break;
+        case Qt::SolidLine:
+            res = QLatin1String(QCssCustomValue_Pen_Line_Solid);
+            break;
+        case Qt::DashLine:
+            res = QLatin1String(QCssCustomValue_Pen_Line_Dash);
+            break;
+        case Qt::DotLine:
+            res = QLatin1String(QCssCustomValue_Pen_Line_Dot);
+            break;
+        case Qt::DashDotLine:
+            res = QLatin1String(QCssCustomValue_Pen_Line_DashDot);
+            break;
+        case Qt::DashDotDotLine:
+            res = QLatin1String(QCssCustomValue_Pen_Line_DashDotDot);
+            break;
+        default:
+            res = QLatin1String(QCssCustomValue_Pen_Line_None);
+            break;
     }
     return res;
 }
@@ -77,15 +76,15 @@ Qt::PenCapStyle StringToCapStyle(const QString &str, bool *ok) {
 QLatin1String CapStyleToString(Qt::PenCapStyle style) {
     QLatin1String res;
     switch (style) {
-    case Qt::SquareCap:
-        res = QLatin1String(QCssCustomValue_Pen_Cap_Square);
-        break;
-    case Qt::RoundCap:
-        res = QLatin1String(QCssCustomValue_Pen_Cap_Round);
-        break;
-    default:
-        res = QLatin1String(QCssCustomValue_Pen_Cap_Flat);
-        break;
+        case Qt::SquareCap:
+            res = QLatin1String(QCssCustomValue_Pen_Cap_Square);
+            break;
+        case Qt::RoundCap:
+            res = QLatin1String(QCssCustomValue_Pen_Cap_Round);
+            break;
+        default:
+            res = QLatin1String(QCssCustomValue_Pen_Cap_Flat);
+            break;
     }
     return res;
 }
@@ -111,15 +110,15 @@ Qt::PenJoinStyle StringToJoinStyle(const QString &str, bool *ok) {
 QLatin1String JoinStyleToString(Qt::PenJoinStyle style) {
     QLatin1String res;
     switch (style) {
-    case Qt::MiterJoin:
-        res = QLatin1String(QCssCustomValue_Pen_Join_Miter);
-        break;
-    case Qt::RoundJoin:
-        res = QLatin1String(QCssCustomValue_Pen_Join_Round);
-        break;
-    default:
-        res = QLatin1String(QCssCustomValue_Pen_Join_Bevel);
-        break;
+        case Qt::MiterJoin:
+            res = QLatin1String(QCssCustomValue_Pen_Join_Miter);
+            break;
+        case Qt::RoundJoin:
+            res = QLatin1String(QCssCustomValue_Pen_Join_Round);
+            break;
+        default:
+            res = QLatin1String(QCssCustomValue_Pen_Join_Bevel);
+            break;
     }
     return res;
 }

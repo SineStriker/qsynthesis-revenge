@@ -279,6 +279,11 @@ namespace QsApi {
         d->m_listWidget->clear();
     }
 
+    QListWidgetItem *CommandPalette::itemAt(int index) const {
+        Q_D(const CommandPalette);
+        return d->m_listWidget->item(index);
+    }
+
     QListWidgetItem *CommandPalette::currentItem() const {
         Q_D(const CommandPalette);
         return d->m_listWidget->currentItem();
@@ -330,6 +335,7 @@ namespace QsApi {
 
     void CommandPalette::setStyleData(const QTypeList &list) {
         Q_D(CommandPalette);
+
         d->m_delegate->setStyleData(list);
         update();
 

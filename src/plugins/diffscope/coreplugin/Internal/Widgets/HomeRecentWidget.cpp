@@ -156,7 +156,6 @@ namespace Core::Internal {
 
             auto item = new QListWidgetItem();
             item->setData(QsApi::DecorationRole, spec ? spec->icon() : QIcon());
-            item->setData(QsApi::IconSizeRole, m_iconSize);
             item->setData(QsApi::DisplayRole, QDir::toNativeSeparators(info.absoluteFilePath()));
             item->setData(QsApi::SubtitleRole, QDir::toNativeSeparators(info.absolutePath()));
             item->setData(QsApi::DescriptionRole, info.lastModified().toString(dateFormat));
@@ -171,15 +170,6 @@ namespace Core::Internal {
         m_keyword = keyword;
         m_keyword.replace("\\", "/");
         updateListFilter();
-    }
-
-    QSize HomeRecentBottomFrame::iconSize() const {
-        return m_iconSize;
-    }
-
-    void HomeRecentBottomFrame::setIconSize(const QSize &iconSize) {
-        m_iconSize = iconSize;
-        reloadRecentFiles();
     }
 
     void HomeRecentBottomFrame::updateListFilter() {

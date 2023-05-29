@@ -33,6 +33,7 @@ namespace QsApi {
         QMargins m_padding;
 
         QMargins m_iconMargins;
+        QSize m_defaultIconSize;
 
         [[nodiscard]] QTypeList styleData_helper() const;
         void setStyleData_helper(const QTypeList &list);

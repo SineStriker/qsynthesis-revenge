@@ -28,6 +28,7 @@ namespace QsApi {
         void insertItem(int index, QListWidgetItem *item);
         int count() const;
         void clear();
+        QListWidgetItem *itemAt(int index) const;
 
         QListWidgetItem *currentItem() const;
         void setCurrentItem(QListWidgetItem *item);

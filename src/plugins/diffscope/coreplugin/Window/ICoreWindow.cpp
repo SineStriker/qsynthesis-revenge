@@ -276,6 +276,10 @@ namespace Core {
             }
         }
 
+        if (!curItem) {
+            return;
+        }
+
         cp->setFilterHint(tr("Select color theme (Press Up/Down to preview)"));
         cp->setCurrentItem(curItem);
         cp->start();
@@ -337,6 +341,10 @@ namespace Core {
             }
         }
 
+        if (!curItem) {
+            return;
+        }
+
         cp->setFilterHint(tr("Select locale and language"));
         cp->setCurrentItem(curItem);
         cp->start();
@@ -357,18 +365,97 @@ namespace Core {
     }
 
     void ICoreWindowPrivate::selectRecentFiles_helper(bool dirsAtTop) {
+        Q_Q(ICoreWindow);
+
         cp->abandon();
 
         auto docMgr = ICore::instance()->documentSystem();
 
-        auto addFiles = [&]() {
-            for (const auto &file : docMgr->recentFiles()) {
+        QList<QListWidgetItem *> fileItems;
+        QList<QListWidgetItem *> dirItems;
+
+        for (const auto &file : docMgr->recentFiles()) {
+            QFileInfo info(file);
+            auto spec = docMgr->supportedDocType(info.completeSuffix());
+
+            auto item = new QListWidgetItem();
+            item->setData(QsApi::DecorationRole, spec ? spec->icon() : QIcon());
+            item->setData(QsApi::DisplayRole, QDir::toNativeSeparators(info.absoluteFilePath()));
+            item->setData(QsApi::InternalDataRole, info.absoluteFilePath());
+            item->setData(QsApi::InternalTypeRole, int(QDir::Files));
+
+            fileItems.append(item);
+        }
+
+        if (!fileItems.isEmpty()) {
+            fileItems.first()->setData(QsApi::DescriptionRole, QString("<highlight>%1</highlight>").arg(tr("Files")));
+        }
+
+        for (const auto &file : docMgr->recentDirs()) {
+            QFileInfo info(file);
+            // auto spec = docMgr->supportedDocType(info.completeSuffix());
+
+            auto item = new QListWidgetItem();
+            // item->setData(QsApi::DecorationRole, spec ? spec->icon() : QIcon());
+            item->setData(QsApi::DisplayRole, QDir::toNativeSeparators(info.absoluteFilePath()));
+            item->setData(QsApi::InternalDataRole, info.absoluteFilePath());
+            item->setData(QsApi::InternalTypeRole, int(QDir::Dirs));
+
+            dirItems.append(item);
+        }
+
+        if (!dirItems.isEmpty()) {
+            dirItems.first()->setData(QsApi::DescriptionRole,
+                                      QString("<highlight>%1</highlight>").arg(tr("Directories")));
+        }
+
+        const QList<QListWidgetItem *> *first, *second;
+
+        if (dirsAtTop) {
+            first = &dirItems;
+            second = &fileItems;
+        } else {
+            first = &fileItems;
+            second = &dirItems;
+        }
+
+        if (!first->isEmpty() && !second->isEmpty()) {
+            first->last()->setData(QsApi::SeparatorRole, true);
+        }
+
+        for (auto item : *first) {
+            cp->addItem(item);
+        }
+        for (auto item : *second) {
+            cp->addItem(item);
+        }
+
+        if (cp->count() == 0) {
+            return;
+        }
+
+        cp->setFilterHint(tr("Select file or directory"));
+        cp->setCurrentRow(0);
+        cp->start();
+
+        auto obj = new QObject();
+        connect(cp, &QsApi::CommandPalette::finished, obj, [obj, q](QListWidgetItem *item) {
+            delete obj;
+            if (!item) {
+                return;
             }
-        };
-
-        auto addDirs = [&]() {
-
-        };
+            QString path = item->data(QsApi::InternalDataRole).toString();
+            bool isDir = item->data(QsApi::InternalDataRole).toInt() == QDir::Dirs;
+            if (isDir) {
+                QTimer::singleShot(0, q, [q, path]() {
+                    q->openDirectory(path); //
+                });
+            } else {
+                QTimer::singleShot(0, q, [q, path]() {
+                    q->openFile(path); //
+                });
+            }
+        });
     }
 
     void ICoreWindowPrivate::showMenuInPalette_helper(QMenu *menu, QMenu *menuToDelete) {
@@ -515,6 +602,7 @@ namespace Core {
 
     void ICoreWindow::openDirectory(const QString &path) {
         // TODO: add open directory support
+        qDebug() << "Open directory" << path;
     }
 
     void ICoreWindow::showAllActions() {

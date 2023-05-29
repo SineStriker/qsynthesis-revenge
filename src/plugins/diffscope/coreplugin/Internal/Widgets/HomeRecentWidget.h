@@ -65,7 +65,6 @@ namespace Core::Internal {
     class HomeRecentBottomFrame : public QFrame {
         Q_OBJECT
         Q_LAYOUT_PROPERTY_DELCARE
-        Q_PROPERTY(QSize iconSize READ iconSize WRITE setIconSize NOTIFY iconChanged)
     public:
         explicit HomeRecentBottomFrame(QWidget *parent = nullptr);
         ~HomeRecentBottomFrame();
@@ -76,21 +75,13 @@ namespace Core::Internal {
 
         void setFilterKeyword(const QString &keyword);
 
-        // Style data
-    public:
-        QSize iconSize() const;
-        void setIconSize(const QSize &iconSize);
-
     signals:
-        void iconChanged();
         void openFileRequested(const QString &fileName);
 
     private:
         QVBoxLayout *bottomLayout;
         QsApi::FileListWidget *fileWidget;
         QLabel *emptyLabel;
-
-        QSize m_iconSize;
 
         QString m_keyword;
 

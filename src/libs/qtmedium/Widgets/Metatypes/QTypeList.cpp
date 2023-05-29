@@ -5,6 +5,8 @@
 #include "QMCss.h"
 
 #include <QDebug>
+#include <QRegularExpression>
+#include <QSize>
 
 QString combineFunctionStringList(const QStringList &stringList) {
     if (stringList.size() != 2) {
@@ -46,8 +48,7 @@ QStringList QTypeList::toStringList() const {
 
 QTypeList QTypeList::fromStringList(const QStringList &stringList) {
     QTypeList res;
-    if (stringList.size() == 2 &&
-        !stringList.front().compare(MetaFunctionName(), Qt::CaseInsensitive)) {
+    if (stringList.size() == 2 && !stringList.front().compare(MetaFunctionName(), Qt::CaseInsensitive)) {
         QStringList valueList = SplitStringByComma(stringList.back());
         for (int i = 0; i < valueList.size(); ++i) {
             QString str = valueList.at(i).simplified();
@@ -67,9 +68,26 @@ QTypeList QTypeList::fromStringList(const QStringList &stringList) {
                 }
             } else {
                 if (str.endsWith(QLatin1String(PixelSizeUnit), Qt::CaseInsensitive)) {
-                    QVariant var;
-                    var.setValue(QPixelSize::fromString(str));
-                    res.append(var);
+                    if (str.contains(' ')) {
+                        // QSize
+                        QRegularExpression regex(R"((\d+)px?\s+(\d+)px?)");
+                        QRegularExpressionMatch match = regex.match(str);
+
+                        QSize size;
+                        if (match.hasMatch()) {
+                            QString widthString = match.captured(1);
+                            QString heightString = match.captured(2);
+                            int width = widthString.toInt();
+                            int height = heightString.toInt();
+                            size = QSize(width, height);
+                        }
+                        res.append(size);
+                    } else {
+                        // QPixelSize
+                        QVariant var;
+                        var.setValue(QPixelSize::fromString(str));
+                        res.append(var);
+                    }
                 } else {
                     bool ok2;
                     double val = str.toDouble(&ok2);

@@ -63,6 +63,8 @@ namespace Core::Internal {
         aboutPluginsItem->setText(tr("About Plugins"));
         aboutAppItem->setText(tr("&About %1").arg(qApp->applicationName()));
         aboutQtItem->setText(tr("About Qt"));
+
+        showRecentFileItem->setText(tr("Show Recent Files"));
     }
 
     void CoreWindowAddOn::initActions() {
@@ -93,11 +95,15 @@ namespace Core::Internal {
         showHomeItem = new ActionItem("core.ShowHome", new QAction(this), this);
         findActionItem = new ActionItem("core.FindAction", new QAction(this), this);
 
+        // Invisible
+        showRecentFileItem = new ActionItem("core.ShowRecentFiles", new QAction(this), this);
+
         connect(newFileItem->action(), &QAction::triggered, this, [this, iWin]() {
             //
             qDebug() << "New";
 
-            iWin->showMenuInPalette(fileItem->menu(), false);
+            // iWin->showMenuInPalette(fileItem->menu(), false);
+            iWin->selectRecentFiles();
 
             //            auto action = new QAction("Test");
             //            action->setShortcut(QKeySequence("Ctrl+N"));
@@ -150,7 +156,13 @@ namespace Core::Internal {
             ICore::showHome(); //
         });
 
-        connect(findActionItem->action(), &QAction::triggered, this, [iWin]() { iWin->showAllActions(); });
+        connect(findActionItem->action(), &QAction::triggered, this, [iWin]() {
+            iWin->showAllActions(); //
+        });
+
+        connect(showRecentFileItem->action(), &QAction::triggered, this, [iWin]() {
+            iWin->selectRecentFiles(); //
+        });
 
         iWin->addActionItems({
             fileItem,
@@ -170,28 +182,73 @@ namespace Core::Internal {
             welcomeGroupItem,
             showHomeItem,
             findActionItem,
+            showRecentFileItem,
         });
     }
 
     void CoreWindowAddOn::reloadRecentMenu() {
+        auto iWin = windowHandle()->cast<ICoreWindow>();
+
         auto docMgr = ICore::instance()->documentSystem();
         auto menu = openRecentItem->menu();
 
         menu->clear();
 
+        const auto &recentFiles = docMgr->recentFiles();
+        const auto &recentDirs = docMgr->recentDirs();
+
+        bool needMore = false;
         int cnt = 0;
-        for (const auto &file : docMgr->recentFiles()) {
+        for (const auto &file : recentFiles) {
             auto action = menu->addAction(QDir::toNativeSeparators(file));
             action->setData(file);
-            connect(action, &QAction::triggered, this, [this]() {
-                windowHandle()->cast<ICoreWindow>()->openFile(qobject_cast<QAction *>(sender())->data().toString()); //
+            connect(action, &QAction::triggered, this, [this, iWin]() {
+                iWin->openFile(qobject_cast<QAction *>(sender())->data().toString()); //
             });
+
             cnt++;
-            if (cnt >= 10)
+            if (cnt >= 10) {
+                needMore = true;
                 break;
+            }
         }
 
-        if (cnt > 0) {
+        if (cnt > 0 && !recentDirs.isEmpty()) {
+            menu->addSeparator();
+        }
+
+        cnt = 0;
+        for (const auto &file : recentDirs) {
+            auto action = menu->addAction(QDir::toNativeSeparators(file));
+            action->setData(file);
+            connect(action, &QAction::triggered, this, [this, iWin]() {
+                iWin->openDirectory(qobject_cast<QAction *>(sender())->data().toString()); //
+            });
+
+            cnt++;
+            if (cnt >= 10) {
+                needMore = true;
+                break;
+            }
+        }
+
+        if (needMore) {
+            menu->addSeparator();
+
+            auto action = new QAction(menu);
+            menu->addAction(action);
+
+            auto slot = [action](const QString &locale) {
+                action->setText(tr("More...")); //
+            };
+
+            connect(qIDec, &QMCoreDecoratorV2::localeChanged, action, slot);
+            connect(action, &QAction::triggered, iWin, &ICoreWindow::selectRecentFiles);
+
+            slot(qIDec->locale());
+        }
+
+        if (!recentFiles.isEmpty() || !recentDirs.isEmpty()) {
             menu->addSeparator();
 
             auto action = new QAction(menu);
@@ -202,7 +259,10 @@ namespace Core::Internal {
             };
 
             connect(qIDec, &QMCoreDecoratorV2::localeChanged, action, slot);
-            connect(action, &QAction::triggered, docMgr, &DocumentSystem::clearRecentFiles);
+            connect(action, &QAction::triggered, docMgr, [docMgr]() {
+                docMgr->clearRecentDirs();
+                docMgr->clearRecentFiles();
+            });
 
             slot(qIDec->locale());
         } else {

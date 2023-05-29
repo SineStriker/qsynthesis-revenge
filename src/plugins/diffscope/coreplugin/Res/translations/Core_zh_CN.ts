@@ -195,6 +195,18 @@
         <source>Select locale and language</source>
         <translation>选择地区和语言</translation>
     </message>
+    <message>
+        <source>Files</source>
+        <translation>文件</translation>
+    </message>
+    <message>
+        <source>Directories</source>
+        <translation>文件夹</translation>
+    </message>
+    <message>
+        <source>Select file or directory</source>
+        <translation>选择文件或文件夹</translation>
+    </message>
 </context>
 <context>
     <name>Core::IHomeWindow</name>
@@ -380,6 +392,14 @@
     <message>
         <source>&amp;Preferences</source>
         <translation>首选项(&amp;P)</translation>
+    </message>
+    <message>
+        <source>Show Recent Files</source>
+        <translation>显示最近的文件</translation>
+    </message>
+    <message>
+        <source>More...</source>
+        <translation>更多...</translation>
     </message>
 </context>
 <context>

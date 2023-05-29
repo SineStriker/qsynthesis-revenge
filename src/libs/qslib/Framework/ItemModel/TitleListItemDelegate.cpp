@@ -173,14 +173,16 @@ namespace QsApi {
 
     QTypeList TitleListItemDelegatePrivate::styleData_helper() const {
         return {
-            QVariant::fromValue(m_backgroundType), QVariant::fromValue(m_underline),
-            QVariant::fromValue(m_fileType),       QVariant::fromValue(m_locType),
-            QVariant::fromValue(m_dateType),       QVariant::fromValue(m_dateHighlightType),
+            QVariant::fromValue(m_backgroundType),  QVariant::fromValue(m_underline),
+            QVariant::fromValue(m_fileType),        QVariant::fromValue(m_locType),
+            QVariant::fromValue(m_dateType),        QVariant::fromValue(m_dateHighlightType),
             QVariant::fromValue(m_dateBackType),
 
-            QVariant::fromValue(m_fileMargins),    QVariant::fromValue(m_locMargins),
-            QVariant::fromValue(m_dateMargins),    QVariant::fromValue(m_iconMargins),
-            QVariant::fromValue(m_padding),        QVariant::fromValue(m_margins),
+            QVariant::fromValue(m_fileMargins),     QVariant::fromValue(m_locMargins),
+            QVariant::fromValue(m_dateMargins),     QVariant::fromValue(m_iconMargins),
+            QVariant::fromValue(m_padding),         QVariant::fromValue(m_margins),
+
+            QVariant::fromValue(m_defaultIconSize),
         };
     }
 
@@ -192,7 +194,7 @@ namespace QsApi {
             }
         };
 
-        if (list.size() >= 13) {
+        if (list.size() >= 14) {
             int i = 0;
 
             decodeStyle(list.at(i++), m_backgroundType);
@@ -209,6 +211,8 @@ namespace QsApi {
             decodeStyle(list.at(i++), m_iconMargins);
             decodeStyle(list.at(i++), m_padding);
             decodeStyle(list.at(i++), m_margins);
+
+            decodeStyle(list.at(i++), m_defaultIconSize);
         }
     }
 
@@ -226,10 +230,13 @@ namespace QsApi {
         auto location = index.data(QsApi::SubtitleRole).toString();
         auto date = index.data(QsApi::DescriptionRole).toString();
 
+        auto iconSize = index.data(QsApi::IconSizeRole).toSize();
+        if (iconSize.isEmpty()) {
+            iconSize = d->m_defaultIconSize;
+        }
+
         QSize size = QStyledItemDelegate::sizeHint(option, index);
-        int iconHeight = icon.isNull() ? 0
-                                       : (index.data(QsApi::IconSizeRole).toSize().height() + d->m_iconMargins.top() +
-                                          d->m_iconMargins.bottom());
+        int iconHeight = icon.isNull() ? 0 : (iconSize.height() + d->m_iconMargins.top() + d->m_iconMargins.bottom());
         int midHeight =
             QFontMetrics(d->m_fileType.font()).height() + d->m_fileMargins.top() + d->m_fileMargins.bottom() +
             (location.isEmpty()
@@ -306,6 +313,9 @@ namespace QsApi {
 
         auto icon = index.data(QsApi::DecorationRole).value<QIcon>();
         QSize iconSize = index.data(QsApi::IconSizeRole).toSize();
+        if (iconSize.isEmpty()) {
+            iconSize = d->m_defaultIconSize;
+        }
         if (icon.isNull()) {
             iconSize = QSize(0, 0);
         }
@@ -336,7 +346,7 @@ namespace QsApi {
         int dateFontHeight = dateSize.height();
         int dateWidth = dateSize.width();
 
-        int iconHeight = index.data(QsApi::IconSizeRole).toSize().height() + iconMargins.top() + iconMargins.bottom();
+        int iconHeight = iconSize.height() + iconMargins.top() + iconMargins.bottom();
         int midHeight = fileFontHeight + d->m_fileMargins.top() + d->m_fileMargins.bottom() + locFontHeight +
                         locMargins.top() + locMargins.bottom();
         int dateHeight = dateFontHeight + d->m_dateMargins.top() + d->m_dateMargins.bottom();

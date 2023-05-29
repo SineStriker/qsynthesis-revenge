@@ -220,7 +220,7 @@
     </message>
     <message>
         <source>Import MIDI file</source>
-        <translation>导入MIDI文件</translation>
+        <translation>导入 MIDI 文件</translation>
     </message>
     <message>
         <source>This file doesn&apos;t contain any notes.</source>
@@ -228,7 +228,7 @@
     </message>
     <message>
         <source>Midi file</source>
-        <translation>Midi文件</translation>
+        <translation>Midi 文件</translation>
     </message>
     <message>
         <source>A communications protocol for media interfaces.</source>
@@ -257,26 +257,26 @@
     <name>IEMgr::Internal::OpenSvipWizard</name>
     <message>
         <source>OpenSVIP model</source>
-        <translation>OpenSVIP模型</translation>
+        <translation>OpenSVIP 模型</translation>
     </message>
     <message>
         <source>OpenSVIP converter intermediate model.</source>
-        <translation>OpenSVPI转换器中间模型。</translation>
+        <translation>OpenSVIP 转换器中间模型。</translation>
     </message>
     <message>
         <source>OpenSVIP Json Files</source>
-        <translation>OpenSVIP Json文件</translation>
+        <translation>OpenSVIP Json 文件</translation>
     </message>
 </context>
 <context>
     <name>IEMgr::Internal::SvipWizard</name>
     <message>
         <source>SVIP file</source>
-        <translation>SVIP文件</translation>
+        <translation>SVIP 文件</translation>
     </message>
     <message>
         <source>XStudio 2.0 project file.</source>
-        <translation>XStudio 2.0工程文件。</translation>
+        <translation>XStudio 2.0 工程文件。</translation>
     </message>
     <message>
         <source>XiaoIce</source>
@@ -284,7 +284,7 @@
     </message>
     <message>
         <source>XStudio Svip Files</source>
-        <translation>XStudio Svip文件</translation>
+        <translation>XStudio Svip 文件</translation>
     </message>
 </context>
 <context>
@@ -295,19 +295,19 @@
     </message>
     <message>
         <source>Utau Sequence Texts</source>
-        <translation>UTAU工程格式文件</translation>
+        <translation>UTAU 工程格式文件</translation>
     </message>
     <message>
         <source>UST file</source>
-        <translation>UST文件</translation>
+        <translation>UST 文件</translation>
     </message>
     <message>
         <source>Utau sequence text file.</source>
-        <translation>UTAU工程格式文件。</translation>
+        <translation>UTAU 工程格式文件。</translation>
     </message>
     <message>
         <source>Fail to open MIDI file!</source>
-        <translation>无法打开MIDI文件！</translation>
+        <translation>无法打开 MIDI 文件！</translation>
     </message>
     <message>
         <source>%1(%2): (%3 notes, %4)</source>
@@ -319,7 +319,7 @@
     </message>
     <message>
         <source>Import MIDI file</source>
-        <translation>导入MIDI文件</translation>
+        <translation>导入 MIDI 文件</translation>
     </message>
     <message>
         <source>This file doesn&apos;t contain any notes.</source>

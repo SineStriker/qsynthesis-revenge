@@ -119,6 +119,18 @@
         <source>Select locale and language</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Files</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Directories</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Select file or directory</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>Core::IHomeWindowPrivate</name>
@@ -244,6 +256,14 @@
     </message>
     <message>
         <source>&amp;Preferences</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Show Recent Files</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>More...</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

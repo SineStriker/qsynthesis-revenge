@@ -47,6 +47,9 @@ namespace Core {
             ActionItem *showHomeItem;
             ActionItem *findActionItem;
 
+            // Invisible
+            ActionItem *showRecentFileItem;
+
         protected slots:
             void reloadRecentMenu();
 

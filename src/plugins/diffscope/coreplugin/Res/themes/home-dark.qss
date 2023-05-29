@@ -156,7 +156,6 @@ Core--Internal--HomeRecentTopFrame>QLineEdit#search-box:focus {
 Core--Internal--HomeRecentBottomFrame {
     padding: 20px;
     background-color: transparent;
-    qproperty-iconSize: 40px 40px;
 }
 
 Core--Internal--HomeRecentBottomFrame>QLabel {
@@ -180,6 +179,7 @@ Core--Internal--HomeRecentBottomFrame>QsApi--FileListWidget {
     qmargins(10px), /* iconMargins */
     qmargins(3.75px, 10px), /* padding */
     qmargins(3px, 5px, 3px, 5px), /* margins */
+    40px 40px, /* defaultIconSize */
     );
 }
 

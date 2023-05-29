@@ -21,6 +21,7 @@ namespace QsApi {
         ObjectPointerRole,
         AlignmentRole,
         InternalDataRole,
+        InternalTypeRole,
         KeywordRole,
 
         UserRole = Qt::UserRole + 4000,

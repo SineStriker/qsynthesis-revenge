@@ -29,6 +29,10 @@
         </menu>
     </context>
 
+    <context id="home.Invisible" prefix="core.">
+        <action id="ShowRecentFiles" command="File: Show Recent Files"/>
+    </context>
+
     <context id="project.MainMenu" prefix="core.">
         <menu id="File">
             <group id="OpenGroup">
@@ -78,6 +82,10 @@
                 <action id="AboutQt"/>
             </group>
         </menu>
+    </context>
+
+    <context id="project.Invisible" prefix="core.">
+        <action id="ShowRecentFiles"/>
     </context>
 
     <context id="project.MainToolbar" prefix="core.">
