@@ -1013,9 +1013,9 @@ function(ck_target_components _target)
         target_include_directories(${_target}
             PUBLIC
             "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>"
-            "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>/.."
+            "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/..>"
             "$<INSTALL_INTERFACE:${CK_INSTALL_INCLUDE_DIR}/${_rel_path}>"
-            "$<INSTALL_INTERFACE:${CK_INSTALL_INCLUDE_DIR}/${_rel_path}>/.."
+            "$<INSTALL_INTERFACE:${CK_INSTALL_INCLUDE_DIR}/${_rel_path}/..>"
         )
     endif()
 
