@@ -24,7 +24,9 @@ namespace IEMgr {
         private:
             bool load(const QString &filename, QDspxModel *out, QWidget *parent = nullptr);
             bool save(const QString &filename, const QDspxModel &in, QWidget *parent = nullptr);
-            bool loadProjectFile(const QString &filename, QJsonObject *out);
+            static double toLinearVolume(const double &gain);
+            static double toDecibelGain(const double &volume);
+            static double log10(const double &x);
         };
 
     }
