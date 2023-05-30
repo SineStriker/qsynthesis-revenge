@@ -118,8 +118,8 @@ QSvipModel QSvipModel::fromJsonObject(const QJsonObject &obj, bool *ok) {
     auto decodeParam = [](const QJsonObject &obj) -> ParamCurve {
         auto arrPoints = obj.value("PointList").toArray();
         ParamCurve curve;
-        for (int i = 0; i < arrPoints.count(); i++) {
-            auto objPoint = arrPoints.at(i).toArray();
+        for (const auto &item : arrPoints) {
+            auto objPoint = item.toArray();
             QPair<int, int> point = {
                 objPoint.at(0).toInt(),
                 objPoint.at(1).toInt()
@@ -137,9 +137,9 @@ QSvipModel QSvipModel::fromJsonObject(const QJsonObject &obj, bool *ok) {
 
     // TempoList
     auto arrTempos = obj.value("SongTempoList").toArray();
-    for (int i = 0; i < arrTempos.count(); i++) {
-        auto objTempo = arrTempos.at(i).toObject();
-        QSvipModel::SongTempo tempo;
+    for (const auto &item : arrTempos) {
+        auto objTempo = item.toObject();
+        SongTempo tempo;
         tempo.Position = objTempo.value("Position").toInt();
         tempo.BPM = objTempo.value("BPM").toDouble();
         model.SongTempoList.append(tempo);
@@ -148,9 +148,9 @@ QSvipModel QSvipModel::fromJsonObject(const QJsonObject &obj, bool *ok) {
 
     // TimeSignatureList
     auto arrTimeSignatures = obj.value("TimeSignatureList").toArray();
-    for (int i = 0; i < arrTimeSignatures.count(); i++) {
-        auto objTimeSig = arrTimeSignatures.at(i).toObject();
-        QSvipModel::TimeSignature timeSig;
+    for (const auto &item : arrTimeSignatures) {
+        auto objTimeSig = item.toObject();
+        TimeSignature timeSig;
         timeSig.BarIndex = objTimeSig.value("BarIndex").toInt();
         timeSig.Numerator = objTimeSig.value("Numerator").toInt();
         timeSig.Denominator = objTimeSig.value("Denominator").toInt();
@@ -161,12 +161,12 @@ QSvipModel QSvipModel::fromJsonObject(const QJsonObject &obj, bool *ok) {
 
     // TrackList
     auto arrTracks = obj.value("TrackList").toArray();
-    for (int i = 0; i < arrTracks.count(); i++) {
-        auto objTrack = arrTracks.at(i).toObject();
+    for (const auto &arrTracksItem : arrTracks) {
+        auto objTrack = arrTracksItem.toObject();
         auto type = objTrack.value("Type").toString();
         if (type == "Singing") {
-            auto* singingTrackPtr = new QSvipModel::SingingTrack;
-            QSharedPointer<QSvipModel::SingingTrack> singingTrack(singingTrackPtr);
+            auto* singingTrackPtr = new SingingTrack;
+            QSharedPointer<SingingTrack> singingTrack(singingTrackPtr);
             singingTrack->Title = objTrack.value("Title").toString();
             singingTrack->Mute = objTrack.value("Mute").toBool();
             singingTrack->Solo = objTrack.value("Solo").toBool();
@@ -177,9 +177,9 @@ QSvipModel QSvipModel::fromJsonObject(const QJsonObject &obj, bool *ok) {
             singingTrack->ReverbPreset = objTrack.value("ReverbPreset").toString();
 
             auto arrNotes = objTrack.value("NoteList").toArray();
-            for (int i = 0; i < arrNotes.count(); i++) {
-                auto objNote = arrNotes.at(i).toObject();
-                QSvipModel::Note note;
+            for (const auto &arrNotesItem : arrNotes) {
+                auto objNote = arrNotesItem.toObject();
+                Note note;
                 note.StartPos = objNote.value("StartPos").toInt();
                 note.Length = objNote.value("Length").toInt();
                 note.KeyNumber = objNote.value("KeyNumber").toInt();
@@ -188,8 +188,8 @@ QSvipModel QSvipModel::fromJsonObject(const QJsonObject &obj, bool *ok) {
                 note.Pronunciation = objNote.value("Pronunciation").toString();
 
                 auto objPhones = objNote.value("EditedPhones").toObject();
-                auto* phonesPtr = new QSvipModel::Phones;
-                QSharedPointer<QSvipModel::Phones> phones(phonesPtr);
+                auto* phonesPtr = new Phones;
+                QSharedPointer<Phones> phones(phonesPtr);
                 phones->HeadLengthInSecs = objPhones.value("HeadLengthInSecs").toDouble();
                 phones->MidRatioOverTail = objPhones.value("MidRatioOverTail").toDouble();
                 note.EditedPhones = phones;
@@ -198,7 +198,7 @@ QSvipModel QSvipModel::fromJsonObject(const QJsonObject &obj, bool *ok) {
             }
 
             auto objParams = objTrack.value("Params").toObject();
-            QSvipModel::Params params;
+            Params params;
             params.Pitch = decodeParam(objParams.value("Pitch").toObject());
             params.Volume = decodeParam(objParams.value("Volume").toObject());
             params.Breath = decodeParam(objParams.value("Breath").toObject());
@@ -207,8 +207,8 @@ QSvipModel QSvipModel::fromJsonObject(const QJsonObject &obj, bool *ok) {
             singingTrack->EditedParams = params;
             model.TrackList.append(singingTrack);
         } else if (type == "Instrumental") {
-            auto* instTrackPtr = new QSvipModel::InstrumentalTrack;
-            QSharedPointer<QSvipModel::InstrumentalTrack> instTrack(instTrackPtr);
+            auto* instTrackPtr = new InstrumentalTrack;
+            QSharedPointer<InstrumentalTrack> instTrack(instTrackPtr);
             instTrack->Title = objTrack.value("Title").toString();
             instTrack->Mute = objTrack.value("Mute").toBool();
             instTrack->Solo = objTrack.value("Solo").toBool();
