@@ -7,7 +7,10 @@ namespace QM {
 
     enum Direction { Forward, Backward };
 
-    enum Priority { Primary, Secondary };
+    enum Priority {
+        Primary = 16,
+        Secondary = 32,
+    };
 
 }
 

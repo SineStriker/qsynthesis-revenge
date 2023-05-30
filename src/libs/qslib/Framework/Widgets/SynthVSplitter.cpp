@@ -251,13 +251,13 @@ namespace QsApi {
     SynthVSplitter::~SynthVSplitter() {
     }
 
-    void SynthVSplitter::addWidget(QWidget *w) {
-        insertWidget(count(), w);
+    void SynthVSplitter::addWidget(QWidget *w, QWidget *titleBar) {
+        insertWidget(count(), w, titleBar);
     }
 
     static SynthVLayoutItem *m_tmpItem = nullptr;
 
-    void SynthVSplitter::insertWidget(int index, QWidget *w) {
+    void SynthVSplitter::insertWidget(int index, QWidget *w, QWidget *titleBar) {
         Q_D(SynthVSplitter);
 
         auto org = QLayoutPrivate::widgetItemFactoryMethod;
@@ -273,10 +273,12 @@ namespace QsApi {
 
         QLayoutPrivate::widgetItemFactoryMethod = org;
 
-        auto handle = createHandle(w);
+        auto handle = createHandle(w, titleBar);
         d->layout->insertWidget(index * 2 + 1, handle);
 
         m_tmpItem = nullptr;
+
+        emit widgetInserted(w);
     }
 
     void SynthVSplitter::removeWidget(QWidget *w) {
@@ -287,10 +289,14 @@ namespace QsApi {
 
         auto handleItem = d->layout->takeAt(index + 1);
         auto handle = handleItem->widget();
+        handleDestroyed(qobject_cast<SynthVSplitterHandle *>(handle));
+        emit aboutToRemoveWidget(w);
+
         delete handleItem;
         delete handle;
 
         delete d->layout->takeAt(index);
+        w->setParent(nullptr);
     }
 
     void SynthVSplitter::moveWidget(int from, int to) {
@@ -418,9 +424,28 @@ namespace QsApi {
         d->vbar->raise();
     }
 
-    SynthVSplitterHandle *SynthVSplitter::createHandle(QWidget *w) {
+    SynthVSplitterHandle *SynthVSplitter::createHandle(QWidget *w, QWidget *titleBar) {
         Q_UNUSED(w);
-        return new SynthVSplitterHandle(this);
+
+        auto handle = new SynthVSplitterHandle(this);
+        if (titleBar) {
+            auto layout = new QHBoxLayout();
+            layout->setMargin(0);
+            layout->setSpacing(0);
+            layout->addWidget(titleBar);
+            handle->setLayout(layout);
+            handle->setProperty("has-titleBar", true);
+        }
+
+        return handle;
+    }
+
+    void SynthVSplitter::handleDestroyed(SynthVSplitterHandle *handle) {
+        auto titleBar = handle->property("has-titleBar").toBool() ? handle->layout()->itemAt(0)->widget() : nullptr;
+        if (titleBar) {
+            handle->layout()->removeWidget(titleBar);
+            titleBar->setParent(nullptr);
+        }
     }
 
     void SynthVSplitter::resizeEvent(QResizeEvent *event) {

@@ -437,12 +437,7 @@ namespace Core {
         }
     }
 
-    template <class Menu>
-    static void buildMenu(const QList<ActionItem *> &items, Menu *menuBar, const QMap<QString, QStringList> &state) {
-        if (!menuBar)
-            return;
-        menuBar->clear();
-
+    static QHash<QString, ActionItem *> getActionMap(const QList<ActionItem *> &items, QWidget *buildingWidget) {
         QHash<QString, ActionItem *> itemMap;
         QSet<QKeySequence> keySet;
 
@@ -473,10 +468,21 @@ namespace Core {
             item->action()->setShortcuts(keys);
 
             if (!duplicatedKeys.isEmpty()) {
-                qDebug() << "Core::ActionContext::buildMenu(): building" << menuBar
+                qDebug() << "Core::ActionContext::buildMenu(): building" << buildingWidget
                          << " but duplicated shortcut detected" << item->id() << duplicatedKeys.values();
             }
         }
+
+        return itemMap;
+    }
+
+    template <class Menu>
+    static void buildMenu(const QList<ActionItem *> &items, Menu *menuBar, const QMap<QString, QStringList> &state) {
+        if (!menuBar)
+            return;
+        menuBar->clear();
+
+        QHash<QString, ActionItem *> itemMap = getActionMap(items, menuBar);
 
         // Fill action group first
         for (auto it = state.begin(); it != state.end(); ++it) {

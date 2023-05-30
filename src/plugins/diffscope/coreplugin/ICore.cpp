@@ -170,8 +170,8 @@ namespace Core {
     }
 
     ICore::ICore(QObject *parent) : ICore(*new ICorePrivate(), parent) {
-        auto style = QStyleFactory::create("fusion");
-        QApplication::setStyle(style);
+        // auto style = QStyleFactory::create("fusion");
+        // QApplication::setStyle(style);
     }
 
     ICore::~ICore() {

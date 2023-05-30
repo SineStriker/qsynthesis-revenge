@@ -12,3 +12,5 @@ add_subdirectory(scriptmgr)
 add_subdirectory(vst)
 
 add_subdirectory(templateplg)
+
+add_subdirectory(params)

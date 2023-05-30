@@ -482,6 +482,42 @@
         <source>Deselect</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>&amp;View</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Appearance</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Main Menu</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Main Toolbar</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Dock Panel Bars</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Status Bar</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Dock Panels</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Floating Panels</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Phonemes</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>Core::Internal::SettingsDialog</name>

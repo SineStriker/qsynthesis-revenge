@@ -23,8 +23,12 @@ namespace Core {
         void init();
 
         void reloadMenuBar();
+        void loadInvisibleContext();
 
         ActionContext *mainMenuCtx;
+        ActionContext *invisibleCtx;
+
+        QMenu *invisibleCtxMenu;
 
         QsApi::CommandPalette *cp;
 

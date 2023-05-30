@@ -14,25 +14,26 @@ public:
     }
 
 protected:
-    QsApi::SynthVSplitterHandle *createHandle(QWidget *w) override {
-        auto handle = QsApi::SynthVSplitter::createHandle(w);
-        auto titleBar =
-            new QPushButton("TitleBar " + QString(w->metaObject()->className()) + " " + w->property("text").toString());
-        titleBar->setObjectName("titleBar");
-        titleBar->setStyleSheet("text-align: left;");
-        titleBar->setCheckable(true);
-        titleBar->setChecked(true);
-
-        connect(titleBar, &QPushButton::toggled, w, &QWidget::setVisible);
-
-        auto layout = new QVBoxLayout();
-        layout->setMargin(0);
-        layout->setSpacing(0);
-        layout->addWidget(titleBar);
-        handle->setLayout(layout);
-
-        return handle;
-    }
+    //    QsApi::SynthVSplitterHandle *createHandle(QWidget *w) override {
+    //        auto handle = QsApi::SynthVSplitter::createHandle(w);
+    //        auto titleBar =
+    //            new QPushButton("TitleBar " + QString(w->metaObject()->className()) + " " +
+    //            w->property("text").toString());
+    //        titleBar->setObjectName("titleBar");
+    //        titleBar->setStyleSheet("text-align: left;");
+    //        titleBar->setCheckable(true);
+    //        titleBar->setChecked(true);
+    //
+    //        connect(titleBar, &QPushButton::toggled, w, &QWidget::setVisible);
+    //
+    //        auto layout = new QVBoxLayout();
+    //        layout->setMargin(0);
+    //        layout->setSpacing(0);
+    //        layout->addWidget(titleBar);
+    //        handle->setLayout(layout);
+    //
+    //        return handle;
+    //    }
 };
 
 int main(int argc, char *argv[]) {
@@ -44,6 +45,16 @@ int main(int argc, char *argv[]) {
 
     auto s = new MySplitter();
     w.setCentralWidget(s);
+
+    auto createTitleBar = [](QWidget *w) {
+        auto titleBar =
+            new QPushButton("TitleBar " + QString(w->metaObject()->className()) + " " + w->property("text").toString());
+        titleBar->setObjectName("titleBar");
+        titleBar->setStyleSheet("text-align: left;");
+        titleBar->setCheckable(true);
+        titleBar->setChecked(true);
+        return titleBar;
+    };
 
     auto label1 = new QLabel("1234");
     label1->setObjectName("panel");
@@ -57,9 +68,9 @@ int main(int argc, char *argv[]) {
     label3->setObjectName("panel");
     label3->setMinimumHeight(50);
 
-    s->addWidget(label1);
-    s->addWidget(label2);
-    s->addWidget(label3);
+    s->addWidget(label1, createTitleBar(label1));
+    s->addWidget(label2, createTitleBar(label2));
+    s->addWidget(label3, createTitleBar(label3));
 
     auto area = new QScrollArea();
     area->setFrameStyle(QFrame::NoFrame);

@@ -2,17 +2,19 @@
 
 ## Intro
 
-QSynthesis is originally the name of the Qt-based UTAU editor, as a result of continuous iterations, its functionality has been abstracted into a library that can be used by multiple SVS frontend, so we called the library QSynthesis Library as well.
+<!-- QSynthesis is originally the name of the Qt-based UTAU editor, as a result of continuous iterations, its functionality has been abstracted into a library that can be used by multiple SVS frontend, so we called the library QSynthesis Library as well.
 
-All applications in this toolset are free softwares and aim to provide the community with user-friendly experience.
+All applications in this toolset are free softwares and aim to provide the community with user-friendly experience. -->
 
-## Toolset
+ChorusKit is a Singing Voice Synthesis toolset that aims to provide the community with user-friendly experience.
+
+## Applications
 
 + LabelVoice (Suspended)
     + Annnotation tool for vocal synthesis database.
 
 + DiffScope (Developing)
-    + DiffSinger graphical editing tool maintained by OpenVPI.
+    + DiffSinger graphical editing tool.
 
 <!-- + QSynthesis
     + Remade edition of UTAU in second iteration.

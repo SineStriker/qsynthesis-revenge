@@ -3,6 +3,7 @@
 
 #include <QAbstractScrollArea>
 #include <QFrame>
+#include <QLayout>
 #include <QSplitter>
 
 #include <QPixelSize.h>
@@ -17,13 +18,14 @@ namespace QsApi {
 
     class QSFRAMEWORK_API SynthVSplitter : public QFrame {
         Q_OBJECT
+        Q_LAYOUT_PROPERTY_DELCARE
         Q_DECLARE_PRIVATE(SynthVSplitter)
     public:
         explicit SynthVSplitter(QWidget *parent = nullptr);
         ~SynthVSplitter();
 
-        void addWidget(QWidget *w);
-        void insertWidget(int index, QWidget *w);
+        void addWidget(QWidget *w, QWidget *titleBar = nullptr);
+        void insertWidget(int index, QWidget *w, QWidget *titleBar = nullptr);
         void removeWidget(QWidget *w);
         void moveWidget(int from, int to);
 
@@ -39,8 +41,13 @@ namespace QsApi {
         QAbstractScrollArea *takeScrollArea();
         void setScrollArea(QAbstractScrollArea *area);
 
+    signals:
+        void widgetInserted(QWidget *w);
+        void aboutToRemoveWidget(QWidget *w);
+
     protected:
-        virtual SynthVSplitterHandle *createHandle(QWidget *w);
+        virtual SynthVSplitterHandle *createHandle(QWidget *w, QWidget *titleBar);
+        virtual void handleDestroyed(SynthVSplitterHandle *handle);
 
         void resizeEvent(QResizeEvent *event) override;
 
@@ -57,6 +64,7 @@ namespace QsApi {
 
     class SynthVSplitterHandle : public QFrame {
         Q_OBJECT
+        Q_LAYOUT_PROPERTY_DELCARE
         Q_PROPERTY(QPixelSize handleHeight READ handleHeight WRITE setHandleHeight)
     public:
         explicit SynthVSplitterHandle(SynthVSplitter *parent);

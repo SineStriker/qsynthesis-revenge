@@ -673,6 +673,46 @@
         <source>Deselect</source>
         <translation>取消选择</translation>
     </message>
+    <message>
+        <source>&amp;View</source>
+        <translation>视图(&amp;V)</translation>
+    </message>
+    <message>
+        <source>Appearance</source>
+        <translation>外观</translation>
+    </message>
+    <message>
+        <source>Main Menu</source>
+        <translation>主菜单</translation>
+    </message>
+    <message>
+        <source>Main Toolbar</source>
+        <translation>主工具栏</translation>
+    </message>
+    <message>
+        <source>Dock Panel Bars</source>
+        <translation>Dock 面板栏</translation>
+    </message>
+    <message>
+        <source>Status Bar</source>
+        <translation>状态栏</translation>
+    </message>
+    <message>
+        <source>Dock Panels</source>
+        <translation>Dock 面板</translation>
+    </message>
+    <message>
+        <source>Floating Panels</source>
+        <translation>浮动面板</translation>
+    </message>
+    <message>
+        <source>Phoneme Panel</source>
+        <translation type="vanished">音素面板</translation>
+    </message>
+    <message>
+        <source>Phonemes</source>
+        <translation>音素</translation>
+    </message>
 </context>
 <context>
     <name>Core::Internal::SettingsDialog</name>

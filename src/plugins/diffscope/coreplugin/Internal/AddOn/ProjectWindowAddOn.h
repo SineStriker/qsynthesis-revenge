@@ -1,9 +1,12 @@
 #ifndef PROJECTWINDOWADDON_H
 #define PROJECTWINDOWADDON_H
 
+#include <QAbstractButton>
+
 #include "CoreApi/ActionItem.h"
 
 #include "CoreWindowAddOn.h"
+#include "Internal/Widgets/PhonemePanel.h"
 
 namespace Core {
 
@@ -30,7 +33,9 @@ namespace Core {
 
         protected:
             ActionItem *editItem;
+            ActionItem *viewItem;
 
+            // File
             ActionItem *saveGroupItem;
             ActionItem *saveFileItem;
             ActionItem *saveAsFileItem;
@@ -38,6 +43,7 @@ namespace Core {
             ActionItem *exitGroupItem;
             ActionItem *closeFileItem;
 
+            // Edit
             ActionItem *undoGroupItem;
             ActionItem *undoItem;
             ActionItem *redoItem;
@@ -52,6 +58,19 @@ namespace Core {
             ActionItem *selectAllItem;
             ActionItem *deselectItem;
 
+            // View
+            ActionItem *appearanceMenuItem;
+            ActionItem *menuBarVisibleItem;
+            ActionItem *mainToolbarVisibleItem;
+            ActionItem *dockVisibleItem;
+            ActionItem *statusBarVisibleItem;
+
+            ActionItem *dockPanelsVisibilityMenuItem;
+
+            ActionItem *floatingPanelsVisibilityMenuItem;
+            ActionItem *phonemePanelVisibleItem;
+
+            // Main Toolbar
             ActionItem *timerGroupItem;
             ActionItem *timerLabelItem;
 
@@ -70,6 +89,10 @@ namespace Core {
 
             ActionItem *mainToolbarStretchItem;
             ActionItem *mainToolbarHelpGroupItem;
+
+            // Panels
+            PhonemePanel *phonemePanel;
+            QAbstractButton *phonemeButton;
         };
 
     }

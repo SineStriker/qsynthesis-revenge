@@ -8,11 +8,7 @@
             <content>
                 <menu id="Import">
                     <action id="ImportProject" command="Import: Import Project"/>
-                    <action id="ImportAudio" command="Import: Export Audio"/>
-                </menu>
-                <menu id="Export">
-                    <action id="ExportProject" command="Export: Export Project"/>
-                    <action id="ExportAudio" command="Export: Export Audio"/>
+                    <action id="ImportAudio" command="Import: Import Audio"/>
                 </menu>
             </content>
         </group>
@@ -29,8 +25,8 @@
                     <action id="ImportAudio"/>
                 </menu>
                 <menu id="Export">
-                    <action id="ExportProject"/>
-                    <action id="ExportAudio"/>
+                    <action id="ExportProject" command="Export: Export Project"/>
+                    <action id="ExportAudio" command="Export: Export Audio"/>
                 </menu>
             </content>
         </group>

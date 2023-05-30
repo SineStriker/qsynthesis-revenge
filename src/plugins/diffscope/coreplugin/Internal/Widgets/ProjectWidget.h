@@ -25,6 +25,10 @@ namespace Core::Internal {
             return m_frame;
         }
 
+        QsApi::SynthVSplitter *piano() const {
+            return m_piano;
+        }
+
     private:
         QVBoxLayout *m_layout;
 

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<actionSystem>
+    <context id="project.MainMenu" prefix="params." mode="find">
+
+        <action id="ParamsPanelVisible" command="View: Parameters">
+            <rules>
+                <rule id="core.FloatingPanelsVisibility"/>
+            </rules>
+        </action>
+
+    </context>
+</actionSystem>

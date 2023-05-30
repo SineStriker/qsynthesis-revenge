@@ -85,6 +85,17 @@ namespace Core {
         mainMenuCtx->buildMenuBarWithState(items, bar);
     }
 
+    void ICoreWindowPrivate::loadInvisibleContext() {
+        Q_Q(ICoreWindow);
+
+        auto win = q->window();
+        invisibleCtxMenu = ICore::createCoreMenu(win);
+        invisibleCtx->buildMenuWithState(q->actionItems(), invisibleCtxMenu);
+
+        q->addShortcutContext(invisibleCtxMenu);
+        win->addAction(invisibleCtxMenu->menuAction());
+    }
+
     static QString keySequenceToRichText(const QKeySequence &seq) {
         if (!seq.isEmpty()) {
             auto seqs = seq.toString(QKeySequence::PortableText).split(", ");
@@ -659,6 +670,7 @@ namespace Core {
         addShortcutContext(menuBar());
 
         d->mainMenuCtx = ICore::instance()->actionSystem()->context(QString("%1.MainMenu").arg(id()));
+        d->invisibleCtx = ICore::instance()->actionSystem()->context(QString("%1.InvisibleContext").arg(id()));
 
         // Init command palette
         d->cp = new QsApi::CommandPalette(win);
@@ -670,6 +682,8 @@ namespace Core {
         Q_D(ICoreWindow);
         connect(d->mainMenuCtx, &ActionContext::stateChanged, d, &ICoreWindowPrivate::reloadMenuBar);
         d->reloadMenuBar();
+
+        d->loadInvisibleContext();
 
         // Shortcut will cause immediate close of command palette
         connect(this, &IWindow::shortcutAboutToCome, d->cp, &QsApi::CommandPalette::abandon);

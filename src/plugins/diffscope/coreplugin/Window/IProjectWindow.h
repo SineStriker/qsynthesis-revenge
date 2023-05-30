@@ -3,6 +3,8 @@
 
 #include <CDockFrame.h>
 
+#include <QAbstractButton>
+
 #include "Document/DspxDocument.h"
 #include "ICoreWindow.h"
 
@@ -26,6 +28,10 @@ namespace Core {
         QToolBar *mainToolbar() const;
 
         CDockFrame *mainDock() const;
+
+        QAbstractButton *addFloatingPanel(const QString &id, QWidget *panel, QWidget *titleBar);
+
+        QAbstractButton *addToolWindowPanel(const QString &id, int preferredEdge, QWidget *panel);
 
     protected:
         explicit IProjectWindow(QObject *parent = nullptr);

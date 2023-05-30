@@ -6,6 +6,7 @@
 #include <QLabel>
 #include <QMenuBar>
 #include <QPushButton>
+#include <QStatusBar>
 
 #include <QMDecoratorV2.h>
 #include <QMSystem.h>
@@ -35,9 +36,15 @@ namespace Core {
         }
 
         void ProjectWindowAddOn::initialize() {
+            auto iWin = windowHandle()->cast<IProjectWindow>();
+
             CoreWindowAddOn::initialize();
 
             initActions();
+
+            // Add phoneme panel
+            phonemePanel = new Internal::PhonemePanel();
+            phonemeButton = iWin->addFloatingPanel("edit.phonemePanel", phonemePanel, nullptr);
 
             qIDec->installLocale(this, _LOC(ProjectWindowAddOn, this));
         }
@@ -48,6 +55,7 @@ namespace Core {
 
         void ProjectWindowAddOn::reloadStrings() {
             editItem->setText(tr("&Edit"));
+            viewItem->setText(tr("&View"));
 
             saveGroupItem->setText(tr("Save Actions"));
             saveFileItem->setText(tr("&Save"));
@@ -70,6 +78,17 @@ namespace Core {
             selectAllItem->setText(tr("Select &All"));
             deselectItem->setText(tr("Deselect"));
 
+            appearanceMenuItem->setText(tr("Appearance"));
+            menuBarVisibleItem->setText(tr("Main Menu"));
+            mainToolbarVisibleItem->setText(tr("Main Toolbar"));
+            dockVisibleItem->setText(tr("Dock Panel Bars"));
+            statusBarVisibleItem->setText(tr("Status Bar"));
+
+            dockPanelsVisibilityMenuItem->setText(tr("Dock Panels"));
+
+            floatingPanelsVisibilityMenuItem->setText(tr("Floating Panels"));
+            phonemePanelVisibleItem->setText(tr("Phonemes"));
+
             playItem->setText(tr("Play"));
             playItem->setCommandCheckedDescription(qMakePair(tr("Play"), tr("Pause")));
 
@@ -79,6 +98,8 @@ namespace Core {
 
             metronomeItem->setText(tr("Metronome"));
             loopPlayItem->setText(tr("Loop Play"));
+
+            phonemeButton->setText(tr("Phonemes"));
         }
 
         static QAction *createToolBarAction(QObject *parent, const QString &name, bool selectable = false) {
@@ -97,11 +118,18 @@ namespace Core {
             return w;
         }
 
+        static void connectVisibilityControlAction(QAction *action, QWidget *w, bool initState = true) {
+            action->setCheckable(true);
+            QObject::connect(action, &QAction::toggled, w, &QWidget::setVisible);
+            action->setChecked(initState);
+        }
+
         void ProjectWindowAddOn::initActions() {
             auto iWin = windowHandle()->cast<IProjectWindow>();
             auto win = iWin->window();
 
             editItem = new ActionItem("core.Edit", ICore::createCoreMenu(win), this);
+            viewItem = new ActionItem("core.View", ICore::createCoreMenu(win), this);
 
             // File
             saveGroupItem = new ActionItem("core.SaveGroup", new QActionGroup(this), this);
@@ -125,6 +153,20 @@ namespace Core {
             selectGroupItem = new ActionItem("core.SelectGroup", new QActionGroup(this), this);
             selectAllItem = new ActionItem("core.SelectAll", new QAction(this), this);
             deselectItem = new ActionItem("core.Deselect", new QAction(this), this);
+
+            // View
+            appearanceMenuItem = new ActionItem("core.Appearance", ICore::createCoreMenu(win), this);
+            menuBarVisibleItem = new ActionItem("core.MenuBarVisible", new QAction(this), this);
+            mainToolbarVisibleItem = new ActionItem("core.MainToolbarVisible", new QAction(this), this);
+            dockVisibleItem = new ActionItem("core.DockVisible", new QAction(this), this);
+            statusBarVisibleItem = new ActionItem("core.StatusBarVisible", new QAction(this), this);
+
+            dockPanelsVisibilityMenuItem =
+                new ActionItem("core.DockPanelsVisibility", ICore::createCoreMenu(win), this);
+
+            floatingPanelsVisibilityMenuItem =
+                new ActionItem("core.FloatingPanelsVisibility", ICore::createCoreMenu(win), this);
+            phonemePanelVisibleItem = new ActionItem("core.PhonemePanelVisible", new QAction(this), this);
 
             // Toolbar
             timerGroupItem = new ActionItem("core.TimerGroup", new QActionGroup(this), this);
@@ -153,12 +195,24 @@ namespace Core {
             undoItem->setProperty("no-command-palette", true);
             redoItem->setProperty("no-command-palette", true);
 
+            connectVisibilityControlAction(menuBarVisibleItem->action(), iWin->menuBar());
+            connectVisibilityControlAction(mainToolbarVisibleItem->action(), iWin->mainToolbar());
+            connectVisibilityControlAction(dockVisibleItem->action(), iWin->mainDock());
+            connectVisibilityControlAction(statusBarVisibleItem->action(), iWin->statusBar());
+
+            phonemePanelVisibleItem->action()->setCheckable(true);
+            iWin->addCheckable("edit.phonemePanel", phonemePanelVisibleItem->action());
+
             playControlGroupItem->actionGroup()->setExclusionPolicy(QActionGroup::ExclusionPolicy::None);
             playItem->action()->setCheckable(true);
 
             playAssistGroupItem->actionGroup()->setExclusionPolicy(QActionGroup::ExclusionPolicy::None);
             metronomeItem->action()->setCheckable(true);
             loopPlayItem->action()->setCheckable(true);
+
+            iWin->addCheckable("playback.playing", playItem->action());
+            iWin->addCheckable("playback.metronome", metronomeItem->action());
+            iWin->addCheckable("playback.loopPlay", loopPlayItem->action());
 
             connect(iWin->doc(), &IDocument::changed, this, [this, iWin]() {
                 saveFileItem->setEnabled(iWin->doc()->isModified()); //
@@ -196,12 +250,9 @@ namespace Core {
                 iWin->requestGlobalEvent("playback.moveToEnd"); //
             });
 
-            iWin->addCheckable("playback.playing", playItem->action());
-            iWin->addCheckable("playback.metronome", metronomeItem->action());
-            iWin->addCheckable("playback.loopPlay", loopPlayItem->action());
-
             iWin->addActionItems({
                 editItem,
+                viewItem,
 
                 saveGroupItem,
                 saveFileItem,
@@ -223,6 +274,17 @@ namespace Core {
                 selectGroupItem,
                 selectAllItem,
                 deselectItem,
+
+                appearanceMenuItem,
+                menuBarVisibleItem,
+                mainToolbarVisibleItem,
+                dockVisibleItem,
+                statusBarVisibleItem,
+
+                dockPanelsVisibilityMenuItem,
+
+                floatingPanelsVisibilityMenuItem,
+                phonemePanelVisibleItem,
 
                 timerGroupItem,
                 timerLabelItem,

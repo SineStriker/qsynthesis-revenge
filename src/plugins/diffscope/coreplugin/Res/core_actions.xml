@@ -29,7 +29,7 @@
         </menu>
     </context>
 
-    <context id="home.Invisible" prefix="core.">
+    <context id="home.InvisibleContext" prefix="core.">
         <action id="ShowRecentFiles" command="File: Show Recent Files"/>
     </context>
 
@@ -71,6 +71,20 @@
             </group>
         </menu>
 
+        <menu id="View">
+            <menu id="Appearance">
+                <action id="MenuBarVisible" command="View: Main Menu"/>
+                <action id="MainToolbarVisible" command="View: Main Toolbar"/>
+                <action id="DockVisible" command="View: Dock Panel Bars"/>
+                <action id="StatusBarVisible" command="View: Status Bar"/>
+            </menu>
+            <menu id="DockPanelsVisibility">
+            </menu>
+            <menu id="FloatingPanelsVisibility">
+                <action id="PhonemePanelVisible" command="View: Phonemes"/>
+            </menu>
+        </menu>
+
         <menu id="Help">
             <group id="WelcomeGroup">
                 <action id="ShowHome"/>
@@ -84,7 +98,7 @@
         </menu>
     </context>
 
-    <context id="project.Invisible" prefix="core.">
+    <context id="project.InvisibleContext" prefix="core.">
         <action id="ShowRecentFiles"/>
     </context>
 

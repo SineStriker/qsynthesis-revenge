@@ -150,6 +150,8 @@ namespace Core::Internal {
         auto docMgr = ICore::instance()->documentSystem();
 
         fileWidget->clear();
+
+        int cnt = 0;
         for (const auto &fileName : docMgr->recentFiles()) {
             QFileInfo info(fileName);
             auto spec = docMgr->supportedDocType(info.completeSuffix());
@@ -161,6 +163,10 @@ namespace Core::Internal {
             item->setData(QsApi::DescriptionRole, info.lastModified().toString(dateFormat));
 
             fileWidget->addItem(item);
+
+            if (++cnt > 20) {
+                break;
+            }
         }
         // fileWidget->resize(fileWidget->width(), fileWidget->contentsSize().height());
         updateListFilter();

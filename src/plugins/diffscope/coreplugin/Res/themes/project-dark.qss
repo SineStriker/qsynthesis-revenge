@@ -73,3 +73,34 @@ QToolBar#main-toolbar>QToolButton[action-id="core.Settings"] {
 QToolBar#main-toolbar>QToolButton[selectable=true]:checked {
     background-color: rgba(35, 50, 51, 100%);
 }
+
+Core--Internal--FloatingTitleBar {
+    background-color: #363737;
+    qproperty-layoutMargins: qmargins(5px);
+    qproperty-layoutSpacing: 10px;
+}
+
+Core--Internal--FloatingTitleBarButton {
+    background-color: transparent;
+    border: none;
+    color: white;
+}
+
+Core--Internal--FloatingTitleBar>QToolButton {
+    background-color: transparent;
+    border: none;
+    qproperty-iconSize: 12px 12px;
+}
+
+Core--Internal--FloatingTitleBar>QToolButton#fold-button {
+    qproperty-iconUp: svg(":/svg/floating-titlebar/unfold.svg", "${project.floatingPanel.iconColor}");
+    qproperty-iconUpChecked: svg(":/svg/floating-titlebar/fold.svg", "${project.floatingPanel.iconColor}");
+}
+
+Core--Internal--FloatingTitleBar>QToolButton#close-button {
+    qproperty-iconUp: svg(":/svg/floating-titlebar/close.svg", "${project.floatingPanel.iconColor}");
+}
+
+QWidget[floating-panel=true] {
+    background-color: rgba(0, 0, 0, 40%);
+}

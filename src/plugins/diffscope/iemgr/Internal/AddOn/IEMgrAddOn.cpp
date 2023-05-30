@@ -96,6 +96,11 @@ namespace IEMgr::Internal {
             exportProjectItem,
             exportAudioItem,
         });
+
+        if (iWin->id() == "home") {
+            exportProjectItem->setEnabled(false);
+            exportAudioItem->setEnabled(false);
+        }
     }
 
     void IEMgrAddOn::initImportButton() {

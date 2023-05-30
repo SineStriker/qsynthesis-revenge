@@ -30,6 +30,8 @@ namespace Core {
 
         Internal::ProjectWidget *m_projectWidget;
 
+        QHash<QString, QObject *> floatingPanels;
+
     private:
         void _q_documentChanged();
         void _q_documentRaiseRequested();

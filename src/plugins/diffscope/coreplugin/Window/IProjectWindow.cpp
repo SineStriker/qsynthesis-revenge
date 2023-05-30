@@ -15,6 +15,8 @@
 
 #include "ICore.h"
 
+#include "Internal/Widgets/FloatingTitleBar.h"
+
 namespace Core {
 
     IProjectWindowPrivate::IProjectWindowPrivate() {
@@ -67,9 +69,60 @@ namespace Core {
         return d->m_projectWidget->mainToolbar();
     }
 
-    CDockFrame *IProjectWindow::mainDock() const {
+    CDockFrame *Core::IProjectWindow::mainDock() const {
         Q_D(const IProjectWindow);
         return d->m_projectWidget->mainDock();
+    }
+
+    QAbstractButton *IProjectWindow::addFloatingPanel(const QString &id, QWidget *panel, QWidget *titleBar) {
+        Q_D(IProjectWindow);
+
+        // Wrap
+        auto bar = new Internal::FloatingTitleBar();
+        bar->setTitleBar(titleBar);
+
+        auto obj = new QObject(d);
+        obj->setProperty("checked", globalAttribute(id).toBool());
+
+        connect(bar->foldButton(), &QAbstractButton::toggled, obj, [id, panel, this](bool checked) {
+            panel->setVisible(checked); //
+        });
+
+        connect(bar->closeButton(), &QAbstractButton::clicked, obj, [id, this]() {
+            setGlobalAttribute(id, false, true); //
+        });
+
+        connect(obj, &QObject::destroyed, obj, [panel, bar]() {
+            panel->deleteLater();
+            bar->deleteLater();
+        });
+
+        connect(this, &ObjectPool::globalAttributeChanged, obj,
+                [id, obj, panel, bar, d](const QString &_id, const QVariant &var, const QVariant &orgVar) {
+                    if (_id != id) {
+                        return;
+                    }
+
+                    bool checked = var.toBool();
+                    if (checked == obj->property("checked").toBool()) {
+                        return;
+                    }
+
+                    if (checked) {
+                        d->m_projectWidget->piano()->addWidget(panel, bar);
+                        bar->foldButton()->setChecked(true);
+                    } else {
+                        d->m_projectWidget->piano()->removeWidget(panel);
+                    }
+
+                    obj->setProperty("checked", checked);
+                });
+
+        return bar->titleButton();
+    }
+
+    QAbstractButton *IProjectWindow::addToolWindowPanel(const QString &id, int preferredEdge, QWidget *panel) {
+        return nullptr;
     }
 
     IProjectWindow::IProjectWindow(QObject *parent) : IProjectWindow(*new IProjectWindowPrivate(), parent) {

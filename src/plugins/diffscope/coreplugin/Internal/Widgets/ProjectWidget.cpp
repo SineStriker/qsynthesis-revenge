@@ -24,6 +24,11 @@ namespace Core::Internal {
         m_layout->addWidget(m_toolbar);
         m_layout->addWidget(m_frame, 1);
         setLayout(m_layout);
+
+        m_piano = new QsApi::SynthVSplitter();
+        m_piano->setObjectName("piano-roll");
+
+        m_frame->setWidget(m_piano);
     }
 
     ProjectWidget::~ProjectWidget() {
