@@ -305,7 +305,7 @@ namespace QsApi {
             return;
         }
 
-        to = qMin(count() - 1, to);
+        to = qMin(count(), to);
         if (to < 0) {
             return;
         }
@@ -314,17 +314,15 @@ namespace QsApi {
             to -= 1;
         }
 
-        auto w1 = d->layout->itemAt(from * 2)->widget();
-        auto w2 = d->layout->itemAt(from * 2 + 1)->widget();
-        d->layout->removeWidget(w1);
-        d->layout->removeWidget(w2);
-        d->layout->insertWidget(to * 2, w1);
-        d->layout->insertWidget(to * 2 + 1, w2);
+        auto w1 = d->layout->takeAt(from * 2);
+        auto w2 = d->layout->takeAt(from * 2);
+        d->layout->insertItem(to * 2, w1);
+        d->layout->insertItem(to * 2 + 1, w2);
     }
 
     QWidget *SynthVSplitter::widget(int index) const {
         Q_D(const SynthVSplitter);
-        return d->layout->itemAt(qMin(index * 2, d->layout->count() - 1))->widget();
+        return d->layout->itemAt(qMin(index * 2, d->layout->count() - 2))->widget();
     }
 
     int SynthVSplitter::indexOf(QWidget *w) const {
@@ -340,6 +338,36 @@ namespace QsApi {
     bool SynthVSplitter::isEmpty() const {
         Q_D(const SynthVSplitter);
         return d->layout->count() - 1 == 0;
+    }
+
+    SynthVSplitterHandle *SynthVSplitter::handle(int index) const {
+        Q_D(const SynthVSplitter);
+        return qobject_cast<SynthVSplitterHandle *>(
+            d->layout->itemAt(qMin(index * 2 + 1, d->layout->count() - 2))->widget());
+    }
+
+    int SynthVSplitter::indexOfHandle(SynthVSplitterHandle *handle) const {
+        Q_D(const SynthVSplitter);
+        return (d->layout->indexOf(handle) - 1) / 2;
+    }
+
+    int SynthVSplitter::indexAt(const QPoint &pos) const {
+        Q_D(const SynthVSplitter);
+
+        int i = 0;
+        int j = d->layout->count() - 2;
+        int mid;
+
+        while (i < j) {
+            mid = (i + j) / 2;
+            if (d->layout->itemAt(mid)->widget()->y() < pos.y()) {
+                j = mid - 1;
+            } else {
+                i = mid + 1;
+            }
+        }
+
+        return i / 2;
     }
 
     QSize SynthVSplitter::sizeHint() const {
@@ -531,7 +559,7 @@ namespace QsApi {
         if (delta < orgMinDelta)
             delta = orgMinDelta;
 
-        currentItem->delta = orgDelta + delta;
+        currentItem->delta = qMax(0, orgDelta + delta);
 
         layout->invalidate();
     }
@@ -551,6 +579,10 @@ namespace QsApi {
 
     SynthVSplitterHandle::~SynthVSplitterHandle() {
         delete d;
+    }
+
+    SynthVSplitter *SynthVSplitterHandle::splitter() const {
+        return d->s;
     }
 
     QPixelSize SynthVSplitterHandle::handleHeight() {

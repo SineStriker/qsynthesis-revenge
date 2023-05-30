@@ -34,6 +34,11 @@ namespace QsApi {
         int count() const;
         bool isEmpty() const;
 
+        SynthVSplitterHandle *handle(int index) const;
+        int indexOfHandle(SynthVSplitterHandle *handle) const;
+
+        int indexAt(const QPoint &pos) const;
+
         QSize sizeHint() const override;
 
     public:
@@ -62,13 +67,15 @@ namespace QsApi {
 
     class SynthVSplitterHandlePrivate;
 
-    class SynthVSplitterHandle : public QFrame {
+    class QSFRAMEWORK_API SynthVSplitterHandle : public QFrame {
         Q_OBJECT
         Q_LAYOUT_PROPERTY_DELCARE
         Q_PROPERTY(QPixelSize handleHeight READ handleHeight WRITE setHandleHeight)
     public:
         explicit SynthVSplitterHandle(SynthVSplitter *parent);
         ~SynthVSplitterHandle();
+
+        SynthVSplitter *splitter() const;
 
         QPixelSize handleHeight();
         void setHandleHeight(const QPixelSize &h);

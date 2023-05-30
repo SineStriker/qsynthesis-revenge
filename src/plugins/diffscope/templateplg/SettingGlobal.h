@@ -3,7 +3,7 @@
 
 #include <QtGlobal>
 
-#if defined(TEMPLATE_LIBRARY)
+#if defined(TEMPLATEPLG_LIBRARY)
 #    define TEMPLATE_EXPORT Q_DECL_EXPORT
 #else
 #    define TEMPLATE_EXPORT Q_DECL_IMPORT

@@ -6,8 +6,8 @@
 #include <QMimeData>
 #include <QStyle>
 
-const char PROPERTY_HIGHLIGHT[] = "highlight";
-const char PROPERTY_WIDTHHINT[] = "widthhint";
+static const char PROPERTY_HIGHLIGHT[] = "highlight";
+static const char PROPERTY_WIDTHHINT[] = "widthhint";
 
 CDockSideBar::CDockSideBar(QWidget *parent) : QFrame(parent) {
     init();

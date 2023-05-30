@@ -84,6 +84,8 @@ Core--Internal--FloatingTitleBarButton {
     background-color: transparent;
     border: none;
     color: white;
+    qproperty-hintHeight: 4px;
+    qproperty-hintColor: #017FD4;
 }
 
 Core--Internal--FloatingTitleBar>QToolButton {
@@ -104,3 +106,4 @@ Core--Internal--FloatingTitleBar>QToolButton#close-button {
 QWidget[floating-panel=true] {
     background-color: rgba(0, 0, 0, 40%);
 }
+
