@@ -58,7 +58,6 @@ protected:
     void splitNoteUnderMouse();
     void shiftDraggedNoteByPitch(double pitchDelta);
     void setDraggedNotePitch(int pitch);
-    void snapDraggedNoteToF0(int x);
     Q_SLOT void mergeCurrentSlurToLeftNode(bool checked);
 
     // Events
@@ -119,11 +118,7 @@ protected:
         Note
     } draggingMode;
     bool dragging = false;
-    enum {
-        KeyLevel,
-        CentLevel,
-        SnapToF0
-    } noteDragGranularity = KeyLevel;
+    bool draggingNoteInCents = false;
     double draggingNoteStartPitch = 0.0, draggingNoteBeginCents = 0, draggingNoteBeginPitch = 0;
 
     // Embedded widgets
