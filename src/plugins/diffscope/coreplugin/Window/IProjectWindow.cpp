@@ -13,11 +13,15 @@
 #include <QMDecoratorV2.h>
 #include <QMView.h>
 
+#include <CoreApi/ILoader.h>
+
 #include "ICore.h"
 
-#include "Internal/Widgets/FloatingTitleBar.h"
-
 namespace Core {
+
+    static const char settingCatalogC[] = "IProjectWindow";
+
+    static const char floatingPanelsGroupC[] = "FloatingPanels";
 
     IProjectWindowPrivate::IProjectWindowPrivate() {
         m_forceClose = false;
@@ -26,8 +30,52 @@ namespace Core {
     void IProjectWindowPrivate::init() {
         Q_Q(IProjectWindow);
 
+        readSettings();
+
         m_doc = new DspxDocument(q);
         m_doc->setAutoRemoveLogDirectory(false);
+    }
+
+    void IProjectWindowPrivate::readSettings() {
+        auto settings = ILoader::instance()->settings();
+        auto obj = settings->value(settingCatalogC).toObject();
+        auto floatingPanelsStateArr = obj.value(floatingPanelsGroupC).toArray();
+        for (auto it = floatingPanelsStateArr.begin(); it != floatingPanelsStateArr.end(); ++it) {
+            if (!it->isObject())
+                continue;
+
+            auto stateObj = it->toObject();
+            auto value = stateObj.value("id");
+            if (!value.isString())
+                continue;
+
+            QString id = value.toString();
+
+            value = stateObj.value("isOpen");
+            if (!value.isUndefined() && !value.isBool())
+                continue;
+
+            bool isOpen = value.toBool();
+
+            floatingPanelsState.append({id, isOpen});
+        }
+    }
+
+    void IProjectWindowPrivate::saveSettings() const {
+        auto settings = ILoader::instance()->settings();
+
+        QJsonObject obj;
+
+        QJsonArray floatingPanelsStateArr;
+        for (const auto &item : qAsConst(floatingPanelsState)) {
+            floatingPanelsStateArr.append(QJsonObject{
+                {"id",     item.id    },
+                {"isOpen", item.isOpen}
+            });
+        }
+        obj.insert(floatingPanelsGroupC, floatingPanelsStateArr);
+
+        settings->insert(settingCatalogC, obj);
     }
 
     void IProjectWindowPrivate::reloadStrings() {
@@ -77,12 +125,18 @@ namespace Core {
     QAbstractButton *IProjectWindow::addFloatingPanel(const QString &id, QWidget *panel, QWidget *titleBar) {
         Q_D(IProjectWindow);
 
+        // Add sign
+        panel->setProperty("choruskit_checkable_id", id);
+
+        // Set checked to false
+        setGlobalAttribute(id, false, true);
+
         // Wrap
         auto bar = new Internal::FloatingTitleBar();
         bar->setTitleBar(titleBar);
 
         auto obj = new QObject(d);
-        obj->setProperty("checked", globalAttribute(id).toBool());
+        obj->setProperty("checked", false);
 
         connect(bar->foldButton(), &QAbstractButton::toggled, obj, [id, panel, this](bool checked) {
             panel->setVisible(checked); //
@@ -118,6 +172,8 @@ namespace Core {
                     obj->setProperty("checked", checked);
                 });
 
+        d->floatingPanels.insert(id, {id, panel, bar, obj});
+
         return bar->titleButton();
     }
 
@@ -129,6 +185,8 @@ namespace Core {
     }
 
     IProjectWindow::~IProjectWindow() {
+        Q_D(IProjectWindow);
+        d->saveSettings();
     }
 
     void IProjectWindow::setupWindow() {
@@ -165,18 +223,40 @@ namespace Core {
         qIDec->installLocale(this, _LOC(IProjectWindowPrivate, d));
         qIDec->installTheme(win, "core.ProjectWindow");
 
+        // Restore floating panels
+        for (const auto &item : qAsConst(d->floatingPanelsState)) {
+            auto it = d->floatingPanels.find(item.id);
+            if (it == d->floatingPanels.end())
+                continue;
+            setGlobalAttribute(item.id, true, true);
+            it->titleBar->foldButton()->setChecked(item.isOpen);
+        }
+
         ICore::instance()->windowSystem()->loadWindowGeometry(metaObject()->className(), win, {1200, 800});
     }
 
     void IProjectWindow::windowAboutToClose() {
         Q_D(IProjectWindow);
 
-        // *(int *) nullptr = 1;
-
         // Windows should be all closed before quit signal arrives except a kill or interrupt signal
         // is emitted, only when this function is called the log should be removed expectedly.
         if (!d->m_doc->isModified() || d->m_forceClose) {
             d->m_doc->setAutoRemoveLogDirectory(true);
+        }
+
+        // Save floating panels state
+        d->floatingPanelsState.clear();
+        auto piano = d->m_projectWidget->piano();
+        for (int i = 0; i < piano->count(); ++i) {
+            auto id = piano->widget(i)->property("choruskit_checkable_id").toString();
+            auto it = d->floatingPanels.find(id);
+            if (it == d->floatingPanels.end())
+                continue;
+
+            d->floatingPanelsState.append({
+                id,
+                it->titleBar->foldButton()->isChecked(),
+            });
         }
 
         ICore::instance()->windowSystem()->saveWindowGeometry(metaObject()->className(), window());

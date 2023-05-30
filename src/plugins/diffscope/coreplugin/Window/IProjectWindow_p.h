@@ -7,6 +7,7 @@
 
 #include "ICoreWindow_p.h"
 #include "IProjectWindow.h"
+#include "Internal/Widgets/FloatingTitleBar.h"
 #include "Internal/Widgets/ProjectWidget.h"
 
 namespace Core {
@@ -19,9 +20,13 @@ namespace Core {
 
         void init();
 
+        void readSettings();
+        void saveSettings() const;
+
         void reloadStrings();
 
         void reloadMainToolbar();
+
         ActionContext *mainToolbarCtx;
 
         DspxDocument *m_doc;
@@ -30,7 +35,19 @@ namespace Core {
 
         Internal::ProjectWidget *m_projectWidget;
 
-        QHash<QString, QObject *> floatingPanels;
+        struct FloatingPanelState {
+            QString id;
+            bool isOpen;
+        };
+        QList<FloatingPanelState> floatingPanelsState;
+
+        struct FloatingPanelControlBlock {
+            QString id;
+            QWidget *panel;
+            Internal::FloatingTitleBar *titleBar;
+            QObject *obj;
+        };
+        QHash<QString, FloatingPanelControlBlock> floatingPanels;
 
     private:
         void _q_documentChanged();

@@ -26,6 +26,11 @@ namespace Core::Internal {
         if (event->button() == Qt::LeftButton) {
             m_pressed = true;
 
+            if (m_hintWidget) {
+                delete m_hintWidget;
+                m_hintWidget = nullptr;
+            }
+
             m_curHandle = qobject_cast<QsApi::SynthVSplitterHandle *>(parentWidget()->parentWidget());
             m_splitter = m_curHandle->splitter();
         }
