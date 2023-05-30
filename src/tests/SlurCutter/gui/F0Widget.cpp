@@ -352,7 +352,7 @@ void F0Widget::shiftDraggedNoteByPitch(double pitchDelta) {
         return;
 
     auto &note = intervals[0].value;
-    double addedCents = draggingNoteInCents ? (std::isnan(note.cents) ? 0 : note.cents) : 0;
+    double addedCents = (noteDragGranularity == CentLevel) ? (std::isnan(note.cents) ? 0 : note.cents) : 0;
     double semitoneDelta, newCents;
     newCents = 100 * ::modf(pitchDelta + 0.01 * addedCents, &semitoneDelta);
 
@@ -372,6 +372,27 @@ void F0Widget::setDraggedNotePitch(int pitch) {
     auto &note = intervals[0].value;
     note.pitch = pitch;
     note.cents = NAN;
+
+    midiIntervals.remove(intervals[0]);
+    midiIntervals.insert(intervals[0]);
+}
+
+void F0Widget::snapDraggedNoteToF0(int x) {
+    auto intervals =
+        midiIntervals.findInnerIntervals({std::get<0>(draggingNoteInterval), std::get<1>(draggingNoteInterval)});
+    if (intervals.empty())
+        return;
+
+    auto &note = intervals[0].value;
+    auto w = width() - KeyWidth - ScrollBarWidth;
+    auto leftTime = centerTime - w / 2 / secondWidth;
+    auto f0Index = ((x - KeyWidth) / secondWidth + leftTime) / f0Timestep;
+    double midiNote = 60;
+    if (f0Index < f0Values.size() && f0Index >= 0)
+        midiNote = f0Values[f0Index];
+
+    note.pitch = midiNote;
+    note.cents = ::fmod(midiNote, 1) * 100;
 
     midiIntervals.remove(intervals[0]);
     midiIntervals.insert(intervals[0]);
@@ -503,21 +524,38 @@ void F0Widget::paintEvent(QPaintEvent *event) {
                  noteRight = (std::get<1>(draggingNoteInterval) - leftTime) * secondWidth;
             painter.drawLine(noteLeft, 0, noteLeft, h);
             painter.drawLine(noteRight, 0, noteRight, h);
-            if (draggingNoteInCents) {
-                auto dragPitch =
-                    mousePitch - draggingNoteStartPitch + draggingNoteBeginCents * 0.01 + draggingNoteBeginPitch;
-                auto rec = QRectF(noteLeft, lowestPitchY - (dragPitch - lowestPitch) * semitoneHeight,
-                                  noteRight - noteLeft, semitoneHeight);
-                painter.fillRect(rec, QColor(255, 255, 255, 60));
-                painter.drawLine(rec.left(), rec.center().y(), rec.right(), rec.center().y());
-                painter.drawRect(rec);
-                painter.drawText(rec.topLeft() + QPointF(0, -3), PitchToNotePlusCentsString(dragPitch));
-            } else {
-                auto dragPitch = ::floor(mousePitch + 0.5); // Key center pitch -> key bottom pitch
-                auto rec = QRectF(noteLeft, lowestPitchY - (dragPitch - lowestPitch) * semitoneHeight,
-                                  noteRight - noteLeft, semitoneHeight);
-                painter.fillRect(rec, QColor(255, 255, 255, 60));
-                painter.drawRect(rec);
+
+            double dragPitch;
+            switch (noteDragGranularity) {
+                case CentLevel:
+                    dragPitch =
+                        mousePitch - draggingNoteStartPitch + draggingNoteBeginCents * 0.01 + draggingNoteBeginPitch;
+                case SnapToF0: {
+                    int x;
+                    if (noteDragGranularity == SnapToF0) {
+                        x = mapFromGlobal(QCursor::pos()).x() - KeyWidth;
+                        size_t f0Index = (x / secondWidth + leftTime) / f0Timestep;
+                        if (f0Index >= f0Values.size() || f0Index < 0)
+                            dragPitch = 60;
+                        else
+                            dragPitch = f0Values[f0Index];
+                        // painter.drawText(QPointF(0, 40), QString("%1 %2").arg(f0Index).arg(dragPitch));
+                    }
+                    auto rec = QRectF(noteLeft, lowestPitchY - (dragPitch - lowestPitch) * semitoneHeight,
+                                      noteRight - noteLeft, semitoneHeight);
+                    painter.fillRect(rec, QColor(255, 255, 255, 60));
+                    painter.drawLine(rec.left(), rec.center().y(), rec.right(), rec.center().y());
+                    painter.drawRect(rec);
+                    painter.drawText(rec.topLeft() + QPointF(0, -3), PitchToNotePlusCentsString(dragPitch));
+                    break;
+                }
+                case KeyLevel: {
+                    dragPitch = ::floor(mousePitch + 0.5); // Key center pitch -> key bottom pitch
+                    auto rec = QRectF(noteLeft, lowestPitchY - (dragPitch - lowestPitch) * semitoneHeight,
+                                      noteRight - noteLeft, semitoneHeight);
+                    painter.fillRect(rec, QColor(255, 255, 255, 60));
+                    painter.drawRect(rec);
+                }
             }
         } else if (mouseOnNote(mapFromGlobal(QCursor::pos()), &note)) {
             auto rec =
@@ -566,8 +604,7 @@ void F0Widget::paintEvent(QPaintEvent *event) {
         w += KeyWidth;
 
         // Debug text
-        if (showPitchTextOverlay)
-        {
+        if (showPitchTextOverlay) {
             auto mousePitch = centerPitch + h / 2 / semitoneHeight -
                               (mapFromGlobal(QCursor::pos()).y() - TimelineHeight) / semitoneHeight;
             painter.setPen(Qt::white);
@@ -669,8 +706,13 @@ void F0Widget::mouseMoveEvent(QMouseEvent *event) {
             if (draggingButton == Qt::LeftButton) {
                 if (draggingMode == Note) {
                     // Drag note
-                    draggingNoteInCents = event->modifiers() & Qt::ShiftModifier;
-                    if (!snapToKey) draggingNoteInCents = !draggingNoteInCents;
+                    auto mod = event->modifiers();
+                    if (mod & Qt::ControlModifier)
+                        noteDragGranularity = SnapToF0;
+                    else if (mod & Qt::ShiftModifier)
+                        noteDragGranularity = snapToKey ? CentLevel : KeyLevel;
+                    else
+                        noteDragGranularity = snapToKey ? KeyLevel : CentLevel;
                 }
                 update();
             } else if (draggingButton == Qt::RightButton) {
@@ -707,10 +749,16 @@ void F0Widget::mouseReleaseEvent(QMouseEvent *event) {
     if (dragging) {
         switch (draggingMode) {
             case Note: {
-                if (draggingNoteInCents) {
-                    shiftDraggedNoteByPitch(pitchOnWidgetY(event->y()) - draggingNoteStartPitch);
-                } else {
-                    setDraggedNotePitch(pitchOnWidgetY(event->y()) + 0.5); // Key center pitch -> key bottom pitch
+                switch (noteDragGranularity) {
+                    case SnapToF0:
+                        snapDraggedNoteToF0(event->x());
+                        break;
+                    case KeyLevel:
+                        setDraggedNotePitch(pitchOnWidgetY(event->y()) + 0.5); // Key center pitch -> key bottom pitch
+                        break;
+                    case CentLevel:
+                        shiftDraggedNoteByPitch(pitchOnWidgetY(event->y()) - draggingNoteStartPitch);
+                        break;
                 }
                 setCursor(Qt::ArrowCursor);
                 break;
