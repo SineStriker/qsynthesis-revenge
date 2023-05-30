@@ -1,8 +1,7 @@
 #include "TreeConfigPage.h"
 #include <QMDecoratorV2.h>
 
-namespace TemplatePlg {
-    namespace Internal {
+namespace TemplatePlg::Internal {
         TreeConfigPage::TreeConfigPage(QObject *parent) : ISettingPage("core.JsonConfig", parent) {
             m_widget = nullptr;
             qIDec->installLocale(this, _LOC(TreeConfigPage, this));
@@ -44,4 +43,3 @@ namespace TemplatePlg {
 
 
     }
-}

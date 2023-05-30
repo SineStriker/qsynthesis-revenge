@@ -4,14 +4,13 @@
 #include "../Widgets/TreeConfigWidget.h"
 #include <CoreApi/ISettingPage.h>
 
-namespace TemplatePlg {
-    namespace Internal {
+namespace TemplatePlg::Internal {
         using namespace Core;
         class TreeConfigPage : public ISettingPage {
             Q_OBJECT
         public:
             explicit TreeConfigPage(QObject *parent = nullptr);
-            ~TreeConfigPage();
+            ~TreeConfigPage() override;
 
             void reloadStrings();
 
@@ -28,8 +27,5 @@ namespace TemplatePlg {
             QWidget *m_widget;
         };
     }
-
-
-}
 
 #endif // CHORUSKIT_TREECONFIGPAGE_H

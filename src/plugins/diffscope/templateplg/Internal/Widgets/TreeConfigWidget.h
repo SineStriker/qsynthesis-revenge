@@ -8,18 +8,17 @@
 #include <QPushButton>
 #include <QTreeWidget>
 
-namespace TemplatePlg {
-    namespace Internal {
+namespace TemplatePlg::Internal {
         class TreeConfigWidget : public QWidget {
             Q_OBJECT
         public:
             explicit TreeConfigWidget(const QString &pluginId, const QString &configDir, bool configGen = false,
                                       QWidget *parent = nullptr);
-            ~TreeConfigWidget();
+            ~TreeConfigWidget() override;
 
             static TreeConfigWidget *instance(const QString &pluginId);
             QWidget *configWidget();
-            QVariant readConfig(const QString &path, QString type = "index");
+            QVariant readConfig(const QString &path, const QString& type = "index");
 
         protected:
             QString pluginId;
@@ -31,12 +30,12 @@ namespace TemplatePlg {
             QString m_language;
 
             QWidget *m_widget;
-            QTreeWidget *m_treeWidget;
-            QVBoxLayout *mainLayout;
+            QTreeWidget *m_treeWidget{};
+            QVBoxLayout *mainLayout{};
 
-            QPushButton *m_defaultButton;
-            QPushButton *m_loadButton;
-            QPushButton *m_saveButton;
+            QPushButton *m_defaultButton{};
+            QPushButton *m_loadButton{};
+            QPushButton *m_saveButton{};
 
         private:
             QWidget *createWidget();
@@ -51,5 +50,4 @@ namespace TemplatePlg {
         };
 
     }
-}
 #endif // CHORUSKIT_TREECONFIGWIDGET_H

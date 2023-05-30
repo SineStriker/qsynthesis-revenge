@@ -8,14 +8,13 @@
 #include <QPushButton>
 #include <QTreeWidget>
 
-namespace TemplatePlg {
-    namespace Internal {
+namespace TemplatePlg::Internal {
         class TreeDevWidget : public QWidget {
             Q_OBJECT
             friend class TreeConfigWidget;
         private:
-            TreeDevWidget(QTreeWidget *m_treeWidget, QWidget *parent = nullptr);
-            ~TreeDevWidget();
+            explicit TreeDevWidget(QTreeWidget *m_treeWidget, QWidget *parent = nullptr);
+            ~TreeDevWidget() override;
 
             void moveItem(bool up);
             QTreeWidget *m_treeWidget;
@@ -42,6 +41,5 @@ namespace TemplatePlg {
             void _q_btnDownClicked();
         };
     }
-}
 
 #endif // CHORUSKIT_TREEDEVWIDGET_H

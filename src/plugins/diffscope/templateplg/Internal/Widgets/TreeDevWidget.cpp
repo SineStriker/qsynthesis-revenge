@@ -147,8 +147,7 @@ namespace TemplatePlg {
             if (remark.contains(";")) {
                 remarks = remark.split(";");
                 if (remarks.size() != 2) {
-                    QMessageBox msg;
-                    msg.information(this, tr("Warning"), tr("The remark format must be: Chinese;English"));
+                    QMessageBox::information(this, tr("Warning"), tr("The remark format must be: Chinese;English"));
                     return;
                 }
             } else {
@@ -170,8 +169,7 @@ namespace TemplatePlg {
                 if (selectedItem) {
                     selectedItem->addChild(child);
                 } else {
-                    QMessageBox msg;
-                    msg.information(this, tr("Warning"), tr("Unchecked item cannot add sub items"));
+                    QMessageBox::information(this, tr("Warning"), tr("Unchecked item cannot add sub items"));
                     return;
                 }
             }

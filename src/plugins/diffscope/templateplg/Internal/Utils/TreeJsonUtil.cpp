@@ -15,19 +15,18 @@
 #include <QLocale>
 #include <QSpinBox>
 
-namespace TemplatePlg {
-    namespace Internal {
+namespace TemplatePlg::Internal {
         QJsonArray TreeJsonUtil::jsonArrayFromFile(const QString &filePath) {
             QFile file(filePath);
             if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
                 qDebug() << "Failed to open file: " << filePath;
-                return QJsonArray();
+                return {};
             }
             QByteArray jsonData = file.readAll();
             QJsonDocument jsonDoc = QJsonDocument::fromJson(jsonData);
             if (!jsonDoc.isArray()) {
                 qDebug() << "Invalid JSON format: " << filePath;
-                return QJsonArray();
+                return {};
             }
             return jsonDoc.array();
         }
@@ -145,7 +144,7 @@ namespace TemplatePlg {
                                              QTreeWidget *treeWidget, QTreeWidgetItem *parent) {
             auto language = getLocalLanguage();
             for (auto it = config.begin(); it != config.end(); ++it) {
-                QTreeWidgetItem *item = new QTreeWidgetItem();
+                auto *item = new QTreeWidgetItem();
                 // must insert item before setting it
                 if (parent) {
                     if (insertIndex >= 0) {
@@ -180,7 +179,7 @@ namespace TemplatePlg {
 
                     QStringList zhValues = it->toObject().value("zh_value").toVariant().toStringList();
                     QStringList enValues = it->toObject().value("en_value").toVariant().toStringList();
-                    QListView *view = qobject_cast<QListView *>(comboBox->view());
+                    auto *view = qobject_cast<QListView *>(comboBox->view());
                     comboBox->addItems(zhValues);
                     comboBox->addItems(enValues);
                     if (!configGen && language == "Chinese") {
@@ -248,5 +247,4 @@ namespace TemplatePlg {
             });
             return widget;
         }
-    }
-} // TemplatePlg
+    } // TemplatePlg

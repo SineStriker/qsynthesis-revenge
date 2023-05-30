@@ -8,8 +8,7 @@
 #include <QMessageBox>
 #include <QTreeWidget>
 
-namespace TemplatePlg {
-    namespace Internal {
+namespace TemplatePlg::Internal {
         class TreeJsonUtil {
         public:
             static QString getLocalLanguage();
@@ -25,7 +24,6 @@ namespace TemplatePlg {
                                           QTreeWidget *treeWidget, QTreeWidgetItem *parent = nullptr);
             static void TreeFromFile(const QString &filePath, bool configGen, QTreeWidget *treeWidget);
         };
-    }
-} // TemplatePlg
+    } // TemplatePlg
 
 #endif // CHORUSKIT_TREEJSONUTIL_H

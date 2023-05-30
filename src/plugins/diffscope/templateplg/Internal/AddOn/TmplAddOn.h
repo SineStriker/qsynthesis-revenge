@@ -6,9 +6,7 @@
 #include <CoreApi/ActionItem.h>
 #include <CoreApi/IWindowAddOn.h>
 
-namespace TemplatePlg {
-
-    namespace Internal {
+namespace TemplatePlg::Internal {
         class TmplAddOnFactory : public Core::IWindowAddOnFactory {
         public:
             bool predicate(Core::IWindow *handle) const override;
@@ -19,7 +17,7 @@ namespace TemplatePlg {
             Q_OBJECT
         public:
             explicit TmplAddOn(QObject *parent = nullptr);
-            ~TmplAddOn();
+            ~TmplAddOn() override;
 
             void initialize() override;
             void extensionsInitialized() override;
@@ -29,7 +27,7 @@ namespace TemplatePlg {
             void initActions();
 
         private slots:
-            void _q_tmplButtonClicked();
+            static void _q_tmplButtonClicked();
 
         private:
             Core::ActionItem *templateGroupItem;
@@ -38,8 +36,6 @@ namespace TemplatePlg {
         };
 
     }
-
-}
 
 
 
