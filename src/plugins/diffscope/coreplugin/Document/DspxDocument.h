@@ -27,6 +27,9 @@ namespace Core {
         bool open(const QString &filename) override;
         bool save(const QString &filename) override;
 
+        bool isVST() const;
+        bool openVST(const QByteArray &bytes);
+
         ReloadBehavior reloadBehavior(ChangeTrigger state, ChangeType type) const override;
         bool reload(ReloadFlag flag, ChangeType type) override;
 

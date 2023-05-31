@@ -37,28 +37,28 @@ QToolBar#main-toolbar>QToolButton:hover {
     background-color: rgba(35, 50, 51, 50%);
 }
 
-QToolBar#main-toolbar>QToolButton#play {
+QToolBar#main-toolbar>QToolButton[action-id="core.Play"] {
     qproperty-iconUp: svg(":/svg/main-toolbar/play-line.svg", "${project.toolbar.iconColor}");
     qproperty-iconUpChecked: svg(":/svg/main-toolbar/pause-line.svg", "${project.toolbar.iconColor}");
 }
 
-QToolBar#main-toolbar>QToolButton#stop {
+QToolBar#main-toolbar>QToolButton[action-id="core.Stop"] {
     qproperty-iconUp: svg(":/svg/main-toolbar/stop-line.svg", "${project.toolbar.iconColor}");
 }
 
-QToolBar#main-toolbar>QToolButton#moveToStart {
+QToolBar#main-toolbar>QToolButton[action-id="core.MoveToStart"] {
     qproperty-iconUp: svg(":/svg/main-toolbar/move-start-line.svg", "${project.toolbar.iconColor}");
 }
 
-QToolBar#main-toolbar>QToolButton#moveToEnd {
+QToolBar#main-toolbar>QToolButton[action-id="core.MoveToEnd"] {
     qproperty-iconUp: svg(":/svg/main-toolbar/move-end-line.svg", "${project.toolbar.iconColor}");
 }
 
-QToolBar#main-toolbar>QToolButton#metronome {
+QToolBar#main-toolbar>QToolButton[action-id="core.Metronome"] {
     qproperty-iconUp: svg(":/svg/main-toolbar/metronome-line.svg", "${project.toolbar.iconColor}");
 }
 
-QToolBar#main-toolbar>QToolButton#loopPlay {
+QToolBar#main-toolbar>QToolButton[action-id="core.LoopPlay"] {
     qproperty-iconUp: svg(":/svg/main-toolbar/loop-line.svg", "${project.toolbar.iconColor}");
 }
 
@@ -75,7 +75,7 @@ QToolBar#main-toolbar>QToolButton[selectable=true]:checked {
 }
 
 QsApi--SynthVSplitter#canvas>QsApi--SynthVSplitterHandle {
-    qproperty-handleHeight: 4px;
+    qproperty-handleHeight: 6px;
 }
 
 Core--Internal--FloatingTitleBar {
@@ -114,44 +114,41 @@ QWidget[floating-panel=true] {
 
 /* PianoArea */
 
-TPianoArea {
+Core--Internal--PianoKeyWidget {
     qproperty-preferredWidth: 125px;
     background-color: #333333;
 }
 
-TPianoArea>QLabel[type=standard] {
+Core--Internal--PianoKeyWidget>QLabel[type=standard] {
     color: #333333;
 }
 
-TPianoArea>QLabel[type=realtime] {
+Core--Internal--PianoKeyWidget>QLabel[type=realtime] {
     color: black;
     background-color: transparent;
 }
 
-TPianoArea>QLabel[type=realtime][black=true] {
+Core--Internal--PianoKeyWidget>QLabel[type=realtime][black=true] {
     color: white;
 }
 
-TPianoArea>TPianoKey {
+Core--Internal--PianoKey {
     border: none;
-    /* border-bottom-right-radius: 3px;
-    border-top-right-radius: 3px; */
-    /* top right bottom left */
     margin: 1px 2px 1px 0;
 }
 
-TPianoArea>TPianoKey[color=white] {
+Core--Internal--PianoKey[color=white] {
     background-color: lightgrey;
 }
 
-TPianoArea>TPianoKey[color=white]:hover {
+Core--Internal--PianoKey[color=white]:hover {
     background-color: #EFEFEF;
 }
 
-TPianoArea>TPianoKey[color=black] {
+Core--Internal--PianoKey[color=black] {
     background-color: black;
 }
 
-TPianoArea>TPianoKey[color=black]:hover {
+Core--Internal--PianoKey[color=black]:hover {
     background-color: #535353;
 }

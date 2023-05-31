@@ -20,6 +20,7 @@ namespace Core {
 
     class CORE_EXPORT IProjectWindow : public ICoreWindow {
         Q_OBJECT
+        Q_DECLARE_PRIVATE(IProjectWindow)
     public:
         static inline QString WindowTypeID() {
             return "project";
@@ -48,8 +49,6 @@ namespace Core {
 
     protected:
         IProjectWindow(IProjectWindowPrivate &d, QObject *parent = nullptr);
-
-        Q_DECLARE_PRIVATE(IProjectWindow)
 
         friend class Internal::IProjectWindowFactory;
 

@@ -17,6 +17,8 @@
 
 #include "ICore.h"
 
+#include "Internal/Widgets/PianoKeyWidget.h"
+
 namespace Core {
 
     static const char settingCatalogC[] = "IProjectWindow";
@@ -65,7 +67,7 @@ namespace Core {
         }
 
         value = obj.value(pianoKeyWidgetC);
-        currentPianoKeyWidget = value.isString() ? value.toString() : "uta.pianoKeys";
+        currentPianoKeyWidget = value.isString() ? value.toString() : Internal::DefaultPianoKeyWidget;
     }
 
     void IProjectWindowPrivate::saveSettings() const {
@@ -204,7 +206,9 @@ namespace Core {
     }
 
     QAbstractButton *IProjectWindow::addToolWindowPanel(const QString &id, int preferredEdge, QWidget *panel) {
-        return nullptr;
+        Q_D(IProjectWindow);
+        return d->m_projectWidget->mainDock()->addWidget(Qt::Edge(preferredEdge & 0xF),
+                                                         QM::Priority(preferredEdge & 0xF0), panel);
     }
 
     void IProjectWindow::addPianoKeyWidget(const QString &id, IPianoKeyWidgetFactory *factory) {

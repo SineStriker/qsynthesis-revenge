@@ -13,6 +13,7 @@ namespace Core {
 
     DspxDocumentPrivate::DspxDocumentPrivate() {
         hasWatch = false;
+        isVST = false;
     }
 
     DspxDocumentPrivate::~DspxDocumentPrivate() {
@@ -109,6 +110,19 @@ namespace Core {
         d->unshiftToRecent();
 
         return true;
+    }
+
+    bool DspxDocument::isVST() const {
+        Q_D(const DspxDocument);
+        return d->isVST;
+    }
+
+    bool DspxDocument::openVST(const QByteArray &bytes) {
+        Q_D(DspxDocument);
+
+        d->isVST = true;
+
+        return false;
     }
 
     QString DspxDocument::defaultPath() const {

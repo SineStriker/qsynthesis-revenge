@@ -15,6 +15,7 @@ namespace Core {
 
     class CORE_EXPORT IHomeWindow : public ICoreWindow {
         Q_OBJECT
+        Q_DECLARE_PRIVATE(IHomeWindow)
     public:
         static inline QString WindowTypeID() {
             return "home";
@@ -41,8 +42,6 @@ namespace Core {
 
     protected:
         IHomeWindow(IHomeWindowPrivate &d, QObject *parent = nullptr);
-
-        Q_DECLARE_PRIVATE(IHomeWindow)
 
         friend class Internal::IHomeWindowFactory;
     };

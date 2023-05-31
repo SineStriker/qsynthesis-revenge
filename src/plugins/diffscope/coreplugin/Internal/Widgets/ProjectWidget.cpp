@@ -5,9 +5,6 @@
 
 #include <CToolBar.h>
 
-#include "TPianoArea/TPianoArea.h"
-#include "TPianoArea/TPianoScroll.h"
-
 namespace Core::Internal {
 
     ProjectWidget::ProjectWidget(QWidget *parent) : QFrame(parent) {
@@ -31,38 +28,36 @@ namespace Core::Internal {
         m_canvas = new QsApi::SynthVSplitter();
         m_canvas->setObjectName("canvas");
 
-        auto pianoScroll = new TPianoScroll();
-        m_pianoArea = pianoScroll;
+        m_pianoKeyContainer = new PianoKeyContainer();
+        m_pianoKeyContainer->setObjectName("piano-container");
 
-        auto sectionArea = new QWidget();
-        m_sectionArea = sectionArea;
+        m_sectionContainer = new QWidget();
+        m_sectionContainer->setObjectName("section-container");
 
-        m_pianoLayout = new QGridLayout();
-        m_pianoLayout->setMargin(0);
-        m_pianoLayout->setSpacing(0);
-        m_pianoLayout->addItem(new QSpacerItem(0, 0), 0, 0);
-        m_pianoLayout->addWidget(m_sectionArea, 0, 1);
-        m_pianoLayout->addWidget(m_pianoArea, 1, 0);
-        m_pianoLayout->addWidget(m_canvas, 1, 1);
+        m_pianoRollLayout = new QGridLayout();
+        m_pianoRollLayout->setMargin(0);
+        m_pianoRollLayout->setSpacing(0);
+        m_pianoRollLayout->addItem(new QSpacerItem(0, 0), 0, 0);
+        m_pianoRollLayout->addWidget(m_sectionContainer, 0, 1);
+        m_pianoRollLayout->addWidget(m_pianoKeyContainer, 1, 0);
+        m_pianoRollLayout->addWidget(m_canvas, 1, 1);
 
-        m_pianoWidget = new QWidget();
-        m_pianoWidget->setAttribute(Qt::WA_StyledBackground);
-        m_pianoWidget->setLayout(m_pianoLayout);
+        m_pianoRoll = new QWidget();
+        m_pianoRoll->setAttribute(Qt::WA_StyledBackground);
+        m_pianoRoll->setLayout(m_pianoRollLayout);
 
-        m_frame->setWidget(m_pianoWidget);
+        m_frame->setWidget(m_pianoRoll);
     }
 
     ProjectWidget::~ProjectWidget() {
     }
 
     Core::IPianoKeyWidget *ProjectWidget::pianoKeyWidget() const {
-        auto pianoScroll = qobject_cast<TPianoScroll *>(m_pianoArea);
-        return pianoScroll->area();
+        return m_pianoKeyContainer->area();
     }
 
-    void ProjectWidget::setPianoKeyWidget(Core::IPianoKeyWidget *widget) {
-        auto pianoScroll = qobject_cast<TPianoScroll *>(m_pianoArea);
-        pianoScroll->setArea(widget);
+    void ProjectWidget::setPianoKeyWidget(IPianoKeyWidget *widget) {
+        m_pianoKeyContainer->setArea(widget);
     }
 
 }

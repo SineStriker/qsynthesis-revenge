@@ -10,6 +10,7 @@
 #include <Widgets/SynthVSplitter.h>
 
 #include "Interfaces/IPianoKeyWidget.h"
+#include "PianoKeyContainer.h"
 
 namespace Core::Internal {
 
@@ -31,25 +32,25 @@ namespace Core::Internal {
             return m_canvas;
         }
 
-        QWidget *pianoKeyArea() const{
-            return m_pianoArea;
+        QWidget *pianoKeyArea() const {
+            return m_pianoKeyContainer;
         }
 
-        Core::IPianoKeyWidget *pianoKeyWidget() const;
-        void setPianoKeyWidget(Core::IPianoKeyWidget *widget);
+        IPianoKeyWidget *pianoKeyWidget() const;
+        void setPianoKeyWidget(IPianoKeyWidget *widget);
 
     private:
         QVBoxLayout *m_layout;
 
         QToolBar *m_toolbar;
         CDockFrame *m_frame;
+
+        QGridLayout *m_pianoRollLayout;
+        QWidget *m_pianoRoll;
+
+        PianoKeyContainer *m_pianoKeyContainer;
+        QWidget *m_sectionContainer;
         QsApi::SynthVSplitter *m_canvas;
-
-        QWidget *m_pianoArea;
-        QWidget *m_sectionArea;
-
-        QGridLayout *m_pianoLayout;
-        QWidget *m_pianoWidget;
     };
 
 }

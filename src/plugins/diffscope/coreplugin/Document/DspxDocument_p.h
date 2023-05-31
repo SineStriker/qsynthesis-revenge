@@ -23,6 +23,8 @@ namespace Core {
         QMChronSet<IDspxObserver *> observers;
         QsApi::AceTreeModel *model;
 
+        bool isVST;
+
         void unshiftToRecent();
     };
 

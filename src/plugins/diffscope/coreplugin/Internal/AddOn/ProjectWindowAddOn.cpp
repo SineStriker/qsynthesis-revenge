@@ -16,7 +16,7 @@
 #include "Window/IProjectWindow_p.h"
 
 #include "Internal/Utils/LastWindowFilter.h"
-#include "Internal/Widgets/TPianoArea/TPianoArea.h"
+#include "Internal/Widgets/PianoKeyWidget.h"
 
 namespace Core {
 
@@ -48,7 +48,7 @@ namespace Core {
             phonemeButton = iWin->addFloatingPanel("edit.phonemePanel", phonemePanel, nullptr);
 
             // Add piano key widgets
-            iWin->addPianoKeyWidget("uta.pianoKeys", new TPianoAreaFactory());
+            iWin->addPianoKeyWidget(DefaultPianoKeyWidget, new PianoKeyWidgetFactory());
 
             qIDec->installLocale(this, _LOC(ProjectWindowAddOn, this));
         }
@@ -186,14 +186,14 @@ namespace Core {
             quantizeSelectorItem = new ActionItem("core.QuantizeSelector", new QLabel("1/4"), this);
 
             playControlGroupItem = new ActionItem("core.PlayControlGroup", new QActionGroup(this), this);
-            playItem = new ActionItem("core.Play", createToolBarAction(this, "play"), this);
-            stopItem = new ActionItem("core.Stop", createToolBarAction(this, "stop"), this);
-            moveToStartItem = new ActionItem("core.MoveToStart", createToolBarAction(this, "moveToStart"), this);
-            moveToEndItem = new ActionItem("core.MoveToEnd", createToolBarAction(this, "moveToEnd"), this);
+            playItem = new ActionItem("core.Play", new QAction(this), this);
+            stopItem = new ActionItem("core.Stop", new QAction(this), this);
+            moveToStartItem = new ActionItem("core.MoveToStart", new QAction(this), this);
+            moveToEndItem = new ActionItem("core.MoveToEnd", new QAction(this), this);
 
             playAssistGroupItem = new ActionItem("core.PlayAssistGroup", new QActionGroup(this), this);
-            metronomeItem = new ActionItem("core.Metronome", createToolBarAction(this, "metronome", true), this);
-            loopPlayItem = new ActionItem("core.LoopPlay", createToolBarAction(this, "loopPlay", true), this);
+            metronomeItem = new ActionItem("core.Metronome", new QAction(this), this);
+            loopPlayItem = new ActionItem("core.LoopPlay", new QAction(this), this);
 
             // Stretch Item
             mainToolbarStretchItem = new ActionItem("core.MainToolbarStretch", createStretch(), this);
@@ -219,6 +219,10 @@ namespace Core {
             playItem->action()->setCheckable(true);
 
             playAssistGroupItem->actionGroup()->setExclusionPolicy(QActionGroup::ExclusionPolicy::None);
+
+            metronomeItem->action()->setProperty("selectable", true);
+            loopPlayItem->action()->setProperty("selectable", true);
+
             metronomeItem->action()->setCheckable(true);
             loopPlayItem->action()->setCheckable(true);
 
@@ -227,7 +231,7 @@ namespace Core {
             iWin->addCheckable("playback.loopPlay", loopPlayItem->action());
 
             connect(iWin->doc(), &IDocument::changed, this, [this, iWin]() {
-                saveFileItem->setEnabled(iWin->doc()->isModified()); //
+                saveFileItem->setEnabled(!iWin->doc()->isVST() && iWin->doc()->isModified()); //
             });
 
             connect(saveAsFileItem->action(), &QAction::triggered, this, [this, iWin]() {
