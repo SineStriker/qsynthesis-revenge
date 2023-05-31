@@ -7,11 +7,13 @@
 
 #include "Document/DspxDocument.h"
 #include "ICoreWindow.h"
+#include "Interfaces/IPianoKeyWidget.h"
 
 namespace Core {
 
     namespace Internal {
         class IProjectWindowFactory;
+        class ProjectWindowAddOn;
     }
 
     class IProjectWindowPrivate;
@@ -33,6 +35,8 @@ namespace Core {
 
         QAbstractButton *addToolWindowPanel(const QString &id, int preferredEdge, QWidget *panel);
 
+        void addPianoKeyWidget(const QString &id, IPianoKeyWidgetFactory *factory);
+
     protected:
         explicit IProjectWindow(QObject *parent = nullptr);
         ~IProjectWindow();
@@ -48,6 +52,8 @@ namespace Core {
         Q_DECLARE_PRIVATE(IProjectWindow)
 
         friend class Internal::IProjectWindowFactory;
+
+        friend class Internal::ProjectWindowAddOn;
     };
 
 }

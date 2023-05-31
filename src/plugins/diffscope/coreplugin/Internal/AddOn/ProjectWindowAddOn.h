@@ -60,7 +60,6 @@ namespace Core {
 
             // View
             ActionItem *appearanceMenuItem;
-            ActionItem *menuBarVisibleItem;
             ActionItem *mainToolbarVisibleItem;
             ActionItem *dockVisibleItem;
             ActionItem *statusBarVisibleItem;
@@ -89,6 +88,9 @@ namespace Core {
 
             ActionItem *mainToolbarStretchItem;
             ActionItem *mainToolbarHelpGroupItem;
+
+            // Invisible
+            ActionItem *selectPianoKeyWidgetItem;
 
             // Panels
             PhonemePanel *phonemePanel;

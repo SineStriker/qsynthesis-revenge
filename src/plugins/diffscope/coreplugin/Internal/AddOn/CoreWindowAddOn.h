@@ -28,6 +28,7 @@ namespace Core {
             ActionItem *fileItem;
             ActionItem *helpItem;
 
+            // File
             ActionItem *openGroupItem;
             ActionItem *newFileItem;
             ActionItem *openFileItem;
@@ -38,6 +39,7 @@ namespace Core {
             ActionItem *colorThemesItem;
             ActionItem *languagesItem;
 
+            // Help
             ActionItem *aboutGroupItem;
             ActionItem *aboutPluginsItem;
             ActionItem *aboutAppItem;

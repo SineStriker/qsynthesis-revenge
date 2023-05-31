@@ -6,6 +6,7 @@
 namespace Core {
 
     class IButtonBar : public QObject {
+        Q_OBJECT
     public:
         virtual QAbstractButton *addButton(const QString &id) = 0;
         virtual void removeButton(const QString &id) = 0;

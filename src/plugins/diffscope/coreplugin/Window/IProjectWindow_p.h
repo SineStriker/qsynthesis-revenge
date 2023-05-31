@@ -35,6 +35,7 @@ namespace Core {
 
         Internal::ProjectWidget *m_projectWidget;
 
+        // Floating panels
         struct FloatingPanelState {
             QString id;
             bool isOpen;
@@ -48,6 +49,12 @@ namespace Core {
             QObject *obj;
         };
         QHash<QString, FloatingPanelControlBlock> floatingPanels;
+
+        // Piano key widgets
+        QHash<QString, IPianoKeyWidgetFactory *> pianoKeyWidgets;
+        QString currentPianoKeyWidget;
+
+        void setPianoKeyWidget(const QString &id);
 
     private:
         void _q_documentChanged();

@@ -13,9 +13,15 @@ namespace QsApi {
     }
 
     void NoneScrollArea::setWidget(QWidget *widget) {
+        takeWidget();
+        if (!widget) {
+            return;
+        }
+
         m_widget = widget;
         widget->setParent(this);
         widget->move(0, 0);
+        widget->show();
     }
 
     QWidget *NoneScrollArea::widget() const {
@@ -23,6 +29,9 @@ namespace QsApi {
     }
 
     QWidget *NoneScrollArea::takeWidget() {
+        if (m_widget) {
+            m_widget->setParent(nullptr);
+        }
         m_widget = nullptr;
         return m_widget;
     }

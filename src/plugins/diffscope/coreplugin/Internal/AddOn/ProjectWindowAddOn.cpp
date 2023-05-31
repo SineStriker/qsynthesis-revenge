@@ -13,9 +13,10 @@
 
 #include "CoreApi/IWindow.h"
 #include "ICore.h"
-#include "Window/IProjectWindow.h"
+#include "Window/IProjectWindow_p.h"
 
 #include "Internal/Utils/LastWindowFilter.h"
+#include "Internal/Widgets/TPianoArea/TPianoArea.h"
 
 namespace Core {
 
@@ -45,6 +46,9 @@ namespace Core {
             // Add phoneme panel
             phonemePanel = new Internal::PhonemePanel();
             phonemeButton = iWin->addFloatingPanel("edit.phonemePanel", phonemePanel, nullptr);
+
+            // Add piano key widgets
+            iWin->addPianoKeyWidget("uta.pianoKeys", new TPianoAreaFactory());
 
             qIDec->installLocale(this, _LOC(ProjectWindowAddOn, this));
         }
@@ -79,7 +83,6 @@ namespace Core {
             deselectItem->setText(tr("Deselect"));
 
             appearanceMenuItem->setText(tr("Appearance"));
-            menuBarVisibleItem->setText(tr("Main Menu"));
             mainToolbarVisibleItem->setText(tr("Main Toolbar"));
             dockVisibleItem->setText(tr("Dock Panel Bars"));
             statusBarVisibleItem->setText(tr("Status Bar"));
@@ -98,6 +101,8 @@ namespace Core {
 
             metronomeItem->setText(tr("Metronome"));
             loopPlayItem->setText(tr("Loop Play"));
+
+            selectPianoKeyWidgetItem->setText(tr("Select Piano Key Widget"));
 
             phonemeButton->setText(tr("Phonemes"));
         }
@@ -121,6 +126,12 @@ namespace Core {
         static void connectVisibilityControlAction(QAction *action, QWidget *w, bool initState = true) {
             action->setCheckable(true);
             QObject::connect(action, &QAction::toggled, w, &QWidget::setVisible);
+            action->setChecked(initState);
+        }
+
+        static void connectDockVisibilityControlAction(QAction *action, CDockFrame *w, bool initState = true) {
+            action->setCheckable(true);
+            QObject::connect(action, &QAction::toggled, w, &CDockFrame::setBarVisible);
             action->setChecked(initState);
         }
 
@@ -156,7 +167,6 @@ namespace Core {
 
             // View
             appearanceMenuItem = new ActionItem("core.Appearance", ICore::createCoreMenu(win), this);
-            menuBarVisibleItem = new ActionItem("core.MenuBarVisible", new QAction(this), this);
             mainToolbarVisibleItem = new ActionItem("core.MainToolbarVisible", new QAction(this), this);
             dockVisibleItem = new ActionItem("core.DockVisible", new QAction(this), this);
             statusBarVisibleItem = new ActionItem("core.StatusBarVisible", new QAction(this), this);
@@ -191,13 +201,15 @@ namespace Core {
 
             mainToolbarHelpGroupItem = new ActionItem("core.MainToolbarHelpGroup", new QActionGroup(this), this);
 
+            // Invisible
+            selectPianoKeyWidgetItem = new ActionItem("core.SelectPianoKeyWidget", new QAction(this), this);
+
             // Set properties
             undoItem->setProperty("no-command-palette", true);
             redoItem->setProperty("no-command-palette", true);
 
-            connectVisibilityControlAction(menuBarVisibleItem->action(), iWin->menuBar());
             connectVisibilityControlAction(mainToolbarVisibleItem->action(), iWin->mainToolbar());
-            connectVisibilityControlAction(dockVisibleItem->action(), iWin->mainDock());
+            connectDockVisibilityControlAction(dockVisibleItem->action(), iWin->mainDock());
             connectVisibilityControlAction(statusBarVisibleItem->action(), iWin->statusBar());
 
             phonemePanelVisibleItem->action()->setCheckable(true);
@@ -250,6 +262,30 @@ namespace Core {
                 iWin->requestGlobalEvent("playback.moveToEnd"); //
             });
 
+            connect(selectPianoKeyWidgetItem->action(), &QAction::triggered, this, [this, iWin]() {
+                const auto &hash = iWin->d_func()->pianoKeyWidgets;
+
+                QStringList keys = hash.keys();
+                std::sort(keys.begin(), keys.end());
+
+                if (keys.isEmpty()) {
+                    return;
+                }
+
+                auto menu = new QMenu();
+                menu->setProperty("text", selectPianoKeyWidgetItem->text());
+                for (const auto &key : qAsConst(keys)) {
+                    auto action = new QAction(hash[key]->name(), menu);
+                    action->setData(key);
+                    menu->addAction(action);
+                    connect(action, &QAction::triggered, iWin->d_func(), [action, iWin]() {
+                        iWin->d_func()->setPianoKeyWidget(action->data().toString()); //
+                    });
+                }
+
+                iWin->showMenuInPalette(menu, true);
+            });
+
             iWin->addActionItems({
                 editItem,
                 viewItem,
@@ -276,7 +312,6 @@ namespace Core {
                 deselectItem,
 
                 appearanceMenuItem,
-                menuBarVisibleItem,
                 mainToolbarVisibleItem,
                 dockVisibleItem,
                 statusBarVisibleItem,
@@ -304,6 +339,8 @@ namespace Core {
 
                 mainToolbarStretchItem,
                 mainToolbarHelpGroupItem,
+
+                selectPianoKeyWidgetItem,
             });
         }
     }

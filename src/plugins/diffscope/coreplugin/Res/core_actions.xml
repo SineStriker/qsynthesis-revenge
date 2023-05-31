@@ -73,7 +73,6 @@
 
         <menu id="View">
             <menu id="Appearance">
-                <action id="MenuBarVisible" command="View: Main Menu"/>
                 <action id="MainToolbarVisible" command="View: Main Toolbar"/>
                 <action id="DockVisible" command="View: Dock Panel Bars"/>
                 <action id="StatusBarVisible" command="View: Status Bar"/>
@@ -100,6 +99,7 @@
 
     <context id="project.InvisibleContext" prefix="core.">
         <action id="ShowRecentFiles"/>
+        <action id="SelectPianoKeyWidget" command="View: Select Piano Key Widget"/>
     </context>
 
     <context id="project.MainToolbar" prefix="core.">

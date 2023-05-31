@@ -19,7 +19,7 @@ ck_target_components(${_plugin}
     SOURCES ${_src} ${_res_dir}/core_res.qrc
     QT_LINKS Core Widgets
     QT_INCLUDES_PRIVATE Core Gui Widgets
-    LINKS QsFramework ExtensionSystem CkAppCore
+    LINKS QsFramework QsSVS ExtensionSystem CkAppCore
     AUTO_INCLUDE_CURRENT
     INCLUDE_PRIVATE ${CK_HEADERS_OUTPUT_PATH}
 )

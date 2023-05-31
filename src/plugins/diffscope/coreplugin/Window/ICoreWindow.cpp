@@ -499,7 +499,10 @@ namespace Core {
             return;
         }
 
-        cp->setFilterHint(tr("Select action in \"%1\"").arg(removeAllAccelerateKeys(menu->title())));
+        QString title = menu->property("text").toString();
+
+        cp->setFilterHint(title.isEmpty() ? tr("Select action in \"%1\"").arg(removeAllAccelerateKeys(menu->title()))
+                                          : title);
         cp->setCurrentRow(0);
         cp->start();
 

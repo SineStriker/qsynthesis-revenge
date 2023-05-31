@@ -23,6 +23,8 @@ namespace Core {
 
     static const char floatingPanelsGroupC[] = "FloatingPanels";
 
+    static const char pianoKeyWidgetC[] = "PianoKeyWidget";
+
     IProjectWindowPrivate::IProjectWindowPrivate() {
         m_forceClose = false;
     }
@@ -40,12 +42,14 @@ namespace Core {
         auto settings = ILoader::instance()->settings();
         auto obj = settings->value(settingCatalogC).toObject();
         auto floatingPanelsStateArr = obj.value(floatingPanelsGroupC).toArray();
+
+        QJsonValue value;
         for (auto it = floatingPanelsStateArr.begin(); it != floatingPanelsStateArr.end(); ++it) {
             if (!it->isObject())
                 continue;
 
             auto stateObj = it->toObject();
-            auto value = stateObj.value("id");
+            value = stateObj.value("id");
             if (!value.isString())
                 continue;
 
@@ -59,6 +63,9 @@ namespace Core {
 
             floatingPanelsState.append({id, isOpen});
         }
+
+        value = obj.value(pianoKeyWidgetC);
+        currentPianoKeyWidget = value.isString() ? value.toString() : "uta.pianoKeys";
     }
 
     void IProjectWindowPrivate::saveSettings() const {
@@ -74,6 +81,7 @@ namespace Core {
             });
         }
         obj.insert(floatingPanelsGroupC, floatingPanelsStateArr);
+        obj.insert(pianoKeyWidgetC, currentPianoKeyWidget);
 
         settings->insert(settingCatalogC, obj);
     }
@@ -87,6 +95,24 @@ namespace Core {
         auto bar = q->mainToolbar();
 
         mainToolbarCtx->buildToolBarWithState(items, bar);
+    }
+
+    void IProjectWindowPrivate::setPianoKeyWidget(const QString &id) {
+        if (currentPianoKeyWidget == id) {
+            return;
+        }
+
+        auto fac = pianoKeyWidgets.value(id);
+        if (!fac) {
+            return;
+        }
+        currentPianoKeyWidget = id;
+
+        auto org = m_projectWidget->pianoKeyWidget();
+        if (org) {
+            org->deleteLater();
+        }
+        m_projectWidget->setPianoKeyWidget(fac->create(nullptr));
     }
 
     void IProjectWindowPrivate::_q_documentChanged() {
@@ -163,10 +189,10 @@ namespace Core {
                     }
 
                     if (checked) {
-                        d->m_projectWidget->piano()->addWidget(panel, bar);
+                        d->m_projectWidget->canvas()->addWidget(panel, bar);
                         bar->foldButton()->setChecked(true);
                     } else {
-                        d->m_projectWidget->piano()->removeWidget(panel);
+                        d->m_projectWidget->canvas()->removeWidget(panel);
                     }
 
                     obj->setProperty("checked", checked);
@@ -181,12 +207,28 @@ namespace Core {
         return nullptr;
     }
 
+    void IProjectWindow::addPianoKeyWidget(const QString &id, IPianoKeyWidgetFactory *factory) {
+        Q_D(IProjectWindow);
+        if (!factory) {
+            qWarning() << "Core::IProjectWindow::addPianoKeyWidget(): trying to add null factory";
+            return;
+        }
+        if (d->pianoKeyWidgets.contains(id)) {
+            qWarning() << "Core::IProjectWindow::addPianoKeyWidget(): trying to add duplicated factory:" << id;
+            return;
+        }
+        d->pianoKeyWidgets.insert(id, factory);
+    }
+
     IProjectWindow::IProjectWindow(QObject *parent) : IProjectWindow(*new IProjectWindowPrivate(), parent) {
     }
 
     IProjectWindow::~IProjectWindow() {
         Q_D(IProjectWindow);
         d->saveSettings();
+
+        // Remove piano key widget factories
+        qDeleteAll(d->pianoKeyWidgets);
     }
 
     void IProjectWindow::setupWindow() {
@@ -232,6 +274,19 @@ namespace Core {
             it->titleBar->foldButton()->setChecked(item.isOpen);
         }
 
+        // Restore piano key widget
+        {
+            QString id = d->currentPianoKeyWidget;
+            d->currentPianoKeyWidget.clear();
+
+            if (d->pianoKeyWidgets.isEmpty()) {
+                d->pianoKeyWidgets.clear();
+            } else if (!d->pianoKeyWidgets.contains(id)) {
+                id = d->pianoKeyWidgets.begin().key();
+            }
+            d->setPianoKeyWidget(id);
+        }
+
         ICore::instance()->windowSystem()->loadWindowGeometry(metaObject()->className(), win, {1200, 800});
     }
 
@@ -246,7 +301,7 @@ namespace Core {
 
         // Save floating panels state
         d->floatingPanelsState.clear();
-        auto piano = d->m_projectWidget->piano();
+        auto piano = d->m_projectWidget->canvas();
         for (int i = 0; i < piano->count(); ++i) {
             auto id = piano->widget(i)->property("choruskit_checkable_id").toString();
             auto it = d->floatingPanels.find(id);

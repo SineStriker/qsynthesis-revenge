@@ -683,7 +683,7 @@
     </message>
     <message>
         <source>Main Menu</source>
-        <translation>主菜单</translation>
+        <translation type="vanished">主菜单</translation>
     </message>
     <message>
         <source>Main Toolbar</source>
@@ -712,6 +712,10 @@
     <message>
         <source>Phonemes</source>
         <translation>音素</translation>
+    </message>
+    <message>
+        <source>Select Piano Key Widget</source>
+        <translation>选择钢琴键窗体</translation>
     </message>
 </context>
 <context>
@@ -765,6 +769,17 @@
     <message>
         <source>Help</source>
         <translation type="vanished">帮助</translation>
+    </message>
+</context>
+<context>
+    <name>TPianoArea</name>
+    <message>
+        <source>UTAU Piano</source>
+        <translation type="vanished">UTAU 钢琴</translation>
+    </message>
+    <message>
+        <source>UTAU/FL Studio</source>
+        <translation></translation>
     </message>
 </context>
 </TS>

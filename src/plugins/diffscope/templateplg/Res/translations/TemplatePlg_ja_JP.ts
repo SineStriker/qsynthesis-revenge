@@ -40,8 +40,8 @@
 <context>
     <name>TemplatePlg::Internal::TreeConfigPage</name>
     <message>
+        <location filename="../../Internal/Settings/TreeConfigPage.cpp" line="14"/>
         <location filename="../../Internal/Settings/TreeConfigPage.cpp" line="15"/>
-        <location filename="../../Internal/Settings/TreeConfigPage.cpp" line="16"/>
         <source>JsonConfig</source>
         <translation type="unfinished"></translation>
     </message>
@@ -84,57 +84,57 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Internal/Widgets/TreeConfigWidget.cpp" line="69"/>
+        <location filename="../../Internal/Widgets/TreeConfigWidget.cpp" line="68"/>
         <source>Warning</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Internal/Widgets/TreeConfigWidget.cpp" line="70"/>
+        <location filename="../../Internal/Widgets/TreeConfigWidget.cpp" line="69"/>
         <source>: The configuration interface (config.treeui) is missing. Please download and install this plugin again.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Internal/Widgets/TreeConfigWidget.cpp" line="79"/>
+        <location filename="../../Internal/Widgets/TreeConfigWidget.cpp" line="77"/>
         <source>File not exist!</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Internal/Widgets/TreeConfigWidget.cpp" line="81"/>
+        <location filename="../../Internal/Widgets/TreeConfigWidget.cpp" line="79"/>
         <source>: The setting information file (config.json) does not exist, use default settings!</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Internal/Widgets/TreeConfigWidget.cpp" line="102"/>
+        <location filename="../../Internal/Widgets/TreeConfigWidget.cpp" line="100"/>
         <source>default config</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Internal/Widgets/TreeConfigWidget.cpp" line="103"/>
+        <location filename="../../Internal/Widgets/TreeConfigWidget.cpp" line="101"/>
         <source>load config</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Internal/Widgets/TreeConfigWidget.cpp" line="104"/>
+        <location filename="../../Internal/Widgets/TreeConfigWidget.cpp" line="102"/>
         <source>save config</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Internal/Widgets/TreeConfigWidget.cpp" line="197"/>
+        <location filename="../../Internal/Widgets/TreeConfigWidget.cpp" line="194"/>
         <source>Info</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Internal/Widgets/TreeConfigWidget.cpp" line="198"/>
+        <location filename="../../Internal/Widgets/TreeConfigWidget.cpp" line="195"/>
         <source>The default settings have been restored. Please manually click the save button to confirm the modification.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Internal/Widgets/TreeConfigWidget.cpp" line="214"/>
+        <location filename="../../Internal/Widgets/TreeConfigWidget.cpp" line="210"/>
         <source>Successfully saved</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Internal/Widgets/TreeConfigWidget.cpp" line="214"/>
+        <location filename="../../Internal/Widgets/TreeConfigWidget.cpp" line="210"/>
         <source>Successfully saved!</source>
         <translation type="unfinished"></translation>
     </message>
@@ -248,24 +248,24 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Internal/Widgets/TreeDevWidget.cpp" line="151"/>
-        <location filename="../../Internal/Widgets/TreeDevWidget.cpp" line="174"/>
-        <location filename="../../Internal/Widgets/TreeDevWidget.cpp" line="196"/>
+        <location filename="../../Internal/Widgets/TreeDevWidget.cpp" line="150"/>
+        <location filename="../../Internal/Widgets/TreeDevWidget.cpp" line="172"/>
+        <location filename="../../Internal/Widgets/TreeDevWidget.cpp" line="194"/>
         <source>Warning</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Internal/Widgets/TreeDevWidget.cpp" line="151"/>
+        <location filename="../../Internal/Widgets/TreeDevWidget.cpp" line="150"/>
         <source>The remark format must be: Chinese;English</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Internal/Widgets/TreeDevWidget.cpp" line="174"/>
+        <location filename="../../Internal/Widgets/TreeDevWidget.cpp" line="172"/>
         <source>Unchecked item cannot add sub items</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Internal/Widgets/TreeDevWidget.cpp" line="197"/>
+        <location filename="../../Internal/Widgets/TreeDevWidget.cpp" line="195"/>
         <source>Please input<byte value="xd"/>
 &quot;Chinese; Chinese; English; English&quot; in the following format to ensure that the items are even numbers, and click addButton again.</source>
         <translation type="unfinished"></translation>

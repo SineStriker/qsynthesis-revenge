@@ -9,6 +9,8 @@
 #include <CDockFrame.h>
 #include <Widgets/SynthVSplitter.h>
 
+#include "Interfaces/IPianoKeyWidget.h"
+
 namespace Core::Internal {
 
     class ProjectWidget : public QFrame {
@@ -25,16 +27,29 @@ namespace Core::Internal {
             return m_frame;
         }
 
-        QsApi::SynthVSplitter *piano() const {
-            return m_piano;
+        QsApi::SynthVSplitter *canvas() const {
+            return m_canvas;
         }
+
+        QWidget *pianoKeyArea() const{
+            return m_pianoArea;
+        }
+
+        Core::IPianoKeyWidget *pianoKeyWidget() const;
+        void setPianoKeyWidget(Core::IPianoKeyWidget *widget);
 
     private:
         QVBoxLayout *m_layout;
 
         QToolBar *m_toolbar;
         CDockFrame *m_frame;
-        QsApi::SynthVSplitter *m_piano;
+        QsApi::SynthVSplitter *m_canvas;
+
+        QWidget *m_pianoArea;
+        QWidget *m_sectionArea;
+
+        QGridLayout *m_pianoLayout;
+        QWidget *m_pianoWidget;
     };
 
 }

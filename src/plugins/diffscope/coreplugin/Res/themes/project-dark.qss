@@ -74,6 +74,10 @@ QToolBar#main-toolbar>QToolButton[selectable=true]:checked {
     background-color: rgba(35, 50, 51, 100%);
 }
 
+QsApi--SynthVSplitter#canvas>QsApi--SynthVSplitterHandle {
+    qproperty-handleHeight: 4px;
+}
+
 Core--Internal--FloatingTitleBar {
     background-color: #363737;
     qproperty-layoutMargins: qmargins(5px);
@@ -107,3 +111,47 @@ QWidget[floating-panel=true] {
     background-color: rgba(0, 0, 0, 40%);
 }
 
+
+/* PianoArea */
+
+TPianoArea {
+    qproperty-preferredWidth: 125px;
+    background-color: #333333;
+}
+
+TPianoArea>QLabel[type=standard] {
+    color: #333333;
+}
+
+TPianoArea>QLabel[type=realtime] {
+    color: black;
+    background-color: transparent;
+}
+
+TPianoArea>QLabel[type=realtime][black=true] {
+    color: white;
+}
+
+TPianoArea>TPianoKey {
+    border: none;
+    /* border-bottom-right-radius: 3px;
+    border-top-right-radius: 3px; */
+    /* top right bottom left */
+    margin: 1px 2px 1px 0;
+}
+
+TPianoArea>TPianoKey[color=white] {
+    background-color: lightgrey;
+}
+
+TPianoArea>TPianoKey[color=white]:hover {
+    background-color: #EFEFEF;
+}
+
+TPianoArea>TPianoKey[color=black] {
+    background-color: black;
+}
+
+TPianoArea>TPianoKey[color=black]:hover {
+    background-color: #535353;
+}
