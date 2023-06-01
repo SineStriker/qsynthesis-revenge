@@ -3,85 +3,48 @@
 
 #include <QList>
 #include <QPair>
+#include <QScopedPointer>
 
 namespace ScriptMgr::Internal {
 
-    class MusicTimeManager;
+    class MusicTimeline;
+    class MusicTimePrivate;
+
+    struct MusicTimeData {
+        int measure = 0;
+        int beat = 0;
+        int tick = 0;
+        double msec = -1;
+    };
 
     class MusicTime {
+        Q_DECLARE_PRIVATE(MusicTime)
     public:
         ~MusicTime();
-        bool setMbt(int measure, int beat, int tick);
+        MusicTime(const MusicTime &mt);
+        MusicTime &operator=(const MusicTime &mt);
+        int measure();
+        int beat();
+        int tick();
+        QString toString();
 
-        int measure() const;
-        int beat() const;
-        int tick() const;
-        std::tuple<int, int, int> mbt() const;
-        inline int totalTick() const {
-            return m_tick;
-        }
+        int totalTick() const;
 
-        QString toString() const;
-        bool fromString(const QString &str);
+        double msec();
 
-        double msec() const;
-        bool fromMsec(double msec);
-
-        inline bool operator!=(const MusicTime &t) const {
-            return m_tick != t.m_tick;
-        }
-        inline bool operator<(const MusicTime &t) const {
-            return m_tick < t.m_tick;
-        }
-        inline bool operator<=(const MusicTime &t) const {
-            return m_tick <= t.m_tick;
-        }
-        inline bool operator==(const MusicTime &t) const {
-            return m_tick == t.m_tick;
-        }
-        inline bool operator>(const MusicTime &t) const {
-            return m_tick > t.m_tick;
-        }
-        inline bool operator>=(const MusicTime &t) const {
-            return m_tick >= t.m_tick;
-        }
-        inline MusicTime &operator+=(int val) {
-            m_tick += val;
-            return *this;
-        }
-        inline MusicTime &operator-=(int val) {
-            m_tick -= val;
-            return *this;
-        }
-        inline MusicTime operator+(int val) const {
-            MusicTime t(*this);
-            t.m_tick += val;
-            return t;
-        }
-        friend inline MusicTime operator+(int val, const MusicTime &t) {
-            MusicTime t2(t);
-            t2.m_tick += val;
-            return t2;
-        }
-        inline MusicTime operator-(int val) const {
-            MusicTime t(*this);
-            t.m_tick -= val;
-            return t;
-        }
-        friend inline MusicTime operator-(int val, const MusicTime &t) {
-            MusicTime t2(t);
-            t2.m_tick -= val;
-            return t2;
-        }
     private:
-        friend class MusicTimeManager;
-        const MusicTimeManager *m_manager;
+        friend class MusicTimeline;
+        friend class MusicTimelinePrivate;
+        QScopedPointer<MusicTimePrivate> d_ptr;
         int m_tick = 0;
+        MusicTimeData m_cache;
+        bool m_mbtDirty = true;
+        explicit MusicTime(MusicTimePrivate &d, MusicTimeline *timeline);
     protected:
-        explicit MusicTime(MusicTimeManager *manager);
-        MusicTime(MusicTimeManager *manager, int measure, int beat, int tick);
-        MusicTime(MusicTimeManager *manager, const QString &str);
-        MusicTime(MusicTimeManager *manager, double msec);
+        explicit MusicTime(MusicTimeline *manager);
+        MusicTime(MusicTimeline *manager, int measure, int beat, int tick);
+        MusicTime(MusicTimeline *manager, const QString &str);
+        MusicTime(MusicTimeline *manager, double msec);
     };
 
 } // Internal

@@ -12,7 +12,7 @@
 
 #include "JsIntegrationUtils/KeyNameSpinBox.h"
 #include "JsIntegrationUtils/KeyNameValidator.h"
-#include "JsIntegrationUtils/MusicTimeManager.h"
+#include "JsIntegrationUtils/MusicTimeline.h"
 #include "JsInternalObject.h"
 #include "ScriptLoader.h"
 
@@ -121,7 +121,7 @@ namespace ScriptMgr {
             //TODO this is a test
             auto testAction = new QAction;
             connect(testAction, &QAction::triggered, this, [=](){
-                MusicTimeManager mgr;
+                MusicTimeline mgr;
                 mgr.thisIsATest();
             });
             userScriptsMainGroup->actionGroup()->addAction(testAction);
