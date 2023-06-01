@@ -216,7 +216,7 @@ QSvipModel QSvipModel::fromJsonObject(const QJsonObject &obj, bool *ok) {
             instTrack->Pan = objTrack.value("Pan").toDouble();
 
             instTrack->AudioFilePath = objTrack.value("AudioFilePath").toString();
-            instTrack->Offset = objTrack.value("Offset").toDouble();
+            instTrack->Offset = objTrack.value("Offset").toInt();
             model.TrackList.append(instTrack);
         }
     }
