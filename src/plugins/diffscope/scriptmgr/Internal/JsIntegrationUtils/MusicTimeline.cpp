@@ -85,14 +85,14 @@ namespace ScriptMgr::Internal {
 
     void MusicTimelinePrivate::_q_timeSignatureChanged() {
         for(auto *t: mbtCachedMusicTimes) {
-            t->m_mbtDirty = true;
+            t->m_cache.clearMbt();
         }
         mbtCachedMusicTimes.clear();
     }
 
     void MusicTimelinePrivate::_q_tempoChanged() {
         for(auto *t: msecCachedMusicTimes) {
-            t->m_cache.msec = -1;
+            t->m_cache.clearMsec();
         }
         msecCachedMusicTimes.clear();
     }

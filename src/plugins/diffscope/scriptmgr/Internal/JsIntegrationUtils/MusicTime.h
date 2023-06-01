@@ -11,10 +11,14 @@ namespace ScriptMgr::Internal {
     class MusicTimePrivate;
 
     struct MusicTimeData {
-        int measure = 0;
+        int measure = -1;
         int beat = 0;
         int tick = 0;
         double msec = -1;
+        inline bool isMbtNull() const { return measure < 0; }
+        inline bool isMsecNull() const { return msec < 0; }
+        inline void clearMbt() { measure = -1; }
+        inline void clearMsec() { msec = -1; }
     };
 
     class MusicTime {
@@ -38,7 +42,6 @@ namespace ScriptMgr::Internal {
         QScopedPointer<MusicTimePrivate> d_ptr;
         int m_tick = 0;
         MusicTimeData m_cache;
-        bool m_mbtDirty = true;
         explicit MusicTime(MusicTimePrivate &d, MusicTimeline *timeline);
     protected:
         explicit MusicTime(MusicTimeline *manager);

@@ -79,7 +79,6 @@ namespace ScriptMgr::Internal {
         q->m_cache.beat = std::get<1>(ret);
         q->m_cache.tick = std::get<2>(ret);
         addTimelineMbtCached();
-        q->m_mbtDirty = false;
     }
 
     void MusicTimePrivate::updateCachedMsec() {
@@ -115,7 +114,7 @@ namespace ScriptMgr::Internal {
 
     int MusicTime::measure() {
         Q_D(MusicTime);
-        if(m_mbtDirty) {
+        if(m_cache.isMbtNull()) {
             d->updateCachedMbt();
         }
         return m_cache.measure;
@@ -123,7 +122,7 @@ namespace ScriptMgr::Internal {
 
     int MusicTime::beat() {
         Q_D(MusicTime);
-        if(m_mbtDirty) {
+        if(m_cache.isMbtNull()) {
             d->updateCachedMbt();
         }
         return m_cache.beat;
@@ -131,7 +130,7 @@ namespace ScriptMgr::Internal {
 
     int MusicTime::tick() {
         Q_D(MusicTime);
-        if(m_mbtDirty) {
+        if(m_cache.isMbtNull()) {
             d->updateCachedMbt();
         }
         return m_cache.tick;
@@ -143,7 +142,7 @@ namespace ScriptMgr::Internal {
 
     double MusicTime::msec() {
         Q_D(MusicTime);
-        if(m_cache.msec < 0) {
+        if(m_cache.isMsecNull()) {
             d->updateCachedMsec();
         }
         return m_cache.msec;
@@ -185,18 +184,17 @@ namespace ScriptMgr::Internal {
         Q_D(MusicTime);
         Q_ASSERT(d->timeline == mt.d_func()->timeline);
         m_tick = mt.m_tick;
-        if(!mt.m_mbtDirty) {
+        if(!mt.m_cache.isMbtNull()) {
             m_cache = mt.m_cache;
-            m_mbtDirty = false;
             d->addTimelineMbtCached();
         } else {
-            m_mbtDirty = true;
+            m_cache.clearMbt();
         }
-        if(mt.m_cache.msec > 0) {
+        if(!mt.m_cache.isMsecNull()) {
             m_cache.msec = mt.m_cache.msec;
             d->addTimelineMsecCached();
         } else {
-            m_cache.msec = -1;
+            m_cache.clearMsec();
         }
         return *this;
     }
