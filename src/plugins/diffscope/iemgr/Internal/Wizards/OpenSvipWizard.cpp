@@ -115,14 +115,14 @@ namespace IEMgr ::Internal {
                 time = 0;
             else {
                 auto currentBarIndex = osTimeSig.BarIndex;
-                auto prevTimeSig = osProject.TimeSignatureList.at(timeSigIndex - 1);
+                auto &prevTimeSig = osProject.TimeSignatureList.at(timeSigIndex - 1);
                 auto prevBarIndex = prevTimeSig.BarIndex;
                 auto prevNumerator = prevTimeSig.Numerator;
                 auto prevDenominator = prevTimeSig.Denominator;
                 currentTime += (currentBarIndex - prevBarIndex) * 1920 * (prevNumerator / prevDenominator);
                 time = currentTime;
             }
-            timeSigIndex += 1;
+            timeSigIndex++;
             timeSig.pos = time;
             timeSig.num = osTimeSig.Numerator;
             timeSig.den = osTimeSig.Denominator;
@@ -205,6 +205,127 @@ namespace IEMgr ::Internal {
     }
 
     bool OpenSvipWizard::save(const QString &filename, const QDspxModel &in, QWidget *parent) {
+        auto &dsProject = in;
+        auto &dsContent = dsProject.content;
+        auto &dsTimeline = dsContent.timeline;
+
+        QSvipModel model;
+        
+        // Tempos
+        for (const auto &dsTempo : qAsConst(dsTimeline.tempos)) {
+            QSvipModel::SongTempo tempo;
+            tempo.Position = dsTempo.pos;
+            tempo.BPM = dsTempo.value;
+            model.SongTempoList.append(tempo);
+        }
+
+        // TimeSignatures
+        int timeSigIndex = 0;
+        int currentBarIndex = 0;
+        for (const auto &dsTimeSig : qAsConst(dsTimeline.timeSignatures)) {
+            int deltaTime = 0;
+            int barIndex;
+            if (timeSigIndex == 0)
+                barIndex = 0;
+            else {
+                auto curTime = dsTimeSig.pos;
+                auto &prevTimeSig = dsTimeline.timeSignatures.at(timeSigIndex - 1);
+                auto prevTime = prevTimeSig.pos;
+                deltaTime = curTime - prevTime;
+                auto bars = deltaTime * prevTimeSig.den / 1920 / prevTimeSig.num;
+                currentBarIndex += bars;
+                barIndex = currentBarIndex;
+            }
+            timeSigIndex++;
+            QSvipModel::TimeSignature timeSig;
+            timeSig.BarIndex = barIndex;
+            timeSig.Numerator = dsTimeSig.num;
+            timeSig.Denominator = dsTimeSig.den;
+            model.TimeSignatureList.append(timeSig);
+        }
+
+        // Tracks
+        for (const auto &dsTrack : qAsConst(dsContent.tracks)) {
+            if (dsTrack.clips.isEmpty()) { // Insert an empty singing track if ds track is empty.
+                auto *singingTrackPtr = new QSvipModel::SingingTrack;
+                QSharedPointer<QSvipModel::SingingTrack> singingTrack(singingTrackPtr);
+                singingTrack->Title = dsTrack.name;
+                singingTrack->Mute = dsTrack.control.mute;
+                singingTrack->Solo = dsTrack.control.solo;
+                singingTrack->Volume = OpenSvipWizard::toLinearVolume(dsTrack.control.gain);
+                singingTrack->Pan = dsTrack.control.pan;
+                model.TrackList.append(singingTrack);
+            } else { // Assign clips to proper tracks
+                for (const auto &dsClip : qAsConst(dsTrack.clips)) {
+                    if (dsClip->type == QDspx::Clip::Singing) {
+                        auto dsSingingClip = dsClip.dynamicCast<QDspx::SingingClip>();
+                        auto *singingTrackPtr = new QSvipModel::SingingTrack;
+                        QSharedPointer<QSvipModel::SingingTrack> singingTrack(singingTrackPtr);
+                        singingTrack->Title = dsTrack.name + " " + dsSingingClip->name;
+                        singingTrack->Mute = dsSingingClip->control.mute;
+                        singingTrack->Solo = dsTrack.control.solo;
+                        singingTrack->Volume = OpenSvipWizard::toLinearVolume(dsSingingClip->control.gain);
+                        singingTrack->Pan = dsTrack.control.pan;
+
+                        // Only visiable notes will be exported
+                        int start = dsClip->time.start;
+                        int clipStart = dsClip->time.clipStart;
+                        int visiableLeft = start + clipStart;
+                        int length = dsClip->time.length;
+                        int clipLen = dsClip->time.clipLen;
+                        int visiableRight = visiableLeft + clipLen;
+                        for (const auto &dsNote : qAsConst(dsSingingClip->notes)) {
+                            if (dsNote.pos < visiableLeft || dsNote.pos + dsNote.length > visiableRight) // Ignore invisible note
+                                continue;
+
+                            QSvipModel::Note note;
+                            note.StartPos = dsNote.pos;
+                            note.Length = dsNote.length;
+                            note.Lyric = dsNote.lyric;
+                            note.KeyNumber = dsNote.keyNum;
+                            // TODO: Phoneme conversion
+                            singingTrack->NoteList.append(note);
+                        }
+                        // TODO: Params Conversion
+                        model.TrackList.append(singingTrack);
+                    } else if (dsClip->type == QDspx::Clip::Audio) {
+                        auto dsAudioClip = dsClip.dynamicCast<QDspx::AudioClip>();
+                        auto *instTrackPtr = new QSvipModel::InstrumentalTrack;
+                        QSharedPointer<QSvipModel::InstrumentalTrack> instTrack(instTrackPtr);
+                        instTrack->Title = dsTrack.name + " " + dsAudioClip->name;
+                        instTrack->Mute = dsAudioClip->control.mute;
+                        instTrack->Solo = dsTrack.control.solo;
+                        instTrack->Volume = OpenSvipWizard::toLinearVolume(dsAudioClip->control.gain);
+                        instTrack->Pan = dsTrack.control.pan;
+
+                        instTrack->AudioFilePath = dsAudioClip->path;
+                        instTrack->Offset = dsAudioClip->time.start;
+                        model.TrackList.append(instTrack);
+                    }
+                }
+            }
+        }
+
+        auto saveProjectFile = [](const QString &filename, QJsonObject &jsonObj) -> bool {
+            QJsonDocument document;
+            document.setObject(jsonObj);
+
+            auto byteArray = document.toJson(QJsonDocument::Compact);
+            QString jsonStr(byteArray);
+            QFile file(filename);
+
+            if (!file.open(QIODevice::ReadWrite | QIODevice::Text)) {
+                qDebug() << "Failed to write project file";
+            }
+            QTextStream in(&file);
+            in << jsonStr;
+
+            file.close();
+        };
+
+        auto modelObj = model.toJsonObject();
+        if (!saveProjectFile(filename, modelObj))
+            return false;
         return true;
     }
 
