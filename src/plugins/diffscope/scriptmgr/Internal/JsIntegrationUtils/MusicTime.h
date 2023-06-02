@@ -1,6 +1,7 @@
 #ifndef CHORUSKIT_MUSICTIME_H
 #define CHORUSKIT_MUSICTIME_H
 
+#include <QDebug>
 #include <QList>
 #include <QPair>
 #include <QScopedPointer>
@@ -36,6 +37,8 @@ namespace ScriptMgr::Internal {
 
         double msec();
 
+        friend QDebug operator<<(QDebug debug, MusicTime mt);
+
     private:
         friend class MusicTimeline;
         friend class MusicTimelinePrivate;
@@ -49,7 +52,6 @@ namespace ScriptMgr::Internal {
         MusicTime(MusicTimeline *manager, const QString &str);
         MusicTime(MusicTimeline *manager, double msec);
     };
-
 } // Internal
 
 #endif // CHORUSKIT_MUSICTIME_H

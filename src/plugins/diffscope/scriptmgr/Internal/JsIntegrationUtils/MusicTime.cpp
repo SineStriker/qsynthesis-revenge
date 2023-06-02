@@ -8,6 +8,9 @@
 namespace ScriptMgr::Internal {
 
     MusicTime::~MusicTime() {
+        Q_D(MusicTime);
+        d->removeTimelineMbtCached();
+        d->removeTimelineMsecCached();
     }
 
     bool MusicTimePrivate::setMbt(int measure, int beat, int tick) {
@@ -35,10 +38,15 @@ namespace ScriptMgr::Internal {
     }
 
     bool MusicTimePrivate::fromString(const QString &str) {
-        QRegularExpression rx(R"(^\s*(\d+)\s*[:\xff1a]?\s*(\d*)\s*[:\xff1a]?\s*(\d*)\s*$)");
+        QRegularExpression rx(R"(^\s*(\d*)\s*[:\xff1a]?\s*(\d*)\s*[:\xff1a]?\s*(\d*)\s*$)");
         auto match = rx.match(str);
         if(!match.hasMatch()) return false;
-        setMbt(match.captured(1).toInt() - 1, match.captured(2).toInt() - 1, match.captured(3).toInt());
+        qDebug() << "match: " << match;
+        setMbt(
+            match.captured(1).isEmpty() ? 0: (match.captured(1).toInt() - 1),
+            match.captured(2).isEmpty() ? 0: (match.captured(2).toInt() - 1),
+            match.captured(3).toInt()
+        );
         return true;
     }
 
@@ -67,7 +75,7 @@ namespace ScriptMgr::Internal {
     MusicTimePrivate::~MusicTimePrivate() {
     }
 
-    void MusicTimePrivate::init(MusicTimeline *timeline_) {
+    void MusicTimePrivate::setTimeline(MusicTimeline *timeline_) {
         timeline = timeline_;
         timeline_d = timeline_->d_func();
     }
@@ -159,9 +167,18 @@ namespace ScriptMgr::Internal {
         return str;
     }
 
+    QDebug operator<<(QDebug debug, MusicTime mt) {
+        QDebugStateSaver saver(debug);
+        debug.nospace() << "MusicTime(";
+        debug << "tick=" << mt.m_tick << ", "
+              << "mbt=" << "(" << mt.measure() << ", " << mt.beat() << ", " << mt.tick() << ", " << mt.toString() << "), "
+              << "msec=" << mt.msec() << ")";
+        return debug;
+    }
+
     MusicTime::MusicTime(MusicTimePrivate &d, MusicTimeline *timeline): d_ptr(&d) {
         d.q_ptr = this;
-        d.init(timeline);
+        d.setTimeline(timeline);
     }
     MusicTime::MusicTime(MusicTimeline *manager): MusicTime(*new MusicTimePrivate, manager) {
     }
@@ -182,19 +199,21 @@ namespace ScriptMgr::Internal {
     }
     MusicTime &MusicTime::operator=(const MusicTime &mt) {
         Q_D(MusicTime);
-        Q_ASSERT(d->timeline == mt.d_func()->timeline);
+        d->setTimeline(mt.d_func()->timeline);
         m_tick = mt.m_tick;
         if(!mt.m_cache.isMbtNull()) {
             m_cache = mt.m_cache;
             d->addTimelineMbtCached();
         } else {
             m_cache.clearMbt();
+            d->removeTimelineMbtCached();
         }
         if(!mt.m_cache.isMsecNull()) {
             m_cache.msec = mt.m_cache.msec;
             d->addTimelineMsecCached();
         } else {
             m_cache.clearMsec();
+            d->removeTimelineMsecCached();
         }
         return *this;
     }

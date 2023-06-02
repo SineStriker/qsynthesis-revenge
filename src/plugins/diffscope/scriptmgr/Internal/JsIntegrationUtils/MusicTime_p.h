@@ -17,7 +17,7 @@ namespace ScriptMgr::Internal {
         MusicTimePrivate();
         ~MusicTimePrivate();
 
-        void init(MusicTimeline *timeline_);
+        void setTimeline(MusicTimeline *timeline_);
         bool setMbt(int measure, int beat, int tick);
 
         std::tuple<int, int, int> mbt() const;

@@ -350,6 +350,8 @@ namespace ScriptMgr::Internal {
         qDebug() << mt.msec();
         removeTempos({2400, 1920, 1200});
         qDebug() << mt.msec();
+        qDebug() << create("2") << create("2:") << create(":2") << create("2:2:") << create("::10") << create("2:0:0");
+
     }
 
 } // Internal
