@@ -12,6 +12,7 @@
 
 #include "JsIntegrationUtils/KeyNameSpinBox.h"
 #include "JsIntegrationUtils/KeyNameValidator.h"
+#include "JsIntegrationUtils/MsecTime.h"
 #include "JsIntegrationUtils/MusicTimeline.h"
 #include "JsInternalObject.h"
 #include "ScriptLoader.h"
@@ -123,6 +124,16 @@ namespace ScriptMgr {
             connect(testAction, &QAction::triggered, this, [=](){
                 MusicTimeline mgr;
                 mgr.thisIsATest();
+                qDebug() << MsecTime("1:5").toString();
+                qDebug() << MsecTime("10").toString();
+                qDebug() << MsecTime("1:5:10").toString();
+                qDebug() << MsecTime("1:.100").toString();
+                qDebug() << MsecTime("114.514").toString();
+                qDebug() << MsecTime("1::.919").toString();
+                qDebug() << MsecTime(":8:.10").toString();
+                qDebug() << MsecTime("::8.10").toString();
+                qDebug() << MsecTime("19:2.6").toString();
+                qDebug() << MsecTime("8:1:7.999").toString();
             });
             userScriptsMainGroup->actionGroup()->addAction(testAction);
 

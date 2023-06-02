@@ -165,6 +165,7 @@ namespace ScriptMgr::Internal {
         textStream.setFieldAlignment(QTextStream::AlignRight);
         textStream.setPadChar('0');
         textStream << tick();
+        textStream.flush();
         return str;
     }
 
