@@ -44,7 +44,6 @@ namespace ScriptMgr::Internal {
         void tempoChanged();
         void changed();
     private:
-        friend class MusicTime;
         friend class MusicTimePrivate;
         QScopedPointer<MusicTimelinePrivate> d_ptr;
         explicit MusicTimeline(MusicTimelinePrivate &d);

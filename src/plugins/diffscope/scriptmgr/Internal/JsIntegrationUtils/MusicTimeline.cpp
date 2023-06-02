@@ -3,6 +3,8 @@
 
 #include <QDebug>
 
+#include "MusicTime_p.h"
+
 namespace ScriptMgr::Internal {
 
     MusicTimeline::MusicTimeline(): MusicTimeline(*new MusicTimelinePrivate) {
@@ -85,14 +87,14 @@ namespace ScriptMgr::Internal {
 
     void MusicTimelinePrivate::_q_timeSignatureChanged() {
         for(auto *t: mbtCachedMusicTimes) {
-            t->m_cache.clearMbt();
+            t->cache.clearMbt();
         }
         mbtCachedMusicTimes.clear();
     }
 
     void MusicTimelinePrivate::_q_tempoChanged() {
         for(auto *t: msecCachedMusicTimes) {
-            t->m_cache.clearMsec();
+            t->cache.clearMsec();
         }
         msecCachedMusicTimes.clear();
     }
@@ -335,23 +337,31 @@ namespace ScriptMgr::Internal {
         qDebug() << d->msecSumMap.values();
         auto mt = create();
         mt = create(0, 0, 5700);
-        qDebug() << mt.toString();
+        qDebug() << mt;
         mt = create(0, 0, 4000);
-        qDebug() << mt.toString();
+        qDebug() << mt;
         mt = create("3:3:160");
-        qDebug() << mt.totalTick();
+        qDebug() << mt;
         mt = create(3, 0, 420);
-        qDebug() << mt.totalTick();
-        qDebug() << mt.msec();
+        qDebug() << mt;
         mt = create(2875);
-        qDebug() << mt.toString();
+        qDebug() << mt;
         mt = create(3000);
-        qDebug() << mt.toString();
-        qDebug() << mt.msec();
+        qDebug() << mt;
+        auto mt2 = mt;
+        qDebug() << mt << mt2;
         removeTempos({2400, 1920, 1200});
-        qDebug() << mt.msec();
-        qDebug() << create("2") << create("2:") << create(":2") << create("2:2:") << create("::10") << create("2:0:0");
-
+        setTimeSignature(0, {4, 4});
+        qDebug() << mt << mt2;
+        qDebug() << "strconv:" << create("2");
+        qDebug() << "strconv:" << create("2:");
+        qDebug() << "strconv:" << create(":2");
+        qDebug() << "strconv:" << create("2:2:");
+        qDebug() << "strconv:" << create("::10");
+        qDebug() << "strconv:" << create("2:0:0");
+        mt += 960;
+        qDebug() << mt;
+        qDebug() << (mt == mt2);
     }
 
 } // Internal

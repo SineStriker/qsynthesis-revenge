@@ -8,32 +8,33 @@
 namespace ScriptMgr::Internal {
 
     MusicTime::~MusicTime() {
-        Q_D(MusicTime);
-        d->removeTimelineMbtCached();
-        d->removeTimelineMsecCached();
+
     }
 
     bool MusicTimePrivate::setMbt(int measure, int beat, int tick) {
-        Q_Q(MusicTime);
         if(measure < 0 || beat < 0 || tick < 0) return false;
+        if(measure == 0 && beat == 0) {
+            cache.totalTick = tick;
+            return true;
+        }
         auto timeSig = timeline->timeSignature(measure);
         auto refMeasure = timeline->nearestTimeSignaturePosition(measure);
         auto refTick = timeline_d->revMeasureMap[refMeasure];
         tick += refTick + (measure - refMeasure) * timeSig.ticksPerBar(timeline_d->tpqn);
         tick += beat * timeSig.ticksPerBeat(timeline_d->tpqn);
-        q->m_tick = tick;
+        cache.totalTick = tick;
         return true;
     }
 
     std::tuple<int, int, int> MusicTimePrivate::mbt() const {
-        Q_Q(const MusicTime);
-        int refTick = timeline_d->findNearestTickWithTimeSignature(q->m_tick);
+
+        int refTick = timeline_d->findNearestTickWithTimeSignature(cache.totalTick);
         int refMeasure = timeline_d->measureMap[refTick];
         MusicTimeSignature timeSig = timeline_d->timeSignatureMap[refMeasure];
         return {
-            refMeasure + (q->m_tick - refTick) / timeSig.ticksPerBar(timeline_d->tpqn),
-            ((q->m_tick - refTick) % timeSig.ticksPerBar(timeline_d->tpqn)) / timeSig.ticksPerBeat(timeline_d->tpqn),
-            ((q->m_tick - refTick) % timeSig.ticksPerBar(timeline_d->tpqn)) % timeSig.ticksPerBeat(timeline_d->tpqn),
+            refMeasure + (cache.totalTick - refTick) / timeSig.ticksPerBar(timeline_d->tpqn),
+            ((cache.totalTick - refTick) % timeSig.ticksPerBar(timeline_d->tpqn)) / timeSig.ticksPerBeat(timeline_d->tpqn),
+            ((cache.totalTick - refTick) % timeSig.ticksPerBar(timeline_d->tpqn)) % timeSig.ticksPerBeat(timeline_d->tpqn),
         };
     }
 
@@ -41,7 +42,6 @@ namespace ScriptMgr::Internal {
         QRegularExpression rx(R"(^\s*(\d*)\s*[:\xff1a]?\s*(\d*)\s*[:\xff1a]?\s*(\d*)\s*$)");
         auto match = rx.match(str);
         if(!match.hasMatch()) return false;
-        qDebug() << "match: " << match;
         setMbt(
             match.captured(1).isEmpty() ? 0: (match.captured(1).toInt() - 1),
             match.captured(2).isEmpty() ? 0: (match.captured(2).toInt() - 1),
@@ -51,21 +51,20 @@ namespace ScriptMgr::Internal {
     }
 
     double MusicTimePrivate::msec() const {
-        Q_Q(const MusicTime);
-        auto refTick = timeline->nearestTempoPosition(q->m_tick);
+
+        auto refTick = timeline->nearestTempoPosition(cache.totalTick);
         auto tempo = timeline_d->tempoMap[refTick];
         auto refMsec = timeline_d->msecSumMap[refTick];
-        return refMsec + (q->m_tick - refTick) * (60.0 * 1000.0) / (timeline_d->tpqn * tempo);
+        return refMsec + (cache.totalTick - refTick) * (60.0 * 1000.0) / (timeline_d->tpqn * tempo);
     }
 
     bool MusicTimePrivate::fromMsec(double msec) {
-        Q_Q(MusicTime);
         if(msec < 0) return false;
         auto refMsec = timeline_d->findNearestMsecWithTempo(msec);
         auto refTick = timeline_d->revMsecSumMap[refMsec];
         auto tempo = timeline_d->tempoMap[refTick];
         auto deltaTick = (int)qRound((msec - refMsec) / (60.0 * 1000.0) * (timeline_d->tpqn * tempo));
-        q->m_tick = refTick + deltaTick;
+        cache.totalTick = refTick + deltaTick;
         return true;
     }
 
@@ -73,6 +72,8 @@ namespace ScriptMgr::Internal {
     }
 
     MusicTimePrivate::~MusicTimePrivate() {
+        removeTimelineMbtCached();
+        removeTimelineMsecCached();
     }
 
     void MusicTimePrivate::setTimeline(MusicTimeline *timeline_) {
@@ -81,82 +82,82 @@ namespace ScriptMgr::Internal {
     }
 
     void MusicTimePrivate::updateCachedMbt() {
-        Q_Q(MusicTime);
         auto ret = mbt();
-        q->m_cache.measure = std::get<0>(ret);
-        q->m_cache.beat = std::get<1>(ret);
-        q->m_cache.tick = std::get<2>(ret);
+        cache.measure = std::get<0>(ret);
+        cache.beat = std::get<1>(ret);
+        cache.tick = std::get<2>(ret);
         addTimelineMbtCached();
     }
 
     void MusicTimePrivate::updateCachedMsec() {
-        Q_Q(MusicTime);
         auto ret = msec();
-        q->m_cache.msec = ret;
+        cache.msec = ret;
         addTimelineMsecCached();
     }
 
     void MusicTimePrivate::addTimelineMbtCached() {
-        Q_Q(MusicTime);
-        timeline_d->mbtCachedMusicTimes.insert(q);
+        timeline_d->mbtCachedMusicTimes.insert(this);
     }
 
     void MusicTimePrivate::removeTimelineMbtCached() {
-        Q_Q(MusicTime);
-        timeline_d->mbtCachedMusicTimes.remove(q);
+        timeline_d->mbtCachedMusicTimes.remove(this);
     }
 
     void MusicTimePrivate::addTimelineMsecCached() {
-        Q_Q(MusicTime);
-        timeline_d->msecCachedMusicTimes.insert(q);
+        timeline_d->msecCachedMusicTimes.insert(this);
     }
 
     void MusicTimePrivate::removeTimelineMsecCached() {
-        Q_Q(MusicTime);
-        timeline_d->msecCachedMusicTimes.remove(q);
+        timeline_d->msecCachedMusicTimes.remove(this);
     }
 
 
 
 
 
-    int MusicTime::measure() {
-        Q_D(MusicTime);
-        if(m_cache.isMbtNull()) {
+    int MusicTime::measure() const {
+        auto d = d_ptr.data();
+        if(d->cache.isMbtNull()) {
             d->updateCachedMbt();
         }
-        return m_cache.measure;
+        return d->cache.measure;
     }
 
-    int MusicTime::beat() {
-        Q_D(MusicTime);
-        if(m_cache.isMbtNull()) {
+    int MusicTime::beat() const {
+        auto d = d_ptr.data();
+        if(d->cache.isMbtNull()) {
             d->updateCachedMbt();
         }
-        return m_cache.beat;
+        return d->cache.beat;
     }
 
-    int MusicTime::tick() {
-        Q_D(MusicTime);
-        if(m_cache.isMbtNull()) {
+    int MusicTime::tick() const {
+        auto d = d_ptr.data();
+        if(d->cache.isMbtNull()) {
             d->updateCachedMbt();
         }
-        return m_cache.tick;
+        return d->cache.tick;
     }
 
     int MusicTime::totalTick() const {
-        return m_tick;
+        auto d = d_ptr.data();
+        return d->cache.totalTick;
     }
 
-    double MusicTime::msec() {
-        Q_D(MusicTime);
-        if(m_cache.isMsecNull()) {
+    double MusicTime::msec() const {
+        auto d = d_ptr.data();
+        if(d->cache.isMsecNull()) {
             d->updateCachedMsec();
         }
-        return m_cache.msec;
+        return d->cache.msec;
     }
 
-    QString MusicTime::toString() {
+    MusicTimeline *MusicTime::timeline() const {
+        auto d = d_ptr.data();
+        return d->timeline;
+    }
+
+    QString MusicTime::toString() const {
         QString str;
         QTextStream textStream(&str);
         textStream << measure() + 1 << ":" << beat() + 1 << ":";
@@ -170,51 +171,34 @@ namespace ScriptMgr::Internal {
     QDebug operator<<(QDebug debug, MusicTime mt) {
         QDebugStateSaver saver(debug);
         debug.nospace() << "MusicTime(";
-        debug << "tick=" << mt.m_tick << ", "
+        debug << "tick=" << mt.totalTick() << ", "
               << "mbt=" << "(" << mt.measure() << ", " << mt.beat() << ", " << mt.tick() << ", " << mt.toString() << "), "
               << "msec=" << mt.msec() << ")";
         return debug;
     }
 
     MusicTime::MusicTime(MusicTimePrivate &d, MusicTimeline *timeline): d_ptr(&d) {
-        d.q_ptr = this;
         d.setTimeline(timeline);
     }
-    MusicTime::MusicTime(MusicTimeline *manager): MusicTime(*new MusicTimePrivate, manager) {
+    MusicTime::MusicTime(MusicTimeline *timeline): MusicTime(*new MusicTimePrivate, timeline) {
     }
-    MusicTime::MusicTime(MusicTimeline *manager, int measure, int beat, int tick): MusicTime(manager) {
-        Q_D(MusicTime);
+    MusicTime::MusicTime(MusicTimeline *timeline, int measure, int beat, int tick): MusicTime(timeline) {
+        auto d = d_ptr.data();
         d->setMbt(measure, beat, tick);
     }
-    MusicTime::MusicTime(MusicTimeline *manager, const QString &str): MusicTime(manager) {
-        Q_D(MusicTime);
+    MusicTime::MusicTime(MusicTimeline *timeline, const QString &str): MusicTime(timeline) {
+        auto d = d_ptr.data();
         d->fromString(str);
     }
-    MusicTime::MusicTime(MusicTimeline *manager, double msec): MusicTime(manager) {
-        Q_D(MusicTime);
+    MusicTime::MusicTime(MusicTimeline *timeline, double msec): MusicTime(timeline) {
+        auto d = d_ptr.data();
         d->fromMsec(msec);
     }
-    MusicTime::MusicTime(const MusicTime &mt): MusicTime(mt.d_func()->timeline) {
+    MusicTime::MusicTime(const MusicTime &mt) {
         *this = mt;
     }
     MusicTime &MusicTime::operator=(const MusicTime &mt) {
-        Q_D(MusicTime);
-        d->setTimeline(mt.d_func()->timeline);
-        m_tick = mt.m_tick;
-        if(!mt.m_cache.isMbtNull()) {
-            m_cache = mt.m_cache;
-            d->addTimelineMbtCached();
-        } else {
-            m_cache.clearMbt();
-            d->removeTimelineMbtCached();
-        }
-        if(!mt.m_cache.isMsecNull()) {
-            m_cache.msec = mt.m_cache.msec;
-            d->addTimelineMsecCached();
-        } else {
-            m_cache.clearMsec();
-            d->removeTimelineMsecCached();
-        }
+        d_ptr = mt.d_ptr;
         return *this;
     }
 

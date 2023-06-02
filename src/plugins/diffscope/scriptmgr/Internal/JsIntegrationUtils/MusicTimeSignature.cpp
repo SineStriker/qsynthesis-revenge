@@ -1,5 +1,4 @@
 #include "MusicTimeSignature.h"
-#include <QRegularExpression>
 
 namespace ScriptMgr::Internal {
     MusicTimeSignature::MusicTimeSignature(int numerator, int denominator): m_numerator(numerator), m_denominator(denominator) {
@@ -14,5 +13,13 @@ namespace ScriptMgr::Internal {
     }
     int MusicTimeSignature::ticksPerBeat(int tpqn) const {
         return tpqn * 4 / m_denominator;
+    }
+    QString MusicTimeSignature::toString() const {
+        return QString("%1/%2").arg(QString::number(m_numerator), QString::number(m_denominator));
+    }
+    QDebug operator<<(QDebug debug, const MusicTimeSignature &t) {
+        QDebugStateSaver saver(debug);
+        debug.nospace() << "MusicTimeSignature(" << t.m_numerator << "/" << t.m_denominator << ")";
+        return debug;
     }
 } // Internal

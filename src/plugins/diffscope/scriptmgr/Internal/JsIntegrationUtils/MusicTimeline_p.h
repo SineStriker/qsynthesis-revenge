@@ -25,8 +25,8 @@ namespace ScriptMgr::Internal {
         int findNearestTickWithTimeSignature(int tick) const;
         double findNearestMsecWithTempo(double msec) const;
 
-        QSet<MusicTime *> mbtCachedMusicTimes;
-        QSet<MusicTime *> msecCachedMusicTimes;
+        QSet<MusicTimePrivate *> mbtCachedMusicTimes;
+        QSet<MusicTimePrivate *> msecCachedMusicTimes;
         void _q_timeSignatureChanged();
         void _q_tempoChanged();
 

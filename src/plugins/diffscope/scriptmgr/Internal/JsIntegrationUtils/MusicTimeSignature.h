@@ -22,9 +22,7 @@ namespace ScriptMgr::Internal {
         int ticksPerBar(int tpqn) const;
         int ticksPerBeat(int tpqn) const;
 
-        inline QString toString() const {
-            return QString("%1/%2").arg(QString::number(m_numerator), QString::number(m_denominator));
-        }
+        QString toString() const;
 
         inline bool operator==(const MusicTimeSignature &t) const {
             return m_numerator == t.m_numerator && m_denominator == t.m_denominator;
@@ -32,9 +30,7 @@ namespace ScriptMgr::Internal {
         inline bool operator!=(const MusicTimeSignature &t) const {
             return m_numerator != t.m_numerator || m_denominator != t.m_denominator;
         }
-        friend inline QDebug &operator<<(QDebug &debug, const MusicTimeSignature &t) {
-            return debug << t.toString();
-        }
+        friend QDebug operator<<(QDebug debug, const MusicTimeSignature &t);
     private:
         int m_numerator;
         int m_denominator;

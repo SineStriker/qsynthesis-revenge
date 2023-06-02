@@ -8,12 +8,25 @@
 
 namespace ScriptMgr::Internal {
 
+    class MusicTimelinePrivate;
+
+    struct MusicTimeData {
+        int totalTick = 0;
+        int measure = -1;
+        int beat = 0;
+        int tick = 0;
+        double msec = -1;
+        inline bool isMbtNull() const { return measure < 0; }
+        inline bool isMsecNull() const { return msec < 0; }
+        inline void clearMbt() { measure = -1; }
+        inline void clearMsec() { msec = -1; }
+    };
+
     class MusicTimePrivate {
-        Q_DECLARE_PUBLIC(MusicTime)
     public:
-        MusicTime *q_ptr;
         MusicTimeline *timeline;
         MusicTimelinePrivate *timeline_d;
+        MusicTimeData cache;
         MusicTimePrivate();
         ~MusicTimePrivate();
 
