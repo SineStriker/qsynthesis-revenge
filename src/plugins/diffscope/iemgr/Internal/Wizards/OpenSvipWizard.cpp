@@ -267,15 +267,15 @@ namespace IEMgr ::Internal {
                         singingTrack->Volume = OpenSvipWizard::toLinearVolume(dsSingingClip->control.gain);
                         singingTrack->Pan = dsTrack.control.pan;
 
-                        // Only visiable notes will be exported
+                        // Only visible notes will be exported
                         int start = dsClip->time.start;
                         int clipStart = dsClip->time.clipStart;
-                        int visiableLeft = start + clipStart;
+                        int visibleLeft = start + clipStart;
                         int length = dsClip->time.length;
                         int clipLen = dsClip->time.clipLen;
-                        int visiableRight = visiableLeft + clipLen;
+                        int visibleRight = visibleLeft + clipLen;
                         for (const auto &dsNote : qAsConst(dsSingingClip->notes)) {
-                            if (dsNote.pos < visiableLeft || dsNote.pos + dsNote.length > visiableRight) // Ignore invisible note
+                            if (dsNote.pos < visibleLeft || dsNote.pos + dsNote.length > visibleRight) // Ignore invisible note
                                 continue;
 
                             QSvipModel::Note note;
