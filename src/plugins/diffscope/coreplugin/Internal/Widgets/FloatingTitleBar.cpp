@@ -1,5 +1,6 @@
 #include "FloatingTitleBar.h"
 
+#include <Controllers/MouseEventGuard.h>
 #include <Widgets/SynthVSplitter.h>
 
 #include <QMouseEvent>
@@ -17,78 +18,75 @@ namespace Core::Internal {
 
         m_hintHeight = -1;
         m_hintColor = Qt::blue;
+
+        new QsApi::MouseEventGuard(Qt::LeftButton, "mouseHandler", this);
     }
 
     FloatingTitleBarButton::~FloatingTitleBarButton() {
     }
 
-    void FloatingTitleBarButton::mousePressEvent(QMouseEvent *event) {
-        if (event->button() == Qt::LeftButton) {
-            m_pressed = true;
-
-            if (m_hintWidget) {
-                delete m_hintWidget;
-                m_hintWidget = nullptr;
-            }
-
-            m_curHandle = qobject_cast<QsApi::SynthVSplitterHandle *>(parentWidget()->parentWidget());
-            m_splitter = m_curHandle->splitter();
-        }
-
-        QAbstractButton::mousePressEvent(event);
-    }
-
-    void FloatingTitleBarButton::mouseMoveEvent(QMouseEvent *event) {
-        if (!(event->buttons() & Qt::LeftButton) || !m_pressed)
-            return;
-
-        auto pos = m_splitter->mapFromGlobal(event->globalPos());
-        int index = m_splitter->indexAt(pos);
-
-        auto handle = m_splitter->handle(index);
-        int handleHeight = (m_hintHeight.value() > 0) ? m_hintHeight : m_curHandle->handleHeight();
-        if (handle == m_curHandle) {
-            if (m_hintWidget) {
-                m_hintWidget->hide();
-            }
-
-            m_lastIndex = -1;
-        } else {
-            if (!m_hintWidget) {
-                m_hintWidget = new QWidget(m_splitter->parentWidget());
-                m_hintWidget->setAttribute(Qt::WA_StyledBackground);
-                m_hintWidget->setAutoFillBackground(true);
-                m_hintWidget->setFixedSize(handle->width(), handleHeight);
-
-                QPalette palette;
-                palette.setColor(QPalette::Window, m_hintColor);
-                m_hintWidget->setPalette(palette);
-            }
-
-            QPoint p;
-            if (handle->y() > m_curHandle->y()) {
-                if (index > 0) {
-                    p = m_splitter->handle(index - 1)->pos();
-                } else {
-                    p = QPoint(0, m_splitter->height() - handleHeight);
+    void FloatingTitleBarButton::mouseHandler(QMouseEvent *event) {
+        switch (event->type()) {
+            case QEvent::MouseButtonPress: {
+                m_pressed = true;
+                if (m_hintWidget) {
+                    delete m_hintWidget;
+                    m_hintWidget = nullptr;
                 }
-            } else {
-                p = handle->pos();
+                m_curHandle = qobject_cast<QsApi::SynthVSplitterHandle *>(parentWidget()->parentWidget());
+                m_splitter = m_curHandle->splitter();
+                break;
             }
-            p = m_splitter->pos() + p;
+            case QEvent::MouseMove: {
+                if (!m_pressed)
+                    break;
 
-            m_hintWidget->move(p);
-            m_hintWidget->show();
+                auto pos = m_splitter->mapFromGlobal(event->globalPos());
+                int index = m_splitter->indexAt(pos);
 
-            m_lastIndex = index;
-        }
+                auto handle = m_splitter->handle(index);
+                int handleHeight = (m_hintHeight.value() > 0) ? m_hintHeight : m_curHandle->handleHeight();
+                if (handle == m_curHandle) {
+                    if (m_hintWidget) {
+                        m_hintWidget->hide();
+                    }
 
-        QAbstractButton::mouseMoveEvent(event);
-    }
+                    m_lastIndex = -1;
+                } else {
+                    if (!m_hintWidget) {
+                        m_hintWidget = new QWidget(m_splitter->parentWidget());
+                        m_hintWidget->setAttribute(Qt::WA_StyledBackground);
+                        m_hintWidget->setAutoFillBackground(true);
+                        m_hintWidget->setFixedSize(handle->width(), handleHeight);
 
-    void FloatingTitleBarButton::mouseReleaseEvent(QMouseEvent *event) {
-        if (event->button() == Qt::LeftButton) {
-            if (m_pressed) {
+                        QPalette palette;
+                        palette.setColor(QPalette::Window, m_hintColor);
+                        m_hintWidget->setPalette(palette);
+                    }
+
+                    QPoint p;
+                    if (handle->y() > m_curHandle->y()) {
+                        if (index > 0) {
+                            p = m_splitter->handle(index - 1)->pos();
+                        } else {
+                            p = QPoint(0, m_splitter->height() - handleHeight);
+                        }
+                    } else {
+                        p = handle->pos();
+                    }
+                    p = m_splitter->pos() + p;
+
+                    m_hintWidget->move(p);
+                    m_hintWidget->show();
+
+                    m_lastIndex = index;
+                }
+                break;
+            }
+            case QEvent::MouseButtonRelease: {
+                if (!m_pressed) {
+                    break;
+                }
                 m_pressed = false;
                 if (m_hintWidget) {
                     delete m_hintWidget;
@@ -106,9 +104,11 @@ namespace Core::Internal {
                 m_curHandle = nullptr;
                 m_splitter = nullptr;
                 m_lastIndex = -1;
+                break;
             }
+            default:
+                break;
         }
-        QAbstractButton::mouseReleaseEvent(event);
     }
 
     FloatingTitleBar::FloatingTitleBar(QWidget *parent) : QFrame(parent) {
@@ -138,7 +138,6 @@ namespace Core::Internal {
     }
 
     FloatingTitleBar::~FloatingTitleBar() {
-        // qDebug() << "Floating title bar destroyed";
     }
 
     QAbstractButton *FloatingTitleBar::foldButton() const {

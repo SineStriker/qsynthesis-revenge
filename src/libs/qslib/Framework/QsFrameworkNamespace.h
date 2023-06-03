@@ -3,8 +3,11 @@
 
 #include <QObject>
 
+#include "QsFrameworkGlobal.h"
+
 namespace QsApi {
 
+    QSFRAMEWORK_API
     Q_NAMESPACE
 
     enum Role {

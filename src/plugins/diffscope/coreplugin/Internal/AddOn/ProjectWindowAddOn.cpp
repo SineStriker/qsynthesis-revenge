@@ -22,6 +22,8 @@ namespace Core {
 
     namespace Internal {
 
+        static const char *phonemeKey = "edit.phonemePanel";
+
         bool ProjectWindowAddOnFactory::predicate(IWindow *handle) const {
             return handle->id() == "project";
         }
@@ -43,12 +45,37 @@ namespace Core {
 
             initActions();
 
+            auto pianoRoll = iWin->pianoRoll();
+
             // Add phoneme panel
             phonemePanel = new Internal::PhonemePanel();
-            phonemeButton = iWin->addFloatingPanel("edit.phonemePanel", phonemePanel, nullptr);
+            phonemeButton = pianoRoll->addFloatingPanel(phonemeKey, phonemePanel, nullptr);
+
+            connect(pianoRoll, &PianoRoll::floatingPanelStateChanged, this,
+                    [iWin](const QString &id, PianoRoll::FloatingPanelState state) {
+                        if (id == phonemeKey) {
+                            iWin->setGlobalAttribute(phonemeKey, state != PianoRoll::Hidden);
+                        }
+                    });
+
+            connect(iWin, &IWindow::globalAttributeChanged, this,
+                    [pianoRoll](const QString &id, const QVariant &var, const QVariant &orgVar) {
+                        if (id != phonemeKey) {
+                            return;
+                        }
+                        if (var.toBool()) {
+                            if (pianoRoll->floatingPanelState(phonemeKey) == PianoRoll::Hidden) {
+                                pianoRoll->setFloatingPanelState(phonemeKey, PianoRoll::Normal);
+                            }
+                        } else {
+                            if (pianoRoll->floatingPanelState(phonemeKey) != PianoRoll::Hidden) {
+                                pianoRoll->setFloatingPanelState(phonemeKey, PianoRoll::Hidden);
+                            }
+                        }
+                    });
 
             // Add piano key widgets
-            iWin->addPianoKeyWidget(DefaultPianoKeyWidget, new PianoKeyWidgetFactory());
+            pianoRoll->addPianoKeyWidget(DefaultPianoKeyWidget, new PianoKeyWidgetFactory());
 
             qIDec->installLocale(this, _LOC(ProjectWindowAddOn, this));
         }
@@ -83,6 +110,7 @@ namespace Core {
             deselectItem->setText(tr("Deselect"));
 
             appearanceMenuItem->setText(tr("Appearance"));
+            mainMenuVisibleItem->setText(tr("Main Menu"));
             mainToolbarVisibleItem->setText(tr("Main Toolbar"));
             dockVisibleItem->setText(tr("Dock Panel Bars"));
             statusBarVisibleItem->setText(tr("Status Bar"));
@@ -105,15 +133,6 @@ namespace Core {
             selectPianoKeyWidgetItem->setText(tr("Select Piano Key Widget"));
 
             phonemeButton->setText(tr("Phonemes"));
-        }
-
-        static QAction *createToolBarAction(QObject *parent, const QString &name, bool selectable = false) {
-            auto action = new QAction(parent);
-            action->setObjectName(name);
-            if (selectable) {
-                action->setProperty("selectable", true);
-            }
-            return action;
         }
 
         static QWidget *createStretch() {
@@ -167,6 +186,7 @@ namespace Core {
 
             // View
             appearanceMenuItem = new ActionItem("core.Appearance", ICore::createCoreMenu(win), this);
+            mainMenuVisibleItem = new ActionItem("core.MainMenuVisible", new QAction(this), this);
             mainToolbarVisibleItem = new ActionItem("core.MainToolbarVisible", new QAction(this), this);
             dockVisibleItem = new ActionItem("core.DockVisible", new QAction(this), this);
             statusBarVisibleItem = new ActionItem("core.StatusBarVisible", new QAction(this), this);
@@ -208,12 +228,13 @@ namespace Core {
             undoItem->setProperty("no-command-palette", true);
             redoItem->setProperty("no-command-palette", true);
 
+            connectVisibilityControlAction(mainMenuVisibleItem->action(), iWin->menuBar());
             connectVisibilityControlAction(mainToolbarVisibleItem->action(), iWin->mainToolbar());
             connectDockVisibilityControlAction(dockVisibleItem->action(), iWin->mainDock());
             connectVisibilityControlAction(statusBarVisibleItem->action(), iWin->statusBar());
 
             phonemePanelVisibleItem->action()->setCheckable(true);
-            iWin->addCheckable("edit.phonemePanel", phonemePanelVisibleItem->action());
+            iWin->addCheckable(phonemeKey, phonemePanelVisibleItem->action());
 
             playControlGroupItem->actionGroup()->setExclusionPolicy(QActionGroup::ExclusionPolicy::None);
             playItem->action()->setCheckable(true);
@@ -267,9 +288,9 @@ namespace Core {
             });
 
             connect(selectPianoKeyWidgetItem->action(), &QAction::triggered, this, [this, iWin]() {
-                const auto &hash = iWin->d_func()->pianoKeyWidgets;
+                auto pianoRoll = iWin->pianoRoll();
 
-                QStringList keys = hash.keys();
+                auto keys = pianoRoll->pianoKeyWidgets();
                 std::sort(keys.begin(), keys.end());
 
                 if (keys.isEmpty()) {
@@ -279,11 +300,16 @@ namespace Core {
                 auto menu = new QMenu();
                 menu->setProperty("text", selectPianoKeyWidgetItem->text());
                 for (const auto &key : qAsConst(keys)) {
-                    auto action = new QAction(hash[key]->name(), menu);
+                    auto action = new QAction(pianoRoll->pianoKeyWidgetName(key), menu);
                     action->setData(key);
+
+                    if (key == pianoRoll->currentPianoKeyWidget()) {
+                        action->setProperty("current", true);
+                    }
+
                     menu->addAction(action);
-                    connect(action, &QAction::triggered, iWin->d_func(), [action, iWin]() {
-                        iWin->d_func()->setPianoKeyWidget(action->data().toString()); //
+                    connect(action, &QAction::triggered, action, [action, pianoRoll]() {
+                        pianoRoll->setCurrentPianoKeyWidget(action->data().toString()); //
                     });
                 }
 
@@ -316,6 +342,7 @@ namespace Core {
                 deselectItem,
 
                 appearanceMenuItem,
+                mainMenuVisibleItem,
                 mainToolbarVisibleItem,
                 dockVisibleItem,
                 statusBarVisibleItem,

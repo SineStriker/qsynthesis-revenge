@@ -54,6 +54,9 @@ namespace Core {
         void windowAddOnsInitialized() override;
         void windowAddOnsFinished() override;
 
+        void actionItemAdded(ActionItem *item) override;
+        void actionItemRemoved(ActionItem *item) override;
+
     protected:
         ICoreWindow(ICoreWindowPrivate &d, const QString &id, QObject *parent = nullptr);
     };

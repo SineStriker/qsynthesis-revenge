@@ -13,7 +13,6 @@ CDockTabBar::CDockTabBar(QM::Direction barDirection, QWidget *parent) : QFrame(p
     setAttribute(Qt::WA_StyledBackground);
 
     m_placeholderIndex = -1;
-    m_placeholderWidth = 0;
 
     m_barDirection = barDirection;
     m_cardDirection = QM::Forward;
@@ -55,8 +54,7 @@ void CDockTabBar::setCardDirection(QM::Direction cardDirection) {
     m_cardDirection = cardDirection;
     for (auto it = m_cards.begin(); it != m_cards.end(); ++it) {
         auto card = *it;
-        card->setLongitudinalDirection(
-            static_cast<CDockCard::LongitudinalDirection>(cardDirection));
+        card->setLongitudinalDirection(static_cast<CDockCard::LongitudinalDirection>(cardDirection));
     }
 }
 
@@ -75,7 +73,6 @@ void CDockTabBar::setPlaceholder(int placeholder, int width) {
         QWidget *w = createPlaceholder(width);
         layout->insertWidget(placeholder, w);
         m_placeholderIndex = placeholder;
-        m_placeholderWidth = width;
     }
 }
 
@@ -90,7 +87,6 @@ void CDockTabBar::removePlaceholder() {
         delete w;
     }
     m_placeholderIndex = -1;
-    m_placeholderWidth = 0;
 }
 
 void CDockTabBar::addCard(CDockCard *card) {
@@ -99,24 +95,22 @@ void CDockTabBar::addCard(CDockCard *card) {
 
 void CDockTabBar::insertCard(int index, CDockCard *card) {
     if (!card->widget()) {
-        qWarning().nospace() << "CCoupleTabBar: card \"" << card
-                             << "\" doesn't have a valid widget pointer.";
+        qWarning().nospace() << "CDockTabBar: card " << card << " doesn't have a valid widget pointer.";
         return;
     }
 
-    QBoxLayout *layout = static_cast<QBoxLayout *>(this->layout());
+    auto layout = static_cast<QBoxLayout *>(this->layout());
     if (m_cards.contains(card)) {
         return;
     }
     resetCardTransform(card);
 
     // Uncheck all other cards
-    if (card->isChecked()) {
-        for (auto it = m_cards.begin(); it != m_cards.end(); ++it) {
-            auto cur = *it;
-            cur->blockSignals(true);
-            cur->setChecked(false);
-            cur->blockSignals(false);
+    if (card->dockVisible()) {
+        for (auto cur : m_cards) {
+            if (cur->dockVisible() && cur != card) {
+                cur->setChecked(false);
+            }
         }
     }
 
@@ -133,6 +127,7 @@ void CDockTabBar::insertCard(int index, CDockCard *card) {
     card->show();
     connect(card, &CDockCard::startDrag, this, &CDockTabBar::_q_tabDragStarted);
     connect(card, &CDockCard::toggled, this, &CDockTabBar::_q_tabToggled);
+    connect(card, &CDockCard::viewModeChanged, this, &CDockTabBar::_q_tabViewModeChanged);
 
     emit cardAdded(card);
 }
@@ -142,23 +137,26 @@ void CDockTabBar::insertCard(CDockCard *indexCard, CDockCard *card) {
 }
 
 void CDockTabBar::removeCard(CDockCard *card) {
-    QBoxLayout *layout = static_cast<QBoxLayout *>(this->layout());
+    auto layout = static_cast<QBoxLayout *>(this->layout());
     if (!m_cards.contains(card)) {
         return;
     }
     disconnect(card, &CDockCard::startDrag, this, &CDockTabBar::_q_tabDragStarted);
     disconnect(card, &CDockCard::toggled, this, &CDockTabBar::_q_tabToggled);
+    disconnect(card, &CDockCard::viewModeChanged, this, &CDockTabBar::_q_tabViewModeChanged);
+
     m_cards.removeOne(card);
     layout->removeWidget(card);
     emit cardRemoved(card);
 }
 
-void CDockTabBar::removeAllCards() {
-    QBoxLayout *layout = static_cast<QBoxLayout *>(this->layout());
-    for (auto it = m_cards.begin(); it != m_cards.end(); ++it) {
-        auto card = *it;
+void CDockTabBar::clearCards() {
+    auto layout = static_cast<QBoxLayout *>(this->layout());
+    for (auto card : m_cards) {
         disconnect(card, &CDockCard::startDrag, this, &CDockTabBar::_q_tabDragStarted);
         disconnect(card, &CDockCard::toggled, this, &CDockTabBar::_q_tabToggled);
+        disconnect(card, &CDockCard::viewModeChanged, this, &CDockTabBar::_q_tabViewModeChanged);
+
         layout->removeWidget(card);
         emit cardRemoved(card);
     }
@@ -188,46 +186,14 @@ CDockCard *CDockTabBar::cardAtPos(QPoint pos) const {
     return qobject_cast<CDockCard *>(childAt(pos));
 }
 
-int CDockTabBar::activeIndex() const {
-    int i = 0;
-    int res = -1;
-    for (auto it = m_cards.begin(); it != m_cards.end(); ++it) {
-        auto card = *it;
-        if (card->isChecked()) {
-            res = i;
-            break;
-        }
-        i++;
-    }
-    return res;
-}
-
-void CDockTabBar::setActiveIndex(int index) {
-    if (index < 0 || index >= m_cards.size()) {
-        int cur = activeIndex();
-        if (cur >= 0) {
-            m_cards.at(cur)->setChecked(false);
-        }
-        return;
-    }
-    auto card = m_cards.at(index);
-    for (auto it = m_cards.begin(); it != m_cards.end(); ++it) {
-        auto cur = *it;
-        cur->blockSignals(true);
-        cur->setChecked(cur == card);
-        cur->blockSignals(false);
-    }
-    emit cardToggled(card);
-}
-
-CDockSideBar *CDockTabBar::doubleTabBar() const {
+CDockSideBar *CDockTabBar::sideBar() const {
     return qobject_cast<CDockSideBar *>(parentWidget());
 }
 
 void CDockTabBar::resetLayout() {
     // Store org
     QList<QWidget *> widgets;
-    QBoxLayout *layout = static_cast<QBoxLayout *>(this->layout());
+    auto layout = static_cast<QBoxLayout *>(this->layout());
     if (layout) {
         for (int i = 0; i < layout->count(); ++i) {
             auto w = layout->itemAt(i)->widget();
@@ -239,13 +205,11 @@ void CDockTabBar::resetLayout() {
     // New
     if (m_orientation == Qt::Horizontal) {
         layout = new QHBoxLayout();
-        layout->setDirection((m_barDirection == QM::Forward) ? QBoxLayout::LeftToRight
-                                                             : QBoxLayout::RightToLeft);
+        layout->setDirection((m_barDirection == QM::Forward) ? QBoxLayout::LeftToRight : QBoxLayout::RightToLeft);
         setSizePolicy(QSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed));
     } else {
         layout = new QVBoxLayout();
-        layout->setDirection((m_barDirection == QM::Forward) ? QBoxLayout::TopToBottom
-                                                             : QBoxLayout::BottomToTop);
+        layout->setDirection((m_barDirection == QM::Forward) ? QBoxLayout::TopToBottom : QBoxLayout::BottomToTop);
         setSizePolicy(QSizePolicy(QSizePolicy::Fixed, QSizePolicy::Preferred));
     }
 
@@ -253,12 +217,11 @@ void CDockTabBar::resetLayout() {
     layout->setSpacing(0);
 
     // Insert
-    for (auto it = widgets.begin(); it != widgets.end(); ++it) {
-        layout->addWidget(*it);
+    for (auto widget : widgets) {
+        layout->addWidget(widget);
     }
 
-    for (auto it = m_cards.begin(); it != m_cards.end(); ++it) {
-        auto card = *it;
+    for (auto card : m_cards) {
         resetCardTransform(card);
     }
 
@@ -282,15 +245,31 @@ void CDockTabBar::_q_tabDragStarted(const QPoint &pos, const QPixmap &pixmap) {
 
 void CDockTabBar::_q_tabToggled(bool checked) {
     auto card = qobject_cast<CDockCard *>(sender());
-    if (checked) {
-        setActiveIndex(indexOf(card));
-    } else {
-        emit cardToggled(card);
+    if (card->dockVisible()) {
+        for (auto cur : m_cards) {
+            if (cur->dockVisible() && cur != card) {
+                cur->setChecked(false);
+            }
+        }
     }
+    emit cardToggled(card);
+}
+
+void CDockTabBar::_q_tabViewModeChanged(CDockCard::ViewMode viewMode, CDockCard::ViewMode oldViewMode) {
+    auto card = qobject_cast<CDockCard *>(sender());
+    if (card->dockVisible()) {
+        for (auto cur : m_cards) {
+            if (cur->dockVisible() && cur != card) {
+                cur->setChecked(false);
+            }
+        }
+    }
+    emit cardViewModeChanged(card, oldViewMode);
 }
 
 QWidget *CDockTabBar::createPlaceholder(int width) const {
-    QWidget *w = new QWidget();
+    auto w = new QWidget();
+    w->setAttribute(Qt::WA_StyledBackground);
     if (m_orientation == Qt::Horizontal) {
         w->setSizePolicy(QSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed));
         w->resize(width, w->height());
@@ -302,5 +281,5 @@ QWidget *CDockTabBar::createPlaceholder(int width) const {
 }
 
 void CDockTabBar::paintEvent(QPaintEvent *event) {
-    return QWidget::paintEvent(event);
+    return QFrame::paintEvent(event);
 }

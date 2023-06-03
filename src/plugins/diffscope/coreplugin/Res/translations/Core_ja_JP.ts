@@ -354,6 +354,13 @@
     </message>
 </context>
 <context>
+    <name>Core::Internal::PianoKeyWidget</name>
+    <message>
+        <source>UTAU/FL Studio</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>Core::Internal::PluginDialog</name>
     <message>
         <source>Details</source>
@@ -518,6 +525,10 @@
         <source>Select Piano Key Widget</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Main Menu</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>Core::Internal::SettingsDialog</name>
@@ -527,13 +538,6 @@
     </message>
     <message>
         <source>Settings</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>TPianoArea</name>
-    <message>
-        <source>UTAU/FL Studio</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

@@ -7,7 +7,7 @@
 
 #include "Document/DspxDocument.h"
 #include "ICoreWindow.h"
-#include "Interfaces/IPianoKeyWidget.h"
+#include "PianoRoll/PianoRoll.h"
 
 namespace Core {
 
@@ -32,11 +32,9 @@ namespace Core {
 
         CDockFrame *mainDock() const;
 
-        QAbstractButton *addFloatingPanel(const QString &id, QWidget *panel, QWidget *titleBar);
-
         QAbstractButton *addToolWindowPanel(const QString &id, int preferredEdge, QWidget *panel);
 
-        void addPianoKeyWidget(const QString &id, IPianoKeyWidgetFactory *factory);
+        PianoRoll *pianoRoll() const;
 
     protected:
         explicit IProjectWindow(QObject *parent = nullptr);
@@ -51,8 +49,6 @@ namespace Core {
         IProjectWindow(IProjectWindowPrivate &d, QObject *parent = nullptr);
 
         friend class Internal::IProjectWindowFactory;
-
-        friend class Internal::ProjectWindowAddOn;
     };
 
 }

@@ -1,22 +1,28 @@
 #include "DspxSpec.h"
 
-#include "ICore.h"
-#include "Window/IProjectWindow.h"
-
 #include <QCoreApplication>
 #include <QDebug>
 #include <QMessageBox>
 #include <QTimer>
 
+#include <QMDecoratorV2.h>
+
+#include "ICore.h"
+#include "Window/IProjectWindow.h"
+
 namespace Core::Internal {
 
     DspxSpec::DspxSpec(QObject *parent) : DocumentSpec("org.ChorusKit.dspx", parent) {
         setIcon(QIcon(":/images/dspx.png"));
-        setDisplayName(tr("OpenVPI DiffSinger Editor"));
-        setDescription(tr("Built-in"));
+        qIDec->installLocale(this, _LOC(DspxSpec, this));
     }
 
     DspxSpec::~DspxSpec() {
+    }
+
+    void DspxSpec::reloadStrings() {
+        setDisplayName(tr("OpenVPI DiffSinger Editor"));
+        setDescription(tr("Built-in"));
     }
 
     QStringList DspxSpec::supportedExtensions() const {

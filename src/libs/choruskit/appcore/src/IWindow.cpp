@@ -2,6 +2,7 @@
 #include "IWindow_p.h"
 
 #include "IWindowAddOn_p.h"
+#include "ShortcutContext_p.h"
 #include "WindowCloseFilter_p.h"
 #include "WindowSystem_p.h"
 
@@ -29,10 +30,6 @@ namespace Core {
         Q_Q(IWindow);
 
         m_closed = false;
-        // m_shortcutsDirty = false;
-
-        actionFilter = nullptr;
-        shortcutFilter = nullptr;
     }
 
     IWindowPrivate::~IWindowPrivate() {
@@ -47,11 +44,7 @@ namespace Core {
 
         q->setWindow(w);
 
-        actionFilter = new WindowActionFilter(this);
-        connect(actionFilter, &WindowActionFilter::actionChanged, this, &IWindowPrivate::_q_actionChanged);
-
-        shortcutFilter = new ShortcutFilter(this);
-        connect(shortcutFilter, &ShortcutFilter::shortcutAboutToCome, q, &IWindow::shortcutAboutToCome);
+        shortcutContext = new ShortcutContext(this);
 
         closeFilter = new WindowCloseFilter(this, q->window());
         connect(closeFilter, &WindowCloseFilter::windowClosed, this, &IWindowPrivate::_q_windowClosed);
@@ -104,6 +97,19 @@ namespace Core {
         q->windowAddOnsFinished();
     }
 
+    void IWindowPrivate::closeWindow() {
+        Q_Q(IWindow);
+        auto w = q->window();
+
+        m_closed = true;
+
+        if (!w->isHidden())
+            w->hide();
+
+        delete shortcutContext;
+        shortcutContext = nullptr;
+    }
+
     void IWindowPrivate::deleteAllAddOns() {
         for (auto it2 = addOns.rbegin(); it2 != addOns.rend(); ++it2) {
             auto &addOn = *it2;
@@ -143,53 +149,6 @@ namespace Core {
         }
     }
 
-    void IWindowPrivate::shortcutContextAdded(QWidget *w) {
-        for (const auto &action : w->actions()) {
-            addAndFilterAction(w, action);
-        }
-    }
-
-    void IWindowPrivate::shortcutContextRemoved(QWidget *w) {
-        // We cannot query widgets' actions because the widget maybe destroyed
-        QSet<QAction *> actions;
-        for (auto it = shortcutMap.begin(); it != shortcutMap.end();) {
-            if (it->second == w) {
-                actions.insert(it->first);
-                it = shortcutMap.erase(it);
-                continue;
-            }
-            it++;
-        }
-
-        for (const auto &action : qAsConst(actions)) {
-            actionKeyMap.remove(action);
-        }
-    }
-
-    void IWindowPrivate::addAndFilterAction(QWidget *w, QAction *action) {
-        QList<QKeySequence> keys;
-        QMChronSet<QKeySequence> duplicatedKeys;
-        for (const auto &sh : action->shortcuts()) {
-            if (sh.isEmpty())
-                continue;
-            if (shortcutMap.contains(sh)) {
-                duplicatedKeys.append(sh);
-                continue;
-            }
-            keys.append(sh);
-            shortcutMap.insert(sh, {action, w});
-        }
-        action->blockSignals(true);
-        action->setShortcuts(keys); // Avoid recursive signal handling
-        action->blockSignals(false);
-
-        actionKeyMap.insert(action, keys);
-
-        if (!duplicatedKeys.isEmpty()) {
-            qWarning() << "Core::IWindow: duplicated shortcuts detected" << w << action << duplicatedKeys.values();
-        }
-    }
-
     void IWindowPrivate::_q_windowClosed(QWidget *w) {
         Q_Q(IWindow);
 
@@ -197,10 +156,7 @@ namespace Core {
 
         tryStopDelayedTimer();
 
-        m_closed = true;
-
-        if (!w->isHidden())
-            w->hide();
+        closeWindow();
 
         q->windowAboutToClose();
 
@@ -214,44 +170,6 @@ namespace Core {
 
         q->setWindow(nullptr);
         delete q;
-    }
-
-    void IWindowPrivate::_q_actionChanged(QWidget *w, int type, QAction *action) {
-        Q_UNUSED(w);
-
-        switch (type) {
-            case QEvent::ActionAdded:
-                addAndFilterAction(w, action);
-                break;
-            case QEvent::ActionRemoved:
-                for (const auto &sh : action->shortcuts()) {
-                    shortcutMap.remove(sh);
-                }
-                actionKeyMap.remove(action);
-                break;
-            case QEvent::ActionChanged:
-                for (const auto &sh : actionKeyMap.value(action)) {
-                    shortcutMap.remove(sh);
-                }
-                addAndFilterAction(w, action);
-                break;
-            default:
-                break;
-        }
-    }
-
-    void IWindowPrivate::_q_shortcutContextDestroyed(QObject *obj) {
-        if (m_closed)
-            return;
-
-        auto w = static_cast<QWidget *>(obj);
-        shortcutContextRemoved(w);
-        shortcutContextWidgets.remove(w);
-    }
-
-    void IWindowPrivate::_q_actionTriggered() {
-        Q_Q(IWindow);
-        emit q->actionTriggered(qobject_cast<QAction *>(sender()));
     }
 
     IWindowFactory::IWindowFactory(const QString &id, AvailableCreator creator) : d_ptr(new IWindowFactoryPrivate()) {
@@ -341,13 +259,7 @@ namespace Core {
         }
         d->actionItemMap.append(item->id(), item);
 
-        if (item->isAction()) {
-            auto action = item->action();
-            action->installEventFilter(d->shortcutFilter);
-            connect(action, &QAction::triggered, d, &IWindowPrivate::_q_actionTriggered);
-        } else if (item->isMenu()) {
-            addShortcutContext(item->menu());
-        }
+        actionItemAdded(item);
     }
 
     void IWindow::addActionItems(const QList<Core::ActionItem *> &items) {
@@ -374,13 +286,7 @@ namespace Core {
         auto item = it.value();
         d->actionItemMap.erase(it);
 
-        if (item->isAction()) {
-            auto action = item->action();
-            action->removeEventFilter(d->shortcutFilter);
-            disconnect(action, &QAction::triggered, d, &IWindowPrivate::_q_actionTriggered);
-        } else if (item->isMenu()) {
-            removeShortcutContext(item->menu());
-        }
+        actionItemRemoved(item);
     }
 
     ActionItem *IWindow::actionItem(const QString &id) const {
@@ -395,47 +301,22 @@ namespace Core {
 
     void IWindow::addShortcutContext(QWidget *w) {
         Q_D(IWindow);
-
-        if (!w) {
-            qWarning() << "Core::IWindow::addShortcutContext(): trying to add null widget";
-            return;
-        }
-
-        if (d->shortcutContextWidgets.contains(w)) {
-            qWarning() << "Core::IWindow::addShortcutContext(): trying to add duplicated widget:" << w;
-            return;
-        }
-
-        d->shortcutContextWidgets.append(w);
-        connect(w, &QObject::destroyed, d, &IWindowPrivate::_q_shortcutContextDestroyed);
-
-        d->shortcutContextAdded(w);
-        w->installEventFilter(d->actionFilter);
+        d->shortcutContext->addContext(w);
     }
 
     void IWindow::removeShortcutContext(QWidget *w) {
         Q_D(IWindow);
-        auto it = d->shortcutContextWidgets.find(w);
-        if (it == d->shortcutContextWidgets.end()) {
-            qWarning() << "Core::IWindow::removeShortcutContext(): widget does not exist:" << w;
-            return;
-        }
-
-        w->removeEventFilter(d->actionFilter);
-        d->shortcutContextRemoved(w);
-
-        disconnect(w, &QObject::destroyed, d, &IWindowPrivate::_q_shortcutContextDestroyed);
-        d->shortcutContextWidgets.erase(it);
+        d->shortcutContext->removeContext(w);
     }
 
     QList<QWidget *> IWindow::shortcutContexts() const {
         Q_D(const IWindow);
-        return d->shortcutContextWidgets.values();
+        return d->shortcutContext->contexts();
     }
 
     bool IWindow::hasShortcut(const QKeySequence &key) const {
         Q_D(const IWindow);
-        return d->shortcutMap.contains(key);
+        return d->shortcutContext->hasShortcut(key);
     }
 
     bool IWindow::hasDragFileHandler(const QString &suffix) {
@@ -491,6 +372,14 @@ namespace Core {
     }
 
     void IWindow::windowClosed() {
+        // Do nothing
+    }
+
+    void IWindow::actionItemAdded(ActionItem *item) {
+        // Do nothing
+    }
+
+    void IWindow::actionItemRemoved(ActionItem *item) {
         // Do nothing
     }
 

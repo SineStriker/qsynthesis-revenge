@@ -23,7 +23,7 @@ void CDockPanel::init() {
 
     m_firstWidget->hide();
     m_secondWidget->hide();
-    updateVisible();
+    updateVisibility();
 }
 
 int CDockPanel::addWidget(QM::Priority num, QWidget *w, bool visible) {
@@ -55,7 +55,7 @@ void CDockPanel::removeWidget(QM::Priority num, QWidget *w) {
 
     if (isCurrent && container->isVisible()) {
         container->hide();
-        updateVisible();
+        updateVisibility();
     }
 }
 
@@ -100,11 +100,11 @@ void CDockPanel::setContainerVisible(QM::Priority num, bool visible) {
     if (visible) {
         show();
     } else {
-        updateVisible();
+        updateVisibility();
     }
 }
 
-void CDockPanel::updateVisible() {
+void CDockPanel::updateVisibility() {
     if (!m_firstWidget->isVisible() && !m_secondWidget->isVisible()) {
         hide();
     }

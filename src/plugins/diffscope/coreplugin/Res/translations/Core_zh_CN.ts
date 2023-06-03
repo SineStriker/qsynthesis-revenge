@@ -537,6 +537,13 @@
     </message>
 </context>
 <context>
+    <name>Core::Internal::PianoKeyWidget</name>
+    <message>
+        <source>UTAU/FL Studio</source>
+        <translation></translation>
+    </message>
+</context>
+<context>
     <name>Core::Internal::PluginDialog</name>
     <message>
         <source>Details</source>
@@ -683,7 +690,7 @@
     </message>
     <message>
         <source>Main Menu</source>
-        <translation type="vanished">主菜单</translation>
+        <translation>主菜单</translation>
     </message>
     <message>
         <source>Main Toolbar</source>
@@ -776,10 +783,6 @@
     <message>
         <source>UTAU Piano</source>
         <translation type="vanished">UTAU 钢琴</translation>
-    </message>
-    <message>
-        <source>UTAU/FL Studio</source>
-        <translation></translation>
     </message>
 </context>
 </TS>

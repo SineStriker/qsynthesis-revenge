@@ -13,6 +13,8 @@ namespace Core {
             explicit DspxSpec(QObject *parent = nullptr);
             ~DspxSpec();
 
+            void reloadStrings();
+
         public:
             QStringList supportedExtensions() const override;
             QString filter() const override;

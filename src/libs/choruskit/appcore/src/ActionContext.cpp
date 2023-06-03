@@ -447,30 +447,31 @@ namespace Core {
                 continue;
 
             itemMap.insert(item->id(), item);
-            if (!item->isAction()) {
-                continue;
-            }
 
-            // Filter shortcuts
-            QList<QKeySequence> keys;
-            QMChronSet<QKeySequence> duplicatedKeys;
-            for (const auto &sh : item->spec()->shortcuts()) {
-                if (sh.isEmpty())
-                    continue;
-
-                if (keySet.contains(sh)) {
-                    duplicatedKeys.append(sh);
-                    continue;
-                }
-                keySet.insert(sh);
-                keys << sh;
-            }
-            item->action()->setShortcuts(keys);
-
-            if (!duplicatedKeys.isEmpty()) {
-                qDebug() << "Core::ActionContext::buildMenu(): building" << buildingWidget
-                         << " but duplicated shortcut detected" << item->id() << duplicatedKeys.values();
-            }
+            // if (!item->isAction()) {
+            //     continue;
+            // }
+            //
+            //// Filter shortcuts
+            // QList<QKeySequence> keys;
+            // QMChronSet<QKeySequence> duplicatedKeys;
+            // for (const auto &sh : item->spec()->shortcuts()) {
+            //     if (sh.isEmpty())
+            //         continue;
+            //
+            //     if (keySet.contains(sh)) {
+            //         duplicatedKeys.append(sh);
+            //         continue;
+            //     }
+            //     keySet.insert(sh);
+            //     keys << sh;
+            // }
+            // item->action()->setShortcuts(keys);
+            //
+            // if (!duplicatedKeys.isEmpty()) {
+            //     qDebug() << "Core::ActionContext::buildMenu(): building" << buildingWidget
+            //              << " but duplicated shortcut detected" << item->id() << duplicatedKeys.values();
+            // }
         }
 
         return itemMap;

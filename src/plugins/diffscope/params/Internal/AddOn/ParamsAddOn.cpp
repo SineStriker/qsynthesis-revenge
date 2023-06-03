@@ -8,6 +8,8 @@ namespace Params::Internal {
 
     using namespace Core;
 
+    static const char *paramsKey = "edit.paramsPanel";
+
     bool ParamsAddOnFactory::predicate(Core::IWindow *handle) const {
         return handle->id() == "project";
     }
@@ -26,9 +28,34 @@ namespace Params::Internal {
 
         initActions();
 
+        auto pianoRoll = iWin->pianoRoll();
+
         // Add phoneme panel
         paramsPanel = new Internal::ParamsPanel();
-        paramsButton = iWin->addFloatingPanel("edit.paramsPanel", paramsPanel, nullptr);
+        paramsButton = pianoRoll->addFloatingPanel(paramsKey, paramsPanel, nullptr);
+
+        connect(pianoRoll, &PianoRoll::floatingPanelStateChanged, this,
+                [iWin](const QString &id, PianoRoll::FloatingPanelState state) {
+                    if (id == paramsKey) {
+                        iWin->setGlobalAttribute(paramsKey, state != PianoRoll::Hidden);
+                    }
+                });
+
+        connect(iWin, &IWindow::globalAttributeChanged, this,
+                [pianoRoll](const QString &id, const QVariant &var, const QVariant &orgVar) {
+                    if (id != paramsKey) {
+                        return;
+                    }
+                    if (var.toBool()) {
+                        if (pianoRoll->floatingPanelState(paramsKey) == PianoRoll::Hidden) {
+                            pianoRoll->setFloatingPanelState(paramsKey, PianoRoll::Normal);
+                        }
+                    } else {
+                        if (pianoRoll->floatingPanelState(paramsKey) != PianoRoll::Hidden) {
+                            pianoRoll->setFloatingPanelState(paramsKey, PianoRoll::Hidden);
+                        }
+                    }
+                });
 
         qIDec->installLocale(this, _LOC(ParamsAddOn, this));
     }
@@ -49,7 +76,7 @@ namespace Params::Internal {
         paramsPanelVisibleItem = new ActionItem("params.ParamsPanelVisible", new QAction(this), this);
 
         paramsPanelVisibleItem->action()->setCheckable(true);
-        iWin->addCheckable("edit.paramsPanel", paramsPanelVisibleItem->action());
+        iWin->addCheckable(paramsKey, paramsPanelVisibleItem->action());
 
         iWin->addActionItems({
             paramsPanelVisibleItem,

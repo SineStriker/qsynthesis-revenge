@@ -22,9 +22,7 @@
 
 namespace Core {
 
-    class ShortcutFilter;
-
-    class WindowActionFilter;
+    class ShortcutContext;
 
     class WindowCloseFilter;
 
@@ -46,24 +44,20 @@ namespace Core {
         void init();
 
         void setWindow(QWidget *w, WindowSystemPrivate *d);
+        void closeWindow();
 
         IWindow *q_ptr;
 
         QString id;
         bool m_closed;
 
-        // mutable bool m_shortcutsDirty;
-        QHash<QKeySequence, QPair<QAction *, QWidget *>> shortcutMap;
-        QHash<QAction *, QList<QKeySequence>> actionKeyMap;
         WindowCloseFilter *closeFilter;
-        WindowActionFilter *actionFilter;
-        ShortcutFilter *shortcutFilter;
+        ShortcutContext *shortcutContext;
 
         QMChronMap<QString, ActionItem *> actionItemMap;
         std::list<IWindowAddOn *> addOns;
 
         QHash<QString, QWidget *> widgetMap;
-        QMChronSet<QWidget *> shortcutContextWidgets;
 
         struct DragFileHandler {
             QObject *obj;
@@ -80,15 +74,8 @@ namespace Core {
         void tryStopDelayedTimer();
         void nextDelayedInitialize();
 
-        void shortcutContextAdded(QWidget *w);
-        void shortcutContextRemoved(QWidget *w);
-        void addAndFilterAction(QWidget *w, QAction *action);
-
     private:
         void _q_windowClosed(QWidget *w);
-        void _q_actionChanged(QWidget *w, int type, QAction *action);
-        void _q_shortcutContextDestroyed(QObject *obj);
-        void _q_actionTriggered();
 
         friend class WindowSystem;
     };

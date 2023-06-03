@@ -41,7 +41,7 @@ public:
     void setContainerVisible(QM::Priority num, bool visible);
 
 private:
-    void updateVisible();
+    void updateVisibility();
 
 protected:
     QStackedWidget *m_firstWidget;

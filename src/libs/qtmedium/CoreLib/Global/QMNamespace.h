@@ -3,14 +3,26 @@
 
 #include "QMGlobal.h"
 
+#include <QObject>
+
 namespace QM {
 
-    enum Direction { Forward, Backward };
+    QMCORELIB_API
+    Q_NAMESPACE
+
+    enum Direction {
+        Forward,
+        Backward,
+    };
+
+    Q_ENUM_NS(Direction)
 
     enum Priority {
         Primary = 16,
         Secondary = 32,
     };
+
+    Q_ENUM_NS(Priority)
 
 }
 

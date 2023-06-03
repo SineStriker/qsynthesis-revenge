@@ -20,11 +20,6 @@ namespace Core::Internal {
         explicit FloatingTitleBarButton(QWidget *parent = nullptr);
         ~FloatingTitleBarButton();
 
-    protected:
-        void mousePressEvent(QMouseEvent *event) override;
-        void mouseMoveEvent(QMouseEvent *event) override;
-        void mouseReleaseEvent(QMouseEvent *event) override;
-
     private:
         bool m_pressed;
         QWidget *m_hintWidget;
@@ -32,6 +27,8 @@ namespace Core::Internal {
 
         QsApi::SynthVSplitterHandle *m_curHandle;
         QsApi::SynthVSplitter *m_splitter;
+
+        Q_INVOKABLE void mouseHandler(QMouseEvent *event);
     };
 
     class FloatingTitleBar : public QFrame {

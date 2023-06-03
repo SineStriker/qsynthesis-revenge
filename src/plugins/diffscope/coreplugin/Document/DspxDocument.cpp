@@ -4,6 +4,7 @@
 #include <QStandardPaths>
 
 #include <Dspx/QDspxModel.h>
+#include <QMDecoratorV2.h>
 
 #include "ICore.h"
 

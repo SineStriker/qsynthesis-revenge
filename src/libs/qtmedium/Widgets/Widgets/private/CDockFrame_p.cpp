@@ -1,7 +1,6 @@
 #include "CDockFrame_p.h"
 
-CDockFramePrivate::CDockFramePrivate(CDockFrame *parent)
-    : QObject(parent), q(parent) {
+CDockFramePrivate::CDockFramePrivate(CDockFrame *parent) : QObject(parent), q(parent) {
 }
 
 CDockFramePrivate::~CDockFramePrivate() {
@@ -87,32 +86,25 @@ void CDockFramePrivate::init() {
 
     m_leftBar->installEventFilter(this);
 
-    connect(m_leftBar, &CDockSideBar::cardAdded, this,
-            &CDockFramePrivate::_q_cardAdded);
-    connect(m_leftBar, &CDockSideBar::cardRemoved, this,
-            &CDockFramePrivate::_q_cardRemoved);
-    connect(m_leftBar, &CDockSideBar::cardToggled, this,
-            &CDockFramePrivate::_q_cardToggled);
+    connect(m_leftBar, &CDockSideBar::cardAdded, this, &CDockFramePrivate::_q_cardAdded);
+    connect(m_leftBar, &CDockSideBar::cardRemoved, this, &CDockFramePrivate::_q_cardRemoved);
+    connect(m_leftBar, &CDockSideBar::cardToggled, this, &CDockFramePrivate::_q_cardToggled);
+    connect(m_leftBar, &CDockSideBar::cardViewModeChanged, this, &CDockFramePrivate::_q_cardViewModeChanged);
 
     connect(m_topBar, &CDockSideBar::cardAdded, this, &CDockFramePrivate::_q_cardAdded);
-    connect(m_topBar, &CDockSideBar::cardRemoved, this,
-            &CDockFramePrivate::_q_cardRemoved);
-    connect(m_topBar, &CDockSideBar::cardToggled, this,
-            &CDockFramePrivate::_q_cardToggled);
+    connect(m_topBar, &CDockSideBar::cardRemoved, this, &CDockFramePrivate::_q_cardRemoved);
+    connect(m_topBar, &CDockSideBar::cardToggled, this, &CDockFramePrivate::_q_cardToggled);
+    connect(m_topBar, &CDockSideBar::cardViewModeChanged, this, &CDockFramePrivate::_q_cardViewModeChanged);
 
-    connect(m_rightBar, &CDockSideBar::cardAdded, this,
-            &CDockFramePrivate::_q_cardAdded);
-    connect(m_rightBar, &CDockSideBar::cardRemoved, this,
-            &CDockFramePrivate::_q_cardRemoved);
-    connect(m_rightBar, &CDockSideBar::cardToggled, this,
-            &CDockFramePrivate::_q_cardToggled);
+    connect(m_rightBar, &CDockSideBar::cardAdded, this, &CDockFramePrivate::_q_cardAdded);
+    connect(m_rightBar, &CDockSideBar::cardRemoved, this, &CDockFramePrivate::_q_cardRemoved);
+    connect(m_rightBar, &CDockSideBar::cardToggled, this, &CDockFramePrivate::_q_cardToggled);
+    connect(m_rightBar, &CDockSideBar::cardViewModeChanged, this, &CDockFramePrivate::_q_cardViewModeChanged);
 
-    connect(m_bottomBar, &CDockSideBar::cardAdded, this,
-            &CDockFramePrivate::_q_cardAdded);
-    connect(m_bottomBar, &CDockSideBar::cardRemoved, this,
-            &CDockFramePrivate::_q_cardRemoved);
-    connect(m_bottomBar, &CDockSideBar::cardToggled, this,
-            &CDockFramePrivate::_q_cardToggled);
+    connect(m_bottomBar, &CDockSideBar::cardAdded, this, &CDockFramePrivate::_q_cardAdded);
+    connect(m_bottomBar, &CDockSideBar::cardRemoved, this, &CDockFramePrivate::_q_cardRemoved);
+    connect(m_bottomBar, &CDockSideBar::cardToggled, this, &CDockFramePrivate::_q_cardToggled);
+    connect(m_bottomBar, &CDockSideBar::cardViewModeChanged, this, &CDockFramePrivate::_q_cardViewModeChanged);
 }
 
 void CDockFramePrivate::_q_cardAdded(QM::Priority number, CDockCard *card) {
@@ -127,7 +119,7 @@ void CDockFramePrivate::_q_cardAdded(QM::Priority number, CDockCard *card) {
     } else {
         container = m_bottomPanel;
     }
-    container->addWidget(number, card->widget(), card->isChecked());
+    container->addWidget(number, card->container(), card->dockVisible());
 }
 
 void CDockFramePrivate::_q_cardRemoved(QM::Priority number, CDockCard *card) {
@@ -142,7 +134,7 @@ void CDockFramePrivate::_q_cardRemoved(QM::Priority number, CDockCard *card) {
     } else {
         container = m_bottomPanel;
     }
-    container->removeWidget(number, card->widget());
+    container->removeWidget(number, card->container());
 }
 
 void CDockFramePrivate::_q_cardToggled(QM::Priority number, CDockCard *card) {
@@ -162,10 +154,42 @@ void CDockFramePrivate::_q_cardToggled(QM::Priority number, CDockCard *card) {
         edge = Qt::BottomEdge;
         container = m_bottomPanel;
     }
+
     bool visible = card->isChecked();
-    container->setContainerVisible(number, visible);
-    if (visible) {
-        container->setCurrentWidget(number, card->widget());
+    if (card->viewMode() == CDockCard::DockPinned) {
+        container->setContainerVisible(number, visible);
+        if (visible) {
+            container->setCurrentWidget(number, card->container());
+        }
+    } else {
+        card->widget()->setVisible(visible);
     }
     emit q->cardToggled(edge, number, card);
+}
+
+void CDockFramePrivate::_q_cardViewModeChanged(QM::Priority number, CDockCard *card, CDockCard::ViewMode oldViewMode) {
+    auto doubleBar = qobject_cast<CDockSideBar *>(sender());
+    CDockPanel *container;
+    if (doubleBar == m_leftBar) {
+        container = m_leftPanel;
+    } else if (doubleBar == m_topBar) {
+        container = m_topPanel;
+    } else if (doubleBar == m_rightBar) {
+        container = m_rightPanel;
+    } else {
+        container = m_bottomPanel;
+    }
+
+    bool visible = card->isChecked();
+    if (visible) {
+        if (oldViewMode == CDockCard::DockPinned) {
+            container->setContainerVisible(number, false);
+        } else if (card->viewMode() == CDockCard::DockPinned) {
+            container->setContainerVisible(number, true);
+            container->setCurrentWidget(number, card->container());
+
+            // We must refresh its layout
+            card->container()->layout()->invalidate();
+        }
+    }
 }

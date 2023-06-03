@@ -17,7 +17,7 @@
 #  endif
 #endif
 
-#define QM_BEGIN_NAMESPACE namespace Qm {
+#define QM_BEGIN_NAMESPACE namespace QM {
 #define QM_END_NAMESPACE }
 
 #ifndef QTMEDIUM_DISABLE_DEBUG

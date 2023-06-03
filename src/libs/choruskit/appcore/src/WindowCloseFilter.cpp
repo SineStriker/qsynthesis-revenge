@@ -133,39 +133,4 @@ namespace Core {
         return QObject::eventFilter(obj, event);
     }
 
-
-    WindowActionFilter::WindowActionFilter(IWindowPrivate *d) : QObject(d), d(d) {
-    }
-
-    WindowActionFilter::~WindowActionFilter() {
-    }
-
-    bool WindowActionFilter::eventFilter(QObject *obj, QEvent *event) {
-        switch (event->type()) {
-            case QEvent::ActionAdded:
-            case QEvent::ActionChanged:
-            case QEvent::ActionRemoved:
-                emit actionChanged(qobject_cast<QWidget *>(obj), event->type(),
-                                   static_cast<QActionEvent *>(event)->action());
-                break;
-            default:
-                break;
-        }
-        return QObject::eventFilter(obj, event);
-    }
-
-    ShortcutFilter::ShortcutFilter(IWindowPrivate *d) {
-    }
-
-    ShortcutFilter::~ShortcutFilter() {
-    }
-
-    bool ShortcutFilter::eventFilter(QObject *obj, QEvent *event) {
-        QAction *action;
-        if (event->type() == QEvent::Shortcut && (action = qobject_cast<QAction *>(obj))) {
-            emit shortcutAboutToCome(action);
-        }
-        return QObject::eventFilter(obj, event);
-    }
-
 }

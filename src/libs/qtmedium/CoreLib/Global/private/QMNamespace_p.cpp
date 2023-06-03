@@ -4,6 +4,6 @@
 #include <QMetaType>
 
 void Register_QMNamespace() {
-    qRegisterMetaType<QM::Direction>("QM::Direction");
-    qRegisterMetaType<QM::Priority>("QM::Priority");
+    // qRegisterMetaType<QM::Direction>("QM::Direction");
+    // qRegisterMetaType<QM::Priority>("QM::Priority");
 }

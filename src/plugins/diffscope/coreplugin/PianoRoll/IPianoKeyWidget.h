@@ -1,29 +1,27 @@
-//
-// Created by Functioner on 2023/5/31.
-//
-
 #ifndef CHORUSKIT_IPIANOKEYWIDGET_H
 #define CHORUSKIT_IPIANOKEYWIDGET_H
 
 #include <QFrame>
 
+#include "coreplugin/CoreGlobal.h"
+
 namespace Core {
 
     class IPianoKeyWidget;
 
-    class IPianoKeyWidgetFactory {
+    class CORE_EXPORT IPianoKeyWidgetFactory {
     public:
-        virtual ~IPianoKeyWidgetFactory() = default;
+        virtual ~IPianoKeyWidgetFactory();
         virtual IPianoKeyWidget *create(QWidget *parent) = 0;
 
         virtual QString name() const = 0;
     };
 
-    class IPianoKeyWidget : public QFrame {
+    class CORE_EXPORT IPianoKeyWidget : public QFrame {
         Q_OBJECT
     public:
-        explicit IPianoKeyWidget(QWidget *parent = nullptr) : QFrame(parent) {
-        }
+        explicit IPianoKeyWidget(QWidget *parent = nullptr);
+        ~IPianoKeyWidget();
 
         virtual int currentHeight() const = 0;
         virtual void setCurrentHeight(int height) = 0;

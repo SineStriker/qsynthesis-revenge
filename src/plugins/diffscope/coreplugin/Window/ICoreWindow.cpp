@@ -472,6 +472,7 @@ namespace Core {
     void ICoreWindowPrivate::showMenuInPalette_helper(QMenu *menu, QMenu *menuToDelete) {
         cp->abandon();
 
+        QListWidgetItem *curItem = nullptr;
         QListWidgetItem *lastItem = nullptr;
         for (const auto &action : menu->actions()) {
             QString desc;
@@ -492,6 +493,9 @@ namespace Core {
             item->setData(QsApi::ObjectPointerRole, QVariant::fromValue(intptr_t(action)));
 
             cp->addItem(item);
+            if (action->property("current").toBool()) {
+                curItem = item;
+            }
             lastItem = item;
         }
 
@@ -503,7 +507,11 @@ namespace Core {
 
         cp->setFilterHint(title.isEmpty() ? tr("Select action in \"%1\"").arg(removeAllAccelerateKeys(menu->title()))
                                           : title);
-        cp->setCurrentRow(0);
+        if (curItem) {
+            cp->setCurrentItem(curItem);
+        } else {
+            cp->setCurrentRow(0);
+        }
         cp->start();
 
         auto obj = new QObject();
@@ -689,10 +697,26 @@ namespace Core {
         d->loadInvisibleContext();
 
         // Shortcut will cause immediate close of command palette
-        connect(this, &IWindow::shortcutAboutToCome, d->cp, &QsApi::CommandPalette::abandon);
+        // connect(this, &IWindow::shortcutAboutToCome, d->cp, &QsApi::CommandPalette::abandon);
     }
 
     void ICoreWindow::windowAddOnsFinished() {
+    }
+
+    void ICoreWindow::actionItemAdded(ActionItem *item) {
+        if (item->isAction()) {
+            window()->addAction(item->action());
+        } else if (item->isMenu()) {
+            addShortcutContext(item->menu());
+        }
+    }
+
+    void ICoreWindow::actionItemRemoved(ActionItem *item) {
+        if (item->isAction()) {
+            window()->removeAction(item->action());
+        } else if (item->isMenu()) {
+            removeShortcutContext(item->menu());
+        }
     }
 
     ICoreWindow::ICoreWindow(ICoreWindowPrivate &d, const QString &id, QObject *parent) : IWindow(d, id, parent) {

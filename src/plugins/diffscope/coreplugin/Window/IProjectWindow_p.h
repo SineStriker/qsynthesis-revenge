@@ -8,7 +8,7 @@
 #include "ICoreWindow_p.h"
 #include "IProjectWindow.h"
 #include "Internal/Widgets/FloatingTitleBar.h"
-#include "Internal/Widgets/ProjectWidget.h"
+#include "PianoRoll/PianoRoll.h"
 
 namespace Core {
 
@@ -20,9 +20,6 @@ namespace Core {
 
         void init();
 
-        void readSettings();
-        void saveSettings() const;
-
         void reloadStrings();
 
         void reloadMainToolbar();
@@ -33,28 +30,14 @@ namespace Core {
 
         bool m_forceClose;
 
-        Internal::ProjectWidget *m_projectWidget;
+        // Layout
+        QVBoxLayout *m_layout;
+        QWidget *m_centralWidget;
 
-        // Floating panels
-        struct FloatingPanelState {
-            QString id;
-            bool isOpen;
-        };
-        QList<FloatingPanelState> floatingPanelsState;
+        QToolBar *m_toolbar;
+        CDockFrame *m_frame;
 
-        struct FloatingPanelControlBlock {
-            QString id;
-            QWidget *panel;
-            Internal::FloatingTitleBar *titleBar;
-            QObject *obj;
-        };
-        QHash<QString, FloatingPanelControlBlock> floatingPanels;
-
-        // Piano key widgets
-        QHash<QString, IPianoKeyWidgetFactory *> pianoKeyWidgets;
-        QString currentPianoKeyWidget;
-
-        void setPianoKeyWidget(const QString &id);
+        PianoRoll *m_pianoRoll;
 
     private:
         void _q_documentChanged();

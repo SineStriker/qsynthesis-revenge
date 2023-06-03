@@ -33,7 +33,7 @@ public:
     void insertCard(int index, CDockCard *card);
     void insertCard(CDockCard *indexCard, CDockCard *card);
     void removeCard(CDockCard *card);
-    void removeAllCards();
+    void clearCards();
 
     int count() const;
     int indexOf(CDockCard *card) const;
@@ -42,12 +42,9 @@ public:
 
     CDockCard *cardAtPos(QPoint pos) const;
 
-    int indexAtPos(QPoint pos) const;
+    void activateCard(CDockCard *card);
 
-    int activeIndex() const;
-    void setActiveIndex(int index);
-
-    CDockSideBar *doubleTabBar() const;
+    CDockSideBar *sideBar() const;
 
 protected:
     void resetLayout();
@@ -56,10 +53,10 @@ protected:
 private:
     void _q_tabDragStarted(const QPoint &pos, const QPixmap &pixmap);
     void _q_tabToggled(bool checked);
+    void _q_tabViewModeChanged(CDockCard::ViewMode viewMode, CDockCard::ViewMode oldViewMode);
 
 protected:
     int m_placeholderIndex;
-    int m_placeholderWidth;
 
     Qt::Orientation m_orientation;
 
@@ -78,6 +75,7 @@ signals:
     void cardAdded(CDockCard *card);
     void cardRemoved(CDockCard *card);
     void cardToggled(CDockCard *card);
+    void cardViewModeChanged(CDockCard *card, CDockCard::ViewMode oldViewMode);
 };
 
 #endif // CDOCKTABBAR_H

@@ -6,7 +6,7 @@
 
 #include <Widgets/CToolButton.h>
 
-#include "Interfaces/IPianoKeyWidget.h"
+#include "PianoRoll/IPianoKeyWidget.h"
 #include "QPixelSize.h"
 
 namespace Core::Internal {

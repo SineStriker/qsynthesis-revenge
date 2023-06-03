@@ -3,7 +3,7 @@
 
 #include <Widgets/NoneScrollArea.h>
 
-#include "Interfaces/IPianoKeyWidget.h"
+#include "PianoRoll/IPianoKeyWidget.h"
 
 namespace Core::Internal {
 

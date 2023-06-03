@@ -9,6 +9,7 @@
 #include <QDragEnterEvent>
 #include <QDropEvent>
 #include <QMimeData>
+#include <QTimer>
 
 #include "QMView.h"
 
@@ -45,9 +46,8 @@ void CDockTabDragProxy::setFrame(CDockFrame *frame) {
 
 QList<CDockTabBar *> CDockTabDragProxy::tabBars() const {
     return {
-        m_frame->d->m_leftBar->firstBar(),   m_frame->d->m_leftBar->secondBar(),
-        m_frame->d->m_topBar->firstBar(),    m_frame->d->m_topBar->secondBar(),
-        m_frame->d->m_rightBar->firstBar(),  m_frame->d->m_rightBar->secondBar(),
+        m_frame->d->m_leftBar->firstBar(),   m_frame->d->m_leftBar->secondBar(),   m_frame->d->m_topBar->firstBar(),
+        m_frame->d->m_topBar->secondBar(),   m_frame->d->m_rightBar->firstBar(),   m_frame->d->m_rightBar->secondBar(),
         m_frame->d->m_bottomBar->firstBar(), m_frame->d->m_bottomBar->secondBar(),
     };
 }
@@ -84,9 +84,8 @@ bool CDockTabDragProxy::eventFilter(QObject *obj, QEvent *event) {
     return QObject::eventFilter(obj, event);
 }
 
-void CDockTabDragProxy::_q_tabDragStarted(CDockCard *card, const QPoint &pos,
-                                          const QPixmap &pixmap) {
-    auto orgDoubleBar = card->tabBar()->doubleTabBar();
+void CDockTabDragProxy::_q_tabDragStarted(CDockCard *card, const QPoint &pos, const QPixmap &pixmap) {
+    auto orgDoubleBar = card->tabBar()->sideBar();
     if (orgDoubleBar->count() == 1) {
         card->setDisabled(true);
         card->installEventFilter(this);
@@ -111,14 +110,12 @@ void CDockTabDragProxy::_q_tabDragStarted(CDockCard *card, const QPoint &pos,
 }
 
 void CDockTabDragProxy::_q_tabDragMove() {
-    QPoint pos = m_frame->mapFromGlobal(QCursor::pos());
-    m_dragger->move(pos - m_dragger->currentPos);
+    m_dragger->move(m_frame->mapFromGlobal(QCursor::pos()) - m_dragger->currentPos);
 
     auto bars = doubleTabBars();
 
     CDockSideBar *targetBar = nullptr;
-    for (auto it = bars.begin(); it != bars.end(); ++it) {
-        auto bar = *it;
+    for (auto bar : bars) {
         if (!targetBar) {
             int widthHint = m_dragger->currentCard->widthHint();
             bool hit = false;
@@ -139,8 +136,7 @@ void CDockTabDragProxy::_q_tabDragMove() {
                     size = QSize(bar->width(), widthHint);
                 }
                 QRect rect(pos, size);
-                hit = QMView::rectHitTest(
-                    rect, QRect(m_dragger->mapToGlobal(QPoint(0, 0)), m_dragger->size()));
+                hit = QMView::rectHitTest(rect, QRect(m_dragger->mapToGlobal(QPoint(0, 0)), m_dragger->size()));
             } else {
                 hit = QMView::widgetHitTest(bar, m_dragger);
             }
@@ -161,8 +157,7 @@ static int cardAtWidget(CDockTabBar *bar, QWidget *w, bool reverse = false) {
     auto cards = bar->cards();
     int index = 0;
     QPoint center = w->mapToGlobal(w->rect().center());
-    for (auto it = cards.begin(); it != cards.end(); ++it) {
-        auto card = *it;
+    for (auto card : cards) {
         QPoint pos = card->mapToGlobal(QPoint(0, 0));
         if (bar->orientation() == Qt::Vertical) {
             if (reverse) {
@@ -223,6 +218,15 @@ void CDockTabDragProxy::_q_tabDragOver() {
                 bottomBar->insertCard(index, card);
             }
         }
+    } else {
+        auto pos = QCursor::pos();
+        QTimer::singleShot(0, card, [pos, card]() {
+            if (card->viewMode() == CDockCard::DockPinned) {
+                card->setViewMode(CDockCard::Float);
+                card->moveWidget(pos);
+            }
+            card->setChecked(true);
+        });
     }
 
     if (!card->isEnabled()) {
@@ -240,8 +244,7 @@ void CDockTabDragProxy::_q_tabDragOver() {
     m_dragger = nullptr;
 
     auto bars = doubleTabBars();
-    for (auto it = bars.begin(); it != bars.end(); ++it) {
-        auto bar = *it;
+    for (auto bar : bars) {
         bar->setHighlight(false);
     }
 }

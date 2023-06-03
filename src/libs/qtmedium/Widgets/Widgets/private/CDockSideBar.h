@@ -49,11 +49,13 @@ private:
     void _q_cardAdded(CDockCard *card);
     void _q_cardRemoved(CDockCard *card);
     void _q_cardToggled(CDockCard *card);
+    void _q_cardViewModeChanged(CDockCard *card, CDockCard::ViewMode oldViewMode);
 
 signals:
     void cardAdded(QM::Priority number, CDockCard *card);
     void cardRemoved(QM::Priority number, CDockCard *card);
     void cardToggled(QM::Priority number, CDockCard *card);
+    void cardViewModeChanged(QM::Priority number, CDockCard *card, CDockCard::ViewMode oldViewMode);
 };
 
 #endif // __CDOCKSIDEBAR_H__

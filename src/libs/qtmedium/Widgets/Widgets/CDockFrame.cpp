@@ -64,7 +64,7 @@ void CDockFrame::removeWidget(QAbstractButton *card) {
         return;
     }
     auto tabBar = realCard->tabBar();
-    auto doubleBar = tabBar->doubleTabBar();
+    auto doubleBar = tabBar->sideBar();
     if (doubleBar == d->m_leftBar) {
         goto out;
     }

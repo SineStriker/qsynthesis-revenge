@@ -60,6 +60,7 @@ namespace Core {
 
             // View
             ActionItem *appearanceMenuItem;
+            ActionItem *mainMenuVisibleItem;
             ActionItem *mainToolbarVisibleItem;
             ActionItem *dockVisibleItem;
             ActionItem *statusBarVisibleItem;

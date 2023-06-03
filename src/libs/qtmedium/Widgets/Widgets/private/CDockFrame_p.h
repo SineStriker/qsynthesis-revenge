@@ -48,6 +48,7 @@ private:
     void _q_cardAdded(QM::Priority number, CDockCard *card);
     void _q_cardRemoved(QM::Priority number, CDockCard *card);
     void _q_cardToggled(QM::Priority number, CDockCard *card);
+    void _q_cardViewModeChanged(QM::Priority number, CDockCard *card, CDockCard::ViewMode oldViewMode);
 };
 
 #endif // __CDOCKFRAME_P_H__

@@ -42,11 +42,12 @@ void CDockSideBar::init() {
     connect(m_firstBar, &CDockTabBar::cardAdded, this, &CDockSideBar::_q_cardAdded);
     connect(m_firstBar, &CDockTabBar::cardRemoved, this, &CDockSideBar::_q_cardRemoved);
     connect(m_firstBar, &CDockTabBar::cardToggled, this, &CDockSideBar::_q_cardToggled);
+    connect(m_firstBar, &CDockTabBar::cardViewModeChanged, this, &CDockSideBar::_q_cardViewModeChanged);
+
     connect(m_secondBar, &CDockTabBar::cardAdded, this, &CDockSideBar::_q_cardAdded);
-    connect(m_secondBar, &CDockTabBar::cardRemoved, this,
-            &CDockSideBar::_q_cardRemoved);
-    connect(m_secondBar, &CDockTabBar::cardToggled, this,
-            &CDockSideBar::_q_cardToggled);
+    connect(m_secondBar, &CDockTabBar::cardRemoved, this, &CDockSideBar::_q_cardRemoved);
+    connect(m_secondBar, &CDockTabBar::cardToggled, this, &CDockSideBar::_q_cardToggled);
+    connect(m_secondBar, &CDockTabBar::cardViewModeChanged, this, &CDockSideBar::_q_cardViewModeChanged);
 
     resetLayout();
 }
@@ -93,7 +94,7 @@ CDockTabBar *CDockSideBar::secondBar() const {
 }
 
 QSize CDockSideBar::sizeHint() const {
-    QSize sz = QWidget::sizeHint();
+    QSize sz = QFrame::sizeHint();
     if (highlight()) {
         int wh = property(PROPERTY_WIDTHHINT).toInt();
         if (orientation() == Qt::Horizontal && sz.height() < wh) {
@@ -111,10 +112,8 @@ QSize CDockSideBar::minimumSizeHint() const {
 }
 
 void CDockSideBar::resetLayout() {
-    QBoxLayout *layout = static_cast<QBoxLayout *>(this->layout());
-    if (layout) {
-        delete layout;
-    }
+    auto layout = static_cast<QBoxLayout *>(this->layout());
+    delete layout;
 
     if (orientation() == Qt::Horizontal) {
         layout = new QHBoxLayout();
@@ -162,5 +161,14 @@ void CDockSideBar::_q_cardToggled(CDockCard *card) {
         emit cardToggled(QM::Primary, card);
     } else {
         emit cardToggled(QM::Secondary, card);
+    }
+}
+
+void CDockSideBar::_q_cardViewModeChanged(CDockCard *card, CDockCard::ViewMode oldViewMode) {
+    auto bar = qobject_cast<CDockTabBar *>(sender());
+    if (bar == m_firstBar) {
+        emit cardViewModeChanged(QM::Primary, card, oldViewMode);
+    } else {
+        emit cardViewModeChanged(QM::Secondary, card, oldViewMode);
     }
 }

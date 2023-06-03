@@ -105,9 +105,9 @@ namespace Core::Internal {
             // iWin->showMenuInPalette(fileItem->menu(), false);
             iWin->selectRecentFiles();
 
-            //            auto action = new QAction("Test");
-            //            action->setShortcut(QKeySequence("Ctrl+N"));
-            //            helpItem->menu()->addAction(action);
+            auto action = new QAction("Test");
+            action->setShortcut(QKeySequence("Ctrl+N"));
+            helpItem->menu()->addAction(action);
         });
 
         connect(openFileItem->action(), &QAction::triggered, this, [iWin]() {
