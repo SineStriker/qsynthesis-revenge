@@ -316,11 +316,13 @@ namespace IEMgr ::Internal {
 
             if (!file.open(QIODevice::ReadWrite | QIODevice::Text)) {
                 qDebug() << "Failed to write project file";
+                return false;
             }
             QTextStream in(&file);
             in << jsonStr;
 
             file.close();
+            return true;
         };
 
         auto modelObj = model.toJsonObject();
