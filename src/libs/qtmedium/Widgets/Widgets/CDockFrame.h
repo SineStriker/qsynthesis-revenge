@@ -4,8 +4,8 @@
 #include <QAbstractButton>
 #include <QFrame>
 
-#include "QMWidgetsGlobal.h"
 #include "QMNamespace.h"
+#include "QMWidgetsGlobal.h"
 
 class CDockFramePrivate;
 
@@ -36,6 +36,17 @@ public:
     void setBarVisible(bool visible);
     void toggleBarVisible();
 
+signals:
+    void dragAreaSizeChanged();
+    void barVisibleToggled(bool visible);
+    void cardAdded(QAbstractButton *card);
+    void cardAboutToRemove(QAbstractButton *card);
+    void cardToggled(Qt::Edge edge, QM::Priority number, QAbstractButton *card);
+
+protected:
+    virtual void widgetAdded(Qt::Edge edge, QM::Priority number, QWidget *w, QAbstractButton *card);
+    virtual void widgetAboutToRemove(QAbstractButton *card);
+
 protected:
     CDockFramePrivate *d;
 
@@ -43,11 +54,6 @@ protected:
 
 private:
     friend class CDockTabDragProxy;
-
-signals:
-    void dragAreaSizeChanged();
-    void barVisibleToggled(bool visible);
-    void cardToggled(Qt::Edge edge, QM::Priority number, QAbstractButton *card);
 };
 
 

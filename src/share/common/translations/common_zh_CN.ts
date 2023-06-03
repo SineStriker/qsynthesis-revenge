@@ -45,6 +45,21 @@
     </message>
 </context>
 <context>
+    <name>CDockCard</name>
+    <message>
+        <source>Dock pinned</source>
+        <translation>固定停靠</translation>
+    </message>
+    <message>
+        <source>Float</source>
+        <translation>浮动</translation>
+    </message>
+    <message>
+        <source>Window</source>
+        <translation>窗口</translation>
+    </message>
+</context>
+<context>
     <name>CScrollBar</name>
     <message>
         <source>Scroll here</source>

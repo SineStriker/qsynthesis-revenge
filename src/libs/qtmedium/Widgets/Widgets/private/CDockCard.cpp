@@ -9,7 +9,9 @@
 #include <QPainter>
 #include <QResizeEvent>
 #include <QStyle>
+#include <QTimer>
 
+#include "CMenu.h"
 #include "QMView.h"
 
 CDockCard::CDockCard(QWidget *parent) : CLTabButton(parent) {
@@ -36,6 +38,8 @@ CDockCard::~CDockCard() {
 void CDockCard::init() {
     setCheckable(true);
     setContextMenuPolicy(Qt::DefaultContextMenu);
+
+    m_closing = false;
 
     m_container = nullptr;
     m_widget = nullptr;
@@ -170,9 +174,6 @@ void CDockCard::setViewMode(CDockCard::ViewMode viewMode) {
         return;
     }
 
-    auto org = m_viewMode;
-    m_viewMode = viewMode;
-
     auto layout = m_container->layout();
     switch (viewMode) {
         case DockPinned: {
@@ -186,9 +187,11 @@ void CDockCard::setViewMode(CDockCard::ViewMode viewMode) {
             layout->removeWidget(m_widget);
             m_widget->setParent(m_container);
             m_widget->setWindowFlags(Qt::Tool);
-            if (!size.isEmpty())
-                m_widget->resize(size);
-            moveWidget(mapToGlobal({0, 0}));
+            if (m_viewMode == DockPinned) {
+                if (!size.isEmpty())
+                    m_widget->resize(size);
+                moveWidget(mapToGlobal({0, 0}));
+            }
             m_widget->setVisible(isChecked());
             break;
         }
@@ -197,13 +200,18 @@ void CDockCard::setViewMode(CDockCard::ViewMode viewMode) {
             layout->removeWidget(m_widget);
             m_widget->setParent(nullptr);
             m_widget->setWindowFlags(Qt::Window);
-            if (!size.isEmpty())
-                m_widget->resize(size);
-            moveWidget(mapToGlobal({0, 0}));
+            if (m_viewMode == DockPinned) {
+                if (!size.isEmpty())
+                    m_widget->resize(size);
+                moveWidget(mapToGlobal({0, 0}));
+            }
             m_widget->setVisible(isChecked());
             break;
         }
     }
+
+    auto org = m_viewMode;
+    m_viewMode = viewMode;
 
     emit viewModeChanged(viewMode, org);
 }
@@ -245,6 +253,22 @@ void CDockCard::contextMenuEvent(QContextMenuEvent *event) {
     auto floatAction = new QAction(tr("Float"), &menu);
     auto windowAction = new QAction(tr("Window"), &menu);
 
+    dockPinnedAction->setCheckable(true);
+    floatAction->setCheckable(true);
+    windowAction->setCheckable(true);
+
+    switch (m_viewMode) {
+        case DockPinned:
+            dockPinnedAction->setChecked(true);
+            break;
+        case Float:
+            floatAction->setChecked(true);
+            break;
+        case Window:
+            windowAction->setChecked(true);
+            break;
+    }
+
     menu.addAction(dockPinnedAction);
     menu.addAction(floatAction);
     menu.addAction(windowAction);
@@ -272,7 +296,14 @@ void CDockCard::paintEvent(QPaintEvent *event) {
 
 bool CDockCard::eventFilter(QObject *obj, QEvent *event) {
     if (obj == m_widget) {
-        if (m_viewMode != DockPinned && event->type() == QEvent::Hide) {
+        if (m_viewMode != DockPinned && event->type() == QEvent::Close) {
+            m_closing = true;
+            QTimer::singleShot(0, this, [this]() {
+                m_closing = false; //
+            });
+        }
+        if (event->type() == QEvent::Hide && m_closing) {
+            // Close accepted
             setChecked(false);
         }
     }

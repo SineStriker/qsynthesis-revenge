@@ -38,7 +38,7 @@ namespace Core {
         QStringList pianoKeyWidgets() const;
         QString currentPianoKeyWidget() const;
         void setCurrentPianoKeyWidget(const QString &id);
-        QString pianoKeyWidgetName(const QString &id) const;
+        IPianoKeyWidgetFactory *pianoKeyWidgetFactory(const QString &id) const;
 
         QStringList floatingPanels() const;
         FloatingPanelState floatingPanelState(const QString &id);

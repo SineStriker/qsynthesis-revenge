@@ -706,7 +706,7 @@
     </message>
     <message>
         <source>Dock Panels</source>
-        <translation>Dock 面板</translation>
+        <translation>停靠面板</translation>
     </message>
     <message>
         <source>Floating Panels</source>
@@ -723,6 +723,10 @@
     <message>
         <source>Select Piano Key Widget</source>
         <translation>选择钢琴键窗体</translation>
+    </message>
+    <message>
+        <source>Tracks</source>
+        <translation>音轨</translation>
     </message>
 </context>
 <context>

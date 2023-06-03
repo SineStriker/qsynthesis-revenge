@@ -20,7 +20,11 @@
 
 namespace Core {
 
+    //
+
     namespace Internal {
+
+        static const char *trackKey = "edit.trackPanel";
 
         static const char *phonemeKey = "edit.phonemePanel";
 
@@ -47,32 +51,33 @@ namespace Core {
 
             auto pianoRoll = iWin->pianoRoll();
 
+            // Add track panel
+            trackPanel = new TrackPanel();
+            trackPanel->setProperty("choruskit_managed_window", true);
+            trackButton = iWin->mainDock()->addWidget(Qt::TopEdge, QM::Primary, trackPanel);
+            trackButton->setObjectName("track-card");
+            ICore::autoPolishPopupMenu(trackButton);
+
+            connect(trackButton, &QAbstractButton::toggled, trackPanelVisibleItem->action(), &QAction::setChecked);
+            connect(trackPanelVisibleItem->action(), &QAction::toggled, trackButton, &QAbstractButton::setChecked);
+
             // Add phoneme panel
-            phonemePanel = new Internal::PhonemePanel();
+            phonemePanel = new PhonemePanel();
             phonemeButton = pianoRoll->addFloatingPanel(phonemeKey, phonemePanel, nullptr);
+            phonemeButton->setObjectName("phoneme-button");
 
             connect(pianoRoll, &PianoRoll::floatingPanelStateChanged, this,
-                    [iWin](const QString &id, PianoRoll::FloatingPanelState state) {
+                    [this](const QString &id, PianoRoll::FloatingPanelState state) {
                         if (id == phonemeKey) {
-                            iWin->setGlobalAttribute(phonemeKey, state != PianoRoll::Hidden);
+                            phonemePanelVisibleItem->action()->setChecked(state != PianoRoll::Hidden);
                         }
                     });
 
-            connect(iWin, &IWindow::globalAttributeChanged, this,
-                    [pianoRoll](const QString &id, const QVariant &var, const QVariant &orgVar) {
-                        if (id != phonemeKey) {
-                            return;
-                        }
-                        if (var.toBool()) {
-                            if (pianoRoll->floatingPanelState(phonemeKey) == PianoRoll::Hidden) {
-                                pianoRoll->setFloatingPanelState(phonemeKey, PianoRoll::Normal);
-                            }
-                        } else {
-                            if (pianoRoll->floatingPanelState(phonemeKey) != PianoRoll::Hidden) {
-                                pianoRoll->setFloatingPanelState(phonemeKey, PianoRoll::Hidden);
-                            }
-                        }
-                    });
+            connect(phonemePanelVisibleItem->action(), &QAction::toggled, this, [pianoRoll](bool checked) {
+                if (checked == (pianoRoll->floatingPanelState(phonemeKey) == PianoRoll::Hidden)) {
+                    pianoRoll->setFloatingPanelState(phonemeKey, checked ? PianoRoll::Normal : PianoRoll::Hidden);
+                }
+            });
 
             // Add piano key widgets
             pianoRoll->addPianoKeyWidget(DefaultPianoKeyWidget, new PianoKeyWidgetFactory());
@@ -116,6 +121,7 @@ namespace Core {
             statusBarVisibleItem->setText(tr("Status Bar"));
 
             dockPanelsVisibilityMenuItem->setText(tr("Dock Panels"));
+            trackPanelVisibleItem->setText(tr("Tracks"));
 
             floatingPanelsVisibilityMenuItem->setText(tr("Floating Panels"));
             phonemePanelVisibleItem->setText(tr("Phonemes"));
@@ -132,7 +138,10 @@ namespace Core {
 
             selectPianoKeyWidgetItem->setText(tr("Select Piano Key Widget"));
 
+            trackButton->setText(tr("Tracks"));
             phonemeButton->setText(tr("Phonemes"));
+
+            trackPanel->setWindowTitle(trackButton->text());
         }
 
         static QWidget *createStretch() {
@@ -193,6 +202,7 @@ namespace Core {
 
             dockPanelsVisibilityMenuItem =
                 new ActionItem("core.DockPanelsVisibility", ICore::createCoreMenu(win), this);
+            trackPanelVisibleItem = new ActionItem("core.TrackPanelVisible", new QAction(this), this);
 
             floatingPanelsVisibilityMenuItem =
                 new ActionItem("core.FloatingPanelsVisibility", ICore::createCoreMenu(win), this);
@@ -232,6 +242,9 @@ namespace Core {
             connectVisibilityControlAction(mainToolbarVisibleItem->action(), iWin->mainToolbar());
             connectDockVisibilityControlAction(dockVisibleItem->action(), iWin->mainDock());
             connectVisibilityControlAction(statusBarVisibleItem->action(), iWin->statusBar());
+
+            trackPanelVisibleItem->action()->setCheckable(true);
+            iWin->addCheckable(trackKey, trackPanelVisibleItem->action());
 
             phonemePanelVisibleItem->action()->setCheckable(true);
             iWin->addCheckable(phonemeKey, phonemePanelVisibleItem->action());
@@ -300,7 +313,7 @@ namespace Core {
                 auto menu = new QMenu();
                 menu->setProperty("text", selectPianoKeyWidgetItem->text());
                 for (const auto &key : qAsConst(keys)) {
-                    auto action = new QAction(pianoRoll->pianoKeyWidgetName(key), menu);
+                    auto action = new QAction(pianoRoll->pianoKeyWidgetFactory(key)->name(), menu);
                     action->setData(key);
 
                     if (key == pianoRoll->currentPianoKeyWidget()) {
@@ -348,6 +361,7 @@ namespace Core {
                 statusBarVisibleItem,
 
                 dockPanelsVisibilityMenuItem,
+                trackPanelVisibleItem,
 
                 floatingPanelsVisibilityMenuItem,
                 phonemePanelVisibleItem,

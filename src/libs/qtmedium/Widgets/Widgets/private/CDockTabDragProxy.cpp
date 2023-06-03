@@ -15,6 +15,8 @@
 
 #include <QtMath>
 
+#define DOCK_CARD_DRAG_GLOBAL 1
+
 CDockTabDragProxy::CDockTabDragProxy(QObject *parent) : QObject(parent) {
     m_frame = nullptr;
     m_dragger = nullptr;
@@ -30,16 +32,16 @@ CDockFrame *CDockTabDragProxy::frame() const {
 void CDockTabDragProxy::setFrame(CDockFrame *frame) {
     if (m_frame) {
         QList<CDockTabBar *> senders = tabBars();
-        for (auto it = senders.begin(); it != senders.end(); ++it) {
-            disconnect(*it, &CDockTabBar::dragStarted, this, &CDockTabDragProxy::_q_tabDragStarted);
+        for (auto &sender : senders) {
+            disconnect(sender, &CDockTabBar::dragStarted, this, &CDockTabDragProxy::_q_tabDragStarted);
         }
     }
 
     m_frame = frame;
     if (m_frame) {
         QList<CDockTabBar *> senders = tabBars();
-        for (auto it = senders.begin(); it != senders.end(); ++it) {
-            connect(*it, &CDockTabBar::dragStarted, this, &CDockTabDragProxy::_q_tabDragStarted);
+        for (auto &sender : senders) {
+            connect(sender, &CDockTabBar::dragStarted, this, &CDockTabDragProxy::_q_tabDragStarted);
         }
     }
 }
@@ -93,7 +95,12 @@ void CDockTabDragProxy::_q_tabDragStarted(CDockCard *card, const QPoint &pos, co
         card->hide();
     }
 
+#if DOCK_CARD_DRAG_GLOBAL
+    m_dragger = new CDockDragLabel();
+    m_dragger->setWindowFlags(Qt::FramelessWindowHint);
+#else
     m_dragger = new CDockDragLabel(m_frame);
+#endif
     m_dragger->currentCard = card;
     m_dragger->currentPos = pos;
     m_dragger->originBar = orgDoubleBar;
@@ -110,7 +117,11 @@ void CDockTabDragProxy::_q_tabDragStarted(CDockCard *card, const QPoint &pos, co
 }
 
 void CDockTabDragProxy::_q_tabDragMove() {
-    m_dragger->move(m_frame->mapFromGlobal(QCursor::pos()) - m_dragger->currentPos);
+#if DOCK_CARD_DRAG_GLOBAL
+    m_dragger->move(QCursor::pos() - m_dragger->currentPos);
+#else
+    m_dragger->move(m_dragger->parentWidget()->mapFromGlobal(QCursor::pos()) - m_dragger->currentPos);
+#endif
 
     auto bars = doubleTabBars();
 
@@ -223,6 +234,8 @@ void CDockTabDragProxy::_q_tabDragOver() {
         QTimer::singleShot(0, card, [pos, card]() {
             if (card->viewMode() == CDockCard::DockPinned) {
                 card->setViewMode(CDockCard::Float);
+                card->moveWidget(pos);
+            } else if (!card->isChecked()) {
                 card->moveWidget(pos);
             }
             card->setChecked(true);

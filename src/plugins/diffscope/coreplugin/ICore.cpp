@@ -149,9 +149,6 @@ namespace Core {
                     if ((menu = qobject_cast<QMenu *>(child))) {
                         menu->setProperty("core-style", true);
                         menu->style()->polish(menu);
-
-                        auto e = new QEvent(QEvent::Polish);
-                        qApp->postEvent(menu, e);
                     }
                 });
             }

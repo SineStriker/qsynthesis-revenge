@@ -33,6 +33,21 @@
     </message>
 </context>
 <context>
+    <name>CDockCard</name>
+    <message>
+        <source>Dock pinned</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Float</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Window</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>CScrollBar</name>
     <message>
         <source>Scroll here</source>

@@ -98,10 +98,6 @@ ck_option(CK_ENABLE_VCPKG_DEPS on)
 # CMake
 ck_option(CK_CMAKE_RANDOM_LENGTH 8)
 
-# Build
-ck_option(CK_BUILD_TEST on)
-ck_option(CK_ENABLE_BREAKPAD off)
-
 # Messages
 if(CK_ENABLE_DEVEL)
     set(CK_INSTALL_MODE devel)

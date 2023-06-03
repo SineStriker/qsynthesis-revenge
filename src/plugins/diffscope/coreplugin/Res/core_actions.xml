@@ -79,6 +79,7 @@
                 <action id="StatusBarVisible" command="View: Status Bar"/>
             </menu>
             <menu id="DockPanelsVisibility">
+                <action id="TrackPanelVisible" command="View: Tracks"/>
             </menu>
             <menu id="FloatingPanelsVisibility">
                 <action id="PhonemePanelVisible" command="View: Phonemes"/>

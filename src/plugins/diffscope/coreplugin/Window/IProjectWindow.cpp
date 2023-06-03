@@ -76,11 +76,6 @@ namespace Core {
         return d->m_frame;
     }
 
-    QAbstractButton *IProjectWindow::addToolWindowPanel(const QString &id, int preferredEdge, QWidget *panel) {
-        Q_D(IProjectWindow);
-        return d->m_frame->addWidget(Qt::Edge(preferredEdge & 0xF), QM::Priority(preferredEdge & 0xF0), panel);
-    }
-
     PianoRoll *IProjectWindow::pianoRoll() const {
         Q_D(const IProjectWindow);
         return d->m_pianoRoll;
@@ -115,6 +110,9 @@ namespace Core {
         auto &frame = d->m_frame;
         frame = new CDockFrame();
         frame->setObjectName("main-dock");
+        connect(frame, &CDockFrame::cardAdded, this, [this](QAbstractButton *card) {
+            card->setProperty("type", "main-dock-card"); //
+        });
 
         auto &layout = d->m_layout;
         layout = new QVBoxLayout();

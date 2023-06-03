@@ -32,8 +32,6 @@ namespace Core {
 
         CDockFrame *mainDock() const;
 
-        QAbstractButton *addToolWindowPanel(const QString &id, int preferredEdge, QWidget *panel);
-
         PianoRoll *pianoRoll() const;
 
     protected:

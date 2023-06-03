@@ -152,3 +152,73 @@ Core--Internal--PianoKey[color=black] {
 Core--Internal--PianoKey[color=black]:hover {
     background-color: #535353;
 }
+
+
+/* CCoupleTabBar */
+
+CDockFrame {
+    background-color: transparent;
+}
+
+/* CDockTabBar {
+    border: 1px solid transparent;
+}
+
+CDockSideBar {
+    border: 1px solid transparent;
+} */
+
+CDockSideBar[highlight=false] {
+    background-color: transparent;
+}
+
+CDockSideBar[highlight=true] {
+    background-color: #2F2F2F;
+}
+
+CDockCard {
+    color: #CCCCCC;
+    background-color: transparent;
+    border: 1px solid transparent;
+    padding: 4px 8px;
+    qproperty-iconSize: 16px 16px;
+    qproperty-spaceRatio: 0.25;
+}
+
+CDockCard:checked {
+    color: white;
+    background-color: #2F2F2F;
+}
+
+CDockCard:!checked:hover {
+    background-color: #292929;
+}
+
+CDockCard#track-card {
+    qproperty-iconUp: svg(":/svg/main-dock/layer-group-solid.svg", #CCCCCC);
+    qproperty-iconUpChecked: svg(":/svg/main-dock/layer-group-solid.svg", white);
+}
+
+CDockPanelSplitter:handle {
+    background-color: transparent;
+}
+
+CDockPanelSplitter:handle:horizontal {
+    width: 0;
+}
+
+CDockPanelSplitter:handle:vertical {
+    height: 0;
+}
+
+CDockPanel:handle {
+    background-color: transparent;
+}
+
+CDockPanel:handle:horizontal {
+    width: 0;
+}
+
+CDockPanel:handle:vertical {
+    height: 0;
+}

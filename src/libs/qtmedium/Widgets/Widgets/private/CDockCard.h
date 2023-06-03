@@ -68,6 +68,7 @@ protected:
     QWidget *m_container;
     QWidget *m_widget;
 
+    bool m_closing;
     ViewMode m_viewMode;
 
 protected:
@@ -75,9 +76,7 @@ protected:
     void mouseMoveEvent(QMouseEvent *event) override;
     void mouseReleaseEvent(QMouseEvent *event) override;
     void contextMenuEvent(QContextMenuEvent *event) override;
-
     void leaveEvent(QEvent *event) override;
-
     void paintEvent(QPaintEvent *event) override;
 
     bool eventFilter(QObject *obj, QEvent *event) override;

@@ -21,9 +21,16 @@ set(CK_CMAKE_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}) # Must be set
 include(${ROOT_CMAKE_MODULE_DIR}/ChorusKitAPI.cmake)
 
 # ----------------------------------
+# Build Options
+# ----------------------------------
+ck_option(CK_BUILD_TEST on)
+ck_option(CK_ENABLE_BREAKPAD off)
+ck_option(CK_BUILD_ALL_APPLICATIONS off)
+ck_option(CK_BUILD_APPLICATIONS DiffScope) # Not used if `CK_BUILD_ALL_APPLICATIONS` is on
+
+# ----------------------------------
 # Main project
 # ----------------------------------
-
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 

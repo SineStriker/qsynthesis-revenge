@@ -33,29 +33,20 @@ namespace Params::Internal {
         // Add phoneme panel
         paramsPanel = new Internal::ParamsPanel();
         paramsButton = pianoRoll->addFloatingPanel(paramsKey, paramsPanel, nullptr);
+        paramsButton->setObjectName("params-button");
 
         connect(pianoRoll, &PianoRoll::floatingPanelStateChanged, this,
-                [iWin](const QString &id, PianoRoll::FloatingPanelState state) {
+                [this](const QString &id, PianoRoll::FloatingPanelState state) {
                     if (id == paramsKey) {
-                        iWin->setGlobalAttribute(paramsKey, state != PianoRoll::Hidden);
+                        paramsPanelVisibleItem->action()->setChecked(state != PianoRoll::Hidden);
                     }
                 });
 
-        connect(iWin, &IWindow::globalAttributeChanged, this,
-                [pianoRoll](const QString &id, const QVariant &var, const QVariant &orgVar) {
-                    if (id != paramsKey) {
-                        return;
-                    }
-                    if (var.toBool()) {
-                        if (pianoRoll->floatingPanelState(paramsKey) == PianoRoll::Hidden) {
-                            pianoRoll->setFloatingPanelState(paramsKey, PianoRoll::Normal);
-                        }
-                    } else {
-                        if (pianoRoll->floatingPanelState(paramsKey) != PianoRoll::Hidden) {
-                            pianoRoll->setFloatingPanelState(paramsKey, PianoRoll::Hidden);
-                        }
-                    }
-                });
+        connect(paramsPanelVisibleItem->action(), &QAction::toggled, this, [pianoRoll](bool checked) {
+            if (checked == (pianoRoll->floatingPanelState(paramsKey) == PianoRoll::Hidden)) {
+                pianoRoll->setFloatingPanelState(paramsKey, checked ? PianoRoll::Normal : PianoRoll::Hidden);
+            }
+        });
 
         qIDec->installLocale(this, _LOC(ParamsAddOn, this));
     }

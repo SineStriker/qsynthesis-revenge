@@ -18,6 +18,8 @@ font-size: 72px;
 )");
 
         auto layout = new QVBoxLayout();
+        layout->setMargin(0);
+        layout->setSpacing(0);
         layout->addWidget(label);
         setLayout(layout);
     }

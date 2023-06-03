@@ -128,7 +128,8 @@ namespace Core {
         {
             bool lastWindowClosed = true;
             for (auto w : QApplication::topLevelWidgets()) {
-                if (!w->isVisible() || w->parentWidget() || !w->testAttribute(Qt::WA_QuitOnClose))
+                if (!w->isVisible() || w->parentWidget() || !w->testAttribute(Qt::WA_QuitOnClose) ||
+                    w->property("choruskit_managed_window").toBool())
                     continue;
 
                 lastWindowClosed = false;

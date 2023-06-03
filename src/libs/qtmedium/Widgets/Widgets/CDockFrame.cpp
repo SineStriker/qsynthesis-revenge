@@ -4,8 +4,7 @@
 
 #include <QEvent>
 
-CDockFrame::CDockFrame(QWidget *parent)
-    : QFrame(parent), d(new CDockFramePrivate(this)) {
+CDockFrame::CDockFrame(QWidget *parent) : QFrame(parent), d(new CDockFramePrivate(this)) {
     d->init();
 }
 
@@ -54,6 +53,10 @@ QAbstractButton *CDockFrame::addWidget(Qt::Edge edge, QM::Priority number, QWidg
     auto card = new CDockCard();
     card->setWidget(w);
     ((number == QM::Primary) ? bar->firstBar() : bar->secondBar())->addCard(card);
+
+    widgetAdded(edge, number, w, card);
+    emit cardAdded(card);
+
     return card;
 }
 
@@ -81,6 +84,9 @@ void CDockFrame::removeWidget(QAbstractButton *card) {
     return;
 
 out:
+    widgetAboutToRemove(card);
+    emit cardAboutToRemove(card);
+
     tabBar->removeCard(realCard);
     realCard->deleteLater();
 }
@@ -107,6 +113,12 @@ void CDockFrame::setBarVisible(bool visible) {
 
 void CDockFrame::toggleBarVisible() {
     setBarVisible(!barVisible());
+}
+
+void CDockFrame::widgetAdded(Qt::Edge edge, QM::Priority number, QWidget *w, QAbstractButton *card) {
+}
+
+void CDockFrame::widgetAboutToRemove(QAbstractButton *card) {
 }
 
 bool CDockFrame::eventFilter(QObject *obj, QEvent *event) {

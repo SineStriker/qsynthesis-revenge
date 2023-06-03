@@ -7,6 +7,7 @@
 
 #include "CoreWindowAddOn.h"
 #include "Internal/Widgets/PhonemePanel.h"
+#include "Internal/Widgets/TrackPanel.h"
 
 namespace Core {
 
@@ -66,6 +67,7 @@ namespace Core {
             ActionItem *statusBarVisibleItem;
 
             ActionItem *dockPanelsVisibilityMenuItem;
+            ActionItem *trackPanelVisibleItem;
 
             ActionItem *floatingPanelsVisibilityMenuItem;
             ActionItem *phonemePanelVisibleItem;
@@ -94,6 +96,9 @@ namespace Core {
             ActionItem *selectPianoKeyWidgetItem;
 
             // Panels
+            TrackPanel *trackPanel;
+            QAbstractButton *trackButton;
+
             PhonemePanel *phonemePanel;
             QAbstractButton *phonemeButton;
         };

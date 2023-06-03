@@ -1,18 +1,20 @@
-#include "ParamsPanel.h"
+#include "TrackPanel.h"
 
 #include <QLabel>
 #include <QVBoxLayout>
 #include <QVariant>
 
-namespace Params::Internal {
+namespace Core::Internal {
 
-    ParamsPanel::ParamsPanel(QWidget *parent) : QFrame(parent) {
-        setProperty("floating-panel", true);
-        auto label = new QLabel("ACE NI MA SI LE!!!");
+    TrackPanel::TrackPanel(QWidget *parent) : QFrame(parent) {
+        setProperty("dock-panel", true);
+
+        auto label = new QLabel("ACE FUCK YOUR ASSHOLE!!!");
         label->setStyleSheet(R"(
 
 color: rgba(255, 255, 255, 75%);
 font-size: 72px;
+background-color: rgba(255, 0, 0, 25%);
 
 )");
 
@@ -23,7 +25,7 @@ font-size: 72px;
         setLayout(layout);
     }
 
-    ParamsPanel::~ParamsPanel() {
+    TrackPanel::~TrackPanel() {
     }
 
 }

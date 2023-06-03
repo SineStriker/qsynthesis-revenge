@@ -12,7 +12,7 @@
 
 namespace Core {
 
-    static const char settingCatalogC[] = "IProjectWindow";
+    static const char settingCatalogC[] = "PianoRoll";
 
     static const char floatingPanelsGroupC[] = "FloatingPanels";
 
@@ -200,13 +200,9 @@ namespace Core {
         emit pianoKeyWidgetChanged(id);
     }
 
-    QString PianoRoll::pianoKeyWidgetName(const QString &id) const {
+    IPianoKeyWidgetFactory *PianoRoll::pianoKeyWidgetFactory(const QString &id) const {
         Q_D(const PianoRoll);
-        auto fac = d->pianoKeyWidgets.value(id);
-        if (!fac) {
-            return {};
-        }
-        return fac->name();
+        return d->pianoKeyWidgets.value(id);;
     }
 
     QStringList PianoRoll::floatingPanels() const {

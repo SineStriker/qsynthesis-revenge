@@ -529,6 +529,10 @@
         <source>Main Menu</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Tracks</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>Core::Internal::SettingsDialog</name>
