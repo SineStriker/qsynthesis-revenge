@@ -1,4 +1,4 @@
-#include "ParseDs.h"
+#include "VarFmtPlugin.h"
 
 #include <QApplication>
 #include <QThread>
@@ -12,28 +12,29 @@
 
 #include "iemgr/IManager.h"
 
+#include "AcepWizard.h"
 #include "DsWizard.h"
 
-namespace IEMgr {
+namespace VarFmt {
 
     using namespace Core;
 
     namespace Internal {
 
-        ParseDs::ParseDs() {
+        VarFmtPlugin::VarFmtPlugin() {
         }
 
-        ParseDs::~ParseDs() {
+        VarFmtPlugin::~VarFmtPlugin() {
         }
 
-        bool ParseDs::initialize(const QStringList &arguments, QString *errorMessage) {
+        bool VarFmtPlugin::initialize(const QStringList &arguments, QString *errorMessage) {
             // Add resources
             qIDec->addTranslationPath(pluginSpec()->location() + "/translations");
             // qIDec->addThemePath(pluginSpec()->location() +"/themes");
 
             auto splash = qobject_cast<QSplashScreen *>(ILoader::instance()->getFirstObject("choruskit_init_splash"));
             if (splash) {
-                splash->showMessage(tr("Initializing OpenVPI Ds parser..."));
+                splash->showMessage(tr("Initializing variable formats converter..."));
             }
             // QThread::msleep(2000);
 
@@ -41,14 +42,15 @@ namespace IEMgr {
 
             // Add wizards
             imgr->addWizard(new DsWizard());
+            imgr->addWizard(new AcepWizard());
 
             return true;
         }
 
-        void ParseDs::extensionsInitialized() {
+        void VarFmtPlugin::extensionsInitialized() {
         }
 
-        bool ParseDs::delayedInitialize() {
+        bool VarFmtPlugin::delayedInitialize() {
             return false;
         }
 

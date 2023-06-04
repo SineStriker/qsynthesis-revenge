@@ -316,7 +316,7 @@ namespace Core {
                     auto action = new QAction(pianoRoll->pianoKeyWidgetFactory(key)->name(), menu);
                     action->setData(key);
 
-                    if (key == pianoRoll->currentPianoKeyWidget()) {
+                    if (key == pianoRoll->currentPianoKeyWidgetId()) {
                         action->setProperty("current", true);
                     }
 

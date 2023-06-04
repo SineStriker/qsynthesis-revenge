@@ -3,8 +3,6 @@
 
 #include <extensionsystem/iplugin.h>
 
-#include "VstClientGlobal.h"
-
 namespace Vst::Internal {
 
     class VstClientPlugin : public ExtensionSystem::IPlugin {

@@ -8,7 +8,6 @@ CDockFramePrivate::~CDockFramePrivate() {
 
 void CDockFramePrivate::init() {
     q->setAttribute(Qt::WA_StyledBackground);
-    m_dragAreaSize = QSize(30, 30);
 
     m_layout = new QGridLayout();
     m_layout->setMargin(0);

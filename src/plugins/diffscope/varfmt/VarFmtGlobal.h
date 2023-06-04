@@ -1,0 +1,12 @@
+#ifndef CHORUSKIT_VARFMTGLOBAL_H
+#define CHORUSKIT_VARFMTGLOBAL_H
+
+#include <QtGlobal>
+
+#if defined(VARFMT_LIBRARY)
+#    define VARFMT_EXPORT Q_DECL_EXPORT
+#else
+#    define VARFMT_EXPORT Q_DECL_IMPORT
+#endif
+
+#endif // CHORUSKIT_VARFMTGLOBAL_H

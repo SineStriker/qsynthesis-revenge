@@ -1,5 +1,6 @@
 #include "CDockTabBar.h"
 #include "CDockSideBar.h"
+#include "CDockCard_p.h"
 
 #include <QDrag>
 #include <QHBoxLayout>
@@ -125,7 +126,7 @@ void CDockTabBar::insertCard(int index, CDockCard *card) {
         m_cards.insert(index, card);
     }
     card->show();
-    connect(card, &CDockCard::startDrag, this, &CDockTabBar::_q_tabDragStarted);
+    card->d->m_tabBar = this;
     connect(card, &CDockCard::toggled, this, &CDockTabBar::_q_tabToggled);
     connect(card, &CDockCard::viewModeChanged, this, &CDockTabBar::_q_tabViewModeChanged);
 
@@ -141,7 +142,7 @@ void CDockTabBar::removeCard(CDockCard *card) {
     if (!m_cards.contains(card)) {
         return;
     }
-    disconnect(card, &CDockCard::startDrag, this, &CDockTabBar::_q_tabDragStarted);
+    card->d->m_tabBar = nullptr;
     disconnect(card, &CDockCard::toggled, this, &CDockTabBar::_q_tabToggled);
     disconnect(card, &CDockCard::viewModeChanged, this, &CDockTabBar::_q_tabViewModeChanged);
 
@@ -153,7 +154,7 @@ void CDockTabBar::removeCard(CDockCard *card) {
 void CDockTabBar::clearCards() {
     auto layout = static_cast<QBoxLayout *>(this->layout());
     for (auto card : m_cards) {
-        disconnect(card, &CDockCard::startDrag, this, &CDockTabBar::_q_tabDragStarted);
+        card->d->m_tabBar = nullptr;
         disconnect(card, &CDockCard::toggled, this, &CDockTabBar::_q_tabToggled);
         disconnect(card, &CDockCard::viewModeChanged, this, &CDockTabBar::_q_tabViewModeChanged);
 
@@ -236,11 +237,6 @@ void CDockTabBar::resetCardTransform(CDockCard *card) const {
     if (card->longitudinalDirection() != ld) {
         card->setLongitudinalDirection(ld);
     }
-}
-
-void CDockTabBar::_q_tabDragStarted(const QPoint &pos, const QPixmap &pixmap) {
-    auto card = qobject_cast<CDockCard *>(sender());
-    emit dragStarted(card, pos, pixmap);
 }
 
 void CDockTabBar::_q_tabToggled(bool checked) {

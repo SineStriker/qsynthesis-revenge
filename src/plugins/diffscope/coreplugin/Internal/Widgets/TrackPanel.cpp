@@ -9,7 +9,7 @@ namespace Core::Internal {
     TrackPanel::TrackPanel(QWidget *parent) : QFrame(parent) {
         setProperty("dock-panel", true);
 
-        auto label = new QLabel("ACE FUCK YOUR ASSHOLE!!!");
+        auto label = new QLabel("This is the track panel!!!");
         label->setStyleSheet(R"(
 
 color: rgba(255, 255, 255, 75%);

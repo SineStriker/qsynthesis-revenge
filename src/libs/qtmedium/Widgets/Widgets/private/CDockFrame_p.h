@@ -42,8 +42,6 @@ public:
 
     CDockTabDragProxy *m_dragProxy;
 
-    QSize m_dragAreaSize;
-
 private:
     void _q_cardAdded(QM::Priority number, CDockCard *card);
     void _q_cardRemoved(QM::Priority number, CDockCard *card);

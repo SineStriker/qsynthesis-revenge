@@ -18,6 +18,7 @@
 #include "ICore.h"
 
 #include "Internal/Widgets/PianoKeyWidget.h"
+#include "PianoRoll/PianoRoll_p.h"
 
 namespace Core {
 
@@ -153,7 +154,7 @@ namespace Core {
         qIDec->installTheme(win, "core.ProjectWindow");
 
         // Restore floating panels
-        d->m_pianoRoll->readSettings();
+        d->m_pianoRoll->d_func()->readSettings();
 
         ICore::instance()->windowSystem()->loadWindowGeometry(metaObject()->className(), win, {1200, 800});
     }
@@ -168,7 +169,7 @@ namespace Core {
         }
 
         // Save floating panels state
-        d->m_pianoRoll->saveSettings();
+        d->m_pianoRoll->d_func()->saveSettings();
 
         ICore::instance()->windowSystem()->saveWindowGeometry(metaObject()->className(), window());
     }

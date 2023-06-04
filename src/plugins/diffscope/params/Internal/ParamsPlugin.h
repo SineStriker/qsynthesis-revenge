@@ -3,8 +3,6 @@
 
 #include <extensionsystem/iplugin.h>
 
-#include "ParamsGlobal.h"
-
 namespace Params {
 
     namespace Internal {

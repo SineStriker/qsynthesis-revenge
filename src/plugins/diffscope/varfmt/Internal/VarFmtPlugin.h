@@ -1,18 +1,18 @@
-#ifndef PARSEDS_H
-#define PARSEDS_H
+#ifndef VARFMTPLUGIN_H
+#define VARFMTPLUGIN_H
 
 #include <extensionsystem/iplugin.h>
 
-namespace IEMgr {
+namespace VarFmt {
 
     namespace Internal {
 
-        class ParseDs : public ExtensionSystem::IPlugin {
+        class VarFmtPlugin : public ExtensionSystem::IPlugin {
             Q_OBJECT
             Q_PLUGIN_METADATA(IID "org.ChorusKit.DiffScope.Plugin" FILE "plugin.json")
         public:
-            ParseDs();
-            ~ParseDs();
+            VarFmtPlugin();
+            ~VarFmtPlugin();
 
             bool initialize(const QStringList &arguments, QString *errorMessage) override;
             void extensionsInitialized() override;
@@ -24,4 +24,4 @@ namespace IEMgr {
 } // namespace Core
 
 
-#endif // PARSEDS_H
+#endif // VARFMTPLUGIN_H

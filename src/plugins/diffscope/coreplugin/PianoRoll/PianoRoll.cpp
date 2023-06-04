@@ -122,16 +122,6 @@ namespace Core {
     PianoRoll::~PianoRoll() {
     }
 
-    void PianoRoll::readSettings() {
-        Q_D(PianoRoll);
-        d->readSettings();
-    }
-
-    void PianoRoll::saveSettings() const {
-        Q_D(const PianoRoll);
-        d->saveSettings();
-    }
-
     void PianoRoll::addPianoKeyWidget(const QString &id, IPianoKeyWidgetFactory *factory) {
         Q_D(PianoRoll);
         if (!factory) {
@@ -169,10 +159,14 @@ namespace Core {
         return d->pianoKeyWidgets.keys();
     }
 
-
-    QString PianoRoll::currentPianoKeyWidget() const {
+    QString PianoRoll::currentPianoKeyWidgetId() const {
         Q_D(const PianoRoll);
         return d->currentPianoKeyWidget;
+    }
+
+    QWidget *PianoRoll::currentPianoKeyWidget() const {
+        Q_D(const PianoRoll);
+        return d->m_pianoKeyContainer->area();
     }
 
     void PianoRoll::setCurrentPianoKeyWidget(const QString &id) {
@@ -261,6 +255,15 @@ namespace Core {
         block.state = state;
 
         emit floatingPanelStateChanged(id, state);
+    }
+
+    QWidget *PianoRoll::floatingPanel(const QString &id) {
+            Q_D(const PianoRoll);
+            auto it = d->floatingPanels.find(id);
+            if (it == d->floatingPanels.end()) {
+                return nullptr;
+            }
+            return it->panel;
     }
 
     PianoRoll::PianoRoll(PianoRollPrivate &d, QWidget *parent) : QFrame(parent), d_ptr(&d) {

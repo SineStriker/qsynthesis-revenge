@@ -7,9 +7,11 @@
 
 class CDockTabBar;
 
+class CDockCardPrivate;
+
 class QMWIDGETS_API CDockCard : public CLTabButton {
     Q_OBJECT
-    Q_PROPERTY(QSize dragOffset READ dragOffset WRITE setDragOffset NOTIFY dragOffsetChanged)
+    Q_PROPERTY(QSize dragOffset READ dragOffset WRITE setDragOffset)
 public:
     explicit CDockCard(QWidget *parent = nullptr);
     explicit CDockCard(const QString &text, QWidget *parent = nullptr);
@@ -24,9 +26,6 @@ public:
 
     Q_ENUM(ViewMode)
 
-private:
-    void init();
-
 public:
     Qt::Orientation orientation() const;
     void setOrientation(Qt::Orientation orient);
@@ -38,10 +37,6 @@ public:
     QSize dragOffset() const;
     void setDragOffset(const QSize &dragOffset);
 
-    QPixmap cardShot() const;
-
-    CDockTabBar *tabBar() const;
-
     QWidget *widget() const;
     QWidget *container() const;
     QWidget *takeWidget();
@@ -51,25 +46,11 @@ public:
     void setViewMode(ViewMode viewMode);
 
     inline bool dockVisible() const {
-        return isChecked() && m_viewMode == DockPinned;
+        return isChecked() && viewMode() == DockPinned;
     }
 
+    CDockTabBar *tabBar() const;
     void moveWidget(const QPoint &pos);
-
-protected:
-    Qt::Orientation m_orientation;
-    QSizePolicy m_sizePolicyH, m_sizePolicyV;
-
-    QPoint m_dragPos;
-    QSize m_dragOffset;
-
-    bool m_readyDrag;
-
-    QWidget *m_container;
-    QWidget *m_widget;
-
-    bool m_closing;
-    ViewMode m_viewMode;
 
 protected:
     void mousePressEvent(QMouseEvent *event) override;
@@ -82,9 +63,12 @@ protected:
     bool eventFilter(QObject *obj, QEvent *event) override;
 
 signals:
-    void startDrag(const QPoint &pos, const QPixmap &pixmap);
-    void dragOffsetChanged();
     void viewModeChanged(ViewMode viewMode, ViewMode oldViewMode);
+
+private:
+    CDockCardPrivate *d;
+
+    friend class CDockTabBar;
 };
 
 #endif // __CDOCKCARD_H__

@@ -1,6 +1,6 @@
 {
-    "Name": "ParseDs",
-    "DisplayName": "DS format parser",
+    "Name": "VarFmt",
+    "DisplayName": "Variable Formats Converter",
     "Version": "@PLUGIN_METADATA_VERSION@",
     "CompatVersion": "@PLUGIN_METADATA_COMPAT_VERSION@",
     "DisabledByDefault": false,

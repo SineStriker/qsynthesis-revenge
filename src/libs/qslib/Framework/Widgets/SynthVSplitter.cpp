@@ -407,6 +407,8 @@ namespace QsApi {
         d->hbar->hide();
         d->vbar->hide();
 
+        updateGeometry();
+
         return area;
     }
 
@@ -450,6 +452,8 @@ namespace QsApi {
         }
         d->hbar->raise();
         d->vbar->raise();
+
+        updateGeometry();
     }
 
     SynthVSplitterHandle *SynthVSplitter::createHandle(QWidget *w, QWidget *titleBar) {

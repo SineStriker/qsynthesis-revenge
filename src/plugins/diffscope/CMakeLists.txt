@@ -5,7 +5,7 @@ add_subdirectory(coreplugin)
 
 add_subdirectory(iemgr)
 
-add_subdirectory(parseds)
+add_subdirectory(varfmt)
 
 add_subdirectory(scriptmgr)
 

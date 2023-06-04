@@ -698,7 +698,7 @@
     </message>
     <message>
         <source>Dock Panel Bars</source>
-        <translation>Dock 面板栏</translation>
+        <translation>停靠面板栏</translation>
     </message>
     <message>
         <source>Status Bar</source>

@@ -8,7 +8,7 @@ namespace Params::Internal {
 
     ParamsPanel::ParamsPanel(QWidget *parent) : QFrame(parent) {
         setProperty("floating-panel", true);
-        auto label = new QLabel("ACE NI MA SI LE!!!");
+        auto label = new QLabel("This is the params panel!!!");
         label->setStyleSheet(R"(
 
 color: rgba(255, 255, 255, 75%);

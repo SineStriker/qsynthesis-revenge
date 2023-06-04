@@ -3,8 +3,6 @@
 
 #include <extensionsystem/iplugin.h>
 
-#include "ScriptMgrGlobal.h"
-
 namespace ScriptMgr::Internal {
 
     class ScriptMgrPlugin : public ExtensionSystem::IPlugin {

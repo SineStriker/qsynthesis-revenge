@@ -160,14 +160,6 @@ CDockFrame {
     background-color: transparent;
 }
 
-/* CDockTabBar {
-    border: 1px solid transparent;
-}
-
-CDockSideBar {
-    border: 1px solid transparent;
-} */
-
 CDockSideBar[highlight=false] {
     background-color: transparent;
 }

@@ -3,8 +3,6 @@
 
 #include <extensionsystem/iplugin.h>
 
-#include "IEMgrGlobal.h"
-
 namespace IEMgr {
 
     namespace Internal {

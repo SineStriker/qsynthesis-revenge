@@ -1,4 +1,4 @@
-project(parseds VERSION 0.1.0.0)
+project(varfmt VERSION 0.1.0.0)
 
 set(_res_dir Res)
 set(_plugin ${CURRENT_APPLICATION}__${PROJECT_NAME})
@@ -9,7 +9,7 @@ ck_add_files(_src
 )
 
 ck_add_application_plugin(${_plugin}
-    NAME ParseDs
+    NAME VarFmt
     COMPAT_VERSION 0.0.0.0
     VENDOR "FlutyDeer"
     DESCRIPTION "${CURRENT_PLUGIN_DESC}"
@@ -24,7 +24,7 @@ ck_target_components(${_plugin} INCLUDE_CURRENT_PRIVATE INCLUDE_SUBDIRS_PRIVATE
 )
 
 ck_add_translations(${_plugin}_translations
-    PREFIX ParseDs
+    PREFIX VarFmt
     TARGETS ${_plugin}
     LOCALES zh_CN zh_HK ja_JP
     TS_DIR Res/translations

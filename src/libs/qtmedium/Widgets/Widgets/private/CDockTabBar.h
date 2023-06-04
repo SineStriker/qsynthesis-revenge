@@ -51,7 +51,6 @@ protected:
     void resetCardTransform(CDockCard *card) const;
 
 private:
-    void _q_tabDragStarted(const QPoint &pos, const QPixmap &pixmap);
     void _q_tabToggled(bool checked);
     void _q_tabViewModeChanged(CDockCard::ViewMode viewMode, CDockCard::ViewMode oldViewMode);
 

@@ -1,15 +1,20 @@
 #include "TemplatePlg.h"
 #include "AddOn/TmplAddOn.h"
-#include "CoreApi/ILoader.h"
-#include "CoreApi/SettingCatalog.h"
+
+#include <CoreApi/ILoader.h>
+#include <CoreApi/SettingCatalog.h>
+#include <CoreApi/IWindowAddOn.h>
+
+#include <coreplugin/ICore.h>
+#include <extensionsystem/pluginspec.h>
+
 #include "Settings/TreeConfigPage.h"
 #include "Widgets/TreeConfigWidget.h"
+
 #include <QApplication>
 #include <QMDecoratorV2.h>
 #include <QMSystem.h>
 #include <QThread>
-#include <coreplugin/ICore.h>
-#include <extensionsystem/pluginspec.h>
 
 namespace TemplatePlg {
     using namespace Core;

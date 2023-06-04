@@ -9,6 +9,7 @@ CDockFrame::CDockFrame(QWidget *parent) : QFrame(parent), d(new CDockFramePrivat
 }
 
 CDockFrame::~CDockFrame() {
+    delete d;
 }
 
 QWidget *CDockFrame::widget() const {
@@ -34,7 +35,7 @@ QWidget *CDockFrame::takeWidget() {
 }
 
 
-QAbstractButton *CDockFrame::addWidget(Qt::Edge edge, QM::Priority number, QWidget *w) {
+CDockCard *CDockFrame::addWidget(Qt::Edge edge, QM::Priority number, QWidget *w) {
     CDockSideBar *bar;
     switch (edge) {
         case Qt::LeftEdge:
@@ -60,13 +61,12 @@ QAbstractButton *CDockFrame::addWidget(Qt::Edge edge, QM::Priority number, QWidg
     return card;
 }
 
-void CDockFrame::removeWidget(QAbstractButton *card) {
-    auto realCard = qobject_cast<CDockCard *>(card);
-    if (!realCard) {
+void CDockFrame::removeWidget(CDockCard *card) {
+    if (!card) {
         qDebug() << "CDockFrame: invalid card pointer" << (void *) card;
         return;
     }
-    auto tabBar = realCard->tabBar();
+    auto tabBar = card->tabBar();
     auto doubleBar = tabBar->sideBar();
     if (doubleBar == d->m_leftBar) {
         goto out;
@@ -87,17 +87,8 @@ out:
     widgetAboutToRemove(card);
     emit cardAboutToRemove(card);
 
-    tabBar->removeCard(realCard);
-    realCard->deleteLater();
-}
-
-QSize CDockFrame::dragAreaSize() const {
-    return d->m_dragAreaSize;
-}
-
-void CDockFrame::setDragAreaSize(const QSize &dragAreaSize) {
-    d->m_dragAreaSize = dragAreaSize;
-    emit dragAreaSizeChanged();
+    tabBar->removeCard(card);
+    card->deleteLater();
 }
 
 bool CDockFrame::barVisible() const {
@@ -115,10 +106,10 @@ void CDockFrame::toggleBarVisible() {
     setBarVisible(!barVisible());
 }
 
-void CDockFrame::widgetAdded(Qt::Edge edge, QM::Priority number, QWidget *w, QAbstractButton *card) {
+void CDockFrame::widgetAdded(Qt::Edge edge, QM::Priority number, QWidget *w, CDockCard *card) {
 }
 
-void CDockFrame::widgetAboutToRemove(QAbstractButton *card) {
+void CDockFrame::widgetAboutToRemove(CDockCard *card) {
 }
 
 bool CDockFrame::eventFilter(QObject *obj, QEvent *event) {

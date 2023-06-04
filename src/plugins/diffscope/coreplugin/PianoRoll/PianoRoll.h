@@ -10,6 +10,8 @@
 
 namespace Core {
 
+    class IProjectWindow;
+
     class PianoRollPrivate;
 
     class CORE_EXPORT PianoRoll : public QFrame {
@@ -28,21 +30,19 @@ namespace Core {
         Q_ENUM(FloatingPanelState);
 
     public:
-        void readSettings();
-        void saveSettings() const;
-
-    public:
         void addPianoKeyWidget(const QString &id, IPianoKeyWidgetFactory *factory);
         QAbstractButton *addFloatingPanel(const QString &id, QWidget *panel, QWidget *titleBar);
 
         QStringList pianoKeyWidgets() const;
-        QString currentPianoKeyWidget() const;
+        QString currentPianoKeyWidgetId() const;
         void setCurrentPianoKeyWidget(const QString &id);
+        QWidget *currentPianoKeyWidget() const;
         IPianoKeyWidgetFactory *pianoKeyWidgetFactory(const QString &id) const;
 
         QStringList floatingPanels() const;
         FloatingPanelState floatingPanelState(const QString &id);
         void setFloatingPanelState(const QString &id, FloatingPanelState state);
+        QWidget *floatingPanel(const QString &id);
 
     signals:
         void pianoKeyWidgetChanged(const QString &id);
@@ -52,6 +52,8 @@ namespace Core {
         PianoRoll(PianoRollPrivate &d, QWidget *parent = nullptr);
 
         QScopedPointer<PianoRollPrivate> d_ptr;
+
+        friend class IProjectWindow;
     };
 
 }

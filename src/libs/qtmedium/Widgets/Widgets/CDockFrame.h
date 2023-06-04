@@ -5,14 +5,13 @@
 #include <QFrame>
 
 #include "QMNamespace.h"
-#include "QMWidgetsGlobal.h"
+
+#include "CDockCard.h"
 
 class CDockFramePrivate;
 
 class QMWIDGETS_API CDockFrame : public QFrame {
     Q_OBJECT
-    Q_PROPERTY(QSize dragAreaSize //
-                   READ dragAreaSize WRITE setDragAreaSize NOTIFY dragAreaSizeChanged)
 public:
     explicit CDockFrame(QWidget *parent = nullptr);
     ~CDockFrame();
@@ -26,26 +25,22 @@ public:
      * @brief Button which will control the widget visibility, set text or icon after call
      *
      */
-    QAbstractButton *addWidget(Qt::Edge edge, QM::Priority number, QWidget *w);
-    void removeWidget(QAbstractButton *card);
-
-    QSize dragAreaSize() const;
-    void setDragAreaSize(const QSize &dragAreaSize);
+    CDockCard *addWidget(Qt::Edge edge, QM::Priority number, QWidget *w);
+    void removeWidget(CDockCard *card);
 
     bool barVisible() const;
     void setBarVisible(bool visible);
     void toggleBarVisible();
 
 signals:
-    void dragAreaSizeChanged();
     void barVisibleToggled(bool visible);
-    void cardAdded(QAbstractButton *card);
-    void cardAboutToRemove(QAbstractButton *card);
-    void cardToggled(Qt::Edge edge, QM::Priority number, QAbstractButton *card);
+    void cardAdded(CDockCard *card);
+    void cardAboutToRemove(CDockCard *card);
+    void cardToggled(Qt::Edge edge, QM::Priority number, CDockCard *card);
 
 protected:
-    virtual void widgetAdded(Qt::Edge edge, QM::Priority number, QWidget *w, QAbstractButton *card);
-    virtual void widgetAboutToRemove(QAbstractButton *card);
+    virtual void widgetAdded(Qt::Edge edge, QM::Priority number, QWidget *w, CDockCard *card);
+    virtual void widgetAboutToRemove(CDockCard *card);
 
 protected:
     CDockFramePrivate *d;

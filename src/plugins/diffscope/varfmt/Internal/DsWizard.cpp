@@ -1,5 +1,7 @@
 #include "DsWizard.h"
 
+#include <QApplication>
+
 #include <QMConsole.h>
 #include <QMDecoratorV2.h>
 #include <QMLinq.h>
@@ -8,7 +10,9 @@
 
 #include "Utau/Utils/QUtaUtils.h"
 
-namespace IEMgr ::Internal {
+namespace VarFmt ::Internal {
+
+    using namespace IEMgr;
 
     DsWizard::DsWizard(QObject *parent) : IWizardFactory("iemgr.DsWizard", parent) {
         setCategory("score.OpenVPI");
@@ -21,7 +25,7 @@ namespace IEMgr ::Internal {
     void DsWizard::reloadStrings() {
         setDisplayName(tr("OpenVPI Ds file"));
         setDescription(tr("OpenVPI DiffSinger command line synthesizer format."));
-        setDisplayCategory(IWizardFactory::tr("OpenVPI"));
+        setDisplayCategory(QApplication::translate("IEMgr::WizardCategory", "OpenVPI"));
     }
 
     IWizardFactory::Features DsWizard::features() const {
@@ -29,7 +33,7 @@ namespace IEMgr ::Internal {
     }
 
     QString DsWizard::filter(Feature feature) const {
-        return QString("%1(%2)").arg(tr("OpenVPI Ds File"), "*.ds") + ";;" + IWizardFactory::filter(feature);
+        return QString("%1(%2)").arg(tr("OpenVPI Ds Files"), "*.ds") + ";;" + IWizardFactory::filter(feature);
     }
 
     bool DsWizard::runWizard(Feature feature, const QString &path, QWidget *parent) {

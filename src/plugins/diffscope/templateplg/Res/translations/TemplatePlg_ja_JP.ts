@@ -22,17 +22,17 @@
 <context>
     <name>TemplatePlg::Internal::TmplPlg</name>
     <message>
-        <location filename="../../Internal/TemplatePlg.cpp" line="32"/>
+        <location filename="../../Internal/TemplatePlg.cpp" line="37"/>
         <source>Initializing Template Plugin...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Internal/TemplatePlg.cpp" line="39"/>
+        <location filename="../../Internal/TemplatePlg.cpp" line="44"/>
         <source>Failed to load action configuration!</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Internal/TemplatePlg.cpp" line="47"/>
+        <location filename="../../Internal/TemplatePlg.cpp" line="52"/>
         <source>core.tmpl</source>
         <translation type="unfinished"></translation>
     </message>

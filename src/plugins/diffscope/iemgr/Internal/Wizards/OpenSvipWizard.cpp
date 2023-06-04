@@ -1,11 +1,14 @@
 #include "OpenSvipWizard.h"
-#include "QFile"
-#include "QJsonDocument"
 #include "Svip/QSvipModel.h"
+
 #include <QApplication>
+#include <QFile>
 #include <QFileInfo>
-#include <QMDecoratorV2.h>
+#include <QJsonDocument>
+
 #include <QtMath>
+
+#include <QMDecoratorV2.h>
 
 namespace IEMgr ::Internal {
 
@@ -53,8 +56,7 @@ namespace IEMgr ::Internal {
     bool OpenSvipWizard::load(const QString &filename, QDspxModel *out, QWidget *parent) {
         auto loadProjectFile = [](const QString &filename, QJsonObject *jsonObj) {
             QFile loadFile(filename);
-            if(!loadFile.open(QIODevice::ReadOnly))
-            {
+            if (!loadFile.open(QIODevice::ReadOnly)) {
                 qDebug() << "Failed to open project file";
                 return false;
             }
@@ -64,14 +66,15 @@ namespace IEMgr ::Internal {
             QJsonDocument json = QJsonDocument::fromJson(allData, &err);
             if (err.error != QJsonParseError::NoError)
                 return false;
-            if(json.isObject()) {
+            if (json.isObject()) {
                 *jsonObj = json.object();
             }
             return true;
         };
 
         QJsonObject jsonObj;
-        if(!loadProjectFile(filename, &jsonObj)) return false;
+        if (!loadProjectFile(filename, &jsonObj))
+            return false;
         auto osProject = QSvipModel::fromJsonObject(jsonObj);
         qDebug() << osProject.TrackList.size();
 
@@ -134,7 +137,7 @@ namespace IEMgr ::Internal {
         // Tracks
         QDspx::Track track;
         for (const auto &osTrack : qAsConst(osProject.TrackList)) {
-//            qDebug() << osTrack->Title;
+            //            qDebug() << osTrack->Title;
             track.name = osTrack->Title;
 
             QDspx::TrackControl trackControl;
@@ -171,11 +174,11 @@ namespace IEMgr ::Internal {
                     // TODO: Params Conversion
                     singingClip->name = "Pattern";
                     track.clips.append(singingClip);
-//                    QString lyrics;
-//                    for (const auto &note : qAsConst(osSingingTrack->NoteList)) {
-//                        lyrics.append(note.Lyric);
-//                    }
-//                    qDebug() << lyrics;
+                    //                    QString lyrics;
+                    //                    for (const auto &note : qAsConst(osSingingTrack->NoteList)) {
+                    //                        lyrics.append(note.Lyric);
+                    //                    }
+                    //                    qDebug() << lyrics;
                     break;
                 }
                 case QSvipModel::Track::Instrumental: {
@@ -190,8 +193,7 @@ namespace IEMgr ::Internal {
                     audioClip->name = osInstTrack->Title;
                     audioClip->path = osInstTrack->AudioFilePath;
                     track.clips.append(audioClip);
-                }
-                    break;
+                } break;
                 default:
                     break;
             }
@@ -210,7 +212,7 @@ namespace IEMgr ::Internal {
         auto &dsTimeline = dsContent.timeline;
 
         QSvipModel model;
-        
+
         // Tempos
         for (const auto &dsTempo : qAsConst(dsTimeline.tempos)) {
             QSvipModel::SongTempo tempo;
@@ -275,7 +277,8 @@ namespace IEMgr ::Internal {
                         int clipLen = dsClip->time.clipLen;
                         int visibleRight = visibleLeft + clipLen;
                         for (const auto &dsNote : qAsConst(dsSingingClip->notes)) {
-                            if (dsNote.pos < visibleLeft || dsNote.pos + dsNote.length > visibleRight) // Ignore invisible note
+                            if (dsNote.pos < visibleLeft ||
+                                dsNote.pos + dsNote.length > visibleRight) // Ignore invisible note
                                 continue;
 
                             QSvipModel::Note note;
@@ -332,16 +335,14 @@ namespace IEMgr ::Internal {
     }
 
     double OpenSvipWizard::toLinearVolume(const double &gain) {
-        return gain >= 0
-                   ? qMin(gain / (20 * log10(4)) + 1.0, 2.0)
-                   : qPow(10, gain / 20.0);
+        return gain >= 0 ? qMin(gain / (20 * log10(4)) + 1.0, 2.0) : qPow(10, gain / 20.0);
     }
 
     double OpenSvipWizard::toDecibelGain(const double &volume) {
         if (volume > 0)
-            return (float)qMax(20 * log10(volume > 0.01 ? volume : 0.01), -70.0);
+            return (float) qMax(20 * log10(volume > 0.01 ? volume : 0.01), -70.0);
         else
-            return -70;//-infinity
+            return -70; //-infinity
     }
 
     double OpenSvipWizard::log10(const double &x) {
