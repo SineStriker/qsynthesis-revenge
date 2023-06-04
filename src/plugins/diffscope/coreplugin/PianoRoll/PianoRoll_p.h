@@ -8,6 +8,7 @@
 #include "IPianoKeyWidget.h"
 #include "Internal/Widgets/FloatingTitleBar.h"
 #include "Internal/Widgets/PianoKeyContainer.h"
+#include "Internal/Widgets/SectionWidget.h"
 
 namespace Core {
 
@@ -37,12 +38,11 @@ namespace Core {
         QHash<QString, IPianoKeyWidgetFactory *> pianoKeyWidgets;
         QString currentPianoKeyWidget;
 
-
         // Layout
         QGridLayout *m_layout;
 
         Internal::PianoKeyContainer *m_pianoKeyContainer;
-        QWidget *m_sectionContainer;
+        Internal::SectionWidget *m_sectionWidget;
         QsApi::SynthVSplitter *m_canvas;
     };
 

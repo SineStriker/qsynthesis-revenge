@@ -91,6 +91,70 @@ out:
     card->deleteLater();
 }
 
+void CDockFrame::moveWidget(CDockCard *card, Qt::Edge edge, QM::Priority number) {
+    if (!card) {
+        qDebug() << "CDockFrame: invalid card pointer" << (void *) card;
+        return;
+    }
+    auto tabBar = card->tabBar();
+    auto doubleBar = tabBar->sideBar();
+    if (doubleBar == d->m_leftBar) {
+        goto out;
+    }
+    if (doubleBar == d->m_rightBar) {
+        goto out;
+    }
+    if (doubleBar == d->m_topBar) {
+        goto out;
+    }
+    if (doubleBar == d->m_bottomBar) {
+        goto out;
+    }
+    qDebug() << "CDockFrame: unidentified card" << (void *) card;
+    return;
+
+out:
+    CDockSideBar *bar;
+    switch (edge) {
+        case Qt::LeftEdge:
+            bar = d->m_leftBar;
+            break;
+        case Qt::RightEdge:
+            bar = d->m_rightBar;
+            break;
+        case Qt::TopEdge:
+            bar = d->m_topBar;
+            break;
+        case Qt::BottomEdge:
+            bar = d->m_bottomBar;
+            break;
+    }
+    auto newBar = (number == QM::Primary) ? bar->firstBar() : bar->secondBar();
+    auto orgBar = card->tabBar();
+    orgBar->removeCard(card);
+    newBar->addCard(card);
+}
+
+QList<CDockCard *> CDockFrame::widgets(Qt::Edge edge, QM::Priority number) {
+    CDockSideBar *bar;
+    switch (edge) {
+        case Qt::LeftEdge:
+            bar = d->m_leftBar;
+            break;
+        case Qt::RightEdge:
+            bar = d->m_rightBar;
+            break;
+        case Qt::TopEdge:
+            bar = d->m_topBar;
+            break;
+        case Qt::BottomEdge:
+            bar = d->m_bottomBar;
+            break;
+    }
+    auto tabBar = (number == QM::Primary) ? bar->firstBar() : bar->secondBar();
+    return tabBar->cards();
+}
+
 bool CDockFrame::barVisible() const {
     return d->m_leftBar->isVisible();
 }

@@ -73,81 +73,81 @@ QMenu[core-style=true]::separator {
 
 /* QScrollBar */
 
-CScrollArea {
+CScrollArea[core-style=true] {
     border: none;
     background-color: transparent;
 }
 
-CGraphicsView {
+CGraphicsView[core-style=true] {
     border: none;
     background-color: transparent;
 }
 
-QScrollBar {
+QScrollBar[core-style=true] {
     background: transparent;
     margin: 0;
 }
 
-QScrollBar:vertical {
+QScrollBar[core-style=true]:vertical {
     width: 10px;
 }
 
-QScrollBar:horizontal {
+QScrollBar[core-style=true]:horizontal {
     height: 10px;
 }
 
-QScrollBar::handle:vertical {
+QScrollBar[core-style=true]::handle:vertical {
     min-height: 40px;
 }
 
-QScrollBar::handle:horizontal {
+QScrollBar[core-style=true]::handle:horizontal {
     min-width: 40px;
 }
 
-QScrollBar::handle {
+QScrollBar[core-style=true]::handle {
     background: rgba(255, 255, 255, 0.3);
     border: 0px;
     /* margin: 4px 4px 4px 4px; */
 }
 
-QScrollBar::handle:hover {
+QScrollBar[core-style=true]::handle:hover {
     background: rgba(255, 255, 255, 0.5);
 }
 
-QScrollBar::handle:pressed {
+QScrollBar[core-style=true]::handle:pressed {
     background: rgba(255, 255, 255, 0.4);
 }
 
-QScrollBar::sub-page {
+QScrollBar[core-style=true]::sub-page {
     background: transparent;
 }
 
-QScrollBar::add-page {
+QScrollBar[core-style=true]::add-page {
     background: transparent;
 }
 
-QScrollBar::up-arrow {
+QScrollBar[core-style=true]::up-arrow {
     background: transparent;
 }
 
-QScrollBar::down-arrow {
+QScrollBar[core-style=true]::down-arrow {
     background: transparent;
 }
 
-QScrollBar::left-arrow {
+QScrollBar[core-style=true]::left-arrow {
     background: transparent;
 }
 
-QScrollBar::right-arrow {
+QScrollBar[core-style=true]::right-arrow {
     background: transparent;
 }
 
-QScrollBar::sub-line {
+QScrollBar[core-style=true]::sub-line {
     background: transparent;
     width: 0px;
 }
 
-QScrollBar::add-line {
+QScrollBar[core-style=true]::add-line {
     background: transparent;
     width: 0px;
 }

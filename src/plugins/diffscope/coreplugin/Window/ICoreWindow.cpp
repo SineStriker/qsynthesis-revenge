@@ -685,6 +685,7 @@ namespace Core {
 
         // Init command palette
         d->cp = new QsApi::CommandPalette(win);
+        ICore::autoPolishScrollArea(d->cp);
 
         win->installEventFilter(d);
     }

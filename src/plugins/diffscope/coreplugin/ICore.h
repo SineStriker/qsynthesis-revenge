@@ -56,6 +56,15 @@ namespace Core {
         static void autoPolishPopupMenu(QWidget *w);
 
         /**
+         * brief: Automatically set any child scroll area's style property
+         *
+         * @param w Widget that may have scroll bar or scroll area
+         */
+        static void autoPolishScrollArea(QWidget *w);
+
+        static void autoPolishScrollBars(QWidget *w);
+
+        /**
          * brief: Create a menu with core style
          *
          * @param parent argument for constructor

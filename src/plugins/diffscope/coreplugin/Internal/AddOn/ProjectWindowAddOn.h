@@ -1,7 +1,7 @@
 #ifndef PROJECTWINDOWADDON_H
 #define PROJECTWINDOWADDON_H
 
-#include <QAbstractButton>
+#include "CDockCard.h"
 
 #include "CoreApi/ActionItem.h"
 
@@ -97,7 +97,7 @@ namespace Core {
 
             // Panels
             TrackPanel *trackPanel;
-            QAbstractButton *trackButton;
+            CDockCard *trackButton;
 
             PhonemePanel *phonemePanel;
             QAbstractButton *phonemeButton;

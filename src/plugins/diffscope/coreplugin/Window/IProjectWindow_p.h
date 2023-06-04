@@ -24,6 +24,9 @@ namespace Core {
 
         void reloadMainToolbar();
 
+        void saveMainDockState() const;
+        void restoreMainDockState() const;
+
         ActionContext *mainToolbarCtx;
 
         DspxDocument *m_doc;

@@ -6,6 +6,7 @@
 #include <QApplication>
 #include <QDateTime>
 #include <QDebug>
+#include <QMenu>
 #include <QMouseEvent>
 #include <QTimer>
 
@@ -110,12 +111,17 @@ namespace QsApi {
         m_listWidget->clear();
     }
 
+    static bool isMenu(QObject *obj) {
+        return (obj->inherits("QWidgetWindow") && obj->objectName() == "QMenuClassWindow") ||
+               qobject_cast<QMenu *>(obj);
+    }
+
     bool CommandPalettePrivate::eventFilter(QObject *obj, QEvent *event) {
         Q_Q(CommandPalette);
 
         if (event->type() == QEvent::MouseButtonPress) {
             auto e = static_cast<QMouseEvent *>(event);
-            if (q->isVisible() && !q->rect().contains(q->mapFromGlobal(e->globalPos()))) {
+            if (q->isVisible() && !q->rect().contains(q->mapFromGlobal(e->globalPos())) && !isMenu(obj)) {
                 if (noClickOutsideEventToHandle) {
                     noClickOutsideEventToHandle = false;
 

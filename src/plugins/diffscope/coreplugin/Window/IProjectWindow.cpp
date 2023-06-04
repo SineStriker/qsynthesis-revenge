@@ -5,6 +5,7 @@
 #include <QEvent>
 #include <QLabel>
 #include <QMessageBox>
+#include <QMetaEnum>
 #include <QVBoxLayout>
 
 #include <CToolBar.h>
@@ -21,6 +22,8 @@
 #include "PianoRoll/PianoRoll_p.h"
 
 namespace Core {
+
+    static const char mainDockSettingCatalogC[] = "IProjectWindow/MainDock";
 
     IProjectWindowPrivate::IProjectWindowPrivate() {
         m_forceClose = false;
@@ -42,6 +45,91 @@ namespace Core {
         auto bar = q->mainToolbar();
 
         mainToolbarCtx->buildToolBarWithState(items, bar);
+    }
+
+    static const int corners[8][2] = {
+        {Qt::LeftEdge,   QM::Primary  },
+        {Qt::LeftEdge,   QM::Secondary},
+        {Qt::TopEdge,    QM::Primary  },
+        {Qt::TopEdge,    QM::Secondary},
+        {Qt::RightEdge,  QM::Primary  },
+        {Qt::RightEdge,  QM::Secondary},
+        {Qt::BottomEdge, QM::Primary  },
+        {Qt::BottomEdge, QM::Secondary},
+    };
+
+    void IProjectWindowPrivate::saveMainDockState() const {
+        auto settings = ILoader::instance()->settings();
+
+        QJsonArray arr;
+        for (const auto &corner : qAsConst(corners)) {
+            QJsonArray arr0;
+            for (const auto &card :
+                 m_frame->widgets(static_cast<Qt::Edge>(corner[0]), static_cast<QM::Priority>(corner[1]))) {
+                if (card->objectName().isEmpty())
+                    continue;
+                arr0.append(QJsonObject{
+                    {"name",     card->objectName()                                                     },
+                    {"checked",  card->isChecked()                                                      },
+                    {"viewMode", QMetaEnum::fromType<CDockCard::ViewMode>().valueToKey(card->viewMode())},
+                });
+            }
+            arr.append(arr0);
+        }
+
+        settings->insert(mainDockSettingCatalogC, arr);
+    }
+
+    void IProjectWindowPrivate::restoreMainDockState() const {
+        auto settings = ILoader::instance()->settings();
+        auto arr = settings->value(mainDockSettingCatalogC).toArray();
+
+        QHash<QString, CDockCard *> cardMap;
+        for (const auto &corner : qAsConst(corners)) {
+            for (const auto &card :
+                 m_frame->widgets(static_cast<Qt::Edge>(corner[0]), static_cast<QM::Priority>(corner[1]))) {
+                if (card->objectName().isEmpty()) {
+                    continue;
+                }
+                cardMap.insert(card->objectName(), card);
+            }
+        }
+
+        QJsonValue value;
+        for (int i = 0; i < qMin(arr.size(), 8); ++i) {
+            const auto &val = arr.at(i);
+            if (!val.isArray())
+                continue;
+
+            for (const auto &item : val.toArray()) {
+                if (!item.isObject())
+                    continue;
+
+                auto obj = item.toObject();
+                value = obj.value("name");
+                if (value.isUndefined() || !value.isString())
+                    continue;
+
+                auto card = cardMap.value(value.toString());
+                if (!card)
+                    continue;
+
+                const auto &corner = corners[i];
+                m_frame->moveWidget(card, static_cast<Qt::Edge>(corner[0]), static_cast<QM::Priority>(corner[1]));
+
+                value = obj.value("checked");
+                if (value.isBool())
+                    card->setChecked(value.toBool());
+
+                value = obj.value("viewMode");
+                if (value.isString()) {
+                    auto viewMode = QMetaEnum::fromType<CDockCard::ViewMode>().keyToValue(value.toString().toLatin1());
+                    if (viewMode >= 0) {
+                        card->setViewMode(static_cast<CDockCard::ViewMode>(viewMode));
+                    }
+                }
+            }
+        }
     }
 
     void IProjectWindowPrivate::_q_documentChanged() {
@@ -153,7 +241,10 @@ namespace Core {
         qIDec->installLocale(this, _LOC(IProjectWindowPrivate, d));
         qIDec->installTheme(win, "core.ProjectWindow");
 
-        // Restore floating panels
+        // Restore dock
+        d->restoreMainDockState();
+
+        // Restore piano roll state
         d->m_pianoRoll->d_func()->readSettings();
 
         ICore::instance()->windowSystem()->loadWindowGeometry(metaObject()->className(), win, {1200, 800});
@@ -168,8 +259,11 @@ namespace Core {
             d->m_doc->setAutoRemoveLogDirectory(true);
         }
 
-        // Save floating panels state
+        // Save piano roll state
         d->m_pianoRoll->d_func()->saveSettings();
+
+        // Save dock state
+        d->saveMainDockState();
 
         ICore::instance()->windowSystem()->saveWindowGeometry(metaObject()->className(), window());
     }

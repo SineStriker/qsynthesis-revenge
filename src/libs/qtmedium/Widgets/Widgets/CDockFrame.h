@@ -27,6 +27,8 @@ public:
      */
     CDockCard *addWidget(Qt::Edge edge, QM::Priority number, QWidget *w);
     void removeWidget(CDockCard *card);
+    void moveWidget(CDockCard *card, Qt::Edge edge, QM::Priority number);
+    QList<CDockCard *> widgets(Qt::Edge edge, QM::Priority number);
 
     bool barVisible() const;
     void setBarVisible(bool visible);

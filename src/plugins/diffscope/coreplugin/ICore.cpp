@@ -2,23 +2,25 @@
 
 #include <csignal>
 
-#include <QApplication>
 #include "QStyleFactory"
+#include <QApplication>
 #include <QChildEvent>
 #include <QMessageBox>
 #include <QScreen>
+#include <QScrollArea>
+#include <QScrollBar>
 #include <QTimer>
 #include <QToolBar>
 #include <QToolButton>
 
 #include <CMenu.h>
 #include <QMConsole.h>
+#include <QMDecoratorV2.h>
 #include <QMSystem.h>
 #include <QMView.h>
-#include <QMDecoratorV2.h>
 
-#include <CoreApi/ILoader.h>
 #include <CoreApi/ICoreBase_p.h>
+#include <CoreApi/ILoader.h>
 
 #include <extensionsystem/pluginmanager.h>
 
@@ -158,6 +160,27 @@ namespace Core {
 
     void ICore::autoPolishPopupMenu(QWidget *w) {
         new PopUpMenuWatcher(w);
+    }
+
+    void ICore::autoPolishScrollArea(QWidget *w) {
+        auto polishScrollArea = [](QAbstractScrollArea *area) {
+            area->setProperty("core-style", true);
+            autoPolishScrollBars(area);
+        };
+        if (auto area = qobject_cast<QAbstractScrollArea *>(w)) {
+            polishScrollArea(area);
+            return;
+        }
+        for (const auto &area : w->findChildren<QAbstractScrollArea *>()) {
+            polishScrollArea(area);
+        }
+    }
+
+    void ICore::autoPolishScrollBars(QWidget *w) {
+        for (const auto &bar : w->findChildren<QScrollBar *>()) {
+            bar->setProperty("core-style", true);
+            autoPolishPopupMenu(bar);
+        }
     }
 
     QMenu *ICore::createCoreMenu(QWidget *parent) {

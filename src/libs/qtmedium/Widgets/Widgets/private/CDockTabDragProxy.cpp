@@ -15,7 +15,7 @@
 
 #include <QtMath>
 
-#define DOCK_CARD_DRAG_GLOBAL 1
+#define DOCK_CARD_DRAG_GLOBAL 0
 
 CDockTabDragProxy::CDockTabDragProxy(QObject *parent) : QObject(parent) {
     m_frame = nullptr;
@@ -97,9 +97,10 @@ void CDockTabDragProxy::_q_tabDragStarted(CDockCard *card, const QPoint &pos, co
 
 #if DOCK_CARD_DRAG_GLOBAL
     m_dragger = new CDockDragLabel();
-    m_dragger->setWindowFlags(Qt::FramelessWindowHint);
+    m_dragger->setWindowFlags(Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint);
 #else
     m_dragger = new CDockDragLabel(m_frame);
+    m_dragger->setWindowFlags(Qt::Popup | Qt::NoDropShadowWindowHint);
 #endif
     m_dragger->currentCard = card;
     m_dragger->currentPos = pos;
@@ -117,11 +118,11 @@ void CDockTabDragProxy::_q_tabDragStarted(CDockCard *card, const QPoint &pos, co
 }
 
 void CDockTabDragProxy::_q_tabDragMove() {
-#if DOCK_CARD_DRAG_GLOBAL
-    m_dragger->move(QCursor::pos() - m_dragger->currentPos);
-#else
-    m_dragger->move(m_dragger->parentWidget()->mapFromGlobal(QCursor::pos()) - m_dragger->currentPos);
-#endif
+    if (!m_dragger->parentWidget() || (m_dragger->windowFlags() & (Qt::Window | Qt::Popup))) {
+        m_dragger->move(QCursor::pos() - m_dragger->currentPos);
+    } else {
+        m_dragger->move(m_dragger->parentWidget()->mapFromGlobal(QCursor::pos()) - m_dragger->currentPos);
+    }
 
     auto bars = doubleTabBars();
 

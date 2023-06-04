@@ -41,9 +41,6 @@ public:
     CDockCard *cardAt(int index) const;
 
     CDockCard *cardAtPos(QPoint pos) const;
-
-    void activateCard(CDockCard *card);
-
     CDockSideBar *sideBar() const;
 
 protected:

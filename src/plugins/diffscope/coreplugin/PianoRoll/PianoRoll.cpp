@@ -8,11 +8,12 @@
 #include <CToolBar.h>
 #include <CoreApi/ILoader.h>
 
+#include "ICore.h"
 #include "Internal/Widgets/PianoKeyWidget.h"
 
 namespace Core {
 
-    static const char settingCatalogC[] = "PianoRoll";
+    static const char settingCatalogC[] = "IProjectWindow/PianoRoll";
 
     static const char floatingPanelsGroupC[] = "FloatingPanels";
 
@@ -36,17 +37,19 @@ namespace Core {
         m_canvas = new QsApi::SynthVSplitter();
         m_canvas->setObjectName("canvas");
 
+        ICore::autoPolishScrollBars(m_canvas);
+
         m_pianoKeyContainer = new Internal::PianoKeyContainer();
         m_pianoKeyContainer->setObjectName("piano-container");
 
-        m_sectionContainer = new QWidget();
-        m_sectionContainer->setObjectName("section-container");
+        m_sectionWidget = new Internal::SectionWidget();
+        m_sectionWidget->setObjectName("section-widget");
 
         m_layout = new QGridLayout();
         m_layout->setMargin(0);
         m_layout->setSpacing(0);
         m_layout->addItem(new QSpacerItem(0, 0), 0, 0);
-        m_layout->addWidget(m_sectionContainer, 0, 1);
+        m_layout->addWidget(m_sectionWidget, 0, 1);
         m_layout->addWidget(m_pianoKeyContainer, 1, 0);
         m_layout->addWidget(m_canvas, 1, 1);
 
@@ -196,7 +199,8 @@ namespace Core {
 
     IPianoKeyWidgetFactory *PianoRoll::pianoKeyWidgetFactory(const QString &id) const {
         Q_D(const PianoRoll);
-        return d->pianoKeyWidgets.value(id);;
+        return d->pianoKeyWidgets.value(id);
+        ;
     }
 
     QStringList PianoRoll::floatingPanels() const {
@@ -258,12 +262,12 @@ namespace Core {
     }
 
     QWidget *PianoRoll::floatingPanel(const QString &id) {
-            Q_D(const PianoRoll);
-            auto it = d->floatingPanels.find(id);
-            if (it == d->floatingPanels.end()) {
-                return nullptr;
-            }
-            return it->panel;
+        Q_D(const PianoRoll);
+        auto it = d->floatingPanels.find(id);
+        if (it == d->floatingPanels.end()) {
+            return nullptr;
+        }
+        return it->panel;
     }
 
     PianoRoll::PianoRoll(PianoRollPrivate &d, QWidget *parent) : QFrame(parent), d_ptr(&d) {

@@ -41,9 +41,7 @@ namespace Core::Internal {
         searchBox->setClearButtonEnabled(true);
         searchBox->setObjectName("search-box");
 
-#ifdef Q_OS_WINDOWS
         ICore::autoPolishPopupMenu(searchBox);
-#endif
 
         newButton = new CTabButton();
         newButton->setProperty("type", "top-button");
@@ -111,6 +109,8 @@ namespace Core::Internal {
 
     HomeRecentBottomFrame::HomeRecentBottomFrame(QWidget *parent) : QFrame(parent) {
         fileWidget = new QsApi::FileListWidget();
+        ICore::autoPolishScrollArea(fileWidget);
+
         fileWidget->setObjectName("file-widget");
         fileWidget->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Expanding);
 
