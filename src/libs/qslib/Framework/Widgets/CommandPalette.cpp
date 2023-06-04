@@ -10,6 +10,8 @@
 #include <QMouseEvent>
 #include <QTimer>
 
+#include <CLineEdit.h>
+
 #include "QsFrameworkNamespace.h"
 
 namespace QsApi {
@@ -26,7 +28,7 @@ namespace QsApi {
         noClickOutsideEventToHandle = true;
         paletteActive = false;
 
-        m_lineEdit = new QLineEdit();
+        m_lineEdit = new CLineEdit();
         m_lineEdit->setObjectName("search-box");
 
         m_listWidget = new QListWidget();

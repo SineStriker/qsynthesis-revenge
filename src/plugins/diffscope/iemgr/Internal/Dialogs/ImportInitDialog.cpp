@@ -3,6 +3,7 @@
 #include <QDir>
 #include <QFileDialog>
 
+#include <CLineEdit.h>
 #include <Collections/QMChronMap.h>
 #include <QMSystem.h>
 
@@ -35,7 +36,7 @@ namespace IEMgr::Internal {
         // Right
         pathLabel = new QLabel(tr("File Path:"));
 
-        lineEdit = new QLineEdit();
+        lineEdit = new CLineEdit();
         lineEdit->setClearButtonEnabled(true);
 
         browseButton = new QPushButton(tr("Browse"));

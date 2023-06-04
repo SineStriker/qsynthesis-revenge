@@ -12,7 +12,10 @@
 #include <QWindow>
 
 #include <QMSystem.h>
+
 #include <Text/QMSimpleVarExp.h>
+
+#include <Collections/QMChronSet.h>
 
 ThemeGuardV2::ThemeGuardV2(QWidget *w, QMDecoratorV2Private *parent)
     : QObject(parent), w(w), d(parent), winHandle(w->windowHandle()) {
@@ -35,27 +38,39 @@ void ThemeGuardV2::updateScreen() {
     }
 
     auto getStyleSheet = [&](const QString &theme) {
-        auto map = d->stylesheetCaches.value(theme, {});
-        if (map.isEmpty()) {
-            return QString();
+        QString allStylesheets;
+
+        QString base = theme;
+        QMChronSet<QString> bases{base};
+        while (!(base = d->variables.value(base).value("_base")).isEmpty() &&
+               !bases.contains(base) // Avoid recursively referenced
+        ) {
+            bases.prepend(base);
         }
 
-        QString allStylesheets;
-        for (const auto &id : qAsConst(ids)) {
-            for (const auto &key : d->nsMappings.value(id, {})) {
-                auto stylesheet = map.value(key, {});
-                if (stylesheet.isEmpty()) {
-                    continue;
+        for (const auto &curTheme : qAsConst(bases)) {
+            auto map = d->stylesheetCaches.value(curTheme, {});
+            if (map.isEmpty()) {
+                continue;
+            }
+
+            // Go through themes
+            for (const auto &id : qAsConst(ids)) {
+                for (const auto &key : d->nsMappings.value(id, {})) {
+                    auto stylesheet = map.value(key, {});
+                    if (stylesheet.isEmpty()) {
+                        continue;
+                    }
+
+                    // Evaluate variables
+                    stylesheet = QMSimpleVarExp::EvaluateVariables(stylesheet, d->variables.value(curTheme, {}),
+                                                                   R"(\$\{([^\}]+)\})");
+
+                    // Zoom
+                    allStylesheets += QMDecoratorV2Private::replaceSizes(
+                                          stylesheet, screen->logicalDotsPerInch() / QMOs::unitDpi(), true) +
+                                      "\n\n";
                 }
-
-                // Evaluate variables
-                stylesheet =
-                    QMSimpleVarExp::EvaluateVariables(stylesheet, d->variables.value(theme, {}), R"(\$\{([^\}]+)\})");
-
-                // Zoom
-                allStylesheets += QMDecoratorV2Private::replaceSizes(
-                                      stylesheet, screen->logicalDotsPerInch() / QMOs::unitDpi(), true) +
-                                  "\n\n";
             }
         }
 
@@ -298,10 +313,11 @@ void QMDecoratorV2Private::scanForThemes() const {
         auto parseStyleObject = [&](QMap<QString, QMap<double, QList<QssItem>>> &map, const QString &key,
                                     const QJsonObject &obj) {
             QssItem item{ratio, {}, {}};
+            QJsonValue value;
 
-            auto it = obj.find("file");
-            if (it != obj.end()) {
-                QString fileName = parsePlatformString(it.value());
+            value = obj.value("file");
+            if (!value.isUndefined()) {
+                QString fileName = parsePlatformString(value);
                 if (!fileName.isEmpty()) {
                     if (QDir::isRelativePath(fileName)) {
                         fileName = file.absolutePath() + "/" + fileName;
@@ -311,9 +327,9 @@ void QMDecoratorV2Private::scanForThemes() const {
                 }
             }
 
-            it = obj.find("content");
-            if (it != obj.end()) {
-                QString content = parsePlatformString(it.value());
+            value = obj.value("content");
+            if (!value.isUndefined()) {
+                QString content = parsePlatformString(value);
                 if (!content.isEmpty()) {
                     item.content = content;
                     goto out;
@@ -323,18 +339,18 @@ void QMDecoratorV2Private::scanForThemes() const {
             return;
 
         out:
-            it = obj.find("ratio");
-            if (it != obj.end()) {
-                auto _tmp = parsePlatformDouble(it.value());
+            value = obj.value("ratio");
+            if (!value.isUndefined()) {
+                auto _tmp = parsePlatformDouble(value);
                 if (_tmp > 0)
                     item.ratio = _tmp;
             }
 
             auto _priority = priority;
 
-            it = obj.find("priority");
-            if (it != obj.end()) {
-                auto _tmp = parsePlatformDouble(it.value(), -1);
+            value = obj.value("priority");
+            if (!value.isUndefined()) {
+                auto _tmp = parsePlatformDouble(value, -1);
                 if (_tmp >= 0)
                     _priority = _tmp;
             }
@@ -371,7 +387,7 @@ void QMDecoratorV2Private::scanForThemes() const {
                 const QString &themeKey = it.key();
                 auto themeObj = it->toObject();
 
-                // namespace - [ priority - items]
+                // namespace - [ priority - items ]
                 QMap<QString, QMap<double, QList<QssItem>>> map;
                 for (auto it1 = themeObj.begin(); it1 != themeObj.end(); ++it1) {
                     if (it1->isArray()) {
@@ -423,8 +439,7 @@ void QMDecoratorV2Private::scanForThemes() const {
 
                     // Replace relative paths
                     QFileInfo info(item.fileName);
-                    content.replace("@/", info.absolutePath() + "/");
-
+                    content.replace(QRegularExpression(R"(@[/\\])"), info.absolutePath() + "/");
                     f.close();
                 } else {
                     content = item.content;
@@ -583,6 +598,11 @@ void QMDecoratorV2::setTheme(const QString &theme) {
 void QMDecoratorV2::refreshTheme() {
     Q_D(QMDecoratorV2);
     setTheme(d->currentTheme);
+}
+
+QString QMDecoratorV2::themeVariable(const QString &key) const {
+    Q_D(const QMDecoratorV2);
+    return d->variables.value(d->currentTheme, {}).value(key);
 }
 
 void QMDecoratorV2::installTheme(QWidget *w, const QString &id) {

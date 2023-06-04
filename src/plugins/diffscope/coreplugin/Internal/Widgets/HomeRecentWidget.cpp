@@ -6,9 +6,11 @@
 #include <QDir>
 #include <QFileInfo>
 
-#include <CMenu.h>
 #include <QMDecoratorV2.h>
 #include <QMSystem.h>
+
+#include <CLineEdit.h>
+#include <CMenu.h>
 
 #include "ICore.h"
 
@@ -37,7 +39,7 @@ namespace Core::Internal {
      * @brief Recent widget top frame
      */
     HomeRecentTopFrame::HomeRecentTopFrame(QWidget *parent) : QFrame(parent) {
-        searchBox = new QLineEdit();
+        searchBox = new CLineEdit();
         searchBox->setClearButtonEnabled(true);
         searchBox->setObjectName("search-box");
 

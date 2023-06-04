@@ -298,22 +298,30 @@ namespace Core {
         QString orgTheme = qIDec->theme();
 
         auto obj = new QObject();
-        connect(cp, &QsApi::CommandPalette::currentItemChanged, obj, [](QListWidgetItem *item) {
+        connect(cp, &QsApi::CommandPalette::currentItemChanged, obj, [obj, this](QListWidgetItem *item) {
             if (!item) {
                 return;
             }
+
             QString theme = item->text();
-            qIDec->setTheme(theme);
+            QTimer::singleShot(10, this, [theme]() {
+                qIDec->setTheme(theme); //
+            });
         });
 
-        connect(cp, &QsApi::CommandPalette::finished, obj, [obj, orgTheme](QListWidgetItem *item) {
+        connect(cp, &QsApi::CommandPalette::finished, obj, [obj, this, orgTheme](QListWidgetItem *item) {
             delete obj;
             if (!item) {
-                qIDec->setTheme(orgTheme);
+                QTimer::singleShot(10, this, [orgTheme]() {
+                    qIDec->setTheme(orgTheme); //
+                });
                 return;
             }
+
             QString theme = item->text();
-            qIDec->setTheme(theme);
+            QTimer::singleShot(10, this, [theme]() {
+                qIDec->setTheme(theme); //
+            });
 
             ExtensionSystem::PluginManager::settings()->setValue("Preferences/Theme", theme);
         });

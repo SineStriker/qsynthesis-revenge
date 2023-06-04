@@ -69,6 +69,14 @@ namespace Core::Internal {
     PianoKeyWidget::~PianoKeyWidget() {
     }
 
+    QPixelSize PianoKeyWidget::preferredWidth() const {
+        return width();
+    }
+
+    void PianoKeyWidget::setPreferredWidth(const QPixelSize &width) {
+        resize(width, height());
+    }
+
     void PianoKeyWidget::init() {
         setAttribute(Qt::WA_StyledBackground);
 

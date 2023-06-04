@@ -54,13 +54,8 @@ namespace Core::Internal {
         explicit PianoKeyWidget(int currentHeight, QWidget *parent = nullptr);
         ~PianoKeyWidget();
 
-        int preferredWidth() const {
-            return width();
-        }
-
-        void setPreferredWidth(const QPixelSize &width) {
-            resize(width, height());
-        }
+        QPixelSize preferredWidth() const;
+        void setPreferredWidth(const QPixelSize &width);
 
     private:
         void init();

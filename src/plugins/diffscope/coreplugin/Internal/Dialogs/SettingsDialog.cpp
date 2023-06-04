@@ -6,6 +6,7 @@
 #include <QCollator>
 #include <QLabel>
 
+#include <CLineEdit.h>
 #include <QMDecoratorV2.h>
 
 namespace Core {
@@ -45,7 +46,7 @@ namespace Core {
             m_tree = new QTreeWidget();
             m_tree->setHeaderHidden(true);
 
-            m_searchBox = new QLineEdit();
+            m_searchBox = new CLineEdit();
             m_searchBox->setClearButtonEnabled(true);
 
             leftLayout = new QVBoxLayout();

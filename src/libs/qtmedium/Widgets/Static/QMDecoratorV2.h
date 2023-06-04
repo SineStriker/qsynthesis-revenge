@@ -33,6 +33,8 @@ public:
     void setTheme(const QString &theme);
     void refreshTheme();
 
+    QString themeVariable(const QString &key) const;
+
 signals:
     void themeChanged(const QString &theme);
 
