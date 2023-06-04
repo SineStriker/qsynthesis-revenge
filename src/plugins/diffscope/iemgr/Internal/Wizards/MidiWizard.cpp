@@ -77,13 +77,13 @@ namespace IEMgr ::Internal {
             return false;
         }
 
-        // midi种类、四分音符ticks数、轨道数、时间类型
+        // Midi type, quaver diaeresis ticks number, track number, time type
         int midiFormat = midi.fileFormat();
         int resolution = midi.resolution();
         int tracksCount = midi.tracks().size();
         int divType = midi.divisionType();
 
-        // 校验tracks数量、midi种类
+        // Verify the number of tracks and the type of midi
         if (tracksCount == 0) {
             qmCon->MsgBox(parent, QMConsole::Critical, Core::ICore::mainTitle(), tr("No track found!"));
             return false;
@@ -96,12 +96,14 @@ namespace IEMgr ::Internal {
             return false;
         }
 
-        // 解析Tempo Map
-        QList<QPair<int, double>> tempos;
+        // Parsing Tempo Map
+        QMap<int, double> tempos;
+        tempos.insert(0, 120);
+
         QVector<QPair<int, QByteArray>> markers;
 
         QMap<int, QPoint> timeSign;
-        timeSign[0] = QPoint(4, 4);
+        timeSign.insert(0, QPoint(4, 4));
 
         QList<QMidiEvent *> tempMap = midi.eventsForTrack(0);
 
@@ -110,7 +112,7 @@ namespace IEMgr ::Internal {
             if (e->type() == QMidiEvent::Meta) {
                 switch (e->number()) {
                     case QMidiEvent::Tempo:
-                        tempos.append(qMakePair(e->tick(), e->tempo()));
+                        tempos.insert(e->tick(), e->tempo());
                         break;
                     case QMidiEvent::Marker:
                         markers.append(qMakePair(e->tick(), data));
@@ -119,7 +121,7 @@ namespace IEMgr ::Internal {
                         QPoint sig(QPoint(data[0], 2 ^ data[1]));
                         if (sig.x() == 0 || sig.y() == 0)
                             break;
-                        timeSign[e->tick()] = sig;
+                        timeSign.insert(e->tick(), sig);
                         break;
                     }
                     default:
@@ -169,7 +171,7 @@ namespace IEMgr ::Internal {
         // key: pack(track, channel, key);  value: ...;
         QHash<qint32, QPair<QList<qint32>, QList<qint32>>> noteMap;
 
-        // 解析元数据
+        // Parsing metadata
         for (int i = midiFormat; i < tracksCount; ++i) {
             QList<QMidiEvent *> list = midi.eventsForTrack(i);
             qint32 trackIndex = i - midiFormat + 1;
@@ -177,7 +179,7 @@ namespace IEMgr ::Internal {
             TrackNameAndLyrics cur;
             cur.trackEnd = midi.trackEndTick(i);
 
-            // 以track、channel、note为索引打包数据
+            // Package data using track, channel, and note as indexes
             for (auto e : list) {
                 // midi元事件
                 switch (e->type()) {
@@ -218,7 +220,7 @@ namespace IEMgr ::Internal {
             ImportDialog::TrackInfo option;
         };
 
-        // 解析轨道
+        // Analytical Track
         // key: pack(track, channel, 0); value: ...;
         QMap<qint32, LogicTrackInfo> logicTrackInfos;
 
@@ -243,7 +245,7 @@ namespace IEMgr ::Internal {
         // key: pack(track, channel, 0); value: (pos, LogicNote)
         QMap<qint32, std::set<LogicNote>> logicTrackNotes;
 
-        // 现存逻辑轨道
+        // Existing logical trajectory
         for (const auto &packData : qAsConst(trackAndChannelIndexSet)) {
             LogicTrack trackAndChannelIndex = LogicTrack::fromInt(packData);
 
@@ -252,30 +254,30 @@ namespace IEMgr ::Internal {
 
             auto &currentNoteSet = logicTrackNotes[packData];
 
-            // 遍历keyNum
+            // Traverse keyNum
             for (int key = 0; key < 128; ++key) {
                 LogicTrack tempIndex(trackAndChannelIndex.track, trackAndChannelIndex.channel, key);
 
                 auto it = noteMap.find(tempIndex.toInt());
                 if (it == noteMap.end()) {
-                    // 当前trackAndChannelIndex的当前key没有音符
+                    // The current key of the current trackAndChannelIndex has no notes
                     continue;
                 }
 
-                // 以track,channel,note为索引，取出noteMap
+                // Using track, channel, and note as indexes, retrieve a noteMap
                 const auto &noteListPair = it.value();
 
-                // 校验各keyNum的NoteOn/Off事件配对
+                // Verify the pairing of NoteOn/Off events for each keyNum
                 if (noteListPair.first.size() != noteListPair.second.size()) {
                     qmCon->MsgBox(parent, QMConsole::Critical, Core::ICore::mainTitle(),
                                   tr("The number of note-on and note-off are not match!"));
                     return false;
                 }
 
-                // 存储出现的key
+                // Store the key that appears
                 staticKeyNum.insert(key);
 
-                // 逻辑轨道封装Note
+                // Logical Track Encapsulation Note
                 for (int i = 0; i < noteListPair.first.size(); ++i) {
                     noteCount++;
 
@@ -296,7 +298,7 @@ namespace IEMgr ::Internal {
                 }
             }
 
-            // 获取逻辑轨道音域
+            // Obtain Logical Track Range
             QString logicTrackPitchRange;
             if (!staticKeyNum.empty()) {
                 logicTrackPitchRange = QUtaUtils::ToneNumToToneName(*staticKeyNum.begin()) + "-" +
@@ -304,7 +306,7 @@ namespace IEMgr ::Internal {
             }
 
 
-            // 逻辑轨道名称
+            // Logic Track Name
             auto nameBytes = trackNameAndLyrics[trackAndChannelIndex.track].name;
             ImportDialog::TrackInfo info(nameBytes, trackNameAndLyrics[trackAndChannelIndex.track].lyrics.values());
 
@@ -317,9 +319,9 @@ namespace IEMgr ::Internal {
 
 
         QList<qint32> selectID;
-        QTextCodec *codec = nullptr;
+        QTextCodec *codec;
 
-        // 获取选中轨道
+        // Get Selected Track
         {
             ImportDialog dlg(parent);
             dlg.setWindowTitle(tr("Import MIDI file"));
@@ -354,10 +356,10 @@ namespace IEMgr ::Internal {
             }
         }
 
-        // 缩放系数
+        // Scale factor
         double scaleFactor = 480.0 / resolution;
 
-        // TempoMap轨道数据
+        // TempoMap Track Data
         QDspx::Timeline timeLine;
 
         QDspx::TimeSignature timeSignature;
@@ -369,9 +371,9 @@ namespace IEMgr ::Internal {
         }
 
         QDspx::Tempo tempo;
-        for (auto &it : tempos) {
-            tempo.pos = int(it.first * scaleFactor);
-            tempo.value = it.second;
+        for (auto it = tempos.begin(); it != tempos.end(); ++it) {
+            tempo.pos = it.key();
+            tempo.value = it.value();
             timeLine.tempos.append(tempo);
         }
 
@@ -385,7 +387,7 @@ namespace IEMgr ::Internal {
         QDspxModel model;
         model.content.timeline = timeLine;
 
-        // Track数据
+        // Track Data
         for (auto &logicID : selectID) {
             LogicTrack tempIndex = LogicTrack::fromInt(logicID);
             QDspx::Track track;
@@ -397,7 +399,7 @@ namespace IEMgr ::Internal {
             clip->time = clipTime;
             clip->name = codec->toUnicode(logicTrackInfos[logicID].option.title);
 
-            // 填充音符
+            // Fill note
             for (const auto &logicNote : qAsConst(logicNotes)) {
                 QDspx::Note note;
 
@@ -408,7 +410,7 @@ namespace IEMgr ::Internal {
                 clip->notes.append(note);
             }
 
-            // 填充track信息
+            // Fill in track information
             track.name = clip->name;
             track.clips.append(clip);
             model.content.tracks.append(track);
@@ -442,18 +444,18 @@ namespace IEMgr ::Internal {
             buf[2] = 24;
             buf[3] = 8;
             midi.createMetaEvent(0, timeSignature.pos, QMidiEvent::TimeSignature, buf);
-        };
+        }
 
         // tempos
         for (const auto &tempo : qAsConst(timeLine.tempos)) {
             midi.createTempoEvent(0, tempo.pos, float(tempo.value));
-        };
+        }
 
 
         // label
         for (const auto &label : qAsConst(timeLine.labels)) {
             midi.createMarkerEvent(0, label.pos, codec->fromUnicode(label.text));
-        };
+        }
 
         // track
         QList<QPair<int, QDspx::Note>> overlapNotes;
@@ -475,28 +477,28 @@ namespace IEMgr ::Internal {
                         if (clipStart <= note.pos && note.pos < clipEnd) {
                             if (posCursor > note.pos) {
                                 overlapNotes.append(qMakePair(trackId, note));
-                            };
+                            }
                             int noteEnd = note.pos + note.length;
                             midi.createLyricEvent(trackId + 1, note.pos, codec->fromUnicode(note.lyric));
                             midi.createNoteOnEvent(trackId + 1, note.pos, 0, note.keyNum, 64);
                             midi.createNoteOffEvent(trackId + 1, std::min(noteEnd, clipEnd), 0, note.keyNum, 64);
                             posCursor = std::max(posCursor, note.pos + note.length);
-                        };
-                    };
-                };
-            };
-        };
+                        }
+                    }
+                }
+            }
+        }
 
         QString overlapWarn = tr("There are overlapped notes, continue to export?\n");
         if (!overlapNotes.empty()) {
-            QMessageBox msgbox(parent);
-            msgbox.setWindowTitle(tr("Export Midi"));
-            msgbox.setText(overlapWarn);
-            msgbox.setInformativeText("");
-            msgbox.setStandardButtons(QMessageBox::Ok | QMessageBox::Cancel);
-            msgbox.setButtonText(QMessageBox::Ok, tr("Export"));
-            msgbox.setButtonText(QMessageBox::Cancel, tr("Abort"));
-            auto button = msgbox.exec();
+            QMessageBox messageBox(parent);
+            messageBox.setWindowTitle(tr("Export Midi"));
+            messageBox.setText(overlapWarn);
+            messageBox.setInformativeText("");
+            messageBox.setStandardButtons(QMessageBox::Ok | QMessageBox::Cancel);
+            messageBox.setButtonText(QMessageBox::Ok, tr("Export"));
+            messageBox.setButtonText(QMessageBox::Cancel, tr("Abort"));
+            auto button = messageBox.exec();
             switch (button) {
                 case QMessageBox::Ok:
                     qDebug() << "Ok";
@@ -507,7 +509,7 @@ namespace IEMgr ::Internal {
                 default:
                     return false;
             }
-        };
+        }
 
         midi.save(filename);
 

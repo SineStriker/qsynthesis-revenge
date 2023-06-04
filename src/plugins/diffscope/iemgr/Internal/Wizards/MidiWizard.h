@@ -24,7 +24,7 @@ namespace IEMgr {
 
         private:
             bool load(const QString &filename, QDspxModel *out, QWidget *parent = nullptr);
-            bool save(const QString &filename, const QDspxModel &in, QWidget *parent = nullptr);
+            static bool save(const QString &filename, const QDspxModel &in, QWidget *parent = nullptr);
         };
 
     }
