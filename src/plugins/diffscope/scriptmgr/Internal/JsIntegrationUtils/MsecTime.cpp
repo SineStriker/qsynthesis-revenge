@@ -19,12 +19,14 @@ static inline int h2ms(int t) {
 }
 
 namespace ScriptMgr::Internal {
-    MsecTime::MsecTime(int minute, int second, int msec): t(std::max(0, min2ms(minute) + sec2ms(second) + msec)) {
+    MsecTime::MsecTime(int minute, int second, int msec): MsecTime(min2ms(minute) + sec2ms(second) + msec) {
     }
-    MsecTime::MsecTime(int msec): t(std::max(0, msec)) {
+    MsecTime::MsecTime(int msec) {
+        Q_ASSERT(msec >= 0);
+        t = msec;
     }
     MsecTime::MsecTime(const QString &str) {
-        QRegularExpression rx(R"(^\s*(\d*)\s*([:\xff1a]?)\s*(\d*)\s*([:\xff1a]?)\s*(\d*)\s*[.\x3002\xff0e]?\s*(\d*)\s*$)");
+        QRegularExpression rx(R"(^\s*(\d*)\s*([:\x{ff1a}]?)\s*(\d*)\s*([:\x{ff1a}]?)\s*(\d*)\s*[.\x{3002}\x{ff0e}]?\s*(\d*)\s*$)");
         auto match = rx.match(str);
         if(!match.hasMatch()) return;
         auto cap1 = match.captured(1);

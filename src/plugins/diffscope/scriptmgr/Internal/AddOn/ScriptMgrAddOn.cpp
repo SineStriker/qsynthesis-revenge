@@ -134,6 +134,7 @@ namespace ScriptMgr {
                 qDebug() << MsecTime("::8.10").toString();
                 qDebug() << MsecTime("19:2.6").toString();
                 qDebug() << MsecTime("8:1:7.999").toString();
+                qDebug() << MsecTime("1：1：4。514").toString();
             });
             userScriptsMainGroup->actionGroup()->addAction(testAction);
 

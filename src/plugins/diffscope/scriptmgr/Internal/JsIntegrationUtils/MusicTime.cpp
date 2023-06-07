@@ -39,7 +39,7 @@ namespace ScriptMgr::Internal {
     }
 
     bool MusicTimePrivate::fromString(const QString &str) {
-        QRegularExpression rx(R"(^\s*(\d*)\s*[:\xff1a]?\s*(\d*)\s*[:\xff1a]?\s*(\d*)\s*$)");
+        QRegularExpression rx(R"(^\s*(\d*)\s*[:\x{ff1a}]?\s*(\d*)\s*[:\x{ff1a}]?\s*(\d*)\s*$)");
         auto match = rx.match(str);
         if(!match.hasMatch()) return false;
         setMbt(
