@@ -80,7 +80,7 @@ namespace Core {
             });
 
             // Add piano key widgets
-            pianoRoll->addPianoKeyWidget(DefaultPianoKeyWidget, new PianoKeyWidgetFactory());
+            pianoRoll->addPianoKeyWidgetFactory(DefaultPianoKeyWidget, new PianoKeyWidgetFactory());
 
             qIDec->installLocale(this, _LOC(ProjectWindowAddOn, this));
         }
@@ -303,7 +303,7 @@ namespace Core {
             connect(selectPianoKeyWidgetItem->action(), &QAction::triggered, this, [this, iWin]() {
                 auto pianoRoll = iWin->pianoRoll();
 
-                auto keys = pianoRoll->pianoKeyWidgets();
+                auto keys = pianoRoll->pianoKeyWidgetKeys();
                 std::sort(keys.begin(), keys.end());
 
                 if (keys.isEmpty()) {
@@ -316,7 +316,7 @@ namespace Core {
                     auto action = new QAction(pianoRoll->pianoKeyWidgetFactory(key)->name(), menu);
                     action->setData(key);
 
-                    if (key == pianoRoll->currentPianoKeyWidgetId()) {
+                    if (key == pianoRoll->currentPianoKeyWidgetKey()) {
                         action->setProperty("current", true);
                     }
 

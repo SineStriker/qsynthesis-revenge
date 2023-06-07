@@ -110,9 +110,10 @@ namespace Core {
     }
 
     DocumentSystem::~DocumentSystem() {
-        m_instance = nullptr;
         Q_D(DocumentSystem);
         d->saveSettings();
+
+        m_instance = nullptr;
     }
 
     bool DocumentSystem::addDocType(DocumentSpec *doc) {

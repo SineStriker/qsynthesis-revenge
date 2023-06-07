@@ -23,7 +23,9 @@ namespace Core::Internal {
             m_area->removeEventFilter(this);
         }
         m_area = area;
-        m_area->installEventFilter(this);
+        if (m_area) {
+            m_area->installEventFilter(this);
+        }
 
         setWidget(area);
         updateGeometry();

@@ -72,12 +72,12 @@ namespace Core {
     }
 
     ILoader::~ILoader() {
-        m_instance = nullptr;
-
         Q_D(ILoader);
         if (d->settingsNeedWrite) {
             writeSettings();
         }
+
+        m_instance = nullptr;
     }
 
     ILoader *ILoader::instance() {

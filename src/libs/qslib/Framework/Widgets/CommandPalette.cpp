@@ -127,17 +127,19 @@ namespace QsApi {
                 if (noClickOutsideEventToHandle) {
                     noClickOutsideEventToHandle = false;
 
+                    // 点击了非 QWidget 的区域，执行关闭操作
+                    // qDebug() << "Clicked outside the widget, closing..." << QDateTime::currentDateTime();
+                    q->abandon();
+
                     QTimer::singleShot(0, this, [this, q]() {
-                        // 点击了非 QWidget 的区域，执行关闭操作
-                        // qDebug() << "Clicked outside the widget, closing..." << QDateTime::currentDateTime();
-
-                        q->abandon();
-
                         noClickOutsideEventToHandle = true;
                     });
                 }
                 goto out;
             }
+        } else if (event->type() == QEvent::Shortcut) {
+            q->abandon();
+            goto out;
         }
 
         if (obj == q->parentWidget()) {

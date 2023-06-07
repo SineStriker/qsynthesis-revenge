@@ -61,7 +61,7 @@ namespace Core {
 
         if (m_canvas->count() > 0) {
             for (const auto &item : qAsConst(floatingPanels)) {
-                q->setFloatingPanelState(item.id, PianoRoll::Hidden);
+                q->setFloatingPanelState(item.key, PianoRoll::Hidden);
             }
         }
 
@@ -77,7 +77,7 @@ namespace Core {
                 continue;
 
             auto stateObj = it->toObject();
-            value = stateObj.value("id");
+            value = stateObj.value("key");
             if (!value.isString())
                 continue;
 
@@ -107,7 +107,7 @@ namespace Core {
         QJsonArray floatingPanelsStateArr;
         for (const auto &item : qAsConst(floatingPanels)) {
             floatingPanelsStateArr.append(QJsonObject{
-                {"id",    item.id                                                                    },
+                {"key",   item.key                                                                   },
                 {"state", QMetaEnum::fromType<PianoRoll::FloatingPanelState>().valueToKey(item.state)},
             });
         }
@@ -119,50 +119,63 @@ namespace Core {
         settings->insert(settingCatalogC, obj);
     }
 
+
+    void PianoRollPrivate::setPianoKeyWidget_helper(IPianoKeyWidget *w) {
+        // Remove old widget
+        auto org = m_pianoKeyContainer->area();
+        if (org) {
+            org->deleteLater();
+        }
+
+        // Create new widget
+        m_pianoKeyContainer->setArea(w);
+    }
+
     PianoRoll::PianoRoll(QWidget *parent) : PianoRoll(*new PianoRollPrivate(), parent) {
     }
 
     PianoRoll::~PianoRoll() {
     }
 
-    void PianoRoll::addPianoKeyWidget(const QString &id, IPianoKeyWidgetFactory *factory) {
+    void PianoRoll::addPianoKeyWidgetFactory(const QString &key, IPianoKeyWidgetFactory *factory) {
         Q_D(PianoRoll);
         if (!factory) {
-            qWarning() << "Core::PianoRoll::addPianoKeyWidget(): trying to add null factory";
+            qWarning() << "Core::PianoRoll::addPianoKeyWidgetFactory(): trying to add null factory";
             return;
         }
-        if (d->pianoKeyWidgets.contains(id)) {
-            qWarning() << "Core::PianoRoll::addPianoKeyWidget(): trying to add duplicated factory:" << id;
+        if (d->pianoKeyWidgets.contains(key)) {
+            qWarning() << "Core::PianoRoll::addPianoKeyWidgetFactory(): trying to add duplicated factory:" << key;
             return;
         }
-        d->pianoKeyWidgets.insert(id, factory);
+        d->pianoKeyWidgets.insert(key, factory);
     }
 
-    QAbstractButton *PianoRoll::addFloatingPanel(const QString &id, QWidget *panel, QWidget *titleBar) {
+    void PianoRoll::removePianoKeyWidgetFactory(const QString &key) {
         Q_D(PianoRoll);
 
-        auto bar = new Internal::FloatingTitleBar();
-        bar->setTitleBar(titleBar);
+        auto it = d->pianoKeyWidgets.find(key);
+        if (it == d->pianoKeyWidgets.end()) {
+            qWarning() << "Core::PianoRoll::removeFloatingPanel(): panel does not exist:" << key;
+            return;
+        }
 
-        connect(bar->foldButton(), &QAbstractButton::toggled, this, [this, id](bool checked) {
-            setFloatingPanelState(id, checked ? Normal : Folded); //
-        });
+        d->pianoKeyWidgets.erase(it);
 
-        connect(bar->closeButton(), &QAbstractButton::clicked, this, [id, this]() {
-            setFloatingPanelState(id, Hidden); //
-        });
-
-        d->floatingPanels.insert(id, {id, panel, bar, Hidden});
-
-        return bar->titleButton();
+        // Need to remove its widget because the call may happen from a library unload
+        if (d->currentPianoKeyWidget == key) {
+            if (d->pianoKeyWidgets.contains(Internal::DefaultPianoKeyWidget))
+                setCurrentPianoKeyWidget(Internal::DefaultPianoKeyWidget);
+            else
+                setCurrentPianoKeyWidget({});
+        }
     }
 
-    QStringList PianoRoll::pianoKeyWidgets() const {
+    QStringList PianoRoll::pianoKeyWidgetKeys() const {
         Q_D(const PianoRoll);
         return d->pianoKeyWidgets.keys();
     }
 
-    QString PianoRoll::currentPianoKeyWidgetId() const {
+    QString PianoRoll::currentPianoKeyWidgetKey() const {
         Q_D(const PianoRoll);
         return d->currentPianoKeyWidget;
     }
@@ -172,54 +185,93 @@ namespace Core {
         return d->m_pianoKeyContainer->area();
     }
 
-    void PianoRoll::setCurrentPianoKeyWidget(const QString &id) {
+    void PianoRoll::setCurrentPianoKeyWidget(const QString &key) {
         Q_D(PianoRoll);
 
-        if (d->currentPianoKeyWidget == id) {
+        if (d->currentPianoKeyWidget == key) {
             return;
         }
 
-        auto fac = d->pianoKeyWidgets.value(id);
-        if (!fac) {
-            return;
+        if (!key.isEmpty()) {
+            auto fac = d->pianoKeyWidgets.value(key);
+            if (!fac) {
+                return;
+            }
+            d->setPianoKeyWidget_helper(fac->create(nullptr));
+        } else {
+            d->setPianoKeyWidget_helper(nullptr);
         }
-        d->currentPianoKeyWidget = id;
+        d->currentPianoKeyWidget = key;
 
-        // Remove old widget
-        auto org = d->m_pianoKeyContainer->area();
-        if (org) {
-            org->deleteLater();
-        }
-
-        // Create new widget
-        d->m_pianoKeyContainer->setArea(fac->create(nullptr));
-
-        emit pianoKeyWidgetChanged(id);
+        emit pianoKeyWidgetChanged(key);
     }
 
-    IPianoKeyWidgetFactory *PianoRoll::pianoKeyWidgetFactory(const QString &id) const {
+    IPianoKeyWidgetFactory *PianoRoll::pianoKeyWidgetFactory(const QString &key) const {
         Q_D(const PianoRoll);
-        return d->pianoKeyWidgets.value(id);
-        ;
+        return d->pianoKeyWidgets.value(key);
     }
 
-    QStringList PianoRoll::floatingPanels() const {
+    QAbstractButton *PianoRoll::addFloatingPanel(const QString &key, QWidget *panel, QWidget *titleBar) {
+        Q_D(PianoRoll);
+
+        if (!panel) {
+            qWarning() << "Core::PianoRoll::addFloatingPanel(): trying to add null panel";
+            return nullptr;
+        }
+        auto it = d->floatingPanels.find(key);
+        if (it != d->floatingPanels.end()) {
+            qWarning() << "Core::PianoRoll::addFloatingPanel(): trying to add duplicated panel:" << key;
+            return it->titleBar->titleButton();
+        }
+
+        auto bar = new Internal::FloatingTitleBar();
+        bar->setTitleBar(titleBar);
+
+        connect(bar->foldButton(), &QAbstractButton::toggled, this, [this, key](bool checked) {
+            setFloatingPanelState(key, checked ? Normal : Folded); //
+        });
+
+        connect(bar->closeButton(), &QAbstractButton::clicked, this, [key, this]() {
+            setFloatingPanelState(key, Hidden); //
+        });
+
+        d->floatingPanels.insert(key, {key, panel, bar, Hidden});
+
+        return bar->titleButton();
+    }
+
+    void PianoRoll::removeFloatingPanel(const QString &key) {
+        Q_D(PianoRoll);
+
+        auto it = d->floatingPanels.find(key);
+        if (it == d->floatingPanels.end()) {
+            qWarning() << "Core::PianoRoll::removeFloatingPanel(): panel does not exist:" << key;
+            return;
+        }
+
+        it->titleBar->takeTitleBar();
+        delete it->titleBar;
+
+        d->floatingPanels.erase(it);
+    }
+
+    QStringList PianoRoll::floatingPanelKeys() const {
         Q_D(const PianoRoll);
         return d->floatingPanels.keys();
     }
 
-    PianoRoll::FloatingPanelState PianoRoll::floatingPanelState(const QString &id) {
+    PianoRoll::FloatingPanelState PianoRoll::floatingPanelState(const QString &key) {
         Q_D(const PianoRoll);
-        auto it = d->floatingPanels.find(id);
+        auto it = d->floatingPanels.find(key);
         if (it == d->floatingPanels.end()) {
             return Hidden;
         }
         return it->state;
     }
 
-    void PianoRoll::setFloatingPanelState(const QString &id, PianoRoll::FloatingPanelState state) {
+    void PianoRoll::setFloatingPanelState(const QString &key, PianoRoll::FloatingPanelState state) {
         Q_D(PianoRoll);
-        auto it = d->floatingPanels.find(id);
+        auto it = d->floatingPanels.find(key);
         if (it == d->floatingPanels.end()) {
             return;
         }
@@ -258,12 +310,12 @@ namespace Core {
 
         block.state = state;
 
-        emit floatingPanelStateChanged(id, state);
+        emit floatingPanelStateChanged(key, state);
     }
 
-    QWidget *PianoRoll::floatingPanel(const QString &id) {
+    QWidget *PianoRoll::floatingPanel(const QString &key) {
         Q_D(const PianoRoll);
-        auto it = d->floatingPanels.find(id);
+        auto it = d->floatingPanels.find(key);
         if (it == d->floatingPanels.end()) {
             return nullptr;
         }

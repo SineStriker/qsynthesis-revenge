@@ -35,6 +35,7 @@ namespace Core {
 
     protected:
         ILoader(ILoaderPrivate &d, QObject *parent = nullptr);
+
         QScopedPointer<ILoaderPrivate> d_ptr;
     };
 

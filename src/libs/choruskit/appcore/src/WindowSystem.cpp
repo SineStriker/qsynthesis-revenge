@@ -160,8 +160,6 @@ namespace Core {
     WindowSystem::~WindowSystem() {
         Q_D(WindowSystem);
 
-        m_instance = nullptr;
-
         d->saveSettings();
 
         // Remove all managed factories
@@ -172,6 +170,8 @@ namespace Core {
         for (auto &item : qAsConst(d->addOnFactories)) {
             delete item;
         }
+
+        m_instance = nullptr;
     }
 
     bool WindowSystem::addWindow(IWindowFactory *factory) {

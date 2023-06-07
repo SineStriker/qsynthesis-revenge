@@ -10,11 +10,6 @@
 #include <private/qguiapplication_p.h>
 #include <private/qshortcutmap_p.h>
 
-#include "AddOn/HomeWindowAddOn.h"
-#include "AddOn/ProjectWindowAddOn.h"
-
-#include "Window/ICoreWindowFactory.h"
-
 #include "QMDecoratorV2.h"
 #include "QMSystem.h"
 #include "QMView.h"
@@ -24,12 +19,14 @@
 
 #include "CoreApi/ILoader.h"
 
+#include "AddOn/HomeWindowAddOn.h"
+#include "AddOn/ProjectWindowAddOn.h"
+#include "Document/DspxSpec.h"
+#include "Window/ICoreWindowFactory.h"
+
 #include "Internal/Settings/ActionConfigurePage.h"
 #include "Internal/Settings/AppearanceTopPage.h"
 #include "Internal/Settings/DisplayPage.h"
-
-#include "Internal/Document/DspxSpec.h"
-
 #include "Internal/Utils/LastWindowFilter.h"
 
 namespace Core {
@@ -152,7 +149,7 @@ namespace Core {
 
                 // Open files
                 openFileFromCommand({}, ExtensionSystem::PluginManager::arguments(), nullptr);
-                
+
                 if (winMgr->count() == 0) {
                     waitSplash(winMgr->createWindow("home")->window());
                 } else {

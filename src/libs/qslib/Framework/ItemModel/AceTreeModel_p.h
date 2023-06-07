@@ -19,6 +19,7 @@ namespace QsApi {
 
         AceTreeItem *q_ptr;
         QString name;
+        QHash<QString, QVariant> dynamicData;
 
         AceTreeItem *parent;
         AceTreeModel *model;
@@ -28,7 +29,9 @@ namespace QsApi {
         QHash<QString, QVariant> properties;
         QByteArray byteArray;
         QVector<AceTreeItem *> vector;
+
         QSet<AceTreeItem *> set;
+        QHash<QString, QSet<AceTreeItem *>> setNameIndexes;
 
         bool allowModify() const;
 

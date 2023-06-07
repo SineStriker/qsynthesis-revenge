@@ -18,9 +18,6 @@ namespace Core {
         explicit DspxDocument(QObject *parent = nullptr);
         ~DspxDocument();
 
-        bool addObserver(IDspxObserver *observer);
-        bool removeObserver(IDspxObserver *observer);
-
         QsApi::AceTreeModel *model() const;
 
     public:

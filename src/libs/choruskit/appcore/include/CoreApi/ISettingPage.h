@@ -33,6 +33,8 @@ namespace Core {
         QList<ISettingPage *> pages() const;
         QList<ISettingPage *> allPages() const;
 
+        inline ISettingPage *parentPage() const;
+
     public:
         virtual QString sortKeyword() const;
 
@@ -54,6 +56,10 @@ namespace Core {
 
         QScopedPointer<ISettingPagePrivate> d_ptr;
     };
+
+    ISettingPage *ISettingPage::parentPage() const {
+        return qobject_cast<ISettingPage *>(parent());
+    }
 
 }
 

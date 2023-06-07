@@ -119,6 +119,31 @@ namespace QsApi {
         return d->name;
     }
 
+    QVariant AceTreeItem::dynamicData(const QString &key) const {
+        Q_D(const AceTreeItem);
+        return d->dynamicData.value(key);
+    }
+
+    void AceTreeItem::setDynamicData(const QString &key, const QVariant &value) {
+        Q_D(AceTreeItem);
+        auto it = d->dynamicData.find(key);
+        if (it == d->dynamicData.end()) {
+            if (value.isNull() || !value.isValid())
+                return;
+            d->dynamicData.insert(key, value);
+        } else {
+            if (value.isNull() || !value.isValid())
+                d->dynamicData.erase(it);
+            else
+                it.value() = value;
+        }
+    }
+
+    QVariantHash AceTreeItem::dynamicDataMap() const {
+        Q_D(const AceTreeItem);
+        return d->dynamicData;
+    }
+
     AceTreeItem *AceTreeItem::parent() const {
         Q_D(const AceTreeItem);
         return d->parent;
@@ -305,6 +330,24 @@ namespace QsApi {
         return d->set.size();
     }
 
+    QStringList AceTreeItem::nodeNames() const {
+        Q_D(const AceTreeItem);
+        return d->setNameIndexes.keys();
+    }
+
+    AceTreeItem *AceTreeItem::nameToNode(const QString &name) const {
+        Q_D(const AceTreeItem);
+        auto it = d->setNameIndexes.find(name);
+        if (it == d->setNameIndexes.end() || it->isEmpty())
+            return nullptr;
+        return *it->begin();
+    }
+
+    QList<AceTreeItem *> AceTreeItem::nameToNodes(const QString &name) const {
+        Q_D(const AceTreeItem);
+        return d->setNameIndexes.value(name).values();
+    }
+
     AceTreeItem *AceTreeItem::read(QDataStream &in) {
         char sign[sizeof(SIGN_TREE_ITEM) - 1];
         in.readRawData(sign, sizeof(sign));
@@ -341,6 +384,7 @@ namespace QsApi {
 
             in >> size;
             d->set.reserve(size);
+            d->setNameIndexes.reserve(size);
             for (int i = 0; i < size; ++i) {
                 auto child = read(in);
                 if (!child) {
@@ -349,6 +393,7 @@ namespace QsApi {
                 }
                 child->d_func()->parent = item;
                 d->set.insert(child);
+                d->setNameIndexes[child->name()] += child;
             }
         }
 
@@ -395,10 +440,12 @@ namespace QsApi {
         }
 
         d2->set.reserve(d->set.size());
+        d2->setNameIndexes.reserve(d->set.size());
         for (auto &child : d->set) {
             auto newChild = child->clone();
             newChild->d_func()->parent = item;
             d2->set.insert(newChild);
+            d2->setNameIndexes[newChild->name()] += newChild;
         }
 
         return item;
@@ -683,6 +730,7 @@ namespace QsApi {
         if (model)
             item->propagateModel(model);
         set.insert(item);
+        setNameIndexes[item->name()] += item;
 
         // Propagate signal
         if (model)
@@ -701,6 +749,15 @@ namespace QsApi {
         if (model)
             item->propagateModel(nullptr);
         set.remove(item);
+        {
+            auto it = setNameIndexes.find(item->name());
+            if (it != setNameIndexes.end()) {
+                it.value().remove(item);
+                if (it.value().isEmpty()) {
+                    setNameIndexes.erase(it);
+                }
+            }
+        }
 
         // Propagate signal
         if (model)

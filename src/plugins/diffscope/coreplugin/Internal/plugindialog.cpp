@@ -87,7 +87,7 @@ PluginDialog::PluginDialog(QWidget *parent)
 
     vl->addLayout(hl);
 
-    resize(650, 400);
+    resize(800, 500);
     setWindowTitle(tr("Installed Plugins"));
 
     connect(m_view, &ExtensionSystem::PluginView::currentPluginChanged,

@@ -32,10 +32,10 @@ namespace Core {
     }
 
     ActionSystem::~ActionSystem() {
-        m_instance = nullptr;
-
         Q_D(ActionSystem);
         d->saveSettings();
+
+        m_instance = nullptr;
     }
 
     bool ActionSystem::addAction(ActionSpec *action) {

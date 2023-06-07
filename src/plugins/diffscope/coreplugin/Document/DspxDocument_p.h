@@ -20,7 +20,6 @@ namespace Core {
         bool hasWatch;
         mutable QString untitledFileName;
 
-        QMChronSet<IDspxObserver *> observers;
         QsApi::AceTreeModel *model;
 
         bool isVST;

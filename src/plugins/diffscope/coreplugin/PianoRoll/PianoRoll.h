@@ -30,23 +30,24 @@ namespace Core {
         Q_ENUM(FloatingPanelState);
 
     public:
-        void addPianoKeyWidget(const QString &id, IPianoKeyWidgetFactory *factory);
-        QAbstractButton *addFloatingPanel(const QString &id, QWidget *panel, QWidget *titleBar);
-
-        QStringList pianoKeyWidgets() const;
-        QString currentPianoKeyWidgetId() const;
-        void setCurrentPianoKeyWidget(const QString &id);
+        void addPianoKeyWidgetFactory(const QString &key, IPianoKeyWidgetFactory *factory);
+        void removePianoKeyWidgetFactory(const QString &key);
+        QStringList pianoKeyWidgetKeys() const;
+        QString currentPianoKeyWidgetKey() const;
+        void setCurrentPianoKeyWidget(const QString &key);
         QWidget *currentPianoKeyWidget() const;
-        IPianoKeyWidgetFactory *pianoKeyWidgetFactory(const QString &id) const;
+        IPianoKeyWidgetFactory *pianoKeyWidgetFactory(const QString &key) const;
 
-        QStringList floatingPanels() const;
-        FloatingPanelState floatingPanelState(const QString &id);
-        void setFloatingPanelState(const QString &id, FloatingPanelState state);
-        QWidget *floatingPanel(const QString &id);
+        QAbstractButton *addFloatingPanel(const QString &key, QWidget *panel, QWidget *titleBar);
+        void removeFloatingPanel(const QString &key);
+        QStringList floatingPanelKeys() const;
+        FloatingPanelState floatingPanelState(const QString &key);
+        void setFloatingPanelState(const QString &key, FloatingPanelState state);
+        QWidget *floatingPanel(const QString &key);
 
     signals:
-        void pianoKeyWidgetChanged(const QString &id);
-        void floatingPanelStateChanged(const QString &id, FloatingPanelState state);
+        void pianoKeyWidgetChanged(const QString &key);
+        void floatingPanelStateChanged(const QString &key, FloatingPanelState state);
 
     protected:
         PianoRoll(PianoRollPrivate &d, QWidget *parent = nullptr);

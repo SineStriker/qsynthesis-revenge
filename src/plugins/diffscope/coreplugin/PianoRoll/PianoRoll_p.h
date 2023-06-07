@@ -27,7 +27,7 @@ namespace Core {
 
         // Floating panels
         struct FloatingPanelControlBlock {
-            QString id;
+            QString key;
             QWidget *panel;
             Internal::FloatingTitleBar *titleBar;
             PianoRoll::FloatingPanelState state;
@@ -37,6 +37,8 @@ namespace Core {
         // Piano key widgets
         QHash<QString, IPianoKeyWidgetFactory *> pianoKeyWidgets;
         QString currentPianoKeyWidget;
+
+        void setPianoKeyWidget_helper(IPianoKeyWidget *w);
 
         // Layout
         QGridLayout *m_layout;

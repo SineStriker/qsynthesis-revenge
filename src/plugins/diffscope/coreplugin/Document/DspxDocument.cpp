@@ -36,31 +36,6 @@ namespace Core {
     DspxDocument::~DspxDocument() {
     }
 
-    bool DspxDocument::addObserver(IDspxObserver *observer) {
-        Q_D(DspxDocument);
-        if (!observer) {
-            qWarning() << "Core::DspxDocument::addObserver(): trying to add null observer";
-            return false;
-        }
-        if (d->observers.contains(observer)) {
-            qWarning() << "Core::DspxDocument::addObserver(): trying to add duplicated observer:" << observer;
-            return false;
-        }
-        d->observers.append(observer);
-        return true;
-    }
-
-    bool DspxDocument::removeObserver(IDspxObserver *observer) {
-        Q_D(DspxDocument);
-        auto it = d->observers.find(observer);
-        if (it == d->observers.end()) {
-            qWarning() << "Core::DspxDocument::removeObserver(): observer does not exist:" << observer;
-            return false;
-        }
-        d->observers.erase(it);
-        return true;
-    }
-
     QsApi::AceTreeModel *DspxDocument::model() const {
         Q_D(const DspxDocument);
         return d->model;
@@ -75,14 +50,6 @@ namespace Core {
             return false;
         }
 
-        for (auto observer : d->observers) {
-            QString err;
-            if (!observer->read(model, nullptr, &err)) {
-                setErrorMessage(err);
-                return false;
-            }
-        }
-
         setFilePath(filename);
         d->unshiftToRecent();
 
@@ -93,14 +60,6 @@ namespace Core {
         Q_D(DspxDocument);
 
         QDspxModel model;
-
-        for (auto observer : d->observers) {
-            QString err;
-            if (!observer->write(&model, nullptr, &err)) {
-                setErrorMessage(err);
-                return false;
-            }
-        }
 
         if (!model.save(filename)) {
             setErrorMessage(tr("Failed to save %1").arg(filename));

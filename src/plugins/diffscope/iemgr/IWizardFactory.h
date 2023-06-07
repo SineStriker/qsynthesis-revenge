@@ -23,7 +23,8 @@ namespace IEMgr {
             ImportAudio = 4,
             ExportAudio = 8,
         };
-        Q_DECLARE_FLAGS(Features, Feature);
+        Q_ENUM(Feature)
+        Q_DECLARE_FLAGS(Features, Feature)
 
         virtual Features features() const = 0;
         virtual QString filter(Feature feature) const;

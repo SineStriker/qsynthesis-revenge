@@ -19,9 +19,12 @@ namespace QsApi {
         explicit AceTreeItem(const QString &name);
         virtual ~AceTreeItem();
 
-    public:
         QString name() const;
+        QVariant dynamicData(const QString &key) const;
+        void setDynamicData(const QString &key, const QVariant &value);
+        QVariantHash dynamicDataMap() const;
 
+    public:
         AceTreeItem *parent() const;
         AceTreeModel *model() const;
         int index() const;
@@ -63,6 +66,10 @@ namespace QsApi {
         void removeNode(AceTreeItem *item);
         QList<AceTreeItem *> nodes() const;
         int nodeCount() const;
+
+        QStringList nodeNames() const;
+        AceTreeItem *nameToNode(const QString &name) const;
+        QList<AceTreeItem *> nameToNodes(const QString &name) const;
 
     public:
         static AceTreeItem *read(QDataStream &in);
