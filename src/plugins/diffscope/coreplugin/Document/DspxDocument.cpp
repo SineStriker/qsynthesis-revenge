@@ -1,11 +1,16 @@
 #include "DspxDocument.h"
 #include "DspxDocument_p.h"
 
+#include <QBuffer>
+#include <QDir>
+#include <QFile>
+#include <QJsonDocument>
+#include <QJsonObject>
 #include <QStandardPaths>
 
-#include <Dspx/QDspxModel.h>
 #include <QMDecoratorV2.h>
 
+#include "DspxSpec.h"
 #include "ICore.h"
 
 namespace Core {
@@ -14,7 +19,8 @@ namespace Core {
 
     DspxDocumentPrivate::DspxDocumentPrivate() {
         hasWatch = false;
-        isVST = false;
+        vstMode = false;
+        model = nullptr;
     }
 
     DspxDocumentPrivate::~DspxDocumentPrivate() {
@@ -22,12 +28,50 @@ namespace Core {
 
     void DspxDocumentPrivate::init() {
         Q_Q(DspxDocument);
+
+        model = new QsApi::AceTreeModel(q);
+
         ICore::instance()->documentSystem()->addDocument(q, true);
     }
 
     void DspxDocumentPrivate::unshiftToRecent() {
         Q_Q(DspxDocument);
         ICore::instance()->documentSystem()->addRecentFile(q->filePath());
+    }
+
+    bool DspxDocumentPrivate::readFile(const QByteArray &data) {
+        Q_Q(DspxDocument);
+
+        // Parse json
+        QJsonParseError parseError;
+        QJsonDocument doc = QJsonDocument::fromJson(data, &parseError);
+        if (parseError.error != QJsonParseError::NoError || !doc.isObject()) {
+            q->setErrorMessage(DspxDocument::tr("Invalid file format!"));
+            return false;
+        }
+
+        auto item = new QsApi::AceTreeItem("root");
+        if (!DspxSpec::instance()->serializer()->readObject(doc.object(), item)) {
+            delete item;
+            q->setErrorMessage(DspxDocument::tr("Error occurred while parsing file!"));
+            return false;
+        }
+        model->setRootItem(item);
+
+        return true;
+    }
+
+    bool DspxDocumentPrivate::saveFile(QByteArray *data) const {
+        Q_Q(const DspxDocument);
+
+        QJsonObject obj;
+        if (!DspxSpec::instance()->serializer()->writeObject(&obj, model->rootItem())) {
+            q->setErrorMessage(DspxDocument::tr("Error occurred while saving file!"));
+            return false;
+        }
+        *data = QJsonDocument(obj).toJson();
+
+        return true;
     }
 
     DspxDocument::DspxDocument(QObject *parent) : DspxDocument(*new DspxDocumentPrivate(), parent) {
@@ -44,9 +88,16 @@ namespace Core {
     bool DspxDocument::open(const QString &filename) {
         Q_D(DspxDocument);
 
-        QDspxModel model;
-        if (!model.load(filename)) {
-            setErrorMessage(tr("Failed to open %1").arg(filename));
+        QFile file(filename);
+        if (!file.open(QIODevice::ReadOnly)) {
+            setErrorMessage(tr("Failed to open file!"));
+            return false;
+        }
+
+        QByteArray data = file.readAll();
+        file.close();
+
+        if (!d->readFile(data)) {
             return false;
         }
 
@@ -59,12 +110,18 @@ namespace Core {
     bool DspxDocument::save(const QString &filename) {
         Q_D(DspxDocument);
 
-        QDspxModel model;
-
-        if (!model.save(filename)) {
-            setErrorMessage(tr("Failed to save %1").arg(filename));
+        QByteArray data;
+        if (!d->saveFile(&data)) {
             return false;
         }
+
+        QFile file(filename);
+        if (!file.open(QIODevice::WriteOnly)) {
+            setErrorMessage(tr("Failed to create file!"));
+            return false;
+        }
+        file.write(data);
+        file.close();
 
         setFilePath(filename);
         d->unshiftToRecent();
@@ -72,17 +129,36 @@ namespace Core {
         return true;
     }
 
-    bool DspxDocument::isVST() const {
-        Q_D(const DspxDocument);
-        return d->isVST;
+    bool DspxDocument::openRawData(const QByteArray &data) {
+        Q_D(DspxDocument);
+        return d->readFile(data);
     }
 
-    bool DspxDocument::openVST(const QByteArray &bytes) {
+    bool DspxDocument::saveRawData(QByteArray *data) {
+        Q_D(DspxDocument);
+        return d->saveFile(data);
+    }
+
+    void DspxDocument::makeNew() {
         Q_D(DspxDocument);
 
-        d->isVST = true;
+        ++m_untitledIndex;
 
-        return false;
+        auto item = new QsApi::AceTreeItem("root");
+        DspxSpec::instance()->serializer()->createObject(item);
+
+        d->model->setRootItem(item);
+    }
+
+    bool DspxDocument::isVSTMode() const {
+        Q_D(const DspxDocument);
+        return d->vstMode;
+    }
+
+    void DspxDocument::setVSTMode(bool on) {
+        Q_D(DspxDocument);
+        d->vstMode = on;
+        emit changed();
     }
 
     QString DspxDocument::defaultPath() const {
@@ -92,7 +168,7 @@ namespace Core {
     QString DspxDocument::suggestedFileName() const {
         Q_D(const DspxDocument);
         if (d->untitledFileName.isEmpty())
-            d->untitledFileName = QString("Untitled-%1.dspx").arg(QString::number(++m_untitledIndex));
+            d->untitledFileName = QString("Untitled-%1.dspx").arg(QString::number(m_untitledIndex));
         return d->untitledFileName;
     }
 

@@ -112,46 +112,46 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Internal/AddOn/ScriptMgrAddOn.cpp" line="290"/>
+        <location filename="../../Internal/AddOn/ScriptMgrAddOn.cpp" line="291"/>
         <source>Uncaught error.</source>
         <translation>捕捉されなかったエラー。</translation>
     </message>
     <message>
-        <location filename="../../Internal/AddOn/ScriptMgrAddOn.cpp" line="291"/>
+        <location filename="../../Internal/AddOn/ScriptMgrAddOn.cpp" line="292"/>
         <source>JavaScript Error</source>
         <translation>JavaScript エラー</translation>
     </message>
     <message>
-        <location filename="../../Internal/AddOn/ScriptMgrAddOn.cpp" line="295"/>
-        <location filename="../../Internal/AddOn/ScriptMgrAddOn.cpp" line="299"/>
+        <location filename="../../Internal/AddOn/ScriptMgrAddOn.cpp" line="296"/>
+        <location filename="../../Internal/AddOn/ScriptMgrAddOn.cpp" line="300"/>
         <source>Warning</source>
         <translation>警告</translation>
     </message>
     <message>
-        <location filename="../../Internal/AddOn/ScriptMgrAddOn.cpp" line="295"/>
+        <location filename="../../Internal/AddOn/ScriptMgrAddOn.cpp" line="296"/>
         <source>Cannot load script file &apos;%1&apos;. The file is ignored.</source>
         <translation>スクリプトファイル「%1」を読み込めません。このファイルは無視されます。</translation>
     </message>
     <message>
-        <location filename="../../Internal/AddOn/ScriptMgrAddOn.cpp" line="299"/>
+        <location filename="../../Internal/AddOn/ScriptMgrAddOn.cpp" line="300"/>
         <source>Cannot get name of script &apos;%1&apos;. Its name will be displayed as its id.</source>
         <translation>スクリプト「%1」の名前を取得できません。その名前がその id として表示されます。</translation>
     </message>
     <message>
-        <location filename="../../Internal/AddOn/ScriptMgrAddOn.cpp" line="303"/>
-        <location filename="../../Internal/AddOn/ScriptMgrAddOn.cpp" line="307"/>
-        <location filename="../../Internal/AddOn/ScriptMgrAddOn.cpp" line="311"/>
+        <location filename="../../Internal/AddOn/ScriptMgrAddOn.cpp" line="304"/>
+        <location filename="../../Internal/AddOn/ScriptMgrAddOn.cpp" line="308"/>
+        <location filename="../../Internal/AddOn/ScriptMgrAddOn.cpp" line="312"/>
         <source>Error</source>
         <translation>エラー</translation>
     </message>
     <message>
-        <location filename="../../Internal/AddOn/ScriptMgrAddOn.cpp" line="303"/>
+        <location filename="../../Internal/AddOn/ScriptMgrAddOn.cpp" line="304"/>
         <source>Cannot initialize JavaScript engine.</source>
         <translation>JavaScript エンジンを初期化できません。</translation>
     </message>
     <message>
-        <location filename="../../Internal/AddOn/ScriptMgrAddOn.cpp" line="307"/>
-        <location filename="../../Internal/AddOn/ScriptMgrAddOn.cpp" line="311"/>
+        <location filename="../../Internal/AddOn/ScriptMgrAddOn.cpp" line="308"/>
+        <location filename="../../Internal/AddOn/ScriptMgrAddOn.cpp" line="312"/>
         <source>Script &apos;%1&apos; execution failed.</source>
         <translation>スクリプト「%1」の実行に失敗しました。</translation>
     </message>

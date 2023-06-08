@@ -55,11 +55,73 @@
     <name>Core::DspxDocument</name>
     <message>
         <source>Failed to open %1</source>
-        <translation>无法打开 %1</translation>
+        <translation type="vanished">无法打开 %1</translation>
     </message>
     <message>
         <source>Failed to save %1</source>
-        <translation>无法保存 %1</translation>
+        <translation type="vanished">无法保存 %1</translation>
+    </message>
+    <message>
+        <source>%1: Invalid file format!</source>
+        <translation type="vanished">%1: 意外的文件格式！</translation>
+    </message>
+    <message>
+        <source>%1: Error occurred while parsing file!</source>
+        <translation type="vanished">%1: 解析文件时发生错误！</translation>
+    </message>
+    <message>
+        <source>%1: Error occurred while saving file!</source>
+        <translation type="vanished">%1: 写入文件时发生错误！</translation>
+    </message>
+    <message>
+        <source>%1: Failed to open file!</source>
+        <translation type="vanished">%1: 打开文件失败！</translation>
+    </message>
+    <message>
+        <source>%1: Failed to create file!</source>
+        <translation type="vanished">%1: 创建文件失败！</translation>
+    </message>
+    <message>
+        <source>Invalid file format!</source>
+        <translation>意外的文件格式！</translation>
+    </message>
+    <message>
+        <source>Error occurred while parsing file!</source>
+        <translation>解析文件时发生错误！</translation>
+    </message>
+    <message>
+        <source>Error occurred while saving file!</source>
+        <translation>写入文件时发生错误！</translation>
+    </message>
+    <message>
+        <source>Failed to open file!</source>
+        <translation>打开文件失败！</translation>
+    </message>
+    <message>
+        <source>Failed to create file!</source>
+        <translation>创建文件失败！</translation>
+    </message>
+</context>
+<context>
+    <name>Core::DspxSpec</name>
+    <message>
+        <source>DiffScope Project Files</source>
+        <translation>DiffScope工程文件</translation>
+    </message>
+    <message>
+        <source>File Error</source>
+        <translation>文件错误</translation>
+    </message>
+</context>
+<context>
+    <name>Core::DspxSpecPrivate</name>
+    <message>
+        <source>OpenVPI DiffSinger Editor</source>
+        <translation>OpenVPI DiffSinger 编辑器</translation>
+    </message>
+    <message>
+        <source>Built-in</source>
+        <translation>内置</translation>
     </message>
 </context>
 <context>
@@ -413,19 +475,19 @@
     <name>Core::Internal::DspxSpec</name>
     <message>
         <source>DiffScope Project Files</source>
-        <translation>DiffScope工程文件</translation>
+        <translation type="vanished">DiffScope工程文件</translation>
     </message>
     <message>
         <source>File Error</source>
-        <translation>文件错误</translation>
+        <translation type="vanished">文件错误</translation>
     </message>
     <message>
         <source>OpenVPI DiffSinger Editor</source>
-        <translation>OpenVPI DiffSinger 编辑器</translation>
+        <translation type="vanished">OpenVPI DiffSinger 编辑器</translation>
     </message>
     <message>
         <source>Built-in</source>
-        <translation>内置</translation>
+        <translation type="vanished">内置</translation>
     </message>
 </context>
 <context>

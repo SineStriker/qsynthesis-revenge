@@ -189,7 +189,7 @@ namespace QsApi {
         bool internalChange;
 
         struct Offsets {
-            [[maybe_unused]] qint64 startPos;
+            qint64 startPos;
             qint64 countPos;
             qint64 dataPos;
             QVector<qint64> begs;

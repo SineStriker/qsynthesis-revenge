@@ -50,18 +50,21 @@ namespace QsApi {
             }
             AcceptValueTypeStrict(AcceptValueType at) : AcceptValueTypeStrict(at, {}) {
             }
-            AcceptValueTypeStrict(QJsonValue::Type jt) : AcceptValueTypeStrict({}, jt) {
+            AcceptValueTypeStrict(const QJsonValue &jt) : AcceptValueTypeStrict({}, jt) {
             }
-            AcceptValueTypeStrict(AcceptValueType at, QJsonValue::Type jt) : at(at), jt(jt) {
+            AcceptValueTypeStrict(AcceptValueType at, const QJsonValue &jt) : at(at), jt(jt) {
             }
             AcceptValueType aType() const {
                 return at;
             }
             QJsonValue::Type jType() const {
+                return jt.type();
+            }
+            QJsonValue jValue() const {
                 return jt;
             }
             bool validate(QJsonValue::Type type) const {
-                return jt == QJsonValue::Null ? true : (jt == type);
+                return jt == QJsonValue::Null ? true : (jt.type() == type);
             }
             bool operator==(const AcceptValueTypeStrict &other) const {
                 return at == other.at && jt == other.jt;
@@ -84,7 +87,7 @@ namespace QsApi {
 
         private:
             AcceptValueType at;
-            QJsonValue::Type jt;
+            QJsonValue jt;
         };
 
         struct ChildOrProperty {
@@ -103,6 +106,7 @@ namespace QsApi {
             QString typeField;
             Result (*reader)(int, const QJsonValue &, AceTreeItem *, void *);
             Result (*writer)(int, QJsonArray *, const ChildOrProperty &, void *);
+            void (*creator)(AceTreeItem *, void *);
         };
 
         struct ObjectOptions {
@@ -110,6 +114,7 @@ namespace QsApi {
             QHash<QString, AcceptValueTypeStrict> acceptOnes;
             Result (*reader)(const QString &, const QJsonValue &, AceTreeItem *, void *);
             Result (*writer)(const QString &, QJsonObject *, const ChildOrProperty &, void *);
+            void (*creator)(AceTreeItem *, void *);
         };
 
         QString id() const;
@@ -155,6 +160,10 @@ namespace QsApi {
         virtual bool writeValue(const ValueRef &ref, const ChildOrProperty &cop);
         virtual bool writeArray(QJsonArray *array, const AceTreeItem *item);
         virtual bool writeObject(QJsonObject *object, const AceTreeItem *item);
+
+        virtual void createValue(AceTreeItem *item);
+        virtual void createArray(AceTreeItem *item);
+        virtual void createObject(AceTreeItem *item);
 
     private:
         AceTreeSerializerPrivate *d;

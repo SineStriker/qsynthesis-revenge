@@ -897,7 +897,7 @@ bool PluginSpecPrivate::loadLibrary() {
     }
 
     // Begin OpenVPI patch
-    LibraryLoadGuard guard(QFileInfo(loader.fileName()).absolutePath());
+    LibraryLoadGuard guard(&loader);
     // End
 
     if (!loader.load()) {

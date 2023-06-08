@@ -1,20 +1,18 @@
 #ifndef LIBRARYLOADGUARD_H
 #define LIBRARYLOADGUARD_H
 
-#include <QScopedPointer>
+#include <QPluginLoader>
 #include <QString>
 
 class LibraryLoadGuardPrivate;
 
 class LibraryLoadGuard {
 public:
-    LibraryLoadGuard(const QString &path);
+    explicit LibraryLoadGuard(QPluginLoader *loader);
     ~LibraryLoadGuard();
 
 protected:
-#ifdef Q_OS_WINDOWS
-    QScopedPointer<LibraryLoadGuardPrivate> d_ptr;
-#endif
+    LibraryLoadGuardPrivate *d;
 };
 
 #endif // LIBRARYLOADGUARD_H

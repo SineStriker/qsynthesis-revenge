@@ -1,6 +1,15 @@
 #ifndef IDOCUMENTPRIVATE_H
 #define IDOCUMENTPRIVATE_H
 
+//
+//  W A R N I N G !!!
+//  -----------------
+//
+// This file is not part of the ChorusKit API. It is used purely as an
+// implementation detail. This header file may change from version to
+// version without notice, or may even be removed.
+//
+
 #include <QSettings>
 #include <QSharedPointer>
 #include <QTemporaryDir>
@@ -10,7 +19,7 @@
 
 namespace Core {
 
-    class LogDirectory {
+    class CKAPPCORE_API LogDirectory {
     public:
         explicit LogDirectory(const QString &prefix = {}) : prefix(prefix), autoRemove(true) {
         }
@@ -28,7 +37,7 @@ namespace Core {
         QString userLogDir;
     };
 
-    class IDocumentPrivate {
+    class CKAPPCORE_API IDocumentPrivate {
         Q_DECLARE_PUBLIC(IDocument)
     public:
         IDocumentPrivate();
@@ -56,7 +65,7 @@ namespace Core {
         LogDirectory logDir;
     };
 
-    class IDocumentSettingsData : public QSharedData {
+    class CKAPPCORE_API IDocumentSettingsData : public QSharedData {
     public:
         QString dir;
         QSharedPointer<QSettings> settings;

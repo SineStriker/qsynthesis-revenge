@@ -39,11 +39,45 @@
 <context>
     <name>Core::DspxDocument</name>
     <message>
-        <source>Failed to open %1</source>
+        <source>Invalid file format!</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Failed to save %1</source>
+        <source>Error occurred while parsing file!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Error occurred while saving file!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Failed to open file!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Failed to create file!</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>Core::DspxSpec</name>
+    <message>
+        <source>DiffScope Project Files</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>File Error</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>Core::DspxSpecPrivate</name>
+    <message>
+        <source>OpenVPI DiffSinger Editor</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Built-in</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -271,25 +305,6 @@
     <name>Core::Internal::DisplayPage</name>
     <message>
         <source>Display</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>Core::Internal::DspxSpec</name>
-    <message>
-        <source>DiffScope Project Files</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>File Error</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>OpenVPI DiffSinger Editor</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Built-in</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

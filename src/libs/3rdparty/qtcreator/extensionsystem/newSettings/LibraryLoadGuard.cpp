@@ -1,31 +1,35 @@
 #include "LibraryLoadGuard.h"
 
-#ifndef Q_OS_WINDOWS
-
-LibraryLoadGuard::LibraryLoadGuard(const QString &path) {
-}
-
-LibraryLoadGuard::~LibraryLoadGuard() {
-}
-
-#else
+#ifdef Q_OS_WINDOWS
 #    include <Windows.h>
+#else
+#endif
 
 class LibraryLoadGuardPrivate {
 public:
+    QPluginLoader *loader;
+#ifdef Q_OS_WINDOWS
     QString path;
+#endif
+
+    explicit LibraryLoadGuardPrivate(QPluginLoader *loader) : loader(loader) {
+    }
 };
 
-LibraryLoadGuard::LibraryLoadGuard(const QString &path) : d_ptr(new LibraryLoadGuardPrivate()) {
+LibraryLoadGuard::LibraryLoadGuard(QPluginLoader *loader) : d(new LibraryLoadGuardPrivate(loader)) {
+#ifdef Q_OS_WINDOWS
     wchar_t buf[MAX_PATH];
     if (::GetDllDirectoryW(MAX_PATH, buf)) {
-        d_ptr->path = QString::fromStdWString(buf);
+        d->path = QString::fromStdWString(buf);
     }
-    ::SetDllDirectoryW(path.toStdWString().data());
+    ::SetDllDirectoryW(loader->fileName().toStdWString().data());
+#else
+    loader->setLoadHints(loader.loadHints() | QLibrary::ExportExternalSymbolsHint);
+#endif
 }
 
 LibraryLoadGuard::~LibraryLoadGuard() {
-    ::SetDllDirectoryW(d_ptr->path.isEmpty() ? NULL : d_ptr->path.toStdWString().data());
-}
+    ::SetDllDirectoryW(d->path.isEmpty() ? nullptr : d->path.toStdWString().data());
 
-#endif
+    delete d;
+}

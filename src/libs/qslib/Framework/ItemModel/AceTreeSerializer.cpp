@@ -39,7 +39,7 @@ namespace QsApi {
 
     AceTreeSerializerPrivate::AceTreeSerializerPrivate(AceTreeSerializer *q)
         : q(q), preferredType(QJsonValue::Null), userdata(nullptr), root(q), parent(nullptr),
-          arrayOptions({{}, {}, {}}), objectOptions({{}, {}, {}, {}}) {
+          arrayOptions({{}, {}, {}, {}}), objectOptions({{}, {}, {}, {}, {}}) {
     }
 
     AceTreeSerializerPrivate::~AceTreeSerializerPrivate() {
@@ -281,17 +281,18 @@ namespace QsApi {
     }
 
     bool AceTreeSerializer::readValue(const QJsonValue &value, AceTreeItem *item) {
-        if (!d->selfKey.isEmpty() || !d->parent) {
+        if (d->selfKey.isEmpty() || !d->parent) {
             return false;
         }
 
         AceTreeItem *childItem;
-        switch (value.type()) {
+        switch (d->preferredType) {
             case QJsonValue::Null:
             case QJsonValue::Bool:
             case QJsonValue::Double:
             case QJsonValue::String: {
                 item->setProperty(d->selfKey, value.toVariant());
+                return true;
                 break;
             }
 
@@ -371,6 +372,10 @@ namespace QsApi {
     bool AceTreeSerializer::readObject(const QJsonObject &object, AceTreeItem *item) {
         const auto &opt = d->objectOptions;
         const auto &func = opt.reader;
+
+        QSet<QString> queriedKeys;
+        QSet<AceTreeSerializer *> queriedChildren;
+
         for (auto it = object.begin(); it != object.end(); ++it) {
             const auto &key = it.key();
             const auto &val = it.value();
@@ -399,10 +404,14 @@ namespace QsApi {
                     case QJsonValue::String:
                     case QJsonValue::Array:
                     case QJsonValue::Object: {
-                        if (!it1->validate(val.type())) {
-                            return false;
+                        AcceptValueType type = opt.acceptAll;
+                        if (type == NoAccept) {
+                            if (!it1->validate(val.type())) {
+                                return false;
+                            }
+                            type = it1->aType();
                         }
-                        switch (it1->aType()) {
+                        switch (type) {
                             case Property:
                                 item->setProperty(key, val.toVariant());
                                 break;
@@ -412,6 +421,7 @@ namespace QsApi {
                             default:
                                 break;
                         }
+                        queriedKeys.insert(key);
                         continue;
                         break;
                     }
@@ -422,11 +432,32 @@ namespace QsApi {
 
             // Try children
             auto child = keyToChild(key);
-            if (child && !child->readValue(val, item)) {
-                return false;
+            if (child) {
+                if (!child->readValue(val, item)) {
+                    return false;
+                }
+                queriedChildren.insert(child);
             }
 
             // Leave it unhandled
+        }
+
+        // Unused children
+        for (const auto &child : qAsConst(d->childKeyIndexes)) {
+            if (queriedChildren.contains(child))
+                continue;
+            child->createValue(item);
+        }
+
+        // Default properties
+        for (auto it = opt.acceptOnes.begin(); it != opt.acceptOnes.end(); ++it) {
+            if (queriedKeys.contains(it.key()))
+                continue;
+
+            if (it->aType() == Property)
+                item->setProperty(it.key(), it->jValue());
+            else if (it->aType() == DynamicData)
+                item->setDynamicData(it.key(), it->jValue());
         }
 
         return true;
@@ -523,6 +554,9 @@ namespace QsApi {
         const auto &opt = d->objectOptions;
         const auto &func = opt.writer;
 
+        QSet<QString> queriedKeys;
+        QSet<AceTreeSerializer *> queriedChildren;
+
         // Write properties
         auto properties = item->properties();
         for (auto it = properties.begin(); it != properties.end(); ++it) {
@@ -551,13 +585,17 @@ namespace QsApi {
                 ((it1 = opt.acceptOnes.find(key)) != opt.acceptOnes.end() && it1.value() == Property)) {
                 QJsonValue value = variant_to_jsonValue(val);
                 object->insert(key, value);
+                queriedKeys.insert(key);
                 continue;
             }
 
             // Try children
             auto child = keyToChild(key);
-            if (child && !child->writeValue(object, {&val, Property})) {
-                return false;
+            if (child) {
+                if (!child->writeValue(object, {&val, Property})) {
+                    return false;
+                }
+                queriedChildren.insert(child);
             }
 
             // Leave it unhandled
@@ -596,8 +634,11 @@ namespace QsApi {
 
             // Try children
             auto child = keyToChild(key);
-            if (child && !child->writeValue(object, {&val, DynamicData})) {
-                return false;
+            if (child) {
+                if (!child->writeValue(object, {&val, DynamicData})) {
+                    return false;
+                }
+                queriedChildren.insert(child);
             }
 
             // Leave it unhandled
@@ -623,14 +664,99 @@ namespace QsApi {
 
             // Try children
             auto child = keyToChild(key);
-            if (child && !child->writeValue(object, item)) {
-                return false;
+            if (child) {
+                if (!child->writeValue(object, node)) {
+                    return false;
+                }
+                queriedChildren.insert(child);
             }
 
             // Leave it unhandled
         }
 
+        Q_UNUSED(queriedChildren)
+
+        // Default properties
+        for (auto it = opt.acceptOnes.begin(); it != opt.acceptOnes.end(); ++it) {
+            if (queriedKeys.contains(it.key()))
+                continue;
+
+            object->insert(it.key(), it->jValue());
+        }
+
         return true;
+    }
+
+    void AceTreeSerializer::createValue(AceTreeItem *item) {
+        if (d->selfKey.isEmpty() || !d->parent) {
+            return;
+        }
+
+        AceTreeItem *childItem;
+        switch (d->preferredType) {
+            case QJsonValue::Null:
+            case QJsonValue::Bool:
+            case QJsonValue::Double:
+            case QJsonValue::String: {
+                item->setProperty(d->selfKey, d->preferredType);
+                break;
+            }
+
+            case QJsonValue::Array: {
+                childItem = new AceTreeItem(d->selfKey);
+                createArray(childItem);
+                break;
+            }
+
+            case QJsonValue::Object: {
+                childItem = new AceTreeItem(d->selfKey);
+                createObject(childItem);
+                break;
+            }
+
+            default:
+                return;
+                break;
+        }
+
+        switch (d->parent->preferredType()) {
+            case QJsonValue::Array:
+                item->appendRow(childItem);
+                break;
+            case QJsonValue::Object:
+                item->insertNode(childItem);
+                break;
+            default:
+                break;
+        }
+    }
+
+    void AceTreeSerializer::createArray(AceTreeItem *item) {
+        const auto &opt = d->arrayOptions;
+        if (opt.creator) {
+            opt.creator(item, d->userdata);
+        }
+    }
+
+    void AceTreeSerializer::createObject(AceTreeItem *item) {
+        const auto &opt = d->objectOptions;
+
+        if (opt.creator) {
+            opt.creator(item, d->userdata);
+        }
+
+        // Default properties
+        for (auto it = opt.acceptOnes.begin(); it != opt.acceptOnes.end(); ++it) {
+            if (it->aType() == Property)
+                item->setProperty(it.key(), it->jValue());
+            else if (it->aType() == DynamicData)
+                item->setDynamicData(it.key(), it->jValue());
+        }
+
+        // Children
+        for (const auto &child : qAsConst(d->childKeyIndexes)) {
+            child->createValue(item);
+        }
     }
 
 }

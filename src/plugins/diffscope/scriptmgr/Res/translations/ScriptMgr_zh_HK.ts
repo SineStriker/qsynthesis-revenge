@@ -112,46 +112,46 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Internal/AddOn/ScriptMgrAddOn.cpp" line="290"/>
+        <location filename="../../Internal/AddOn/ScriptMgrAddOn.cpp" line="291"/>
         <source>Uncaught error.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Internal/AddOn/ScriptMgrAddOn.cpp" line="291"/>
+        <location filename="../../Internal/AddOn/ScriptMgrAddOn.cpp" line="292"/>
         <source>JavaScript Error</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Internal/AddOn/ScriptMgrAddOn.cpp" line="295"/>
-        <location filename="../../Internal/AddOn/ScriptMgrAddOn.cpp" line="299"/>
+        <location filename="../../Internal/AddOn/ScriptMgrAddOn.cpp" line="296"/>
+        <location filename="../../Internal/AddOn/ScriptMgrAddOn.cpp" line="300"/>
         <source>Warning</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Internal/AddOn/ScriptMgrAddOn.cpp" line="295"/>
+        <location filename="../../Internal/AddOn/ScriptMgrAddOn.cpp" line="296"/>
         <source>Cannot load script file &apos;%1&apos;. The file is ignored.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Internal/AddOn/ScriptMgrAddOn.cpp" line="299"/>
+        <location filename="../../Internal/AddOn/ScriptMgrAddOn.cpp" line="300"/>
         <source>Cannot get name of script &apos;%1&apos;. Its name will be displayed as its id.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Internal/AddOn/ScriptMgrAddOn.cpp" line="303"/>
-        <location filename="../../Internal/AddOn/ScriptMgrAddOn.cpp" line="307"/>
-        <location filename="../../Internal/AddOn/ScriptMgrAddOn.cpp" line="311"/>
+        <location filename="../../Internal/AddOn/ScriptMgrAddOn.cpp" line="304"/>
+        <location filename="../../Internal/AddOn/ScriptMgrAddOn.cpp" line="308"/>
+        <location filename="../../Internal/AddOn/ScriptMgrAddOn.cpp" line="312"/>
         <source>Error</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Internal/AddOn/ScriptMgrAddOn.cpp" line="303"/>
+        <location filename="../../Internal/AddOn/ScriptMgrAddOn.cpp" line="304"/>
         <source>Cannot initialize JavaScript engine.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../../Internal/AddOn/ScriptMgrAddOn.cpp" line="307"/>
-        <location filename="../../Internal/AddOn/ScriptMgrAddOn.cpp" line="311"/>
+        <location filename="../../Internal/AddOn/ScriptMgrAddOn.cpp" line="308"/>
+        <location filename="../../Internal/AddOn/ScriptMgrAddOn.cpp" line="312"/>
         <source>Script &apos;%1&apos; execution failed.</source>
         <translation type="unfinished"></translation>
     </message>

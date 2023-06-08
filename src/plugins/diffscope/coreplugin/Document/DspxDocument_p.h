@@ -22,9 +22,12 @@ namespace Core {
 
         QsApi::AceTreeModel *model;
 
-        bool isVST;
+        bool vstMode;
 
         void unshiftToRecent();
+
+        bool readFile(const QByteArray &data);
+        bool saveFile(QByteArray *data) const;
     };
 
 }
