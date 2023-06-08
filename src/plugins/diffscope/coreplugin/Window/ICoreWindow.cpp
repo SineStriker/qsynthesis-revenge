@@ -28,6 +28,17 @@ namespace Core {
     using MOST_RECENT_ACTIONS = QMChronSet<QString>;
     Q_GLOBAL_STATIC(MOST_RECENT_ACTIONS, mostRecentActionsGlobal);
 
+    static void delayUpdateTheme(const QString &theme) {
+        static QString currentTheme;
+        currentTheme = theme;
+        QTimer::singleShot(10, qIDec, [theme]() {
+            if (currentTheme != theme) {
+                return;
+            }
+            qIDec->setTheme(theme);
+        });
+    }
+
     static QString removeAllAccelerateKeys(QString text) {
         // 第一步：去掉带括号的加速键
         QRegularExpression regex1("\\(&[^)]+\\)");
@@ -302,27 +313,19 @@ namespace Core {
             if (!item) {
                 return;
             }
-
             QString theme = item->text();
-            QTimer::singleShot(10, this, [theme]() {
-                qIDec->setTheme(theme); //
-            });
+            delayUpdateTheme(theme);
         });
 
         connect(cp, &QsApi::CommandPalette::finished, obj, [obj, this, orgTheme](QListWidgetItem *item) {
             delete obj;
             if (!item) {
-                QTimer::singleShot(10, this, [orgTheme]() {
-                    qIDec->setTheme(orgTheme); //
-                });
+                delayUpdateTheme(orgTheme);
                 return;
             }
 
             QString theme = item->text();
-            QTimer::singleShot(10, this, [theme]() {
-                qIDec->setTheme(theme); //
-            });
-
+            delayUpdateTheme(theme);
             ExtensionSystem::PluginManager::settings()->setValue("Preferences/Theme", theme);
         });
     }

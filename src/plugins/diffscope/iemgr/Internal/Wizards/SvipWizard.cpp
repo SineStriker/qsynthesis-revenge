@@ -11,16 +11,12 @@ namespace IEMgr ::Internal {
 
     SvipWizard::SvipWizard(QObject *parent) : IWizardFactory("iemgr.SvipWizard", parent) {
         setCategory("score.XiaoIce");
-        qIDec->installLocale(this, _LOC(SvipWizard, this));
+        setDisplayName([]() { return tr("SVIP file"); });
+        setDescription([]() { return tr("XStudio 2.0 project file."); });
+        setDisplayCategory([]() { return QApplication::translate("IEMgr::WizardCategory", "XiaoIce"); });
     }
 
     SvipWizard::~SvipWizard() {
-    }
-
-    void SvipWizard::reloadStrings() {
-        setDisplayName(tr("SVIP file"));
-        setDescription(tr("XStudio 2.0 project file."));
-        setDisplayCategory(QApplication::translate("IEMgr::WizardCategory", "XiaoIce"));
     }
 
     QString SvipWizard::filter(Feature feature) const {

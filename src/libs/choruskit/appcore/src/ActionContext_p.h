@@ -29,7 +29,7 @@ namespace Core {
         ActionContext *q_ptr;
 
         QString id;
-        QString title;
+        QMDisplayString title;
 
         bool configurable;
         QMChronMap<QString, ActionContextItemPrivate> actions;

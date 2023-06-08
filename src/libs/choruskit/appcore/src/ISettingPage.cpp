@@ -29,7 +29,7 @@ namespace Core {
         return d->title;
     }
 
-    void ISettingPage::setTitle(const QString &title) {
+    void ISettingPage::setTitle(const QMDisplayString &title) {
         Q_D(ISettingPage);
         d->title = title;
 
@@ -41,7 +41,7 @@ namespace Core {
         return d->description;
     }
 
-    void ISettingPage::setDescription(const QString &description) {
+    void ISettingPage::setDescription(const QMDisplayString &description) {
         Q_D(ISettingPage);
         d->description = description;
 
@@ -118,7 +118,7 @@ namespace Core {
 
     bool ISettingPage::matches(const QString &word) const {
         Q_D(const ISettingPage);
-        return d->title.contains(word, Qt::CaseInsensitive) || sortKeyword().contains(word, Qt::CaseInsensitive);
+        return d->title.text().contains(word, Qt::CaseInsensitive) || sortKeyword().contains(word, Qt::CaseInsensitive);
     }
 
     ISettingPage::ISettingPage(ISettingPagePrivate &d, const QString &id, QObject *parent)

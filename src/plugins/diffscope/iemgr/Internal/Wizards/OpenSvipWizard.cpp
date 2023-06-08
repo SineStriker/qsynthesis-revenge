@@ -14,16 +14,12 @@ namespace IEMgr ::Internal {
 
     OpenSvipWizard::OpenSvipWizard(QObject *parent) : IWizardFactory("iemgr.OpenSvipWizard", parent) {
         setCategory("score.OpenVPI");
-        qIDec->installLocale(this, _LOC(OpenSvipWizard, this));
+        setDisplayName([]() { return tr("OpenSVIP model"); });
+        setDescription([]() { return tr("OpenSVIP converter intermediate model."); });
+        setDisplayCategory([]() { return QApplication::translate("IEMgr::WizardCategory", "OpenVPI"); });
     }
 
     OpenSvipWizard::~OpenSvipWizard() {
-    }
-
-    void OpenSvipWizard::reloadStrings() {
-        setDisplayName(tr("OpenSVIP model"));
-        setDescription(tr("OpenSVIP converter intermediate model."));
-        setDisplayCategory(QApplication::translate("IEMgr::WizardCategory", "OpenVPI"));
     }
 
     QString OpenSvipWizard::filter(Feature feature) const {

@@ -16,8 +16,6 @@ namespace Core {
         DspxSpec *q;
 
         mutable QsApi::AceTreeSerializer *serializer;
-
-        void reloadStrings();
     };
 
 }

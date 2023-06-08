@@ -15,8 +15,6 @@ namespace IEMgr {
             explicit MidiWizard(QObject *parent = nullptr);
             ~MidiWizard();
 
-            void reloadStrings();
-
         public:
             Features features() const override;
             QString filter(Feature feature) const override;

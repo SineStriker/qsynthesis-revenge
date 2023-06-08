@@ -13,6 +13,8 @@ public:
 
 protected:
     LibraryLoadGuardPrivate *d;
+
+    Q_DISABLE_COPY_MOVE(LibraryLoadGuard);
 };
 
 #endif // LIBRARYLOADGUARD_H

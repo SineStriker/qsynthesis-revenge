@@ -20,8 +20,8 @@ namespace Core {
         QMChronMap<QString, ISettingPage *> pages;
 
         QString id;
-        QString title;
-        QString description;
+        QMDisplayString title;
+        QMDisplayString description;
     };
 
 }

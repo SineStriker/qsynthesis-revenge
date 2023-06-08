@@ -94,7 +94,7 @@ namespace Core {
         return d->title;
     }
 
-    void ActionContext::setTitle(const QString &title) {
+    void ActionContext::setTitle(const QMDisplayString &title) {
         Q_D(ActionContext);
         d->title = title;
         emit titleChanged(title);

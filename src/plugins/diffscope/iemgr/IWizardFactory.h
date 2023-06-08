@@ -4,6 +4,8 @@
 #include <QDateTime>
 #include <QObject>
 
+#include <Text/QMDisplayString.h>
+
 #include "IEMgrGlobal.h"
 
 namespace IEMgr {
@@ -36,17 +38,17 @@ namespace IEMgr {
         QString iconPath() const;
         void setIconPath(const QString &path);
 
-        QString description() const;
-        void setDescription(const QString &description);
+        QMDisplayString description() const;
+        void setDescription(const QMDisplayString &description);
 
-        QString displayName() const;
-        void setDisplayName(const QString &displayName);
+        QMDisplayString displayName() const;
+        void setDisplayName(const QMDisplayString &displayName);
 
         QString category() const;
         void setCategory(const QString &category);
 
-        QString displayCategory() const;
-        void setDisplayCategory(const QString &displayCategory);
+        QMDisplayString displayCategory() const;
+        void setDisplayCategory(const QMDisplayString &displayCategory);
 
     protected:
         IWizardFactory(IWizardFactoryPrivate &d, const QString &id, QObject *parent = nullptr);

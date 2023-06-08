@@ -6,9 +6,10 @@
 
 namespace Core::Internal {
 
-    ActionConfigurePage::ActionConfigurePage(QObject *parent)
-        : ISettingPage("core.ActionConfigure", parent) {
+    ActionConfigurePage::ActionConfigurePage(QObject *parent) : ISettingPage("core.ActionConfigure", parent) {
         m_widget = nullptr;
+        setTitle([]() { return tr("Actions and Toolbars"); });
+        setDescription([]() { return tr("Actions and Toolbars"); });
 
         qIDec->installLocale(this, _LOC(ActionConfigurePage, this));
     }
@@ -17,8 +18,6 @@ namespace Core::Internal {
     }
 
     void ActionConfigurePage::reloadStrings() {
-        setTitle(tr("Actions and Toolbars"));
-        setDescription(tr("Actions and Toolbars"));
     }
 
     QString ActionConfigurePage::sortKeyword() const {

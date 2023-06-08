@@ -6,6 +6,9 @@
 #include <QSet>
 #include <QToolBar>
 
+#include "QMNamespace.h"
+#include "Text/QMDisplayString.h"
+
 #include "CkAppCoreGlobal.h"
 
 namespace Core {
@@ -72,7 +75,7 @@ namespace Core {
         QString id() const;
 
         QString title() const;
-        void setTitle(const QString &title);
+        void setTitle(const QMDisplayString &title);
 
         ActionContextItem addAction(const QString &id, bool isGroup);
         void removeAction(const QString &id);

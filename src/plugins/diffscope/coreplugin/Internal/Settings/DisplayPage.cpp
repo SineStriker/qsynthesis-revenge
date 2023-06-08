@@ -10,6 +10,8 @@ namespace Core {
 
         DisplayPage::DisplayPage(QObject *parent) : ISettingPage("core.Display", parent) {
             m_widget = nullptr;
+            setTitle([]() { return tr("Display"); });
+            setDescription([]() { return tr("Display"); });
 
             qIDec->installLocale(this, _LOC(DisplayPage, this));
         }
@@ -18,8 +20,6 @@ namespace Core {
         }
 
         void DisplayPage::reloadStrings() {
-            setTitle(tr("Display"));
-            setDescription(tr("Display"));
         }
 
         QString DisplayPage::sortKeyword() const {

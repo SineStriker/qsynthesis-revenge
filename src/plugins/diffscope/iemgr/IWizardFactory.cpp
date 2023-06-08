@@ -49,22 +49,22 @@ namespace IEMgr {
         d->iconPath = path;
     }
 
-    QString IWizardFactory::description() const {
+    QMDisplayString IWizardFactory::description() const {
         Q_D(const IWizardFactory);
         return d->description;
     }
 
-    void IWizardFactory::setDescription(const QString &description) {
+    void IWizardFactory::setDescription(const QMDisplayString &description) {
         Q_D(IWizardFactory);
         d->description = description;
     }
 
-    QString IWizardFactory::displayName() const {
+    QMDisplayString IWizardFactory::displayName() const {
         Q_D(const IWizardFactory);
         return d->displayName;
     }
 
-    void IWizardFactory::setDisplayName(const QString &displayName) {
+    void IWizardFactory::setDisplayName(const QMDisplayString &displayName) {
         Q_D(IWizardFactory);
         d->displayName = displayName;
     }
@@ -79,12 +79,12 @@ namespace IEMgr {
         d->category = category;
     }
 
-    QString IWizardFactory::displayCategory() const {
+    QMDisplayString IWizardFactory::displayCategory() const {
         Q_D(const IWizardFactory);
         return d->displayCategory;
     }
 
-    void IWizardFactory::setDisplayCategory(const QString &displayCategory) {
+    void IWizardFactory::setDisplayCategory(const QMDisplayString &displayCategory) {
         Q_D(IWizardFactory);
         d->displayCategory = displayCategory;
     }

@@ -3,6 +3,8 @@
 
 #include <QObject>
 
+#include "Text/QMDisplayString.h"
+
 #include "CkAppCoreGlobal.h"
 
 namespace Core {
@@ -20,10 +22,10 @@ namespace Core {
         QString id() const;
 
         QString displayName() const;
-        void setDisplayName(const QString &displayName);
+        void setDisplayName(const QMDisplayString &displayName);
 
         QString description() const;
-        void setDescription(const QString &description);
+        void setDescription(const QMDisplayString &description);
 
         QIcon icon() const;
         void setIcon(const QIcon &icon);

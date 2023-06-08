@@ -21,16 +21,12 @@ namespace IEMgr ::Internal {
 
     MidiWizard::MidiWizard(QObject *parent) : IWizardFactory("iemgr.MidiWizard", parent) {
         setCategory("score.SimpleScore");
-        qIDec->installLocale(this, _LOC(MidiWizard, this));
+        setDisplayName([]() { return tr("Midi file"); });
+        setDescription([]() { return tr("A communications protocol for media interfaces."); });
+        setDisplayCategory([]() { return QApplication::translate("IEMgr::WizardCategory", "Simple Score"); });
     }
 
     MidiWizard::~MidiWizard() {
-    }
-
-    void MidiWizard::reloadStrings() {
-        setDisplayName(tr("Midi file"));
-        setDescription(tr("A communications protocol for media interfaces."));
-        setDisplayCategory(QApplication::translate("IEMgr::WizardCategory", "Simple Score"));
     }
 
     IWizardFactory::Features MidiWizard::features() const {

@@ -17,13 +17,13 @@ namespace IEMgr {
 
         QString id;
 
-        QString displayName;
-        QString description;
+        QMDisplayString displayName;
+        QMDisplayString description;
 
         QString iconPath;
 
         QString category;
-        QString displayCategory;
+        QMDisplayString displayCategory;
     };
 
 }

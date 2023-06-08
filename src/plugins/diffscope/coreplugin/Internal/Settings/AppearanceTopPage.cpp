@@ -10,6 +10,8 @@ namespace Core {
 
         AppearanceTopPage::AppearanceTopPage(QObject *parent) : ISettingPage("core.AppearanceTop", parent) {
             m_widget = nullptr;
+            setTitle([]() { return tr("Appearance"); });
+            setDescription([]() { return tr("Application appearance."); });
 
             qIDec->installLocale(this, _LOC(AppearanceTopPage, this));
         }
@@ -18,8 +20,6 @@ namespace Core {
         }
 
         void AppearanceTopPage::reloadStrings() {
-            setTitle(tr("Appearance"));
-            setDescription(tr("Application appearance."));
         }
 
         QString AppearanceTopPage::sortKeyword() const {

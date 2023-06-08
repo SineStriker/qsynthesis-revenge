@@ -23,16 +23,12 @@ namespace IEMgr ::Internal {
 
     UstWizard::UstWizard(QObject *parent) : IWizardFactory("iemgr.UstWizard", parent) {
         setCategory("score.SimpleScore");
-        qIDec->installLocale(this, _LOC(UstWizard, this));
+        setDisplayName([]() { return tr("UST file"); });
+        setDescription([]() { return tr("Utau sequence text file."); });
+        setDisplayCategory([]() { return QApplication::translate("IEMgr::WizardCategory", "Simple Score"); });
     }
 
     UstWizard::~UstWizard() {
-    }
-
-    void UstWizard::reloadStrings() {
-        setDisplayName(tr("UST file"));
-        setDescription(tr("Utau sequence text file."));
-        setDisplayCategory(QApplication::translate("IEMgr::WizardCategory", "Simple Score"));
     }
 
     QString UstWizard::filter(Feature feature) const {

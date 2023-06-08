@@ -3,6 +3,8 @@
 
 #include <QObject>
 
+#include "Text/QMDisplayString.h"
+
 #include "CkAppCoreGlobal.h"
 
 namespace Core {
@@ -20,10 +22,10 @@ namespace Core {
         QString id() const;
 
         QString title() const;
-        void setTitle(const QString &title);
+        void setTitle(const QMDisplayString &title);
 
         QString description() const;
-        void setDescription(const QString &description);
+        void setDescription(const QMDisplayString &description);
 
         bool addPage(ISettingPage *page);
         bool removePage(ISettingPage *page);

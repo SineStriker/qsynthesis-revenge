@@ -16,16 +16,12 @@ namespace VarFmt ::Internal {
 
     DsWizard::DsWizard(QObject *parent) : IWizardFactory("iemgr.DsWizard", parent) {
         setCategory("score.OpenVPI");
-        qIDec->installLocale(this, _LOC(DsWizard, this));
+        setDisplayName([]() { return tr("OpenVPI Ds file"); });
+        setDescription([]() { return tr("OpenVPI DiffSinger command line synthesizer format."); });
+        setDisplayCategory([]() { return QApplication::translate("IEMgr::WizardCategory", "OpenVPI"); });
     }
 
     DsWizard::~DsWizard() {
-    }
-
-    void DsWizard::reloadStrings() {
-        setDisplayName(tr("OpenVPI Ds file"));
-        setDescription(tr("OpenVPI DiffSinger command line synthesizer format."));
-        setDisplayCategory(QApplication::translate("IEMgr::WizardCategory", "OpenVPI"));
     }
 
     IWizardFactory::Features DsWizard::features() const {

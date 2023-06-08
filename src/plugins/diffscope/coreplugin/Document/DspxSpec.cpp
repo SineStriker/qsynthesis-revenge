@@ -103,7 +103,7 @@ namespace Core {
 
                     auto label = new QsApi::AceTreeSerializer("root.content.timeline.label", QJsonValue::Object);
                     label->setObjectAcceptOnes({
-                        {"pos",   {QsApi::AceTreeSerializer::Property, 0}        },
+                        {"pos",  {QsApi::AceTreeSerializer::Property, 0}        },
                         {"text", {QsApi::AceTreeSerializer::Property, QString()}},
                     });
                     labels->addChild("item", label);
@@ -135,8 +135,7 @@ namespace Core {
 
                 // workspace
                 {
-                    auto workspace = new QsApi::AceTreeSerializer("root.content.track.workspace",
-                                                                  QJsonValue::Object);
+                    auto workspace = new QsApi::AceTreeSerializer("root.content.track.workspace", QJsonValue::Object);
                     workspace->setObjectAcceptAll(QsApi::AceTreeSerializer::DynamicData);
                     track->addChild("workspace", workspace);
                 }
@@ -440,11 +439,6 @@ namespace Core {
         serializer = nullptr;
     }
 
-    void DspxSpecPrivate::reloadStrings() {
-        q->setDisplayName(tr("OpenVPI DiffSinger Editor"));
-        q->setDescription(tr("Built-in"));
-    }
-
     DspxSpec *m_instance = nullptr;
 
     DspxSpec::DspxSpec(QObject *parent) : DocumentSpec("org.ChorusKit.dspx", parent), d(new DspxSpecPrivate(this)) {
@@ -453,7 +447,8 @@ namespace Core {
         d->init();
 
         setIcon(QIcon(":/images/dspx.png"));
-        qIDec->installLocale(this, _LOC(DspxSpecPrivate, d));
+        setDisplayName([]() { return tr("OpenVPI DiffSinger Editor"); });
+        setDescription([]() { return tr("Built-in"); });
     }
 
     DspxSpec::~DspxSpec() {

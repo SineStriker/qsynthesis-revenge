@@ -13,8 +13,6 @@ namespace VarFmt::Internal {
         explicit DsWizard(QObject *parent = nullptr);
         ~DsWizard();
 
-        void reloadStrings();
-
     public:
         Features features() const override;
         QString filter(Feature feature) const override;
