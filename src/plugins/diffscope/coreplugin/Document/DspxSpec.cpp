@@ -8,6 +8,7 @@
 
 #include <QMDecoratorV2.h>
 
+#include "DspxController.h"
 #include "ICore.h"
 #include "Window/IProjectWindow.h"
 
@@ -20,9 +21,9 @@ namespace Core {
         {
             auto metadata = new QsApi::AceTreeSerializer("root.metadata", QJsonValue::Object);
             metadata->setObjectAcceptOnes({
-                {"version", {QsApi::AceTreeSerializer::DynamicData, qApp->property("dspxVersion").toString()}},
-                {"author",  {QsApi::AceTreeSerializer::Property, QString()}                                  },
-                {"name",    {QsApi::AceTreeSerializer::Property, "New Project"}                              },
+                {"version", {QsApi::AceTreeSerializer::Property, qApp->property("dspxVersion").toString()}},
+                {"author",  {QsApi::AceTreeSerializer::Property, QString()}                               },
+                {"name",    {QsApi::AceTreeSerializer::Property, "New Project"}                           },
             });
             root->addChild("metadata", metadata);
         }
@@ -429,14 +430,21 @@ namespace Core {
         return root;
     }
 
+    static QsApi::AceTreeControllerBuilder *createDspxControllerBuilder() {
+        auto root = new QsApi::AceTreeControllerBuilder("root");
+        root->addBuilder("root", &DspxRootController::staticMetaObject);
+        return root;
+    }
+
     DspxSpecPrivate::DspxSpecPrivate(Core::DspxSpec *q) : q(q) {
+        serializer = nullptr;
+        controllerBuilder = nullptr;
     }
 
     DspxSpecPrivate::~DspxSpecPrivate() {
     }
 
     void DspxSpecPrivate::init() {
-        serializer = nullptr;
     }
 
     DspxSpec *m_instance = nullptr;
@@ -515,6 +523,12 @@ namespace Core {
         if (!d->serializer)
             d->serializer = createDspxRootSerializer();
         return d->serializer;
+    }
+
+    QsApi::AceTreeControllerBuilder *DspxSpec::controllerBuilder() const {
+        if (!d->controllerBuilder)
+            d->controllerBuilder = createDspxControllerBuilder();
+        return d->controllerBuilder;
     }
 
 } // Core

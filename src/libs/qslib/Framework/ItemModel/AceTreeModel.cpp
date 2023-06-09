@@ -126,17 +126,26 @@ namespace QsApi {
 
     void AceTreeItem::setDynamicData(const QString &key, const QVariant &value) {
         Q_D(AceTreeItem);
+
+        QVariant oldValue;
         auto it = d->dynamicData.find(key);
         if (it == d->dynamicData.end()) {
             if (value.isNull() || !value.isValid())
                 return;
             d->dynamicData.insert(key, value);
         } else {
+            oldValue = it.value();
             if (value.isNull() || !value.isValid())
                 d->dynamicData.erase(it);
+            else if (oldValue == value)
+                return;
             else
                 it.value() = value;
         }
+
+        // Propagate signal
+        if (d->model)
+            emit d->model->dynamicDataChanged(this, key, oldValue, value);
     }
 
     QVariantHash AceTreeItem::dynamicDataMap() const {

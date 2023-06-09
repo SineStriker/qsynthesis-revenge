@@ -282,8 +282,8 @@ namespace Core {
                 ICore::instance()->documentSystem()->saveFileBrowse(iWin->window(), iWin->doc()); //
             });
 
-            connect(closeFileItem->action(), &QAction::triggered, this, [this, win]() {
-                LastWindowFilter guard;
+            connect(closeFileItem->action(), &QAction::triggered, this, [iWin, win]() {
+                iWin->setProperty("choruskit_show_home", true);
                 win->close();
             });
 

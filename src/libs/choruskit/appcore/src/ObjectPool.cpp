@@ -142,6 +142,7 @@ namespace Core {
                      << QList<QObject *>(d->objects.begin(), d->objects.end());
         }
 #endif
+        delete d;
     }
 
     void ObjectPool::addObject(QObject *obj) {
@@ -295,8 +296,8 @@ namespace Core {
             d->checkableMap1.insert(obj, {id, obj, reverse});
             d->checkableMap2.insert(id, {id, obj, reverse});
 
-            connect(obj, SIGNAL(toggled(bool)), d.data(), SLOT(_q_checkableToggled(bool)));
-            connect(obj, &QObject::destroyed, d.data(), &ObjectPoolPrivate::_q_checkableDestroyed);
+            connect(obj, SIGNAL(toggled(bool)), d, SLOT(_q_checkableToggled(bool)));
+            connect(obj, &QObject::destroyed, d, &ObjectPoolPrivate::_q_checkableDestroyed);
         }
 
         d->setGlobalAttribute_helper(id, reverse ^ obj->property("checked").toBool(), true, true);

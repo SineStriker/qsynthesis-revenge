@@ -18,7 +18,6 @@ namespace Core {
     static int m_untitledIndex = 0;
 
     DspxDocumentPrivate::DspxDocumentPrivate() {
-        hasWatch = false;
         vstMode = false;
         model = nullptr;
     }
@@ -30,6 +29,10 @@ namespace Core {
         Q_Q(DspxDocument);
 
         model = new QsApi::AceTreeModel(q);
+        ctl = DspxSpec::instance()->controllerBuilder()->buildRoot<DspxRootController>();
+        if (!ctl) {
+            ICore::fatalError(q->dialogParent(), DspxDocument::tr("Failed to create file model."));
+        }
 
         ICore::instance()->documentSystem()->addDocument(q, true);
     }
@@ -57,6 +60,7 @@ namespace Core {
             return false;
         }
         model->setRootItem(item);
+        ctl->setup(item);
 
         return true;
     }
@@ -69,7 +73,7 @@ namespace Core {
             q->setErrorMessage(DspxDocument::tr("Error occurred while saving file!"));
             return false;
         }
-        *data = QJsonDocument(obj).toJson();
+        *data = QJsonDocument(obj).toJson(QJsonDocument::Compact); // Disable indent to reduce size
 
         return true;
     }
@@ -83,6 +87,11 @@ namespace Core {
     QsApi::AceTreeModel *DspxDocument::model() const {
         Q_D(const DspxDocument);
         return d->model;
+    }
+
+    DspxRootController *DspxDocument::rootCtl() const {
+        Q_D(const DspxDocument);
+        return d->ctl;
     }
 
     bool DspxDocument::open(const QString &filename) {
@@ -148,6 +157,7 @@ namespace Core {
         DspxSpec::instance()->serializer()->createObject(item);
 
         d->model->setRootItem(item);
+        d->ctl->setup(item);
     }
 
     bool DspxDocument::isVSTMode() const {
@@ -174,6 +184,13 @@ namespace Core {
 
     bool DspxDocument::isModified() const {
         return false;
+    }
+
+    void DspxDocument::close() {
+        if (!QFileInfo(filePath()).isFile()) {
+            ICore::instance()->documentSystem()->removeRecentFile(filePath());
+        }
+        IDocument::close();
     }
 
     IDocument::ReloadBehavior DspxDocument::reloadBehavior(IDocument::ChangeTrigger state,

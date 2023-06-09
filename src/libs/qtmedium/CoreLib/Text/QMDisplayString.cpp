@@ -1,6 +1,7 @@
 #include "QMDisplayString.h"
 
 #include <QCoreApplication>
+#include <QDebug>
 
 namespace QMPrivate {
     class BaseString;
@@ -13,6 +14,7 @@ public:
     QVariantHash *properties;
 
     explicit QMDisplayStringData(const QString &s, QMDisplayString *q);
+    explicit QMDisplayStringData(QMDisplayString::GetText func, QMDisplayString *q);
     explicit QMDisplayStringData(QMDisplayString::GetTextEx func, void *userdata, QMDisplayString *q);
     explicit QMDisplayStringData(QMPrivate::BaseString *str, QVariantHash *properties, QMDisplayString *q);
     ~QMDisplayStringData();
@@ -49,14 +51,30 @@ namespace QMPrivate {
 
     class CallbackString : public BaseString {
     public:
-        explicit CallbackString(QMDisplayString::GetTextEx func, void *userdata, QMDisplayStringData *q)
-            : BaseString(QMDisplayString::TranslateAlways, q), func(func), userdata(userdata){};
+        explicit CallbackString(QMDisplayString::GetText func, QMDisplayStringData *q)
+            : BaseString(QMDisplayString::TranslateAlways, q), func(std::move(func)){};
+
+        QString text() const override {
+            return func();
+        }
+
+        BaseString *clone(QMDisplayStringData *q) const override {
+            return new CallbackString(func, q);
+        }
+
+        QMDisplayString::GetText func;
+    };
+
+    class CallbackExString : public BaseString {
+    public:
+        explicit CallbackExString(QMDisplayString::GetTextEx func, void *userdata, QMDisplayStringData *q)
+            : BaseString(QMDisplayString::TranslateAlwaysEx, q), func(std::move(func)), userdata(userdata){};
 
         QString text() const override {
             return func(*(q->q), userdata);
         }
         BaseString *clone(QMDisplayStringData *q) const override {
-            return new CallbackString(func, userdata, q);
+            return new CallbackExString(func, userdata, q);
         }
 
         QMDisplayString::GetTextEx func;
@@ -65,16 +83,20 @@ namespace QMPrivate {
 
 }
 
-static QString qm_get_text_default(const QMDisplayString &, void *userdata) {
-    return reinterpret_cast<QMDisplayString::GetText>(userdata)();
-}
-
 QMDisplayStringData::QMDisplayStringData(const QString &s, QMDisplayString *q)
     : q(q), str(new QMPrivate::PlainString(s, this)), properties(nullptr) {
 }
 
+QMDisplayStringData::QMDisplayStringData(QMDisplayString::GetText func, QMDisplayString *q)
+    : q(q), str(func ? decltype(str)(new QMPrivate::CallbackString(std::move(func), this))
+                     : decltype(str)(new QMPrivate::PlainString({}, this))),
+      properties(nullptr) {
+}
+
 QMDisplayStringData::QMDisplayStringData(QMDisplayString::GetTextEx func, void *userdata, QMDisplayString *q)
-    : q(q), str(new QMPrivate::CallbackString(func, userdata, this)), properties(nullptr) {
+    : q(q), str(func ? decltype(str)(new QMPrivate::CallbackExString(std::move(func), userdata, this))
+                     : decltype(str)(new QMPrivate::PlainString({}, this))),
+      properties(nullptr) {
 }
 
 QMDisplayStringData::QMDisplayStringData(QMPrivate::BaseString *str, QVariantHash *properties, QMDisplayString *q)
@@ -89,11 +111,16 @@ QMDisplayStringData::~QMDisplayStringData() {
 QMDisplayString::QMDisplayString(const QString &s) : d(new QMDisplayStringData(s, this)) {
 }
 
-QMDisplayString::QMDisplayString(QMDisplayString::GetText func)
-    : d(new QMDisplayStringData(qm_get_text_default, reinterpret_cast<void *>(func), this)) {
+QMDisplayString::QMDisplayString(const QMDisplayString::GetText &func) : d(new QMDisplayStringData(func, this)) {
 }
 
-QMDisplayString::QMDisplayString(GetTextEx func, void *userdata) : d(new QMDisplayStringData(func, userdata, this)) {
+QMDisplayString::QMDisplayString(const GetTextEx &func, void *userdata)
+    : d(new QMDisplayStringData(func, userdata, this)) {
+}
+
+QMDisplayString::~QMDisplayString() {
+    if (d->q == this)
+        delete d;
 }
 
 QMDisplayString::QMDisplayString(const QMDisplayString &other)
@@ -102,11 +129,6 @@ QMDisplayString::QMDisplayString(const QMDisplayString &other)
 
 QMDisplayString::QMDisplayString(QMDisplayString &&other) noexcept : d(other.d) {
     d->q = this;
-}
-
-QMDisplayString::~QMDisplayString() {
-    if (d->q == this)
-        delete d;
 }
 
 QMDisplayString &QMDisplayString::operator=(const QString &s) {
@@ -140,16 +162,33 @@ QString QMDisplayString::text() const {
 QMDisplayString::TranslatePolicy QMDisplayString::translatePolicy() const {
     return d->str->p;
 }
-void QMDisplayString::setTranslateCallback(QMDisplayString::GetText func) {
-    setTranslateCallback(qm_get_text_default, reinterpret_cast<void *>(func));
-}
 
-void QMDisplayString::setTranslateCallback(QMDisplayString::GetTextEx func, void *userdata) {
+void QMDisplayString::setTranslateCallback(const QMDisplayString::GetText &func) {
+    if (!func) {
+        setPlainString({});
+        return;
+    }
+
     if (d->str->p != TranslateAlways) {
         delete d->str;
-        d->str = new QMPrivate::CallbackString(func, userdata, d);
+        d->str = new QMPrivate::CallbackString(func, d);
     } else {
         auto str = static_cast<QMPrivate::CallbackString *>(d->str);
+        str->func = func;
+    }
+}
+
+void QMDisplayString::setTranslateCallback(const QMDisplayString::GetTextEx &func, void *userdata) {
+    if (!func) {
+        setPlainString({});
+        return;
+    }
+
+    if (d->str->p != TranslateAlwaysEx) {
+        delete d->str;
+        d->str = new QMPrivate::CallbackExString(func, userdata, d);
+    } else {
+        auto *str = static_cast<QMPrivate::CallbackExString *>(d->str);
         str->func = func;
         str->userdata = userdata;
     }

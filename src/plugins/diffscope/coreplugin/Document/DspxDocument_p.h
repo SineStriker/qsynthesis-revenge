@@ -1,6 +1,7 @@
 #ifndef DSPXDOCUMENTPRIVATE_H
 #define DSPXDOCUMENTPRIVATE_H
 
+#include "DspxController.h"
 #include "DspxDocument.h"
 
 #include <Collections/QMChronSet.h>
@@ -17,10 +18,10 @@ namespace Core {
 
         DspxDocument *q_ptr;
 
-        bool hasWatch;
         mutable QString untitledFileName;
 
         QsApi::AceTreeModel *model;
+        DspxRootController *ctl;
 
         bool vstMode;
 

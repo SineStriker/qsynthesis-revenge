@@ -16,6 +16,7 @@
 
 #include "ICore.h"
 #include "Internal/Window/MainWindow.h"
+#include "Window/IHomeWindow.h"
 
 #include "QsFrameworkNamespace.h"
 
@@ -692,7 +693,14 @@ namespace Core {
         addShortcutContext(menuBar());
 
         d->mainMenuCtx = ICore::instance()->actionSystem()->context(QString("%1.MainMenu").arg(id()));
+        if (!d->mainMenuCtx) {
+            ICore::fatalError(win, tr("Failed to create main menu."));
+        }
+
         d->invisibleCtx = ICore::instance()->actionSystem()->context(QString("%1.InvisibleContext").arg(id()));
+        if (!d->invisibleCtx) {
+            ICore::fatalError(win, tr("Failed to create internal action context."));
+        }
 
         // Init command palette
         d->cp = new QsApi::CommandPalette(win);
@@ -713,6 +721,12 @@ namespace Core {
     }
 
     void ICoreWindow::windowAddOnsFinished() {
+    }
+
+    void ICoreWindow::windowClosed() {
+        if (property("choruskit_show_home").toBool() && ICore::instance()->windowSystem()->count() == 1) {
+            ICore::showHome();
+        }
     }
 
     void ICoreWindow::actionItemAdded(ActionItem *item) {

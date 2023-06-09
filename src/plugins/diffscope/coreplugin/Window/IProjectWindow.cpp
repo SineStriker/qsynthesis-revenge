@@ -3,6 +3,8 @@
 
 #include <QDebug>
 #include <QEvent>
+#include <QJsonArray>
+#include <QJsonObject>
 #include <QLabel>
 #include <QMessageBox>
 #include <QMetaEnum>
@@ -147,6 +149,7 @@ namespace Core {
         Q_Q(IProjectWindow);
 
         m_forceClose = true;
+        q->setProperty("choruskit_show_home", true);
         q->window()->close();
     }
 
@@ -187,6 +190,9 @@ namespace Core {
         win->setAcceptDrops(true);
 
         d->mainToolbarCtx = ICore::instance()->actionSystem()->context("project.MainToolbar");
+        if (!d->mainToolbarCtx) {
+            ICore::fatalError(win, tr("Failed to create main toolbar."));
+        }
 
         auto &toolbar = d->m_toolbar;
         toolbar = new CToolBar();

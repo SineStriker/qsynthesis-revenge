@@ -135,6 +135,15 @@ namespace Core {
         instance()->windowSystem()->createWindow("home");
     }
 
+    void ICore::fatalError(QWidget *parent, const QString &text, int exitCode) {
+        QMessageBox msgBox(QMessageBox::Critical, tr("Fatal Error"), text, QMessageBox::Ok, parent);
+        msgBox.setText(tr("%1\n\nThe application is about to exit because an unresolvable exception has occurred, "
+                          "which may be caused by an illegal operation of an plugin.").arg(text));
+        msgBox.setDefaultButton(QMessageBox::Ok);
+        msgBox.exec();
+        std::exit(exitCode);
+    }
+
     class PopUpMenuWatcher : public QObject {
     public:
         explicit PopUpMenuWatcher(QWidget *parent = nullptr) : QObject(parent) {

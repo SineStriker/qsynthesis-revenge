@@ -112,11 +112,10 @@ namespace Core {
         settings->insert(settingCatalogC, obj);
     }
 
-    void WindowSystemPrivate::_q_iWindowClosed() {
+    void WindowSystemPrivate::windowClosed(IWindow *iWin) {
         Q_Q(WindowSystem);
 
-        auto iWin = qobject_cast<IWindow *>(sender());
-        emit q->windowDestroyed(iWin);
+        emit q->windowClosed(iWin);
 
         iWindows.remove(iWin);
         windowMap.remove(iWin->window());
@@ -271,7 +270,6 @@ namespace Core {
         }
 
         d->iWindows.append(iWin);
-        connect(iWin, &IWindow::closed, d, &WindowSystemPrivate::_q_iWindowClosed);
 
         // Get quit control
         qApp->setQuitOnLastWindowClosed(false);

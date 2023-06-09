@@ -94,8 +94,8 @@ namespace Core {
         void globalAttributeChanged(const QString &id, const QVariant &var, const QVariant &orgVar = {});
         void globalEventRequested(const QString &id, const QVariantHash &args);
 
-    protected:
-        QScopedPointer<ObjectPoolPrivate> d;
+    private:
+        ObjectPoolPrivate *d;
 
         friend class ObjectPoolPrivate;
     };

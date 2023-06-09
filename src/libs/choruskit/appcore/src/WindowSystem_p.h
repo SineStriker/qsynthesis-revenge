@@ -57,8 +57,7 @@ namespace Core {
         QHash<QString, WindowGeometry> winGeometries;
         QHash<QString, SplitterSizes> splitterSizes;
 
-    private:
-        void _q_iWindowClosed();
+        void windowClosed(IWindow *iWin);
     };
 }
 

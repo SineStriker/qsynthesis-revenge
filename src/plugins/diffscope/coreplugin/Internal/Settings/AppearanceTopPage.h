@@ -13,8 +13,6 @@ namespace Core {
             explicit AppearanceTopPage(QObject *parent = nullptr);
             ~AppearanceTopPage();
 
-            void reloadStrings();
-
         public:
             QString sortKeyword() const override;
 

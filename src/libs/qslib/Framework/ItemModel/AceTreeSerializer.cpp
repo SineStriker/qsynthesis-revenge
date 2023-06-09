@@ -35,6 +35,7 @@ namespace QsApi {
         QHash<QString, AceTreeSerializer *> rootIndexes; // Only root item own this
 
         bool addChild(const QString &key, AceTreeSerializer *child);
+        bool removeChild(const QString &_id, AceTreeSerializer **child_ref = nullptr);
     };
 
     AceTreeSerializerPrivate::AceTreeSerializerPrivate(AceTreeSerializer *q)
@@ -63,10 +64,10 @@ namespace QsApi {
             return false;
         }
 
-        auto &parent = child->d->parent;
-        if (parent) {
+        auto &_parent = child->d->parent;
+        if (_parent) {
             qWarning() << "QsApi::AceTreeSerializer::addChild(): trying to add a child which already has a parent"
-                       << parent;
+                       << _parent;
             return false;
         }
 
@@ -92,7 +93,7 @@ namespace QsApi {
         // Add parent index
         childKeyIndexes.insert(key, child);
         childNodeIndexes.insert(child, key);
-        parent = q;
+        _parent = q;
 
         // Add root index
         d2->rootIndexes.insert(d1->id, child);
@@ -106,6 +107,48 @@ namespace QsApi {
         // Transfer root
         d2->rootIndexes.insert(d1->rootIndexes);
         d1->rootIndexes.clear();
+
+        return true;
+    }
+
+    bool AceTreeSerializerPrivate::removeChild(const QString &_id, AceTreeSerializer **child_ref) {
+        auto &d2 = root->d;
+
+        auto it = d2->rootIndexes.find(_id);
+        if (it == d2->childKeyIndexes.end()) {
+            qWarning() << "QsApi::AceTreeSerializer::removeChild(): child does not exist:" << _id;
+            return false;
+        }
+
+        auto child = it.value();
+        auto &_parent = child->d->parent;
+
+        // Remove parent index
+        if (_parent) {
+            auto &d3 = _parent->d;
+            auto it2 = d3->childNodeIndexes.find(child); // Find key
+            d3->childKeyIndexes.remove(it2.value());     // Remove key index
+            d3->childNodeIndexes.erase(it2);             // Remove node index
+        }
+        _parent = nullptr;
+
+        // Remove root index
+        d2->rootIndexes.erase(it);
+        child->d->root = child;
+
+        // Build root
+        QHash<QString, AceTreeSerializer *> indexes;
+        for (const auto &item : child->children()) {
+            item->d->root = child; // Propagate
+            indexes.insert(item->id(), item);
+
+            d2->rootIndexes.remove(item->id());
+        }
+
+        child->d->rootIndexes = std::move(indexes);
+
+        if (child_ref)
+            *child_ref = child;
 
         return true;
     }
@@ -209,43 +252,12 @@ namespace QsApi {
     }
 
     bool AceTreeSerializer::removeChildById(const QString &id) {
-        auto &d2 = d->root->d;
-
-        auto it = d2->rootIndexes.find(id);
-        if (it == d2->childKeyIndexes.end()) {
-            qWarning() << "QsApi::AceTreeSerializer::removeChild(): child does not exist:" << id;
-            return false;
+        AceTreeSerializer *child;
+        if (d->removeChild(id, &child)) {
+            child->d->selfKey.clear();
+            return true;
         }
-
-        auto child = it.value();
-        auto &parent = child->d->parent;
-
-        // Remove parent index
-        if (parent) {
-            auto &d3 = parent->d;
-            auto it2 = d3->childNodeIndexes.find(child); // Find key
-            d3->childKeyIndexes.remove(it2.value());     // Remove key index
-            d3->childNodeIndexes.erase(it2);             // Remove node index
-        }
-        parent = nullptr;
-
-        // Remove root index
-        d2->rootIndexes.erase(it);
-        child->d->root = child;
-
-        // Build root
-        QHash<QString, AceTreeSerializer *> indexes;
-        for (const auto &item : child->children()) {
-            item->d->root = child; // Propagate
-            indexes.insert(item->id(), item);
-
-            d2->rootIndexes.remove(item->id());
-        }
-
-        child->d->rootIndexes = std::move(indexes);
-        child->d->selfKey.clear();
-
-        return true;
+        return false;
     }
 
     AceTreeSerializer *AceTreeSerializer::child(const QString &id) const {

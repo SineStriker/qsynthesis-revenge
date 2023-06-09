@@ -53,6 +53,7 @@ namespace Core {
         void setupWindow() override;
         void windowAddOnsInitialized() override;
         void windowAddOnsFinished() override;
+        void windowClosed() override;
 
         void actionItemAdded(ActionItem *item) override;
         void actionItemRemoved(ActionItem *item) override;

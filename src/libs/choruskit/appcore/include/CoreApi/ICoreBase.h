@@ -24,8 +24,11 @@ namespace Core {
 
     public:
         ActionSystem *actionSystem() const;
+
         WindowSystem *windowSystem() const;
+
         DocumentSystem *documentSystem() const;
+
         SettingCatalog *settingCatalog() const;
 
     protected:

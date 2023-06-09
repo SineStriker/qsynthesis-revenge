@@ -117,6 +117,7 @@ namespace QsApi {
         AceTreeItem *reset();
 
     signals:
+        void dynamicDataChanged(AceTreeItem *item, const QString &key, const QVariant &oldValue, const QVariant &newValue);
         void propertyChanged(AceTreeItem *item, const QString &key, const QVariant &oldValue, const QVariant &newValue);
 
         void bytesSet(AceTreeItem *item, int start, const QByteArray &oldBytes, const QByteArray &newBytes);

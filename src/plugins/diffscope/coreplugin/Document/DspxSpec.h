@@ -1,11 +1,12 @@
 #ifndef CHORUSKIT_DSPXSPEC_H
 #define CHORUSKIT_DSPXSPEC_H
 
+#include <Controllers/AceTreeController.h>
 #include <ItemModel/AceTreeSerializer.h>
 
 #include <CoreApi/DocumentSpec.h>
 
-#include <coreplugin/CoreGlobal.h>
+#include "coreplugin/CoreGlobal.h"
 
 namespace Core {
 
@@ -30,6 +31,8 @@ namespace Core {
 
     public:
         QsApi::AceTreeSerializer *serializer() const;
+
+        QsApi::AceTreeControllerBuilder *controllerBuilder() const;
 
     private:
         DspxSpecPrivate *d;

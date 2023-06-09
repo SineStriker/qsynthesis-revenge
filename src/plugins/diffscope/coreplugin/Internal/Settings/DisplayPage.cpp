@@ -12,14 +12,9 @@ namespace Core {
             m_widget = nullptr;
             setTitle([]() { return tr("Display"); });
             setDescription([]() { return tr("Display"); });
-
-            qIDec->installLocale(this, _LOC(DisplayPage, this));
         }
 
         DisplayPage::~DisplayPage() {
-        }
-
-        void DisplayPage::reloadStrings() {
         }
 
         QString DisplayPage::sortKeyword() const {

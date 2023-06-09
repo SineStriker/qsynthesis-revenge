@@ -12,14 +12,9 @@ namespace Core {
             m_widget = nullptr;
             setTitle([]() { return tr("Appearance"); });
             setDescription([]() { return tr("Application appearance."); });
-
-            qIDec->installLocale(this, _LOC(AppearanceTopPage, this));
         }
 
         AppearanceTopPage::~AppearanceTopPage() {
-        }
-
-        void AppearanceTopPage::reloadStrings() {
         }
 
         QString AppearanceTopPage::sortKeyword() const {

@@ -13,8 +13,6 @@ namespace Core {
             explicit ActionConfigurePage(QObject *parent = nullptr);
             ~ActionConfigurePage();
 
-            void reloadStrings();
-
         public:
             QString sortKeyword() const override;
 

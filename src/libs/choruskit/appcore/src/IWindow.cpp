@@ -1,6 +1,7 @@
 #include "IWindow.h"
 #include "IWindow_p.h"
 
+#include "ICoreBase.h"
 #include "IWindowAddOn_p.h"
 #include "ShortcutContext_p.h"
 #include "WindowCloseFilter_p.h"
@@ -166,6 +167,7 @@ namespace Core {
 
         q->windowClosed();
 
+        ICoreBase::instance()->windowSystem()->d_func()->windowClosed(q);
         emit q->closed();
 
         q->setWindow(nullptr);

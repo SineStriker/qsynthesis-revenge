@@ -1,6 +1,8 @@
 #ifndef CHORUSKIT_QMDISPLAYSTRING_H
 #define CHORUSKIT_QMDISPLAYSTRING_H
 
+#include <functional>
+
 #include <QPair>
 #include <QSharedDataPointer>
 #include <QString>
@@ -13,20 +15,23 @@ class QMDisplayStringData;
 class QMCORELIB_API QMDisplayString {
 public:
     enum TranslatePolicy {
-        TranslateAlways,
-        TranslateIgnored,
+        TranslateIgnored = 0,
+        TranslateAlways = 1,
+        TranslateAlwaysEx = 3,
     };
 
-    typedef QString (*GetText)();
-    typedef QString (*GetTextEx)(const QMDisplayString &, void *);
+    using GetText = std::function<QString()>;
+    using GetTextEx = std::function<QString(const QMDisplayString &, void *)>;
 
     QMDisplayString() : QMDisplayString(QString()){};
     QMDisplayString(const QString &s);
-    QMDisplayString(GetText func);
-    explicit QMDisplayString(GetTextEx func, void *userdata = nullptr);
+    QMDisplayString(const GetText &func);
+    explicit QMDisplayString(const GetTextEx &func, void *userdata = nullptr);
+    ~QMDisplayString();
+
     QMDisplayString(const QMDisplayString &other);
     QMDisplayString(QMDisplayString &&other) noexcept;
-    ~QMDisplayString();
+
 
     QMDisplayString &operator=(const QString &s);
     QMDisplayString &operator=(const QMDisplayString &other);
@@ -35,8 +40,8 @@ public:
     QString text() const;
     TranslatePolicy translatePolicy() const;
 
-    void setTranslateCallback(GetText func);
-    void setTranslateCallback(GetTextEx func, void *userdata = nullptr);
+    void setTranslateCallback(const GetText &func);
+    void setTranslateCallback(const GetTextEx &func, void *userdata = nullptr);
     void setPlainString(const QString &s);
 
     QVariant property(const QString &key) const;

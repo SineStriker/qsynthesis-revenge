@@ -10,14 +10,9 @@ namespace Core::Internal {
         m_widget = nullptr;
         setTitle([]() { return tr("Actions and Toolbars"); });
         setDescription([]() { return tr("Actions and Toolbars"); });
-
-        qIDec->installLocale(this, _LOC(ActionConfigurePage, this));
     }
 
     ActionConfigurePage::~ActionConfigurePage() {
-    }
-
-    void ActionConfigurePage::reloadStrings() {
     }
 
     QString ActionConfigurePage::sortKeyword() const {

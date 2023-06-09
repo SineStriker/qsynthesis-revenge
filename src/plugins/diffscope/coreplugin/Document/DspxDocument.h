@@ -4,8 +4,7 @@
 #include <CoreApi/IDocument.h>
 #include <ItemModel/AceTreeModel.h>
 
-#include "coreplugin/CoreGlobal.h"
-#include "coreplugin/Interfaces/IDspxObserver.h"
+#include "DspxController.h"
 
 namespace Core {
 
@@ -19,6 +18,8 @@ namespace Core {
         ~DspxDocument();
 
         QsApi::AceTreeModel *model() const;
+
+        DspxRootController *rootCtl() const;
 
     public:
         bool open(const QString &filename) override;
@@ -38,6 +39,8 @@ namespace Core {
         QString defaultPath() const override;
         QString suggestedFileName() const override;
         bool isModified() const override;
+
+        void close() override;
 
     protected:
         DspxDocument(DspxDocumentPrivate &d, QObject *parent = nullptr);

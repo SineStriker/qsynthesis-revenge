@@ -46,7 +46,7 @@ namespace Core {
 
     signals:
         void windowCreated(IWindow *iWin);
-        void windowDestroyed(IWindow *iWin);
+        void windowClosed(IWindow *iWin);
 
     protected:
         QScopedPointer<WindowSystemPrivate> d_ptr;

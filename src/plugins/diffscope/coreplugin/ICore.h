@@ -47,6 +47,11 @@ namespace Core {
          */
         static void showHome();
 
+        /*
+         * brief Show fatal error message and exit
+         */
+        static void fatalError(QWidget *parent, const QString &text, int exitCode = -1);
+
     public:
         /**
          * brief: Automatically set any child popup menu's style property to update its style

@@ -13,8 +13,6 @@ namespace Core {
             explicit DisplayPage(QObject *parent = nullptr);
             ~DisplayPage();
 
-            void reloadStrings();
-
         public:
             QString sortKeyword() const override;
 

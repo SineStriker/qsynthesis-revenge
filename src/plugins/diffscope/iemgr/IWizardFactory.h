@@ -60,4 +60,6 @@ namespace IEMgr {
 
 }
 
+Q_DECLARE_OPERATORS_FOR_FLAGS(IEMgr::IWizardFactory::Features)
+
 #endif // IWIZARDFACTORY_H
