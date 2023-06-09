@@ -8,6 +8,7 @@
 
 #include <QMDecoratorV2.h>
 
+#include "DspxConst.h"
 #include "DspxController.h"
 #include "ICore.h"
 #include "Window/IProjectWindow.h"
@@ -21,9 +22,9 @@ namespace Core {
         {
             auto metadata = new QsApi::AceTreeSerializer("root.metadata", QJsonValue::Object);
             metadata->setObjectAcceptOnes({
-                {"version", {QsApi::AceTreeSerializer::Property, qApp->property("dspxVersion").toString()}},
-                {"author",  {QsApi::AceTreeSerializer::Property, QString()}                               },
-                {"name",    {QsApi::AceTreeSerializer::Property, "New Project"}                           },
+                {"version", {QsApi::AceTreeSerializer::Property, Dspx::Version}           },
+                {"author",  {QsApi::AceTreeSerializer::Property, Dspx::DefaultAuthor}     },
+                {"name",    {QsApi::AceTreeSerializer::Property, Dspx::DefaultProjectName}},
             });
             root->addChild("metadata", metadata);
         }
@@ -56,8 +57,8 @@ namespace Core {
                 {
                     auto control = new QsApi::AceTreeSerializer("root.content.master.control", QJsonValue::Object);
                     control->setObjectAcceptOnes({
-                        {"gain", {QsApi::AceTreeSerializer::Property, 0}    },
-                        {"mute", {QsApi::AceTreeSerializer::Property, false}},
+                        {"gain", {QsApi::AceTreeSerializer::Property, Dspx::DefaultGain}},
+                        {"mute", {QsApi::AceTreeSerializer::Property, Dspx::DefaultMute}},
                     });
                     master->addChild("control", control);
                 }
@@ -77,9 +78,9 @@ namespace Core {
                     auto timeSignature =
                         new QsApi::AceTreeSerializer("root.content.timeline.timeSignature", QJsonValue::Object);
                     timeSignature->setObjectAcceptOnes({
-                        {"pos",         {QsApi::AceTreeSerializer::Property, 0}},
-                        {"numerator",   {QsApi::AceTreeSerializer::Property, 4}},
-                        {"denominator", {QsApi::AceTreeSerializer::Property, 4}},
+                        {"pos",         {QsApi::AceTreeSerializer::Property, Dspx::DefaultTimeSignaturePos}        },
+                        {"numerator",   {QsApi::AceTreeSerializer::Property, Dspx::DefaultTimeSignatureNumerator}  },
+                        {"denominator", {QsApi::AceTreeSerializer::Property, Dspx::DefaultTimeSignatureDenominator}},
                     });
                     timeSignatures->addChild("item", timeSignature);
                 }
@@ -91,8 +92,8 @@ namespace Core {
 
                     auto tempo = new QsApi::AceTreeSerializer("root.content.timeline.tempo", QJsonValue::Object);
                     tempo->setObjectAcceptOnes({
-                        {"pos",   {QsApi::AceTreeSerializer::Property, 0}    },
-                        {"value", {QsApi::AceTreeSerializer::Property, 120.0}},
+                        {"pos",   {QsApi::AceTreeSerializer::Property, Dspx::DefaultTempoPos}  },
+                        {"value", {QsApi::AceTreeSerializer::Property, Dspx::DefaultTempoValue}},
                     });
                     tempos->addChild("item", tempo);
                 }
@@ -104,8 +105,8 @@ namespace Core {
 
                     auto label = new QsApi::AceTreeSerializer("root.content.timeline.label", QJsonValue::Object);
                     label->setObjectAcceptOnes({
-                        {"pos",  {QsApi::AceTreeSerializer::Property, 0}        },
-                        {"text", {QsApi::AceTreeSerializer::Property, QString()}},
+                        {"pos",  {QsApi::AceTreeSerializer::Property, Dspx::DefaultLabelPos} },
+                        {"text", {QsApi::AceTreeSerializer::Property, Dspx::DefaultLabelText}},
                     });
                     labels->addChild("item", label);
                 }
@@ -118,7 +119,7 @@ namespace Core {
 
                 auto track = new QsApi::AceTreeSerializer("root.content.track", QJsonValue::Object);
                 track->setObjectAcceptOnes({
-                    {"name", {QsApi::AceTreeSerializer::Property, "Untitled Track"}},
+                    {"name", {QsApi::AceTreeSerializer::Property, Dspx::DefaultTrackName}},
                 });
                 tracks->addChild("item", track);
 
@@ -126,10 +127,10 @@ namespace Core {
                 {
                     auto control = new QsApi::AceTreeSerializer("root.content.track.control", QJsonValue::Object);
                     control->setObjectAcceptOnes({
-                        {"gain", {QsApi::AceTreeSerializer::Property, 0}    },
-                        {"pan",  {QsApi::AceTreeSerializer::Property, 0}    },
-                        {"mute", {QsApi::AceTreeSerializer::Property, false}},
-                        {"solo", {QsApi::AceTreeSerializer::Property, false}},
+                        {"gain", {QsApi::AceTreeSerializer::Property, Dspx::DefaultGain}},
+                        {"pan",  {QsApi::AceTreeSerializer::Property, Dspx::DefaultPan} },
+                        {"mute", {QsApi::AceTreeSerializer::Property, Dspx::DefaultMute}},
+                        {"solo", {QsApi::AceTreeSerializer::Property, Dspx::DefaultSolo}},
                     });
                     track->addChild("control", control);
                 }
@@ -152,7 +153,7 @@ namespace Core {
                         auto singingClip =
                             new QsApi::AceTreeSerializer("root.content.track.singingClip", QJsonValue::Object);
                         singingClip->setObjectAcceptOnes({
-                            {"name", {QsApi::AceTreeSerializer::Property, "Untitled Singing Clip"}},
+                            {"name", {QsApi::AceTreeSerializer::Property, Dspx::DefaultSingingClipName}},
                         });
                         clips->addChild("singing", singingClip);
 
@@ -161,10 +162,10 @@ namespace Core {
                             auto time =
                                 new QsApi::AceTreeSerializer("root.content.track.singingClip.time", QJsonValue::Object);
                             time->setObjectAcceptOnes({
-                                {"start",     {QsApi::AceTreeSerializer::Property, 0}  },
-                                {"length",    {QsApi::AceTreeSerializer::Property, 480}},
-                                {"clipStart", {QsApi::AceTreeSerializer::Property, 0}  },
-                                {"clipLen",   {QsApi::AceTreeSerializer::Property, 480}},
+                                {"start",     {QsApi::AceTreeSerializer::Property, Dspx::DefaultClipStart}     },
+                                {"length",    {QsApi::AceTreeSerializer::Property, Dspx::DefaultClipLength}    },
+                                {"clipStart", {QsApi::AceTreeSerializer::Property, Dspx::DefaultClipClipStart} },
+                                {"clipLen",   {QsApi::AceTreeSerializer::Property, Dspx::DefaultClipClipLength}},
                             });
                             singingClip->addChild("time", time);
                         }
@@ -174,8 +175,8 @@ namespace Core {
                             auto control = new QsApi::AceTreeSerializer("root.content.track.singingClip.control",
                                                                         QJsonValue::Object);
                             control->setObjectAcceptOnes({
-                                {"gain", {QsApi::AceTreeSerializer::Property, 0}    },
-                                {"mute", {QsApi::AceTreeSerializer::Property, false}},
+                                {"gain", {QsApi::AceTreeSerializer::Property, Dspx::DefaultGain}},
+                                {"mute", {QsApi::AceTreeSerializer::Property, Dspx::DefaultMute}},
                             });
                             singingClip->addChild("control", control);
                         }
@@ -197,10 +198,10 @@ namespace Core {
                             auto note =
                                 new QsApi::AceTreeSerializer("root.content.track.singingClip.note", QJsonValue::Object);
                             note->setObjectAcceptOnes({
-                                {"pos",    {QsApi::AceTreeSerializer::Property, 0}   },
-                                {"length", {QsApi::AceTreeSerializer::Property, 480} },
-                                {"keyNum", {QsApi::AceTreeSerializer::Property, 60}  },
-                                {"lyric",  {QsApi::AceTreeSerializer::Property, "la"}},
+                                {"pos",    {QsApi::AceTreeSerializer::Property, Dspx::DefaultNotePos}   },
+                                {"length", {QsApi::AceTreeSerializer::Property, Dspx::DefaultNoteLength}},
+                                {"keyNum", {QsApi::AceTreeSerializer::Property, Dspx::DefaultNoteKeyNum}},
+                                {"lyric",  {QsApi::AceTreeSerializer::Property, Dspx::DefaultNoteLyric} },
                             });
                             notes->addChild("item", note);
 
@@ -217,12 +218,12 @@ namespace Core {
                                 auto vibrato = new QsApi::AceTreeSerializer(
                                     "root.content.track.singingClip.note.vibrato", QJsonValue::Object);
                                 vibrato->setObjectAcceptOnes({
-                                    {"start",  {QsApi::AceTreeSerializer::Property, 0}},
-                                    {"end",    {QsApi::AceTreeSerializer::Property, 1}},
-                                    {"freq",   {QsApi::AceTreeSerializer::Property, 5}},
-                                    {"phase",  {QsApi::AceTreeSerializer::Property, 0}},
-                                    {"amp",    {QsApi::AceTreeSerializer::Property, 1}},
-                                    {"offset", {QsApi::AceTreeSerializer::Property, 0}},
+                                    {"start",  {QsApi::AceTreeSerializer::Property, Dspx::DefaultVibratoStart}    },
+                                    {"end",    {QsApi::AceTreeSerializer::Property, Dspx::DefaultVibratoEnd}      },
+                                    {"freq",   {QsApi::AceTreeSerializer::Property, Dspx::DefaultVibratoFrequency}},
+                                    {"phase",  {QsApi::AceTreeSerializer::Property, Dspx::DefaultVibratoPhase}    },
+                                    {"amp",    {QsApi::AceTreeSerializer::Property, Dspx::DefaultVibratoAmplitude}},
+                                    {"offset", {QsApi::AceTreeSerializer::Property, Dspx::DefaultVibratoOffset}   },
                                 });
                                 note->addChild("vibrato", vibrato);
 
@@ -235,8 +236,8 @@ namespace Core {
                                     auto point = new QsApi::AceTreeSerializer(
                                         "root.content.track.singingClip.note.vibrato.point", QJsonValue::Object);
                                     point->setObjectAcceptOnes({
-                                        {"x", {QsApi::AceTreeSerializer::Property, 0}},
-                                        {"y", {QsApi::AceTreeSerializer::Property, 0}},
+                                        {"x", {QsApi::AceTreeSerializer::Property, Dspx::DefaultVibratoPointX}},
+                                        {"y", {QsApi::AceTreeSerializer::Property, Dspx::DefaultVibratoPointY}},
                                     });
                                     points->addChild("point", point);
                                 }
@@ -260,9 +261,9 @@ namespace Core {
                                 auto phoneme = new QsApi::AceTreeSerializer(
                                     "root.content.track.singingClip.note.phonemes.edited.phoneme", QJsonValue::Object);
                                 phoneme->setObjectAcceptOnes({
-                                    {"type",  {QsApi::AceTreeSerializer::Property, "ahead"}  },
-                                    {"token", {QsApi::AceTreeSerializer::Property, QString()}},
-                                    {"start", {QsApi::AceTreeSerializer::Property, 0}        },
+                                    {"type",  {QsApi::AceTreeSerializer::Property, Dspx::DefaultPhonemeType} },
+                                    {"token", {QsApi::AceTreeSerializer::Property, Dspx::DefaultPhonemeToken}},
+                                    {"start", {QsApi::AceTreeSerializer::Property, Dspx::DefaultPhonemeStart}},
                                 });
                                 edited->addChild("item", phoneme);
                             }
@@ -307,9 +308,11 @@ namespace Core {
                                         "root.content.track.singingClip.note.params.pitch.edited.anchor.node",
                                         QJsonValue::Object);
                                     node->setObjectAcceptOnes({
-                                        {"x",      {QsApi::AceTreeSerializer::Property, 0}       },
-                                        {"y",      {QsApi::AceTreeSerializer::Property, 0}       },
-                                        {"interp", {QsApi::AceTreeSerializer::Property, "linear"}},
+                                        {"x",      {QsApi::AceTreeSerializer::Property, Dspx::DefaultParamAnchorNodeX}},
+                                        {"y",      {QsApi::AceTreeSerializer::Property, Dspx::DefaultParamAnchorNodeY}},
+                                        {"interp",
+                                         {QsApi::AceTreeSerializer::Property,
+                                          Dspx::DefaultParamAnchorNodeInterpolation}                                  },
                                     });
                                     nodes->addChild("item", node);
                                 }
@@ -322,8 +325,9 @@ namespace Core {
                                     free->setObjectOptions({
                                         {},
                                         {
-                                         {"start", {QsApi::AceTreeSerializer::Property, 0}},
-                                         {"step", {QsApi::AceTreeSerializer::Property, 5}},
+                                         {"start",
+                                             {QsApi::AceTreeSerializer::Property, Dspx::DefaultParamFreeStart}},
+                                         {"step", {QsApi::AceTreeSerializer::Property, Dspx::DefaultParamFreeStep}},
                                          },
 
                                         [](const QString &key, const QJsonValue &value, QsApi::AceTreeItem *item,
@@ -387,8 +391,8 @@ namespace Core {
                         auto audioClip =
                             new QsApi::AceTreeSerializer("root.content.track.audioClip", QJsonValue::Object);
                         audioClip->setObjectAcceptOnes({
-                            {"name", {QsApi::AceTreeSerializer::Property, "Untitled Audio Clip"}},
-                            {"path", {QsApi::AceTreeSerializer::Property, "/path/to"}           },
+                            {"name", {QsApi::AceTreeSerializer::Property, Dspx::DefaultAudioClipName}},
+                            {"path", {QsApi::AceTreeSerializer::Property, Dspx::DefaultAudioClipPath}},
                         });
                         clips->addChild("audio", audioClip);
 
@@ -397,10 +401,10 @@ namespace Core {
                             auto time =
                                 new QsApi::AceTreeSerializer("root.content.track.audioClip.time", QJsonValue::Object);
                             time->setObjectAcceptOnes({
-                                {"start",     {QsApi::AceTreeSerializer::Property, 0}  },
-                                {"length",    {QsApi::AceTreeSerializer::Property, 480}},
-                                {"clipStart", {QsApi::AceTreeSerializer::Property, 0}  },
-                                {"clipLen",   {QsApi::AceTreeSerializer::Property, 480}},
+                                {"start",     {QsApi::AceTreeSerializer::Property, Dspx::DefaultClipStart}     },
+                                {"length",    {QsApi::AceTreeSerializer::Property, Dspx::DefaultClipLength}    },
+                                {"clipStart", {QsApi::AceTreeSerializer::Property, Dspx::DefaultClipClipStart} },
+                                {"clipLen",   {QsApi::AceTreeSerializer::Property, Dspx::DefaultClipClipLength}},
                             });
                             audioClip->addChild("time", time);
                         }
@@ -410,8 +414,8 @@ namespace Core {
                             auto control = new QsApi::AceTreeSerializer("root.content.track.audioClip.control",
                                                                         QJsonValue::Object);
                             control->setObjectAcceptOnes({
-                                {"gain", {QsApi::AceTreeSerializer::Property, 0}    },
-                                {"mute", {QsApi::AceTreeSerializer::Property, false}},
+                                {"gain", {QsApi::AceTreeSerializer::Property, Dspx::DefaultGain}},
+                                {"mute", {QsApi::AceTreeSerializer::Property, Dspx::DefaultMute}},
                             });
                             audioClip->addChild("control", control);
                         }

@@ -127,7 +127,6 @@ namespace Core {
             // QLoggingCategory::setFilterRules("qt.gui.shortcutmap=true");
             qApp->setProperty("closeHomeOnOpen", true);
             qApp->setProperty("projectDocTypeId", "org.ChorusKit.dspx");
-            qApp->setProperty("dspxVersion", "1.0.0");
 
             // Handle FileOpenEvent
             qApp->installEventFilter(this);
