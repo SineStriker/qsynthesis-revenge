@@ -4,7 +4,7 @@
 #include <CoreApi/IDocument.h>
 #include <ItemModel/AceTreeModel.h>
 
-#include "DspxController.h"
+#include "coreplugin/CoreGlobal.h"
 
 namespace Core {
 
@@ -17,9 +17,7 @@ namespace Core {
         explicit DspxDocument(QObject *parent = nullptr);
         ~DspxDocument();
 
-        QsApi::AceTreeModel *model() const;
-
-        DspxRootController *rootCtl() const;
+        AceTreeModel *model() const;
 
     public:
         bool open(const QString &filename) override;

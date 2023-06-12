@@ -4,7 +4,7 @@
 <context>
     <name>IEMgr::WizardCategory</name>
     <message>
-        <location filename="../../Internal/DsWizard.cpp" line="28"/>
+        <location filename="../../Internal/DsWizard.cpp" line="21"/>
         <source>OpenVPI</source>
         <translation></translation>
     </message>
@@ -46,17 +46,17 @@
 <context>
     <name>VarFmt::Internal::DsWizard</name>
     <message>
-        <location filename="../../Internal/DsWizard.cpp" line="26"/>
+        <location filename="../../Internal/DsWizard.cpp" line="19"/>
         <source>OpenVPI Ds file</source>
         <translation>OpenVPI Ds 文件</translation>
     </message>
     <message>
-        <location filename="../../Internal/DsWizard.cpp" line="27"/>
+        <location filename="../../Internal/DsWizard.cpp" line="20"/>
         <source>OpenVPI DiffSinger command line synthesizer format.</source>
         <translation>OpenVPI DiffSinger 命令行工具合成格式。</translation>
     </message>
     <message>
-        <location filename="../../Internal/DsWizard.cpp" line="36"/>
+        <location filename="../../Internal/DsWizard.cpp" line="32"/>
         <source>OpenVPI Ds Files</source>
         <translation>OpenVPI Ds 文件</translation>
     </message>

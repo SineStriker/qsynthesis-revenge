@@ -6,6 +6,7 @@
 #include <QTextCodec>
 
 #include "IEMgrGlobal.h"
+#include "QMWidgetsMacros.h"
 #include "QPixelSize.h"
 
 namespace IEMgr {

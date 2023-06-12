@@ -1402,3 +1402,17 @@ function(ck_install_headers)
         )
     ")
 endfunction()
+
+#[[
+Set SKIP_AUTOMOC for all source files in specified directory.
+
+    ck_dir_skip_automoc(<dir...>)
+]] #
+function(ck_dir_skip_automoc)
+    foreach(_item ${ARGN})
+        file(GLOB _src ${_item}/*.h ${_item}/*.cpp ${_item}/*.cc)
+        set_source_files_properties(
+            ${_src} PROPERTIES SKIP_AUTOMOC ON
+        )
+    endforeach()
+endfunction()

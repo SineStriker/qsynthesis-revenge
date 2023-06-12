@@ -4,8 +4,8 @@
 #include <QHash>
 #include <QSet>
 
-#include "Collections/QMChronMap.h"
-#include "Collections/QMChronSet.h"
+#include "QMChronMap.h"
+#include "QMChronSet.h"
 
 #include "WindowSystem.h"
 

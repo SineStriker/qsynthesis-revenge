@@ -6,8 +6,8 @@
 #include "ICoreBase.h"
 #include "ILoader.h"
 
-#include <QMCoreHost.h>
-#include <QMMath.h>
+#include <QMBatch.h>
+#include <QMCoreAppExtension.h>
 #include <QMSystem.h>
 
 #include <QApplication>
@@ -54,8 +54,8 @@ namespace Core {
         auto obj = s->value(settingCategoryC).toObject();
 
         auto recentObj = obj.value(recentGroupC).toObject();
-        QStringList recentFiles = QMMath::arrayToStringList(recentObj.value(QLatin1String(filesKeyC)).toArray());
-        QStringList recentDirs = QMMath::arrayToStringList(recentObj.value(QLatin1String(dirKeyC)).toArray());
+        QStringList recentFiles = QMBatch::arrayToStringList(recentObj.value(QLatin1String(filesKeyC)).toArray());
+        QStringList recentDirs = QMBatch::arrayToStringList(recentObj.value(QLatin1String(dirKeyC)).toArray());
 
         // clean non-existing files
         m_recentFiles.clear();
@@ -101,7 +101,7 @@ namespace Core {
     }
 
     QString DocumentSystemPrivate::logBaseDir() {
-        return QString("%1/logs").arg(qmHost->tempDir());
+        return QString("%1/logs").arg(qAppExt->tempDir());
     }
 
     static DocumentSystem *m_instance = nullptr;

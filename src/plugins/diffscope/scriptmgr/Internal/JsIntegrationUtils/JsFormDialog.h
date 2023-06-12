@@ -1,14 +1,14 @@
-#ifndef CHORUSKIT_JSFORMDIALOG_H
-#define CHORUSKIT_JSFORMDIALOG_H
+#ifndef JSFORMDIALOG_H
+#define JSFORMDIALOG_H
 
 #include <QFormLayout>
 #include <QJSValue>
 
-#include "Dialogs/ConfigurableDialog.h"
+#include "QMConfigurableDialog.h"
 
 namespace ScriptMgr::Internal {
 
-    class JsFormDialog: public QsApi::ConfigurableDialog {
+    class JsFormDialog: public QMConfigurableDialog {
         Q_OBJECT
     public:
         JsFormDialog(QJSEngine *engine, QJSValue listener, QWidget *parent = nullptr);
@@ -53,4 +53,4 @@ namespace ScriptMgr::Internal {
 
 } // Internal
 
-#endif // CHORUSKIT_JSFORMDIALOG_H
+#endif // JSFORMDIALOG_H

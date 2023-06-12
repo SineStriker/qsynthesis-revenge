@@ -23,12 +23,13 @@ def main():
                         help="Copy libraries to path.", type=str, default=".")
     parser.add_argument("--plugindir", metavar="<path>",
                         help="Copy plugins to path.", type=str, default=".")
-    parser.add_argument("--debug", help="Deploy debug libraries.", action="store_true")
+    parser.add_argument(
+        "--debug", help="Deploy debug libraries.", action="store_true")
     parser.add_argument(
         "--verbose", help="Show deploy process.", action="store_true")
     parser.add_argument('files', nargs='*')
     args = parser.parse_args()
-    
+
     def print_verbose(*va_args):
         if args.verbose:
             print(va_args)
@@ -42,13 +43,18 @@ def main():
 
     # Do deploy work for specific platform
     if os_name == "windows":
-        windeployqt = os.path.dirname(args.qmake) + "/windeployqt.exe"
+        qmake_dir = os.path.dirname(args.qmake)
+        windeployqt = qmake_dir + "/windeployqt.exe"
         if not os.path.isfile(windeployqt):
             print("windeployqt.exe not found!!!")
             sys.exit(-1)
 
-        # Simply running windeployqt
+        # Add qmake directory to PATH
+        path_var = os.environ["PATH"]
+        os.environ["PATH"] = qmake_dir + \
+            os.pathsep + os.environ.get("PATH", "")
 
+        # Simply running windeployqt
         cmds: list[str] = [
             windeployqt,
             "--libdir",
@@ -68,19 +74,25 @@ def main():
         cmds += args.files
 
         code = subprocess.run(cmds).returncode
+
+        # Restore PATH
+        os.environ["PATH"] = path_var
+
         if code != 0:
             print("Deploy failed")
             sys.exit(code)
 
     elif os_name == "osx":
         # Obtain Qt library dependencies of the required libraries
-        qtlibs_path = subprocess.check_output([args.qmake, "-query", "QT_INSTALL_LIBS"]).strip().decode('utf-8')
+        qtlibs_path = subprocess.check_output(
+            [args.qmake, "-query", "QT_INSTALL_LIBS"]).strip().decode('utf-8')
         print_verbose(f"Qt Libraries path: {qtlibs_path}")
 
         qtdeps = set()
         for libname in args.files:
             otool_exc = ["otool", "-L", libname]
-            regex = re.compile(r'^\s*(?P<qt_prefix>.+)(?P<qt>Qt\w+\.framework)(?P<qt_suffix>.+)\s\(.+$')
+            regex = re.compile(
+                r'^\s*(?P<qt_prefix>.+)(?P<qt>Qt\w+\.framework)(?P<qt_suffix>.+)\s\(.+$')
 
             # Call otool.
             output = subprocess.check_output(otool_exc).decode('utf-8')
@@ -91,7 +103,8 @@ def main():
                 match = regex.match(line)
                 if match:
                     qt_framework_name = match.group('qt')
-                    qt_framework_fullpath = os.path.join(qtlibs_path, qt_framework_name)
+                    qt_framework_fullpath = os.path.join(
+                        qtlibs_path, qt_framework_name)
                     dependencies.append(qt_framework_fullpath)
 
             qtdeps = qtdeps.union(set(dependencies))
@@ -104,20 +117,24 @@ def main():
             copydir(qt_framework, args.libdir, symlinks=True)
 
         # Query Qt Plugins path
-        qtplugins_path = subprocess.check_output([args.qmake, "-query", "QT_INSTALL_PLUGINS"]).strip().decode('utf-8')
+        qtplugins_path = subprocess.check_output(
+            [args.qmake, "-query", "QT_INSTALL_PLUGINS"]).strip().decode('utf-8')
         print_verbose(f"Qt Plugins path: {qtplugins_path}")
 
-        plugin_list = ['bearer', 'iconengines', 'imageformats', 'platforminputcontexts', 'styles', 'virtualkeyboard']
+        plugin_list = ['bearer', 'iconengines', 'imageformats',
+                       'platforminputcontexts', 'styles', 'virtualkeyboard']
         plugin_dylib_list = ['platforms/libqcocoa.dylib']
 
         for plugin_src in plugin_list:
             print_verbose(f"  Copying {plugin_src}...")
-            copydir(f"{qtplugins_path}/{plugin_src}", f"{args.plugindir}", symlinks=True)
+            copydir(f"{qtplugins_path}/{plugin_src}",
+                    f"{args.plugindir}", symlinks=True)
 
         for plugin_dylib in plugin_dylib_list:
             print_verbose(f"  Copying {plugin_dylib}...")
             base_dir = os.path.dirname(f"{args.plugindir}/{plugin_dylib}")
-            copyfile(f"{qtplugins_path}/{plugin_dylib}", base_dir, follow_symlinks=False)
+            copyfile(f"{qtplugins_path}/{plugin_dylib}",
+                     base_dir, follow_symlinks=False)
 
     else:
         print("Linux")

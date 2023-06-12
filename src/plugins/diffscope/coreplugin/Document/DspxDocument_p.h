@@ -1,10 +1,9 @@
-#ifndef DSPXDOCUMENTPRIVATE_H
-#define DSPXDOCUMENTPRIVATE_H
+#ifndef DSPXDOCUMENT_P_H
+#define DSPXDOCUMENT_P_H
 
-#include "DspxController.h"
 #include "DspxDocument.h"
 
-#include <Collections/QMChronSet.h>
+#include <QMChronSet.h>
 
 namespace Core {
 
@@ -20,8 +19,7 @@ namespace Core {
 
         mutable QString untitledFileName;
 
-        QsApi::AceTreeModel *model;
-        DspxRootController *ctl;
+        AceTreeModel *model;
 
         bool vstMode;
 
@@ -33,4 +31,4 @@ namespace Core {
 
 }
 
-#endif // DSPXDOCUMENTPRIVATE_H
+#endif // DSPXDOCUMENT_P_H

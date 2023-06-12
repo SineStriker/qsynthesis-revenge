@@ -40,8 +40,8 @@
 <context>
     <name>TemplatePlg::Internal::TreeConfigPage</name>
     <message>
-        <location filename="../../Internal/Settings/TreeConfigPage.cpp" line="14"/>
-        <location filename="../../Internal/Settings/TreeConfigPage.cpp" line="15"/>
+        <location filename="../../Internal/Settings/TreeConfigPage.cpp" line="8"/>
+        <location filename="../../Internal/Settings/TreeConfigPage.cpp" line="9"/>
         <source>JsonConfig</source>
         <translation type="unfinished"></translation>
     </message>

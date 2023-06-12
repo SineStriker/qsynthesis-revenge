@@ -6,7 +6,7 @@
 #define CHORUSKIT_AUDIOBUS_H
 
 #include <QSet>
-#include "Collections/QMChronSet.h"
+#include "QMChronSet.h"
 #include "IAudioSource.h"
 
 class AudioBus {

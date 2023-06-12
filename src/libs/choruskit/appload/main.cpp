@@ -1,5 +1,4 @@
 #include <QApplication>
-#include <QDebug>
 #include <QDir>
 #include <QLoggingCategory>
 #include <QMainWindow>
@@ -7,11 +6,11 @@
 #include <QProcess>
 #include <QTextStream>
 
+#include "QMAppExtension.h"
 #include "QMConsole.h"
 #include "QMCss.h"
 #include "QMDecoratorV2.h"
 #include "QMSystem.h"
-#include "QMWidgetsHost.h"
 
 #include "QBreakpadHandler.h"
 
@@ -24,6 +23,8 @@
 #include "splash/SplashScreen.h"
 
 #include "CoreApi/ILoader.h"
+
+Q_LOGGING_CATEGORY(loaderLog, "apploader")
 
 #define USE_NATIVE_MESSAGEBOX
 
@@ -217,7 +218,7 @@ int main_entry(int argc, char *argv[]) {
     a.setOrganizationName("ChorusKit");
     a.setOrganizationDomain("ChorusKit");
 
-    QMWidgetsHost host;
+    QMAppExtension host;
 
     Q_ASSERT(qApp->applicationName() == a.applicationName());
     QString corePluginNameC = "Core";
@@ -463,7 +464,7 @@ int main_entry(int argc, char *argv[]) {
     // Init single handle
     SingleApplication single(qApp, true, opts);
     if (!single.isPrimary()) {
-        qInfo() << "apploader: primary instance already running. PID:" << single.primaryPid();
+        qCDebug(loaderLog) << "primary instance already running. PID:" << single.primaryPid();
 
         if (!vstiAddr.isEmpty()) {
             displayError(QCoreApplication::translate("Application", "Please close the running application!"));
@@ -478,11 +479,11 @@ int main_entry(int argc, char *argv[]) {
         stream << PluginManager::serializedArguments();
         single.sendMessage(buffer);
 
-        qInfo() << "apploader: secondary instance closing...";
+        qCDebug(loaderLog) << "secondary instance closing...";
 
         return 0;
     } else {
-        qInfo() << "apploader: primary instance initializing...";
+        qCDebug(loaderLog) << "primary instance initializing...";
     }
 
     // Update loader text
@@ -499,7 +500,7 @@ int main_entry(int argc, char *argv[]) {
         QDataStream stream(&message, QIODevice::ReadOnly);
         QString msg;
         stream >> msg;
-        qDebug().noquote().nospace() << "apploader: remote message from " << instanceId << ", " << msg;
+        qCDebug(loaderLog).noquote().nospace() << " remote message from " << instanceId << ", " << msg;
         pluginManager.remoteArguments(msg, nullptr);
     });
 

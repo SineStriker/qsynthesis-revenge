@@ -1,7 +1,7 @@
 #ifndef CHORUSKIT_DSPXSPEC_H
 #define CHORUSKIT_DSPXSPEC_H
 
-#include <Controllers/AceTreeController.h>
+#include <ItemModel/AceTreeEntity.h>
 #include <ItemModel/AceTreeSerializer.h>
 
 #include <CoreApi/DocumentSpec.h>
@@ -30,9 +30,9 @@ namespace Core {
         bool recover(const QString &logDir, const QString &fileName) override;
 
     public:
-        QsApi::AceTreeSerializer *serializer() const;
+        AceTreeSerializer *serializer() const;
 
-        QsApi::AceTreeControllerBuilder *controllerBuilder() const;
+        AceTreeEntityBuilder *entityBuilder() const;
 
     private:
         DspxSpecPrivate *d;

@@ -14,7 +14,7 @@ public:
     ~MainWindow();
 
 private:
-    QsApi::AceTreeWidget *m_treeWidget;
+    AceTreeWidget *m_treeWidget;
 
     QBuffer m_buffer;
     QByteArray m_data;

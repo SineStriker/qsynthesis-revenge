@@ -3,7 +3,7 @@
 
 #include "IManager.h"
 
-#include <Collections/QMChronMap.h>
+#include <QMChronMap.h>
 
 namespace IEMgr {
 

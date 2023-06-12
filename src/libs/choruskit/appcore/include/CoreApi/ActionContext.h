@@ -6,8 +6,7 @@
 #include <QSet>
 #include <QToolBar>
 
-#include "QMNamespace.h"
-#include "Text/QMDisplayString.h"
+#include "QMDisplayString.h"
 
 #include "CkAppCoreGlobal.h"
 

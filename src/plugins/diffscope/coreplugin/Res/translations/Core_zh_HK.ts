@@ -69,9 +69,6 @@
         <source>File Error</source>
         <translation type="unfinished"></translation>
     </message>
-</context>
-<context>
-    <name>Core::DspxSpecPrivate</name>
     <message>
         <source>OpenVPI DiffSinger Editor</source>
         <translation type="unfinished"></translation>
@@ -107,11 +104,29 @@
         <source>&lt;h3&gt;License&lt;/h3&gt;&lt;p&gt;Licensed under the Apache License, Version 2.0.&lt;br&gt;You may obtain a copy of the License at %1.&lt;/p&gt;&lt;p&gt;This application is distributed &lt;b&gt;AS IS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND&lt;/b&gt;, either express or implied.&lt;/p&gt;</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Fatal Error</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>%1
+
+The application is about to exit because an unresolvable exception has occurred, which may be caused by an illegal operation of an plugin.</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>Core::ICoreWindow</name>
     <message>
         <source>Can&apos;t find editor of the file %1!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Failed to create main menu.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Failed to create internal action context.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -174,6 +189,13 @@
     </message>
     <message>
         <source>About %1</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>Core::IProjectWindow</name>
+    <message>
+        <source>Failed to create main toolbar.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

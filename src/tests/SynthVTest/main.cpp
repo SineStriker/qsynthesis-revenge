@@ -5,14 +5,21 @@
 #include <QScrollArea>
 #include <QVBoxLayout>
 
-#include <QMWidgetsHost.h>
+#include <QMAppExtension.h>
 #include <Widgets/CDockFrame.h>
 #include <Widgets/SynthVSplitter.h>
+
+#include <QMChronSet.h>
 
 int main(int argc, char *argv[]) {
     QApplication app(argc, argv);
 
-    QMWidgetsHost host;
+    QMAppExtension host;
+
+    QMChronSet<int> set;
+    qDebug() << set.append(1).second;
+    qDebug() << set.append(2).second;
+    qDebug() << set.append(1).second;
 
     auto frame = new CDockFrame();
     frame->addWidget(Qt::LeftEdge, QM::Primary, new QLabel("A1"))->setText("A1");

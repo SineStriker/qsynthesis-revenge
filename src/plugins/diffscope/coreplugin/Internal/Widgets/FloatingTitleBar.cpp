@@ -1,6 +1,6 @@
 #include "FloatingTitleBar.h"
 
-#include <Controllers/MouseEventGuard.h>
+#include <QMMouseEventGuard.h>
 #include <Widgets/SynthVSplitter.h>
 
 #include <QMouseEvent>
@@ -19,7 +19,7 @@ namespace Core::Internal {
         m_hintHeight = -1;
         m_hintColor = Qt::blue;
 
-        new QsApi::MouseEventGuard(Qt::LeftButton, "mouseHandler", this);
+        new QMMouseEventGuard(Qt::LeftButton, "mouseHandler", this);
     }
 
     FloatingTitleBarButton::~FloatingTitleBarButton() {

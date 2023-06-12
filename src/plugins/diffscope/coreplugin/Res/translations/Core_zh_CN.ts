@@ -112,9 +112,6 @@
         <source>File Error</source>
         <translation>文件错误</translation>
     </message>
-</context>
-<context>
-    <name>Core::DspxSpecPrivate</name>
     <message>
         <source>OpenVPI DiffSinger Editor</source>
         <translation>OpenVPI DiffSinger 编辑器</translation>
@@ -122,6 +119,17 @@
     <message>
         <source>Built-in</source>
         <translation>内置</translation>
+    </message>
+</context>
+<context>
+    <name>Core::DspxSpecPrivate</name>
+    <message>
+        <source>OpenVPI DiffSinger Editor</source>
+        <translation type="vanished">OpenVPI DiffSinger 编辑器</translation>
+    </message>
+    <message>
+        <source>Built-in</source>
+        <translation type="vanished">内置</translation>
     </message>
 </context>
 <context>
@@ -211,12 +219,32 @@
         <source>&lt;h3&gt;License&lt;/h3&gt;&lt;p&gt;Licensed under the Apache License, Version 2.0.&lt;br&gt;You may obtain a copy of the License at %1.&lt;/p&gt;&lt;p&gt;This application is distributed &lt;b&gt;AS IS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND&lt;/b&gt;, either express or implied.&lt;/p&gt;</source>
         <translation>&lt;h3&gt;许可&lt;/h3&gt;&lt;p&gt;本程序根据 Apache 协议版本 2.0 授权。&lt;br&gt;您可以在 %1 中得到协议的一份副本。&lt;/p&gt;&lt;p&gt;本程序&lt;b&gt;以&quot;按原样&quot;为基础提供，不作任何形式的担保&lt;/b&gt;，无论担保是明示的还是暗示的。&lt;/p&gt;</translation>
     </message>
+    <message>
+        <source>Fatal Error</source>
+        <translation>致命错误</translation>
+    </message>
+    <message>
+        <source>%1
+
+The application is about to exit because an unresolvable exception has occurred, which may be caused by an illegal operation of an plugin.</source>
+        <translation>%1
+
+程序遇到不可修复的异常，需要立即退出。这可能是插件的非法操作导致的。</translation>
+    </message>
 </context>
 <context>
     <name>Core::ICoreWindow</name>
     <message>
         <source>Can&apos;t find editor of the file %1!</source>
         <translation>无法找到 %1 的编辑器！</translation>
+    </message>
+    <message>
+        <source>Failed to create main menu.</source>
+        <translation>无法创建主菜单。</translation>
+    </message>
+    <message>
+        <source>Failed to create internal action context.</source>
+        <translation>无法创建内部菜单。</translation>
     </message>
 </context>
 <context>
@@ -290,6 +318,13 @@
     <message>
         <source>About %1</source>
         <translation>关于 %1</translation>
+    </message>
+</context>
+<context>
+    <name>Core::IProjectWindow</name>
+    <message>
+        <source>Failed to create main toolbar.</source>
+        <translation>无法创建主工具栏。</translation>
     </message>
 </context>
 <context>

@@ -1,12 +1,12 @@
-#ifndef CHORUSKIT_IMPORTINITDIALOG_H
-#define CHORUSKIT_IMPORTINITDIALOG_H
+#ifndef IMPORTINITDIALOG_H
+#define IMPORTINITDIALOG_H
 
 #include <QButtonGroup>
 #include <QLabel>
 #include <QLineEdit>
 #include <QVBoxLayout>
 
-#include <Framework/Dialogs/WorkflowDialog.h>
+#include <QMWorkflowDialog.h>
 
 #include "IWizardFactory.h"
 
@@ -16,7 +16,7 @@ namespace IEMgr {
 
     namespace Internal {
 
-        class ImportInitDialog : public QsApi::WorkflowDialog {
+        class ImportInitDialog : public QMWorkflowDialog {
             Q_OBJECT
         public:
             explicit ImportInitDialog(QWidget *parent = nullptr);
@@ -34,7 +34,7 @@ namespace IEMgr {
             bool finish() override;
 
         private:
-            QsApi::WorkflowPage *page;
+            QMWorkflowPage *page;
 
             QVBoxLayout *leftLayout;
             QVBoxLayout *rightLayout;
@@ -63,4 +63,4 @@ namespace IEMgr {
 }
 
 
-#endif // CHORUSKIT_IMPORTINITDIALOG_H
+#endif // IMPORTINITDIALOG_H

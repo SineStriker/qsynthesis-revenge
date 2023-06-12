@@ -1,7 +1,7 @@
 #include "UPluginTxt.h"
 
 #include "QMCodec.h"
-#include "Serialization/QMSettingFile.h"
+#include "QMSettingFile.h"
 
 #include "Config/UtaPluginText.h"
 

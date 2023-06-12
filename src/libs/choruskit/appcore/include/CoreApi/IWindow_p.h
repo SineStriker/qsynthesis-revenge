@@ -14,8 +14,8 @@
 #include <QSet>
 #include <QTimer>
 
-#include <Collections/QMChronMap.h>
-#include <Collections/QMChronSet.h>
+#include <QMChronMap.h>
+#include <QMChronSet.h>
 
 #include "IWindow.h"
 #include "IWindowAddOn.h"

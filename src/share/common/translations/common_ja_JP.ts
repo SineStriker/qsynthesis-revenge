@@ -235,6 +235,21 @@
     </message>
 </context>
 <context>
+    <name>QMConfigurableDialogPrivate</name>
+    <message>
+        <source>OK</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Apply</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>QMSystem</name>
     <message>
         <source>Explorer</source>
@@ -258,22 +273,7 @@
     </message>
 </context>
 <context>
-    <name>QsApi::ConfigurableDialogPrivate</name>
-    <message>
-        <source>OK</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Cancel</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Apply</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>QsApi::WorkflowPagePrivate</name>
+    <name>QMWorkflowPagePrivate</name>
     <message>
         <source>Previous</source>
         <translation type="unfinished"></translation>

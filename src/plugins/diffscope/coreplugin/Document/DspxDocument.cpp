@@ -28,11 +28,12 @@ namespace Core {
     void DspxDocumentPrivate::init() {
         Q_Q(DspxDocument);
 
-        model = new QsApi::AceTreeModel(q);
-        ctl = DspxSpec::instance()->controllerBuilder()->buildRoot<DspxRootController>();
-        if (!ctl) {
-            ICore::fatalError(q->dialogParent(), DspxDocument::tr("Failed to create file model."));
-        }
+        model = new AceTreeModel(q);
+//        ctl = DspxSpec::instance()->controllerBuilder()->buildRoot<DspxRootController>();
+//        if (!ctl) {
+//            ICore::fatalError(q->dialogParent(), DspxDocument::tr("Failed to create file model."));
+//        }
+//        ctl->setModel(model);
 
         ICore::instance()->documentSystem()->addDocument(q, true);
     }
@@ -53,14 +54,14 @@ namespace Core {
             return false;
         }
 
-        auto item = new QsApi::AceTreeItem("root");
-        if (!DspxSpec::instance()->serializer()->readObject(doc.object(), item)) {
+        auto serializer = DspxSpec::instance()->serializer();
+        auto item = serializer->createChildItem(serializer, nullptr);
+        if (!serializer->readObject(doc.object(), item)) {
             delete item;
             q->setErrorMessage(DspxDocument::tr("Error occurred while parsing file!"));
             return false;
         }
         model->setRootItem(item);
-        ctl->setup(item);
 
         return true;
     }
@@ -84,14 +85,9 @@ namespace Core {
     DspxDocument::~DspxDocument() {
     }
 
-    QsApi::AceTreeModel *DspxDocument::model() const {
+    AceTreeModel *DspxDocument::model() const {
         Q_D(const DspxDocument);
         return d->model;
-    }
-
-    DspxRootController *DspxDocument::rootCtl() const {
-        Q_D(const DspxDocument);
-        return d->ctl;
     }
 
     bool DspxDocument::open(const QString &filename) {
@@ -153,11 +149,10 @@ namespace Core {
 
         ++m_untitledIndex;
 
-        auto item = new QsApi::AceTreeItem("root");
-        DspxSpec::instance()->serializer()->createObject(item);
-
+        auto serializer = DspxSpec::instance()->serializer();
+        auto item = serializer->createChildItem(serializer, nullptr);
+        serializer->createObject(item);
         d->model->setRootItem(item);
-        d->ctl->setup(item);
     }
 
     bool DspxDocument::isVSTMode() const {

@@ -15,7 +15,7 @@ ck_target_components(${PROJECT_NAME}
     SOURCES ${_src}
     QT_LINKS Core
     QT_INCLUDES_PRIVATE Core
-    LINKS QMCoreLib qastool::core
+    LINKS QMCore qastool::core
     LINKS_PRIVATE mrq
     AUTO_INCLUDE_DIRS Global
 )

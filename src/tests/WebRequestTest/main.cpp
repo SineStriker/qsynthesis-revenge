@@ -8,8 +8,8 @@
 
 #include <QDebug>
 
-#include "Collections/QMChronMap.h"
-#include "Collections/QMChronSet.h"
+#include "QMChronMap.h"
+#include "QMChronSet.h"
 
 int main(int argc, char *argv[]) {
     QApplication a(argc, argv);

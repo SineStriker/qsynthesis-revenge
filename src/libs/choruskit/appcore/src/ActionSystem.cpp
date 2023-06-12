@@ -3,10 +3,10 @@
 
 #include "ActionContext_p.h"
 
-#include "Collections/QMChronSet.h"
-#include "Serialization/QMXmlAdaptor.h"
+#include "QMChronSet.h"
+#include "QMXmlAdaptor.h"
 
-#include "QMMath.h"
+#include "QMBatch.h"
 
 #include "ILoader.h"
 
@@ -275,7 +275,7 @@ namespace Core {
             if (!it->isArray()) {
                 continue;
             }
-            res.insert(it.key(), QMMath::arrayToStringList(it->toArray()));
+            res.insert(it.key(), QMBatch::arrayToStringList(it->toArray()));
         }
         return res;
     }

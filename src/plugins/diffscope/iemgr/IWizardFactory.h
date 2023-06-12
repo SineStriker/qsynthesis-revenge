@@ -4,7 +4,7 @@
 #include <QDateTime>
 #include <QObject>
 
-#include <Text/QMDisplayString.h>
+#include <QMDisplayString.h>
 
 #include "IEMgrGlobal.h"
 

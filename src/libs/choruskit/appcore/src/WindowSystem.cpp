@@ -6,7 +6,7 @@
 #include "IWindow_p.h"
 
 #include <QMLinq.h>
-#include <QMMath.h>
+#include <QMBatch.h>
 #include <QMSystem.h>
 #include <QMView.h>
 
@@ -49,7 +49,7 @@ namespace Core {
     }
 
     SplitterSizes SplitterSizes::fromObject(const QJsonObject &obj) {
-        return QMMath::toIntList(QMMath::arrayToStringList(obj.value("sizes").toArray()));
+        return QMBatch::toIntList(QMBatch::arrayToStringList(obj.value("sizes").toArray()));
     }
 
     QJsonObject SplitterSizes::toObject() const {

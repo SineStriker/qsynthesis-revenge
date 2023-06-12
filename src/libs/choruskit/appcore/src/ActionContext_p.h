@@ -4,7 +4,7 @@
 #include <QHash>
 
 #include "ActionContext.h"
-#include "Collections/QMChronMap.h"
+#include "QMChronMap.h"
 
 namespace Core {
 

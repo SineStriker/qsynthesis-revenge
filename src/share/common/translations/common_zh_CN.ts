@@ -400,6 +400,21 @@
     </message>
 </context>
 <context>
+    <name>QMConfigurableDialogPrivate</name>
+    <message>
+        <source>OK</source>
+        <translation>确定</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation>取消</translation>
+    </message>
+    <message>
+        <source>Apply</source>
+        <translation>应用</translation>
+    </message>
+</context>
+<context>
     <name>QMSystem</name>
     <message>
         <source>Explorer</source>
@@ -423,22 +438,7 @@
     </message>
 </context>
 <context>
-    <name>QsApi::ConfigurableDialogPrivate</name>
-    <message>
-        <source>OK</source>
-        <translation>确定</translation>
-    </message>
-    <message>
-        <source>Cancel</source>
-        <translation>取消</translation>
-    </message>
-    <message>
-        <source>Apply</source>
-        <translation>应用</translation>
-    </message>
-</context>
-<context>
-    <name>QsApi::WorkflowPagePrivate</name>
+    <name>QMWorkflowPagePrivate</name>
     <message>
         <source>Previous</source>
         <translation>上一步</translation>
@@ -462,6 +462,48 @@
     <message>
         <source>Help</source>
         <translation>帮助</translation>
+    </message>
+</context>
+<context>
+    <name>QsApi::ConfigurableDialogPrivate</name>
+    <message>
+        <source>OK</source>
+        <translation type="vanished">确定</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation type="vanished">取消</translation>
+    </message>
+    <message>
+        <source>Apply</source>
+        <translation type="vanished">应用</translation>
+    </message>
+</context>
+<context>
+    <name>QsApi::WorkflowPagePrivate</name>
+    <message>
+        <source>Previous</source>
+        <translation type="vanished">上一步</translation>
+    </message>
+    <message>
+        <source>Next</source>
+        <translation type="vanished">下一步</translation>
+    </message>
+    <message>
+        <source>Finish</source>
+        <translation type="vanished">完成</translation>
+    </message>
+    <message>
+        <source>Confirm</source>
+        <translation type="vanished">确定</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation type="vanished">取消</translation>
+    </message>
+    <message>
+        <source>Help</source>
+        <translation type="vanished">帮助</translation>
     </message>
 </context>
 </TS>

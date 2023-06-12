@@ -15,7 +15,7 @@ ck_target_components(${PROJECT_NAME}
     SOURCES ${_src}
     QT_LINKS Widgets
     QT_INCLUDES_PRIVATE Core Widgets
-    LINKS QMWidgets QsMedia QsSVS
+    LINKS QMWidgetTools QsMedia QsSVS
     LINKS_PRIVATE
     AUTO_INCLUDE_DIRS Global
     INCLUDE_PRIVATE ${CK_HEADERS_OUTPUT_PATH}

@@ -7,7 +7,6 @@
 #include <QSettings>
 
 #include <QMSystem.h>
-#include <QMWidgetsHost.h>
 
 #include "DocumentSystem_p.h"
 #include "ICoreBase.h"

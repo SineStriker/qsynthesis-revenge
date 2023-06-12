@@ -9,56 +9,55 @@
 #include <QMDecoratorV2.h>
 
 #include "DspxConst.h"
-#include "DspxController.h"
 #include "ICore.h"
 #include "Window/IProjectWindow.h"
 
 namespace Core {
 
-    static QsApi::AceTreeSerializer *createDspxRootSerializer() {
-        auto root = new QsApi::AceTreeSerializer("root", QJsonValue::Object);
+    static AceTreeSerializer *createDspxRootSerializer() {
+        auto root = new AceTreeSerializer("root", QJsonValue::Object);
 
         // metadata
         {
-            auto metadata = new QsApi::AceTreeSerializer("root.metadata", QJsonValue::Object);
+            auto metadata = new AceTreeSerializer("root.metadata", QJsonValue::Object);
             metadata->setObjectAcceptOnes({
-                {"version", {QsApi::AceTreeSerializer::Property, Dspx::Version}           },
-                {"author",  {QsApi::AceTreeSerializer::Property, Dspx::DefaultAuthor}     },
-                {"name",    {QsApi::AceTreeSerializer::Property, Dspx::DefaultProjectName}},
+                {"version", {AceTreeSerializer::Property, Dspx::Version}           },
+                {"author",  {AceTreeSerializer::Property, Dspx::DefaultAuthor}     },
+                {"name",    {AceTreeSerializer::Property, Dspx::DefaultProjectName}},
             });
             root->addChild("metadata", metadata);
         }
 
         // workspace
         {
-            auto workspace = new QsApi::AceTreeSerializer("root.workspace", QJsonValue::Object);
-            workspace->setObjectAcceptAll(QsApi::AceTreeSerializer::DynamicData);
+            auto workspace = new AceTreeSerializer("root.workspace", QJsonValue::Object);
+            workspace->setObjectAcceptAll(AceTreeSerializer::DynamicData);
             root->addChild("workspace", workspace);
         }
 
         // content
         {
-            auto content = new QsApi::AceTreeSerializer("root.content", QJsonValue::Object);
+            auto content = new AceTreeSerializer("root.content", QJsonValue::Object);
             root->addChild("content", content);
 
             // workspace
             {
-                auto workspace = new QsApi::AceTreeSerializer("root.content.workspace", QJsonValue::Object);
-                workspace->setObjectAcceptAll(QsApi::AceTreeSerializer::DynamicData);
+                auto workspace = new AceTreeSerializer("root.content.workspace", QJsonValue::Object);
+                workspace->setObjectAcceptAll(AceTreeSerializer::DynamicData);
                 content->addChild("workspace", workspace);
             }
 
             // master
             {
-                auto master = new QsApi::AceTreeSerializer("root.content.master", QJsonValue::Object);
+                auto master = new AceTreeSerializer("root.content.master", QJsonValue::Object);
                 content->addChild("master", master);
 
                 // control
                 {
-                    auto control = new QsApi::AceTreeSerializer("root.content.master.control", QJsonValue::Object);
+                    auto control = new AceTreeSerializer("root.content.master.control", QJsonValue::Object);
                     control->setObjectAcceptOnes({
-                        {"gain", {QsApi::AceTreeSerializer::Property, Dspx::DefaultGain}},
-                        {"mute", {QsApi::AceTreeSerializer::Property, Dspx::DefaultMute}},
+                        {"gain", {AceTreeSerializer::Property, Dspx::DefaultGain}},
+                        {"mute", {AceTreeSerializer::Property, Dspx::DefaultMute}},
                     });
                     master->addChild("control", control);
                 }
@@ -66,47 +65,47 @@ namespace Core {
 
             // timeline
             {
-                auto timeline = new QsApi::AceTreeSerializer("root.content.timeline", QJsonValue::Object);
+                auto timeline = new AceTreeSerializer("root.content.timeline", QJsonValue::Object);
                 content->addChild("timeline", timeline);
 
                 // timeSignatures
                 {
                     auto timeSignatures =
-                        new QsApi::AceTreeSerializer("root.content.timeline.timeSignatures", QJsonValue::Array);
+                        new AceTreeSerializer("root.content.timeline.timeSignatures", QJsonValue::Array);
                     timeline->addChild("timeSignatures", timeSignatures);
 
                     auto timeSignature =
-                        new QsApi::AceTreeSerializer("root.content.timeline.timeSignature", QJsonValue::Object);
+                        new AceTreeSerializer("root.content.timeline.timeSignature", QJsonValue::Object);
                     timeSignature->setObjectAcceptOnes({
-                        {"pos",         {QsApi::AceTreeSerializer::Property, Dspx::DefaultTimeSignaturePos}        },
-                        {"numerator",   {QsApi::AceTreeSerializer::Property, Dspx::DefaultTimeSignatureNumerator}  },
-                        {"denominator", {QsApi::AceTreeSerializer::Property, Dspx::DefaultTimeSignatureDenominator}},
+                        {"pos",         {AceTreeSerializer::Property, Dspx::DefaultTimeSignaturePos}        },
+                        {"numerator",   {AceTreeSerializer::Property, Dspx::DefaultTimeSignatureNumerator}  },
+                        {"denominator", {AceTreeSerializer::Property, Dspx::DefaultTimeSignatureDenominator}},
                     });
                     timeSignatures->addChild("item", timeSignature);
                 }
 
                 // tempos
                 {
-                    auto tempos = new QsApi::AceTreeSerializer("root.content.timeline.tempos", QJsonValue::Array);
+                    auto tempos = new AceTreeSerializer("root.content.timeline.tempos", QJsonValue::Array);
                     timeline->addChild("tempos", tempos);
 
-                    auto tempo = new QsApi::AceTreeSerializer("root.content.timeline.tempo", QJsonValue::Object);
+                    auto tempo = new AceTreeSerializer("root.content.timeline.tempo", QJsonValue::Object);
                     tempo->setObjectAcceptOnes({
-                        {"pos",   {QsApi::AceTreeSerializer::Property, Dspx::DefaultTempoPos}  },
-                        {"value", {QsApi::AceTreeSerializer::Property, Dspx::DefaultTempoValue}},
+                        {"pos",   {AceTreeSerializer::Property, Dspx::DefaultTempoPos}  },
+                        {"value", {AceTreeSerializer::Property, Dspx::DefaultTempoValue}},
                     });
                     tempos->addChild("item", tempo);
                 }
 
                 // labels
                 {
-                    auto labels = new QsApi::AceTreeSerializer("root.content.timeline.labels", QJsonValue::Array);
+                    auto labels = new AceTreeSerializer("root.content.timeline.labels", QJsonValue::Array);
                     timeline->addChild("labels", labels);
 
-                    auto label = new QsApi::AceTreeSerializer("root.content.timeline.label", QJsonValue::Object);
+                    auto label = new AceTreeSerializer("root.content.timeline.label", QJsonValue::Object);
                     label->setObjectAcceptOnes({
-                        {"pos",  {QsApi::AceTreeSerializer::Property, Dspx::DefaultLabelPos} },
-                        {"text", {QsApi::AceTreeSerializer::Property, Dspx::DefaultLabelText}},
+                        {"pos",  {AceTreeSerializer::Property, Dspx::DefaultLabelPos} },
+                        {"text", {AceTreeSerializer::Property, Dspx::DefaultLabelText}},
                     });
                     labels->addChild("item", label);
                 }
@@ -114,130 +113,131 @@ namespace Core {
 
             // tracks
             {
-                auto tracks = new QsApi::AceTreeSerializer("root.content.tracks", QJsonValue::Array);
+                auto tracks = new AceTreeSerializer("root.content.tracks", QJsonValue::Array);
                 content->addChild("tracks", tracks);
 
-                auto track = new QsApi::AceTreeSerializer("root.content.track", QJsonValue::Object);
+                auto track = new AceTreeSerializer("root.content.track", QJsonValue::Object);
                 track->setObjectAcceptOnes({
-                    {"name", {QsApi::AceTreeSerializer::Property, Dspx::DefaultTrackName}},
+                    {"name", {AceTreeSerializer::Property, Dspx::DefaultTrackName}},
                 });
                 tracks->addChild("item", track);
 
                 // control
                 {
-                    auto control = new QsApi::AceTreeSerializer("root.content.track.control", QJsonValue::Object);
+                    auto control = new AceTreeSerializer("root.content.track.control", QJsonValue::Object);
                     control->setObjectAcceptOnes({
-                        {"gain", {QsApi::AceTreeSerializer::Property, Dspx::DefaultGain}},
-                        {"pan",  {QsApi::AceTreeSerializer::Property, Dspx::DefaultPan} },
-                        {"mute", {QsApi::AceTreeSerializer::Property, Dspx::DefaultMute}},
-                        {"solo", {QsApi::AceTreeSerializer::Property, Dspx::DefaultSolo}},
+                        {"gain", {AceTreeSerializer::Property, Dspx::DefaultGain}},
+                        {"pan",  {AceTreeSerializer::Property, Dspx::DefaultPan} },
+                        {"mute", {AceTreeSerializer::Property, Dspx::DefaultMute}},
+                        {"solo", {AceTreeSerializer::Property, Dspx::DefaultSolo}},
                     });
                     track->addChild("control", control);
                 }
 
                 // workspace
                 {
-                    auto workspace = new QsApi::AceTreeSerializer("root.content.track.workspace", QJsonValue::Object);
-                    workspace->setObjectAcceptAll(QsApi::AceTreeSerializer::DynamicData);
+                    auto workspace = new AceTreeSerializer("root.content.track.workspace", QJsonValue::Object);
+                    workspace->setObjectAcceptAll(AceTreeSerializer::DynamicData);
                     track->addChild("workspace", workspace);
                 }
 
                 // clip
                 {
-                    auto clips = new QsApi::AceTreeSerializer("root.content.track.clips", QJsonValue::Array);
+                    auto clips = new AceTreeSerializer("root.content.track.clips", QJsonValue::Array);
                     clips->setArrayTypeField("type");
                     track->addChild("clips", clips);
 
                     // singing
                     {
                         auto singingClip =
-                            new QsApi::AceTreeSerializer("root.content.track.singingClip", QJsonValue::Object);
+                            new AceTreeSerializer("root.content.track.singingClip", QJsonValue::Object);
                         singingClip->setObjectAcceptOnes({
-                            {"name", {QsApi::AceTreeSerializer::Property, Dspx::DefaultSingingClipName}},
+                            {"name", {AceTreeSerializer::Property, Dspx::DefaultSingingClipName}},
                         });
                         clips->addChild("singing", singingClip);
 
                         // time
                         {
                             auto time =
-                                new QsApi::AceTreeSerializer("root.content.track.singingClip.time", QJsonValue::Object);
+                                new AceTreeSerializer("root.content.track.singingClip.time", QJsonValue::Object);
                             time->setObjectAcceptOnes({
-                                {"start",     {QsApi::AceTreeSerializer::Property, Dspx::DefaultClipStart}     },
-                                {"length",    {QsApi::AceTreeSerializer::Property, Dspx::DefaultClipLength}    },
-                                {"clipStart", {QsApi::AceTreeSerializer::Property, Dspx::DefaultClipClipStart} },
-                                {"clipLen",   {QsApi::AceTreeSerializer::Property, Dspx::DefaultClipClipLength}},
+                                {"start",     {AceTreeSerializer::Property, Dspx::DefaultClipStart}     },
+                                {"length",    {AceTreeSerializer::Property, Dspx::DefaultClipLength}    },
+                                {"clipStart", {AceTreeSerializer::Property, Dspx::DefaultClipClipStart} },
+                                {"clipLen",   {AceTreeSerializer::Property, Dspx::DefaultClipClipLength}},
                             });
                             singingClip->addChild("time", time);
                         }
 
                         // control
                         {
-                            auto control = new QsApi::AceTreeSerializer("root.content.track.singingClip.control",
+                            auto control = new AceTreeSerializer("root.content.track.singingClip.control",
                                                                         QJsonValue::Object);
                             control->setObjectAcceptOnes({
-                                {"gain", {QsApi::AceTreeSerializer::Property, Dspx::DefaultGain}},
-                                {"mute", {QsApi::AceTreeSerializer::Property, Dspx::DefaultMute}},
+                                {"gain", {AceTreeSerializer::Property, Dspx::DefaultGain}},
+                                {"mute", {AceTreeSerializer::Property, Dspx::DefaultMute}},
                             });
                             singingClip->addChild("control", control);
                         }
 
                         // workspace
                         {
-                            auto workspace = new QsApi::AceTreeSerializer("root.content.track.singingClip.workspace",
+                            auto workspace = new AceTreeSerializer("root.content.track.singingClip.workspace",
                                                                           QJsonValue::Object);
-                            workspace->setObjectAcceptAll(QsApi::AceTreeSerializer::DynamicData);
+                            workspace->setObjectAcceptAll(AceTreeSerializer::DynamicData);
                             singingClip->addChild("workspace", workspace);
                         }
 
                         // notes
                         {
                             auto notes =
-                                new QsApi::AceTreeSerializer("root.content.track.singingClip.notes", QJsonValue::Array);
+                                new AceTreeSerializer("root.content.track.singingClip.notes", QJsonValue::Array);
+                            notes->setArrayUnordered(true);
                             singingClip->addChild("notes", notes);
 
                             auto note =
-                                new QsApi::AceTreeSerializer("root.content.track.singingClip.note", QJsonValue::Object);
+                                new AceTreeSerializer("root.content.track.singingClip.note", QJsonValue::Object);
                             note->setObjectAcceptOnes({
-                                {"pos",    {QsApi::AceTreeSerializer::Property, Dspx::DefaultNotePos}   },
-                                {"length", {QsApi::AceTreeSerializer::Property, Dspx::DefaultNoteLength}},
-                                {"keyNum", {QsApi::AceTreeSerializer::Property, Dspx::DefaultNoteKeyNum}},
-                                {"lyric",  {QsApi::AceTreeSerializer::Property, Dspx::DefaultNoteLyric} },
+                                {"pos",    {AceTreeSerializer::Property, Dspx::DefaultNotePos}   },
+                                {"length", {AceTreeSerializer::Property, Dspx::DefaultNoteLength}},
+                                {"keyNum", {AceTreeSerializer::Property, Dspx::DefaultNoteKeyNum}},
+                                {"lyric",  {AceTreeSerializer::Property, Dspx::DefaultNoteLyric} },
                             });
                             notes->addChild("item", note);
 
                             // workspace
                             {
-                                auto workspace = new QsApi::AceTreeSerializer(
+                                auto workspace = new AceTreeSerializer(
                                     "root.content.track.singingClip.note.workspace", QJsonValue::Object);
-                                workspace->setObjectAcceptAll(QsApi::AceTreeSerializer::DynamicData);
+                                workspace->setObjectAcceptAll(AceTreeSerializer::DynamicData);
                                 note->addChild("workspace", workspace);
                             }
 
                             // vibrato
                             {
-                                auto vibrato = new QsApi::AceTreeSerializer(
+                                auto vibrato = new AceTreeSerializer(
                                     "root.content.track.singingClip.note.vibrato", QJsonValue::Object);
                                 vibrato->setObjectAcceptOnes({
-                                    {"start",  {QsApi::AceTreeSerializer::Property, Dspx::DefaultVibratoStart}    },
-                                    {"end",    {QsApi::AceTreeSerializer::Property, Dspx::DefaultVibratoEnd}      },
-                                    {"freq",   {QsApi::AceTreeSerializer::Property, Dspx::DefaultVibratoFrequency}},
-                                    {"phase",  {QsApi::AceTreeSerializer::Property, Dspx::DefaultVibratoPhase}    },
-                                    {"amp",    {QsApi::AceTreeSerializer::Property, Dspx::DefaultVibratoAmplitude}},
-                                    {"offset", {QsApi::AceTreeSerializer::Property, Dspx::DefaultVibratoOffset}   },
+                                    {"start",  {AceTreeSerializer::Property, Dspx::DefaultVibratoStart}    },
+                                    {"end",    {AceTreeSerializer::Property, Dspx::DefaultVibratoEnd}      },
+                                    {"freq",   {AceTreeSerializer::Property, Dspx::DefaultVibratoFrequency}},
+                                    {"phase",  {AceTreeSerializer::Property, Dspx::DefaultVibratoPhase}    },
+                                    {"amp",    {AceTreeSerializer::Property, Dspx::DefaultVibratoAmplitude}},
+                                    {"offset", {AceTreeSerializer::Property, Dspx::DefaultVibratoOffset}   },
                                 });
                                 note->addChild("vibrato", vibrato);
 
                                 // points
                                 {
-                                    auto points = new QsApi::AceTreeSerializer(
+                                    auto points = new AceTreeSerializer(
                                         "root.content.track.singingClip.note.vibrato.points", QJsonValue::Array);
                                     vibrato->addChild("points", points);
 
-                                    auto point = new QsApi::AceTreeSerializer(
+                                    auto point = new AceTreeSerializer(
                                         "root.content.track.singingClip.note.vibrato.point", QJsonValue::Object);
                                     point->setObjectAcceptOnes({
-                                        {"x", {QsApi::AceTreeSerializer::Property, Dspx::DefaultVibratoPointX}},
-                                        {"y", {QsApi::AceTreeSerializer::Property, Dspx::DefaultVibratoPointY}},
+                                        {"x", {AceTreeSerializer::Property, Dspx::DefaultVibratoPointX}},
+                                        {"y", {AceTreeSerializer::Property, Dspx::DefaultVibratoPointY}},
                                     });
                                     points->addChild("point", point);
                                 }
@@ -245,25 +245,25 @@ namespace Core {
 
                             // phonemes
                             {
-                                auto phonemes = new QsApi::AceTreeSerializer(
+                                auto phonemes = new AceTreeSerializer(
                                     "root.content.track.singingClip.note.phonemes", QJsonValue::Object);
                                 phonemes->setObjectAcceptOnes({
-                                    {"original", {QsApi::AceTreeSerializer::DynamicData, QJsonValue::Array}},
+                                    {"original", {AceTreeSerializer::DynamicData, QJsonValue::Array}},
                                 });
                                 note->addChild("phonemes", phonemes);
 
                                 // edited
-                                auto edited = new QsApi::AceTreeSerializer(
+                                auto edited = new AceTreeSerializer(
                                     "root.content.track.singingClip.note.phonemes.edited", QJsonValue::Array);
                                 phonemes->addChild("edited", edited);
 
                                 // phoneme
-                                auto phoneme = new QsApi::AceTreeSerializer(
+                                auto phoneme = new AceTreeSerializer(
                                     "root.content.track.singingClip.note.phonemes.edited.phoneme", QJsonValue::Object);
                                 phoneme->setObjectAcceptOnes({
-                                    {"type",  {QsApi::AceTreeSerializer::Property, Dspx::DefaultPhonemeType} },
-                                    {"token", {QsApi::AceTreeSerializer::Property, Dspx::DefaultPhonemeToken}},
-                                    {"start", {QsApi::AceTreeSerializer::Property, Dspx::DefaultPhonemeStart}},
+                                    {"type",  {AceTreeSerializer::Property, Dspx::DefaultPhonemeType} },
+                                    {"token", {AceTreeSerializer::Property, Dspx::DefaultPhonemeToken}},
+                                    {"start", {AceTreeSerializer::Property, Dspx::DefaultPhonemeStart}},
                                 });
                                 edited->addChild("item", phoneme);
                             }
@@ -271,47 +271,48 @@ namespace Core {
 
                         // params
                         {
-                            auto params = new QsApi::AceTreeSerializer("root.content.track.singingClip.note.params",
+                            auto params = new AceTreeSerializer("root.content.track.singingClip.note.params",
                                                                        QJsonValue::Object);
                             singingClip->addChild("params", params);
 
                             // pitch
                             {
-                                auto pitch = new QsApi::AceTreeSerializer(
+                                auto pitch = new AceTreeSerializer(
                                     "root.content.track.singingClip.note.params.pitch", QJsonValue::Object);
                                 pitch->setObjectAcceptOnes({
-                                    {"original", {QsApi::AceTreeSerializer::DynamicData, QJsonValue::Array}},
+                                    {"original", {AceTreeSerializer::DynamicData, QJsonValue::Array}},
                                 });
                                 params->addChild("pitch", pitch);
 
                                 // edited
-                                auto edited = new QsApi::AceTreeSerializer(
+                                auto edited = new AceTreeSerializer(
                                     "root.content.track.singingClip.note.params.pitch.edited", QJsonValue::Array);
                                 edited->setArrayTypeField("type");
                                 pitch->addChild("edited", edited);
 
                                 // anchor
                                 {
-                                    auto anchor = new QsApi::AceTreeSerializer(
+                                    auto anchor = new AceTreeSerializer(
                                         "root.content.track.singingClip.note.params.pitch.edited.anchor",
                                         QJsonValue::Object);
                                     edited->addChild("anchor", anchor);
 
                                     // nodes
-                                    auto nodes = new QsApi::AceTreeSerializer(
+                                    auto nodes = new AceTreeSerializer(
                                         "root.content.track.singingClip.note.params.pitch.edited.anchor.nodes",
                                         QJsonValue::Array);
+                                    nodes->setArrayUnordered(true);
                                     anchor->addChild("nodes", nodes);
 
                                     // node
-                                    auto node = new QsApi::AceTreeSerializer(
+                                    auto node = new AceTreeSerializer(
                                         "root.content.track.singingClip.note.params.pitch.edited.anchor.node",
                                         QJsonValue::Object);
                                     node->setObjectAcceptOnes({
-                                        {"x",      {QsApi::AceTreeSerializer::Property, Dspx::DefaultParamAnchorNodeX}},
-                                        {"y",      {QsApi::AceTreeSerializer::Property, Dspx::DefaultParamAnchorNodeY}},
+                                        {"x",      {AceTreeSerializer::Property, Dspx::DefaultParamAnchorNodeX}},
+                                        {"y",      {AceTreeSerializer::Property, Dspx::DefaultParamAnchorNodeY}},
                                         {"interp",
-                                         {QsApi::AceTreeSerializer::Property,
+                                         {AceTreeSerializer::Property,
                                           Dspx::DefaultParamAnchorNodeInterpolation}                                  },
                                     });
                                     nodes->addChild("item", node);
@@ -319,23 +320,23 @@ namespace Core {
 
                                 // free
                                 {
-                                    auto free = new QsApi::AceTreeSerializer(
+                                    auto free = new AceTreeSerializer(
                                         "root.content.track.singingClip.note.params.pitch.edited.free",
                                         QJsonValue::Object);
                                     free->setObjectOptions({
                                         {},
                                         {
                                          {"start",
-                                             {QsApi::AceTreeSerializer::Property, Dspx::DefaultParamFreeStart}},
-                                         {"step", {QsApi::AceTreeSerializer::Property, Dspx::DefaultParamFreeStep}},
+                                             {AceTreeSerializer::Property, Dspx::DefaultParamFreeStart}},
+                                         {"step", {AceTreeSerializer::Property, Dspx::DefaultParamFreeStep}},
                                          },
 
-                                        [](const QString &key, const QJsonValue &value, QsApi::AceTreeItem *item,
+                                        [](const QString &key, const QJsonValue &value, AceTreeItem *item,
                                            void *) {
                                             if (key != "values")
-                                                return QsApi::AceTreeSerializer::Unhandled;
+                                                return AceTreeSerializer::Unhandled;
                                             if (!value.isArray())
-                                                return QsApi::AceTreeSerializer::Failed;
+                                                return AceTreeSerializer::Failed;
 
                                             QByteArray bytes;
                                             QDataStream stream(&bytes, QIODevice::WriteOnly);
@@ -343,19 +344,19 @@ namespace Core {
                                                 stream << qint16(child.isDouble() ? child.toDouble() : 0);
                                             }
 
-                                            auto childItem = new QsApi::AceTreeItem("values");
+                                            auto childItem = new AceTreeItem("values");
                                             childItem->setBytes(0, bytes);
                                             item->addNode(childItem);
 
-                                            return QsApi::AceTreeSerializer::Success;
+                                            return AceTreeSerializer::Success;
                                          },
 
                                         [](const QString &key, QJsonObject *obj,
-                                           const QsApi::AceTreeSerializer::ChildOrProperty &cop, void *) {
+                                           const AceTreeSerializer::ChildOrProperty &cop, void *) {
                                             if (key != "values")
-                                                return QsApi::AceTreeSerializer::Unhandled;
+                                                return AceTreeSerializer::Unhandled;
                                             if (!cop.is_item) {
-                                                return QsApi::AceTreeSerializer::Failed;
+                                                return AceTreeSerializer::Failed;
                                             }
 
                                             QByteArray bytes = cop.i->bytes();
@@ -372,13 +373,16 @@ namespace Core {
                                             }
                                             obj->insert("values", arr);
 
-                                            return QsApi::AceTreeSerializer::Success;
+                                            return AceTreeSerializer::Success;
                                          },
 
-                                        [](QsApi::AceTreeItem *item, void *) {
-                                            auto childItem = new QsApi::AceTreeItem("values");
+                                        [](AceTreeItem *item, void *) {
+                                            auto childItem = new AceTreeItem("values");
                                             item->addNode(childItem);
+                                            return AceTreeSerializer::Success;
                                          },
+
+                                        nullptr,
                                     });
                                     edited->addChild("free", free);
                                 }
@@ -389,42 +393,42 @@ namespace Core {
                     // audio
                     {
                         auto audioClip =
-                            new QsApi::AceTreeSerializer("root.content.track.audioClip", QJsonValue::Object);
+                            new AceTreeSerializer("root.content.track.audioClip", QJsonValue::Object);
                         audioClip->setObjectAcceptOnes({
-                            {"name", {QsApi::AceTreeSerializer::Property, Dspx::DefaultAudioClipName}},
-                            {"path", {QsApi::AceTreeSerializer::Property, Dspx::DefaultAudioClipPath}},
+                            {"name", {AceTreeSerializer::Property, Dspx::DefaultAudioClipName}},
+                            {"path", {AceTreeSerializer::Property, Dspx::DefaultAudioClipPath}},
                         });
                         clips->addChild("audio", audioClip);
 
                         // time
                         {
                             auto time =
-                                new QsApi::AceTreeSerializer("root.content.track.audioClip.time", QJsonValue::Object);
+                                new AceTreeSerializer("root.content.track.audioClip.time", QJsonValue::Object);
                             time->setObjectAcceptOnes({
-                                {"start",     {QsApi::AceTreeSerializer::Property, Dspx::DefaultClipStart}     },
-                                {"length",    {QsApi::AceTreeSerializer::Property, Dspx::DefaultClipLength}    },
-                                {"clipStart", {QsApi::AceTreeSerializer::Property, Dspx::DefaultClipClipStart} },
-                                {"clipLen",   {QsApi::AceTreeSerializer::Property, Dspx::DefaultClipClipLength}},
+                                {"start",     {AceTreeSerializer::Property, Dspx::DefaultClipStart}     },
+                                {"length",    {AceTreeSerializer::Property, Dspx::DefaultClipLength}    },
+                                {"clipStart", {AceTreeSerializer::Property, Dspx::DefaultClipClipStart} },
+                                {"clipLen",   {AceTreeSerializer::Property, Dspx::DefaultClipClipLength}},
                             });
                             audioClip->addChild("time", time);
                         }
 
                         // control
                         {
-                            auto control = new QsApi::AceTreeSerializer("root.content.track.audioClip.control",
+                            auto control = new AceTreeSerializer("root.content.track.audioClip.control",
                                                                         QJsonValue::Object);
                             control->setObjectAcceptOnes({
-                                {"gain", {QsApi::AceTreeSerializer::Property, Dspx::DefaultGain}},
-                                {"mute", {QsApi::AceTreeSerializer::Property, Dspx::DefaultMute}},
+                                {"gain", {AceTreeSerializer::Property, Dspx::DefaultGain}},
+                                {"mute", {AceTreeSerializer::Property, Dspx::DefaultMute}},
                             });
                             audioClip->addChild("control", control);
                         }
 
                         // workspace
                         {
-                            auto workspace = new QsApi::AceTreeSerializer("root.content.track.audioClip.workspace",
+                            auto workspace = new AceTreeSerializer("root.content.track.audioClip.workspace",
                                                                           QJsonValue::Object);
-                            workspace->setObjectAcceptAll(QsApi::AceTreeSerializer::DynamicData);
+                            workspace->setObjectAcceptAll(AceTreeSerializer::DynamicData);
                             audioClip->addChild("workspace", workspace);
                         }
                     }
@@ -434,15 +438,30 @@ namespace Core {
         return root;
     }
 
-    static QsApi::AceTreeControllerBuilder *createDspxControllerBuilder() {
-        auto root = new QsApi::AceTreeControllerBuilder("root");
-        root->addBuilder("root", &DspxRootController::staticMetaObject);
-        return root;
+    static AceTreeEntityBuilder *createDspxControllerBuilder() {
+        auto builder = new AceTreeEntityBuilder("root");
+
+//        // root
+//        builder->addBuilder("root", &DspxRootController::staticMetaObject);
+//
+//        // metadata
+//        builder->addBuilder("root.metadata", []() { return new AceTreeController("metadata"); });
+//        builder->addSubBuilder("root", "root.metadata");
+//
+//        // content
+//        builder->addBuilder("root.content", &DspxContentController::staticMetaObject);
+//        builder->addSubBuilder("root", "root.content");
+//
+//        // workspace
+//        builder->addBuilder("root.workspace", []() { return new AceTreeController("workspace"); });
+//        builder->addSubBuilder("root", "root.workspace");
+
+        return builder;
     }
 
     DspxSpecPrivate::DspxSpecPrivate(Core::DspxSpec *q) : q(q) {
-        serializer = nullptr;
-        controllerBuilder = nullptr;
+        serializer = createDspxRootSerializer();
+        entityBuilder = createDspxControllerBuilder();
     }
 
     DspxSpecPrivate::~DspxSpecPrivate() {
@@ -523,16 +542,12 @@ namespace Core {
         return true;
     }
 
-    QsApi::AceTreeSerializer *DspxSpec::serializer() const {
-        if (!d->serializer)
-            d->serializer = createDspxRootSerializer();
+    AceTreeSerializer *DspxSpec::serializer() const {
         return d->serializer;
     }
 
-    QsApi::AceTreeControllerBuilder *DspxSpec::controllerBuilder() const {
-        if (!d->controllerBuilder)
-            d->controllerBuilder = createDspxControllerBuilder();
-        return d->controllerBuilder;
+    AceTreeEntityBuilder *DspxSpec::entityBuilder() const {
+        return d->entityBuilder;
     }
 
 } // Core

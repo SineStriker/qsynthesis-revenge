@@ -1,7 +1,7 @@
 #ifndef CHORUSKIT_COREWINDOWADDON_H
 #define CHORUSKIT_COREWINDOWADDON_H
 
-#include <Collections/QMChronSet.h>
+#include <QMChronSet.h>
 
 #include <CoreApi/ActionItem.h>
 #include <CoreApi/DocumentSpec.h>

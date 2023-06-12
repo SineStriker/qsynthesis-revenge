@@ -3,7 +3,7 @@
 
 #include "SettingCatalog.h"
 
-#include <Collections/QMChronMap.h>
+#include <QMChronMap.h>
 
 namespace Core {
 

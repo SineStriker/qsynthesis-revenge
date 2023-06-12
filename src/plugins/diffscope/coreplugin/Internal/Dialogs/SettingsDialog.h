@@ -10,11 +10,11 @@
 #include <QStackedWidget>
 #include <QTreeWidget>
 
-#include <Layout/QMEqualBoxLayout.h>
-#include <Metatypes/QPixelSize.h>
-#include <Widgets/CTabButton.h>
+#include <CTabButton.h>
+#include <QMEqualBoxLayout.h>
+#include <QPixelSize.h>
 
-#include "Framework/Dialogs/ConfigurableDialog.h"
+#include "QMConfigurableDialog.h"
 
 namespace Core {
 
@@ -22,7 +22,7 @@ namespace Core {
 
     namespace Internal {
 
-        class SettingsDialog : public QsApi::ConfigurableDialog {
+        class SettingsDialog : public QMConfigurableDialog {
             Q_OBJECT
             Q_LAYOUT_PROPERTY_DELCARE
         public:

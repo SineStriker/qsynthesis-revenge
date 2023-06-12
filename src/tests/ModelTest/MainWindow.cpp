@@ -6,7 +6,7 @@
 #include <QMenuBar>
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
-    m_treeWidget = new QsApi::AceTreeWidget();
+    m_treeWidget = new AceTreeWidget();
     setCentralWidget(m_treeWidget);
 
     auto model = m_treeWidget->model();
@@ -17,12 +17,12 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
     //    m_buffer.open(QIODevice::WriteOnly);
     //    model->startRecord(&m_buffer);
 
-    QsApi::AceTreeItem *root = nullptr;
+    AceTreeItem *root = nullptr;
 
     {
         QFile file(filename);
         if (file.open(QIODevice::ReadOnly)) {
-            auto model1 = QsApi::AceTreeModel::recover(file.readAll());
+            auto model1 = AceTreeModel::recover(file.readAll());
             file.close();
             if (model1) {
                 qDebug() << "Recover success";
@@ -39,10 +39,10 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
     if (root) {
         model->setRootItem(root);
     } else {
-        auto listItem1 = new QsApi::AceTreeItem("Track");
-        auto setItem1 = new QsApi::AceTreeItem("Note");
+        auto listItem1 = new AceTreeItem("Track");
+        auto setItem1 = new AceTreeItem("Note");
 
-        auto rootItem = new QsApi::AceTreeItem("Root");
+        auto rootItem = new AceTreeItem("Root");
         rootItem->setProperty("text", QLatin1String("YQ's god"));
         rootItem->insertRows(0, {listItem1});
         rootItem->insertNode(setItem1);
@@ -54,7 +54,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
         // rootItem->removeRow(0);
     }
 
-    connect(model, &QsApi::AceTreeModel::stepChanged, this, [this](int step) {
+    connect(model, &AceTreeModel::stepChanged, this, [this](int step) {
         QTreeWidgetItem *root;
         if ((root = m_treeWidget->topLevelItem(0))) {
             m_treeWidget->setItemExpandedRecursively(root, true);

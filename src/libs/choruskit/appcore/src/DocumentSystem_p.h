@@ -1,10 +1,10 @@
-#ifndef DOCUMENTSYSTEMPRIVATE_H
-#define DOCUMENTSYSTEMPRIVATE_H
+#ifndef DOCUMENTSYSTEM_P_H
+#define DOCUMENTSYSTEM_P_H
 
 #include "DocumentSystem.h"
 
-#include <Collections/QMChronMap.h>
-#include <Collections/QMChronSet.h>
+#include <QMChronMap.h>
+#include <QMChronSet.h>
 
 #include <QMSystem.h>
 
@@ -41,4 +41,4 @@ namespace Core {
 
 }
 
-#endif // DOCUMENTSYSTEMPRIVATE_H
+#endif // DOCUMENTSYSTEM_P_H

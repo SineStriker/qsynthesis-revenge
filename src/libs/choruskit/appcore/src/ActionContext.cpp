@@ -3,7 +3,7 @@
 
 #include <private/qkeysequence_p.h>
 
-#include <Collections/QMChronSet.h>
+#include <QMChronSet.h>
 
 #include "ActionItem.h"
 #include "ActionSystem.h"
@@ -110,7 +110,7 @@ namespace Core {
 
         d->setDirty();
 
-        return ActionContextItem(&(it.value()));
+        return ActionContextItem(&(it.first.value()));
     }
 
     void ActionContext::removeAction(const QString &id) {

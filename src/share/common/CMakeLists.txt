@@ -46,7 +46,7 @@ ck_add_shared_files(
     SRC themes DEST ChorusKit
     SRC ${CMAKE_CURRENT_BINARY_DIR}/translations DEST ChorusKit
     SRC dict DEST ChorusKit/g2p
-    SRC conf/${CK_PLATFORM_LOWER}/qtmedium.conf.json DEST ${CK_QT_CONF_OUTPUT_DIR}
+    SRC conf/${CK_PLATFORM_LOWER}/qtmediate.json DEST ${CK_QT_CONF_OUTPUT_DIR}
 )
 
 ck_add_shared_files(

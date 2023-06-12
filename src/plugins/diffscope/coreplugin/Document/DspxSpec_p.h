@@ -15,8 +15,8 @@ namespace Core {
 
         DspxSpec *q;
 
-        mutable QsApi::AceTreeSerializer *serializer;
-        mutable QsApi::AceTreeControllerBuilder *controllerBuilder;
+        AceTreeSerializer *serializer;
+        AceTreeEntityBuilder *entityBuilder;
     };
 
 }

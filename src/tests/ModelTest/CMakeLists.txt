@@ -12,5 +12,5 @@ ck_target_components(${PROJECT_NAME}
     INCLUDE_CURRENT_PRIVATE
     SOURCES ${_src}
     QT_LINKS Core Widgets Network
-    LINKS QsFramework
+    LINKS QsFramework QMEditing
 )

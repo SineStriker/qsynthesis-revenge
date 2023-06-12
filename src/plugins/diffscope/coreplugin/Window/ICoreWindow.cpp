@@ -10,7 +10,7 @@
 #include <extensionsystem/pluginmanager.h>
 
 #include <QMDecoratorV2.h>
-#include <QMMath.h>
+#include <QMBatch.h>
 
 #include <CoreApi/ILoader.h>
 

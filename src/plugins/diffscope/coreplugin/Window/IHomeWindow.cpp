@@ -5,7 +5,7 @@
 #include <QStyle>
 
 #include <QMDecoratorV2.h>
-#include <QMMath.h>
+#include <QMBatch.h>
 #include <QMView.h>
 
 #include <CoreApi/ILoader.h>
