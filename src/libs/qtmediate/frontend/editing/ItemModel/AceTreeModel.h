@@ -42,7 +42,7 @@ public:
     QByteArray bytes() const;
     int bytesSize() const;
 
-    // Vector
+    // Vector - Rows
     inline void prependRow(AceTreeItem *item);
     inline void prependRows(const QVector<AceTreeItem *> &items);
     inline void appendRow(AceTreeItem *item);
@@ -57,14 +57,22 @@ public:
     int rowIndexOf(AceTreeItem *item) const;
     int rowCount() const;
 
-    // Set
+    // Hash - Records
+    int addRecord(AceTreeItem *item);
+    void removeRecord(int seq);
+    AceTreeItem *record(int seq);
+    int recordIndexOf(AceTreeItem *item) const;
+    QList<int> records() const;
+    int recordCount() const;
+    int maxRecordSeq() const;
+
+    // Set - Nodes
     inline void insertNode(AceTreeItem *item);
     void addNode(AceTreeItem *item);
     bool containsNode(AceTreeItem *item);
     void removeNode(AceTreeItem *item);
     QList<AceTreeItem *> nodes() const;
     int nodeCount() const;
-
     QStringList nodeNames() const;
     AceTreeItem *nameToNode(const QString &name) const;
     QList<AceTreeItem *> nameToNodes(const QString &name) const;
@@ -103,8 +111,8 @@ public:
 
     bool isWritable() const;
 
-    void startRecord(QIODevice *dev);
-    void stopRecord();
+    void startLogging(QIODevice *dev);
+    void stopLogging();
     static AceTreeModel *recover(const QByteArray &data);
 
     AceTreeItem *itemFromIndex(int index) const;
@@ -126,6 +134,10 @@ signals:
     void rowsAboutToRemove(AceTreeItem *parent, int index, const QVector<AceTreeItem *> &items);
     void rowsRemoved(AceTreeItem *parent, int index, int count);
 
+    void recordAdded(AceTreeItem *parent, int seq, AceTreeItem *item);
+    void recordAboutToRemove(AceTreeItem *parent, int seq, AceTreeItem *item);
+    void recordRemoved(AceTreeItem *parent, int seq);
+
     void nodeAdded(AceTreeItem *parent, AceTreeItem *item);
     void nodeAboutToRemove(AceTreeItem *parent, AceTreeItem *item);
     void nodeRemoved(AceTreeItem *parent, AceTreeItem *item);
@@ -134,7 +146,7 @@ signals:
     void rootChanged(AceTreeItem *newRoot, AceTreeItem *oldRoot);
 
     void stepChanged(int step);
-    void recordError();
+    void loggingError();
 
 protected:
     AceTreeModel(AceTreeModelPrivate &d, QObject *parent = nullptr);

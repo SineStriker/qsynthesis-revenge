@@ -1,13 +1,9 @@
-#ifndef ACETREEENTITY_P_H
-#define ACETREEENTITY_P_H
-
-#include <QHash>
-#include <QSet>
+#ifndef ACETREEENTITYPRIVATE_H
+#define ACETREEENTITYPRIVATE_H
 
 #include "AceTreeEntity.h"
 
-class QMEDITING_EXPORT AceTreeEntityPrivate : public QObject {
-    Q_OBJECT
+class AceTreeEntityPrivate {
     Q_DECLARE_PUBLIC(AceTreeEntity)
 public:
     AceTreeEntityPrivate();
@@ -16,12 +12,13 @@ public:
     void init();
 
     AceTreeEntity *q_ptr;
-
-    QString name;
-    AceTreeItem *treeItem;
-    AceTreeEntityBuilder *builder;
-
-    QHash<QString, AceTreeEntity *> children;
 };
 
-#endif // ACETREEENTITY_P_H
+class AceTreeEntityFactoryPrivate {
+public:
+    AceTreeEntityFactoryPrivate(AceTreeEntityFactory *q) : q(q){};
+
+    AceTreeEntityFactory *q;
+};
+
+#endif // ACETREEENTITYPRIVATE_H

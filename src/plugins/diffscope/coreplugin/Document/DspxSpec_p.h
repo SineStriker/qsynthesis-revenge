@@ -16,7 +16,6 @@ namespace Core {
         DspxSpec *q;
 
         AceTreeSerializer *serializer;
-        AceTreeEntityBuilder *entityBuilder;
     };
 
 }

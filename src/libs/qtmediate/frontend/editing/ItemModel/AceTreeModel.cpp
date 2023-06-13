@@ -78,6 +78,44 @@ namespace AceTreePrivate {
 
 }
 
+void AceTreeItemPrivate::propagateItems(AceTreeItem *item, const std::function<void(AceTreeItem *)> &f) {
+    QStack<AceTreeItem *> stack;
+    stack.push(item);
+    while (!stack.isEmpty()) {
+        auto top = stack.pop();
+        auto d = top->d_func();
+        f(top);
+
+        for (const auto &child : qAsConst(d->vector))
+            stack.push(child);
+        for (const auto &child : qAsConst(d->set))
+            stack.push(child);
+    }
+}
+
+QByteArray AceTreeItemPrivate::itemToData(AceTreeItem *item) {
+    QByteArray data;
+    QDataStream stream(&data, QIODevice::WriteOnly);
+    item->write(stream);
+    return data;
+}
+
+QByteArray AceTreeItemPrivate::itemToDataWithIndex(AceTreeItem *item) {
+    auto d = item->d_func();
+
+    auto orgIndex = d->m_index;
+    auto orgIndexHint = d->m_indexHint;
+    auto tmpIndex = qMax(orgIndex, orgIndexHint);
+    d->m_index = tmpIndex;
+    d->m_indexHint = tmpIndex;
+
+    QByteArray data = itemToData(item);
+
+    d->m_index = orgIndex;
+    d->m_indexHint = orgIndexHint;
+    return data;
+}
+
 /**
  * User can only add child items whose index is zero into a model
  *
@@ -94,6 +132,7 @@ AceTreeItemPrivate::AceTreeItemPrivate() {
     model = nullptr;
     m_index = 0;
     m_indexHint = 0;
+    maxRecordSeq = 0;
 }
 
 AceTreeItemPrivate::~AceTreeItemPrivate() {
@@ -110,10 +149,11 @@ AceTreeItem::~AceTreeItem() {
 
     auto model = d->model;
     if (model && !model->d_func()->is_destruct)
-        propagateModel(nullptr);
+        propagateModel(nullptr); // No need to detach from model if the model is in destruction
 
     qDeleteAll(d->vector);
     qDeleteAll(d->set);
+    qDeleteAll(d->records);
 }
 
 QString AceTreeItem::name() const {
@@ -172,6 +212,9 @@ int AceTreeItem::index() const {
 
 bool AceTreeItem::isFree() const {
     Q_D(const AceTreeItem);
+
+    // The item is not free if it has parent or model
+
     return !d->model && !d->parent && d->m_index == 0;
 }
 
@@ -293,6 +336,68 @@ int AceTreeItem::rowCount() const {
     return d->vector.size();
 }
 
+int AceTreeItem::addRecord(AceTreeItem *item) {
+    Q_D(AceTreeItem);
+
+    if (!d->allowModify())
+        return -1;
+
+    if (!item)
+        return -1;
+
+    // Validate
+    if (!item->isFree()) {
+        qWarning() << "AceTreeItem::addRecord(): item is not free" << item;
+        return -1;
+    }
+
+    auto seq = ++d->maxRecordSeq;
+    d->addRecord_helper(seq, item);
+    return seq;
+}
+
+void AceTreeItem::removeRecord(int seq) {
+    Q_D(AceTreeItem);
+
+    if (!d->allowModify())
+        return;
+
+    // Validate
+    if (!d->records.contains(seq)) {
+        qWarning() << "AceTreeItem: seq num" << seq << "doesn't exists in" << this;
+        return;
+    }
+
+    d->removeRecord_helper(seq);
+}
+
+AceTreeItem *AceTreeItem::record(int seq) {
+    Q_D(const AceTreeItem);
+    return d->records.value(seq, nullptr);
+}
+
+int AceTreeItem::recordIndexOf(AceTreeItem *item) const {
+    Q_D(const AceTreeItem);
+    return d->recordIndexes.value(item, -1);
+}
+
+QList<int> AceTreeItem::records() const {
+    Q_D(const AceTreeItem);
+    auto seqs = d->records.keys();
+    std::sort(seqs.begin(), seqs.end());
+    return seqs;
+}
+
+int AceTreeItem::recordCount() const {
+    Q_D(const AceTreeItem);
+    return d->records.size();
+}
+
+int AceTreeItem::maxRecordSeq() const {
+    Q_D(const AceTreeItem);
+    return d->maxRecordSeq;
+}
+
 void AceTreeItem::addNode(AceTreeItem *item) {
     Q_D(AceTreeItem);
 
@@ -308,7 +413,7 @@ void AceTreeItem::addNode(AceTreeItem *item) {
         return;
     }
 
-    return d->addNode_helper(item);
+    d->addNode_helper(item);
 }
 
 bool AceTreeItem::containsNode(AceTreeItem *item) {
@@ -372,7 +477,7 @@ AceTreeItem *AceTreeItem::read(QDataStream &in) {
     auto item = new AceTreeItem(name);
     auto d = item->d_func();
 
-    in >> d->m_indexHint;
+    in >> d->m_indexHint; // Read saved index as hint
     AceTreePrivate::operator>>(in, d->properties);
     in >> d->byteArray;
 
@@ -586,8 +691,8 @@ out:
         writeCurrentStep(stepIndex);
 
         if (stream.status() != QDataStream::Ok || (m_fileDev && (!m_fileDev->flush()))) {
-            q->stopRecord();
-            emit q->recordError();
+            q->stopLogging();
+            emit q->loggingError();
         }
     }
 
@@ -776,6 +881,43 @@ void AceTreeItemPrivate::removeNode_helper(AceTreeItem *item) {
         model->d_func()->nodeRemoved(q, item);
 }
 
+void AceTreeItemPrivate::addRecord_helper(int seq, AceTreeItem *item) {
+    Q_Q(AceTreeItem);
+
+    // Do change
+    item->d_func()->parent = q;
+    if (model)
+        item->propagateModel(model);
+    records.insert(seq, item);
+    recordIndexes.insert(item, seq);
+
+    // Propagate signal
+    if (model)
+        model->d_func()->recordAdded(q, seq, item);
+}
+
+void AceTreeItemPrivate::removeRecord_helper(int seq) {
+    Q_Q(AceTreeItem);
+
+    auto it = records.find(seq);
+    auto item = it.value();
+
+    // Pre-Propagate signal
+    if (model)
+        emit model->recordAboutToRemove(q, seq, item);
+
+    // Do change
+    item->d_func()->parent = nullptr;
+    if (model)
+        item->propagateModel(nullptr);
+    records.erase(it);
+    recordIndexes.remove(item);
+
+    // Propagate signal
+    if (model)
+        model->d_func()->recordRemoved(q, seq, item);
+}
+
 void AceTreeModelPrivate::serializeOperation(QDataStream &stream, BaseOp *baseOp) {
     // Write begin sign
     stream.writeRawData(SIGN_OPERATION, sizeof(SIGN_OPERATION) - 1);
@@ -820,6 +962,18 @@ void AceTreeModelPrivate::serializeOperation(QDataStream &stream, BaseOp *baseOp
             stream << op->id << op->index << op->count << op->dest;
             break;
         }
+        case RecordAdd:
+        case RecordRemove: {
+            auto op = static_cast<RecordAddRemoveOp *>(baseOp);
+            stream << op->id << op->seq;
+            if (op->c == RecordAdd) {
+                stream.writeRawData(op->serialized, op->serialized.size());
+            } else {
+                // Write id only
+                stream << op->item->d_func()->m_index;
+            }
+            break;
+        }
         case NodeAdd:
         case NodeRemove: {
             auto op = static_cast<NodeAddRemoveOp *>(baseOp);
@@ -843,7 +997,7 @@ void AceTreeModelPrivate::serializeOperation(QDataStream &stream, BaseOp *baseOp
                 stream << op->newRoot->d_func()->m_index;
 
                 // Write new root
-                op->newRoot->write(stream);
+                stream.writeRawData(op->serialized, op->serialized.size());
             } else {
                 stream << int(0);
             }
@@ -901,6 +1055,9 @@ AceTreeModelPrivate::BaseOp *AceTreeModelPrivate::deserializeOperation(QDataStre
                         break;
                     }
                     op->items.append(item);
+
+                    // Restore serialized data
+                    op->serialized.append(AceTreeItemPrivate::itemToDataWithIndex(item));
                 }
             } else {
                 int id;
@@ -919,6 +1076,29 @@ AceTreeModelPrivate::BaseOp *AceTreeModelPrivate::deserializeOperation(QDataStre
             res = op;
             break;
         }
+        case RecordAdd:
+        case RecordRemove: {
+            auto op = new RecordAddRemoveOp(c == RecordAdd);
+            stream >> op->id >> op->seq;
+            if (c == RecordAdd) {
+                auto item = AceTreeItem::read(stream);
+                if (!item) {
+                    stream.setStatus(QDataStream::ReadCorruptData);
+                } else {
+                    op->item = item;
+
+                    // Restore serialized data
+                    op->serialized = AceTreeItemPrivate::itemToDataWithIndex(item);
+                }
+            } else {
+                int id;
+                stream >> id;
+                if (ids)
+                    ids->append(id);
+            }
+            res = op;
+            break;
+        }
         case NodeAdd:
         case NodeRemove: {
             auto op = new NodeAddRemoveOp(c == NodeAdd);
@@ -930,6 +1110,9 @@ AceTreeModelPrivate::BaseOp *AceTreeModelPrivate::deserializeOperation(QDataStre
                     stream.setStatus(QDataStream::ReadCorruptData);
                 } else {
                     op->item = item;
+
+                    // Restore serialized data
+                    op->serialized = AceTreeItemPrivate::itemToDataWithIndex(item);
                 }
             } else {
                 int id;
@@ -957,6 +1140,9 @@ AceTreeModelPrivate::BaseOp *AceTreeModelPrivate::deserializeOperation(QDataStre
                     stream.setStatus(QDataStream::ReadCorruptData);
                 } else {
                     op->newRoot = item;
+
+                    // Restore serialized data
+                    op->serialized = AceTreeItemPrivate::itemToDataWithIndex(item);
                 }
             }
             res = op;
@@ -1023,12 +1209,10 @@ void AceTreeModelPrivate::rowsInserted(AceTreeItem *parent, int index, const QVe
         op->index = index;
         op->items = items;
 
+        // Serialize all items for recovery
         op->serialized.reserve(items.size());
         for (const auto &item : items) {
-            QByteArray data;
-            QDataStream stream(&data, QIODevice::WriteOnly);
-            item->write(stream);
-            op->serialized.append(data);
+            op->serialized.append(AceTreeItemPrivate::itemToData(item));
         }
 
         push(op);
@@ -1061,6 +1245,34 @@ void AceTreeModelPrivate::rowsRemoved(AceTreeItem *parent, int index, const QVec
     emit q->rowsRemoved(parent, index, items.size());
 }
 
+void AceTreeModelPrivate::recordAdded(AceTreeItem *parent, int seq, AceTreeItem *item) {
+    Q_Q(AceTreeModel);
+    if (!internalChange) {
+        auto op = new RecordAddRemoveOp(true);
+        op->id = parent->d_func()->m_index;
+        op->seq = seq;
+        op->item = item;
+
+        // Serialize item for recovery
+        op->serialized = std::move(AceTreeItemPrivate::itemToData(item));
+
+        push(op);
+    }
+    emit q->nodeAdded(parent, item);
+}
+
+void AceTreeModelPrivate::recordRemoved(AceTreeItem *parent, int seq, AceTreeItem *item) {
+    Q_Q(AceTreeModel);
+    if (!internalChange) {
+        auto op = new RecordAddRemoveOp(false);
+        op->id = parent->d_func()->m_index;
+        op->seq = seq;
+        op->item = item;
+        push(op);
+    }
+    emit q->nodeRemoved(parent, item);
+}
+
 void AceTreeModelPrivate::nodeAdded(AceTreeItem *parent, AceTreeItem *item) {
     Q_Q(AceTreeModel);
     if (!internalChange) {
@@ -1068,12 +1280,8 @@ void AceTreeModelPrivate::nodeAdded(AceTreeItem *parent, AceTreeItem *item) {
         op->id = parent->d_func()->m_index;
         op->item = item;
 
-        {
-            QByteArray data;
-            QDataStream stream(&data, QIODevice::WriteOnly);
-            item->write(stream);
-            op->serialized = data;
-        }
+        // Serialize item for recovery
+        op->serialized = std::move(AceTreeItemPrivate::itemToData(item));
 
         push(op);
     }
@@ -1097,6 +1305,12 @@ void AceTreeModelPrivate::rootChanged(AceTreeItem *oldRoot, AceTreeItem *newRoot
         auto op = new RootChangeOp();
         op->oldRoot = oldRoot;
         op->newRoot = newRoot;
+
+        // Serialize item for recovery
+        if (newRoot) {
+            op->serialized = AceTreeItemPrivate::itemToData(newRoot);
+        }
+
         push(op);
     }
     emit q->rootChanged(newRoot, oldRoot);
@@ -1175,6 +1389,16 @@ bool AceTreeModelPrivate::execute(BaseOp *baseOp, bool undo) {
                 item->d_func()->moveRows_helper(op->index, op->count, op->dest);
             break;
         }
+        case RecordAdd:
+        case RecordRemove: {
+            auto c = static_cast<RecordAddRemoveOp *>(baseOp);
+            auto item = model->itemFromIndex(c->id);
+            if (!item)
+                goto obsolete;
+            ((c->c == RecordRemove) ^ undo) ? item->d_func()->removeRecord_helper(c->seq)
+                                            : item->d_func()->addRecord_helper(c->seq, c->item);
+            break;
+        }
         case NodeAdd:
         case NodeRemove: {
             auto c = static_cast<NodeAddRemoveOp *>(baseOp);
@@ -1218,8 +1442,8 @@ void AceTreeModelPrivate::push(BaseOp *op) {
         offsets.begs.append(m_dev->pos());
 
         if (stream.status() != QDataStream::Ok || (m_fileDev && (!m_fileDev->flush()))) {
-            q->stopRecord();
-            emit q->recordError();
+            q->stopLogging();
+            emit q->loggingError();
         }
     }
 
@@ -1251,8 +1475,8 @@ void AceTreeModelPrivate::truncate(int step) {
         m_dev->seek(pos);
 
         if (stream.status() != QDataStream::Ok || (m_fileDev && (!m_fileDev->resize(pos) || !m_fileDev->flush()))) {
-            q->stopRecord();
-            emit q->recordError();
+            q->stopLogging();
+            emit q->loggingError();
         }
     }
 }
@@ -1299,10 +1523,10 @@ bool AceTreeModel::isWritable() const {
     return !d->internalChange;
 }
 
-void AceTreeModel::startRecord(QIODevice *dev) {
+void AceTreeModel::startLogging(QIODevice *dev) {
     Q_D(AceTreeModel);
     if (d->m_dev)
-        stopRecord();
+        stopLogging();
 
     d->m_dev = dev;
     d->m_fileDev = qobject_cast<QFileDevice *>(dev); // Try QFileDevice
@@ -1322,8 +1546,8 @@ void AceTreeModel::startRecord(QIODevice *dev) {
         AceTreeModelPrivate::serializeOperation(stream, d->operations.at(i));
 
         if (stream.status() != QDataStream::Ok) {
-            stopRecord();
-            emit recordError();
+            stopLogging();
+            emit loggingError();
             return;
         }
 
@@ -1334,7 +1558,7 @@ void AceTreeModel::startRecord(QIODevice *dev) {
         d->m_fileDev->flush();
 }
 
-void AceTreeModel::stopRecord() {
+void AceTreeModel::stopLogging() {
     Q_D(AceTreeModel);
     d->m_dev = nullptr;
     d->m_fileDev = nullptr;
@@ -1371,6 +1595,7 @@ AceTreeModel *AceTreeModel::recover(const QByteArray &data) {
         }
     };
 
+    // Deserialize all operations, and collect all items
     QVector<AceTreeModelPrivate::BaseOp *> operations;
     int size;
     stream >> size;
@@ -1401,6 +1626,21 @@ AceTreeModel *AceTreeModel::recover(const QByteArray &data) {
                     }
                     op->items.append(removedItem);
                 }
+                break;
+            }
+            case AceTreeModelPrivate::RecordAdd: {
+                auto op = static_cast<AceTreeModelPrivate::RecordAddRemoveOp *>(baseOp);
+                collectItems(op->item);
+                break;
+            }
+            case AceTreeModelPrivate::RecordRemove: {
+                auto op = static_cast<AceTreeModelPrivate::RecordAddRemoveOp *>(baseOp);
+                auto removedItem = insertedItems.value(ids.front(), nullptr);
+                if (!removedItem) {
+                    qDebug() << "AceTreeModel::recover(): removed node not found";
+                    goto op_abort;
+                }
+                op->item = removedItem;
                 break;
             }
             case AceTreeModelPrivate::NodeAdd: {
@@ -1491,7 +1731,7 @@ void AceTreeModel::setRootItem(AceTreeItem *item) {
 AceTreeItem *AceTreeModel::reset() {
     Q_D(AceTreeModel);
     if (d->internalChange) {
-        qWarning() << "AceTreeModel: taking root item during model's internal state switching is prohibited" << this;
+        qWarning() << "AceTreeModel: reset model during model's internal state switching is prohibited" << this;
         return nullptr;
     }
 

@@ -446,7 +446,15 @@ void QMDecoratorV2Private::scanForThemes() const {
                     continue;
                 }
 
+                // Remove comments
                 content = QMDecoratorV2Private::removeAllComments(content);
+
+                // Replace custom keys
+                content = QMDecoratorV2Private::replaceCustomKeyWithQProperty(content);
+
+                // Replace CSS grammars
+                content = QMDecoratorV2Private::replaceCssGrammars(content);
+
                 if (item.ratio != 1 && item.ratio > 0) {
                     content = QMDecoratorV2Private::replaceSizes(content, item.ratio, false);
                 }
@@ -485,12 +493,53 @@ QString QMDecoratorV2Private::replaceSizes(const QString &stylesheet, double rat
     QString Content = stylesheet;
 
     while ((index = Content.indexOf(re, index, &match)) != -1) {
-        QString ValueString;
         QString MatchString = match.captured();
 
         double size = MatchString.midRef(0, MatchString.size() - 2).toDouble();
         size *= ratio;
-        ValueString = (rounding ? QString::number(int(size)) : QString::number(size)) + "px";
+        QString ValueString = (rounding ? QString::number(int(size)) : QString::number(size)) + "px";
+
+        Content.replace(index, MatchString.size(), ValueString);
+        index += ValueString.size();
+    }
+
+    return Content;
+}
+
+QString QMDecoratorV2Private::replaceCustomKeyWithQProperty(const QString &stylesheet) {
+    // Replace "--key: value;" with "qproperty-key: value;"
+    QRegularExpression re(R"((\{|;)\s*(--|---)\w(\w|-)*:)",
+                          QRegularExpression::MultilineOption | QRegularExpression::DotMatchesEverythingOption);
+    QRegularExpressionMatch match;
+    int index = 0;
+
+    QString Content = stylesheet;
+    while ((index = Content.indexOf(re, index, &match)) != -1) {
+        QString MatchString = match.captured();
+        QString ValueString = MatchString;
+
+        int capturedIndex = match.capturedStart(2) - index;
+        int capturedLen = match.capturedLength(2);
+        ValueString.replace(capturedIndex, capturedLen, capturedLen == 2 ? "qproperty-" : "");
+
+        Content.replace(index, MatchString.size(), ValueString);
+        index += ValueString.size();
+    }
+
+    return Content;
+}
+
+QString QMDecoratorV2Private::replaceCssGrammars(const QString &stylesheet) {
+    // Replace ":not(:xxx)" with ":!xxx"
+    QRegularExpression re(R"(:not\(\s*:([^)]+)\s*\))",
+                          QRegularExpression::MultilineOption | QRegularExpression::DotMatchesEverythingOption);
+    QRegularExpressionMatch match;
+    int index = 0;
+
+    QString Content = stylesheet;
+    while ((index = Content.indexOf(re, index, &match)) != -1) {
+        QString MatchString = match.captured();
+        QString ValueString = ":!" + match.captured(1).trimmed();
 
         Content.replace(index, MatchString.size(), ValueString);
         index += ValueString.size();

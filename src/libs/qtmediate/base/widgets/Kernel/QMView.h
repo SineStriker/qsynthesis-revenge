@@ -28,8 +28,6 @@ namespace QMView {
 
     QMWIDGETS_EXPORT void centralizeWindow(QWidget *w, QSizeF ratio = QSizeF(-1, -1));
 
-    QMWIDGETS_EXPORT void enableScaling(); // unused
-
     QMWIDGETS_EXPORT QPoint fixDesktopPos(const QPoint &pos, const QSize &size);
 
     QMWIDGETS_EXPORT void bringWindowToForeground(QWidget *w);

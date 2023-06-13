@@ -186,12 +186,6 @@ void QMView::centralizeWindow(QWidget *w, QSizeF ratio) {
     w->setGeometry((dw - size.width()) / 2, (dh - size.height()) / 2, size.width(), size.height());
 }
 
-void QMView::enableScaling() {
-    qputenv("QT_ENABLE_HIGHDPI_SCALING", "1");
-    QGuiApplication::setHighDpiScaleFactorRoundingPolicy(
-        Qt::HighDpiScaleFactorRoundingPolicy::PassThrough);
-}
-
 QPoint QMView::fixDesktopPos(const QPoint &pos, const QSize &size) {
     QPoint target(pos);
     if (target.x() < 0) {

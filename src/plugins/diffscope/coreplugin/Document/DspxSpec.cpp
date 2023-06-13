@@ -438,30 +438,8 @@ namespace Core {
         return root;
     }
 
-    static AceTreeEntityBuilder *createDspxControllerBuilder() {
-        auto builder = new AceTreeEntityBuilder("root");
-
-//        // root
-//        builder->addBuilder("root", &DspxRootController::staticMetaObject);
-//
-//        // metadata
-//        builder->addBuilder("root.metadata", []() { return new AceTreeController("metadata"); });
-//        builder->addSubBuilder("root", "root.metadata");
-//
-//        // content
-//        builder->addBuilder("root.content", &DspxContentController::staticMetaObject);
-//        builder->addSubBuilder("root", "root.content");
-//
-//        // workspace
-//        builder->addBuilder("root.workspace", []() { return new AceTreeController("workspace"); });
-//        builder->addSubBuilder("root", "root.workspace");
-
-        return builder;
-    }
-
     DspxSpecPrivate::DspxSpecPrivate(Core::DspxSpec *q) : q(q) {
         serializer = createDspxRootSerializer();
-        entityBuilder = createDspxControllerBuilder();
     }
 
     DspxSpecPrivate::~DspxSpecPrivate() {
@@ -544,10 +522,6 @@ namespace Core {
 
     AceTreeSerializer *DspxSpec::serializer() const {
         return d->serializer;
-    }
-
-    AceTreeEntityBuilder *DspxSpec::entityBuilder() const {
-        return d->entityBuilder;
     }
 
 } // Core

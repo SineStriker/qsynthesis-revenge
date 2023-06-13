@@ -180,30 +180,30 @@ public:
         friend class QMChronMap;
     };
 
-    QPair<iterator, bool> append(const K &key, const T &val) {
-        auto it0 = m_map.find(key);
-        if (it0 != m_map.end()) {
-            return {iterator(it0.value()), false};
+    QPair<iterator, bool> append(const K &key, const T &val, bool replace = true) {
+        iterator tmp;
+        if (tryReplace(key, val, &tmp, replace)) {
+            return {tmp, false};
         }
         auto it = m_list.insert(m_list.end(), qMakePair(key, val));
         m_map.insert(key, it);
         return {iterator(it), true};
     }
 
-    QPair<iterator, bool> prepend(const K &key, const T &val) {
-        auto it0 = m_map.find(key);
-        if (it0 != m_map.end()) {
-            return {iterator(it0.value()), false};
+    QPair<iterator, bool> prepend(const K &key, const T &val, bool replace = true) {
+        iterator tmp;
+        if (tryReplace(key, val, &tmp, replace)) {
+            return {tmp, false};
         }
         auto it = m_list.insert(m_list.begin(), qMakePair(key, val));
         m_map.insert(key, it);
         return {iterator(it), true};
     }
 
-    QPair<iterator, bool> insert(const const_iterator &it, const K &key, const T &val) {
-        auto it0 = m_map.find(key);
-        if (it0 != m_map.end()) {
-            return {iterator(it0.value()), false};
+    QPair<iterator, bool> insert(const const_iterator &it, const K &key, const T &val, bool replace = true) {
+        iterator tmp;
+        if (tryReplace(key, val, &tmp, replace)) {
+            return {tmp, false};
         }
         auto it2 = m_list.insert(it.i, qMakePair(key, val));
         m_map.insert(key, it2);
@@ -315,6 +315,18 @@ public:
             res.append(item.second);
         }
         return res;
+    }
+
+private:
+    bool tryReplace(const K &key, const T &val, iterator *it, bool noDryRun) {
+        auto it0 = m_map.find(key);
+        if (it0 != m_map.end()) {
+            if (noDryRun)
+                it0.value()->second = val;
+            *it = iterator(it0.value());
+            return true;
+        }
+        return false;
     }
 };
 

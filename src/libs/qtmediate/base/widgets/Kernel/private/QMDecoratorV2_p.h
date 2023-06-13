@@ -59,6 +59,8 @@ public:
     mutable QHash<QString, QHash<QString, QString>> variables;      // themeKey - [ varKey - var ]
 
     static QString replaceSizes(const QString &stylesheet, double ratio, bool rounding);
+    static QString replaceCustomKeyWithQProperty(const QString &stylesheet);
+    static QString replaceCssGrammars(const QString &stylesheet);
     static QString removeAllComments(QString data);
 
 private:

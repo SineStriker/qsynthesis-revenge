@@ -34,7 +34,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
 
     m_file.setFileName(filename);
     m_file.open(QIODevice::WriteOnly | QIODevice::Truncate);
-    model->startRecord(&m_file);
+    model->startLogging(&m_file);
 
     if (root) {
         model->setRootItem(root);

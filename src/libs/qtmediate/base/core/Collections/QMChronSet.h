@@ -171,9 +171,9 @@ public:
     };
 
     QPair<iterator, bool> append(const K &key) {
-        auto it0 = m_map.find(key);
-        if (it0 != m_map.end()) {
-            return qMakePair(iterator(it0.value()), false);
+        iterator tmp;
+        if (tryReplace(key, &tmp)) {
+            return {tmp, false};
         }
         auto it = m_list.insert(m_list.end(), key);
         m_map.insert(key, it);
@@ -181,9 +181,9 @@ public:
     }
 
     QPair<iterator, bool> prepend(const K &key) {
-        auto it0 = m_map.find(key);
-        if (it0 != m_map.end()) {
-            return qMakePair(iterator(it0.value()), false);
+        iterator tmp;
+        if (tryReplace(key, &tmp)) {
+            return {tmp, false};
         }
         auto it = m_list.insert(m_list.begin(), key);
         m_map.insert(key, it);
@@ -191,9 +191,9 @@ public:
     }
 
     QPair<iterator, bool> insert(const const_iterator &it, const K &key) {
-        auto it0 = m_map.find(key);
-        if (it0 != m_map.end()) {
-            return qMakePair(iterator(it0.value()), false);
+        iterator tmp;
+        if (tryReplace(key, &tmp)) {
+            return {tmp, false};
         }
         auto it2 = m_list.insert(it.i, key);
         m_map.insert(key, it2);
@@ -285,6 +285,16 @@ public:
 
     QList<K> values() const {
         return {m_list.begin(), m_list.end()};
+    }
+
+private:
+    bool tryReplace(const K &key, iterator *it) {
+        auto it0 = m_map.find(key);
+        if (it0 != m_map.end()) {
+            *it = iterator(it0.value());
+            return true;
+        }
+        return false;
     }
 };
 

@@ -358,10 +358,7 @@ namespace Core {
             if (!context) {
                 continue;
             }
-
-            if (!res.contains(id)) {
-                res.append(id);
-            }
+            res.append(id);
 
             QString prefix = ctx.properties.value("prefix");
             for (const auto &ctx_ref2 : qAsConst(ctx.children)) {

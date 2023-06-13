@@ -158,13 +158,10 @@ namespace Core {
         {
             QWriteLocker locker(&d->objectListLock);
             auto &set = d->objectMap[id];
-            if (set.contains(obj)) {
+            if (!set.append(obj).second) {
                 qWarning() << "Core::ObjectPool::addObject(): trying to add duplicated object:" << id << obj;
                 return;
             }
-
-            // Add to map
-            set.append(obj);
 
             // Add to list
             auto it = d->objects.insert(d->objects.end(), obj);

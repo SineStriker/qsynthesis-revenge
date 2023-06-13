@@ -6,7 +6,7 @@ QWidget {
 }
 
 CWindowBarV2>CToolButton#icon-button {
-    qproperty-iconUp: svg(":/svg/app/diffsinger.svg", transparent);
+    --iconUp: svg(":/svg/app/diffsinger.svg", transparent);
 }
 
 
@@ -15,7 +15,7 @@ CWindowBarV2>CToolButton#icon-button {
 QMenuBar[core-style=true] {
     background-color: transparent;
     border: none;
-    qproperty-extensionIcon: svg(":/svg/menu-bar/more-line.svg", white);
+    --extensionIcon: svg(":/svg/menu-bar/more-line.svg", white);
 }
 
 QMenuBar[core-style=true]>QToolButton#qt_menubar_ext_button:hover,

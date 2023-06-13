@@ -1,7 +1,6 @@
 #ifndef CHORUSKIT_DSPXSPEC_H
 #define CHORUSKIT_DSPXSPEC_H
 
-#include <ItemModel/AceTreeEntity.h>
 #include <ItemModel/AceTreeSerializer.h>
 
 #include <CoreApi/DocumentSpec.h>
@@ -31,8 +30,6 @@ namespace Core {
 
     public:
         AceTreeSerializer *serializer() const;
-
-        AceTreeEntityBuilder *entityBuilder() const;
 
     private:
         DspxSpecPrivate *d;

@@ -29,6 +29,10 @@ public:
     QByteArray byteArray;
     QVector<AceTreeItem *> vector;
 
+    QHash<int, AceTreeItem *> records;
+    QHash<AceTreeItem *, int> recordIndexes;
+    int maxRecordSeq;
+
     QSet<AceTreeItem *> set;
     QHash<QString, QSet<AceTreeItem *>> setNameIndexes;
 
@@ -43,21 +47,12 @@ public:
     void addNode_helper(AceTreeItem *item);
     void removeNode_helper(AceTreeItem *item);
 
-    template <class Func>
-    static void propagateItems(AceTreeItem *item, Func f) {
-        QStack<AceTreeItem *> stack;
-        stack.push(item);
-        while (!stack.isEmpty()) {
-            auto top = stack.pop();
-            auto d = top->d_func();
-            f(top);
+    void addRecord_helper(int seq, AceTreeItem *item);
+    void removeRecord_helper(int seq);
 
-            for (const auto &child : qAsConst(d->vector))
-                stack.push(child);
-            for (const auto &child : qAsConst(d->set))
-                stack.push(child);
-        }
-    }
+    static void propagateItems(AceTreeItem *item, const std::function<void(AceTreeItem *)> &f);
+    static QByteArray itemToData(AceTreeItem *item);
+    static QByteArray itemToDataWithIndex(AceTreeItem *item);
 };
 
 class AceTreeModelPrivate {
@@ -95,6 +90,8 @@ public:
         RowsInsert,
         RowsMove,
         RowsRemove,
+        RecordAdd,
+        RecordRemove,
         NodeAdd,
         NodeRemove,
         RootChange,
@@ -137,7 +134,7 @@ public:
         int id;
         int index;
         QVector<AceTreeItem *> items;
-        QByteArrayList serialized;
+        QByteArrayList serialized; // Insert operation needs
         RowsInsertRemoveOp(bool isInsert = false) : BaseOp(isInsert ? RowsInsert : RowsRemove), id(0), index(0) {
         }
         ~RowsInsertRemoveOp() {
@@ -145,6 +142,9 @@ public:
                 for (const auto &item : qAsConst(items))
                     if (item && !item->model() && !item->parent())
                         delete item;
+
+            // If this is a remove operation, there must be an insert operation ahead
+            // which holds the reference of `item`, we don't need to delete
         }
     };
 
@@ -157,29 +157,51 @@ public:
         }
     };
 
+    struct RecordAddRemoveOp : public BaseOp {
+        int id;
+        int seq;
+        AceTreeItem *item;
+        QByteArray serialized; // Insert operation needs
+        RecordAddRemoveOp(bool isAdd) : BaseOp(isAdd ? RecordAdd : RecordRemove), id(0), seq(-1), item(nullptr) {
+        }
+        ~RecordAddRemoveOp() {
+            if (c == RecordAdd)
+                if (item && !item->model() && !item->parent())
+                    delete item;
+
+            // If this is a remove operation, there must be an insert operation ahead
+            // which holds the reference of `item`, we don't need to delete
+        }
+    };
+
     struct NodeAddRemoveOp : public BaseOp {
         int id;
         AceTreeItem *item;
-        QByteArray serialized;
+        QByteArray serialized; // Insert operation needs
         NodeAddRemoveOp(bool isInsert = false) : BaseOp(isInsert ? NodeAdd : NodeRemove), id(0), item(nullptr) {
         }
         ~NodeAddRemoveOp() {
             if (c == NodeAdd)
                 if (item && !item->model() && !item->parent())
                     delete item;
+
+            // If this is a remove operation, there must be an insert operation ahead
+            // which holds the reference of `item`, we don't need to delete
         }
     };
 
     struct RootChangeOp : public BaseOp {
         AceTreeItem *oldRoot;
         AceTreeItem *newRoot;
+        QByteArray serialized;
         RootChangeOp() : BaseOp(RootChange), oldRoot(nullptr), newRoot(nullptr) {
         }
         ~RootChangeOp() {
-            // if (oldRoot && !oldRoot->model())
-            //    delete oldRoot;
             if (newRoot && !newRoot->model())
                 delete newRoot;
+
+            // The `oldRoot` must be hold by the previous `RootChangeOp`
+            // we don't need to delete
         }
     };
 
@@ -215,6 +237,9 @@ public:
     void rowsInserted(AceTreeItem *parent, int index, const QVector<AceTreeItem *> &items);
     void rowsMoved(AceTreeItem *parent, int index, int count, int dest);
     void rowsRemoved(AceTreeItem *parent, int index, const QVector<AceTreeItem *> &items);
+
+    void recordAdded(AceTreeItem *parent, int seq, AceTreeItem *item);
+    void recordRemoved(AceTreeItem *parent, int seq, AceTreeItem *item);
 
     void nodeAdded(AceTreeItem *parent, AceTreeItem *item);
     void nodeRemoved(AceTreeItem *parent, AceTreeItem *item);

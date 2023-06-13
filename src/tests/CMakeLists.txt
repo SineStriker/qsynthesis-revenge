@@ -17,3 +17,5 @@ add_subdirectory(VstTest)
 add_subdirectory(QtROTest)
 
 add_subdirectory(SynthVTest)
+
+add_subdirectory(auto)

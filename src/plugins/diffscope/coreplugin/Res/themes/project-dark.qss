@@ -6,8 +6,8 @@ QWidget#project-window {
 
 QToolBar#main-toolbar {
     padding: 5px;
-    spacing: 5px;
-    qproperty-iconSize: 20px 20px;
+    ---spacing: 5px;
+    --iconSize: 20px 20px;
 }
 
 QToolBar#main-toolbar>QToolBarSeparator {
@@ -38,36 +38,36 @@ QToolBar#main-toolbar>QToolButton:hover {
 }
 
 QToolBar#main-toolbar>QToolButton[action-id="core.Play"] {
-    qproperty-iconUp: svg(":/svg/main-toolbar/play-line.svg", "${project.toolbar.iconColor}");
-    qproperty-iconUpChecked: svg(":/svg/main-toolbar/pause-line.svg", "${project.toolbar.iconColor}");
+    --iconUp: svg(":/svg/main-toolbar/play-line.svg", ${project.toolbar.iconColor});
+    --iconUpChecked: svg(":/svg/main-toolbar/pause-line.svg", ${project.toolbar.iconColor});
 }
 
 QToolBar#main-toolbar>QToolButton[action-id="core.Stop"] {
-    qproperty-iconUp: svg(":/svg/main-toolbar/stop-line.svg", "${project.toolbar.iconColor}");
+    --iconUp: svg(":/svg/main-toolbar/stop-line.svg", ${project.toolbar.iconColor});
 }
 
 QToolBar#main-toolbar>QToolButton[action-id="core.MoveToStart"] {
-    qproperty-iconUp: svg(":/svg/main-toolbar/move-start-line.svg", "${project.toolbar.iconColor}");
+    --iconUp: svg(":/svg/main-toolbar/move-start-line.svg", ${project.toolbar.iconColor});
 }
 
 QToolBar#main-toolbar>QToolButton[action-id="core.MoveToEnd"] {
-    qproperty-iconUp: svg(":/svg/main-toolbar/move-end-line.svg", "${project.toolbar.iconColor}");
+    --iconUp: svg(":/svg/main-toolbar/move-end-line.svg", ${project.toolbar.iconColor});
 }
 
 QToolBar#main-toolbar>QToolButton[action-id="core.Metronome"] {
-    qproperty-iconUp: svg(":/svg/main-toolbar/metronome-line.svg", "${project.toolbar.iconColor}");
+    --iconUp: svg(":/svg/main-toolbar/metronome-line.svg", ${project.toolbar.iconColor});
 }
 
 QToolBar#main-toolbar>QToolButton[action-id="core.LoopPlay"] {
-    qproperty-iconUp: svg(":/svg/main-toolbar/loop-line.svg", "${project.toolbar.iconColor}");
+    --iconUp: svg(":/svg/main-toolbar/loop-line.svg", ${project.toolbar.iconColor});
 }
 
 QToolBar#main-toolbar>QToolButton[action-id="core.FindAction"] {
-    qproperty-iconUp: svg(":/svg/main-toolbar/search-line.svg", "${project.toolbar.iconColor}");
+    --iconUp: svg(":/svg/main-toolbar/search-line.svg", ${project.toolbar.iconColor});
 }
 
 QToolBar#main-toolbar>QToolButton[action-id="core.Settings"] {
-    qproperty-iconUp: svg(":/svg/main-toolbar/setting-line.svg", "${project.toolbar.iconColor}");
+    --iconUp: svg(":/svg/main-toolbar/setting-line.svg", ${project.toolbar.iconColor});
 }
 
 QToolBar#main-toolbar>QToolButton[selectable=true]:checked {
@@ -75,36 +75,36 @@ QToolBar#main-toolbar>QToolButton[selectable=true]:checked {
 }
 
 QsApi--SynthVSplitter#canvas>QsApi--SynthVSplitterHandle {
-    qproperty-handleHeight: 6px;
+    --handleHeight: 6px;
 }
 
 Core--Internal--FloatingTitleBar {
     background-color: #363737;
-    qproperty-layoutMargins: qmargins(5px);
-    qproperty-layoutSpacing: 10px;
+    --layoutMargins: qmargins(5px);
+    --layoutSpacing: 10px;
 }
 
 Core--Internal--FloatingTitleBarButton {
     background-color: transparent;
     border: none;
     color: white;
-    qproperty-hintHeight: 4px;
-    qproperty-hintColor: #017FD4;
+    --hintHeight: 4px;
+    --hintColor: #017FD4;
 }
 
 Core--Internal--FloatingTitleBar>QToolButton {
     background-color: transparent;
     border: none;
-    qproperty-iconSize: 12px 12px;
+    --iconSize: 12px 12px;
 }
 
 Core--Internal--FloatingTitleBar>QToolButton#fold-button {
-    qproperty-iconUp: svg(":/svg/floating-titlebar/unfold.svg", "${project.floatingPanel.iconColor}");
-    qproperty-iconUpChecked: svg(":/svg/floating-titlebar/fold.svg", "${project.floatingPanel.iconColor}");
+    --iconUp: svg(":/svg/floating-titlebar/unfold.svg", ${project.floatingPanel.iconColor});
+    --iconUpChecked: svg(":/svg/floating-titlebar/fold.svg", ${project.floatingPanel.iconColor});
 }
 
 Core--Internal--FloatingTitleBar>QToolButton#close-button {
-    qproperty-iconUp: svg(":/svg/floating-titlebar/close.svg", "${project.floatingPanel.iconColor}");
+    --iconUp: svg(":/svg/floating-titlebar/close.svg", ${project.floatingPanel.iconColor});
 }
 
 QWidget[floating-panel=true] {
@@ -115,7 +115,7 @@ QWidget[floating-panel=true] {
 /* PianoArea */
 
 Core--Internal--PianoKeyWidget {
-    qproperty-preferredWidth: 125px;
+    --preferredWidth: 125px;
     background-color: #333333;
 }
 
@@ -173,8 +173,8 @@ CDockCard {
     background-color: transparent;
     border: 1px solid transparent;
     padding: 4px 8px;
-    qproperty-iconSize: 16px 16px;
-    qproperty-spaceRatio: 0.25;
+    --iconSize: 16px 16px;
+    --spaceRatio: 0.25;
 }
 
 CDockCard:checked {
@@ -182,13 +182,13 @@ CDockCard:checked {
     background-color: #2F2F2F;
 }
 
-CDockCard:!checked:hover {
+CDockCard:not(:checked):hover {
     background-color: #292929;
 }
 
 CDockCard#track-card {
-    qproperty-iconUp: svg(":/svg/main-dock/layer-group-solid.svg", #CCCCCC);
-    qproperty-iconUpChecked: svg(":/svg/main-dock/layer-group-solid.svg", white);
+    --iconUp: svg(":/svg/main-dock/layer-group-solid.svg", #CCCCCC);
+    --iconUpChecked: svg(":/svg/main-dock/layer-group-solid.svg", white);
 }
 
 CDockPanelSplitter:handle {
