@@ -235,7 +235,7 @@ QVariant AceTreeItem::property(const QString &key) const {
 
 void AceTreeItem::setProperty(const QString &key, const QVariant &value) {
     Q_D(AceTreeItem);
-    if (!d->allowModify())
+    if (!d->allowModify("AceTreeItem::setProperty()"))
         return;
 
     d->setProperty_helper(key, value);
@@ -248,7 +248,7 @@ QVariantHash AceTreeItem::properties() const {
 
 void AceTreeItem::setBytes(int start, const QByteArray &bytes) {
     Q_D(AceTreeItem);
-    if (!d->allowModify())
+    if (!d->allowModify("AceTreeItem::setBytes()"))
         return;
 
     d->setBytes_helper(start, bytes);
@@ -256,7 +256,7 @@ void AceTreeItem::setBytes(int start, const QByteArray &bytes) {
 
 void AceTreeItem::truncateBytes(int size) {
     Q_D(AceTreeItem);
-    if (!d->allowModify())
+    if (!d->allowModify("AceTreeItem::truncateBytes()"))
         return;
 
     d->truncateBytes_helper(size);
@@ -272,53 +272,51 @@ int AceTreeItem::bytesSize() const {
     return d->byteArray.size();
 }
 
-void AceTreeItem::insertRows(int index, const QVector<AceTreeItem *> &items) {
+bool AceTreeItem::insertRows(int index, const QVector<AceTreeItem *> &items) {
     Q_D(AceTreeItem);
-    if (!d->allowModify())
-        return;
+    if (!d->allowModify("AceTreeItem::insertRows()"))
+        return false;
 
     // Validate
-    QVector<AceTreeItem *> validItems;
-    validItems.reserve(items.size());
     for (const auto &item : items) {
-        if (!item)
-            continue;
-
+        if (!item) {
+            qWarning() << "AceTreeItem::insertRows(): item is null";
+            return false;
+        }
         if (!item->isFree()) {
             qWarning() << "AceTreeItem::insertRows(): item is not free" << item;
-            continue;
+            return false;
         }
-        validItems.append(item);
     }
 
-    if (validItems.isEmpty())
-        return;
-
-    d->insertRows_helper(index, validItems);
+    d->insertRows_helper(index, items);
+    return true;
 }
 
-void AceTreeItem::moveRows(int index, int count, int dest) {
+bool AceTreeItem::moveRows(int index, int count, int dest) {
     Q_D(AceTreeItem);
 
-    if (!d->allowModify())
-        return;
+    if (!d->allowModify("AceTreeItem::moveRows()"))
+        return false;
 
-    d->moveRows_helper(index, count, dest);
+    return d->moveRows_helper(index, count, dest);
 }
 
-void AceTreeItem::removeRows(int index, int count) {
+bool AceTreeItem::removeRows(int index, int count) {
     Q_D(AceTreeItem);
 
-    if (!d->allowModify())
-        return;
+    if (!d->allowModify("AceTreeItem::removeRows()"))
+        return false;
 
     // Validate
     count = qMin(count, d->vector.size() - index);
     if (count <= 0 || count > d->vector.size()) {
-        return;
+        qWarning() << "AceTreeItem::removeRows(): invalid parameters";
+        return false;
     }
 
     d->removeRows_helper(index, count);
+    return true;
 }
 
 AceTreeItem *AceTreeItem::row(int row) const {
@@ -339,11 +337,13 @@ int AceTreeItem::rowCount() const {
 int AceTreeItem::addRecord(AceTreeItem *item) {
     Q_D(AceTreeItem);
 
-    if (!d->allowModify())
+    if (!d->allowModify("AceTreeItem::addRecord()"))
         return -1;
 
-    if (!item)
+    if (!item) {
+        qWarning() << "AceTreeItem::addRecord(): item is null";
         return -1;
+    }
 
     // Validate
     if (!item->isFree()) {
@@ -356,19 +356,20 @@ int AceTreeItem::addRecord(AceTreeItem *item) {
     return seq;
 }
 
-void AceTreeItem::removeRecord(int seq) {
+bool AceTreeItem::removeRecord(int seq) {
     Q_D(AceTreeItem);
 
-    if (!d->allowModify())
-        return;
+    if (!d->allowModify("AceTreeItem::removeRecord()"))
+        return false;
 
     // Validate
     if (!d->records.contains(seq)) {
         qWarning() << "AceTreeItem: seq num" << seq << "doesn't exists in" << this;
-        return;
+        return false;
     }
 
     d->removeRecord_helper(seq);
+    return true;
 }
 
 AceTreeItem *AceTreeItem::record(int seq) {
@@ -398,22 +399,25 @@ int AceTreeItem::maxRecordSeq() const {
     return d->maxRecordSeq;
 }
 
-void AceTreeItem::addNode(AceTreeItem *item) {
+bool AceTreeItem::addNode(AceTreeItem *item) {
     Q_D(AceTreeItem);
 
-    if (!d->allowModify())
-        return;
+    if (!d->allowModify("AceTreeItem::addNode()"))
+        return false;
 
-    if (!item)
-        return;
+    if (!item) {
+        qWarning() << "AceTreeItem::addNode(): item is null";
+        return false;
+    }
 
     // Validate
     if (!item->isFree()) {
         qWarning() << "AceTreeItem::addNode(): item is not free" << item;
-        return;
+        return false;
     }
 
     d->addNode_helper(item);
+    return true;
 }
 
 bool AceTreeItem::containsNode(AceTreeItem *item) {
@@ -421,19 +425,25 @@ bool AceTreeItem::containsNode(AceTreeItem *item) {
     return d->set.contains(item);
 }
 
-void AceTreeItem::removeNode(AceTreeItem *item) {
+bool AceTreeItem::removeNode(AceTreeItem *item) {
     Q_D(AceTreeItem);
 
-    if (!d->allowModify())
-        return;
+    if (!d->allowModify("AceTreeItem::removeNode()"))
+        return false;
+
+    if (!item) {
+        qWarning() << "AceTreeItem::removeNode(): item is null";
+        return false;
+    }
 
     // Validate
     if (item->parent() != this || !d->set.contains(item)) {
         qWarning() << "AceTreeItem: item" << item << "has nothing to do with parent" << this;
-        return;
+        return false;
     }
 
     d->removeNode_helper(item);
+    return true;
 }
 
 QList<AceTreeItem *> AceTreeItem::nodes() const {
@@ -709,16 +719,16 @@ void AceTreeModelPrivate::removeIndex(int index) {
     indexes.remove(index);
 }
 
-bool AceTreeItemPrivate::allowModify() const {
+bool AceTreeItemPrivate::allowModify(const char *func) const {
     Q_Q(const AceTreeItem);
 
     if (model && model->d_func()->internalChange) {
-        qWarning() << "AceTreeItem: modifying data during model's internal state switching is prohibited" << q;
+        qWarning().nospace() << func << ": modifying data during model's internal state switching is prohibited " << q;
         return false;
     }
 
     if (!model && m_index > 0) {
-        qWarning() << "AceTreeItem: the item is now obsolete" << q;
+        qWarning().nospace() << ": the item is now obsolete " << q;
         return false;
     }
 
@@ -802,17 +812,20 @@ void AceTreeItemPrivate::insertRows_helper(int index, const QVector<AceTreeItem 
         model->d_func()->rowsInserted(q, index, items);
 }
 
-void AceTreeItemPrivate::moveRows_helper(int index, int count, int dest) {
+bool AceTreeItemPrivate::moveRows_helper(int index, int count, int dest) {
     Q_Q(AceTreeItem);
 
     // Do change
     if (!QMBatch::arrayMove(vector, index, count, dest)) {
-        return;
+        qWarning() << "AceTreeItem::moveRows(): invalid parameters";
+        return false;
     }
 
     // Propagate signal
     if (model)
         model->d_func()->rowsMoved(q, index, count, dest);
+
+    return true;
 }
 
 void AceTreeItemPrivate::removeRows_helper(int index, int count) {
@@ -1258,7 +1271,7 @@ void AceTreeModelPrivate::recordAdded(AceTreeItem *parent, int seq, AceTreeItem 
 
         push(op);
     }
-    emit q->nodeAdded(parent, item);
+    emit q->recordAdded(parent, seq, item);
 }
 
 void AceTreeModelPrivate::recordRemoved(AceTreeItem *parent, int seq, AceTreeItem *item) {
@@ -1270,7 +1283,8 @@ void AceTreeModelPrivate::recordRemoved(AceTreeItem *parent, int seq, AceTreeIte
         op->item = item;
         push(op);
     }
-    emit q->nodeRemoved(parent, item);
+
+    emit q->recordRemoved(parent, seq);
 }
 
 void AceTreeModelPrivate::nodeAdded(AceTreeItem *parent, AceTreeItem *item) {
@@ -1713,7 +1727,9 @@ AceTreeItem *AceTreeModel::rootItem() const {
 void AceTreeModel::setRootItem(AceTreeItem *item) {
     Q_D(AceTreeModel);
     if (d->internalChange) {
-        qWarning() << "AceTreeModel: modifying root item during model's internal state switching is prohibited" << this;
+        qWarning()
+            << "AceTreeModel::setRootItem(): modifying root item during model's internal state switching is prohibited"
+            << this;
         return;
     }
 
@@ -1731,7 +1747,8 @@ void AceTreeModel::setRootItem(AceTreeItem *item) {
 AceTreeItem *AceTreeModel::reset() {
     Q_D(AceTreeModel);
     if (d->internalChange) {
-        qWarning() << "AceTreeModel: reset model during model's internal state switching is prohibited" << this;
+        qWarning() << "AceTreeModel::reset(): reset model during model's internal state switching is prohibited"
+                   << this;
         return nullptr;
     }
 

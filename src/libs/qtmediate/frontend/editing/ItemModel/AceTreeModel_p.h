@@ -36,13 +36,13 @@ public:
     QSet<AceTreeItem *> set;
     QHash<QString, QSet<AceTreeItem *>> setNameIndexes;
 
-    bool allowModify() const;
+    bool allowModify(const char *func) const;
 
     void setProperty_helper(const QString &key, const QVariant &value);
     void setBytes_helper(int start, const QByteArray &bytes);
     void truncateBytes_helper(int size);
     void insertRows_helper(int index, const QVector<AceTreeItem *> &items);
-    void moveRows_helper(int index, int count, int dest);
+    bool moveRows_helper(int index, int count, int dest);
     void removeRows_helper(int index, int count);
     void addNode_helper(AceTreeItem *item);
     void removeNode_helper(AceTreeItem *item);

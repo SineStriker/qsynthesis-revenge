@@ -43,23 +43,23 @@ public:
     int bytesSize() const;
 
     // Vector - Rows
-    inline void prependRow(AceTreeItem *item);
-    inline void prependRows(const QVector<AceTreeItem *> &items);
-    inline void appendRow(AceTreeItem *item);
-    inline void appendRows(const QVector<AceTreeItem *> &items);
-    inline void insertRow(int index, AceTreeItem *item);
-    inline void removeRow(int index);
-    void insertRows(int index, const QVector<AceTreeItem *> &items);
-    void moveRows(int index, int count, int dest);         // `dest`: destination index before move
-    inline void moveRows2(int index, int count, int dest); // `dest`: destination index after move
-    void removeRows(int index, int count);
+    inline bool prependRow(AceTreeItem *item);
+    inline bool prependRows(const QVector<AceTreeItem *> &items);
+    inline bool appendRow(AceTreeItem *item);
+    inline bool appendRows(const QVector<AceTreeItem *> &items);
+    inline bool insertRow(int index, AceTreeItem *item);
+    inline bool removeRow(int index);
+    bool insertRows(int index, const QVector<AceTreeItem *> &items);
+    bool moveRows(int index, int count, int dest);         // `dest`: destination index before move
+    inline bool moveRows2(int index, int count, int dest); // `dest`: destination index after move
+    bool removeRows(int index, int count);
     AceTreeItem *row(int row) const;
     int rowIndexOf(AceTreeItem *item) const;
     int rowCount() const;
 
     // Hash - Records
     int addRecord(AceTreeItem *item);
-    void removeRecord(int seq);
+    bool removeRecord(int seq);
     AceTreeItem *record(int seq);
     int recordIndexOf(AceTreeItem *item) const;
     QList<int> records() const;
@@ -67,10 +67,10 @@ public:
     int maxRecordSeq() const;
 
     // Set - Nodes
-    inline void insertNode(AceTreeItem *item);
-    void addNode(AceTreeItem *item);
+    inline bool insertNode(AceTreeItem *item);
+    bool addNode(AceTreeItem *item);
     bool containsNode(AceTreeItem *item);
-    void removeNode(AceTreeItem *item);
+    bool removeNode(AceTreeItem *item);
     QList<AceTreeItem *> nodes() const;
     int nodeCount() const;
     QStringList nodeNames() const;
@@ -157,36 +157,36 @@ protected:
     friend class AceTreeItemPrivate;
 };
 
-inline void AceTreeItem::prependRow(AceTreeItem *item) {
-    insertRows(0, {item});
+inline bool AceTreeItem::prependRow(AceTreeItem *item) {
+    return insertRows(0, {item});
 }
 
-inline void AceTreeItem::prependRows(const QVector<AceTreeItem *> &items) {
-    insertRows(0, items);
+inline bool AceTreeItem::prependRows(const QVector<AceTreeItem *> &items) {
+    return insertRows(0, items);
 }
 
-inline void AceTreeItem::appendRow(AceTreeItem *item) {
-    insertRows(rowCount(), {item});
+inline bool AceTreeItem::appendRow(AceTreeItem *item) {
+    return insertRows(rowCount(), {item});
 }
 
-inline void AceTreeItem::appendRows(const QVector<AceTreeItem *> &items) {
-    insertRows(rowCount(), items);
+inline bool AceTreeItem::appendRows(const QVector<AceTreeItem *> &items) {
+    return insertRows(rowCount(), items);
 }
 
-inline void AceTreeItem::insertRow(int index, AceTreeItem *item) {
-    insertRows(index, {item});
+inline bool AceTreeItem::insertRow(int index, AceTreeItem *item) {
+    return insertRows(index, {item});
 }
 
-inline void AceTreeItem::moveRows2(int index, int count, int dest) {
+inline bool AceTreeItem::moveRows2(int index, int count, int dest) {
     return moveRows(index, count, (dest <= index) ? dest : (dest + count));
 }
 
-inline void AceTreeItem::removeRow(int index) {
-    removeRows(index, 1);
+inline bool AceTreeItem::removeRow(int index) {
+    return removeRows(index, 1);
 }
 
-inline void AceTreeItem::insertNode(AceTreeItem *item) {
-    addNode(item);
+inline bool AceTreeItem::insertNode(AceTreeItem *item) {
+    return addNode(item);
 }
 
 inline void AceTreeModel::nextStep() {
