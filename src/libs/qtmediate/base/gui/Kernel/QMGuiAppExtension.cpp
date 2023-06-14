@@ -8,6 +8,7 @@
 #include "QMGuiConsole.h"
 #include "QMGuiDecoratorV2.h"
 #include "QMSystem.h"
+
 #include "private/QMGuiAppExtension_p.h"
 #include "private/QMetaTypeImpl_p.h"
 
@@ -26,11 +27,11 @@ QMGuiAppExtensionPrivate::~QMGuiAppExtensionPrivate() {
 }
 
 void QMGuiAppExtensionPrivate::init() {
-    // This is necessary for MacOS platforms, so that QIcon will return a
+    // This is necessary for macOS platforms, so that QIcon will return a
     // pixmap with correct devicePixelRatio when using QIcon::pixmap().
     QGuiApplication::setAttribute(Qt::AA_UseHighDpiPixmaps);
 
-    // Must register all metatype converters in advance
+    // Must register all meta-types converters in advance
     Register_QMetaTypeImpl();
 
     for (const auto &path : qAsConst(fontPaths)) {
@@ -49,7 +50,7 @@ void QMGuiAppExtensionPrivate::init() {
     QFont font = QGuiApplication::font();
 
 #ifdef Q_OS_WINDOWS
-    font.setFamily("Microsoft YaHei");
+    // font.setFamily("Microsoft YaHei"); // Consider not using MSYH on non-Chinese Windows platform
 #endif
 
     // Init font
@@ -62,13 +63,13 @@ void QMGuiAppExtensionPrivate::init() {
 
         value = appFont.value("Size");
         if (value.isDouble()) {
-            double ratio = qApp->primaryScreen()->logicalDotsPerInch() / QMOs::unitDpi();
-            font.setPixelSize(value.toDouble() * ratio);
+            double ratio = QGuiApplication::primaryScreen()->logicalDotsPerInch() / QMOs::unitDpi();
+            font.setPixelSize(int(value.toDouble() * ratio));
         }
 
         value = appFont.value("Weight");
         if (value.isDouble()) {
-            font.setWeight(value.toDouble());
+            font.setWeight(value.toInt());
         }
     }
 

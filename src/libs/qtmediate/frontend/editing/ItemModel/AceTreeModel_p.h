@@ -1,6 +1,7 @@
 #ifndef ACETREEMODEL_P_H
 #define ACETREEMODEL_P_H
 
+#include <QDebug>
 #include <QFileDevice>
 #include <QSet>
 #include <QStack>
@@ -36,7 +37,8 @@ public:
     QSet<AceTreeItem *> set;
     QHash<QString, QSet<AceTreeItem *>> setNameIndexes;
 
-    bool allowModify(const char *func) const;
+    bool testModifiable(const char *func) const;
+    bool testInsertedItem(const char *func, const AceTreeItem *item) const;
 
     void setProperty_helper(const QString &key, const QVariant &value);
     void setBytes_helper(int start, const QByteArray &bytes);
@@ -52,10 +54,11 @@ public:
 
     static void propagateItems(AceTreeItem *item, const std::function<void(AceTreeItem *)> &f);
     static QByteArray itemToData(AceTreeItem *item);
-    static QByteArray itemToDataWithIndex(AceTreeItem *item);
+    static AceTreeItem *itemFromStream(QDataStream &stream, QByteArray *out);
 };
 
 class AceTreeModelPrivate {
+    Q_GADGET
     Q_DECLARE_PUBLIC(AceTreeModel)
 public:
     AceTreeModelPrivate();
@@ -97,10 +100,14 @@ public:
         RootChange,
     };
 
+    Q_ENUM(Change)
+
     struct BaseOp {
         Change c;
         explicit BaseOp(Change c) : c(c){};
-        virtual ~BaseOp() = default;
+        virtual ~BaseOp() {
+            // qDebug() << "AceTree Operation destroyed" << c;
+        }
     };
 
     struct PropertyChangeOp : public BaseOp {
@@ -162,7 +169,7 @@ public:
         int seq;
         AceTreeItem *item;
         QByteArray serialized; // Insert operation needs
-        RecordAddRemoveOp(bool isAdd) : BaseOp(isAdd ? RecordAdd : RecordRemove), id(0), seq(-1), item(nullptr) {
+        RecordAddRemoveOp(bool isInsert) : BaseOp(isInsert ? RecordAdd : RecordRemove), id(0), seq(-1), item(nullptr) {
         }
         ~RecordAddRemoveOp() {
             if (c == RecordAdd)
