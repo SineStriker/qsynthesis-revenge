@@ -1,8 +1,6 @@
 #ifndef ICOREWINDOW_H
 #define ICOREWINDOW_H
 
-#include <QPointer>
-
 #include <CoreApi/IWindow.h>
 #include <Widgets/CommandPalette.h>
 

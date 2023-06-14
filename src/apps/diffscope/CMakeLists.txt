@@ -3,7 +3,8 @@ project(DiffScope
     VERSION ${CHORUSKIT_VERSION}
 )
 
-ck_add_application(${PROJECT_NAME} CkAppLoad
+ck_add_application(${PROJECT_NAME}
+    ENTRY_LIB CkAppLoad
     ENV "CHORUSKIT_APP_NAME_HINT=${PROJECT_NAME}" "CHORUSKIT_APP_VERSION_HINT=${PROJECT_VERSION}"
     ICO app.ico
     ICNS app.icns

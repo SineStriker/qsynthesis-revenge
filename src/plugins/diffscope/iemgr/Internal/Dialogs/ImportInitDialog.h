@@ -6,7 +6,7 @@
 #include <QLineEdit>
 #include <QVBoxLayout>
 
-#include <QMWorkflowDialog.h>
+#include <CWorkflowDialog.h>
 
 #include "IWizardFactory.h"
 
@@ -16,7 +16,7 @@ namespace IEMgr {
 
     namespace Internal {
 
-        class ImportInitDialog : public QMWorkflowDialog {
+        class ImportInitDialog : public CWorkflowDialog {
             Q_OBJECT
         public:
             explicit ImportInitDialog(QWidget *parent = nullptr);
@@ -34,7 +34,7 @@ namespace IEMgr {
             bool finish() override;
 
         private:
-            QMWorkflowPage *page;
+            CWorkflowPage *page;
 
             QVBoxLayout *leftLayout;
             QVBoxLayout *rightLayout;

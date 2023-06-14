@@ -434,48 +434,54 @@ endfunction()
 #[[
 Add an application, need to specify an entry library.
 
-    ck_add_application(<target> <entry library> <ICO ico> <ICNS icns>
+    ck_add_application(<target> <ICO ico> <ICNS icns>
         [SKIP_EXPORT]
         [NAME           name] 
         [VERSION        version] 
         [DESCRIPTION    desc]
-        [ENTRY_NAME     name]
+        [ENTRY_LIB <entry library> [ENV env...] [ENTRY_NAME name]...]
     )
 
-    ICO: set Windows icon file (Required)
-    ICNS: set Mac icon file (Required)
-    ENTRY_NAME: set a custom function name to pass "argc" and "argv", the default is "main_entry"
+    ICO: set Windows icon file
+    ICNS: set Mac icon file
+    ENTRY_LIB: set the application as a loader to a shared library
+        ENV: set a series of environment variable to the shared library
+        ENTRY_NAME: set a custom function name to pass "argc" and "argv", the default is "main_entry"
 
     Check `ck_add_library` for arguments' usage.
 ]] #
-function(ck_add_application _target _entry_library)
+function(ck_add_application _target)
     set(options SKIP_EXPORT)
-    set(oneValueArgs ENTRY_NAME ICO ICNS)
+    set(oneValueArgs ENTRY_LIB ENTRY_NAME ICO ICNS)
     set(multiValueArgs ENV)
     cmake_parse_arguments(FUNC "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
 
     # Configure main cpp template
-    _ck_set_value(_entry_name FUNC_ENTRY_NAME "main_entry")
-    set(APP_MAIN_ENTRY_NAME ${_entry_name})
+    if(FUNC_ENTRY_LIB)
+        _ck_set_value(_entry_name FUNC_ENTRY_NAME "main_entry")
+        set(APP_MAIN_ENTRY_NAME ${_entry_name})
 
-    if(FUNC_ENV)
-        foreach(_item ${FUNC_ENV})
-            set(_env_codes "${_env_codes}    PUTENV(\"${_item}\")\;\n")
-        endforeach()
+        if(FUNC_ENV)
+            foreach(_item ${FUNC_ENV})
+                set(_env_codes "${_env_codes}    PUTENV(\"${_item}\")\;\n")
+            endforeach()
 
-        set(APP_MAIN_ENVS ${_env_codes})
+            set(APP_MAIN_ENVS ${_env_codes})
+        endif()
+
+        set(_cpp_path ${CMAKE_CURRENT_BINARY_DIR}/${_target}_main.cpp)
+        configure_file(
+            ${CK_CMAKE_MODULES_DIR}/ChorusKitAppMain.cpp.in
+            ${_cpp_path}
+            @ONLY
+        )
+
+        # Add target
+        add_executable(${_target} ${_cpp_path})
+        target_link_libraries(${_target} PRIVATE ${FUNC_ENTRY_LIB})
+    else()
+        add_executable(${_target})
     endif()
-
-    set(_cpp_path ${CMAKE_CURRENT_BINARY_DIR}/${_target}_main.cpp)
-    configure_file(
-        ${CK_CMAKE_MODULES_DIR}/ChorusKitAppMain.cpp.in
-        ${_cpp_path}
-        @ONLY
-    )
-
-    # Add target
-    add_executable(${_target} ${_cpp_path})
-    target_link_libraries(${_target} PRIVATE ${_entry_library})
 
     # Make location dependent executable, otherwise GNOME cannot recognize
     if("${CMAKE_CXX_COMPILER_ID}" MATCHES "GNU")
@@ -486,10 +492,16 @@ function(ck_add_application _target _entry_library)
     set(_copyright "Copyright ${CK_DEV_START_YEAR}-${_year} OpenVPI")
 
     if(APPLE)
+        if(FUNC_ICNS)
+            set(_icns ICNS ${FUNC_ICNS})
+        else()
+            set(_icns)
+        endif()
+
         # Add mac bundle
         _ck_attach_mac_bundle(${_target}
             COPYRIGHT "${_copyright}"
-            ICNS ${FUNC_ICNS}
+            ${_icns}
             ${FUNC_UNPARSED_ARGUMENTS}
         )
         set_target_properties(${_target} PROPERTIES
@@ -501,11 +513,17 @@ function(ck_add_application _target _entry_library)
             # Set windows application type
             _ck_set_win32_executable_type(${_target})
 
+            if(FUNC_ICO)
+                set(_ico ICO ${FUNC_ICO})
+            else()
+                set(_ico)
+            endif()
+
             # Add windows rc file
             _ck_attach_win_rc_file(${_target}
                 MANIFEST
                 COPYRIGHT "${_copyright}"
-                ICO ${FUNC_ICO}
+                ${_ico}
                 ${FUNC_UNPARSED_ARGUMENTS}
             )
 

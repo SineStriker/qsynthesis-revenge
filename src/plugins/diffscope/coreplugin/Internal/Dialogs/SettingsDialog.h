@@ -14,7 +14,7 @@
 #include <QMEqualBoxLayout.h>
 #include <QPixelSize.h>
 
-#include "QMConfigurableDialog.h"
+#include "CConfigurableDialog.h"
 
 namespace Core {
 
@@ -22,7 +22,7 @@ namespace Core {
 
     namespace Internal {
 
-        class SettingsDialog : public QMConfigurableDialog {
+        class SettingsDialog : public CConfigurableDialog {
             Q_OBJECT
             Q_LAYOUT_PROPERTY_DELCARE
         public:

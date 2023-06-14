@@ -145,6 +145,7 @@ AceTreeItemPrivate::AceTreeItemPrivate() {
 }
 
 AceTreeItemPrivate::~AceTreeItemPrivate() {
+    //
 }
 
 void AceTreeItemPrivate::init() {

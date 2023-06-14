@@ -4,11 +4,11 @@
 #include <QFormLayout>
 #include <QJSValue>
 
-#include "QMConfigurableDialog.h"
+#include "CConfigurableDialog.h"
 
 namespace ScriptMgr::Internal {
 
-    class JsFormDialog: public QMConfigurableDialog {
+    class JsFormDialog: public CConfigurableDialog {
         Q_OBJECT
     public:
         JsFormDialog(QJSEngine *engine, QJSValue listener, QWidget *parent = nullptr);

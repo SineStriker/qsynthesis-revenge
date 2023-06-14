@@ -28,7 +28,7 @@
 namespace ScriptMgr::Internal {
 
     JsFormDialog::JsFormDialog(QJSEngine *engine, QJSValue listener, QWidget *parent)
-        : QMConfigurableDialog(parent), engine(engine), listener(listener) {
+        : CConfigurableDialog(parent), engine(engine), listener(listener) {
         setApplyButtonVisible(false);
         ret = engine->newObject();
         ret.setProperty("form", engine->newArray());
