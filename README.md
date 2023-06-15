@@ -61,6 +61,8 @@ For detailed information, see [Related Tools](./docs/related-tools.md).
     + GNU LGPL v2.1 or later
 + [FFmpeg](https://github.com/FFmpeg/FFmpeg) (libavcodec libavformat libavutil libswresample)
     + GNU LGPL v2.1 or later
++ [LAME](https://lame.sourceforge.io/)
+    + GNU LGPL v2.0
 + [SDL](https://github.com/libsdl-org/SDL) (Audio)
     + Zlib License
 + [vcpkg](https://github.com/microsoft/vcpkg)
