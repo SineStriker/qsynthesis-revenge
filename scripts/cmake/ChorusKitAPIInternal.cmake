@@ -715,6 +715,10 @@ function(_ck_dist_shared_for_application _item)
         set(_base_dir $<TARGET_BUNDLE_DIR:${_item}>/Contents)
         add_custom_command(TARGET ${_item} POST_BUILD
 
+            # Make directories if not exist
+            COMMAND mkdir -p ${_base_dir}/Frameworks
+            COMMAND mkdir -p ${_base_dir}/Resources
+
             # Remove previous links
             COMMAND find ${_base_dir}/Frameworks -type l -delete
             COMMAND find ${_base_dir}/Resources -type l -delete
