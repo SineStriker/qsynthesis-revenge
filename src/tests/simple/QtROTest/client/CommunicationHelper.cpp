@@ -72,3 +72,5 @@ Awaiter::Awaiter(): Awaiter(new AwaiterPrivate) {
 Awaiter::Awaiter(AwaiterPrivate *d): d_ptr(d) {
     d->q_ptr = this;
 }
+Awaiter::~Awaiter() {
+}
