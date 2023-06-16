@@ -3,7 +3,7 @@
 
 #include "AceTreeEntity.h"
 
-class AceTreeEntityPrivate {
+class QMEDITING_EXPORT AceTreeEntityPrivate {
     Q_DECLARE_PUBLIC(AceTreeEntity)
 public:
     AceTreeEntityPrivate();
@@ -12,13 +12,19 @@ public:
     void init();
 
     AceTreeEntity *q_ptr;
-};
 
-class AceTreeEntityFactoryPrivate {
-public:
-    AceTreeEntityFactoryPrivate(AceTreeEntityFactory *q) : q(q){};
+    AceTreeItem *m_treeItem;
 
-    AceTreeEntityFactory *q;
+    QSet<AceTreeEntity *> children;
+    AceTreeEntity *parent;
+
+    inline static AceTreeItem *getItem(AceTreeEntity *entity) {
+        return entity->d_func()->m_treeItem;
+    }
+
+    inline static AceTreeEntityPrivate *get(AceTreeEntity *entity) {
+        return entity->d_func();
+    }
 };
 
 #endif // ACETREEENTITYPRIVATE_H

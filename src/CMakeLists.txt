@@ -25,8 +25,12 @@ include(${ROOT_CMAKE_MODULE_DIR}/ChorusKitAPI.cmake)
 # ----------------------------------
 ck_option(CK_BUILD_TEST on)
 ck_option(CK_ENABLE_BREAKPAD off)
+
 ck_option(CK_BUILD_ALL_APPLICATIONS off)
 ck_option(CK_BUILD_APPLICATIONS DiffScope) # Not used if `CK_BUILD_ALL_APPLICATIONS` is on
+
+ck_option(CK_BUILD_ALL_TOOLS on)
+ck_option(CK_BUILD_TOOLS DiffScope) # Not used if `CK_BUILD_ALL_TOOLS` is on
 
 # ----------------------------------
 # Main project

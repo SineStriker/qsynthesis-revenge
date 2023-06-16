@@ -199,3 +199,39 @@ macro(ck_add_qt_private_inc _list)
         list(APPEND ${_list} ${Qt${QT_VERSION_MAJOR}${_module}_PRIVATE_INCLUDE_DIRS})
     endforeach()
 endmacro()
+
+#[[
+Add all or partial sub-directories to buildsystem
+
+    ck_add_subdirectories([ALL] [<dirs...>])
+]] #
+function(ck_add_subdirectories)
+    set(options ALL)
+    set(oneValueArgs)
+    set(multiValueArgs)
+    cmake_parse_arguments(FUNC "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
+
+    ck_get_subdirs(_dirs)
+
+    if(FUNC_ALL)
+        foreach(_dir ${_dirs})
+            add_subdirectory(${_dir})
+        endforeach()
+    else()
+        set(_apps_lower)
+
+        foreach(_item ${FUNC_UNPARSED_ARGUMENTS})
+            string(TOLOWER ${_item} _lower)
+            list(APPEND _apps_lower ${_lower})
+        endforeach()
+
+        foreach(_dir ${_dirs})
+            string(TOLOWER ${_dir} _lower)
+            list(FIND _apps_lower ${_lower} _out)
+
+            if(_out GREATER_EQUAL 0)
+                add_subdirectory(${_dir})
+            endif()
+        endforeach()
+    endif()
+endfunction()

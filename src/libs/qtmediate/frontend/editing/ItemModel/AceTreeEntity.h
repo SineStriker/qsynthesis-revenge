@@ -1,7 +1,9 @@
 #ifndef ACETREEENTITY_H
 #define ACETREEENTITY_H
 
+#include <QJsonValue>
 #include <QObject>
+#include <QSharedData>
 
 #include "AceTreeModel.h"
 
@@ -14,37 +16,44 @@ public:
     explicit AceTreeEntity(QObject *parent = nullptr);
     ~AceTreeEntity();
 
-    virtual void setup(AceTreeItem *item);
+    virtual QString name() const = 0;
+
+public:
+    void initialize();
+    void setup(AceTreeItem *item);
+
+    virtual bool read(const QJsonValue &value) = 0;
+    virtual QJsonValue write() const = 0;
+
+    QList<AceTreeEntity *> childEntities() const;
+    bool hasChildEntity(AceTreeEntity *child) const;
+    AceTreeEntity *parentEntity() const;
+
+    inline bool isFree() const;
+    inline bool isWritable() const;
+    const AceTreeItem *treeItem() const;
+    const AceTreeModel *treeModel() const;
+
+    bool addChild(AceTreeEntity *child);
+    bool removeChild(AceTreeEntity *child);
 
 protected:
-    AceTreeEntity(AceTreeEntityPrivate &d, QObject *parent = nullptr);
+    virtual void doInitialize();
+    virtual void doSetup();
 
+    virtual void childAdded(AceTreeEntity *child);
+    virtual void childAboutToRemove(AceTreeEntity *child);
+
+    AceTreeEntity(AceTreeEntityPrivate &d, QObject *parent = nullptr);
     QScopedPointer<AceTreeEntityPrivate> d_ptr;
 };
 
-class AceTreeEntityFactoryPrivate;
+inline bool AceTreeEntity::isFree() const {
+    return !parentEntity() && treeItem()->isFree();
+}
 
-class QMEDITING_EXPORT AceTreeEntityFactory : public QObject {
-    Q_OBJECT
-public:
-    explicit AceTreeEntityFactory(QObject *parent = nullptr);
-    ~AceTreeEntityFactory();
-
-    template <class T>
-    T *create(AceTreeItem *item = nullptr) const {
-        static_assert(std::is_base_of<AceTreeEntity, T>::value, "T should inherit from AceTreeEntity");
-        return qobject_cast<T *>(createImpl(&T::staticMetaObject, item));
-    }
-
-public:
-    bool addChild(const QMetaObject *parent, const QString &key, const QMetaObject *child);
-    bool removeChild(const QMetaObject *parent, const QString &key);
-    const QMetaObject *child(const QMetaObject *parent, const QString &key);
-
-private:
-    AceTreeEntity *createImpl(const QMetaObject *metaObject, AceTreeItem *treeItem);
-
-    AceTreeEntityFactoryPrivate *d;
-};
+inline bool AceTreeEntity::isWritable() const {
+    return treeItem()->isWritable();
+}
 
 #endif // ACETREEENTITY_H

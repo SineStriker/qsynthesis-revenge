@@ -31,6 +31,8 @@
 
 namespace Core {
 
+    extern void initDspxEntitiesSchema();
+
     namespace Internal {
 
         static ICore *icore = nullptr;
@@ -116,6 +118,9 @@ namespace Core {
 
                 sc->addPage(appearance);
             }
+
+            // Register basic items
+            initDspxEntitiesSchema();
 
             // Add document types
             auto docMgr = icore->documentSystem();

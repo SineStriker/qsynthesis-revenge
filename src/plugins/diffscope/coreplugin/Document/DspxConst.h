@@ -31,9 +31,10 @@ namespace Core::Dspx {
     const char DefaultTrackName[] = "Untitled Track";
 
     // Clip
-    const char DefaultSingingClipName[] = "Untitled Clip";
-    const char DefaultAudioClipName[] = "Untitled Clip";
+    const char DefaultSingingClipName[] = "Untitled Clip"; // To remove
+    const char DefaultAudioClipName[] = "Untitled Clip";   // To remove
     const char DefaultAudioClipPath[] = "/path/to";
+    const char DefaultClipName[] = "Untitled Clip";
     const int DefaultClipStart = 0;
     const int DefaultClipLength = 480;
     const int DefaultClipClipStart = 0;

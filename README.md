@@ -103,6 +103,7 @@ See [Related Tools](./docs/related-tools.md) for dependencies for each plugin.
 + [RigoLigoRLC](https://github.com/RigoLigoRLC)
 + [CrSjimo](https://github.com/CrSjimo)
 + [wolfgitpr](https://github.com/wolfgitpr)
++ [JobSecond](https://github.com/JobSecond)
 
 Welcome to commit pull requests.
 

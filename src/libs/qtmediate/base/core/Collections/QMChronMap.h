@@ -316,6 +316,12 @@ public:
         }
         return res;
     }
+    int capacity() const {
+        return m_map.capacity();
+    }
+    void reserve(int size) {
+        m_map.reserve(size);
+    }
 
 private:
     bool tryReplace(const K &key, const T &val, iterator *it, bool noDryRun) {

@@ -6,6 +6,8 @@
 #include <QSet>
 #include <QStack>
 
+#include <QMChronSet.h>
+
 #include "AceTreeModel.h"
 
 class AceTreeItemPrivate {
@@ -18,8 +20,8 @@ public:
 
     AceTreeItem *q_ptr;
     QString name;
-    QString serializerId;
     QHash<QString, QVariant> dynamicData;
+    QMChronSet<AceTreeItemSubscriber *> subscribers;
 
     AceTreeItem *parent;
     AceTreeModel *model;
@@ -38,13 +40,13 @@ public:
     QHash<QString, QSet<AceTreeItem *>> setNameIndexes;
 
     bool testModifiable(const char *func) const;
-    bool testInsertedItem(const char *func, const AceTreeItem *item) const;
+    bool testInsertable(const char *func, const AceTreeItem *item) const;
 
     void setProperty_helper(const QString &key, const QVariant &value);
     void setBytes_helper(int start, const QByteArray &bytes);
     void truncateBytes_helper(int size);
     void insertRows_helper(int index, const QVector<AceTreeItem *> &items);
-    bool moveRows_helper(int index, int count, int dest);
+    void moveRows_helper(int index, int count, int dest);
     void removeRows_helper(int index, int count);
     void addNode_helper(AceTreeItem *item);
     void removeNode_helper(AceTreeItem *item);
@@ -252,6 +254,15 @@ public:
     void nodeRemoved(AceTreeItem *parent, AceTreeItem *item);
 
     void rootChanged(AceTreeItem *oldRoot, AceTreeItem *newRoot);
+};
+
+class AceTreeItemSubscriberPrivate {
+public:
+    AceTreeItemSubscriberPrivate(AceTreeItemSubscriber *q);
+    ~AceTreeItemSubscriberPrivate();
+
+    AceTreeItemSubscriber *q;
+    AceTreeItem *m_treeItem;
 };
 
 #endif // ACETREEMODEL_P_H

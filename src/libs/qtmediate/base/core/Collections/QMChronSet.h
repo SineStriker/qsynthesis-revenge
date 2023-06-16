@@ -282,9 +282,14 @@ public:
         m_list.clear();
         m_map.clear();
     }
-
     QList<K> values() const {
         return {m_list.begin(), m_list.end()};
+    }
+    int capacity() const {
+        return m_map.capacity();
+    }
+    void reserve(int size) {
+        m_map.reserve(size);
     }
 
 private:

@@ -53,6 +53,8 @@ namespace AceTreePrivate {
         stream << s.size();
         for (auto it = s.begin(); it != s.end(); ++it) {
             AceTreePrivate::operator<<(stream, it.key());
+            if (it->type() == QVariant::String) {
+            }
             stream << it.value();
         }
         return stream;
@@ -166,6 +168,39 @@ AceTreeItem::~AceTreeItem() {
     qDeleteAll(d->records);
 }
 
+bool AceTreeItem::addSubscriber(AceTreeItemSubscriber *sub) {
+    Q_D(AceTreeItem);
+    auto res = d->subscribers.append(sub).second;
+    if (res) {
+        sub->d->m_treeItem = this;
+    }
+    return res;
+}
+
+bool AceTreeItem::removeSubscriber(AceTreeItemSubscriber *sub) {
+    Q_D(AceTreeItem);
+    auto res = d->subscribers.remove(sub);
+    if (res) {
+        sub->d->m_treeItem = nullptr;
+    }
+    return res;
+}
+
+QList<AceTreeItemSubscriber *> AceTreeItem::subscribers() const {
+    Q_D(const AceTreeItem);
+    return d->subscribers.values();
+}
+
+int AceTreeItem::subscriberCount() const {
+    Q_D(const AceTreeItem);
+    return d->subscribers.size();
+}
+
+bool AceTreeItem::hasSubscriber(AceTreeItemSubscriber *sub) const {
+    Q_D(const AceTreeItem);
+    return d->subscribers.contains(sub);
+}
+
 QString AceTreeItem::name() const {
     Q_D(const AceTreeItem);
     return d->name;
@@ -196,8 +231,15 @@ void AceTreeItem::setDynamicData(const QString &key, const QVariant &value) {
     }
 
     // Propagate signal
+    for (const auto &sub : qAsConst(d->subscribers))
+        sub->dynamicDataChanged(key, value, oldValue);
     if (d->model)
         emit d->model->dynamicDataChanged(this, key, value, oldValue);
+}
+
+QStringList AceTreeItem::dynamicDataKeys() const {
+    Q_D(const AceTreeItem);
+    return d->dynamicData.keys();
 }
 
 QVariantHash AceTreeItem::dynamicDataMap() const {
@@ -243,15 +285,21 @@ QVariant AceTreeItem::property(const QString &key) const {
     return d->properties.value(key, {});
 }
 
-void AceTreeItem::setProperty(const QString &key, const QVariant &value) {
+bool AceTreeItem::setProperty(const QString &key, const QVariant &value) {
     Q_D(AceTreeItem);
     if (!d->testModifiable(__func__))
-        return;
+        return false;
 
     d->setProperty_helper(key, value);
+    return true;
 }
 
-QVariantHash AceTreeItem::properties() const {
+QStringList AceTreeItem::propertyKeys() const {
+    Q_D(const AceTreeItem);
+    return d->properties.keys();
+}
+
+QVariantHash AceTreeItem::propertyMap() const {
     Q_D(const AceTreeItem);
     return d->properties;
 }
@@ -277,6 +325,11 @@ QByteArray AceTreeItem::bytes() const {
     return d->byteArray;
 }
 
+QByteArray AceTreeItem::midBytes(int start, int len) const {
+    Q_D(const AceTreeItem);
+    return d->byteArray.mid(start, len);
+}
+
 int AceTreeItem::bytesSize() const {
     Q_D(const AceTreeItem);
     return d->byteArray.size();
@@ -289,7 +342,7 @@ bool AceTreeItem::insertRows(int index, const QVector<AceTreeItem *> &items) {
 
     // Validate
     for (const auto &item : items) {
-        if (!d->testInsertedItem(__func__, item)) {
+        if (!d->testInsertable(__func__, item)) {
             return false;
         }
     }
@@ -304,7 +357,14 @@ bool AceTreeItem::moveRows(int index, int count, int dest) {
     if (!d->testModifiable(__func__))
         return false;
 
-    return d->moveRows_helper(index, count, dest);
+    count = qMin(count, d->vector.size() - index);
+    if (count <= 0 || count > d->vector.size() || (dest >= index && dest <= index + count)) {
+        myWarning(__func__) << "invalid parameters";
+        return false;
+    }
+
+    d->moveRows_helper(index, count, dest);
+    return true;
 }
 
 bool AceTreeItem::removeRows(int index, int count) {
@@ -324,9 +384,9 @@ bool AceTreeItem::removeRows(int index, int count) {
     return true;
 }
 
-AceTreeItem *AceTreeItem::row(int row) const {
+AceTreeItem *AceTreeItem::row(int index) const {
     Q_D(const AceTreeItem);
-    return (row >= 0 && row < d->vector.size()) ? d->vector.at(row) : nullptr;
+    return (index >= 0 && index < d->vector.size()) ? d->vector.at(index) : nullptr;
 }
 
 QVector<AceTreeItem *> AceTreeItem::rows() const {
@@ -350,7 +410,7 @@ int AceTreeItem::addRecord(AceTreeItem *item) {
     if (!d->testModifiable(__func__))
         return -1;
 
-    if (!d->testInsertedItem(__func__, item))
+    if (!d->testInsertable(__func__, item))
         return -1;
 
     auto seq = ++d->maxRecordSeq;
@@ -366,6 +426,27 @@ bool AceTreeItem::removeRecord(int seq) {
 
     // Validate
     if (!d->records.contains(seq)) {
+        myWarning(__func__) << "seq num" << seq << "doesn't exists in" << this;
+        return false;
+    }
+
+    d->removeRecord_helper(seq);
+    return true;
+}
+
+bool AceTreeItem::removeRecord(AceTreeItem *item) {
+    Q_D(AceTreeItem);
+
+    if (!d->testModifiable(__func__))
+        return false;
+
+    if (!d->testInsertable(__func__, item))
+        return false;
+
+    int seq = d->recordIndexes.value(item, -1);
+
+    // Validate
+    if (seq < 0) {
         myWarning(__func__) << "seq num" << seq << "doesn't exists in" << this;
         return false;
     }
@@ -407,16 +488,11 @@ bool AceTreeItem::addNode(AceTreeItem *item) {
     if (!d->testModifiable(__func__))
         return false;
 
-    if (!d->testInsertedItem(__func__, item))
+    if (!d->testInsertable(__func__, item))
         return false;
 
     d->addNode_helper(item);
     return true;
-}
-
-bool AceTreeItem::containsNode(AceTreeItem *item) {
-    Q_D(const AceTreeItem);
-    return d->set.contains(item);
 }
 
 bool AceTreeItem::removeNode(AceTreeItem *item) {
@@ -425,7 +501,7 @@ bool AceTreeItem::removeNode(AceTreeItem *item) {
     if (!d->testModifiable(__func__))
         return false;
 
-    if (!d->testInsertedItem(__func__, item))
+    if (!d->testInsertable(__func__, item))
         return false;
 
     // Validate
@@ -436,6 +512,11 @@ bool AceTreeItem::removeNode(AceTreeItem *item) {
 
     d->removeNode_helper(item);
     return true;
+}
+
+bool AceTreeItem::containsNode(AceTreeItem *item) {
+    Q_D(const AceTreeItem);
+    return d->set.contains(item);
 }
 
 QList<AceTreeItem *> AceTreeItem::nodes() const {
@@ -767,7 +848,7 @@ bool AceTreeItemPrivate::testModifiable(const char *func) const {
     return true;
 }
 
-bool AceTreeItemPrivate::testInsertedItem(const char *func, const AceTreeItem *item) const {
+bool AceTreeItemPrivate::testInsertable(const char *func, const AceTreeItem *item) const {
     Q_Q(const AceTreeItem);
     if (!item) {
         myWarning(func) << "item is null";
@@ -807,6 +888,8 @@ void AceTreeItemPrivate::setProperty_helper(const QString &key, const QVariant &
     }
 
     // Propagate signal
+    for (const auto &sub : qAsConst(subscribers))
+        sub->propertyChanged(key, oldValue, value);
     if (model)
         model->d_func()->propertyChanged(q, key, oldValue, value);
 }
@@ -824,6 +907,8 @@ void AceTreeItemPrivate::setBytes_helper(int start, const QByteArray &bytes) {
     this->byteArray.replace(start, len, bytes);
 
     // Propagate signal
+    for (const auto &sub : qAsConst(subscribers))
+        sub->bytesSet(start, oldBytes, bytes);
     if (model)
         model->d_func()->bytesSet(q, start, oldBytes, bytes);
 }
@@ -841,6 +926,8 @@ void AceTreeItemPrivate::truncateBytes_helper(int size) {
     byteArray.resize(size);
 
     // Propagate signal
+    for (const auto &sub : qAsConst(subscribers))
+        sub->bytesTruncated(size, oldBytes, len);
     if (model)
         model->d_func()->bytesTruncated(q, size, oldBytes, len);
 }
@@ -860,24 +947,29 @@ void AceTreeItemPrivate::insertRows_helper(int index, const QVector<AceTreeItem 
     }
 
     // Propagate signal
+    for (const auto &sub : qAsConst(subscribers))
+        sub->rowsInserted(index, items);
     if (model)
         model->d_func()->rowsInserted(q, index, items);
 }
 
-bool AceTreeItemPrivate::moveRows_helper(int index, int count, int dest) {
+void AceTreeItemPrivate::moveRows_helper(int index, int count, int dest) {
     Q_Q(AceTreeItem);
 
+    // Pre-Propagate signal
+    for (const auto &sub : qAsConst(subscribers))
+        sub->rowsAboutToMove(index, count, dest);
+    if (model)
+        emit model->rowsAboutToMove(q, index, count, dest);
+
     // Do change
-    if (!QMBatch::arrayMove(vector, index, count, dest)) {
-        myWarning("moveRows") << "invalid parameters";
-        return false;
-    }
+    QMBatch::arrayMove(vector, index, count, dest);
 
     // Propagate signal
+    for (const auto &sub : qAsConst(subscribers))
+        sub->rowsMoved(index, count, dest);
     if (model)
         model->d_func()->rowsMoved(q, index, count, dest);
-
-    return true;
 }
 
 void AceTreeItemPrivate::removeRows_helper(int index, int count) {
@@ -888,6 +980,8 @@ void AceTreeItemPrivate::removeRows_helper(int index, int count) {
     std::copy(vector.begin() + index, vector.begin() + index + count, tmp.begin());
 
     // Pre-Propagate signal
+    for (const auto &sub : qAsConst(subscribers))
+        sub->rowsAboutToRemove(index, tmp);
     if (model)
         emit model->rowsAboutToRemove(q, index, tmp);
 
@@ -900,6 +994,8 @@ void AceTreeItemPrivate::removeRows_helper(int index, int count) {
     vector.erase(vector.begin() + index, vector.begin() + index + count);
 
     // Propagate signal
+    for (const auto &sub : qAsConst(subscribers))
+        sub->rowsRemoved(index, tmp);
     if (model)
         model->d_func()->rowsRemoved(q, index, tmp);
 }
@@ -915,6 +1011,8 @@ void AceTreeItemPrivate::addNode_helper(AceTreeItem *item) {
     setNameIndexes[item->name()] += item;
 
     // Propagate signal
+    for (const auto &sub : qAsConst(subscribers))
+        sub->nodeAdded(item);
     if (model)
         model->d_func()->nodeAdded(q, item);
 }
@@ -923,6 +1021,8 @@ void AceTreeItemPrivate::removeNode_helper(AceTreeItem *item) {
     Q_Q(AceTreeItem);
 
     // Pre-Propagate signal
+    for (const auto &sub : qAsConst(subscribers))
+        sub->nodeAboutToRemove(item);
     if (model)
         emit model->nodeAboutToRemove(q, item);
 
@@ -942,6 +1042,8 @@ void AceTreeItemPrivate::removeNode_helper(AceTreeItem *item) {
     }
 
     // Propagate signal
+    for (const auto &sub : qAsConst(subscribers))
+        sub->nodeRemoved(item);
     if (model)
         model->d_func()->nodeRemoved(q, item);
 }
@@ -957,6 +1059,8 @@ void AceTreeItemPrivate::addRecord_helper(int seq, AceTreeItem *item) {
     recordIndexes.insert(item, seq);
 
     // Propagate signal
+    for (const auto &sub : qAsConst(subscribers))
+        sub->recordAdded(seq, item);
     if (model)
         model->d_func()->recordAdded(q, seq, item);
 }
@@ -968,6 +1072,8 @@ void AceTreeItemPrivate::removeRecord_helper(int seq) {
     auto item = it.value();
 
     // Pre-Propagate signal
+    for (const auto &sub : qAsConst(subscribers))
+        sub->recordAboutToRemove(seq, item);
     if (model)
         emit model->recordAboutToRemove(q, seq, item);
 
@@ -979,6 +1085,8 @@ void AceTreeItemPrivate::removeRecord_helper(int seq) {
     recordIndexes.remove(item);
 
     // Propagate signal
+    for (const auto &sub : qAsConst(subscribers))
+        sub->recordRemoved(seq, item);
     if (model)
         model->d_func()->recordRemoved(q, seq, item);
 }
@@ -1311,7 +1419,7 @@ void AceTreeModelPrivate::rowsRemoved(AceTreeItem *parent, int index, const QVec
         op->items = items;
         push(op);
     }
-    emit q->rowsRemoved(parent, index, items.size());
+    emit q->rowsRemoved(parent, index, items);
 }
 
 void AceTreeModelPrivate::recordAdded(AceTreeItem *parent, int seq, AceTreeItem *item) {
@@ -1340,7 +1448,7 @@ void AceTreeModelPrivate::recordRemoved(AceTreeItem *parent, int seq, AceTreeIte
         push(op);
     }
 
-    emit q->recordRemoved(parent, seq);
+    emit q->recordRemoved(parent, seq, item);
 }
 
 void AceTreeModelPrivate::nodeAdded(AceTreeItem *parent, AceTreeItem *item) {
@@ -1814,4 +1922,54 @@ AceTreeModel::AceTreeModel(AceTreeModelPrivate &d, QObject *parent) : QObject(pa
     d.q_ptr = this;
 
     d.init();
+}
+
+AceTreeItemSubscriberPrivate::AceTreeItemSubscriberPrivate(AceTreeItemSubscriber *q) : q(q) {
+    m_treeItem = nullptr;
+}
+
+AceTreeItemSubscriberPrivate::~AceTreeItemSubscriberPrivate() {
+    if (m_treeItem)
+        m_treeItem->removeSubscriber(q);
+}
+
+AceTreeItemSubscriber::AceTreeItemSubscriber() : d(new AceTreeItemSubscriberPrivate(this)) {
+}
+
+AceTreeItemSubscriber::~AceTreeItemSubscriber() {
+}
+
+AceTreeItem *AceTreeItemSubscriber::treeItem() const {
+    return d->m_treeItem;
+}
+
+void AceTreeItemSubscriber::dynamicDataChanged(const QString &key, const QVariant &newValue, const QVariant &oldValue) {
+}
+void AceTreeItemSubscriber::propertyChanged(const QString &key, const QVariant &newValue, const QVariant &oldValue) {
+}
+void AceTreeItemSubscriber::bytesSet(int start, const QByteArray &newBytes, const QByteArray &oldBytes) {
+}
+void AceTreeItemSubscriber::bytesTruncated(int size, const QByteArray &oldBytes, int delta) {
+}
+void AceTreeItemSubscriber::rowsInserted(int index, const QVector<AceTreeItem *> &items) {
+}
+void AceTreeItemSubscriber::rowsAboutToMove(int index, int count, int dest) {
+}
+void AceTreeItemSubscriber::rowsMoved(int index, int count, int dest) {
+}
+void AceTreeItemSubscriber::rowsAboutToRemove(int index, const QVector<AceTreeItem *> &items) {
+}
+void AceTreeItemSubscriber::rowsRemoved(int index, const QVector<AceTreeItem *> &items) {
+}
+void AceTreeItemSubscriber::recordAdded(int seq, AceTreeItem *item) {
+}
+void AceTreeItemSubscriber::recordAboutToRemove(int seq, AceTreeItem *item) {
+}
+void AceTreeItemSubscriber::recordRemoved(int seq, AceTreeItem *item) {
+}
+void AceTreeItemSubscriber::nodeAdded(AceTreeItem *item) {
+}
+void AceTreeItemSubscriber::nodeAboutToRemove(AceTreeItem *item) {
+}
+void AceTreeItemSubscriber::nodeRemoved(AceTreeItem *item) {
 }

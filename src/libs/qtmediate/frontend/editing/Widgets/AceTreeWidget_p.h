@@ -30,7 +30,7 @@ private:
     void _q_rowsInserted(AceTreeItem *parent, int index, const QVector<AceTreeItem *> &items);
     void _q_rowsMoved(AceTreeItem *parent, int index, int count, int dest);
     void _q_rowsAboutToRemove(AceTreeItem *parent, int index, const QVector<AceTreeItem *> &items);
-    void _q_rowsRemoved(AceTreeItem *parent, int index, int count);
+    void _q_rowsRemoved(AceTreeItem *parent, int index, const QVector<AceTreeItem *> &items);
 
     void _q_nodeAdded(AceTreeItem *parent, AceTreeItem *item);
     void _q_nodeAboutToRemove(AceTreeItem *parent, AceTreeItem *item);

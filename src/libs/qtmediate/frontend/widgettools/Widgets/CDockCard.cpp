@@ -130,7 +130,7 @@ CDockCard::ViewMode CDockCard::viewMode() const {
 
 static void adjustWindowGeometry(QWidget *w) {
     if (w->x() < 0 || w->y() < 0) {
-        w->move(qMin(w->x(), 0), qMin(w->y(), 0));
+        w->move(qMax(w->x(), 0), qMax(w->y(), 0));
     }
 
     if (w->x() + w->width() > QApplication::desktop()->width() ||

@@ -24,12 +24,13 @@ LibraryLoadGuard::LibraryLoadGuard(QPluginLoader *loader) : d(new LibraryLoadGua
     }
     ::SetDllDirectoryW(loader->fileName().toStdWString().data());
 #else
-    loader->setLoadHints(loader.loadHints() | QLibrary::ExportExternalSymbolsHint);
+    loader->setLoadHints(loader->loadHints() | QLibrary::ExportExternalSymbolsHint);
 #endif
 }
 
 LibraryLoadGuard::~LibraryLoadGuard() {
+#ifdef Q_OS_WINDOWS
     ::SetDllDirectoryW(d->path.isEmpty() ? nullptr : d->path.toStdWString().data());
-
+#endif
     delete d;
 }

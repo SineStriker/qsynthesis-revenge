@@ -610,7 +610,7 @@ bool AceTreeSerializer::writeObject(QJsonObject *object, const AceTreeItem *item
     QSet<AceTreeSerializer *> queriedChildren;
 
     // Write properties
-    auto properties = item->properties();
+    auto properties = item->propertyMap();
     for (auto it = properties.begin(); it != properties.end(); ++it) {
         const auto &key = it.key();
         const auto &val = it.value();

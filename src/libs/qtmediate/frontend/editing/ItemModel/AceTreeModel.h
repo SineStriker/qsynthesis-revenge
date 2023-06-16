@@ -9,6 +9,8 @@
 
 class AceTreeModel;
 
+class AceTreeItemSubscriber;
+
 class AceTreeItemPrivate;
 
 class QMEDITING_EXPORT AceTreeItem {
@@ -18,8 +20,17 @@ public:
     virtual ~AceTreeItem();
 
     QString name() const;
+
+    bool addSubscriber(AceTreeItemSubscriber *sub);
+    bool removeSubscriber(AceTreeItemSubscriber *sub);
+    QList<AceTreeItemSubscriber *> subscribers() const;
+    int subscriberCount() const;
+    bool hasSubscriber(AceTreeItemSubscriber *sub) const;
+
     QVariant dynamicData(const QString &key) const;
     void setDynamicData(const QString &key, const QVariant &value);
+    inline void clearDynamicData(const QString &key);
+    QStringList dynamicDataKeys() const;
     QVariantHash dynamicDataMap() const;
 
 public:
@@ -33,13 +44,17 @@ public:
 
     // Properties
     QVariant property(const QString &key) const;
-    void setProperty(const QString &key, const QVariant &value);
-    QVariantHash properties() const;
+    bool setProperty(const QString &key, const QVariant &value);
+    inline bool clearProperty(const QString &key);
+    QStringList propertyKeys() const;
+    QVariantHash propertyMap() const;
+    inline QVariantHash properties() const;
 
     // ByteArray
     void setBytes(int start, const QByteArray &bytes);
     void truncateBytes(int size);
     QByteArray bytes() const;
+    QByteArray midBytes(int start, int len) const;
     int bytesSize() const;
 
     // Vector - Rows
@@ -53,14 +68,15 @@ public:
     bool moveRows(int index, int count, int dest);         // `dest`: destination index before move
     inline bool moveRows2(int index, int count, int dest); // `dest`: destination index after move
     bool removeRows(int index, int count);
-    AceTreeItem *row(int row) const;
+    AceTreeItem *row(int index) const;
     QVector<AceTreeItem *> rows() const;
     int rowIndexOf(AceTreeItem *item) const;
     int rowCount() const;
 
-    // Hash - Records
+    // Sheet - Records
     int addRecord(AceTreeItem *item);
     bool removeRecord(int seq);
+    bool removeRecord(AceTreeItem *item);
     AceTreeItem *record(int seq);
     int recordIndexOf(AceTreeItem *item) const;
     QList<int> records() const;
@@ -70,8 +86,8 @@ public:
     // Set - Nodes
     inline bool insertNode(AceTreeItem *item);
     bool addNode(AceTreeItem *item);
-    bool containsNode(AceTreeItem *item);
     bool removeNode(AceTreeItem *item);
+    bool containsNode(AceTreeItem *item);
     QList<AceTreeItem *> nodes() const;
     int nodeCount() const;
     QStringList nodeNames() const;
@@ -131,13 +147,14 @@ signals:
     void bytesTruncated(AceTreeItem *item, int size, const QByteArray &oldBytes, int delta);
 
     void rowsInserted(AceTreeItem *parent, int index, const QVector<AceTreeItem *> &items);
+    void rowsAboutToMove(AceTreeItem *parent, int index, int count, int dest);
     void rowsMoved(AceTreeItem *parent, int index, int count, int dest);
     void rowsAboutToRemove(AceTreeItem *parent, int index, const QVector<AceTreeItem *> &items);
-    void rowsRemoved(AceTreeItem *parent, int index, int count);
+    void rowsRemoved(AceTreeItem *parent, int index, const QVector<AceTreeItem *> &items);
 
     void recordAdded(AceTreeItem *parent, int seq, AceTreeItem *item);
     void recordAboutToRemove(AceTreeItem *parent, int seq, AceTreeItem *item);
-    void recordRemoved(AceTreeItem *parent, int seq);
+    void recordRemoved(AceTreeItem *parent, int seq, AceTreeItem *item);
 
     void nodeAdded(AceTreeItem *parent, AceTreeItem *item);
     void nodeAboutToRemove(AceTreeItem *parent, AceTreeItem *item);
@@ -157,6 +174,58 @@ protected:
     friend class AceTreeItem;
     friend class AceTreeItemPrivate;
 };
+
+class AceTreeItemSubscriberPrivate;
+
+class QMEDITING_EXPORT AceTreeItemSubscriber {
+    Q_DISABLE_COPY_MOVE(AceTreeItemSubscriber)
+public:
+    AceTreeItemSubscriber();
+    virtual ~AceTreeItemSubscriber();
+
+    AceTreeItem *treeItem() const;
+
+    virtual void dynamicDataChanged(const QString &key, const QVariant &newValue, const QVariant &oldValue);
+    virtual void propertyChanged(const QString &key, const QVariant &newValue, const QVariant &oldValue);
+
+    virtual void bytesSet(int start, const QByteArray &newBytes, const QByteArray &oldBytes);
+    virtual void bytesTruncated(int size, const QByteArray &oldBytes, int delta);
+
+    virtual void rowsInserted(int index, const QVector<AceTreeItem *> &items);
+    virtual void rowsAboutToMove(int index, int count, int dest);
+    virtual void rowsMoved(int index, int count, int dest);
+    virtual void rowsAboutToRemove(int index, const QVector<AceTreeItem *> &items);
+    virtual void rowsRemoved(int index, const QVector<AceTreeItem *> &items);
+
+    virtual void recordAdded(int seq, AceTreeItem *item);
+    virtual void recordAboutToRemove(int seq, AceTreeItem *item);
+    virtual void recordRemoved(int seq, AceTreeItem *item);
+
+    virtual void nodeAdded(AceTreeItem *item);
+    virtual void nodeAboutToRemove(AceTreeItem *item);
+    virtual void nodeRemoved(AceTreeItem *item);
+
+private:
+    AceTreeItemSubscriberPrivate *d;
+
+    friend class AceTreeItem;
+    friend class AceTreeItemPrivate;
+    friend class AceTreeModel;
+    friend class AceTreeModelPrivate;
+    friend class AceTreeItemSubscriberPrivate;
+};
+
+inline void AceTreeItem::clearDynamicData(const QString &key) {
+    setDynamicData(key, {});
+}
+
+inline bool AceTreeItem::clearProperty(const QString &key) {
+    return setProperty(key, {});
+}
+
+inline QVariantHash AceTreeItem::properties() const {
+    return propertyMap();
+}
 
 inline bool AceTreeItem::prependRow(AceTreeItem *item) {
     return insertRows(0, {item});

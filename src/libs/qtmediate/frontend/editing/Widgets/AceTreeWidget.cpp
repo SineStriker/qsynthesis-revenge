@@ -149,7 +149,7 @@ void AceTreeWidgetPrivate::_q_rowsAboutToRemove(AceTreeItem *parent, int index, 
     Q_Q(AceTreeWidget);
 }
 
-void AceTreeWidgetPrivate::_q_rowsRemoved(AceTreeItem *parent, int index, int count) {
+void AceTreeWidgetPrivate::_q_rowsRemoved(AceTreeItem *parent, int index, const QVector<AceTreeItem *> &items) {
     auto parentItem = itemIndexes.value(parent, nullptr);
     if (!parentItem) {
         return;
@@ -158,7 +158,7 @@ void AceTreeWidgetPrivate::_q_rowsRemoved(AceTreeItem *parent, int index, int co
     auto vectorItem = parentItem->child(0);
 
     QList<QTreeWidgetItem *> childItems;
-    for (int i = 0; i < count; ++i) {
+    for (int i = 0; i < items.size(); ++i) {
         auto childItem = vectorItem->child(index + i);
         childItems.append(childItem);
     }

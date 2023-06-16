@@ -77,10 +77,10 @@ namespace QMBatch {
      *
      */
     template <template <class> class Array, class T>
-    bool arrayMove(Array<T> &arr, int index, int count, int dest) {
+    void arrayMove(Array<T> &arr, int index, int count, int dest) {
         count = qMin(count, arr.size() - index);
         if (count <= 0 || count > arr.size() || (dest >= index && dest <= index + count)) {
-            return false;
+            return;
         }
 
         decltype(typename std::remove_reference<decltype(arr)>::type()) tmp;
@@ -103,8 +103,6 @@ namespace QMBatch {
             }
         }
         std::copy(tmp.begin(), tmp.end(), arr.begin() + correctDest);
-
-        return true;
     }
 
     /**
@@ -126,6 +124,15 @@ namespace QMBatch {
             array[i + 1] = key;
         }
     }
+
+//    /**
+//     * @brief Remove a collection in a map/hash if the last item has been removed
+//     *
+//     */
+//    template <template <class, template <class> class> class Map, template <class> class List, class K, class T>
+//    bool removeCollection(Map<K, List> &map) {
+//
+//    }
 
 };
 
