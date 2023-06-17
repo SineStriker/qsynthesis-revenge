@@ -7,6 +7,8 @@ from __future__ import annotations
 import argparse
 import os
 import re
+import glob
+import shutil
 import subprocess
 
 from utils import *
@@ -83,13 +85,60 @@ def main():
             sys.exit(code)
 
     elif os_name == "osx":
+        files_to_analyze = []
+        files_to_analyze.extend(args.files)
+
+        DEBUG_SUFFIX = "_debug"
+        if args.debug:
+            print_verbose("Asked for debug version Qt libraries.")
+            ignore = None
+        else:
+            # Do not copy debug version Qt libraries for Release build
+            ignore = shutil.ignore_patterns(
+                f"*{DEBUG_SUFFIX}", f"*{DEBUG_SUFFIX}.dylib")
+
+        # Query Qt Plugins path
+        qtplugins_path = subprocess.check_output(
+            [args.qmake, "-query", "QT_INSTALL_PLUGINS"]).strip().decode('utf-8')
+        print_verbose(f"Qt Plugins path: {qtplugins_path}")
+
+        plugin_list = ['bearer', 'iconengines', 'imageformats',
+                       'platforminputcontexts', 'styles', 'virtualkeyboard']
+
+        # No debug dylibs here. It will be added in the following steps.
+        plugin_dylib_list = ['platforms/libqcocoa.dylib']
+
+        if args.debug:
+            print_verbose("Asked for debug version Qt libraries.")
+
+            # Add debug dylibs
+            plugin_dylib_list_debug = [
+                re.sub("^(.*)\\.dylib$", f"\\1{DEBUG_SUFFIX}.dylib", s)
+                for s in plugin_dylib_list
+            ]
+            plugin_dylib_list.extend(plugin_dylib_list_debug)
+
+        for plugin_src in plugin_list:
+            print_verbose(f"  Copying {plugin_src}...")
+            copydir(f"{qtplugins_path}/{plugin_src}",
+                    f"{args.plugindir}", symlinks=True, ignore=ignore)
+
+        for plugin_dylib in plugin_dylib_list:
+            print_verbose(f"  Copying {plugin_dylib}...")
+            base_dir = os.path.dirname(f"{args.plugindir}/{plugin_dylib}")
+            copyfile(f"{qtplugins_path}/{plugin_dylib}",
+                     base_dir, follow_symlinks=False)
+
+        plugin_dylib_paths = glob.glob(f"{args.plugindir}/**/*.dylib", recursive=True)
+        files_to_analyze.extend(plugin_dylib_paths)
+
         # Obtain Qt library dependencies of the required libraries
         qtlibs_path = subprocess.check_output(
             [args.qmake, "-query", "QT_INSTALL_LIBS"]).strip().decode('utf-8')
         print_verbose(f"Qt Libraries path: {qtlibs_path}")
 
         qtdeps = set()
-        for libname in args.files:
+        for libname in files_to_analyze:
             otool_exc = ["otool", "-L", libname]
             regex = re.compile(
                 r'^\s*(?P<qt_prefix>.+)(?P<qt>Qt\w+\.framework)(?P<qt_suffix>.+)\s\(.+$')
@@ -108,33 +157,12 @@ def main():
                     dependencies.append(qt_framework_fullpath)
 
             qtdeps = qtdeps.union(set(dependencies))
-        if args.debug:
-            print_verbose("Asked for debug version Qt libraries.")
+
         print_verbose(f"Qt dependencies: {qtdeps}")
 
         for qt_framework in qtdeps:
             print_verbose(f"  Copying {qt_framework}...")
-            copydir(qt_framework, args.libdir, symlinks=True)
-
-        # Query Qt Plugins path
-        qtplugins_path = subprocess.check_output(
-            [args.qmake, "-query", "QT_INSTALL_PLUGINS"]).strip().decode('utf-8')
-        print_verbose(f"Qt Plugins path: {qtplugins_path}")
-
-        plugin_list = ['bearer', 'iconengines', 'imageformats',
-                       'platforminputcontexts', 'styles', 'virtualkeyboard']
-        plugin_dylib_list = ['platforms/libqcocoa.dylib']
-
-        for plugin_src in plugin_list:
-            print_verbose(f"  Copying {plugin_src}...")
-            copydir(f"{qtplugins_path}/{plugin_src}",
-                    f"{args.plugindir}", symlinks=True)
-
-        for plugin_dylib in plugin_dylib_list:
-            print_verbose(f"  Copying {plugin_dylib}...")
-            base_dir = os.path.dirname(f"{args.plugindir}/{plugin_dylib}")
-            copyfile(f"{qtplugins_path}/{plugin_dylib}",
-                     base_dir, follow_symlinks=False)
+            copydir(qt_framework, args.libdir, symlinks=True, ignore=ignore)
 
     else:
         print("Linux")

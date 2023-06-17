@@ -3,10 +3,120 @@
 # Usage: python postdeploy.py <dir>
 
 from __future__ import annotations
+from typing import Iterable
 
 import sys
+import re
+import pathlib
 
 from utils import *
+
+
+def mac_postdeploy(dir):
+    # macOS postdeploy
+    import dylib_utils
+
+    def add_rpath_iter(executables_dir: str | pathlib.Path, rpaths: Iterable[str]):
+        if not isinstance(executables_dir, pathlib.Path):
+            executables_dir = pathlib.Path(executables_dir)
+        if not executables_dir.exists():
+            return
+        for executable in executables_dir.iterdir():
+            existing_rpaths = dylib_utils.get_binary_rpath(executable)
+            for rpath in rpaths:
+                if rpath in existing_rpaths:
+                    continue
+
+                dylib_utils.add_rpath(executable, rpath)
+
+    def remove_symlinks_shared(shared_prefix, app_bundle_prefix, copy_folder_name):
+        shared_contents = [x.stem for x in (shared_prefix / copy_folder_name).iterdir()]
+        for fn in (app_bundle_prefix / "Contents" / copy_folder_name).iterdir():
+            if fn.is_symlink() and fn.stem in shared_contents:
+                print(fn, ".unlink()")
+                fn.unlink()
+
+    install_prefix = pathlib.Path(dir)
+
+    rpaths = {
+        "@executable_path/../Frameworks",
+        "@executable_path/../Frameworks/Qt",
+        "@executable_path/../Frameworks/ChorusKit",
+    }
+
+    shared_prefix = install_prefix / "shared"
+    executables_dir_shared = shared_prefix / "MacOS"
+    frameworks_dir_shared = shared_prefix / "Frameworks"
+    resources_dir_shared = shared_prefix / "Resources"
+
+    add_rpath_iter(executables_dir_shared, rpaths)
+
+    for app_bundle_prefix in install_prefix.iterdir():
+        if (not app_bundle_prefix.is_dir()) or app_bundle_prefix.suffix != '.app':
+            continue
+
+        contents_prefix = app_bundle_prefix / "Contents"
+        # Fix the rpaths for executables
+        executables_dir = contents_prefix / "MacOS"
+        frameworks_dir = contents_prefix / "Frameworks"
+        plugins_dir = contents_prefix / "Plugins"
+        qt_dir = frameworks_dir / "Qt"
+        add_rpath_iter(executables_dir, rpaths)
+
+        # Remove symlinks that point to `shared` directory,
+        # and copy contents (Frameworks and Resources)
+        # of `shared` directory to app bundles.
+        remove_symlinks_shared(shared_prefix, app_bundle_prefix, "Frameworks")
+        remove_symlinks_shared(shared_prefix, app_bundle_prefix, "Resources")
+        shutil.copytree(frameworks_dir_shared, contents_prefix / "Frameworks",
+                        symlinks=True, dirs_exist_ok=True)
+        shutil.copytree(resources_dir_shared, contents_prefix / "Resources",
+                        symlinks=True, dirs_exist_ok=True)
+
+        # recursively collect any other external dependencies and fix rpath
+        to_collect = []
+        to_analyze = []
+        for framework in dylib_utils.iter_macho_recursive(frameworks_dir):
+            to_analyze.append(str(framework))
+
+        to_collect.extend(dylib_utils.analyze_dependencies(to_analyze))
+        print(to_collect)
+
+        for lib in to_collect:
+            realpath = pathlib.Path(lib).resolve()
+            prefix_real, name_real, _ = dylib_utils.get_lib_components(realpath)
+            prefix_notional, name_notional, _ = dylib_utils.get_lib_components(lib)
+            src = pathlib.Path(prefix_real) / name_real
+            if re.match(r"^(Qt.*\.framework|libQt.*\.dylib)$", str(name_notional)):
+                if not qt_dir.exists():
+                    qt_dir.mkdir()
+                dest = qt_dir / name_notional
+            else:
+                dest = frameworks_dir / name_notional
+            if dest.exists():
+                continue
+            if src.is_dir():
+                shutil.copytree(src, dest, symlinks=True)
+            else:
+                shutil.copy2(src, dest, follow_symlinks=True)
+
+        for framework in dylib_utils.iter_macho_recursive(
+                frameworks_dir, executables_dir, plugins_dir):
+            deps = dylib_utils.get_dependencies(framework)
+            for dep in deps:
+                if dylib_utils.get_path_type(dep) == 'other':
+                    new_dep = '@rpath/' + dylib_utils.get_lib_components(dep)[2]
+                    print("changing", framework, ":", dep, "->", new_dep)
+                    dylib_utils.change_dependency(framework, dep, new_dep)
+
+            install_id = dylib_utils.get_id(framework)
+            if install_id != '' and dylib_utils.get_path_type(install_id) == 'other':
+                new_install_id = dylib_utils.get_lib_components(install_id)[2]
+                if not framework.is_relative_to(qt_dir / "plugins"):
+                    install_id = "@rpath/" + new_install_id
+                    dylib_utils.change_id(framework, install_id)
+
+            dylib_utils.codesign_binary(framework)
 
 
 def main():
@@ -27,6 +137,7 @@ def main():
         sys.exit(0)
     elif os_name == "osx":
         print("MacOS")
+        mac_postdeploy(dir)
     else:
         print("Linux")
 
