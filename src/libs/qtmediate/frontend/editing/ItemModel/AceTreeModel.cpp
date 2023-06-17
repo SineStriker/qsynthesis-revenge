@@ -10,6 +10,14 @@
 
 #include <iostream>
 
+//#define ENABLE_DEBUG_COUNT
+
+AceTreeModelPrivate::BaseOp::~BaseOp() {
+#ifdef ENABLE_DEBUG_COUNT
+    qDebug() << "AceTree Operation destroyed" << c;
+#endif
+}
+
 template <typename ForwardIterator>
 static void qCloneAll(ForwardIterator begin, ForwardIterator end, ForwardIterator dest) {
     while (begin != end) {
@@ -127,22 +135,13 @@ AceTreeItem *AceTreeItemPrivate::itemFromStream(QDataStream &stream, QByteArray 
     return item;
 }
 
-#define NO_PROPAGATE_WHEN_REMOVE
-
 void AceTreeItemPrivate::enterModel(AceTreeItem *item, AceTreeModel *model) {
-#ifdef NO_PROPAGATE_WHEN_REMOVE
     if (!item->d_func()->model) {
         item->propagateModel(model);
     }
-#else
-    item->propagateModel(model);
-#endif
 }
 
 void AceTreeItemPrivate::leaveModel(AceTreeItem *item) {
-#ifndef NO_PROPAGATE_WHEN_REMOVE
-    item->propagateModel(nullptr);
-#endif
 }
 
 void AceTreeItemPrivate::forceDelete(AceTreeItem *item) {
@@ -160,12 +159,16 @@ void AceTreeItemPrivate::forceDelete(AceTreeItem *item) {
  * rebuilding the original structure precisely
  */
 
-//static int item_count = 0;
+#ifdef ENABLE_DEBUG_COUNT
+static int item_count = 0;
+#endif
 
 // Item
 AceTreeItemPrivate::AceTreeItemPrivate() {
-//    item_count++;
-//    qDebug() << "AceTreeItemPrivate construct, left" << item_count;
+#ifdef ENABLE_DEBUG_COUNT
+    item_count++;
+    qDebug() << "AceTreeItemPrivate construct, left" << item_count;
+#endif
 
     parent = nullptr;
     model = nullptr;
@@ -179,22 +182,19 @@ AceTreeItemPrivate::AceTreeItemPrivate() {
 AceTreeItemPrivate::~AceTreeItemPrivate() {
     Q_Q(AceTreeItem);
 
-//    item_count--;
-//    qDebug() << "AceTreeItemPrivate destroy, left" << item_count << q->name();
-
-    auto warn = [this]() {
-        if (!m_forceDelete)
-            myWarning("~AceTreeItem") << "Deleting a managed item may cause crash";
-    };
+#ifdef ENABLE_DEBUG_COUNT
+    item_count--;
+    qDebug() << "AceTreeItemPrivate destroy, left" << item_count << q->name();
+#endif
 
     // No need to detach from model if the model is in destruction
     if (model) {
         if (!model->d_func()->is_destruct) {
-            warn();
-            q->propagateModel(nullptr);
+            if (!m_forceDelete)
+                myWarning("~AceTreeItem") << "Deleting a managed item may cause crash";
+
+            model->d_func()->removeIndex(m_index);
         }
-    } else if (m_index > 0) {
-        warn();
     } else {
         switch (status) {
             case AceTreeItem::Row:
@@ -338,17 +338,19 @@ bool AceTreeItem::isFree() const {
 
     // The item is not free if it has parent or model
 
-    return !d->model && !d->parent && d->m_index == 0;
+    return !d->model && !d->parent;
 }
 
 bool AceTreeItem::isObsolete() const {
-    Q_D(const AceTreeItem);
-    return !d->model && d->m_index > 0;
+    auto item = this;
+    while (auto parent = item->d_func()->parent)
+        item = parent;
+    return item->d_func()->status == ManagedRoot;
 }
 
 bool AceTreeItem::isWritable() const {
     Q_D(const AceTreeItem);
-    return d->model ? d->model->isWritable() : (d->m_index == 0);
+    return d->model ? d->model->isWritable() : true;
 }
 
 QVariant AceTreeItem::property(const QString &key) const {
@@ -762,20 +764,10 @@ AceTreeItem *AceTreeItem::clone(const QString &newName) const {
 
 void AceTreeItem::propagateModel(AceTreeModel *model) {
     Q_D(AceTreeItem);
-    auto &m_model = d->model;
-    if ((m_model && model) || m_model == model) {
-        return;
-    }
-
-    if (m_model) {
-        m_model->d_func()->removeIndex(d->m_index);
-    } else {
-        auto d2 = model->d_func();
-        d->m_index = d2->addIndex(this, (d2->internalChange && d->m_indexHint != 0) ? d->m_indexHint : d->m_index);
-        d->m_indexHint = 0;
-    }
-
-    m_model = model;
+    auto d2 = model->d_func();
+    d->m_index = d2->addIndex(this, (d2->internalChange && d->m_indexHint != 0) ? d->m_indexHint : d->m_index);
+    d->m_indexHint = 0;
+    d->model = model;
 
     for (auto item : qAsConst(d->vector))
         item->propagateModel(model);

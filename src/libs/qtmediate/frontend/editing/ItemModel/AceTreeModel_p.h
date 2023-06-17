@@ -115,9 +115,7 @@ public:
     struct BaseOp {
         Change c;
         explicit BaseOp(Change c) : c(c){};
-        virtual ~BaseOp() {
-            // qDebug() << "AceTree Operation destroyed" << c;
-        }
+        virtual ~BaseOp();
     };
 
     struct PropertyChangeOp : public BaseOp {
@@ -157,7 +155,7 @@ public:
         ~RowsInsertRemoveOp() {
             if (c == RowsInsert)
                 for (const auto &item : qAsConst(items))
-                    if (item && item->status() == AceTreeItem::ManagedRoot)
+                    if (item && item->isManagedRoot())
                         AceTreeItemPrivate::forceDelete(item);
 
             // If this is a remove operation, there must be an insert operation ahead
@@ -183,7 +181,7 @@ public:
         }
         ~RecordAddRemoveOp() {
             if (c == RecordAdd)
-                if (item && item->status() == AceTreeItem::ManagedRoot)
+                if (item && item->isManagedRoot())
                     AceTreeItemPrivate::forceDelete(item);
 
             // If this is a remove operation, there must be an insert operation ahead
@@ -199,7 +197,7 @@ public:
         }
         ~NodeAddRemoveOp() {
             if (c == NodeAdd)
-                if (item && item->status() == AceTreeItem::ManagedRoot)
+                if (item && item->isManagedRoot())
                     AceTreeItemPrivate::forceDelete(item);
 
             // If this is a remove operation, there must be an insert operation ahead
@@ -214,7 +212,7 @@ public:
         RootChangeOp() : BaseOp(RootChange), oldRoot(nullptr), newRoot(nullptr) {
         }
         ~RootChangeOp() {
-            if (newRoot && newRoot->status() == AceTreeItem::ManagedRoot)
+            if (newRoot && newRoot->isManagedRoot())
                 AceTreeItemPrivate::forceDelete(newRoot);
 
             // The `oldRoot` must be hold by the previous `RootChangeOp`

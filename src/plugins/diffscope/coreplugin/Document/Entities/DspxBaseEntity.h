@@ -116,7 +116,7 @@ namespace Core {
 
     //===========================================================================
     // AnchorPoint
-    class CORE_EXPORT DspxAnchorPointEntity : public DspxIntPointListEntity {
+    class CORE_EXPORT DspxAnchorPointEntity : public DspxIntPointEntity {
         Q_OBJECT
     public:
         explicit DspxAnchorPointEntity(QObject *parent = nullptr);

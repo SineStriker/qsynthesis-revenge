@@ -15,6 +15,7 @@ namespace Core {
     class DspxParamFreeDataEntity;
     class DspxParamCurveListEntity;
     class DspxParamInfoEntity;
+    class DspxEnvParamInfoEntity;
 
     //===========================================================================
     // ParamCurve
@@ -75,10 +76,16 @@ namespace Core {
         QString name() const override;
 
     public:
+        int size() const;
+        QList<qint16> mid(int index, int size) const;
+        void append(const QList<qint16> &values);
+        void replace(int index, const QList<qint16> &values);
+        void truncate(int index);
+
+    public:
         bool read(const QJsonValue &value) override;
         QJsonValue write() const override;
     };
-
     //===========================================================================
 
     //===========================================================================
@@ -93,7 +100,7 @@ namespace Core {
         ~DspxParamAnchorEntity();
 
     public:
-        DspxIntPointListEntity *nodes() const;
+        DspxAnchorPointListEntity *nodes() const;
     };
     //===========================================================================
 
@@ -128,18 +135,43 @@ namespace Core {
 
         DspxParamCurveListEntity *edited() const;
 
+    protected:
+        DspxParamInfoEntity(DspxParamInfoEntityPrivate &d, QObject *parent = nullptr);
+    };
+    //===========================================================================
+
+    //===========================================================================
+    // EnvParamInfo
+    class DspxEnvParamInfoEntityPrivate;
+
+    class CORE_EXPORT DspxEnvParamInfoEntity : public DspxParamInfoEntity {
+        Q_OBJECT
+        Q_DECLARE_PRIVATE(DspxEnvParamInfoEntity)
+    public:
+        explicit DspxEnvParamInfoEntity(QObject *parent = nullptr);
+        ~DspxEnvParamInfoEntity();
+
+    public:
         DspxParamCurveListEntity *envelope() const;
     };
     //===========================================================================
 
     //===========================================================================
     // ParamSet
-    class CORE_EXPORT DspxParamSetEntity : public AceTreeEntityMapping {
+    class DspxParamSetEntityPrivate;
+
+    class CORE_EXPORT DspxParamSetEntity : public AceTreeStandardEntity {
         Q_OBJECT
-        Q_DECLARE_PRIVATE(DspxParamAnchorEntity)
+        Q_DECLARE_PRIVATE(DspxParamSetEntity)
     public:
         explicit DspxParamSetEntity(QObject *parent = nullptr);
         ~DspxParamSetEntity();
+
+    public:
+        DspxParamInfoEntity *pitch() const;
+
+    protected:
+        DspxParamSetEntity(DspxParamSetEntityPrivate &d, QObject *parent = nullptr);
     };
     //===========================================================================
 

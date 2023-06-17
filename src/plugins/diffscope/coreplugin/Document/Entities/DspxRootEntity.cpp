@@ -169,7 +169,9 @@ namespace Core {
                     auto &paramInfo = SCHEMA(ParamInfo);
                     ADD_DY_DATA(paramInfo, "original", QJsonValue::Array);
                     ADD_NODE(paramInfo, "edited", ParamCurveList);
-                    ADD_NODE(paramInfo, "envelope", ParamCurveList);
+
+                    auto &envParamInfo = SCHEMA(EnvParamInfo);
+                    ADD_NODE(envParamInfo, "envelope", ParamCurveList);
 
                     auto &params = SCHEMA(ParamCurveList); // ParamCurve List
                     params.setRecordTypeKey("type");
@@ -189,7 +191,7 @@ namespace Core {
                     // Anchor
                     {
                         auto &anchor = SCHEMA(ParamAnchor);
-                        ADD_NODE(anchor, "nodes", IntPointList);
+                        ADD_NODE(anchor, "nodes", AnchorPointList);
                     }
                 }
             }

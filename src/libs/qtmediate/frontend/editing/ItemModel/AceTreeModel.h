@@ -20,12 +20,18 @@ public:
     virtual ~AceTreeItem();
 
     enum Status : qint8 {
-        Root,
-        Row,
-        Record,
-        Node,
-        ManagedRoot,
+        Root,        // Set as root or newly created
+        Row,         // Added to vector
+        Record,      // Added to record table
+        Node,        // Added to set
+        ManagedRoot, // Removed from an item on a model
     };
+
+    inline bool isRoot() const;
+    inline bool isRow() const;
+    inline bool isRecord() const;
+    inline bool isNode() const;
+    inline bool isManagedRoot() const;
 
     QString name() const;
     Status status() const;
@@ -223,6 +229,26 @@ private:
     friend class AceTreeModelPrivate;
     friend class AceTreeItemSubscriberPrivate;
 };
+
+bool AceTreeItem::isRoot() const {
+    return status() == Root;
+}
+
+bool AceTreeItem::isRow() const {
+    return status() == Row;
+}
+
+bool AceTreeItem::isRecord() const {
+    return status() == Record;
+}
+
+bool AceTreeItem::isNode() const {
+    return status() == Node;
+}
+
+bool AceTreeItem::isManagedRoot() const {
+    return status() == ManagedRoot;
+}
 
 inline void AceTreeItem::clearDynamicData(const QString &key) {
     setDynamicData(key, {});

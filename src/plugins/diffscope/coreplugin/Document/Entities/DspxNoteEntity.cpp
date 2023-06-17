@@ -41,6 +41,7 @@ namespace Core {
     //===========================================================================
     // EditedPhonemeList
     DspxPhonemeListEntity::DspxPhonemeListEntity(QObject *parent) : AceTreeEntityVector(parent) {
+        AceTreeStandardEntityPrivate::setName(this, "phonemes");
     }
     DspxPhonemeListEntity::~DspxPhonemeListEntity() {
     }

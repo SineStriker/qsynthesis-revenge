@@ -113,7 +113,7 @@ namespace Core {
 
     //===========================================================================
     // AnchorPoint
-    DspxAnchorPointEntity::DspxAnchorPointEntity(QObject *parent) : DspxIntPointListEntity(parent) {
+    DspxAnchorPointEntity::DspxAnchorPointEntity(QObject *parent) : DspxIntPointEntity(parent) {
     }
     DspxAnchorPointEntity::~DspxAnchorPointEntity() {
     }
