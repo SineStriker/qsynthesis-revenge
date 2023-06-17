@@ -48,6 +48,9 @@ namespace QsApi {
 
         m_delegate = new TitleListItemDelegate(this);
         m_listWidget->setItemDelegate(m_delegate);
+#ifndef Q_OS_WINDOWS
+        m_listWidget->setMouseTracking(true);
+#endif
 
         connect(m_lineEdit, &QLineEdit::textChanged, this, &CommandPalettePrivate::_q_textChanged);
         connect(m_listWidget, &QListWidget::currentRowChanged, this, &CommandPalettePrivate::_q_currentRowChanged);

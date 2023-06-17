@@ -21,6 +21,9 @@ namespace QsApi {
 
         m_delegate = new TitleListItemDelegate(this);
         q->setItemDelegate(m_delegate);
+#ifndef Q_OS_WINDOWS
+        q->setMouseTracking(true);
+#endif
 
         connect(m_delegate, &TitleListItemDelegate::clicked, this, &FileListWidgetPrivate::_q_delegateClicked);
     }
