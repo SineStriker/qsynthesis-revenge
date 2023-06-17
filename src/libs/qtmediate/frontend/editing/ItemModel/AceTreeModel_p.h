@@ -28,6 +28,7 @@ public:
     AceTreeModel *model;
     int m_index;
     int m_indexHint; // Only for deserialization
+    bool m_forceDelete;
 
     QHash<QString, QVariant> properties;
     QByteArray byteArray;
@@ -58,6 +59,12 @@ public:
     static void propagateItems(AceTreeItem *item, const std::function<void(AceTreeItem *)> &f);
     static QByteArray itemToData(AceTreeItem *item);
     static AceTreeItem *itemFromStream(QDataStream &stream, QByteArray *out);
+
+    static void enterModel(AceTreeItem *item, AceTreeModel *model);
+    static void leaveModel(AceTreeItem *item);
+
+public:
+    static void forceDelete(AceTreeItem *item);
 };
 
 class AceTreeModelPrivate {
@@ -150,8 +157,8 @@ public:
         ~RowsInsertRemoveOp() {
             if (c == RowsInsert)
                 for (const auto &item : qAsConst(items))
-                    if (item && !item->model() && !item->parent())
-                        delete item;
+                    if (item && item->status() == AceTreeItem::ManagedRoot)
+                        AceTreeItemPrivate::forceDelete(item);
 
             // If this is a remove operation, there must be an insert operation ahead
             // which holds the reference of `item`, we don't need to delete
@@ -176,8 +183,8 @@ public:
         }
         ~RecordAddRemoveOp() {
             if (c == RecordAdd)
-                if (item && !item->model() && !item->parent())
-                    delete item;
+                if (item && item->status() == AceTreeItem::ManagedRoot)
+                    AceTreeItemPrivate::forceDelete(item);
 
             // If this is a remove operation, there must be an insert operation ahead
             // which holds the reference of `item`, we don't need to delete
@@ -192,8 +199,8 @@ public:
         }
         ~NodeAddRemoveOp() {
             if (c == NodeAdd)
-                if (item && !item->model() && !item->parent())
-                    delete item;
+                if (item && item->status() == AceTreeItem::ManagedRoot)
+                    AceTreeItemPrivate::forceDelete(item);
 
             // If this is a remove operation, there must be an insert operation ahead
             // which holds the reference of `item`, we don't need to delete
@@ -207,8 +214,8 @@ public:
         RootChangeOp() : BaseOp(RootChange), oldRoot(nullptr), newRoot(nullptr) {
         }
         ~RootChangeOp() {
-            if (newRoot && !newRoot->model())
-                delete newRoot;
+            if (newRoot && newRoot->status() == AceTreeItem::ManagedRoot)
+                AceTreeItemPrivate::forceDelete(newRoot);
 
             // The `oldRoot` must be hold by the previous `RootChangeOp`
             // we don't need to delete

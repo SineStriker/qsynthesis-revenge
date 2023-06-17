@@ -127,6 +127,29 @@ AceTreeItem *AceTreeItemPrivate::itemFromStream(QDataStream &stream, QByteArray 
     return item;
 }
 
+#define NO_PROPAGATE_WHEN_REMOVE
+
+void AceTreeItemPrivate::enterModel(AceTreeItem *item, AceTreeModel *model) {
+#ifdef NO_PROPAGATE_WHEN_REMOVE
+    if (!item->d_func()->model) {
+        item->propagateModel(model);
+    }
+#else
+    item->propagateModel(model);
+#endif
+}
+
+void AceTreeItemPrivate::leaveModel(AceTreeItem *item) {
+#ifndef NO_PROPAGATE_WHEN_REMOVE
+    item->propagateModel(nullptr);
+#endif
+}
+
+void AceTreeItemPrivate::forceDelete(AceTreeItem *item) {
+    item->d_func()->m_forceDelete = true;
+    delete item;
+}
+
 /**
  * User can only add child items whose index is zero into a model
  *
@@ -137,18 +160,69 @@ AceTreeItem *AceTreeItemPrivate::itemFromStream(QDataStream &stream, QByteArray 
  * rebuilding the original structure precisely
  */
 
+//static int item_count = 0;
+
 // Item
 AceTreeItemPrivate::AceTreeItemPrivate() {
+//    item_count++;
+//    qDebug() << "AceTreeItemPrivate construct, left" << item_count;
+
     parent = nullptr;
     model = nullptr;
     m_index = 0;
     m_indexHint = 0;
+    m_forceDelete = false;
     maxRecordSeq = 0;
     status = AceTreeItem::Root;
 }
 
 AceTreeItemPrivate::~AceTreeItemPrivate() {
-    //
+    Q_Q(AceTreeItem);
+
+//    item_count--;
+//    qDebug() << "AceTreeItemPrivate destroy, left" << item_count << q->name();
+
+    auto warn = [this]() {
+        if (!m_forceDelete)
+            myWarning("~AceTreeItem") << "Deleting a managed item may cause crash";
+    };
+
+    // No need to detach from model if the model is in destruction
+    if (model) {
+        if (!model->d_func()->is_destruct) {
+            warn();
+            q->propagateModel(nullptr);
+        }
+    } else if (m_index > 0) {
+        warn();
+    } else {
+        switch (status) {
+            case AceTreeItem::Row:
+                parent->removeRow(parent->rowIndexOf(q));
+                break;
+            case AceTreeItem::Record:
+                parent->removeRecord(q);
+                break;
+            case AceTreeItem::Node:
+                parent->removeNode(q);
+                break;
+            default:
+                break;
+        }
+    }
+
+    if (m_forceDelete) {
+        for (const auto &item : qAsConst(vector))
+            forceDelete(item);
+        for (const auto &item : qAsConst(set))
+            forceDelete(item);
+        for (const auto &item : qAsConst(records))
+            forceDelete(item);
+    } else {
+        qDeleteAll(vector);
+        qDeleteAll(set);
+        qDeleteAll(records);
+    }
 }
 
 void AceTreeItemPrivate::init() {
@@ -158,28 +232,6 @@ AceTreeItem::AceTreeItem(const QString &name) : AceTreeItem(*new AceTreeItemPriv
 }
 
 AceTreeItem::~AceTreeItem() {
-    Q_D(AceTreeItem);
-
-    auto warn = []() {
-        myWarning("~AceTreeItem") << "Deleting a managed tree item  may cause crash"; //
-    };
-
-    auto model = d->model;
-    // No need to detach from model if the model is in destruction
-    if (model) {
-        if (!model->d_func()->is_destruct) {
-            if (!model->d_func()->internalChange) {
-                warn();
-            }
-            propagateModel(nullptr);
-        }
-    } else if (d->m_index > 0) {
-        warn();
-    }
-
-    qDeleteAll(d->vector);
-    qDeleteAll(d->set);
-    qDeleteAll(d->records);
 }
 
 bool AceTreeItem::addSubscriber(AceTreeItemSubscriber *sub) {
@@ -755,7 +807,7 @@ AceTreeModelPrivate::AceTreeModelPrivate() {
 
 AceTreeModelPrivate::~AceTreeModelPrivate() {
     is_destruct = true;
-    qDeleteAll(operations);
+    qDeleteAll(operations.rbegin(), operations.rend());
     delete rootItem;
 }
 
@@ -771,10 +823,14 @@ void AceTreeModelPrivate::setRootItem_helper(AceTreeItem *item) {
     emit q->rootAboutToChange(item, org);
 
     // Do change
-    if (org)
-        org->propagateModel(nullptr);
-    if (item)
-        item->propagateModel(q);
+    if (org) {
+        org->d_func()->status = AceTreeItem::ManagedRoot;
+        AceTreeItemPrivate::leaveModel(org);
+    }
+    if (item) {
+        item->d_func()->status = AceTreeItem::Root;
+        AceTreeItemPrivate::enterModel(item, q);
+    }
     rootItem = item;
 
     // Propagate signal
@@ -966,7 +1022,7 @@ void AceTreeItemPrivate::insertRows_helper(int index, const QVector<AceTreeItem 
 
         item->d_func()->parent = q;
         if (model)
-            item->propagateModel(model);
+            enterModel(item, model);
     }
 
     // Update status
@@ -1016,13 +1072,17 @@ void AceTreeItemPrivate::removeRows_helper(int index, int count) {
     for (const auto &item : qAsConst(tmp)) {
         item->d_func()->parent = nullptr;
         if (model)
-            item->propagateModel(nullptr);
+            leaveModel(item);
     }
     vector.erase(vector.begin() + index, vector.begin() + index + count);
 
     // Update status
-    for (const auto &item : qAsConst(tmp))
-        item->d_func()->status = AceTreeItem::Root;
+    if (model)
+        for (const auto &item : qAsConst(tmp))
+            item->d_func()->status = AceTreeItem::ManagedRoot;
+    else
+        for (const auto &item : qAsConst(tmp))
+            item->d_func()->status = AceTreeItem::Root;
 
     // Propagate signal
     for (const auto &sub : qAsConst(subscribers))
@@ -1037,7 +1097,7 @@ void AceTreeItemPrivate::addNode_helper(AceTreeItem *item) {
     // Do change
     item->d_func()->parent = q;
     if (model)
-        item->propagateModel(model);
+        enterModel(item, model);
     set.insert(item);
     setNameIndexes[item->name()] += item;
 
@@ -1063,7 +1123,7 @@ void AceTreeItemPrivate::removeNode_helper(AceTreeItem *item) {
     // Do change
     item->d_func()->parent = nullptr;
     if (model)
-        item->propagateModel(nullptr);
+        leaveModel(item);
     set.remove(item);
     {
         auto it = setNameIndexes.find(item->name());
@@ -1076,7 +1136,7 @@ void AceTreeItemPrivate::removeNode_helper(AceTreeItem *item) {
     }
 
     // Update status
-    item->d_func()->status = AceTreeItem::Root;
+    item->d_func()->status = model ? AceTreeItem::ManagedRoot : AceTreeItem::Root;
 
     // Propagate signal
     for (const auto &sub : qAsConst(subscribers))
@@ -1091,7 +1151,8 @@ void AceTreeItemPrivate::addRecord_helper(int seq, AceTreeItem *item) {
     // Do change
     item->d_func()->parent = q;
     if (model)
-        item->propagateModel(model);
+        enterModel(item, model);
+
     records.insert(seq, item);
     recordIndexes.insert(item, seq);
 
@@ -1120,12 +1181,12 @@ void AceTreeItemPrivate::removeRecord_helper(int seq) {
     // Do change
     item->d_func()->parent = nullptr;
     if (model)
-        item->propagateModel(nullptr);
+        leaveModel(item);
     records.erase(it);
     recordIndexes.remove(item);
 
     // Update status
-    item->d_func()->status = AceTreeItem::Root;
+    item->d_func()->status = model ? AceTreeItem::ManagedRoot : AceTreeItem::Root;
 
     // Propagate signal
     for (const auto &sub : qAsConst(subscribers))
@@ -1901,7 +1962,7 @@ AceTreeModel *AceTreeModel::recover(const QByteArray &data) {
         continue;
 
     op_abort:
-        qDeleteAll(operations);
+        qDeleteAll(operations.rbegin(), operations.rend());
         return nullptr;
     }
 

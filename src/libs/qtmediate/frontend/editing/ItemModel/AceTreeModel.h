@@ -24,6 +24,7 @@ public:
         Row,
         Record,
         Node,
+        ManagedRoot,
     };
 
     QString name() const;

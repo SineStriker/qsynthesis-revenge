@@ -50,17 +50,17 @@ void tst_AceTreeModel::basic() {
     model.previousStep();
 
     // Step 4 - Test insert and remove rows
-    auto trackItem1 = new AceTreeItem("track");
-    auto trackItem2 = new AceTreeItem("track");
-    auto trackItem3 = new AceTreeItem("track");
-    auto trackItem4 = new AceTreeItem("track");
+    auto trackItem1 = new AceTreeItem("track1");
+    auto trackItem2 = new AceTreeItem("track2");
+    auto trackItem3 = new AceTreeItem("track3");
+    auto trackItem4 = new AceTreeItem("track4");
     rootItem->appendRow(trackItem1);
     rootItem->appendRow(trackItem2);
     rootItem->appendRow(trackItem3);
     rootItem->appendRow(trackItem4);
     QCOMPARE(rootItem->rowCount(), 4);
 
-    auto trackItem1_5 = new AceTreeItem("track");
+    auto trackItem1_5 = new AceTreeItem("track5");
     rootItem->insertRow(1, trackItem1_5);
     {
         auto tmp = {trackItem1, trackItem1_5, trackItem2, trackItem3, trackItem4};
@@ -101,11 +101,11 @@ void tst_AceTreeModel::basic() {
     }
 
     // Step 6 - Test add records
-    auto noteItem1 = new AceTreeItem("note");
-    auto noteItem2 = new AceTreeItem("note");
-    auto noteItem3 = new AceTreeItem("note");
-    auto noteItem4 = new AceTreeItem("note");
-    auto noteItem5 = new AceTreeItem("note");
+    auto noteItem1 = new AceTreeItem("note1");
+    auto noteItem2 = new AceTreeItem("note2");
+    auto noteItem3 = new AceTreeItem("note3");
+    auto noteItem4 = new AceTreeItem("note4");
+    auto noteItem5 = new AceTreeItem("note5");
 
     int seq;
     seq = rootItem->addRecord(noteItem1);
@@ -129,6 +129,7 @@ void tst_AceTreeModel::basic() {
         auto tmp = {1, 2, 3, 4, 5};
         QCOMPARE(rootItem->records(), tmp);
     }
+    model.nextStep();
 }
 
 QTEST_APPLESS_MAIN(tst_AceTreeModel)
