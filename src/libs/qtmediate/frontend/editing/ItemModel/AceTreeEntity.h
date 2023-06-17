@@ -37,6 +37,8 @@ public:
     bool addChild(AceTreeEntity *child);
     bool removeChild(AceTreeEntity *child);
 
+    static AceTreeEntity *itemToEntity(AceTreeItem *item);
+
 protected:
     virtual void doInitialize();
     virtual void doSetup();

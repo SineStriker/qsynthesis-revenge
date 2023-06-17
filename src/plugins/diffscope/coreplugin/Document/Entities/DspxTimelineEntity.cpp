@@ -1,17 +1,15 @@
 #include "DspxTimelineEntity.h"
 #include "AceTreeStandardEntity_p.h"
+#include "DspxEntityUtils_p.h"
 
 namespace Core {
-
-    static bool compareTimelineElement(const AceTreeEntity *left, const AceTreeEntity *right) {
-        return left->property("pos").toInt() < right->property("pos").toInt();
-    }
 
     //===========================================================================
     // Timeline
     class DspxTimelineEntityPrivate : public AceTreeStandardEntityPrivate {
     public:
         DspxTimelineEntityPrivate() : AceTreeStandardEntityPrivate(AceTreeStandardEntity::Mapping) {
+            name = "timeline";
             timeSignatures = nullptr;
             tempos = nullptr;
             labels = nullptr;
@@ -30,9 +28,6 @@ namespace Core {
     }
     DspxTimelineEntity::~DspxTimelineEntity() {
     }
-    QString DspxTimelineEntity::name() const {
-        return "timeline";
-    }
     DspxTimeSignatureListEntity *DspxTimelineEntity::timeSignatures() const {
         Q_D(const DspxTimelineEntity);
         return d->timeSignatures;
@@ -50,11 +45,9 @@ namespace Core {
     //===========================================================================
     // TimeSignature
     DspxTimeSignatureEntity::DspxTimeSignatureEntity(QObject *parent) : AceTreeEntityMapping(parent) {
+        AceTreeStandardEntityPrivate::setName(this, "timeSignature");
     }
     DspxTimeSignatureEntity::~DspxTimeSignatureEntity() {
-    }
-    QString DspxTimeSignatureEntity::name() const {
-        return "timeSignature";
     }
     int DspxTimeSignatureEntity::position() const {
         return property("pos").toInt();
@@ -79,25 +72,21 @@ namespace Core {
     //===========================================================================
     // TimeSignature List
     DspxTimeSignatureListEntity::DspxTimeSignatureListEntity(QObject *parent) : AceTreeEntityRecordTable(parent) {
+        AceTreeStandardEntityPrivate::setName(this, "timeSignatures");
     }
     DspxTimeSignatureListEntity::~DspxTimeSignatureListEntity() {
     }
-    QString DspxTimeSignatureListEntity::name() const {
-        return "timeSignatures";
-    }
     void DspxTimeSignatureListEntity::sortRecords(QVector<AceTreeEntity *> &records) const {
-        std::sort(records.begin(), records.end(), compareTimelineElement);
+        std::sort(records.begin(), records.end(), compareElementPos<int>);
     }
     //===========================================================================
 
     //===========================================================================
     // Tempo
     DspxTempoEntity::DspxTempoEntity(QObject *parent) : AceTreeEntityMapping(parent) {
+        AceTreeStandardEntityPrivate::setName(this, "tempo");
     }
     DspxTempoEntity::~DspxTempoEntity() {
-    }
-    QString DspxTempoEntity::name() const {
-        return "tempo";
     }
     int DspxTempoEntity::position() const {
         return property("pos").toInt();
@@ -115,26 +104,22 @@ namespace Core {
 
     //===========================================================================
     // Tempo List
-    DspxTempoListEntity::DspxTempoListEntity(QObject *parent) : AceTreeEntityVector(parent) {
+    DspxTempoListEntity::DspxTempoListEntity(QObject *parent) : AceTreeEntityRecordTable(parent) {
+        AceTreeStandardEntityPrivate::setName(this, "tempos");
     }
     DspxTempoListEntity::~DspxTempoListEntity() {
     }
-    QString DspxTempoListEntity::name() const {
-        return "tempos";
-    }
     void DspxTempoListEntity::sortRecords(QVector<AceTreeEntity *> &records) const {
-        std::sort(records.begin(), records.end(), compareTimelineElement);
+        std::sort(records.begin(), records.end(), compareElementPos<int>);
     }
     //===========================================================================
 
     //===========================================================================
     // TimelineLabel
     DspxTimelineLabelEntity::DspxTimelineLabelEntity(QObject *parent) : AceTreeEntityMapping(parent) {
+        AceTreeStandardEntityPrivate::setName(this, "label");
     }
     DspxTimelineLabelEntity::~DspxTimelineLabelEntity() {
-    }
-    QString DspxTimelineLabelEntity::name() const {
-        return "label";
     }
     int DspxTimelineLabelEntity::position() const {
         return property("pos").toInt();
@@ -152,15 +137,13 @@ namespace Core {
 
     //===========================================================================
     // TimelineLabel List
-    DspxTimelineLabelListEntity::DspxTimelineLabelListEntity(QObject *parent) : AceTreeEntityVector(parent) {
+    DspxTimelineLabelListEntity::DspxTimelineLabelListEntity(QObject *parent) : AceTreeEntityRecordTable(parent) {
+        AceTreeStandardEntityPrivate::setName(this, "labels");
     }
     DspxTimelineLabelListEntity::~DspxTimelineLabelListEntity() {
     }
-    QString DspxTimelineLabelListEntity::name() const {
-        return "labels";
-    }
     void DspxTimelineLabelListEntity::sortRecords(QVector<AceTreeEntity *> &records) const {
-        std::sort(records.begin(), records.end(), compareTimelineElement);
+        std::sort(records.begin(), records.end(), compareElementPos<int>);
     }
     //===========================================================================
 

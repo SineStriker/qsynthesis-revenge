@@ -27,9 +27,9 @@ ck_target_components(${PROJECT_NAME}
     LINKS
     LINKS_PRIVATE ${_platform_libs}
     AUTO_INCLUDE_CURRENT
-    AUTO_INCLUDE_DIRS Global Kernel Text Collections Serialization ../..
+    AUTO_INCLUDE_DIRS Global Kernel Text Collections Serialization Tools ../..
     INCLUDE_PRIVATE ${CK_HEADERS_OUTPUT_PATH}
     INCLUDE_SUBDIRS_PRIVATE
 )
 
-ck_dir_skip_automoc(Collections Serialization Text)
+ck_dir_skip_automoc(Collections Serialization Text Tools)

@@ -903,10 +903,28 @@ function(ck_finish_build_system)
     if(APPLE)
         # Add install command to copy shared files
         foreach(_item ${_app_list})
-            install(
-                DIRECTORY ${CK_GLOBAL_LIBRARY_OUTPUT_PATH} ${CK_GLOBAL_SHARE_OUTPUT_PATH}
-                DESTINATION $<TARGET_FILE_NAME:${_item}>.app/Contents
-            )
+            # install(
+            #     DIRECTORY ${CK_GLOBAL_LIBRARY_OUTPUT_PATH} ${CK_GLOBAL_SHARE_OUTPUT_PATH}
+            #     DESTINATION $<TARGET_FILE_NAME:${_item}>.app/Contents
+            # )
+            install(CODE "
+                execute_process(
+                    COMMAND \"${CMAKE_COMMAND}\"
+                    -D \"src=${CMAKE_INSTALL_PREFIX}/${CK_INSTALL_LIBRARY_OUTPUT_PATH}\"
+                    -D \"dest=${CMAKE_INSTALL_PREFIX}/$<TARGET_FILE_NAME:${_item}>.app/Contents\"
+                    -P \"${CK_CMAKE_SCRIPTS_DIR}/CopyIfDifferent.cmake\"
+                    COMMAND_ERROR_IS_FATAL ANY
+                )
+            ")
+            install(CODE "
+                execute_process(
+                    COMMAND \"${CMAKE_COMMAND}\"
+                    -D \"src=${CMAKE_INSTALL_PREFIX}/${CK_INSTALL_SHARE_OUTPUT_PATH}\"
+                    -D \"dest=${CMAKE_INSTALL_PREFIX}/$<TARGET_FILE_NAME:${_item}>.app/Contents\"
+                    -P \"${CK_CMAKE_SCRIPTS_DIR}/CopyIfDifferent.cmake\"
+                    COMMAND_ERROR_IS_FATAL ANY
+                )
+            ")
         endforeach()
     endif()
 

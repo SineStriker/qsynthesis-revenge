@@ -1,5 +1,6 @@
 #include "DspxParamEntity.h"
 #include "AceTreeStandardEntity_p.h"
+#include "DspxEntityUtils_p.h"
 
 #include <QDataStream>
 
@@ -11,6 +12,7 @@ namespace Core {
     public:
         DspxParamCurveEntityPrivate(DspxParamCurveEntity::Type type, AceTreeStandardEntity::Type schemaType)
             : AceTreeStandardEntityPrivate(schemaType), type(type) {
+            name = "curve";
         }
         ~DspxParamCurveEntityPrivate() = default;
 
@@ -26,6 +28,12 @@ namespace Core {
         Q_D(const DspxParamCurveEntity);
         return d->type;
     }
+    int DspxParamCurveEntity::start() const {
+        return property("start").toInt();
+    }
+    void DspxParamCurveEntity::setStart(int start) {
+        setProperty("start", start);
+    }
     DspxParamCurveEntity::DspxParamCurveEntity(DspxParamCurveEntityPrivate &d, QObject *parent)
         : AceTreeStandardEntity(d, parent) {
     }
@@ -36,6 +44,7 @@ namespace Core {
     public:
         DspxParamFreeEntityPrivate()
             : DspxParamCurveEntityPrivate(DspxParamCurveEntity::Anchor, AceTreeStandardEntity::Mapping) {
+            name = "free";
             values = nullptr;
             childPostAssignRefs.insert("values", &values);
         }
@@ -47,15 +56,6 @@ namespace Core {
         : DspxParamCurveEntity(*new DspxParamFreeEntityPrivate(), parent) {
     }
     DspxParamFreeEntity::~DspxParamFreeEntity() {
-    }
-    QString DspxParamFreeEntity::name() const {
-        return "free";
-    }
-    int DspxParamFreeEntity::start() const {
-        return property("start").toInt();
-    }
-    void DspxParamFreeEntity::setStart(int start) {
-        setProperty("start", start);
     }
     int DspxParamFreeEntity::step() const {
         return property("step").toInt();
@@ -71,8 +71,6 @@ namespace Core {
     class DspxParamFreeDataEntityPrivate : public AceTreeEntityPrivate {
         Q_DECLARE_PUBLIC(DspxParamFreeEntity)
     public:
-        DspxParamFreeDataEntityPrivate() {
-        }
         ~DspxParamFreeDataEntityPrivate() = default;
     };
     DspxParamFreeDataEntity::DspxParamFreeDataEntity(QObject *parent)
@@ -123,6 +121,7 @@ namespace Core {
     public:
         DspxParamAnchorEntityPrivate()
             : DspxParamCurveEntityPrivate(DspxParamCurveEntity::Anchor, AceTreeStandardEntity::Mapping) {
+            name = "anchor";
             nodes = nullptr;
             childPostAssignRefs.insert("nodes", &nodes);
         }
@@ -135,9 +134,6 @@ namespace Core {
     }
     DspxParamAnchorEntity::~DspxParamAnchorEntity() {
     }
-    QString DspxParamAnchorEntity::name() const {
-        return "anchor";
-    }
     DspxIntPointListEntity *DspxParamAnchorEntity::nodes() const {
         Q_D(const DspxParamAnchorEntity);
         return d->nodes;
@@ -147,14 +143,12 @@ namespace Core {
     //===========================================================================
     // ParamCurve List
     DspxParamCurveListEntity::DspxParamCurveListEntity(QObject *parent) : AceTreeEntityRecordTable(parent) {
+        AceTreeStandardEntityPrivate::setName(this, "curves");
     }
     DspxParamCurveListEntity::~DspxParamCurveListEntity() {
     }
-    QString DspxParamCurveListEntity::name() const {
-        return "curves";
-    }
     void DspxParamCurveListEntity::sortRecords(QVector<AceTreeEntity *> &records) const {
-        // TODO: Sort param curves
+        std::sort(records.begin(), records.end(), compareElementStart<int>);
     }
     //===========================================================================
 
@@ -163,6 +157,7 @@ namespace Core {
     class DspxParamInfoEntityPrivate : public AceTreeStandardEntityPrivate {
     public:
         DspxParamInfoEntityPrivate() : AceTreeStandardEntityPrivate(AceTreeStandardEntity::Mapping) {
+            name = "param";
             edited = nullptr;
             envelope = nullptr;
             childPostAssignRefs.insert("edited", &edited);
@@ -177,9 +172,6 @@ namespace Core {
         : AceTreeStandardEntity(*new DspxParamInfoEntityPrivate(), parent) {
     }
     DspxParamInfoEntity::~DspxParamInfoEntity() {
-    }
-    QString DspxParamInfoEntity::name() const {
-        return "param";
     }
     QJsonArray DspxParamInfoEntity::original() const {
         return property("original").toJsonArray();
@@ -200,11 +192,9 @@ namespace Core {
     //===========================================================================
     // ParamSet
     DspxParamSetEntity::DspxParamSetEntity(QObject *parent) : AceTreeEntityMapping(parent) {
+        AceTreeStandardEntityPrivate::setName(this, "params");
     }
     DspxParamSetEntity::~DspxParamSetEntity() {
-    }
-    QString DspxParamSetEntity::name() const {
-        return "params";
     }
     //===========================================================================
 

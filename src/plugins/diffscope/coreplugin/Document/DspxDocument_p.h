@@ -2,6 +2,7 @@
 #define DSPXDOCUMENT_P_H
 
 #include "DspxDocument.h"
+#include "Document/Entities/DspxRootEntity.h"
 
 #include <QMChronSet.h>
 
@@ -20,6 +21,7 @@ namespace Core {
         mutable QString untitledFileName;
 
         AceTreeModel *model;
+        DspxContentEntity *content;
 
         bool vstMode;
 

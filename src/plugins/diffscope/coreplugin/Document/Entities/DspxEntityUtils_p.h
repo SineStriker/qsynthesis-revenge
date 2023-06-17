@@ -17,7 +17,7 @@ namespace Core {
     }
 
     template <class T>
-    T variantToEnum(const QVariant &v){
+    T variantToEnum(const QVariant &v) {
         return stringToEnum<T>(v.toString());
     }
 
@@ -26,6 +26,21 @@ namespace Core {
         auto key = QString::fromLatin1(QMetaEnum::fromType<T>().valueToKey(value));
         key[0] = key[0].toLower();
         return key;
+    }
+
+    template <class T = int>
+    inline bool compareElementPos(const AceTreeEntity *left, const AceTreeEntity *right) {
+        return left->property("pos").value<T>() < right->property("pos").value<T>();
+    }
+
+    template <class T = int>
+    inline bool compareElementStart(const AceTreeEntity *left, const AceTreeEntity *right) {
+        return left->property("start").value<T>() < right->property("start").value<T>();
+    }
+
+    template <class T = int>
+    inline bool compareElementX(const AceTreeEntity *left, const AceTreeEntity *right) {
+        return left->property("x").value<T>() < right->property("x").value<T>();
     }
 
 }

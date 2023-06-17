@@ -26,8 +26,6 @@ namespace Core {
         explicit DspxBusControlEntity(QObject *parent = nullptr);
         ~DspxBusControlEntity();
 
-        QString name() const override;
-
     public:
         double gain() const;
         void setGain(double gain);
@@ -62,8 +60,6 @@ namespace Core {
         explicit DspxIntPointEntity(QObject *parent = nullptr);
         ~DspxIntPointEntity();
 
-        QString name() const override;
-
     public:
         int x() const;
         void setX(int x);
@@ -82,8 +78,6 @@ namespace Core {
         explicit DspxIntPointListEntity(QObject *parent = nullptr);
         ~DspxIntPointListEntity();
 
-        QString name() const override;
-
     public:
         void sortRecords(QVector<AceTreeEntity *> &records) const override;
     };
@@ -96,8 +90,6 @@ namespace Core {
     public:
         explicit DspxDoublePointEntity(QObject *parent = nullptr);
         ~DspxDoublePointEntity();
-
-        QString name() const override;
 
     public:
         double x() const;
@@ -116,8 +108,6 @@ namespace Core {
     public:
         explicit DspxDoublePointListEntity(QObject *parent = nullptr);
         ~DspxDoublePointListEntity();
-
-        QString name() const override;
 
     public:
         void sortRecords(QVector<AceTreeEntity *> &records) const override;
@@ -154,24 +144,8 @@ namespace Core {
         explicit DspxAnchorPointListEntity(QObject *parent = nullptr);
         ~DspxAnchorPointListEntity();
 
-        QString name() const override;
-
     public:
         void sortRecords(QVector<AceTreeEntity *> &records) const override;
-    };
-    //===========================================================================
-
-    //===========================================================================
-    // Workspace
-    class DspxWorkspaceEntity : public AceTreeObjectEntity {
-        Q_OBJECT
-    public:
-        explicit DspxWorkspaceEntity(QObject *parent = nullptr);
-        ~DspxWorkspaceEntity();
-
-        QString name() const override;
-
-        friend class DspxRootEntity;
     };
     //===========================================================================
 

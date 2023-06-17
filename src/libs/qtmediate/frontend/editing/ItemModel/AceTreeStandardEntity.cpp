@@ -1,17 +1,13 @@
 #include "AceTreeStandardEntity.h"
 #include "AceTreeStandardEntity_p.h"
 
-static const char KEY_NAME_ENTITY_PTR[] = "ace_tree_entity_ptr";
-
 static const char KEY_NAME_CHILD_TYPE[] = "ace_tree_child_type";
 
-static inline void setEntityToItem(AceTreeItem *item, AceTreeEntity *entity) {
-    item->setDynamicData(KEY_NAME_ENTITY_PTR, entity ? QVariant::fromValue(intptr_t(entity)) : QVariant());
-}
+static int indent = 0;
 
-static inline AceTreeEntity *getEntityFromItem(const AceTreeItem *item) {
-    return reinterpret_cast<AceTreeEntity *>(item->dynamicData(KEY_NAME_ENTITY_PTR).value<intptr_t>());
-}
+using GlobalSpecMap = QHash<const QMetaObject *, AceTreeStandardSchema>;
+Q_GLOBAL_STATIC(GlobalSpecMap, globalSpecMap)
+Q_GLOBAL_STATIC(GlobalSpecMap, globalSpecMapComplete)
 
 static inline void setTypeValueToItem(AceTreeItem *item, const QString &typeValue) {
     item->setProperty(KEY_NAME_CHILD_TYPE, typeValue);
@@ -25,7 +21,6 @@ static inline QString getTypeValueFromItem(const AceTreeItem *item) {
 
 AceTreeStandardEntityPrivate::AceTreeStandardEntityPrivate(AceTreeStandardEntity::Type type) : type(type) {
     m_external = false;
-    cachedMetaObject = nullptr;
 }
 
 AceTreeStandardEntityPrivate::~AceTreeStandardEntityPrivate() {
@@ -68,7 +63,7 @@ void AceTreeStandardEntityPrivate::rowsInserted(int index, const QVector<AceTree
     if (m_external) {
         // Triggered by user
         for (const auto &item : items) {
-            entities.append(getEntityFromItem(item));
+            entities.append(AceTreeEntity::itemToEntity(item));
         }
     } else {
         // Triggered by undo/redo
@@ -88,7 +83,7 @@ void AceTreeStandardEntityPrivate::rowsRemoved(int index, const QVector<AceTreeI
     Q_UNUSED(m_external);
 
     for (const auto &item : items) {
-        auto entity = getEntityFromItem(item);
+        auto entity = AceTreeEntity::itemToEntity(item);
         q->removeChild(entity);
         if (!entity->isFree())
             delete entity;
@@ -102,7 +97,7 @@ void AceTreeStandardEntityPrivate::recordAdded(int seq, AceTreeItem *item) {
     entities.reserve(1);
     if (m_external) {
         // Triggered by user
-        entities.append(getEntityFromItem(item));
+        entities.append(AceTreeEntity::itemToEntity(item));
     } else {
         // Triggered by undo/redo
         setupVector_helper(q->schema(), &AceTreeStandardSchema::recordTypeKey,
@@ -119,7 +114,7 @@ void AceTreeStandardEntityPrivate::recordAdded(int seq, AceTreeItem *item) {
 void AceTreeStandardEntityPrivate::recordRemoved(int seq, AceTreeItem *item) {
     Q_Q(AceTreeStandardEntity);
 
-    auto entity = getEntityFromItem(item);
+    auto entity = AceTreeEntity::itemToEntity(item);
     q->removeChild(entity);
     if (!entity->isFree())
         delete entity;
@@ -132,7 +127,7 @@ void AceTreeStandardEntityPrivate::nodeAdded(AceTreeItem *item) {
     const auto &typeValue = getTypeValueFromItem(item);
     if (m_external) {
         // Triggered by user
-        entity = getEntityFromItem(item);
+        entity = AceTreeEntity::itemToEntity(item);
     } else {
         // Triggered by undo/redo
         // Find type value to determine the derived entity class builder
@@ -156,7 +151,7 @@ void AceTreeStandardEntityPrivate::nodeAdded(AceTreeItem *item) {
 void AceTreeStandardEntityPrivate::nodeRemoved(AceTreeItem *item) {
     Q_Q(AceTreeStandardEntity);
 
-    auto entity = getEntityFromItem(item);
+    auto entity = AceTreeEntity::itemToEntity(item);
     const auto &typeValue = getTypeValueFromItem(item);
 
     removeNode_assigns(entity);
@@ -192,11 +187,14 @@ bool AceTreeStandardEntityPrivate::readVector_helper(const AceTreeStandardSchema
                 continue;
 
             child->initialize();
+
+            qDebug().noquote() << std::string(indent, ' ').c_str() << "[read child]" << child->name() << child;
             if (!child->read(item)) {
                 // Ignore error
                 delete child;
                 continue;
             }
+            qDebug() << std::string(indent, ' ').c_str() << "[success]";
 
             childrenToAdd.append({QString(), child});
         }
@@ -215,11 +213,13 @@ bool AceTreeStandardEntityPrivate::readVector_helper(const AceTreeStandardSchema
                 continue;
 
             child->initialize();
+            qDebug().noquote() << std::string(indent, ' ').c_str() << "[read child]" << typeValue << child;
             if (!child->read(item)) {
                 // Ignore error
                 delete child;
                 continue;
             }
+            qDebug() << std::string(indent, ' ').c_str() << "[success]";
 
             childrenToAdd.append({typeValue, child});
         }
@@ -257,6 +257,7 @@ bool AceTreeStandardEntityPrivate::readSet_helper(const AceTreeStandardSchema &s
     // Read properties
     hash = schema.propertySpecHash();
     QVector<QPair<QString, QVariant>> propertiesToSet;
+    qDebug().noquote() << std::string(indent, ' ').c_str() << "[collect properties]" << hash.keys();
     for (auto it = hash.begin(); it != hash.end(); ++it) {
         auto val = obj.value(it.key());
         if (val.isUndefined())
@@ -269,6 +270,7 @@ bool AceTreeStandardEntityPrivate::readSet_helper(const AceTreeStandardSchema &s
         propertiesToSet.append({it.key(), val.toVariant()});
     }
     for (const auto &pair : qAsConst(propertiesToSet)) {
+        qDebug().noquote() << std::string(indent, ' ').c_str() << "[read property]" << pair.first << pair.second;
         m_treeItem->setProperty(pair.first, pair.second);
     }
 
@@ -282,9 +284,11 @@ bool AceTreeStandardEntityPrivate::readSet_helper(const AceTreeStandardSchema &s
         if (!child)
             continue;
 
+        qDebug().noquote() << std::string(indent, ' ').c_str() << "[read child]" << key << child;
         if (!child->read(val))
             // Ignore
             continue;
+        qDebug() << std::string(indent, ' ').c_str() << "[success]";
     }
     return true;
 }
@@ -298,7 +302,7 @@ QJsonArray AceTreeStandardEntityPrivate::writeVector_helper(const AceTreeStandar
     auto typeKey = schema.rowTypeKey();
     if (typeKey.isEmpty()) {
         for (const auto &item : childItems) {
-            auto child = getEntityFromItem(item);
+            auto child = AceTreeEntity::itemToEntity(item);
             if (!child)
                 continue;
 
@@ -307,7 +311,7 @@ QJsonArray AceTreeStandardEntityPrivate::writeVector_helper(const AceTreeStandar
         }
     } else {
         for (const auto &item : childItems) {
-            auto child = getEntityFromItem(item);
+            auto child = AceTreeEntity::itemToEntity(item);
             if (!child)
                 continue;
 
@@ -334,10 +338,24 @@ QJsonObject AceTreeStandardEntityPrivate::writeSet_helper(const AceTreeStandardS
 
     QJsonObject obj;
 
-    // Write properties
-    auto hash = m_treeItem->propertyMap();
+    // Write dynamic data
+    auto hash = schema.dynamicDataSpecHash();
     for (auto it = hash.begin(); it != hash.end(); ++it) {
-        obj.insert(it.key(), QJsonValue::fromVariant(it.value()));
+        auto val = m_treeItem->dynamicData(it.key());
+        if (val.isValid())
+            obj.insert(it.key(), QJsonValue::fromVariant(val));
+        else
+            obj.insert(it.key(), it.value());
+    }
+
+    // Write properties
+    hash = schema.propertySpecHash();
+    for (auto it = hash.begin(); it != hash.end(); ++it) {
+        auto val = m_treeItem->property(it.key());
+        if (val.isValid())
+            obj.insert(it.key(), QJsonValue::fromVariant(val));
+        else
+            obj.insert(it.key(), it.value());
     }
 
     // Write node children
@@ -392,14 +410,18 @@ void AceTreeStandardEntityPrivate::addNode_assign(AceTreeEntity *child) {
     auto it = childPostAssignRefs.find(getTypeValueFromItem(AceTreeEntityPrivate::getItem(child)));
     if (it == childPostAssignRefs.end())
         return;
-    *it->ref = child;
+    it->get() = child;
 }
 
 void AceTreeStandardEntityPrivate::removeNode_assigns(AceTreeEntity *child) {
     auto it = childPostAssignRefs.find(getTypeValueFromItem(AceTreeEntityPrivate::getItem(child)));
     if (it == childPostAssignRefs.end())
         return;
-    *it->ref = nullptr;
+    it->get() = nullptr;
+}
+
+void AceTreeStandardEntityPrivate::setName(AceTreeStandardEntity *entity, const QString &name) {
+    entity->d_func()->name = name;
 }
 
 // -------------------------- AceTreeStandardEntity --------------------------
@@ -416,8 +438,28 @@ AceTreeStandardEntity::Type AceTreeStandardEntity::type() const {
     return d->type;
 }
 
+QString AceTreeStandardEntity::name() const {
+    Q_D(const AceTreeStandardEntity);
+    return d->name;
+}
+
 bool AceTreeStandardEntity::read(const QJsonValue &value) {
     Q_D(AceTreeStandardEntity);
+
+    class ABC {
+    public:
+        explicit ABC(int &i) : i(i) {
+            i += 2;
+        }
+        ~ABC() {
+            i -= 2;
+        }
+
+        int &i;
+    };
+
+    ABC abc(indent);
+
     auto schema = this->schema();
     switch (d->type) {
         case Vector: {
@@ -475,7 +517,7 @@ QJsonValue AceTreeStandardEntity::write() const {
             entities.reserve(d->m_treeItem->recordCount());
             for (const auto &seq : d->m_treeItem->records()) {
                 auto item = d->m_treeItem->record(seq);
-                entities.append(getEntityFromItem(item));
+                entities.append(AceTreeEntity::itemToEntity(item));
             }
             sortRecords(entities);
 
@@ -532,11 +574,17 @@ AceTreeStandardSchema AceTreeStandardEntity::schema() const {
     Q_D(const AceTreeStandardEntity);
 
     auto mo = metaObject();
-    if (mo == d->cachedMetaObject) {
-        return d->cachedSpec;
+    {
+        // Search in cache
+        auto it = globalSpecMapComplete->find(mo);
+        if (it != globalSpecMapComplete->end()) {
+            return it.value();
+        }
     }
-    d->cachedMetaObject = mo;
 
+    auto mo0 = mo;
+
+    // Get and cache schema
     auto thisSchema = AceTreeStandardSchema::globalSchema(mo);
     auto d1 = thisSchema.d.data();
     mo = mo->superClass();
@@ -545,6 +593,7 @@ AceTreeStandardSchema AceTreeStandardEntity::schema() const {
         bool ok;
         auto schema = AceTreeStandardSchema::globalSchema(mo, &ok);
         if (!ok) {
+            mo = mo->superClass();
             continue;
         }
 
@@ -571,13 +620,9 @@ AceTreeStandardSchema AceTreeStandardEntity::schema() const {
         mo = mo->superClass();
     }
 
-    d->cachedSpec = thisSchema;
-    return thisSchema;
-}
+    globalSpecMapComplete->insert(mo0, thisSchema);
 
-void AceTreeStandardEntity::clearCachedSchema() {
-    Q_D(AceTreeStandardEntity);
-    d->cachedMetaObject = nullptr;
+    return thisSchema;
 }
 
 QString AceTreeStandardEntity::searchChildType(const QMetaObject *metaObject) const {
@@ -633,43 +678,6 @@ int AceTreeStandardEntity::childTreeCount() const {
     return d->childNodeMap.size();
 }
 
-// static void doInitialize_helper(const AceTreeStandardSchema &schema, const QHash<QString, QJsonValue> &hash,
-//                                 QVector<QPair<QString, QVariant>> &propertiesToSet) {
-//     // Set default dynamic data
-//     for (auto it = hash.begin(); it != hash.end(); ++it) {
-//         QVariant val;
-//         if (it->isString()) {
-//             auto me = schema.menaEnumSpec(it.key());
-//
-//             // Not enumeration
-//             auto mo = me.enclosingMetaObject();
-//             if (!mo)
-//                 goto get_enum_fail;
-//
-//             // Check class info
-//             auto index = mo->indexOfClassInfo((std::string(me.name()) + "_Style").data());
-//             if (index >= 0) {
-//                 auto info = mo->classInfo(index).value();
-//                 if (!qstrcmp(info, "Camel")) {
-//                     // Using camel
-//                     goto get_enum_success;
-//                 }else if (!qstrcmp(info, "UpperCamel")){
-//                     // Using upper camel
-//                 }
-//             }
-//
-//             int val = me.keyToValue()
-//             goto get_enum_success;
-//         }
-//
-//     get_enum_fail:
-//         val = it->toVariant();
-//
-//     get_enum_success:
-//         propertiesToSet.append({it.key(), val});
-//     }
-// }
-
 void AceTreeStandardEntity::doInitialize() {
     Q_D(AceTreeStandardEntity);
 
@@ -699,6 +707,8 @@ void AceTreeStandardEntity::doInitialize() {
                 auto child = builder();
                 if (!child)
                     continue;
+
+                child->initialize();
                 addNode(key, child);
             }
             break;
@@ -737,20 +747,6 @@ void AceTreeStandardEntity::doSetup() {
         default:
             break;
     }
-}
-
-void AceTreeStandardEntity::childAdded(AceTreeEntity *child) {
-    Q_D(AceTreeStandardEntity);
-
-    auto childItem = AceTreeEntityPrivate::getItem(child);
-    setEntityToItem(childItem, this);
-}
-
-void AceTreeStandardEntity::childAboutToRemove(AceTreeEntity *child) {
-    Q_D(AceTreeStandardEntity);
-
-    auto childItem = AceTreeEntityPrivate::getItem(child);
-    setEntityToItem(childItem, nullptr);
 }
 
 AceTreeStandardEntity::AceTreeStandardEntity(AceTreeStandardEntityPrivate &d, QObject *parent)
@@ -845,7 +841,7 @@ bool AceTreeStandardEntity::removeRows(int index, int count) {
 
 AceTreeEntity *AceTreeStandardEntity::row(int row) const {
     Q_D(const AceTreeStandardEntity);
-    return getEntityFromItem(d->m_treeItem->row(row));
+    return AceTreeEntity::itemToEntity(d->m_treeItem->row(row));
 }
 
 QVector<AceTreeEntity *> AceTreeStandardEntity::rows() const {
@@ -853,7 +849,7 @@ QVector<AceTreeEntity *> AceTreeStandardEntity::rows() const {
     QVector<AceTreeEntity *> res;
     res.reserve(d->m_treeItem->rowCount());
     for (const auto &item : d->m_treeItem->rows()) {
-        auto child = getEntityFromItem(item);
+        auto child = AceTreeEntity::itemToEntity(item);
         if (!child)
             continue;
         res.append(child);
@@ -895,6 +891,9 @@ int AceTreeStandardEntity::addRecord(const QString &key, AceTreeEntity *entity) 
 bool AceTreeStandardEntity::removeRecord(int seq) {
     Q_D(AceTreeStandardEntity);
 
+    if (!d->testModifiable(__func__))
+        return false;
+
     // Commit change to model
     d->m_external = true;
     auto res = d->m_treeItem->removeRecord(seq);
@@ -905,6 +904,14 @@ bool AceTreeStandardEntity::removeRecord(int seq) {
 bool AceTreeStandardEntity::removeRecord(AceTreeEntity *entity) {
     Q_D(AceTreeStandardEntity);
 
+    if (!d->testModifiable(__func__))
+        return false;
+
+    if (!entity) {
+        myWarning(__func__) << "trying to remove a null record from" << this;
+        return false;
+    }
+
     // Commit change to model
     d->m_external = true;
     auto res = d->m_treeItem->removeRecord(AceTreeEntityPrivate::getItem(entity));
@@ -914,7 +921,7 @@ bool AceTreeStandardEntity::removeRecord(AceTreeEntity *entity) {
 
 AceTreeEntity *AceTreeStandardEntity::record(int seq) {
     Q_D(const AceTreeStandardEntity);
-    return getEntityFromItem(d->m_treeItem->record(seq));
+    return AceTreeEntity::itemToEntity(d->m_treeItem->record(seq));
 }
 
 int AceTreeStandardEntity::recordIndexOf(AceTreeEntity *entity) const {
@@ -985,6 +992,14 @@ bool AceTreeStandardEntity::addNode(const QString &key, AceTreeEntity *entity) {
 
 bool AceTreeStandardEntity::removeNode(AceTreeEntity *entity) {
     Q_D(AceTreeStandardEntity);
+
+    if (!d->testModifiable(__func__))
+        return false;
+
+    if (!entity) {
+        myWarning(__func__) << "trying to remove a null node from" << this;
+        return false;
+    }
 
     // Commit change to model
     d->m_external = true;
@@ -1206,15 +1221,12 @@ void AceTreeStandardSchema::setNodeBuilder(const QString &key, const AceTreeEnti
     setBuilder_helper(d->nodeBuilders, d->nodeBuilderIndexes, key, builder);
 }
 
-using GlobalSpecMap = QHash<const QMetaObject *, AceTreeStandardSchema>;
-Q_GLOBAL_STATIC(GlobalSpecMap, globalSpecMap)
-
-AceTreeStandardSchema &AceTreeStandardSchema::globalSchemaRef(const QMetaObject *staticMetaObject) {
-    return (*globalSpecMap)[staticMetaObject];
+AceTreeStandardSchema &AceTreeStandardSchema::globalSchemaRef(const QMetaObject *metaObject) {
+    return (*globalSpecMap)[metaObject];
 }
 
-AceTreeStandardSchema AceTreeStandardSchema::globalSchema(const QMetaObject *staticMetaObject, bool *ok) {
-    auto it = globalSpecMap->find(staticMetaObject);
+AceTreeStandardSchema AceTreeStandardSchema::globalSchema(const QMetaObject *metaObject, bool *ok) {
+    auto it = globalSpecMap->find(metaObject);
     if (it == globalSpecMap->end()) {
         if (ok)
             *ok = false;
@@ -1225,6 +1237,23 @@ AceTreeStandardSchema AceTreeStandardSchema::globalSchema(const QMetaObject *sta
     return it.value();
 }
 
-void AceTreeStandardSchema::setGlobalSchema(const QMetaObject *staticMetaObject, const AceTreeStandardSchema &schema) {
-    globalSpecMap->insert(staticMetaObject, schema);
+void AceTreeStandardSchema::setGlobalSchema(const QMetaObject *metaObject, const AceTreeStandardSchema &schema) {
+    globalSpecMap->insert(metaObject, schema);
+}
+
+void AceTreeStandardSchema::clearGlobalSchemaCache(const QMetaObject *metaObject) {
+    if (!metaObject) {
+        // Clear all cache
+        globalSpecMapComplete->clear();
+        return;
+    }
+
+    // Clear derived classes' cache
+    for (auto it = globalSpecMapComplete->begin(); it != globalSpecMapComplete->end();) {
+        if (it.key()->inherits(metaObject)) {
+            it = globalSpecMapComplete->erase(it);
+            continue;
+        }
+        it++;
+    }
 }

@@ -25,6 +25,8 @@ public:
 
     Type type() const;
 
+    QString name() const override;
+
 public:
     bool read(const QJsonValue &value) override;
     QJsonValue write() const override;
@@ -32,7 +34,6 @@ public:
     virtual void sortRecords(QVector<AceTreeEntity *> &records) const;
 
     AceTreeStandardSchema schema() const;
-    void clearCachedSchema();
 
     QString searchChildType(const QMetaObject *metaObject) const;
 
@@ -43,9 +44,6 @@ public:
 protected:
     void doInitialize() override;
     void doSetup() override;
-
-    void childAdded(AceTreeEntity *child) override;
-    void childAboutToRemove(AceTreeEntity *child) override;
 
     AceTreeStandardEntity(AceTreeStandardEntityPrivate &d, QObject *parent = nullptr);
 
@@ -202,9 +200,10 @@ public:
     int nodeBuilderCount() const;
 
 public:
-    static AceTreeStandardSchema &globalSchemaRef(const QMetaObject *staticMetaObject);
-    static AceTreeStandardSchema globalSchema(const QMetaObject *staticMetaObject, bool *ok = nullptr);
-    static void setGlobalSchema(const QMetaObject *staticMetaObject, const AceTreeStandardSchema &schema);
+    static AceTreeStandardSchema &globalSchemaRef(const QMetaObject *metaObject);
+    static AceTreeStandardSchema globalSchema(const QMetaObject *metaObject, bool *ok = nullptr);
+    static void setGlobalSchema(const QMetaObject *metaObject, const AceTreeStandardSchema &schema);
+    static void clearGlobalSchemaCache(const QMetaObject *metaObject = nullptr);
 
 private:
     QSharedDataPointer<AceTreeStandardSchemaData> d;
@@ -353,7 +352,8 @@ inline const AceTreeStandardEntity *AceTreeEntityVectorHelper<T>::to_entity() co
 
 template <class T>
 int AceTreeEntityRecordTableHelper<T>::insert(T *item) {
-    return to_entity()->addRecord(item ? item->name() : QString(), item);
+    AceTreeStandardEntity *entity = to_entity();
+    return to_entity()->addRecord(item ? entity->searchChildType(item->metaObject()) : QString(), item);
 }
 
 template <class T>

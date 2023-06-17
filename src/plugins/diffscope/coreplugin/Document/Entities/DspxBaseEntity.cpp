@@ -1,24 +1,15 @@
 #include "DspxBaseEntity.h"
 #include "DspxEntityUtils_p.h"
+#include "AceTreeStandardEntity_p.h"
 
 namespace Core {
-
-    static bool compareIntPointX(const AceTreeEntity *left, const AceTreeEntity *right) {
-        return left->property("x").toInt() < right->property("x").toInt();
-    }
-
-    static bool compareDoublePointX(const AceTreeEntity *left, const AceTreeEntity *right) {
-        return left->property("x").toDouble() < right->property("x").toDouble();
-    }
 
     //===========================================================================
     // BusControl
     DspxBusControlEntity::DspxBusControlEntity(QObject *parent) : AceTreeEntityMapping(parent) {
+        AceTreeStandardEntityPrivate::setName(this, "control");
     }
     DspxBusControlEntity::~DspxBusControlEntity() {
-    }
-    QString DspxBusControlEntity::name() const {
-        return "control";
     }
     double DspxBusControlEntity::gain() const {
         return property("gain").toDouble();
@@ -57,11 +48,9 @@ namespace Core {
     //===========================================================================
     // IntPoint
     DspxIntPointEntity::DspxIntPointEntity(QObject *parent) : AceTreeEntityMapping(parent) {
+        AceTreeStandardEntityPrivate::setName(this, "point");
     }
     DspxIntPointEntity::~DspxIntPointEntity() {
-    }
-    QString DspxIntPointEntity::name() const {
-        return "point";
     }
     int DspxIntPointEntity::x() const {
         return property("x").toInt();
@@ -80,25 +69,21 @@ namespace Core {
     //===========================================================================
     // IntPoint List
     DspxIntPointListEntity::DspxIntPointListEntity(QObject *parent) : AceTreeEntityRecordTable(parent) {
+        AceTreeStandardEntityPrivate::setName(this, "points");
     }
     DspxIntPointListEntity::~DspxIntPointListEntity() {
     }
-    QString DspxIntPointListEntity::name() const {
-        return "points";
-    }
     void DspxIntPointListEntity::sortRecords(QVector<AceTreeEntity *> &records) const {
-        std::sort(records.begin(), records.end(), compareIntPointX);
+        std::sort(records.begin(), records.end(), compareElementX<int>);
     }
     //===========================================================================
 
     //===========================================================================
     // DoublePoint
     DspxDoublePointEntity::DspxDoublePointEntity(QObject *parent) : AceTreeEntityMapping(parent) {
+        AceTreeStandardEntityPrivate::setName(this, "point");
     }
     DspxDoublePointEntity::~DspxDoublePointEntity() {
-    }
-    QString DspxDoublePointEntity::name() const {
-        return "point";
     }
     double DspxDoublePointEntity::x() const {
         return property("x").toDouble();
@@ -117,14 +102,12 @@ namespace Core {
     //===========================================================================
     // DoublePoint List
     DspxDoublePointListEntity::DspxDoublePointListEntity(QObject *parent) : AceTreeEntityRecordTable(parent) {
+        AceTreeStandardEntityPrivate::setName(this, "points");
     }
     DspxDoublePointListEntity::~DspxDoublePointListEntity() {
     }
-    QString DspxDoublePointListEntity::name() const {
-        return "points";
-    }
     void DspxDoublePointListEntity::sortRecords(QVector<AceTreeEntity *> &records) const {
-        std::sort(records.begin(), records.end(), compareDoublePointX);
+        std::sort(records.begin(), records.end(), compareElementX<double>);
     }
     //===========================================================================
 
@@ -145,27 +128,12 @@ namespace Core {
     //===========================================================================
     // AnchorPoint List
     DspxAnchorPointListEntity::DspxAnchorPointListEntity(QObject *parent) : AceTreeEntityRecordTable(parent) {
+        AceTreeStandardEntityPrivate::setName(this, "points");
     }
     DspxAnchorPointListEntity::~DspxAnchorPointListEntity() {
     }
-    QString DspxAnchorPointListEntity::name() const {
-        return "points";
-    }
     void DspxAnchorPointListEntity::sortRecords(QVector<AceTreeEntity *> &records) const {
-        std::sort(records.begin(), records.end(), compareIntPointX);
-    }
-    //===========================================================================
-
-    //===========================================================================
-    // Workspace
-    DspxWorkspaceEntity::DspxWorkspaceEntity(QObject *parent) : AceTreeObjectEntity(DynamicData, parent) {
-    }
-
-    DspxWorkspaceEntity::~DspxWorkspaceEntity() {
-    }
-
-    QString DspxWorkspaceEntity::name() const {
-        return "workspace";
+        std::sort(records.begin(), records.end(), compareElementX<int>);
     }
     //===========================================================================
 

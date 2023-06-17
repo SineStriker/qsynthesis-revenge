@@ -9,19 +9,14 @@ namespace Core {
     class DspxPhonemeEntityPrivate : public AceTreeStandardEntityPrivate {
     public:
         DspxPhonemeEntityPrivate() : AceTreeStandardEntityPrivate(AceTreeStandardEntity::Mapping) {
-            workspace = nullptr;
-            childPostAssignRefs.insert("workspace", &workspace);
+            name = "phoneme";
         }
-        DspxWorkspaceEntity *workspace;
     };
 
     DspxPhonemeEntity::DspxPhonemeEntity(QObject *parent)
         : AceTreeStandardEntity(*new DspxPhonemeEntityPrivate(), parent) {
     }
     DspxPhonemeEntity::~DspxPhonemeEntity() {
-    }
-    QString DspxPhonemeEntity::name() const {
-        return "phoneme";
     }
     DspxPhonemeEntity::Type DspxPhonemeEntity::phonemeType() const {
         return variantToEnum<Type>(property("type"));
@@ -41,10 +36,6 @@ namespace Core {
     void DspxPhonemeEntity::setStart(int start) {
         setProperty("start", start);
     }
-    DspxWorkspaceEntity *DspxPhonemeEntity::workspace() const {
-        Q_D(const DspxPhonemeEntity);
-        return d->workspace;
-    }
     //===========================================================================
 
     //===========================================================================
@@ -53,9 +44,6 @@ namespace Core {
     }
     DspxPhonemeListEntity::~DspxPhonemeListEntity() {
     }
-    QString DspxPhonemeListEntity::name() const {
-        return "phonemes";
-    }
     //===========================================================================
 
     //===========================================================================
@@ -63,6 +51,7 @@ namespace Core {
     class DspxPhonemeInfoEntityPrivate : public AceTreeStandardEntityPrivate {
     public:
         DspxPhonemeInfoEntityPrivate() : AceTreeStandardEntityPrivate(AceTreeStandardEntity::Mapping) {
+            name = "phoneme";
             edited = nullptr;
             childPostAssignRefs.insert("edited", &edited);
         }
@@ -72,9 +61,6 @@ namespace Core {
         : AceTreeStandardEntity(*new DspxPhonemeInfoEntityPrivate(), parent) {
     }
     DspxPhonemeInfoEntity::~DspxPhonemeInfoEntity() {
-    }
-    QString DspxPhonemeInfoEntity::name() const {
-        return "phonemes";
     }
     QJsonArray DspxPhonemeInfoEntity::original() const {
         return property("original").toJsonArray();
@@ -93,6 +79,7 @@ namespace Core {
     class DspxVibratoInfoEntityPrivate : public AceTreeStandardEntityPrivate {
     public:
         DspxVibratoInfoEntityPrivate() : AceTreeStandardEntityPrivate(AceTreeStandardEntity::Mapping) {
+            name = "vibrato";
             points = nullptr;
             childPostAssignRefs.insert("points", &points);
         }
@@ -102,9 +89,6 @@ namespace Core {
         : AceTreeStandardEntity(*new DspxVibratoInfoEntityPrivate(), parent) {
     }
     DspxVibratoInfoEntity::~DspxVibratoInfoEntity() {
-    }
-    QString DspxVibratoInfoEntity::name() const {
-        return "vibrato";
     }
     double DspxVibratoInfoEntity::start() const {
         return property("start").toDouble();
@@ -153,23 +137,18 @@ namespace Core {
     class DspxNoteEntityPrivate : public AceTreeStandardEntityPrivate {
     public:
         DspxNoteEntityPrivate() : AceTreeStandardEntityPrivate(AceTreeStandardEntity::Mapping) {
+            name = "note";
             phonemes = nullptr;
             vibrato = nullptr;
-            workspace = nullptr;
             childPostAssignRefs.insert("phonemes", &phonemes);
             childPostAssignRefs.insert("vibrato", &vibrato);
-            childPostAssignRefs.insert("workspace", &workspace);
         }
         DspxPhonemeInfoEntity *phonemes;
         DspxVibratoInfoEntity *vibrato;
-        DspxWorkspaceEntity *workspace;
     };
     DspxNoteEntity::DspxNoteEntity(QObject *parent) : AceTreeStandardEntity(*new DspxNoteEntityPrivate(), parent) {
     }
     DspxNoteEntity::~DspxNoteEntity() {
-    }
-    QString DspxNoteEntity::name() const {
-        return "note";
     }
     int DspxNoteEntity::position() const {
         return property("pos").toInt();
@@ -203,25 +182,17 @@ namespace Core {
         Q_D(const DspxNoteEntity);
         return d->vibrato;
     }
-    DspxWorkspaceEntity *DspxNoteEntity::workspace() const {
-        Q_D(const DspxNoteEntity);
-        return d->workspace;
-    }
     //===========================================================================
 
     //===========================================================================
     // NoteList
     DspxNoteListEntity::DspxNoteListEntity(QObject *parent) : AceTreeEntityRecordTable(parent) {
+        AceTreeStandardEntityPrivate::setName(this, "notes");
     }
     DspxNoteListEntity::~DspxNoteListEntity() {
     }
-    QString DspxNoteListEntity::name() const {
-        return "notes";
-    }
     void DspxNoteListEntity::sortRecords(QVector<AceTreeEntity *> &records) const {
-        std::sort(records.begin(), records.end(), [](const AceTreeEntity *left, const AceTreeEntity *right) -> bool {
-            return left->property("pos").toInt() < right->property("pos").toInt();
-        });
+        std::sort(records.begin(), records.end(), compareElementPos<int>);
     }
     //===========================================================================
 

@@ -144,6 +144,7 @@ AceTreeItemPrivate::AceTreeItemPrivate() {
     m_index = 0;
     m_indexHint = 0;
     maxRecordSeq = 0;
+    status = AceTreeItem::Root;
 }
 
 AceTreeItemPrivate::~AceTreeItemPrivate() {
@@ -159,9 +160,22 @@ AceTreeItem::AceTreeItem(const QString &name) : AceTreeItem(*new AceTreeItemPriv
 AceTreeItem::~AceTreeItem() {
     Q_D(AceTreeItem);
 
+    auto warn = []() {
+        myWarning("~AceTreeItem") << "Deleting a managed tree item  may cause crash"; //
+    };
+
     auto model = d->model;
-    if (model && !model->d_func()->is_destruct)
-        propagateModel(nullptr); // No need to detach from model if the model is in destruction
+    // No need to detach from model if the model is in destruction
+    if (model) {
+        if (!model->d_func()->is_destruct) {
+            if (!model->d_func()->internalChange) {
+                warn();
+            }
+            propagateModel(nullptr);
+        }
+    } else if (d->m_index > 0) {
+        warn();
+    }
 
     qDeleteAll(d->vector);
     qDeleteAll(d->set);
@@ -204,6 +218,11 @@ bool AceTreeItem::hasSubscriber(AceTreeItemSubscriber *sub) const {
 QString AceTreeItem::name() const {
     Q_D(const AceTreeItem);
     return d->name;
+}
+
+AceTreeItem::Status AceTreeItem::status() const {
+    Q_D(const AceTreeItem);
+    return d->status;
 }
 
 QVariant AceTreeItem::dynamicData(const QString &key) const {
@@ -440,8 +459,10 @@ bool AceTreeItem::removeRecord(AceTreeItem *item) {
     if (!d->testModifiable(__func__))
         return false;
 
-    if (!d->testInsertable(__func__, item))
+    if (!item) {
+        myWarning(__func__) << "trying to remove a null record from" << this;
         return false;
+    }
 
     int seq = d->recordIndexes.value(item, -1);
 
@@ -501,8 +522,10 @@ bool AceTreeItem::removeNode(AceTreeItem *item) {
     if (!d->testModifiable(__func__))
         return false;
 
-    if (!d->testInsertable(__func__, item))
+    if (!item) {
+        myWarning(__func__) << "trying to remove a null node from" << this;
         return false;
+    }
 
     // Validate
     if (item->parent() != this || !d->set.contains(item)) {
@@ -946,6 +969,10 @@ void AceTreeItemPrivate::insertRows_helper(int index, const QVector<AceTreeItem 
             item->propagateModel(model);
     }
 
+    // Update status
+    for (const auto &item : items)
+        item->d_func()->status = AceTreeItem::Row;
+
     // Propagate signal
     for (const auto &sub : qAsConst(subscribers))
         sub->rowsInserted(index, items);
@@ -993,6 +1020,10 @@ void AceTreeItemPrivate::removeRows_helper(int index, int count) {
     }
     vector.erase(vector.begin() + index, vector.begin() + index + count);
 
+    // Update status
+    for (const auto &item : qAsConst(tmp))
+        item->d_func()->status = AceTreeItem::Root;
+
     // Propagate signal
     for (const auto &sub : qAsConst(subscribers))
         sub->rowsRemoved(index, tmp);
@@ -1009,6 +1040,9 @@ void AceTreeItemPrivate::addNode_helper(AceTreeItem *item) {
         item->propagateModel(model);
     set.insert(item);
     setNameIndexes[item->name()] += item;
+
+    // Update status
+    item->d_func()->status = AceTreeItem::Node;
 
     // Propagate signal
     for (const auto &sub : qAsConst(subscribers))
@@ -1041,6 +1075,9 @@ void AceTreeItemPrivate::removeNode_helper(AceTreeItem *item) {
         }
     }
 
+    // Update status
+    item->d_func()->status = AceTreeItem::Root;
+
     // Propagate signal
     for (const auto &sub : qAsConst(subscribers))
         sub->nodeRemoved(item);
@@ -1057,6 +1094,9 @@ void AceTreeItemPrivate::addRecord_helper(int seq, AceTreeItem *item) {
         item->propagateModel(model);
     records.insert(seq, item);
     recordIndexes.insert(item, seq);
+
+    // Update status
+    item->d_func()->status = AceTreeItem::Record;
 
     // Propagate signal
     for (const auto &sub : qAsConst(subscribers))
@@ -1083,6 +1123,9 @@ void AceTreeItemPrivate::removeRecord_helper(int seq) {
         item->propagateModel(nullptr);
     records.erase(it);
     recordIndexes.remove(item);
+
+    // Update status
+    item->d_func()->status = AceTreeItem::Root;
 
     // Propagate signal
     for (const auto &sub : qAsConst(subscribers))

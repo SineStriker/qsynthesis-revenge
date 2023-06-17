@@ -1,7 +1,3 @@
-//
-// Created by Functioner on 2023/6/16.
-//
-
 #ifndef CHORUSKIT_DSPXNOTEENTITY_H
 #define CHORUSKIT_DSPXNOTEENTITY_H
 
@@ -27,8 +23,6 @@ namespace Core {
         explicit DspxPhonemeEntity(QObject *parent = nullptr);
         ~DspxPhonemeEntity();
 
-        QString name() const override;
-
     public:
         enum Type {
             Ahead,
@@ -45,8 +39,6 @@ namespace Core {
 
         int start() const;
         void setStart(int start);
-
-        DspxWorkspaceEntity *workspace() const;
     };
     //===========================================================================
 
@@ -58,8 +50,6 @@ namespace Core {
     public:
         explicit DspxPhonemeListEntity(QObject *parent = nullptr);
         ~DspxPhonemeListEntity();
-
-        QString name() const override;
     };
     //===========================================================================
 
@@ -73,8 +63,6 @@ namespace Core {
     public:
         explicit DspxPhonemeInfoEntity(QObject *parent = nullptr);
         ~DspxPhonemeInfoEntity();
-
-        QString name() const override;
 
     public:
         QJsonArray original() const;
@@ -94,8 +82,6 @@ namespace Core {
     public:
         explicit DspxVibratoInfoEntity(QObject *parent = nullptr);
         ~DspxVibratoInfoEntity();
-
-        QString name() const override;
 
     public:
         double start() const;
@@ -131,8 +117,6 @@ namespace Core {
         explicit DspxNoteEntity(QObject *parent = nullptr);
         ~DspxNoteEntity();
 
-        QString name() const override;
-
     public:
         int position() const;
         void setPosition(int position);
@@ -148,7 +132,6 @@ namespace Core {
 
         DspxPhonemeInfoEntity *phonemes() const;
         DspxVibratoInfoEntity *vibrato() const;
-        DspxWorkspaceEntity *workspace() const;
     };
     //===========================================================================
 
@@ -160,8 +143,6 @@ namespace Core {
     public:
         explicit DspxNoteListEntity(QObject *parent = nullptr);
         ~DspxNoteListEntity();
-
-        QString name() const override;
 
     public:
         void sortRecords(QVector<AceTreeEntity *> &records) const override;

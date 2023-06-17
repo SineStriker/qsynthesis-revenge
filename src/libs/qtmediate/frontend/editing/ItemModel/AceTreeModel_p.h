@@ -20,6 +20,7 @@ public:
 
     AceTreeItem *q_ptr;
     QString name;
+    AceTreeItem::Status status;
     QHash<QString, QVariant> dynamicData;
     QMChronSet<AceTreeItemSubscriber *> subscribers;
 

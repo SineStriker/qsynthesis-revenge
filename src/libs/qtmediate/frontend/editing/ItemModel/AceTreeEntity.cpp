@@ -1,12 +1,17 @@
 #include "AceTreeEntity.h"
 #include "AceTreeEntity_p.h"
 
+using ItemEntityHash = QHash<AceTreeItem *, AceTreeEntity *>;
+Q_GLOBAL_STATIC(ItemEntityHash, globalItemIndexes)
+
 AceTreeEntityPrivate::AceTreeEntityPrivate() {
     m_treeItem = nullptr;
     parent = nullptr;
 }
 
 AceTreeEntityPrivate::~AceTreeEntityPrivate() {
+    if (m_treeItem)
+        globalItemIndexes->remove(m_treeItem);
 }
 
 void AceTreeEntityPrivate::init() {
@@ -37,6 +42,7 @@ void AceTreeEntity::initialize() {
     }
 
     d->m_treeItem = new AceTreeItem(name());
+    globalItemIndexes->insert(d->m_treeItem, this);
     doInitialize();
 }
 
@@ -48,6 +54,7 @@ void AceTreeEntity::setup(AceTreeItem *item) {
     }
 
     d->m_treeItem = item;
+    globalItemIndexes->insert(d->m_treeItem, this);
     doSetup();
 }
 
@@ -100,6 +107,10 @@ bool AceTreeEntity::removeChild(AceTreeEntity *child) {
     child->d_func()->parent = nullptr;
     d->children.erase(it);
     return true;
+}
+
+AceTreeEntity *AceTreeEntity::itemToEntity(AceTreeItem *item) {
+    return globalItemIndexes->value(item, nullptr);
 }
 
 void AceTreeEntity::doInitialize() {

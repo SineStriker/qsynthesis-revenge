@@ -1,7 +1,7 @@
 #ifndef CHORUSKIT_DSPXSPEC_H
 #define CHORUSKIT_DSPXSPEC_H
 
-#include <ItemModel/AceTreeSerializer.h>
+#include <QVersionNumber>
 
 #include <CoreApi/DocumentSpec.h>
 
@@ -13,11 +13,14 @@ namespace Core {
 
     class CORE_EXPORT DspxSpec : public DocumentSpec {
         Q_OBJECT
+        Q_DECLARE_PRIVATE(DspxSpec)
     public:
         explicit DspxSpec(QObject *parent = nullptr);
         ~DspxSpec();
 
         static DspxSpec *instance();
+
+        static QVersionNumber currentVersion();
 
     public:
         QStringList supportedExtensions() const override;
@@ -27,12 +30,6 @@ namespace Core {
 
         bool canRecover() const override;
         bool recover(const QString &logDir, const QString &fileName) override;
-
-    public:
-        AceTreeSerializer *serializer() const;
-
-    private:
-        DspxSpecPrivate *d;
     };
 
 } // Core

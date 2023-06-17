@@ -7,6 +7,7 @@
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QStandardPaths>
+#include <QVersionNumber>
 
 #include <QMDecoratorV2.h>
 
@@ -20,6 +21,7 @@ namespace Core {
     DspxDocumentPrivate::DspxDocumentPrivate() {
         vstMode = false;
         model = nullptr;
+        content = nullptr;
     }
 
     DspxDocumentPrivate::~DspxDocumentPrivate() {
@@ -29,11 +31,6 @@ namespace Core {
         Q_Q(DspxDocument);
 
         model = new AceTreeModel(q);
-//        ctl = DspxSpec::instance()->controllerBuilder()->buildRoot<DspxRootController>();
-//        if (!ctl) {
-//            ICore::fatalError(q->dialogParent(), DspxDocument::tr("Failed to create file model."));
-//        }
-//        ctl->setModel(model);
 
         ICore::instance()->documentSystem()->addDocument(q, true);
     }
@@ -54,14 +51,48 @@ namespace Core {
             return false;
         }
 
-        auto serializer = DspxSpec::instance()->serializer();
-        auto item = serializer->createChildItem(serializer, nullptr);
-        if (!serializer->readObject(doc.object(), item)) {
-            delete item;
+        auto obj = doc.object();
+        QJsonValue value;
+
+        // Get version
+        value = obj.value("version");
+        if (!value.isString()) {
+            q->setErrorMessage(DspxDocument::tr("Missing version field!"));
+            return false;
+        }
+
+        // Check version
+        QString versionString = value.toString();
+        QVersionNumber version = QVersionNumber::fromString(versionString);
+        if (version > DspxSpec::currentVersion()) {
+            q->setErrorMessage(DspxDocument::tr("The specified file version(%1) is too high.!").arg(versionString));
+            return false;
+        }
+
+        // Get workspace
+        value = obj.value("workspace");
+        // Check plugins
+        if (value.isObject()) {
+        }
+
+        // Get content
+        value = obj.value("content");
+        if (!value.isObject()) {
+            q->setErrorMessage(DspxDocument::tr("Missing content field!"));
+            return false;
+        }
+
+        auto content = new DspxContentEntity();
+        content->initialize();
+
+        if (!content->read(value.toObject())) {
+            delete content;
             q->setErrorMessage(DspxDocument::tr("Error occurred while parsing file!"));
             return false;
         }
-        model->setRootItem(item);
+
+        this->content = content;
+        model->setRootItem(const_cast<AceTreeItem *>(content->treeItem()));
 
         return true;
     }
@@ -69,13 +100,24 @@ namespace Core {
     bool DspxDocumentPrivate::saveFile(QByteArray *data) const {
         Q_Q(const DspxDocument);
 
-        QJsonObject obj;
-        if (!DspxSpec::instance()->serializer()->writeObject(&obj, model->rootItem())) {
+        auto obj = content->write().toObject();
+        if (obj.isEmpty()) {
             q->setErrorMessage(DspxDocument::tr("Error occurred while saving file!"));
             return false;
         }
-        *data = QJsonDocument(obj).toJson(QJsonDocument::Compact); // Disable indent to reduce size
 
+        QJsonObject docObj;
+
+        // Write version
+        docObj.insert("version", DspxSpec::currentVersion().toString());
+
+        // Write workspace
+        docObj.insert("workspace", QJsonObject()); // Workspace
+
+        // Write content
+        docObj.insert("content", obj);
+
+        *data = QJsonDocument(docObj).toJson(QJsonDocument::Compact); // Disable indent to reduce size
         return true;
     }
 
@@ -139,8 +181,8 @@ namespace Core {
         return d->readFile(data);
     }
 
-    bool DspxDocument::saveRawData(QByteArray *data) {
-        Q_D(DspxDocument);
+    bool DspxDocument::saveRawData(QByteArray *data) const {
+        Q_D(const DspxDocument);
         return d->saveFile(data);
     }
 
@@ -149,10 +191,15 @@ namespace Core {
 
         ++m_untitledIndex;
 
-        auto serializer = DspxSpec::instance()->serializer();
-        auto item = serializer->createChildItem(serializer, nullptr);
-        serializer->createObject(item);
-        d->model->setRootItem(item);
+        auto content = new DspxContentEntity();
+        content->initialize();
+        d->model->setRootItem(const_cast<AceTreeItem *>(content->treeItem()));
+        d->content = content;
+    }
+
+    bool DspxDocument::recover(const QString &filename) {
+        Q_UNUSED(filename)
+        return false;
     }
 
     bool DspxDocument::isVSTMode() const {

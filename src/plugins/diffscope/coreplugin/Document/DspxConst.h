@@ -67,7 +67,8 @@ namespace Core::Dspx {
     const int DefaultParamAnchorNodeY = 0;
 
     // ParamFree
-    const int DefaultParamFreeStart = 0;
+    const int DefaultParamCurveStart = 0;
+    const int DefaultParamFreeStart = 0; // To remove
     const int DefaultParamFreeStep = 5;
 
 }

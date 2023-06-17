@@ -7,37 +7,9 @@
 
 namespace Core {
 
-    class DspxRootEntity;
     class DspxContentEntity;
+    class DspxFileMetaEntity;
     class DspxMasterEntity;
-
-    //===========================================================================
-    // Root
-    class DspxRootEntityPrivate;
-
-    class CORE_EXPORT DspxRootEntity : public AceTreeStandardEntity {
-        Q_OBJECT
-        Q_DECLARE_PRIVATE(DspxRootEntity)
-    public:
-        explicit DspxRootEntity(QObject *parent = nullptr);
-        ~DspxRootEntity();
-
-        QString name() const override;
-
-    public:
-        QString version() const;
-        void setVersion(const QString &version);
-
-        QString author() const;
-        void setAuthor(const QString &author);
-
-        QString projectName() const;
-        void setProjectName(const QString &projectName);
-
-        DspxWorkspaceEntity *workspace() const;
-        DspxContentEntity *content() const;
-    };
-    //===========================================================================
 
     //===========================================================================
     // Content
@@ -50,13 +22,28 @@ namespace Core {
         explicit DspxContentEntity(QObject *parent = nullptr);
         ~DspxContentEntity();
 
-        QString name() const override;
-
     public:
+        DspxFileMetaEntity *metadata() const;
         DspxMasterEntity *master() const;
         DspxTimelineEntity *timeline() const;
         DspxTrackListEntity *tracks() const;
-        DspxWorkspaceEntity *workspace() const;
+    };
+    //===========================================================================
+
+    //===========================================================================
+    // FileMeta
+    class CORE_EXPORT DspxFileMetaEntity : public AceTreeEntityMapping {
+        Q_OBJECT
+    public:
+        explicit DspxFileMetaEntity(QObject *parent = nullptr);
+        ~DspxFileMetaEntity();
+
+    public:
+        QString author() const;
+        void setAuthor(const QString &author);
+
+        QString projectName() const;
+        void setProjectName(const QString &projectName);
     };
     //===========================================================================
 
@@ -70,8 +57,6 @@ namespace Core {
     public:
         explicit DspxMasterEntity(QObject *parent = nullptr);
         ~DspxMasterEntity();
-
-        QString name() const override;
 
     public:
         DspxBusControlEntity *control() const;

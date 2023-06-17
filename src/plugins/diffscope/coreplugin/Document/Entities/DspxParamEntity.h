@@ -32,8 +32,11 @@ namespace Core {
         explicit DspxParamCurveEntity(Type type, AceTreeStandardEntity::Type schemaType, QObject *parent = nullptr);
         ~DspxParamCurveEntity();
 
-    public:
         Type curveType() const;
+
+    public:
+        int start() const;
+        void setStart(int start);
 
     protected:
         DspxParamCurveEntity(DspxParamCurveEntityPrivate &d, QObject *parent = nullptr);
@@ -51,12 +54,7 @@ namespace Core {
         explicit DspxParamFreeEntity(QObject *parent = nullptr);
         ~DspxParamFreeEntity();
 
-        QString name() const override;
-
     public:
-        int start() const;
-        void setStart(int start);
-
         int step() const;
 
         DspxParamFreeDataEntity *values() const;
@@ -94,8 +92,6 @@ namespace Core {
         explicit DspxParamAnchorEntity(QObject *parent = nullptr);
         ~DspxParamAnchorEntity();
 
-        QString name() const override;
-
     public:
         DspxIntPointListEntity *nodes() const;
     };
@@ -109,8 +105,6 @@ namespace Core {
     public:
         explicit DspxParamCurveListEntity(QObject *parent = nullptr);
         ~DspxParamCurveListEntity();
-
-        QString name() const override;
 
     public:
         void sortRecords(QVector<AceTreeEntity *> &records) const override;
@@ -127,8 +121,6 @@ namespace Core {
     public:
         explicit DspxParamInfoEntity(QObject *parent = nullptr);
         ~DspxParamInfoEntity();
-
-        QString name() const override;
 
     public:
         QJsonArray original() const;
@@ -148,8 +140,6 @@ namespace Core {
     public:
         explicit DspxParamSetEntity(QObject *parent = nullptr);
         ~DspxParamSetEntity();
-
-        QString name() const override;
     };
     //===========================================================================
 

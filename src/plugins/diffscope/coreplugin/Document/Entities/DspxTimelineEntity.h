@@ -28,8 +28,6 @@ namespace Core {
         explicit DspxTimelineEntity(QObject *parent = nullptr);
         ~DspxTimelineEntity();
 
-        QString name() const override;
-
     public:
         DspxTimeSignatureListEntity *timeSignatures() const;
         DspxTempoListEntity *tempos() const;
@@ -44,8 +42,6 @@ namespace Core {
     public:
         explicit DspxTimeSignatureEntity(QObject *parent = nullptr);
         ~DspxTimeSignatureEntity();
-
-        QString name() const override;
 
     public:
         int position() const;
@@ -68,8 +64,6 @@ namespace Core {
         explicit DspxTimeSignatureListEntity(QObject *parent = nullptr);
         ~DspxTimeSignatureListEntity();
 
-        QString name() const override;
-
     public:
         void sortRecords(QVector<AceTreeEntity *> &records) const override;
     };
@@ -83,8 +77,6 @@ namespace Core {
         explicit DspxTempoEntity(QObject *parent = nullptr);
         ~DspxTempoEntity();
 
-        QString name() const override;
-
     public:
         int position() const;
         void setPosition(int position);
@@ -96,14 +88,12 @@ namespace Core {
 
     //===========================================================================
     // Tempo List
-    class CORE_EXPORT DspxTempoListEntity : public AceTreeEntityVector,
-                                            public AceTreeEntityVectorHelper<DspxTempoEntity> {
+    class CORE_EXPORT DspxTempoListEntity : public AceTreeEntityRecordTable,
+                                            public AceTreeEntityRecordTableHelper<DspxTempoEntity> {
         Q_OBJECT
     public:
         explicit DspxTempoListEntity(QObject *parent = nullptr);
         ~DspxTempoListEntity();
-
-        QString name() const override;
 
     public:
         void sortRecords(QVector<AceTreeEntity *> &records) const override;
@@ -118,8 +108,6 @@ namespace Core {
         explicit DspxTimelineLabelEntity(QObject *parent = nullptr);
         ~DspxTimelineLabelEntity();
 
-        QString name() const override;
-
     public:
         int position() const;
         void setPosition(int position);
@@ -131,14 +119,12 @@ namespace Core {
 
     //===========================================================================
     // TimelineLabel List
-    class CORE_EXPORT DspxTimelineLabelListEntity : public AceTreeEntityVector,
-                                                    public AceTreeEntityVectorHelper<DspxTimelineLabelEntity> {
+    class CORE_EXPORT DspxTimelineLabelListEntity : public AceTreeEntityRecordTable,
+                                                    public AceTreeEntityRecordTableHelper<DspxTimelineLabelEntity> {
         Q_OBJECT
     public:
         explicit DspxTimelineLabelListEntity(QObject *parent = nullptr);
         ~DspxTimelineLabelListEntity();
-
-        QString name() const override;
 
     public:
         void sortRecords(QVector<AceTreeEntity *> &records) const override;

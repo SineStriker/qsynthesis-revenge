@@ -1,5 +1,6 @@
 #include "DspxTrackEntity.h"
 #include "AceTreeStandardEntity_p.h"
+#include "DspxEntityUtils_p.h"
 
 namespace Core {
 
@@ -44,12 +45,11 @@ namespace Core {
     public:
         DspxClipEntityPrivate(DspxClipEntity::Type type)
             : AceTreeStandardEntityPrivate(AceTreeStandardEntity::Mapping), type(type) {
+            name = "clip";
             time = nullptr;
             control = nullptr;
-            workspace = nullptr;
             childPostAssignRefs.insert("time", &time);
             childPostAssignRefs.insert("control", &control);
-            childPostAssignRefs.insert("workspace", &workspace);
         }
         ~DspxClipEntityPrivate() = default;
 
@@ -57,7 +57,6 @@ namespace Core {
 
         DspxClipTimeEntity *time;
         DspxBusControlEntity *control;
-        DspxWorkspaceEntity *workspace;
     };
     DspxClipEntity::DspxClipEntity(DspxClipEntity::Type type, QObject *parent)
         : DspxClipEntity(*new DspxClipEntityPrivate(type), parent) {
@@ -82,10 +81,6 @@ namespace Core {
         Q_D(const DspxClipEntity);
         return d->control;
     }
-    DspxWorkspaceEntity *DspxClipEntity::workspace() const {
-        Q_D(const DspxClipEntity);
-        return d->workspace;
-    }
     DspxClipEntity::DspxClipEntity(DspxClipEntityPrivate &d, QObject *parent) : AceTreeStandardEntity(d, parent) {
     }
     //===========================================================================
@@ -95,6 +90,7 @@ namespace Core {
     class DspxAudioClipEntityPrivate : public DspxClipEntityPrivate {
     public:
         DspxAudioClipEntityPrivate() : DspxClipEntityPrivate(DspxClipEntity::Audio) {
+            name = "audio";
         }
         ~DspxAudioClipEntityPrivate() = default;
     };
@@ -102,9 +98,6 @@ namespace Core {
         : DspxClipEntity(*new DspxAudioClipEntityPrivate(), parent) {
     }
     DspxAudioClipEntity::~DspxAudioClipEntity() {
-    }
-    QString DspxAudioClipEntity::name() const {
-        return "audio";
     }
     QString DspxAudioClipEntity::path() const {
         return property("path").toString();
@@ -119,6 +112,7 @@ namespace Core {
     class DspxSingingClipEntityPrivate : public DspxClipEntityPrivate {
     public:
         DspxSingingClipEntityPrivate() : DspxClipEntityPrivate(DspxClipEntity::Singing) {
+            name = "singing";
             notes = nullptr;
             params = nullptr;
             childPostAssignRefs.insert("notes", &notes);
@@ -134,9 +128,6 @@ namespace Core {
     }
     DspxSingingClipEntity::~DspxSingingClipEntity() {
     }
-    QString DspxSingingClipEntity::name() const {
-        return "singing";
-    }
     DspxParamSetEntity *DspxSingingClipEntity::params() const {
         Q_D(const DspxSingingClipEntity);
         return d->params;
@@ -150,16 +141,12 @@ namespace Core {
     //===========================================================================
     // Clip List
     DspxClipListEntity::DspxClipListEntity(QObject *parent) : AceTreeEntityRecordTable(parent) {
+        AceTreeStandardEntityPrivate::setName(this, "clips");
     }
     DspxClipListEntity::~DspxClipListEntity() {
     }
-    QString DspxClipListEntity::name() const {
-        return "clip";
-    }
     void DspxClipListEntity::sortRecords(QVector<AceTreeEntity *> &records) const {
-        std::sort(records.begin(), records.end(), [](const AceTreeEntity *left, const AceTreeEntity *right) -> bool {
-            return left->property("start").toInt() < right->property("start").toInt();
-        });
+        std::sort(records.begin(), records.end(), compareElementStart<int>);
     }
     //===========================================================================
 
@@ -168,31 +155,32 @@ namespace Core {
     class DspxTrackEntityPrivate : public AceTreeStandardEntityPrivate {
     public:
         DspxTrackEntityPrivate() : AceTreeStandardEntityPrivate(AceTreeStandardEntity::Mapping) {
+            name = "track";
             control = nullptr;
             clips = nullptr;
-            workspace = nullptr;
             childPostAssignRefs.insert("control", &control);
             childPostAssignRefs.insert("clips", &clips);
-            childPostAssignRefs.insert("workspace", &workspace);
         }
         ~DspxTrackEntityPrivate() = default;
 
         DspxTrackControlEntity *control;
         DspxClipListEntity *clips;
-        DspxWorkspaceEntity *workspace;
     };
     DspxTrackEntity::DspxTrackEntity(QObject *parent) : AceTreeStandardEntity(*new DspxTrackEntityPrivate(), parent) {
     }
     DspxTrackEntity::~DspxTrackEntity() {
-    }
-    QString DspxTrackEntity::name() const {
-        return "track";
     }
     QString DspxTrackEntity::trackName() const {
         return property("name").toString();
     }
     void DspxTrackEntity::setTrackName(const QString &trackName) {
         setProperty("name", trackName);
+    }
+    QJsonObject DspxTrackEntity::colorConfiguration() const {
+        return property("color").toJsonObject();
+    }
+    void DspxTrackEntity::setColorConfiguration(const QJsonObject &colorConfiguration) {
+        setProperty("color", colorConfiguration);
     }
     DspxTrackControlEntity *DspxTrackEntity::control() const {
         Q_D(const DspxTrackEntity);
@@ -202,20 +190,14 @@ namespace Core {
         Q_D(const DspxTrackEntity);
         return d->clips;
     }
-    DspxWorkspaceEntity *DspxTrackEntity::workspace() const {
-        Q_D(const DspxTrackEntity);
-        return d->workspace;
-    }
     //===========================================================================
 
     //===========================================================================
     // Track List
     DspxTrackListEntity::DspxTrackListEntity(QObject *parent) : AceTreeEntityVector(parent) {
+        AceTreeStandardEntityPrivate::setName(this, "tracks");
     }
     DspxTrackListEntity::~DspxTrackListEntity() {
-    }
-    QString DspxTrackListEntity::name() const {
-        return "tracks";
     }
     //===========================================================================
 

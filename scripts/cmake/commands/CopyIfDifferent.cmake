@@ -47,9 +47,12 @@ function(_copy_if_different _file _target_file)
 
         # Copy file
         # file(COPY ${_file} DESTINATION ${_target_dir})
-
-        # Use cmake command becault file(COPY) doesn't update modification time
-        execute_process(COMMAND ${CMAKE_COMMAND} -E copy ${_file} ${_target_dir})
+        if(WIN32)
+            # Use cmake command becault file(COPY) doesn't update modification time
+            execute_process(COMMAND ${CMAKE_COMMAND} -E copy ${_file} ${_target_dir})
+        else()
+            execute_process(COMMAND cp -p ${_file} ${_target_dir})
+        endif()
 
         message(STATUS "Copy \"${_file}\" to \"${_target_dir}\"")
         math(EXPR _cnt "${_cnt} + 1")

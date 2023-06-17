@@ -19,7 +19,15 @@ public:
     explicit AceTreeItem(const QString &name);
     virtual ~AceTreeItem();
 
+    enum Status : qint8 {
+        Root,
+        Row,
+        Record,
+        Node,
+    };
+
     QString name() const;
+    Status status() const;
 
     bool addSubscriber(AceTreeItemSubscriber *sub);
     bool removeSubscriber(AceTreeItemSubscriber *sub);

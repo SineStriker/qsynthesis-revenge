@@ -20,13 +20,14 @@ namespace Core {
         AceTreeModel *model() const;
 
     public:
+        // Initializers, must call one of them before accessing the instance
         bool open(const QString &filename) override;
-        bool save(const QString &filename) override;
-
         bool openRawData(const QByteArray &data);
-        bool saveRawData(QByteArray *data);
-
         void makeNew();
+        bool recover(const QString &filename);
+
+        bool save(const QString &filename) override;
+        bool saveRawData(QByteArray *data) const;
 
         bool isVSTMode() const;
         void setVSTMode(bool on);

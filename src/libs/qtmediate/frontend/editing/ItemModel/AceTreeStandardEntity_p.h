@@ -6,7 +6,8 @@
 #include <QJsonArray>
 #include <QJsonObject>
 
-#include "QMChronSet.h"
+#include <QMChronSet.h>
+#include <QMPointerWrapper.h>
 
 class QMEDITING_EXPORT AceTreeStandardEntityPrivate : public AceTreeEntityPrivate, public AceTreeItemSubscriber {
     Q_DECLARE_PUBLIC(AceTreeStandardEntity)
@@ -15,23 +16,11 @@ public:
     ~AceTreeStandardEntityPrivate();
 
     AceTreeStandardEntity::Type type;
+    QString name;
     QHash<QString, AceTreeEntity *> childNodeMap;
     bool m_external;
 
-    mutable AceTreeStandardSchema cachedSpec;
-    mutable const QMetaObject *cachedMetaObject;
-
-    struct EntityPointerWrapper {
-        EntityPointerWrapper() : ref(nullptr){};
-
-        template <class T>
-        EntityPointerWrapper(T **ref) : ref(reinterpret_cast<AceTreeEntity **>(ref)) {
-            static_assert(std::is_base_of<AceTreeEntity, T>::value, "T should inherit from AceTreeEntity");
-        }
-
-        AceTreeEntity **ref;
-    };
-    QHash<QString, EntityPointerWrapper> childPostAssignRefs;
+    QHash<QString, QMPointerWrapper<AceTreeEntity>> childPostAssignRefs;
 
     typedef QString (AceTreeStandardSchema::*GetTypeKey)() const;
     typedef AceTreeEntityBuilder (AceTreeStandardSchema::*GetDefaultBuilder)() const;
@@ -61,6 +50,8 @@ public:
 
     void addNode_assign(AceTreeEntity *child);
     void removeNode_assigns(AceTreeEntity *child);
+
+    static void setName(AceTreeStandardEntity *entity, const QString &name);
 };
 
 class AceTreeStandardSchemaData : public QSharedData {

@@ -63,7 +63,6 @@ namespace Core {
 
         DspxClipTimeEntity *time() const;
         DspxBusControlEntity *control() const;
-        DspxWorkspaceEntity *workspace() const;
 
     protected:
         DspxClipEntity(DspxClipEntityPrivate &d, QObject *parent = nullptr);
@@ -80,8 +79,6 @@ namespace Core {
     public:
         explicit DspxAudioClipEntity(QObject *parent = nullptr);
         ~DspxAudioClipEntity();
-
-        QString name() const override;
 
     public:
         QString path() const;
@@ -100,8 +97,6 @@ namespace Core {
         explicit DspxSingingClipEntity(QObject *parent = nullptr);
         ~DspxSingingClipEntity();
 
-        QString name() const override;
-
     public:
         DspxParamSetEntity *params() const;
         DspxNoteListEntity *notes() const;
@@ -116,8 +111,6 @@ namespace Core {
     public:
         explicit DspxClipListEntity(QObject *parent = nullptr);
         ~DspxClipListEntity();
-
-        QString name() const override;
 
     public:
         void sortRecords(QVector<AceTreeEntity *> &records) const override;
@@ -135,15 +128,15 @@ namespace Core {
         explicit DspxTrackEntity(QObject *parent = nullptr);
         ~DspxTrackEntity();
 
-        QString name() const override;
-
     public:
         QString trackName() const;
         void setTrackName(const QString &trackName);
 
+        QJsonObject colorConfiguration() const;
+        void setColorConfiguration(const QJsonObject &colorConfiguration);
+
         DspxTrackControlEntity *control() const;
         DspxClipListEntity *clips() const;
-        DspxWorkspaceEntity *workspace() const;
     };
     //===========================================================================
 
@@ -155,8 +148,6 @@ namespace Core {
     public:
         explicit DspxTrackListEntity(QObject *parent = nullptr);
         ~DspxTrackListEntity();
-
-        QString name() const override;
     };
     //===========================================================================
 
