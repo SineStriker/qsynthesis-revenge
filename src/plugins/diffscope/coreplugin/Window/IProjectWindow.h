@@ -4,6 +4,7 @@
 #include <CDockFrame.h>
 
 #include <QAbstractButton>
+#include <QToolBar>
 
 #include "Document/DspxDocument.h"
 #include "ICoreWindow.h"

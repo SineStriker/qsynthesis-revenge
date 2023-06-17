@@ -20,6 +20,7 @@ class Awaiter: public QObject {
     friend class CommunicationHelper;
 public:
     explicit Awaiter();
+    ~Awaiter();
     Q_INVOKABLE void call(std::function<QVariant()> fx);
     Q_INVOKABLE void callBySignal(std::function<void()> fx);
     void wait();
