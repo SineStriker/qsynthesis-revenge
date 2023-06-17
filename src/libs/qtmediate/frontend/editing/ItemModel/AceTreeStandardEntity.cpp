@@ -6,7 +6,7 @@ static const char KEY_NAME_ENTITY_PTR[] = "ace_tree_entity_ptr";
 static const char KEY_NAME_CHILD_TYPE[] = "ace_tree_child_type";
 
 static inline void setEntityToItem(AceTreeItem *item, AceTreeEntity *entity) {
-    item->setDynamicData(KEY_NAME_ENTITY_PTR, entity ? QVariant(intptr_t(entity)) : QVariant());
+    item->setDynamicData(KEY_NAME_ENTITY_PTR, entity ? QVariant::fromValue(intptr_t(entity)) : QVariant());
 }
 
 static inline AceTreeEntity *getEntityFromItem(const AceTreeItem *item) {
