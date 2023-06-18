@@ -1,4 +1,4 @@
-#include "simpleswitch.h"
+#include "SimpleSwitch.h"
 #include <QTimer>
 
 // constructor

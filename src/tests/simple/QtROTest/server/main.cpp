@@ -1,4 +1,4 @@
-#include "simpleswitch.h"
+#include "SimpleSwitch.h"
 #include <QApplication>
 #include <QLabel>
 #include <QMainWindow>
