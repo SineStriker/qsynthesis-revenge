@@ -22,8 +22,6 @@ void AceTreeWidgetPrivate::init() {
 
     m_model = new AceTreeModel(this);
     connect(m_model, &AceTreeModel::propertyChanged, this, &AceTreeWidgetPrivate::_q_propertyChanged);
-    connect(m_model, &AceTreeModel::bytesSet, this, &AceTreeWidgetPrivate::_q_bytesSet);
-    connect(m_model, &AceTreeModel::bytesTruncated, this, &AceTreeWidgetPrivate::_q_bytesTruncated);
     connect(m_model, &AceTreeModel::rowsInserted, this, &AceTreeWidgetPrivate::_q_rowsInserted);
     connect(m_model, &AceTreeModel::rowsMoved, this, &AceTreeWidgetPrivate::_q_rowsMoved);
     connect(m_model, &AceTreeModel::rowsAboutToRemove, this, &AceTreeWidgetPrivate::_q_rowsAboutToRemove);
@@ -97,23 +95,6 @@ void AceTreeWidgetPrivate::_q_propertyChanged(AceTreeItem *item, const QString &
             treeItem->setText(1, newValue.toString());
         }
     }
-}
-
-void AceTreeWidgetPrivate::_q_bytesSet(AceTreeItem *item, int start, const QByteArray &newBytes,
-                                       const QByteArray &oldBytes) {
-    auto treeItem = itemIndexes.value(item, nullptr);
-    if (!treeItem) {
-        return;
-    }
-    treeItem->setText(2, item->bytes().toHex());
-}
-
-void AceTreeWidgetPrivate::_q_bytesTruncated(AceTreeItem *item, int size, const QByteArray &oldBytes, int delta) {
-    auto treeItem = itemIndexes.value(item, nullptr);
-    if (!treeItem) {
-        return;
-    }
-    treeItem->setText(2, item->bytes().toHex());
 }
 
 void AceTreeWidgetPrivate::_q_rowsInserted(AceTreeItem *parent, int index, const QVector<AceTreeItem *> &items) {

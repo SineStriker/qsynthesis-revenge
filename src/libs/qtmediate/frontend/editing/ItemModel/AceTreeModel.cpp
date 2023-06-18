@@ -36,6 +36,16 @@ static Container2<T> qCloneAll(const Container1<T> &container) {
     return res;
 }
 
+static bool validateArrayQueryArguments(int index, int size) {
+    return index >= 0 && index <= size;
+}
+
+static bool validateArrayRemoveArguments(int index, int &count, int size) {
+    return (index >= 0 && index <= size)                                 // index bound
+           && ((count = qMin(count, size - index)) > 0 && count <= size) // count bound
+        ;
+}
+
 static const char SIGN_TREE_MODEL[] = "ATM"
                                       "TX"
                                       "LOG";
@@ -377,20 +387,50 @@ QVariantHash AceTreeItem::propertyMap() const {
     return d->properties;
 }
 
-void AceTreeItem::setBytes(int start, const QByteArray &bytes) {
+bool AceTreeItem::setBytes(int start, const QByteArray &bytes) {
     Q_D(AceTreeItem);
     if (!d->testModifiable(__func__))
-        return;
+        return false;
+
+    // Validate
+    if (!validateArrayQueryArguments(start, d->byteArray.size())) {
+        myWarning(__func__) << "invalid parameters";
+        return false;
+    }
 
     d->setBytes_helper(start, bytes);
+    return true;
 }
 
-void AceTreeItem::truncateBytes(int size) {
+bool AceTreeItem::insertBytes(int start, const QByteArray &bytes) {
     Q_D(AceTreeItem);
     if (!d->testModifiable(__func__))
-        return;
+        return false;
 
-    d->truncateBytes_helper(size);
+    // Validate
+    if (!validateArrayQueryArguments(start, d->byteArray.size())) {
+        myWarning(__func__) << "invalid parameters";
+        return false;
+    }
+
+    d->insertBytes_helper(start, bytes);
+    return true;
+}
+
+bool AceTreeItem::removeBytes(int start, int size) {
+    Q_D(AceTreeItem);
+
+    if (!d->testModifiable(__func__))
+        return false;
+
+    // Validate
+    if (!validateArrayRemoveArguments(start, size, d->byteArray.size())) {
+        myWarning(__func__) << "invalid parameters";
+        return false;
+    }
+
+    d->removeBytes_helper(start, size);
+    return true;
 }
 
 QByteArray AceTreeItem::bytes() const {
@@ -398,9 +438,19 @@ QByteArray AceTreeItem::bytes() const {
     return d->byteArray;
 }
 
+const char *AceTreeItem::bytesData() const {
+    Q_D(const AceTreeItem);
+    return d->byteArray.constData();
+}
+
 QByteArray AceTreeItem::midBytes(int start, int len) const {
     Q_D(const AceTreeItem);
     return d->byteArray.mid(start, len);
+}
+
+int AceTreeItem::bytesIndexOf(const QByteArray &bytes, int start) const {
+    Q_D(const AceTreeItem);
+    return d->byteArray.indexOf(bytes, start);
 }
 
 int AceTreeItem::bytesSize() const {
@@ -414,6 +464,10 @@ bool AceTreeItem::insertRows(int index, const QVector<AceTreeItem *> &items) {
         return false;
 
     // Validate
+    if (!validateArrayQueryArguments(index, d->vector.size())) {
+        myWarning(__func__) << "invalid parameters";
+        return false;
+    }
     for (const auto &item : items) {
         if (!d->testInsertable(__func__, item)) {
             return false;
@@ -430,8 +484,10 @@ bool AceTreeItem::moveRows(int index, int count, int dest) {
     if (!d->testModifiable(__func__))
         return false;
 
-    count = qMin(count, d->vector.size() - index);
-    if (count <= 0 || count > d->vector.size() || (dest >= index && dest <= index + count)) {
+    // Validate
+    if (!validateArrayRemoveArguments(index, count, d->vector.size()) ||
+        (dest >= index && dest <= index + count) // dest bound
+    ) {
         myWarning(__func__) << "invalid parameters";
         return false;
     }
@@ -447,8 +503,7 @@ bool AceTreeItem::removeRows(int index, int count) {
         return false;
 
     // Validate
-    count = qMin(count, d->vector.size() - index);
-    if (count <= 0 || count > d->vector.size()) {
+    if (!validateArrayRemoveArguments(index, count, d->vector.size())) {
         myWarning(__func__) << "invalid parameters";
         return false;
     }
@@ -483,6 +538,7 @@ int AceTreeItem::addRecord(AceTreeItem *item) {
     if (!d->testModifiable(__func__))
         return -1;
 
+    // Validate
     if (!d->testInsertable(__func__, item))
         return -1;
 
@@ -513,14 +569,12 @@ bool AceTreeItem::removeRecord(AceTreeItem *item) {
     if (!d->testModifiable(__func__))
         return false;
 
+    // Validate
     if (!item) {
         myWarning(__func__) << "trying to remove a null record from" << this;
         return false;
     }
-
     int seq = d->recordIndexes.value(item, -1);
-
-    // Validate
     if (seq < 0) {
         myWarning(__func__) << "seq num" << seq << "doesn't exists in" << this;
         return false;
@@ -563,6 +617,7 @@ bool AceTreeItem::addNode(AceTreeItem *item) {
     if (!d->testModifiable(__func__))
         return false;
 
+    // Validate
     if (!d->testInsertable(__func__, item))
         return false;
 
@@ -576,12 +631,11 @@ bool AceTreeItem::removeNode(AceTreeItem *item) {
     if (!d->testModifiable(__func__))
         return false;
 
+    // Validate
     if (!item) {
         myWarning(__func__) << "trying to remove a null node from" << this;
         return false;
     }
-
-    // Validate
     if (item->parent() != this || !d->set.contains(item)) {
         myWarning(__func__) << "item" << item << "has nothing to do with parent" << this;
         return false;
@@ -984,23 +1038,32 @@ void AceTreeItemPrivate::setBytes_helper(int start, const QByteArray &bytes) {
         model->d_func()->bytesSet(q, start, bytes, oldBytes);
 }
 
-void AceTreeItemPrivate::truncateBytes_helper(int size) {
+void AceTreeItemPrivate::insertBytes_helper(int start, const QByteArray &bytes) {
     Q_Q(AceTreeItem);
 
-    int len = size - byteArray.size();
-    if (len == 0)
-        return;
-
-    auto oldBytes = byteArray.mid(size);
-
     // Do change
-    byteArray.resize(size);
+    byteArray.insert(start, bytes);
 
     // Propagate signal
     for (const auto &sub : qAsConst(subscribers))
-        sub->bytesTruncated(size, oldBytes, len);
+        sub->bytesInserted(start, bytes);
     if (model)
-        model->d_func()->bytesTruncated(q, size, oldBytes, len);
+        model->d_func()->bytesInserted(q, start, bytes);
+}
+
+void AceTreeItemPrivate::removeBytes_helper(int start, int size) {
+    Q_Q(AceTreeItem);
+
+    auto bytes = byteArray.mid(start, size);
+
+    // Do change
+    byteArray.remove(start, size);
+
+    // Propagate signal
+    for (const auto &sub : qAsConst(subscribers))
+        sub->bytesRemoved(start, bytes);
+    if (model)
+        model->d_func()->bytesRemoved(q, start, bytes);
 }
 
 void AceTreeItemPrivate::insertRows_helper(int index, const QVector<AceTreeItem *> &items) {
@@ -1205,9 +1268,10 @@ void AceTreeModelPrivate::serializeOperation(QDataStream &stream, BaseOp *baseOp
             stream << op->id << op->start << op->oldBytes << op->newBytes;
             break;
         }
-        case BytesTruncate: {
-            auto op = static_cast<BytesTruncateOp *>(baseOp);
-            stream << op->id << op->size << op->oldBytes << op->delta;
+        case BytesInsert:
+        case BytesRemove: {
+            auto op = static_cast<BytesInsertRemoveOp *>(baseOp);
+            stream << op->id << op->start << op->bytes;
             break;
         }
         case RowsInsert:
@@ -1304,9 +1368,10 @@ AceTreeModelPrivate::BaseOp *AceTreeModelPrivate::deserializeOperation(QDataStre
             res = op;
             break;
         }
-        case BytesTruncate: {
-            auto op = new BytesTruncateOp();
-            stream >> op->id >> op->size >> op->oldBytes >> op->delta;
+        case BytesInsert:
+        case BytesRemove: {
+            auto op = new BytesInsertRemoveOp(c == BytesInsert);
+            stream >> op->id >> op->start >> op->bytes;
             res = op;
             break;
         }
@@ -1461,17 +1526,28 @@ void AceTreeModelPrivate::bytesSet(AceTreeItem *item, int start, const QByteArra
     emit q->bytesSet(item, start, newBytes, oldBytes);
 }
 
-void AceTreeModelPrivate::bytesTruncated(AceTreeItem *item, int size, const QByteArray &oldBytes, int delta) {
+void AceTreeModelPrivate::bytesInserted(AceTreeItem *item, int start, const QByteArray &bytes) {
     Q_Q(AceTreeModel);
     if (!internalChange) {
-        auto op = new BytesTruncateOp();
+        auto op = new BytesInsertRemoveOp(true);
         op->id = item->d_func()->m_index;
-        op->size = size;
-        op->oldBytes = oldBytes;
-        op->delta = delta;
+        op->start = start;
+        op->bytes = bytes;
         push(op);
     }
-    emit q->bytesTruncated(item, size, oldBytes, delta);
+    emit q->bytesInserted(item, start, bytes);
+}
+
+void AceTreeModelPrivate::bytesRemoved(AceTreeItem *item, int start, const QByteArray &bytes) {
+    Q_Q(AceTreeModel);
+    if (!internalChange) {
+        auto op = new BytesInsertRemoveOp(false);
+        op->id = item->d_func()->m_index;
+        op->start = start;
+        op->bytes = bytes;
+        push(op);
+    }
+    emit q->bytesRemoved(item, start, bytes);
 }
 
 void AceTreeModelPrivate::rowsInserted(AceTreeItem *parent, int index, const QVector<AceTreeItem *> &items) {
@@ -1609,28 +1685,25 @@ bool AceTreeModelPrivate::execute(BaseOp *baseOp, bool undo) {
                 goto obsolete;
             if (undo) {
                 item->d_func()->setBytes_helper(op->start, op->oldBytes);
-                if (op->newBytes.size() > op->oldBytes.size())
-                    item->d_func()->truncateBytes_helper(item->bytesSize() -
-                                                         (op->newBytes.size() - op->oldBytes.size()));
+
+                // Need truncate
+                int delta = op->newBytes.size() - op->oldBytes.size();
+                if (delta > 0) {
+                    item->d_func()->removeBytes_helper(item->bytesSize() - delta, delta);
+                }
             } else {
                 item->d_func()->setBytes_helper(op->start, op->newBytes);
             }
             break;
         }
-        case BytesTruncate: {
-            auto op = static_cast<BytesTruncateOp *>(baseOp);
+        case BytesInsert:
+        case BytesRemove: {
+            auto op = static_cast<BytesInsertRemoveOp *>(baseOp);
             auto item = model->itemFromIndex(op->id);
             if (!item)
                 goto obsolete;
-            if (undo) {
-                if (op->oldBytes.isEmpty()) {
-                    item->d_func()->truncateBytes_helper(op->size - op->delta);
-                } else {
-                    item->d_func()->setBytes_helper(op->size, op->oldBytes);
-                }
-            } else {
-                item->d_func()->truncateBytes_helper(op->size);
-            }
+            ((op->c == BytesRemove) ^ undo) ? item->d_func()->removeBytes_helper(op->start, op->bytes.size())
+                                            : item->d_func()->insertBytes_helper(op->start, op->bytes);
             break;
         }
         case RowsInsert:
@@ -1695,6 +1768,7 @@ bool AceTreeModelPrivate::execute(BaseOp *baseOp, bool undo) {
     return true;
 
 obsolete:
+    myWarning2(__func__) << "Encountering obsolete operation" << baseOp << baseOp->c;
     return false;
 }
 
@@ -2045,7 +2119,9 @@ void AceTreeItemSubscriber::propertyChanged(const QString &key, const QVariant &
 }
 void AceTreeItemSubscriber::bytesSet(int start, const QByteArray &newBytes, const QByteArray &oldBytes) {
 }
-void AceTreeItemSubscriber::bytesTruncated(int size, const QByteArray &oldBytes, int delta) {
+void AceTreeItemSubscriber::bytesInserted(int start, const QByteArray &bytes) {
+}
+void AceTreeItemSubscriber::bytesRemoved(int start, const QByteArray &bytes) {
 }
 void AceTreeItemSubscriber::rowsInserted(int index, const QVector<AceTreeItem *> &items) {
 }

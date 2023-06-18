@@ -24,9 +24,6 @@ public:
 private:
     void _q_propertyChanged(AceTreeItem *item, const QString &key, const QVariant &newValue, const QVariant &oldValue);
 
-    void _q_bytesSet(AceTreeItem *item, int start, const QByteArray &newBytes, const QByteArray &oldBytes);
-    void _q_bytesTruncated(AceTreeItem *item, int size, const QByteArray &oldBytes, int delta);
-
     void _q_rowsInserted(AceTreeItem *parent, int index, const QVector<AceTreeItem *> &items);
     void _q_rowsMoved(AceTreeItem *parent, int index, int count, int dest);
     void _q_rowsAboutToRemove(AceTreeItem *parent, int index, const QVector<AceTreeItem *> &items);

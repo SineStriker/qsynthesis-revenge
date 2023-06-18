@@ -79,10 +79,19 @@ namespace Core {
 
     public:
         int size() const;
-        QList<qint16> mid(int index, int size) const;
-        void append(const QList<qint16> &values);
-        void replace(int index, const QList<qint16> &values);
-        void truncate(int index);
+        QVector<qint16> mid(int index, int size) const;
+        QVector<qint16> values() const;
+        inline void append(const QVector<qint16> &values) {
+            insert(size(), values);
+        }
+        void replace(int index, const QVector<qint16> &values);
+        void insert(int index, const QVector<qint16> &values);
+        void remove(int index, const QVector<qint16> &values);
+
+    Q_SIGNALS:
+        void replaced(int index, const QVector<qint16> &values);
+        void inserted(int index, const QVector<qint16> &values);
+        void removed(int index, int count);
 
     protected:
         void doInitialize() override;

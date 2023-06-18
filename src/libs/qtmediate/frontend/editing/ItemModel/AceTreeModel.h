@@ -73,10 +73,17 @@ public:
     inline QVariantHash attributes() const;
 
     // ByteArray
-    void setBytes(int start, const QByteArray &bytes);
-    void truncateBytes(int size);
+    bool setBytes(int start, const QByteArray &bytes);
+    inline bool prependBytes(const QByteArray &bytes);
+    inline bool appendBytes(const QByteArray &bytes);
+    bool insertBytes(int start, const QByteArray &bytes);
+    bool removeBytes(int start, int size);
+    inline bool truncateBytes(int size);
+    inline bool clearBytes();
     QByteArray bytes() const;
+    const char *bytesData() const;
     QByteArray midBytes(int start, int len) const;
+    int bytesIndexOf(const QByteArray &bytes, int start) const;
     int bytesSize() const;
 
     // Vector - Rows
@@ -166,7 +173,8 @@ signals:
     void propertyChanged(AceTreeItem *item, const QString &key, const QVariant &newValue, const QVariant &oldValue);
 
     void bytesSet(AceTreeItem *item, int start, const QByteArray &newBytes, const QByteArray &oldBytes);
-    void bytesTruncated(AceTreeItem *item, int size, const QByteArray &oldBytes, int delta);
+    void bytesInserted(AceTreeItem *item, int start, const QByteArray &bytes);
+    void bytesRemoved(AceTreeItem *item, int start, const QByteArray &bytes);
 
     void rowsInserted(AceTreeItem *parent, int index, const QVector<AceTreeItem *> &items);
     void rowsAboutToMove(AceTreeItem *parent, int index, int count, int dest);
@@ -211,7 +219,8 @@ public:
     virtual void propertyChanged(const QString &key, const QVariant &newValue, const QVariant &oldValue);
 
     virtual void bytesSet(int start, const QByteArray &newBytes, const QByteArray &oldBytes);
-    virtual void bytesTruncated(int size, const QByteArray &oldBytes, int delta);
+    virtual void bytesInserted(int start, const QByteArray &bytes);
+    virtual void bytesRemoved(int start, const QByteArray &bytes);
 
     virtual void rowsInserted(int index, const QVector<AceTreeItem *> &items);
     virtual void rowsAboutToMove(int index, int count, int dest);
@@ -237,23 +246,23 @@ private:
     friend class AceTreeItemSubscriberPrivate;
 };
 
-bool AceTreeItem::isRoot() const {
+inline bool AceTreeItem::isRoot() const {
     return status() == Root;
 }
 
-bool AceTreeItem::isRow() const {
+inline bool AceTreeItem::isRow() const {
     return status() == Row;
 }
 
-bool AceTreeItem::isRecord() const {
+inline bool AceTreeItem::isRecord() const {
     return status() == Record;
 }
 
-bool AceTreeItem::isNode() const {
+inline bool AceTreeItem::isNode() const {
     return status() == Node;
 }
 
-bool AceTreeItem::isManagedRoot() const {
+inline bool AceTreeItem::isManagedRoot() const {
     return status() == ManagedRoot;
 }
 
@@ -269,28 +278,44 @@ inline QVariantHash AceTreeItem::properties() const {
     return propertyMap();
 }
 
-QVariant AceTreeItem::attribute(const QString &key) const {
+inline QVariant AceTreeItem::attribute(const QString &key) const {
     return property(key);
 }
 
-bool AceTreeItem::setAttribute(const QString &key, const QVariant &value) {
+inline bool AceTreeItem::setAttribute(const QString &key, const QVariant &value) {
     return setProperty(key, value);
 }
 
-bool AceTreeItem::clearAttribute(const QString &key) {
+inline bool AceTreeItem::clearAttribute(const QString &key) {
     return clearProperty(key);
 }
 
-QStringList AceTreeItem::attributeKeys() const {
+inline QStringList AceTreeItem::attributeKeys() const {
     return propertyKeys();
 }
 
-QVariantHash AceTreeItem::attributeMap() const {
+inline QVariantHash AceTreeItem::attributeMap() const {
     return propertyMap();
 }
 
-QVariantHash AceTreeItem::attributes() const {
+inline QVariantHash AceTreeItem::attributes() const {
     return propertyMap();
+}
+
+inline bool AceTreeItem::prependBytes(const QByteArray &bytes) {
+    return insertBytes(0, bytes);
+}
+
+inline bool AceTreeItem::appendBytes(const QByteArray &bytes) {
+    return insertBytes(bytesSize(), bytes);
+}
+
+inline bool AceTreeItem::truncateBytes(int size) {
+    return removeBytes(size, bytesSize() - size);
+}
+
+inline bool AceTreeItem::clearBytes() {
+    return removeBytes(0, bytesSize());
 }
 
 inline bool AceTreeItem::prependRow(AceTreeItem *item) {

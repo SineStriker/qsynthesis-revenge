@@ -38,7 +38,7 @@ void tst_AceTreeModel::basic() {
     model.previousStep();
 
     // Step 3 - Test Set Bytes
-    rootItem->setBytes(0, "ABCDEFGHIJKLMN");
+    rootItem->insertBytes(0, "ABCDEFGHIJKLMN");
     rootItem->setBytes(0, "1234");
     QCOMPARE(rootItem->bytes(), "1234EFGHIJKLMN");
     model.previousStep();
@@ -47,7 +47,14 @@ void tst_AceTreeModel::basic() {
     QCOMPARE(rootItem->bytes(), "ABCD");
     model.previousStep();
     QCOMPARE(rootItem->bytes(), "ABCDEFGHIJKLMN");
+    rootItem->setBytes(10, "123456");
+    QCOMPARE(rootItem->bytes(), "ABCDEFGHIJ123456");
     model.previousStep();
+    QCOMPARE(rootItem->bytes(), "ABCDEFGHIJKLMN");
+    rootItem->removeBytes(2,2);
+    QCOMPARE(rootItem->bytes(), "ABEFGHIJKLMN");
+    model.previousStep();
+    QCOMPARE(rootItem->bytes(), "ABCDEFGHIJKLMN");
 
     // Step 4 - Test insert and remove rows
     auto trackItem1 = new AceTreeItem("track1");

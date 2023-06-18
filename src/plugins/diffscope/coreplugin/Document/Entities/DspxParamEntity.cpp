@@ -80,8 +80,28 @@ namespace Core {
         ~DspxParamFreeDataEntityPrivate() = default;
 
         void bytesSet(int start, const QByteArray &newBytes, const QByteArray &oldBytes) override {
+            Q_Q(DspxParamFreeDataEntity);
+
+            int size = newBytes.size() / int(sizeof(qint16));
+            auto data = reinterpret_cast<const qint16 *>(newBytes.constData());
+            emit q->replaced(start / int(sizeof(qint16)), {
+                                                              data,
+                                                              data + size,
+                                                          });
         }
-        void bytesTruncated(int size, const QByteArray &oldBytes, int delta) override {
+        void bytesInserted(int start, const QByteArray &bytes) override {
+            Q_Q(DspxParamFreeDataEntity);
+
+            int size = bytes.size() / int(sizeof(qint16));
+            auto data = reinterpret_cast<const qint16 *>(bytes.constData());
+            emit q->inserted(start / int(sizeof(qint16)), {
+                                                              data,
+                                                              data + size,
+                                                          });
+        }
+        void bytesRemoved(int start, const QByteArray &bytes) override {
+            Q_Q(DspxParamFreeDataEntity);
+            emit q->removed(start / int(sizeof(qint16)), bytes.size() / int(sizeof(qint16)));
         }
     };
     DspxParamFreeDataEntity::DspxParamFreeDataEntity(QObject *parent)
@@ -91,69 +111,63 @@ namespace Core {
     DspxParamFreeDataEntity::~DspxParamFreeDataEntity() {
     }
     bool DspxParamFreeDataEntity::read(const QJsonValue &value) {
-        auto treeItem = AceTreeEntityPrivate::getItem(this);
         if (!value.isArray())
             return false;
 
-        // Read as int16 data
+        auto arr = value.toArray();
+
         QByteArray bytes;
-        QDataStream stream(&bytes, QIODevice::WriteOnly);
-        for (const auto &child : value.toArray()) {
-            stream << qint16(child.isDouble() ? child.toDouble() : 0);
+        bytes.reserve(arr.size() * int(sizeof(qint16)));
+
+        // Read as int16 data
+        for (const auto &item : qAsConst(arr)) {
+            auto num = static_cast<qint16>(item.toInt());
+            bytes.append(reinterpret_cast<const char *>(&num), sizeof(num));
         }
-        treeItem->setBytes(0, bytes);
+        AceTreeEntityPrivate::getItem(this)->appendBytes(bytes);
         return true;
     }
     QJsonValue DspxParamFreeDataEntity::write() const {
-        QDataStream stream(treeItem()->bytes());
+        auto treeItem = this->treeItem();
         QJsonArray arr;
-        while (!stream.atEnd()) {
-            qint16 num;
-            stream >> num;
-            if (stream.status() != QDataStream::Ok) {
-                break;
-            }
-            arr.append(double(num));
+        auto begin = reinterpret_cast<const qint16 *>(treeItem->bytesData());
+        auto end = begin + (treeItem->bytesSize() / int(sizeof(qint16)));
+        for (auto it = begin; it != end; ++it) {
+            arr.append(static_cast<int>(*it));
         }
         return arr;
     }
     int DspxParamFreeDataEntity::size() const {
-        auto treeItem = AceTreeEntityPrivate::getItem(this);
-        return treeItem->bytesSize() / int(sizeof(qint16));
+        return treeItem()->bytesSize() / int(sizeof(qint16));
     }
-    QList<qint16> DspxParamFreeDataEntity::mid(int index, int size) const {
-        QDataStream stream(treeItem()->midBytes(index * int(sizeof(qint16)), size * int(sizeof(qint16))));
-        QList<qint16> res;
-        res.reserve(size);
-        while (!stream.atEnd()) {
-            qint16 num;
-            stream >> num;
-            if (stream.status() != QDataStream::Ok) {
-                break;
-            }
-            res.append(num);
-        }
-        return res;
+    QVector<qint16> DspxParamFreeDataEntity::mid(int index, int size) const {
+        auto data = reinterpret_cast<const qint16 *>(treeItem()->bytesData()) + index;
+        return {data, data + size};
     }
-    void DspxParamFreeDataEntity::append(const QList<qint16> &values) {
-        auto treeItem = AceTreeEntityPrivate::getItem(this);
-        QByteArray bytes;
-        QDataStream stream(&bytes, QIODevice::WriteOnly);
-        for (const auto &value : values)
-            stream << value;
-        treeItem->setBytes(treeItem->bytesSize(), bytes);
+    QVector<qint16> DspxParamFreeDataEntity::values() const {
+        auto treeItem = this->treeItem();
+
+        int size = treeItem->bytesSize() / int(sizeof(qint16));
+        auto data = reinterpret_cast<const qint16 *>(treeItem->bytesData());
+        return {data, data + size};
     }
-    void DspxParamFreeDataEntity::replace(int index, const QList<qint16> &values) {
-        auto treeItem = AceTreeEntityPrivate::getItem(this);
-        QByteArray bytes;
-        QDataStream stream(&bytes, QIODevice::WriteOnly);
-        for (const auto &value : values)
-            stream << value;
-        treeItem->setBytes(index * int(sizeof(qint16)), bytes);
+    void DspxParamFreeDataEntity::replace(int index, const QVector<qint16> &values) {
+        AceTreeEntityPrivate::getItem(this)->setBytes(index * int(sizeof(qint16)),
+                                                      {
+                                                          reinterpret_cast<const char *>(values.constData()),
+                                                          values.size() * int(sizeof(qint16)),
+                                                      });
     }
-    void DspxParamFreeDataEntity::truncate(int index) {
-        auto treeItem = AceTreeEntityPrivate::getItem(this);
-        treeItem->truncateBytes(index * int(sizeof(qint16)));
+    void DspxParamFreeDataEntity::insert(int index, const QVector<qint16> &values) {
+        AceTreeEntityPrivate::getItem(this)->insertBytes(index * int(sizeof(qint16)),
+                                                         {
+                                                             reinterpret_cast<const char *>(values.constData()),
+                                                             values.size() * int(sizeof(qint16)),
+                                                         });
+    }
+    void DspxParamFreeDataEntity::remove(int index, const QVector<qint16> &values) {
+        AceTreeEntityPrivate::getItem(this)->removeBytes(index * int(sizeof(qint16)),
+                                                         values.size() * int(sizeof(qint16)));
     }
     void DspxParamFreeDataEntity::doInitialize() {
         // Bytes

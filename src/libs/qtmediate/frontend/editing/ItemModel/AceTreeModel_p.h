@@ -46,7 +46,8 @@ public:
 
     void setProperty_helper(const QString &key, const QVariant &value);
     void setBytes_helper(int start, const QByteArray &bytes);
-    void truncateBytes_helper(int size);
+    void insertBytes_helper(int start, const QByteArray &bytes);
+    void removeBytes_helper(int start, int size);
     void insertRows_helper(int index, const QVector<AceTreeItem *> &items);
     void moveRows_helper(int index, int count, int dest);
     void removeRows_helper(int index, int count);
@@ -99,7 +100,8 @@ public:
     enum Change {
         PropertyChange = 0xC1,
         BytesSet,
-        BytesTruncate,
+        BytesInsert,
+        BytesRemove,
         RowsInsert,
         RowsMove,
         RowsRemove,
@@ -136,12 +138,11 @@ public:
         }
     };
 
-    struct BytesTruncateOp : public BaseOp {
+    struct BytesInsertRemoveOp : public BaseOp {
         int id;
-        int size;
-        QByteArray oldBytes;
-        int delta;
-        BytesTruncateOp() : BaseOp(BytesTruncate), id(0), size(0), delta(0) {
+        int start;
+        QByteArray bytes;
+        BytesInsertRemoveOp(bool isInsert = false) : BaseOp(isInsert ? BytesInsert : BytesRemove), id(0), start(0) {
         }
     };
 
@@ -247,7 +248,8 @@ public:
     void propertyChanged(AceTreeItem *item, const QString &key, const QVariant &newValue, const QVariant &oldValue);
 
     void bytesSet(AceTreeItem *item, int start, const QByteArray &newBytes, const QByteArray &oldBytes);
-    void bytesTruncated(AceTreeItem *item, int size, const QByteArray &oldBytes, int delta);
+    void bytesInserted(AceTreeItem *item, int start, const QByteArray &bytes);
+    void bytesRemoved(AceTreeItem *item, int start, const QByteArray &bytes);
 
     void rowsInserted(AceTreeItem *parent, int index, const QVector<AceTreeItem *> &items);
     void rowsMoved(AceTreeItem *parent, int index, int count, int dest);
