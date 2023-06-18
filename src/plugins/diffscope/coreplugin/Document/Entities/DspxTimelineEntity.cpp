@@ -87,7 +87,8 @@ namespace Core {
 
     //===========================================================================
     // TimeSignature List
-    DspxTimeSignatureListEntity::DspxTimeSignatureListEntity(QObject *parent) : AceTreeEntityRecordTable(parent) {
+    DspxTimeSignatureListEntity::DspxTimeSignatureListEntity(QObject *parent)
+        : AceTreeEntityRecordTable(parent), AceTreeEntityRecordTableHelper(this) {
         AceTreeStandardEntityPrivate::setName(this, "timeSignatures");
     }
     DspxTimeSignatureListEntity::~DspxTimeSignatureListEntity() {
@@ -131,7 +132,8 @@ namespace Core {
 
     //===========================================================================
     // Tempo List
-    DspxTempoListEntity::DspxTempoListEntity(QObject *parent) : AceTreeEntityRecordTable(parent) {
+    DspxTempoListEntity::DspxTempoListEntity(QObject *parent)
+        : AceTreeEntityRecordTable(parent), AceTreeEntityRecordTableHelper(this) {
         AceTreeStandardEntityPrivate::setName(this, "tempos");
     }
     DspxTempoListEntity::~DspxTempoListEntity() {
@@ -175,7 +177,8 @@ namespace Core {
 
     //===========================================================================
     // TimelineLabel List
-    DspxTimelineLabelListEntity::DspxTimelineLabelListEntity(QObject *parent) : AceTreeEntityRecordTable(parent) {
+    DspxTimelineLabelListEntity::DspxTimelineLabelListEntity(QObject *parent)
+        : AceTreeEntityRecordTable(parent), AceTreeEntityRecordTableHelper(this) {
         AceTreeStandardEntityPrivate::setName(this, "labels");
     }
     DspxTimelineLabelListEntity::~DspxTimelineLabelListEntity() {

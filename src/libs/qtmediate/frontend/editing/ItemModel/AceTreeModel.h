@@ -7,6 +7,8 @@
 
 #include "QMEditingGlobal.h"
 
+class AceTreeTransaction;
+
 class AceTreeModel;
 
 class AceTreeItemSubscriber;
@@ -137,6 +139,7 @@ protected:
 
     friend class AceTreeModel;
     friend class AceTreeModelPrivate;
+    friend class AceTreeTransaction;
 };
 
 class AceTreeModelPrivate;
@@ -152,6 +155,7 @@ public:
     int steps() const;
     int currentStep() const;
     void setCurrentStep(int step);
+    void truncateForwardSteps();
     inline void nextStep();
     inline void previousStep();
 
@@ -244,6 +248,7 @@ private:
     friend class AceTreeModel;
     friend class AceTreeModelPrivate;
     friend class AceTreeItemSubscriberPrivate;
+    friend class AceTreeTransaction;
 };
 
 inline bool AceTreeItem::isRoot() const {

@@ -203,7 +203,8 @@ namespace Core {
 
     //===========================================================================
     // ParamCurve List
-    DspxParamCurveListEntity::DspxParamCurveListEntity(QObject *parent) : AceTreeEntityRecordTable(parent) {
+    DspxParamCurveListEntity::DspxParamCurveListEntity(QObject *parent)
+        : AceTreeEntityRecordTable(parent), AceTreeEntityRecordTableHelper(this) {
         AceTreeStandardEntityPrivate::setName(this, "curves");
     }
     DspxParamCurveListEntity::~DspxParamCurveListEntity() {

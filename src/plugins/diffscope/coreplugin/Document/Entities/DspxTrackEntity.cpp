@@ -170,7 +170,8 @@ namespace Core {
 
     //===========================================================================
     // Clip List
-    DspxClipListEntity::DspxClipListEntity(QObject *parent) : AceTreeEntityRecordTable(parent) {
+    DspxClipListEntity::DspxClipListEntity(QObject *parent)
+        : AceTreeEntityRecordTable(parent), AceTreeEntityRecordTableHelper(this) {
         AceTreeStandardEntityPrivate::setName(this, "clips");
     }
     DspxClipListEntity::~DspxClipListEntity() {
@@ -196,6 +197,10 @@ namespace Core {
             propertyNotifiers.insert("name", [](ACE_A) {
                 ACE_Q(DspxTrackEntity);
                 emit q->trackNameChanged(newValue.toString());
+            });
+            propertyNotifiers.insert("color", [](ACE_A) {
+                ACE_Q(DspxTrackEntity);
+                emit q->colorConfigurationChanged(newValue.toJsonObject());
             });
         }
         ~DspxTrackEntityPrivate() = default;
@@ -231,7 +236,8 @@ namespace Core {
 
     //===========================================================================
     // Track List
-    DspxTrackListEntity::DspxTrackListEntity(QObject *parent) : AceTreeEntityVector(parent) {
+    DspxTrackListEntity::DspxTrackListEntity(QObject *parent)
+        : AceTreeEntityVector(parent), AceTreeEntityVectorHelper(this) {
         AceTreeStandardEntityPrivate::setName(this, "tracks");
     }
     DspxTrackListEntity::~DspxTrackListEntity() {

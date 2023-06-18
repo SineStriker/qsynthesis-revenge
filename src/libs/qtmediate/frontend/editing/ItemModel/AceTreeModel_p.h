@@ -239,7 +239,7 @@ public:
     void push(BaseOp *op);
     void truncate(int step);
 
-    void writeCurrentStep(int step);
+    void writeCurrentStep() const;
 
     static void serializeOperation(QDataStream &stream, BaseOp *baseOp);
     static BaseOp *deserializeOperation(QDataStream &stream, QList<int> *ids);

@@ -58,7 +58,8 @@ namespace Core {
 
     //===========================================================================
     // EditedPhonemeList
-    DspxPhonemeListEntity::DspxPhonemeListEntity(QObject *parent) : AceTreeEntityVector(parent) {
+    DspxPhonemeListEntity::DspxPhonemeListEntity(QObject *parent)
+        : AceTreeEntityVector(parent), AceTreeEntityVectorHelper(this) {
         AceTreeStandardEntityPrivate::setName(this, "phonemes");
     }
     DspxPhonemeListEntity::~DspxPhonemeListEntity() {
@@ -265,7 +266,8 @@ namespace Core {
 
     //===========================================================================
     // NoteList
-    DspxNoteListEntity::DspxNoteListEntity(QObject *parent) : AceTreeEntityRecordTable(parent) {
+    DspxNoteListEntity::DspxNoteListEntity(QObject *parent)
+        : AceTreeEntityRecordTable(parent), AceTreeEntityRecordTableHelper(this) {
         AceTreeStandardEntityPrivate::setName(this, "notes");
     }
     DspxNoteListEntity::~DspxNoteListEntity() {

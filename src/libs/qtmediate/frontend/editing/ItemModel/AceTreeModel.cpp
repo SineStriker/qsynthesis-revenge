@@ -221,6 +221,12 @@ AceTreeItemPrivate::~AceTreeItemPrivate() {
         }
     }
 
+    // Clear subscribers
+    for (const auto &sub : subscribers){
+        sub->d->m_treeItem = nullptr;
+    }
+    subscribers.clear();
+
     if (m_forceDelete) {
         for (const auto &item : qAsConst(vector))
             forceDelete(item);
@@ -936,7 +942,7 @@ out:
         QDataStream stream(m_dev);
 
         // Change step in log
-        writeCurrentStep(stepIndex);
+        writeCurrentStep();
 
         if (stream.status() != QDataStream::Ok || (m_fileDev && (!m_fileDev->flush()))) {
             q->stopLogging();
@@ -1784,7 +1790,7 @@ void AceTreeModelPrivate::push(BaseOp *op) {
         QDataStream stream(m_dev);
 
         // Change step in log
-        writeCurrentStep(stepIndex);
+        writeCurrentStep();
 
         serializeOperation(stream, op);
         offsets.begs.append(m_dev->pos());
@@ -1817,6 +1823,7 @@ void AceTreeModelPrivate::truncate(int step) {
         m_dev->seek(offsets.countPos);
 
         stream << stepIndex;
+        stream << operations.size();
 
         // Restore pos
         qint64 pos = offsets.begs.isEmpty() ? offsets.dataPos : offsets.begs.back();
@@ -1829,12 +1836,13 @@ void AceTreeModelPrivate::truncate(int step) {
     }
 }
 
-void AceTreeModelPrivate::writeCurrentStep(int step) {
+void AceTreeModelPrivate::writeCurrentStep() const {
     qint64 pos = m_dev->pos();
     m_dev->seek(offsets.countPos);
 
     QDataStream stream(m_dev);
-    stream << step;
+    stream << stepIndex;
+    stream << operations.size();
 
     m_dev->seek(pos);
 }
@@ -1863,6 +1871,14 @@ void AceTreeModel::setCurrentStep(int step) {
     d->setCurrentStep_helper(step);
 }
 
+void AceTreeModel::truncateForwardSteps() {
+    Q_D(AceTreeModel);
+    if (d->internalChange)
+        return;
+
+    d->truncate(d->stepIndex);
+}
+
 bool AceTreeModel::isWritable() const {
     Q_D(const AceTreeModel);
     return !d->internalChange;
@@ -1883,6 +1899,7 @@ void AceTreeModel::startLogging(QIODevice *dev) {
 
     d->offsets.countPos = dev->pos();
     stream << d->stepIndex;
+    stream << d->operations.size();
 
     d->offsets.dataPos = dev->pos();
 
@@ -1944,8 +1961,11 @@ AceTreeModel *AceTreeModel::recover(const QByteArray &data) {
 
     // Deserialize all operations, and collect all items
     QVector<AceTreeModelPrivate::BaseOp *> operations;
-    int size;
-    stream >> size;
+    int step, size;
+
+    stream >> step; // stepIndex
+    stream >> size; // operation size
+
     operations.reserve(size);
     for (int i = 0; i < size; ++i) {
         QList<int> ids;
@@ -2032,17 +2052,18 @@ AceTreeModel *AceTreeModel::recover(const QByteArray &data) {
         return nullptr;
     }
 
-    int step = operations.size();
-
     // Rebuild
     auto model = new AceTreeModel();
     model->d_func()->operations = std::move(operations);
-    model->setCurrentStep(step);
-    if (model->currentStep() != step) {
+    model->setCurrentStep(size);
+    if (model->currentStep() != size) {
         myWarning2(__func__) << "failed to reach given step";
         delete model;
         return nullptr;
     }
+
+    // Go back to current step
+    model->setCurrentStep(step);
 
     return model;
 }

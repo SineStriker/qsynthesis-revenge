@@ -87,8 +87,6 @@ namespace Core {
                 x = pos.x();
                 y = pos.y();
                 emit q->positionChanged(x, y);
-
-                qDebug() << "int point" << x << y;
             }
         }
     };
@@ -146,7 +144,8 @@ namespace Core {
 
     //===========================================================================
     // IntPoint List
-    DspxIntPointListEntity::DspxIntPointListEntity(QObject *parent) : AceTreeEntityRecordTable(parent) {
+    DspxIntPointListEntity::DspxIntPointListEntity(QObject *parent)
+        : AceTreeEntityRecordTable(parent), AceTreeEntityRecordTableHelper(this) {
         AceTreeStandardEntityPrivate::setName(this, "points");
     }
     DspxIntPointListEntity::~DspxIntPointListEntity() {
@@ -235,7 +234,8 @@ namespace Core {
 
     //===========================================================================
     // DoublePoint List
-    DspxDoublePointListEntity::DspxDoublePointListEntity(QObject *parent) : AceTreeEntityRecordTable(parent) {
+    DspxDoublePointListEntity::DspxDoublePointListEntity(QObject *parent)
+        : AceTreeEntityRecordTable(parent), AceTreeEntityRecordTableHelper(this) {
         AceTreeStandardEntityPrivate::setName(this, "points");
     }
     DspxDoublePointListEntity::~DspxDoublePointListEntity() {
@@ -266,8 +266,6 @@ namespace Core {
                 // Cache point value
                 i = static_cast<DspxAnchorPointEntity::Interpolation>(newValue.toInt());
                 emit q->interpolationChanged(i);
-
-                qDebug() << "anchor point" << i;
             }
         }
     };
@@ -314,7 +312,8 @@ namespace Core {
 
     //===========================================================================
     // AnchorPoint List
-    DspxAnchorPointListEntity::DspxAnchorPointListEntity(QObject *parent) : AceTreeEntityRecordTable(parent) {
+    DspxAnchorPointListEntity::DspxAnchorPointListEntity(QObject *parent)
+        : AceTreeEntityRecordTable(parent), AceTreeEntityRecordTableHelper(this) {
         AceTreeStandardEntityPrivate::setName(this, "points");
     }
     DspxAnchorPointListEntity::~DspxAnchorPointListEntity() {

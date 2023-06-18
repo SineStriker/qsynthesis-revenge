@@ -31,6 +31,7 @@ namespace Core {
         Q_Q(DspxDocument);
 
         model = new AceTreeModel(q);
+        tx = new AceTreeTransaction(model, q);
 
         ICore::instance()->documentSystem()->addDocument(q, true);
     }
@@ -127,9 +128,14 @@ namespace Core {
     DspxDocument::~DspxDocument() {
     }
 
-    AceTreeModel *DspxDocument::model() const {
+    AceTreeTransaction *DspxDocument::TX() const {
         Q_D(const DspxDocument);
-        return d->model;
+        return d->tx;
+    }
+
+    DspxContentEntity *DspxDocument::project() const {
+        Q_D(const DspxDocument);
+        return d->content;
     }
 
     bool DspxDocument::open(const QString &filename) {
@@ -199,6 +205,9 @@ namespace Core {
 
     bool DspxDocument::recover(const QString &filename) {
         Q_UNUSED(filename)
+
+        setFilePath(QFileInfo(filename).fileName());
+
         return false;
     }
 

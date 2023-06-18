@@ -293,7 +293,7 @@ namespace Core {
             });
 
             connect(moveToStartItem->action(), &QAction::triggered, this, [this, iWin]() {
-                // qDebug() << iWin->doc()->rootCtl()->projectName();
+                qDebug() << iWin->doc()->project()->tracks()->count();
                 iWin->requestGlobalEvent("playback.moveToStart"); //
             });
 

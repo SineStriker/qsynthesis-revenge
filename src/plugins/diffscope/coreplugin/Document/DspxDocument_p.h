@@ -21,6 +21,7 @@ namespace Core {
         mutable QString untitledFileName;
 
         AceTreeModel *model;
+        AceTreeTransaction *tx;
         DspxContentEntity *content;
 
         bool vstMode;

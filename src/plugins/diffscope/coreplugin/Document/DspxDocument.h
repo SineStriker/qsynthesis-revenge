@@ -2,9 +2,9 @@
 #define DSPXDOCUMENT_H
 
 #include <CoreApi/IDocument.h>
-#include <ItemModel/AceTreeModel.h>
+#include <ItemModel/AceTreeTransaction.h>
 
-#include "coreplugin/CoreGlobal.h"
+#include "coreplugin/Document/Entities/DspxRootEntity.h"
 
 namespace Core {
 
@@ -17,7 +17,9 @@ namespace Core {
         explicit DspxDocument(QObject *parent = nullptr);
         ~DspxDocument();
 
-        AceTreeModel *model() const;
+        AceTreeTransaction *TX() const;
+
+        DspxContentEntity *project() const;
 
     public:
         // Initializers, must call one of them before accessing the instance
@@ -26,9 +28,11 @@ namespace Core {
         void makeNew();
         bool recover(const QString &filename);
 
+        // Save functions
         bool save(const QString &filename) override;
         bool saveRawData(QByteArray *data) const;
 
+        // VST related
         bool isVSTMode() const;
         void setVSTMode(bool on);
 
