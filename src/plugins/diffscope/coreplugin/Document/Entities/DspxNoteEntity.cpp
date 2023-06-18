@@ -6,35 +6,53 @@ namespace Core {
 
     //===========================================================================
     // Phoneme
-    class DspxPhonemeEntityPrivate : public AceTreeStandardEntityPrivate {
+    class DspxPhonemeEntityPrivate : public AceTreeEntityMappingPrivate {
+        Q_DECLARE_PUBLIC(DspxPhonemeEntity)
     public:
-        DspxPhonemeEntityPrivate() : AceTreeStandardEntityPrivate(AceTreeStandardEntity::Mapping) {
+        DspxPhonemeEntityPrivate() {
             name = "phoneme";
+
+            // Notifiers
+            propertyNotifiers.insert("type", [](ACE_A) {
+                ACE_Q(DspxPhonemeEntity);
+                emit q->phonemeTypeChanged(variantToEnum<DspxPhonemeEntity::Type>(newValue));
+            });
+            propertyNotifiers.insert("token", [](ACE_A) {
+                ACE_Q(DspxPhonemeEntity);
+                emit q->tokenChanged(newValue.toString());
+            });
+            propertyNotifiers.insert("start", [](ACE_A) {
+                ACE_Q(DspxPhonemeEntity);
+                emit q->startChanged(newValue.toInt());
+            });
         }
+        ~DspxPhonemeEntityPrivate() = default;
     };
 
-    DspxPhonemeEntity::DspxPhonemeEntity(QObject *parent)
-        : AceTreeStandardEntity(*new DspxPhonemeEntityPrivate(), parent) {
+    DspxPhonemeEntity::DspxPhonemeEntity(QObject *parent) : DspxPhonemeEntity(*new DspxPhonemeEntityPrivate(), parent) {
     }
     DspxPhonemeEntity::~DspxPhonemeEntity() {
     }
     DspxPhonemeEntity::Type DspxPhonemeEntity::phonemeType() const {
-        return variantToEnum<Type>(property("type"));
+        return variantToEnum<Type>(attribute("type"));
     }
     void DspxPhonemeEntity::setPhonemeType(DspxPhonemeEntity::Type type) {
-        setProperty("type", enumToString(type));
+        setAttribute("type", enumToString(type));
     }
     QString DspxPhonemeEntity::token() const {
-        return property("token").toString();
+        return attribute("token").toString();
     }
     void DspxPhonemeEntity::setToken(const QString &token) {
-        setProperty("token", token);
+        setAttribute("token", token);
     }
     int DspxPhonemeEntity::start() const {
-        return property("start").toInt();
+        return attribute("start").toInt();
     }
     void DspxPhonemeEntity::setStart(int start) {
-        setProperty("start", start);
+        setAttribute("start", start);
+    }
+    DspxPhonemeEntity::DspxPhonemeEntity(DspxPhonemeEntityPrivate &d, QObject *parent)
+        : AceTreeEntityMapping(d, parent) {
     }
     //===========================================================================
 
@@ -49,83 +67,123 @@ namespace Core {
 
     //===========================================================================
     // PhonemeInfo
-    class DspxPhonemeInfoEntityPrivate : public AceTreeStandardEntityPrivate {
+    class DspxPhonemeInfoEntityPrivate : public AceTreeEntityMappingPrivate {
+        Q_DECLARE_PUBLIC(DspxPhonemeInfoEntity)
     public:
-        DspxPhonemeInfoEntityPrivate() : AceTreeStandardEntityPrivate(AceTreeStandardEntity::Mapping) {
+        DspxPhonemeInfoEntityPrivate() {
             name = "phoneme";
             edited = nullptr;
             childPostAssignRefs.insert("edited", &edited);
+
+            // Notifiers
+            dynamicPropertyNotifiers.insert("original", [](ACE_A) {
+                ACE_Q(DspxPhonemeInfoEntity);
+                emit q->originalChanged(newValue.toJsonArray());
+            });
         }
+        ~DspxPhonemeInfoEntityPrivate() = default;
+
         DspxPhonemeListEntity *edited;
     };
     DspxPhonemeInfoEntity::DspxPhonemeInfoEntity(QObject *parent)
-        : AceTreeStandardEntity(*new DspxPhonemeInfoEntityPrivate(), parent) {
+        : DspxPhonemeInfoEntity(*new DspxPhonemeInfoEntityPrivate(), parent) {
     }
     DspxPhonemeInfoEntity::~DspxPhonemeInfoEntity() {
     }
     QJsonArray DspxPhonemeInfoEntity::original() const {
-        return property("original").toJsonArray();
+        return attribute("original").toJsonArray();
     }
     void DspxPhonemeInfoEntity::setOriginal(const QJsonArray &original) {
-        setProperty("original", original);
+        setAttribute("original", original);
     }
     DspxPhonemeListEntity *DspxPhonemeInfoEntity::edited() const {
         Q_D(const DspxPhonemeInfoEntity);
         return d->edited;
     }
+    DspxPhonemeInfoEntity::DspxPhonemeInfoEntity(DspxPhonemeInfoEntityPrivate &d, QObject *parent)
+        : AceTreeEntityMapping(d, parent) {
+    }
     //===========================================================================
 
     //===========================================================================
     // VibratoInfo
-    class DspxVibratoInfoEntityPrivate : public AceTreeStandardEntityPrivate {
+    class DspxVibratoInfoEntityPrivate : public AceTreeEntityMappingPrivate {
+        Q_DECLARE_PUBLIC(DspxVibratoInfoEntity)
     public:
-        DspxVibratoInfoEntityPrivate() : AceTreeStandardEntityPrivate(AceTreeStandardEntity::Mapping) {
+        DspxVibratoInfoEntityPrivate() {
             name = "vibrato";
             points = nullptr;
             childPostAssignRefs.insert("points", &points);
+
+            // Notifiers
+            propertyNotifiers.insert("start", [](ACE_A) {
+                ACE_Q(DspxVibratoInfoEntity);
+                emit q->startChanged(newValue.toDouble());
+            });
+            propertyNotifiers.insert("end", [](ACE_A) {
+                ACE_Q(DspxVibratoInfoEntity);
+                emit q->endChanged(newValue.toDouble());
+            });
+            propertyNotifiers.insert("freq", [](ACE_A) {
+                ACE_Q(DspxVibratoInfoEntity);
+                emit q->frequencyChanged(newValue.toDouble());
+            });
+            propertyNotifiers.insert("phase", [](ACE_A) {
+                ACE_Q(DspxVibratoInfoEntity);
+                emit q->phaseChanged(newValue.toDouble());
+            });
+            propertyNotifiers.insert("amp", [](ACE_A) {
+                ACE_Q(DspxVibratoInfoEntity);
+                emit q->amplitudeChanged(newValue.toDouble());
+            });
+            propertyNotifiers.insert("offset", [](ACE_A) {
+                ACE_Q(DspxVibratoInfoEntity);
+                emit q->offsetChanged(newValue.toDouble());
+            });
         }
+        ~DspxVibratoInfoEntityPrivate() = default;
         DspxDoublePointListEntity *points;
     };
     DspxVibratoInfoEntity::DspxVibratoInfoEntity(QObject *parent)
-        : AceTreeStandardEntity(*new DspxVibratoInfoEntityPrivate(), parent) {
+        : AceTreeEntityMapping(*new DspxVibratoInfoEntityPrivate(), parent) {
     }
     DspxVibratoInfoEntity::~DspxVibratoInfoEntity() {
     }
     double DspxVibratoInfoEntity::start() const {
-        return property("start").toDouble();
+        return attribute("start").toDouble();
     }
     void DspxVibratoInfoEntity::setStart(double start) {
-        setProperty("start", start);
+        setAttribute("start", start);
     }
     double DspxVibratoInfoEntity::end() const {
-        return property("end").toDouble();
+        return attribute("end").toDouble();
     }
     void DspxVibratoInfoEntity::setEnd(double end) {
-        setProperty("end", end);
+        setAttribute("end", end);
     }
     double DspxVibratoInfoEntity::frequency() const {
-        return property("freq").toDouble();
+        return attribute("freq").toDouble();
     }
     void DspxVibratoInfoEntity::setFrequency(double frequency) {
-        setProperty("freq", frequency);
+        setAttribute("freq", frequency);
     }
     double DspxVibratoInfoEntity::phase() const {
-        return property("phase").toDouble();
+        return attribute("phase").toDouble();
     }
     void DspxVibratoInfoEntity::setPhase(double phase) {
-        setProperty("phase", phase);
+        setAttribute("phase", phase);
     }
     double DspxVibratoInfoEntity::amplitude() const {
-        return property("amp").toDouble();
+        return attribute("amp").toDouble();
     }
     void DspxVibratoInfoEntity::setAmplitude(double amplitude) {
-        setProperty("amp", amplitude);
+        setAttribute("amp", amplitude);
     }
     double DspxVibratoInfoEntity::offset() const {
-        return property("offset").toDouble();
+        return attribute("offset").toDouble();
     }
     void DspxVibratoInfoEntity::setOffset(double offset) {
-        setProperty("offset", offset);
+        setAttribute("offset", offset);
     }
     DspxDoublePointListEntity *DspxVibratoInfoEntity::points() const {
         Q_D(const DspxVibratoInfoEntity);
@@ -135,45 +193,65 @@ namespace Core {
 
     //===========================================================================
     // Note
-    class DspxNoteEntityPrivate : public AceTreeStandardEntityPrivate {
+    class DspxNoteEntityPrivate : public AceTreeEntityMappingPrivate {
+        Q_DECLARE_PUBLIC(DspxNoteEntity)
     public:
-        DspxNoteEntityPrivate() : AceTreeStandardEntityPrivate(AceTreeStandardEntity::Mapping) {
+        DspxNoteEntityPrivate() {
             name = "note";
             phonemes = nullptr;
             vibrato = nullptr;
             childPostAssignRefs.insert("phonemes", &phonemes);
             childPostAssignRefs.insert("vibrato", &vibrato);
+
+            // Notifiers
+            propertyNotifiers.insert("pos", [](ACE_A) {
+                ACE_Q(DspxNoteEntity);
+                emit q->positionChanged(newValue.toInt());
+            });
+            propertyNotifiers.insert("length", [](ACE_A) {
+                ACE_Q(DspxNoteEntity);
+                emit q->lengthChanged(newValue.toInt());
+            });
+            propertyNotifiers.insert("keyNum", [](ACE_A) {
+                ACE_Q(DspxNoteEntity);
+                emit q->keyNumberChanged(newValue.toInt());
+            });
+            propertyNotifiers.insert("lyric", [](ACE_A) {
+                ACE_Q(DspxNoteEntity);
+                emit q->lyricChanged(newValue.toString());
+            });
         }
+        ~DspxNoteEntityPrivate() = default;
         DspxPhonemeInfoEntity *phonemes;
         DspxVibratoInfoEntity *vibrato;
     };
-    DspxNoteEntity::DspxNoteEntity(QObject *parent) : AceTreeStandardEntity(*new DspxNoteEntityPrivate(), parent) {
+    DspxNoteEntity::DspxNoteEntity(QObject *parent) : AceTreeEntityMapping(*new DspxNoteEntityPrivate(), parent) {
     }
     DspxNoteEntity::~DspxNoteEntity() {
     }
     int DspxNoteEntity::position() const {
-        return property("pos").toInt();
+        return attribute("pos").toInt();
     }
     void DspxNoteEntity::setPosition(int position) {
-        setProperty("pos", position);
+        setAttribute("pos", position);
     }
     int DspxNoteEntity::length() const {
-        return property("length").toInt();
+        return attribute("length").toInt();
     }
     void DspxNoteEntity::setLength(int length) {
-        setProperty("length", length);
+        setAttribute("length", length);
     }
     int DspxNoteEntity::keyNumber() const {
-        return property("keyNum").toInt();
+        return attribute("keyNum").toInt();
     }
     void DspxNoteEntity::setKeyNumber(int keyNumber) {
-        setProperty("keyNum", keyNumber);
+        setAttribute("keyNum", keyNumber);
     }
     QString DspxNoteEntity::lyric() const {
-        return property("lyric").toString();
+        return attribute("lyric").toString();
     }
     void DspxNoteEntity::setLyric(const QString &lyric) {
-        setProperty("lyric", lyric);
+        setAttribute("lyric", lyric);
     }
     DspxPhonemeInfoEntity *DspxNoteEntity::phonemes() const {
         Q_D(const DspxNoteEntity);

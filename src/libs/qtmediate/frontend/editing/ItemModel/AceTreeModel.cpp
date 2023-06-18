@@ -10,7 +10,7 @@
 
 #include <iostream>
 
-//#define ENABLE_DEBUG_COUNT
+// #define ENABLE_DEBUG_COUNT
 
 AceTreeModelPrivate::BaseOp::~BaseOp() {
 #ifdef ENABLE_DEBUG_COUNT
@@ -288,12 +288,12 @@ void AceTreeItem::setDynamicData(const QString &key, const QVariant &value) {
     QVariant oldValue;
     auto it = d->dynamicData.find(key);
     if (it == d->dynamicData.end()) {
-        if (value.isNull() || !value.isValid())
+        if (!value.isValid())
             return;
         d->dynamicData.insert(key, value);
     } else {
         oldValue = it.value();
-        if (value.isNull() || !value.isValid())
+        if (!value.isValid())
             d->dynamicData.erase(it);
         else if (oldValue == value)
             return;
@@ -826,7 +826,7 @@ void AceTreeModelPrivate::setRootItem_helper(AceTreeItem *item) {
     rootItem = item;
 
     // Propagate signal
-    rootChanged(org, item);
+    rootChanged(item, org);
 }
 
 AceTreeItem *AceTreeModelPrivate::reset_helper() {
@@ -945,12 +945,12 @@ void AceTreeItemPrivate::setProperty_helper(const QString &key, const QVariant &
     QVariant oldValue;
     auto it = properties.find(key);
     if (it == properties.end()) {
-        if (value.isNull() || !value.isValid())
+        if (!value.isValid())
             return;
         properties.insert(key, value);
     } else {
         oldValue = it.value();
-        if (value.isNull() || !value.isValid())
+        if (!value.isValid())
             properties.erase(it);
         else if (oldValue == value)
             return;
@@ -960,9 +960,9 @@ void AceTreeItemPrivate::setProperty_helper(const QString &key, const QVariant &
 
     // Propagate signal
     for (const auto &sub : qAsConst(subscribers))
-        sub->propertyChanged(key, oldValue, value);
+        sub->propertyChanged(key, value, oldValue);
     if (model)
-        model->d_func()->propertyChanged(q, key, oldValue, value);
+        model->d_func()->propertyChanged(q, key, value, oldValue);
 }
 
 void AceTreeItemPrivate::setBytes_helper(int start, const QByteArray &bytes) {
@@ -979,9 +979,9 @@ void AceTreeItemPrivate::setBytes_helper(int start, const QByteArray &bytes) {
 
     // Propagate signal
     for (const auto &sub : qAsConst(subscribers))
-        sub->bytesSet(start, oldBytes, bytes);
+        sub->bytesSet(start, bytes, oldBytes);
     if (model)
-        model->d_func()->bytesSet(q, start, oldBytes, bytes);
+        model->d_func()->bytesSet(q, start, bytes, oldBytes);
 }
 
 void AceTreeItemPrivate::truncateBytes_helper(int size) {
@@ -1433,8 +1433,8 @@ AceTreeModelPrivate::BaseOp *AceTreeModelPrivate::deserializeOperation(QDataStre
     return res;
 }
 
-void AceTreeModelPrivate::propertyChanged(AceTreeItem *item, const QString &key, const QVariant &oldValue,
-                                          const QVariant &newValue) {
+void AceTreeModelPrivate::propertyChanged(AceTreeItem *item, const QString &key, const QVariant &newValue,
+                                          const QVariant &oldValue) {
     Q_Q(AceTreeModel);
     if (!internalChange) {
         auto op = new PropertyChangeOp();
@@ -1447,8 +1447,8 @@ void AceTreeModelPrivate::propertyChanged(AceTreeItem *item, const QString &key,
     emit q->propertyChanged(item, key, newValue, oldValue);
 }
 
-void AceTreeModelPrivate::bytesSet(AceTreeItem *item, int start, const QByteArray &oldBytes,
-                                   const QByteArray &newBytes) {
+void AceTreeModelPrivate::bytesSet(AceTreeItem *item, int start, const QByteArray &newBytes,
+                                   const QByteArray &oldBytes) {
     Q_Q(AceTreeModel);
     if (!internalChange) {
         auto op = new BytesSetOp();
@@ -1573,7 +1573,7 @@ void AceTreeModelPrivate::nodeRemoved(AceTreeItem *parent, AceTreeItem *item) {
     emit q->nodeRemoved(parent, item);
 }
 
-void AceTreeModelPrivate::rootChanged(AceTreeItem *oldRoot, AceTreeItem *newRoot) {
+void AceTreeModelPrivate::rootChanged(AceTreeItem *newRoot, AceTreeItem *oldRoot) {
     Q_Q(AceTreeModel);
     if (!internalChange) {
         auto op = new RootChangeOp();

@@ -15,7 +15,7 @@ namespace Core {
     // Content
     class DspxContentEntityPrivate;
 
-    class CORE_EXPORT DspxContentEntity : public AceTreeStandardEntity {
+    class CORE_EXPORT DspxContentEntity : public AceTreeEntityMapping {
         Q_OBJECT
         Q_DECLARE_PRIVATE(DspxContentEntity)
     public:
@@ -44,6 +44,10 @@ namespace Core {
 
         QString projectName() const;
         void setProjectName(const QString &projectName);
+
+    Q_SIGNALS:
+        void authorChanged(const QString &author);
+        void projectNameChanged(const QString &projectName);
     };
     //===========================================================================
 
@@ -51,7 +55,7 @@ namespace Core {
     // Master
     class DspxMasterEntityPrivate;
 
-    class CORE_EXPORT DspxMasterEntity : public AceTreeStandardEntity {
+    class CORE_EXPORT DspxMasterEntity : public AceTreeEntityMapping {
         Q_OBJECT
         Q_DECLARE_PRIVATE(DspxMasterEntity)
     public:

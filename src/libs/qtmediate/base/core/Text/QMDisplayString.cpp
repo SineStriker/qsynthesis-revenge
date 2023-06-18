@@ -216,11 +216,11 @@ void QMDisplayString::setProperty(const QString &key, const QVariant &value) {
     auto &properties = *d->properties;
     auto it = properties.find(key);
     if (it == properties.end()) {
-        if (value.isNull() || !value.isValid())
+        if (!value.isValid())
             return;
         properties.insert(key, value);
     } else {
-        if (value.isNull() || !value.isValid())
+        if (!value.isValid())
             properties.erase(it);
         else
             it.value() = value;

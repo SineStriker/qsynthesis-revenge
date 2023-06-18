@@ -65,6 +65,13 @@ public:
     QVariantHash propertyMap() const;
     inline QVariantHash properties() const;
 
+    inline QVariant attribute(const QString &key) const;
+    inline bool setAttribute(const QString &key, const QVariant &value);
+    inline bool clearAttribute(const QString &key);
+    inline QStringList attributeKeys() const;
+    inline QVariantHash attributeMap() const;
+    inline QVariantHash attributes() const;
+
     // ByteArray
     void setBytes(int start, const QByteArray &bytes);
     void truncateBytes(int size);
@@ -259,6 +266,30 @@ inline bool AceTreeItem::clearProperty(const QString &key) {
 }
 
 inline QVariantHash AceTreeItem::properties() const {
+    return propertyMap();
+}
+
+QVariant AceTreeItem::attribute(const QString &key) const {
+    return property(key);
+}
+
+bool AceTreeItem::setAttribute(const QString &key, const QVariant &value) {
+    return setProperty(key, value);
+}
+
+bool AceTreeItem::clearAttribute(const QString &key) {
+    return clearProperty(key);
+}
+
+QStringList AceTreeItem::attributeKeys() const {
+    return propertyKeys();
+}
+
+QVariantHash AceTreeItem::attributeMap() const {
+    return propertyMap();
+}
+
+QVariantHash AceTreeItem::attributes() const {
     return propertyMap();
 }
 

@@ -16,7 +16,7 @@ public:
     explicit AceTreeEntity(QObject *parent = nullptr);
     ~AceTreeEntity();
 
-    virtual QString name() const = 0;
+    virtual QString name() const;
 
 public:
     void initialize();
@@ -40,8 +40,8 @@ public:
     static AceTreeEntity *itemToEntity(AceTreeItem *item);
 
 protected:
-    virtual void doInitialize();
-    virtual void doSetup();
+    virtual void doInitialize() = 0;
+    virtual void doSetup() = 0;
 
     virtual void childAdded(AceTreeEntity *child);
     virtual void childAboutToRemove(AceTreeEntity *child);

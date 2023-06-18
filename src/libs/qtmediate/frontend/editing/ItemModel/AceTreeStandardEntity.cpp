@@ -239,6 +239,8 @@ bool AceTreeStandardEntityPrivate::readSet_helper(const AceTreeStandardSchema &s
     // Read dynamic data
     auto hash = schema.dynamicDataSpecHash();
     QVector<QPair<QString, QVariant>> dynamicDataToSet;
+    if (!hash.isEmpty())
+        qDebug().noquote() << std::string(indent, ' ').c_str() << "[collect dynamic-data]" << hash.keys();
     for (auto it = hash.begin(); it != hash.end(); ++it) {
         auto val = obj.value(it.key());
         if (val.isUndefined())
@@ -251,13 +253,15 @@ bool AceTreeStandardEntityPrivate::readSet_helper(const AceTreeStandardSchema &s
         dynamicDataToSet.append({it.key(), val.toVariant()});
     }
     for (const auto &pair : qAsConst(dynamicDataToSet)) {
+        qDebug().noquote() << std::string(indent, ' ').c_str() << "[read dynamic-data]" << pair.first << pair.second;
         m_treeItem->setDynamicData(pair.first, pair.second);
     }
 
     // Read properties
     hash = schema.propertySpecHash();
     QVector<QPair<QString, QVariant>> propertiesToSet;
-    qDebug().noquote() << std::string(indent, ' ').c_str() << "[collect properties]" << hash.keys();
+    if (!hash.isEmpty())
+        qDebug().noquote() << std::string(indent, ' ').c_str() << "[collect properties]" << hash.keys();
     for (auto it = hash.begin(); it != hash.end(); ++it) {
         auto val = obj.value(it.key());
         if (val.isUndefined())
@@ -420,11 +424,8 @@ void AceTreeStandardEntityPrivate::removeNode_assigns(AceTreeEntity *child) {
     it->get() = nullptr;
 }
 
-void AceTreeStandardEntityPrivate::setName(AceTreeStandardEntity *entity, const QString &name) {
-    entity->d_func()->name = name;
-}
-
-// -------------------------- AceTreeStandardEntity --------------------------
+//===========================================================================
+// AceTreeStandardEntity
 
 AceTreeStandardEntity::AceTreeStandardEntity(Type type, QObject *parent)
     : AceTreeStandardEntity(*new AceTreeStandardEntityPrivate(type), parent) {
@@ -683,7 +684,6 @@ void AceTreeStandardEntity::doInitialize() {
 
     // Add subscriber
     auto &treeItem = d->m_treeItem;
-    treeItem->addSubscriber(d);
 
     switch (d->type) {
         case Mapping: {
@@ -724,7 +724,6 @@ void AceTreeStandardEntity::doSetup() {
 
     // Add subscriber
     auto &treeItem = d->m_treeItem;
-    treeItem->addSubscriber(d);
 
     switch (d->type) {
         case Vector: {
@@ -1008,24 +1007,11 @@ bool AceTreeStandardEntity::removeNode(AceTreeEntity *entity) {
     return res;
 }
 
-AceTreeEntityVector::AceTreeEntityVector(QObject *parent) : AceTreeStandardEntity(Vector, parent) {
-}
-AceTreeEntityVector::~AceTreeEntityVector() {
-}
-AceTreeEntityRecordTable::AceTreeEntityRecordTable(QObject *parent) : AceTreeStandardEntity(RecordTable, parent) {
-}
-AceTreeEntityRecordTable::~AceTreeEntityRecordTable() {
-}
-AceTreeEntityMapping::AceTreeEntityMapping(QObject *parent) : AceTreeStandardEntity(Mapping, parent) {
-}
-AceTreeEntityMapping::~AceTreeEntityMapping() {
-}
+//===========================================================================
 
-// QString AceTreeStandardEntity::itemTypeValue(const AceTreeItem *item) {
-//     return getTypeValueFromItem(item);
-// }
 
-// -------------------------- AceTreeStandardSchema --------------------------
+//===========================================================================
+// AceTreeStandardSchema
 
 AceTreeStandardSchema::AceTreeStandardSchema() : d(new AceTreeStandardSchemaData()) {
 }
@@ -1257,3 +1243,344 @@ void AceTreeStandardSchema::clearGlobalSchemaCache(const QMetaObject *metaObject
         it++;
     }
 }
+
+//===========================================================================
+
+
+//===========================================================================
+// AceTreeEntityVector
+
+using VectorSignals = AceTreeEntityVectorPrivate::Signals;
+using VectorSignalIndexes = QHash<const QMetaObject *, QSharedPointer<VectorSignals>>;
+Q_GLOBAL_STATIC(VectorSignalIndexes, vectorIndexes)
+
+static VectorSignals *findVectorSignal(const QMetaObject *metaObject) {
+    auto it = vectorIndexes->find(metaObject);
+    if (it != vectorIndexes->end()) {
+        return it->data();
+    }
+
+    VectorSignals s;
+    QHash<QString, QPair<QMetaMethod *, bool (*)(QMetaMethod *)>> fields{
+        {
+         "inserted", {
+                &s.inserted,
+                [](QMetaMethod *method) {
+                    return QRegularExpression(R"(inserted\(int,QVector<\w+\*>\))")
+                        .match(method->methodSignature())
+                        .hasMatch(); //
+                },
+            }, },
+        {"aboutToMove",
+         {
+             &s.aboutToMove,
+             [](QMetaMethod *method) {
+                 return method->methodSignature() == "aboutToMove(int,int,int)"; //
+             },
+         }},
+        {"moved",
+         {
+             &s.moved,
+             [](QMetaMethod *method) {
+                 return method->methodSignature() == "moved(int,int,int)"; //
+             },
+         }},
+        {"aboutToRemove",
+         {
+             &s.aboutToRemove,
+             [](QMetaMethod *method) {
+                 return QRegularExpression(R"(aboutToRemove\(int,QVector<\w+\*>\))")
+                     .match(method->methodSignature())
+                     .hasMatch(); //
+             },
+         }},
+        {"removed",
+         {
+             &s.removed,
+             [](QMetaMethod *method) {
+                 return method->methodSignature() == "removed(int,int)"; //
+             },
+         }},
+    };
+
+    int methodCount = metaObject->methodCount();
+
+    for (int i = 0; i < methodCount; ++i) {
+        QMetaMethod method = metaObject->method(i);
+        if (method.methodType() == QMetaMethod::Signal) {
+            auto it1 = fields.find(method.name());
+            if (it1 == fields.end())
+                continue;
+            auto &ref = it1.value();
+            if (!ref.second(&method))
+                continue;
+            *ref.first = method;
+        }
+    }
+
+    it = vectorIndexes->insert(metaObject, QSharedPointer<VectorSignals>::create(s));
+    return it->data();
+}
+
+AceTreeEntityVectorPrivate::AceTreeEntityVectorPrivate() : AceTreeStandardEntityPrivate(AceTreeStandardEntity::Vector) {
+    _signals = nullptr;
+}
+
+AceTreeEntityVectorPrivate::~AceTreeEntityVectorPrivate() {
+}
+
+void AceTreeEntityVectorPrivate::init_deferred() {
+    AceTreeStandardEntityPrivate::init_deferred();
+
+    Q_Q(AceTreeEntityVector);
+    _signals = findVectorSignal(q->metaObject());
+}
+
+void AceTreeEntityVectorPrivate::rowsInserted(int index, const QVector<AceTreeItem *> &items) {
+    AceTreeStandardEntityPrivate::rowsInserted(index, items);
+    auto &mm = _signals->inserted;
+    if (!mm.isValid()) {
+        return;
+    }
+
+    Q_Q(AceTreeEntityVector);
+    mm.invoke(q,                                                                 //
+              QGenericArgument("int", &index),                                   //
+              QGenericArgument(QMetaType::typeName(mm.parameterType(1)), &items) //
+    );
+}
+
+void AceTreeEntityVectorPrivate::rowsAboutToMove(int index, int count, int dest) {
+    AceTreeItemSubscriber::rowsAboutToMove(index, count, dest);
+    auto &mm = _signals->aboutToMove;
+    if (!mm.isValid()) {
+        return;
+    }
+
+    Q_Q(AceTreeEntityVector);
+    mm.invoke(q,                               //
+              QGenericArgument("int", &index), //
+              QGenericArgument("int", &count), //
+              QGenericArgument("int", &dest)   //
+    );
+}
+
+void AceTreeEntityVectorPrivate::rowsMoved(int index, int count, int dest) {
+    AceTreeItemSubscriber::rowsMoved(index, count, dest);
+    auto &mm = _signals->moved;
+    if (!mm.isValid()) {
+        return;
+    }
+    Q_Q(AceTreeEntityVector);
+    mm.invoke(q,                               //
+              QGenericArgument("int", &index), //
+              QGenericArgument("int", &count), //
+              QGenericArgument("int", &dest)   //
+    );
+}
+
+void AceTreeEntityVectorPrivate::rowsAboutToRemove(int index, const QVector<AceTreeItem *> &items) {
+    AceTreeItemSubscriber::rowsAboutToRemove(index, items);
+    auto &mm = _signals->aboutToRemove;
+    if (!mm.isValid()) {
+        return;
+    }
+    Q_Q(AceTreeEntityVector);
+    mm.invoke(q,                                                                 //
+              QGenericArgument("int", &index),                                   //
+              QGenericArgument(QMetaType::typeName(mm.parameterType(1)), &items) //
+    );
+}
+
+void AceTreeEntityVectorPrivate::rowsRemoved(int index, const QVector<AceTreeItem *> &items) {
+    AceTreeStandardEntityPrivate::rowsRemoved(index, items);
+    auto &mm = _signals->removed;
+    if (!mm.isValid()) {
+        return;
+    }
+}
+
+AceTreeEntityVector::AceTreeEntityVector(QObject *parent)
+    : AceTreeEntityVector(*new AceTreeEntityVectorPrivate(), parent) {
+}
+
+AceTreeEntityVector::~AceTreeEntityVector() {
+}
+
+AceTreeEntityVector::AceTreeEntityVector(AceTreeEntityVectorPrivate &d, QObject *parent)
+    : AceTreeStandardEntity(d, parent) {
+    d.init();
+}
+
+//===========================================================================
+
+
+//===========================================================================
+// AceTreeEntityRecordTable
+
+using RecordTableSignals = AceTreeEntityRecordTablePrivate::Signals;
+using RecordTableSignalIndexes = QHash<const QMetaObject *, QSharedPointer<RecordTableSignals>>;
+Q_GLOBAL_STATIC(RecordTableSignalIndexes, recordTableIndexes)
+
+static RecordTableSignals *findRecordTableSignal(const QMetaObject *metaObject) {
+    auto it = recordTableIndexes->find(metaObject);
+    if (it != recordTableIndexes->end()) {
+        return it->data();
+    }
+
+
+    RecordTableSignals s;
+    QHash<QString, QPair<QMetaMethod *, bool (*)(QMetaMethod *)>> fields{
+        {"inserted",
+         {
+             &s.inserted,
+             [](QMetaMethod *method) {
+                 return QRegularExpression(R"(inserted\(int,\w+\*\))").match(method->methodSignature()).hasMatch(); //
+             },
+         }},
+        {"aboutToRemove",
+         {
+             &s.aboutToRemove,
+             [](QMetaMethod *method) -> bool {
+                 return QRegularExpression(R"(aboutToRemove\(int,\w+\*\))")
+                     .match(method->methodSignature())
+                     .hasMatch(); //
+             },
+         }},
+        {"removed",
+         {
+             &s.removed,
+             [](QMetaMethod *method) -> bool {
+                 return method->methodSignature() == "removed(int)"; //
+             },
+         }},
+    };
+
+    int methodCount = metaObject->methodCount();
+    for (int i = 0; i < methodCount; ++i) {
+        QMetaMethod method = metaObject->method(i);
+        if (method.methodType() == QMetaMethod::Signal) {
+            auto it1 = fields.find(method.name());
+            if (it1 == fields.end())
+                continue;
+            auto &ref = it1.value();
+            if (!ref.second(&method))
+                continue;
+            *ref.first = method;
+        }
+    }
+
+    it = recordTableIndexes->insert(metaObject, QSharedPointer<RecordTableSignals>::create(s));
+    return it->data();
+}
+
+AceTreeEntityRecordTablePrivate::AceTreeEntityRecordTablePrivate()
+    : AceTreeStandardEntityPrivate(AceTreeStandardEntity::RecordTable) {
+    _signals = nullptr;
+}
+
+AceTreeEntityRecordTablePrivate::~AceTreeEntityRecordTablePrivate() {
+}
+
+void AceTreeEntityRecordTablePrivate::init_deferred() {
+    AceTreeStandardEntityPrivate::init_deferred();
+
+    Q_Q(AceTreeStandardEntity);
+    _signals = findRecordTableSignal(q->metaObject());
+}
+
+void AceTreeEntityRecordTablePrivate::recordAdded(int seq, AceTreeItem *item) {
+    AceTreeStandardEntityPrivate::recordAdded(seq, item);
+
+    auto &mm = _signals->inserted;
+    if (!mm.isValid()) {
+        return;
+    }
+    Q_Q(AceTreeEntityRecordTable);
+
+    mm.invoke(q,                                                                //
+              QGenericArgument("int", &seq),                                    //
+              QGenericArgument(QMetaType::typeName(mm.parameterType(1)), &item) //
+    );
+}
+void AceTreeEntityRecordTablePrivate::recordAboutToRemove(int seq, AceTreeItem *item) {
+    AceTreeItemSubscriber::recordAboutToRemove(seq, item);
+    auto &mm = _signals->aboutToRemove;
+    if (!mm.isValid()) {
+        return;
+    }
+    Q_Q(AceTreeEntityRecordTable);
+    mm.invoke(q,                                                                //
+              QGenericArgument("int", &seq),                                    //
+              QGenericArgument(QMetaType::typeName(mm.parameterType(1)), &item) //
+    );
+}
+void AceTreeEntityRecordTablePrivate::recordRemoved(int seq, AceTreeItem *item) {
+    AceTreeStandardEntityPrivate::recordRemoved(seq, item);
+    auto &mm = _signals->removed;
+    if (!mm.isValid()) {
+        return;
+    }
+    Q_Q(AceTreeEntityRecordTable);
+    mm.invoke(q,                                                                //
+              QGenericArgument("int", &seq),                                    //
+              QGenericArgument(QMetaType::typeName(mm.parameterType(1)), &item) //
+    );
+}
+
+AceTreeEntityRecordTable::AceTreeEntityRecordTable(QObject *parent)
+    : AceTreeEntityRecordTable(*new AceTreeEntityRecordTablePrivate(), parent) {
+}
+
+AceTreeEntityRecordTable::~AceTreeEntityRecordTable() {
+}
+
+AceTreeEntityRecordTable::AceTreeEntityRecordTable(AceTreeEntityRecordTablePrivate &d, QObject *parent)
+    : AceTreeStandardEntity(d, parent) {
+    d.init();
+}
+
+//===========================================================================
+
+
+//===========================================================================
+// AceTreeEntityMapping
+
+AceTreeEntityMappingPrivate::AceTreeEntityMappingPrivate()
+    : AceTreeStandardEntityPrivate(AceTreeStandardEntity::Mapping) {
+}
+
+AceTreeEntityMappingPrivate::~AceTreeEntityMappingPrivate() {
+}
+
+AceTreeEntityMapping::AceTreeEntityMapping(QObject *parent)
+    : AceTreeEntityMapping(*new AceTreeEntityMappingPrivate(), parent) {
+}
+
+AceTreeEntityMapping::~AceTreeEntityMapping() {
+}
+
+AceTreeEntityMapping::AceTreeEntityMapping(AceTreeEntityMappingPrivate &d, QObject *parent)
+    : AceTreeStandardEntity(d, parent) {
+    d.init();
+}
+
+void AceTreeEntityMappingPrivate::dynamicDataChanged(const QString &key, const QVariant &newValue,
+                                                     const QVariant &oldValue) {
+    Q_Q(AceTreeEntityMapping);
+    auto it = dynamicPropertyNotifiers.find(key);
+    if (it == dynamicPropertyNotifiers.end())
+        return;
+    it.value()(q, newValue, oldValue);
+}
+
+void AceTreeEntityMappingPrivate::propertyChanged(const QString &key, const QVariant &newValue,
+                                                  const QVariant &oldValue) {
+    Q_Q(AceTreeEntityMapping);
+    auto it = propertyNotifiers.find(key);
+    if (it == propertyNotifiers.end())
+        return;
+    it.value()(q, newValue, oldValue);
+}
+
+//===========================================================================

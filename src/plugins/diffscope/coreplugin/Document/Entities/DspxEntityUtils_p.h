@@ -38,11 +38,6 @@ namespace Core {
         return left->property("start").value<T>() < right->property("start").value<T>();
     }
 
-    template <class T = int>
-    inline bool compareElementX(const AceTreeEntity *left, const AceTreeEntity *right) {
-        return left->property("x").value<T>() < right->property("x").value<T>();
-    }
-
 }
 
 #endif // CHORUSKIT_DSPXENTITYUTILS_P_H

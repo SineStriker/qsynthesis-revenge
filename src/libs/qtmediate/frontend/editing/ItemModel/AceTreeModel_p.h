@@ -244,9 +244,9 @@ public:
     static BaseOp *deserializeOperation(QDataStream &stream, QList<int> *ids);
 
 public:
-    void propertyChanged(AceTreeItem *item, const QString &key, const QVariant &oldValue, const QVariant &newValue);
+    void propertyChanged(AceTreeItem *item, const QString &key, const QVariant &newValue, const QVariant &oldValue);
 
-    void bytesSet(AceTreeItem *item, int start, const QByteArray &oldBytes, const QByteArray &newBytes);
+    void bytesSet(AceTreeItem *item, int start, const QByteArray &newBytes, const QByteArray &oldBytes);
     void bytesTruncated(AceTreeItem *item, int size, const QByteArray &oldBytes, int delta);
 
     void rowsInserted(AceTreeItem *parent, int index, const QVector<AceTreeItem *> &items);
@@ -259,7 +259,7 @@ public:
     void nodeAdded(AceTreeItem *parent, AceTreeItem *item);
     void nodeRemoved(AceTreeItem *parent, AceTreeItem *item);
 
-    void rootChanged(AceTreeItem *oldRoot, AceTreeItem *newRoot);
+    void rootChanged(AceTreeItem *newRoot, AceTreeItem *oldRoot);
 };
 
 class AceTreeItemSubscriberPrivate {

@@ -226,13 +226,6 @@ int main_entry(int argc, char *argv[]) {
     QPixmap splashImage;
     QStringList resourcesFiles; // Unused
 
-    // Add qslib plugin dir
-    // QApplication::addLibraryPath(host.libDir() + "/QsLib/plugins");
-
-    // Load decorators
-    // QMDecorateDir dummyDec;
-    // dummyDec.load(QString("%1/%2/%2.res.json").arg(host.shareDir(), "qtdummy")); // qtdummy
-
     // Load configuration
     LoadConfig configFile;
     QString configDir = host.appShareDir();

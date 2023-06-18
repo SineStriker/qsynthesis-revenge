@@ -20,7 +20,7 @@ namespace Core {
 #define SET_ROW2(X)    SET_ROW(SCHEMA(X##List), X)
 #define SET_RECORD2(X) SET_RECORD(SCHEMA(X##List), X)
 
-#define ADD_PROPERTY(L, KEY, V) L.setPropertySpec(KEY, V)
+#define ADD_PROPERTY(L, KEY, V) L.setAttributeSpec(KEY, V)
 #define ADD_DY_DATA(L, KEY, V)  L.setDynamicDataSpec(KEY, V)
 
     void initDspxEntitiesSchema() {
@@ -36,19 +36,9 @@ namespace Core {
         }
 
         {
-            auto &intPoint = SCHEMA(IntPoint);
-            SET_RECORD2(IntPoint); // IntPointList
-            ADD_PROPERTY(intPoint, "x", Dspx::DefaultParamAnchorNodeX);
-            ADD_PROPERTY(intPoint, "y", Dspx::DefaultParamAnchorNodeY);
-
-            auto &doublePoint = SCHEMA(DoublePoint);
+            SET_RECORD2(IntPoint);    // IntPointList
             SET_RECORD2(DoublePoint); // DoublePointList
-            ADD_PROPERTY(doublePoint, "x", Dspx::DefaultVibratoPointX);
-            ADD_PROPERTY(doublePoint, "y", Dspx::DefaultVibratoPointY);
-
-            auto &anchorPoint = SCHEMA(AnchorPoint);
             SET_RECORD2(AnchorPoint); // AnchorPointList
-            ADD_PROPERTY(anchorPoint, "interp", Dspx::DefaultParamAnchorNodeInterpolation);
         }
 
         // Content
@@ -71,24 +61,25 @@ namespace Core {
 
         // Timeline
         {
+            SET_RECORD2(TimeSignature); // TimeSignature List
+            SET_RECORD2(Tempo);         // Tempo List
+            SET_RECORD2(TimelineLabel); // TimelineLabel List
+
             auto &timeline = SCHEMA(Timeline);
             ADD_NODE(timeline, "timeSignatures", TimeSignatureList);
             ADD_NODE(timeline, "tempos", TempoList);
             ADD_NODE(timeline, "labels", TimelineLabelList);
 
             auto &timeSignature = SCHEMA(TimeSignature);
-            SET_RECORD2(TimeSignature); // TimeSignature List
             ADD_PROPERTY(timeSignature, "pos", Dspx::DefaultTimeSignaturePos);
-            ADD_PROPERTY(timeSignature, "numerator", Dspx::DefaultTimeSignatureNumerator);
-            ADD_PROPERTY(timeSignature, "denominator", Dspx::DefaultTimeSignatureDenominator);
+            ADD_PROPERTY(timeSignature, "num", Dspx::DefaultTimeSignatureNumerator);
+            ADD_PROPERTY(timeSignature, "den", Dspx::DefaultTimeSignatureDenominator);
 
             auto &tempo = SCHEMA(Tempo);
-            SET_RECORD2(Tempo); // Tempo List
             ADD_PROPERTY(tempo, "pos", Dspx::DefaultTempoPos);
             ADD_PROPERTY(tempo, "value", Dspx::DefaultTempoValue);
 
             auto &label = SCHEMA(TimelineLabel);
-            SET_RECORD2(TimelineLabel); // TimelineLabel List
             ADD_PROPERTY(label, "pos", Dspx::DefaultLabelPos);
             ADD_PROPERTY(label, "text", Dspx::DefaultLabelText);
         }
@@ -126,8 +117,9 @@ namespace Core {
 
                 // Note
                 {
-                    auto &note = SCHEMA(Note);
                     SET_RECORD2(Note); // Note List
+
+                    auto &note = SCHEMA(Note);
                     ADD_PROPERTY(note, "pos", Dspx::DefaultNotePos);
                     ADD_PROPERTY(note, "length", Dspx::DefaultNoteLength);
                     ADD_PROPERTY(note, "keyNum", Dspx::DefaultNoteKeyNum);
@@ -207,9 +199,9 @@ namespace Core {
 
     //===========================================================================
     // Content
-    class DspxContentEntityPrivate : public AceTreeStandardEntityPrivate {
+    class DspxContentEntityPrivate : public AceTreeEntityMappingPrivate {
     public:
-        DspxContentEntityPrivate() : AceTreeStandardEntityPrivate(AceTreeStandardEntity::Mapping) {
+        DspxContentEntityPrivate() {
             name = "content";
             metadata = nullptr;
             master = nullptr;
@@ -228,7 +220,7 @@ namespace Core {
         DspxTrackListEntity *tracks;
     };
     DspxContentEntity::DspxContentEntity(QObject *parent)
-        : AceTreeStandardEntity(*new DspxContentEntityPrivate(), parent) {
+        : AceTreeEntityMapping(*new DspxContentEntityPrivate(), parent) {
     }
     DspxContentEntity::~DspxContentEntity() {
     }
@@ -253,29 +245,40 @@ namespace Core {
     //===========================================================================
     // FileMeta
     DspxFileMetaEntity::DspxFileMetaEntity(QObject *parent) : AceTreeEntityMapping(parent) {
-        AceTreeStandardEntityPrivate::setName(this, "metadata");
+        auto d = AceTreeEntityMappingPrivate::get(this);
+        d->name = "metadata";
+
+        // Notifiers
+        d->propertyNotifiers.insert("author", [](ACE_A) {
+            ACE_Q(DspxFileMetaEntity);
+            emit q->authorChanged(newValue.toString());
+        });
+        d->propertyNotifiers.insert("name", [](ACE_A) {
+            ACE_Q(DspxFileMetaEntity);
+            emit q->projectNameChanged(newValue.toString());
+        });
     }
     DspxFileMetaEntity::~DspxFileMetaEntity() {
     }
     QString DspxFileMetaEntity::author() const {
-        return property("author").toString();
+        return attribute("author").toString();
     }
     void DspxFileMetaEntity::setAuthor(const QString &author) {
-        setProperty("author", author);
+        setAttribute("author", author);
     }
     QString DspxFileMetaEntity::projectName() const {
-        return property("name").toString();
+        return attribute("name").toString();
     }
     void DspxFileMetaEntity::setProjectName(const QString &projectName) {
-        setProperty("name", projectName);
+        setAttribute("name", projectName);
     }
     //===========================================================================
 
     //===========================================================================
     // Master
-    class DspxMasterEntityPrivate : public AceTreeStandardEntityPrivate {
+    class DspxMasterEntityPrivate : public AceTreeEntityMappingPrivate {
     public:
-        DspxMasterEntityPrivate() : AceTreeStandardEntityPrivate(AceTreeStandardEntity::Mapping) {
+        DspxMasterEntityPrivate() {
             name = "master";
             control = nullptr;
             childPostAssignRefs.insert("control", &control);
@@ -284,8 +287,7 @@ namespace Core {
 
         DspxBusControlEntity *control;
     };
-    DspxMasterEntity::DspxMasterEntity(QObject *parent)
-        : AceTreeStandardEntity(*new DspxMasterEntityPrivate(), parent) {
+    DspxMasterEntity::DspxMasterEntity(QObject *parent) : AceTreeEntityMapping(*new DspxMasterEntityPrivate(), parent) {
     }
     DspxMasterEntity::~DspxMasterEntity() {
     }

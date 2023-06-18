@@ -53,8 +53,6 @@ namespace Core::Dspx {
     const double DefaultVibratoPhase = 0;
     const double DefaultVibratoAmplitude = 1;
     const double DefaultVibratoOffset = 0;
-    const double DefaultVibratoPointX = 0;
-    const double DefaultVibratoPointY = 0;
 
     // Phoneme
     const char DefaultPhonemeType[] = "ahead";
@@ -63,8 +61,6 @@ namespace Core::Dspx {
 
     // ParamAnchor
     const char DefaultParamAnchorNodeInterpolation[] = "linear";
-    const int DefaultParamAnchorNodeX = 0;
-    const int DefaultParamAnchorNodeY = 0;
 
     // ParamFree
     const int DefaultParamCurveStart = 0;

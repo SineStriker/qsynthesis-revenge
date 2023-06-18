@@ -21,7 +21,7 @@ namespace Core {
     // Timeline
     class DspxTimelineEntityPrivate;
 
-    class CORE_EXPORT DspxTimelineEntity : public AceTreeStandardEntity {
+    class CORE_EXPORT DspxTimelineEntity : public AceTreeEntityMapping {
         Q_OBJECT
         Q_DECLARE_PRIVATE(DspxTimelineEntity)
     public:
@@ -39,6 +39,9 @@ namespace Core {
     // TimeSignature
     class CORE_EXPORT DspxTimeSignatureEntity : public AceTreeEntityMapping {
         Q_OBJECT
+        Q_PROPERTY(int position READ position WRITE setPosition NOTIFY positionChanged)
+        Q_PROPERTY(int numerator READ numerator WRITE setNumerator NOTIFY numeratorChanged)
+        Q_PROPERTY(int denominator READ denominator WRITE setPosition NOTIFY denominatorChanged)
     public:
         explicit DspxTimeSignatureEntity(QObject *parent = nullptr);
         ~DspxTimeSignatureEntity();
@@ -52,6 +55,11 @@ namespace Core {
 
         int denominator() const;
         void setDenominator(int denominator);
+
+    Q_SIGNALS:
+        void positionChanged(int position);
+        void numeratorChanged(int numerator);
+        void denominatorChanged(int denominator);
     };
     //===========================================================================
 
@@ -66,6 +74,9 @@ namespace Core {
 
     public:
         void sortRecords(QVector<AceTreeEntity *> &records) const override;
+
+    Q_SIGNALS:
+        ACE_TREE_DECLARE_RECORD_TABLE_SIGNALS(DspxTimeSignatureEntity)
     };
     //===========================================================================
 
@@ -73,6 +84,8 @@ namespace Core {
     // Tempo
     class CORE_EXPORT DspxTempoEntity : public AceTreeEntityMapping {
         Q_OBJECT
+        Q_PROPERTY(int position READ position WRITE setPosition NOTIFY positionChanged)
+        Q_PROPERTY(double value READ value WRITE setValue NOTIFY valueChanged)
     public:
         explicit DspxTempoEntity(QObject *parent = nullptr);
         ~DspxTempoEntity();
@@ -83,6 +96,10 @@ namespace Core {
 
         double value() const;
         void setValue(double value);
+
+    Q_SIGNALS:
+        void positionChanged(int position);
+        void valueChanged(double value);
     };
     //===========================================================================
 
@@ -97,6 +114,9 @@ namespace Core {
 
     public:
         void sortRecords(QVector<AceTreeEntity *> &records) const override;
+
+    Q_SIGNALS:
+        ACE_TREE_DECLARE_RECORD_TABLE_SIGNALS(DspxTempoEntity)
     };
     //===========================================================================
 
@@ -104,6 +124,8 @@ namespace Core {
     // TimelineLabel
     class CORE_EXPORT DspxTimelineLabelEntity : public AceTreeEntityMapping {
         Q_OBJECT
+        Q_PROPERTY(int position READ position WRITE setPosition NOTIFY positionChanged)
+        Q_PROPERTY(QString text READ text WRITE setText NOTIFY textChanged)
     public:
         explicit DspxTimelineLabelEntity(QObject *parent = nullptr);
         ~DspxTimelineLabelEntity();
@@ -114,6 +136,10 @@ namespace Core {
 
         QString text() const;
         void setText(const QString &text);
+
+    Q_SIGNALS:
+        void positionChanged(int position);
+        void textChanged(const QString &text);
     };
     //===========================================================================
 
@@ -128,6 +154,9 @@ namespace Core {
 
     public:
         void sortRecords(QVector<AceTreeEntity *> &records) const override;
+
+    Q_SIGNALS:
+        ACE_TREE_DECLARE_RECORD_TABLE_SIGNALS(DspxTimelineLabelEntity)
     };
     //===========================================================================
 

@@ -1,7 +1,3 @@
-//
-// Created by Functioner on 2023/6/17.
-//
-
 #ifndef CHORUSKIT_DSPXPARAMENTITY_H
 #define CHORUSKIT_DSPXPARAMENTITY_H
 
@@ -21,16 +17,17 @@ namespace Core {
     // ParamCurve
     class DspxParamCurveEntityPrivate;
 
-    class CORE_EXPORT DspxParamCurveEntity : public AceTreeStandardEntity {
+    class CORE_EXPORT DspxParamCurveEntity : public AceTreeEntityMapping {
         Q_OBJECT
         Q_DECLARE_PRIVATE(DspxParamCurveEntity)
+        Q_PROPERTY(int start READ start WRITE setStart NOTIFY startChanged)
     public:
         enum Type {
             Anchor,
             Free,
         };
 
-        explicit DspxParamCurveEntity(Type type, AceTreeStandardEntity::Type schemaType, QObject *parent = nullptr);
+        explicit DspxParamCurveEntity(Type type, QObject *parent = nullptr);
         ~DspxParamCurveEntity();
 
         Type curveType() const;
@@ -38,6 +35,9 @@ namespace Core {
     public:
         int start() const;
         void setStart(int start);
+
+    Q_SIGNALS:
+        void startChanged(int start);
 
     protected:
         DspxParamCurveEntity(DspxParamCurveEntityPrivate &d, QObject *parent = nullptr);
@@ -73,7 +73,9 @@ namespace Core {
         explicit DspxParamFreeDataEntity(QObject *parent = nullptr);
         ~DspxParamFreeDataEntity();
 
-        QString name() const override;
+    public:
+        bool read(const QJsonValue &value) override;
+        QJsonValue write() const override;
 
     public:
         int size() const;
@@ -82,9 +84,9 @@ namespace Core {
         void replace(int index, const QList<qint16> &values);
         void truncate(int index);
 
-    public:
-        bool read(const QJsonValue &value) override;
-        QJsonValue write() const override;
+    protected:
+        void doInitialize() override;
+        void doSetup() override;
     };
     //===========================================================================
 
@@ -115,6 +117,9 @@ namespace Core {
 
     public:
         void sortRecords(QVector<AceTreeEntity *> &records) const override;
+
+    Q_SIGNALS:
+        ACE_TREE_DECLARE_RECORD_TABLE_SIGNALS(DspxParamCurveEntity)
     };
     //===========================================================================
 
@@ -122,9 +127,10 @@ namespace Core {
     // ParamInfo
     class DspxParamInfoEntityPrivate;
 
-    class CORE_EXPORT DspxParamInfoEntity : public AceTreeStandardEntity {
+    class CORE_EXPORT DspxParamInfoEntity : public AceTreeEntityMapping {
         Q_OBJECT
         Q_DECLARE_PRIVATE(DspxParamInfoEntity)
+        Q_PROPERTY(QJsonArray original READ original WRITE setOriginal NOTIFY originalChanged)
     public:
         explicit DspxParamInfoEntity(QObject *parent = nullptr);
         ~DspxParamInfoEntity();
@@ -134,6 +140,9 @@ namespace Core {
         void setOriginal(const QJsonArray &original);
 
         DspxParamCurveListEntity *edited() const;
+
+    Q_SIGNALS:
+        void originalChanged(const QJsonArray &org);
 
     protected:
         DspxParamInfoEntity(DspxParamInfoEntityPrivate &d, QObject *parent = nullptr);
@@ -160,7 +169,7 @@ namespace Core {
     // ParamSet
     class DspxParamSetEntityPrivate;
 
-    class CORE_EXPORT DspxParamSetEntity : public AceTreeStandardEntity {
+    class CORE_EXPORT DspxParamSetEntity : public AceTreeEntityMapping {
         Q_OBJECT
         Q_DECLARE_PRIVATE(DspxParamSetEntity)
     public:

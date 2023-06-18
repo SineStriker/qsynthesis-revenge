@@ -3,13 +3,23 @@
 
 #include <QJsonObject>
 
-class AceTreeObjectEntityPrivate : public AceTreeEntityPrivate, public AceTreeItemSubscriber {
+class AceTreeObjectEntityPrivate : public AceTreeEntityPrivate {
     Q_DECLARE_PUBLIC(AceTreeObjectEntity)
 public:
     explicit AceTreeObjectEntityPrivate(AceTreeObjectEntity::Type type) : type(type) {
     }
 
     AceTreeObjectEntity::Type type;
+
+    void dynamicDataChanged(const QString &key, const QVariant &newValue, const QVariant &oldValue) override {
+        Q_Q(AceTreeObjectEntity);
+        emit q->changed(key, newValue);
+    }
+
+    void propertyChanged(const QString &key, const QVariant &newValue, const QVariant &oldValue) override {
+        Q_Q(AceTreeObjectEntity);
+        emit q->changed(key, newValue);
+    }
 };
 
 AceTreeObjectEntity::AceTreeObjectEntity(AceTreeObjectEntity::Type type, QObject *parent)
@@ -153,4 +163,10 @@ QVariantHash AceTreeObjectEntity::valueMap() const {
             break;
     }
     return res;
+}
+
+void AceTreeObjectEntity::doInitialize() {
+}
+
+void AceTreeObjectEntity::doSetup() {
 }

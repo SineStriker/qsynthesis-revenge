@@ -8,19 +8,24 @@ namespace Core {
 
     //===========================================================================
     // ParamCurve
-    class DspxParamCurveEntityPrivate : public AceTreeStandardEntityPrivate {
+    class DspxParamCurveEntityPrivate : public AceTreeEntityMappingPrivate {
+        Q_DECLARE_PUBLIC(DspxParamCurveEntity)
     public:
-        DspxParamCurveEntityPrivate(DspxParamCurveEntity::Type type, AceTreeStandardEntity::Type schemaType)
-            : AceTreeStandardEntityPrivate(schemaType), type(type) {
+        DspxParamCurveEntityPrivate(DspxParamCurveEntity::Type type) : type(type) {
             name = "curve";
+
+            // Notifiers
+            propertyNotifiers.insert("start", [](ACE_A) {
+                ACE_Q(DspxParamCurveEntity);
+                emit q->startChanged(newValue.toInt());
+            });
         }
         ~DspxParamCurveEntityPrivate() = default;
 
         DspxParamCurveEntity::Type type;
     };
-    DspxParamCurveEntity::DspxParamCurveEntity(DspxParamCurveEntity::Type type, AceTreeStandardEntity::Type schemaType,
-                                               QObject *parent)
-        : DspxParamCurveEntity(*new DspxParamCurveEntityPrivate(type, schemaType), parent) {
+    DspxParamCurveEntity::DspxParamCurveEntity(DspxParamCurveEntity::Type type, QObject *parent)
+        : DspxParamCurveEntity(*new DspxParamCurveEntityPrivate(type), parent) {
     }
     DspxParamCurveEntity::~DspxParamCurveEntity() {
     }
@@ -29,21 +34,20 @@ namespace Core {
         return d->type;
     }
     int DspxParamCurveEntity::start() const {
-        return property("start").toInt();
+        return attribute("start").toInt();
     }
     void DspxParamCurveEntity::setStart(int start) {
-        setProperty("start", start);
+        setAttribute("start", start);
     }
     DspxParamCurveEntity::DspxParamCurveEntity(DspxParamCurveEntityPrivate &d, QObject *parent)
-        : AceTreeStandardEntity(d, parent) {
+        : AceTreeEntityMapping(d, parent) {
     }
 
     //===========================================================================
     // ParamFree
     class DspxParamFreeEntityPrivate : public DspxParamCurveEntityPrivate {
     public:
-        DspxParamFreeEntityPrivate()
-            : DspxParamCurveEntityPrivate(DspxParamCurveEntity::Anchor, AceTreeStandardEntity::Mapping) {
+        DspxParamFreeEntityPrivate() : DspxParamCurveEntityPrivate(DspxParamCurveEntity::Anchor) {
             name = "free";
             values = nullptr;
             childPostAssignRefs.insert("values", &values);
@@ -58,7 +62,7 @@ namespace Core {
     DspxParamFreeEntity::~DspxParamFreeEntity() {
     }
     int DspxParamFreeEntity::step() const {
-        return property("step").toInt();
+        return attribute("step").toInt();
     }
     DspxParamFreeDataEntity *DspxParamFreeEntity::values() const {
         Q_D(const DspxParamFreeEntity);
@@ -69,25 +73,56 @@ namespace Core {
     //===========================================================================
     // ParamFreeData
     class DspxParamFreeDataEntityPrivate : public AceTreeEntityPrivate {
-        Q_DECLARE_PUBLIC(DspxParamFreeEntity)
+        Q_DECLARE_PUBLIC(DspxParamFreeDataEntity)
     public:
+        DspxParamFreeDataEntityPrivate() {
+        }
         ~DspxParamFreeDataEntityPrivate() = default;
+
+        void bytesSet(int start, const QByteArray &newBytes, const QByteArray &oldBytes) override {
+        }
+        void bytesTruncated(int size, const QByteArray &oldBytes, int delta) override {
+        }
     };
     DspxParamFreeDataEntity::DspxParamFreeDataEntity(QObject *parent)
         : AceTreeEntity(*new DspxParamFreeDataEntityPrivate(), parent) {
+        AceTreeEntityPrivate::setName(this, "values");
     }
     DspxParamFreeDataEntity::~DspxParamFreeDataEntity() {
     }
-    QString DspxParamFreeDataEntity::name() const {
-        return "values";
+    bool DspxParamFreeDataEntity::read(const QJsonValue &value) {
+        auto treeItem = AceTreeEntityPrivate::getItem(this);
+        if (!value.isArray())
+            return false;
+
+        // Read as int16 data
+        QByteArray bytes;
+        QDataStream stream(&bytes, QIODevice::WriteOnly);
+        for (const auto &child : value.toArray()) {
+            stream << qint16(child.isDouble() ? child.toDouble() : 0);
+        }
+        treeItem->setBytes(0, bytes);
+        return true;
+    }
+    QJsonValue DspxParamFreeDataEntity::write() const {
+        QDataStream stream(treeItem()->bytes());
+        QJsonArray arr;
+        while (!stream.atEnd()) {
+            qint16 num;
+            stream >> num;
+            if (stream.status() != QDataStream::Ok) {
+                break;
+            }
+            arr.append(double(num));
+        }
+        return arr;
     }
     int DspxParamFreeDataEntity::size() const {
-        Q_D(const DspxParamFreeDataEntity);
-        return d->m_treeItem->bytesSize() / int(sizeof(qint16));
+        auto treeItem = AceTreeEntityPrivate::getItem(this);
+        return treeItem->bytesSize() / int(sizeof(qint16));
     }
     QList<qint16> DspxParamFreeDataEntity::mid(int index, int size) const {
-        Q_D(const DspxParamFreeDataEntity);
-        QDataStream stream(d->m_treeItem->midBytes(index * int(sizeof(qint16)), size * int(sizeof(qint16))));
+        QDataStream stream(treeItem()->midBytes(index * int(sizeof(qint16)), size * int(sizeof(qint16))));
         QList<qint16> res;
         res.reserve(size);
         while (!stream.atEnd()) {
@@ -101,52 +136,30 @@ namespace Core {
         return res;
     }
     void DspxParamFreeDataEntity::append(const QList<qint16> &values) {
-        Q_D(DspxParamFreeDataEntity);
+        auto treeItem = AceTreeEntityPrivate::getItem(this);
         QByteArray bytes;
         QDataStream stream(&bytes, QIODevice::WriteOnly);
         for (const auto &value : values)
             stream << value;
-        d->m_treeItem->setBytes(d->m_treeItem->bytesSize(), bytes);
+        treeItem->setBytes(treeItem->bytesSize(), bytes);
     }
     void DspxParamFreeDataEntity::replace(int index, const QList<qint16> &values) {
-        Q_D(DspxParamFreeDataEntity);
+        auto treeItem = AceTreeEntityPrivate::getItem(this);
         QByteArray bytes;
         QDataStream stream(&bytes, QIODevice::WriteOnly);
         for (const auto &value : values)
             stream << value;
-        d->m_treeItem->setBytes(index * int(sizeof(qint16)), bytes);
+        treeItem->setBytes(index * int(sizeof(qint16)), bytes);
     }
     void DspxParamFreeDataEntity::truncate(int index) {
-        Q_D(DspxParamFreeDataEntity);
-        d->m_treeItem->truncateBytes(index * int(sizeof(qint16)));
+        auto treeItem = AceTreeEntityPrivate::getItem(this);
+        treeItem->truncateBytes(index * int(sizeof(qint16)));
     }
-    bool DspxParamFreeDataEntity::read(const QJsonValue &value) {
-        Q_D(DspxParamFreeDataEntity);
-        if (!value.isArray())
-            return false;
-
-        // Read as int16 data
-        QByteArray bytes;
-        QDataStream stream(&bytes, QIODevice::WriteOnly);
-        for (const auto &child : value.toArray()) {
-            stream << qint16(child.isDouble() ? child.toDouble() : 0);
-        }
-        d->m_treeItem->setBytes(0, bytes);
-        return true;
+    void DspxParamFreeDataEntity::doInitialize() {
+        // Bytes
     }
-    QJsonValue DspxParamFreeDataEntity::write() const {
-        Q_D(const DspxParamFreeDataEntity);
-        QDataStream stream(d->m_treeItem->bytes());
-        QJsonArray arr;
-        while (!stream.atEnd()) {
-            qint16 num;
-            stream >> num;
-            if (stream.status() != QDataStream::Ok) {
-                break;
-            }
-            arr.append(double(num));
-        }
-        return arr;
+    void DspxParamFreeDataEntity::doSetup() {
+        // Bytes
     }
     //===========================================================================
 
@@ -154,8 +167,7 @@ namespace Core {
     // ParamAnchor
     class DspxParamAnchorEntityPrivate : public DspxParamCurveEntityPrivate {
     public:
-        DspxParamAnchorEntityPrivate()
-            : DspxParamCurveEntityPrivate(DspxParamCurveEntity::Anchor, AceTreeStandardEntity::Mapping) {
+        DspxParamAnchorEntityPrivate() : DspxParamCurveEntityPrivate(DspxParamCurveEntity::Anchor) {
             name = "anchor";
             nodes = nullptr;
             childPostAssignRefs.insert("nodes", &nodes);
@@ -189,12 +201,19 @@ namespace Core {
 
     //===========================================================================
     // ParamInfo
-    class DspxParamInfoEntityPrivate : public AceTreeStandardEntityPrivate {
+    class DspxParamInfoEntityPrivate : public AceTreeEntityMappingPrivate {
+        Q_DECLARE_PUBLIC(DspxParamInfoEntity)
     public:
-        DspxParamInfoEntityPrivate() : AceTreeStandardEntityPrivate(AceTreeStandardEntity::Mapping) {
+        DspxParamInfoEntityPrivate() {
             name = "param";
             edited = nullptr;
             childPostAssignRefs.insert("edited", &edited);
+
+            // Notifiers
+            dynamicPropertyNotifiers.insert("original", [](ACE_A) {
+                ACE_Q(DspxParamInfoEntity);
+                emit q->originalChanged(newValue.toJsonArray());
+            });
         }
         ~DspxParamInfoEntityPrivate() = default;
 
@@ -206,17 +225,17 @@ namespace Core {
     DspxParamInfoEntity::~DspxParamInfoEntity() {
     }
     QJsonArray DspxParamInfoEntity::original() const {
-        return property("original").toJsonArray();
+        return attribute("original").toJsonArray();
     }
     void DspxParamInfoEntity::setOriginal(const QJsonArray &original) {
-        setProperty("original", original);
+        setAttribute("original", original);
     }
     DspxParamCurveListEntity *DspxParamInfoEntity::edited() const {
         Q_D(const DspxParamInfoEntity);
         return d->edited;
     }
     DspxParamInfoEntity::DspxParamInfoEntity(DspxParamInfoEntityPrivate &d, QObject *parent)
-        : AceTreeStandardEntity(d, parent) {
+        : AceTreeEntityMapping(d, parent) {
     }
     //===========================================================================
 
@@ -245,9 +264,9 @@ namespace Core {
 
     //===========================================================================
     // ParamSet
-    class DspxParamSetEntityPrivate : public AceTreeStandardEntityPrivate {
+    class DspxParamSetEntityPrivate : public AceTreeEntityMappingPrivate {
     public:
-        DspxParamSetEntityPrivate() : AceTreeStandardEntityPrivate(AceTreeStandardEntity::Mapping) {
+        DspxParamSetEntityPrivate() {
             name = "params";
             pitch = nullptr;
             childPostAssignRefs.insert("pitch", &pitch);
@@ -266,7 +285,7 @@ namespace Core {
         return d->pitch;
     }
     DspxParamSetEntity::DspxParamSetEntity(DspxParamSetEntityPrivate &d, QObject *parent)
-        : AceTreeStandardEntity(d, parent) {
+        : AceTreeEntityMapping(d, parent) {
     }
     //===========================================================================
 

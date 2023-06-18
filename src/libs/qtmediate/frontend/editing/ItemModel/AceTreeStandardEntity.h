@@ -56,6 +56,10 @@ protected:
     bool setProperty(const QString &key, const QVariant &value);
     QVariantHash properties() const;
 
+    // Prevents confusion with QObject::setProperty/QObject::property
+    inline QVariant attribute(const QString &key) const;
+    inline bool setAttribute(const QString &key, const QVariant &value);
+
     bool insertRows(int index, const QVector<QPair<QString, AceTreeEntity *>> &entities);
     bool moveRows(int index, int count, int dest);
     bool removeRows(int index, int count);
@@ -90,26 +94,13 @@ private:
     friend class AceTreeEntityRecordTableHelper;
 };
 
-class QMEDITING_EXPORT AceTreeEntityVector : public AceTreeStandardEntity {
-    Q_OBJECT
-public:
-    explicit AceTreeEntityVector(QObject *parent = nullptr);
-    ~AceTreeEntityVector();
-};
+inline QVariant AceTreeStandardEntity::attribute(const QString &key) const {
+    return property(key);
+}
 
-class QMEDITING_EXPORT AceTreeEntityRecordTable : public AceTreeStandardEntity {
-    Q_OBJECT
-public:
-    explicit AceTreeEntityRecordTable(QObject *parent = nullptr);
-    ~AceTreeEntityRecordTable();
-};
-
-class QMEDITING_EXPORT AceTreeEntityMapping : public AceTreeStandardEntity {
-    Q_OBJECT
-public:
-    explicit AceTreeEntityMapping(QObject *parent = nullptr);
-    ~AceTreeEntityMapping();
-};
+inline bool AceTreeStandardEntity::setAttribute(const QString &key, const QVariant &value) {
+    return setProperty(key, value);
+}
 
 class AceTreeStandardSchemaData;
 
@@ -163,6 +154,11 @@ public:
     QStringList propertySpecKeys() const;
     QHash<QString, QJsonValue> propertySpecHash() const;
 
+    inline QJsonValue attributeSpec(const QString &key) const;
+    inline void setAttributeSpec(const QString &key, const QJsonValue &defaultValue);
+    inline QStringList attributeSpecKeys() const;
+    inline QHash<QString, QJsonValue> attributeSpecHash() const;
+
     // Row
     QString rowTypeKey() const;
     void setRowTypeKey(const QString &key);
@@ -212,6 +208,61 @@ private:
     friend class AceTreeStandardEntityPrivate;
 };
 
+inline QJsonValue AceTreeStandardSchema::attributeSpec(const QString &key) const {
+    return propertySpec(key);
+}
+
+inline void AceTreeStandardSchema::setAttributeSpec(const QString &key, const QJsonValue &defaultValue) {
+    setPropertySpec(key, defaultValue);
+}
+
+inline QStringList AceTreeStandardSchema::attributeSpecKeys() const {
+    return propertySpecKeys();
+}
+
+inline QHash<QString, QJsonValue> AceTreeStandardSchema::attributeSpecHash() const {
+    return propertySpecHash();
+}
+
+class AceTreeEntityVectorPrivate;
+
+class QMEDITING_EXPORT AceTreeEntityVector : public AceTreeStandardEntity {
+    Q_OBJECT
+    Q_DECLARE_PRIVATE(AceTreeEntityVector)
+public:
+    explicit AceTreeEntityVector(QObject *parent = nullptr);
+    ~AceTreeEntityVector();
+
+protected:
+    AceTreeEntityVector(AceTreeEntityVectorPrivate &d, QObject *parent = nullptr);
+};
+
+class AceTreeEntityRecordTablePrivate;
+
+class QMEDITING_EXPORT AceTreeEntityRecordTable : public AceTreeStandardEntity {
+    Q_OBJECT
+    Q_DECLARE_PRIVATE(AceTreeEntityRecordTable)
+public:
+    explicit AceTreeEntityRecordTable(QObject *parent = nullptr);
+    ~AceTreeEntityRecordTable();
+
+protected:
+    AceTreeEntityRecordTable(AceTreeEntityRecordTablePrivate &d, QObject *parent = nullptr);
+};
+
+class AceTreeEntityMappingPrivate;
+
+class QMEDITING_EXPORT AceTreeEntityMapping : public AceTreeStandardEntity {
+    Q_OBJECT
+    Q_DECLARE_PRIVATE(AceTreeEntityMapping)
+public:
+    explicit AceTreeEntityMapping(QObject *parent = nullptr);
+    ~AceTreeEntityMapping();
+
+protected:
+    AceTreeEntityMapping(AceTreeEntityMappingPrivate &d, QObject *parent = nullptr);
+};
+
 template <class T>
 class AceTreeEntityVectorHelper {
     static_assert(std::is_base_of<AceTreeEntity, T>::value, "T should inherit from AceTreeEntity");
@@ -237,6 +288,13 @@ private:
     inline const AceTreeStandardEntity *to_entity() const;
 };
 
+#define ACE_TREE_DECLARE_VECTOR_SIGNALS(T)                                                                             \
+    void inserted(int index, const QVector<T *> &items);                                                               \
+    void aboutToMove(int index, int count, int dest);                                                                  \
+    void moved(int index, int count, int dest);                                                                        \
+    void aboutToRemove(int index, const QVector<T *> &items);                                                          \
+    void removed(int index, int count);
+
 template <class T>
 class AceTreeEntityRecordTableHelper {
     static_assert(std::is_base_of<AceTreeEntity, T>::value, "T should inherit from AceTreeEntity");
@@ -256,6 +314,11 @@ private:
     inline AceTreeStandardEntity *to_entity();
     inline const AceTreeStandardEntity *to_entity() const;
 };
+
+#define ACE_TREE_DECLARE_RECORD_TABLE_SIGNALS(T)                                                                       \
+    void inserted(int seq, T *item);                                                                                   \
+    void aboutToRemove(int seq, T *item);                                                                              \
+    void removed(int seq);
 
 template <class T>
 bool AceTreeEntityVectorHelper<T>::prepend(T *item) {

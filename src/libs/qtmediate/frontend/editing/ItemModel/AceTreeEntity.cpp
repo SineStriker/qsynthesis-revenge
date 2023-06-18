@@ -17,6 +17,12 @@ AceTreeEntityPrivate::~AceTreeEntityPrivate() {
 void AceTreeEntityPrivate::init() {
 }
 
+void AceTreeEntityPrivate::init_deferred() {
+    Q_Q(AceTreeEntity);
+    globalItemIndexes->insert(m_treeItem, q);
+    m_treeItem->addSubscriber(this);
+}
+
 AceTreeEntity::AceTreeEntity(QObject *parent) : AceTreeEntity(*new AceTreeEntityPrivate(), parent) {
 }
 
@@ -34,27 +40,34 @@ AceTreeEntity::~AceTreeEntity() {
     }
 }
 
+QString AceTreeEntity::name() const {
+    Q_D(const AceTreeEntity);
+    return d->name;
+}
+
 void AceTreeEntity::initialize() {
     Q_D(AceTreeEntity);
-    if (d->m_treeItem) {
+    auto &treeItem = d->m_treeItem;
+    if (treeItem) {
         qWarning() << "AceTreeEntity::setup(): entity has been initialized" << this;
         return;
     }
 
-    d->m_treeItem = new AceTreeItem(name());
-    globalItemIndexes->insert(d->m_treeItem, this);
+    treeItem = new AceTreeItem(name());
+    d->init_deferred();
     doInitialize();
 }
 
 void AceTreeEntity::setup(AceTreeItem *item) {
     Q_D(AceTreeEntity);
-    if (d->m_treeItem) {
+    auto &treeItem = d->m_treeItem;
+    if (treeItem) {
         qWarning() << "AceTreeEntity::setup(): entity has been setup" << this;
         return;
     }
 
-    d->m_treeItem = item;
-    globalItemIndexes->insert(d->m_treeItem, this);
+    treeItem = item;
+    d->init_deferred();
     doSetup();
 }
 
@@ -111,14 +124,6 @@ bool AceTreeEntity::removeChild(AceTreeEntity *child) {
 
 AceTreeEntity *AceTreeEntity::itemToEntity(AceTreeItem *item) {
     return globalItemIndexes->value(item, nullptr);
-}
-
-void AceTreeEntity::doInitialize() {
-    // Do nothing
-}
-
-void AceTreeEntity::doSetup() {
-    // Do nothing
 }
 
 void AceTreeEntity::childAdded(AceTreeEntity *child) {

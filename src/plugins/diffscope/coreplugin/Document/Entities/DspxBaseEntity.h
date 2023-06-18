@@ -16,12 +16,13 @@ namespace Core {
     class DspxDoublePointListEntity;
     class DspxAnchorPointEntity;
     class DspxAnchorPointListEntity;
-    class DspxWorkspaceEntity;
 
     //===========================================================================
     // BusControl
     class CORE_EXPORT DspxBusControlEntity : public AceTreeEntityMapping {
         Q_OBJECT
+        Q_PROPERTY(double gain READ gain WRITE setGain NOTIFY gainChanged)
+        Q_PROPERTY(bool mute READ mute WRITE setMute NOTIFY muteChanged)
     public:
         explicit DspxBusControlEntity(QObject *parent = nullptr);
         ~DspxBusControlEntity();
@@ -32,6 +33,10 @@ namespace Core {
 
         bool mute() const;
         void setMute(bool mute);
+
+    Q_SIGNALS:
+        void gainChanged(double gain);
+        void muteChanged(bool mute);
     };
     //===========================================================================
 
@@ -39,6 +44,8 @@ namespace Core {
     // TrackControl
     class CORE_EXPORT DspxTrackControlEntity : public DspxBusControlEntity {
         Q_OBJECT
+        Q_PROPERTY(double pan READ pan WRITE setPan NOTIFY panChanged)
+        Q_PROPERTY(bool solo READ solo WRITE setSolo NOTIFY soloChanged)
     public:
         explicit DspxTrackControlEntity(QObject *parent = nullptr);
         ~DspxTrackControlEntity();
@@ -49,23 +56,46 @@ namespace Core {
 
         bool solo() const;
         void setSolo(bool solo);
+
+    Q_SIGNALS:
+        void panChanged(double pan);
+        void soloChanged(bool solo);
     };
     //===========================================================================
 
     //===========================================================================
     // IntPoint
-    class CORE_EXPORT DspxIntPointEntity : public AceTreeEntityMapping {
+    class DspxIntPointEntityPrivate;
+
+    class CORE_EXPORT DspxIntPointEntity : public AceTreeEntity {
         Q_OBJECT
+        Q_DECLARE_PRIVATE(DspxIntPointEntity)
+        Q_PROPERTY(QPoint pos READ pos WRITE setPos NOTIFY positionChanged)
+        Q_PROPERTY(int x READ x)
+        Q_PROPERTY(int y READ y)
     public:
         explicit DspxIntPointEntity(QObject *parent = nullptr);
         ~DspxIntPointEntity();
 
     public:
-        int x() const;
-        void setX(int x);
+        bool read(const QJsonValue &value) override;
+        QJsonValue write() const override;
 
+        int x() const;
         int y() const;
-        void setY(int y);
+
+        QPoint pos() const;
+        void setPos(const QPoint &pos);
+
+    protected:
+        void doInitialize() override;
+        void doSetup() override;
+
+    Q_SIGNALS:
+        void positionChanged(int x, int y);
+
+    protected:
+        DspxIntPointEntity(DspxIntPointEntityPrivate &d, QObject *parent = nullptr);
     };
     //===========================================================================
 
@@ -80,23 +110,45 @@ namespace Core {
 
     public:
         void sortRecords(QVector<AceTreeEntity *> &records) const override;
+
+    Q_SIGNALS:
+        ACE_TREE_DECLARE_RECORD_TABLE_SIGNALS(DspxIntPointEntity)
     };
     //===========================================================================
 
     //===========================================================================
     // DoublePoint
-    class CORE_EXPORT DspxDoublePointEntity : public AceTreeEntityMapping {
+    class DspxDoublePointEntityPrivate;
+
+    class CORE_EXPORT DspxDoublePointEntity : public AceTreeEntity {
         Q_OBJECT
+        Q_DECLARE_PRIVATE(DspxDoublePointEntity)
+        Q_PROPERTY(QPointF pos READ pos WRITE setPos NOTIFY positionChanged)
+        Q_PROPERTY(double x READ x)
+        Q_PROPERTY(double y READ y)
     public:
         explicit DspxDoublePointEntity(QObject *parent = nullptr);
         ~DspxDoublePointEntity();
 
     public:
-        double x() const;
-        void setX(double x);
+        bool read(const QJsonValue &value) override;
+        QJsonValue write() const override;
 
+        double x() const;
         double y() const;
-        void setY(double y);
+
+        QPointF pos() const;
+        void setPos(const QPointF &pos);
+
+    protected:
+        void doInitialize() override;
+        void doSetup() override;
+
+    Q_SIGNALS:
+        void positionChanged(double x, double y);
+
+    protected:
+        DspxDoublePointEntity(DspxDoublePointEntityPrivate &d, QObject *parent = nullptr);
     };
     //===========================================================================
 
@@ -111,17 +163,28 @@ namespace Core {
 
     public:
         void sortRecords(QVector<AceTreeEntity *> &records) const override;
+
+    Q_SIGNALS:
+        ACE_TREE_DECLARE_RECORD_TABLE_SIGNALS(DspxDoublePointEntity)
     };
     //===========================================================================
 
     //===========================================================================
     // AnchorPoint
+    class DspxAnchorPointEntityPrivate;
+
     class CORE_EXPORT DspxAnchorPointEntity : public DspxIntPointEntity {
         Q_OBJECT
+        Q_DECLARE_PRIVATE(DspxAnchorPointEntity)
     public:
         explicit DspxAnchorPointEntity(QObject *parent = nullptr);
         ~DspxAnchorPointEntity();
 
+    public:
+        bool read(const QJsonValue &value) override;
+        QJsonValue write() const override;
+
+    public:
         enum Interpolation {
             None,
             Linear,
@@ -129,9 +192,15 @@ namespace Core {
         };
         Q_ENUM(Interpolation)
 
-    public:
-        Interpolation interpolation() const;
-        void setInterpolation(Interpolation interpolation);
+        Interpolation interp() const;
+        void setInterp(Interpolation i);
+
+    protected:
+        void doInitialize() override;
+        void doSetup() override;
+
+    Q_SIGNALS:
+        void interpolationChanged(Interpolation i);
     };
     //===========================================================================
 
@@ -146,6 +215,9 @@ namespace Core {
 
     public:
         void sortRecords(QVector<AceTreeEntity *> &records) const override;
+
+    Q_SIGNALS:
+        ACE_TREE_DECLARE_RECORD_TABLE_SIGNALS(DspxAnchorPointEntity)
     };
     //===========================================================================
 

@@ -6,9 +6,10 @@ namespace Core {
 
     //===========================================================================
     // Timeline
-    class DspxTimelineEntityPrivate : public AceTreeStandardEntityPrivate {
+    class DspxTimelineEntityPrivate : public AceTreeEntityMappingPrivate {
+        Q_DECLARE_PUBLIC(DspxTimelineEntity)
     public:
-        DspxTimelineEntityPrivate() : AceTreeStandardEntityPrivate(AceTreeStandardEntity::Mapping) {
+        DspxTimelineEntityPrivate() {
             name = "timeline";
             timeSignatures = nullptr;
             tempos = nullptr;
@@ -24,7 +25,7 @@ namespace Core {
         DspxTimelineLabelListEntity *labels;
     };
     DspxTimelineEntity::DspxTimelineEntity(QObject *parent)
-        : AceTreeStandardEntity(*new DspxTimelineEntityPrivate(), parent) {
+        : AceTreeEntityMapping(*new DspxTimelineEntityPrivate(), parent) {
     }
     DspxTimelineEntity::~DspxTimelineEntity() {
     }
@@ -45,27 +46,42 @@ namespace Core {
     //===========================================================================
     // TimeSignature
     DspxTimeSignatureEntity::DspxTimeSignatureEntity(QObject *parent) : AceTreeEntityMapping(parent) {
-        AceTreeStandardEntityPrivate::setName(this, "timeSignature");
+        auto d = AceTreeEntityMappingPrivate::get(this);
+        d->name = "timeSignature";
+
+        // Notifiers
+        d->propertyNotifiers.insert("pos", [](ACE_A) {
+            ACE_Q(DspxTimeSignatureEntity);
+            emit q->positionChanged(newValue.toInt());
+        });
+        d->propertyNotifiers.insert("num", [](ACE_A) {
+            ACE_Q(DspxTimeSignatureEntity);
+            emit q->numeratorChanged(newValue.toInt());
+        });
+        d->propertyNotifiers.insert("den", [](ACE_A) {
+            ACE_Q(DspxTimeSignatureEntity);
+            emit q->denominatorChanged(newValue.toInt());
+        });
     }
     DspxTimeSignatureEntity::~DspxTimeSignatureEntity() {
     }
     int DspxTimeSignatureEntity::position() const {
-        return property("pos").toInt();
+        return attribute("pos").toInt();
     }
     void DspxTimeSignatureEntity::setPosition(int position) {
-        setProperty("pos", position);
+        setAttribute("pos", position);
     }
     int DspxTimeSignatureEntity::numerator() const {
-        return property("numerator").toInt();
+        return attribute("num").toInt();
     }
     void DspxTimeSignatureEntity::setNumerator(int numerator) {
-        setProperty("numerator", numerator);
+        setAttribute("num", numerator);
     }
     int DspxTimeSignatureEntity::denominator() const {
-        return property("denominator").toInt();
+        return attribute("den").toInt();
     }
     void DspxTimeSignatureEntity::setDenominator(int denominator) {
-        setProperty("denominator", denominator);
+        setAttribute("den", denominator);
     }
     //===========================================================================
 
@@ -84,21 +100,32 @@ namespace Core {
     //===========================================================================
     // Tempo
     DspxTempoEntity::DspxTempoEntity(QObject *parent) : AceTreeEntityMapping(parent) {
-        AceTreeStandardEntityPrivate::setName(this, "tempo");
+        auto d = AceTreeEntityMappingPrivate::get(this);
+        d->name = "tempo";
+
+        // Notifiers
+        d->propertyNotifiers.insert("pos", [](ACE_A) {
+            ACE_Q(DspxTempoEntity);
+            emit q->positionChanged(newValue.toInt());
+        });
+        d->propertyNotifiers.insert("value", [](ACE_A) {
+            ACE_Q(DspxTempoEntity);
+            emit q->valueChanged(newValue.toDouble());
+        });
     }
     DspxTempoEntity::~DspxTempoEntity() {
     }
     int DspxTempoEntity::position() const {
-        return property("pos").toInt();
+        return attribute("pos").toInt();
     }
     void DspxTempoEntity::setPosition(int position) {
-        setProperty("pos", position);
+        setAttribute("pos", position);
     }
     double DspxTempoEntity::value() const {
-        return property("value").toDouble();
+        return attribute("value").toDouble();
     }
     void DspxTempoEntity::setValue(double value) {
-        setProperty("value", value);
+        setAttribute("value", value);
     }
     //===========================================================================
 
@@ -117,21 +144,32 @@ namespace Core {
     //===========================================================================
     // TimelineLabel
     DspxTimelineLabelEntity::DspxTimelineLabelEntity(QObject *parent) : AceTreeEntityMapping(parent) {
-        AceTreeStandardEntityPrivate::setName(this, "label");
+        auto d = AceTreeEntityMappingPrivate::get(this);
+        d->name = "label";
+
+        // Notifiers
+        d->propertyNotifiers.insert("pos", [](ACE_A) {
+            ACE_Q(DspxTimelineLabelEntity);
+            emit q->positionChanged(newValue.toInt());
+        });
+        d->propertyNotifiers.insert("text", [](ACE_A) {
+            ACE_Q(DspxTimelineLabelEntity);
+            emit q->textChanged(newValue.toString());
+        });
     }
     DspxTimelineLabelEntity::~DspxTimelineLabelEntity() {
     }
     int DspxTimelineLabelEntity::position() const {
-        return property("pos").toInt();
+        return attribute("pos").toInt();
     }
     void DspxTimelineLabelEntity::setPosition(int position) {
-        setProperty("pos", position);
+        setAttribute("pos", position);
     }
     QString DspxTimelineLabelEntity::text() const {
-        return property("text").toString();
+        return attribute("text").toString();
     }
     void DspxTimelineLabelEntity::setText(const QString &text) {
-        setProperty("text", text);
+        setAttribute("text", text);
     }
     //===========================================================================
 

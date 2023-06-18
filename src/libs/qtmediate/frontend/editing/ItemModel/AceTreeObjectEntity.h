@@ -27,6 +27,13 @@ public:
     void setValue(const QString &key, const QVariant &value);
     QStringList keys() const;
     QVariantHash valueMap() const;
+
+protected:
+    void doInitialize() override;
+    void doSetup() override;
+
+Q_SIGNALS:
+    void changed(const QString &key, const QVariant &value);
 };
 
 #endif // CHORUSKIT_ACETREEOBJECTENTITY_H
