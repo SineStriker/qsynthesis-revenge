@@ -22,13 +22,13 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
     {
         QFile file(filename);
         if (file.open(QIODevice::ReadOnly)) {
-            auto model1 = AceTreeModel::recover(file.readAll());
-            file.close();
-            if (model1) {
+            auto model1 = new AceTreeModel();
+            if (model->recover(file.readAll())) {
                 qDebug() << "Recover success";
                 root = model1->reset();
-                delete model1;
             }
+            delete model1;
+            file.close();
         }
     }
 

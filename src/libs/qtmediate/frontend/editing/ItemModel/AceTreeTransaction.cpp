@@ -1,7 +1,6 @@
 #include "AceTreeTransaction.h"
 
 #include <QDebug>
-#include <QJsonObject>
 #include <QPointer>
 #include <QStack>
 
@@ -36,7 +35,7 @@ public:
 
     struct Operation {
         QString key;
-        QJsonObject args;
+        QMap<QString, QString> args;
 
         int begin;
         int count;
@@ -112,7 +111,7 @@ void AceTreeTransaction::abortTransaction() {
     d->state = Idle;
 }
 
-void AceTreeTransaction::endTransaction(const QString &key, const QJsonObject &args) {
+void AceTreeTransaction::endTransaction(const QString &key, const QMap<QString, QString> &args) {
     if (!inTransaction()) {
         myWarning(__func__) << "No transaction in execution";
         return;
@@ -165,6 +164,7 @@ void AceTreeTransaction::undo() {
     d->state = Undo;
 
     const auto &op = d->undoStack.at(d->undoIndex - 1);
+    d->undoIndex--;
     d->model->setCurrentStep(op.begin);
 
     d->state = Idle;
@@ -185,6 +185,7 @@ void AceTreeTransaction::redo() {
     d->state = Redo;
 
     const auto &op = d->undoStack.at(d->undoIndex);
+    d->undoIndex++;
     d->model->setCurrentStep(op.begin);
 
     d->state = Idle;

@@ -3,6 +3,7 @@
 
 #include <QLoggingCategory>
 #include <QObject>
+#include <QSettings>
 
 #include "QMGlobal.h"
 
@@ -80,6 +81,11 @@ public:
      * @return false Failed
      */
     bool createDataAndTempDirs() const;
+
+public:
+    static QString configurationPath(QSettings::Scope scope = QSettings::UserScope);
+
+    static QString configurationBasePrefix();
 
 protected:
     QMCoreAppExtension(QMCoreAppExtensionPrivate &d, QObject *parent = nullptr);

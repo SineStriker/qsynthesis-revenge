@@ -1412,6 +1412,16 @@ AceTreeEntityVector::AceTreeEntityVector(AceTreeEntityVectorPrivate &d, QObject 
     d.init();
 }
 
+namespace AceTreePrivate {
+    using VV = AceTreeEntityVectorHelper<AceTreeEntity>;
+    class AA : public AceTreeEntityVector, public VV {};
+    static const uintptr_t offset_v = intptr_t(static_cast<VV *>(reinterpret_cast<AA *>(255))) - 255;
+}
+
+AceTreeStandardEntity *AceTreeEntityVector::get_entity_helper(const void *ptr) {
+    return reinterpret_cast<AceTreeStandardEntity *>(uintptr_t(ptr) - AceTreePrivate::offset_v);
+}
+
 //===========================================================================
 
 
@@ -1538,6 +1548,16 @@ AceTreeEntityRecordTable::~AceTreeEntityRecordTable() {
 AceTreeEntityRecordTable::AceTreeEntityRecordTable(AceTreeEntityRecordTablePrivate &d, QObject *parent)
     : AceTreeStandardEntity(d, parent) {
     d.init();
+}
+
+namespace AceTreePrivate {
+    using RR = AceTreeEntityRecordTableHelper<AceTreeEntity>;
+    class BB : public AceTreeEntityRecordTable, public RR {};
+    static const uintptr_t offset_r = intptr_t(static_cast<RR *>(reinterpret_cast<BB *>(255))) - 255;
+}
+
+AceTreeStandardEntity *AceTreeEntityRecordTable::get_entity_helper(const void *ptr) {
+    return reinterpret_cast<AceTreeStandardEntity *>(uintptr_t(ptr) - AceTreePrivate::offset_r);
 }
 
 //===========================================================================

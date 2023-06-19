@@ -1,8 +1,6 @@
 #include "QMCoreAppExtension.h"
 #include "private/QMCoreAppExtension_p.h"
 
-#include "QMSystem.h"
-
 #include <QCoreApplication>
 #include <QIODevice>
 #include <QJsonArray>
@@ -11,6 +9,9 @@
 #include <QJsonParseError>
 #include <QMessageLogger>
 #include <QSettings>
+
+#include "QMBatch.h"
+#include "QMSystem.h"
 
 Q_LOGGING_CATEGORY(qAppExtLog, "qtmediate")
 
@@ -22,10 +23,10 @@ Q_SINGLETON_DECLARE(QMCoreAppExtension);
 #    define DEFAULT_LIBRARY_DIR "Frameworks"
 #    define DEFAULT_SHARE_DIR   "Resources"
 #else
-#    define QT_CONFIG_FILE_DIR      QCoreApplication::applicationDirPath()
-#    define QT_CONFIG_BASE_DIR      QCoreApplication::applicationDirPath()
-#    define DEFAULT_LIBRARY_DIR     "lib"
-#    define DEFAULT_SHARE_DIR       "share"
+#    define QT_CONFIG_FILE_DIR  QCoreApplication::applicationDirPath()
+#    define QT_CONFIG_BASE_DIR  QCoreApplication::applicationDirPath()
+#    define DEFAULT_LIBRARY_DIR "lib"
+#    define DEFAULT_SHARE_DIR   "share"
 #endif
 
 static QString appUpperDir() {
@@ -55,109 +56,24 @@ void QMCoreAppExtensionPrivate::init() {
     appDataDir = QMFs::appDataPath() + "/ChorusKit/" + qApp->applicationName();
     tempDir = QDir::tempPath() + "/ChorusKit/" + qApp->applicationName();
 
-    QHash<QString, QStringList> confValues;
+    libDir = appUpperDir() + "/" + DEFAULT_LIBRARY_DIR;
+    shareDir = appUpperDir() + "/" + DEFAULT_SHARE_DIR;
 
-    // Read qtmediate.json
-    {
+    configVars.addHash(QMSimpleVarExp::SystemValues());
+    configVars.add("DEFAULT_APPDATA", appDataDir);
+    configVars.add("DEFAULT_TEMP", tempDir);
 
-        QFile file(QT_CONFIG_FILE_DIR + "/qtmediate.json");
-        if (!file.open(QIODevice::ReadOnly)) {
-            qCDebug(qAppExtLog) << "configuration file not found";
-            goto finish_conf;
-        }
-
-        QByteArray data(file.readAll());
-        file.close();
-
-        QJsonParseError err;
-        QJsonDocument doc = QJsonDocument::fromJson(data, &err);
-        if (err.error != QJsonParseError::NoError || !doc.isObject()) {
-            qCDebug(qAppExtLog) << "configuration file not valid";
-            goto finish_conf;
-        }
-
-        qCDebug(qAppExtLog) << "load configuration file success";
-
-        auto obj = doc.object();
-        for (auto it = obj.begin(); it != obj.end(); ++it) {
-            QStringList res;
-
-            if (it.key() == "AppFont") {
-                if (it->isString()) {
-                    appFont.insert("Family", it->toString());
-                } else if (it->isObject()) {
-                    appFont = it->toObject();
-                }
-                continue;
-            }
-
-            if (it->isArray()) {
-                auto arr = it->toArray();
-                for (const auto &item : qAsConst(arr)) {
-                    if (item.isString()) {
-                        res.append(item.toString());
-                    }
-                }
-            } else if (it->isString()) {
-                res.append(it->toString());
-            } else if (it->isDouble()) {
-                res.append(QString::number(it->toDouble()));
-            }
-            if (res.isEmpty()) {
-                continue;
-            }
-            confValues.insert(it.key(), res);
-        }
+    // Read configurations
+    if (readConfiguration(QMCoreAppExtension::configurationPath(QSettings::SystemScope))) {
+        qCDebug(qAppExtLog) << "system configuration file found";
+    } else {
+        qCDebug(qAppExtLog) << "system configuration file not found";
     }
 
-finish_conf:
-
-    auto prefix = confValues.value("Prefix", {appUpperDir()}).front();
-    if (QMFs::isPathRelative(prefix)) {
-        prefix = QT_CONFIG_BASE_DIR + "/" + prefix;
-    }
-    prefix = QFileInfo(prefix).canonicalFilePath();
-
-    libDir = confValues.value("Libraries", {DEFAULT_LIBRARY_DIR}).front();
-    if (QMFs::isPathRelative(libDir)) {
-        libDir = prefix + "/" + libDir;
-    }
-
-    shareDir = confValues.value("Share", {DEFAULT_SHARE_DIR}).front();
-    if (QMFs::isPathRelative(shareDir)) {
-        shareDir = prefix + "/" + shareDir;
-    }
-
-    QStringList plugins = confValues.value("Plugins", {});
-    for (auto path : qAsConst(plugins)) {
-        if (QMFs::isPathRelative(path)) {
-            path = prefix + "/" + path;
-        }
-        QCoreApplication::addLibraryPath(path);
-    }
-
-    QStringList translations = confValues.value("Translations", {});
-    for (auto path : qAsConst(translations)) {
-        if (QMFs::isPathRelative(path)) {
-            path = prefix + "/" + path;
-        }
-        translationPaths.append(path);
-    }
-
-    QStringList themes = confValues.value("Themes", {});
-    for (auto path : qAsConst(themes)) {
-        if (QMFs::isPathRelative(path)) {
-            path = prefix + "/" + path;
-        }
-        themePaths.append(path);
-    }
-
-    QStringList fonts = confValues.value("Fonts", {});
-    for (auto path : qAsConst(fonts)) {
-        if (QMFs::isPathRelative(path)) {
-            path = prefix + "/" + path;
-        }
-        fontPaths.append(path);
+    if (readConfiguration(QMCoreAppExtension::configurationPath(QSettings::UserScope))) {
+        qCDebug(qAppExtLog) << "user configuration file found";
+    } else {
+        qCDebug(qAppExtLog) << "user configuration file not found";
     }
 
     // Polymorphic factory
@@ -170,9 +86,13 @@ finish_conf:
     s_cs = fac->createConsole(q);
     qCDebug(qAppExtLog) << s_cs->metaObject()->className() << "initializing.";
 
-    q->connect(qApp, &QCoreApplication::aboutToQuit, this, [this]() {
+    QObject::connect(qApp, &QCoreApplication::aboutToQuit, this, [this]() {
         isAboutToQuit = true; //
     });
+
+    // Add plugin paths
+    for (const auto &path : qAsConst(pluginPaths))
+        QCoreApplication::addLibraryPath(path);
 
     // Add translation paths
     for (const auto &path : qAsConst(translationPaths))
@@ -192,6 +112,120 @@ finish_conf:
         libDir + "/" + QCoreApplication::applicationName() + "/plugins"
 #endif
         ;
+}
+
+bool QMCoreAppExtensionPrivate::readConfiguration(const QString &fileName) {
+    qCDebug(qAppExtLog) << "read" << fileName;
+
+    // Read
+    QFile file(fileName);
+    if (!file.open(QIODevice::ReadOnly)) {
+        return false;
+    }
+    auto data = file.readAll();
+    file.close();
+
+    // Parse
+    QJsonParseError err;
+    QJsonDocument doc = QJsonDocument::fromJson(data, &err);
+    if (err.error != QJsonParseError::NoError || !doc.isObject()) {
+        return false;
+    }
+
+    auto obj = doc.object();
+
+    QJsonValue value;
+
+    value = obj.value("AppFont");
+    if (!value.isUndefined()) {
+        if (value.isString()) {
+            appFont.insert("Family", value.toString());
+        } else if (value.isObject()) {
+            appFont = value.toObject();
+        }
+    }
+
+    QString prefix = QMCoreAppExtension::configurationBasePrefix();
+    value = obj.value("Prefix");
+    if (value.isString()) {
+        auto dir = configVars.parse(value.toString());
+        if (QMFs::isPathRelative(dir)) {
+            dir = QT_CONFIG_BASE_DIR + "/" + dir;
+        }
+
+        QFileInfo info(dir);
+        if (info.isDir()) {
+            prefix = info.canonicalFilePath();
+        }
+    }
+
+    auto getDir = [prefix, this](QString path) {
+        path = configVars.parse(path);
+        if (QMFs::isPathRelative(path)) {
+            path = prefix + "/" + path;
+        }
+        QFileInfo info(path);
+        if (!info.isDir())
+            return QString();
+        return info.canonicalFilePath();
+    };
+
+    auto getDirs = [getDir](QStringList &paths, const QJsonValue &value) {
+        switch (value.type()) {
+            case QJsonValue::String: {
+                auto dir = getDir(value.toString());
+                if (!dir.isEmpty()) {
+                    paths << dir;
+                }
+                break;
+            }
+            case QJsonValue::Array: {
+                for (const auto &item : value.toArray()) {
+                    if (!item.isString())
+                        continue;
+
+                    auto dir = getDir(item.toString());
+                    if (!dir.isEmpty()) {
+                        paths << dir;
+                    }
+                }
+                break;
+            }
+            default:
+                break;
+        }
+    };
+
+    value = obj.value("Temp");
+    if (value.isString()) {
+        auto dir = getDir(value.toString());
+        if (!dir.isEmpty()) {
+            tempDir = dir;
+        }
+    }
+
+    value = obj.value("Libraries");
+    if (value.isString()) {
+        auto dir = getDir(value.toString());
+        if (!dir.isEmpty()) {
+            libDir = dir;
+        }
+    }
+
+    value = obj.value("Share");
+    if (value.isString()) {
+        auto dir = getDir(value.toString());
+        if (!dir.isEmpty()) {
+            shareDir = dir;
+        }
+    }
+
+    getDirs(pluginPaths, obj.value("Plugins"));
+    getDirs(translationPaths, obj.value("Translations"));
+    getDirs(themePaths, obj.value("Themes"));
+    getDirs(fontPaths, obj.value("Fonts"));
+
+    return true;
 }
 
 QMCoreInitFactory *QMCoreAppExtensionPrivate::createFactory() {
@@ -290,6 +324,14 @@ bool QMCoreAppExtension::createDataAndTempDirs() const {
     }
 
     return true;
+}
+
+QString QMCoreAppExtension::configurationPath(QSettings::Scope scope) {
+    return QT_CONFIG_FILE_DIR + "/" + (scope == QSettings::SystemScope ? "qtmediate.json" : "qtmediate.json.user");
+}
+
+QString QMCoreAppExtension::configurationBasePrefix() {
+    return QT_CONFIG_BASE_DIR;
 }
 
 QMCoreAppExtension::QMCoreAppExtension(QMCoreAppExtensionPrivate &d, QObject *parent) : QObject(parent), d_ptr(&d) {

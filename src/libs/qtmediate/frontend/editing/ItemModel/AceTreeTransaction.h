@@ -16,7 +16,7 @@ public:
     bool isValid() const;
 
 public:
-    using FormatDescription = QString (*)(const QJsonObject &);
+    using FormatDescription = QString (*)(const QMap<QString, QString> &);
 
     static bool hasDescriptionFormatter(const QString &key);
     static void registerDescriptionFormatter(const QString &key, FormatDescription func);
@@ -53,7 +53,7 @@ public:
      * @param key Description formatter key
      * @param args Arguments to format description
      */
-    void endTransaction(const QString &key, const QJsonObject &args);
+    void endTransaction(const QString &key, const QMap<QString, QString> &args);
 
     /*
      * Undo stack size

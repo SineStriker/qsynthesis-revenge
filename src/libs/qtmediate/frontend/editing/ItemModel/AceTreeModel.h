@@ -163,7 +163,7 @@ public:
 
     void startLogging(QIODevice *dev);
     void stopLogging();
-    static AceTreeModel *recover(const QByteArray &data);
+    bool recover(const QByteArray &data);
 
     AceTreeItem *itemFromIndex(int index) const;
 

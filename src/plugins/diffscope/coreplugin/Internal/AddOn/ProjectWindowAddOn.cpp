@@ -293,7 +293,13 @@ namespace Core {
             });
 
             connect(moveToStartItem->action(), &QAction::triggered, this, [this, iWin]() {
-                qDebug() << iWin->doc()->project()->tracks()->count();
+                auto tracks = iWin->doc()->project()->tracks();
+                auto track1 = tracks->at(0);
+                auto clips = track1->clips();
+
+                qDebug() << clips->count();
+                qDebug() << clips->searchChildType(&DspxAudioClipEntity::staticMetaObject);
+
                 iWin->requestGlobalEvent("playback.moveToStart"); //
             });
 

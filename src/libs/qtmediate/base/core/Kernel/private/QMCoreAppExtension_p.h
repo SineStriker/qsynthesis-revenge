@@ -7,6 +7,8 @@
 #include "../QMCoreConsole.h"
 #include "../QMCoreDecoratorV2.h"
 
+#include "QMSimpleVarExp.h"
+
 class QMCORE_EXPORT QMCoreInitFactory {
 public:
     virtual QMCoreConsole *createConsole(QObject *parent);
@@ -22,7 +24,11 @@ public:
 
     void init();
 
+    bool readConfiguration(const QString &fileName);
+
     QMCoreAppExtension *q_ptr;
+
+    QMSimpleVarExp configVars;
 
     bool isAboutToQuit;
 
@@ -34,6 +40,7 @@ public:
     QString appShareDir;
     QString appPluginsDir;
 
+    QStringList pluginPaths;
     QStringList translationPaths;
     QStringList themePaths;
     QStringList fontPaths;

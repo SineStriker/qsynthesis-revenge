@@ -235,6 +235,12 @@ public:
 
 protected:
     AceTreeEntityVector(AceTreeEntityVectorPrivate &d, QObject *parent = nullptr);
+
+private:
+    static AceTreeStandardEntity *get_entity_helper(const void *ptr);
+
+    template <class T>
+    friend class AceTreeEntityVectorHelper;
 };
 
 class AceTreeEntityRecordTablePrivate;
@@ -248,6 +254,12 @@ public:
 
 protected:
     AceTreeEntityRecordTable(AceTreeEntityRecordTablePrivate &d, QObject *parent = nullptr);
+
+private:
+    static AceTreeStandardEntity *get_entity_helper(const void *ptr);
+
+    template <class T>
+    friend class AceTreeEntityRecordTableHelper;
 };
 
 class AceTreeEntityMappingPrivate;
@@ -268,10 +280,7 @@ class AceTreeEntityVectorHelper {
     static_assert(std::is_base_of<AceTreeEntity, T>::value, "T should inherit from AceTreeEntity");
 
 public:
-    explicit AceTreeEntityVectorHelper(AceTreeStandardEntity *entity) : m_entity(entity){};
-    ~AceTreeEntityVectorHelper() = default;
-
-public:
+    AceTreeEntityVectorHelper(AceTreeEntityVector *){};
     bool prepend(T *item);
     bool prepend(const QVector<T *> &items);
     bool append(T *item);
@@ -288,7 +297,12 @@ public:
     int count() const;
 
 private:
-    AceTreeStandardEntity *m_entity;
+    const AceTreeStandardEntity *to_entity() const {
+        return AceTreeEntityVector::get_entity_helper(this);
+    }
+    AceTreeStandardEntity *to_entity() {
+        return AceTreeEntityVector::get_entity_helper(this);
+    }
 };
 
 #define ACE_TREE_DECLARE_VECTOR_SIGNALS(T)                                                                             \
@@ -303,10 +317,7 @@ class AceTreeEntityRecordTableHelper {
     static_assert(std::is_base_of<AceTreeEntity, T>::value, "T should inherit from AceTreeEntity");
 
 public:
-    explicit AceTreeEntityRecordTableHelper(AceTreeStandardEntity *entity) : m_entity(entity){};
-    ~AceTreeEntityRecordTableHelper() = default;
-
-public:
+    AceTreeEntityRecordTableHelper(AceTreeEntityRecordTable *){};
     int insert(T *item);
     bool remove(int index);
     bool remove(T *item);
@@ -318,7 +329,12 @@ public:
     int maxIndex() const;
 
 private:
-    AceTreeStandardEntity *m_entity;
+    const AceTreeStandardEntity *to_entity() const {
+        return AceTreeEntityRecordTable::get_entity_helper(this);
+    }
+    AceTreeStandardEntity *to_entity() {
+        return AceTreeEntityRecordTable::get_entity_helper(this);
+    }
 };
 
 #define ACE_TREE_DECLARE_RECORD_TABLE_SIGNALS(T)                                                                       \
@@ -358,33 +374,34 @@ bool AceTreeEntityVectorHelper<T>::remove(int index) {
 
 template <class T>
 bool AceTreeEntityVectorHelper<T>::insert(int index, const QVector<T *> &items) {
+    auto entity = to_entity();
     QVector<QPair<QString, AceTreeEntity *>> tmp;
     tmp.resize(items.size());
     for (const auto &item : items) {
-        tmp.append({item ? m_entity->searchChildType(item->metaObject()) : QString(), item});
+        tmp.append({item ? entity->searchChildType(item->metaObject()) : QString(), item});
     }
-    return m_entity->insertRows(index, tmp);
+    return entity->insertRows(index, tmp);
 }
 
 template <class T>
 bool AceTreeEntityVectorHelper<T>::move(int index, int count, int dest) {
-    return m_entity->moveRows(index, count, dest);
+    return to_entity()->moveRows(index, count, dest);
 }
 
 template <class T>
 bool AceTreeEntityVectorHelper<T>::remove(int index, int count) {
-    return m_entity->removeRows(index, count);
+    return to_entity()->removeRows(index, count);
 }
 
 template <class T>
 T *AceTreeEntityVectorHelper<T>::at(int index) const {
-    return qobject_cast<T *>(m_entity->row(index));
+    return qobject_cast<T *>(to_entity()->row(index));
 }
 
 template <class T>
 QVector<T *> AceTreeEntityVectorHelper<T>::values() const {
     QVector<T *> tmp;
-    const auto &children = m_entity->rows();
+    const auto &children = to_entity()->rows();
     tmp.reserve(children.size());
     for (const auto &child : children) {
         tmp.append(qobject_cast<T *>(child));
@@ -394,12 +411,12 @@ QVector<T *> AceTreeEntityVectorHelper<T>::values() const {
 
 template <class T>
 int AceTreeEntityVectorHelper<T>::indexOf(T *item) const {
-    return m_entity->rowIndexOf(item);
+    return to_entity()->rowIndexOf(item);
 }
 
 template <class T>
 int AceTreeEntityVectorHelper<T>::size() const {
-    return m_entity->rowCount();
+    return to_entity()->rowCount();
 }
 
 template <class T>
@@ -410,37 +427,38 @@ int AceTreeEntityVectorHelper<T>::count() const {
 
 template <class T>
 int AceTreeEntityRecordTableHelper<T>::insert(T *item) {
-    return m_entity->addRecord(item ? m_entity->searchChildType(item->metaObject()) : QString(), item);
+    auto entity = to_entity();
+    return entity->addRecord(item ? entity->searchChildType(item->metaObject()) : QString(), item);
 }
 
 template <class T>
 bool AceTreeEntityRecordTableHelper<T>::remove(int index) {
-    return m_entity->removeRecord(index);
+    return to_entity()->removeRecord(index);
 }
 
 template <class T>
 bool AceTreeEntityRecordTableHelper<T>::remove(T *item) {
-    return m_entity->removeRecord(item);
+    return to_entity()->removeRecord(item);
 }
 
 template <class T>
 T *AceTreeEntityRecordTableHelper<T>::at(int index) {
-    return qobject_cast<T *>(m_entity->record(index));
+    return qobject_cast<T *>(to_entity()->record(index));
 }
 
 template <class T>
 int AceTreeEntityRecordTableHelper<T>::indexOf(T *item) const {
-    return m_entity->recordIndexOf(item);
+    return to_entity()->recordIndexOf(item);
 }
 
 template <class T>
 QList<int> AceTreeEntityRecordTableHelper<T>::indexes() const {
-    return m_entity->records();
+    return to_entity()->records();
 }
 
 template <class T>
 int AceTreeEntityRecordTableHelper<T>::size() const {
-    return m_entity->recordCount();
+    return to_entity()->recordCount();
 }
 
 template <class T>
@@ -450,7 +468,7 @@ int AceTreeEntityRecordTableHelper<T>::count() const {
 
 template <class T>
 int AceTreeEntityRecordTableHelper<T>::maxIndex() const {
-    return m_entity->maxRecordSeq();
+    return to_entity()->maxRecordSeq();
 }
 
 #endif // ACETREESTANDARDENTITY_H

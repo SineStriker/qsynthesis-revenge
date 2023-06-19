@@ -222,7 +222,7 @@ AceTreeItemPrivate::~AceTreeItemPrivate() {
     }
 
     // Clear subscribers
-    for (const auto &sub : subscribers){
+    for (const auto &sub : subscribers) {
         sub->d->m_treeItem = nullptr;
     }
     subscribers.clear();
@@ -1928,14 +1928,20 @@ void AceTreeModel::stopLogging() {
     d->offsets = {};
 }
 
-AceTreeModel *AceTreeModel::recover(const QByteArray &data) {
+bool AceTreeModel::recover(const QByteArray &data) {
+    Q_D(AceTreeModel);
+    if (d->maxIndex > 1) {
+        myWarning2(__func__) << "cannot recover when model has changed";
+        return false;
+    }
+
     QDataStream stream(data);
 
     char sign[sizeof(SIGN_TREE_MODEL) - 1];
     stream.readRawData(sign, sizeof(sign));
     if (memcmp(sign, SIGN_TREE_MODEL, sizeof(sign)) != 0) {
         myWarning2(__func__) << "read header sign failed";
-        return nullptr;
+        return false;
     }
 
     QHash<int, AceTreeItem *> insertedItems;
@@ -2049,23 +2055,24 @@ AceTreeModel *AceTreeModel::recover(const QByteArray &data) {
 
     op_abort:
         qDeleteAll(operations.rbegin(), operations.rend());
-        return nullptr;
+        return false;
     }
 
     // Rebuild
-    auto model = new AceTreeModel();
-    model->d_func()->operations = std::move(operations);
-    model->setCurrentStep(size);
-    if (model->currentStep() != size) {
-        myWarning2(__func__) << "failed to reach given step";
-        delete model;
-        return nullptr;
-    }
+    d->operations = std::move(operations);
+    setCurrentStep(size);
+
+    // Cannot happen if the log is not illegally modified
+    //    if (currentStep() != size) {
+    //        myWarning2(__func__) << "failed to reach given step";
+    //        delete reset();
+    //        return false;
+    //    }
 
     // Go back to current step
-    model->setCurrentStep(step);
+    setCurrentStep(step);
 
-    return model;
+    return true;
 }
 
 AceTreeItem *AceTreeModel::itemFromIndex(int index) const {

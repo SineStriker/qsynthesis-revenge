@@ -39,7 +39,7 @@ QTreeWidgetItem *AceTreeWidgetPrivate::buildItem(AceTreeItem *item) {
     auto res = new QTreeWidgetItem();
     itemIndexes.insert(item, res);
 
-    res->setData(0, Qt::UserRole + 1, QVariant::fromValue((intptr_t) item));
+    res->setData(0, Qt::UserRole + 1, QVariant::fromValue((uintptr_t) item));
     res->setText(0, item->name());
     res->setText(1, item->property("text").toString());
     res->setText(2, item->bytes().toHex());
@@ -144,7 +144,7 @@ void AceTreeWidgetPrivate::_q_rowsRemoved(AceTreeItem *parent, int index, const 
         childItems.append(childItem);
     }
     for (const auto &item : qAsConst(childItems)) {
-        auto item1 = reinterpret_cast<AceTreeItem *>(item->data(0, Qt::UserRole + 1).value<intptr_t>());
+        auto item1 = reinterpret_cast<AceTreeItem *>(item->data(0, Qt::UserRole + 1).value<uintptr_t>());
         removeItem(item1);
     }
 
@@ -219,11 +219,11 @@ void AceTreeWidgetPrivate::_q_itemClickedEx(QTreeWidgetItem *item, int column, Q
         auto typeData = item->data(0, Qt::UserRole + 2).toString();
         if (typeData == "vector") {
             auto parentItem1 =
-                reinterpret_cast<AceTreeItem *>(item->parent()->data(0, Qt::UserRole + 1).value<intptr_t>());
+                reinterpret_cast<AceTreeItem *>(item->parent()->data(0, Qt::UserRole + 1).value<uintptr_t>());
             parentItem1->appendRow(addItem());
         } else if (typeData == "set") {
             auto parentItem1 =
-                reinterpret_cast<AceTreeItem *>(item->parent()->data(0, Qt::UserRole + 1).value<intptr_t>());
+                reinterpret_cast<AceTreeItem *>(item->parent()->data(0, Qt::UserRole + 1).value<uintptr_t>());
             parentItem1->addNode(addItem());
         }
     } else if (button == Qt::RightButton) {
@@ -243,7 +243,7 @@ void AceTreeWidgetPrivate::_q_itemClickedEx(QTreeWidgetItem *item, int column, Q
         auto insertAfter = isRow ? menu.addAction("Insert after") : nullptr;
         auto insetNode = (isRow && isNode) ? menu.addAction("Insert") : nullptr;
 
-        auto item1 = reinterpret_cast<AceTreeItem *>(item->data(0, Qt::UserRole + 1).value<intptr_t>());
+        auto item1 = reinterpret_cast<AceTreeItem *>(item->data(0, Qt::UserRole + 1).value<uintptr_t>());
         auto parentItem1 = item1->parent();
 
         auto action = menu.exec(QCursor::pos());
@@ -276,7 +276,7 @@ void AceTreeWidgetPrivate::_q_itemClickedEx(QTreeWidgetItem *item, int column, Q
         if (typeData != "vector") {
             return;
         }
-        auto parentItem1 = reinterpret_cast<AceTreeItem *>(item->parent()->data(0, Qt::UserRole + 1).value<intptr_t>());
+        auto parentItem1 = reinterpret_cast<AceTreeItem *>(item->parent()->data(0, Qt::UserRole + 1).value<uintptr_t>());
         QInputDialog dlg(q);
         dlg.setInputMode(QInputDialog::TextInput);
         dlg.setLabelText("Range(format: idx cnt dest)");

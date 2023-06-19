@@ -208,7 +208,7 @@ namespace Core {
                 item->setData(QsApi::SubtitleRole, text);
             }
             item->setData(QsApi::DescriptionRole, extra);
-            item->setData(QsApi::ObjectPointerRole, QVariant::fromValue(intptr_t(ai)));
+            item->setData(QsApi::ObjectPointerRole, QVariant::fromValue(uintptr_t(ai)));
             item->setData(QsApi::AlignmentRole, int(Qt::AlignTop));
 
             cp->addItem(item);
@@ -225,7 +225,7 @@ namespace Core {
                 return;
             }
 
-            auto ai = reinterpret_cast<ActionItem *>(item->data(QsApi::ObjectPointerRole).value<intptr_t>());
+            auto ai = reinterpret_cast<ActionItem *>(item->data(QsApi::ObjectPointerRole).value<uintptr_t>());
             if (!ai) {
                 return;
             }
@@ -261,7 +261,7 @@ namespace Core {
 
             item->setText(desc);
             item->setData(QsApi::SubtitleRole, name);
-            item->setData(QsApi::ObjectPointerRole, QVariant::fromValue(intptr_t(spec)));
+            item->setData(QsApi::ObjectPointerRole, QVariant::fromValue(uintptr_t(spec)));
 
             cp->addItem(item);
         }
@@ -276,7 +276,7 @@ namespace Core {
             if (!item) {
                 return;
             }
-            auto spec = reinterpret_cast<DocumentSpec *>(item->data(QsApi::ObjectPointerRole).value<intptr_t>());
+            auto spec = reinterpret_cast<DocumentSpec *>(item->data(QsApi::ObjectPointerRole).value<uintptr_t>());
             openEditor(spec, path);
         });
     }
@@ -502,7 +502,7 @@ namespace Core {
             auto item = new QListWidgetItem();
             item->setText(removeAllAccelerateKeys(action->text()));
             item->setData(QsApi::DescriptionRole, desc);
-            item->setData(QsApi::ObjectPointerRole, QVariant::fromValue(intptr_t(action)));
+            item->setData(QsApi::ObjectPointerRole, QVariant::fromValue(uintptr_t(action)));
 
             cp->addItem(item);
             if (action->property("current").toBool()) {
@@ -537,7 +537,7 @@ namespace Core {
                     goto out;
                 }
 
-                auto action = reinterpret_cast<QAction *>(item->data(QsApi::ObjectPointerRole).value<intptr_t>());
+                auto action = reinterpret_cast<QAction *>(item->data(QsApi::ObjectPointerRole).value<uintptr_t>());
                 if (!action) {
                     handled = false;
                     goto out;
