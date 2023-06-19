@@ -7,8 +7,9 @@
 
 class AceTreeTransactionPrivate;
 
-class QMEDITING_EXPORT AceTreeTransaction : public QObject {
+class QMEDITING_EXPORT AceTreeTransaction : public AceTreeRecoverable {
     Q_OBJECT
+    Q_DECLARE_PRIVATE(AceTreeTransaction)
 public:
     explicit AceTreeTransaction(AceTreeModel *model, QObject *parent = nullptr);
     ~AceTreeTransaction();
@@ -75,11 +76,13 @@ public:
     inline bool canUndo() const;
     inline bool canRedo() const;
 
+    bool recover(const QByteArray &data) override;
+
 signals:
     void indexChanged(int index);
 
-private:
-    AceTreeTransactionPrivate *d;
+protected:
+    AceTreeTransaction(AceTreeTransactionPrivate &d, AceTreeModel *model, QObject *parent = nullptr);
 };
 
 bool AceTreeTransaction::isIdle() const {

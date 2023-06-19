@@ -7,6 +7,7 @@
  * This util helps to write data to setting(.ini) file.
  */
 
+#include <QHash>
 #include <QMap>
 #include <QTextCodec>
 
@@ -32,7 +33,8 @@ public:
     QList<QPair<QString, QString>> toPairList() const;
 
     QString *valueOf(const QString &key);
-    bool containsKey(const QString &key);
+    const QString *valueOf(const QString &key) const;
+    bool containsKey(const QString &key) const;
 
     bool isEmpty() const;
 
@@ -50,8 +52,8 @@ public:
 
 private:
     QString name;
-    QList<QString> keys;
-    QMap<QString, QString> map;
+    QStringList keys;
+    QHash<QString, QString> map;
 
     QStringList unformatted;
 
@@ -60,7 +62,7 @@ public:
 };
 
 // File
-class QMSettingFile {
+class QMCORE_EXPORT QMSettingFile {
 public:
     QMSettingFile();
     ~QMSettingFile();
@@ -95,8 +97,8 @@ public:
     void setBreakAfterSection(bool breakAfterSection);
 
 private:
-    QList<QString> names;
-    QMap<QString, Section> map;
+    QStringList names;
+    QHash<QString, Section> map;
 
 private:
     QTextCodec *m_codec;

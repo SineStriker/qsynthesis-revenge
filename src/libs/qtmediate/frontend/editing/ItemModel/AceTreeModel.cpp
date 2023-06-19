@@ -848,8 +848,6 @@ AceTreeItem::AceTreeItem(AceTreeItemPrivate &d, const QString &name) : d_ptr(&d)
 
 // Model
 AceTreeModelPrivate::AceTreeModelPrivate() {
-    m_dev = nullptr;
-    m_fileDev = nullptr;
     is_destruct = false;
     maxIndex = 1;
     rootItem = nullptr;
@@ -939,14 +937,9 @@ out:
 
     // Serialize
     if (m_dev) {
-        QDataStream stream(m_dev);
-
         // Change step in log
-        writeCurrentStep();
-
-        if (stream.status() != QDataStream::Ok || (m_fileDev && (!m_fileDev->flush()))) {
-            q->stopLogging();
-            emit q->loggingError();
+        if (!writeCurrentStep() || (m_fileDev && (!m_fileDev->flush()))) {
+            logError();
         }
     }
 
@@ -1504,6 +1497,42 @@ AceTreeModelPrivate::BaseOp *AceTreeModelPrivate::deserializeOperation(QDataStre
     return res;
 }
 
+
+void AceTreeModelPrivate::logStart() {
+    auto &dev = m_dev;
+
+    QDataStream stream(dev);
+
+    offsets.startPos = dev->pos();
+    stream.writeRawData(SIGN_TREE_MODEL, sizeof(SIGN_TREE_MODEL) - 1);
+
+    offsets.countPos = dev->pos();
+    stream << stepIndex;
+    offsets.totalPos = dev->pos();
+    stream << operations.size();
+
+    offsets.dataPos = dev->pos();
+
+    // Write all existing operations
+    for (auto operation : operations) {
+        AceTreeModelPrivate::serializeOperation(stream, operation);
+
+        if (stream.status() != QDataStream::Ok) {
+            logError();
+            return;
+        }
+
+        offsets.begs.append(dev->pos());
+    }
+
+    if (m_fileDev)
+        m_fileDev->flush();
+}
+
+void AceTreeModelPrivate::logStop() {
+    offsets = {};
+}
+
 void AceTreeModelPrivate::propertyChanged(AceTreeItem *item, const QString &key, const QVariant &newValue,
                                           const QVariant &oldValue) {
     Q_Q(AceTreeModel);
@@ -1673,12 +1702,11 @@ void AceTreeModelPrivate::rootChanged(AceTreeItem *newRoot, AceTreeItem *oldRoot
 }
 
 bool AceTreeModelPrivate::execute(BaseOp *baseOp, bool undo) {
-    // #define DO_CHANGE(OBJ, FUNC) OBJ->d_func()->FUNC##_helper
-    auto model = q_ptr;
+    Q_Q(AceTreeModel);
     switch (baseOp->c) {
         case PropertyChange: {
             auto op = static_cast<PropertyChangeOp *>(baseOp);
-            auto item = model->itemFromIndex(op->id);
+            auto item = q->itemFromIndex(op->id);
             if (!item)
                 goto obsolete;
             item->d_func()->setProperty_helper(op->key, undo ? op->oldValue : op->newValue);
@@ -1686,7 +1714,7 @@ bool AceTreeModelPrivate::execute(BaseOp *baseOp, bool undo) {
         }
         case BytesSet: {
             auto op = static_cast<BytesSetOp *>(baseOp);
-            auto item = model->itemFromIndex(op->id);
+            auto item = q->itemFromIndex(op->id);
             if (!item)
                 goto obsolete;
             if (undo) {
@@ -1705,7 +1733,7 @@ bool AceTreeModelPrivate::execute(BaseOp *baseOp, bool undo) {
         case BytesInsert:
         case BytesRemove: {
             auto op = static_cast<BytesInsertRemoveOp *>(baseOp);
-            auto item = model->itemFromIndex(op->id);
+            auto item = q->itemFromIndex(op->id);
             if (!item)
                 goto obsolete;
             ((op->c == BytesRemove) ^ undo) ? item->d_func()->removeBytes_helper(op->start, op->bytes.size())
@@ -1715,7 +1743,7 @@ bool AceTreeModelPrivate::execute(BaseOp *baseOp, bool undo) {
         case RowsInsert:
         case RowsRemove: {
             auto op = static_cast<RowsInsertRemoveOp *>(baseOp);
-            auto item = model->itemFromIndex(op->id);
+            auto item = q->itemFromIndex(op->id);
             if (!item)
                 goto obsolete;
             ((op->c == RowsRemove) ^ undo) ? item->d_func()->removeRows_helper(op->index, op->items.size())
@@ -1724,7 +1752,7 @@ bool AceTreeModelPrivate::execute(BaseOp *baseOp, bool undo) {
         }
         case RowsMove: {
             auto op = static_cast<RowsMoveOp *>(baseOp);
-            auto item = model->itemFromIndex(op->id);
+            auto item = q->itemFromIndex(op->id);
             if (!item)
                 goto obsolete;
             if (undo) {
@@ -1745,7 +1773,7 @@ bool AceTreeModelPrivate::execute(BaseOp *baseOp, bool undo) {
         case RecordAdd:
         case RecordRemove: {
             auto c = static_cast<RecordAddRemoveOp *>(baseOp);
-            auto item = model->itemFromIndex(c->id);
+            auto item = q->itemFromIndex(c->id);
             if (!item)
                 goto obsolete;
             ((c->c == RecordRemove) ^ undo) ? item->d_func()->removeRecord_helper(c->seq)
@@ -1755,7 +1783,7 @@ bool AceTreeModelPrivate::execute(BaseOp *baseOp, bool undo) {
         case NodeAdd:
         case NodeRemove: {
             auto c = static_cast<NodeAddRemoveOp *>(baseOp);
-            auto item = model->itemFromIndex(c->id);
+            auto item = q->itemFromIndex(c->id);
             if (!item)
                 goto obsolete;
             ((c->c == NodeRemove) ^ undo) ? item->d_func()->removeNode_helper(c->item)
@@ -1764,7 +1792,7 @@ bool AceTreeModelPrivate::execute(BaseOp *baseOp, bool undo) {
         }
         case RootChange: {
             auto op = static_cast<RootChangeOp *>(baseOp);
-            model->d_func()->setRootItem_helper(undo ? op->oldRoot : op->newRoot);
+            setRootItem_helper(undo ? op->oldRoot : op->newRoot);
             break;
         }
         default:
@@ -1787,17 +1815,15 @@ void AceTreeModelPrivate::push(BaseOp *op) {
 
     // Serialize
     if (m_dev) {
-        QDataStream stream(m_dev);
-
         // Change step in log
         writeCurrentStep();
 
+        QDataStream stream(m_dev);
         serializeOperation(stream, op);
         offsets.begs.append(m_dev->pos());
 
         if (stream.status() != QDataStream::Ok || (m_fileDev && (!m_fileDev->flush()))) {
-            q->stopLogging();
-            emit q->loggingError();
+            logError();
         }
     }
 
@@ -1807,8 +1833,6 @@ void AceTreeModelPrivate::push(BaseOp *op) {
 void AceTreeModelPrivate::truncate(int step) {
     Q_Q(AceTreeModel);
 
-    // qDeleteAll(operations.rbegin(), operations.rend() - stepIndex);
-    // operations.resize(stepIndex);
     while (operations.size() > step) {
         delete operations.takeLast();
     }
@@ -1817,26 +1841,16 @@ void AceTreeModelPrivate::truncate(int step) {
 
     // Serialize
     if (m_dev) {
-        QDataStream stream(m_dev);
-
-        // Change step in log
-        m_dev->seek(offsets.countPos);
-
-        stream << stepIndex;
-        stream << operations.size();
-
         // Restore pos
         qint64 pos = offsets.begs.isEmpty() ? offsets.dataPos : offsets.begs.back();
         m_dev->seek(pos);
-
-        if (stream.status() != QDataStream::Ok || (m_fileDev && (!m_fileDev->resize(pos) || !m_fileDev->flush()))) {
-            q->stopLogging();
-            emit q->loggingError();
+        if (!writeCurrentStep() || (m_fileDev && (!m_fileDev->resize(pos) || !m_fileDev->flush()))) {
+            logError();
         }
     }
 }
 
-void AceTreeModelPrivate::writeCurrentStep() const {
+bool AceTreeModelPrivate::writeCurrentStep() const {
     qint64 pos = m_dev->pos();
     m_dev->seek(offsets.countPos);
 
@@ -1845,6 +1859,8 @@ void AceTreeModelPrivate::writeCurrentStep() const {
     stream << operations.size();
 
     m_dev->seek(pos);
+
+    return stream.status() == QDataStream::Ok;
 }
 
 AceTreeModel::AceTreeModel(QObject *parent) : AceTreeModel(*new AceTreeModelPrivate(), parent) {
@@ -1882,50 +1898,6 @@ void AceTreeModel::truncateForwardSteps() {
 bool AceTreeModel::isWritable() const {
     Q_D(const AceTreeModel);
     return !d->internalChange;
-}
-
-void AceTreeModel::startLogging(QIODevice *dev) {
-    Q_D(AceTreeModel);
-    if (d->m_dev)
-        stopLogging();
-
-    d->m_dev = dev;
-    d->m_fileDev = qobject_cast<QFileDevice *>(dev); // Try QFileDevice
-
-    QDataStream stream(dev);
-
-    d->offsets.startPos = dev->pos();
-    stream.writeRawData(SIGN_TREE_MODEL, sizeof(SIGN_TREE_MODEL) - 1);
-
-    d->offsets.countPos = dev->pos();
-    stream << d->stepIndex;
-    stream << d->operations.size();
-
-    d->offsets.dataPos = dev->pos();
-
-    // Write all existing operations
-    for (int i = 0; i < d->operations.size(); ++i) {
-        AceTreeModelPrivate::serializeOperation(stream, d->operations.at(i));
-
-        if (stream.status() != QDataStream::Ok) {
-            stopLogging();
-            emit loggingError();
-            return;
-        }
-
-        d->offsets.begs.append(dev->pos());
-    }
-
-    if (d->m_fileDev)
-        d->m_fileDev->flush();
-}
-
-void AceTreeModel::stopLogging() {
-    Q_D(AceTreeModel);
-    d->m_dev = nullptr;
-    d->m_fileDev = nullptr;
-
-    d->offsets = {};
 }
 
 bool AceTreeModel::recover(const QByteArray &data) {
@@ -2116,9 +2088,7 @@ AceTreeItem *AceTreeModel::reset() {
     return d->reset_helper();
 }
 
-AceTreeModel::AceTreeModel(AceTreeModelPrivate &d, QObject *parent) : QObject(parent), d_ptr(&d) {
-    d.q_ptr = this;
-
+AceTreeModel::AceTreeModel(AceTreeModelPrivate &d, QObject *parent) : AceTreeRecoverable(d, parent) {
     d.init();
 }
 

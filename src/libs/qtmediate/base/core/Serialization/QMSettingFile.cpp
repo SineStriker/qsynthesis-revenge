@@ -95,19 +95,26 @@ bool QMSettingSection::isArray(QString *prefix) const {
 
 QStringList QMSettingSection::toArray() const {
     QStringList list;
-    for (int i = 0; i < keys.size(); ++i) {
-        list.append(map[keys.at(i)]);
+    for (const auto &key : keys) {
+        list.append(map[key]);
     }
     return list;
 }
 
 QList<QPair<QString, QString>> QMSettingSection::toPairList() const {
     QList<QPair<QString, QString>> list;
-    for (int i = 0; i < keys.size(); ++i) {
-        QString key = keys.at(i);
+    for (const auto &key : keys) {
         list.append(qMakePair(key, map[key]));
     }
     return list;
+}
+
+const QString *QMSettingSection::valueOf(const QString &key) const {
+    auto it = map.find(key);
+    if (it == map.end()) {
+        return nullptr;
+    }
+    return &it.value();
 }
 
 QString *QMSettingSection::valueOf(const QString &key) {
@@ -118,7 +125,7 @@ QString *QMSettingSection::valueOf(const QString &key) {
     return &it.value();
 }
 
-bool QMSettingSection::containsKey(const QString &key) {
+bool QMSettingSection::containsKey(const QString &key) const {
     return map.contains(key);
 }
 
@@ -231,38 +238,35 @@ void QMSettingFile::fromLines(const QStringList &list) {
     QStringList lines;
 
     bool toAdd = false;
+    auto addSec = [&]() {
+        if (toAdd) {
+            section.fromLines(lines);
+            addSection(section);
+            section.clearAll();
+            lines.clear();
+        }
+    };
+
     auto it = list.begin();
     while (it != list.end()) {
         line = *it;
         ++it;
 
-        if (line.isEmpty() && it != list.end()) {
+        if (line.isEmpty()) {
             continue;
         }
 
         if (parseSectionName(line, name)) {
-            if (toAdd) {
-                section.fromLines(lines);
-                addSection(section);
-                section.clearAll();
-                lines.clear();
-            }
+            addSec();
             section.setSectionName(name);
             toAdd = true;
         } else {
             lines.append(line);
         }
-
-        // At end
-        if (it == list.end()) {
-            if (toAdd) {
-                section.fromLines(lines);
-                addSection(section);
-                section.clearAll();
-                lines.clear();
-            }
-        }
     }
+
+    // At end
+    addSec();
 }
 
 QStringList QMSettingFile::toLines() const {
@@ -304,8 +308,7 @@ bool QMSettingFile::isEmpty() const {
     return names.isEmpty();
 }
 
-bool QMSettingFile::addPairsSection(const QString &name,
-                                   const QList<QPair<QString, QString>> &pairs) {
+bool QMSettingFile::addPairsSection(const QString &name, const QList<QPair<QString, QString>> &pairs) {
     if (contains(name)) {
         return false;
     }
@@ -317,8 +320,7 @@ bool QMSettingFile::addPairsSection(const QString &name,
     return true;
 }
 
-bool QMSettingFile::addArraySection(const QString &name, const QString &prefix,
-                                   const QStringList &values, int begin) {
+bool QMSettingFile::addArraySection(const QString &name, const QString &prefix, const QStringList &values, int begin) {
     if (contains(name)) {
         return false;
     }
@@ -369,9 +371,8 @@ void QMSettingFile::setBreakAfterSection(bool breakAfterSection) {
 
 bool QMSettingFile::parseSectionName(const QString &oName, QString &oResult) {
     if (oName.startsWith(SECTION_BEGIN_MARK) && oName.endsWith(SECTION_END_MARK)) {
-        oResult = oName.mid(int(strlen(SECTION_BEGIN_MARK)), oName.size() -
-                                                                 int(strlen(SECTION_BEGIN_MARK)) -
-                                                                 int(strlen(SECTION_END_MARK)));
+        oResult = oName.mid(int(strlen(SECTION_BEGIN_MARK)),
+                            oName.size() - int(strlen(SECTION_BEGIN_MARK)) - int(strlen(SECTION_END_MARK)));
         return true;
     } else {
         return false;

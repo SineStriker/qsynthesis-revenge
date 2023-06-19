@@ -50,6 +50,11 @@ namespace Core {
         return btn;
     }
 
+    void IHomeWindow::removeNavWidget(QWidget *w) {
+        Q_D(IHomeWindow);
+        d->navFrame->removeWidget(w);
+    }
+
     IHomeWindow::IHomeWindow(QObject *parent) : IHomeWindow(*new IHomeWindowPrivate(), parent) {
     }
 

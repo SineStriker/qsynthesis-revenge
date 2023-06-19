@@ -9,6 +9,7 @@
 #include <QMChronSet.h>
 
 #include "AceTreeModel.h"
+#include "AceTreeRecoverable_p.h"
 
 class AceTreeItemPrivate {
     Q_DECLARE_PUBLIC(AceTreeItem)
@@ -68,19 +69,14 @@ public:
     static void forceDelete(AceTreeItem *item);
 };
 
-class AceTreeModelPrivate {
+class AceTreeModelPrivate : public AceTreeRecoverablePrivate {
     Q_GADGET
     Q_DECLARE_PUBLIC(AceTreeModel)
 public:
     AceTreeModelPrivate();
-    virtual ~AceTreeModelPrivate();
+    ~AceTreeModelPrivate();
 
     void init();
-
-    AceTreeModel *q_ptr;
-
-    QIODevice *m_dev;
-    QFileDevice *m_fileDev;
 
     bool is_destruct;
 
@@ -228,9 +224,10 @@ public:
     struct Offsets {
         qint64 startPos;
         qint64 countPos;
+        qint64 totalPos;
         qint64 dataPos;
         QVector<qint64> begs;
-        Offsets() : startPos(0), countPos(0), dataPos(0) {
+        Offsets() : startPos(0), countPos(0), totalPos(0), dataPos(0) {
         }
     };
     Offsets offsets;
@@ -239,10 +236,13 @@ public:
     void push(BaseOp *op);
     void truncate(int step);
 
-    void writeCurrentStep() const;
+    bool writeCurrentStep() const;
 
     static void serializeOperation(QDataStream &stream, BaseOp *baseOp);
     static BaseOp *deserializeOperation(QDataStream &stream, QList<int> *ids);
+
+    void logStart() override;
+    void logStop() override;
 
 public:
     void propertyChanged(AceTreeItem *item, const QString &key, const QVariant &newValue, const QVariant &oldValue);

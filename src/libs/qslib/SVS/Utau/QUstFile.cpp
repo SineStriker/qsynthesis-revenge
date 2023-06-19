@@ -282,7 +282,7 @@ bool QUstFile::parseSectionNote(const QStringList &sectionList, QUstNote &note) 
                 note.tempo = valueDouble; // Tempo
             }
         } else if (key == KEY_NAME_REGION_START) {
-            note.region = value; // Start of region
+            note.region = value;    // Start of region
         } else if (key == KEY_NAME_REGION_END) {
             note.regionEnd = value; // End of region
         } else if (key == KEY_NAME_PB_START) {
@@ -306,9 +306,9 @@ bool QUstFile::parseSectionNote(const QStringList &sectionList, QUstNote &note) 
         } else if (key == KEY_NAME_VBR) {
             note.vibrato = QUtaUtils::StringsToDoubles(value.split(COMMA)); // Vibrato
         } else if (key == KEY_NAME_ENVELOPE) {
-            strEnv = value; // Envelope
+            strEnv = value;                                                 // Envelope
         } else if (!key.startsWith('@')) {
-            note.customData.append(qMakePair(key, value)); // Custom Values
+            note.customData.append(qMakePair(key, value));                  // Custom Values
         }
     }
     note.Mode2Pitch = QUtaUtils::StringToPortamento(mode2); // Mode2 Pitch
@@ -364,17 +364,17 @@ bool QUstFile::parseSectionSettings(const QStringList &sectionList, QUstSettings
         value = sectionList[i].mid(eq + 1);
 
         if (key == KEY_NAME_PROJECT_NAME) {
-            settings.projectName = value; // Project Name
+            settings.projectName = value;                                          // Project Name
         } else if (key == KEY_NAME_OUTPUT_FILE) {
-            settings.outputFileName = value; // Output File Name
+            settings.outputFileName = value;                                       // Output File Name
         } else if (key == KEY_NAME_VOICE_DIR) {
             settings.voiceDirectory = QUtaUtils::fromUSTVoiceDir(value, voiceDir); // Voice Directory
         } else if (key == KEY_NAME_CACHE_DIR) {
-            settings.cacheDirectory = value; // Cache Directory
+            settings.cacheDirectory = value;                                       // Cache Directory
         } else if (key == KEY_NAME_TOOL1) {
-            settings.wavtoolPath = QUtaUtils::fromUSTToolsDir(value); // Wavtool
+            settings.wavtoolPath = QUtaUtils::fromUSTToolsDir(value);              // Wavtool
         } else if (key == KEY_NAME_TOOL2) {
-            settings.resamplerPath = QUtaUtils::fromUSTToolsDir(value); // Resampler
+            settings.resamplerPath = QUtaUtils::fromUSTToolsDir(value);            // Resampler
         } else if (key == KEY_NAME_MODE2) {
             if (value != "True") {
                 isValid = false;
@@ -482,8 +482,8 @@ void QUstFile::writeSectionNote(int num, const QUstNote &note, QTextStream &out)
     }
 
     // Custom Values
-    for (int i = 0; i < note.customData.size(); ++i) {
-        out << note.customData[i].first << "=" << note.customData[i].second << Qt::endl;
+    for (const auto &item : note.customData) {
+        out << item.first << "=" << item.second << Qt::endl;
     }
 }
 

@@ -23,13 +23,9 @@ namespace Core {
 
         static IHomeWindow *instance();
 
-        /**
-         * brief: Add a navigation widget
-         *
-         * @param w QWidget to show in tabs
-         * @return Sidebar button handle
-         */
         QAbstractButton *addNavWidget(QWidget *w);
+
+        void removeNavWidget(QWidget *w);
 
     protected:
         explicit IHomeWindow(QObject *parent = nullptr);

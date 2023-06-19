@@ -2,6 +2,7 @@
 #define CHORUSKIT_ACETREESTANDARDENTITY_P_H
 
 #include "AceTreeEntity_p.h"
+#include "AceTreeStandardEntity.h"
 
 #include <QJsonArray>
 #include <QJsonObject>

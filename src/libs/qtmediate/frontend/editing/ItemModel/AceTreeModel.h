@@ -5,7 +5,7 @@
 #include <QObject>
 #include <QVariant>
 
-#include "QMEditingGlobal.h"
+#include "AceTreeRecoverable.h"
 
 class AceTreeTransaction;
 
@@ -144,7 +144,7 @@ protected:
 
 class AceTreeModelPrivate;
 
-class QMEDITING_EXPORT AceTreeModel : public QObject {
+class QMEDITING_EXPORT AceTreeModel : public AceTreeRecoverable {
     Q_OBJECT
     Q_DECLARE_PRIVATE(AceTreeModel)
 public:
@@ -161,9 +161,7 @@ public:
 
     bool isWritable() const;
 
-    void startLogging(QIODevice *dev);
-    void stopLogging();
-    bool recover(const QByteArray &data);
+    bool recover(const QByteArray &data) override;
 
     AceTreeItem *itemFromIndex(int index) const;
 
@@ -198,12 +196,9 @@ signals:
     void rootChanged(AceTreeItem *newRoot, AceTreeItem *oldRoot);
 
     void stepChanged(int step);
-    void loggingError();
 
 protected:
     AceTreeModel(AceTreeModelPrivate &d, QObject *parent = nullptr);
-
-    QScopedPointer<AceTreeModelPrivate> d_ptr;
 
     friend class AceTreeItem;
     friend class AceTreeItemPrivate;
