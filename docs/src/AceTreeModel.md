@@ -146,3 +146,111 @@
 + 日志为二进制形式，头部留有两个`int32`的位置标记当前步数与总步数
 + 每次撤销或重做会更新当前步数
 + 每次新操作发生时，会截断当前步数的日志片段的尾部之后所有的内容，追加新操作的日志片段，并更新总步数
+
+## 文档模型封装
+
+### AceTreeEntity
+
+`AceTreeEntity`是对`AceTreeItem`的封装，将纯数据的`item`包装为提供清晰的属性读写接口的`entity`。
+
+例如，如果有一个`Json`描述的对象
+```json
+{
+    "name": "Alice",
+    "gender": "female",
+    "age": 18,
+    "talents": [
+        {
+            "type": "sports",
+            "name": "basketball",
+        },
+        {
+            "type": "linguist",
+            "name": "english"
+        }
+    ]
+}
+```
+
+可将其封装为
+```c++
+class StudentEntity: public AceTreeStandardEntity {
+    Q_OBJECT
+    Q_PROPERTY(QString name READ name WRITE setName NOTIFY nameChanged)
+    Q_PROPERTY(Gender gender READ gender WRITE setGender NOTIFY genderChanged)
+    Q_PROPERTY(int age READ age WRITE setAge NOTIFY ageChanged)
+public:
+    explicit StudentEntity(QObject *parent = nullptr);
+    ~StudentEntity();
+
+    enum Gender {
+        Male,
+        Female,
+    };
+    Q_ENUM(Gender)
+
+public:
+    QString name() const;
+    void setName(const QString &name);
+
+    Gender gender() const;
+    void setGender(Gender gender);
+
+    int age() const;
+    void setAge(int age);
+
+    TalentList *talents() const;
+
+Q_SIGNALS:
+    void nameChanged(const QString &name);
+    void genderChanged(Gender gender);
+    void ageChanged(int age);
+}
+```
+
++ 如果自己创建，则需要在`new`之后调用`initialize`进行初始化
++ 如果根据`AceTreeItem`生成，则需要调用`setup`进行装载
+
+### AceTreeTransaction
+
+`AceTreeTransaction`是对`AceTreeModel`的封装，其一步相当于`model`的多步。
+
+使用事务机制的步骤如下
+```c++
+// Initialize model
+auto model = new AceTreeModel();
+auto tx = new AceTransaction(model);
+
+// Setup root
+auto studentList = new StudentListEntity();
+studentList->initialize();
+
+model->setRootItem(const_cast<AceTreeItem *>(studentList->treeItem()));
+
+// ======== Transaction 1: Add student ========
+tx->beginTransaction();
+
+auto student = new Student();
+student->initialaize();
+student->setName("Alice");
+student->setGender(StudentEntity::Female);
+student->setAge(18);
+studentList->insert(0, student);
+
+tx->endTransaction("add student", {});
+
+// ======== Transaction 2: Change age ========
+tx->beginTransaction();
+
+student->setAge(20);
+
+tx->endTransaction("change age", {});
+
+// ======== Undo ========
+tx->undo();
+qDebug() << student->age(); // 18
+
+// ======== Redo ========
+tx->redo();
+qDebug() << student->age(); // 20
+```

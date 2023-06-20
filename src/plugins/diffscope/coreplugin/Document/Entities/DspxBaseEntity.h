@@ -176,6 +176,7 @@ namespace Core {
     class CORE_EXPORT DspxAnchorPointEntity : public DspxIntPointEntity {
         Q_OBJECT
         Q_DECLARE_PRIVATE(DspxAnchorPointEntity)
+        Q_PROPERTY(Interpolation interp READ interp WRITE setInterp NOTIFY interpChanged)
     public:
         explicit DspxAnchorPointEntity(QObject *parent = nullptr);
         ~DspxAnchorPointEntity();
@@ -200,7 +201,7 @@ namespace Core {
         void doSetup() override;
 
     Q_SIGNALS:
-        void interpolationChanged(Interpolation i);
+        void interpChanged(Interpolation i);
     };
     //===========================================================================
 

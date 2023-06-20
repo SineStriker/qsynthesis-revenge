@@ -265,7 +265,7 @@ namespace Core {
             if (key == "i") {
                 // Cache point value
                 i = static_cast<DspxAnchorPointEntity::Interpolation>(newValue.toInt());
-                emit q->interpolationChanged(i);
+                emit q->interpChanged(i);
             }
         }
     };
