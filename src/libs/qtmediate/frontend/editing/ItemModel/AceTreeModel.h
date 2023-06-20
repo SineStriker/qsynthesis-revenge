@@ -99,6 +99,7 @@ public:
     bool moveRows(int index, int count, int dest);         // `dest`: destination index before move
     inline bool moveRows2(int index, int count, int dest); // `dest`: destination index after move
     bool removeRows(int index, int count);
+    bool removeRow(AceTreeItem *item);
     AceTreeItem *row(int index) const;
     QVector<AceTreeItem *> rows() const;
     int rowIndexOf(AceTreeItem *item) const;

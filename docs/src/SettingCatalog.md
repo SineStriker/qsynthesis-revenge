@@ -1,5 +1,7 @@
 # SettingCatalog
 
+---
+
 ## ISettingPage
 
 + 负责单个设置页面，可对其进行`addPage`、`clearPage`操作。

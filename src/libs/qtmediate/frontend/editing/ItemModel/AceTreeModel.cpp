@@ -208,7 +208,7 @@ AceTreeItemPrivate::~AceTreeItemPrivate() {
     } else {
         switch (status) {
             case AceTreeItem::Row:
-                parent->removeRow(parent->rowIndexOf(q));
+                parent->removeRow(q);
                 break;
             case AceTreeItem::Record:
                 parent->removeRecord(q);
@@ -518,6 +518,26 @@ bool AceTreeItem::removeRows(int index, int count) {
     return true;
 }
 
+bool AceTreeItem::removeRow(AceTreeItem *item) {
+    Q_D(AceTreeItem);
+    if (!d->testModifiable(__func__))
+        return false;
+
+    // Validate
+    if (!item) {
+        myWarning(__func__) << "trying to remove a null row from" << this;
+        return false;
+    }
+    int index;
+    if (item->parent() != this || (index = d->vector.indexOf(item)) < 0) {
+        myWarning(__func__) << "item" << item << "is not a row of" << this;
+        return false;
+    }
+
+    d->removeRows_helper(index, 1);
+    return true;
+}
+
 AceTreeItem *AceTreeItem::row(int index) const {
     Q_D(const AceTreeItem);
     return (index >= 0 && index < d->vector.size()) ? d->vector.at(index) : nullptr;
@@ -643,7 +663,7 @@ bool AceTreeItem::removeNode(AceTreeItem *item) {
         return false;
     }
     if (item->parent() != this || !d->set.contains(item)) {
-        myWarning(__func__) << "item" << item << "has nothing to do with parent" << this;
+        myWarning(__func__) << "item" << item << "is not a node of" << this;
         return false;
     }
 

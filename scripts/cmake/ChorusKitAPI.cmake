@@ -448,13 +448,19 @@ Add an application, need to specify an entry library.
         ENV: set a series of environment variable to the shared library
         ENTRY_NAME: set a custom function name to pass "argc" and "argv", the default is "main_entry"
 
+    AUTOGEN: set CMAKE_AUTOMOC, CMAKE_AUTOUIC, CMAKE_AUTORCC
+
     Check `ck_add_library` for arguments' usage.
 ]] #
 function(ck_add_application _target)
-    set(options SKIP_EXPORT)
+    set(options AUTOGEN SKIP_EXPORT)
     set(oneValueArgs ENTRY_LIB ENTRY_NAME ICO ICNS)
     set(multiValueArgs ENV)
     cmake_parse_arguments(FUNC "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
+
+    if(FUNC_AUTOGEN)
+        _ck_set_cmake_autoxxx(on)
+    endif()
 
     # Configure main cpp template
     if(FUNC_ENTRY_LIB)

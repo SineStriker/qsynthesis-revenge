@@ -48,6 +48,7 @@ namespace Core {
         Q_Q(DspxDocument);
 
         opened = true;
+        emit q->opened();
 
         binLog = new QFile(q);
         binLog->setFileName(q->logDirectory() + "/atm.dat");
@@ -276,9 +277,7 @@ namespace Core {
             return false;
         }
 
-        auto err = [this](){
-            setErrorMessage(tr("Fail to read log"));
-        };
+        auto err = [this]() { setErrorMessage(tr("Fail to read log")); };
 
         // Read binary log
         {

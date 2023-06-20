@@ -1,10 +1,10 @@
 #ifndef IPROJECTWINDOW_H
 #define IPROJECTWINDOW_H
 
-#include <CDockFrame.h>
-
 #include <QAbstractButton>
 #include <QToolBar>
+
+#include <CDockFrame.h>
 
 #include "Document/DspxDocument.h"
 #include "ICoreWindow.h"

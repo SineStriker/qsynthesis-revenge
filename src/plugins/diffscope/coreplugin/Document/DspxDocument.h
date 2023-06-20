@@ -19,7 +19,6 @@ namespace Core {
         ~DspxDocument();
 
         AceTreeTransaction *TX() const;
-
         DspxContentEntity *project() const;
 
     public:
@@ -47,6 +46,9 @@ namespace Core {
         bool isModified() const override;
 
         void close() override;
+
+    signals:
+        void opened();
 
     protected:
         DspxDocument(DspxDocumentPrivate &d, QObject *parent = nullptr);
