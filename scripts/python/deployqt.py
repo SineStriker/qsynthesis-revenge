@@ -164,8 +164,95 @@ def main():
             print_verbose(f"  Copying {qt_framework}...")
             copydir(qt_framework, args.libdir, symlinks=True, ignore=ignore)
 
-    else:
-        print("Linux")
+    elif os_name == "linux":
+        files_to_analyze = []
+        files_to_analyze.extend(args.files)
+
+        DEBUG_SUFFIX = "_debug"
+        if args.debug:
+            print_verbose("Asked for debug version Qt libraries.")
+            ignore = None
+        else:
+            # Do not copy debug version Qt libraries for Release build
+            ignore = shutil.ignore_patterns(f"*{DEBUG_SUFFIX}", f"*{DEBUG_SUFFIX}.so")
+
+        # Query Qt Plugins path
+        qtplugins_path = (
+            subprocess.check_output([args.qmake, "-query", "QT_INSTALL_PLUGINS"])
+            .strip()
+            .decode("utf-8")
+        )
+        print_verbose(f"Qt Plugins path: {qtplugins_path}")
+
+        plugin_list = [
+            "bearer",
+            "iconengines",
+            "imageformats",
+            "platforminputcontexts",
+            "styles",
+            "virtualkeyboard",
+        ]
+
+        # No debug dylibs here. It will be added in the following steps.
+        plugin_so_list = ["platforms/libqxcb.so"]
+
+        if args.debug:
+            print_verbose("Asked for debug version Qt libraries.")
+
+            # Add debug dylibs
+            plugin_so_list_debug = [
+                re.sub("^(.*)\\.so$", f"\\1{DEBUG_SUFFIX}.so", s)
+                for s in plugin_so_list
+            ]
+            plugin_so_list.extend(plugin_so_list_debug)
+
+        for plugin_src in plugin_list:
+            print_verbose(f"  Copying {plugin_src}...")
+            copydir(
+                f"{qtplugins_path}/{plugin_src}",
+                f"{args.plugindir}",
+                symlinks=True,
+                ignore=ignore,
+            )
+
+        for plugin_so in plugin_so_list:
+            print_verbose(f"  Copying {plugin_so}...")
+            base_dir = os.path.dirname(f"{args.plugindir}/{plugin_so}")
+            copyfile(f"{qtplugins_path}/{plugin_so}", base_dir, follow_symlinks=False)
+
+        plugin_so_paths = glob.glob(f"{args.plugindir}/**/*.so", recursive=True)
+        files_to_analyze.extend(plugin_so_paths)
+
+        # Obtain Qt library dependencies of the required libraries
+        qtlibs_path = (
+            subprocess.check_output([args.qmake, "-query", "QT_INSTALL_LIBS"])
+            .strip()
+            .decode("utf-8")
+        )
+        print_verbose(f"Qt Libraries path: {qtlibs_path}")
+
+        qtdeps = set()
+        for libname in files_to_analyze:
+            ldd_exc = ["ldd", libname]
+
+            # Call ldd.
+            output = subprocess.check_output(ldd_exc).decode("utf-8")
+
+            # Parse the output.
+            dependencies = []
+            for line in output.splitlines():
+                if "=>" in line and "(" in line:
+                    deps_path = line.split(" => ")[1].split(" (")[0]
+                    if qtlibs_path in deps_path:
+                        dependencies.append(deps_path)
+
+            qtdeps = qtdeps.union(set(dependencies))
+
+        print_verbose(f"Qt dependencies: {qtdeps}")
+
+        for qt_library in qtdeps:
+            print_verbose(f"  Copying {qt_library}...")
+            copyfile(qt_library, args.libdir, follow_symlinks=False)
 
 
 if __name__ == "__main__":
