@@ -102,7 +102,7 @@ namespace Core {
         QString versionString = value.toString();
         QVersionNumber version = QVersionNumber::fromString(versionString);
         if (version > DspxSpec::currentVersion()) {
-            errMsg = DspxDocument::tr("The specified file version(%1) is too high.!").arg(versionString);
+            errMsg = DspxDocument::tr("The specified file version(%1) is too high").arg(versionString);
             return false;
         }
 
@@ -348,7 +348,7 @@ namespace Core {
 
     QString DspxDocument::suggestedFileName() const {
         Q_D(const DspxDocument);
-        return tr("Untitled Project.dspx");
+        return "Untitled Project.dspx";
     }
 
     bool DspxDocument::isModified() const {

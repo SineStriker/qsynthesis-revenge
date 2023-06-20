@@ -101,6 +101,34 @@
         <source>Failed to create file!</source>
         <translation>创建文件失败！</translation>
     </message>
+    <message>
+        <source>Log Error</source>
+        <translation>日志错误</translation>
+    </message>
+    <message>
+        <source>Failed to create log!</source>
+        <translation>无法创建日志！</translation>
+    </message>
+    <message>
+        <source>File is opened</source>
+        <translation>文件已打开</translation>
+    </message>
+    <message>
+        <source>Missing version field!</source>
+        <translation>缺少 version 字段！</translation>
+    </message>
+    <message>
+        <source>Missing content field!</source>
+        <translation>缺少 content 字段！</translation>
+    </message>
+    <message>
+        <source>Fail to read log</source>
+        <translation>无法读取日志</translation>
+    </message>
+    <message>
+        <source>The specified file version(%1) is too high</source>
+        <translation>指定的文件版本(%1)太高</translation>
+    </message>
 </context>
 <context>
     <name>Core::DspxSpec</name>

@@ -58,6 +58,34 @@
         <source>Failed to create file!</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Log Error</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Failed to create log!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>File is opened</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Missing version field!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Missing content field!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Fail to read log</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>The specified file version(%1) is too high</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>Core::DspxSpec</name>
