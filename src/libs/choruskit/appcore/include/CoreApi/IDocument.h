@@ -35,8 +35,8 @@ namespace Core {
         void setAutoRemoveLogDirectory(bool autoRemove);
 
     public:
-        virtual bool open(const QString &filename) = 0;
-        virtual bool save(const QString &filename) = 0;
+        virtual bool open(const QString &fileName) = 0;
+        virtual bool save(const QString &fileName) = 0;
 
         virtual ReloadBehavior reloadBehavior(ChangeTrigger state, ChangeType type) const;
         virtual bool reload(ReloadFlag flag, ChangeType type) = 0;

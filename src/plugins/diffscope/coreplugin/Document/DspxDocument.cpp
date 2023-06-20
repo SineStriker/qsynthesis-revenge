@@ -6,6 +6,7 @@
 #include <QFile>
 #include <QJsonDocument>
 #include <QJsonObject>
+#include <QMessageBox>
 #include <QStandardPaths>
 #include <QVersionNumber>
 
@@ -19,12 +20,19 @@ namespace Core {
     static int m_untitledIndex = 0;
 
     DspxDocumentPrivate::DspxDocumentPrivate() {
+        opened = false;
         vstMode = false;
         model = nullptr;
         content = nullptr;
+        tx = nullptr;
+
+        binLog = nullptr;
+        txtLog = nullptr;
     }
 
     DspxDocumentPrivate::~DspxDocumentPrivate() {
+        delete binLog;
+        delete txtLog;
     }
 
     void DspxDocumentPrivate::init() {
@@ -36,9 +44,37 @@ namespace Core {
         ICore::instance()->documentSystem()->addDocument(q, true);
     }
 
+    void DspxDocumentPrivate::changeToOpen() {
+        Q_Q(DspxDocument);
+
+        opened = true;
+
+        binLog = new QFile(q);
+        binLog->setFileName(q->logDirectory() + "/atm.dat");
+
+        txtLog = new QFile(q);
+        txtLog->setFileName(q->logDirectory() + "/atx.log");
+
+        if (!binLog->open(QIODevice::WriteOnly) || !txtLog->open(QIODevice::WriteOnly | QIODevice::Text)) {
+            QMessageBox::warning(q->dialogParent(), DspxDocument::tr("Log Error"),
+                                 DspxDocument::tr("Failed to create log!"));
+            return;
+        }
+
+        model->startLogging(binLog);
+        tx->startLogging(txtLog);
+    }
+
     void DspxDocumentPrivate::unshiftToRecent() {
         Q_Q(DspxDocument);
         ICore::instance()->documentSystem()->addRecentFile(q->filePath());
+    }
+
+    bool DspxDocumentPrivate::checkNotOpened() const {
+        if (!opened)
+            return true;
+        errMsg = DspxDocument::tr("File is opened");
+        return false;
     }
 
     bool DspxDocumentPrivate::readFile(const QByteArray &data) {
@@ -48,7 +84,7 @@ namespace Core {
         QJsonParseError parseError;
         QJsonDocument doc = QJsonDocument::fromJson(data, &parseError);
         if (parseError.error != QJsonParseError::NoError || !doc.isObject()) {
-            q->setErrorMessage(DspxDocument::tr("Invalid file format!"));
+            errMsg = DspxDocument::tr("Invalid file format!");
             return false;
         }
 
@@ -58,7 +94,7 @@ namespace Core {
         // Get version
         value = obj.value("version");
         if (!value.isString()) {
-            q->setErrorMessage(DspxDocument::tr("Missing version field!"));
+            errMsg = DspxDocument::tr("Missing version field!");
             return false;
         }
 
@@ -66,7 +102,7 @@ namespace Core {
         QString versionString = value.toString();
         QVersionNumber version = QVersionNumber::fromString(versionString);
         if (version > DspxSpec::currentVersion()) {
-            q->setErrorMessage(DspxDocument::tr("The specified file version(%1) is too high.!").arg(versionString));
+            errMsg = DspxDocument::tr("The specified file version(%1) is too high.!").arg(versionString);
             return false;
         }
 
@@ -79,21 +115,21 @@ namespace Core {
         // Get content
         value = obj.value("content");
         if (!value.isObject()) {
-            q->setErrorMessage(DspxDocument::tr("Missing content field!"));
+            errMsg = DspxDocument::tr("Missing content field!");
             return false;
         }
 
-        auto content = new DspxContentEntity();
-        content->initialize();
+        auto cont = new DspxContentEntity();
+        cont->initialize();
 
-        if (!content->read(value.toObject())) {
-            delete content;
-            q->setErrorMessage(DspxDocument::tr("Error occurred while parsing file!"));
+        if (!cont->read(value.toObject())) {
+            delete cont;
+            errMsg = DspxDocument::tr("Error occurred while parsing file!");
             return false;
         }
 
-        this->content = content;
-        model->setRootItem(const_cast<AceTreeItem *>(content->treeItem()));
+        this->content = cont;
+        model->setRootItem(const_cast<AceTreeItem *>(cont->treeItem()));
 
         return true;
     }
@@ -103,7 +139,7 @@ namespace Core {
 
         auto obj = content->write().toObject();
         if (obj.isEmpty()) {
-            q->setErrorMessage(DspxDocument::tr("Error occurred while saving file!"));
+            errMsg = DspxDocument::tr("Error occurred while saving file!");
             return false;
         }
 
@@ -138,10 +174,14 @@ namespace Core {
         return d->content;
     }
 
-    bool DspxDocument::open(const QString &filename) {
+    bool DspxDocument::open(const QString &fileName) {
         Q_D(DspxDocument);
 
-        QFile file(filename);
+        if (!d->checkNotOpened()) {
+            return false;
+        }
+
+        QFile file(fileName);
         if (!file.open(QIODevice::ReadOnly)) {
             setErrorMessage(tr("Failed to open file!"));
             return false;
@@ -154,13 +194,15 @@ namespace Core {
             return false;
         }
 
-        setFilePath(filename);
+        setFilePath(fileName);
+        d->changeToOpen();
+
         d->unshiftToRecent();
 
         return true;
     }
 
-    bool DspxDocument::save(const QString &filename) {
+    bool DspxDocument::save(const QString &fileName) {
         Q_D(DspxDocument);
 
         QByteArray data;
@@ -168,7 +210,7 @@ namespace Core {
             return false;
         }
 
-        QFile file(filename);
+        QFile file(fileName);
         if (!file.open(QIODevice::WriteOnly)) {
             setErrorMessage(tr("Failed to create file!"));
             return false;
@@ -176,15 +218,32 @@ namespace Core {
         file.write(data);
         file.close();
 
-        setFilePath(filename);
+        if (!d->preferredDisplayName.isEmpty()) {
+            setPreferredDisplayName({});
+        }
+        setFilePath(fileName);
+
         d->unshiftToRecent();
 
         return true;
     }
 
-    bool DspxDocument::openRawData(const QByteArray &data) {
+    bool DspxDocument::openRawData(const QString &suggestFileName, const QByteArray &data) {
         Q_D(DspxDocument);
-        return d->readFile(data);
+
+        if (!d->checkNotOpened()) {
+            return false;
+        }
+        if (!d->readFile(data)) {
+            return false;
+        }
+
+        QFileInfo info(suggestFileName);
+        setFilePath(info.fileName());
+        setPreferredDisplayName(info.baseName());
+        d->changeToOpen();
+
+        return true;
     }
 
     bool DspxDocument::saveRawData(QByteArray *data) const {
@@ -195,25 +254,86 @@ namespace Core {
     void DspxDocument::makeNew() {
         Q_D(DspxDocument);
 
-        ++m_untitledIndex;
+        if (d->opened) {
+            return;
+        }
 
         auto content = new DspxContentEntity();
         content->initialize();
         d->model->setRootItem(const_cast<AceTreeItem *>(content->treeItem()));
         d->content = content;
+
+        QString baseName = QString("Untitled-%1").arg(QString::number(++m_untitledIndex));
+        setFilePath(baseName + ".dspx");
+        setPreferredDisplayName(baseName);
+        d->changeToOpen();
     }
 
     bool DspxDocument::recover(const QString &filename) {
-        Q_UNUSED(filename)
+        Q_D(DspxDocument);
 
-        setFilePath(QFileInfo(filename).fileName());
+        if (!d->checkNotOpened()) {
+            return false;
+        }
 
-        return false;
+        auto err = [this](){
+            setErrorMessage(tr("Fail to read log"));
+        };
+
+        // Read binary log
+        {
+            QFile file(logDirectory() + "/atm.dat");
+            if (!file.open(QIODevice::ReadOnly)) {
+                err();
+                return false;
+            }
+
+            QByteArray data = file.readAll();
+            file.close();
+
+            if (!d->model->recover(data)) {
+                err();
+                return false;
+            }
+        }
+
+        // Read text log
+        {
+            QFile file(logDirectory() + "/atx.log");
+            if (!file.open(QIODevice::ReadOnly)) {
+                err();
+                return false;
+            }
+
+            QByteArray data = file.readAll();
+            file.close();
+
+            if (!d->tx->recover(data)) {
+                err();
+                return false;
+            }
+        }
+
+        auto content = new DspxContentEntity();
+        content->setup(d->model->rootItem());
+        d->content = content;
+
+        QFileInfo info(filename);
+        setFilePath(info.fileName());
+        setPreferredDisplayName(info.baseName());
+        d->changeToOpen();
+
+        return true;
     }
 
     bool DspxDocument::isVSTMode() const {
         Q_D(const DspxDocument);
         return d->vstMode;
+    }
+
+    bool DspxDocument::isOpened() const {
+        Q_D(const DspxDocument);
+        return d->opened;
     }
 
     void DspxDocument::setVSTMode(bool on) {
@@ -228,12 +348,13 @@ namespace Core {
 
     QString DspxDocument::suggestedFileName() const {
         Q_D(const DspxDocument);
-        if (d->untitledFileName.isEmpty())
-            d->untitledFileName = QString("Untitled-%1.dspx").arg(QString::number(m_untitledIndex));
-        return d->untitledFileName;
+        return tr("Untitled Project.dspx");
     }
 
     bool DspxDocument::isModified() const {
+        Q_D(const DspxDocument);
+        if (!d->opened)
+            return false;
         return false;
     }
 
@@ -257,10 +378,7 @@ namespace Core {
         return true;
     }
 
-    DspxDocument::DspxDocument(DspxDocumentPrivate &d, QObject *parent)
-        : IDocument("org.ChorusKit.dspx", parent), d_ptr(&d) {
-        d.q_ptr = this;
-
+    DspxDocument::DspxDocument(DspxDocumentPrivate &d, QObject *parent) : IDocument(d, "org.ChorusKit.dspx", parent) {
         d.init();
     }
 

@@ -1,8 +1,9 @@
 #ifndef DSPXDOCUMENT_H
 #define DSPXDOCUMENT_H
 
-#include <CoreApi/IDocument.h>
 #include <ItemModel/AceTreeTransaction.h>
+
+#include <CoreApi/IDocument.h>
 
 #include "coreplugin/Document/Entities/DspxRootEntity.h"
 
@@ -23,18 +24,20 @@ namespace Core {
 
     public:
         // Initializers, must call one of them before accessing the instance
-        bool open(const QString &filename) override;
-        bool openRawData(const QByteArray &data);
+        bool open(const QString &fileName) override;
+        bool openRawData(const QString &suggestFileName, const QByteArray &data);
         void makeNew();
-        bool recover(const QString &filename);
+        bool recover(const QString &fileName);
 
         // Save functions
-        bool save(const QString &filename) override;
+        bool save(const QString &fileName) override;
         bool saveRawData(QByteArray *data) const;
 
         // VST related
         bool isVSTMode() const;
         void setVSTMode(bool on);
+
+        bool isOpened() const;
 
         ReloadBehavior reloadBehavior(ChangeTrigger state, ChangeType type) const override;
         bool reload(ReloadFlag flag, ChangeType type) override;
@@ -47,8 +50,6 @@ namespace Core {
 
     protected:
         DspxDocument(DspxDocumentPrivate &d, QObject *parent = nullptr);
-
-        QScopedPointer<DspxDocumentPrivate> d_ptr;
     };
 
 }

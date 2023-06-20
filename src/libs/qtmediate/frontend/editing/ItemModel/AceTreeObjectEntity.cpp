@@ -54,7 +54,7 @@ bool AceTreeObjectEntity::read(const QJsonValue &value) {
 
         case Property: {
             for (auto it = obj.begin(); it != obj.end(); ++it) {
-                treeItem->setProperty(it.key(), it->toVariant());
+                treeItem->setAttribute(it.key(), it->toVariant());
             }
             break;
         }
@@ -104,7 +104,7 @@ QVariant AceTreeObjectEntity::value(const QString &key) const {
             break;
 
         case Property:
-            res = d->m_treeItem->property(key);
+            res = d->m_treeItem->attribute(key);
             break;
 
         default:
@@ -121,7 +121,7 @@ void AceTreeObjectEntity::setValue(const QString &key, const QVariant &value) {
             break;
 
         case Property:
-            d->m_treeItem->setProperty(key, value);
+            d->m_treeItem->setAttribute(key, value);
             break;
 
         default:

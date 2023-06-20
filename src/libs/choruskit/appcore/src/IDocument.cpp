@@ -155,6 +155,8 @@ namespace Core {
     QString IDocument::plainDisplayName() const {
         Q_D(const IDocument);
         QString filename;
+        if (!d->preferredDisplayName.isEmpty())
+            return d->preferredDisplayName;
         return d->preferredDisplayName.isEmpty() ? ((filename = QFileInfo(d->filePath).fileName()).isEmpty()
                                                         ? QFileInfo(suggestedFileName()).baseName()
                                                         : filename)

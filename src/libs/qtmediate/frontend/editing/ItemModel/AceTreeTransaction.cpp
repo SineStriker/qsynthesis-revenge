@@ -44,8 +44,8 @@ public:
     AceTreeTransaction::State state;
 
     struct Operation {
-        QString key;
-        QMap<QString, QString> args;
+        QString name;
+        QMap<QString, QString> attrs;
 
         int begin;
         int end;
@@ -131,8 +131,8 @@ public:
 
     static void serializeOperation(QTextStream &stream, const Operation &op) {
         stream << "[" << Sign_Operation << " " << op.begin << "-" << (op.begin + op.end) << "]" << Qt::endl;
-        stream << "%Formatter=" << op.key << Qt::endl;
-        for (auto it = op.args.begin(); it != op.args.end(); ++it) {
+        stream << "%Name=" << op.name << Qt::endl;
+        for (auto it = op.attrs.begin(); it != op.attrs.end(); ++it) {
             stream << it.key() << "=" << it.value() << Qt::endl;
         }
         stream << Qt::endl;
@@ -202,24 +202,6 @@ bool AceTreeTransaction::isValid() const {
     return d->model != nullptr;
 }
 
-using DescriptionGetterFunc = QHash<QString, AceTreeTransaction::FormatDescription>;
-Q_GLOBAL_STATIC(DescriptionGetterFunc, descGetterIndexes)
-
-bool AceTreeTransaction::hasDescriptionFormatter(const QString &key) {
-    return descGetterIndexes->contains(key);
-}
-
-void AceTreeTransaction::registerDescriptionFormatter(const QString &key, FormatDescription func) {
-    if (key.isEmpty())
-        return;
-
-    if (!func) {
-        descGetterIndexes->remove(key);
-        return;
-    }
-    descGetterIndexes->insert(key, func);
-}
-
 AceTreeTransaction::State AceTreeTransaction::state() const {
     Q_D(const AceTreeTransaction);
     return d->state;
@@ -250,12 +232,12 @@ void AceTreeTransaction::abortTransaction() {
     // Abort
     d->model->setCurrentStep(d->current);
     d->model->truncateForwardSteps();
-    d->current = -1;
 
+    d->current = -1;
     d->state = Idle;
 }
 
-void AceTreeTransaction::endTransaction(const QString &key, const QMap<QString, QString> &args) {
+void AceTreeTransaction::endTransaction(const QString &name, const QMap<QString, QString> &attributes) {
     if (!inTransaction()) {
         myWarning(__func__) << "No transaction in execution";
         return;
@@ -266,17 +248,16 @@ void AceTreeTransaction::endTransaction(const QString &key, const QMap<QString, 
     AceTreeTransactionPrivate::Operation op;
     op.begin = d->current;
     op.end = d->model->currentStep();
-    op.key = key;
-    op.args = args;
-
-    d->current = -1;
+    op.name = name;
+    op.attrs = attributes;
 
     // Commit
     d->push(op);
 
+    d->current = -1;
     d->state = Idle;
 
-    emit indexChanged(index());
+    emit indexChanged(d->stepIndex);
 }
 
 int AceTreeTransaction::count() const {
@@ -289,15 +270,18 @@ int AceTreeTransaction::index() const {
     return d->stepIndex;
 }
 
-QString AceTreeTransaction::description(int index) const {
+QString AceTreeTransaction::name(int index) const {
     Q_D(const AceTreeTransaction);
-
-    if (index >= 0 && index <= d->operations.size())
+    if (index >= d->operations.size() || index < 0)
         return {};
+    return d->operations.at(index).name;
+}
 
-    const auto &op = d->operations.at(index);
-    auto func = descGetterIndexes->value(op.key);
-    return func ? func(op.args) : QString();
+QString AceTreeTransaction::attribute(int index, const QString &key) const {
+    Q_D(const AceTreeTransaction);
+    if (index >= d->operations.size() || index < 0)
+        return {};
+    return d->operations.at(index).attrs.value(key);
 }
 
 void AceTreeTransaction::undo() {
@@ -320,7 +304,7 @@ void AceTreeTransaction::undo() {
 
     d->state = Idle;
 
-    emit indexChanged(index());
+    emit indexChanged(d->stepIndex);
 }
 
 void AceTreeTransaction::redo() {
@@ -343,7 +327,7 @@ void AceTreeTransaction::redo() {
 
     d->state = Idle;
 
-    emit indexChanged(index());
+    emit indexChanged(d->stepIndex);
 }
 
 bool AceTreeTransaction::recover(const QByteArray &data) {
@@ -404,17 +388,18 @@ bool AceTreeTransaction::recover(const QByteArray &data) {
         if (!match.hasMatch())
             return false;
 
+        if (!(s = section.valueOf("%Name"))) {
+            return false;
+        }
+
         AceTreeTransactionPrivate::Operation op;
         op.begin = match.captured(1).toInt();
         op.end = match.captured(2).toInt();
-
-        if ((s = section.valueOf("%Formatter"))) {
-            op.key = *s;
-            for (const auto &pair : section.toPairList()) {
-                if (pair.first == "%Formatter")
-                    continue;
-                op.args.insert(pair.first, pair.second);
-            }
+        op.name = *s;
+        for (const auto &pair : section.toPairList()) {
+            if (pair.first == "%Name")
+                continue;
+            op.attrs.insert(pair.first, pair.second);
         }
         operations << op;
     }

@@ -1,14 +1,16 @@
 #ifndef DSPXDOCUMENT_P_H
 #define DSPXDOCUMENT_P_H
 
-#include "DspxDocument.h"
+#include "CoreApi/IDocument_p.h"
 #include "Document/Entities/DspxRootEntity.h"
+#include "DspxDocument.h"
 
 #include <QMChronSet.h>
+#include <QMDisplayString.h>
 
 namespace Core {
 
-    class DspxDocumentPrivate {
+    class DspxDocumentPrivate : public IDocumentPrivate {
         Q_DECLARE_PUBLIC(DspxDocument)
     public:
         DspxDocumentPrivate();
@@ -16,17 +18,20 @@ namespace Core {
 
         void init();
 
-        DspxDocument *q_ptr;
-
-        mutable QString untitledFileName;
-
         AceTreeModel *model;
         AceTreeTransaction *tx;
         DspxContentEntity *content;
 
+        bool opened;
         bool vstMode;
 
+        QFile *binLog;
+        QFile *txtLog;
+
+        void changeToOpen();
         void unshiftToRecent();
+
+        bool checkNotOpened() const;
 
         bool readFile(const QByteArray &data);
         bool saveFile(QByteArray *data) const;

@@ -17,12 +17,6 @@ public:
     bool isValid() const;
 
 public:
-    using FormatDescription = QString (*)(const QMap<QString, QString> &);
-
-    static bool hasDescriptionFormatter(const QString &key);
-    static void registerDescriptionFormatter(const QString &key, FormatDescription func);
-
-public:
     enum State {
         Idle,
         Transaction,
@@ -38,37 +32,15 @@ public:
     inline bool undoExecuting() const;
     inline bool redoExecuting() const;
 
-    /**
-     * Start a transaction, all changes will be recorded
-     */
     void beginTransaction();
-
-    /**
-     * Abort current transaction
-     */
     void abortTransaction();
+    void endTransaction(const QString &name, const QMap<QString, QString> &attributes = {});
 
-    /**
-     * Commit current transaction
-     *
-     * @param key Description formatter key
-     * @param args Arguments to format description
-     */
-    void endTransaction(const QString &key, const QMap<QString, QString> &args);
-
-    /*
-     * Undo stack size
-     */
     int count() const;
-
-    /*
-     * Operation index
-     */
     int index() const;
 
-    QString description(int index) const;
-    inline QString currentUndoDescription() const;
-    inline QString currentRedoDescription() const;
+    QString name(int index) const;
+    QString attribute(int index, const QString &key) const;
 
     void undo();
     void redo();
@@ -99,14 +71,6 @@ bool AceTreeTransaction::undoExecuting() const {
 
 bool AceTreeTransaction::redoExecuting() const {
     return state() == Redo;
-}
-
-QString AceTreeTransaction::currentUndoDescription() const {
-    return description(index() - 1);
-}
-
-QString AceTreeTransaction::currentRedoDescription() const {
-    return description(index());
 }
 
 bool AceTreeTransaction::canUndo() const {

@@ -7,8 +7,7 @@
 
 namespace QsApi {
 
-    QSFRAMEWORK_API
-    Q_NAMESPACE
+    Q_NAMESPACE_EXPORT(QSFRAMEWORK_API)
 
     enum Role {
         DisplayRole = Qt::DisplayRole,
