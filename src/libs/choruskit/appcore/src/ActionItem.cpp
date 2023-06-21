@@ -8,6 +8,8 @@
 
 namespace Core {
 
+#define myWarning(func) qWarning() << "Core::ActionItem(): "
+
     static bool m_autoDelete = false;
 
     ActionItemPrivate::ActionItemPrivate() : q_ptr(nullptr) {
@@ -24,7 +26,7 @@ namespace Core {
     bool ActionItemPrivate::getSpec() {
         spec = ICoreBase::instance()->actionSystem()->action(id);
         if (!spec) {
-            qWarning() << "ActionItem: action is not registered to ActionSystem:" << id;
+            myWarning(__func__) << "action is not registered to ActionSystem:" << id;
             return false;
         }
 
@@ -47,11 +49,11 @@ namespace Core {
         Q_D(ActionItem);
 
         if (!action) {
-            qWarning() << "Core::ActionItem(): trying to wrap null action";
+            myWarning(__func__) << "trying to wrap null action";
             return;
         }
         if (!qstrcmp(action->metaObject()->className(), "QWidgetAction")) {
-            qWarning() << "Core::ActionItem(): trying to add widget action which is not supported";
+            myWarning(__func__) << "trying to add widget action which is not supported";
             return;
         }
         d->type = Action;
@@ -69,7 +71,7 @@ namespace Core {
         Q_D(ActionItem);
 
         if (!actionGroup) {
-            qWarning() << "Core::ActionItem(): trying to wrap null action group";
+            myWarning(__func__) << "trying to wrap null action group";
             return;
         }
         d->type = ActionGroup;
@@ -87,7 +89,7 @@ namespace Core {
         Q_D(ActionItem);
 
         if (!menu) {
-            qWarning() << "Core::ActionItem(): trying to wrap null menu";
+            myWarning(__func__) << "trying to wrap null menu";
             return;
         }
         d->type = Menu;
@@ -106,7 +108,7 @@ namespace Core {
         Q_D(ActionItem);
 
         if (!widget) {
-            qWarning() << "Core::ActionItem(): trying to wrap null widget";
+            myWarning(__func__) << "trying to wrap null widget";
             return;
         }
         d->type = Widget;

@@ -9,6 +9,7 @@
 #include "ActionSystem.h"
 
 #include <QDebug>
+#include <utility>
 
 class TreeNode {
 public:
@@ -16,8 +17,8 @@ public:
     TreeNode *parent;
     QMChronMap<QString, TreeNode *> children;
 
-    TreeNode(const QString &id, TreeNode *parent, const QMChronMap<QString, TreeNode *> &children = {})
-        : id(id), parent(parent), children(children) {
+    TreeNode(QString id, TreeNode *parent, const QMChronMap<QString, TreeNode *> &children = {})
+        : id(std::move(id)), parent(parent), children(children) {
     }
 
     ~TreeNode() {
@@ -26,6 +27,8 @@ public:
 };
 
 namespace Core {
+
+#define myWarning(func) (qWarning().nospace() << "Core::ActionContext::" << (func) << "(): ").maybeSpace()
 
     ActionContextPrivate::ActionContextPrivate() : q_ptr(nullptr), configurable(true), stateDirty(false) {
     }
@@ -103,7 +106,7 @@ namespace Core {
     ActionContextItem ActionContext::addAction(const QString &id, bool isGroup) {
         Q_D(ActionContext);
         if (d->actions.contains(id)) {
-            qWarning() << "Core::ActionContext::addAction(): trying to add duplicated action:" << id;
+            myWarning(__func__) << "trying to add duplicated action:" << id;
             return {};
         }
         auto it = d->actions.append(id, {d, id, isGroup, {}, {}});
@@ -117,7 +120,7 @@ namespace Core {
         Q_D(ActionContext);
         auto it = d->actions.find(id);
         if (it == d->actions.end()) {
-            qWarning() << "Core::ActionContext::removeAction(): action does not exist:" << id;
+            myWarning(__func__) << "action does not exist:" << id;
             return;
         }
         d->actions.erase(it);

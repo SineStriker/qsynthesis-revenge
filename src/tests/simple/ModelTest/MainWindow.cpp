@@ -12,22 +12,14 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
     auto model = m_treeWidget->model();
 
     QString filename = qApp->applicationDirPath() + "/1.dat";
-
-    //    m_buffer.setBuffer(&m_data);
-    //    m_buffer.open(QIODevice::WriteOnly);
-    //    model->startRecord(&m_buffer);
-
     AceTreeItem *root = nullptr;
 
     {
         QFile file(filename);
         if (file.open(QIODevice::ReadOnly)) {
-            auto model1 = new AceTreeModel();
             if (model->recover(file.readAll())) {
-                qDebug() << "Recover success";
-                root = model1->reset();
+                qDebug() << "Recover success" << model->rootItem();
             }
-            delete model1;
             file.close();
         }
     }
@@ -36,9 +28,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
     m_file.open(QIODevice::WriteOnly | QIODevice::Truncate);
     model->startLogging(&m_file);
 
-    if (root) {
-        model->setRootItem(root);
-    } else {
+    if (!model->rootItem()) {
         auto listItem1 = new AceTreeItem("Track");
         auto setItem1 = new AceTreeItem("Note");
 

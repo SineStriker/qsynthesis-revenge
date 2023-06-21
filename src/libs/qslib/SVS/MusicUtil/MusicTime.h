@@ -1,87 +1,149 @@
-#ifndef CHORUSKIT_MUSICTIME_H
-#define CHORUSKIT_MUSICTIME_H
+#ifndef MUSICTIME_H
+#define MUSICTIME_H
 
-#include <QDebug>
-#include <QSharedData>
+#include <QSharedPointer>
 
-class MusicTimeData;
+#include "QsSVSGlobal.h"
 
-class MusicTimeSignature {
-public:
-    MusicTimeSignature(int numerator = 4, int denominator = 4) : m_numerator(numerator), m_denominator(denominator){};
+namespace QsApi {
 
-    bool isValid() const {
-        if (m_numerator <= 0)
-            return false;
-        if (m_denominator != 2 && m_denominator != 4 && m_denominator != 8 && m_denominator != 16)
-            return false;
-        return true;
+    class MusicTimeline;
+
+    class MusicTimelinePrivate;
+
+    class PersistentMusicTimeData;
+
+    class MusicTime {
+    public:
+        Q_DECL_CONSTEXPR inline MusicTime() noexcept;
+        Q_DECL_CONSTEXPR inline MusicTime(int measure, int beat, int tick);
+
+        Q_DECL_CONSTEXPR inline int measure() const;
+        Q_RELAXED_CONSTEXPR inline void setMeasure(int measure);
+
+        Q_DECL_CONSTEXPR inline int beat() const;
+        Q_RELAXED_CONSTEXPR inline void setBeat(int beat);
+
+        Q_DECL_CONSTEXPR inline int tick() const;
+        Q_RELAXED_CONSTEXPR inline void setTick(int tick);
+
+        Q_DECL_CONSTEXPR inline bool isValid() const;
+
+    private:
+        int m, b, t;
+    };
+
+    Q_DECL_CONSTEXPR MusicTime::MusicTime() noexcept : m(0), b(0), t(0) {
     }
 
-    inline int ticksPerBar(int resolution) const {
-        return resolution * m_numerator * 4 / m_denominator;
+    Q_DECL_CONSTEXPR MusicTime::MusicTime(int measure, int beat, int tick) : m(measure), b(beat), t(tick) {
     }
 
-    inline int ticksPerBeat(int resolution) const {
-        return resolution * 4 / m_denominator;
+    Q_DECL_CONSTEXPR int MusicTime::measure() const {
+        return m;
     }
 
-    inline int numerator() const {
-        return m_numerator;
+    Q_DECL_RELAXED_CONSTEXPR void MusicTime::setMeasure(int measure) {
+        m = measure;
     }
 
-    inline int denominator() const {
-        return m_denominator;
+    Q_DECL_CONSTEXPR int MusicTime::beat() const {
+        return b;
     }
 
-    inline QString toString() const {
-        return QString("%1/%2").arg(QString::number(m_numerator), QString::number(m_denominator));
+    Q_DECL_RELAXED_CONSTEXPR void MusicTime::setBeat(int beat) {
+        b = beat;
     }
 
-    inline bool operator==(const MusicTimeSignature &t) const {
-        return m_numerator == t.m_numerator && m_denominator == t.m_denominator;
+    Q_DECL_CONSTEXPR int MusicTime::tick() const {
+        return t;
     }
 
-    inline bool operator!=(const MusicTimeSignature &t) const {
-        return !(*this == t);
+    Q_DECL_RELAXED_CONSTEXPR void MusicTime::setTick(int tick) {
+        t = tick;
     }
 
-    friend inline QDebug &operator<<(QDebug &debug, const MusicTimeSignature &t) {
-        return debug << t.toString();
+    Q_DECL_CONSTEXPR bool MusicTime::isValid() const {
+        return m >= 0 && b >= 0 && t >= 0;
     }
 
-private:
-    int m_numerator;
-    int m_denominator;
-};
+    class QSSVS_API PersistentMusicTime {
+    public:
+        PersistentMusicTime();
+        ~PersistentMusicTime();
 
-class MusicTime {
-public:
-    MusicTime(int resolution = 480);
-    ~MusicTime();
+        PersistentMusicTime(const PersistentMusicTime &other);
+        PersistentMusicTime &operator=(const PersistentMusicTime &other);
 
-public:
-    int resolution() const;
-    inline int tickPerQuarter() const {
-        return resolution();
+        PersistentMusicTime(PersistentMusicTime &&other) noexcept;
+        PersistentMusicTime &operator=(PersistentMusicTime &&other) noexcept {
+            swap(other);
+            return *this;
+        }
+
+        void swap(PersistentMusicTime &other) noexcept {
+            qSwap(d_ptr, other.d_ptr);
+        }
+
+    public:
+        const MusicTimeline *timeline() const;
+
+        int measure() const;
+        int beat() const;
+        int tick() const;
+
+        double msec() const;
+        int totalTick() const;
+
+    public:
+        inline bool operator==(const PersistentMusicTime &other) const;
+        inline bool operator!=(const PersistentMusicTime &other) const;
+        inline bool operator<(const PersistentMusicTime &other) const;
+        inline bool operator>(const PersistentMusicTime &other) const;
+        inline bool operator<=(const PersistentMusicTime &other) const;
+        inline bool operator>=(const PersistentMusicTime &other) const;
+
+        PersistentMusicTime operator+(int t) const;
+        PersistentMusicTime operator-(int t) const;
+        PersistentMusicTime &operator+=(int t);
+        PersistentMusicTime &operator-=(int t);
+
+        QString toString() const;
+
+        friend QDebug operator<<(QDebug debug, const PersistentMusicTime &mt);
+
+    private:
+        explicit PersistentMusicTime(PersistentMusicTimeData *d);
+
+        QSharedPointer<PersistentMusicTimeData> d_ptr;
+
+        friend class MusicTimeline;
+    };
+
+    inline bool PersistentMusicTime::operator==(const PersistentMusicTime &other) const {
+        return totalTick() == other.totalTick();
     }
 
-    void addTempo(int tick, double tempo);
-    void addTempos(const QMap<int, double> &tempos);
-    bool removeTempo(int tick);
-    void removeTempos(const QList<int> &ticks);
-    bool hasTempo(int tick);
-    const QMap<int, double> &tempos() const;
+    inline bool PersistentMusicTime::operator!=(const PersistentMusicTime &other) const {
+        return totalTick() != other.totalTick();
+    }
 
-    void addTimeSignature(int bar, const MusicTimeSignature &timeSig);
-    void addTimeSignatures(const QMap<int, MusicTimeSignature> &timeSigs);
-    bool removeTimeSignature(int bar);
-    void removeTimeSignatures(const QList<int> &bars);
-    bool hasTimeSignature(int bar);
-    const QMap<int, MusicTimeSignature> &timeSignatures() const;
+    inline bool PersistentMusicTime::operator<(const PersistentMusicTime &other) const {
+        return totalTick() < other.totalTick();
+    }
 
-private:
-    QSharedDataPointer<MusicTimeData> d;
-};
+    inline bool PersistentMusicTime::operator>(const PersistentMusicTime &other) const {
+        return totalTick() > other.totalTick();
+    }
 
-#endif // CHORUSKIT_MUSICTIME_H
+    inline bool PersistentMusicTime::operator<=(const PersistentMusicTime &other) const {
+        return totalTick() <= other.totalTick();
+    }
+
+    inline bool PersistentMusicTime::operator>=(const PersistentMusicTime &other) const {
+        return totalTick() >= other.totalTick();
+    }
+
+}
+
+#endif // MUSICTIME_H

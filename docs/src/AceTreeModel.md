@@ -34,7 +34,7 @@
         + 插入/删除：O(1)
         + 查找 ID：O(1)
         + ID 访问：O(1)
-+ 集合（Set -Nodes）
++ 集合（Set - Nodes）
     + 适合存储数量固定、没有顺序关系的元素
     + 对应于`JsonObject`
     + 父节点仅维护子节点的指针集合
@@ -93,7 +93,7 @@
     grandItem->setAttribute("name", "baz");  // Op8
     childItem->addRecord(grandItem);         // Op9
     grandItem->setAttribute("name", "hack"); // Op10
-    rootItem->removeRow(child);              // Op11
+    rootItem->removeRow(childItem);          // Op11
     ```
     + `Op5`将`rootItem`设为了`model`的根节点，从此时开始，`rootItem`以及`rootItem`的所有子孙节点的所有权不再属于用户，全部转移给了`model`，上述节点中
         + `tempItem`的所有权属于用户，因为它已经从`childItem`被删除了
@@ -230,7 +230,7 @@ model->setRootItem(const_cast<AceTreeItem *>(studentList->treeItem()));
 // ======== Transaction 1: Add student ========
 tx->beginTransaction();
 
-auto student = new Student();
+auto student = new StudentEntity();
 student->initialaize();
 student->setName("Alice");
 student->setGender(StudentEntity::Female);

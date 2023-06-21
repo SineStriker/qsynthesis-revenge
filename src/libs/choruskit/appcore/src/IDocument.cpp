@@ -57,7 +57,7 @@ namespace Core {
     bool IDocumentPrivate::getSpec() {
         spec = ICoreBase::instance()->documentSystem()->docType(id);
         if (!spec) {
-            qWarning() << "IDocument: document is not registered to Document:" << id;
+            qWarning() << "Core::IDocument(): document is not registered to Document:" << id;
             return false;
         }
         return true;

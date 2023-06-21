@@ -39,10 +39,12 @@ namespace ScriptMgr::Internal {
         MusicTime create(double msec);
 
         void thisIsATest();
+
     signals:
         void timeSignatureChanged();
         void tempoChanged();
         void changed();
+
     private:
         friend class MusicTimePrivate;
         QScopedPointer<MusicTimelinePrivate> d_ptr;

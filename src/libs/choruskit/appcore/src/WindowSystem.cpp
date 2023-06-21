@@ -5,8 +5,8 @@
 #include "IWindowAddOn_p.h"
 #include "IWindow_p.h"
 
-#include <QMLinq.h>
 #include <QMBatch.h>
+#include <QMLinq.h>
 #include <QMSystem.h>
 #include <QMView.h>
 
@@ -19,6 +19,8 @@
 #include <QSplitter>
 
 namespace Core {
+
+#define myWarning(func) (qWarning().nospace() << "Core::WindowSystem::" << (func) << "(): ").maybeSpace()
 
     static const char settingCatalogC[] = "WindowSystem";
 
@@ -176,11 +178,11 @@ namespace Core {
     bool WindowSystem::addWindow(IWindowFactory *factory) {
         Q_D(WindowSystem);
         if (!factory) {
-            qWarning() << "Core::WindowSystem::addWindow(): trying to add null factory";
+            myWarning(__func__) << "trying to add null factory";
             return false;
         }
         if (d->windowFactories.contains(factory->id())) {
-            qWarning() << "Core::WindowSystem::addWindow(): trying to add duplicated factory:" << factory->id();
+            myWarning(__func__) << "trying to add duplicated factory:" << factory->id();
             return false;
         }
         d->windowFactories.append(factory->id(), factory);
@@ -189,7 +191,7 @@ namespace Core {
 
     bool WindowSystem::removeWindow(IWindowFactory *factory) {
         if (factory == nullptr) {
-            qWarning() << "Core::WindowSystem::removeWindow(): trying to remove null factory";
+            myWarning(__func__) << "trying to remove null factory";
             return false;
         }
         return removeWindow(factory->id());
@@ -199,7 +201,7 @@ namespace Core {
         Q_D(WindowSystem);
         auto it = d->windowFactories.find(id);
         if (it == d->windowFactories.end()) {
-            qWarning() << "Core::WindowSystem::removeWindow(): factory does not exist:" << id;
+            myWarning(__func__) << "factory does not exist:" << id;
             return false;
         }
         d->windowFactories.erase(it);
@@ -219,7 +221,7 @@ namespace Core {
     bool WindowSystem::addAddOn(IWindowAddOnFactory *factory) {
         Q_D(WindowSystem);
         if (!factory) {
-            qWarning() << "Core::WindowSystem::addAddOn(): trying to add null factory";
+            myWarning(__func__) << "trying to add null factory";
             return false;
         }
         d->addOnFactories.append(factory);
@@ -229,12 +231,12 @@ namespace Core {
     bool WindowSystem::removeAddOn(IWindowAddOnFactory *factory) {
         Q_D(WindowSystem);
         if (!factory) {
-            qWarning() << "Core::WindowSystem::removeAddOn(): trying to remove null factory";
+            myWarning(__func__) << "trying to remove null factory";
             return false;
         }
 
         if (!d->addOnFactories.remove(factory)) {
-            qWarning() << "Core::WindowSystem::removeAddOn(): factory does not exist:" << factory;
+            myWarning(__func__) << "factory does not exist:" << factory;
             return false;
         }
         return true;
@@ -255,7 +257,7 @@ namespace Core {
 
         auto it = d->windowFactories.find(id);
         if (it == d->windowFactories.end()) {
-            qWarning() << "Core::WindowSystem::createWindow(): window factory does not exist:" << id;
+            myWarning(__func__) << "window factory does not exist:" << id;
             return nullptr;
         }
 
@@ -265,7 +267,7 @@ namespace Core {
         auto iWin = factory->creator() == IWindowFactory::Create ? factory->create(nullptr)
                                                                  : factory->create(factory->id(), nullptr);
         if (!iWin) {
-            qWarning() << "Core::WindowSystem::createWindow(): window factory creates null instance:" << id;
+            myWarning(__func__) << "window factory creates null instance:" << id;
             return nullptr;
         }
 

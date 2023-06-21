@@ -48,7 +48,7 @@ namespace Core::Internal {
 
     class PianoKeyWidget : public Core::IPianoKeyWidget {
         Q_OBJECT
-        Q_PROPERTY(QPixelSize preferredWidth READ preferredWidth WRITE setPreferredWidth)
+        Q_PROPERTY(QPixelSize preferredWidth READ preferredWidth WRITE setPreferredWidth NOTIFY preferredWidthChanged)
     public:
         explicit PianoKeyWidget(QWidget *parent = nullptr);
         explicit PianoKeyWidget(int currentHeight, QWidget *parent = nullptr);
@@ -81,6 +81,7 @@ namespace Core::Internal {
         void resizeEvent(QResizeEvent *event) override;
 
     signals:
+        void preferredWidthChanged(int width);
     };
 
 }

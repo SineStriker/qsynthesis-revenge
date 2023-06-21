@@ -15,6 +15,8 @@
 
 namespace Core {
 
+#define myWarning(func) (qWarning().nospace() << "Core::ActionSystem::" << (func) << "(): ").maybeSpace()
+
     ActionSystemPrivate::ActionSystemPrivate() : q_ptr(nullptr) {
     }
 
@@ -41,11 +43,11 @@ namespace Core {
     bool ActionSystem::addAction(ActionSpec *action) {
         Q_D(ActionSystem);
         if (!action) {
-            qWarning() << "Core::ActionSystem::addAction(): trying to add null action";
+            myWarning(__func__) << "trying to add null action";
             return false;
         }
         if (d->actions.contains(action->id())) {
-            qWarning() << "Core::ActionSystem::addAction(): trying to add duplicated action:" << action->id();
+            myWarning(__func__) << "trying to add duplicated action:" << action->id();
             return false;
         }
         action->setParent(this);
@@ -56,7 +58,7 @@ namespace Core {
 
     bool ActionSystem::removeAction(Core::ActionSpec *action) {
         if (action == nullptr) {
-            qWarning() << "Core::ActionSystem::removeAction(): trying to remove null action";
+            myWarning(__func__) << "trying to remove null action";
             return false;
         }
         return removeAction(action->id());
@@ -66,7 +68,7 @@ namespace Core {
         Q_D(ActionSystem);
         auto it = d->actions.find(id);
         if (it == d->actions.end()) {
-            qWarning() << "Core::ActionSystem::removeAction(): action does not exist:" << id;
+            myWarning(__func__) << "action does not exist:" << id;
             return false;
         }
 
@@ -95,11 +97,11 @@ namespace Core {
     bool ActionSystem::addContext(ActionContext *context) {
         Q_D(ActionSystem);
         if (!context) {
-            qWarning() << "Core::ActionSystem::addContext(): trying to add null context";
+            myWarning(__func__) << "trying to add null context";
             return false;
         }
         if (d->contexts.contains(context->id())) {
-            qWarning() << "Core::ActionSystem::addContext(): trying to add duplicated context:" << context->id();
+            myWarning(__func__) << "trying to add duplicated context:" << context->id();
             return false;
         }
         context->setParent(this);
@@ -111,7 +113,7 @@ namespace Core {
 
     bool ActionSystem::removeContext(ActionContext *context) {
         if (context == nullptr) {
-            qWarning() << "Core::ActionSystem::removeContext(): trying to remove null context";
+            myWarning(__func__) << "trying to remove null context";
             return false;
         }
         return removeContext(context->id());
@@ -121,7 +123,7 @@ namespace Core {
         Q_D(ActionSystem);
         auto it = d->contexts.find(id);
         if (it == d->contexts.end()) {
-            qWarning() << "Core::ActionSystem::removeContext(): context does not exist:" << id;
+            myWarning(__func__) << "context does not exist:" << id;
             return false;
         }
 
@@ -326,7 +328,7 @@ namespace Core {
 
         QMXmlAdaptor file;
         if (!file.load(filename)) {
-            qWarning() << "Core::ActionSystem::loadContexts(): load file failed";
+            myWarning(__func__) << "load file failed";
             return {};
         }
 

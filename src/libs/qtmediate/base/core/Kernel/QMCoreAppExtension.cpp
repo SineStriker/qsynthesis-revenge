@@ -115,8 +115,6 @@ void QMCoreAppExtensionPrivate::init() {
 }
 
 bool QMCoreAppExtensionPrivate::readConfiguration(const QString &fileName) {
-    qCDebug(qAppExtLog) << "read" << fileName;
-
     // Read
     QFile file(fileName);
     if (!file.open(QIODevice::ReadOnly)) {

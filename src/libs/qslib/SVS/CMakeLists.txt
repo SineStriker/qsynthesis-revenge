@@ -17,7 +17,7 @@ ck_target_components(${PROJECT_NAME}
     QT_INCLUDES_PRIVATE Core
     LINKS QMCore qastool::core
     LINKS_PRIVATE mrq
-    AUTO_INCLUDE_DIRS Global
+#    AUTO_INCLUDE_DIRS Global
 )
 
 include(Dspx/qasc.cmake)

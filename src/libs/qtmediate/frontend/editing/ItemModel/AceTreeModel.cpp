@@ -910,9 +910,6 @@ void AceTreeModelPrivate::setRootItem_helper(AceTreeItem *item) {
 AceTreeItem *AceTreeModelPrivate::reset_helper() {
     Q_Q(AceTreeModel);
 
-    if (stepIndex != 0)
-        truncate(0);
-
     auto func = [&](AceTreeItem *item) {
         auto d = item->d_func();
         d->model = nullptr;
@@ -920,13 +917,18 @@ AceTreeItem *AceTreeModelPrivate::reset_helper() {
     };
 
     AceTreeItemPrivate::propagateItems(rootItem, func);
+    rootItem->d_func()->status = AceTreeItem::Root;
+
     indexes.clear();
     maxIndex = 1;
 
     auto org = rootItem;
     rootItem = nullptr;
 
-    emit q->stepChanged(0);
+    if (stepIndex != 0) {
+        truncate(0);
+        emit q->stepChanged(0);
+    }
 
     return org;
 }

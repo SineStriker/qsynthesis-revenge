@@ -9,8 +9,8 @@
 
 #include <extensionsystem/pluginmanager.h>
 
-#include <QMDecoratorV2.h>
 #include <QMBatch.h>
+#include <QMDecoratorV2.h>
 
 #include <CoreApi/ILoader.h>
 
@@ -487,6 +487,9 @@ namespace Core {
         QListWidgetItem *curItem = nullptr;
         QListWidgetItem *lastItem = nullptr;
         for (const auto &action : menu->actions()) {
+            if (!action->isEnabled())
+                continue;
+
             QString desc;
             if (action->isSeparator()) {
                 if (lastItem) {
@@ -512,6 +515,7 @@ namespace Core {
         }
 
         if (!lastItem) {
+            delete menuToDelete;
             return;
         }
 

@@ -16,6 +16,8 @@ static const int DELAYED_INITIALIZE_INTERVAL = 5; // ms
 
 namespace Core {
 
+#define myWarning(func) (qWarning().nospace() << "Core::IWindow::" << (func) << "(): ").maybeSpace()
+
     class QWidgetHacker : public QWidget {
     public:
         int actionCount() const {
@@ -61,8 +63,7 @@ namespace Core {
 
             auto addOn = fac->create(q);
             if (!addOn) {
-                qWarning() << "Core::WindowSystem::createWindow(): window add-on factory creates null instance:"
-                           << typeid(*fac).name();
+                myWarning(__func__) << "window add-on factory creates null instance:" << typeid(*fac).name();
                 continue;
             }
 
@@ -206,11 +207,11 @@ namespace Core {
     void IWindow::addWidget(const QString &id, QWidget *w) {
         Q_D(IWindow);
         if (!w) {
-            qWarning() << "Core::IWindow::addWidget(): trying to add null widget";
+            myWarning(__func__) << "trying to add null widget";
             return;
         }
         if (d->actionItemMap.contains(id)) {
-            qWarning() << "Core::IWindow::addWidget(): trying to add duplicated widget:" << id;
+            myWarning(__func__) << "trying to add duplicated widget:" << id;
             return;
         }
         d->widgetMap.insert(id, w);
@@ -221,7 +222,7 @@ namespace Core {
         Q_D(IWindow);
         auto it = d->widgetMap.find(id);
         if (it == d->widgetMap.end()) {
-            qWarning() << "Core::IWindow::removeWidget(): action item does not exist:" << id;
+            myWarning(__func__) << "action item does not exist:" << id;
             return;
         }
         auto w = it.value();
@@ -246,17 +247,17 @@ namespace Core {
     void IWindow::addActionItem(ActionItem *item) {
         Q_D(IWindow);
         if (!item) {
-            qWarning() << "Core::IWindow::addActionItem(): trying to add null action item";
+            myWarning(__func__) << "trying to add null action item";
             return;
         }
 
         if (!item->spec()) {
-            qWarning() << "Core::IWindow::addActionItem(): trying to add unidentified item" << item->id();
+            myWarning(__func__) << "trying to add unidentified item" << item->id();
             return;
         }
 
         if (d->actionItemMap.contains(item->id())) {
-            qWarning() << "Core::IWindow::addActionItem(): trying to add duplicated action item:" << item->id();
+            myWarning(__func__) << "trying to add duplicated action item:" << item->id();
             return;
         }
         d->actionItemMap.append(item->id(), item);
@@ -272,7 +273,7 @@ namespace Core {
 
     void IWindow::removeActionItem(Core::ActionItem *item) {
         if (item == nullptr) {
-            qWarning() << "Core::IWindow::removeActionItem(): trying to remove null item";
+            myWarning(__func__) << "trying to remove null item";
             return;
         }
         removeActionItem(item->id());
@@ -282,7 +283,7 @@ namespace Core {
         Q_D(IWindow);
         auto it = d->actionItemMap.find(id);
         if (it == d->actionItemMap.end()) {
-            qWarning() << "Core::IWindow::removeActionItem(): action item does not exist:" << id;
+            myWarning(__func__) << "action item does not exist:" << id;
             return;
         }
         auto item = it.value();

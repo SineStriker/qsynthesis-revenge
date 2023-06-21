@@ -23,6 +23,8 @@
 
 namespace Core {
 
+#define myWarning(func) (qWarning().nospace() << "Core::DocumentSystem::" << (func) << "(): ").maybeSpace()
+
     static const char settingCategoryC[] = "DocumentSystem";
 
     static const char recentGroupC[] = "RecentFiles";
@@ -119,11 +121,11 @@ namespace Core {
     bool DocumentSystem::addDocType(DocumentSpec *doc) {
         Q_D(DocumentSystem);
         if (!doc) {
-            qWarning() << "Core::DocumentSystem::addDocType(): trying to add null document";
+            myWarning(__func__) << "trying to add null document";
             return false;
         }
         if (d->docSpecs.contains(doc->id())) {
-            qWarning() << "Core::DocumentSystem::addDocType(): trying to add duplicated document:" << doc->id();
+            myWarning(__func__) << "trying to add duplicated document:" << doc->id();
             return false;
         }
         doc->setParent(this);
@@ -138,7 +140,7 @@ namespace Core {
 
     bool DocumentSystem::removeDocType(DocumentSpec *doc) {
         if (doc == nullptr) {
-            qWarning() << "Core::DocumentSystem::removeDocType(): trying to remove null document";
+            myWarning(__func__) << "trying to remove null document";
             return false;
         }
         return removeDocType(doc->id());
@@ -148,7 +150,7 @@ namespace Core {
         Q_D(DocumentSystem);
         auto it = d->docSpecs.find(id);
         if (it == d->docSpecs.end()) {
-            qWarning() << "Core::DocumentSystem::removeDocType(): document does not exist:" << id;
+            myWarning(__func__) << "document does not exist:" << id;
             return false;
         }
 

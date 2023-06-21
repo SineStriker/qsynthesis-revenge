@@ -14,10 +14,12 @@ namespace ScriptMgr::Internal {
             explicit MsecTime(int minute, int second, int msec);
             explicit MsecTime(int msec);
             explicit MsecTime(const QString &str);
+
             int minute() const;
             int second() const;
             int msec() const;
             int totalMsec() const;
+
             QString toString() const;
         };
 

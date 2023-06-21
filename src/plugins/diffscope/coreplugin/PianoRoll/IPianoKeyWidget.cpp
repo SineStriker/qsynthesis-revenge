@@ -11,5 +11,4 @@ namespace Core {
     IPianoKeyWidget::~IPianoKeyWidget() {
     }
 
-
 }

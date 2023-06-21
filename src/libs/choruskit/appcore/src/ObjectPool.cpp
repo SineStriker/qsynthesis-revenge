@@ -8,6 +8,8 @@
 
 namespace Core {
 
+#define myWarning(func) (qWarning().nospace() << "Core::ObjectPool::" << (func) << "(): ").maybeSpace()
+
     ObjectPoolPrivate::ObjectPoolPrivate(ObjectPool *q) : q(q) {
     }
 
@@ -151,7 +153,7 @@ namespace Core {
 
     void ObjectPool::addObject(const QString &id, QObject *obj) {
         if (!obj) {
-            qWarning() << "Core::ObjectPool::addObject(): trying to add null object";
+            myWarning(__func__) << "trying to add null object";
             return;
         }
 
@@ -159,7 +161,7 @@ namespace Core {
             QWriteLocker locker(&d->objectListLock);
             auto &set = d->objectMap[id];
             if (!set.append(obj).second) {
-                qWarning() << "Core::ObjectPool::addObject(): trying to add duplicated object:" << id << obj;
+                myWarning(__func__) << "trying to add duplicated object:" << id << obj;
                 return;
             }
 
@@ -186,7 +188,7 @@ namespace Core {
 
             auto it = d->objectIndexes.find(obj);
             if (it == d->objectIndexes.end()) {
-                qWarning() << "Core::ObjectPool::removeObject(): obj does not exist:" << obj;
+                myWarning(__func__) << "obj does not exist:" << obj;
                 return;
             }
 

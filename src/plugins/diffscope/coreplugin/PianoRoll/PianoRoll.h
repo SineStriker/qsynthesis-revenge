@@ -26,7 +26,6 @@ namespace Core {
             Normal,
             Folded,
         };
-
         Q_ENUM(FloatingPanelState);
 
     public:

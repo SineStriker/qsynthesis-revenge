@@ -75,6 +75,7 @@ namespace Core::Internal {
 
     void PianoKeyWidget::setPreferredWidth(const QPixelSize &width) {
         resize(width, height());
+        emit preferredWidthChanged(width);
     }
 
     void PianoKeyWidget::init() {

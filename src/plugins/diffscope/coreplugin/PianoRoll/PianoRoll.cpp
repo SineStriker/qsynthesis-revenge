@@ -13,6 +13,8 @@
 
 namespace Core {
 
+#define myWarning(func) (qWarning().nospace() << "Core::PianoRoll::" << (func) << "(): ").maybeSpace()
+
     static const char settingCatalogC[] = "IProjectWindow/PianoRoll";
 
     static const char floatingPanelsGroupC[] = "FloatingPanels";
@@ -140,11 +142,11 @@ namespace Core {
     void PianoRoll::addPianoKeyWidgetFactory(const QString &key, IPianoKeyWidgetFactory *factory) {
         Q_D(PianoRoll);
         if (!factory) {
-            qWarning() << "Core::PianoRoll::addPianoKeyWidgetFactory(): trying to add null factory";
+            myWarning(__func__) << "trying to add null factory";
             return;
         }
         if (d->pianoKeyWidgets.contains(key)) {
-            qWarning() << "Core::PianoRoll::addPianoKeyWidgetFactory(): trying to add duplicated factory:" << key;
+            myWarning(__func__) << "trying to add duplicated factory:" << key;
             return;
         }
         d->pianoKeyWidgets.insert(key, factory);
@@ -155,7 +157,7 @@ namespace Core {
 
         auto it = d->pianoKeyWidgets.find(key);
         if (it == d->pianoKeyWidgets.end()) {
-            qWarning() << "Core::PianoRoll::removeFloatingPanel(): panel does not exist:" << key;
+            myWarning(__func__) << "panel does not exist:" << key;
             return;
         }
 
@@ -215,12 +217,12 @@ namespace Core {
         Q_D(PianoRoll);
 
         if (!panel) {
-            qWarning() << "Core::PianoRoll::addFloatingPanel(): trying to add null panel";
+            myWarning(__func__) << "trying to add null panel";
             return nullptr;
         }
         auto it = d->floatingPanels.find(key);
         if (it != d->floatingPanels.end()) {
-            qWarning() << "Core::PianoRoll::addFloatingPanel(): trying to add duplicated panel:" << key;
+            myWarning(__func__) << "trying to add duplicated panel:" << key;
             return it->titleBar->titleButton();
         }
 
@@ -245,7 +247,7 @@ namespace Core {
 
         auto it = d->floatingPanels.find(key);
         if (it == d->floatingPanels.end()) {
-            qWarning() << "Core::PianoRoll::removeFloatingPanel(): panel does not exist:" << key;
+            myWarning(__func__) << "panel does not exist:" << key;
             return;
         }
 

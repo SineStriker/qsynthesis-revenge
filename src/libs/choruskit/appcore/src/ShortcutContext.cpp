@@ -4,6 +4,8 @@
 
 namespace Core {
 
+#define myWarning(func) (qWarning().nospace() << "Core::ShortcutContext::" << (func) << "(): ").maybeSpace()
+
     ShortcutContext::ShortcutContext(QObject *parent) : QObject(parent) {
         lastFlushedAction = nullptr;
     }
@@ -14,12 +16,12 @@ namespace Core {
 
     void ShortcutContext::addContext(QWidget *w) {
         if (!w) {
-            qWarning() << "Core::IWindow::addShortcutContext(): trying to add null widget";
+            myWarning(__func__) << "trying to add null widget";
             return;
         }
 
         if (shortcutContextWidgets.contains(w)) {
-            qWarning() << "Core::IWindow::addShortcutContext(): trying to add duplicated widget:" << w;
+            myWarning(__func__) << "trying to add duplicated widget:" << w;
             return;
         }
 
@@ -34,7 +36,7 @@ namespace Core {
     void ShortcutContext::removeContext(QWidget *w) {
         auto it = shortcutContextWidgets.find(w);
         if (it == shortcutContextWidgets.end()) {
-            qWarning() << "Core::IWindow::removeShortcutContext(): widget does not exist:" << w;
+            myWarning(__func__) << "widget does not exist:" << w;
             return;
         }
 
@@ -182,7 +184,7 @@ namespace Core {
         data->keys = keys;
 
         if (!duplicatedKeys.isEmpty()) {
-            qWarning() << "Core::IWindow: duplicated shortcuts detected" << action << duplicatedKeys.values();
+            myWarning(__func__) << "duplicated shortcuts detected" << action << duplicatedKeys.values();
         }
     }
 
