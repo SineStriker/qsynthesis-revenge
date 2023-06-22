@@ -7,6 +7,7 @@
 
 #include "LoaderInjectedObject.h"
 #include "JsInternalObject.h"
+#include "ScriptSettingsPage.h"
 
 namespace ScriptMgr::Internal {
 
@@ -51,15 +52,16 @@ namespace ScriptMgr::Internal {
         m_builtInScriptEntries = m_scriptEntries;
         m_scriptEntries.clear();
 
-        //load user scripts
-//        QDir dir(userScriptDir());
-//        for(const auto& filename: dir.entryList(QDir::Files)) {
-//            auto ret = m_engine->importModule(dir.filePath(filename));
-//            if(ret.isError()){
-//                alertJsUncaughtError(ret);
-//                warningCannotLoadFile(dir.filePath(filename));
-//            }
-//        }
+        if(ScriptSettingsPage::storedEnableUserScripts()) {
+            QDir dir(userScriptDir());
+            for(const auto& filename: dir.entryList(QDir::Files)) {
+                auto ret = m_engine->importModule(dir.filePath(filename));
+                if(ret.isError()){
+                    alertJsUncaughtError(ret);
+                    warningCannotLoadFile(dir.filePath(filename));
+                }
+            }
+        }
         emit engineReloaded();
         return true;
     }
@@ -121,7 +123,7 @@ namespace ScriptMgr::Internal {
     }
 
     QString ScriptLoader::userScriptDir() {
-        return QString(); //TODO
+        return ScriptSettingsPage::storedUserScriptsDirectory();
     }
 
     ScriptLoader::ScriptLoader(QObject *parent): QObject(parent) {

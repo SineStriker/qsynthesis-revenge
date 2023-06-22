@@ -14,6 +14,7 @@
 
 #include "AddOn/ScriptMgrAddOn.h"
 #include "ScriptLoader.h"
+#include "ScriptSettingsPage.h"
 
 namespace ScriptMgr {
 
@@ -44,9 +45,13 @@ namespace ScriptMgr {
                 return false;
             }
 
+            auto sc = ICore::instance()->settingCatalog();
+            sc->addPage(new ScriptSettingsPage);
+
             // Add basic windows and add-ons
             new ScriptLoader(this);
             ScriptLoader::instance()->reloadEngine();
+
             auto winMgr = ICore::instance()->windowSystem();
             winMgr->addAddOn(new ScriptMgrAddOnFactory());
 

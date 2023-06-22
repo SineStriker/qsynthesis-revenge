@@ -20,7 +20,7 @@ namespace ScriptMgr {
     namespace Internal {
 
         bool ScriptMgrAddOnFactory::predicate(Core::IWindow *handle) const {
-            return handle->id() == "project" || handle->id() == "home"; // TODO temporarily add to home
+            return handle->id() == "project";
         }
 
         Core::IWindowAddOn *ScriptMgrAddOnFactory::create(QObject *parent) {
@@ -72,7 +72,7 @@ namespace ScriptMgr {
             scriptSettingsAction = new ActionItem("scriptmgr.ScriptSettings", new QAction, this);
             connect(reloadScriptsAction->action(), &QAction::triggered, ScriptLoader::instance(), &ScriptLoader::reloadEngine);
             connect(scriptSettingsAction->action(), &QAction::triggered, this, [=](){
-                ICore::showSettingsDialog("core.Settings", windowHandle()->window()); //TODO script settings
+                ICore::showSettingsDialog("scriptmgr.Script", windowHandle()->window());
             });
             iWin->addActionItems({
                 batchProcessMainGroup,
@@ -119,6 +119,7 @@ namespace ScriptMgr {
                         menu->addAction(childAction);
                     }
                     mainAction->setMenu(menu);
+                    windowHandle()->addShortcutContext(menu);
                 }
                 batchProcessMainMenu->menu()->addAction(mainAction);
                 scriptActions.append(mainAction);
