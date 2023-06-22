@@ -14,7 +14,7 @@ namespace ScriptMgr::Internal {
     class JsInternalObject : public QObject {
         Q_OBJECT
     public:
-        explicit JsInternalObject(QJSEngine *engine, ScriptMgrAddOn *addOn);
+        explicit JsInternalObject(ScriptMgrAddOn *addOn);
         ~JsInternalObject();
 
     public slots:
@@ -22,9 +22,6 @@ namespace ScriptMgr::Internal {
         void infoMsgBox(const QString &title, const QString &message) const;
         bool questionMsgBox(const QString &title, const QString &message, const QString &defaultButton) const;
         QJSValue form(const QString &title, const QVariantList &widgets, QJSValue listener) const;
-        void registerScript(const QString &id, int flags, const QString &_shortcut);
-        void registerScriptSet(const QString &id, const QStringList &childrenId, int flags,
-                               const QStringList &_childrenShortcuts);
 
     protected:
         QJSEngine *engine;

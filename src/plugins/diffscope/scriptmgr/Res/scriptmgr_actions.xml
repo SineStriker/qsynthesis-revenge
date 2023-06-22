@@ -1,18 +1,12 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <actionSystem>
-    <context id="home.MainMenu" prefix="scriptmgr." mode="find">
+    <context id="project.MainMenu" prefix="scriptmgr." mode="find">
         <group id="BatchProcessGroup">
             <rules>
-                <rule id="core.File" mode="append"/>
+                <rule id="core.Edit" mode="append"/>
             </rules>
             <content>
                 <menu id="BatchProcessMenu">
-                    <group id="BuiltInScripts">
-
-                    </group>
-                    <group id="UserScripts">
-
-                    </group>
                     <group id="ScriptOperations">
                         <action id="ReloadScripts"/>
                         <action id="ScriptSettings"/>

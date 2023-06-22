@@ -1,30 +1,66 @@
 #ifndef CHORUSKIT_SCRIPTLOADER_H
 #define CHORUSKIT_SCRIPTLOADER_H
 
-#include <QSet>
-
-#include "AddOn/ScriptMgrAddOn.h"
+#include <QJSEngine>
 
 namespace ScriptMgr::Internal {
+
+    class ScriptMgrPlugin;
+    class LoaderInjectedObject;
+    class JsInternalObject;
+
+    struct ScriptEntry {
+        enum Type { Script, ScriptSet };
+        QString id;
+        Type type;
+        QStringList role;
+        QString shortcut;
+        QStringList childrenId;
+        QStringList childrenShortcut;
+    };
 
     class ScriptLoader: public QObject {
         Q_OBJECT
     public:
         static ScriptLoader *instance();
 
-        void registerAddon(ScriptMgrAddOn *addon);
-        QString userScriptDir() const;
+        bool reloadEngine();
 
-    public slots:
-        void reloadScripts();
+        [[nodiscard]] QString createHandles(JsInternalObject *internalObject);
 
-    protected:
-        explicit ScriptLoader(QObject *parent);
+        void invoke(const QString &windowKey, const QString &id);
+        void invoke(const QString &windowKey, const QString &id, int index);
+
+        QString getName(const QString &id);
+        QString getName(const QString &id, int index);
+
+        void removeHandles(const QString &windowKey);
+
+        QList<ScriptEntry> builtInScriptEntries() const;
+        QList<ScriptEntry> scriptEntries() const;
+
+        QString userScriptDir();
+    signals:
+        void engineWillReload();
+        void engineReloaded();
+    private:
+        friend class ScriptMgrPlugin;
+        friend class LoaderInjectedObject;
+        friend class JsInternalObject;
+
+        ScriptLoader(QObject *parent = nullptr);
         ~ScriptLoader();
 
-        QSet<ScriptMgrAddOn *> addonRegistry;
+        static void alertJsUncaughtError(const QJSValue &error);
+        static void warningCannotLoadFile(const QString &path);
+        static void warningCannotGetName(const QString &id);
+        static void criticalCannotInitializeEngine();
+        static void criticalScriptExecutionFailed(const QString &name);
 
-        friend class ScriptMgrPlugin;
+        QScopedPointer<QJSEngine> m_engine;
+        QJSValue m_jsCallbacks;
+        QList<ScriptEntry> m_builtInScriptEntries;
+        QList<ScriptEntry> m_scriptEntries;
     };
 
 } // Internal

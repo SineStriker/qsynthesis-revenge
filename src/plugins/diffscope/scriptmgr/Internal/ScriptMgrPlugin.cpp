@@ -45,7 +45,8 @@ namespace ScriptMgr {
             }
 
             // Add basic windows and add-ons
-            scriptLoader = new ScriptLoader(this);
+            new ScriptLoader(this);
+            ScriptLoader::instance()->reloadEngine();
             auto winMgr = ICore::instance()->windowSystem();
             winMgr->addAddOn(new ScriptMgrAddOnFactory());
 

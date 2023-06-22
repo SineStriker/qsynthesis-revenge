@@ -11,7 +11,7 @@
 
 namespace ScriptMgr::Internal {
 
-    JsInternalObject::JsInternalObject(QJSEngine *engine, ScriptMgrAddOn *addOn) : engine(engine), addOn(addOn) {
+    JsInternalObject::JsInternalObject(ScriptMgrAddOn *addOn): engine(ScriptLoader::instance()->m_engine.data()), addOn(addOn), QObject(addOn) {
     }
 
     JsInternalObject::~JsInternalObject() {
@@ -41,15 +41,6 @@ namespace ScriptMgr::Internal {
             return QJSValue::UndefinedValue;
         }
         return dlg->jsExec();
-    }
-
-    void JsInternalObject::registerScript(const QString &id, int flags, const QString &_shortcut) {
-        addOn->registerScript(id, flags, _shortcut);
-    }
-
-    void JsInternalObject::registerScriptSet(const QString &id, const QStringList &childrenId, int flags,
-                                             const QStringList &_childrenShortcuts) {
-        addOn->registerScript(id, childrenId, flags, _childrenShortcuts);
     }
 
 }
