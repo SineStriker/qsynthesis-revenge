@@ -36,6 +36,7 @@ protected:
     QVBoxLayout *mainLayout;
 
     QScopedPointer<IKg2p::ZhG2p> g2p;
+    QScopedPointer<IKg2p::ZhG2p> g2p_canton;
     QScopedPointer<IKg2p::JpG2p> g2p_jp;
 
 private:

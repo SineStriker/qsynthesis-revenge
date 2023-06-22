@@ -6,7 +6,9 @@
 #include <QMessageBox>
 #include <QRegularExpression>
 
-TextWidget::TextWidget(QWidget *parent) : QWidget(parent), g2p(new IKg2p::ZhG2p()), g2p_jp(new IKg2p::JpG2p()) {
+TextWidget::TextWidget(QWidget *parent)
+    : QWidget(parent), g2p(new IKg2p::ZhG2p("mandarin")), g2p_jp(new IKg2p::JpG2p()),
+      g2p_canton(new IKg2p::ZhG2p("cantonese")) {
     wordsText = new QLineEdit();
     wordsText->setPlaceholderText("Enter mandarin here...");
 
@@ -33,7 +35,7 @@ TextWidget::TextWidget(QWidget *parent) : QWidget(parent), g2p(new IKg2p::ZhG2p(
     appendButton->setProperty("type", "user");
 
     languageCombo = new QComboBox();
-    languageCombo->addItems({"pinyin", "romaji"});
+    languageCombo->addItems({"pinyin", "romaji", "cantonese(test)"});
 
     buttonsLayout = new QHBoxLayout();
     buttonsLayout->setMargin(0);
@@ -89,12 +91,39 @@ static QString filterString(const QString &str) {
 }
 
 void TextWidget::_q_replaceButtonClicked() {
-    QString str = languageCombo->currentIndex() == 0 ? g2p->convert(sentence()) : g2p_jp->kana2romaji(sentence());
+    QString str;
+    switch (languageCombo->currentIndex()) {
+        case 0:
+            str = g2p->convert(sentence());
+            break;
+        case 1:
+            str = g2p_jp->kana2romaji(sentence());
+            break;
+        case 2:
+            str = g2p_canton->convert(sentence());
+            break;
+        default:
+            break;
+    }
     contentText->setPlainText(filterString(str));
 }
 
 void TextWidget::_q_appendButtonClicked() {
-    QString str = languageCombo->currentIndex() == 0 ? g2p->convert(sentence()) : g2p_jp->kana2romaji(sentence());
+    QString str;
+    switch (languageCombo->currentIndex()) {
+        case 0:
+            str = g2p->convert(sentence());
+            break;
+        case 1:
+            str = g2p_jp->kana2romaji(sentence());
+            break;
+        case 2:
+            str = g2p_canton->convert(sentence());
+            break;
+        default:
+            break;
+    }
+
     QString org = contentText->toPlainText();
     contentText->setPlainText((org.isEmpty() ? "" : org + " ") + filterString(str));
 }

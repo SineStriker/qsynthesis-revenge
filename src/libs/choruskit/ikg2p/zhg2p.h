@@ -11,7 +11,7 @@ namespace IKg2p {
         Q_OBJECT
         Q_DECLARE_PRIVATE(ZhG2p)
     public:
-        explicit ZhG2p(QObject *parent = nullptr);
+        explicit ZhG2p(QString language, QObject *parent = nullptr);
         ~ZhG2p();
 
         QString convert(const QString &input);

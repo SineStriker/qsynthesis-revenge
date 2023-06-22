@@ -29,7 +29,7 @@ namespace IKg2p {
         list.erase(list.begin() + start, list.begin() + start + n);
     }
 
-    ZhG2pPrivate::ZhG2pPrivate() {
+    ZhG2pPrivate::ZhG2pPrivate(QString language) : m_language(language) {
     }
 
     ZhG2pPrivate::~ZhG2pPrivate() {
@@ -37,7 +37,13 @@ namespace IKg2p {
 
     // load zh convert dict
     void ZhG2pPrivate::init() {
-        auto dict_dir = dictionaryPath();
+        QString dict_dir;
+        if (m_language == "mandarin") {
+            dict_dir = dictionaryPath() + "/mandarin";
+        } else {
+            dict_dir = dictionaryPath() + "/cantonese";
+        }
+
         loadDict(dict_dir, "phrases_map.txt", phrases_map);
         loadDict(dict_dir, "phrases_dict.txt", phrases_dict);
         loadDict(dict_dir, "user_dict.txt", phrases_dict);
@@ -68,7 +74,7 @@ namespace IKg2p {
     }
 
 
-    ZhG2p::ZhG2p(QObject *parent) : ZhG2p(*new ZhG2pPrivate(), parent) {
+    ZhG2p::ZhG2p(QString language, QObject *parent) : ZhG2p(*new ZhG2pPrivate(language), parent) {
     }
 
     ZhG2p::~ZhG2p() {
