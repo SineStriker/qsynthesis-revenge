@@ -41,6 +41,7 @@
 しゃ:sha
 しゅ:shu
 しょ:sho
+ぢ:ji
 じ:ji
 じぇ:je
 じゃ:ja
@@ -51,6 +52,7 @@
 すぃ:swi
 すぇ:swe
 すぉ:swo
+づ:zu
 ず:zu
 ずぁ:zwa
 ずぃ:zwi
@@ -88,7 +90,7 @@
 にゃ:nya
 にゅ:nyu
 にょ:nyo
-ぬ:me
+ぬ:nu
 ぬぁ:nwa
 ぬぃ:nwi
 ぬぇ:nwe
