@@ -1,10 +1,11 @@
 #ifndef CHORUSKIT_SCRIPTMGRADDON_H
 #define CHORUSKIT_SCRIPTMGRADDON_H
 
-#include "CoreApi/ActionItem.h"
-#include "CoreApi/IWindowAddOn.h"
+#include <CoreApi/IWindowAddOn.h>
+#include <CoreApi/ActionItem.h>
+#include <Widgets/CommandPalette.h>
+#include <Collections/QMChronMap.h>
 
-#include "JsInternalObject.h"
 #include "ScriptLoader.h"
 
 namespace ScriptMgr::Internal {
@@ -13,8 +14,6 @@ namespace ScriptMgr::Internal {
     public:
         bool predicate(Core::IWindow *handle) const override;
         Core::IWindowAddOn *create(QObject *parent) override;
-    private:
-        QJSEngine *engine;
     };
 
     class ScriptMgrAddOn : public Core::IWindowAddOn {
@@ -26,25 +25,29 @@ namespace ScriptMgr::Internal {
         void initialize() override;
         void extensionsInitialized() override;
 
+    signals:
+        void handleJsReloadStrings();
+
+    private:
         void reloadStrings();
 
         void initializeActions();
         void reloadActions();
         void createScriptActions(const QList<ScriptEntry> &entries);
+        void cleanupScriptActions();
+        void selectScript();
 
-    signals:
-        void handleJsReloadStrings();
-
-    private:
         Core::ActionItem *batchProcessMainGroup;
         Core::ActionItem *batchProcessMainMenu;
         Core::ActionItem *scriptOperationsGroup;
         Core::ActionItem *reloadScriptsAction;
         Core::ActionItem *scriptSettingsAction;
+        Core::ActionItem *runScriptAction;
 
         QString windowKey;
         JsInternalObject *internalObject;
-        QList<QAction *> scriptActions;
+        QList<QAction *> allActions;
+        QMChronMap<QString, QAction *> scriptMainActionDict;
     };
 
 } // Internal

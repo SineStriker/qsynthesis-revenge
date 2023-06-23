@@ -1,5 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <actionSystem>
+
+    <context id="project.InvisibleContext" prefix="scriptmgr." mode="find">
+        <action id="RunScript" command="Batch Process: Run"/>
+    </context>
+
     <context id="project.MainMenu" prefix="scriptmgr." mode="find">
         <group id="BatchProcessGroup">
             <rules>
@@ -8,11 +13,12 @@
             <content>
                 <menu id="BatchProcessMenu">
                     <group id="ScriptOperations">
-                        <action id="ReloadScripts"/>
-                        <action id="ScriptSettings"/>
+                        <action id="ReloadScripts" command="Script Manager: Reload Scripts"/>
+                        <action id="ScriptSettings" command="Script Manager: Script Settings"/>
                     </group>
                 </menu>
             </content>
         </group>
     </context>
+
 </actionSystem>
