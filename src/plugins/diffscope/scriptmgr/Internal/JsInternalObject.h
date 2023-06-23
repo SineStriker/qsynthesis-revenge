@@ -24,7 +24,6 @@ namespace ScriptMgr::Internal {
         QJSValue form(const QString &title, const QVariantList &widgets, QJSValue listener) const;
 
     protected:
-        QJSEngine *engine;
         ScriptMgrAddOn *addOn = nullptr;
     };
 

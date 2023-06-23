@@ -1,16 +1,18 @@
 #include "ScriptSettingsPage.h"
 
 #include <QCheckBox>
+#include <QDir>
+#include <QFileDialog>
 #include <QFormLayout>
 #include <QGroupBox>
 #include <QHBoxLayout>
 #include <QLineEdit>
 #include <QPushButton>
-#include <QDir>
 #include <QStandardPaths>
-#include <QFileDialog>
 
 #include <CoreApi/ILoader.h>
+
+#include "ScriptLoader.h"
 
 namespace ScriptMgr::Internal {
     ScriptSettingsPage::ScriptSettingsPage(QObject *parent) : Core::ISettingPage("scriptmgr.Script", parent) {
@@ -43,8 +45,6 @@ namespace ScriptMgr::Internal {
         formLayout->addRow(tr("Directory"), browseFileLayout);
         groupBox->setLayout(formLayout);
 
-        m_enableUserScriptsCheckBox->setChecked(storedEnableUserScripts());
-        m_userScriptsDirLabel->setText(storedUserScriptsDirectory());
         connect(browseFileButton, &QPushButton::clicked, this, [=](){
             auto dir = QFileDialog::getExistingDirectory(groupBox, tr("Select User Scripts Directory"), m_userScriptsDirLabel->text());
             if(!dir.isEmpty()) m_userScriptsDirLabel->setText(QDir::toNativeSeparators(dir));
@@ -53,16 +53,23 @@ namespace ScriptMgr::Internal {
            browseFileButton->setDisabled(!checked);
            m_userScriptsDirLabel->setDisabled(!checked);
         });
-
+        m_enableUserScriptsCheckBox->setChecked(storedEnableUserScripts());
+        m_userScriptsDirLabel->setText(storedUserScriptsDirectory());
+        browseFileButton->setDisabled(!m_enableUserScriptsCheckBox->isChecked());
+        m_userScriptsDirLabel->setDisabled(!m_enableUserScriptsCheckBox->isChecked());
         return m_widget = groupBox;
     }
     bool ScriptSettingsPage::accept() {
         QDir dir(m_userScriptsDirLabel->text());
         if(!dir.exists()) return false;
+        bool isModified = (m_enableUserScriptsCheckBox->isChecked() != storedEnableUserScripts()) || (m_userScriptsDirLabel->text() != storedUserScriptsDirectory());
         QJsonObject obj;
         obj.insert("enableUserScripts", m_enableUserScriptsCheckBox->isChecked());
         obj.insert("userScriptsDirectory", m_userScriptsDirLabel->text());
         Core::ILoader::instance()->settings()->insert("ScriptMgr", obj);
+        if(isModified) {
+            ScriptLoader::instance()->reloadEngine();
+        }
         return true;
     }
     void ScriptSettingsPage::finish() {

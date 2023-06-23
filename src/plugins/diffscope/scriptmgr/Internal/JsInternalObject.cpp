@@ -11,7 +11,7 @@
 
 namespace ScriptMgr::Internal {
 
-    JsInternalObject::JsInternalObject(ScriptMgrAddOn *addOn): engine(ScriptLoader::instance()->m_engine.data()), addOn(addOn), QObject(addOn) {
+    JsInternalObject::JsInternalObject(ScriptMgrAddOn *addOn): addOn(addOn), QObject(addOn) {
     }
 
     JsInternalObject::~JsInternalObject() {
@@ -34,10 +34,10 @@ namespace ScriptMgr::Internal {
     }
 
     QJSValue JsInternalObject::form(const QString &title, const QVariantList &widgets, QJSValue listener) const {
-        auto dlg = new JsFormDialog(engine, listener, addOn->windowHandle()->window());
+        auto dlg = new JsFormDialog(ScriptLoader::instance()->engine(), listener, addOn->windowHandle()->window());
         dlg->setWindowTitle(title);
         if(!dlg->addFormWidgets(widgets)) {
-            engine->throwError(QJSValue::TypeError, "Invalid widget parameters.");
+            ScriptLoader::instance()->engine()->throwError(QJSValue::TypeError, "Invalid widget parameters.");
             return QJSValue::UndefinedValue;
         }
         return dlg->jsExec();

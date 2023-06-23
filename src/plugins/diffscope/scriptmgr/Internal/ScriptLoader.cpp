@@ -154,5 +154,8 @@ namespace ScriptMgr::Internal {
     void ScriptLoader::criticalScriptExecutionFailed(const QString &name) {
         QMessageBox::critical(nullptr, tr("Error"), tr("Script '%1' execution failed.").arg(name));
     }
+    QJSEngine *ScriptLoader::engine() {
+        return m_engine.data();
+    }
 
 }

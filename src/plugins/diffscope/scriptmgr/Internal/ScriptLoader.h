@@ -40,13 +40,14 @@ namespace ScriptMgr::Internal {
         QList<ScriptEntry> scriptEntries() const;
 
         QString userScriptDir();
+
+        QJSEngine *engine();
     signals:
         void engineWillReload();
         void engineReloaded();
     private:
         friend class ScriptMgrPlugin;
         friend class LoaderInjectedObject;
-        friend class JsInternalObject;
 
         ScriptLoader(QObject *parent = nullptr);
         ~ScriptLoader();
