@@ -7,7 +7,7 @@
 #include <QRegularExpression>
 
 TextWidget::TextWidget(QWidget *parent)
-    : QWidget(parent), g2p(new IKg2p::ZhG2p("mandarin")), g2p_jp(new IKg2p::JpG2p()),
+    : QWidget(parent), g2p(new IKg2p::ZhG2p("mandarin")), g2p_jp(new IKg2p::JpG2p()), g2p_en(new IKg2p::EnG2p()),
       g2p_canton(new IKg2p::ZhG2p("cantonese")) {
     wordsText = new QLineEdit();
     wordsText->setPlaceholderText("Enter mandarin here...");
@@ -35,7 +35,7 @@ TextWidget::TextWidget(QWidget *parent)
     appendButton->setProperty("type", "user");
 
     languageCombo = new QComboBox();
-    languageCombo->addItems({"pinyin", "romaji", "cantonese(test)"});
+    languageCombo->addItems({"pinyin", "romaji", "arpabet(test)", "cantonese(test)"});
 
     buttonsLayout = new QHBoxLayout();
     buttonsLayout->setMargin(0);
@@ -79,7 +79,7 @@ static QString filterString(const QString &str) {
     QString words;
     for (const auto &ch : str) {
         auto u = ch.unicode();
-        if (u >= 128 || !ch.isLetter()) {
+        if ((u >= 128 && !ch.isDigit()) || (!ch.isLetterOrNumber())) {
             if (words.isEmpty() || words.back() != ' ') {
                 words.append(' ');
             }
@@ -100,6 +100,9 @@ void TextWidget::_q_replaceButtonClicked() {
             str = g2p_jp->kana2romaji(sentence());
             break;
         case 2:
+            str = g2p_en->word2arpabet(sentence());
+            break;
+        case 3:
             str = g2p_canton->convert(sentence());
             break;
         default:
@@ -118,6 +121,9 @@ void TextWidget::_q_appendButtonClicked() {
             str = g2p_jp->kana2romaji(sentence());
             break;
         case 2:
+            str = g2p_en->word2arpabet(sentence());
+            break;
+        case 3:
             str = g2p_canton->convert(sentence());
             break;
         default:

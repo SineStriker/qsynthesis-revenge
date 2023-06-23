@@ -10,8 +10,9 @@
 #include <QVBoxLayout>
 #include <QWidget>
 
-#include "zhg2p.h"
 #include "jpg2p.h"
+#include "zhg2p.h"
+#include "eng2p.h"
 
 class TextWidget : public QWidget {
     Q_OBJECT
@@ -36,8 +37,9 @@ protected:
     QVBoxLayout *mainLayout;
 
     QScopedPointer<IKg2p::ZhG2p> g2p;
-    QScopedPointer<IKg2p::ZhG2p> g2p_canton;
+    QScopedPointer<IKg2p::EnG2p> g2p_en;
     QScopedPointer<IKg2p::JpG2p> g2p_jp;
+    QScopedPointer<IKg2p::ZhG2p> g2p_canton;
 
 private:
     QString sentence() const;

@@ -12,7 +12,7 @@ namespace IKg2p {
         Q_DECLARE_PRIVATE(JpG2p)
     public:
         explicit JpG2p(QObject *parent = nullptr);
-        ~JpG2p();
+        ~JpG2p() override;
 
         QString kana2romaji(const QString &kanaStr) const;
         QString kana2romaji(const QStringList &kanaList) const;
