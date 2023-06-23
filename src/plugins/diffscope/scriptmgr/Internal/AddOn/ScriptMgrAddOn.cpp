@@ -40,7 +40,10 @@ namespace ScriptMgr {
             connect(ScriptLoader::instance(), &ScriptLoader::engineWillReload, this, [=](){
                 for(auto action: scriptActions) {
                     batchProcessMainMenu->menu()->removeAction(action);
-                    if(action->menu()) action->menu()->deleteLater();
+                    if(action->menu()) {
+                        windowHandle()->removeShortcutContext(action->menu());
+                        action->menu()->deleteLater();
+                    }
                     action->deleteLater();
                 }
                 scriptActions.clear();
