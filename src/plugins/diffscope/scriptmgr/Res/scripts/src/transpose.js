@@ -7,19 +7,19 @@ $register(class extends $ScriptSet {
             children: [{
                 id: 'plus_semitone',
                 name: $tr('JsBuiltIn', 'Shift Up by a Semitone'),
-                _shortcut: 'Ctrl+Up',
+                shortcut: 'Ctrl+Up',
             }, {
                 id: 'minus_semitone',
                 name: $tr('JsBuiltIn', 'Shift Down by a Semitone'),
-                _shortcut: 'Ctrl+Down',
+                shortcut: 'Ctrl+Down',
             }, {
                 id: 'plus_octave',
                 name: $tr('JsBuiltIn', 'Shift Up by an Octave'),
-                _shortcut: 'Ctrl+Shift+Up',
+                shortcut: 'Ctrl+Shift+Up',
             }, {
                 id: 'minus_octave',
                 name: $tr('JsBuiltIn', 'Shift Down by an Octave'),
-                _shortcut: 'Ctrl+Shift+Down',
+                shortcut: 'Ctrl+Shift+Down',
             }, {
                 id: 'customize',
                 name: $tr('JsBuiltIn', 'Customize Transposition')

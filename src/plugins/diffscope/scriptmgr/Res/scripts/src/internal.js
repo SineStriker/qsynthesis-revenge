@@ -33,13 +33,13 @@ class $DS {
             alert: (title, message) => {
                 this.internal.infoMsgBox(title, message);
             },
-            confirm: (title, message, defaultButton) => {
+            confirm: (title, message, defaultButton = 'Yes') => {
                 return this.internal.questionMsgBox(title, message, defaultButton);
             },
-            prompt: (title, message) => {
+            prompt: (title, message, defaultValue) => {
                 let res =  this.internal.form(
                     title,
-                    [{ type: 'TextBox', label: message }],
+                    [{ type: 'TextBox', label: message, defaultValue }],
                 );
                 if(res.result == 'Ok') {
                     return res.form[0];
@@ -88,11 +88,12 @@ var registry = new Map();
 
 export function register(clazz) {
     let info = clazz.info();
+    if(registry.has(info.id)) return;
     registry.set(info.id, clazz);
     if(clazz.prototype instanceof Script) {
-        __q_loader.registerScript(info.id, [].concat(info.role), info._shortcut ?? "");
+        __q_loader.registerScript(info.id, [].concat(info.role), info.shortcut ?? "");
     } else if(clazz.prototype instanceof ScriptSet) {
-        __q_loader.registerScriptSet(info.id, info.children.map(c => c.id), [].concat(info.role), info.children.map(c => c._shortcut ?? ""));
+        __q_loader.registerScriptSet(info.id, info.children.map(c => c.id), [].concat(info.role), info.children.map(c => c.shortcut ?? ""));
     }
 }
 
