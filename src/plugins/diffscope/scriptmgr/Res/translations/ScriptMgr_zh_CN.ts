@@ -254,6 +254,11 @@
         <translation>提示：第三方脚本可能包含恶意代码。在添加脚本之前请确保你信任它们。</translation>
     </message>
     <message>
+            <location filename="../../Internal/ScriptSettingsPage.cpp" line="74"/>
+            <source>Script Inspector</source>
+            <translation>脚本检查器</translation>
+        </message>
+    <message>
         <location filename="../../Internal/ScriptSettingsPage.cpp" line="81"/>
         <source>Script ID</source>
         <translation>脚本 ID</translation>

@@ -71,7 +71,7 @@ namespace ScriptMgr::Internal {
 
         //section: script inspector
         auto inspector = new QGroupBox;
-        inspector->setTitle("Script Inspector");
+        inspector->setTitle(tr("Script Inspector"));
         auto inspectorLayout = new QHBoxLayout;
         inspector->setLayout(inspectorLayout);
         mainLayout->addWidget(inspector);
