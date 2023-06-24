@@ -25,8 +25,18 @@ endif()
 
 set(_cnt 0)
 
+function(_remove_target_symlink _item _target)
+    # Remove if target is symlink and source is not symlink
+    if(IS_SYMLINK ${_target} AND NOT IS_SYMLINK ${_item})
+        file(REMOVE ${_target})
+    endif()
+endfunction()
+
 function(_copy_if_different _file _target_file)
     get_filename_component(_target_dir ${_target_file} DIRECTORY)
+
+    # Remove if target is symlink and source is not symlink
+    _remove_target_symlink(${_file} ${_target_file})
 
     # Remove if not file
     if(IS_DIRECTORY ${_target_file})
@@ -42,17 +52,15 @@ function(_copy_if_different _file _target_file)
 
         # Make dir if not exist
         if(NOT EXISTS ${_target_dir})
-            make_directory(${_target_dir})
+            file(MAKE_DIRECTORY ${_target_dir})
         endif()
 
-        # Copy file
-        # file(COPY ${_file} DESTINATION ${_target_dir})
-        if(WIN32)
-            # Use cmake command becault file(COPY) doesn't update modification time
-            execute_process(COMMAND ${CMAKE_COMMAND} -E copy ${_file} ${_target_dir})
-        else()
-            execute_process(COMMAND cp -p ${_file} ${_target_dir})
-        endif()
+        # Copy file (symlinks are not followed)
+        # Note: file(COPY) doesn't update modification time
+        file(COPY ${_file} DESTINATION ${_target_dir})
+
+        # Update modification/access time of target file
+        file(TOUCH_NOCREATE ${_target_file})
 
         message(STATUS "Copy \"${_file}\" to \"${_target_dir}\"")
         math(EXPR _cnt "${_cnt} + 1")
@@ -62,11 +70,29 @@ endfunction()
 
 macro(_copy_dir _item)
     get_filename_component(_name ${_item} NAME)
-    file(GLOB_RECURSE _files ${_item}/*)
+
+    # Set the CMake policy CMP0009 to NEW
+    # CMP0009: FILE GLOB_RECURSE calls should not follow symlinks by default
+    cmake_policy(PUSH)
+    cmake_policy(SET CMP0009 NEW)
+
+    # Get a list of all files in the directory to be copied
+    # (symlinks will not be followed)
+    file(GLOB_RECURSE _files LIST_DIRECTORIES true ${_item}/*)
+
+    # Restore the CMake policy
+    cmake_policy(POP)
 
     foreach(_file ${_files})
         file(RELATIVE_PATH _rel_path ${_item} ${_file})
-        _copy_if_different(${_file} ${_dest}/${_name}/${_rel_path})
+        if(NOT IS_SYMLINK ${_file} AND IS_DIRECTORY ${_file})
+            # If we set `LIST_DIRECTORIES true` in `GLOB_RECURSE`, directories are also
+            # included in the file list. These directories are only used for checking
+            # whether destination (if exists) is symlink. They will not be copied.
+            _remove_target_symlink(${_file} ${_dest}/${_name}/${_rel_path})
+        else()
+            _copy_if_different(${_file} ${_dest}/${_name}/${_rel_path})
+        endif()
     endforeach()
 endmacro()
 
@@ -87,7 +113,7 @@ foreach(_item ${src})
         file(GLOB _files LIST_DIRECTORIES TRUE ${_item})
 
         foreach(_file ${_files})
-            if(IS_DIRECTORY ${_file})
+            if(NOT IS_SYMLINK ${_file} AND IS_DIRECTORY ${_file})
                 _copy_dir(${_file})
             else()
                 get_filename_component(_name ${_file} NAME)
