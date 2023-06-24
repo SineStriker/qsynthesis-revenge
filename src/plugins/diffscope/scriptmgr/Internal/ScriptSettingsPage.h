@@ -13,6 +13,7 @@ class QTreeWidgetItem;
 namespace ScriptMgr::Internal {
 
     class ScriptSettingsPage: public Core::ISettingPage {
+        Q_OBJECT
     public:
         explicit ScriptSettingsPage(QObject *parent = nullptr);
         ~ScriptSettingsPage();

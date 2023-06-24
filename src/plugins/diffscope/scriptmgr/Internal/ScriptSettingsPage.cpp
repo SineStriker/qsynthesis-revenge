@@ -86,7 +86,7 @@ namespace ScriptMgr::Internal {
         updateScriptInspector();
         connect(m_scriptListWidget, &QTreeWidget::currentItemChanged, this, [=](QTreeWidgetItem *current, QTreeWidgetItem *previous){
             Q_UNUSED(previous);
-            if(current->flags() & Qt::ItemIsSelectable) showScriptInfo(current->text(0), current->data(0, Qt::UserRole).toInt());
+            if(current && (current->flags() & Qt::ItemIsSelectable)) showScriptInfo(current->text(0), current->data(0, Qt::UserRole).toInt());
         });
         return m_widget = mainWidget;
     }
@@ -134,6 +134,7 @@ namespace ScriptMgr::Internal {
     }
     void ScriptSettingsPage::updateScriptInspector() {
         m_scriptListWidget->clear();
+        m_scriptInfoWidget->clear();
         createScriptList(tr("Built-in Scripts"), ScriptLoader::instance()->builtInScriptEntries());
         if(!ScriptLoader::instance()->scriptEntries().empty()) {
             createScriptList(tr("User Scripts"), ScriptLoader::instance()->scriptEntries());
