@@ -2,9 +2,13 @@
 #define CHORUSKIT_SCRIPTSETTINGSPAGE_H
 
 #include <CoreApi/ISettingPage.h>
+#include "ScriptLoader.h"
 
 class QCheckBox;
 class QLineEdit;
+class QListWidget;
+class QTreeWidget;
+class QTreeWidgetItem;
 
 namespace ScriptMgr::Internal {
 
@@ -21,9 +25,15 @@ namespace ScriptMgr::Internal {
         static bool storedEnableUserScripts();
         static QString storedUserScriptsDirectory();
     private:
+        void updateScriptInspector();
+        void createScriptList(const QString &title, const QList<ScriptEntry> &entryList);
+        void showScriptInfo(const QString &id, int type);
+
         QWidget *m_widget;
         QCheckBox *m_enableUserScriptsCheckBox;
         QLineEdit *m_userScriptsDirLabel;
+        QTreeWidget *m_scriptListWidget;
+        QTreeWidget *m_scriptInfoWidget;
     };
 
 } // Internal

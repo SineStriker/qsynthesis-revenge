@@ -12,18 +12,7 @@
 #include "QMEqualBoxLayout.h"
 
 #include "JsInternalObject.h"
-
-#define PARAM_OPTIONAL_IF(prop, type)                                                                                  \
-    if (JS_PROP_ASSERT(widgetParams, prop, type)) {                                                                    \
-        auto prop##Prop = JS_PROP_AS(widgetParams, prop, type);
-#define PARAM_OPTIONAL_ELSE                                                                                            \
-    }                                                                                                                  \
-    else {
-#define PARAM_OPTIONAL_ENDIF }
-#define PARAM_REQUIRED(prop, type)                                                                                     \
-    if (!JS_PROP_ASSERT(widgetParams, prop, type))                                                                     \
-        return false;                                                                                                  \
-    auto prop##Prop = JS_PROP_AS(widgetParams, prop, type)
+#include "JsMacros.h"
 
 namespace ScriptMgr::Internal {
 
@@ -47,7 +36,7 @@ namespace ScriptMgr::Internal {
                 return false;
             }
             auto widgetParams = widget.toMap();
-            PARAM_REQUIRED(type, String);
+            JS_PROP_REQUIRED(widgetParams, type, String);
             bool successful;
             auto creatorMethodName = QString("create") + typeProp;
             if (!QMetaObject::invokeMethod(this, creatorMethodName.toLocal8Bit(), Q_RETURN_ARG(bool, successful),
@@ -122,7 +111,7 @@ namespace ScriptMgr::Internal {
     }
     bool JsFormDialog::createTextBox(const QVariantMap &widgetParams) {
         auto index = formWidgets.size();
-        PARAM_REQUIRED(label, String);
+        JS_PROP_REQUIRED(widgetParams, label, String);
         ret.property("form").setProperty(index, "");
         auto textBox = new QLineEdit;
         connect(textBox, &QLineEdit::textChanged, this, [=](const QString &text) {
@@ -130,9 +119,9 @@ namespace ScriptMgr::Internal {
             emit formValueChanged();
         });
 
-        PARAM_OPTIONAL_IF(defaultValue, String)
+        JS_PROP_OPTIONAL_IF(widgetParams, defaultValue, String)
         textBox->setText(defaultValueProp);
-        PARAM_OPTIONAL_ENDIF
+        JS_PROP_OPTIONAL_ENDIF
 
         formLayout->addRow(labelProp, textBox);
         formWidgets.push_back(textBox);
@@ -141,7 +130,7 @@ namespace ScriptMgr::Internal {
 
     bool JsFormDialog::createTextArea(const QVariantMap &widgetParams) {
         auto index = formWidgets.size();
-        PARAM_REQUIRED(label, String);
+        JS_PROP_REQUIRED(widgetParams, label, String);
         ret.property("form").setProperty(index, "");
         auto textArea = new QPlainTextEdit;
         connect(textArea, &QPlainTextEdit::textChanged, this, [=]() {
@@ -149,9 +138,9 @@ namespace ScriptMgr::Internal {
             emit formValueChanged();
         });
 
-        PARAM_OPTIONAL_IF(defaultValue, String)
+        JS_PROP_OPTIONAL_IF(widgetParams, defaultValue, String)
         textArea->setPlainText(defaultValueProp);
-        PARAM_OPTIONAL_ENDIF
+        JS_PROP_OPTIONAL_ENDIF
 
         formLayout->addRow(labelProp, textArea);
         formWidgets.push_back(textArea);
@@ -160,7 +149,7 @@ namespace ScriptMgr::Internal {
 
     bool JsFormDialog::createLabel(const QVariantMap &widgetParams) {
         auto index = formWidgets.size();
-        PARAM_REQUIRED(label, String);
+        JS_PROP_REQUIRED(widgetParams, label, String);
         ret.property("form").setProperty(index, QJSValue::UndefinedValue);
         auto label = new QLabel(labelProp);
         formLayout->addRow(label);
@@ -170,7 +159,7 @@ namespace ScriptMgr::Internal {
 
     bool JsFormDialog::createNumberBox(const QVariantMap &widgetParams) {
         auto index = formWidgets.size();
-        PARAM_REQUIRED(label, String);
+        JS_PROP_REQUIRED(widgetParams, label, String);
         ret.property("form").setProperty(index, 0);
         auto numberBox = new QDoubleSpinBox;
         connect(numberBox, QOverload<double>::of(&QDoubleSpinBox::valueChanged), this, [=](double value) {
@@ -178,39 +167,39 @@ namespace ScriptMgr::Internal {
             emit formValueChanged();
         });
 
-        PARAM_OPTIONAL_IF(precision, Int)
+        JS_PROP_OPTIONAL_IF(widgetParams, precision, Int)
         numberBox->setDecimals(precisionProp);
-        PARAM_OPTIONAL_ELSE
+        JS_PROP_OPTIONAL_ELSE
         numberBox->setDecimals(0);
-        PARAM_OPTIONAL_ENDIF
+        JS_PROP_OPTIONAL_ENDIF
 
-        PARAM_OPTIONAL_IF(max, Double)
+        JS_PROP_OPTIONAL_IF(widgetParams, max, Double)
         numberBox->setMaximum(maxProp);
-        PARAM_OPTIONAL_ELSE
+        JS_PROP_OPTIONAL_ELSE
         numberBox->setMaximum(std::numeric_limits<double>::max());
-        PARAM_OPTIONAL_ENDIF
+        JS_PROP_OPTIONAL_ENDIF
 
-        PARAM_OPTIONAL_IF(min, Double)
+        JS_PROP_OPTIONAL_IF(widgetParams, min, Double)
         numberBox->setMinimum(minProp);
-        PARAM_OPTIONAL_ELSE
+        JS_PROP_OPTIONAL_ELSE
         numberBox->setMinimum(std::numeric_limits<double>::lowest());
-        PARAM_OPTIONAL_ENDIF
+        JS_PROP_OPTIONAL_ENDIF
 
-        PARAM_OPTIONAL_IF(step, Double)
+        JS_PROP_OPTIONAL_IF(widgetParams, step, Double)
         numberBox->setSingleStep(stepProp);
-        PARAM_OPTIONAL_ENDIF
+        JS_PROP_OPTIONAL_ENDIF
 
-        PARAM_OPTIONAL_IF(prefix, String)
+        JS_PROP_OPTIONAL_IF(widgetParams, prefix, String)
         numberBox->setPrefix(prefixProp);
-        PARAM_OPTIONAL_ENDIF
+        JS_PROP_OPTIONAL_ENDIF
 
-        PARAM_OPTIONAL_IF(suffix, String)
+        JS_PROP_OPTIONAL_IF(widgetParams, suffix, String)
         numberBox->setSuffix(suffixProp);
-        PARAM_OPTIONAL_ENDIF
+        JS_PROP_OPTIONAL_ENDIF
 
-        PARAM_OPTIONAL_IF(defaultValue, Double)
+        JS_PROP_OPTIONAL_IF(widgetParams, defaultValue, Double)
         numberBox->setValue(defaultValueProp);
-        PARAM_OPTIONAL_ENDIF
+        JS_PROP_OPTIONAL_ENDIF
 
         formLayout->addRow(labelProp, numberBox);
         formWidgets.push_back(numberBox);
@@ -227,7 +216,7 @@ namespace ScriptMgr::Internal {
 
     bool JsFormDialog::createCheckBox(const QVariantMap &widgetParams) {
         auto index = formWidgets.size();
-        PARAM_REQUIRED(label, String);
+        JS_PROP_REQUIRED(widgetParams, label, String);
         ret.property("form").setProperty(index, false);
         auto checkBox = new QCheckBox;
         connect(checkBox, &QCheckBox::clicked, this, [=](bool checked) {
@@ -235,12 +224,12 @@ namespace ScriptMgr::Internal {
             emit formValueChanged();
         });
 
-        PARAM_OPTIONAL_IF(defaultValue, Bool)
+        JS_PROP_OPTIONAL_IF(widgetParams, defaultValue, Bool)
         checkBox->setChecked(defaultValueProp);
         connect(this, &JsFormDialog::formWidgetsCreated, this, [=]() { emit checkBox->clicked(defaultValueProp); });
-        PARAM_OPTIONAL_ELSE
+        JS_PROP_OPTIONAL_ELSE
         connect(this, &JsFormDialog::formWidgetsCreated, this, [=]() { emit checkBox->clicked(); });
-        PARAM_OPTIONAL_ENDIF
+        JS_PROP_OPTIONAL_ENDIF
 
         checkBox->setText(labelProp);
 
@@ -251,25 +240,25 @@ namespace ScriptMgr::Internal {
 
     bool JsFormDialog::createSelect(const QVariantMap &widgetParams) {
         auto index = formWidgets.size();
-        PARAM_REQUIRED(label, String);
+        JS_PROP_REQUIRED(widgetParams, label, String);
         ret.property("form").setProperty(index, 0);
         auto select = new QComboBox;
-        PARAM_REQUIRED(options, StringList);
+        JS_PROP_REQUIRED(widgetParams, options, StringList);
         select->addItems(optionsProp);
         connect(select, QOverload<int>::of(&QComboBox::currentIndexChanged), this, [=](int currentIndex) {
             ret.property("form").setProperty(index, currentIndex);
             emit formValueChanged();
         });
 
-        PARAM_OPTIONAL_IF(defaultValue, Int)
+        JS_PROP_OPTIONAL_IF(widgetParams, defaultValue, Int)
         connect(this, &JsFormDialog::formWidgetsCreated, this, [=]() {
             select->setCurrentIndex(defaultValueProp);
             if (defaultValueProp == 0)
                 emit select->currentIndexChanged(0);
         });
-        PARAM_OPTIONAL_ELSE
+        JS_PROP_OPTIONAL_ELSE
         connect(this, &JsFormDialog::formWidgetsCreated, this, [=]() { emit select->currentIndexChanged(0); });
-        PARAM_OPTIONAL_ENDIF
+        JS_PROP_OPTIONAL_ENDIF
 
         formLayout->addRow(labelProp, select);
         formWidgets.push_back(select);

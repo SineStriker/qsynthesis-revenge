@@ -107,6 +107,14 @@ namespace ScriptMgr::Internal {
         return m_jsCallbacks.property("getName").call({id, index}).toString();
     }
 
+    QJSValue ScriptLoader::getInfo(const QString &id) {
+        if(m_engine.isNull()) {
+            qWarning() << "ScriptLoader: Engine not initialized.";
+            return {};
+        }
+        return m_jsCallbacks.property("getInfo").call({id});
+    }
+
     void ScriptLoader::removeHandles(const QString &windowKey) {
         if(m_engine.isNull()) {
             qWarning() << "ScriptLoader: Engine not initialized.";

@@ -2,6 +2,10 @@ $register(class extends $ScriptSet {
     static info() {
         return {
             id: 'transpose',
+            vendor: 'CrSjimo',
+            description: '', //TODO
+            version: '0.0.1',
+            requiredVersion: '0.1.0',
             role: ['pianoroll', 'arrangement'],
             name: $tr('JsBuiltIn', 'Transpose'),
             children: [{
@@ -27,7 +31,6 @@ $register(class extends $ScriptSet {
                 id: 'shift_mode',
                 name: $tr('JsBuiltIn', 'Shift Mode')
             }],
-            requiredEditorVersion: '0.1.0',
         };
     }
     main(index) {

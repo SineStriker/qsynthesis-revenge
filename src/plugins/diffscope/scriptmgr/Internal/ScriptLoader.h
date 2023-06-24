@@ -34,6 +34,8 @@ namespace ScriptMgr::Internal {
         QString getName(const QString &id);
         QString getName(const QString &id, int index);
 
+        QJSValue getInfo(const QString &id);
+
         void removeHandles(const QString &windowKey);
 
         QList<ScriptEntry> builtInScriptEntries() const;

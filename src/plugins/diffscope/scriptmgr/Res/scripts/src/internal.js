@@ -88,6 +88,7 @@ var registry = new Map();
 
 export function register(clazz) {
     let info = clazz.info();
+    //TODO check info
     if(registry.has(info.id)) return;
     registry.set(info.id, clazz);
     if(clazz.prototype instanceof Script) {
@@ -132,6 +133,11 @@ __q_callbacks.getName = function (id, index) {
             return clazz.info().name;
         }
     }
+}
+
+__q_callbacks.getInfo = function(id) {
+    let clazz = registry.get(id);
+    return clazz.info();
 }
 
 __q_callbacks.removeHandles = function (windowKey) {

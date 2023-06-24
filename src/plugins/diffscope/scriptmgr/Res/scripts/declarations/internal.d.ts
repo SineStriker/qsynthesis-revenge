@@ -127,8 +127,11 @@ declare global {
     interface ScriptInfoBase {
         id: string;
         name: string;
+        vendor?: string;
+        description?: string;
+        version?: string;
+        requiredVersion: string;
         role: string|string[];
-        requiredEditorVersion: string;
     }
 
     abstract class ScriptBase {
