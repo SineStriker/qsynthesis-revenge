@@ -29,13 +29,6 @@ def mac_postdeploy(dir):
 
                 dylib_utils.add_rpath(executable, rpath)
 
-    def remove_symlinks_shared(shared_prefix, app_bundle_prefix, copy_folder_name):
-        shared_contents = [x.stem for x in (shared_prefix / copy_folder_name).iterdir()]
-        for fn in (app_bundle_prefix / "Contents" / copy_folder_name).iterdir():
-            if fn.is_symlink() and fn.stem in shared_contents:
-                print(fn, ".unlink()")
-                fn.unlink()
-
     install_prefix = pathlib.Path(dir)
 
     rpaths = {
@@ -46,8 +39,6 @@ def mac_postdeploy(dir):
 
     shared_prefix = install_prefix / "shared"
     executables_dir_shared = shared_prefix / "MacOS"
-    frameworks_dir_shared = shared_prefix / "Frameworks"
-    resources_dir_shared = shared_prefix / "Resources"
 
     add_rpath_iter(executables_dir_shared, rpaths)
 
@@ -62,16 +53,6 @@ def mac_postdeploy(dir):
         plugins_dir = contents_prefix / "Plugins"
         qt_dir = frameworks_dir / "Qt"
         add_rpath_iter(executables_dir, rpaths)
-
-        # Remove symlinks that point to `shared` directory,
-        # and copy contents (Frameworks and Resources)
-        # of `shared` directory to app bundles.
-        remove_symlinks_shared(shared_prefix, app_bundle_prefix, "Frameworks")
-        remove_symlinks_shared(shared_prefix, app_bundle_prefix, "Resources")
-        shutil.copytree(frameworks_dir_shared, contents_prefix / "Frameworks",
-                        symlinks=True, dirs_exist_ok=True)
-        shutil.copytree(resources_dir_shared, contents_prefix / "Resources",
-                        symlinks=True, dirs_exist_ok=True)
 
         # recursively collect any other external dependencies and fix rpath
         to_collect = []
@@ -102,12 +83,14 @@ def mac_postdeploy(dir):
 
         for framework in dylib_utils.iter_macho_recursive(
                 frameworks_dir, executables_dir, plugins_dir):
+            should_codesign = False
             deps = dylib_utils.get_dependencies(framework)
             for dep in deps:
                 if dylib_utils.get_path_type(dep) == 'other':
                     new_dep = '@rpath/' + dylib_utils.get_lib_components(dep)[2]
                     print("changing", framework, ":", dep, "->", new_dep)
                     dylib_utils.change_dependency(framework, dep, new_dep)
+                    should_codesign = True
 
             install_id = dylib_utils.get_id(framework)
             if install_id != '' and dylib_utils.get_path_type(install_id) == 'other':
@@ -115,8 +98,11 @@ def mac_postdeploy(dir):
                 if not framework.is_relative_to(qt_dir / "plugins"):
                     install_id = "@rpath/" + new_install_id
                     dylib_utils.change_id(framework, install_id)
+                    should_codesign = True
 
-            dylib_utils.codesign_binary(framework)
+            if should_codesign:
+                if dylib_utils.is_signed(framework):
+                    dylib_utils.codesign_binary(framework)
 
 
 def main():

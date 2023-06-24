@@ -19,7 +19,7 @@ CODESIGN_EXEC = '/usr/bin/codesign'
 LIPO_EXEC = '/usr/bin/lipo'
 
 
-def get_path_type(path: "str | pathlib.Path"):
+def get_path_type(path: "str | os.PathLike"):
     path = str(path)
     if path.startswith('@rpath'):
         return 'rpath'
@@ -38,7 +38,7 @@ def get_path_type(path: "str | pathlib.Path"):
     return 'other'
 
 
-def get_otool_l_output(path: "str | pathlib.Path",
+def get_otool_l_output(path: "str | os.PathLike",
                        arch: str = None) -> str:
     path = str(path)
     args = [OTOOL_EXEC]
@@ -49,7 +49,7 @@ def get_otool_l_output(path: "str | pathlib.Path",
     return output
 
 
-def get_binary_rpath(executable_path: "str | pathlib.Path",
+def get_binary_rpath(executable_path: "str | os.PathLike",
                      arch: str = None) -> list[str]:
     executable_path = str(executable_path)
     output = get_otool_l_output(executable_path, arch)
@@ -59,7 +59,7 @@ def get_binary_rpath(executable_path: "str | pathlib.Path",
     return rpath_list
 
 
-def get_dependencies(path: "str | pathlib.Path",
+def get_dependencies(path: "str | os.PathLike",
                      arch: str = None) -> list[str]:
     path = str(path)
     output = get_otool_l_output(path, arch)
@@ -69,7 +69,7 @@ def get_dependencies(path: "str | pathlib.Path",
     return dependency_list
 
 
-def get_id(path: "str | pathlib.Path",
+def get_id(path: "str | os.PathLike",
            arch: str = None) -> str:
     path = str(path)
     output = get_otool_l_output(path, arch)
@@ -81,7 +81,7 @@ def get_id(path: "str | pathlib.Path",
     return ''
 
 
-def get_lib_components(path: "str | pathlib.Path") -> tuple[str, str, str]:
+def get_lib_components(path: "str | os.PathLike") -> tuple[str, str, str]:
     path = str(path)
     name = ""
     name_with_suffix = ""
@@ -101,7 +101,7 @@ def get_lib_components(path: "str | pathlib.Path") -> tuple[str, str, str]:
     return prefix, name, name_with_suffix
 
 
-def collect_dependencies_recursive(path: "str | pathlib.Path", *,
+def collect_dependencies_recursive(path: "str | os.PathLike", *,
                                    ignore_path_types: Iterable[str] = None,
                                    verbose: bool = False) -> list[str]:
     def print_verbose(*args, **kwargs):
@@ -135,7 +135,7 @@ def collect_dependencies_recursive(path: "str | pathlib.Path", *,
     return list(collect_list)
 
 
-def install_name_tool(macho_binary_path: "str | pathlib.Path",
+def install_name_tool(macho_binary_path: "str | os.PathLike",
                       commands: dict):
     macho_binary_path = str(macho_binary_path)
     cmd_add_rpath = commands.get("add_rpath", [])
@@ -163,32 +163,51 @@ def install_name_tool(macho_binary_path: "str | pathlib.Path",
     subprocess.run(exec_args)
 
 
-def add_rpath(executable_path: "str | pathlib.Path",
+def add_rpath(executable_path: "str | os.PathLike",
               new: str):
     install_name_tool(executable_path, commands={"add_rpath": [new]})
 
 
-def delete_rpath(executable_path: "str | pathlib.Path",
+def delete_rpath(executable_path: "str | os.PathLike",
                  old: str):
     install_name_tool(executable_path, commands={"delete_rpath": [old]})
 
 
-def change_rpath(executable_path: "str | pathlib.Path",
+def change_rpath(executable_path: "str | os.PathLike",
                  old: str, new: str):
     install_name_tool(executable_path, commands={"rpath": [(old, new)]})
 
 
-def change_dependency(executable_path: "str | pathlib.Path",
+def change_dependency(executable_path: "str | os.PathLike",
                       old: str, new: str):
     install_name_tool(executable_path, commands={"change": [(old, new)]})
 
 
-def change_id(shared_lib_path: "str | pathlib.Path",
+def change_id(shared_lib_path: "str | os.PathLike",
               name: str):
     install_name_tool(shared_lib_path, commands={"id": name})
 
 
-def codesign_binary(path: "str | pathlib.Path",
+def is_signed(path: "str | os.PathLike"):
+    path = str(path)
+    cmd = [CODESIGN_EXEC, '--display', path]
+    result = subprocess.run(cmd,
+                            stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True,
+                            check=True)
+    if result.returncode == 0:
+        return True
+    else:
+        if result.stderr.endswith(': code object is not signed at all'):
+            return False
+        raise subprocess.CalledProcessError(
+            returncode=result.returncode,
+            cmd=cmd,
+            output=result.stdout,
+            stderr=result.stderr,
+        )
+
+
+def codesign_binary(path: "str | os.PathLike",
                     identity: str = '-'):
     path = str(path)
     print(
@@ -199,7 +218,7 @@ def codesign_binary(path: "str | pathlib.Path",
     subprocess.run([CODESIGN_EXEC, '--force', '--sign', identity, path])
 
 
-def is_macho(path: "str | pathlib.Path"):
+def is_macho(path: "str | os.PathLike"):
     """
     Determine if a file is Mach-O binary.
     """
@@ -238,7 +257,7 @@ def is_macho(path: "str | pathlib.Path"):
     return output_b.startswith(b'Mach-O')
 
 
-def strip_universal_binary(input_file: "str | pathlib.Path",
+def strip_universal_binary(input_file: "str | os.PathLike",
                            target_arch: str,
                            skip_error: bool = False):
     input_file = str(input_file)
@@ -266,7 +285,7 @@ def strip_universal_binary(input_file: "str | pathlib.Path",
     os.rename(output_file, input_file)
 
 
-def strip_universal_binary_recursive(input_dir: "str | pathlib.Path",
+def strip_universal_binary_recursive(input_dir: "str | os.PathLike",
                                      target_arch: str,
                                      skip_error: bool = False):
     inp = pathlib.Path(input_dir)
@@ -280,7 +299,7 @@ def strip_universal_binary_recursive(input_dir: "str | pathlib.Path",
         strip_universal_binary(file, target_arch, skip_error)
 
 
-def analyze_dependencies(paths: Iterable[str],
+def analyze_dependencies(paths: "Iterable[str | os.PathLike]",
                          *,
                          ignore_path_types: Iterable[str] = None) -> list[str]:
     if ignore_path_types is None:
@@ -289,7 +308,7 @@ def analyze_dependencies(paths: Iterable[str],
     collect_list = set()
 
     # Recursion helper function
-    def _helper(_path: str) -> str:
+    def _helper(_path: str) -> "str | None":
         if _path in collect_list:
             print("Skip:", _path)
             return None
@@ -320,7 +339,7 @@ def analyze_dependencies(paths: Iterable[str],
     return list(collect_list)
 
 
-def iter_macho_recursive(*parents: "str | pathlib.Path"):
+def iter_macho_recursive(*parents: "str | os.PathLike"):
     for parent in parents:
         parent = pathlib.Path(parent)
         for framework in parent.rglob("*"):
