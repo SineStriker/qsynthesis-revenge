@@ -60,7 +60,11 @@ namespace ScriptMgr::Internal {
         static void criticalCannotInitializeEngine();
         static void criticalScriptExecutionFailed(const QString &name);
 
-        QScopedPointer<QJSEngine> m_engine;
+        struct EngineDeleter {
+            static inline void cleanup(QJSEngine *pointer) { if (pointer) { pointer->setInterrupted(true); pointer->deleteLater(); } }
+        };
+
+        QScopedPointer<QJSEngine, EngineDeleter> m_engine;
         QJSValue m_jsCallbacks;
         QList<ScriptEntry> m_builtInScriptEntries;
         QList<ScriptEntry> m_scriptEntries;

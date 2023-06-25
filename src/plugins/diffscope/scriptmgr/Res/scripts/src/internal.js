@@ -2,11 +2,11 @@ class $DS {
 
     constructor(internal) {
 
-        this.internal = internal;
+        this._internal = internal;
 
         this.dialogSystem = {
             form: (title, widgets, listener) => {
-                return this.internal.form(title, widgets, listener ? (rawHandle) => {
+                return this._internal.form(title, widgets, listener ? (rawHandle) => {
                     listener(widgets.map((v, i) => {
                         let handle = {};
                         Object.defineProperties(handle, {
@@ -31,13 +31,13 @@ class $DS {
                 } : undefined);
             },
             alert: (title, message) => {
-                this.internal.infoMsgBox(title, message);
+                this._internal.infoMsgBox(title, message);
             },
             confirm: (title, message, defaultButton = 'Yes') => {
-                return this.internal.questionMsgBox(title, message, defaultButton);
+                return this._internal.questionMsgBox(title, message, defaultButton);
             },
             prompt: (title, message, defaultValue) => {
-                let res =  this.internal.form(
+                let res =  this._internal.form(
                     title,
                     [{ type: 'TextBox', label: message, defaultValue }],
                 );
@@ -48,7 +48,7 @@ class $DS {
                 }
             },
             msgBox: (title, message, icon = '', buttons = ['Ok'], defaultButton = '') => {
-                return this.internal.msgBox(title, message, icon, buttons, defaultButton);
+                return this._internal.msgBox(title, message, icon, buttons, defaultButton);
             }
         };
 
@@ -71,7 +71,7 @@ class ScriptBase {
         if(!locale) return __q_tr_ext.qsTranslate('JsBuiltIn', text);
         let entry = locale[text];
         if(!entry) return __q_tr_ext.qsTranslate('JsBuiltIn', text);
-        let translation = entry[this.internal.getLang()];
+        let translation = entry[this._internal.getLang()];
         if (typeof(translation) !== 'string') return __q_tr_ext.qsTranslate('JsBuiltIn', text);
         return translation;
     }
@@ -89,9 +89,19 @@ export class ScriptSet extends ScriptBase {
 
 var registry = new Map();
 
+function checkClass(clazz) {
+    let err = new TypeError('Invalid script class.');
+    if(!(clazz.prototype instanceof Script || clazz.prototype instanceof ScriptSet)) throw err;
+    let info = clazz.info();
+    if(typeof info !== 'object') throw err;
+    if(typeof info.id !== 'string') throw err;
+    if(typeof info.name !== 'string') throw err;
+    if(clazz.prototype instanceof ScriptSet && !(info.children instanceof Array)) throw err;
+}
+
 export function register(clazz) {
     let info = clazz.info();
-    //TODO check info
+    checkClass(clazz);
     if(registry.has(info.id)) return;
     registry.set(info.id, clazz);
     if(clazz.prototype instanceof Script) {
@@ -118,11 +128,14 @@ __q_callbacks.createHandles = function (internal) {
 
 __q_callbacks.invoke = function (windowKey, id, index) {
     let script = instanceRegistry.get(windowKey).get(id);
-    if(script instanceof Script) {
-        script.main();
-    } else if(script instanceof ScriptSet) {
-        script.main(index);
-    }
+    new Promise((resolve, reject)=>{
+        if(script instanceof Script) {
+            script.main();
+        } else if(script instanceof ScriptSet) {
+            script.main(index);
+        }
+        resolve();
+    });
 }
 
 __q_callbacks.getName = function (id, index) {

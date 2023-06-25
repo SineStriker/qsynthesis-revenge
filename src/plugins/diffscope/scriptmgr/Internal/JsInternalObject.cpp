@@ -113,6 +113,9 @@ namespace ScriptMgr::Internal {
         }
         return dlg->jsExec();
     }
+    void JsInternalObject::assertFalse() {
+        Q_ASSERT(false);
+    }
 
 
 }

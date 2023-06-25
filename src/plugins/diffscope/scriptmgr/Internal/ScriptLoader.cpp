@@ -32,6 +32,7 @@ namespace ScriptMgr::Internal {
         //load internal.js
         m_engine->globalObject().setProperty("__q_tr_ext", m_engine->newObject());
         m_engine->installExtensions(QJSEngine::TranslationExtension, m_engine->globalObject().property("__q_tr_ext"));
+        m_engine->installExtensions(QJSEngine::ConsoleExtension);
         m_engine->globalObject().setProperty("__q_loader", m_engine->newQObject(new LoaderInjectedObject(this)));
         auto internalModule = m_engine->importModule(":/scripts/internal.js");
         if(internalModule.isError()) {

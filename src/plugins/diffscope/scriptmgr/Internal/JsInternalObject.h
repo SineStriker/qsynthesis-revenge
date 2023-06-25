@@ -21,6 +21,7 @@ namespace ScriptMgr::Internal {
         void infoMsgBox(const QString &title, const QString &message) const;
         bool questionMsgBox(const QString &title, const QString &message, const QString &defaultButton) const;
         QJSValue form(const QString &title, const QVariantList &widgets, QJSValue listener) const;
+        void assertFalse();
 
     protected:
         ScriptMgrAddOn *addOn = nullptr;
