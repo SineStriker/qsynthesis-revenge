@@ -46,6 +46,9 @@ class $DS {
                 } else {
                     return null;
                 }
+            },
+            msgBox: (title, message, icon = '', buttons = ['Ok'], defaultButton = '') => {
+                return this.internal.msgBox(title, message, icon, buttons, defaultButton);
             }
         };
 

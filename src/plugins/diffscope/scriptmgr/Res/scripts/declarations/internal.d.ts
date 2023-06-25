@@ -99,6 +99,8 @@ declare namespace DsDialogSystem {
             disabled: boolean;
         }
     }
+
+    type StandardButton = "Ok" | "Save" | "SaveAll" | "Open" | "Yes" | "YesToAll" | "No" | "NoToAll" | "Abort" | "Retry" | "Ignore" | "Close" | "Cancel" | "Discard" | "Help" | "Apply" | "Reset" | "RestoreDefaults";
 }
 
 declare global {
@@ -243,6 +245,14 @@ declare global {
              * @returns The value user input, `null` if user cancelled
              */
             prompt(title: string, message: string, defaultValue?: string): string|null;
+
+            msgBox(
+                title: string,
+                message: string,
+                icon: string = '',
+                buttons?: DsDialogSystem.StandardButton[] = ['Ok'],
+                defaultButton?: DsDialogSystem.StandardButton
+            ): DsDialogSystem.StandardButton;
         }
     }
 }
