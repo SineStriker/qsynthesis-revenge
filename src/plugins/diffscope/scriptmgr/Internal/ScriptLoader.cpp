@@ -9,6 +9,12 @@
 #include "JsInternalObject.h"
 #include "ScriptSettingsPage.h"
 
+#define CHECK_ENGINE(ret) \
+if(m_engine.isNull()) { \
+    qWarning() << "ScriptLoader: Engine not initialized."; \
+    return (ret); \
+}
+
 namespace ScriptMgr::Internal {
 
     static ScriptLoader *m_instance = nullptr;
@@ -67,60 +73,67 @@ namespace ScriptMgr::Internal {
     }
 
     QString ScriptLoader::createHandles(JsInternalObject *internalObject) {
-        if(m_engine.isNull()) {
-            qWarning() << "ScriptLoader: Engine not initialized.";
-            return {};
-        }
+        CHECK_ENGINE("")
         auto jsInternal = m_engine->newQObject(internalObject);
         return m_jsCallbacks.property("createHandles").call({jsInternal}).toString();
     }
 
     void ScriptLoader::invoke(const QString &windowKey, const QString &id) {
-        if(m_engine.isNull()) {
-            qWarning() << "ScriptLoader: Engine not initialized.";
-            return;
+        CHECK_ENGINE(void())
+        auto ret = m_jsCallbacks.property("invoke").call({windowKey, id});
+        if(ret.isError()) {
+            alertJsUncaughtError(ret);
+            criticalScriptExecutionFailed(id);
         }
-        m_jsCallbacks.property("invoke").call({windowKey, id});
     }
 
     void ScriptLoader::invoke(const QString &windowKey, const QString &id, int index) {
-        if(m_engine.isNull()) {
-            qWarning() << "ScriptLoader: Engine not initialized.";
-            return;
+        CHECK_ENGINE(void())
+        auto ret = m_jsCallbacks.property("invoke").call({windowKey, id, index});
+        if(ret.isError()) {
+            alertJsUncaughtError(ret);
+            criticalScriptExecutionFailed(tr("Sub-action %1 of %2").arg(index).arg(id));
         }
-        m_jsCallbacks.property("invoke").call({windowKey, id, index});
     }
 
     QString ScriptLoader::getName(const QString &id) {
-        if(m_engine.isNull()) {
-            qWarning() << "ScriptLoader: Engine not initialized.";
-            return {};
+        CHECK_ENGINE("")
+        auto ret = m_jsCallbacks.property("getName").call({id});
+        if(ret.isError()) {
+            alertJsUncaughtError(ret);
+            warningCannotGetName(id);
+            return id;
         }
-        return m_jsCallbacks.property("getName").call({id}).toString();
+        return ret.toString();
     }
 
     QString ScriptLoader::getName(const QString &id, int index) {
-        if(m_engine.isNull()) {
-            qWarning() << "ScriptLoader: Engine not initialized.";
-            return {};
+        CHECK_ENGINE("")
+        auto ret = m_jsCallbacks.property("getName").call({id, index});
+        if(ret.isError()) {
+            alertJsUncaughtError(ret);
+            warningCannotGetName(id);
+            return id + QString(" <%1>").arg(index);
         }
-        return m_jsCallbacks.property("getName").call({id, index}).toString();
+        return ret.toString();
     }
 
     QJSValue ScriptLoader::getInfo(const QString &id) {
-        if(m_engine.isNull()) {
-            qWarning() << "ScriptLoader: Engine not initialized.";
-            return {};
+        CHECK_ENGINE("")
+        auto ret = m_jsCallbacks.property("getInfo").call({id});
+        if(ret.isError()) {
+            alertJsUncaughtError(ret);
+            return m_engine->evaluate("null");
         }
-        return m_jsCallbacks.property("getInfo").call({id});
+        return ret;
     }
 
     void ScriptLoader::removeHandles(const QString &windowKey) {
-        if(m_engine.isNull()) {
-            qWarning() << "ScriptLoader: Engine not initialized.";
-            return;
+        CHECK_ENGINE(void())
+        auto ret = m_jsCallbacks.property("removeHandles").call({windowKey});
+        if(ret.isError()) {
+            alertJsUncaughtError(ret);
         }
-        m_jsCallbacks.property("removeHandles").call({windowKey});
     }
 
     QList<ScriptEntry> ScriptLoader::builtInScriptEntries() const {
