@@ -23,6 +23,20 @@ namespace ScriptMgr::Internal {
         return m_instance;
     }
 
+    bool ScriptLoader::loadFile(const QString &path) {
+        QFile f(path);
+        f.open(QFile::ReadOnly);
+        if(!f.isOpen()) {
+            return false;
+        }
+        auto ret = m_engine->evaluate(f.readAll(), path);
+        if(ret.isError()) {
+            alertJsUncaughtError(ret);
+            return false;
+        }
+        return true;
+    }
+
     bool ScriptLoader::reloadEngine() {
         emit engineWillReload();
         m_engine.reset(new QJSEngine);
@@ -34,7 +48,8 @@ namespace ScriptMgr::Internal {
         m_engine->installExtensions(QJSEngine::TranslationExtension, m_engine->globalObject().property("__q_tr_ext"));
         m_engine->installExtensions(QJSEngine::ConsoleExtension);
         m_engine->globalObject().setProperty("__q_loader", m_engine->newQObject(new LoaderInjectedObject(this)));
-        auto internalModule = m_engine->importModule(":/scripts/internal.js");
+        m_engine->globalObject().setProperty("__q_internal", m_engine->newQObject(new JsInternalObject(nullptr)));
+        auto internalModule = m_engine->importModule(":/scripts/internal/index.js");
         if(internalModule.isError()) {
             alertJsUncaughtError(internalModule);
             criticalCannotInitializeEngine();
@@ -50,9 +65,7 @@ namespace ScriptMgr::Internal {
         //load built-in scripts
         for(const auto& filename: QDir(":/scripts/").entryList(QDir::Files)) {
             if(filename == "internal.js") continue;
-            auto ret = m_engine->importModule(":/scripts/" + filename);
-            if(ret.isError()){
-                alertJsUncaughtError(ret);
+            if(!loadFile(":/scripts/" + filename)){
                 warningCannotLoadFile(":/scripts/" + filename);
             }
         }
@@ -62,9 +75,7 @@ namespace ScriptMgr::Internal {
         if(ScriptSettingsPage::storedEnableUserScripts()) {
             QDir dir(userScriptDir());
             for(const auto& filename: dir.entryList(QDir::Files)) {
-                auto ret = m_engine->importModule(dir.filePath(filename));
-                if(ret.isError()){
-                    alertJsUncaughtError(ret);
+                if(!loadFile(dir.filePath(filename))){
                     warningCannotLoadFile(dir.filePath(filename));
                 }
             }
@@ -73,13 +84,13 @@ namespace ScriptMgr::Internal {
         return true;
     }
 
-    QString ScriptLoader::createHandles(JsInternalObject *internalObject) {
+    QString ScriptLoader::createHandles(JsInternalObject *internalObject) const {
         CHECK_ENGINE("")
         auto jsInternal = m_engine->newQObject(internalObject);
         return m_jsCallbacks.property("createHandles").call({jsInternal}).toString();
     }
 
-    void ScriptLoader::invoke(const QString &windowKey, const QString &id) {
+    void ScriptLoader::invoke(const QString &windowKey, const QString &id) const {
         CHECK_ENGINE(void())
         auto ret = m_jsCallbacks.property("invoke").call({windowKey, id});
         if(ret.isError()) {
@@ -88,7 +99,7 @@ namespace ScriptMgr::Internal {
         }
     }
 
-    void ScriptLoader::invoke(const QString &windowKey, const QString &id, int index) {
+    void ScriptLoader::invoke(const QString &windowKey, const QString &id, int index) const {
         CHECK_ENGINE(void())
         auto ret = m_jsCallbacks.property("invoke").call({windowKey, id, index});
         if(ret.isError()) {
@@ -97,7 +108,7 @@ namespace ScriptMgr::Internal {
         }
     }
 
-    QString ScriptLoader::getName(const QString &id) {
+    QString ScriptLoader::getName(const QString &id) const {
         CHECK_ENGINE("")
         auto ret = m_jsCallbacks.property("getName").call({id});
         if(ret.isError()) {
@@ -108,7 +119,7 @@ namespace ScriptMgr::Internal {
         return ret.toString();
     }
 
-    QString ScriptLoader::getName(const QString &id, int index) {
+    QString ScriptLoader::getName(const QString &id, int index) const {
         CHECK_ENGINE("")
         auto ret = m_jsCallbacks.property("getName").call({id, index});
         if(ret.isError()) {
@@ -119,7 +130,7 @@ namespace ScriptMgr::Internal {
         return ret.toString();
     }
 
-    QJSValue ScriptLoader::getInfo(const QString &id) {
+    QJSValue ScriptLoader::getInfo(const QString &id) const {
         CHECK_ENGINE("")
         auto ret = m_jsCallbacks.property("getInfo").call({id});
         if(ret.isError()) {
@@ -129,7 +140,7 @@ namespace ScriptMgr::Internal {
         return ret;
     }
 
-    void ScriptLoader::removeHandles(const QString &windowKey) {
+    void ScriptLoader::removeHandles(const QString &windowKey) const {
         CHECK_ENGINE(void())
         auto ret = m_jsCallbacks.property("removeHandles").call({windowKey});
         if(ret.isError()) {
@@ -166,7 +177,7 @@ namespace ScriptMgr::Internal {
     }
 
     void ScriptLoader::warningCannotGetName(const QString &id) {
-        QMessageBox::warning(nullptr, tr("Warning"), tr("Cannot get name of script '%1'. Its name will be displayed as its id."));
+        QMessageBox::warning(nullptr, tr("Warning"), tr("Cannot get name of script '%1'. Its name will be displayed as its id.").arg(id));
     }
 
     void ScriptLoader::criticalCannotInitializeEngine() {
@@ -176,8 +187,14 @@ namespace ScriptMgr::Internal {
     void ScriptLoader::criticalScriptExecutionFailed(const QString &name) {
         QMessageBox::critical(nullptr, tr("Error"), tr("Script '%1' execution failed.").arg(name));
     }
-    QJSEngine *ScriptLoader::engine() {
+    QJSEngine *ScriptLoader::engine() const {
         return m_engine.data();
+    }
+    void ScriptLoader::setVersion(const QString &version) {
+        m_version = version;
+    }
+    QString ScriptLoader::version() const {
+        return m_version;
     }
 
 }

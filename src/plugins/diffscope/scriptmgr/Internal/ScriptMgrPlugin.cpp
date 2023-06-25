@@ -50,6 +50,7 @@ namespace ScriptMgr {
 
             // Add basic windows and add-ons
             new ScriptLoader(this);
+            ScriptLoader::instance()->setVersion(pluginSpec()->version().split("_")[0]);
             ScriptLoader::instance()->reloadEngine();
 
             auto winMgr = ICore::instance()->windowSystem();

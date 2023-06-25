@@ -82,8 +82,8 @@ namespace ScriptMgr::Internal {
     }
 
     QString JsInternalObject::msgBox(const QString &title, const QString &message, const QString &icon,
-                                 const QStringList &buttons, const QString &defaultButton) {
-        QMessageBox msg;
+                                 const QStringList &buttons, const QString &defaultButton) const {
+        QMessageBox msg(addOn ? addOn->windowHandle()->window() : nullptr);
         msg.setStandardButtons(buttonStrToButtons(buttons));
         if(!defaultButton.isEmpty()) msg.setDefaultButton(strToButton(defaultButton));
         msg.setIcon(strToIcon(icon));
@@ -93,28 +93,31 @@ namespace ScriptMgr::Internal {
     }
 
     void JsInternalObject::infoMsgBox(const QString &title, const QString &message) const {
-        QMessageBox::information(addOn->windowHandle()->window(), title, message);
+        QMessageBox::information(addOn ? addOn->windowHandle()->window() : nullptr, title, message);
     }
 
     bool JsInternalObject::questionMsgBox(const QString &title, const QString &message, const QString &defaultButton) const {
         auto defaultButtonFlag = QMessageBox::Yes;
         if (defaultButton == "No")
             defaultButtonFlag = QMessageBox::No;
-        return QMessageBox::question(addOn->windowHandle()->window(), title, message,
+        return QMessageBox::question(addOn ? addOn->windowHandle()->window() : nullptr, title, message,
                                      QMessageBox::Yes | QMessageBox::No, defaultButtonFlag) == QMessageBox::Yes;
     }
 
     QJSValue JsInternalObject::form(const QString &title, const QVariantList &widgets, QJSValue listener) const {
-        auto dlg = new JsFormDialog(ScriptLoader::instance()->engine(), listener, addOn->windowHandle()->window());
-        dlg->setWindowTitle(title);
-        if(!dlg->addFormWidgets(widgets)) {
+        JsFormDialog dlg(ScriptLoader::instance()->engine(), listener, addOn ? addOn->windowHandle()->window() : nullptr);
+        dlg.setWindowTitle(title);
+        if(!dlg.addFormWidgets(widgets)) {
             ScriptLoader::instance()->engine()->throwError(QJSValue::TypeError, "Invalid widget parameters.");
             return QJSValue::UndefinedValue;
         }
-        return dlg->jsExec();
+        return dlg.jsExec();
     }
-    void JsInternalObject::assertFalse() {
+    void JsInternalObject::assertFalse() const {
         Q_ASSERT(false);
+    }
+    QString JsInternalObject::version() const {
+        return ScriptLoader::instance()->version();
     }
 
 

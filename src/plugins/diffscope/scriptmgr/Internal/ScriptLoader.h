@@ -26,24 +26,26 @@ namespace ScriptMgr::Internal {
 
         bool reloadEngine();
 
-        [[nodiscard]] QString createHandles(JsInternalObject *internalObject);
+        [[nodiscard]] QString createHandles(JsInternalObject *internalObject) const;
 
-        void invoke(const QString &windowKey, const QString &id);
-        void invoke(const QString &windowKey, const QString &id, int index);
+        void invoke(const QString &windowKey, const QString &id) const;
+        void invoke(const QString &windowKey, const QString &id, int index) const;
 
-        QString getName(const QString &id);
-        QString getName(const QString &id, int index);
+        QString getName(const QString &id) const;
+        QString getName(const QString &id, int index) const;
 
-        QJSValue getInfo(const QString &id);
+        QJSValue getInfo(const QString &id) const;
 
-        void removeHandles(const QString &windowKey);
+        void removeHandles(const QString &windowKey) const;
 
         QList<ScriptEntry> builtInScriptEntries() const;
         QList<ScriptEntry> scriptEntries() const;
 
-        QString userScriptDir();
+        static QString userScriptDir();
 
-        QJSEngine *engine();
+        QJSEngine *engine() const;
+
+        QString version() const;
     signals:
         void engineWillReload();
         void engineReloaded();
@@ -53,6 +55,10 @@ namespace ScriptMgr::Internal {
 
         ScriptLoader(QObject *parent = nullptr);
         ~ScriptLoader();
+
+        bool loadFile(const QString &path);
+
+        void setVersion(const QString &version);
 
         static void alertJsUncaughtError(const QJSValue &error);
         static void warningCannotLoadFile(const QString &path);
@@ -68,6 +74,7 @@ namespace ScriptMgr::Internal {
         QJSValue m_jsCallbacks;
         QList<ScriptEntry> m_builtInScriptEntries;
         QList<ScriptEntry> m_scriptEntries;
+        QString m_version;
     };
 
 } // Internal

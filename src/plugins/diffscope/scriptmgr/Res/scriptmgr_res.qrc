@@ -3,7 +3,13 @@
         <file>scriptmgr_actions.xml</file>
     </qresource>
     <qresource prefix="/scripts">
-        <file alias="internal.js">scripts/src/internal.js</file>
+        <file alias="internal/callbacks.js">scripts/src/internal/callbacks.js</file>
+        <file alias="internal/compare-version.js">scripts/src/internal/compare-version.js</file>
+        <file alias="internal/DiffScopeHandle.js">scripts/src/internal/DiffScopeHandle.js</file>
+        <file alias="internal/register.js">scripts/src/internal/register.js</file>
+        <file alias="internal/script_definitions.js">scripts/src/internal/script_definitions.js</file>
+
+        <file alias="internal/index.js">scripts/src/internal/index.js</file>
         <file alias="transpose.js">scripts/src/transpose.js</file>
     </qresource>
 </RCC>
