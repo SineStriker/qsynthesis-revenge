@@ -15,17 +15,10 @@ namespace ScriptMgr::Internal {
         ~JsInternalObject();
 
     public slots:
-        QString getLang() const;
-        QString msgBox(const QString &title, const QString &message, const QString &icon, const QStringList &buttons,
-                   const QString &defaultButton) const;
-        void infoMsgBox(const QString &title, const QString &message) const;
-        bool questionMsgBox(const QString &title, const QString &message, const QString &defaultButton) const;
+        QString msgBox(const QString &title, const QString &message, const QString &icon, const QStringList &buttons, const QString &defaultButton) const;
         QJSValue form(const QString &title, const QVariantList &widgets, QJSValue listener) const;
-        void assertFalse() const;
-        QString version() const;
-
     protected:
-        ScriptMgrAddOn *addOn = nullptr;
+        ScriptMgrAddOn *addOn;
     };
 
 } // Internal

@@ -31,10 +31,10 @@ export class DiffScopeHandle {
                 } : undefined);
             },
             alert: (title, message) => {
-                this._internal.infoMsgBox(title, message);
+                this._internal.msgBox(title, message, 'Information', ['Ok'], '');
             },
             confirm: (title, message, defaultButton = 'Yes') => {
-                return this._internal.questionMsgBox(title, message, defaultButton);
+                return this._internal.msgBox(title, message, 'Question', ['Yes', 'No'], defaultButton) == 'Yes';
             },
             prompt: (title, message, defaultValue) => {
                 let res =  this._internal.form(

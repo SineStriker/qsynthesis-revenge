@@ -6,7 +6,7 @@
 namespace ScriptMgr::Internal {
 
     class ScriptMgrPlugin;
-    class LoaderInjectedObject;
+    class JsLoaderObject;
     class JsInternalObject;
 
     struct ScriptEntry {
@@ -32,7 +32,6 @@ namespace ScriptMgr::Internal {
         void invoke(const QString &windowKey, const QString &id, int index) const;
 
         QString getName(const QString &id) const;
-        QString getName(const QString &id, int index) const;
 
         QJSValue getInfo(const QString &id) const;
 
@@ -49,12 +48,17 @@ namespace ScriptMgr::Internal {
     signals:
         void engineWillReload();
         void engineReloaded();
+        void scriptNameReloaded();
     private:
         friend class ScriptMgrPlugin;
-        friend class LoaderInjectedObject;
+        friend class JsLoaderObject;
 
         ScriptLoader(QObject *parent = nullptr);
         ~ScriptLoader();
+
+        QString getNameFromJs(const QString &id) const;
+        QString getNameFromJs(const QString &id, const QString &childId, int index) const;
+        void reloadStrings();
 
         bool loadFile(const QString &path);
 
@@ -75,6 +79,7 @@ namespace ScriptMgr::Internal {
         QList<ScriptEntry> m_builtInScriptEntries;
         QList<ScriptEntry> m_scriptEntries;
         QString m_version;
+        QMap<QString, QString> scriptNameDict;
     };
 
 } // Internal

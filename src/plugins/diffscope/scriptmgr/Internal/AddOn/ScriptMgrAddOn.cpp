@@ -52,7 +52,6 @@ namespace ScriptMgr {
             reloadScriptsAction->setText(tr("Reload Scripts"));
             scriptSettingsAction->setText(tr("Script Settings"));
             runScriptAction->setText(tr("Run"));
-            emit handleJsReloadStrings();
         }
 
         void ScriptMgrAddOn::initializeActions() {
@@ -142,14 +141,14 @@ namespace ScriptMgr {
             windowKey = ScriptLoader::instance()->createHandles(internalObject);
             createScriptActions(ScriptLoader::instance()->builtInScriptEntries());
             createScriptActions(ScriptLoader::instance()->scriptEntries());
-            emit handleJsReloadStrings();
         }
 
         void ScriptMgrAddOn::createScriptActions(const QList<ScriptEntry> &entries) {
-            allActions.append(batchProcessMainMenu->menu()->addSeparator());
+            auto actionBefore = reloadScriptsAction->action();
             for(const auto &entry: entries) {
                 auto mainAction = new QAction(this);
-                connect(this, &ScriptMgrAddOn::handleJsReloadStrings, mainAction, [=](){
+                mainAction->setText(ScriptLoader::instance()->getName(entry.id));
+                connect(ScriptLoader::instance(), &ScriptLoader::scriptNameReloaded, mainAction, [=](){
                     mainAction->setText(ScriptLoader::instance()->getName(entry.id));
                 });
                 if(entry.type == ScriptEntry::Script) {
@@ -164,8 +163,9 @@ namespace ScriptMgr {
                         auto childId = entry.childrenId[i];
                         auto childShortcut = entry.childrenShortcut[i];
                         auto childAction = new QAction(this);
-                        connect(this, &ScriptMgrAddOn::handleJsReloadStrings, childAction, [=](){
-                            childAction->setText(ScriptLoader::instance()->getName(entry.id, i));
+                        childAction->setText(ScriptLoader::instance()->getName(entry.id + '.' + childId));
+                        connect(ScriptLoader::instance(), &ScriptLoader::scriptNameReloaded, childAction, [=](){
+                            childAction->setText(ScriptLoader::instance()->getName(entry.id + '.' + childId));
                         });
                         if(!childShortcut.isEmpty()) childAction->setShortcut(QKeySequence(childShortcut));
                         connect(childAction, &QAction::triggered, this, [=](){
@@ -178,9 +178,10 @@ namespace ScriptMgr {
                     mainAction->setMenu(menu);
                     windowHandle()->addShortcutContext(menu);
                 }
-                batchProcessMainMenu->menu()->addAction(mainAction);
+                batchProcessMainMenu->menu()->insertAction(actionBefore, mainAction);
                 allActions.append(mainAction);
             }
+            allActions.append(batchProcessMainMenu->menu()->insertSeparator(actionBefore));
         }
     }
 }

@@ -182,7 +182,7 @@ declare global {
         children: {
             id: string;
             name: string;
-            shortcut: string;
+            shortcut?: string;
         }[];
     }
 

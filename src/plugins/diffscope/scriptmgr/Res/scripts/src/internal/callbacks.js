@@ -28,7 +28,7 @@ __q_callbacks.invoke = function (windowKey, id, index) {
     }
 }
 
-__q_callbacks.getName = function (id, index) {
+__q_callbacks.getNameFromJs = function (id, index) {
     let clazz = registry.get(id);
     if(clazz.prototype instanceof Script) {
         return clazz.info().name;

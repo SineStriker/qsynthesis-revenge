@@ -5,8 +5,10 @@
 #include <QFile>
 #include <QMessageBox>
 
-#include "LoaderInjectedObject.h"
+#include <QMDecoratorV2.h>
+
 #include "JsInternalObject.h"
+#include "JsLoaderObject.h"
 #include "ScriptSettingsPage.h"
 
 #define CHECK_ENGINE(ret) \
@@ -47,7 +49,7 @@ namespace ScriptMgr::Internal {
         m_engine->globalObject().setProperty("__q_tr_ext", m_engine->newObject());
         m_engine->installExtensions(QJSEngine::TranslationExtension, m_engine->globalObject().property("__q_tr_ext"));
         m_engine->installExtensions(QJSEngine::ConsoleExtension);
-        m_engine->globalObject().setProperty("__q_loader", m_engine->newQObject(new LoaderInjectedObject(this)));
+        m_engine->globalObject().setProperty("__q_loader", m_engine->newQObject(new JsLoaderObject(this)));
         m_engine->globalObject().setProperty("__q_internal", m_engine->newQObject(new JsInternalObject(nullptr)));
         auto internalModule = m_engine->importModule(":/scripts/internal/index.js");
         if(internalModule.isError()) {
@@ -80,6 +82,7 @@ namespace ScriptMgr::Internal {
                 }
             }
         }
+        reloadStrings();
         emit engineReloaded();
         return true;
     }
@@ -95,7 +98,7 @@ namespace ScriptMgr::Internal {
         auto ret = m_jsCallbacks.property("invoke").call({windowKey, id});
         if(ret.isError()) {
             alertJsUncaughtError(ret);
-            criticalScriptExecutionFailed(id);
+            criticalScriptExecutionFailed(getName(id));
         }
     }
 
@@ -104,13 +107,13 @@ namespace ScriptMgr::Internal {
         auto ret = m_jsCallbacks.property("invoke").call({windowKey, id, index});
         if(ret.isError()) {
             alertJsUncaughtError(ret);
-            criticalScriptExecutionFailed(tr("Sub-action %1 of %2").arg(index).arg(id));
+            criticalScriptExecutionFailed(getName(id + "@" + QString::number(index)));
         }
     }
 
-    QString ScriptLoader::getName(const QString &id) const {
+    QString ScriptLoader::getNameFromJs(const QString &id) const {
         CHECK_ENGINE("")
-        auto ret = m_jsCallbacks.property("getName").call({id});
+        auto ret = m_jsCallbacks.property("getNameFromJs").call({id});
         if(ret.isError()) {
             alertJsUncaughtError(ret);
             warningCannotGetName(id);
@@ -119,14 +122,14 @@ namespace ScriptMgr::Internal {
         return ret.toString();
     }
 
-    QString ScriptLoader::getName(const QString &id, int index) const {
+    QString ScriptLoader::getNameFromJs(const QString &id, const QString &childId, int index) const {
         CHECK_ENGINE("")
-        auto ret = m_jsCallbacks.property("getName").call({id, index});
+        auto ret = m_jsCallbacks.property("getNameFromJs").call({id, index});
         if(ret.isError()) {
             alertJsUncaughtError(ret);
             warningCannotGetName(id);
-            return id + QString(" <%1>").arg(index);
         }
+        if(!ret.isString()) return id + '.' + childId;
         return ret.toString();
     }
 
@@ -135,7 +138,7 @@ namespace ScriptMgr::Internal {
         auto ret = m_jsCallbacks.property("getInfo").call({id});
         if(ret.isError()) {
             alertJsUncaughtError(ret);
-            return m_engine->evaluate("null");
+            return QJSValue::NullValue;
         }
         return ret;
     }
@@ -161,6 +164,7 @@ namespace ScriptMgr::Internal {
 
     ScriptLoader::ScriptLoader(QObject *parent): QObject(parent) {
         m_instance = this;
+        qIDec->installLocale(this, _LOC(ScriptLoader, this));
     }
 
     ScriptLoader::~ScriptLoader() {
@@ -195,6 +199,25 @@ namespace ScriptMgr::Internal {
     }
     QString ScriptLoader::version() const {
         return m_version;
+    }
+    void ScriptLoader::reloadStrings() {
+        scriptNameDict.clear();
+        for(const auto &entry: m_builtInScriptEntries) {
+            scriptNameDict.insert(entry.id, getNameFromJs(entry.id));
+            if(entry.type == ScriptEntry::ScriptSet) {
+                for(int i = 0; i < entry.childrenId.size(); i++) {
+                    auto childId = entry.childrenId[i];
+                    auto childName = getNameFromJs(entry.id, childId, i);
+                    scriptNameDict.insert(entry.id + "." + childId, childName);
+                    scriptNameDict.insert(entry.id + "@" + QString::number(i), childName);
+                }
+            }
+        }
+        emit scriptNameReloaded();
+    }
+
+    QString ScriptLoader::getName(const QString &id) const {
+        return scriptNameDict.value(id, id);
     }
 
 }

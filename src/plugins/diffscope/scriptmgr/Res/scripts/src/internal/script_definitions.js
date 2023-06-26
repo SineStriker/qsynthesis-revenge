@@ -8,7 +8,7 @@ class ScriptBase {
         if(!locale) return __q_tr_ext.qsTranslate('JsBuiltIn', text);
         let entry = locale[text];
         if(!entry) return __q_tr_ext.qsTranslate('JsBuiltIn', text);
-        let translation = entry[this._internal.getLang()];
+        let translation = entry[__q_loader.getLang()];
         if (typeof(translation) !== 'string') return __q_tr_ext.qsTranslate('JsBuiltIn', text);
         return translation;
     }

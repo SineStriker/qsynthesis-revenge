@@ -25,8 +25,6 @@ namespace ScriptMgr::Internal {
         void initialize() override;
         void extensionsInitialized() override;
 
-    signals:
-        void handleJsReloadStrings();
 
     private:
         void reloadStrings();
