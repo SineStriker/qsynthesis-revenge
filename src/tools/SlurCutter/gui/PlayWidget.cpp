@@ -337,11 +337,14 @@ void PlayWidget::_q_deviceActionTriggered(QAction *action) {
 void PlayWidget::_q_playStateChanged() {
     bool isPlaying = playback->isPlaying();
     if (playing != isPlaying) {
+        setPlaying(isPlaying);
         if (decoder->Position() == decoder->Length()) {
             // Sound complete
             // decoder->SetPosition(0);
+            // Should set this pauseAtTime (Resume time when next time you click play button)
+            // after setPlaying because it will internally set it to current esitimated time too
+            pauseAtTime = rangeBegin * 1000.0;
         }
-        setPlaying(isPlaying);
     }
 }
 
