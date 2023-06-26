@@ -1,4 +1,4 @@
-project(SlurCutter VERSION 0.0.1.2)
+project(SlurCutter VERSION 0.0.1.3)
 
 ck_add_files(_src
     CURRENT
