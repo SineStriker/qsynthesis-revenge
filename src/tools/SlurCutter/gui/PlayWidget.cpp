@@ -143,6 +143,7 @@ void PlayWidget::setRange(double start, double end) {
 
     slider->setMaximum((end - start) * 1000.0);
     decoder->SetCurrentTime(start * 1000.0); // Sets before media is initialized, will crash
+    pauseAtTime = start * 1000.0;
     reloadSliderStatus();
 }
 
