@@ -22,6 +22,8 @@ F0Widget::F0Widget(QWidget *parent) : QFrame(parent), draggingNoteInterval(0, 0)
     assert(FrequencyToMidiNote(440.0) == 69.0);
     assert(FrequencyToMidiNote(110.0) == 45.0);
 
+    pitchRange = {60, 60};
+
     setMouseTracking(true);
 
     horizontalScrollBar = new QScrollBar(Qt::Horizontal, this);
@@ -437,11 +439,6 @@ void F0Widget::paintEvent(QPaintEvent *event) {
         int lowestPitch = ::floor(centerPitch) - ::ceil((h - keyReferenceY) / semitoneHeight);
         double lowestPitchY = keyReferenceY + (int(centerPitch - lowestPitch) + 0.5) * semitoneHeight;
 
-        if (lowestPitch < 21) {
-            lowestPitchY += (21 - lowestPitch) * semitoneHeight;
-            lowestPitch = 21;
-        }
-
         // Grid
         painter.setPen(QColor(80, 80, 80));
         {
@@ -568,23 +565,30 @@ void F0Widget::paintEvent(QPaintEvent *event) {
         // Debug text
         if (showPitchTextOverlay)
         {
+            auto mousePos = mapFromGlobal(QCursor::pos());
             auto mousePitch = centerPitch + h / 2 / semitoneHeight -
-                              (mapFromGlobal(QCursor::pos()).y() - TimelineHeight) / semitoneHeight;
+                              (mousePos.y() - TimelineHeight) / semitoneHeight;
             painter.setPen(Qt::white);
             painter.drawText(KeyWidth, TimelineHeight,
-                             QString("CenterPitch %1 (%2)  LowestPitch %3 (%4) MousePitch %5")
+                             QString("CenterPitch %1 (%2)  LowestPitch %3 (%4) MousePitch %5 MousePos (%6, %7)")
                                  .arg(centerPitch)
                                  .arg(MidiNoteToNoteName(centerPitch))
                                  .arg(lowestPitch)
                                  .arg(MidiNoteToNoteName(lowestPitch))
-                                 .arg(mousePitch));
+                                 .arg(mousePitch)
+                                 .arg(mousePos.x())
+                                 .arg(mousePos.y()));
         }
 
         // Piano keys
         auto prevfont = painter.font();
+
         do {
             lowestPitch++;
             lowestPitchY -= semitoneHeight;
+
+            if (lowestPitch < 21) continue;
+
             auto rec = QRectF(0, lowestPitchY, 60.0, semitoneHeight);
             auto color = keyColor[lowestPitch % 12];
             painter.fillRect(rec, color);
