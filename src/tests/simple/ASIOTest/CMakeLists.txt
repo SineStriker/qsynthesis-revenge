@@ -22,7 +22,7 @@ else()
 
     ck_target_components(${PROJECT_NAME}
         INCLUDE_CURRENT_PRIVATE
-        SOURCES ${_src}
+        SOURCES ${_src} Res/ASIOTest_res.qrc
         LINKS ASIO_SDK "winmm.lib"
         QT_LINKS Core Widgets
     )

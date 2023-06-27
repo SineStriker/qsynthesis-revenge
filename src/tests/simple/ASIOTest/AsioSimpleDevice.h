@@ -65,7 +65,7 @@ struct AsioSimpleSpec {
     bool           stopped;
 };
 
-typedef std::function<void(int i, long size, float *buf)> AsioSimplePlayCallback;
+typedef std::function<void(long, const QVector<float *> &)> AsioSimplePlayCallback;
 
 class AsioDrivers;
 
@@ -85,6 +85,7 @@ public:
     bool isStarted() const;
     void stop();
     bool setSampleRate(double sampleRate);
+    bool canSetSampleRate() const;
 
     AsioSimpleSpec spec() const;
 
@@ -93,6 +94,7 @@ public:
 signals:
     void initializationStatusChanged(bool initializationStatus);
     void playbackStatusChanged(bool playbackStatus);
+    void sampleRateChanged(double sampleRate);
 
 private:
     friend int main(int, char **);
@@ -106,14 +108,14 @@ private:
     AsioSimpleSpec m_spec = {0};
     bool initAsioStaticData();
     bool createAsioBuffers();
-    ASIOCallbacks m_cb = {&bufferSwitch, &sampleRateChanged, &asioMessages, &bufferSwitchTimeInfo};
+    ASIOCallbacks m_cb = {&bufferSwitch, &sampleRateChangedCb, &asioMessages, &bufferSwitchTimeInfo};
 
     AsioSimplePlayCallback m_callback;
 
     //ASIO callbacks
     static void bufferSwitch(long index, ASIOBool processNow);
     static ASIOTime *bufferSwitchTimeInfo(ASIOTime *timeInfo, long index, ASIOBool processNow);
-    static void sampleRateChanged(ASIOSampleRate sRate);
+    static void sampleRateChangedCb(ASIOSampleRate sRate);
     static long asioMessages(long selector, long value, void* message, double* opt);
 };
 

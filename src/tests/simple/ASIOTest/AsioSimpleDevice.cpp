@@ -73,6 +73,7 @@ bool AsioSimpleDevice::initialize() {
     if(!createAsioBuffers()) return false;
     m_isBufferCreated = true;
     emit initializationStatusChanged(true);
+    emit sampleRateChanged(m_spec.sampleRate);
     return true;
 }
 
@@ -205,8 +206,10 @@ ASIOTime *AsioSimpleDevice::bufferSwitchTimeInfo(ASIOTime *timeInfo, long index,
     long buffSize = m_instance->m_spec.preferredSize;
 
     // perform the processing
+    QVector<float *> bufferList;
     for (int i = 0; i < m_instance->m_spec.inputBuffers + m_instance->m_spec.outputBuffers; i++)
     {
+
         if (m_instance->m_spec.bufferInfos[i].isInput == false)
         {
             // OK do processing for the outputs only
@@ -214,11 +217,12 @@ ASIOTime *AsioSimpleDevice::bufferSwitchTimeInfo(ASIOTime *timeInfo, long index,
             {
                 case ASIOSTFloat32LSB:		// IEEE 754 32 bit float, as found on Intel x86 architecture
                     memset (m_instance->m_spec.bufferInfos[i].buffers[index], 0, buffSize * 4);
-                    m_instance->m_callback(i, buffSize, static_cast<float *>(m_instance->m_spec.bufferInfos[i].buffers[index]));
+                    bufferList.append(static_cast<float *>(m_instance->m_spec.bufferInfos[i].buffers[index]));
                     break;
             }
         }
     }
+    m_instance->m_callback(buffSize, bufferList);
 
     // finally if the driver supports the ASIOOutputReady() optimization, do it here, all data are in place
     if (m_instance->m_spec.postOutput)
@@ -227,13 +231,14 @@ ASIOTime *AsioSimpleDevice::bufferSwitchTimeInfo(ASIOTime *timeInfo, long index,
     return nullptr;
 }
 
-void AsioSimpleDevice::sampleRateChanged(ASIOSampleRate sRate) {
+void AsioSimpleDevice::sampleRateChangedCb(ASIOSampleRate sRate) {
     // do whatever you need to do if the sample rate changed
     // usually this only happens during external sync.
     // Audio processing is not stopped by the driver, actual sample rate
     // might not have even changed, maybe only the sample rate status of an
     // AES/EBU or S/PDIF digital input at the audio device.
     // You might have to update time/sample related conversion routines, etc.
+    emit m_instance->sampleRateChanged(sRate);
 }
 long AsioSimpleDevice::asioMessages(long selector, long value, void *message, double *opt) {
     // currently the parameters "value", "message" and "opt" are not used.
