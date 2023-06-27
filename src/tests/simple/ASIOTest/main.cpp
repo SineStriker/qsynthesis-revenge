@@ -71,7 +71,10 @@ int main(int argc, char **argv) {
         drvSelect->setDisabled(s);
         playbackBtn->setDisabled(!s);
         if(s) {
-            specLabel->setText(QString("i: %1, o: %2").arg(dev.spec().inputChannels).arg(dev.spec().outputChannels));
+            specLabel->setText(QString("i: %1, o: %2, st: %3")
+                                   .arg(dev.spec().inputChannels)
+                                   .arg(dev.spec().outputChannels)
+                                   .arg(dev.spec().channelInfos[0].type));
             setSampleRateEdit->setDisabled(false);
             commitSetSampleRateBtn->setDisabled(false);
         } else {
@@ -94,6 +97,7 @@ int main(int argc, char **argv) {
     formLayout->addRow(stateBtn);
 
     auto callback = [&](long size, const QVector<float *> &bufferList){
+        if(bufferList.isEmpty()) return;
         sineWave(size, bufferList[0], dev.spec().sampleRate);
         for(int i = 1; i < bufferList.size(); i++) {
             memcpy(bufferList[i], bufferList[0], size * 4);

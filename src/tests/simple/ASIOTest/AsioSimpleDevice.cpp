@@ -6,6 +6,7 @@
 
 #include "asiodrivers.h"
 #include <QStringList>
+#include "ASIOConvertSamples.h"
 
 static AsioSimpleDevice *m_instance = nullptr;
 
@@ -104,6 +105,7 @@ void AsioSimpleDevice::finalize() {
 }
 bool AsioSimpleDevice::start(const AsioSimplePlayCallback &callback) {
     m_callback = callback;
+    m_callbackBuffer = new float[m_spec.preferredSize * m_spec.outputBuffers];
     if(ASIOStart() == ASE_OK) {
         m_isPlaying = true;
         emit playbackStatusChanged(true);
@@ -207,19 +209,41 @@ ASIOTime *AsioSimpleDevice::bufferSwitchTimeInfo(ASIOTime *timeInfo, long index,
 
     // perform the processing
     QVector<float *> bufferList;
+    for(int i = 0; i < m_instance->m_spec.outputBuffers; i++) {
+        bufferList.append(m_instance->m_callbackBuffer + i * buffSize);
+    }
+
+    int outputCount = 0;
     for (int i = 0; i < m_instance->m_spec.inputBuffers + m_instance->m_spec.outputBuffers; i++)
     {
 
         if (m_instance->m_spec.bufferInfos[i].isInput == false)
         {
             // OK do processing for the outputs only
+            int typeSize = 0;
             switch (m_instance->m_spec.channelInfos[i].type)
             {
                 case ASIOSTFloat32LSB:		// IEEE 754 32 bit float, as found on Intel x86 architecture
-                    memset (m_instance->m_spec.bufferInfos[i].buffers[index], 0, buffSize * 4);
-                    bufferList.append(static_cast<float *>(m_instance->m_spec.bufferInfos[i].buffers[index]));
+                    typeSize = 4;
                     break;
+                case ASIOSTInt32LSB:
+                    typeSize = 4;
+                    ASIOConvertSamples().float32toInt32inPlace(m_instance->m_callbackBuffer + (buffSize * outputCount), buffSize);
+                    break;
+                case ASIOSTInt24LSB:
+                    typeSize = 3;
+                    ASIOConvertSamples().float32toInt24inPlace(m_instance->m_callbackBuffer + (buffSize * outputCount), buffSize);
+                    break;
+                case ASIOSTInt16LSB:
+                    typeSize = 2;
+                    ASIOConvertSamples().float32toInt16inPlace(m_instance->m_callbackBuffer + (buffSize * outputCount), buffSize);
+                    break;
+
             }
+            memcpy (
+                m_instance->m_spec.bufferInfos[i].buffers[index],
+                m_instance->m_callbackBuffer + (buffSize * outputCount++),
+                buffSize * typeSize);
         }
     }
     m_instance->m_callback(buffSize, bufferList);

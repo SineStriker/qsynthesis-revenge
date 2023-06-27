@@ -111,6 +111,7 @@ private:
     ASIOCallbacks m_cb = {&bufferSwitch, &sampleRateChangedCb, &asioMessages, &bufferSwitchTimeInfo};
 
     AsioSimplePlayCallback m_callback;
+    float *m_callbackBuffer;
 
     //ASIO callbacks
     static void bufferSwitch(long index, ASIOBool processNow);
