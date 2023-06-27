@@ -175,6 +175,28 @@ static unsigned long get_sys_reference_time()
 #endif
 }
 
+static void float32toInt24inPlace(float* buffer, long frames)
+{
+    double sc = 0x7fffffL + .49999;
+    long a;
+    char* b = (char*)buffer;
+    char* aa = (char*)&a;
+
+    while(--frames >= 0)
+    {
+        a = (long)((double)(*buffer++) * sc);
+#if ASIO_LITTLE_ENDIAN
+        *b++ = aa[0];
+        *b++ = aa[1];
+        *b++ = aa[2];
+#else
+        *b++ = aa[3];
+        *b++ = aa[2];
+        *b++ = aa[1];
+#endif
+    }
+}
+
 ASIOTime *AsioSimpleDevice::bufferSwitchTimeInfo(ASIOTime *timeInfo, long index, ASIOBool processNow) {
     // the actual processing callback.
     // Beware that this is normally in a seperate thread, hence be sure that you take care
@@ -232,7 +254,7 @@ ASIOTime *AsioSimpleDevice::bufferSwitchTimeInfo(ASIOTime *timeInfo, long index,
                     break;
                 case ASIOSTInt24LSB:
                     typeSize = 3;
-                    ASIOConvertSamples().float32toInt24inPlace(m_instance->m_callbackBuffer + (buffSize * outputCount), buffSize);
+                    float32toInt24inPlace(m_instance->m_callbackBuffer + (buffSize * outputCount), buffSize);
                     break;
                 case ASIOSTInt16LSB:
                     typeSize = 2;

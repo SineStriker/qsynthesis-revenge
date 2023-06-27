@@ -1,14 +1,15 @@
+#include <ASIOConvertSamples.h>
 #include <AsioSimpleDevice.h>
 #include <QApplication>
 #include <QComboBox>
 #include <QDebug>
+#include <QDoubleSpinBox>
 #include <QFile>
 #include <QFormLayout>
 #include <QLabel>
 #include <QMainWindow>
 #include <QMessageBox>
 #include <QPushButton>
-#include <QDoubleSpinBox>
 
 static float audio[65536];
 static long pos = 0;
