@@ -39,8 +39,8 @@ function validateClass(clazz) {
 
 
 export function register(clazz) {
-    let info = clazz.info();
     validateClass(clazz);
+    let info = clazz.info();
     if(registry.has(info.id)) return;
     registry.set(info.id, clazz);
     if(clazz.prototype instanceof Script) {
