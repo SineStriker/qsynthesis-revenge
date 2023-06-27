@@ -92,6 +92,7 @@ void AsioSimpleDevice::finalize() {
     if(m_isAsioInitialized) {
 #ifdef Q_OS_WINDOWS
         m_asioDrivers->removeCurrentDriver();
+        theAsioDriver = nullptr;
 #else
         ASIOExit();
 #endif
@@ -298,7 +299,7 @@ long AsioSimpleDevice::asioMessages(long selector, long value, void *message, do
 
 QStringList AsioSimpleDevice::drivers() const {
     QStringList drvList;
-    QByteArray strBuf(256, 0);
+    QByteArray strBuf(64, 0);
 #ifdef Q_OS_WINDOWS
     auto drvNum = m_asioDrivers->asioGetNumDev();
 #else //Mac
@@ -306,7 +307,7 @@ QStringList AsioSimpleDevice::drivers() const {
 #endif
     for(long i = 0; i < m_asioDrivers->asioGetNumDev(); i++) {
 #ifdef Q_OS_WINDOWS
-        m_asioDrivers->asioGetDriverName(i, strBuf.data(), 256);
+        m_asioDrivers->asioGetDriverName(i, strBuf.data(), 32);
 #else
         m_asioDrivers->getName(i, strBuf.data());
 #endif

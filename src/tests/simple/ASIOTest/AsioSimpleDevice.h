@@ -9,6 +9,9 @@
 #include <asiosys.h>
 #include <asio.h>
 
+struct IASIO;
+extern IASIO *theAsioDriver;
+
 struct AsioSimpleSpec {
 
     enum {

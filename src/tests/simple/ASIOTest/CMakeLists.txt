@@ -11,9 +11,7 @@ else()
     list(FILTER _asiosdk_src_common EXCLUDE REGEX "asiodrvr")
     file(GLOB_RECURSE _asiosdk_src_host ${ASIOSDK_DIR}/host/*.cpp)
     list(FILTER _asiosdk_src_host EXCLUDE REGEX "hostsample")
-    if(NOT CMAKE_HOST_WIN32)
-        list(FILTER _asiosdk_src_host EXCLUDE REGEX "asiolist")
-    endif()
+    list(FILTER _asiosdk_src_host EXCLUDE REGEX "asiolist")
     add_library(ASIO_SDK STATIC ${_asiosdk_src_common} ${_asiosdk_src_host})
     target_include_directories(ASIO_SDK PUBLIC
         ${ASIOSDK_DIR}/common
