@@ -15,3 +15,5 @@ add_subdirectory(QtROTest)
 add_subdirectory(SynthVTest)
 
 add_subdirectory(MetaObjectTest)
+
+add_subdirectory(ASIOTest)
