@@ -106,6 +106,7 @@ void AsioSimpleDevice::finalize() {
 bool AsioSimpleDevice::start(const AsioSimplePlayCallback &callback) {
     m_callback = callback;
     m_callbackBuffer = new float[m_spec.preferredSize * m_spec.outputBuffers];
+    memset(m_callbackBuffer, 0, m_spec.preferredSize * m_spec.outputBuffers * sizeof(float));
     if(ASIOStart() == ASE_OK) {
         m_isPlaying = true;
         emit playbackStatusChanged(true);
