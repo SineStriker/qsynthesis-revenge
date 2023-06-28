@@ -18,7 +18,8 @@ AsioSimpleDevice::~AsioSimpleDevice() {
 AsioSimpleDevice *AsioSimpleDevice::instance() {
     return m_instance;
 }
-void AsioSimpleDevice::setName(QString name) {
+void AsioSimpleDevice::setName(const QString &name) {
+    Q_ASSERT(!isInitialized());
     m_name = name;
 }
 
@@ -30,8 +31,8 @@ bool AsioSimpleDevice::initAsioStaticData() {
     if(ASIOGetChannels(&m_spec.inputChannels, &m_spec.outputChannels) != ASE_OK) return false;
     if(ASIOGetBufferSize(&m_spec.minSize, &m_spec.maxSize, &m_spec.preferredSize, &m_spec.granularity) != ASE_OK) return false;
     if(ASIOGetSampleRate(&m_spec.sampleRate) != ASE_OK) return false;
-    if(m_spec.sampleRate == 0 && m_name == "Realtek ASIO") {
-        ASIOSetSampleRate(48000);
+    if(m_spec.sampleRate <= 0) {
+        if(ASIOSetSampleRate(48000) != ASE_OK) return false;
         if(ASIOGetBufferSize(&m_spec.minSize, &m_spec.maxSize, &m_spec.preferredSize, &m_spec.granularity) != ASE_OK) return false;
     }
     m_spec.postOutput = (ASIOOutputReady() == ASE_OK);
@@ -70,7 +71,8 @@ bool AsioSimpleDevice::createAsioBuffers() {
 }
 
 bool AsioSimpleDevice::initialize() {
-    if(!m_asioDrivers->loadDriver(m_name.toLocal8Bit().data())) return false;
+    finalize();
+    if(!asioDrivers->loadDriver(m_name.toLocal8Bit().data())) return false;
     m_isAsioLoaded = true;
     if (ASIOInit(&m_spec.driverInfo) != ASE_OK) return false;
     m_isAsioInitialized = true;
@@ -96,12 +98,7 @@ void AsioSimpleDevice::finalize() {
     }
     m_spec = {0};
     if(m_isAsioInitialized) {
-#ifdef Q_OS_WINDOWS
-        m_asioDrivers->removeCurrentDriver();
-        theAsioDriver = nullptr;
-#else
         ASIOExit();
-#endif
         m_isAsioInitialized = false;
         m_isAsioLoaded = false;
     }
@@ -110,7 +107,6 @@ void AsioSimpleDevice::finalize() {
 bool AsioSimpleDevice::start(const AsioSimplePlayCallback &callback) {
     m_callback = callback;
     m_callbackBuffer = new float[m_spec.preferredSize * m_spec.outputBuffers];
-    memset(m_callbackBuffer, 0, m_spec.preferredSize * m_spec.outputBuffers * sizeof(float));
     if(ASIOStart() == ASE_OK) {
         m_isPlaying = true;
         emit playbackStatusChanged(true);
@@ -133,7 +129,8 @@ void AsioSimpleDevice::stop() {
 AsioSimpleSpec AsioSimpleDevice::spec() const {
     return m_spec;
 }
-AsioSimpleDevice::AsioSimpleDevice(): m_asioDrivers(new AsioDrivers) {
+AsioSimpleDevice::AsioSimpleDevice() {
+    if(asioDrivers) asioDrivers = new AsioDrivers;
     m_instance = this;
 }
 bool AsioSimpleDevice::setSampleRate(double sampleRate) {
@@ -236,9 +233,11 @@ ASIOTime *AsioSimpleDevice::bufferSwitchTimeInfo(ASIOTime *timeInfo, long index,
 
     // perform the processing
     QVector<float *> bufferList;
+    bufferList.reserve(m_instance->m_spec.outputBuffers);
     for(int i = 0; i < m_instance->m_spec.outputBuffers; i++) {
         bufferList.append(m_instance->m_callbackBuffer + i * buffSize);
     }
+    m_instance->m_callback(buffSize, bufferList);
 
     int outputCount = 0;
     for (int i = 0; i < m_instance->m_spec.inputBuffers + m_instance->m_spec.outputBuffers; i++)
@@ -273,7 +272,6 @@ ASIOTime *AsioSimpleDevice::bufferSwitchTimeInfo(ASIOTime *timeInfo, long index,
                 buffSize * typeSize);
         }
     }
-    m_instance->m_callback(buffSize, bufferList);
 
     // finally if the driver supports the ASIOOutputReady() optimization, do it here, all data are in place
     if (m_instance->m_spec.postOutput)
@@ -354,16 +352,17 @@ long AsioSimpleDevice::asioMessages(long selector, long value, void *message, do
 }
 
 QStringList AsioSimpleDevice::drivers() const {
+    if(!asioDrivers) asioDrivers = new AsioDrivers;
     QStringList drvList;
     QByteArray strBuf(64, 0);
 #ifdef Q_OS_WINDOWS
-    auto drvNum = m_asioDrivers->asioGetNumDev();
+    auto drvNum = asioDrivers->asioGetNumDev();
 #else //Mac
     auto drvNum = m_asioDrivers->getNumFragments();
 #endif
-    for(long i = 0; i < m_asioDrivers->asioGetNumDev(); i++) {
+    for(long i = 0; i < asioDrivers->asioGetNumDev(); i++) {
 #ifdef Q_OS_WINDOWS
-        m_asioDrivers->asioGetDriverName(i, strBuf.data(), 32);
+        asioDrivers->asioGetDriverName(i, strBuf.data(), 32);
 #else
         m_asioDrivers->getName(i, strBuf.data());
 #endif

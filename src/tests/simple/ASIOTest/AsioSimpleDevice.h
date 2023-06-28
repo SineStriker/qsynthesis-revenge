@@ -1,16 +1,20 @@
 #ifndef CHORUSKIT_ASIOSIMPLEDEVICE_H
 #define CHORUSKIT_ASIOSIMPLEDEVICE_H
 
-#define NOMINMAX
+#include <functional>
+
 #include <QObject>
 #include <QScopedPointer>
 #include <QString>
-#include <functional>
+
+#define NOMINMAX
 #include <asiosys.h>
 #include <asio.h>
 
 struct IASIO;
 extern IASIO *theAsioDriver;
+class AsioDrivers;
+extern AsioDrivers *asioDrivers;
 
 struct AsioSimpleSpec {
 
@@ -67,8 +71,6 @@ struct AsioSimpleSpec {
 
 typedef std::function<void(long, const QVector<float *> &)> AsioSimplePlayCallback;
 
-class AsioDrivers;
-
 class AsioSimpleDevice: public QObject {
     Q_OBJECT
 public:
@@ -76,7 +78,7 @@ public:
 
     static AsioSimpleDevice *instance();
 
-    void setName(QString name);
+    void setName(const QString &name);
     QString name() const;
     bool initialize();
     bool isInitialized() const;
@@ -100,7 +102,6 @@ private:
     friend int main(int, char **);
     AsioSimpleDevice();
     QString m_name;
-    QScopedPointer<AsioDrivers> m_asioDrivers;
     bool m_isAsioLoaded = false;
     bool m_isAsioInitialized = false;
     bool m_isBufferCreated = false;
