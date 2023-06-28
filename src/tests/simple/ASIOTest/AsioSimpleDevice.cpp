@@ -30,8 +30,10 @@ bool AsioSimpleDevice::initAsioStaticData() {
     if(ASIOGetChannels(&m_spec.inputChannels, &m_spec.outputChannels) != ASE_OK) return false;
     if(ASIOGetBufferSize(&m_spec.minSize, &m_spec.maxSize, &m_spec.preferredSize, &m_spec.granularity) != ASE_OK) return false;
     if(ASIOGetSampleRate(&m_spec.sampleRate) != ASE_OK) return false;
-    qDebug() << m_spec.preferredSize;
-    if(m_spec.sampleRate==0) ASIOSetSampleRate(44100);
+    if(m_spec.sampleRate == 0 && m_name == "Realtek ASIO") {
+        ASIOSetSampleRate(48000);
+        if(ASIOGetBufferSize(&m_spec.minSize, &m_spec.maxSize, &m_spec.preferredSize, &m_spec.granularity) != ASE_OK) return false;
+    }
     m_spec.postOutput = (ASIOOutputReady() == ASE_OK);
     return true;
 }
