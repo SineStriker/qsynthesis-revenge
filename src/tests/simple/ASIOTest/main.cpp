@@ -1,6 +1,7 @@
 #include <ASIOConvertSamples.h>
 #include <AsioSimpleDevice.h>
 #include <QApplication>
+#include <QFont>
 #include <QComboBox>
 #include <QDebug>
 #include <QDoubleSpinBox>
@@ -25,6 +26,12 @@ static void sineWave(long size, float *buf, double sampleRate) {
 
 int main(int argc, char **argv) {
     QApplication app(argc, argv);
+    qDebug() << QApplication::font();
+#ifdef Q_OS_WINDOWS
+    QFont font("Microsoft YaHei");
+    font.setPointSize(9);
+    app.setFont(font);
+#endif
 
     QFile audioFile;
     audioFile.setFileName(":/test.pcm");
