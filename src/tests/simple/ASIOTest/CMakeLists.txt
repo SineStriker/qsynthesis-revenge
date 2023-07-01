@@ -1,12 +1,11 @@
 project(tst_ASIOTest VERSION 0.0.0.0)
 
-ck_add_files(_src CURRENT PATTERNS *.h *.cpp)
-
-ck_add_test(${PROJECT_NAME} AUTOGEN)
-
 if(NOT ASIOSDK_DIR)
     message("ASIOSDK_DIR not specified. ASIOTest will be skipped.")
 else()
+    ck_add_files(_src CURRENT PATTERNS *.h *.cpp)
+
+    ck_add_test(${PROJECT_NAME} AUTOGEN)
     file(GLOB_RECURSE _asiosdk_src_common ${ASIOSDK_DIR}/common/*.cpp)
     list(FILTER _asiosdk_src_common EXCLUDE REGEX "asiodrvr")
     file(GLOB_RECURSE _asiosdk_src_host ${ASIOSDK_DIR}/host/*.cpp)
