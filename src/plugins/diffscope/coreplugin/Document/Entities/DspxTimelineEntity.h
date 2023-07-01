@@ -19,11 +19,8 @@ namespace Core {
 
     //===========================================================================
     // Timeline
-    class DspxTimelineEntityPrivate;
-
     class CORE_EXPORT DspxTimelineEntity : public AceTreeEntityMapping {
         Q_OBJECT
-        Q_DECLARE_PRIVATE(DspxTimelineEntity)
     public:
         explicit DspxTimelineEntity(QObject *parent = nullptr);
         ~DspxTimelineEntity();

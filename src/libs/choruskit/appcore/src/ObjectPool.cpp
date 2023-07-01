@@ -8,7 +8,7 @@
 
 namespace Core {
 
-#define myWarning(func) (qWarning().nospace() << "Core::ObjectPool::" << (func) << "(): ").maybeSpace()
+#define myWarning(func) (qWarning().nospace() << "Core::ObjectPool::" << (func) << "():").space()
 
     ObjectPoolPrivate::ObjectPoolPrivate(ObjectPool *q) : q(q) {
     }

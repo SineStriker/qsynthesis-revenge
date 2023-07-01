@@ -104,7 +104,7 @@ namespace Core {
         invisibleCtxMenu = ICore::createCoreMenu(win);
         invisibleCtx->buildMenuWithState(q->actionItems(), invisibleCtxMenu);
 
-        q->addShortcutContext(invisibleCtxMenu);
+        q->addShortcutContext(invisibleCtxMenu, IWindow::Resident);
         win->addAction(invisibleCtxMenu->menuAction());
     }
 
@@ -693,8 +693,8 @@ namespace Core {
         win->setProperty("top-window", true);
 
         // Add window and menubar as basic shortcut contexts
-        addShortcutContext(win);
-        addShortcutContext(menuBar());
+        addShortcutContext(win, IWindow::Resident);
+        addShortcutContext(menuBar(), IWindow::Resident);
 
         d->mainMenuCtx = ICore::instance()->actionSystem()->context(QString("%1.MainMenu").arg(id()));
         if (!d->mainMenuCtx) {
@@ -737,7 +737,7 @@ namespace Core {
         if (item->isAction()) {
             window()->addAction(item->action());
         } else if (item->isMenu()) {
-            addShortcutContext(item->menu());
+            addShortcutContext(item->menu(), IWindow::Resident);
         }
     }
 

@@ -28,7 +28,7 @@ public:
 
 namespace Core {
 
-#define myWarning(func) (qWarning().nospace() << "Core::ActionContext::" << (func) << "(): ").maybeSpace()
+#define myWarning(func) (qWarning().nospace() << "Core::ActionContext::" << (func) << "():").space()
 
     ActionContextPrivate::ActionContextPrivate() : q_ptr(nullptr), configurable(true), stateDirty(false) {
     }

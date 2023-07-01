@@ -1,35 +1,35 @@
 #include "DspxNoteEntity.h"
-#include "AceTreeStandardEntity_p.h"
 #include "DspxEntityUtils_p.h"
+
+#include <QJsonObject>
+
+#include "AceTreeMacros.h"
 
 namespace Core {
 
     //===========================================================================
     // Phoneme
-    class DspxPhonemeEntityPrivate : public AceTreeEntityMappingPrivate {
-        Q_DECLARE_PUBLIC(DspxPhonemeEntity)
+    class DspxPhonemeEntityExtra : public AceTreeEntityMappingExtra {
     public:
-        DspxPhonemeEntityPrivate() {
-            name = "phoneme";
+        void setup(AceTreeEntity *entity) override {
 
-            // Notifiers
-            propertyNotifiers.insert("type", [](ACE_A) {
-                ACE_Q(DspxPhonemeEntity);
-                emit q->phonemeTypeChanged(variantToEnum<DspxPhonemeEntity::Type>(newValue));
+            auto q = static_cast<DspxPhonemeEntity *>(entity);
+            addPropertyNotifier("type", [q](ACE_A) {
+                Q_UNUSED(oldValue)
+                emit q->phonemeTypeChanged(variantToEnum<DspxPhonemeEntity::Type>(value));
             });
-            propertyNotifiers.insert("token", [](ACE_A) {
-                ACE_Q(DspxPhonemeEntity);
-                emit q->tokenChanged(newValue.toString());
+            addPropertyNotifier("token", [q](ACE_A) {
+                Q_UNUSED(oldValue)
+                emit q->tokenChanged(value.toString());
             });
-            propertyNotifiers.insert("start", [](ACE_A) {
-                ACE_Q(DspxPhonemeEntity);
-                emit q->startChanged(newValue.toInt());
+            addPropertyNotifier("start", [q](ACE_A) {
+                Q_UNUSED(oldValue)
+                emit q->startChanged(value.toInt());
             });
         }
-        ~DspxPhonemeEntityPrivate() = default;
     };
 
-    DspxPhonemeEntity::DspxPhonemeEntity(QObject *parent) : DspxPhonemeEntity(*new DspxPhonemeEntityPrivate(), parent) {
+    DspxPhonemeEntity::DspxPhonemeEntity(QObject *parent) : AceTreeEntityMapping(new DspxPhonemeEntityExtra(), parent) {
     }
     DspxPhonemeEntity::~DspxPhonemeEntity() {
     }
@@ -51,16 +51,11 @@ namespace Core {
     void DspxPhonemeEntity::setStart(int start) {
         setAttribute("start", start);
     }
-    DspxPhonemeEntity::DspxPhonemeEntity(DspxPhonemeEntityPrivate &d, QObject *parent)
-        : AceTreeEntityMapping(d, parent) {
-    }
     //===========================================================================
 
     //===========================================================================
     // EditedPhonemeList
-    DspxPhonemeListEntity::DspxPhonemeListEntity(QObject *parent)
-        : AceTreeEntityVector(parent), AceTreeEntityVectorHelper(this) {
-        AceTreeStandardEntityPrivate::setName(this, "phonemes");
+    DspxPhonemeListEntity::DspxPhonemeListEntity(QObject *parent) : AceTreeEntityVector(parent) {
     }
     DspxPhonemeListEntity::~DspxPhonemeListEntity() {
     }
@@ -68,26 +63,25 @@ namespace Core {
 
     //===========================================================================
     // PhonemeInfo
-    class DspxPhonemeInfoEntityPrivate : public AceTreeEntityMappingPrivate {
-        Q_DECLARE_PUBLIC(DspxPhonemeInfoEntity)
+    class DspxPhonemeInfoEntityExtra : public AceTreeEntityMappingExtra {
     public:
-        DspxPhonemeInfoEntityPrivate() {
-            name = "phoneme";
-            edited = nullptr;
-            childPostAssignRefs.insert("edited", &edited);
+        DspxPhonemeInfoEntityExtra() : edited(nullptr) {
+        }
+        void setup(AceTreeEntity *entity) override {
+            auto q = static_cast<DspxPhonemeInfoEntity *>(entity);
 
-            // Notifiers
-            dynamicPropertyNotifiers.insert("original", [](ACE_A) {
-                ACE_Q(DspxPhonemeInfoEntity);
-                emit q->originalChanged(newValue.toJsonArray());
+            addChildPointer("edited", edited);
+
+            addDynamicDataNotifier("original", [q](ACE_A) {
+                Q_UNUSED(oldValue)
+                emit q->originalChanged(value.toJsonArray());
             });
         }
-        ~DspxPhonemeInfoEntityPrivate() = default;
-
         DspxPhonemeListEntity *edited;
     };
+
     DspxPhonemeInfoEntity::DspxPhonemeInfoEntity(QObject *parent)
-        : DspxPhonemeInfoEntity(*new DspxPhonemeInfoEntityPrivate(), parent) {
+        : AceTreeEntityMapping(new DspxPhonemeInfoEntityExtra(), parent) {
     }
     DspxPhonemeInfoEntity::~DspxPhonemeInfoEntity() {
     }
@@ -98,55 +92,50 @@ namespace Core {
         setAttribute("original", original);
     }
     DspxPhonemeListEntity *DspxPhonemeInfoEntity::edited() const {
-        Q_D(const DspxPhonemeInfoEntity);
-        return d->edited;
-    }
-    DspxPhonemeInfoEntity::DspxPhonemeInfoEntity(DspxPhonemeInfoEntityPrivate &d, QObject *parent)
-        : AceTreeEntityMapping(d, parent) {
+        return static_cast<DspxPhonemeInfoEntityExtra *>(extra())->edited;
     }
     //===========================================================================
 
     //===========================================================================
     // VibratoInfo
-    class DspxVibratoInfoEntityPrivate : public AceTreeEntityMappingPrivate {
-        Q_DECLARE_PUBLIC(DspxVibratoInfoEntity)
+    class DspxVibratoInfoEntityExtra : public AceTreeEntityMappingExtra {
     public:
-        DspxVibratoInfoEntityPrivate() {
-            name = "vibrato";
-            points = nullptr;
-            childPostAssignRefs.insert("points", &points);
+        DspxVibratoInfoEntityExtra() : points(nullptr) {
+        }
+        void setup(AceTreeEntity *entity) override {
+            auto q = static_cast<DspxVibratoInfoEntity *>(entity);
 
-            // Notifiers
-            propertyNotifiers.insert("start", [](ACE_A) {
-                ACE_Q(DspxVibratoInfoEntity);
-                emit q->startChanged(newValue.toDouble());
+            addChildPointer("points", points);
+
+            addPropertyNotifier("start", [q](ACE_A) {
+                Q_UNUSED(oldValue)
+                emit q->startChanged(value.toDouble());
             });
-            propertyNotifiers.insert("end", [](ACE_A) {
-                ACE_Q(DspxVibratoInfoEntity);
-                emit q->endChanged(newValue.toDouble());
+            addPropertyNotifier("end", [q](ACE_A) {
+                Q_UNUSED(oldValue)
+                emit q->endChanged(value.toDouble());
             });
-            propertyNotifiers.insert("freq", [](ACE_A) {
-                ACE_Q(DspxVibratoInfoEntity);
-                emit q->frequencyChanged(newValue.toDouble());
+            addPropertyNotifier("freq", [q](ACE_A) {
+                Q_UNUSED(oldValue)
+                emit q->frequencyChanged(value.toDouble());
             });
-            propertyNotifiers.insert("phase", [](ACE_A) {
-                ACE_Q(DspxVibratoInfoEntity);
-                emit q->phaseChanged(newValue.toDouble());
+            addPropertyNotifier("phase", [q](ACE_A) {
+                Q_UNUSED(oldValue)
+                emit q->phaseChanged(value.toDouble());
             });
-            propertyNotifiers.insert("amp", [](ACE_A) {
-                ACE_Q(DspxVibratoInfoEntity);
-                emit q->amplitudeChanged(newValue.toDouble());
+            addPropertyNotifier("amp", [q](ACE_A) {
+                Q_UNUSED(oldValue)
+                emit q->amplitudeChanged(value.toDouble());
             });
-            propertyNotifiers.insert("offset", [](ACE_A) {
-                ACE_Q(DspxVibratoInfoEntity);
-                emit q->offsetChanged(newValue.toDouble());
+            addPropertyNotifier("offset", [q](ACE_A) {
+                Q_UNUSED(oldValue)
+                emit q->offsetChanged(value.toDouble());
             });
         }
-        ~DspxVibratoInfoEntityPrivate() = default;
         DspxDoublePointListEntity *points;
     };
     DspxVibratoInfoEntity::DspxVibratoInfoEntity(QObject *parent)
-        : AceTreeEntityMapping(*new DspxVibratoInfoEntityPrivate(), parent) {
+        : AceTreeEntityMapping(new DspxVibratoInfoEntityExtra(), parent) {
     }
     DspxVibratoInfoEntity::~DspxVibratoInfoEntity() {
     }
@@ -187,46 +176,43 @@ namespace Core {
         setAttribute("offset", offset);
     }
     DspxDoublePointListEntity *DspxVibratoInfoEntity::points() const {
-        Q_D(const DspxVibratoInfoEntity);
-        return d->points;
+        return static_cast<DspxVibratoInfoEntityExtra *>(extra())->points;
     }
     //===========================================================================
 
     //===========================================================================
     // Note
-    class DspxNoteEntityPrivate : public AceTreeEntityMappingPrivate {
-        Q_DECLARE_PUBLIC(DspxNoteEntity)
+    class DspxNoteEntityExtra : public AceTreeEntityMappingExtra {
     public:
-        DspxNoteEntityPrivate() {
-            name = "note";
-            phonemes = nullptr;
-            vibrato = nullptr;
-            childPostAssignRefs.insert("phonemes", &phonemes);
-            childPostAssignRefs.insert("vibrato", &vibrato);
+        DspxNoteEntityExtra() : phonemes(nullptr), vibrato(nullptr) {
+        }
+        void setup(AceTreeEntity *entity) override {
+            auto q = static_cast<DspxNoteEntity *>(entity);
 
-            // Notifiers
-            propertyNotifiers.insert("pos", [](ACE_A) {
-                ACE_Q(DspxNoteEntity);
-                emit q->positionChanged(newValue.toInt());
+            addChildPointer("phonemes", phonemes);
+            addChildPointer("vibrato", vibrato);
+
+            addPropertyNotifier("pos", [q](ACE_A) {
+                Q_UNUSED(oldValue)
+                emit q->positionChanged(value.toInt());
             });
-            propertyNotifiers.insert("length", [](ACE_A) {
-                ACE_Q(DspxNoteEntity);
-                emit q->lengthChanged(newValue.toInt());
+            addPropertyNotifier("length", [q](ACE_A) {
+                Q_UNUSED(oldValue)
+                emit q->lengthChanged(value.toInt());
             });
-            propertyNotifiers.insert("keyNum", [](ACE_A) {
-                ACE_Q(DspxNoteEntity);
-                emit q->keyNumberChanged(newValue.toInt());
+            addPropertyNotifier("keyNum", [q](ACE_A) {
+                Q_UNUSED(oldValue)
+                emit q->keyNumberChanged(value.toInt());
             });
-            propertyNotifiers.insert("lyric", [](ACE_A) {
-                ACE_Q(DspxNoteEntity);
-                emit q->lyricChanged(newValue.toString());
+            addPropertyNotifier("lyric", [q](ACE_A) {
+                Q_UNUSED(oldValue)
+                emit q->lyricChanged(value.toString());
             });
         }
-        ~DspxNoteEntityPrivate() = default;
         DspxPhonemeInfoEntity *phonemes;
         DspxVibratoInfoEntity *vibrato;
     };
-    DspxNoteEntity::DspxNoteEntity(QObject *parent) : AceTreeEntityMapping(*new DspxNoteEntityPrivate(), parent) {
+    DspxNoteEntity::DspxNoteEntity(QObject *parent) : AceTreeEntityMapping(new DspxNoteEntityExtra(), parent) {
     }
     DspxNoteEntity::~DspxNoteEntity() {
     }
@@ -255,25 +241,21 @@ namespace Core {
         setAttribute("lyric", lyric);
     }
     DspxPhonemeInfoEntity *DspxNoteEntity::phonemes() const {
-        Q_D(const DspxNoteEntity);
-        return d->phonemes;
+        return static_cast<DspxNoteEntityExtra *>(extra())->phonemes;
     }
     DspxVibratoInfoEntity *DspxNoteEntity::vibrato() const {
-        Q_D(const DspxNoteEntity);
-        return d->vibrato;
+        return static_cast<DspxNoteEntityExtra *>(extra())->vibrato;
     }
     //===========================================================================
 
     //===========================================================================
     // NoteList
-    DspxNoteListEntity::DspxNoteListEntity(QObject *parent)
-        : AceTreeEntityRecordTable(parent), AceTreeEntityRecordTableHelper(this) {
-        AceTreeStandardEntityPrivate::setName(this, "notes");
+    DspxNoteListEntity::DspxNoteListEntity(QObject *parent) : AceTreeEntityRecordTable(parent) {
     }
     DspxNoteListEntity::~DspxNoteListEntity() {
     }
     void DspxNoteListEntity::sortRecords(QVector<AceTreeEntity *> &records) const {
-        std::sort(records.begin(), records.end(), compareElementPos<int>);
+        std::sort(records.begin(), records.end(), compareElementPos<DspxNoteEntity>);
     }
     //===========================================================================
 

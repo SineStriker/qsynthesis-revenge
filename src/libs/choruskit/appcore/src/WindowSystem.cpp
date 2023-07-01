@@ -20,7 +20,7 @@
 
 namespace Core {
 
-#define myWarning(func) (qWarning().nospace() << "Core::WindowSystem::" << (func) << "(): ").maybeSpace()
+#define myWarning(func) (qWarning().nospace() << "Core::WindowSystem::" << (func) << "():").space()
 
     static const char settingCatalogC[] = "WindowSystem";
 

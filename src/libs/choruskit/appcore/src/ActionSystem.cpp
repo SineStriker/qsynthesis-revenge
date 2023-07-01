@@ -15,7 +15,7 @@
 
 namespace Core {
 
-#define myWarning(func) (qWarning().nospace() << "Core::ActionSystem::" << (func) << "(): ").maybeSpace()
+#define myWarning(func) (qWarning().nospace() << "Core::ActionSystem::" << (func) << "():").space()
 
     ActionSystemPrivate::ActionSystemPrivate() : q_ptr(nullptr) {
     }

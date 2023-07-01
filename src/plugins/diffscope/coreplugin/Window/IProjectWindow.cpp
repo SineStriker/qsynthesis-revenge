@@ -14,6 +14,7 @@
 #include <CToolButton.h>
 
 #include <QMDecoratorV2.h>
+#include <QMSystem.h>
 #include <QMView.h>
 
 #include <CoreApi/ILoader.h>
@@ -134,6 +135,51 @@ namespace Core {
         }
     }
 
+    bool IProjectWindowPrivate::eventFilter(QObject *obj, QEvent *event) {
+        Q_Q(IProjectWindow);
+        if (obj == q->window()) {
+            switch (event->type()) {
+                case QEvent::Close: {
+                    if (!m_forceClose) {
+                        if (m_doc->isVSTMode()) {
+                            // VST mode, we simply hide window
+                            event->ignore();
+                            q->window()->hide();
+                        } else if (m_doc->isModified()) {
+                            // Unexpected close
+                            auto ret = QMessageBox::question(q->window(), ICore::mainTitle(),
+                                                             tr("There are unsaved changes, do you want to save them?"),
+                                                             QMessageBox::Yes | QMessageBox::No | QMessageBox::Cancel);
+                            switch (ret) {
+                                case QMessageBox::Yes: {
+                                    event->setAccepted([q, this]() {
+                                        if (QMFs::isFileExist(m_doc->filePath())) {
+                                            return m_doc->save(m_doc->filePath());
+                                        }
+                                        return ICore::instance()->documentSystem()->saveFileBrowse(q->window(), m_doc);
+                                    }());
+                                    break;
+                                }
+                                case QMessageBox::No:
+                                    event->accept();
+                                    break;
+                                case QMessageBox::Cancel:
+                                    event->ignore();
+                                    break;
+                                default:
+                                    break;
+                            }
+                        }
+                    }
+                    break;
+                }
+                default:
+                    break;
+            }
+        }
+        return ICoreWindowPrivate::eventFilter(obj, event);
+    }
+
     void IProjectWindowPrivate::_q_documentChanged() {
         Q_Q(IProjectWindow);
         q->setWindowModified(m_doc->isModified());
@@ -227,6 +273,8 @@ namespace Core {
 
         setCentralWidget(centralWidget);
         d->cp->setParent(centralWidget);
+
+        win->installEventFilter(d);
 
         // Close event
         connect(d->m_doc, &IDocument::changed, d, &IProjectWindowPrivate::_q_documentChanged);

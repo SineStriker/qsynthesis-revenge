@@ -13,7 +13,7 @@
 
 namespace Core {
 
-#define myWarning(func) (qWarning().nospace() << "Core::PianoRoll::" << (func) << "(): ").maybeSpace()
+#define myWarning(func) (qWarning().nospace() << "Core::PianoRoll::" << (func) << "():").space()
 
     static const char settingCatalogC[] = "IProjectWindow/PianoRoll";
 

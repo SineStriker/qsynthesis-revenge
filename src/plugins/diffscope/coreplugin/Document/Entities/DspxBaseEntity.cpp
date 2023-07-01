@@ -1,24 +1,32 @@
 #include "DspxBaseEntity.h"
-#include "AceTreeStandardEntity_p.h"
 #include "DspxEntityUtils_p.h"
+
+#include <QJsonObject>
+
+#include "AceTreeMacros.h"
 
 namespace Core {
 
     //===========================================================================
     // BusControl
-    DspxBusControlEntity::DspxBusControlEntity(QObject *parent) : AceTreeEntityMapping(parent) {
-        auto d = AceTreeEntityMappingPrivate::get(this);
-        d->name = "control";
+    class DspxBusControlEntityExtra : public AceTreeEntityMappingExtra {
+    public:
+        void setup(AceTreeEntity *entity) override {
+            auto q = static_cast<DspxBusControlEntity *>(entity);
 
-        // Notifiers
-        d->propertyNotifiers.insert("gain", [](ACE_A) {
-            ACE_Q(DspxBusControlEntity);
-            emit q->gainChanged(newValue.toDouble());
-        });
-        d->propertyNotifiers.insert("mute", [](ACE_A) {
-            ACE_Q(DspxBusControlEntity);
-            emit q->muteChanged(newValue.toBool());
-        });
+            addPropertyNotifier("gain", [q](ACE_A) {
+                Q_UNUSED(oldValue)
+                emit q->gainChanged(value.toDouble());
+            });
+
+            addPropertyNotifier("mute", [q](ACE_A) {
+                Q_UNUSED(oldValue)
+                emit q->muteChanged(value.toBool());
+            });
+        }
+    };
+    DspxBusControlEntity::DspxBusControlEntity(QObject *parent)
+        : DspxBusControlEntity(new DspxBusControlEntityExtra(), parent) {
     }
     DspxBusControlEntity::~DspxBusControlEntity() {
     }
@@ -34,22 +42,35 @@ namespace Core {
     void DspxBusControlEntity::setMute(bool mute) {
         setAttribute("mute", mute);
     }
+
+    DspxBusControlEntity::DspxBusControlEntity(DspxBusControlEntityExtra *extra, QObject *parent)
+        : AceTreeEntityMapping(extra, parent) {
+    }
     //===========================================================================
 
     //===========================================================================
     // TrackControl
-    DspxTrackControlEntity::DspxTrackControlEntity(QObject *parent) : DspxBusControlEntity(parent) {
-        auto d = AceTreeEntityMappingPrivate::get(this);
+    class DspxTrackControlEntityExtra : public DspxBusControlEntityExtra {
+    public:
+        void setup(AceTreeEntity *entity) override {
+            DspxBusControlEntityExtra::setup(entity);
 
-        // Notifiers
-        d->propertyNotifiers.insert("pan", [](ACE_A) {
-            ACE_Q(DspxTrackControlEntity);
-            emit q->gainChanged(newValue.toDouble());
-        });
-        d->propertyNotifiers.insert("solo", [](ACE_A) {
-            ACE_Q(DspxTrackControlEntity);
-            emit q->muteChanged(newValue.toBool());
-        });
+            auto q = static_cast<DspxTrackControlEntity *>(entity);
+
+            addPropertyNotifier("pan", [q](ACE_A) {
+                Q_UNUSED(oldValue)
+                emit q->gainChanged(value.toDouble());
+            });
+
+            addPropertyNotifier("solo", [q](ACE_A) {
+                Q_UNUSED(oldValue)
+                emit q->muteChanged(value.toBool());
+            });
+        }
+    };
+
+    DspxTrackControlEntity::DspxTrackControlEntity(QObject *parent)
+        : DspxBusControlEntity(new DspxTrackControlEntityExtra(), parent) {
     }
     DspxTrackControlEntity::~DspxTrackControlEntity() {
     }
@@ -69,34 +90,33 @@ namespace Core {
 
     //===========================================================================
     // IntPoint
-    class DspxIntPointEntityPrivate : public AceTreeEntityPrivate {
-        Q_DECLARE_PUBLIC(DspxIntPointEntity)
+    class DspxIntPointEntityExtra : public AceTreeEntityNotifyExtra {
     public:
-        DspxIntPointEntityPrivate() : x(0), y(0) {
-            name = "point";
+        DspxIntPointEntityExtra() : x(0), y(0) {
         }
-        ~DspxIntPointEntityPrivate() = default;
 
-        int x, y; // avoid conversion when read data
+        void setup(AceTreeEntity *entity) override {
+            auto q = static_cast<DspxDoublePointEntity *>(entity);
 
-        void propertyChanged(const QString &key, const QVariant &newValue, const QVariant &oldValue) override {
-            Q_Q(DspxIntPointEntity);
-            if (key == "p") {
-                auto pos = newValue.toPoint();
+            addPropertyNotifier("p", [this, q](ACE_A) {
+                Q_UNUSED(oldValue)
+                auto pos = value.toPoint();
                 // Cache point value
                 x = pos.x();
                 y = pos.y();
                 emit q->positionChanged(x, y);
-            }
+            });
         }
+
+        int x, y; // avoid conversion when read data
     };
+
     DspxIntPointEntity::DspxIntPointEntity(QObject *parent)
-        : DspxIntPointEntity(*new DspxIntPointEntityPrivate(), parent) {
+        : DspxIntPointEntity(new DspxIntPointEntityExtra(), parent) {
     }
     DspxIntPointEntity::~DspxIntPointEntity() {
     }
     bool DspxIntPointEntity::read(const QJsonValue &value) {
-        Q_D(DspxIntPointEntity);
         if (!value.isObject())
             return false;
         auto obj = value.toObject();
@@ -104,89 +124,80 @@ namespace Core {
         return true;
     }
     QJsonValue DspxIntPointEntity::write() const {
-        Q_D(const DspxIntPointEntity);
+        auto extra = static_cast<DspxIntPointEntityExtra *>(this->extra());
         return QJsonObject{
-            {"x", d->x},
-            {"y", d->y},
+            {"x", extra->x},
+            {"y", extra->y},
         };
     }
     int DspxIntPointEntity::x() const {
-        Q_D(const DspxIntPointEntity);
-        return d->x;
+        return static_cast<DspxIntPointEntityExtra *>(extra())->x;
     }
     int DspxIntPointEntity::y() const {
-        Q_D(const DspxIntPointEntity);
-        return d->y;
+        return static_cast<DspxIntPointEntityExtra *>(extra())->y;
     }
     QPoint DspxIntPointEntity::pos() const {
-        Q_D(const DspxIntPointEntity);
-        return {d->x, d->y};
+        auto extra = static_cast<DspxIntPointEntityExtra *>(this->extra());
+        return {extra->x, extra->y};
     }
     void DspxIntPointEntity::setPos(const QPoint &pos) {
-        Q_D(DspxIntPointEntity);
-        d->m_treeItem->setAttribute("p", pos);
+        treeItem()->setAttribute("p", pos);
     }
     void DspxIntPointEntity::doInitialize() {
         setPos({0, 0});
     }
     void DspxIntPointEntity::doSetup() {
-        Q_D(DspxIntPointEntity);
-        auto pos = d->m_treeItem->attribute("p").toPoint();
+        auto pos = treeItem()->attribute("p").toPoint();
+        auto extra = static_cast<DspxIntPointEntityExtra *>(this->extra());
 
         // Get cache
-        d->x = pos.x();
-        d->y = pos.y();
+        extra->x = pos.x();
+        extra->y = pos.y();
     }
-    DspxIntPointEntity::DspxIntPointEntity(Core::DspxIntPointEntityPrivate &d, QObject *parent)
-        : AceTreeEntity(d, parent) {
+    DspxIntPointEntity::DspxIntPointEntity(DspxIntPointEntityExtra *extra, QObject *parent)
+        : AceTreeEntity(extra, parent) {
     }
     //===========================================================================
 
     //===========================================================================
     // IntPoint List
-    DspxIntPointListEntity::DspxIntPointListEntity(QObject *parent)
-        : AceTreeEntityRecordTable(parent), AceTreeEntityRecordTableHelper(this) {
-        AceTreeStandardEntityPrivate::setName(this, "points");
+    DspxIntPointListEntity::DspxIntPointListEntity(QObject *parent) : AceTreeEntityRecordTable(parent) {
     }
     DspxIntPointListEntity::~DspxIntPointListEntity() {
     }
     void DspxIntPointListEntity::sortRecords(QVector<AceTreeEntity *> &records) const {
-        std::sort(records.begin(), records.end(), [](const AceTreeEntity *left, const AceTreeEntity *right) {
-            return reinterpret_cast<const DspxIntPointEntity *>(left)->x() <
-                   reinterpret_cast<const DspxIntPointEntity *>(right)->x();
-        });
+        std::sort(records.begin(), records.end(), compareElementX<DspxIntPointEntity>);
     }
     //===========================================================================
 
     //===========================================================================
     // DoublePoint
-    class DspxDoublePointEntityPrivate : public AceTreeEntityPrivate {
-        Q_DECLARE_PUBLIC(DspxDoublePointEntity)
+    class DspxDoublePointEntityExtra : public AceTreeEntityNotifyExtra {
     public:
-        DspxDoublePointEntityPrivate() : x(0), y(0) {
-            name = "point";
+        DspxDoublePointEntityExtra() : x(0), y(0) {
         }
-        ~DspxDoublePointEntityPrivate() = default;
-        double x, y; // avoid conversion when read data
 
-        void propertyChanged(const QString &key, const QVariant &newValue, const QVariant &oldValue) override {
-            Q_Q(DspxDoublePointEntity);
-            if (key == "p") {
-                auto pos = newValue.toPointF();
+        void setup(AceTreeEntity *entity) override {
+            auto q = static_cast<DspxDoublePointEntity *>(entity);
+
+            addPropertyNotifier("p", [this, q](ACE_A) {
+                Q_UNUSED(oldValue)
+                auto pos = value.toPointF();
                 // Cache point value
                 x = pos.x();
                 y = pos.y();
-                emit q->positionChanged(x, y);
-            }
+                emit static_cast<DspxDoublePointEntity *>(q)->positionChanged(x, y);
+            });
         }
+
+        double x, y; // avoid conversion when read data
     };
     DspxDoublePointEntity::DspxDoublePointEntity(QObject *parent)
-        : DspxDoublePointEntity(*new DspxDoublePointEntityPrivate(), parent) {
+        : DspxDoublePointEntity(new DspxDoublePointEntityExtra(), parent) {
     }
     DspxDoublePointEntity::~DspxDoublePointEntity() {
     }
     bool DspxDoublePointEntity::read(const QJsonValue &value) {
-        Q_D(DspxDoublePointEntity);
         if (!value.isObject())
             return false;
         auto obj = value.toObject();
@@ -194,88 +205,80 @@ namespace Core {
         return true;
     }
     QJsonValue DspxDoublePointEntity::write() const {
-        Q_D(const DspxDoublePointEntity);
+        auto extra = static_cast<DspxDoublePointEntityExtra *>(this->extra());
         return QJsonObject{
-            {"x", d->x},
-            {"y", d->y},
+            {"x", extra->x},
+            {"y", extra->y},
         };
     }
     double DspxDoublePointEntity::x() const {
-        Q_D(const DspxDoublePointEntity);
-        return d->x;
+        return static_cast<DspxDoublePointEntityExtra *>(this->extra())->x;
     }
     double DspxDoublePointEntity::y() const {
-        Q_D(const DspxDoublePointEntity);
-        return d->y;
+        return static_cast<DspxDoublePointEntityExtra *>(this->extra())->y;
     }
     QPointF DspxDoublePointEntity::pos() const {
-        Q_D(const DspxDoublePointEntity);
-        return {d->x, d->y};
+        auto extra = static_cast<DspxDoublePointEntityExtra *>(this->extra());
+        return {extra->x, extra->y};
     }
     void DspxDoublePointEntity::setPos(const QPointF &pos) {
-        Q_D(DspxDoublePointEntity);
-        d->m_treeItem->setAttribute("p", pos);
+        treeItem()->setAttribute("p", pos);
     }
     void DspxDoublePointEntity::doInitialize() {
         setPos({0, 0});
     }
     void DspxDoublePointEntity::doSetup() {
-        Q_D(DspxDoublePointEntity);
-        auto pos = d->m_treeItem->attribute("p").toPointF();
+        auto pos = treeItem()->attribute("p").toPointF();
+        auto extra = static_cast<DspxDoublePointEntityExtra *>(this->extra());
 
         // Get cache
-        d->x = pos.x();
-        d->y = pos.y();
+        extra->x = pos.x();
+        extra->y = pos.y();
     }
-    DspxDoublePointEntity::DspxDoublePointEntity(Core::DspxDoublePointEntityPrivate &d, QObject *parent)
-        : AceTreeEntity(d, parent) {
+    DspxDoublePointEntity::DspxDoublePointEntity(DspxDoublePointEntityExtra *extra, QObject *parent)
+        : AceTreeEntity(extra, parent) {
     }
     //===========================================================================
 
     //===========================================================================
     // DoublePoint List
-    DspxDoublePointListEntity::DspxDoublePointListEntity(QObject *parent)
-        : AceTreeEntityRecordTable(parent), AceTreeEntityRecordTableHelper(this) {
-        AceTreeStandardEntityPrivate::setName(this, "points");
+    DspxDoublePointListEntity::DspxDoublePointListEntity(QObject *parent) : AceTreeEntityRecordTable(parent) {
     }
     DspxDoublePointListEntity::~DspxDoublePointListEntity() {
     }
     void DspxDoublePointListEntity::sortRecords(QVector<AceTreeEntity *> &records) const {
-        std::sort(records.begin(), records.end(), [](const AceTreeEntity *left, const AceTreeEntity *right) {
-            return reinterpret_cast<const DspxDoublePointEntity *>(left)->x() <
-                   reinterpret_cast<const DspxDoublePointEntity *>(right)->x();
-        });
+        std::sort(records.begin(), records.end(), compareElementX<DspxDoublePointEntity>);
     }
     //===========================================================================
 
     //===========================================================================
-    // AnchorPoint
-    class DspxAnchorPointEntityPrivate : public DspxIntPointEntityPrivate {
-        Q_DECLARE_PUBLIC(DspxAnchorPointEntity)
+    // DspxAnchorPointEntity
+    class DspxAnchorPointEntityExtra : public DspxIntPointEntityExtra {
     public:
-        DspxAnchorPointEntityPrivate() : i(DspxAnchorPointEntity::None){};
-        ~DspxAnchorPointEntityPrivate() = default;
+        DspxAnchorPointEntityExtra() : i(DspxAnchorPointEntity::None) {
+        }
+
+        void setup(AceTreeEntity *entity) override {
+            DspxIntPointEntityExtra::setup(entity);
+
+            auto q = static_cast<DspxAnchorPointEntity *>(entity);
+            addPropertyNotifier("i", [this, q](ACE_A) {
+                Q_UNUSED(oldValue)
+                // Cache interp value
+                i = variantToEnum<DspxAnchorPointEntity::Interpolation>(value);
+                emit q->interpChanged(i);
+            });
+        }
 
         DspxAnchorPointEntity::Interpolation i;
-
-        void propertyChanged(const QString &key, const QVariant &newValue, const QVariant &oldValue) override {
-            DspxIntPointEntityPrivate::propertyChanged(key, newValue, oldValue);
-
-            Q_Q(DspxAnchorPointEntity);
-            if (key == "i") {
-                // Cache point value
-                i = static_cast<DspxAnchorPointEntity::Interpolation>(newValue.toInt());
-                emit q->interpChanged(i);
-            }
-        }
     };
+
     DspxAnchorPointEntity::DspxAnchorPointEntity(QObject *parent)
-        : DspxIntPointEntity(*new DspxAnchorPointEntityPrivate(), parent) {
+        : DspxIntPointEntity(new DspxAnchorPointEntityExtra(), parent) {
     }
     DspxAnchorPointEntity::~DspxAnchorPointEntity() {
     }
     bool DspxAnchorPointEntity::read(const QJsonValue &value) {
-        Q_D(DspxAnchorPointEntity);
         if (!DspxIntPointEntity::read(value)) {
             return false;
         }
@@ -283,47 +286,37 @@ namespace Core {
         return true;
     }
     QJsonValue DspxAnchorPointEntity::write() const {
-        Q_D(const DspxAnchorPointEntity);
         auto obj = DspxIntPointEntity::write().toObject();
-        obj.insert("interp", enumToString(d->i));
+        obj.insert("interp", enumToString(static_cast<DspxAnchorPointEntityExtra *>(this->extra())->i));
         return obj;
     }
     DspxAnchorPointEntity::Interpolation DspxAnchorPointEntity::interp() const {
-        Q_D(const DspxAnchorPointEntity);
-        return d->i;
+        return static_cast<DspxAnchorPointEntityExtra *>(this->extra())->i;
     }
     void DspxAnchorPointEntity::setInterp(DspxAnchorPointEntity::Interpolation i) {
-        Q_D(DspxAnchorPointEntity);
-        d->m_treeItem->setAttribute("i", int(i));
+        treeItem()->setAttribute("i", int(i));
     }
     void DspxAnchorPointEntity::doInitialize() {
         DspxIntPointEntity::doInitialize();
         setInterp(None);
     }
     void DspxAnchorPointEntity::doSetup() {
-        Q_D(DspxIntPointEntity);
-
         DspxIntPointEntity::doSetup();
 
         // Get cache
-        setInterp(variantToEnum<Interpolation>(d->m_treeItem->attribute("i")));
+        setInterp(variantToEnum<Interpolation>(treeItem()->attribute("i")));
     }
     //===========================================================================
 
     //===========================================================================
     // AnchorPoint List
-    DspxAnchorPointListEntity::DspxAnchorPointListEntity(QObject *parent)
-        : AceTreeEntityRecordTable(parent), AceTreeEntityRecordTableHelper(this) {
-        AceTreeStandardEntityPrivate::setName(this, "points");
+    DspxAnchorPointListEntity::DspxAnchorPointListEntity(QObject *parent) : AceTreeEntityRecordTable(parent) {
     }
     DspxAnchorPointListEntity::~DspxAnchorPointListEntity() {
     }
     void DspxAnchorPointListEntity::sortRecords(QVector<AceTreeEntity *> &records) const {
-        std::sort(records.begin(), records.end(), [](const AceTreeEntity *left, const AceTreeEntity *right) {
-            return reinterpret_cast<const DspxAnchorPointEntity *>(left)->x() <
-                   reinterpret_cast<const DspxAnchorPointEntity *>(right)->x();
-        });
+        std::sort(records.begin(), records.end(), compareElementX<DspxAnchorPointEntity>);
     }
     //===========================================================================
 
-}
+} // namespace Core

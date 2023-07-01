@@ -1,8 +1,10 @@
-#ifndef CHORUSKIT_DSPXENTITYUTILS_P_H
-#define CHORUSKIT_DSPXENTITYUTILS_P_H
+#ifndef DSPXENTITYUTILS_P_H
+#define DSPXENTITYUTILS_P_H
 
 #include <QMetaEnum>
 #include <QString>
+
+#include "AceTreeEntity.h"
 
 namespace Core {
 
@@ -28,16 +30,21 @@ namespace Core {
         return key;
     }
 
-    template <class T = int>
-    inline bool compareElementPos(const AceTreeEntity *left, const AceTreeEntity *right) {
-        return left->property("pos").value<T>() < right->property("pos").value<T>();
+    template <class T>
+    inline bool compareElementX(const AceTreeEntity *left, const AceTreeEntity *right) {
+        return static_cast<const T *>(left)->x() < static_cast<const T *>(right)->x();
     }
 
-    template <class T = int>
+    template <class T>
+    inline bool compareElementPos(const AceTreeEntity *left, const AceTreeEntity *right) {
+        return static_cast<const T *>(left)->position() < static_cast<const T *>(right)->position();
+    }
+
+    template <class T>
     inline bool compareElementStart(const AceTreeEntity *left, const AceTreeEntity *right) {
-        return left->property("start").value<T>() < right->property("start").value<T>();
+        return static_cast<const T *>(left)->start() < static_cast<const T *>(right)->start();
     }
 
 }
 
-#endif // CHORUSKIT_DSPXENTITYUTILS_P_H
+#endif // DSPXENTITYUTILS_P_H

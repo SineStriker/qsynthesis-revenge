@@ -11,9 +11,12 @@
 #include <QVersionNumber>
 
 #include <QMDecoratorV2.h>
+#include <QMSystem.h>
 
 #include "DspxSpec.h"
 #include "ICore.h"
+
+#include "AceTreeJournalBackend.h"
 
 namespace Core {
 
@@ -24,46 +27,35 @@ namespace Core {
         vstMode = false;
         model = nullptr;
         content = nullptr;
-        tx = nullptr;
-
-        binLog = nullptr;
-        txtLog = nullptr;
     }
 
     DspxDocumentPrivate::~DspxDocumentPrivate() {
-        delete binLog;
-        delete txtLog;
+        delete content;
+        delete model;
     }
 
     void DspxDocumentPrivate::init() {
         Q_Q(DspxDocument);
 
         model = new AceTreeModel(q);
-        tx = new AceTreeTransaction(model, q);
 
         ICore::instance()->documentSystem()->addDocument(q, true);
     }
 
     void DspxDocumentPrivate::changeToOpen() {
         Q_Q(DspxDocument);
-
         opened = true;
         emit q->opened();
+    }
 
-        binLog = new QFile(q);
-        binLog->setFileName(q->logDirectory() + "/atm.dat");
+    void DspxDocumentPrivate::changeToSaved() {
+        Q_Q(DspxDocument);
 
-        txtLog = new QFile(q);
-        txtLog->setFileName(q->logDirectory() + "/atx.log");
-
-        if (!binLog->open(QIODevice::WriteOnly) || !txtLog->open(QIODevice::WriteOnly | QIODevice::Text)) {
-            QMessageBox::warning(q->dialogParent(), DspxDocument::tr("Log Error"),
-                                 DspxDocument::tr("Failed to create log!"));
-            return;
+        if (!preferredDisplayName.isEmpty()) {
+            q->setPreferredDisplayName({});
         }
 
-        model->startLogging(binLog);
-        tx->startLogging(txtLog);
+        emit q->changed();
     }
 
     void DspxDocumentPrivate::unshiftToRecent() {
@@ -120,24 +112,35 @@ namespace Core {
             return false;
         }
 
-        auto cont = new DspxContentEntity();
-        cont->initialize();
+        auto content = new DspxContentEntity();
+        content->initialize();
 
-        if (!cont->read(value.toObject())) {
-            delete cont;
+        if (!content->read(value.toObject())) {
+            delete content;
             errMsg = DspxDocument::tr("Error occurred while parsing file!");
             return false;
         }
 
-        this->content = cont;
-        model->setRootItem(const_cast<AceTreeItem *>(cont->treeItem()));
+        this->content = content;
+
+        QDir logDir(q->logDirectory());
+        logDir.mkdir("model");
+
+        auto backend = new AceTreeJournalBackend();
+        backend->start(logDir.absoluteFilePath("model"));
+
+        auto model = new AceTreeModel(backend, q);
+        model->beginTransaction();
+        model->setRootItem(content->treeItem());
+        model->commitTransaction({
+            {"load", "true"},
+        });
+        this->model = model;
 
         return true;
     }
 
     bool DspxDocumentPrivate::saveFile(QByteArray *data) const {
-        Q_Q(const DspxDocument);
-
         auto obj = content->write().toObject();
         if (obj.isEmpty()) {
             errMsg = DspxDocument::tr("Error occurred while saving file!");
@@ -165,9 +168,9 @@ namespace Core {
     DspxDocument::~DspxDocument() {
     }
 
-    AceTreeTransaction *DspxDocument::TX() const {
+    AceTreeModel *DspxDocument::model() const {
         Q_D(const DspxDocument);
-        return d->tx;
+        return d->model;
     }
 
     DspxContentEntity *DspxDocument::project() const {
@@ -219,13 +222,10 @@ namespace Core {
         file.write(data);
         file.close();
 
-        if (!d->preferredDisplayName.isEmpty()) {
-            setPreferredDisplayName({});
-        }
         setFilePath(fileName);
-
         d->unshiftToRecent();
 
+        d->changeToSaved();
         return true;
     }
 
@@ -259,10 +259,34 @@ namespace Core {
             return;
         }
 
-        auto content = new DspxContentEntity();
-        content->initialize();
-        d->model->setRootItem(const_cast<AceTreeItem *>(content->treeItem()));
-        d->content = content;
+        // Read binary log
+        {
+            auto content = new DspxContentEntity();
+            content->initialize();
+
+            QDir logDir(logDirectory());
+            logDir.mkdir("model");
+
+            auto backend = new AceTreeJournalBackend();
+            backend->start(logDir.absoluteFilePath("model"));
+
+            auto model = new AceTreeModel(backend, this);
+            model->beginTransaction();
+            model->setRootItem(content->treeItem());
+            model->commitTransaction({
+                {"load", "true"},
+            });
+
+            model->beginTransaction();
+            model->setRootItem(content->treeItem());
+            model->commitTransaction({
+                {"load", "true"},
+            });
+
+            d->model = model;
+            d->content = content;
+        }
+
 
         QString baseName = QString("Untitled-%1").arg(QString::number(++m_untitledIndex));
         setFilePath(baseName + ".dspx");
@@ -281,36 +305,15 @@ namespace Core {
 
         // Read binary log
         {
-            QFile file(logDirectory() + "/atm.dat");
-            if (!file.open(QIODevice::ReadOnly)) {
+            QDir logDir(logDirectory() + "/model");
+
+            auto backend = new AceTreeJournalBackend();
+            if (!backend->recover(logDir.absolutePath())) {
+                delete backend;
                 err();
                 return false;
             }
-
-            QByteArray data = file.readAll();
-            file.close();
-
-            if (!d->model->recover(data)) {
-                err();
-                return false;
-            }
-        }
-
-        // Read text log
-        {
-            QFile file(logDirectory() + "/atx.log");
-            if (!file.open(QIODevice::ReadOnly)) {
-                err();
-                return false;
-            }
-
-            QByteArray data = file.readAll();
-            file.close();
-
-            if (!d->tx->recover(data)) {
-                err();
-                return false;
-            }
+            d->model = new AceTreeModel(backend, this);
         }
 
         auto content = new DspxContentEntity();
@@ -341,12 +344,25 @@ namespace Core {
         emit changed();
     }
 
+    void DspxDocument::saveVST(const std::function<bool(const QByteArray &)> &callback) {
+        Q_D(DspxDocument);
+        
+        QByteArray data;
+        if (!saveRawData(&data)) {
+            return;
+        }
+        if (!callback(data)) {
+            return;
+        }
+
+        d->changeToSaved();
+    }
+
     QString DspxDocument::defaultPath() const {
         return QStandardPaths::writableLocation(QStandardPaths::DesktopLocation);
     }
 
     QString DspxDocument::suggestedFileName() const {
-        Q_D(const DspxDocument);
         return "Untitled Project.dspx";
     }
 
@@ -366,6 +382,7 @@ namespace Core {
 
     IDocument::ReloadBehavior DspxDocument::reloadBehavior(IDocument::ChangeTrigger state,
                                                            IDocument::ChangeType type) const {
+        Q_UNUSED(state)
         if (type == TypeRemoved) {
             return BehaviorAsk;
         }
@@ -373,6 +390,8 @@ namespace Core {
     }
 
     bool DspxDocument::reload(IDocument::ReloadFlag flag, IDocument::ChangeType type) {
+        Q_UNUSED(flag)
+        Q_UNUSED(type)
         emit changed();
         return true;
     }
@@ -381,4 +400,4 @@ namespace Core {
         d.init();
     }
 
-}
+} // namespace Core

@@ -3,7 +3,7 @@
 
 namespace Core {
 
-#define myWarning(func) (qWarning().nospace() << "Core::ISettingPage::" << (func) << "(): ").maybeSpace()
+#define myWarning(func) (qWarning().nospace() << "Core::ISettingPage::" << (func) << "():").space()
 
     ISettingPagePrivate::ISettingPagePrivate() {
     }

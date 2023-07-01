@@ -19,16 +19,13 @@ namespace Core {
         void init();
 
         AceTreeModel *model;
-        AceTreeTransaction *tx;
         DspxContentEntity *content;
 
         bool opened;
         bool vstMode;
 
-        QFile *binLog;
-        QFile *txtLog;
-
         void changeToOpen();
+        void changeToSaved();
         void unshiftToRecent();
 
         bool checkNotOpened() const;

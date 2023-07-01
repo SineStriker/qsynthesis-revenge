@@ -4,7 +4,7 @@
 
 namespace Core {
 
-#define myWarning(func) (qWarning().nospace() << "Core::ShortcutContext::" << (func) << "(): ").maybeSpace()
+#define myWarning(func) (qWarning().nospace() << "Core::ShortcutContext::" << (func) << "():").space()
 
     ShortcutContext::ShortcutContext(QObject *parent) : QObject(parent) {
         lastFlushedAction = nullptr;

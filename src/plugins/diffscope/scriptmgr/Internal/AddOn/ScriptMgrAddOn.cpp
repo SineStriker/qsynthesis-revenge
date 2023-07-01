@@ -176,7 +176,7 @@ namespace ScriptMgr {
                         scriptMainActionDict.append(entry.id + "." + childId, childAction);
                     }
                     mainAction->setMenu(menu);
-                    windowHandle()->addShortcutContext(menu);
+                    windowHandle()->addShortcutContext(menu, IWindow::Mutable);
                 }
                 batchProcessMainMenu->menu()->insertAction(actionBefore, mainAction);
                 allActions.append(mainAction);

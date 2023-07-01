@@ -1,5 +1,5 @@
-#ifndef CHORUSKIT_DSPXBASEENTITY_H
-#define CHORUSKIT_DSPXBASEENTITY_H
+#ifndef DSPXBASEENTITY_H
+#define DSPXBASEENTITY_H
 
 #include <AceTreeObjectEntity.h>
 #include <AceTreeStandardEntity.h>
@@ -19,6 +19,8 @@ namespace Core {
 
     //===========================================================================
     // BusControl
+    class DspxBusControlEntityExtra;
+
     class CORE_EXPORT DspxBusControlEntity : public AceTreeEntityMapping {
         Q_OBJECT
         Q_PROPERTY(double gain READ gain WRITE setGain NOTIFY gainChanged)
@@ -37,6 +39,9 @@ namespace Core {
     Q_SIGNALS:
         void gainChanged(double gain);
         void muteChanged(bool mute);
+
+    protected:
+        DspxBusControlEntity(DspxBusControlEntityExtra *extra, QObject *parent = nullptr);
     };
     //===========================================================================
 
@@ -65,11 +70,10 @@ namespace Core {
 
     //===========================================================================
     // IntPoint
-    class DspxIntPointEntityPrivate;
+    class DspxIntPointEntityExtra;
 
     class CORE_EXPORT DspxIntPointEntity : public AceTreeEntity {
         Q_OBJECT
-        Q_DECLARE_PRIVATE(DspxIntPointEntity)
         Q_PROPERTY(QPoint pos READ pos WRITE setPos NOTIFY positionChanged)
         Q_PROPERTY(int x READ x)
         Q_PROPERTY(int y READ y)
@@ -95,7 +99,7 @@ namespace Core {
         void positionChanged(int x, int y);
 
     protected:
-        DspxIntPointEntity(DspxIntPointEntityPrivate &d, QObject *parent = nullptr);
+        DspxIntPointEntity(DspxIntPointEntityExtra *extra, QObject *parent = nullptr);
     };
     //===========================================================================
 
@@ -118,11 +122,10 @@ namespace Core {
 
     //===========================================================================
     // DoublePoint
-    class DspxDoublePointEntityPrivate;
-
+    class DspxDoublePointEntityExtra;
+    
     class CORE_EXPORT DspxDoublePointEntity : public AceTreeEntity {
         Q_OBJECT
-        Q_DECLARE_PRIVATE(DspxDoublePointEntity)
         Q_PROPERTY(QPointF pos READ pos WRITE setPos NOTIFY positionChanged)
         Q_PROPERTY(double x READ x)
         Q_PROPERTY(double y READ y)
@@ -148,7 +151,7 @@ namespace Core {
         void positionChanged(double x, double y);
 
     protected:
-        DspxDoublePointEntity(DspxDoublePointEntityPrivate &d, QObject *parent = nullptr);
+        DspxDoublePointEntity(DspxDoublePointEntityExtra *extra, QObject *parent = nullptr);
     };
     //===========================================================================
 
@@ -171,11 +174,8 @@ namespace Core {
 
     //===========================================================================
     // AnchorPoint
-    class DspxAnchorPointEntityPrivate;
-
     class CORE_EXPORT DspxAnchorPointEntity : public DspxIntPointEntity {
         Q_OBJECT
-        Q_DECLARE_PRIVATE(DspxAnchorPointEntity)
         Q_PROPERTY(Interpolation interp READ interp WRITE setInterp NOTIFY interpChanged)
     public:
         explicit DspxAnchorPointEntity(QObject *parent = nullptr);
@@ -224,4 +224,4 @@ namespace Core {
 
 }
 
-#endif // CHORUSKIT_DSPXBASEENTITY_H
+#endif // DSPXBASEENTITY_H

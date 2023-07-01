@@ -1,13 +1,14 @@
 #include "DspxRootEntity.h"
-#include "AceTreeStandardEntity_p.h"
+
+#include "AceTreeMacros.h"
 
 #include "../DspxConst.h"
 
 namespace Core {
 
 #define SCHEMA(X) AceTreeStandardSchema::globalSchemaRef(&Dspx##X##Entity ::staticMetaObject)
-#define ADD_NODE(L, KEY, X)                                                                                            \
-    L.setNodeBuilder(KEY, {&Dspx##X##Entity::staticMetaObject, []() { return new Dspx##X##Entity(); }})
+#define ADD_ELEMENT(L, KEY, X)                                                                                         \
+    L.setElementBuilder(KEY, {&Dspx##X##Entity::staticMetaObject, []() { return new Dspx##X##Entity(); }})
 #define ADD_ROW(L, KEY, X)                                                                                             \
     L.setRowBuilder(KEY, {&Dspx##X##Entity::staticMetaObject, []() { return new Dspx##X##Entity(); }})
 #define ADD_RECORD(L, KEY, X)                                                                                          \
@@ -43,10 +44,10 @@ namespace Core {
 
         // Content
         auto &content = SCHEMA(Content);
-        ADD_NODE(content, "metadata", FileMeta);
-        ADD_NODE(content, "master", Master);
-        ADD_NODE(content, "timeline", Timeline);
-        ADD_NODE(content, "tracks", TrackList);
+        ADD_ELEMENT(content, "metadata", FileMeta);
+        ADD_ELEMENT(content, "master", Master);
+        ADD_ELEMENT(content, "timeline", Timeline);
+        ADD_ELEMENT(content, "tracks", TrackList);
 
         // FileMeta
         auto &metadata = SCHEMA(FileMeta);
@@ -56,7 +57,7 @@ namespace Core {
         // Master
         {
             auto &master = SCHEMA(Master);
-            ADD_NODE(master, "control", BusControl);
+            ADD_ELEMENT(master, "control", BusControl);
         }
 
         // Timeline
@@ -66,9 +67,9 @@ namespace Core {
             SET_RECORD2(TimelineLabel); // TimelineLabel List
 
             auto &timeline = SCHEMA(Timeline);
-            ADD_NODE(timeline, "timeSignatures", TimeSignatureList);
-            ADD_NODE(timeline, "tempos", TempoList);
-            ADD_NODE(timeline, "labels", TimelineLabelList);
+            ADD_ELEMENT(timeline, "timeSignatures", TimeSignatureList);
+            ADD_ELEMENT(timeline, "tempos", TempoList);
+            ADD_ELEMENT(timeline, "labels", TimelineLabelList);
 
             auto &timeSignature = SCHEMA(TimeSignature);
             ADD_PROPERTY(timeSignature, "pos", Dspx::DefaultTimeSignaturePos);
@@ -90,8 +91,8 @@ namespace Core {
             SET_ROW2(Track); // Track List
             ADD_PROPERTY(track, "name", Dspx::DefaultTrackName);
             ADD_PROPERTY(track, "color", QJsonValue::Object);
-            ADD_NODE(track, "control", TrackControl);
-            ADD_NODE(track, "clips", ClipList);
+            ADD_ELEMENT(track, "control", TrackControl);
+            ADD_ELEMENT(track, "clips", ClipList);
 
             auto &clipTime = SCHEMA(ClipTime);
             ADD_PROPERTY(clipTime, "start", Dspx::DefaultClipStart);
@@ -101,8 +102,8 @@ namespace Core {
 
             auto &clip = SCHEMA(Clip);
             ADD_PROPERTY(clip, "name", Dspx::DefaultClipName);
-            ADD_NODE(clip, "time", ClipTime);
-            ADD_NODE(clip, "control", BusControl);
+            ADD_ELEMENT(clip, "time", ClipTime);
+            ADD_ELEMENT(clip, "control", BusControl);
 
             auto &clips = SCHEMA(ClipList); // Clip List
             clips.setRecordTypeKey("type");
@@ -112,8 +113,8 @@ namespace Core {
             // SingingClip
             {
                 auto &singingClip = SCHEMA(SingingClip);
-                ADD_NODE(singingClip, "notes", NoteList);
-                ADD_NODE(singingClip, "params", ParamSet);
+                ADD_ELEMENT(singingClip, "notes", NoteList);
+                ADD_ELEMENT(singingClip, "params", ParamSet);
 
                 // Note
                 {
@@ -124,8 +125,8 @@ namespace Core {
                     ADD_PROPERTY(note, "length", Dspx::DefaultNoteLength);
                     ADD_PROPERTY(note, "keyNum", Dspx::DefaultNoteKeyNum);
                     ADD_PROPERTY(note, "lyric", Dspx::DefaultNoteLyric);
-                    ADD_NODE(note, "vibrato", VibratoInfo);
-                    ADD_NODE(note, "phonemes", PhonemeInfo);
+                    ADD_ELEMENT(note, "vibrato", VibratoInfo);
+                    ADD_ELEMENT(note, "phonemes", PhonemeInfo);
 
                     // VibratoInfo
                     {
@@ -136,14 +137,14 @@ namespace Core {
                         ADD_PROPERTY(vibrato, "phase", Dspx::DefaultVibratoPhase);
                         ADD_PROPERTY(vibrato, "amp", Dspx::DefaultVibratoAmplitude);
                         ADD_PROPERTY(vibrato, "offset", Dspx::DefaultVibratoOffset);
-                        ADD_NODE(vibrato, "points", DoublePointList);
+                        ADD_ELEMENT(vibrato, "points", DoublePointList);
                     }
 
                     // PhonemeInfo
                     {
                         auto &phonemes = SCHEMA(PhonemeInfo);
                         ADD_DY_DATA(phonemes, "original", QJsonValue::Array);
-                        ADD_NODE(phonemes, "edited", PhonemeList);
+                        ADD_ELEMENT(phonemes, "edited", PhonemeList);
 
                         auto &phoneme = SCHEMA(Phoneme);
                         SET_ROW2(Phoneme); // Phoneme List
@@ -156,14 +157,14 @@ namespace Core {
                 // ParamInfo
                 {
                     auto &paramSet = SCHEMA(ParamSet);
-                    ADD_NODE(paramSet, "pitch", ParamInfo); // ParamCurve: Pitch
+                    ADD_ELEMENT(paramSet, "pitch", ParamInfo); // ParamCurve: Pitch
 
                     auto &paramInfo = SCHEMA(ParamInfo);
                     ADD_DY_DATA(paramInfo, "original", QJsonValue::Array);
-                    ADD_NODE(paramInfo, "edited", ParamCurveList);
+                    ADD_ELEMENT(paramInfo, "edited", ParamCurveList);
 
                     auto &envParamInfo = SCHEMA(EnvParamInfo);
-                    ADD_NODE(envParamInfo, "envelope", ParamCurveList);
+                    ADD_ELEMENT(envParamInfo, "envelope", ParamCurveList);
 
                     auto &params = SCHEMA(ParamCurveList); // ParamCurve List
                     params.setRecordTypeKey("type");
@@ -177,13 +178,13 @@ namespace Core {
                     {
                         auto &free = SCHEMA(ParamFree);
                         ADD_PROPERTY(free, "step", Dspx::DefaultParamFreeStep);
-                        ADD_NODE(free, "values", ParamFreeData);
+                        ADD_ELEMENT(free, "values", ParamFreeData);
                     }
 
                     // Anchor
                     {
                         auto &anchor = SCHEMA(ParamAnchor);
-                        ADD_NODE(anchor, "nodes", AnchorPointList);
+                        ADD_ELEMENT(anchor, "nodes", AnchorPointList);
                     }
                 }
             }
@@ -199,64 +200,61 @@ namespace Core {
 
     //===========================================================================
     // Content
-    class DspxContentEntityPrivate : public AceTreeEntityMappingPrivate {
+    class DspxContentEntityExtra : public AceTreeEntityMappingExtra {
     public:
-        DspxContentEntityPrivate() {
-            name = "content";
-            metadata = nullptr;
-            master = nullptr;
-            timeline = nullptr;
-            tracks = nullptr;
-            childPostAssignRefs.insert("metadata", &metadata);
-            childPostAssignRefs.insert("master", &master);
-            childPostAssignRefs.insert("timeline", &timeline);
-            childPostAssignRefs.insert("tracks", &tracks);
+        DspxContentEntityExtra() : metadata(nullptr), master(nullptr), timeline(nullptr), tracks(nullptr) {
         }
-        ~DspxContentEntityPrivate() = default;
+
+        void setup(AceTreeEntity *entity) override {
+            Q_UNUSED(entity)
+            addChildPointer("metadata", metadata);
+            addChildPointer("master", master);
+            addChildPointer("timeline", timeline);
+            addChildPointer("tracks", tracks);
+        }
 
         DspxFileMetaEntity *metadata;
         DspxMasterEntity *master;
         DspxTimelineEntity *timeline;
         DspxTrackListEntity *tracks;
     };
-    DspxContentEntity::DspxContentEntity(QObject *parent)
-        : AceTreeEntityMapping(*new DspxContentEntityPrivate(), parent) {
+    DspxContentEntity::DspxContentEntity(QObject *parent) : AceTreeEntityMapping(new DspxContentEntityExtra(), parent) {
     }
     DspxContentEntity::~DspxContentEntity() {
     }
     DspxFileMetaEntity *DspxContentEntity::metadata() const {
-        Q_D(const DspxContentEntity);
-        return d->metadata;
+        return static_cast<DspxContentEntityExtra *>(extra())->metadata;
     }
     DspxMasterEntity *DspxContentEntity::master() const {
-        Q_D(const DspxContentEntity);
-        return d->master;
+        return static_cast<DspxContentEntityExtra *>(extra())->master;
     }
     DspxTimelineEntity *DspxContentEntity::timeline() const {
-        Q_D(const DspxContentEntity);
-        return d->timeline;
+        return static_cast<DspxContentEntityExtra *>(extra())->timeline;
     }
     DspxTrackListEntity *DspxContentEntity::tracks() const {
-        Q_D(const DspxContentEntity);
-        return d->tracks;
+        return static_cast<DspxContentEntityExtra *>(extra())->tracks;
     }
     //===========================================================================
 
     //===========================================================================
     // FileMeta
-    DspxFileMetaEntity::DspxFileMetaEntity(QObject *parent) : AceTreeEntityMapping(parent) {
-        auto d = AceTreeEntityMappingPrivate::get(this);
-        d->name = "metadata";
+    class DspxFileMetaEntityExtra : public AceTreeEntityMappingExtra {
+    public:
+        void setup(AceTreeEntity *entity) override {
+            auto q = static_cast<DspxFileMetaEntity *>(entity);
 
-        // Notifiers
-        d->propertyNotifiers.insert("author", [](ACE_A) {
-            ACE_Q(DspxFileMetaEntity);
-            emit q->authorChanged(newValue.toString());
-        });
-        d->propertyNotifiers.insert("name", [](ACE_A) {
-            ACE_Q(DspxFileMetaEntity);
-            emit q->projectNameChanged(newValue.toString());
-        });
+            addPropertyNotifier("author", [q](ACE_A) {
+                Q_UNUSED(oldValue)
+                emit q->authorChanged(value.toString());
+            });
+            addPropertyNotifier("name", [q](ACE_A) {
+                Q_UNUSED(oldValue)
+                emit q->projectNameChanged(value.toString());
+            });
+        }
+    };
+    DspxFileMetaEntity::DspxFileMetaEntity(QObject *parent)
+        : AceTreeEntityMapping(new DspxFileMetaEntityExtra(), parent) {
     }
     DspxFileMetaEntity::~DspxFileMetaEntity() {
     }
@@ -276,24 +274,24 @@ namespace Core {
 
     //===========================================================================
     // Master
-    class DspxMasterEntityPrivate : public AceTreeEntityMappingPrivate {
+    class DspxMasterEntityExtra : public AceTreeEntityMappingExtra {
     public:
-        DspxMasterEntityPrivate() {
-            name = "master";
-            control = nullptr;
-            childPostAssignRefs.insert("control", &control);
+        DspxMasterEntityExtra() : control(nullptr) {
         }
-        ~DspxMasterEntityPrivate() = default;
+
+        void setup(AceTreeEntity *entity) override {
+            Q_UNUSED(entity)
+            addChildPointer("control", control);
+        }
 
         DspxBusControlEntity *control;
     };
-    DspxMasterEntity::DspxMasterEntity(QObject *parent) : AceTreeEntityMapping(*new DspxMasterEntityPrivate(), parent) {
+    DspxMasterEntity::DspxMasterEntity(QObject *parent) : AceTreeEntityMapping(new DspxMasterEntityExtra(), parent) {
     }
     DspxMasterEntity::~DspxMasterEntity() {
     }
     DspxBusControlEntity *DspxMasterEntity::control() const {
-        Q_D(const DspxMasterEntity);
-        return d->control;
+        return static_cast<DspxMasterEntityExtra *>(extra())->control;
     }
     //===========================================================================
 

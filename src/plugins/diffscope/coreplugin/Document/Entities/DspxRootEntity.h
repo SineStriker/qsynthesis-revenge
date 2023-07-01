@@ -13,11 +13,8 @@ namespace Core {
 
     //===========================================================================
     // Content
-    class DspxContentEntityPrivate;
-
     class CORE_EXPORT DspxContentEntity : public AceTreeEntityMapping {
         Q_OBJECT
-        Q_DECLARE_PRIVATE(DspxContentEntity)
     public:
         explicit DspxContentEntity(QObject *parent = nullptr);
         ~DspxContentEntity();
@@ -53,11 +50,8 @@ namespace Core {
 
     //===========================================================================
     // Master
-    class DspxMasterEntityPrivate;
-
     class CORE_EXPORT DspxMasterEntity : public AceTreeEntityMapping {
         Q_OBJECT
-        Q_DECLARE_PRIVATE(DspxMasterEntity)
     public:
         explicit DspxMasterEntity(QObject *parent = nullptr);
         ~DspxMasterEntity();

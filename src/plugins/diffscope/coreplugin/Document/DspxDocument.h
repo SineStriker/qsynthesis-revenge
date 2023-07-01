@@ -1,8 +1,7 @@
 #ifndef DSPXDOCUMENT_H
 #define DSPXDOCUMENT_H
 
-#include <ItemModel/AceTreeTransaction.h>
-
+#include <AceTreeModel.h>
 #include <CoreApi/IDocument.h>
 
 #include "coreplugin/Document/Entities/DspxRootEntity.h"
@@ -18,7 +17,7 @@ namespace Core {
         explicit DspxDocument(QObject *parent = nullptr);
         ~DspxDocument();
 
-        AceTreeTransaction *TX() const;
+        AceTreeModel *model() const;
         DspxContentEntity *project() const;
 
     public:
@@ -35,6 +34,7 @@ namespace Core {
         // VST related
         bool isVSTMode() const;
         void setVSTMode(bool on);
+        void saveVST(const std::function<bool(const QByteArray &)> &callback);
 
         bool isOpened() const;
 

@@ -1,5 +1,5 @@
-#ifndef CHORUSKIT_DSPXTRACKENTITY_H
-#define CHORUSKIT_DSPXTRACKENTITY_H
+#ifndef DSPXTRACKENTITY_H
+#define DSPXTRACKENTITY_H
 
 #include <QJsonObject>
 
@@ -51,19 +51,17 @@ namespace Core {
 
     //===========================================================================
     // Clip
-    class DspxClipEntityPrivate;
+    class DspxClipEntityExtra;
 
     class CORE_EXPORT DspxClipEntity : public AceTreeEntityMapping {
         Q_OBJECT
-        Q_DECLARE_PRIVATE(DspxClipEntity)
         Q_PROPERTY(QString clipName READ clipName WRITE setClipName NOTIFY clipNameChanged)
     public:
         enum Type {
             Singing,
             Audio,
         };
-
-        explicit DspxClipEntity(Type type, QObject *parent = nullptr);
+        
         ~DspxClipEntity();
 
     public:
@@ -75,21 +73,18 @@ namespace Core {
         DspxClipTimeEntity *time() const;
         DspxBusControlEntity *control() const;
 
+    protected:
+        explicit DspxClipEntity(DspxClipEntityExtra *extra, QObject *parent = nullptr);
+
     Q_SIGNALS:
         void clipNameChanged(const QString &clipName);
-
-    protected:
-        DspxClipEntity(DspxClipEntityPrivate &d, QObject *parent = nullptr);
     };
     //===========================================================================
 
     //===========================================================================
     // AudioClip
-    class DspxAudioClipEntityPrivate;
-
     class CORE_EXPORT DspxAudioClipEntity : public DspxClipEntity {
         Q_OBJECT
-        Q_DECLARE_PRIVATE(DspxAudioClipEntity)
         Q_PROPERTY(QString path READ path WRITE setPath NOTIFY pathChanged)
     public:
         explicit DspxAudioClipEntity(QObject *parent = nullptr);
@@ -106,11 +101,8 @@ namespace Core {
 
     //===========================================================================
     // SingingClip
-    class DspxSingingClipEntityPrivate;
-
     class CORE_EXPORT DspxSingingClipEntity : public DspxClipEntity {
         Q_OBJECT
-        Q_DECLARE_PRIVATE(DspxSingingClipEntity)
     public:
         explicit DspxSingingClipEntity(QObject *parent = nullptr);
         ~DspxSingingClipEntity();
@@ -140,11 +132,8 @@ namespace Core {
 
     //===========================================================================
     // Track
-    class DspxTrackEntityPrivate;
-
     class CORE_EXPORT DspxTrackEntity : public AceTreeEntityMapping {
         Q_OBJECT
-        Q_DECLARE_PRIVATE(DspxTrackEntity)
         Q_PROPERTY(QString trackName READ trackName WRITE setTrackName NOTIFY trackNameChanged)
         Q_PROPERTY(QJsonObject colorConfiguration READ colorConfiguration WRITE setColorConfiguration NOTIFY
                        colorConfigurationChanged)
@@ -184,4 +173,4 @@ namespace Core {
 
 }
 
-#endif // CHORUSKIT_DSPXTRACKENTITY_H
+#endif // DSPXTRACKENTITY_H

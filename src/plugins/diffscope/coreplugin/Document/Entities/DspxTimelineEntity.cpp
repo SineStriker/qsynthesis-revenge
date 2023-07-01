@@ -1,67 +1,67 @@
 #include "DspxTimelineEntity.h"
-#include "AceTreeStandardEntity_p.h"
 #include "DspxEntityUtils_p.h"
+
+#include "AceTreeMacros.h"
 
 namespace Core {
 
     //===========================================================================
     // Timeline
-    class DspxTimelineEntityPrivate : public AceTreeEntityMappingPrivate {
-        Q_DECLARE_PUBLIC(DspxTimelineEntity)
+    class DspxTimelineEntityExtra : public AceTreeEntityMappingExtra {
     public:
-        DspxTimelineEntityPrivate() {
-            name = "timeline";
-            timeSignatures = nullptr;
-            tempos = nullptr;
-            labels = nullptr;
-            childPostAssignRefs.insert("timeSignatures", &timeSignatures);
-            childPostAssignRefs.insert("tempos", &tempos);
-            childPostAssignRefs.insert("labels", &labels);
+        DspxTimelineEntityExtra() : timeSignatures(nullptr), tempos(nullptr), labels(nullptr) {
         }
-        ~DspxTimelineEntityPrivate() = default;
-
+        void setup(AceTreeEntity *entity) override {
+            Q_UNUSED(entity);
+            addChildPointer("timeSignatures", timeSignatures);
+            addChildPointer("tempos", tempos);
+            addChildPointer("labels", labels);
+        }
         DspxTimeSignatureListEntity *timeSignatures;
         DspxTempoListEntity *tempos;
         DspxTimelineLabelListEntity *labels;
     };
     DspxTimelineEntity::DspxTimelineEntity(QObject *parent)
-        : AceTreeEntityMapping(*new DspxTimelineEntityPrivate(), parent) {
+        : AceTreeEntityMapping(new DspxTimelineEntityExtra(), parent) {
     }
     DspxTimelineEntity::~DspxTimelineEntity() {
     }
     DspxTimeSignatureListEntity *DspxTimelineEntity::timeSignatures() const {
-        Q_D(const DspxTimelineEntity);
-        return d->timeSignatures;
+        return static_cast<DspxTimelineEntityExtra *>(extra())->timeSignatures;
     }
     DspxTempoListEntity *DspxTimelineEntity::tempos() const {
-        Q_D(const DspxTimelineEntity);
-        return d->tempos;
+        return static_cast<DspxTimelineEntityExtra *>(extra())->tempos;
     }
     DspxTimelineLabelListEntity *DspxTimelineEntity::labels() const {
-        Q_D(const DspxTimelineEntity);
-        return d->labels;
+        return static_cast<DspxTimelineEntityExtra *>(extra())->labels;
     }
     //===========================================================================
 
     //===========================================================================
     // TimeSignature
-    DspxTimeSignatureEntity::DspxTimeSignatureEntity(QObject *parent) : AceTreeEntityMapping(parent) {
-        auto d = AceTreeEntityMappingPrivate::get(this);
-        d->name = "timeSignature";
+    class DspxTimeSignatureEntityExtra : public AceTreeEntityMappingExtra {
+    public:
+        DspxTimeSignatureEntityExtra() {
+        }
+        void setup(AceTreeEntity *entity) override {
+            auto q = static_cast<DspxTimeSignatureEntity *>(entity);
 
-        // Notifiers
-        d->propertyNotifiers.insert("pos", [](ACE_A) {
-            ACE_Q(DspxTimeSignatureEntity);
-            emit q->positionChanged(newValue.toInt());
-        });
-        d->propertyNotifiers.insert("num", [](ACE_A) {
-            ACE_Q(DspxTimeSignatureEntity);
-            emit q->numeratorChanged(newValue.toInt());
-        });
-        d->propertyNotifiers.insert("den", [](ACE_A) {
-            ACE_Q(DspxTimeSignatureEntity);
-            emit q->denominatorChanged(newValue.toInt());
-        });
+            addPropertyNotifier("pos", [q](ACE_A) {
+                Q_UNUSED(oldValue)
+                emit q->positionChanged(value.toInt());
+            });
+            addPropertyNotifier("num", [q](ACE_A) {
+                Q_UNUSED(oldValue)
+                emit q->numeratorChanged(value.toInt());
+            });
+            addPropertyNotifier("den", [q](ACE_A) {
+                Q_UNUSED(oldValue)
+                emit q->denominatorChanged(value.toInt());
+            });
+        }
+    };
+    DspxTimeSignatureEntity::DspxTimeSignatureEntity(QObject *parent)
+        : AceTreeEntityMapping(new DspxTimeSignatureEntityExtra(), parent) {
     }
     DspxTimeSignatureEntity::~DspxTimeSignatureEntity() {
     }
@@ -87,32 +87,35 @@ namespace Core {
 
     //===========================================================================
     // TimeSignature List
-    DspxTimeSignatureListEntity::DspxTimeSignatureListEntity(QObject *parent)
-        : AceTreeEntityRecordTable(parent), AceTreeEntityRecordTableHelper(this) {
-        AceTreeStandardEntityPrivate::setName(this, "timeSignatures");
+    DspxTimeSignatureListEntity::DspxTimeSignatureListEntity(QObject *parent) : AceTreeEntityRecordTable(parent) {
     }
     DspxTimeSignatureListEntity::~DspxTimeSignatureListEntity() {
     }
     void DspxTimeSignatureListEntity::sortRecords(QVector<AceTreeEntity *> &records) const {
-        std::sort(records.begin(), records.end(), compareElementPos<int>);
+        std::sort(records.begin(), records.end(), compareElementPos<DspxTimeSignatureEntity>);
     }
     //===========================================================================
 
     //===========================================================================
     // Tempo
-    DspxTempoEntity::DspxTempoEntity(QObject *parent) : AceTreeEntityMapping(parent) {
-        auto d = AceTreeEntityMappingPrivate::get(this);
-        d->name = "tempo";
+    class DspxTempoEntityExtra : public AceTreeEntityMappingExtra {
+    public:
+        DspxTempoEntityExtra() {
+        }
+        void setup(AceTreeEntity *entity) override {
+            auto q = static_cast<DspxTempoEntity *>(entity);
 
-        // Notifiers
-        d->propertyNotifiers.insert("pos", [](ACE_A) {
-            ACE_Q(DspxTempoEntity);
-            emit q->positionChanged(newValue.toInt());
-        });
-        d->propertyNotifiers.insert("value", [](ACE_A) {
-            ACE_Q(DspxTempoEntity);
-            emit q->valueChanged(newValue.toDouble());
-        });
+            addPropertyNotifier("pos", [q](ACE_A) {
+                Q_UNUSED(oldValue)
+                emit q->positionChanged(value.toInt());
+            });
+            addPropertyNotifier("value", [q](ACE_A) {
+                Q_UNUSED(oldValue)
+                emit q->valueChanged(value.toDouble());
+            });
+        }
+    };
+    DspxTempoEntity::DspxTempoEntity(QObject *parent) : AceTreeEntityMapping(new DspxTempoEntityExtra(), parent) {
     }
     DspxTempoEntity::~DspxTempoEntity() {
     }
@@ -132,32 +135,36 @@ namespace Core {
 
     //===========================================================================
     // Tempo List
-    DspxTempoListEntity::DspxTempoListEntity(QObject *parent)
-        : AceTreeEntityRecordTable(parent), AceTreeEntityRecordTableHelper(this) {
-        AceTreeStandardEntityPrivate::setName(this, "tempos");
+    DspxTempoListEntity::DspxTempoListEntity(QObject *parent) : AceTreeEntityRecordTable(parent) {
     }
     DspxTempoListEntity::~DspxTempoListEntity() {
     }
     void DspxTempoListEntity::sortRecords(QVector<AceTreeEntity *> &records) const {
-        std::sort(records.begin(), records.end(), compareElementPos<int>);
+        std::sort(records.begin(), records.end(), compareElementPos<DspxTempoEntity>);
     }
     //===========================================================================
 
     //===========================================================================
     // TimelineLabel
-    DspxTimelineLabelEntity::DspxTimelineLabelEntity(QObject *parent) : AceTreeEntityMapping(parent) {
-        auto d = AceTreeEntityMappingPrivate::get(this);
-        d->name = "label";
+    class DspxTimelineLabelEntityExtra : public AceTreeEntityMappingExtra {
+    public:
+        DspxTimelineLabelEntityExtra() {
+        }
+        void setup(AceTreeEntity *entity) override {
+            auto q = static_cast<DspxTimelineLabelEntity *>(entity);
 
-        // Notifiers
-        d->propertyNotifiers.insert("pos", [](ACE_A) {
-            ACE_Q(DspxTimelineLabelEntity);
-            emit q->positionChanged(newValue.toInt());
-        });
-        d->propertyNotifiers.insert("text", [](ACE_A) {
-            ACE_Q(DspxTimelineLabelEntity);
-            emit q->textChanged(newValue.toString());
-        });
+            addPropertyNotifier("pos", [q](ACE_A) {
+                Q_UNUSED(oldValue)
+                emit q->positionChanged(value.toInt());
+            });
+            addPropertyNotifier("text", [q](ACE_A) {
+                Q_UNUSED(oldValue)
+                emit q->textChanged(value.toString());
+            });
+        }
+    };
+    DspxTimelineLabelEntity::DspxTimelineLabelEntity(QObject *parent)
+        : AceTreeEntityMapping(new DspxTimelineLabelEntityExtra(), parent) {
     }
     DspxTimelineLabelEntity::~DspxTimelineLabelEntity() {
     }
@@ -177,14 +184,12 @@ namespace Core {
 
     //===========================================================================
     // TimelineLabel List
-    DspxTimelineLabelListEntity::DspxTimelineLabelListEntity(QObject *parent)
-        : AceTreeEntityRecordTable(parent), AceTreeEntityRecordTableHelper(this) {
-        AceTreeStandardEntityPrivate::setName(this, "labels");
+    DspxTimelineLabelListEntity::DspxTimelineLabelListEntity(QObject *parent) : AceTreeEntityRecordTable(parent) {
     }
     DspxTimelineLabelListEntity::~DspxTimelineLabelListEntity() {
     }
     void DspxTimelineLabelListEntity::sortRecords(QVector<AceTreeEntity *> &records) const {
-        std::sort(records.begin(), records.end(), compareElementPos<int>);
+        std::sort(records.begin(), records.end(), compareElementPos<DspxTimelineLabelEntity>);
     }
     //===========================================================================
 

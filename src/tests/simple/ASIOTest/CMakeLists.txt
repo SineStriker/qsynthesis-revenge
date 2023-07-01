@@ -1,7 +1,7 @@
 project(tst_ASIOTest VERSION 0.0.0.0)
 
 if(NOT ASIOSDK_DIR)
-    message("ASIOSDK_DIR not specified. ASIOTest will be skipped.")
+    message(STATUS "ASIOSDK_DIR not specified. ASIOTest will be skipped.")
 else()
     ck_add_files(_src CURRENT PATTERNS *.h *.cpp)
 

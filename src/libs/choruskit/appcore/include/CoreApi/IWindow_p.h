@@ -16,6 +16,7 @@
 
 #include <QMChronMap.h>
 #include <QMChronSet.h>
+#include <QMShortcutContext.h>
 
 #include "IWindow.h"
 #include "IWindowAddOn.h"
@@ -52,7 +53,7 @@ namespace Core {
         bool m_closed;
 
         WindowCloseFilter *closeFilter;
-        ShortcutContext *shortcutContext;
+        QMShortcutContext *shortcutCtx;
 
         QMChronMap<QString, ActionItem *> actionItemMap;
         std::list<IWindowAddOn *> addOns;

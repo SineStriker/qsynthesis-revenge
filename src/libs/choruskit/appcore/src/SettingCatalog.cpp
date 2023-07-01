@@ -5,7 +5,7 @@
 
 namespace Core {
 
-#define myWarning(func) (qWarning().nospace() << "Core::SettingCatalog::" << (func) << "(): ").maybeSpace()
+#define myWarning(func) (qWarning().nospace() << "Core::SettingCatalog::" << (func) << "():").space()
 
     SettingCatalogPrivate::SettingCatalogPrivate() {
     }

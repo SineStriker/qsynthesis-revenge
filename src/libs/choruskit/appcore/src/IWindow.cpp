@@ -16,7 +16,7 @@ static const int DELAYED_INITIALIZE_INTERVAL = 5; // ms
 
 namespace Core {
 
-#define myWarning(func) (qWarning().nospace() << "Core::IWindow::" << (func) << "(): ").maybeSpace()
+#define myWarning(func) (qWarning().nospace() << "Core::IWindow::" << (func) << "():").space()
 
     class QWidgetHacker : public QWidget {
     public:
@@ -47,10 +47,11 @@ namespace Core {
 
         q->setWindow(w);
 
-        shortcutContext = new ShortcutContext(this);
+        shortcutCtx = new QMShortcutContext(this);
 
         closeFilter = new WindowCloseFilter(this, q->window());
-        connect(closeFilter, &WindowCloseFilter::windowClosed, this, &IWindowPrivate::_q_windowClosed);
+        connect(closeFilter, &WindowCloseFilter::windowClosed, this,
+                &IWindowPrivate::_q_windowClosed);
 
         // Setup window
         q->setupWindow();
@@ -63,7 +64,8 @@ namespace Core {
 
             auto addOn = fac->create(q);
             if (!addOn) {
-                myWarning(__func__) << "window add-on factory creates null instance:" << typeid(*fac).name();
+                myWarning(__func__)
+                    << "window add-on factory creates null instance:" << typeid(*fac).name();
                 continue;
             }
 
@@ -92,7 +94,8 @@ namespace Core {
         delayedInitializeTimer = new QTimer();
         delayedInitializeTimer->setInterval(DELAYED_INITIALIZE_INTERVAL);
         delayedInitializeTimer->setSingleShot(true);
-        connect(delayedInitializeTimer, &QTimer::timeout, this, &IWindowPrivate::nextDelayedInitialize);
+        connect(delayedInitializeTimer, &QTimer::timeout, this,
+                &IWindowPrivate::nextDelayedInitialize);
         delayedInitializeTimer->start();
 
         // Add-ons finished
@@ -108,8 +111,8 @@ namespace Core {
         if (!w->isHidden())
             w->hide();
 
-        delete shortcutContext;
-        shortcutContext = nullptr;
+        delete shortcutCtx;
+        shortcutCtx = nullptr;
     }
 
     void IWindowPrivate::deleteAllAddOns() {
@@ -175,7 +178,8 @@ namespace Core {
         delete q;
     }
 
-    IWindowFactory::IWindowFactory(const QString &id, AvailableCreator creator) : d_ptr(new IWindowFactoryPrivate()) {
+    IWindowFactory::IWindowFactory(const QString &id, AvailableCreator creator)
+        : d_ptr(new IWindowFactoryPrivate()) {
         d_ptr->id = id;
         d_ptr->creator = creator;
     }
@@ -302,24 +306,19 @@ namespace Core {
         return d->actionItemMap.values();
     }
 
-    void IWindow::addShortcutContext(QWidget *w) {
+    void IWindow::addShortcutContext(QWidget *w, ShortcutContextPriority priority) {
         Q_D(IWindow);
-        d->shortcutContext->addContext(w);
+        d->shortcutCtx->addWidget(w, priority);
     }
 
     void IWindow::removeShortcutContext(QWidget *w) {
         Q_D(IWindow);
-        d->shortcutContext->removeContext(w);
+        d->shortcutCtx->removeWidget(w);
     }
 
     QList<QWidget *> IWindow::shortcutContexts() const {
         Q_D(const IWindow);
-        return d->shortcutContext->contexts();
-    }
-
-    bool IWindow::hasShortcut(const QKeySequence &key) const {
-        Q_D(const IWindow);
-        return d->shortcutContext->hasShortcut(key);
+        return d->shortcutCtx->widgets();
     }
 
     bool IWindow::hasDragFileHandler(const QString &suffix) {
@@ -330,7 +329,8 @@ namespace Core {
         return d->dragFileHandlerMap.contains(suffix.toLower());
     }
 
-    void IWindow::setDragFileHandler(const QString &suffix, QObject *obj, const char *member, int maxCount) {
+    void IWindow::setDragFileHandler(const QString &suffix, QObject *obj, const char *member,
+                                     int maxCount) {
         Q_D(IWindow);
 
         if (suffix.isEmpty())
@@ -351,7 +351,8 @@ namespace Core {
         d->dragFileHandlerMap.remove(suffix.toLower());
     }
 
-    IWindow::IWindow(const QString &id, QObject *parent) : IWindow(*new IWindowPrivate(), id, parent) {
+    IWindow::IWindow(const QString &id, QObject *parent)
+        : IWindow(*new IWindowPrivate(), id, parent) {
     }
 
     IWindow::~IWindow() {
@@ -386,7 +387,8 @@ namespace Core {
         // Do nothing
     }
 
-    IWindow::IWindow(IWindowPrivate &d, const QString &id, QObject *parent) : ObjectPool(parent), d_ptr(&d) {
+    IWindow::IWindow(IWindowPrivate &d, const QString &id, QObject *parent)
+        : ObjectPool(parent), d_ptr(&d) {
         d.q_ptr = this;
         d.id = id;
 
@@ -398,4 +400,4 @@ namespace Core {
         return d->m_closed;
     }
 
-}
+} // namespace Core

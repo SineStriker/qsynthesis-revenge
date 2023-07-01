@@ -16,11 +16,8 @@ namespace Core {
 
     //===========================================================================
     // Phoneme
-    class DspxPhonemeEntityPrivate;
-
     class CORE_EXPORT DspxPhonemeEntity : public AceTreeEntityMapping {
         Q_OBJECT
-        Q_DECLARE_PRIVATE(DspxPhonemeEntity)
         Q_PROPERTY(DspxPhonemeEntity::Type phonemeType READ phonemeType WRITE setPhonemeType NOTIFY phonemeTypeChanged)
         Q_PROPERTY(QString token READ token WRITE setToken NOTIFY tokenChanged)
         Q_PROPERTY(int start READ start WRITE setStart NOTIFY startChanged)
@@ -49,9 +46,6 @@ namespace Core {
         void phonemeTypeChanged(Type type);
         void tokenChanged(const QString &token);
         void startChanged(int start);
-
-    protected:
-        DspxPhonemeEntity(DspxPhonemeEntityPrivate &d, QObject *parent = nullptr);
     };
     //===========================================================================
 
@@ -71,11 +65,8 @@ namespace Core {
 
     //===========================================================================
     // PhonemeInfo
-    class DspxPhonemeInfoEntityPrivate;
-
     class CORE_EXPORT DspxPhonemeInfoEntity : public AceTreeEntityMapping {
         Q_OBJECT
-        Q_DECLARE_PRIVATE(DspxPhonemeInfoEntity)
         Q_PROPERTY(QJsonArray original READ original WRITE setOriginal NOTIFY originalChanged)
     public:
         explicit DspxPhonemeInfoEntity(QObject *parent = nullptr);
@@ -89,19 +80,13 @@ namespace Core {
 
     Q_SIGNALS:
         void originalChanged(const QJsonArray &org);
-
-    protected:
-        DspxPhonemeInfoEntity(DspxPhonemeInfoEntityPrivate &d, QObject *parent = nullptr);
     };
     //===========================================================================
 
     //===========================================================================
     // VibratoInfo
-    class DspxVibratoInfoEntityPrivate;
-
     class CORE_EXPORT DspxVibratoInfoEntity : public AceTreeEntityMapping {
         Q_OBJECT
-        Q_DECLARE_PRIVATE(DspxVibratoInfoEntity)
         Q_PROPERTY(double start READ start WRITE setStart NOTIFY startChanged)
         Q_PROPERTY(double end READ end WRITE setEnd NOTIFY endChanged)
         Q_PROPERTY(double frequency READ frequency WRITE setFrequency NOTIFY frequencyChanged)
@@ -145,11 +130,8 @@ namespace Core {
 
     //===========================================================================
     // Note
-    class DspxNoteEntityPrivate;
-
     class CORE_EXPORT DspxNoteEntity : public AceTreeEntityMapping {
         Q_OBJECT
-        Q_DECLARE_PRIVATE(DspxNoteEntity)
         Q_PROPERTY(int position READ position WRITE setPosition NOTIFY positionChanged)
         Q_PROPERTY(int length READ length WRITE setLength NOTIFY lengthChanged)
         Q_PROPERTY(int keyNumber READ keyNumber WRITE setKeyNumber NOTIFY keyNumberChanged)
@@ -199,6 +181,5 @@ namespace Core {
     };
     //===========================================================================
 }
-
 
 #endif // CHORUSKIT_DSPXNOTEENTITY_H

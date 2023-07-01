@@ -11,12 +11,12 @@ class QMDisplayStringData {
 public:
     QMDisplayString *q;
     QMPrivate::BaseString *str;
-    QVariantHash *properties;
+    QVariantHash properties;
 
     explicit QMDisplayStringData(const QString &s, QMDisplayString *q);
     explicit QMDisplayStringData(QMDisplayString::GetText func, QMDisplayString *q);
     explicit QMDisplayStringData(QMDisplayString::GetTextEx func, void *userdata, QMDisplayString *q);
-    explicit QMDisplayStringData(QMPrivate::BaseString *str, QVariantHash *properties, QMDisplayString *q);
+    explicit QMDisplayStringData(QMPrivate::BaseString *str, const QVariantHash &properties, QMDisplayString *q);
     ~QMDisplayStringData();
 };
 
@@ -84,28 +84,25 @@ namespace QMPrivate {
 }
 
 QMDisplayStringData::QMDisplayStringData(const QString &s, QMDisplayString *q)
-    : q(q), str(new QMPrivate::PlainString(s, this)), properties(nullptr) {
+    : q(q), str(new QMPrivate::PlainString(s, this)) {
 }
 
 QMDisplayStringData::QMDisplayStringData(QMDisplayString::GetText func, QMDisplayString *q)
     : q(q), str(func ? decltype(str)(new QMPrivate::CallbackString(std::move(func), this))
-                     : decltype(str)(new QMPrivate::PlainString({}, this))),
-      properties(nullptr) {
+                     : decltype(str)(new QMPrivate::PlainString({}, this))) {
 }
 
 QMDisplayStringData::QMDisplayStringData(QMDisplayString::GetTextEx func, void *userdata, QMDisplayString *q)
     : q(q), str(func ? decltype(str)(new QMPrivate::CallbackExString(std::move(func), userdata, this))
-                     : decltype(str)(new QMPrivate::PlainString({}, this))),
-      properties(nullptr) {
+                     : decltype(str)(new QMPrivate::PlainString({}, this))) {
 }
 
-QMDisplayStringData::QMDisplayStringData(QMPrivate::BaseString *str, QVariantHash *properties, QMDisplayString *q)
-    : q(q), str(str->clone(this)), properties(properties ? new QVariantHash(*properties) : nullptr) {
+QMDisplayStringData::QMDisplayStringData(QMPrivate::BaseString *str, const QVariantHash &properties, QMDisplayString *q)
+    : q(q), str(str->clone(this)), properties(properties) {
 }
 
 QMDisplayStringData::~QMDisplayStringData() {
     delete str;
-    delete properties;
 }
 
 QMDisplayString::QMDisplayString(const QString &s) : d(new QMDisplayStringData(s, this)) {
@@ -205,15 +202,11 @@ void QMDisplayString::setPlainString(const QString &s) {
 }
 
 QVariant QMDisplayString::property(const QString &key) const {
-    return d->properties ? d->properties->value(key) : QVariant();
+    return d->properties.value(key);
 }
 
 void QMDisplayString::setProperty(const QString &key, const QVariant &value) {
-    if (!d->properties) {
-        d->properties = new QVariantHash();
-    }
-
-    auto &properties = *d->properties;
+    auto &properties = d->properties;
     auto it = properties.find(key);
     if (it == properties.end()) {
         if (!value.isValid())
@@ -228,5 +221,5 @@ void QMDisplayString::setProperty(const QString &key, const QVariant &value) {
 }
 
 QVariantHash QMDisplayString::propertyMap() const {
-    return d->properties ? *d->properties : QVariantHash();
+    return d->properties;
 }

@@ -42,6 +42,8 @@ namespace Core {
 
         PianoRoll *m_pianoRoll;
 
+        bool eventFilter(QObject *obj, QEvent *event) override;
+
     private:
         void _q_documentChanged();
         void _q_documentRaiseRequested();

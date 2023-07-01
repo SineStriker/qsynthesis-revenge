@@ -87,6 +87,7 @@ vcpkg_tasks: list[library_task] = [
     library_task("qnrbf", True),
     library_task("qastool", True),
     library_task("breakpad", True),
+    library_task("acetree", True)
 ]
 
 

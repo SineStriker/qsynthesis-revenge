@@ -23,7 +23,7 @@
 
 namespace Core {
 
-#define myWarning(func) (qWarning().nospace() << "Core::DocumentSystem::" << (func) << "(): ").maybeSpace()
+#define myWarning(func) (qWarning().nospace() << "Core::DocumentSystem::" << "():").space()
 
     static const char settingCategoryC[] = "DocumentSystem";
 

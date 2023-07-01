@@ -1,32 +1,39 @@
 #include "DspxTrackEntity.h"
-#include "AceTreeStandardEntity_p.h"
 #include "DspxEntityUtils_p.h"
+
+#include "AceTreeMacros.h"
 
 namespace Core {
 
     //===========================================================================
     // ClipTime
-    DspxClipTimeEntity::DspxClipTimeEntity(QObject *parent) : AceTreeEntityMapping(parent) {
-        auto d = AceTreeEntityMappingPrivate::get(this);
-        d->name = "time";
+    class DspxClipTimeEntityExtra : public AceTreeEntityMappingExtra {
+    public:
+        DspxClipTimeEntityExtra() {
+        }
+        void setup(AceTreeEntity *entity) override {
+            auto q = static_cast<DspxClipTimeEntity *>(entity);
 
-        // Notifiers
-        d->propertyNotifiers.insert("start", [](ACE_A) {
-            ACE_Q(DspxClipTimeEntity);
-            emit q->startChanged(newValue.toInt());
-        });
-        d->propertyNotifiers.insert("length", [](ACE_A) {
-            ACE_Q(DspxClipTimeEntity);
-            emit q->lengthChanged(newValue.toInt());
-        });
-        d->propertyNotifiers.insert("clipStart", [](ACE_A) {
-            ACE_Q(DspxClipTimeEntity);
-            emit q->clipStartChanged(newValue.toInt());
-        });
-        d->propertyNotifiers.insert("clipLen", [](ACE_A) {
-            ACE_Q(DspxClipTimeEntity);
-            emit q->clipLengthChanged(newValue.toInt());
-        });
+            addPropertyNotifier("start", [q](ACE_A) {
+                Q_UNUSED(oldValue)
+                emit q->startChanged(value.toInt());
+            });
+            addPropertyNotifier("length", [q](ACE_A) {
+                Q_UNUSED(oldValue)
+                emit q->lengthChanged(value.toInt());
+            });
+            addPropertyNotifier("clipStart", [q](ACE_A) {
+                Q_UNUSED(oldValue)
+                emit q->clipStartChanged(value.toInt());
+            });
+            addPropertyNotifier("clipLen", [q](ACE_A) {
+                Q_UNUSED(oldValue)
+                emit q->clipLengthChanged(value.toInt());
+            });
+        }
+    };
+    DspxClipTimeEntity::DspxClipTimeEntity(QObject *parent)
+        : AceTreeEntityMapping(new DspxClipTimeEntityExtra(), parent) {
     }
     DspxClipTimeEntity::~DspxClipTimeEntity() {
     }
@@ -58,37 +65,31 @@ namespace Core {
 
     //===========================================================================
     // Clip
-    class DspxClipEntityPrivate : public AceTreeEntityMappingPrivate {
-        Q_DECLARE_PUBLIC(DspxClipEntity)
+    class DspxClipEntityExtra : public AceTreeEntityMappingExtra {
     public:
-        DspxClipEntityPrivate(DspxClipEntity::Type type) : type(type) {
-            name = "clip";
-            time = nullptr;
-            control = nullptr;
-            childPostAssignRefs.insert("time", &time);
-            childPostAssignRefs.insert("control", &control);
+        DspxClipEntityExtra(DspxClipEntity::Type type) : type(type), time(nullptr), control(nullptr) {
+        }
+        void setup(AceTreeEntity *entity) override {
+            auto q = static_cast<DspxClipEntity *>(entity);
 
-            // Notifiers
-            propertyNotifiers.insert("name", [](ACE_A) {
-                ACE_Q(DspxClipEntity);
-                emit q->clipNameChanged(newValue.toString());
+            addChildPointer("time", time);
+            addChildPointer("control", control);
+
+            addPropertyNotifier("name", [q](ACE_A) {
+                Q_UNUSED(oldValue)
+                emit q->clipNameChanged(value.toString());
             });
         }
-        ~DspxClipEntityPrivate() = default;
-
         DspxClipEntity::Type type;
 
         DspxClipTimeEntity *time;
         DspxBusControlEntity *control;
     };
-    DspxClipEntity::DspxClipEntity(DspxClipEntity::Type type, QObject *parent)
-        : DspxClipEntity(*new DspxClipEntityPrivate(type), parent) {
-    }
+
     DspxClipEntity::~DspxClipEntity() {
     }
     DspxClipEntity::Type DspxClipEntity::clipType() const {
-        Q_D(const DspxClipEntity);
-        return d->type;
+        return static_cast<DspxClipEntityExtra *>(extra())->type;
     }
     QString DspxClipEntity::clipName() const {
         return attribute("name").toString();
@@ -97,35 +98,33 @@ namespace Core {
         setAttribute("name", clipName);
     }
     DspxClipTimeEntity *DspxClipEntity::time() const {
-        Q_D(const DspxClipEntity);
-        return d->time;
+        return static_cast<DspxClipEntityExtra *>(extra())->time;
     }
     DspxBusControlEntity *DspxClipEntity::control() const {
-        Q_D(const DspxClipEntity);
-        return d->control;
+        return static_cast<DspxClipEntityExtra *>(extra())->control;
     }
-    DspxClipEntity::DspxClipEntity(DspxClipEntityPrivate &d, QObject *parent) : AceTreeEntityMapping(d, parent) {
+    DspxClipEntity::DspxClipEntity(DspxClipEntityExtra *extra, QObject *parent) : AceTreeEntityMapping(extra, parent) {
     }
     //===========================================================================
 
     //===========================================================================
     // AudioClip
-    class DspxAudioClipEntityPrivate : public DspxClipEntityPrivate {
-        Q_DECLARE_PUBLIC(DspxAudioClipEntity)
+    class DspxAudioClipEntityExtra : public DspxClipEntityExtra {
     public:
-        DspxAudioClipEntityPrivate() : DspxClipEntityPrivate(DspxClipEntity::Audio) {
-            name = "audio";
+        DspxAudioClipEntityExtra() : DspxClipEntityExtra(DspxClipEntity::Audio) {
+        }
 
-            // Notifiers
-            propertyNotifiers.insert("path", [](ACE_A) {
-                ACE_Q(DspxAudioClipEntity);
-                emit q->pathChanged(newValue.toString());
+        void setup(AceTreeEntity *entity) override {
+            DspxClipEntityExtra::setup(entity);
+
+            auto q = static_cast<DspxAudioClipEntity *>(entity);
+            addPropertyNotifier("path", [q](ACE_A) {
+                Q_UNUSED(oldValue)
+                emit q->pathChanged(value.toString());
             });
         }
-        ~DspxAudioClipEntityPrivate() = default;
     };
-    DspxAudioClipEntity::DspxAudioClipEntity(QObject *parent)
-        : DspxClipEntity(*new DspxAudioClipEntityPrivate(), parent) {
+    DspxAudioClipEntity::DspxAudioClipEntity(QObject *parent) : DspxClipEntity(new DspxAudioClipEntityExtra(), parent) {
     }
     DspxAudioClipEntity::~DspxAudioClipEntity() {
     }
@@ -139,76 +138,75 @@ namespace Core {
 
     //===========================================================================
     // SingingClip
-    class DspxSingingClipEntityPrivate : public DspxClipEntityPrivate {
+    class DspxSingingClipEntityExtra : public DspxClipEntityExtra {
     public:
-        DspxSingingClipEntityPrivate() : DspxClipEntityPrivate(DspxClipEntity::Singing) {
-            name = "singing";
-            notes = nullptr;
-            params = nullptr;
-            childPostAssignRefs.insert("notes", &notes);
-            childPostAssignRefs.insert("params", &params);
+        DspxSingingClipEntityExtra() : DspxClipEntityExtra(DspxClipEntity::Singing), notes(nullptr), params(nullptr) {
         }
-        ~DspxSingingClipEntityPrivate() = default;
+
+        void setup(AceTreeEntity *entity) override {
+            DspxClipEntityExtra::setup(entity);
+
+            addChildPointer("notes", notes);
+            addChildPointer("params", params);
+        }
 
         DspxNoteListEntity *notes;
         DspxParamSetEntity *params;
     };
     DspxSingingClipEntity::DspxSingingClipEntity(QObject *parent)
-        : DspxClipEntity(*new DspxSingingClipEntityPrivate(), parent) {
+        : DspxClipEntity(new DspxSingingClipEntityExtra(), parent) {
     }
     DspxSingingClipEntity::~DspxSingingClipEntity() {
     }
     DspxParamSetEntity *DspxSingingClipEntity::params() const {
-        Q_D(const DspxSingingClipEntity);
-        return d->params;
+        return static_cast<DspxSingingClipEntityExtra *>(extra())->params;
     }
     DspxNoteListEntity *DspxSingingClipEntity::notes() const {
-        Q_D(const DspxSingingClipEntity);
-        return d->notes;
+        return static_cast<DspxSingingClipEntityExtra *>(extra())->notes;
     }
     //===========================================================================
 
     //===========================================================================
     // Clip List
-    DspxClipListEntity::DspxClipListEntity(QObject *parent)
-        : AceTreeEntityRecordTable(parent), AceTreeEntityRecordTableHelper(this) {
-        AceTreeStandardEntityPrivate::setName(this, "clips");
+    DspxClipListEntity::DspxClipListEntity(QObject *parent) : AceTreeEntityRecordTable(parent) {
     }
     DspxClipListEntity::~DspxClipListEntity() {
     }
     void DspxClipListEntity::sortRecords(QVector<AceTreeEntity *> &records) const {
-        std::sort(records.begin(), records.end(), compareElementStart<int>);
+        std::sort(records.begin(), records.end(), [](const AceTreeEntity *left, const AceTreeEntity *right) {
+            return reinterpret_cast<const DspxClipEntity *>(left)->time()->start() <
+                   reinterpret_cast<const DspxClipEntity *>(right)->time()->start();
+        });
     }
     //===========================================================================
 
     //===========================================================================
     // Track
-    class DspxTrackEntityPrivate : public AceTreeEntityMappingPrivate {
-        Q_DECLARE_PUBLIC(DspxTrackEntity)
+    class DspxTrackEntityExtra : public AceTreeEntityMappingExtra {
     public:
-        DspxTrackEntityPrivate() {
-            name = "track";
-            control = nullptr;
-            clips = nullptr;
-            childPostAssignRefs.insert("control", &control);
-            childPostAssignRefs.insert("clips", &clips);
+        DspxTrackEntityExtra() : control(nullptr), clips(nullptr) {
+        }
 
-            // Notifiers
-            propertyNotifiers.insert("name", [](ACE_A) {
-                ACE_Q(DspxTrackEntity);
-                emit q->trackNameChanged(newValue.toString());
+        void setup(AceTreeEntity *entity) override {
+            auto q = static_cast<DspxTrackEntity *>(entity);
+
+            addChildPointer("control", control);
+            addChildPointer("clips", clips);
+
+            addPropertyNotifier("name", [q](ACE_A) {
+                Q_UNUSED(oldValue)
+                emit q->trackNameChanged(value.toString());
             });
-            propertyNotifiers.insert("color", [](ACE_A) {
-                ACE_Q(DspxTrackEntity);
-                emit q->colorConfigurationChanged(newValue.toJsonObject());
+            addPropertyNotifier("color", [q](ACE_A) {
+                Q_UNUSED(oldValue)
+                emit q->colorConfigurationChanged(value.toJsonObject());
             });
         }
-        ~DspxTrackEntityPrivate() = default;
 
         DspxTrackControlEntity *control;
         DspxClipListEntity *clips;
     };
-    DspxTrackEntity::DspxTrackEntity(QObject *parent) : AceTreeEntityMapping(*new DspxTrackEntityPrivate(), parent) {
+    DspxTrackEntity::DspxTrackEntity(QObject *parent) : AceTreeEntityMapping(new DspxTrackEntityExtra(), parent) {
     }
     DspxTrackEntity::~DspxTrackEntity() {
     }
@@ -225,20 +223,16 @@ namespace Core {
         setAttribute("color", colorConfiguration);
     }
     DspxTrackControlEntity *DspxTrackEntity::control() const {
-        Q_D(const DspxTrackEntity);
-        return d->control;
+        return static_cast<DspxTrackEntityExtra *>(extra())->control;
     }
     DspxClipListEntity *DspxTrackEntity::clips() const {
-        Q_D(const DspxTrackEntity);
-        return d->clips;
+        return static_cast<DspxTrackEntityExtra *>(extra())->clips;
     }
     //===========================================================================
 
     //===========================================================================
     // Track List
-    DspxTrackListEntity::DspxTrackListEntity(QObject *parent)
-        : AceTreeEntityVector(parent), AceTreeEntityVectorHelper(this) {
-        AceTreeStandardEntityPrivate::setName(this, "tracks");
+    DspxTrackListEntity::DspxTrackListEntity(QObject *parent) : AceTreeEntityVector(parent) {
     }
     DspxTrackListEntity::~DspxTrackListEntity() {
     }
