@@ -93,6 +93,8 @@ public:
 
     QStringList drivers() const;
 
+    bool controlPanel() const;
+
 signals:
     void initializationStatusChanged(bool initializationStatus);
     void playbackStatusChanged(bool playbackStatus);

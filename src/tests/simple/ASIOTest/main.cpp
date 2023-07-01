@@ -64,7 +64,11 @@ int main(int argc, char **argv) {
 
     auto stateBtn = new QPushButton;
     auto playbackBtn = new QPushButton;
+    auto cPnlBtn = new QPushButton("Control Panel");
+    setSampleRateEdit->setDisabled(true);
+    commitSetSampleRateBtn->setDisabled(true);
     playbackBtn->setDisabled(true);
+    cPnlBtn->setDisabled(true);
 
     stateBtn->setText("Initialize");
     QObject::connect(&dev, &AsioSimpleDevice::initializationStatusChanged, stateBtn, [&](bool s){
@@ -72,16 +76,21 @@ int main(int argc, char **argv) {
         drvSelect->setDisabled(s);
         playbackBtn->setDisabled(!s);
         if(s) {
-            specLabel->setText(QString("i: %1, o: %2, st: %3")
+            specLabel->setText(QString("i: %1, o: %2, st: %3, li: %4, lo: %5")
                                    .arg(dev.spec().inputChannels)
                                    .arg(dev.spec().outputChannels)
-                                   .arg(dev.spec().channelInfos[0].type));
+                                   .arg(dev.spec().channelInfos[0].type)
+                                   .arg(dev.spec().inputLatency)
+                                   .arg(dev.spec().outputLatency));
             setSampleRateEdit->setDisabled(false);
             commitSetSampleRateBtn->setDisabled(false);
+            cPnlBtn->setDisabled(false);
         } else {
             specLabel->setText("");
             setSampleRateEdit->setDisabled(true);
             commitSetSampleRateBtn->setDisabled(true);
+            playbackBtn->setDisabled(true);
+            cPnlBtn->setDisabled(true);
         }
     });
 
@@ -91,7 +100,7 @@ int main(int argc, char **argv) {
             qDebug() << drvSelect->currentText();
             dev.setName(drvSelect->currentText());
             if(!dev.initialize()) {
-                QMessageBox::critical(&win, "ASIOTest", "Cannot initialize ASIO driver");
+                QMessageBox::critical(&win, "ASIOTest", "Cannot initialize ASIO driver.");
             }
         }
     });
@@ -112,11 +121,18 @@ int main(int argc, char **argv) {
         if(dev.isStarted()) dev.stop();
         else {
             if(!dev.start(callback)) {
-                QMessageBox::critical(&win, "ASIOTest", "Cannot start playback");
+                QMessageBox::critical(&win, "ASIOTest", "Cannot start playback.");
             }
         }
     });
     formLayout->addRow(playbackBtn);
+
+    QObject::connect(cPnlBtn, &QPushButton::clicked, [&](){
+        if(!dev.controlPanel()) {
+            QMessageBox::critical(&win, "ASIOTest", "Cannot open control panel.");
+        }
+    });
+    formLayout->addRow(cPnlBtn);
 
     win.show();
 

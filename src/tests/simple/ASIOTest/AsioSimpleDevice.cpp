@@ -7,6 +7,7 @@
 #include "asiodrivers.h"
 #include <QStringList>
 #include "ASIOConvertSamples.h"
+#include "iasiodrv.h"
 
 static AsioSimpleDevice *m_instance = nullptr;
 
@@ -369,4 +370,7 @@ QStringList AsioSimpleDevice::drivers() const {
         drvList.append(strBuf);
     }
     return drvList;
+}
+bool AsioSimpleDevice::controlPanel() const {
+    return theAsioDriver->controlPanel() == ASE_OK;
 }
