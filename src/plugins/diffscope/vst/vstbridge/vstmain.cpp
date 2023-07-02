@@ -11,12 +11,13 @@
 #include "rep_VstBridge_replica.h"
 
 #define VST_EXPORT extern "C" Q_DECL_EXPORT
+#define vstRep (h->ch->replica<VstBridgeReplica>())
 
 using namespace Vst;
 
-static char GLOBAL_UUID[] = "77F6E993-671E-4283-99BE-C1CD1FF5C09E";
+static const QString GLOBAL_UUID = "77F6E993-671E-4283-99BE-C1CD1FF5C09E";
 
-static const int IPC_TIMEOUT = 1000; //TODO configurate in DiffScope settings
+static int ipcTimeout = 5000; //TODO configurate in DiffScope settings
 
 static bool checkSingleton(VstHandle *h) {
     QSystemSemaphore sema(GLOBAL_UUID, 1);
@@ -75,15 +76,26 @@ VST_EXPORT bool Initializer (VstHandle *h) {
     }
     h->ch.reset(new CommunicationHelper);
     h->ch->start();
-    h->ch->connectAsync<VstBridgeReplica>("local:77F6E993-671E-4283-99BE-C1CD1FF5C09E", [=](bool isValid){
+    h->alivePipe.listen(GLOBAL_UUID + "alive");
+    h->ch->connectAsync<VstBridgeReplica>("local:" + GLOBAL_UUID, [=](bool isValid){
+        h->isPending = false;
         if(isValid) {
-            h->callbacks.setStatus(h->editorHelper, "Connected");
-            h->isConnected.store(true);
+            auto reply = vstRep->initializeVst();
+            if(reply.waitForFinished(ipcTimeout)) {
+                h->callbacks.setStatus(h->editorHelper, "Connected");
+                h->isConnected.store(true);
+            }
         }
-        QObject::connect(h->ch->replica<VstBridgeReplica>(), &QRemoteObjectReplica::stateChanged, h->ch->replica<VstBridgeReplica>(), [=](QRemoteObjectReplica::State state){
+        QObject::connect(vstRep, &QRemoteObjectReplica::stateChanged, vstRep, [=](QRemoteObjectReplica::State state){
             if(state != QRemoteObjectReplica::Valid) {
                 h->callbacks.setStatus(h->editorHelper, "Not Connected");
                 h->isConnected.store(false);
+            } else {
+                auto reply = vstRep->initializeVst();
+                if(reply.waitForFinished(ipcTimeout)) {
+                    h->callbacks.setStatus(h->editorHelper, "Connected");
+                    h->isConnected.store(true);
+                }
             }
         });
     });
@@ -92,6 +104,8 @@ VST_EXPORT bool Initializer (VstHandle *h) {
     if(!h->editorProc.startDetached()) {
         h->callbacks.setError(h->editorHelper, "Cannot start DiffScope Editor");
         return false;
+    } else {
+        h->isPending = true;
     }
     return true;
 }
@@ -106,11 +120,26 @@ VST_EXPORT void HandleDeleter (VstHandle *h) {
 }
 
 VST_EXPORT void WindowOpener (VstHandle *h) {
-
+    if(!h->isConnected.load() && !h->isPending.load()) {
+        if(!h->editorProc.startDetached()) {
+            h->callbacks.setError(h->editorHelper, "Cannot start DiffScope Editor");
+        } else {
+            h->isPending = true;
+        }
+        return;
+    }
+    h->ch->invokeSync<int>([=](){
+        vstRep->showWindow();
+        return 0;
+    });
 }
 
 VST_EXPORT void WindowCloser (VstHandle *h) {
-
+    if(!h->isConnected.load()) return;
+    h->ch->invokeSync<int>([=](){
+        vstRep->hideWindow();
+        return 0;
+    });
 }
 
 VST_EXPORT bool PlaybackProcessor (VstHandle *h, const PlaybackParameters &parameters, float *const *const * outputs) {
@@ -127,16 +156,34 @@ VST_EXPORT bool PlaybackProcessor (VstHandle *h, const PlaybackParameters &param
     });
 }
 
-VST_EXPORT void StateChangedCallback (VstHandle *h, uint64_t size, const uint8_t *data) {
-
+VST_EXPORT void StateChangedCallback (VstHandle *h, uint64_t size, const char *data) {
+    QByteArray sentData(data, size);
+    if(!h->ch->invokeSync<bool>([=](){
+        auto reply = vstRep->openDataToEditor(sentData);
+        if(!reply.waitForFinished(ipcTimeout)) return false;
+        auto ret = reply.returnValue();
+        return ret;
+    })) {
+        h->callbacks.setError(h->editorHelper, "Cannot load file to editor.");
+    }
 }
 
 VST_EXPORT bool StateWillSaveCallback (VstHandle *h, uint64_t &size, const uint8_t *&data) {
-    return false;
+    return h->ch->invokeSync<bool>([&](){
+        auto reply = vstRep->saveDataFromEditor();
+        if(!reply.waitForFinished(ipcTimeout)) return false;
+        auto ret = reply.returnValue();
+        if(ret[0] == (char)-128) return false;
+        size = ret.size();
+        auto dataCopy = new uint8_t[size];
+        memcpy(dataCopy, ret.constData(), size);
+        data = dataCopy;
+        return true;
+    });
 }
 
 VST_EXPORT void StateSavedAsyncCallback (VstHandle *h, const uint8_t * dataToFree) {
-
+    delete[] dataToFree;
 }
 
 VST_EXPORT void CallbacksBinder (VstHandle *h, void *eh, const Callbacks &callbacks_) {

@@ -23,9 +23,13 @@ namespace Vst {
 
         std::atomic<bool> isConnected = false;
 
+        std::atomic<bool> isPending = false;
+
         QSharedMemory sbuf;
 
         QScopedPointer<QSharedMemory> guardSharedMemory;
+
+        QLocalServer alivePipe;
 
     };
 

@@ -91,7 +91,9 @@ namespace Vst {
                     awaiter->finish(false);
                 }
                 m_rep.reset(m_repNode->acquire<R>());
-                QObject::connect(m_rep.data(), &QRemoteObjectReplica::stateChanged, awaiter, [=](QRemoteObjectReplica::State state){
+                auto _ = new QObject;
+                QObject::connect(m_rep.data(), &QRemoteObjectReplica::stateChanged, _, [=](QRemoteObjectReplica::State state){
+                    delete _;
                     awaiter->finish(state == QRemoteObjectReplica::Valid);
                 });
                 QObject::connect(awaiter, &Awaiter::finished, awaiter, [=](QVariant val){

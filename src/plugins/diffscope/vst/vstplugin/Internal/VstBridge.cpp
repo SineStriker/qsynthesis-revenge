@@ -3,26 +3,82 @@
 //
 
 #include "VstBridge.h"
+
 #include <QSharedMemory>
+#include <QLocalSocket>
 
-namespace Vst {
+#include <Window/IProjectWindow.h>
+#include "ICore.h"
 
-    static void sineWave(double sampleRate, int position, int size, float *buf) {
-        double freq = 440 / sampleRate;
-        for (int x = 0; x < size; x++) {
-            buf[x] = ::sin(2 * 3.14159265358979323846 * freq * (position + x));
-        }
+#include "AddOn/VstClientAddOn.h"
+
+namespace Vst::Internal {
+
+    static VstBridge *m_instance = nullptr;
+
+    VstBridge::VstBridge(QObject *parent): VstBridgeSource(parent), m_alivePipe(new QLocalSocket(this)) {
+        m_instance = this;
     }
 
-    static QSharedMemory sbuf("77F6E993-671E-4283-99BE-C1CD1FF5C09E");
+    VstBridge::~VstBridge() {
+        m_instance = nullptr;
+    }
 
-    bool VstBridge::testProcess(int64_t pos, int32_t size) {
-        if(!sbuf.isAttached()) sbuf.attach();
-        sbuf.lock();
-        sineWave(48000, pos, size, static_cast<float *>(sbuf.data()));
-        sbuf.unlock();
+    VstBridge *VstBridge::instance() {
+        return m_instance;
+    }
+
+    bool VstBridge::initializeVst() {
+        qDebug() << "VstBridge: initializeVst";
+        if(m_clientAddOn) return false;
+        m_alivePipe->setServerName(GLOBAL_UUID + "alive");
+        if(!m_alivePipe->open()) {
+            qWarning() << "Cannot connect to alive pipe.";
+            return false;
+        }
+        connect(m_alivePipe, &QLocalSocket::disconnected, this, &VstBridge::finalizeVst);
+        openDataToEditor({});
         return true;
     }
-    VstBridge::VstBridge(QObject *parent): VstBridgeSource(parent) {
+
+    void VstBridge::finalizeVst() {
+        qDebug() << "VstBridge: finalizeVst";
+        if(m_clientAddOn) emit m_clientAddOn->windowHandle()->cast<Core::IProjectWindow>()->doc()->closeRequested();
+        m_clientAddOn = nullptr;
     }
+
+    QByteArray VstBridge::saveDataFromEditor() {
+        qDebug() << "VstBridge: saveDataFromEditor";
+        static char failValue[1] = {-128};
+        static const QByteArray failValueData(failValue, 1);
+        if(!m_clientAddOn) return failValueData;
+        //TODO
+        return {};
+    }
+
+    bool VstBridge::openDataToEditor(const QByteArray &data) {
+        qDebug() << "VstBridge: openDataToEditor";
+        auto docMgr = Core::ICore::instance()->documentSystem();
+        //TODO temporarily do this
+        auto recentFiles = docMgr->recentFiles();
+        if(!recentFiles.empty()) {
+            auto spec = docMgr->docType("org.ChorusKit.dspx");
+            spec->open(recentFiles[0], nullptr);
+        }
+        return true;
+    }
+
+    void VstBridge::showWindow() {
+        qDebug() << "VstBridge: showWindow";
+        if(m_clientAddOn) m_clientAddOn->showWindow();
+    }
+
+    void VstBridge::hideWindow() {
+        qDebug() << "VstBridge: hideWindow";
+        if(m_clientAddOn) m_clientAddOn->hideWindow();
+    }
+
+    void VstBridge::notifySwitchAudioBuffer(qint64 position, int bufferSize, int channelCount, bool isPlaying, bool isRealtime) {
+    }
+
 } // Vst

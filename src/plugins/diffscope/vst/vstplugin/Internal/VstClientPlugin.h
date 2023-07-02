@@ -18,6 +18,8 @@ namespace Vst::Internal {
 
         QObject *remoteCommand(const QStringList &options, const QString &workingDirectory,
                                const QStringList &args) override;
+    private:
+        static void generateVstConfig();
     };
 
 } // namespace Core

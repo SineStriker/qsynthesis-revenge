@@ -1,4 +1,15 @@
 class VstBridge {
-    SLOT(bool testProcess(int64_t pos, int32_t size));
+
+    SLOT(bool initializeVst());
+    SLOT(void finalizeVst());
+
+    SLOT(QByteArray saveDataFromEditor());
+    SLOT(bool openDataToEditor(const QByteArray &data));
+
+    SLOT(void showWindow());
+    SLOT(void hideWindow());
+
+    SLOT(void notifySwitchAudioBuffer(qint64 position, int bufferSize, int channelCount, bool isPlaying, bool isRealtime));
+    SIGNAL(bufferSwitched(bool isSuccessful));
 };
 

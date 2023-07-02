@@ -5,6 +5,7 @@
 
 #include <cmath>
 
+#include "AddOn/VstClientAddOn.h"
 #include "CoreApi/ILoader.h"
 #include "VstBridge.h"
 
@@ -39,45 +40,47 @@ namespace Vst {
                 splash->showMessage(tr("Initializing vst support..."));
             }
 
-            //TODO move to another thread
-            auto srcNode = new QRemoteObjectHost(QUrl("local:77F6E993-671E-4283-99BE-C1CD1FF5C09E"), this);
+            generateVstConfig();
+
+            auto srcNode = new QRemoteObjectHost(QUrl("local:" + GLOBAL_UUID), this);
             auto vstBridge = new VstBridge(this);
             srcNode->enableRemoting(vstBridge);
-
-            if(arguments.contains("-vst")) {
-                //TODO start in vst mode
-
-            } else {
-                QFile configFile(QMFs::appDataPath() + "/ChorusKit/DiffScope/vstconfig.txt");
-                configFile.open(QFile::WriteOnly | QFile::Text);
-                if(configFile.isOpen()) {
-                    QTextStream stream(&configFile);
-                    stream << QDir::toNativeSeparators(QApplication::applicationDirPath()) << QDir::separator() << Qt::endl;
-                    stream << "vstbridge." <<
-#ifdef Q_OS_WINDOWS
-                        "dll"
-#elif defined(Q_OS_MAC)
-                        "dylib"
-#else
-                        "so"
-#endif
-                        << Qt::endl;
-                    stream << QDir::toNativeSeparators(QApplication::applicationFilePath()) << Qt::endl;
-                    stream.flush();
-                    configFile.close();
-                } else {
-                    qDebug() << "VST Plugin: Cannot write vstconfig.txt " << configFile.errorString();
-                }
-            }
 
             auto actionMgr = ICore::instance()->actionSystem();
 
             // Add basic windows and add-ons
 
+            auto winMgr = ICore::instance()->windowSystem();
+            winMgr->addAddOn(new VstClientAddOnFactory());
+
             return true;
         }
 
+        void VstClientPlugin::generateVstConfig() {
+            QFile configFile(QMFs::appDataPath() + "/ChorusKit/DiffScope/vstconfig.txt");
+            configFile.open(QFile::WriteOnly | QFile::Text);
+            if(configFile.isOpen()) {
+                QTextStream stream(&configFile);
+                stream << QDir::toNativeSeparators(QApplication::applicationDirPath()) << QDir::separator() << Qt::endl;
+                stream << "vstbridge." <<
+#ifdef Q_OS_WINDOWS
+                    "dll"
+#elif defined(Q_OS_MAC)
+                    "dylib"
+#else
+                    "so"
+#endif
+                    << Qt::endl;
+                stream << QDir::toNativeSeparators(QApplication::applicationFilePath()) << Qt::endl;
+                stream.flush();
+                configFile.close();
+            } else {
+                qDebug() << "VST Plugin: Cannot write vstconfig.txt " << configFile.errorString();
+            }
+        }
+
         void VstClientPlugin::extensionsInitialized() {
+
         }
 
         bool VstClientPlugin::delayedInitialize() {
