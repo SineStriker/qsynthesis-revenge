@@ -35,7 +35,7 @@ ck_add_translations(${_plugin}_translations
     LOCALES zh_CN zh_HK ja_JP
     TS_DIR Res/translations
     QM_DIR ${CMAKE_CURRENT_BINARY_DIR}/Res/translations
-    TS_OPTIONS "-tr-function-alias" "qsTranslate=$tr"
+    TS_OPTIONS "-tr-function-alias" "qsTranslate=__q_tr"
 )
 
 ck_add_attached_files(${_plugin}

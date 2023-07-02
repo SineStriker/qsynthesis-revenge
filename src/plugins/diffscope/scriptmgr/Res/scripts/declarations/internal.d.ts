@@ -106,15 +106,6 @@ declare namespace DsDialogSystem {
 declare global {
 
     /**
-     * The extension of Qt {@link https://doc.qt.io/qt-5/qcoreapplication.html#translate | QCoreApplication::translate } function.
-     * @param context 
-     * @param sourceText 
-     * @param disambiguation 
-     * @param n 
-     */
-    function $tr(context: string, sourceText: string, disambiguation?: string, n?: number): string;
-
-    /**
      * Register a batch process script
      * @param clazz The class of script
      */

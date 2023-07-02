@@ -7,29 +7,29 @@ $register(class extends $ScriptSet {
             version: '0.0.1',
             requiredVersion: '0.1.0',
             role: ['pianoroll', 'arrangement'],
-            name: $tr('JsBuiltIn', 'Transpose'),
+            name: __q_tr('JsBuiltIn', 'Transpose'),
             children: [{
                 id: 'plus_semitone',
-                name: $tr('JsBuiltIn', 'Shift Up by a Semitone'),
+                name: __q_tr('JsBuiltIn', 'Shift Up by a Semitone'),
                 shortcut: 'Ctrl+Up',
             }, {
                 id: 'minus_semitone',
-                name: $tr('JsBuiltIn', 'Shift Down by a Semitone'),
+                name: __q_tr('JsBuiltIn', 'Shift Down by a Semitone'),
                 shortcut: 'Ctrl+Down',
             }, {
                 id: 'plus_octave',
-                name: $tr('JsBuiltIn', 'Shift Up by an Octave'),
+                name: __q_tr('JsBuiltIn', 'Shift Up by an Octave'),
                 shortcut: 'Ctrl+Shift+Up',
             }, {
                 id: 'minus_octave',
-                name: $tr('JsBuiltIn', 'Shift Down by an Octave'),
+                name: __q_tr('JsBuiltIn', 'Shift Down by an Octave'),
                 shortcut: 'Ctrl+Shift+Down',
             }, {
                 id: 'customize',
-                name: $tr('JsBuiltIn', 'Customize Transposition')
+                name: __q_tr('JsBuiltIn', 'Customize Transposition')
             }, {
                 id: 'shift_mode',
-                name: $tr('JsBuiltIn', 'Shift Mode')
+                name: __q_tr('JsBuiltIn', 'Shift Mode')
             }],
         };
     }
@@ -40,11 +40,11 @@ $register(class extends $ScriptSet {
         else if(index == 3) this.transpose(-12);
         else if(index == 4) {
             let res = this.ds.dialogSystem.form(
-                $tr('JsBuiltIn', 'Transpose'),
+                __q_tr('JsBuiltIn', 'Transpose'),
                 [{
                     type: 'NumberBox',
-                    label: $tr('JsBuiltIn', 'Shift by'),
-                    suffix: $tr('JsBuiltIn', ' semitone(s)'),
+                    label: __q_tr('JsBuiltIn', 'Shift by'),
+                    suffix: __q_tr('JsBuiltIn', ' semitone(s)'),
                 }],
             );
             if(res.result == 'Ok') {
@@ -52,21 +52,21 @@ $register(class extends $ScriptSet {
             }
         } else {
             let res = this.ds.dialogSystem.form(
-                $tr('JsBuiltIn', 'Shift Mode'),
+                __q_tr('JsBuiltIn', 'Shift Mode'),
                 [{
                     type: 'Select',
-                    label: $tr('JsBuiltIn', 'Current mode'),
-                    options: [$tr('JsBuiltIn', 'Ionian (Major mode)'), 'Dorian', 'Phrygian', 'Lydian', 'Mixolydian', $tr('JsBuiltIn', 'Aeolian (Minor mode)'), 'Locrian'],
+                    label: __q_tr('JsBuiltIn', 'Current mode'),
+                    options: [__q_tr('JsBuiltIn', 'Ionian (Major mode)'), 'Dorian', 'Phrygian', 'Lydian', 'Mixolydian', __q_tr('JsBuiltIn', 'Aeolian (Minor mode)'), 'Locrian'],
                 }, {
                     type: 'Select',
-                    label: $tr('JsBuiltIn', 'Target mode'),
-                    options: [$tr('JsBuiltIn', 'Ionian (Major mode)'), 'Dorian', 'Phrygian', 'Lydian', 'Mixolydian', $tr('JsBuiltIn', 'Aeolian (Minor mode)'), 'Locrian'],
+                    label: __q_tr('JsBuiltIn', 'Target mode'),
+                    options: [__q_tr('JsBuiltIn', 'Ionian (Major mode)'), 'Dorian', 'Phrygian', 'Lydian', 'Mixolydian', __q_tr('JsBuiltIn', 'Aeolian (Minor mode)'), 'Locrian'],
                 }],
             )
         }
     }
     transpose(degrees) {
-        this.ds.dialogSystem.alert($tr('JsBuiltIn', 'Transpose'), degrees);
+        this.ds.dialogSystem.alert(__q_tr('JsBuiltIn', 'Transpose'), degrees);
     }
     shiftMode(currentMode, targetMode) {
 

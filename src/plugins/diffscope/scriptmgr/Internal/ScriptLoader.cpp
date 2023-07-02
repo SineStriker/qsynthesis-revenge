@@ -59,7 +59,7 @@ namespace ScriptMgr::Internal {
         }
         m_jsCallbacks = internalModule.property("__q_callbacks");
 
-        m_engine->globalObject().setProperty("$tr", m_engine->globalObject().property("__q_tr_ext").property("qsTranslate"));
+        m_engine->globalObject().setProperty("__q_tr", m_engine->globalObject().property("__q_tr_ext").property("qsTranslate"));
         m_engine->globalObject().setProperty("$register", internalModule.property("register"));
         m_engine->globalObject().setProperty("$Script", internalModule.property("Script"));
         m_engine->globalObject().setProperty("$ScriptSet", internalModule.property("ScriptSet"));

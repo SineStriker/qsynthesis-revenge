@@ -14,8 +14,8 @@ function validateClass(clazz) {
     let scriptMgrVersion = __q_loader.version();
     if(typeof info.requiredVersion !== 'string' || !satisfies(scriptMgrVersion, info.requiredVersion)) {
         if(__q_loader.coreMsgBox(
-            $tr('JsBuiltIn', 'Version Mismatch'),
-            $tr('JsBuiltIn', "The version of DiffScope Script Manager (%1) does not satisfy the requirement in script '%2' (%3).\n\nContinue loading anyway?")
+            __q_tr('JsBuiltIn', 'Version Mismatch'),
+            __q_tr('JsBuiltIn', "The version of DiffScope Script Manager (%1) does not satisfy the requirement in script '%2' (%3).\n\nContinue loading anyway?")
                 .replace('%1', scriptMgrVersion)
                 .replace('%2', info.id)
                 .replace('%3', info.requiredVersion),
