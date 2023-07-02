@@ -17,6 +17,7 @@ namespace Core {
         Q_DECLARE_PUBLIC(IProjectWindow)
     public:
         IProjectWindowPrivate();
+        ~IProjectWindowPrivate();
 
         void init();
 

@@ -12,7 +12,6 @@
 #include "Window/IHomeWindow.h"
 
 #include "Internal/Widgets/HomeRecentWidget.h"
-#include "Internal/Widgets/HomeRecoveryWidget.h"
 
 #include <QMDecoratorV2.h>
 
@@ -48,9 +47,6 @@ namespace Core {
             auto recentWidget = new HomeRecentWidget();
             recentWidgetButton = iWin->addNavWidget(recentWidget);
 
-            auto recoveryWidget = new HomeRecoveryWidget();
-            recoveryWidgetButton = iWin->addNavWidget(recoveryWidget);
-
             auto recentTopWidget = recentWidget->topWidget;
             connect(recentTopWidget, &HomeRecentTopFrame::newRequested, this, &HomeWindowAddOn::_q_newButtonClicked);
             connect(recentTopWidget, &HomeRecentTopFrame::openRequested, this, &HomeWindowAddOn::_q_openButtonClicked);
@@ -81,7 +77,6 @@ namespace Core {
 
         void HomeWindowAddOn::reloadStrings() {
             recentWidgetButton->setText(tr("Recent"));
-            recoveryWidgetButton->setText(tr("Failure Recovery"));
         }
 
         void HomeWindowAddOn::initActions() {

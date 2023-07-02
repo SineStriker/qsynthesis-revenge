@@ -32,6 +32,8 @@ namespace Core {
         virtual void extensionsInitialized() = 0;
         virtual bool delayedInitialize();
 
+        virtual void broadcast(const QString &msg, const QVariantHash &attributes);
+
     protected:
         IWindowAddOn(IWindowAddOnPrivate &d, QObject *parent = nullptr);
 

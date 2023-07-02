@@ -13,35 +13,6 @@
 
 namespace Core {
 
-    LogDirectory::~LogDirectory() {
-        if (!autoRemove) {
-            if (!logDir.isNull())
-                logDir->setAutoRemove(false);
-        } else {
-            QMFs::rmDir(userLogDir);
-        }
-    }
-
-    QString LogDirectory::logDirectory() const {
-        if (!QMFs::isDirExist(userLogDir)) {
-            if (logDir.isNull())
-                logDir.reset(
-                    new QTemporaryDir(QString("%1/%2-XXXXXXXX").arg(DocumentSystemPrivate::logBaseDir(), prefix)));
-            return logDir->path();
-        }
-
-        return userLogDir;
-    }
-
-    void LogDirectory::setLogDirectory(const QString &dir) {
-        QFileInfo info(dir);
-        if (!info.isDir() || !info.isWritable())
-            return;
-
-        logDir.reset();
-        userLogDir = dir;
-    }
-
     IDocumentPrivate::IDocumentPrivate() {
     }
 
@@ -50,7 +21,6 @@ namespace Core {
 
     void IDocumentPrivate::init() {
         Q_Q(IDocument);
-        logDir.prefix = q->id();
         getSpec();
     }
 
@@ -63,15 +33,8 @@ namespace Core {
         return true;
     }
 
-    void IDocumentPrivate::updateLogDesc() {
-        Q_Q(IDocument);
-
-        IDocumentSettings settings(logDir.logDirectory());
-        settings.setFileName(q->filePath());
-        settings.setDocType(q->id());
-    }
-
-    IDocument::IDocument(const QString &id, QObject *parent) : IDocument(*new IDocumentPrivate(), id, parent) {
+    IDocument::IDocument(const QString &id, QObject *parent)
+        : IDocument(*new IDocumentPrivate(), id, parent) {
     }
 
     IDocument::~IDocument() {
@@ -85,26 +48,6 @@ namespace Core {
     DocumentSpec *IDocument::spec() const {
         Q_D(const IDocument);
         return d->spec;
-    }
-
-    QString IDocument::logDirectory() const {
-        Q_D(const IDocument);
-        return d->logDir.logDirectory();
-    }
-
-    void IDocument::setLogDirectory(const QString &dir) {
-        Q_D(IDocument);
-        d->logDir.setLogDirectory(dir);
-    }
-
-    bool IDocument::autoRemoveLogDirectory() const {
-        Q_D(const IDocument);
-        return d->logDir.autoRemove;
-    }
-
-    void IDocument::setAutoRemoveLogDirectory(bool autoRemove) {
-        Q_D(IDocument);
-        d->logDir.autoRemove = autoRemove;
     }
 
     IDocument::ReloadBehavior IDocument::reloadBehavior(IDocument::ChangeTrigger state,
@@ -146,7 +89,7 @@ namespace Core {
         d->filePath = path;
 
         // Update descriptions in log file
-        d->updateLogDesc();
+        // d->updateLogDesc();
 
         emit filePathChanged(oldName, d->filePath);
         emit changed();
@@ -157,10 +100,11 @@ namespace Core {
         QString filename;
         if (!d->preferredDisplayName.isEmpty())
             return d->preferredDisplayName;
-        return d->preferredDisplayName.isEmpty() ? ((filename = QFileInfo(d->filePath).fileName()).isEmpty()
-                                                        ? QFileInfo(suggestedFileName()).baseName()
-                                                        : filename)
-                                                 : d->preferredDisplayName;
+        return d->preferredDisplayName.isEmpty()
+                   ? ((filename = QFileInfo(d->filePath).fileName()).isEmpty()
+                          ? QFileInfo(suggestedFileName()).baseName()
+                          : filename)
+                   : d->preferredDisplayName;
     }
 
     QString IDocument::preferredDisplayName() const {
@@ -256,65 +200,4 @@ namespace Core {
         d.init();
     }
 
-    IDocumentSettings::IDocumentSettings(const QString &dir) : d(new IDocumentSettingsData()) {
-        setDir(dir);
-    }
-
-    IDocumentSettings::~IDocumentSettings() {
-    }
-
-    IDocumentSettings::IDocumentSettings(const IDocumentSettings &other) : d(new IDocumentSettingsData(*other.d)) {
-    }
-
-    IDocumentSettings::IDocumentSettings(IDocumentSettings &&other) noexcept : d(other.d) {
-    }
-
-    IDocumentSettings &IDocumentSettings::operator=(const IDocumentSettings &other) {
-        d = new IDocumentSettingsData(*other.d);
-        return *this;
-    }
-
-    IDocumentSettings &IDocumentSettings::operator=(IDocumentSettings &&other) {
-        d = other.d;
-        return *this;
-    }
-
-    QString IDocumentSettings::dir() const {
-        return d->dir;
-    }
-
-    void IDocumentSettings::setDir(const QString &dir) {
-        if (!QMFs::isDirExist(dir)) {
-            d->dir.clear();
-            d->settings.clear();
-        } else {
-            d->dir = QFileInfo(dir).canonicalFilePath();
-            d->settings.reset(new QSettings(IDocumentSettingsData::descFile(d->dir), QSettings::IniFormat));
-        }
-    }
-
-    bool IDocumentSettings::remove() const {
-        return QMFs::rmFile(IDocumentSettingsData::descFile(d->dir));
-    }
-
-    QString IDocumentSettings::fileName() const {
-        return d->settings.isNull() ? QString() : d->settings->value("File/Path").toString();
-    }
-
-    void IDocumentSettings::setFileName(const QString &fileName) {
-        if (!d->settings)
-            return;
-        d->settings->setValue("File/Path", fileName);
-    }
-
-    QString IDocumentSettings::docType() const {
-        return d->settings.isNull() ? QString() : d->settings->value("File/Editor").toString();
-    }
-
-    void IDocumentSettings::setDocType(const QString &docType) {
-        if (!d->settings)
-            return;
-        d->settings->setValue("File/Editor", docType);
-    }
-
-}
+} // namespace Core

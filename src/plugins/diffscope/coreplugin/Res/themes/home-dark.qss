@@ -186,10 +186,10 @@ Core--Internal--HomeRecentBottomFrame>QsApi--FileListWidget {
 
 /* Home Recovery Widget */
 
-Core--Internal--HomeRecoveryWidget {
+/* Core--Internal--HomeRecoveryWidget {
     padding: 20px;
 }
 
 Core--Internal--HomeRecoveryWidget>QLabel {
     color: #CCCCCC;
-}
+} */

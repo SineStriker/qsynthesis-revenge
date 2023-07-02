@@ -10,6 +10,22 @@
 
 namespace Core {
 
+    class LogDirectory {
+    public:
+        explicit LogDirectory();
+
+        ~LogDirectory();
+
+        QString logDirectory() const;
+        void setLogDirectory(const QString &dir);
+
+        bool autoRemove;
+
+    private:
+        mutable QScopedPointer<QTemporaryDir> logDir;
+        QString userLogDir;
+    };
+
     class DspxDocumentPrivate : public IDocumentPrivate {
         Q_DECLARE_PUBLIC(DspxDocument)
     public:
@@ -20,6 +36,8 @@ namespace Core {
 
         AceTreeModel *model;
         DspxContentEntity *content;
+        QSettings *settings;
+        LogDirectory logDir;
 
         bool opened;
         bool vstMode;

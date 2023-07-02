@@ -22,14 +22,47 @@ namespace Core {
 
     static int m_untitledIndex = 0;
 
+    LogDirectory::LogDirectory() : autoRemove(true) {
+    }
+
+    LogDirectory::~LogDirectory() {
+        if (!autoRemove) {
+            if (!logDir.isNull()) {
+                logDir->setAutoRemove(false);
+            }
+        } else {
+            QMFs::rmDir(userLogDir);
+        }
+    }
+
+    QString LogDirectory::logDirectory() const {
+        if (!QMFs::isDirExist(userLogDir)) {
+            if (logDir.isNull())
+                logDir.reset(new QTemporaryDir(QString("%1/XXXXXXXX").arg(DspxSpec::logBaseDir())));
+            return logDir->path();
+        }
+        return userLogDir;
+    }
+
+    void LogDirectory::setLogDirectory(const QString &dir) {
+        QFileInfo info(dir);
+        if (!info.isDir() || !info.isWritable())
+            return;
+
+        logDir.reset();
+        userLogDir = dir;
+    }
+
     DspxDocumentPrivate::DspxDocumentPrivate() {
         opened = false;
         vstMode = false;
         model = nullptr;
         content = nullptr;
+        settings = nullptr;
     }
 
     DspxDocumentPrivate::~DspxDocumentPrivate() {
+        delete settings;
         delete content;
         delete model;
     }
@@ -45,7 +78,10 @@ namespace Core {
     void DspxDocumentPrivate::changeToOpen() {
         Q_Q(DspxDocument);
         opened = true;
-        emit q->opened();
+
+        settings = new QSettings(QString("%1/desc.tmp.ini").arg(q->logDir()), QSettings::IniFormat);
+        settings->setValue("File/Path", q->filePath());
+        settings->setValue("File/Editor", q->id());
     }
 
     void DspxDocumentPrivate::changeToSaved() {
@@ -54,6 +90,8 @@ namespace Core {
         if (!preferredDisplayName.isEmpty()) {
             q->setPreferredDisplayName({});
         }
+
+        settings->setValue("File/Path", q->filePath());
 
         emit q->changed();
     }
@@ -123,7 +161,7 @@ namespace Core {
 
         this->content = content;
 
-        QDir logDir(q->logDirectory());
+        QDir logDir(q->logDir());
         logDir.mkdir("model");
 
         auto backend = new AceTreeJournalBackend();
@@ -176,6 +214,26 @@ namespace Core {
     DspxContentEntity *DspxDocument::project() const {
         Q_D(const DspxDocument);
         return d->content;
+    }
+
+    QString DspxDocument::logDir() const {
+        Q_D(const DspxDocument);
+        return d->logDir.logDirectory();
+    }
+
+    void DspxDocument::setLogDir(const QString &dir) {
+        Q_D(DspxDocument);
+        d->logDir.setLogDirectory(dir);
+    }
+
+    bool DspxDocument::autoRemoveLogDir() const {
+        Q_D(const DspxDocument);
+        return d->logDir.autoRemove;
+    }
+
+    void DspxDocument::setAutoRemoveLogDir(bool autoRemove) {
+        Q_D(DspxDocument);
+        d->logDir.autoRemove = autoRemove;
     }
 
     bool DspxDocument::open(const QString &fileName) {
@@ -264,11 +322,11 @@ namespace Core {
             auto content = new DspxContentEntity();
             content->initialize();
 
-            QDir logDir(logDirectory());
-            logDir.mkdir("model");
+            QDir dir(this->logDir());
+            dir.mkdir("model");
 
             auto backend = new AceTreeJournalBackend();
-            backend->start(logDir.absoluteFilePath("model"));
+            backend->start(dir.absoluteFilePath("model"));
 
             auto model = new AceTreeModel(backend, this);
             model->beginTransaction();
@@ -305,10 +363,10 @@ namespace Core {
 
         // Read binary log
         {
-            QDir logDir(logDirectory() + "/model");
+            QDir dir(this->logDir() + "/model");
 
             auto backend = new AceTreeJournalBackend();
-            if (!backend->recover(logDir.absolutePath())) {
+            if (!backend->recover(dir.absolutePath())) {
                 delete backend;
                 err();
                 return false;
@@ -346,7 +404,7 @@ namespace Core {
 
     void DspxDocument::saveVST(const std::function<bool(const QByteArray &)> &callback) {
         Q_D(DspxDocument);
-        
+
         QByteArray data;
         if (!saveRawData(&data)) {
             return;

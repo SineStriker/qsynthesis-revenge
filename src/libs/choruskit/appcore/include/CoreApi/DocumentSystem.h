@@ -15,6 +15,8 @@ namespace Core {
         explicit DocumentSystem(QObject *parent = nullptr);
         ~DocumentSystem();
 
+        static QString logBaseDir();
+
     public:
         bool addDocType(DocumentSpec *doc);
         bool removeDocType(DocumentSpec *doc);
@@ -56,11 +58,6 @@ namespace Core {
 
         QString getSaveFileName(QWidget *parent, const QString &title, const QString &path = {},
                                 const QString &filter = QString(), QString *selectedFilter = nullptr) const;
-
-    public:
-        int checkRemainingLogs(QWidget *parent = nullptr) const; // TODO: remove
-
-        static QList<IDocumentSettings> remainingLogs();
 
     protected:
         QString getSaveAsFileName(const IDocument *document, const QString &path, QWidget *parent) const override;

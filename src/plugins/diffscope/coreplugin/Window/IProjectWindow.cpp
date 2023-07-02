@@ -30,13 +30,14 @@ namespace Core {
 
     IProjectWindowPrivate::IProjectWindowPrivate() {
         m_forceClose = false;
+        m_doc = nullptr;
+    }
+
+    IProjectWindowPrivate::~IProjectWindowPrivate() {
     }
 
     void IProjectWindowPrivate::init() {
         Q_Q(IProjectWindow);
-
-        m_doc = new DspxDocument(q);
-        m_doc->setAutoRemoveLogDirectory(false);
     }
 
     void IProjectWindowPrivate::reloadStrings() {
@@ -142,6 +143,8 @@ namespace Core {
                 case QEvent::Close: {
                     if (!m_forceClose) {
                         if (m_doc->isVSTMode()) {
+                            qDebug() << "VSTMode, Hide";
+
                             // VST mode, we simply hide window
                             event->ignore();
                             q->window()->hide();
@@ -204,6 +207,20 @@ namespace Core {
         return d->m_doc;
     }
 
+    void IProjectWindow::setDoc(Core::DspxDocument *doc) {
+        Q_D(IProjectWindow);
+        if (d->m_doc) {
+            return;
+        }
+
+        // Only initialize once
+        d->m_doc = doc;
+        doc->setAutoRemoveLogDir(false);
+        doc->setParent(this);
+
+        windowAddOnsBroadcast("open", {});
+    }
+
     QToolBar *IProjectWindow::mainToolbar() const {
         Q_D(const IProjectWindow);
         return d->m_toolbar;
@@ -223,7 +240,6 @@ namespace Core {
     }
 
     IProjectWindow::~IProjectWindow() {
-        Q_D(IProjectWindow);
     }
 
     void IProjectWindow::setupWindow() {
@@ -310,7 +326,7 @@ namespace Core {
         // Windows should be all closed before quit signal arrives except a kill or interrupt signal
         // is emitted, only when this function is called the log should be removed expectedly.
         if (!d->m_doc->isModified() || d->m_forceClose) {
-            d->m_doc->setAutoRemoveLogDirectory(true);
+            d->m_doc->setAutoRemoveLogDir(true);
         }
 
         // Save piano roll state

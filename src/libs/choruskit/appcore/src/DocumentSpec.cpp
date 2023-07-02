@@ -62,22 +62,12 @@ namespace Core {
         return filter();
     }
 
-    bool DocumentSpec::open(const QString &fileName) {
+    bool DocumentSpec::open(const QString &fileName, QWidget *parent) {
         auto doc = ICoreBase::instance()->documentSystem()->searchDocument(fileName);
         if (doc) {
             doc->raise();
             return true;
         }
-        return false;
-    }
-
-    bool DocumentSpec::canRecover() const {
-        return false;
-    }
-
-    bool DocumentSpec::recover(const QString &logDir, const QString &fileName) {
-        Q_UNUSED(logDir);
-        Q_UNUSED(fileName);
         return false;
     }
 

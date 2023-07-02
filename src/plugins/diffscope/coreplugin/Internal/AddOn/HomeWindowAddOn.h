@@ -30,7 +30,6 @@ namespace Core {
             void initActions();
 
             QAbstractButton *recentWidgetButton;
-            QAbstractButton *recoveryWidgetButton;
 
         private:
             void _q_newButtonClicked();

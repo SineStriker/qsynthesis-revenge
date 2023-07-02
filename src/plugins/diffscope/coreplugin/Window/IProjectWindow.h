@@ -27,12 +27,13 @@ namespace Core {
             return "project";
         }
 
+        // Doc
         DspxDocument *doc() const;
+        void setDoc(DspxDocument *doc);
 
+        // UI
         QToolBar *mainToolbar() const;
-
         CDockFrame *mainDock() const;
-
         PianoRoll *pianoRoll() const;
 
     protected:

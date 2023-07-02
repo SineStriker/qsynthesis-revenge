@@ -28,12 +28,6 @@ namespace Core {
         QString id() const;
         DocumentSpec *spec() const;
 
-        QString logDirectory() const;
-        void setLogDirectory(const QString &dir); // Must be a writable directory
-
-        bool autoRemoveLogDirectory() const;
-        void setAutoRemoveLogDirectory(bool autoRemove);
-
     public:
         virtual bool open(const QString &fileName) = 0;
         virtual bool save(const QString &fileName) = 0;
@@ -92,35 +86,6 @@ namespace Core {
         friend class DocumentSystem;
     };
 
-    class IDocumentSettingsData;
-
-    class CKAPPCORE_API IDocumentSettings {
-    public:
-        IDocumentSettings(const QString &dir = {});
-        ~IDocumentSettings();
-
-        IDocumentSettings(const IDocumentSettings &other);
-        IDocumentSettings(IDocumentSettings &&other) noexcept;
-
-        IDocumentSettings &operator=(const Core::IDocumentSettings &other);
-        IDocumentSettings &operator=(Core::IDocumentSettings &&other);
-
-    public:
-        QString dir() const;
-        void setDir(const QString &dir);
-
-        bool remove() const;
-
-        QString fileName() const;
-        void setFileName(const QString &fileName);
-
-        QString docType() const;
-        void setDocType(const QString &docType);
-
-    private:
-        QSharedDataPointer<IDocumentSettingsData> d;
-    };
-
-}
+} // namespace Core
 
 #endif // IDOCUMENT_H

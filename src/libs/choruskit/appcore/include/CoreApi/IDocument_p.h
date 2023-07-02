@@ -19,24 +19,6 @@
 
 namespace Core {
 
-    class CKAPPCORE_API LogDirectory {
-    public:
-        explicit LogDirectory(const QString &prefix = {}) : prefix(prefix), autoRemove(true) {
-        }
-
-        ~LogDirectory();
-
-        QString logDirectory() const;
-        void setLogDirectory(const QString &dir);
-
-        bool autoRemove;
-        QString prefix;
-
-    private:
-        mutable QScopedPointer<QTemporaryDir> logDir;
-        QString userLogDir;
-    };
-
     class CKAPPCORE_API IDocumentPrivate {
         Q_DECLARE_PUBLIC(IDocument)
     public:
@@ -46,7 +28,6 @@ namespace Core {
         void init();
 
         bool getSpec();
-        void updateLogDesc();
 
         IDocument *q_ptr;
 
@@ -61,20 +42,8 @@ namespace Core {
         QString uniqueDisplayName;
         QString autoSaveName;
         bool temporary;
-
-        LogDirectory logDir;
     };
 
-    class CKAPPCORE_API IDocumentSettingsData : public QSharedData {
-    public:
-        QString dir;
-        QSharedPointer<QSettings> settings;
-
-        static inline QString descFile(const QString &dir) {
-            return QString("%1/desc.tmp.ini").arg(dir);
-        }
-    };
-
-}
+} // namespace Core
 
 #endif // IDOCUMENTPRIVATE_H

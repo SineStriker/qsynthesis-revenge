@@ -42,7 +42,7 @@ namespace Core {
     void IWindowPrivate::init() {
     }
 
-    void IWindowPrivate::setWindow(QWidget *w, WindowSystemPrivate *d) {
+    void IWindowPrivate::setWindow(QWidget *w, WindowSystemPrivate *d, const std::function<void(IWindow *)> &pre) {
         Q_Q(IWindow);
 
         q->setWindow(w);
@@ -50,8 +50,10 @@ namespace Core {
         shortcutCtx = new QMShortcutContext(this);
 
         closeFilter = new WindowCloseFilter(this, q->window());
-        connect(closeFilter, &WindowCloseFilter::windowClosed, this,
-                &IWindowPrivate::_q_windowClosed);
+        connect(closeFilter, &WindowCloseFilter::windowClosed, this, &IWindowPrivate::_q_windowClosed);
+
+        if (pre)
+            pre(q);
 
         // Setup window
         q->setupWindow();
@@ -64,8 +66,7 @@ namespace Core {
 
             auto addOn = fac->create(q);
             if (!addOn) {
-                myWarning(__func__)
-                    << "window add-on factory creates null instance:" << typeid(*fac).name();
+                myWarning(__func__) << "window add-on factory creates null instance:" << typeid(*fac).name();
                 continue;
             }
 
@@ -94,8 +95,7 @@ namespace Core {
         delayedInitializeTimer = new QTimer();
         delayedInitializeTimer->setInterval(DELAYED_INITIALIZE_INTERVAL);
         delayedInitializeTimer->setSingleShot(true);
-        connect(delayedInitializeTimer, &QTimer::timeout, this,
-                &IWindowPrivate::nextDelayedInitialize);
+        connect(delayedInitializeTimer, &QTimer::timeout, this, &IWindowPrivate::nextDelayedInitialize);
         delayedInitializeTimer->start();
 
         // Add-ons finished
@@ -178,10 +178,8 @@ namespace Core {
         delete q;
     }
 
-    IWindowFactory::IWindowFactory(const QString &id, AvailableCreator creator)
-        : d_ptr(new IWindowFactoryPrivate()) {
+    IWindowFactory::IWindowFactory(const QString &id) : d_ptr(new IWindowFactoryPrivate()) {
         d_ptr->id = id;
-        d_ptr->creator = creator;
     }
 
     IWindowFactory::~IWindowFactory() {
@@ -191,15 +189,7 @@ namespace Core {
         return d_ptr->id;
     }
 
-    IWindowFactory::AvailableCreator IWindowFactory::creator() const {
-        return d_ptr->creator;
-    }
-
     IWindow *IWindowFactory::create(QObject *parent) {
-        return nullptr;
-    }
-
-    IWindow *IWindowFactory::create(const QString &id, QObject *parent) {
         return nullptr;
     }
 
@@ -329,8 +319,7 @@ namespace Core {
         return d->dragFileHandlerMap.contains(suffix.toLower());
     }
 
-    void IWindow::setDragFileHandler(const QString &suffix, QObject *obj, const char *member,
-                                     int maxCount) {
+    void IWindow::setDragFileHandler(const QString &suffix, QObject *obj, const char *member, int maxCount) {
         Q_D(IWindow);
 
         if (suffix.isEmpty())
@@ -351,8 +340,7 @@ namespace Core {
         d->dragFileHandlerMap.remove(suffix.toLower());
     }
 
-    IWindow::IWindow(const QString &id, QObject *parent)
-        : IWindow(*new IWindowPrivate(), id, parent) {
+    IWindow::IWindow(const QString &id, QObject *parent) : IWindow(*new IWindowPrivate(), id, parent) {
     }
 
     IWindow::~IWindow() {
@@ -371,6 +359,13 @@ namespace Core {
         // Do nothing
     }
 
+    void IWindow::windowAddOnsBroadcast(const QString &msg, const QVariantHash &attributes) {
+        Q_D(const IWindow);
+        for (const auto &item : d->addOns) {
+            item->broadcast(msg, attributes);
+        }
+    }
+
     void IWindow::windowAboutToClose() {
         // Do nothing
     }
@@ -387,8 +382,7 @@ namespace Core {
         // Do nothing
     }
 
-    IWindow::IWindow(IWindowPrivate &d, const QString &id, QObject *parent)
-        : ObjectPool(parent), d_ptr(&d) {
+    IWindow::IWindow(IWindowPrivate &d, const QString &id, QObject *parent) : ObjectPool(parent), d_ptr(&d) {
         d.q_ptr = this;
         d.id = id;
 

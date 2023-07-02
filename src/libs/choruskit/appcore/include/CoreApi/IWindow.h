@@ -16,19 +16,12 @@ namespace Core {
 
     class CKAPPCORE_API IWindowFactory {
     public:
-        enum AvailableCreator {
-            Create,
-            CreateWithId,
-        };
-
-        explicit IWindowFactory(const QString &id, AvailableCreator creator);
+        explicit IWindowFactory(const QString &id);
         virtual ~IWindowFactory();
 
         QString id() const;
-        AvailableCreator creator() const;
 
         virtual IWindow *create(QObject *parent);
-        virtual IWindow *create(const QString &id, QObject *parent);
 
     private:
         QScopedPointer<IWindowFactoryPrivate> d_ptr;
@@ -84,6 +77,8 @@ namespace Core {
         virtual void setupWindow();
         virtual void windowAddOnsInitialized();
         virtual void windowAddOnsFinished();
+
+        virtual void windowAddOnsBroadcast(const QString &msg, const QVariantHash &attributes);
 
         virtual void windowAboutToClose();
         virtual void windowClosed();

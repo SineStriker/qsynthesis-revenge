@@ -567,7 +567,7 @@ namespace Core {
 
     void ICoreWindowPrivate::openEditor(DocumentSpec *spec, const QString &path) {
         Q_Q(ICoreWindow);
-        if (spec->open(path)) {
+        if (spec->open(path, q->window())) {
             if (qApp->property("closeHomeOnOpen").toBool() && q->id() == "home") {
                 QTimer::singleShot(0, q->window(), &QWidget::close);
             }
@@ -623,6 +623,8 @@ namespace Core {
 
         QFileInfo info(path);
         if (!info.isFile()) {
+            QMessageBox::critical(window(), ICore::mainTitle(),
+                                  tr("%1: not a file!").arg(QDir::toNativeSeparators(info.absoluteFilePath())));
             return;
         }
 
@@ -631,7 +633,7 @@ namespace Core {
         if (specs.isEmpty()) {
             QMessageBox::critical(
                 window(), ICore::mainTitle(),
-                tr("Can't find editor of the file %1!").arg(QDir::toNativeSeparators(info.canonicalFilePath())));
+                tr("%1: Can't find editor of file!").arg(QDir::toNativeSeparators(info.absoluteFilePath())));
             return;
         }
 

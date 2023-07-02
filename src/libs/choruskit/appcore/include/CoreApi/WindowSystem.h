@@ -30,7 +30,7 @@ namespace Core {
         QList<IWindowAddOnFactory *> addOnFactories() const;
         void clearAddOnFactories();
 
-        IWindow *createWindow(const QString &id, QWidget *parent = nullptr);
+        IWindow *createWindow(const QString &id, const std::function<void(IWindow *)> &pre = {}, QWidget *parent = nullptr);
         IWindow *findWindow(QWidget *window) const;
 
         int count() const;

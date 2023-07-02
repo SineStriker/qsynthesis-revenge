@@ -20,6 +20,12 @@ namespace Core {
         AceTreeModel *model() const;
         DspxContentEntity *project() const;
 
+        QString logDir() const;
+        void setLogDir(const QString &dir); // Must be a writable directory
+
+        bool autoRemoveLogDir() const;
+        void setAutoRemoveLogDir(bool autoRemove);
+
     public:
         // Initializers, must call one of them before accessing the instance
         bool open(const QString &fileName) override;
@@ -46,9 +52,6 @@ namespace Core {
         bool isModified() const override;
 
         void close() override;
-
-    signals:
-        void opened();
 
     protected:
         DspxDocument(DspxDocumentPrivate &d, QObject *parent = nullptr);

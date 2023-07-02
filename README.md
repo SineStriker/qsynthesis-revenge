@@ -81,16 +81,18 @@ For detailed information, see [Related Tools](./docs/related-tools.md).
     + MIT License
 + [yaml-cpp](https://github.com/jbeder/yaml-cpp)
     + MIT License
-+ [QNrbf](https://github.com/SineStriker/QNrbf)
-    + GNU LGPL v2.1 or later
-+ [qastool](https://github.com/SineStriker/qt-json-autogen)
-    + Apache 2.0 License
 + [qBreakpad](https://github.com/buzzySmile/qBreakpad)
     + LGPL-3.0 license
 + [QtCreator 3.6](https://github.com/qt-creator/qt-creator/tree/3.6) (ExtensionSystem, Aggregation, Utils)
     + GNU LGPL v2.1 or later
-<!-- # [LinuxDeployQt](https://github.com/probonopd/linuxdeployqt)
-    + GPL v3 -->
+
+## Sub-projects
++ [qastool](https://github.com/SineStriker/qt-json-autogen)
+    + Apache 2.0 License
++ [QNrbf](https://github.com/SineStriker/QNrbf)
+    + GNU LGPL v2.1 or later
++ [AceTreeModel](https://github.com/SineStriker/AceTreeModel)
+    + Apache 2.0 License
 
 See [Related Tools](./docs/related-tools.md) for dependencies for each plugin.
 

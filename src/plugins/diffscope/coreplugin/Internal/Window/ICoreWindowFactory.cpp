@@ -7,7 +7,7 @@ namespace Core {
 
     namespace Internal {
 
-        IHomeWindowFactory::IHomeWindowFactory() : IWindowFactory(IHomeWindow::WindowTypeID(), Create) {
+        IHomeWindowFactory::IHomeWindowFactory() : IWindowFactory(IHomeWindow::WindowTypeID()) {
         }
 
         IHomeWindowFactory::~IHomeWindowFactory() {
@@ -17,7 +17,7 @@ namespace Core {
             return new IHomeWindow(parent);
         }
 
-        IProjectWindowFactory::IProjectWindowFactory() : IWindowFactory(IProjectWindow::WindowTypeID(), Create) {
+        IProjectWindowFactory::IProjectWindowFactory() : IWindowFactory(IProjectWindow::WindowTypeID()) {
         }
 
         IProjectWindowFactory::~IProjectWindowFactory() {

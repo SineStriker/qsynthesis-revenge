@@ -22,14 +22,13 @@ namespace Core {
 
         static QVersionNumber currentVersion();
 
+        static QString logBaseDir();
+
     public:
         QStringList supportedExtensions() const override;
         QString filter() const override;
 
-        bool open(const QString &fileName) override;
-
-        bool canRecover() const override;
-        bool recover(const QString &logDir, const QString &fileName) override;
+        bool open(const QString &fileName, QWidget *parent) override;
     };
 
 } // Core

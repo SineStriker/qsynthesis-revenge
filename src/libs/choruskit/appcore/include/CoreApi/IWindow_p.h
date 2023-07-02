@@ -32,7 +32,6 @@ namespace Core {
     class IWindowFactoryPrivate {
     public:
         QString id;
-        IWindowFactory::AvailableCreator creator;
     };
 
     class CKAPPCORE_API IWindowPrivate : public QObject {
@@ -44,7 +43,7 @@ namespace Core {
 
         void init();
 
-        void setWindow(QWidget *w, WindowSystemPrivate *d);
+        void setWindow(QWidget *w, WindowSystemPrivate *d, const std::function<void(IWindow *)> &pre);
         void closeWindow();
 
         IWindow *q_ptr;

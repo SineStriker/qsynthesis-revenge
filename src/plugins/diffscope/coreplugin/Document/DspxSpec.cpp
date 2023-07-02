@@ -7,6 +7,7 @@
 #include <QTimer>
 
 #include <QMDecoratorV2.h>
+#include <QMSystem.h>
 
 #include "DspxConst.h"
 #include "ICore.h"
@@ -21,11 +22,14 @@ namespace Core {
     }
 
     void DspxSpecPrivate::init() {
+        QMFs::mkDir(DspxSpec::logBaseDir());
     }
 
     DspxSpec *m_instance = nullptr;
 
-    DspxSpec::DspxSpec(QObject *parent) : DocumentSpec(*new DspxSpecPrivate(), "org.ChorusKit.dspx", parent) {
+    static const char m_specId[] = "org.ChorusKit.dspx";
+
+    DspxSpec::DspxSpec(QObject *parent) : DocumentSpec(*new DspxSpecPrivate(), m_specId, parent) {
         m_instance = this;
 
         Q_D(DspxSpec);
@@ -49,6 +53,10 @@ namespace Core {
         return ver;
     }
 
+    QString DspxSpec::logBaseDir() {
+        return DocumentSystem::logBaseDir() + "/" + m_specId;
+    }
+
     QStringList DspxSpec::supportedExtensions() const {
         return {"dspx"};
     }
@@ -57,46 +65,53 @@ namespace Core {
         return QString("%1(%2)").arg(tr("DiffScope Project Files"), "*.dspx");
     }
 
-    bool DspxSpec::open(const QString &fileName) {
-        if (DocumentSpec::open(fileName))
+    bool DspxSpec::open(const QString &fileName, QWidget *parent) {
+        if (DocumentSpec::open(fileName, parent))
             return true;
 
-        auto iWin = ICore::instance()->windowSystem()->createWindow("project")->cast<IProjectWindow>();
-        if (!iWin)
-            return false;
-
-        auto doc = iWin->doc();
+        auto doc = new DspxDocument();
         if (!doc->open(fileName)) {
-            QMessageBox::critical(nullptr, tr("File Error"), doc->errorMessage());
-            iWin->window()->close();
+            qDebug() << "1345";
+            QMessageBox::critical(parent, tr("File Error"), doc->errorMessage());
+            return false;
+        }
+
+        auto pre = [doc](IWindow *iWin) {
+            iWin->cast<IProjectWindow>()->setDoc(doc); //
+        };
+
+        auto iWin = ICore::instance()->windowSystem()->createWindow("project", pre)->cast<IProjectWindow>();
+        if (!iWin) {
+            ICore::fatalError(parent, tr("Failed to create project window."));
             return false;
         }
 
         return true;
     }
 
-    bool DspxSpec::canRecover() const {
-        return true;
-    }
+    //    bool DspxSpec::canRecover() const {
+    //        return true;
+    //    }
 
-    bool DspxSpec::recover(const QString &logDir, const QString &fileName) {
-        auto iWin = ICore::instance()->windowSystem()->createWindow("project")->cast<IProjectWindow>();
-        if (!iWin)
-            return false;
+    //    bool DspxSpec::recover(const QString &logDir, const QString &fileName) {
+    //        auto iWin =
+    //        ICore::instance()->windowSystem()->createWindow("project")->cast<IProjectWindow>(); if
+    //        (!iWin)
+    //            return false;
 
-        auto doc = iWin->doc();
-        doc->setLogDirectory(logDir);
+    //        auto doc = iWin->doc();
+    //        doc->setLogDirectory(logDir);
 
-        if (!doc->recover(fileName)) {
-            QMessageBox::critical(nullptr, tr("File Error"), doc->errorMessage());
+    //        if (!doc->recover(fileName)) {
+    //            QMessageBox::critical(nullptr, tr("File Error"), doc->errorMessage());
 
-            if (qApp->property("closeHomeOnOpen").toBool())
-                QTimer::singleShot(0, iWin->window(), &QWidget::close);
+    //            if (qApp->property("closeHomeOnOpen").toBool())
+    //                QTimer::singleShot(0, iWin->window(), &QWidget::close);
 
-            return false;
-        }
+    //            return false;
+    //        }
 
-        return true;
-    }
+    //        return true;
+    //    }
 
-} // Core
+} // namespace Core

@@ -252,7 +252,7 @@ namespace Core {
         d->addOnFactories.clear();
     }
 
-    IWindow *WindowSystem::createWindow(const QString &id, QWidget *parent) {
+    IWindow *WindowSystem::createWindow(const QString &id, const std::function<void(IWindow *)> &pre, QWidget *parent) {
         Q_D(WindowSystem);
 
         auto it = d->windowFactories.find(id);
@@ -264,8 +264,7 @@ namespace Core {
         auto factory = it.value();
 
         // Create window handle
-        auto iWin = factory->creator() == IWindowFactory::Create ? factory->create(nullptr)
-                                                                 : factory->create(factory->id(), nullptr);
+        auto iWin = factory->create(parent);
         if (!iWin) {
             myWarning(__func__) << "window factory creates null instance:" << id;
             return nullptr;
@@ -285,7 +284,7 @@ namespace Core {
         window->setAttribute(Qt::WA_DeleteOnClose);
         connect(qApp, &QApplication::aboutToQuit, window, &QWidget::close); // Ensure closing window when quit
 
-        iWin->d_ptr->setWindow(window, d);
+        iWin->d_ptr->setWindow(window, d, pre);
 
         emit windowCreated(iWin);
 

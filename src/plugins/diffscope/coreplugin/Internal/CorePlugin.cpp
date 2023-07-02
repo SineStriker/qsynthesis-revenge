@@ -59,7 +59,7 @@ namespace Core {
                 if (!spec)
                     continue;
 
-                if (spec->open(info.canonicalFilePath())) {
+                if (spec->open(info.canonicalFilePath(), iWin ? iWin->window() : nullptr)) {
                     cnt++;
                 }
             }
@@ -156,7 +156,11 @@ namespace Core {
                 openFileFromCommand({}, ExtensionSystem::PluginManager::arguments(), nullptr);
 
                 if (winMgr->count() == 0) {
-                    waitSplash(winMgr->createWindow("home")->window());
+                    auto home = winMgr->createWindow("home");
+                    if (!home) {
+                        ICore::fatalError(nullptr, tr("Failed to create home window."));
+                    }
+                    waitSplash(home->window());
                 } else {
                     waitSplash(winMgr->firstWindow()->window());
                 }

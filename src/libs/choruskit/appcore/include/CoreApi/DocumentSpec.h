@@ -34,10 +34,7 @@ namespace Core {
         virtual QStringList supportedExtensions() const = 0;
         virtual QString filter() const = 0;
         virtual QString saveFilter() const;
-        virtual bool open(const QString &fileName);
-
-        virtual bool canRecover() const;
-        virtual bool recover(const QString &logDir, const QString &fileName);
+        virtual bool open(const QString &fileName, QWidget *parent);
 
     protected:
         DocumentSpec(DocumentSpecPrivate &d, const QString &id, QObject *parent = nullptr);

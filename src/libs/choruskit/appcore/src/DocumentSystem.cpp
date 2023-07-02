@@ -23,7 +23,10 @@
 
 namespace Core {
 
-#define myWarning(func) (qWarning().nospace() << "Core::DocumentSystem::" << "():").space()
+#define myWarning(func)                                                                                                \
+    (qWarning().nospace() << "Core::DocumentSystem::"                                                                  \
+                          << "():")                                                                                    \
+        .space()
 
     static const char settingCategoryC[] = "DocumentSystem";
 
@@ -47,7 +50,7 @@ namespace Core {
     void DocumentSystemPrivate::init() {
         readSettings();
 
-        QMFs::mkDir(logBaseDir());
+        QMFs::mkDir(DocumentSystem::logBaseDir());
     }
 
     void DocumentSystemPrivate::readSettings() {
@@ -102,10 +105,6 @@ namespace Core {
         s->insert(settingCategoryC, obj);
     }
 
-    QString DocumentSystemPrivate::logBaseDir() {
-        return QString("%1/logs").arg(qAppExt->tempDir());
-    }
-
     static DocumentSystem *m_instance = nullptr;
 
     DocumentSystem::DocumentSystem(QObject *parent) : DocumentSystem(*new DocumentSystemPrivate(), parent) {
@@ -116,6 +115,10 @@ namespace Core {
         d->saveSettings();
 
         m_instance = nullptr;
+    }
+
+    QString DocumentSystem::logBaseDir() {
+        return QString("%1/logs").arg(qAppExt->tempDir());
     }
 
     bool DocumentSystem::addDocType(DocumentSpec *doc) {
@@ -162,7 +165,6 @@ namespace Core {
             auto it2 = d->extensionsMap.find(ext);
             if (it2 == d->extensionsMap.end())
                 continue;
-            auto &set = it2.value();
             it2->remove(doc);
             if (it2->isEmpty())
                 d->extensionsMap.erase(it2);
@@ -187,7 +189,6 @@ namespace Core {
     }
 
     DocumentSpec *DocumentSystem::supportedDocType(const QString &suffix) const {
-        Q_D(const DocumentSystem);
         auto id = preferredDocTypeId(suffix);
         DocumentSpec *spec;
         if (id.isEmpty() || !(spec = docType(id))) {
@@ -285,7 +286,6 @@ namespace Core {
     }
 
     bool DocumentSystem::openFileBrowse(QWidget *parent, DocumentSpec *spec, const QString &path) const {
-        Q_D(const DocumentSystem);
         auto filter =
             spec->filter() + ";;" +
             QString("%1(%2)").arg(QApplication::translate("Core::DocumentSystem", "All Files"), QMOs::allFilesFilter());
@@ -296,7 +296,7 @@ namespace Core {
 
         int cnt = 0;
         for (const auto &item : qAsConst(paths)) {
-            if (spec->open(item))
+            if (spec->open(item, parent))
                 cnt++;
         }
 
@@ -373,122 +373,122 @@ namespace Core {
         return res;
     }
 
-    int DocumentSystem::checkRemainingLogs(QWidget *parent) const {
-        Q_D(const DocumentSystem);
+    //    int DocumentSystem::checkRemainingLogs(QWidget *parent) const {
+    //        Q_D(const DocumentSystem);
 
-        QDir baseDir(DocumentSystemPrivate::logBaseDir());
-        QFileInfoList fileInfos = baseDir.entryInfoList(QDir::Dirs | QDir::NoSymLinks | QDir::NoDotAndDotDot);
+    //        QDir baseDir(DocumentSystemPrivate::logBaseDir());
+    //        QFileInfoList fileInfos = baseDir.entryInfoList(QDir::Dirs | QDir::NoSymLinks | QDir::NoDotAndDotDot);
 
-        struct Remaining {
-            DocumentSpec *spec;
-            QString file;
-            QString logDir;
-        };
+    //        struct Remaining {
+    //            DocumentSpec *spec;
+    //            QString file;
+    //            QString logDir;
+    //        };
 
-        QList<Remaining> remaining;
-        for (const auto &info : qAsConst(fileInfos)) {
-            if (info.birthTime() > ILoader::atime()) {
-                continue;
-            }
+    //        QList<Remaining> remaining;
+    //        for (const auto &info : qAsConst(fileInfos)) {
+    //            if (info.birthTime() > ILoader::atime()) {
+    //                continue;
+    //            }
 
-            QDir dir(info.absoluteFilePath());
-            IDocumentSettings settings(dir.path());
+    //            QDir dir(info.absoluteFilePath());
+    //            IDocumentSettings settings(dir.path());
 
-            const QString &id = settings.docType();
-            const QString &path = settings.fileName();
+    //            const QString &id = settings.docType();
+    //            const QString &path = settings.fileName();
 
-            auto spec = docType(id);
-            if (spec && spec->canRecover() && !path.isEmpty()) {
-                remaining.append({spec, path, dir.path()});
-                continue;
-            }
-            dir.removeRecursively();
-        }
+    //            auto spec = docType(id);
+    //            if (spec && spec->canRecover() && !path.isEmpty()) {
+    //                remaining.append({spec, path, dir.path()});
+    //                continue;
+    //            }
+    //            dir.removeRecursively();
+    //        }
 
-        if (remaining.isEmpty())
-            return 0;
+    //        if (remaining.isEmpty())
+    //            return 0;
 
-        auto listWidget = new QListWidget();
-        for (const auto &rem : qAsConst(remaining)) {
-            auto item = new QListWidgetItem();
-            item->setFlags(Qt::ItemIsEnabled | Qt::ItemIsUserCheckable);
-            item->setText(QDir::toNativeSeparators(rem.file));
-            item->setCheckState(Qt::Checked);
-            listWidget->addItem(item);
-        }
+    //        auto listWidget = new QListWidget();
+    //        for (const auto &rem : qAsConst(remaining)) {
+    //            auto item = new QListWidgetItem();
+    //            item->setFlags(Qt::ItemIsEnabled | Qt::ItemIsUserCheckable);
+    //            item->setText(QDir::toNativeSeparators(rem.file));
+    //            item->setCheckState(Qt::Checked);
+    //            listWidget->addItem(item);
+    //        }
 
-        auto allCheckbox = new QCheckBox(QApplication::translate("Core::DocumentSystem", "Restore all"));
-        connect(allCheckbox, &QCheckBox::toggled, listWidget, &QListWidget::setDisabled);
+    //        auto allCheckbox = new QCheckBox(QApplication::translate("Core::DocumentSystem", "Restore all"));
+    //        connect(allCheckbox, &QCheckBox::toggled, listWidget, &QListWidget::setDisabled);
 
-        QMessageBox msgBox(parent);
-        // msgBox.setWindowFlag(Qt::MSWindowsFixedSizeDialogHint, false);
-        msgBox.setIcon(QMessageBox::Question);
-        msgBox.setText(QApplication::translate(
-            "Core::DocumentSystem",
-            "The following files have been detected that closed unexpectedly, would you like to restore them?"));
-        msgBox.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
-        msgBox.setCheckBox(allCheckbox);
+    //        QMessageBox msgBox(parent);
+    //        // msgBox.setWindowFlag(Qt::MSWindowsFixedSizeDialogHint, false);
+    //        msgBox.setIcon(QMessageBox::Question);
+    //        msgBox.setText(QApplication::translate(
+    //            "Core::DocumentSystem",
+    //            "The following files have been detected that closed unexpectedly, would you like to restore them?"));
+    //        msgBox.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
+    //        msgBox.setCheckBox(allCheckbox);
 
-        auto layout = qobject_cast<QGridLayout *>(msgBox.layout());
-        int index = layout->indexOf(allCheckbox);
-        int row, column, rowSpan, columnSpan;
-        layout->getItemPosition(index, &row, &column, &rowSpan, &columnSpan);
-        layout->addWidget(listWidget, row + 1, column, rowSpan, columnSpan);
+    //        auto layout = qobject_cast<QGridLayout *>(msgBox.layout());
+    //        int index = layout->indexOf(allCheckbox);
+    //        int row, column, rowSpan, columnSpan;
+    //        layout->getItemPosition(index, &row, &column, &rowSpan, &columnSpan);
+    //        layout->addWidget(listWidget, row + 1, column, rowSpan, columnSpan);
 
-        double ratio = (msgBox.screen()->logicalDotsPerInch() / QMOs::unitDpi());
-        auto horizontalSpacer = new QSpacerItem(qMax<int>(ratio * 500, listWidget->sizeHint().width() + 100), 0,
-                                                QSizePolicy::Minimum, QSizePolicy::Expanding);
-        layout->addItem(horizontalSpacer, layout->rowCount(), 0, 1, layout->columnCount());
+    //        double ratio = (msgBox.screen()->logicalDotsPerInch() / QMOs::unitDpi());
+    //        auto horizontalSpacer = new QSpacerItem(qMax<int>(ratio * 500, listWidget->sizeHint().width() + 100), 0,
+    //                                                QSizePolicy::Minimum, QSizePolicy::Expanding);
+    //        layout->addItem(horizontalSpacer, layout->rowCount(), 0, 1, layout->columnCount());
 
-        allCheckbox->setChecked(d->selectAllWhenRecover);
-        int result = msgBox.exec();
-        d->selectAllWhenRecover = allCheckbox->isChecked();
+    //        allCheckbox->setChecked(d->selectAllWhenRecover);
+    //        int result = msgBox.exec();
+    //        d->selectAllWhenRecover = allCheckbox->isChecked();
 
-        if (result == QMessageBox::No) {
-            for (const auto &rem : qAsConst(remaining)) {
-                QDir(rem.logDir).removeRecursively();
-            }
-            return 0;
-        }
+    //        if (result == QMessageBox::No) {
+    //            for (const auto &rem : qAsConst(remaining)) {
+    //                QDir(rem.logDir).removeRecursively();
+    //            }
+    //            return 0;
+    //        }
 
-        int cnt = 0;
-        for (int i = 0; i < listWidget->count(); ++i) {
-            auto item = listWidget->item(i);
-            auto rem = remaining.at(i);
-            if (!allCheckbox->isChecked() && item->checkState() == Qt::Unchecked) {
-                QDir(rem.logDir).removeRecursively();
-                continue;
-            }
+    //        int cnt = 0;
+    //        for (int i = 0; i < listWidget->count(); ++i) {
+    //            auto item = listWidget->item(i);
+    //            auto rem = remaining.at(i);
+    //            if (!allCheckbox->isChecked() && item->checkState() == Qt::Unchecked) {
+    //                QDir(rem.logDir).removeRecursively();
+    //                continue;
+    //            }
 
-            if (rem.spec->recover(rem.logDir, rem.file)) {
-                cnt++;
-            }
-        }
+    //            if (rem.spec->recover(rem.logDir, rem.file)) {
+    //                cnt++;
+    //            }
+    //        }
 
-        return cnt;
-    }
+    //        return cnt;
+    //    }
 
-    QList<IDocumentSettings> DocumentSystem::remainingLogs() {
-        if (!ILoader::instance())
-            return {};
+    //    QList<IDocumentSettings> DocumentSystem::remainingLogs() {
+    //        if (!ILoader::instance())
+    //            return {};
 
-        static QList<IDocumentSettings> _logs = []() {
-            QDir baseDir(DocumentSystemPrivate::logBaseDir());
-            QFileInfoList fileInfos = baseDir.entryInfoList(QDir::Dirs | QDir::NoSymLinks | QDir::NoDotAndDotDot);
+    //        static QList<IDocumentSettings> _logs = []() {
+    //            QDir baseDir(DocumentSystemPrivate::logBaseDir());
+    //            QFileInfoList fileInfos = baseDir.entryInfoList(QDir::Dirs | QDir::NoSymLinks | QDir::NoDotAndDotDot);
 
-            QList<IDocumentSettings> remaining;
-            for (const auto &info : qAsConst(fileInfos)) {
-                if (info.birthTime() >= ILoader::atime()) {
-                    continue;
-                }
-                remaining.append(IDocumentSettings(info.absoluteFilePath()));
-            }
+    //            QList<IDocumentSettings> remaining;
+    //            for (const auto &info : qAsConst(fileInfos)) {
+    //                if (info.birthTime() >= ILoader::atime()) {
+    //                    continue;
+    //                }
+    //                remaining.append(IDocumentSettings(info.absoluteFilePath()));
+    //            }
 
-            return remaining;
-        }();
+    //            return remaining;
+    //        }();
 
-        return _logs;
-    }
+    //        return _logs;
+    //    }
 
     QString DocumentSystem::getSaveAsFileName(const IDocument *document, const QString &pathIn, QWidget *parent) const {
         Q_D(const DocumentSystem);
