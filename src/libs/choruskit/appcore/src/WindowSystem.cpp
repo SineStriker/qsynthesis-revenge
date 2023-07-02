@@ -117,7 +117,7 @@ namespace Core {
     void WindowSystemPrivate::windowClosed(IWindow *iWin) {
         Q_Q(WindowSystem);
 
-        emit q->windowClosed(iWin);
+        emit q->windowDestroyed(iWin);
 
         iWindows.remove(iWin);
         windowMap.remove(iWin->window());
@@ -164,58 +164,11 @@ namespace Core {
         d->saveSettings();
 
         // Remove all managed factories
-        for (auto &item : qAsConst(d->windowFactories)) {
-            delete item;
-        }
-
         for (auto &item : qAsConst(d->addOnFactories)) {
             delete item;
         }
 
         m_instance = nullptr;
-    }
-
-    bool WindowSystem::addWindow(IWindowFactory *factory) {
-        Q_D(WindowSystem);
-        if (!factory) {
-            myWarning(__func__) << "trying to add null factory";
-            return false;
-        }
-        if (d->windowFactories.contains(factory->id())) {
-            myWarning(__func__) << "trying to add duplicated factory:" << factory->id();
-            return false;
-        }
-        d->windowFactories.append(factory->id(), factory);
-        return true;
-    }
-
-    bool WindowSystem::removeWindow(IWindowFactory *factory) {
-        if (factory == nullptr) {
-            myWarning(__func__) << "trying to remove null factory";
-            return false;
-        }
-        return removeWindow(factory->id());
-    }
-
-    bool WindowSystem::removeWindow(const QString &id) {
-        Q_D(WindowSystem);
-        auto it = d->windowFactories.find(id);
-        if (it == d->windowFactories.end()) {
-            myWarning(__func__) << "factory does not exist:" << id;
-            return false;
-        }
-        d->windowFactories.erase(it);
-        return true;
-    }
-
-    QList<IWindowFactory *> WindowSystem::windowFactories() const {
-        Q_D(const WindowSystem);
-        return d->windowFactories.values();
-    }
-
-    void WindowSystem::clearWindowFactories() {
-        Q_D(WindowSystem);
-        d->windowFactories.clear();
     }
 
     bool WindowSystem::addAddOn(IWindowAddOnFactory *factory) {
@@ -250,48 +203,6 @@ namespace Core {
     void WindowSystem::clearAddOnFactories() {
         Q_D(WindowSystem);
         d->addOnFactories.clear();
-    }
-
-    IWindow *WindowSystem::createWindow(const QString &id, const std::function<void(IWindow *)> &pre, QWidget *parent) {
-        Q_D(WindowSystem);
-
-        auto it = d->windowFactories.find(id);
-        if (it == d->windowFactories.end()) {
-            myWarning(__func__) << "window factory does not exist:" << id;
-            return nullptr;
-        }
-
-        auto factory = it.value();
-
-        // Create window handle
-        auto iWin = factory->create(parent);
-        if (!iWin) {
-            myWarning(__func__) << "window factory creates null instance:" << id;
-            return nullptr;
-        }
-
-        d->iWindows.append(iWin);
-
-        // Get quit control
-        qApp->setQuitOnLastWindowClosed(false);
-
-        // Create window
-        auto window = iWin->createWindow(parent);
-
-        // Add to indexes
-        d->windowMap.insert(window, iWin);
-
-        window->setAttribute(Qt::WA_DeleteOnClose);
-        connect(qApp, &QApplication::aboutToQuit, window, &QWidget::close); // Ensure closing window when quit
-
-        iWin->d_ptr->setWindow(window, d, pre);
-
-        emit windowCreated(iWin);
-
-        // if (show)
-        window->show();
-
-        return iWin;
     }
 
     IWindow *WindowSystem::findWindow(QWidget *window) const {

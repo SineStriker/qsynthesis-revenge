@@ -688,50 +688,52 @@ namespace Core {
         return new Internal::MainWindow(parent);
     }
 
-    void ICoreWindow::setupWindow() {
+    void ICoreWindow::nextLoadingState(Core::IWindow::State destState) {
         Q_D(ICoreWindow);
 
-        auto win = window();
-        win->setProperty("top-window", true);
+        switch (destState) {
+            case IWindow::WindowSetup: {
+                auto win = window();
+                win->setProperty("top-window", true);
 
-        // Add window and menubar as basic shortcut contexts
-        addShortcutContext(win, IWindow::Resident);
-        addShortcutContext(menuBar(), IWindow::Resident);
+                // Add window and menubar as basic shortcut contexts
+                addShortcutContext(win, IWindow::Resident);
+                addShortcutContext(menuBar(), IWindow::Resident);
 
-        d->mainMenuCtx = ICore::instance()->actionSystem()->context(QString("%1.MainMenu").arg(id()));
-        if (!d->mainMenuCtx) {
-            ICore::fatalError(win, tr("Failed to create main menu."));
-        }
+                d->mainMenuCtx = ICore::instance()->actionSystem()->context(QString("%1.MainMenu").arg(id()));
+                if (!d->mainMenuCtx) {
+                    ICore::fatalError(win, tr("Failed to create main menu."));
+                }
 
-        d->invisibleCtx = ICore::instance()->actionSystem()->context(QString("%1.InvisibleContext").arg(id()));
-        if (!d->invisibleCtx) {
-            ICore::fatalError(win, tr("Failed to create internal action context."));
-        }
+                d->invisibleCtx = ICore::instance()->actionSystem()->context(QString("%1.InvisibleContext").arg(id()));
+                if (!d->invisibleCtx) {
+                    ICore::fatalError(win, tr("Failed to create internal action context."));
+                }
 
-        // Init command palette
-        d->cp = new QsApi::CommandPalette(win);
-        ICore::autoPolishScrollArea(d->cp);
+                // Init command palette
+                d->cp = new QsApi::CommandPalette(win);
+                ICore::autoPolishScrollArea(d->cp);
 
-        win->installEventFilter(d);
-    }
+                win->installEventFilter(d);
+                break;
+            }
 
-    void ICoreWindow::windowAddOnsInitialized() {
-        Q_D(ICoreWindow);
-        connect(d->mainMenuCtx, &ActionContext::stateChanged, d, &ICoreWindowPrivate::reloadMenuBar);
-        d->reloadMenuBar();
+            case IWindow::Initialized: {
+                connect(d->mainMenuCtx, &ActionContext::stateChanged, d, &ICoreWindowPrivate::reloadMenuBar);
+                d->reloadMenuBar();
+                d->loadInvisibleContext();
+                break;
+            }
 
-        d->loadInvisibleContext();
+            case IWindow::Closed: {
+                if (property("choruskit_show_home").toBool() && ICore::instance()->windowSystem()->count() == 1) {
+                    ICore::showHome();
+                }
+                break;
+            }
 
-        // Shortcut will cause immediate close of command palette
-        // connect(this, &IWindow::shortcutAboutToCome, d->cp, &QsApi::CommandPalette::abandon);
-    }
-
-    void ICoreWindow::windowAddOnsFinished() {
-    }
-
-    void ICoreWindow::windowClosed() {
-        if (property("choruskit_show_home").toBool() && ICore::instance()->windowSystem()->count() == 1) {
-            ICore::showHome();
+            default:
+                break;
         }
     }
 

@@ -265,7 +265,7 @@ namespace Core {
             iWin->addCheckable("playback.loopPlay", loopPlayItem->action());
 
             connect(iWin->doc(), &IDocument::changed, this, [this, iWin]() {
-                saveFileItem->setEnabled(!iWin->doc()->isVSTMode() && iWin->doc()->isModified()); //
+                saveFileItem->setEnabled(!iWin->doc()->isVST() && iWin->doc()->isModified()); //
             });
 
             connect(saveAsFileItem->action(), &QAction::triggered, this, [this, iWin]() {

@@ -22,7 +22,7 @@
 #include "AddOn/HomeWindowAddOn.h"
 #include "AddOn/ProjectWindowAddOn.h"
 #include "Document/DspxSpec.h"
-#include "Window/ICoreWindowFactory.h"
+#include "Window/IHomeWindow.h"
 
 #include "Internal/Settings/ActionConfigurePage.h"
 #include "Internal/Settings/AppearanceTopPage.h"
@@ -99,9 +99,6 @@ namespace Core {
             // Add basic windows and add-ons
             auto winMgr = icore->windowSystem();
 
-            winMgr->addWindow(new IHomeWindowFactory());
-            winMgr->addWindow(new IProjectWindowFactory());
-
             winMgr->addAddOn(new HomeWindowAddOnFactory());
             winMgr->addAddOn(new ProjectWindowAddOnFactory());
 
@@ -156,10 +153,7 @@ namespace Core {
                 openFileFromCommand({}, ExtensionSystem::PluginManager::arguments(), nullptr);
 
                 if (winMgr->count() == 0) {
-                    auto home = winMgr->createWindow("home");
-                    if (!home) {
-                        ICore::fatalError(nullptr, tr("Failed to create home window."));
-                    }
+                    auto home = IWindow::create<IHomeWindow>();
                     waitSplash(home->window());
                 } else {
                     waitSplash(winMgr->firstWindow()->window());

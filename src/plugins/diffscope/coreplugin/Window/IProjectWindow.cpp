@@ -28,9 +28,12 @@ namespace Core {
 
     static const char mainDockSettingCatalogC[] = "IProjectWindow/MainDock";
 
-    IProjectWindowPrivate::IProjectWindowPrivate() {
+    IProjectWindowPrivate::IProjectWindowPrivate(DspxDocument *doc) : m_doc(doc) {
         m_forceClose = false;
-        m_doc = nullptr;
+
+        m_doc = doc;
+        doc->setAutoRemoveLogDir(false);
+        doc->setParent(this);
     }
 
     IProjectWindowPrivate::~IProjectWindowPrivate() {
@@ -142,7 +145,7 @@ namespace Core {
             switch (event->type()) {
                 case QEvent::Close: {
                     if (!m_forceClose) {
-                        if (m_doc->isVSTMode()) {
+                        if (m_doc->isVST()) {
                             qDebug() << "VSTMode, Hide";
 
                             // VST mode, we simply hide window
@@ -202,25 +205,17 @@ namespace Core {
         q->window()->close();
     }
 
+    IProjectWindow::IProjectWindow(DspxDocument *doc, QObject *parent)
+        : IProjectWindow(*new IProjectWindowPrivate(doc), parent) {
+    }
+
+    IProjectWindow::~IProjectWindow() {
+    }
+
     DspxDocument *IProjectWindow::doc() const {
         Q_D(const IProjectWindow);
         return d->m_doc;
     }
-
-    void IProjectWindow::setDoc(Core::DspxDocument *doc) {
-        Q_D(IProjectWindow);
-        if (d->m_doc) {
-            return;
-        }
-
-        // Only initialize once
-        d->m_doc = doc;
-        doc->setAutoRemoveLogDir(false);
-        doc->setParent(this);
-
-        windowAddOnsBroadcast("open", {});
-    }
-
     QToolBar *IProjectWindow::mainToolbar() const {
         Q_D(const IProjectWindow);
         return d->m_toolbar;
@@ -236,110 +231,104 @@ namespace Core {
         return d->m_pianoRoll;
     }
 
-    IProjectWindow::IProjectWindow(QObject *parent) : IProjectWindow(*new IProjectWindowPrivate(), parent) {
-    }
+    void IProjectWindow::nextLoadingState(Core::IWindow::State destState) {
+        ICoreWindow::nextLoadingState(destState);
 
-    IProjectWindow::~IProjectWindow() {
-    }
-
-    void IProjectWindow::setupWindow() {
         Q_D(IProjectWindow);
-
-        ICoreWindow::setupWindow();
-
         auto win = window();
-        win->setObjectName("project-window");
-        win->setAcceptDrops(true);
+        switch (destState) {
+            case IWindow::WindowSetup: {
+                win->setObjectName("project-window");
+                win->setAcceptDrops(true);
 
-        d->mainToolbarCtx = ICore::instance()->actionSystem()->context("project.MainToolbar");
-        if (!d->mainToolbarCtx) {
-            ICore::fatalError(win, tr("Failed to create main toolbar."));
+                d->mainToolbarCtx = ICore::instance()->actionSystem()->context("project.MainToolbar");
+                if (!d->mainToolbarCtx) {
+                    ICore::fatalError(win, tr("Failed to create main toolbar."));
+                }
+
+                auto &toolbar = d->m_toolbar;
+                toolbar = new CToolBar();
+                toolbar->setObjectName("main-toolbar");
+                toolbar->setMovable(false);
+                toolbar->setFloatable(false);
+                toolbar->setOrientation(Qt::Horizontal);
+                toolbar->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Minimum);
+
+                auto &frame = d->m_frame;
+                frame = new CDockFrame();
+                frame->setObjectName("main-dock");
+                connect(frame, &CDockFrame::cardAdded, this, [this](QAbstractButton *card) {
+                    card->setProperty("type", "main-dock-card"); //
+                });
+
+                auto &layout = d->m_layout;
+                layout = new QVBoxLayout();
+                layout->setMargin(0);
+                layout->setSpacing(0);
+                layout->addWidget(toolbar);
+                layout->addWidget(frame, 1);
+
+                auto &centralWidget = d->m_centralWidget;
+                centralWidget = new QWidget();
+                centralWidget->setAttribute(Qt::WA_StyledBackground);
+                centralWidget->setLayout(layout);
+
+                auto &m_pianoRoll = d->m_pianoRoll;
+                m_pianoRoll = new PianoRoll();
+                frame->setWidget(m_pianoRoll);
+
+                setCentralWidget(centralWidget);
+                d->cp->setParent(centralWidget);
+
+                win->installEventFilter(d);
+
+                // Close event
+                connect(d->m_doc, &IDocument::changed, d, &IProjectWindowPrivate::_q_documentChanged);
+                connect(d->m_doc, &IDocument::raiseRequested, d, &IProjectWindowPrivate::_q_documentRaiseRequested);
+                connect(d->m_doc, &IDocument::closeRequested, d, &IProjectWindowPrivate::_q_documentCloseRequested);
+                break;
+            }
+
+            case IWindow::Running: {
+                connect(d->mainToolbarCtx, &ActionContext::stateChanged, d, &IProjectWindowPrivate::reloadMainToolbar);
+                d->reloadMainToolbar();
+
+                qIDec->installLocale(this, _LOC(IProjectWindowPrivate, d));
+                qIDec->installTheme(win, "core.ProjectWindow");
+
+                // Restore dock
+                d->restoreMainDockState();
+
+                // Restore piano roll state
+                d->m_pianoRoll->d_func()->readSettings();
+
+                ICore::instance()->windowSystem()->loadWindowGeometry(metaObject()->className(), win, {1200, 800});
+                break;
+            }
+
+            case IWindow::Closed: {
+                // Windows should be all closed before quit signal arrives except a kill or interrupt signal
+                // is emitted, only when this function is called the log should be removed expectedly.
+                if (!d->m_doc->isModified() || d->m_forceClose) {
+                    d->m_doc->setAutoRemoveLogDir(true);
+                }
+
+                // Save piano roll state
+                d->m_pianoRoll->d_func()->saveSettings();
+
+                // Save dock state
+                d->saveMainDockState();
+
+                ICore::instance()->windowSystem()->saveWindowGeometry(metaObject()->className(), window());
+                break;
+            }
+
+            default:
+                break;
         }
-
-        auto &toolbar = d->m_toolbar;
-        toolbar = new CToolBar();
-        toolbar->setObjectName("main-toolbar");
-        toolbar->setMovable(false);
-        toolbar->setFloatable(false);
-        toolbar->setOrientation(Qt::Horizontal);
-        toolbar->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Minimum);
-
-        auto &frame = d->m_frame;
-        frame = new CDockFrame();
-        frame->setObjectName("main-dock");
-        connect(frame, &CDockFrame::cardAdded, this, [this](QAbstractButton *card) {
-            card->setProperty("type", "main-dock-card"); //
-        });
-
-        auto &layout = d->m_layout;
-        layout = new QVBoxLayout();
-        layout->setMargin(0);
-        layout->setSpacing(0);
-        layout->addWidget(toolbar);
-        layout->addWidget(frame, 1);
-
-        auto &centralWidget = d->m_centralWidget;
-        centralWidget = new QWidget();
-        centralWidget->setAttribute(Qt::WA_StyledBackground);
-        centralWidget->setLayout(layout);
-
-        auto &m_pianoRoll = d->m_pianoRoll;
-        m_pianoRoll = new PianoRoll();
-        frame->setWidget(m_pianoRoll);
-
-        setCentralWidget(centralWidget);
-        d->cp->setParent(centralWidget);
-
-        win->installEventFilter(d);
-
-        // Close event
-        connect(d->m_doc, &IDocument::changed, d, &IProjectWindowPrivate::_q_documentChanged);
-        connect(d->m_doc, &IDocument::raiseRequested, d, &IProjectWindowPrivate::_q_documentRaiseRequested);
-        connect(d->m_doc, &IDocument::closeRequested, d, &IProjectWindowPrivate::_q_documentCloseRequested);
     }
 
-    void IProjectWindow::windowAddOnsFinished() {
-        Q_D(IProjectWindow);
-
-        ICoreWindow::windowAddOnsFinished();
-
-        connect(d->mainToolbarCtx, &ActionContext::stateChanged, d, &IProjectWindowPrivate::reloadMainToolbar);
-        d->reloadMainToolbar();
-
-        auto win = window();
-
-        qIDec->installLocale(this, _LOC(IProjectWindowPrivate, d));
-        qIDec->installTheme(win, "core.ProjectWindow");
-
-        // Restore dock
-        d->restoreMainDockState();
-
-        // Restore piano roll state
-        d->m_pianoRoll->d_func()->readSettings();
-
-        ICore::instance()->windowSystem()->loadWindowGeometry(metaObject()->className(), win, {1200, 800});
-    }
-
-    void IProjectWindow::windowAboutToClose() {
-        Q_D(IProjectWindow);
-
-        // Windows should be all closed before quit signal arrives except a kill or interrupt signal
-        // is emitted, only when this function is called the log should be removed expectedly.
-        if (!d->m_doc->isModified() || d->m_forceClose) {
-            d->m_doc->setAutoRemoveLogDir(true);
-        }
-
-        // Save piano roll state
-        d->m_pianoRoll->d_func()->saveSettings();
-
-        // Save dock state
-        d->saveMainDockState();
-
-        ICore::instance()->windowSystem()->saveWindowGeometry(metaObject()->className(), window());
-    }
-
-    IProjectWindow::IProjectWindow(IProjectWindowPrivate &d, QObject *parent)
-        : ICoreWindow(d, IProjectWindow::WindowTypeID(), parent) {
+    IProjectWindow::IProjectWindow(IProjectWindowPrivate &d, QObject *parent) : ICoreWindow(d, "project", parent) {
         d.init();
     }
 

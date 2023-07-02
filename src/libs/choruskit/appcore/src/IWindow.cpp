@@ -31,8 +31,6 @@ namespace Core {
 
     IWindowPrivate::IWindowPrivate() {
         Q_Q(IWindow);
-
-        m_closed = false;
     }
 
     IWindowPrivate::~IWindowPrivate() {
@@ -42,7 +40,14 @@ namespace Core {
     void IWindowPrivate::init() {
     }
 
-    void IWindowPrivate::setWindow(QWidget *w, WindowSystemPrivate *d, const std::function<void(IWindow *)> &pre) {
+    void IWindowPrivate::changeLoadState(IWindow::State state) {
+        Q_Q(IWindow);
+        q->nextLoadingState(state);
+        this->state = state;
+        emit q->loadingStateChanged(state);
+    }
+
+    void IWindowPrivate::setWindow(QWidget *w, WindowSystemPrivate *d) {
         Q_Q(IWindow);
 
         q->setWindow(w);
@@ -52,11 +57,8 @@ namespace Core {
         closeFilter = new WindowCloseFilter(this, q->window());
         connect(closeFilter, &WindowCloseFilter::windowClosed, this, &IWindowPrivate::_q_windowClosed);
 
-        if (pre)
-            pre(q);
-
         // Setup window
-        q->setupWindow();
+        changeLoadState(IWindow::WindowSetup);
 
         // Call all add-ons
         for (auto &fac : qAsConst(d->addOnFactories)) {
@@ -80,7 +82,7 @@ namespace Core {
             addOn->initialize();
         }
 
-        q->windowAddOnsInitialized();
+        changeLoadState(IWindow::Initialized);
 
         // ExtensionsInitialized
         for (auto it2 = addOns.rbegin(); it2 != addOns.rend(); ++it2) {
@@ -88,6 +90,9 @@ namespace Core {
             // Call 2
             addOn->extensionsInitialized();
         }
+
+        // Add-ons finished
+        changeLoadState(IWindow::Running);
 
         // Delayed initialize
         delayedInitializeQueue = addOns;
@@ -97,22 +102,6 @@ namespace Core {
         delayedInitializeTimer->setSingleShot(true);
         connect(delayedInitializeTimer, &QTimer::timeout, this, &IWindowPrivate::nextDelayedInitialize);
         delayedInitializeTimer->start();
-
-        // Add-ons finished
-        q->windowAddOnsFinished();
-    }
-
-    void IWindowPrivate::closeWindow() {
-        Q_Q(IWindow);
-        auto w = q->window();
-
-        m_closed = true;
-
-        if (!w->isHidden())
-            w->hide();
-
-        delete shortcutCtx;
-        shortcutCtx = nullptr;
     }
 
     void IWindowPrivate::deleteAllAddOns() {
@@ -161,36 +150,52 @@ namespace Core {
 
         tryStopDelayedTimer();
 
-        closeWindow();
+        if (!w->isHidden())
+            w->hide();
 
-        q->windowAboutToClose();
-
-        emit q->aboutToClose();
-
-        deleteAllAddOns();
-
-        q->windowClosed();
+        changeLoadState(IWindow::Closed);
 
         ICoreBase::instance()->windowSystem()->d_func()->windowClosed(q);
-        emit q->closed();
+
+        delete shortcutCtx;
+        shortcutCtx = nullptr;
+
+        // Delete addOns
+        deleteAllAddOns();
+
+        changeLoadState(IWindow::Deleted);
 
         q->setWindow(nullptr);
         delete q;
     }
 
-    IWindowFactory::IWindowFactory(const QString &id) : d_ptr(new IWindowFactoryPrivate()) {
-        d_ptr->id = id;
+    void IWindow::load() {
+        auto winMgr = ICoreBase::instance()->windowSystem();
+        auto d = winMgr->d_func();
+        d->iWindows.append(this);
+
+        // Get quit control
+        qApp->setQuitOnLastWindowClosed(false);
+
+        // Create window
+        auto win = createWindow(nullptr);
+
+        // Add to indexes
+        d->windowMap.insert(win, this);
+
+        win->setAttribute(Qt::WA_DeleteOnClose);
+        connect(qApp, &QApplication::aboutToQuit, win, &QWidget::close); // Ensure closing window when quit
+
+        d_func()->setWindow(win, d);
+
+        emit winMgr->windowCreated(this);
+
+        win->show();
     }
 
-    IWindowFactory::~IWindowFactory() {
-    }
-
-    QString IWindowFactory::id() const {
-        return d_ptr->id;
-    }
-
-    IWindow *IWindowFactory::create(QObject *parent) {
-        return nullptr;
+    IWindow::State IWindow::state() const {
+        Q_D(const IWindow);
+        return d->state;
     }
 
     QString IWindow::id() const {
@@ -344,34 +349,10 @@ namespace Core {
     }
 
     IWindow::~IWindow() {
-        Q_D(IWindow);
     }
 
-    void IWindow::setupWindow() {
-        // Do nothing
-    }
-
-    void IWindow::windowAddOnsInitialized() {
-        // Do nothing
-    }
-
-    void IWindow::windowAddOnsFinished() {
-        // Do nothing
-    }
-
-    void IWindow::windowAddOnsBroadcast(const QString &msg, const QVariantHash &attributes) {
-        Q_D(const IWindow);
-        for (const auto &item : d->addOns) {
-            item->broadcast(msg, attributes);
-        }
-    }
-
-    void IWindow::windowAboutToClose() {
-        // Do nothing
-    }
-
-    void IWindow::windowClosed() {
-        // Do nothing
+    void IWindow::nextLoadingState(Core::IWindow::State destState) {
+        Q_UNUSED(destState)
     }
 
     void IWindow::actionItemAdded(ActionItem *item) {
@@ -387,11 +368,6 @@ namespace Core {
         d.id = id;
 
         d.init();
-    }
-
-    bool IWindow::isEffectivelyClosed() const {
-        Q_D(const IWindow);
-        return d->m_closed;
     }
 
 } // namespace Core

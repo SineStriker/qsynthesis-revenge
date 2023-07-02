@@ -12,24 +12,18 @@
 
 namespace Core {
 
-    namespace Internal {
-        class IProjectWindowFactory;
-        class ProjectWindowAddOn;
-    }
-
     class IProjectWindowPrivate;
 
     class CORE_EXPORT IProjectWindow : public ICoreWindow {
         Q_OBJECT
         Q_DECLARE_PRIVATE(IProjectWindow)
     public:
-        static inline QString WindowTypeID() {
-            return "project";
-        }
+        explicit IProjectWindow(DspxDocument *doc, QObject *parent = nullptr);
+        ~IProjectWindow();
 
-        // Doc
+    public:
+        // Meta
         DspxDocument *doc() const;
-        void setDoc(DspxDocument *doc);
 
         // UI
         QToolBar *mainToolbar() const;
@@ -37,18 +31,10 @@ namespace Core {
         PianoRoll *pianoRoll() const;
 
     protected:
-        explicit IProjectWindow(QObject *parent = nullptr);
-        ~IProjectWindow();
-
-        void setupWindow() override;
-        void windowAddOnsFinished() override;
-
-        void windowAboutToClose() override;
+        void nextLoadingState(Core::IWindow::State destState) override;
 
     protected:
         IProjectWindow(IProjectWindowPrivate &d, QObject *parent = nullptr);
-
-        friend class Internal::IProjectWindowFactory;
     };
 
 }

@@ -53,9 +53,8 @@ namespace Core {
         userLogDir = dir;
     }
 
-    DspxDocumentPrivate::DspxDocumentPrivate() {
+    DspxDocumentPrivate::DspxDocumentPrivate(DspxDocument::Mode mode) : mode(mode) {
         opened = false;
-        vstMode = false;
         model = nullptr;
         content = nullptr;
         settings = nullptr;
@@ -200,8 +199,12 @@ namespace Core {
         return true;
     }
 
-    DspxDocument::DspxDocument(QObject *parent) : DspxDocument(*new DspxDocumentPrivate(), parent) {
+    DspxDocument::DspxDocument(QObject *parent) : DspxDocument(*new DspxDocumentPrivate(FileMode), parent) {
     }
+
+    DspxDocument::DspxDocument(Mode mode, QObject *parent) : DspxDocument(*new DspxDocumentPrivate(mode), parent) {
+    }
+
 
     DspxDocument::~DspxDocument() {
     }
@@ -280,10 +283,11 @@ namespace Core {
         file.write(data);
         file.close();
 
-        setFilePath(fileName);
-        d->unshiftToRecent();
-
-        d->changeToSaved();
+        if (d->mode == FileMode) {
+            setFilePath(fileName);
+            d->unshiftToRecent();
+            d->changeToSaved();
+        }
         return true;
     }
 
@@ -345,7 +349,6 @@ namespace Core {
             d->content = content;
         }
 
-
         QString baseName = QString("Untitled-%1").arg(QString::number(++m_untitledIndex));
         setFilePath(baseName + ".dspx");
         setPreferredDisplayName(baseName);
@@ -386,24 +389,17 @@ namespace Core {
         return true;
     }
 
-    bool DspxDocument::isVSTMode() const {
+    bool DspxDocument::isVST() const {
         Q_D(const DspxDocument);
-        return d->vstMode;
-    }
-
-    bool DspxDocument::isOpened() const {
-        Q_D(const DspxDocument);
-        return d->opened;
-    }
-
-    void DspxDocument::setVSTMode(bool on) {
-        Q_D(DspxDocument);
-        d->vstMode = on;
-        emit changed();
+        return d->mode == VSTMode;
     }
 
     void DspxDocument::saveVST(const std::function<bool(const QByteArray &)> &callback) {
         Q_D(DspxDocument);
+
+        if (d->mode == FileMode) {
+            return;
+        }
 
         QByteArray data;
         if (!saveRawData(&data)) {
@@ -414,6 +410,11 @@ namespace Core {
         }
 
         d->changeToSaved();
+    }
+
+    bool DspxDocument::isOpened() const {
+        Q_D(const DspxDocument);
+        return d->opened;
     }
 
     QString DspxDocument::defaultPath() const {

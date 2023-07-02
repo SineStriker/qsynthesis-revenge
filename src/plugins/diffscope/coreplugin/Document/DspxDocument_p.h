@@ -29,10 +29,12 @@ namespace Core {
     class DspxDocumentPrivate : public IDocumentPrivate {
         Q_DECLARE_PUBLIC(DspxDocument)
     public:
-        DspxDocumentPrivate();
+        DspxDocumentPrivate(DspxDocument::Mode mode);
         virtual ~DspxDocumentPrivate();
 
         void init();
+
+        DspxDocument::Mode mode;
 
         AceTreeModel *model;
         DspxContentEntity *content;
@@ -40,7 +42,6 @@ namespace Core {
         LogDirectory logDir;
 
         bool opened;
-        bool vstMode;
 
         void changeToOpen();
         void changeToSaved();

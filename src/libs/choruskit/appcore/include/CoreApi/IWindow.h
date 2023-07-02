@@ -11,26 +11,28 @@ namespace Core {
         class CorePlugin;
     }
 
-    class IWindow;
-    class IWindowFactoryPrivate;
-
-    class CKAPPCORE_API IWindowFactory {
-    public:
-        explicit IWindowFactory(const QString &id);
-        virtual ~IWindowFactory();
-
-        QString id() const;
-
-        virtual IWindow *create(QObject *parent);
-
-    private:
-        QScopedPointer<IWindowFactoryPrivate> d_ptr;
-    };
-
     class IWindowPrivate;
 
     class CKAPPCORE_API IWindow : public ObjectPool, public WindowElementsAdaptor {
         Q_OBJECT
+    public:
+        explicit IWindow(const QString &id, QObject *parent = nullptr);
+        ~IWindow();
+
+        enum State {
+            Invalid,
+            WindowSetup,
+            Initialized,
+            Running,
+            Closed,
+            Deleted,
+        };
+        Q_ENUM(State)
+
+        void load();
+        State state() const;
+        inline bool isEffectivelyClosed() const;
+
     public:
         QString id() const;
 
@@ -50,14 +52,12 @@ namespace Core {
             Resident,
             Mutable,
         };
-
         void addShortcutContext(QWidget *w, ShortcutContextPriority priority);
         void removeShortcutContext(QWidget *w);
         QList<QWidget *> shortcutContexts() const;
 
         bool hasDragFileHandler(const QString &suffix);
-        void setDragFileHandler(const QString &suffix, QObject *obj, const char *member,
-                                int maxCount = 0);
+        void setDragFileHandler(const QString &suffix, QObject *obj, const char *member, int maxCount = 0);
         void removeDragFileHandler(const QString &suffix);
 
     signals:
@@ -65,23 +65,12 @@ namespace Core {
         void aboutToRemoveWidget(const QString &id, QWidget *w);
 
         void initializationDone();
-        void aboutToClose();
-        void closed();
+        void loadingStateChanged(State state);
 
     protected:
-        explicit IWindow(const QString &id, QObject *parent = nullptr);
-        ~IWindow();
-
         virtual QWidget *createWindow(QWidget *parent) const = 0;
 
-        virtual void setupWindow();
-        virtual void windowAddOnsInitialized();
-        virtual void windowAddOnsFinished();
-
-        virtual void windowAddOnsBroadcast(const QString &msg, const QVariantHash &attributes);
-
-        virtual void windowAboutToClose();
-        virtual void windowClosed();
+        virtual void nextLoadingState(State destState);
 
         virtual void actionItemAdded(ActionItem *item);
         virtual void actionItemRemoved(ActionItem *item);
@@ -92,22 +81,26 @@ namespace Core {
 
         Q_DECLARE_PRIVATE(IWindow)
 
+        friend class WindowSystem;
+        friend class WindowSystemPrivate;
         friend class ICore;
         friend class ICorePrivate;
         friend class Internal::CorePlugin;
-        friend class WindowSystem;
-        friend class WindowSystemPrivate;
-        friend class IWindowFactory;
 
     public:
-        bool isEffectivelyClosed() const;
-
         template <class T>
         inline T *cast();
 
         template <class T>
         inline const T *cast() const;
+
+        template <class T, class... Args>
+        static inline T *create(Args &&...args);
     };
+
+    inline bool IWindow::isEffectivelyClosed() const {
+        return state() >= Closed;
+    }
 
     template <class T>
     inline T *IWindow::cast() {
@@ -119,6 +112,14 @@ namespace Core {
     inline const T *IWindow::cast() const {
         static_assert(std::is_base_of<IWindow, T>::value, "T should inherit from Core::IWindow");
         return qobject_cast<T *>(this);
+    }
+
+    template <class T, class... Args>
+    inline T *IWindow::create(Args &&...arguments) {
+        static_assert(std::is_base_of<IWindow, T>::value, "T should inherit from Core::IWindow");
+        auto p = new T(arguments...);
+        p->load();
+        return p;
     }
 
 } // namespace Core

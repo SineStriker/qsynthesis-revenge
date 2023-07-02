@@ -132,7 +132,7 @@ namespace Core {
             QMView::bringWindowToForeground(inst->window());
             return;
         }
-        instance()->windowSystem()->createWindow("home");
+        IWindow::create<IHomeWindow>();
     }
 
     void ICore::fatalError(QWidget *parent, const QString &text, int exitCode) {

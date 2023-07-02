@@ -48,7 +48,6 @@ namespace Core {
 
         WindowSystem *q_ptr;
 
-        QMChronMap<QString, IWindowFactory *> windowFactories;
         QMChronSet<IWindowAddOnFactory *> addOnFactories;
 
         QMChronSet<IWindow *> iWindows;

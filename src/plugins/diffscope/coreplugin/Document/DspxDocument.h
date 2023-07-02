@@ -14,7 +14,12 @@ namespace Core {
         Q_OBJECT
         Q_DECLARE_PRIVATE(DspxDocument)
     public:
+        enum Mode {
+            FileMode,
+            VSTMode,
+        };
         explicit DspxDocument(QObject *parent = nullptr);
+        DspxDocument(Mode mode, QObject *parent = nullptr);
         ~DspxDocument();
 
         AceTreeModel *model() const;
@@ -38,8 +43,7 @@ namespace Core {
         bool saveRawData(QByteArray *data) const;
 
         // VST related
-        bool isVSTMode() const;
-        void setVSTMode(bool on);
+        bool isVST() const;
         void saveVST(const std::function<bool(const QByteArray &)> &callback);
 
         bool isOpened() const;

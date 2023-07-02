@@ -48,10 +48,7 @@ namespace Core {
 
         QWidget *createWindow(QWidget *parent) const override;
 
-        void setupWindow() override;
-        void windowAddOnsInitialized() override;
-        void windowAddOnsFinished() override;
-        void windowClosed() override;
+        void nextLoadingState(Core::IWindow::State destState) override;
 
         void actionItemAdded(ActionItem *item) override;
         void actionItemRemoved(ActionItem *item) override;

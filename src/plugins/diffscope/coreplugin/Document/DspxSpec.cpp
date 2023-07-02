@@ -5,6 +5,7 @@
 #include <QDebug>
 #include <QMessageBox>
 #include <QTimer>
+#include <QSharedPointer>
 
 #include <QMDecoratorV2.h>
 #include <QMSystem.h>
@@ -76,17 +77,7 @@ namespace Core {
             return false;
         }
 
-        auto pre = [doc](IWindow *iWin) {
-            iWin->cast<IProjectWindow>()->setDoc(doc); //
-        };
-
-        auto iWin = ICore::instance()->windowSystem()->createWindow("project", pre)->cast<IProjectWindow>();
-        if (!iWin) {
-            ICore::fatalError(parent, tr("Failed to create project window."));
-            return false;
-        }
-
-        return true;
+        return IWindow::create<IProjectWindow>(doc);
     }
 
     //    bool DspxSpec::canRecover() const {

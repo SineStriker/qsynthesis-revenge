@@ -16,7 +16,7 @@ namespace Core {
         Q_OBJECT
         Q_DECLARE_PUBLIC(IProjectWindow)
     public:
-        IProjectWindowPrivate();
+        IProjectWindowPrivate(DspxDocument *doc);
         ~IProjectWindowPrivate();
 
         void init();

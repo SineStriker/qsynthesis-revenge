@@ -33,10 +33,6 @@ namespace Core {
         return false;
     }
 
-    void IWindowAddOn::broadcast(const QString &msg, const QVariantHash &attributes) {
-        // Do nothing
-    }
-
     IWindowAddOn::IWindowAddOn(IWindowAddOnPrivate &d, QObject *parent) : QObject(parent), d_ptr(&d) {
         d.q_ptr = this;
         d.init();

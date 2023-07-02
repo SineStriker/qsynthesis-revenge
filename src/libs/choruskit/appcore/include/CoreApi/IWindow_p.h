@@ -43,13 +43,13 @@ namespace Core {
 
         void init();
 
-        void setWindow(QWidget *w, WindowSystemPrivate *d, const std::function<void(IWindow *)> &pre);
-        void closeWindow();
+        void changeLoadState(IWindow::State state);
+        void setWindow(QWidget *w, WindowSystemPrivate *d);
 
         IWindow *q_ptr;
 
         QString id;
-        bool m_closed;
+        IWindow::State state;
 
         WindowCloseFilter *closeFilter;
         QMShortcutContext *shortcutCtx;

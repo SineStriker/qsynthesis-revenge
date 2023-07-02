@@ -19,18 +19,11 @@ namespace Core {
         ~WindowSystem();
 
     public:
-        bool addWindow(IWindowFactory *factory);
-        bool removeWindow(IWindowFactory *factory);
-        bool removeWindow(const QString &id);
-        QList<IWindowFactory *> windowFactories() const;
-        void clearWindowFactories();
-
         bool addAddOn(IWindowAddOnFactory *factory);
         bool removeAddOn(IWindowAddOnFactory *factory);
         QList<IWindowAddOnFactory *> addOnFactories() const;
         void clearAddOnFactories();
 
-        IWindow *createWindow(const QString &id, const std::function<void(IWindow *)> &pre = {}, QWidget *parent = nullptr);
         IWindow *findWindow(QWidget *window) const;
 
         int count() const;
@@ -46,7 +39,7 @@ namespace Core {
 
     signals:
         void windowCreated(IWindow *iWin);
-        void windowClosed(IWindow *iWin);
+        void windowDestroyed(IWindow *iWin);
 
     protected:
         QScopedPointer<WindowSystemPrivate> d_ptr;
