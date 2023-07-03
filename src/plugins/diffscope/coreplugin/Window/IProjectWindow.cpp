@@ -167,6 +167,7 @@ namespace Core {
                                     break;
                                 }
                                 case QMessageBox::No:
+                                    m_forceClose = true;
                                     event->accept();
                                     break;
                                 case QMessageBox::Cancel:

@@ -30,7 +30,7 @@ namespace Core {
 
         QMenu *invisibleCtxMenu;
 
-        QsApi::CommandPalette *cp;
+        CommandPalette *cp;
 
         void showAllActions_helper();
         void selectEditor_helper(QList<DocumentSpec *> &specs, const QString &path);

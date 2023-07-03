@@ -8,6 +8,13 @@
 
 namespace Core {
 
+    class CORE_EXPORT CommandPalette : public QsApi::CommandPalette {
+        Q_OBJECT
+    public:
+        explicit CommandPalette(QWidget *parent = nullptr);
+        ~CommandPalette();
+    };
+
     class ICoreWindowPrivate;
 
     class CORE_EXPORT ICoreWindow : public IWindow {
@@ -24,7 +31,7 @@ namespace Core {
         void setStatusBar(QStatusBar *statusBar) override;
 
     public:
-        QsApi::CommandPalette *commandPalette() const;
+        CommandPalette *commandPalette() const;
 
         Q_INVOKABLE void openFile(const QString &path);
 

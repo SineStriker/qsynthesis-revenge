@@ -37,6 +37,7 @@ namespace Core {
         DspxDocument::Mode mode;
 
         AceTreeModel *model;
+        DspxHistory *history;
         DspxContentEntity *content;
         QSettings *settings;
         LogDirectory logDir;
@@ -51,6 +52,14 @@ namespace Core {
 
         bool readFile(const QByteArray &data);
         bool saveFile(QByteArray *data) const;
+    };
+
+    class DspxHistoryData {
+    public:
+        DspxHistoryData(DspxDocumentPrivate *dp);
+        ~DspxHistoryData();
+
+        DspxDocumentPrivate *dp;
     };
 
 }

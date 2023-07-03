@@ -13,6 +13,7 @@
 #include <QMDecoratorV2.h>
 #include <QMSystem.h>
 
+#include "DspxHistory.h"
 #include "DspxSpec.h"
 #include "ICore.h"
 
@@ -56,6 +57,7 @@ namespace Core {
     DspxDocumentPrivate::DspxDocumentPrivate(DspxDocument::Mode mode) : mode(mode) {
         opened = false;
         model = nullptr;
+        history = nullptr;
         content = nullptr;
         settings = nullptr;
     }
@@ -63,6 +65,7 @@ namespace Core {
     DspxDocumentPrivate::~DspxDocumentPrivate() {
         delete settings;
         delete content;
+        delete history;
         delete model;
     }
 
@@ -70,6 +73,7 @@ namespace Core {
         Q_Q(DspxDocument);
 
         model = new AceTreeModel(q);
+        history = new DspxHistory(this);
 
         ICore::instance()->documentSystem()->addDocument(q, true);
     }
@@ -209,9 +213,8 @@ namespace Core {
     DspxDocument::~DspxDocument() {
     }
 
-    AceTreeModel *DspxDocument::model() const {
-        Q_D(const DspxDocument);
-        return d->model;
+    DspxHistory *DspxDocument::history() const {
+        return {};
     }
 
     DspxContentEntity *DspxDocument::project() const {
@@ -457,6 +460,13 @@ namespace Core {
 
     DspxDocument::DspxDocument(DspxDocumentPrivate &d, QObject *parent) : IDocument(d, "org.ChorusKit.dspx", parent) {
         d.init();
+    }
+
+    DspxHistoryData::DspxHistoryData(Core::DspxDocumentPrivate *dp) : dp(dp) {
+    }
+
+    DspxHistoryData::~DspxHistoryData() {
+        delete dp;
     }
 
 } // namespace Core

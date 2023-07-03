@@ -45,13 +45,11 @@ public:
             case QEvent::MouseButtonPress: {
                 auto e = static_cast<QMouseEvent *>(event);
                 if (obj == w) {
-                    if (e->button() == b) {
-                        if (!pressed) {
-                            start(e);
-                        } else {
-                            // Same button pressed twice without release
-                            abandon(e);
-                        }
+                    if (pressed) {
+                        // Same button pressed twice without release
+                        abandon(e);
+                    } else if (e->button() == b) {
+                        start(e);
                     }
                 } else {
                     // Unexpected press encountered
@@ -61,11 +59,13 @@ public:
             }
             case QEvent::MouseMove: {
                 auto e = static_cast<QMouseEvent *>(event);
-                if (e->buttons() == Qt::NoButton) {
-                    // Unexpected move encountered
-                    abandon(e);
-                } else if ((e->buttons() & b) && pressed) {
-                    call(e);
+                if (pressed) {
+                    if (e->buttons() == Qt::NoButton) {
+                        // Unexpected move encountered
+                        abandon(e);
+                    } else if ((e->buttons() & b)) {
+                        call(e);
+                    }
                 }
                 break;
             }

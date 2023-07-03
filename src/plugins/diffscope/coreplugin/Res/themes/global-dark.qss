@@ -155,7 +155,7 @@ QScrollBar[core-style=true]::add-line {
 
 /* CommandPalette */
 
-QsApi--CommandPalette {
+Core--CommandPalette {
     background-color: transparent;
     min-width: 450px;
     max-width: 750px;
@@ -187,22 +187,22 @@ QsApi--CommandPalette {
     );
 }
 
-QsApi--CommandPalette>QListWidget {
+Core--CommandPalette>QListWidget {
     border: none;
     outline: 0;
     background-color: transparent;
 }
 
-QsApi--CommandPalette>QLineEdit {
+Core--CommandPalette>QLineEdit {
     padding: 3px 3px;
 }
 
-QsApi--CommandPalette>QLineEdit {
+Core--CommandPalette>QLineEdit {
     border: 1px solid transparent;
     color: #CCCCCC;
     background-color: #3C3C3C;
 }
 
-QsApi--CommandPalette>QLineEdit:focus {
+Core--CommandPalette>QLineEdit:focus {
     border-color: #167FD2;
 }

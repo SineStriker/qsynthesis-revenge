@@ -17,6 +17,6 @@ ck_target_components(${PROJECT_NAME}
     LINKS QMWidgets
     LINKS_PRIVATE
     AUTO_INCLUDE_CURRENT
-    AUTO_INCLUDE_DIRS Global Kernel Dialogs Widgets ../..
+    AUTO_INCLUDE_DIRS Global Dialogs Widgets Tools ../..
     INCLUDE_SUBDIRS_PRIVATE
 )

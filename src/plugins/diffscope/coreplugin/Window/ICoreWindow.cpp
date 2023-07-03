@@ -50,6 +50,13 @@ namespace Core {
         return text;
     }
 
+    CommandPalette::CommandPalette(QWidget *parent) : QsApi::CommandPalette(parent) {
+        ICore::autoPolishScrollArea(this);
+    }
+
+    CommandPalette::~CommandPalette() {
+    }
+
     ICoreWindowPrivate::ICoreWindowPrivate() {
         cp = nullptr;
         mainMenuCtx = nullptr;
@@ -613,7 +620,7 @@ namespace Core {
         qobject_cast<Internal::MainWindow *>(window())->setStatusBar(statusBar);
     }
 
-    QsApi::CommandPalette *ICoreWindow::commandPalette() const {
+    CommandPalette *ICoreWindow::commandPalette() const {
         Q_D(const ICoreWindow);
         return d->cp;
     }
@@ -711,8 +718,7 @@ namespace Core {
                 }
 
                 // Init command palette
-                d->cp = new QsApi::CommandPalette(win);
-                ICore::autoPolishScrollArea(d->cp);
+                d->cp = new CommandPalette(win);
 
                 win->installEventFilter(d);
                 break;

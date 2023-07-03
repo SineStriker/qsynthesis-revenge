@@ -4,6 +4,7 @@
 #include <AceTreeModel.h>
 #include <CoreApi/IDocument.h>
 
+#include "DspxHistory.h"
 #include "coreplugin/Document/Entities/DspxRootEntity.h"
 
 namespace Core {
@@ -22,7 +23,7 @@ namespace Core {
         DspxDocument(Mode mode, QObject *parent = nullptr);
         ~DspxDocument();
 
-        AceTreeModel *model() const;
+        DspxHistory *history() const;
         DspxContentEntity *project() const;
 
         QString logDir() const;
