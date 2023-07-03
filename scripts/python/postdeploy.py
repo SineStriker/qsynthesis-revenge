@@ -105,6 +105,51 @@ def mac_postdeploy(dir):
                     dylib_utils.codesign_binary(framework)
 
 
+def linux_postdeploy(dir):
+    # Linux postdeploy
+    import shutil
+    import pathlib
+    import subprocess
+
+    def set_rpath(executable_path, rpath):
+        # Set the RPATH of the executable
+        subprocess.run(["patchelf", "--set-rpath", rpath, str(executable_path)], check=True)
+
+    install_prefix = pathlib.Path(dir)
+
+    # The directory where shared libraries will be copied
+    lib_dir = install_prefix / "libs"
+
+    # The directory where plugins will be copied
+    plugins_dir = install_prefix / "plugins"
+
+    # List of Qt plugins to deploy
+    qt_plugins = ["platforms/libqxcb.so", "imageformats", "iconengines"]
+
+    # Ensure directories exist
+    lib_dir.mkdir(parents=True, exist_ok=True)
+    plugins_dir.mkdir(parents=True, exist_ok=True)
+
+    # Copy Qt libraries and plugins to the target directories
+    qt_libs_path = subprocess.check_output(
+        ["qmake", "-query", "QT_INSTALL_LIBS"]).strip().decode('utf-8')
+    qt_plugins_path = subprocess.check_output(
+        ["qmake", "-query", "QT_INSTALL_PLUGINS"]).strip().decode('utf-8')
+
+    for plugin in qt_plugins:
+        src = pathlib.Path(qt_plugins_path) / plugin
+        if src.is_dir():
+            shutil.copytree(src, plugins_dir / plugin, symlinks=True, dirs_exist_ok=True)
+        else:
+            shutil.copy2(src, plugins_dir, follow_symlinks=True)
+
+    # Set the RPATH of the application executable
+    # to look for libraries in the 'libs' directory
+    executable_path = install_prefix / "your_application_executable"  # Change to your application executable name
+    rpath = "$ORIGIN/libs"
+    set_rpath(executable_path, rpath)
+
+
 def main():
     
     # Parse args
@@ -126,6 +171,7 @@ def main():
         mac_postdeploy(dir)
     else:
         print("Linux")
+        linux_postdeploy(dir)
 
 
 if __name__ == "__main__":
