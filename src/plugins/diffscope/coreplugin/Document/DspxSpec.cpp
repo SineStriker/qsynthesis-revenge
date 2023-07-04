@@ -4,8 +4,8 @@
 #include <QCoreApplication>
 #include <QDebug>
 #include <QMessageBox>
-#include <QTimer>
 #include <QSharedPointer>
+#include <QTimer>
 
 #include <QMDecoratorV2.h>
 #include <QMSystem.h>
@@ -71,6 +71,7 @@ namespace Core {
             return true;
 
         auto doc = new DspxDocument();
+
         if (!doc->open(fileName)) {
             qDebug() << "1345";
             QMessageBox::critical(parent, tr("File Error"), doc->errorMessage());

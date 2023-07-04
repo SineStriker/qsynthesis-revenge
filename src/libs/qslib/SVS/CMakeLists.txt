@@ -21,3 +21,5 @@ ck_target_components(${PROJECT_NAME}
 )
 
 include(Dspx/qasc.cmake)
+
+ck_dir_skip_automoc(Dspx Svip Utau)

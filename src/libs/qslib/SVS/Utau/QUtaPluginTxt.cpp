@@ -1,4 +1,4 @@
-#include "UPluginTxt.h"
+#include "QUtaPluginTxt.h"
 
 #include "QMCodec.h"
 #include "QMSettingFile.h"
@@ -11,16 +11,16 @@
 
 using namespace Utau;
 
-Q_CHARSET_DECLARE(UPluginTxt)
+Q_CHARSET_DECLARE(QUtaPluginTxt)
 
-UPluginTxt::UPluginTxt() {
-    UPluginTxt::reset();
+QUtaPluginTxt::QUtaPluginTxt() {
+    QUtaPluginTxt::reset();
 }
 
-UPluginTxt::~UPluginTxt() {
+QUtaPluginTxt::~QUtaPluginTxt() {
 }
 
-bool UPluginTxt::load(const QString &filename) {
+bool QUtaPluginTxt::load(const QString &filename) {
     QFile file(filename);
     if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
         return false;
@@ -77,7 +77,7 @@ bool UPluginTxt::load(const QString &filename) {
     return true;
 }
 
-bool UPluginTxt::save(const QString &filename) {
+bool QUtaPluginTxt::save(const QString &filename) {
     QFile file(filename);
     if (!file.open(QIODevice::WriteOnly | QIODevice::Text)) {
         return false;
@@ -115,7 +115,7 @@ bool UPluginTxt::save(const QString &filename) {
     return true;
 }
 
-void UPluginTxt::reset() {
+void QUtaPluginTxt::reset() {
     useShell = false;
     allNote = false;
 
@@ -125,6 +125,6 @@ void UPluginTxt::reset() {
     execute.clear();
 }
 
-bool UPluginTxt::isEmpty() const {
+bool QUtaPluginTxt::isEmpty() const {
     return execute.isEmpty();
 }

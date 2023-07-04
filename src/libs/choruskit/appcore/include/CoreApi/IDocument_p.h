@@ -20,7 +20,8 @@
 
 namespace Core {
 
-    class CKAPPCORE_API IDocumentPrivate {
+    class CKAPPCORE_API IDocumentPrivate : public QObject {
+        Q_OBJECT
         Q_DECLARE_PUBLIC(IDocument)
     public:
         IDocumentPrivate();

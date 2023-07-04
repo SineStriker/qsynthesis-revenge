@@ -32,6 +32,7 @@ namespace Core {
 
         DspxDocument *m_doc;
 
+        bool m_changeHandled;
         bool m_forceClose;
 
         // Layout

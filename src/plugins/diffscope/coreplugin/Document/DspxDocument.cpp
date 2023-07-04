@@ -56,6 +56,8 @@ namespace Core {
 
     DspxDocumentPrivate::DspxDocumentPrivate(DspxDocument::Mode mode) : mode(mode) {
         opened = false;
+        watched = false;
+
         model = nullptr;
         history = nullptr;
         content = nullptr;
@@ -85,6 +87,13 @@ namespace Core {
         settings = new QSettings(QString("%1/desc.tmp.ini").arg(q->logDir()), QSettings::IniFormat);
         settings->setValue("File/Path", q->filePath());
         settings->setValue("File/Editor", q->id());
+
+        savedStep = model->currentStep();
+
+        QObject::connect(model, &AceTreeModel::modelChanged, this,
+                         &DspxDocumentPrivate::_q_modelChanged);
+
+        emit q->changed();
     }
 
     void DspxDocumentPrivate::changeToSaved() {
@@ -95,8 +104,19 @@ namespace Core {
         }
 
         settings->setValue("File/Path", q->filePath());
+        savedStep = model->currentStep();
 
         emit q->changed();
+    }
+
+    void DspxDocumentPrivate::changeToWatched() {
+        if (!watched) {
+            return;
+        }
+        watched = true;
+
+        Q_Q(DspxDocument);
+        ICore::instance()->documentSystem()->addDocument(q);
     }
 
     void DspxDocumentPrivate::unshiftToRecent() {
@@ -136,7 +156,8 @@ namespace Core {
         QString versionString = value.toString();
         QVersionNumber version = QVersionNumber::fromString(versionString);
         if (version > DspxSpec::currentVersion()) {
-            errMsg = DspxDocument::tr("The specified file version(%1) is too high").arg(versionString);
+            errMsg =
+                DspxDocument::tr("The specified file version(%1) is too high").arg(versionString);
             return false;
         }
 
@@ -174,7 +195,7 @@ namespace Core {
         model->beginTransaction();
         model->setRootItem(content->treeItem());
         model->commitTransaction({
-            {"load", "true"},
+            {"open_dspx", "true"},
         });
         this->model = model;
 
@@ -199,14 +220,30 @@ namespace Core {
         // Write content
         docObj.insert("content", obj);
 
-        *data = QJsonDocument(docObj).toJson(QJsonDocument::Compact); // Disable indent to reduce size
+        *data =
+            QJsonDocument(docObj).toJson(QJsonDocument::Compact); // Disable indent to reduce size
         return true;
     }
 
-    DspxDocument::DspxDocument(QObject *parent) : DspxDocument(*new DspxDocumentPrivate(FileMode), parent) {
+    void DspxDocumentPrivate::_q_stepChanged(int step) {
+        Q_UNUSED(step);
+
+        Q_Q(DspxDocument);
+        emit q->changed();
     }
 
-    DspxDocument::DspxDocument(Mode mode, QObject *parent) : DspxDocument(*new DspxDocumentPrivate(mode), parent) {
+    void DspxDocumentPrivate::_q_modelChanged(AceTreeEvent *event) {
+        if (AceTreeEvent::isChangeType(event->type())) {
+            savedStep = -1;
+        }
+    }
+
+    DspxDocument::DspxDocument(QObject *parent)
+        : DspxDocument(*new DspxDocumentPrivate(FileMode), parent) {
+    }
+
+    DspxDocument::DspxDocument(Mode mode, QObject *parent)
+        : DspxDocument(*new DspxDocumentPrivate(mode), parent) {
     }
 
 
@@ -264,6 +301,7 @@ namespace Core {
 
         setFilePath(fileName);
         d->changeToOpen();
+        d->changeToWatched();
 
         d->unshiftToRecent();
 
@@ -290,7 +328,9 @@ namespace Core {
             setFilePath(fileName);
             d->unshiftToRecent();
             d->changeToSaved();
+            d->changeToWatched();
         }
+
         return true;
     }
 
@@ -339,13 +379,13 @@ namespace Core {
             model->beginTransaction();
             model->setRootItem(content->treeItem());
             model->commitTransaction({
-                {"load", "true"},
+                {"open_dspx", "true"},
             });
 
             model->beginTransaction();
             model->setRootItem(content->treeItem());
             model->commitTransaction({
-                {"load", "true"},
+                {"open_dspx", "true"},
             });
 
             d->model = model;
@@ -365,8 +405,6 @@ namespace Core {
             return false;
         }
 
-        auto err = [this]() { setErrorMessage(tr("Fail to read log")); };
-
         // Read binary log
         {
             QDir dir(this->logDir() + "/model");
@@ -374,7 +412,7 @@ namespace Core {
             auto backend = new AceTreeJournalBackend();
             if (!backend->recover(dir.absolutePath())) {
                 delete backend;
-                err();
+                setErrorMessage(tr("Fail to read log"));
                 return false;
             }
             d->model = new AceTreeModel(backend, this);
@@ -425,14 +463,15 @@ namespace Core {
     }
 
     QString DspxDocument::suggestedFileName() const {
-        return "Untitled Project.dspx";
+        return "Untitled.dspx";
     }
 
     bool DspxDocument::isModified() const {
         Q_D(const DspxDocument);
         if (!d->opened)
             return false;
-        return false;
+
+        return d->savedStep != d->model->currentStep();
     }
 
     void DspxDocument::close() {
@@ -458,7 +497,8 @@ namespace Core {
         return true;
     }
 
-    DspxDocument::DspxDocument(DspxDocumentPrivate &d, QObject *parent) : IDocument(d, "org.ChorusKit.dspx", parent) {
+    DspxDocument::DspxDocument(DspxDocumentPrivate &d, QObject *parent)
+        : IDocument(d, "org.ChorusKit.dspx", parent) {
         d.init();
     }
 

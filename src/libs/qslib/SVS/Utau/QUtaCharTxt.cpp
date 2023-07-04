@@ -1,4 +1,4 @@
-#include "UCharTxt.h"
+#include "QUtaCharTxt.h"
 
 #include "QMCodec.h"
 #include "QMSettingFile.h"
@@ -11,16 +11,16 @@
 
 using namespace Utau;
 
-Q_CHARSET_DECLARE(UCharTxt)
+Q_CHARSET_DECLARE(QUtaCharTxt)
 
-UCharTxt::UCharTxt() {
-    UCharTxt::reset();
+QUtaCharTxt::QUtaCharTxt() {
+    QUtaCharTxt::reset();
 }
 
-UCharTxt::~UCharTxt() {
+QUtaCharTxt::~QUtaCharTxt() {
 }
 
-bool UCharTxt::load(const QString &filename) {
+bool QUtaCharTxt::load(const QString &filename) {
     QFile file(filename);
     QByteArray data;
     if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
@@ -68,7 +68,7 @@ bool UCharTxt::load(const QString &filename) {
     return true;
 }
 
-bool UCharTxt::save(const QString &filename) {
+bool QUtaCharTxt::save(const QString &filename) {
     QFile file(filename);
     if (!file.open(QIODevice::WriteOnly | QIODevice::Text)) {
         return false;
@@ -106,7 +106,7 @@ bool UCharTxt::save(const QString &filename) {
     return true;
 }
 
-void UCharTxt::reset() {
+void QUtaCharTxt::reset() {
     m_codec = nullptr;
 
     name.clear();
@@ -115,6 +115,6 @@ void UCharTxt::reset() {
     sprite.clear();
 }
 
-bool UCharTxt::isEmpty() const {
+bool QUtaCharTxt::isEmpty() const {
     return name.isEmpty() && author.isEmpty() && avatar.isEmpty();
 }

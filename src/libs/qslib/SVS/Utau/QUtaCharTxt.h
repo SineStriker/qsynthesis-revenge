@@ -1,13 +1,13 @@
-#ifndef UCHARTXT_H
-#define UCHARTXT_H
+#ifndef QUTACHARTXT_H
+#define QUTACHARTXT_H
 
 #include "Base/QUtaFile.h"
 
-class QSSVS_API UCharTxt : public QUtaFile {
+class QSSVS_API QUtaCharTxt : public QUtaFile {
     Q_CHARSET
 public:
-    UCharTxt();
-    ~UCharTxt();
+    QUtaCharTxt();
+    ~QUtaCharTxt();
 
     QString name;
     QString author;
@@ -24,4 +24,4 @@ public:
     bool isEmpty() const override;
 };
 
-#endif // UCHARTXT_H
+#endif // QUTACHARTXT_H

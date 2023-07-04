@@ -40,14 +40,15 @@ namespace Core {
         d->dp->model->abortTransaction();
     }
 
-    void DspxHistory::commitTransaction(const QString &opId, const QHash<QString, QString> &attributes) {
+    void DspxHistory::commitTransaction(const QString &opId,
+                                        const QHash<QString, QString> &attributes) {
         auto attrs = attributes;
         attrs.insert("op_id", opId);
         d->dp->model->commitTransaction(attrs);
     }
 
     int DspxHistory::minStep() const {
-        return d->dp->model->minStep();
+        return qMax(1, d->dp->model->minStep());
     }
 
     int DspxHistory::maxStep() const {
@@ -116,4 +117,4 @@ namespace Core {
     DspxHistory::DspxHistory(DspxDocumentPrivate *d) : d(new DspxHistoryData(d)) {
     }
 
-}
+} // namespace Core

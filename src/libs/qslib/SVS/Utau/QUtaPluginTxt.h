@@ -1,13 +1,13 @@
-#ifndef UPLUGINTXT_H
-#define UPLUGINTXT_H
+#ifndef QUTAPLUGINTXT_H
+#define QUTAPLUGINTXT_H
 
 #include "Base/QUtaFile.h"
 
-class QSSVS_API UPluginTxt : public QUtaFile {
+class QSSVS_API QUtaPluginTxt : public QUtaFile {
     Q_CHARSET
 public:
-    UPluginTxt();
-    ~UPluginTxt();
+    QUtaPluginTxt();
+    ~QUtaPluginTxt();
 
     bool useShell;
     bool allNote;
@@ -27,4 +27,4 @@ public:
     bool isEmpty() const override;
 };
 
-#endif // UPLUGINTXT_H
+#endif // QUTAPLUGINTXT_H

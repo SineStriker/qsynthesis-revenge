@@ -27,6 +27,7 @@ namespace Core {
     };
 
     class DspxDocumentPrivate : public IDocumentPrivate {
+        Q_OBJECT
         Q_DECLARE_PUBLIC(DspxDocument)
     public:
         DspxDocumentPrivate(DspxDocument::Mode mode);
@@ -43,15 +44,23 @@ namespace Core {
         LogDirectory logDir;
 
         bool opened;
+        bool watched;
+        int savedStep;
 
         void changeToOpen();
         void changeToSaved();
+        void changeToWatched();
+
         void unshiftToRecent();
 
         bool checkNotOpened() const;
 
         bool readFile(const QByteArray &data);
         bool saveFile(QByteArray *data) const;
+
+    private:
+        void _q_stepChanged(int step);
+        void _q_modelChanged(AceTreeEvent *event);
     };
 
     class DspxHistoryData {
@@ -62,6 +71,6 @@ namespace Core {
         DspxDocumentPrivate *dp;
     };
 
-}
+} // namespace Core
 
 #endif // DSPXDOCUMENT_P_H

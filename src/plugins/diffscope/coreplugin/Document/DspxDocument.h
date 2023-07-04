@@ -9,6 +9,8 @@
 
 namespace Core {
 
+    class DspxSpec;
+
     class DspxDocumentPrivate;
 
     class CORE_EXPORT DspxDocument : public IDocument {
@@ -60,6 +62,8 @@ namespace Core {
 
     protected:
         DspxDocument(DspxDocumentPrivate &d, QObject *parent = nullptr);
+
+        friend class DspxSpec;
     };
 
 }

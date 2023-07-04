@@ -64,7 +64,6 @@ namespace QsApi {
     }
 
     void MusicTimelinePrivate::updateMeasureMap(int barFrom) {
-        Q_Q(MusicTimeline);
         auto iter = timeSignatureMap.lowerBound(barFrom);
         if (iter == timeSignatureMap.begin())
             iter++;
@@ -83,7 +82,6 @@ namespace QsApi {
     }
 
     void MusicTimelinePrivate::updateMsecSumMap(int tickFrom) {
-        Q_Q(MusicTimeline);
         auto iter = tempoMap.lowerBound(tickFrom);
         if (iter == tempoMap.begin())
             iter++;

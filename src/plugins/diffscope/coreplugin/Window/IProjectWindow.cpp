@@ -29,6 +29,7 @@ namespace Core {
     static const char mainDockSettingCatalogC[] = "IProjectWindow/MainDock";
 
     IProjectWindowPrivate::IProjectWindowPrivate(DspxDocument *doc) : m_doc(doc) {
+        m_changeHandled = true;
         m_forceClose = false;
 
         m_doc = doc;
@@ -40,7 +41,6 @@ namespace Core {
     }
 
     void IProjectWindowPrivate::init() {
-        Q_Q(IProjectWindow);
     }
 
     void IProjectWindowPrivate::reloadStrings() {
@@ -55,14 +55,10 @@ namespace Core {
     }
 
     static const int corners[8][2] = {
-        {Qt::LeftEdge,   QM::Primary  },
-        {Qt::LeftEdge,   QM::Secondary},
-        {Qt::TopEdge,    QM::Primary  },
-        {Qt::TopEdge,    QM::Secondary},
-        {Qt::RightEdge,  QM::Primary  },
-        {Qt::RightEdge,  QM::Secondary},
-        {Qt::BottomEdge, QM::Primary  },
-        {Qt::BottomEdge, QM::Secondary},
+        {Qt::LeftEdge, QM::Primary},   {Qt::LeftEdge, QM::Secondary},
+        {Qt::TopEdge, QM::Primary},    {Qt::TopEdge, QM::Secondary},
+        {Qt::RightEdge, QM::Primary},  {Qt::RightEdge, QM::Secondary},
+        {Qt::BottomEdge, QM::Primary}, {Qt::BottomEdge, QM::Secondary},
     };
 
     void IProjectWindowPrivate::saveMainDockState() const {
@@ -71,14 +67,15 @@ namespace Core {
         QJsonArray arr;
         for (const auto &corner : qAsConst(corners)) {
             QJsonArray arr0;
-            for (const auto &card :
-                 m_frame->widgets(static_cast<Qt::Edge>(corner[0]), static_cast<QM::Priority>(corner[1]))) {
+            for (const auto &card : m_frame->widgets(static_cast<Qt::Edge>(corner[0]),
+                                                     static_cast<QM::Priority>(corner[1]))) {
                 if (card->objectName().isEmpty())
                     continue;
                 arr0.append(QJsonObject{
-                    {"name",     card->objectName()                                                     },
-                    {"checked",  card->isChecked()                                                      },
-                    {"viewMode", QMetaEnum::fromType<CDockCard::ViewMode>().valueToKey(card->viewMode())},
+                    {"name", card->objectName()},
+                    {"checked", card->isChecked()},
+                    {"viewMode",
+                     QMetaEnum::fromType<CDockCard::ViewMode>().valueToKey(card->viewMode())},
                 });
             }
             arr.append(arr0);
@@ -93,8 +90,8 @@ namespace Core {
 
         QHash<QString, CDockCard *> cardMap;
         for (const auto &corner : qAsConst(corners)) {
-            for (const auto &card :
-                 m_frame->widgets(static_cast<Qt::Edge>(corner[0]), static_cast<QM::Priority>(corner[1]))) {
+            for (const auto &card : m_frame->widgets(static_cast<Qt::Edge>(corner[0]),
+                                                     static_cast<QM::Priority>(corner[1]))) {
                 if (card->objectName().isEmpty()) {
                     continue;
                 }
@@ -122,7 +119,8 @@ namespace Core {
                     continue;
 
                 const auto &corner = corners[i];
-                m_frame->moveWidget(card, static_cast<Qt::Edge>(corner[0]), static_cast<QM::Priority>(corner[1]));
+                m_frame->moveWidget(card, static_cast<Qt::Edge>(corner[0]),
+                                    static_cast<QM::Priority>(corner[1]));
 
                 value = obj.value("checked");
                 if (value.isBool())
@@ -130,7 +128,8 @@ namespace Core {
 
                 value = obj.value("viewMode");
                 if (value.isString()) {
-                    auto viewMode = QMetaEnum::fromType<CDockCard::ViewMode>().keyToValue(value.toString().toLatin1());
+                    auto viewMode = QMetaEnum::fromType<CDockCard::ViewMode>().keyToValue(
+                        value.toString().toLatin1());
                     if (viewMode >= 0) {
                         card->setViewMode(static_cast<CDockCard::ViewMode>(viewMode));
                     }
@@ -151,18 +150,21 @@ namespace Core {
                             // VST mode, we simply hide window
                             event->ignore();
                             q->window()->hide();
+                            return true;
                         } else if (m_doc->isModified()) {
                             // Unexpected close
-                            auto ret = QMessageBox::question(q->window(), ICore::mainTitle(),
-                                                             tr("There are unsaved changes, do you want to save them?"),
-                                                             QMessageBox::Yes | QMessageBox::No | QMessageBox::Cancel);
+                            auto ret = QMessageBox::question(
+                                q->window(), ICore::mainTitle(),
+                                tr("There are unsaved changes, do you want to save them?"),
+                                QMessageBox::Yes | QMessageBox::No | QMessageBox::Cancel);
                             switch (ret) {
                                 case QMessageBox::Yes: {
                                     event->setAccepted([q, this]() {
                                         if (QMFs::isFileExist(m_doc->filePath())) {
                                             return m_doc->save(m_doc->filePath());
                                         }
-                                        return ICore::instance()->documentSystem()->saveFileBrowse(q->window(), m_doc);
+                                        return ICore::instance()->documentSystem()->saveFileBrowse(
+                                            q->window(), m_doc);
                                     }());
                                     break;
                                 }
@@ -172,6 +174,7 @@ namespace Core {
                                     break;
                                 case QMessageBox::Cancel:
                                     event->ignore();
+                                    return true;
                                     break;
                                 default:
                                     break;
@@ -189,8 +192,18 @@ namespace Core {
 
     void IProjectWindowPrivate::_q_documentChanged() {
         Q_Q(IProjectWindow);
-        q->setWindowModified(m_doc->isModified());
-        q->setWindowTitle(m_doc->displayName());
+
+        if (!m_changeHandled) {
+            return;
+        }
+        m_changeHandled = false;
+
+        QTimer::singleShot(0, q, [q, this]() {
+            qDebug() << "changed";
+            q->setWindowModified(m_doc->isModified());
+            q->setWindowTitle(m_doc->displayName());
+            m_changeHandled = true;
+        });
     }
 
     void IProjectWindowPrivate::_q_documentRaiseRequested() {
@@ -242,7 +255,8 @@ namespace Core {
                 win->setObjectName("project-window");
                 win->setAcceptDrops(true);
 
-                d->mainToolbarCtx = ICore::instance()->actionSystem()->context("project.MainToolbar");
+                d->mainToolbarCtx =
+                    ICore::instance()->actionSystem()->context("project.MainToolbar");
                 if (!d->mainToolbarCtx) {
                     ICore::fatalError(win, tr("Failed to create main toolbar."));
                 }
@@ -258,7 +272,7 @@ namespace Core {
                 auto &frame = d->m_frame;
                 frame = new CDockFrame();
                 frame->setObjectName("main-dock");
-                connect(frame, &CDockFrame::cardAdded, this, [this](QAbstractButton *card) {
+                connect(frame, &CDockFrame::cardAdded, this, [](QAbstractButton *card) {
                     card->setProperty("type", "main-dock-card"); //
                 });
 
@@ -284,14 +298,18 @@ namespace Core {
                 win->installEventFilter(d);
 
                 // Close event
-                connect(d->m_doc, &IDocument::changed, d, &IProjectWindowPrivate::_q_documentChanged);
-                connect(d->m_doc, &IDocument::raiseRequested, d, &IProjectWindowPrivate::_q_documentRaiseRequested);
-                connect(d->m_doc, &IDocument::closeRequested, d, &IProjectWindowPrivate::_q_documentCloseRequested);
+                connect(d->m_doc, &IDocument::changed, d,
+                        &IProjectWindowPrivate::_q_documentChanged);
+                connect(d->m_doc, &IDocument::raiseRequested, d,
+                        &IProjectWindowPrivate::_q_documentRaiseRequested);
+                connect(d->m_doc, &IDocument::closeRequested, d,
+                        &IProjectWindowPrivate::_q_documentCloseRequested);
                 break;
             }
 
             case IWindow::Running: {
-                connect(d->mainToolbarCtx, &ActionContext::stateChanged, d, &IProjectWindowPrivate::reloadMainToolbar);
+                connect(d->mainToolbarCtx, &ActionContext::stateChanged, d,
+                        &IProjectWindowPrivate::reloadMainToolbar);
                 d->reloadMainToolbar();
 
                 qIDec->installLocale(this, _LOC(IProjectWindowPrivate, d));
@@ -303,13 +321,19 @@ namespace Core {
                 // Restore piano roll state
                 d->m_pianoRoll->d_func()->readSettings();
 
-                ICore::instance()->windowSystem()->loadWindowGeometry(metaObject()->className(), win, {1200, 800});
+                ICore::instance()->windowSystem()->loadWindowGeometry(metaObject()->className(),
+                                                                      win, {1200, 800});
+
+                // Update window state
+                emit d->m_doc->changed();
+
                 break;
             }
 
             case IWindow::Closed: {
-                // Windows should be all closed before quit signal arrives except a kill or interrupt signal
-                // is emitted, only when this function is called the log should be removed expectedly.
+                // Windows should be all closed before quit signal arrives except a kill or
+                // interrupt signal is emitted, only when this function is called the log should be
+                // removed expectedly.
                 if (!d->m_doc->isModified() || d->m_forceClose) {
                     d->m_doc->setAutoRemoveLogDir(true);
                 }
@@ -320,7 +344,8 @@ namespace Core {
                 // Save dock state
                 d->saveMainDockState();
 
-                ICore::instance()->windowSystem()->saveWindowGeometry(metaObject()->className(), window());
+                ICore::instance()->windowSystem()->saveWindowGeometry(metaObject()->className(),
+                                                                      window());
                 break;
             }
 
@@ -329,8 +354,9 @@ namespace Core {
         }
     }
 
-    IProjectWindow::IProjectWindow(IProjectWindowPrivate &d, QObject *parent) : ICoreWindow(d, "project", parent) {
+    IProjectWindow::IProjectWindow(IProjectWindowPrivate &d, QObject *parent)
+        : ICoreWindow(d, "project", parent) {
         d.init();
     }
 
-}
+} // namespace Core
