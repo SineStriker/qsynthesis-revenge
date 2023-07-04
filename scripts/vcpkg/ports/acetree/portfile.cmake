@@ -2,7 +2,7 @@ vcpkg_from_github(
     OUT_SOURCE_PATH SOURCE_PATH
     REPO SineStriker/AceTreeModel
     REF 0.0.1.1
-    SHA512 fc64adf580c1b8b4b14d85b35dfc8fe6572bb1a791040db8350c2a74eb7c8bc5efdc92d1c39ac0039f1f74f0e8dfbeda9c741fcef0f0b7ee1b45146acda86793
+    SHA512 d2caadc1f5447ebd7843f7019fc9425e12c043e4a8f45a8e9e0a1f9b8da5cac113bf1b86731e97bbe10fd7e815bd992678e4ddf926aca3104ae0380d46b24510
 )
 
 vcpkg_cmake_configure(

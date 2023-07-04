@@ -55,8 +55,8 @@ namespace Core {
         virtual QString defaultPath() const;
         virtual QString suggestedFileName() const;
 
-        QString mimeType() const;
-        void setMimeType(const QString &mimeType);
+        QJsonObject mimeInfo() const;
+        void setMimeInfo(const QJsonObject &mimeInfo);
 
         virtual bool isModified() const = 0;
         virtual bool isSaveAsAllowed() const;

@@ -1,9 +1,10 @@
 #ifndef WINDOWELEMENTSADAPTOR_H
 #define WINDOWELEMENTSADAPTOR_H
 
-#include "CkAppCoreGlobal.h"
-
+#include <QCoreApplication>
 #include <QWidget>
+
+#include "CkAppCoreGlobal.h"
 
 class QMenuBar;
 class QStatusBar;
@@ -13,6 +14,7 @@ namespace Core {
     class WindowElementsAdaptorPrivate;
 
     class CKAPPCORE_API WindowElementsAdaptor {
+        Q_DECLARE_TR_FUNCTIONS(WindowElementsAdaptor)
     public:
         explicit WindowElementsAdaptor(QWidget *w = nullptr);
         ~WindowElementsAdaptor();
@@ -21,6 +23,9 @@ namespace Core {
 
         bool windowModified() const;
         void setWindowModified(bool modified);
+
+        bool windowFileReadOnly() const;
+        void setWindowFileReadOnly(bool readOnly);
 
         QString windowFilePath() const;
         void setWindowFilePath(const QString &path);

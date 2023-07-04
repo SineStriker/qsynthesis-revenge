@@ -105,6 +105,10 @@ namespace Core {
         s->insert(settingCategoryC, obj);
     }
 
+    void DocumentSystemPrivate::saveOpenFileSettings() const{
+        
+    }
+
     static DocumentSystem *m_instance = nullptr;
 
     DocumentSystem::DocumentSystem(QObject *parent) : DocumentSystem(*new DocumentSystemPrivate(), parent) {
@@ -522,15 +526,12 @@ namespace Core {
     }
 
     void DocumentSystem::documentAdded(IDocument *document, bool addWatch) {
-        DocumentWatcher::documentAdded(document, addWatch);
     }
 
     void DocumentSystem::documentChanged(IDocument *document) {
-        DocumentWatcher::documentChanged(document);
     }
 
     void DocumentSystem::documentRemoved(IDocument *document) {
-        DocumentWatcher::documentRemoved(document);
     }
 
     DocumentSystem::DocumentSystem(DocumentSystemPrivate &d, QObject *parent) : DocumentWatcher(d, parent) {

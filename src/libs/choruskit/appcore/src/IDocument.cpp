@@ -33,8 +33,7 @@ namespace Core {
         return true;
     }
 
-    IDocument::IDocument(const QString &id, QObject *parent)
-        : IDocument(*new IDocumentPrivate(), id, parent) {
+    IDocument::IDocument(const QString &id, QObject *parent) : IDocument(*new IDocumentPrivate(), id, parent) {
     }
 
     IDocument::~IDocument() {
@@ -100,11 +99,10 @@ namespace Core {
         QString filename;
         if (!d->preferredDisplayName.isEmpty())
             return d->preferredDisplayName;
-        return d->preferredDisplayName.isEmpty()
-                   ? ((filename = QFileInfo(d->filePath).fileName()).isEmpty()
-                          ? QFileInfo(suggestedFileName()).baseName()
-                          : filename)
-                   : d->preferredDisplayName;
+        return d->preferredDisplayName.isEmpty() ? ((filename = QFileInfo(d->filePath).fileName()).isEmpty()
+                                                        ? QFileInfo(suggestedFileName()).baseName()
+                                                        : filename)
+                                                 : d->preferredDisplayName;
     }
 
     QString IDocument::preferredDisplayName() const {
@@ -137,9 +135,10 @@ namespace Core {
 
     bool IDocument::isFileReadOnly() const {
         Q_D(const IDocument);
-        if (d->filePath.isEmpty())
+        QFileInfo file(d->filePath);
+        if (file.isRelative() || !file.isFile())
             return false;
-        return !QFileInfo(d->filePath).isWritable();
+        return !file.isWritable();
     }
 
     bool IDocument::isTemporary() const {
@@ -160,17 +159,15 @@ namespace Core {
         return {};
     }
 
-    QString IDocument::mimeType() const {
+    QJsonObject IDocument::mimeInfo() const {
         Q_D(const IDocument);
-        return d->mimeType;
+        return d->mimeInfo;
     }
 
-    void IDocument::setMimeType(const QString &mimeType) {
+    void IDocument::setMimeInfo(const QJsonObject &mimeInfo) {
         Q_D(IDocument);
-        if (d->mimeType != mimeType) {
-            d->mimeType = mimeType;
-            emit mimeTypeChanged();
-        }
+        d->mimeInfo = mimeInfo;
+        emit mimeTypeChanged();
     }
 
     bool IDocument::isSaveAsAllowed() const {

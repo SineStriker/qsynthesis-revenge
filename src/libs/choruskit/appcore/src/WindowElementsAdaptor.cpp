@@ -11,11 +11,13 @@ namespace Core {
         QWidget *w;
 
         bool windowModified;
+        bool windowFileReadOnly;
         QString windowFilePath;
         QString windowTitle;
 
         WindowElementsAdaptorPrivate(WindowElementsAdaptor *q) : q(q) {
             windowModified = false;
+            windowFileReadOnly = false;
         }
 
         void updateWindowTitle() const {
@@ -40,6 +42,15 @@ namespace Core {
 
     void WindowElementsAdaptor::setWindowModified(bool modified) {
         d->windowModified = modified;
+        d->updateWindowTitle();
+    }
+
+    bool WindowElementsAdaptor::windowFileReadOnly() const {
+        return d->windowFileReadOnly;
+    }
+
+    void WindowElementsAdaptor::setWindowFileReadOnly(bool readOnly) {
+        d->windowFileReadOnly = readOnly;
         d->updateWindowTitle();
     }
 
@@ -94,6 +105,7 @@ namespace Core {
     }
 
     QString WindowElementsAdaptor::correctWindowTitle(const QString &title) const {
+        // ReadOnly sign not used
         return d->windowModified ? QString("%1 %2").arg(modifiedIdentifier(), title) : title;
     }
 

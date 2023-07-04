@@ -10,6 +10,7 @@
 // version without notice, or may even be removed.
 //
 
+#include <QJsonObject>
 #include <QSettings>
 #include <QSharedPointer>
 #include <QTemporaryDir>
@@ -36,7 +37,7 @@ namespace Core {
 
         mutable QString errMsg;
 
-        QString mimeType;
+        QJsonObject mimeInfo;
         QString filePath;
         QString preferredDisplayName;
         QString uniqueDisplayName;

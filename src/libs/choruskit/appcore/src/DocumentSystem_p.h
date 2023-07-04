@@ -24,6 +24,8 @@ namespace Core {
         void readSettings();
         void saveSettings() const;
 
+        void saveOpenFileSettings() const;
+
         QMChronMap<QString, DocumentSpec *> docSpecs;
         QHash<QString, QMChronSet<DocumentSpec *>> extensionsMap;
         QHash<QString, QString> preferredExtensionIdMap;
