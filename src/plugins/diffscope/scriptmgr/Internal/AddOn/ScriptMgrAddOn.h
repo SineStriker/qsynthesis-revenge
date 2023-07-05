@@ -42,6 +42,8 @@ namespace ScriptMgr::Internal {
         Core::ActionItem *scriptSettingsAction;
         Core::ActionItem *runScriptAction;
 
+        QScopedPointer<QWidget> scriptActionContext;
+
         QString windowKey;
         JsInternalObject *internalObject;
         QList<QAction *> allActions;
