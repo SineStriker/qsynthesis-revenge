@@ -5,11 +5,14 @@
 #ifndef CHORUSKIT_VSTHANDLE_H
 #define CHORUSKIT_VSTHANDLE_H
 
+#include <IVstBridge.h>
+#include <IEditorCallbacks.h>
+
 #include "CommunicationHelper.h"
-#include "ParameterTypes.h"
+
 namespace Vst {
 
-    class VstHandle {
+    class VstHandle: public IVstBridge {
 
     public:
 
