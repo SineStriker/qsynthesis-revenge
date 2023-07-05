@@ -53,11 +53,12 @@ namespace Vst::Internal {
         static const QByteArray failValueData(failValue, 1);
         if(!m_clientAddOn) return failValueData;
         //TODO
-        return {};
+        return "test";
     }
 
     bool VstBridge::openDataToEditor(const QByteArray &data) {
         qDebug() << "VstBridge: openDataToEditor";
+        qDebug() << "data is: " << data;
         auto docMgr = Core::ICore::instance()->documentSystem();
         //TODO temporarily do this
         auto recentFiles = docMgr->recentFiles();

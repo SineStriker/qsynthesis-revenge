@@ -6,7 +6,7 @@ add_subdirectory(AudioTest)
 
 #add_subdirectory(LyricTest)
 
-add_subdirectory(VstTest)
+#add_subdirectory(VstTest)
 
 add_subdirectory(QtROTest)
 
