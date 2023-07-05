@@ -34,7 +34,8 @@ namespace ScriptMgr {
             // Add resources
             qIDec->addTranslationPath(pluginSpec()->location() + "/translations");
 
-            auto splash = qobject_cast<QSplashScreen *>(ILoader::instance()->getFirstObject("choruskit_init_splash"));
+            auto splash = qobject_cast<QSplashScreen *>(
+                ILoader::instance()->getFirstObject("choruskit_init_splash"));
             if (splash) {
                 splash->showMessage(tr("Initializing script manager..."));
             }
@@ -54,7 +55,7 @@ namespace ScriptMgr {
             ScriptLoader::instance()->reloadEngine();
 
             auto winMgr = ICore::instance()->windowSystem();
-            winMgr->addAddOn(new ScriptMgrAddOnFactory());
+            winMgr->addAddOn("project", &ScriptMgrAddOn::staticMetaObject);
 
             return true;
         }
@@ -66,6 +67,6 @@ namespace ScriptMgr {
             return false;
         }
 
-    }
+    } // namespace Internal
 
-}
+} // namespace ScriptMgr

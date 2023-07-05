@@ -38,7 +38,7 @@ namespace Core {
 
         mutable QString errMsg;
 
-        QJsonObject mimeInfo;
+        QJsonObject docInfo;
         QString filePath;
         QString preferredDisplayName;
         QString uniqueDisplayName;

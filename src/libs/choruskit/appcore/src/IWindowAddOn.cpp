@@ -12,13 +12,6 @@ namespace Core {
     void IWindowAddOnPrivate::init() {
     }
 
-    IWindowAddOnFactory::~IWindowAddOnFactory() {
-    }
-
-    bool IWindowAddOnFactory::predicate(IWindow *handle) const {
-        return true;
-    }
-
     IWindowAddOn::IWindowAddOn(QObject *parent) : IWindowAddOn(*new IWindowAddOnPrivate(), parent) {
     }
 

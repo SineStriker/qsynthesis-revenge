@@ -9,16 +9,10 @@
 
 namespace Vst::Internal {
 
-    class VstClientAddOnFactory: public Core::IWindowAddOnFactory {
+    class VstClientAddOn : public Core::IWindowAddOn {
+        Q_OBJECT
     public:
-        bool predicate(Core::IWindow *handle) const override;
-        Core::IWindowAddOn *create(QObject *parent) override;
-    };
-
-    class VstClientAddOn: public Core::IWindowAddOn {
-        friend class VstBridge;
-    public:
-        explicit VstClientAddOn(QObject *parent = nullptr);
+        Q_INVOKABLE explicit VstClientAddOn(QObject *parent = nullptr);
 
         void initialize() override;
         void extensionsInitialized() override;
@@ -26,8 +20,11 @@ namespace Vst::Internal {
 
         void showWindow() const;
         void hideWindow() const;
+
+    private:
+        friend class VstBridge;
     };
 
-} // Internal
+} // namespace Vst::Internal
 
 #endif // CHORUSKIT_VSTCLIENTADDON_H

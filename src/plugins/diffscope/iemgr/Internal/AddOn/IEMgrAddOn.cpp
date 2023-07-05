@@ -15,14 +15,6 @@ namespace IEMgr::Internal {
 
     using namespace Core;
 
-    bool IEMgrAddOnFactory::predicate(Core::IWindow *handle) const {
-        return handle->id() == "home" || handle->id() == "project";
-    }
-
-    Core::IWindowAddOn *IEMgrAddOnFactory::create(QObject *parent) {
-        return new IEMgrAddOn(parent);
-    }
-
     IEMgrAddOn::IEMgrAddOn(QObject *parent) : Core::IWindowAddOn(parent) {
     }
 

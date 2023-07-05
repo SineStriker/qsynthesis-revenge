@@ -30,7 +30,6 @@ namespace Core {
     };
 
     IWindowPrivate::IWindowPrivate() {
-        Q_Q(IWindow);
     }
 
     IWindowPrivate::~IWindowPrivate() {
@@ -55,20 +54,28 @@ namespace Core {
         shortcutCtx = new QMShortcutContext(this);
 
         closeFilter = new WindowCloseFilter(this, q->window());
-        connect(closeFilter, &WindowCloseFilter::windowClosed, this, &IWindowPrivate::_q_windowClosed);
+        connect(closeFilter, &WindowCloseFilter::windowClosed, this,
+                &IWindowPrivate::_q_windowClosed);
 
         // Setup window
         changeLoadState(IWindow::WindowSetup);
 
         // Call all add-ons
-        for (auto &fac : qAsConst(d->addOnFactories)) {
-            if (!fac->predicate(q)) {
-                continue;
+        auto facs = d->addOnFactories.value(id);
+        for (auto it = facs.begin(); it != facs.end(); ++it) {
+            const auto &mo = it.key();
+            const auto &fac = it.value();
+
+            IWindowAddOn *addOn;
+            if (fac) {
+                addOn = fac();
+            } else {
+                addOn = qobject_cast<IWindowAddOn *>(mo->newInstance());
             }
 
-            auto addOn = fac->create(q);
             if (!addOn) {
-                myWarning(__func__) << "window add-on factory creates null instance:" << typeid(*fac).name();
+                myWarning(__func__)
+                    << "window add-on factory creates null instance:" << mo->className();
                 continue;
             }
 
@@ -100,7 +107,8 @@ namespace Core {
         delayedInitializeTimer = new QTimer();
         delayedInitializeTimer->setInterval(DELAYED_INITIALIZE_INTERVAL);
         delayedInitializeTimer->setSingleShot(true);
-        connect(delayedInitializeTimer, &QTimer::timeout, this, &IWindowPrivate::nextDelayedInitialize);
+        connect(delayedInitializeTimer, &QTimer::timeout, this,
+                &IWindowPrivate::nextDelayedInitialize);
         delayedInitializeTimer->start();
     }
 
@@ -184,7 +192,8 @@ namespace Core {
         d->windowMap.insert(win, this);
 
         win->setAttribute(Qt::WA_DeleteOnClose);
-        connect(qApp, &QApplication::aboutToQuit, win, &QWidget::close); // Ensure closing window when quit
+        connect(qApp, &QApplication::aboutToQuit, win,
+                &QWidget::close); // Ensure closing window when quit
 
         d_func()->setWindow(win, d);
 
@@ -324,7 +333,8 @@ namespace Core {
         return d->dragFileHandlerMap.contains(suffix.toLower());
     }
 
-    void IWindow::setDragFileHandler(const QString &suffix, QObject *obj, const char *member, int maxCount) {
+    void IWindow::setDragFileHandler(const QString &suffix, QObject *obj, const char *member,
+                                     int maxCount) {
         Q_D(IWindow);
 
         if (suffix.isEmpty())
@@ -345,7 +355,8 @@ namespace Core {
         d->dragFileHandlerMap.remove(suffix.toLower());
     }
 
-    IWindow::IWindow(const QString &id, QObject *parent) : IWindow(*new IWindowPrivate(), id, parent) {
+    IWindow::IWindow(const QString &id, QObject *parent)
+        : IWindow(*new IWindowPrivate(), id, parent) {
     }
 
     IWindow::~IWindow() {
@@ -363,7 +374,8 @@ namespace Core {
         // Do nothing
     }
 
-    IWindow::IWindow(IWindowPrivate &d, const QString &id, QObject *parent) : ObjectPool(parent), d_ptr(&d) {
+    IWindow::IWindow(IWindowPrivate &d, const QString &id, QObject *parent)
+        : ObjectPool(parent), d_ptr(&d) {
         d.q_ptr = this;
         d.id = id;
 

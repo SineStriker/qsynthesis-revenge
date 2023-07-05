@@ -17,14 +17,6 @@ namespace ScriptMgr {
 
     namespace Internal {
 
-        bool ScriptMgrAddOnFactory::predicate(Core::IWindow *handle) const {
-            return handle->id() == "project";
-        }
-
-        Core::IWindowAddOn *ScriptMgrAddOnFactory::create(QObject *parent) {
-            return new ScriptMgrAddOn(parent);
-        }
-
         ScriptMgrAddOn::ScriptMgrAddOn(QObject *parent) : IWindowAddOn(parent) {
 
         }

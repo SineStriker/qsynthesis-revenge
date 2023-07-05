@@ -87,7 +87,8 @@ namespace Core {
 
     //===========================================================================
     // TimeSignature List
-    DspxTimeSignatureListEntity::DspxTimeSignatureListEntity(QObject *parent) : AceTreeEntityRecordTable(parent) {
+    DspxTimeSignatureListEntity::DspxTimeSignatureListEntity(QObject *parent)
+        : AceTreeEntityRecordTable(parent) {
     }
     DspxTimeSignatureListEntity::~DspxTimeSignatureListEntity() {
     }
@@ -115,7 +116,8 @@ namespace Core {
             });
         }
     };
-    DspxTempoEntity::DspxTempoEntity(QObject *parent) : AceTreeEntityMapping(new DspxTempoEntityExtra(), parent) {
+    DspxTempoEntity::DspxTempoEntity(QObject *parent)
+        : AceTreeEntityMapping(new DspxTempoEntityExtra(), parent) {
     }
     DspxTempoEntity::~DspxTempoEntity() {
     }
@@ -184,13 +186,29 @@ namespace Core {
 
     //===========================================================================
     // TimelineLabel List
-    DspxTimelineLabelListEntity::DspxTimelineLabelListEntity(QObject *parent) : AceTreeEntityRecordTable(parent) {
+    class DspxTimelineLabelListEntityExtra : public AceTreeEntityExtra {
+    public:
+    };
+
+    DspxTimelineLabelListEntity::DspxTimelineLabelListEntity(QObject *parent)
+        : AceTreeEntityRecordTable(parent) {
     }
     DspxTimelineLabelListEntity::~DspxTimelineLabelListEntity() {
     }
+
+    const QsApi::MusicTimeline *DspxTimelineLabelListEntity::timeline() const {
+        return nullptr;
+    }
+
     void DspxTimelineLabelListEntity::sortRecords(QVector<AceTreeEntity *> &records) const {
         std::sort(records.begin(), records.end(), compareElementPos<DspxTimelineLabelEntity>);
     }
+
+    void DspxTimelineLabelListEntity::doInitialize() {
+    }
+
+    void DspxTimelineLabelListEntity::doSetup() {
+    }
     //===========================================================================
 
-}
+} // namespace Core

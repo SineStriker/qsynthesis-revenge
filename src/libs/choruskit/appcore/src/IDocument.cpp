@@ -49,6 +49,17 @@ namespace Core {
         return d->spec;
     }
 
+    QJsonObject IDocument::docInfo() const {
+        Q_D(const IDocument);
+        return d->docInfo;
+    }
+
+    void IDocument::setDocInfo(const QJsonObject &docInfo) {
+        Q_D(IDocument);
+        d->docInfo = docInfo;
+        emit docInfoChanged();
+    }
+
     IDocument::ReloadBehavior IDocument::reloadBehavior(IDocument::ChangeTrigger state,
                                                         IDocument::ChangeType type) const {
         switch (type) {
@@ -157,17 +168,6 @@ namespace Core {
 
     QString IDocument::suggestedFileName() const {
         return {};
-    }
-
-    QJsonObject IDocument::mimeInfo() const {
-        Q_D(const IDocument);
-        return d->mimeInfo;
-    }
-
-    void IDocument::setMimeInfo(const QJsonObject &mimeInfo) {
-        Q_D(IDocument);
-        d->mimeInfo = mimeInfo;
-        emit mimeTypeChanged();
     }
 
     bool IDocument::isSaveAsAllowed() const {

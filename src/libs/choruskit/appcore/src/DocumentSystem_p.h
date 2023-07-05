@@ -33,12 +33,21 @@ namespace Core {
         QStringList m_recentFiles;
         QStringList m_recentDirs;
 
+        QMChronMap<IDocument *, QJsonObject> docInfos;
+
         mutable QString openFileLastVisitDir;
         mutable QString openDirLastVisitDir;
         mutable QString saveFileLastVisitDir;
         mutable bool selectAllWhenRecover;
+
+        mutable bool openFilesSaved;
+        void postSaveOpenFilesTask();
+
+    private:
+        void _q_docInfoChanged();
+        void _q_documentDestroyed();
     };
 
-}
+} // namespace Core
 
 #endif // DOCUMENTSYSTEM_P_H

@@ -81,6 +81,4 @@ namespace Core {
 
 }
 
-
-
 #endif // DSPXHISTORY_H

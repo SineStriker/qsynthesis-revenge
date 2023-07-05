@@ -22,14 +22,6 @@ namespace Core {
 
     namespace Internal {
 
-        bool HomeWindowAddOnFactory::predicate(IWindow *handle) const {
-            return handle->id() == "home";
-        }
-
-        IWindowAddOn *HomeWindowAddOnFactory::create(QObject *parent) {
-            return new HomeWindowAddOn(parent);
-        }
-
         HomeWindowAddOn::HomeWindowAddOn(QObject *parent) : CoreWindowAddOn(parent) {
         }
 

@@ -59,7 +59,7 @@ namespace IEMgr {
 
             // Add basic windows and add-ons
             auto winMgr = icore->windowSystem();
-            winMgr->addAddOn(new IEMgrAddOnFactory());
+            winMgr->addAddOn({"home","project"}, &IEMgrAddOn::staticMetaObject);
 
             // Add wizards
             imgr->addWizard(new MidiWizard());

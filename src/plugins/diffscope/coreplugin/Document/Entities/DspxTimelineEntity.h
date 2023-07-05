@@ -4,6 +4,8 @@
 #include <AceTreeObjectEntity.h>
 #include <AceTreeStandardEntity.h>
 
+#include <MusicUtil/MusicTimeline.h>
+
 #include "coreplugin/CoreGlobal.h"
 
 namespace Core {
@@ -62,8 +64,9 @@ namespace Core {
 
     //===========================================================================
     // TimeSignature List
-    class CORE_EXPORT DspxTimeSignatureListEntity : public AceTreeEntityRecordTable,
-                                                    public AceTreeEntityRecordTableHelper<DspxTimeSignatureEntity> {
+    class CORE_EXPORT DspxTimeSignatureListEntity
+        : public AceTreeEntityRecordTable,
+          public AceTreeEntityRecordTableHelper<DspxTimeSignatureEntity> {
         Q_OBJECT
     public:
         explicit DspxTimeSignatureListEntity(QObject *parent = nullptr);
@@ -142,21 +145,29 @@ namespace Core {
 
     //===========================================================================
     // TimelineLabel List
-    class CORE_EXPORT DspxTimelineLabelListEntity : public AceTreeEntityRecordTable,
-                                                    public AceTreeEntityRecordTableHelper<DspxTimelineLabelEntity> {
+    class CORE_EXPORT DspxTimelineLabelListEntity
+        : public AceTreeEntityRecordTable,
+          public AceTreeEntityRecordTableHelper<DspxTimelineLabelEntity> {
         Q_OBJECT
     public:
         explicit DspxTimelineLabelListEntity(QObject *parent = nullptr);
         ~DspxTimelineLabelListEntity();
 
     public:
+        const QsApi::MusicTimeline *timeline() const;
+
+    public:
         void sortRecords(QVector<AceTreeEntity *> &records) const override;
+
+    protected:
+        void doInitialize() override;
+        void doSetup() override;
 
     Q_SIGNALS:
         ACE_TREE_DECLARE_RECORD_TABLE_SIGNALS(DspxTimelineLabelEntity)
     };
     //===========================================================================
 
-}
+} // namespace Core
 
 #endif // CHORUSKIT_DSPXTIMELINEENTITY_H

@@ -8,7 +8,7 @@
 
 namespace QsApi {
 
-    class MusicTimelinePrivate {
+    class QSSVS_API MusicTimelinePrivate {
         Q_DECLARE_PUBLIC(MusicTimeline)
     public:
         MusicTimelinePrivate();
