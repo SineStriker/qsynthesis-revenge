@@ -67,6 +67,11 @@ namespace ScriptMgr {
             return false;
         }
 
+        static void _qt_translation_CommandCategory() {
+            QApplication::translate("Core::CommandCategory", "Script Manager");
+            QApplication::translate("Core::CommandCategory", "Batch Process");
+        }
+
     } // namespace Internal
 
 } // namespace ScriptMgr

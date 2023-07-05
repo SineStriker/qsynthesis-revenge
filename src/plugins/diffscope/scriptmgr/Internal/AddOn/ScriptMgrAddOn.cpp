@@ -40,7 +40,6 @@ namespace ScriptMgr {
         void ScriptMgrAddOn::reloadStrings() {
             batchProcessMainGroup->setText(tr("Batch Process Actions"));
             batchProcessMainMenu->setText(tr("&Batch Process"));
-            scriptOperationsGroup->setText(tr("Script Operation Actions"));
             reloadScriptsAction->setText(tr("Reload Scripts"));
             scriptSettingsAction->setText(tr("Script Settings"));
             runScriptAction->setText(tr("Run"));

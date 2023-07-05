@@ -44,6 +44,7 @@ namespace ScriptMgr::Internal {
         m_engine.reset(new QJSEngine);
         m_scriptEntries.clear();
         m_builtInScriptEntries.clear();
+        m_cachedCustomShortcuts = ScriptSettingsPage::storedCustomShortcuts();
 
         //load internal.js
         m_engine->globalObject().setProperty("__q_tr_ext", m_engine->newObject());
@@ -218,6 +219,9 @@ namespace ScriptMgr::Internal {
 
     QString ScriptLoader::getName(const QString &id) const {
         return scriptNameDict.value(id, id);
+    }
+    QMap<QString, QKeySequence> ScriptLoader::cachedCustomShortcuts() const {
+        return m_cachedCustomShortcuts;
     }
 
 }

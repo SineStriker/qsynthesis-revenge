@@ -8,6 +8,7 @@ namespace ScriptMgr::Internal {
     class ScriptMgrPlugin;
     class JsLoaderObject;
     class JsInternalObject;
+    class ScriptSettingsPage;
 
     struct ScriptEntry {
         enum Type { Script, ScriptSet };
@@ -45,6 +46,9 @@ namespace ScriptMgr::Internal {
         QJSEngine *engine() const;
 
         QString version() const;
+
+        QMap<QString, QKeySequence> cachedCustomShortcuts() const;
+
     signals:
         void engineWillReload();
         void engineReloaded();
@@ -52,6 +56,7 @@ namespace ScriptMgr::Internal {
     private:
         friend class ScriptMgrPlugin;
         friend class JsLoaderObject;
+        friend class ScriptSettingsPage;
 
         ScriptLoader(QObject *parent = nullptr);
         ~ScriptLoader();
@@ -80,6 +85,8 @@ namespace ScriptMgr::Internal {
         QList<ScriptEntry> m_scriptEntries;
         QString m_version;
         QMap<QString, QString> scriptNameDict;
+
+        QMap<QString, QKeySequence> m_cachedCustomShortcuts;
     };
 
 } // Internal

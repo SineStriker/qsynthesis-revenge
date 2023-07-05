@@ -16,7 +16,8 @@ namespace ScriptMgr::Internal {
         void assertFalse() const;
         QString version() const;
         QString getLang() const;
-        QString coreMsgBox(const QString &title, const QString &message, const QString &icon, const QStringList &buttons, const QString &defaultButton);
+        QString coreMsgBox(const QString &title, const QString &message, const QString &icon, const QStringList &buttons, const QString &defaultButton) const;
+        bool versionMismatchWarning(const QString &id, const QString &requiredVersion) const;
     private:
         friend class ScriptLoader;
         JsLoaderObject(ScriptLoader *loader);

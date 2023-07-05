@@ -12,17 +12,11 @@ function validateClass(clazz) {
     if(!/^[0-9_A-Za-z]+$/.test(info.id)) throw new TypeError(`Invalid script id '${info.id}'. Script id should not be empty, and only contain letters, digits and underscores.`);
     if(typeof info.name !== 'string') throw new TypeError(`'name' in script info should be string.`);
     let scriptMgrVersion = __q_loader.version();
-    if(typeof info.requiredVersion !== 'string' || !satisfies(scriptMgrVersion, info.requiredVersion)) {
-        if(__q_loader.coreMsgBox(
-            __q_tr('JsBuiltIn', 'Version Mismatch'),
-            __q_tr('JsBuiltIn', "The version of DiffScope Script Manager (%1) does not satisfy the requirement in script '%2' (%3).\n\nContinue loading anyway?")
-                .replace('%1', scriptMgrVersion)
-                .replace('%2', info.id)
-                .replace('%3', info.requiredVersion),
-            'Warning',
-            ['Yes', 'No'],
-            'No'
-        ) == 'No') {
+    if(typeof info.requiredVersion !== 'string' || !(()=>{
+        try { return satisfies(scriptMgrVersion, info.requiredVersion); }
+        catch(e) { return false; }
+    })()) {
+        if(__q_loader.versionMismatchWarning(info.id, String(info.requiredVersion))) {
             throw new Error(`The version of DiffScope Script Manager (${scriptMgrVersion}) does not satisfy the requirement in script '${info.id}' (${info.requiredVersion}).`);
         }
     }
