@@ -1,7 +1,3 @@
-//
-// Created by Crs_1 on 2023/5/28.
-//
-
 #include "DiffScopeVstBridge.h"
 #include "QMSystem.h"
 #include "rep_VstBridge_replica.h"

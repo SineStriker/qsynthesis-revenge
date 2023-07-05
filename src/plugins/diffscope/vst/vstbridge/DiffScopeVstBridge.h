@@ -1,7 +1,3 @@
-//
-// Created by Crs_1 on 2023/5/28.
-//
-
 #ifndef CHORUSKIT_DIFFSCOPEVSTBRIDGE_H
 #define CHORUSKIT_DIFFSCOPEVSTBRIDGE_H
 
