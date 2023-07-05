@@ -10,16 +10,10 @@ namespace IEMgr {
 
     namespace Internal {
 
-        class IEMgrAddOnFactory : public Core::IWindowAddOnFactory {
-        public:
-            bool predicate(Core::IWindow *handle) const override;
-            Core::IWindowAddOn *create(QObject *parent) override;
-        };
-
         class IEMgrAddOn : public Core::IWindowAddOn {
             Q_OBJECT
         public:
-            explicit IEMgrAddOn(QObject *parent = nullptr);
+            Q_INVOKABLE explicit IEMgrAddOn(QObject *parent = nullptr);
             ~IEMgrAddOn();
 
             void initialize() override;
@@ -47,9 +41,9 @@ namespace IEMgr {
             void _q_importButtonClicked();
         };
 
-    }
+    } // namespace Internal
 
-}
+} // namespace IEMgr
 
 
 

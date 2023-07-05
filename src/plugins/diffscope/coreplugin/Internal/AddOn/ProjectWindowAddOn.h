@@ -13,16 +13,10 @@ namespace Core {
 
     namespace Internal {
 
-        class ProjectWindowAddOnFactory : public IWindowAddOnFactory {
-        public:
-            bool predicate(IWindow *handle) const override;
-            IWindowAddOn *create(QObject *parent) override;
-        };
-
         class ProjectWindowAddOn : public CoreWindowAddOn {
             Q_OBJECT
         public:
-            explicit ProjectWindowAddOn(QObject *parent = nullptr);
+            Q_INVOKABLE explicit ProjectWindowAddOn(QObject *parent = nullptr);
             ~ProjectWindowAddOn();
 
             void initialize() override;
@@ -103,8 +97,8 @@ namespace Core {
             QAbstractButton *phonemeButton;
         };
 
-    }
+    } // namespace Internal
 
-}
+} // namespace Core
 
 #endif // PROJECTWINDOWADDON_H

@@ -27,7 +27,8 @@ namespace Params::Internal {
         qIDec->addTranslationPath(pluginSpec()->location() + "/translations");
         qIDec->addThemePath(pluginSpec()->location() + "/themes");
 
-        auto splash = qobject_cast<QSplashScreen *>(ILoader::instance()->getFirstObject("choruskit_init_splash"));
+        auto splash = qobject_cast<QSplashScreen *>(
+            ILoader::instance()->getFirstObject("choruskit_init_splash"));
         if (splash) {
             splash->showMessage(tr("Initializing param-curve editor..."));
         }
@@ -45,7 +46,7 @@ namespace Params::Internal {
 
         // Add basic windows and add-ons
         auto winMgr = icore->windowSystem();
-        winMgr->addAddOn(new Internal::ParamsAddOnFactory());
+        winMgr->addAddOn("project", &Internal::ParamsAddOn::staticMetaObject);
         return true;
     }
 
@@ -56,4 +57,4 @@ namespace Params::Internal {
         return false;
     }
 
-}
+} // namespace Params::Internal

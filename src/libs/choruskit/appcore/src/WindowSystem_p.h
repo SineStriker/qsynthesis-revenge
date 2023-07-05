@@ -17,7 +17,8 @@ namespace Core {
         double ratio;
 
         WindowGeometry() : maximized(false), ratio(0){};
-        WindowGeometry(const QRect &rect, bool max = false) : geometry(rect), maximized(max), ratio(0){};
+        WindowGeometry(const QRect &rect, bool max = false)
+            : geometry(rect), maximized(max), ratio(0){};
 
         static WindowGeometry fromObject(const QJsonObject &obj);
         QJsonObject toObject() const;
@@ -48,7 +49,7 @@ namespace Core {
 
         WindowSystem *q_ptr;
 
-        QMChronSet<IWindowAddOnFactory *> addOnFactories;
+        QHash<QString, QMChronMap<const QMetaObject *, WindowSystem::AddOnFactory>> addOnFactories;
 
         QMChronSet<IWindow *> iWindows;
         QHash<QWidget *, IWindow *> windowMap;
@@ -58,6 +59,6 @@ namespace Core {
 
         void windowClosed(IWindow *iWin);
     };
-}
+} // namespace Core
 
 #endif // WINDOWSYSTEM_P_H

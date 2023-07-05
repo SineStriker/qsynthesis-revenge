@@ -20,12 +20,13 @@
 #include <QListWidget>
 #include <QMessageBox>
 #include <QScreen>
+#include <QTimer>
 
 namespace Core {
 
-#define myWarning(func)                                                                                                \
-    (qWarning().nospace() << "Core::DocumentSystem::"                                                                  \
-                          << "():")                                                                                    \
+#define myWarning(func)                                                                            \
+    (qWarning().nospace() << "Core::DocumentSystem::"                                              \
+                          << "():")                                                                \
         .space()
 
     static const char settingCategoryC[] = "DocumentSystem";
@@ -42,6 +43,7 @@ namespace Core {
     static const char selectAllWhenRecoverC[] = "SelectAllWhenRecover";
 
     DocumentSystemPrivate::DocumentSystemPrivate() {
+        openFilesSaved = true;
     }
 
     DocumentSystemPrivate::~DocumentSystemPrivate() {
@@ -59,8 +61,10 @@ namespace Core {
         auto obj = s->value(settingCategoryC).toObject();
 
         auto recentObj = obj.value(recentGroupC).toObject();
-        QStringList recentFiles = QMBatch::arrayToStringList(recentObj.value(QLatin1String(filesKeyC)).toArray());
-        QStringList recentDirs = QMBatch::arrayToStringList(recentObj.value(QLatin1String(dirKeyC)).toArray());
+        QStringList recentFiles =
+            QMBatch::arrayToStringList(recentObj.value(QLatin1String(filesKeyC)).toArray());
+        QStringList recentDirs =
+            QMBatch::arrayToStringList(recentObj.value(QLatin1String(dirKeyC)).toArray());
 
         // clean non-existing files
         m_recentFiles.clear();
@@ -105,13 +109,34 @@ namespace Core {
         s->insert(settingCategoryC, obj);
     }
 
-    void DocumentSystemPrivate::saveOpenFileSettings() const{
-        
+    void DocumentSystemPrivate::saveOpenFileSettings() const {
+        openFilesSaved = true;
+    }
+
+    void DocumentSystemPrivate::postSaveOpenFilesTask() {
+        if (!openFilesSaved) {
+            return;
+        }
+
+        openFilesSaved = false;
+        QTimer::singleShot(0, this, &DocumentSystemPrivate::saveOpenFileSettings);
+    }
+
+    void DocumentSystemPrivate::_q_docInfoChanged() {
+        auto doc = qobject_cast<IDocument *>(sender());
+        docInfos.append(doc, doc->docInfo());
+        postSaveOpenFilesTask();
+    }
+
+    void DocumentSystemPrivate::_q_documentDestroyed() {
+        docInfos.remove(static_cast<IDocument *>(sender()));
+        postSaveOpenFilesTask();
     }
 
     static DocumentSystem *m_instance = nullptr;
 
-    DocumentSystem::DocumentSystem(QObject *parent) : DocumentSystem(*new DocumentSystemPrivate(), parent) {
+    DocumentSystem::DocumentSystem(QObject *parent)
+        : DocumentSystem(*new DocumentSystemPrivate(), parent) {
     }
 
     DocumentSystem::~DocumentSystem() {
@@ -289,10 +314,12 @@ namespace Core {
         return d->m_recentDirs;
     }
 
-    bool DocumentSystem::openFileBrowse(QWidget *parent, DocumentSpec *spec, const QString &path) const {
+    bool DocumentSystem::openFileBrowse(QWidget *parent, DocumentSpec *spec,
+                                        const QString &path) const {
         auto filter =
             spec->filter() + ";;" +
-            QString("%1(%2)").arg(QApplication::translate("Core::DocumentSystem", "All Files"), QMOs::allFilesFilter());
+            QString("%1(%2)").arg(QApplication::translate("Core::DocumentSystem", "All Files"),
+                                  QMOs::allFilesFilter());
         auto paths = getOpenFileNames(parent, {}, filter, path);
         if (paths.isEmpty()) {
             return false;
@@ -307,7 +334,8 @@ namespace Core {
         return cnt > 0;
     }
 
-    bool DocumentSystem::saveFileBrowse(QWidget *parent, IDocument *doc, const QString &path) const {
+    bool DocumentSystem::saveFileBrowse(QWidget *parent, IDocument *doc,
+                                        const QString &path) const {
         Q_D(const DocumentSystem);
         const QString &saveFileName = getSaveAsFileName(doc, path, parent);
         if (!saveFileName.isEmpty()) {
@@ -320,7 +348,8 @@ namespace Core {
                     DocumentSystemPrivate::errorOnOverwrite(saveFileName, parent);
                     return false;
                 }
-                return const_cast<DocumentSystemPrivate *>(d)->saveDocument_helper(doc, saveFileName, nullptr);
+                return const_cast<DocumentSystemPrivate *>(d)->saveDocument_helper(
+                    doc, saveFileName, nullptr);
             } else
                 goto lab_save;
         }
@@ -330,11 +359,13 @@ namespace Core {
         return doc->save(saveFileName);
     }
 
-    QString DocumentSystem::getOpenFileName(QWidget *parent, const QString &title, const QString &filters,
-                                            const QString &path, QString *selectedFilter) const {
+    QString DocumentSystem::getOpenFileName(QWidget *parent, const QString &title,
+                                            const QString &filters, const QString &path,
+                                            QString *selectedFilter) const {
         Q_D(const DocumentSystem);
         auto res = QFileDialog::getOpenFileName(
-            parent, title.isEmpty() ? QApplication::translate("Core::DocumentSystem", "Open File") : title,
+            parent,
+            title.isEmpty() ? QApplication::translate("Core::DocumentSystem", "Open File") : title,
             path.isEmpty() ? d->openFileLastVisitDir : path, filters, selectedFilter);
         if (!res.isEmpty()) {
             d->openFileLastVisitDir = QMFs::PathFindDirPath(res);
@@ -342,11 +373,13 @@ namespace Core {
         return res;
     }
 
-    QStringList DocumentSystem::getOpenFileNames(QWidget *parent, const QString &title, const QString &filters,
-                                                 const QString &path, QString *selectedFilter) const {
+    QStringList DocumentSystem::getOpenFileNames(QWidget *parent, const QString &title,
+                                                 const QString &filters, const QString &path,
+                                                 QString *selectedFilter) const {
         Q_D(const DocumentSystem);
         auto res = QFileDialog::getOpenFileNames(
-            parent, title.isEmpty() ? QApplication::translate("Core::DocumentSystem", "Open Files") : title,
+            parent,
+            title.isEmpty() ? QApplication::translate("Core::DocumentSystem", "Open Files") : title,
             path.isEmpty() ? d->openFileLastVisitDir : path, filters, selectedFilter);
         if (!res.isEmpty()) {
             d->openFileLastVisitDir = QMFs::PathFindDirPath(res.first());
@@ -354,10 +387,13 @@ namespace Core {
         return res;
     }
 
-    QString DocumentSystem::getExistingDirectory(QWidget *parent, const QString &title, const QString &path) const {
+    QString DocumentSystem::getExistingDirectory(QWidget *parent, const QString &title,
+                                                 const QString &path) const {
         Q_D(const DocumentSystem);
         auto res = QFileDialog::getExistingDirectory(
-            parent, title.isEmpty() ? QApplication::translate("Core::DocumentSystem", "Open Directory") : title,
+            parent,
+            title.isEmpty() ? QApplication::translate("Core::DocumentSystem", "Open Directory")
+                            : title,
             path.isEmpty() ? d->openDirLastVisitDir : path);
         if (!res.isEmpty()) {
             d->openDirLastVisitDir = QMFs::PathFindDirPath(res);
@@ -365,11 +401,13 @@ namespace Core {
         return res;
     }
 
-    QString DocumentSystem::getSaveFileName(QWidget *parent, const QString &title, const QString &path,
-                                            const QString &filter, QString *selectedFilter) const {
+    QString DocumentSystem::getSaveFileName(QWidget *parent, const QString &title,
+                                            const QString &path, const QString &filter,
+                                            QString *selectedFilter) const {
         Q_D(const DocumentSystem);
         auto res = QFileDialog::getSaveFileName(
-            parent, title.isEmpty() ? QApplication::translate("Core::DocumentSystem", "Save File") : title,
+            parent,
+            title.isEmpty() ? QApplication::translate("Core::DocumentSystem", "Save File") : title,
             path.isEmpty() ? d->saveFileLastVisitDir : path, filter, selectedFilter);
         if (!res.isEmpty()) {
             d->saveFileLastVisitDir = QMFs::PathFindDirPath(res);
@@ -381,7 +419,8 @@ namespace Core {
     //        Q_D(const DocumentSystem);
 
     //        QDir baseDir(DocumentSystemPrivate::logBaseDir());
-    //        QFileInfoList fileInfos = baseDir.entryInfoList(QDir::Dirs | QDir::NoSymLinks | QDir::NoDotAndDotDot);
+    //        QFileInfoList fileInfos = baseDir.entryInfoList(QDir::Dirs | QDir::NoSymLinks |
+    //        QDir::NoDotAndDotDot);
 
     //        struct Remaining {
     //            DocumentSpec *spec;
@@ -421,15 +460,17 @@ namespace Core {
     //            listWidget->addItem(item);
     //        }
 
-    //        auto allCheckbox = new QCheckBox(QApplication::translate("Core::DocumentSystem", "Restore all"));
-    //        connect(allCheckbox, &QCheckBox::toggled, listWidget, &QListWidget::setDisabled);
+    //        auto allCheckbox = new QCheckBox(QApplication::translate("Core::DocumentSystem",
+    //        "Restore all")); connect(allCheckbox, &QCheckBox::toggled, listWidget,
+    //        &QListWidget::setDisabled);
 
     //        QMessageBox msgBox(parent);
     //        // msgBox.setWindowFlag(Qt::MSWindowsFixedSizeDialogHint, false);
     //        msgBox.setIcon(QMessageBox::Question);
     //        msgBox.setText(QApplication::translate(
     //            "Core::DocumentSystem",
-    //            "The following files have been detected that closed unexpectedly, would you like to restore them?"));
+    //            "The following files have been detected that closed unexpectedly, would you like
+    //            to restore them?"));
     //        msgBox.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
     //        msgBox.setCheckBox(allCheckbox);
 
@@ -440,7 +481,8 @@ namespace Core {
     //        layout->addWidget(listWidget, row + 1, column, rowSpan, columnSpan);
 
     //        double ratio = (msgBox.screen()->logicalDotsPerInch() / QMOs::unitDpi());
-    //        auto horizontalSpacer = new QSpacerItem(qMax<int>(ratio * 500, listWidget->sizeHint().width() + 100), 0,
+    //        auto horizontalSpacer = new QSpacerItem(qMax<int>(ratio * 500,
+    //        listWidget->sizeHint().width() + 100), 0,
     //                                                QSizePolicy::Minimum, QSizePolicy::Expanding);
     //        layout->addItem(horizontalSpacer, layout->rowCount(), 0, 1, layout->columnCount());
 
@@ -478,7 +520,8 @@ namespace Core {
 
     //        static QList<IDocumentSettings> _logs = []() {
     //            QDir baseDir(DocumentSystemPrivate::logBaseDir());
-    //            QFileInfoList fileInfos = baseDir.entryInfoList(QDir::Dirs | QDir::NoSymLinks | QDir::NoDotAndDotDot);
+    //            QFileInfoList fileInfos = baseDir.entryInfoList(QDir::Dirs | QDir::NoSymLinks |
+    //            QDir::NoDotAndDotDot);
 
     //            QList<IDocumentSettings> remaining;
     //            for (const auto &info : qAsConst(fileInfos)) {
@@ -494,7 +537,8 @@ namespace Core {
     //        return _logs;
     //    }
 
-    QString DocumentSystem::getSaveAsFileName(const IDocument *document, const QString &pathIn, QWidget *parent) const {
+    QString DocumentSystem::getSaveAsFileName(const IDocument *document, const QString &pathIn,
+                                              QWidget *parent) const {
         Q_D(const DocumentSystem);
         auto spec = document->d_func()->spec;
         if (!spec) {
@@ -503,11 +547,13 @@ namespace Core {
 
         auto filter =
             spec->saveFilter() + ";;" +
-            QString("%1(%2)").arg(QApplication::translate("Core::DocumentSystem", "All Files"), QMOs::allFilesFilter());
+            QString("%1(%2)").arg(QApplication::translate("Core::DocumentSystem", "All Files"),
+                                  QMOs::allFilesFilter());
 
         QString absoluteFilePath = document->filePath();
         const QFileInfo fi(absoluteFilePath);
-        QString path = QMFs::isPathRelative(pathIn) ? d->saveFileLastVisitDir : QMFs::PathFindDirPath(pathIn);
+        QString path =
+            QMFs::isPathRelative(pathIn) ? d->saveFileLastVisitDir : QMFs::PathFindDirPath(pathIn);
         QString fileName;
         if (absoluteFilePath.isEmpty()) {
             fileName = document->suggestedFileName();
@@ -521,23 +567,39 @@ namespace Core {
             fileName = fi.fileName();
         }
 
-        return getSaveFileName(parent, QApplication::translate("Core::DocumentSystem", "Save As File"),
+        return getSaveFileName(parent,
+                               QApplication::translate("Core::DocumentSystem", "Save As File"),
                                (path + QLatin1Char('/') + fileName), filter);
     }
 
     void DocumentSystem::documentAdded(IDocument *document, bool addWatch) {
+        Q_UNUSED(addWatch);
+
+        Q_D(DocumentSystem);
+        connect(document, &IDocument::docInfoChanged, d, &DocumentSystemPrivate::_q_docInfoChanged);
+        connect(document, &QObject::destroyed, d, &DocumentSystemPrivate::_q_documentDestroyed);
+        d->docInfos.append(document, document->docInfo());
+        d->postSaveOpenFilesTask();
     }
 
     void DocumentSystem::documentChanged(IDocument *document) {
+        Q_UNUSED(document);
     }
 
     void DocumentSystem::documentRemoved(IDocument *document) {
+        Q_D(DocumentSystem);
+        disconnect(document, &IDocument::docInfoChanged, d,
+                   &DocumentSystemPrivate::_q_docInfoChanged);
+        disconnect(document, &QObject::destroyed, d, &DocumentSystemPrivate::_q_documentDestroyed);
+        d->docInfos.remove(document);
+        d->postSaveOpenFilesTask();
     }
 
-    DocumentSystem::DocumentSystem(DocumentSystemPrivate &d, QObject *parent) : DocumentWatcher(d, parent) {
+    DocumentSystem::DocumentSystem(DocumentSystemPrivate &d, QObject *parent)
+        : DocumentWatcher(d, parent) {
         m_instance = this;
 
         d.init();
     }
 
-}
+} // namespace Core

@@ -36,7 +36,8 @@ namespace QsApi {
     Q_DECL_CONSTEXPR MusicTime::MusicTime() noexcept : m(0), b(0), t(0) {
     }
 
-    Q_DECL_CONSTEXPR MusicTime::MusicTime(int measure, int beat, int tick) : m(measure), b(beat), t(tick) {
+    Q_DECL_CONSTEXPR MusicTime::MusicTime(int measure, int beat, int tick)
+        : m(measure), b(beat), t(tick) {
     }
 
     Q_DECL_CONSTEXPR int MusicTime::measure() const {
@@ -110,7 +111,7 @@ namespace QsApi {
 
         QString toString() const;
 
-        friend QDebug operator<<(QDebug debug, const PersistentMusicTime &mt);
+        friend QSSVS_API QDebug operator<<(QDebug debug, const PersistentMusicTime &mt);
 
     private:
         explicit PersistentMusicTime(PersistentMusicTimeData *d);
@@ -144,6 +145,6 @@ namespace QsApi {
         return totalTick() >= other.totalTick();
     }
 
-}
+} // namespace QsApi
 
 #endif // MUSICTIME_H

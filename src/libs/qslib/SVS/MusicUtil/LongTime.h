@@ -35,7 +35,7 @@ namespace QsApi {
     Q_DECL_CONSTEXPR LongTime::LongTime() : t(0) {
     }
 
-    constexpr LongTime::LongTime(int msec) : t(qMax(msec, 0)) {
+    Q_DECL_CONSTEXPR LongTime::LongTime(int msec) : t(qMax(msec, 0)) {
     }
 
     Q_DECL_CONSTEXPR inline int LongTime::minute() const {

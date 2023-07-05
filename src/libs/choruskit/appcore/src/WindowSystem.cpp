@@ -55,10 +55,8 @@ namespace Core {
     }
 
     QJsonObject SplitterSizes::toObject() const {
-        return {
-            {"sizes", QJsonArray::fromStringList(
-                          QMLinq::Select<QString>(sizes, [](int num) -> QString { return QString::number(num); }))}
-        };
+        return {{"sizes", QJsonArray::fromStringList(QMLinq::Select<QString>(
+                              sizes, [](int num) -> QString { return QString::number(num); }))}};
     }
 
     WindowSystemPrivate::WindowSystemPrivate() : q_ptr(nullptr) {
@@ -128,7 +126,7 @@ namespace Core {
 
         {
             bool lastWindowClosed = true;
-            for (auto w : QApplication::topLevelWidgets()) {
+            for (const auto &w : QApplication::topLevelWidgets()) {
                 if (!w->isVisible() || w->parentWidget() || !w->testAttribute(Qt::WA_QuitOnClose) ||
                     w->property("choruskit_managed_window").toBool())
                     continue;
@@ -163,46 +161,37 @@ namespace Core {
 
         d->saveSettings();
 
-        // Remove all managed factories
-        for (auto &item : qAsConst(d->addOnFactories)) {
-            delete item;
-        }
-
         m_instance = nullptr;
     }
 
-    bool WindowSystem::addAddOn(IWindowAddOnFactory *factory) {
+    bool WindowSystem::addAddOn(const QString &id, const QMetaObject *metaObject,
+                                const WindowSystem::AddOnFactory &factory) {
         Q_D(WindowSystem);
-        if (!factory) {
-            myWarning(__func__) << "trying to add null factory";
+        if (!metaObject) {
+            myWarning(__func__) << "trying to add null meta object";
             return false;
         }
-        d->addOnFactories.append(factory);
+
+        d->addOnFactories[id].append(metaObject, factory);
         return true;
     }
 
-    bool WindowSystem::removeAddOn(IWindowAddOnFactory *factory) {
+    bool WindowSystem::removeAddOn(const QString &id, const QMetaObject *metaObject) {
         Q_D(WindowSystem);
-        if (!factory) {
+        if (!metaObject) {
             myWarning(__func__) << "trying to remove null factory";
             return false;
         }
 
-        if (!d->addOnFactories.remove(factory)) {
-            myWarning(__func__) << "factory does not exist:" << factory;
+        auto it = d->addOnFactories.find(id);
+        if (it == d->addOnFactories.end() || !it->remove(metaObject)) {
             return false;
         }
+
+        if (it->isEmpty()) {
+            d->addOnFactories.erase(it);
+        }
         return true;
-    }
-
-    QList<IWindowAddOnFactory *> WindowSystem::addOnFactories() const {
-        Q_D(const WindowSystem);
-        return d->addOnFactories.values();
-    }
-
-    void WindowSystem::clearAddOnFactories() {
-        Q_D(WindowSystem);
-        d->addOnFactories.clear();
     }
 
     IWindow *WindowSystem::findWindow(QWidget *window) const {
@@ -265,7 +254,8 @@ namespace Core {
             switch (event->type()) {
                     // case QEvent ::WindowStateChange: {
                     //     auto e = static_cast<QWindowStateChangeEvent *>(event);
-                    //     if ((e->oldState() & Qt::WindowMaximized) || !(widget->windowState() & Qt::WindowMaximized))
+                    //     if ((e->oldState() & Qt::WindowMaximized) || !(widget->windowState() &
+                    //     Qt::WindowMaximized))
                     //     {
                     //         break;
                     //     }
@@ -287,7 +277,8 @@ namespace Core {
         bool m_obsolete;
     };
 
-    void WindowSystem::loadWindowGeometry(const QString &id, QWidget *w, const QSize &fallback) const {
+    void WindowSystem::loadWindowGeometry(const QString &id, QWidget *w,
+                                          const QSize &fallback) const {
         Q_D(const WindowSystem);
 
         auto winProp = d->winGeometries.value(id, {});
@@ -340,7 +331,8 @@ namespace Core {
         d->winGeometries.insert(id, {w->geometry(), w->isMaximized()});
     }
 
-    void WindowSystem::loadSplitterSizes(const QString &id, QSplitter *s, const QList<int> &fallback) const {
+    void WindowSystem::loadSplitterSizes(const QString &id, QSplitter *s,
+                                         const QList<int> &fallback) const {
         Q_D(const WindowSystem);
 
         auto spProp = d->splitterSizes.value(id, {});
@@ -357,10 +349,11 @@ namespace Core {
         d->splitterSizes.insert(id, {s->sizes()});
     }
 
-    WindowSystem::WindowSystem(WindowSystemPrivate &d, QObject *parent) : QObject(parent), d_ptr(&d) {
+    WindowSystem::WindowSystem(WindowSystemPrivate &d, QObject *parent)
+        : QObject(parent), d_ptr(&d) {
         m_instance = this;
 
         d.q_ptr = this;
         d.init();
     }
-}
+} // namespace Core

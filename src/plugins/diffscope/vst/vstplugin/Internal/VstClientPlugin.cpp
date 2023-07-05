@@ -51,7 +51,7 @@ namespace Vst {
             // Add basic windows and add-ons
 
             auto winMgr = ICore::instance()->windowSystem();
-            winMgr->addAddOn(new VstClientAddOnFactory());
+            winMgr->addAddOn("project", &VstClientAddOn::staticMetaObject);
 
             return true;
         }

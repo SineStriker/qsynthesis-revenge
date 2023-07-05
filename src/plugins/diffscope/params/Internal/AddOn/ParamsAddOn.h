@@ -14,16 +14,10 @@ namespace Params {
 
     namespace Internal {
 
-        class ParamsAddOnFactory : public Core::IWindowAddOnFactory {
-        public:
-            bool predicate(Core::IWindow *handle) const override;
-            Core::IWindowAddOn *create(QObject *parent) override;
-        };
-
         class ParamsAddOn : public Core::IWindowAddOn {
             Q_OBJECT
         public:
-            explicit ParamsAddOn(QObject *parent = nullptr);
+            Q_INVOKABLE explicit ParamsAddOn(QObject *parent = nullptr);
             ~ParamsAddOn();
 
             void initialize() override;

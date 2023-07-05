@@ -11,12 +11,6 @@
 #include "Window/IProjectWindow.h"
 
 namespace Vst::Internal {
-    bool VstClientAddOnFactory::predicate(Core::IWindow *handle) const {
-        return handle->id() == "project";
-    }
-    Core::IWindowAddOn *VstClientAddOnFactory::create(QObject *parent) {
-        return new VstClientAddOn(parent);
-    }
 
     VstClientAddOn::VstClientAddOn(QObject *parent) : Core::IWindowAddOn(parent) {
     }

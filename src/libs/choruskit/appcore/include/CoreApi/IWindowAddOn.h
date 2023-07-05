@@ -11,14 +11,6 @@ namespace Core {
     class IWindowAddOn;
     class IWindowAddOnPrivate;
 
-    class CKAPPCORE_API IWindowAddOnFactory {
-    public:
-        virtual ~IWindowAddOnFactory();
-
-        virtual bool predicate(IWindow *handle) const;
-        virtual IWindowAddOn *create(QObject *parent) = 0;
-    };
-
     class CKAPPCORE_API IWindowAddOn : public QObject {
         Q_OBJECT
     public:

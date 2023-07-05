@@ -28,14 +28,6 @@ namespace Core {
 
         static const char *phonemeKey = "edit.phonemePanel";
 
-        bool ProjectWindowAddOnFactory::predicate(IWindow *handle) const {
-            return handle->id() == "project";
-        }
-
-        IWindowAddOn *ProjectWindowAddOnFactory::create(QObject *parent) {
-            return new ProjectWindowAddOn(parent);
-        }
-
         ProjectWindowAddOn::ProjectWindowAddOn(QObject *parent) : CoreWindowAddOn(parent) {
         }
 

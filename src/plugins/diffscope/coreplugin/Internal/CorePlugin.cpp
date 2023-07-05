@@ -78,7 +78,8 @@ namespace Core {
             qIDec->addTranslationPath(pluginSpec()->location() + "/translations");
             qIDec->addThemePath(pluginSpec()->location() + "/themes");
 
-            auto splash = qobject_cast<QSplashScreen *>(ILoader::instance()->getFirstObject("choruskit_init_splash"));
+            auto splash = qobject_cast<QSplashScreen *>(
+                ILoader::instance()->getFirstObject("choruskit_init_splash"));
             if (splash) {
                 splash->showMessage(tr("Initializing core plugin..."));
             }
@@ -99,8 +100,8 @@ namespace Core {
             // Add basic windows and add-ons
             auto winMgr = icore->windowSystem();
 
-            winMgr->addAddOn(new HomeWindowAddOnFactory());
-            winMgr->addAddOn(new ProjectWindowAddOnFactory());
+            winMgr->addAddOn("home", &HomeWindowAddOn::staticMetaObject);
+            winMgr->addAddOn("project", &ProjectWindowAddOn::staticMetaObject);
 
             // Add setting panels
             auto sc = icore->settingCatalog();
@@ -163,7 +164,8 @@ namespace Core {
             return false;
         }
 
-        QObject *CorePlugin::remoteCommand(const QStringList &options, const QString &workingDirectory,
+        QObject *CorePlugin::remoteCommand(const QStringList &options,
+                                           const QString &workingDirectory,
                                            const QStringList &args) {
             auto firstHandle = icore->windowSystem()->firstWindow();
             int cnt = openFileFromCommand(workingDirectory, args, firstHandle);
@@ -199,6 +201,6 @@ namespace Core {
             QApplication::translate("Core::CommandCategory", "About");
         }
 
-    }
+    } // namespace Internal
 
-}
+} // namespace Core

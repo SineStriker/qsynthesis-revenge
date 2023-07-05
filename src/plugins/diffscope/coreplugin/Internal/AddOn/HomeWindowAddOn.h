@@ -9,16 +9,10 @@ namespace Core {
 
     namespace Internal {
 
-        class HomeWindowAddOnFactory : public IWindowAddOnFactory {
-        public:
-            bool predicate(IWindow *handle) const override;
-            IWindowAddOn *create(QObject *parent) override;
-        };
-
         class HomeWindowAddOn : public CoreWindowAddOn {
             Q_OBJECT
         public:
-            explicit HomeWindowAddOn(QObject *parent = nullptr);
+            Q_INVOKABLE explicit HomeWindowAddOn(QObject *parent = nullptr);
             ~HomeWindowAddOn();
 
             void initialize() override;
@@ -37,8 +31,8 @@ namespace Core {
             void _q_openFileRequested(const QString &fileName);
         };
 
-    }
+    } // namespace Internal
 
-}
+} // namespace Core
 
 #endif // HOMEWINDOWADDON_H

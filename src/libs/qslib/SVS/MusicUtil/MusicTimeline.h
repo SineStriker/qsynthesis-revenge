@@ -30,7 +30,7 @@ namespace QsApi {
         Q_DECL_CONSTEXPR inline bool operator==(const MusicTimeSignature &t) const;
         Q_DECL_CONSTEXPR inline bool operator!=(const MusicTimeSignature &t) const;
 
-        friend QDebug operator<<(QDebug debug, const MusicTimeSignature &t);
+        friend QSSVS_API QDebug operator<<(QDebug debug, const MusicTimeSignature &t);
 
     private:
         int num;
@@ -122,10 +122,9 @@ namespace QsApi {
         friend class PersistentMusicTime;
     };
 
-    inline void MusicTimeline::addTimeSignature(int bar, const QsApi::MusicTimeSignature &timeSignature) {
-        addTimeSignatures({
-            {bar, timeSignature}
-        });
+    inline void MusicTimeline::addTimeSignature(int bar,
+                                                const QsApi::MusicTimeSignature &timeSignature) {
+        addTimeSignatures({{bar, timeSignature}});
     }
 
     inline void MusicTimeline::removeTimeSignature(int bar) {
@@ -133,9 +132,7 @@ namespace QsApi {
     }
 
     inline void MusicTimeline::addTempo(int tick, double tempo) {
-        addTempos({
-            {tick, tempo}
-        });
+        addTempos({{tick, tempo}});
     }
 
     inline void MusicTimeline::removeTempo(int tick) {
@@ -150,6 +147,6 @@ namespace QsApi {
         return create(time.measure(), time.beat(), time.tick());
     }
 
-}
+} // namespace QsApi
 
 #endif // MUSICTIMELINE_H

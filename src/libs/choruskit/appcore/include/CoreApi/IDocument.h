@@ -28,6 +28,9 @@ namespace Core {
         QString id() const;
         DocumentSpec *spec() const;
 
+        QJsonObject docInfo() const;
+        void setDocInfo(const QJsonObject &docInfo);
+
     public:
         virtual bool open(const QString &fileName) = 0;
         virtual bool save(const QString &fileName) = 0;
@@ -55,9 +58,6 @@ namespace Core {
         virtual QString defaultPath() const;
         virtual QString suggestedFileName() const;
 
-        QJsonObject mimeInfo() const;
-        void setMimeInfo(const QJsonObject &mimeInfo);
-
         virtual bool isModified() const = 0;
         virtual bool isSaveAsAllowed() const;
 
@@ -68,7 +68,7 @@ namespace Core {
 
     signals:
         void changed();
-        void mimeTypeChanged();
+        void docInfoChanged();
 
         void aboutToReload();
         void reloadFinished(bool success);

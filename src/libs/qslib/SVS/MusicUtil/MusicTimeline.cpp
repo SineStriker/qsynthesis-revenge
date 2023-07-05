@@ -43,31 +43,20 @@ namespace QsApi {
     }
 
     void MusicTimelinePrivate::init() {
-        timeSignatureMap = {
-            {0, {4, 4}}
-        };
-        tempoMap = {
-            {0, 120}
-        };
-        measureMap = {
-            {0, 0}
-        };
-        revMeasureMap = {
-            {0, 0}
-        };
-        msecSumMap = {
-            {0, 0}
-        };
-        revMsecSumMap = {
-            {0, 0}
-        };
+        timeSignatureMap = {{0, {4, 4}}};
+        tempoMap = {{0, 120}};
+        measureMap = {{0, 0}};
+        revMeasureMap = {{0, 0}};
+        msecSumMap = {{0, 0}};
+        revMsecSumMap = {{0, 0}};
     }
 
     void MusicTimelinePrivate::updateMeasureMap(int barFrom) {
         auto iter = timeSignatureMap.lowerBound(barFrom);
         if (iter == timeSignatureMap.begin())
             iter++;
-        for (auto it = measureMap.upperBound(revMeasureMap[(iter - 1).key()]); it != measureMap.end();) {
+        for (auto it = measureMap.upperBound(revMeasureMap[(iter - 1).key()]);
+             it != measureMap.end();) {
             revMeasureMap.remove(it.value());
             it = measureMap.erase(it);
         }
@@ -75,7 +64,8 @@ namespace QsApi {
             auto prevMeasure = (iter - 1).key();
             auto prevTimeSig = (iter - 1).value();
             auto prevTickPos = revMeasureMap[prevMeasure];
-            auto currentTickPos = prevTickPos + (iter.key() - prevMeasure) * prevTimeSig.ticksPerBar(resolution);
+            auto currentTickPos =
+                prevTickPos + (iter.key() - prevMeasure) * prevTimeSig.ticksPerBar(resolution);
             measureMap[currentTickPos] = iter.key();
             revMeasureMap[iter.key()] = currentTickPos;
         }
@@ -93,7 +83,8 @@ namespace QsApi {
             auto prevTick = (iter - 1).key();
             auto prevTempo = (iter - 1).value();
             auto prevMsec = msecSumMap[prevTick];
-            auto currentMsec = prevMsec + (iter.key() - prevTick) * (60.0 * 1000.0) / (resolution * prevTempo);
+            auto currentMsec =
+                prevMsec + (iter.key() - prevTick) * (60.0 * 1000.0) / (resolution * prevTempo);
             msecSumMap[iter.key()] = currentMsec;
             revMsecSumMap[currentMsec] = iter.key();
         }
@@ -142,23 +133,27 @@ namespace QsApi {
     }
 
 
-    MusicTimeline::MusicTimeline(QObject *parent) : MusicTimeline(*new MusicTimelinePrivate(), parent) {
+    MusicTimeline::MusicTimeline(QObject *parent)
+        : MusicTimeline(*new MusicTimelinePrivate(), parent) {
     }
 
     MusicTimeline::~MusicTimeline() {
     }
 
-    void MusicTimeline::addTimeSignatures(const QList<QPair<int, MusicTimeSignature>> &timeSignatureList) {
+    void MusicTimeline::addTimeSignatures(
+        const QList<QPair<int, MusicTimeSignature>> &timeSignatureList) {
         Q_D(MusicTimeline);
 
         bool isChanged = false;
         int minPos = std::numeric_limits<int>::max();
         for (const auto &pair : timeSignatureList) {
             if (pair.first < 0) {
-                qWarning() << "Position of a time signature must be positive or zero, but read" << pair.first << ".";
+                qWarning() << "Position of a time signature must be positive or zero, but read"
+                           << pair.first << ".";
                 continue;
             }
-            if (d->timeSignatureMap.contains(pair.first) && d->timeSignatureMap[pair.first] == pair.second) {
+            if (d->timeSignatureMap.contains(pair.first) &&
+                d->timeSignatureMap[pair.first] == pair.second) {
                 // identical to current time signature
                 continue;
             }
@@ -184,7 +179,8 @@ namespace QsApi {
         int minPos = std::numeric_limits<int>::max();
         for (auto barPos : bars) {
             if (barPos <= 0) {
-                qWarning() << "Position of a time signature must be positive, but read" << barPos << ".";
+                qWarning() << "Position of a time signature must be positive, but read" << barPos
+                           << ".";
                 continue;
             }
             if (!d->timeSignatureMap.contains(barPos)) {
@@ -240,7 +236,8 @@ namespace QsApi {
         int minPos = std::numeric_limits<int>::max();
         for (const auto &pair : tempos) {
             if (pair.first < 0) {
-                qWarning() << "Position of a tempo must be positive or zero, but read " << pair.first << " .";
+                qWarning() << "Position of a tempo must be positive or zero, but read "
+                           << pair.first << " .";
                 continue;
             }
             if (d->msecSumMap.contains(pair.first) && d->msecSumMap[pair.first] == pair.second) {
@@ -325,8 +322,10 @@ namespace QsApi {
         MusicTimeSignature timeSig = d->timeSignatureMap[refMeasure];
         return {
             refMeasure + (totalTick - refTick) / timeSig.ticksPerBar(d->resolution),
-            ((totalTick - refTick) % timeSig.ticksPerBar(d->resolution)) / timeSig.ticksPerBeat(d->resolution),
-            ((totalTick - refTick) % timeSig.ticksPerBar(d->resolution)) % timeSig.ticksPerBeat(d->resolution),
+            ((totalTick - refTick) % timeSig.ticksPerBar(d->resolution)) /
+                timeSig.ticksPerBeat(d->resolution),
+            ((totalTick - refTick) % timeSig.ticksPerBar(d->resolution)) %
+                timeSig.ticksPerBeat(d->resolution),
         };
     }
 
@@ -360,7 +359,8 @@ namespace QsApi {
         if (!match.hasMatch())
             return false;
         return timeToTick(match.captured(1).isEmpty() ? 0 : (match.captured(1).toInt() - 1),
-                          match.captured(2).isEmpty() ? 0 : (match.captured(2).toInt() - 1), match.captured(3).toInt());
+                          match.captured(2).isEmpty() ? 0 : (match.captured(2).toInt() - 1),
+                          match.captured(3).toInt());
     }
 
     int MusicTimeline::msecToTick(double msec) const {
@@ -393,31 +393,20 @@ namespace QsApi {
     }
 
     MusicTimelinePrivate::MusicTimelinePrivate() {
-        timeSignatureMap = {
-            {0, {4, 4}}
-        };
-        tempoMap = {
-            {0, 120}
-        };
-        measureMap = {
-            {0, 0}
-        };
-        revMeasureMap = {
-            {0, 0}
-        };
-        msecSumMap = {
-            {0, 0}
-        };
-        revMsecSumMap = {
-            {0, 0}
-        };
+        timeSignatureMap = {{0, {4, 4}}};
+        tempoMap = {{0, 120}};
+        measureMap = {{0, 0}};
+        revMeasureMap = {{0, 0}};
+        msecSumMap = {{0, 0}};
+        revMsecSumMap = {{0, 0}};
     }
 
-    MusicTimeline::MusicTimeline(MusicTimelinePrivate &d, QObject *parent) : QObject(parent), d_ptr(&d) {
+    MusicTimeline::MusicTimeline(MusicTimelinePrivate &d, QObject *parent)
+        : QObject(parent), d_ptr(&d) {
         d.q_ptr = this;
 
         d.init();
     }
     //===========================================================================
 
-}
+} // namespace QsApi

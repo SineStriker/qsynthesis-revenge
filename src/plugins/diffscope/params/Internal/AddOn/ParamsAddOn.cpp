@@ -10,13 +10,6 @@ namespace Params::Internal {
 
     static const char *paramsKey = "edit.paramsPanel";
 
-    bool ParamsAddOnFactory::predicate(Core::IWindow *handle) const {
-        return handle->id() == "project";
-    }
-    Core::IWindowAddOn *ParamsAddOnFactory::create(QObject *parent) {
-        return new ParamsAddOn(parent);
-    }
-
     ParamsAddOn::ParamsAddOn(QObject *parent) : Core::IWindowAddOn(parent) {
     }
 
