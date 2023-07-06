@@ -362,8 +362,8 @@ namespace Core {
     IWindow::~IWindow() {
     }
 
-    void IWindow::nextLoadingState(Core::IWindow::State destState) {
-        Q_UNUSED(destState)
+    void IWindow::nextLoadingState(Core::IWindow::State nextState) {
+        Q_UNUSED(nextState)
     }
 
     void IWindow::actionItemAdded(ActionItem *item) {

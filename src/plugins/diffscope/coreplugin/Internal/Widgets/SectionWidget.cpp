@@ -2,7 +2,7 @@
 
 namespace Core::Internal {
 
-    SectionWidget::SectionWidget(QWidget *parent) : QFrame(parent) {
+    SectionWidget::SectionWidget(IProjectWindow *iWin, QWidget *parent) : SectionBar(iWin, parent) {
         m_preferredHeight = 30;
     }
 

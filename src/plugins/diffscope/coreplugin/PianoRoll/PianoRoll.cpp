@@ -44,7 +44,7 @@ namespace Core {
         m_pianoKeyContainer = new Internal::PianoKeyContainer();
         m_pianoKeyContainer->setObjectName("piano-container");
 
-        m_sectionWidget = new Internal::SectionWidget();
+        m_sectionWidget = new Internal::SectionWidget(q->iWin);
         m_sectionWidget->setObjectName("section-widget");
 
         m_layout = new QGridLayout();
@@ -133,10 +133,20 @@ namespace Core {
         m_pianoKeyContainer->setArea(w);
     }
 
-    PianoRoll::PianoRoll(QWidget *parent) : PianoRoll(*new PianoRollPrivate(), parent) {
+    PianoRoll::PianoRoll(IProjectWindow *iWin, QWidget *parent) : PianoRoll(*new PianoRollPrivate(), iWin, parent) {
     }
 
     PianoRoll::~PianoRoll() {
+    }
+
+    void PianoRoll::initialize() {
+        Q_D(PianoRoll);
+        d->m_sectionWidget->initialize();
+    }
+
+    void PianoRoll::extensionInitialized() {
+        Q_D(PianoRoll);
+        d->m_sectionWidget->extensionInitialized();
     }
 
     void PianoRoll::addPianoKeyWidgetFactory(const QString &key, IPianoKeyWidgetFactory *factory) {
@@ -324,7 +334,13 @@ namespace Core {
         return it->panel;
     }
 
-    PianoRoll::PianoRoll(PianoRollPrivate &d, QWidget *parent) : QFrame(parent), d_ptr(&d) {
+    SectionBar *PianoRoll::sectionBar() const {
+        Q_D(const PianoRoll);
+        return d->m_sectionWidget;
+    }
+
+    PianoRoll::PianoRoll(PianoRollPrivate &d, IProjectWindow *iWin, QWidget *parent)
+        : QFrame(parent), IPianoRollComponent(iWin), d_ptr(&d) {
         d.q_ptr = this;
 
         d.init();

@@ -3,13 +3,18 @@
 
 #include <QFrame>
 
+#include <coreplugin/Interfaces/IPianoRollComponent.h>
+
 namespace Params::Internal {
 
-    class ParamsPanel : public QFrame {
+    class ParamsPanel : public QFrame, public Core::IPianoRollComponent {
         Q_OBJECT
     public:
-        explicit ParamsPanel(QWidget *parent = nullptr);
+        explicit ParamsPanel(Core::IProjectWindow *iWin, QWidget *parent = nullptr);
         ~ParamsPanel();
+
+        void initialize() override;
+        void extensionInitialized() override;
     };
 
 }

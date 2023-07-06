@@ -70,7 +70,7 @@ namespace Core {
     protected:
         virtual QWidget *createWindow(QWidget *parent) const = 0;
 
-        virtual void nextLoadingState(State destState);
+        virtual void nextLoadingState(State nextState);
 
         virtual void actionItemAdded(ActionItem *item);
         virtual void actionItemRemoved(ActionItem *item);

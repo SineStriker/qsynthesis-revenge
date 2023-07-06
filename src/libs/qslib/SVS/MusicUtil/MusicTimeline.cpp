@@ -3,13 +3,43 @@
 
 #include "MusicTime_p.h"
 
+#include <QDataStream>
 #include <QDebug>
 #include <QRegularExpression>
 
 namespace QsApi {
 
+    QDataStream &operator<<(QDataStream &out, const MusicTimeSignature &ts) {
+        out << ts.numerator() << ts.denominator();
+        return out;
+    }
+
+    QDataStream &operator>>(QDataStream &in, MusicTimeSignature &ts) {
+        int n, d;
+        in >> n >> d;
+        ts = MusicTimeSignature(n, d);
+        return in;
+    }
+
     //===========================================================================
     // MusicTimeSignature
+    static bool m_registered = false;
+
+    static void registerMetaType() {
+        qRegisterMetaType<MusicTimeSignature>();
+        qRegisterMetaTypeStreamOperators<MusicTimeSignature>();
+        m_registered = true;
+    }
+
+    Q_DECL_CONSTEXPR MusicTimeSignature::MusicTimeSignature() : MusicTimeSignature(4, 4) {
+    }
+
+    Q_DECL_CONSTEXPR MusicTimeSignature::MusicTimeSignature(int numerator, int denominator)
+        : num(numerator), den(denominator) {
+        if (!m_registered)
+            registerMetaType();
+    }
+
     Q_DECL_CONSTEXPR bool MusicTimeSignature::isValid() const {
         if (num <= 0)
             return false;
@@ -131,7 +161,6 @@ namespace QsApi {
         }
         return revMsecSumMap.lastKey();
     }
-
 
     MusicTimeline::MusicTimeline(QObject *parent)
         : MusicTimeline(*new MusicTimelinePrivate(), parent) {

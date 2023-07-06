@@ -6,7 +6,8 @@
 
 namespace Params::Internal {
 
-    ParamsPanel::ParamsPanel(QWidget *parent) : QFrame(parent) {
+    ParamsPanel::ParamsPanel(Core::IProjectWindow *iWin, QWidget *parent)
+        : QFrame(parent), Core::IPianoRollComponent(iWin) {
         setProperty("floating-panel", true);
         auto label = new QLabel("This is the params panel!!!");
         label->setStyleSheet(R"(
@@ -24,6 +25,12 @@ font-size: 72px;
     }
 
     ParamsPanel::~ParamsPanel() {
+    }
+
+    void ParamsPanel::initialize() {
+    }
+
+    void ParamsPanel::extensionInitialized() {
     }
 
 }

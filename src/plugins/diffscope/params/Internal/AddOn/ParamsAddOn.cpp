@@ -24,7 +24,7 @@ namespace Params::Internal {
         auto pianoRoll = iWin->pianoRoll();
 
         // Add phoneme panel
-        paramsPanel = new Internal::ParamsPanel();
+        paramsPanel = new Internal::ParamsPanel(iWin);
         paramsButton = pianoRoll->addFloatingPanel(paramsKey, paramsPanel, nullptr);
         paramsButton->setObjectName("params-button");
 

@@ -6,7 +6,7 @@
 
 namespace Core::Internal {
 
-    PhonemePanel::PhonemePanel(QWidget *parent) : QFrame(parent) {
+    PhonemePanel::PhonemePanel(IProjectWindow *iWin, QWidget *parent) : QFrame(parent), IPianoRollComponent(iWin) {
         setProperty("floating-panel", true);
 
         auto label = new QLabel("This is the phoneme panel!!!");
@@ -25,6 +25,12 @@ font-size: 72px;
     }
 
     PhonemePanel::~PhonemePanel() {
+    }
+
+    void PhonemePanel::initialize() {
+    }
+
+    void PhonemePanel::extensionInitialized() {
     }
 
 }

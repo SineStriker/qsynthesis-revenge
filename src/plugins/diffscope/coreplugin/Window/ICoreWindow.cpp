@@ -695,10 +695,10 @@ namespace Core {
         return new Internal::MainWindow(parent);
     }
 
-    void ICoreWindow::nextLoadingState(Core::IWindow::State destState) {
+    void ICoreWindow::nextLoadingState(Core::IWindow::State nextState) {
         Q_D(ICoreWindow);
 
-        switch (destState) {
+        switch (nextState) {
             case IWindow::WindowSetup: {
                 auto win = window();
                 win->setProperty("top-window", true);

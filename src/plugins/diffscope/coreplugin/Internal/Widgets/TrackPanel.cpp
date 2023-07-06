@@ -6,7 +6,7 @@
 
 namespace Core::Internal {
 
-    TrackPanel::TrackPanel(QWidget *parent) : QFrame(parent) {
+    TrackPanel::TrackPanel(IProjectWindow *iWin, QWidget *parent) : QFrame(parent), IPianoRollComponent(iWin) {
         setProperty("dock-panel", true);
 
         auto label = new QLabel("This is the track panel!!!");
@@ -26,6 +26,12 @@ background-color: rgba(255, 0, 0, 25%);
     }
 
     TrackPanel::~TrackPanel() {
+    }
+
+    void TrackPanel::initialize() {
+    }
+
+    void TrackPanel::extensionInitialized() {
     }
 
 }

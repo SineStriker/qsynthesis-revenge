@@ -3,13 +3,18 @@
 
 #include <QFrame>
 
+#include "Interfaces/IPianoRollComponent.h"
+
 namespace Core::Internal {
 
-    class PhonemePanel : public QFrame {
+    class PhonemePanel : public QFrame, public IPianoRollComponent {
         Q_OBJECT
     public:
-        explicit PhonemePanel(QWidget *parent = nullptr);
+        explicit PhonemePanel(IProjectWindow *iWin, QWidget *parent = nullptr);
         ~PhonemePanel();
+
+        void initialize() override;
+        void extensionInitialized() override;
     };
 
 }

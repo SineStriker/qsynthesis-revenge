@@ -7,6 +7,7 @@
 #include <CoreApi/IWindow.h>
 
 #include "IPianoKeyWidget.h"
+#include "SectionBar.h"
 
 namespace Core {
 
@@ -14,12 +15,15 @@ namespace Core {
 
     class PianoRollPrivate;
 
-    class CORE_EXPORT PianoRoll : public QFrame {
+    class CORE_EXPORT PianoRoll : public QFrame, public IPianoRollComponent {
         Q_OBJECT
         Q_DECLARE_PRIVATE(PianoRoll)
     public:
-        explicit PianoRoll(QWidget *parent = nullptr);
+        explicit PianoRoll(IProjectWindow *iWin, QWidget *parent = nullptr);
         ~PianoRoll();
+
+        void initialize() override;
+        void extensionInitialized() override;
 
         enum FloatingPanelState {
             Hidden,
@@ -44,12 +48,14 @@ namespace Core {
         void setFloatingPanelState(const QString &key, FloatingPanelState state);
         QWidget *floatingPanel(const QString &key);
 
+        SectionBar *sectionBar() const;
+
     signals:
         void pianoKeyWidgetChanged(const QString &key);
         void floatingPanelStateChanged(const QString &key, FloatingPanelState state);
 
     protected:
-        PianoRoll(PianoRollPrivate &d, QWidget *parent = nullptr);
+        PianoRoll(PianoRollPrivate &d, IProjectWindow *iWin, QWidget *parent = nullptr);
 
         QScopedPointer<PianoRollPrivate> d_ptr;
 

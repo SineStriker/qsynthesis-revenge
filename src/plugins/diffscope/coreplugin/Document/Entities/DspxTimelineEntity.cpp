@@ -1,6 +1,8 @@
 #include "DspxTimelineEntity.h"
 #include "DspxEntityUtils_p.h"
 
+#include <QJsonObject>
+
 #include "AceTreeMacros.h"
 
 namespace Core {
@@ -13,6 +15,7 @@ namespace Core {
         }
         void setup(AceTreeEntity *entity) override {
             Q_UNUSED(entity);
+
             addChildPointer("timeSignatures", timeSignatures);
             addChildPointer("tempos", tempos);
             addChildPointer("labels", labels);
@@ -39,61 +42,101 @@ namespace Core {
 
     //===========================================================================
     // TimeSignature
-    class DspxTimeSignatureEntityExtra : public AceTreeEntityMappingExtra {
+    class DspxTimeSignatureEntityExtra : public AceTreeEntityNotifyExtra {
     public:
-        DspxTimeSignatureEntityExtra() {
+        DspxTimeSignatureEntityExtra() : idx(0), num(0), den(0) {
         }
+
         void setup(AceTreeEntity *entity) override {
             auto q = static_cast<DspxTimeSignatureEntity *>(entity);
 
-            addPropertyNotifier("pos", [q](ACE_A) {
+            addPropertyNotifier("p", [this, q](ACE_A) {
                 Q_UNUSED(oldValue)
-                emit q->positionChanged(value.toInt());
+                idx = value.toInt();
+                emit q->barIndexChanged(idx);
             });
-            addPropertyNotifier("num", [q](ACE_A) {
+
+            addPropertyNotifier("v", [this, q](ACE_A) {
                 Q_UNUSED(oldValue)
-                emit q->numeratorChanged(value.toInt());
-            });
-            addPropertyNotifier("den", [q](ACE_A) {
-                Q_UNUSED(oldValue)
-                emit q->denominatorChanged(value.toInt());
+                auto v = value.value<QsApi::MusicTimeSignature>();
+                // Cache point value
+                num = v.numerator();
+                den = v.denominator();
+                emit q->valueChanged(num, den);
             });
         }
+
+        int idx, num, den; // avoid conversion when read data
     };
     DspxTimeSignatureEntity::DspxTimeSignatureEntity(QObject *parent)
-        : AceTreeEntityMapping(new DspxTimeSignatureEntityExtra(), parent) {
+        : AceTreeEntity(new DspxTimeSignatureEntityExtra(), parent) {
     }
     DspxTimeSignatureEntity::~DspxTimeSignatureEntity() {
     }
-    int DspxTimeSignatureEntity::position() const {
-        return attribute("pos").toInt();
+    bool DspxTimeSignatureEntity::read(const QJsonValue &value) {
+        if (!value.isObject())
+            return false;
+        auto obj = value.toObject();
+        setBarIndex(obj.value("index").toInt());
+
+        auto v = QsApi::MusicTimeSignature(obj.value("numerator").toInt(), obj.value("denominator").toInt());
+        setValue(v.isValid() ? v : QsApi::MusicTimeSignature());
+        return true;
     }
-    void DspxTimeSignatureEntity::setPosition(int position) {
-        setAttribute("pos", position);
+    QJsonValue DspxTimeSignatureEntity::write() const {
+        auto extra = static_cast<DspxTimeSignatureEntityExtra *>(this->extra());
+        return QJsonObject{
+            {"index",       extra->idx},
+            {"numerator",   extra->num},
+            {"denominator", extra->den},
+        };
+    }
+    int DspxTimeSignatureEntity::barIndex() const {
+        return static_cast<DspxTimeSignatureEntityExtra *>(extra())->idx;
+    }
+    void DspxTimeSignatureEntity::setBarIndex(int barIndex) {
+        treeItem()->setAttribute("p", barIndex);
     }
     int DspxTimeSignatureEntity::numerator() const {
-        return attribute("num").toInt();
-    }
-    void DspxTimeSignatureEntity::setNumerator(int numerator) {
-        setAttribute("num", numerator);
+        return static_cast<DspxTimeSignatureEntityExtra *>(extra())->num;
     }
     int DspxTimeSignatureEntity::denominator() const {
-        return attribute("den").toInt();
+        return static_cast<DspxTimeSignatureEntityExtra *>(extra())->den;
     }
-    void DspxTimeSignatureEntity::setDenominator(int denominator) {
-        setAttribute("den", denominator);
+    QsApi::MusicTimeSignature DspxTimeSignatureEntity::value() const {
+        auto extra = static_cast<DspxTimeSignatureEntityExtra *>(this->extra());
+        return {extra->num, extra->den};
+    }
+    void DspxTimeSignatureEntity::setValue(const QsApi::MusicTimeSignature &value) {
+        if (!value.isValid())
+            return;
+        treeItem()->setAttribute("v", QVariant::fromValue(value));
+    }
+    void DspxTimeSignatureEntity::doInitialize() {
+        setBarIndex(0);
+        setValue({});
+    }
+    void DspxTimeSignatureEntity::doSetup() {
+        auto v = treeItem()->attribute("v").value<QsApi::MusicTimeSignature>();
+        auto extra = static_cast<DspxTimeSignatureEntityExtra *>(this->extra());
+
+        // Get cache
+        extra->num = v.numerator();
+        extra->den = v.denominator();
     }
     //===========================================================================
 
     //===========================================================================
     // TimeSignature List
-    DspxTimeSignatureListEntity::DspxTimeSignatureListEntity(QObject *parent)
-        : AceTreeEntityRecordTable(parent) {
+    DspxTimeSignatureListEntity::DspxTimeSignatureListEntity(QObject *parent) : AceTreeEntityRecordTable(parent) {
     }
     DspxTimeSignatureListEntity::~DspxTimeSignatureListEntity() {
     }
     void DspxTimeSignatureListEntity::sortRecords(QVector<AceTreeEntity *> &records) const {
-        std::sort(records.begin(), records.end(), compareElementPos<DspxTimeSignatureEntity>);
+        std::sort(records.begin(), records.end(), [](const AceTreeEntity *left, const AceTreeEntity *right) {
+            return static_cast<const DspxTimeSignatureEntity *>(left)->barIndex() <
+                   static_cast<const DspxTimeSignatureEntity *>(right)->barIndex();
+        });
     }
     //===========================================================================
 
@@ -116,8 +159,7 @@ namespace Core {
             });
         }
     };
-    DspxTempoEntity::DspxTempoEntity(QObject *parent)
-        : AceTreeEntityMapping(new DspxTempoEntityExtra(), parent) {
+    DspxTempoEntity::DspxTempoEntity(QObject *parent) : AceTreeEntityMapping(new DspxTempoEntityExtra(), parent) {
     }
     DspxTempoEntity::~DspxTempoEntity() {
     }
@@ -185,29 +227,13 @@ namespace Core {
     //===========================================================================
 
     //===========================================================================
-    // TimelineLabel List
-    class DspxTimelineLabelListEntityExtra : public AceTreeEntityExtra {
-    public:
-    };
-
-    DspxTimelineLabelListEntity::DspxTimelineLabelListEntity(QObject *parent)
-        : AceTreeEntityRecordTable(parent) {
+    DspxTimelineLabelListEntity::DspxTimelineLabelListEntity(QObject *parent) : AceTreeEntityRecordTable(parent) {
     }
     DspxTimelineLabelListEntity::~DspxTimelineLabelListEntity() {
     }
 
-    const QsApi::MusicTimeline *DspxTimelineLabelListEntity::timeline() const {
-        return nullptr;
-    }
-
     void DspxTimelineLabelListEntity::sortRecords(QVector<AceTreeEntity *> &records) const {
         std::sort(records.begin(), records.end(), compareElementPos<DspxTimelineLabelEntity>);
-    }
-
-    void DspxTimelineLabelListEntity::doInitialize() {
-    }
-
-    void DspxTimelineLabelListEntity::doSetup() {
     }
     //===========================================================================
 

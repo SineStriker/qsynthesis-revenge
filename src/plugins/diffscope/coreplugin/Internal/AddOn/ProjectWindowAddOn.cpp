@@ -44,7 +44,7 @@ namespace Core {
             auto pianoRoll = iWin->pianoRoll();
 
             // Add track panel
-            trackPanel = new TrackPanel();
+            trackPanel = new TrackPanel(iWin);
             trackPanel->setProperty("choruskit_managed_window", true);
             trackButton = iWin->mainDock()->addWidget(Qt::TopEdge, QM::Primary, trackPanel);
             trackButton->setObjectName("track-card");
@@ -54,7 +54,7 @@ namespace Core {
             connect(trackPanelVisibleItem->action(), &QAction::toggled, trackButton, &QAbstractButton::setChecked);
 
             // Add phoneme panel
-            phonemePanel = new PhonemePanel();
+            phonemePanel = new PhonemePanel(iWin);
             phonemeButton = pianoRoll->addFloatingPanel(phonemeKey, phonemePanel, nullptr);
             phonemeButton->setObjectName("phoneme-button");
 

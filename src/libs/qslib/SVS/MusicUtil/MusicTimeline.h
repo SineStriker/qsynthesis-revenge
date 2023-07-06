@@ -3,6 +3,7 @@
 
 #include <QObject>
 #include <QSharedPointer>
+#include <QVariant>
 
 #include "MusicTime.h"
 
@@ -37,12 +38,6 @@ namespace QsApi {
         int den;
     };
 
-    Q_DECL_CONSTEXPR MusicTimeSignature::MusicTimeSignature() : num(4), den(4){};
-
-    Q_DECL_CONSTEXPR MusicTimeSignature::MusicTimeSignature(int numerator, int denominator)
-        : num(numerator), den(denominator) {
-    }
-
     Q_DECL_CONSTEXPR int MusicTimeSignature::numerator() const {
         return num;
     }
@@ -66,6 +61,9 @@ namespace QsApi {
     Q_DECL_CONSTEXPR bool MusicTimeSignature::operator!=(const MusicTimeSignature &t) const {
         return num != t.num || den != t.den;
     }
+
+    QSSVS_API QDataStream &operator<<(QDataStream &out, const MusicTimeSignature &ts);
+    QSSVS_API QDataStream &operator>>(QDataStream &in, MusicTimeSignature &ts);
 
     class MusicTimelinePrivate;
 
@@ -148,5 +146,7 @@ namespace QsApi {
     }
 
 } // namespace QsApi
+
+Q_DECLARE_METATYPE(QsApi::MusicTimeSignature)
 
 #endif // MUSICTIMELINE_H

@@ -36,29 +36,38 @@ namespace Core {
 
     //===========================================================================
     // TimeSignature
-    class CORE_EXPORT DspxTimeSignatureEntity : public AceTreeEntityMapping {
+    class DspxTimeSignatureEntityExtra;
+
+    class CORE_EXPORT DspxTimeSignatureEntity : public AceTreeEntity {
         Q_OBJECT
-        Q_PROPERTY(int position READ position WRITE setPosition NOTIFY positionChanged)
-        Q_PROPERTY(int numerator READ numerator WRITE setNumerator NOTIFY numeratorChanged)
-        Q_PROPERTY(int denominator READ denominator WRITE setPosition NOTIFY denominatorChanged)
+        Q_PROPERTY(int barIndex READ barIndex WRITE setBarIndex NOTIFY barIndexChanged)
+        Q_PROPERTY(QsApi::MusicTimeSignature value READ value WRITE setValue NOTIFY valueChanged)
+        Q_PROPERTY(int numerator READ numerator)
+        Q_PROPERTY(int denominator READ denominator)
     public:
         explicit DspxTimeSignatureEntity(QObject *parent = nullptr);
         ~DspxTimeSignatureEntity();
 
     public:
-        int position() const;
-        void setPosition(int position);
+        bool read(const QJsonValue &value) override;
+        QJsonValue write() const override;
+
+        int barIndex() const;
+        void setBarIndex(int barIndex);
 
         int numerator() const;
-        void setNumerator(int numerator);
-
         int denominator() const;
-        void setDenominator(int denominator);
+
+        QsApi::MusicTimeSignature value() const;
+        void setValue(const QsApi::MusicTimeSignature &value);
+
+    protected:
+        void doInitialize() override;
+        void doSetup() override;
 
     Q_SIGNALS:
-        void positionChanged(int position);
-        void numeratorChanged(int numerator);
-        void denominatorChanged(int denominator);
+        void barIndexChanged(int barIndex);
+        void valueChanged(int numerator, int denominator);
     };
     //===========================================================================
 
@@ -154,14 +163,7 @@ namespace Core {
         ~DspxTimelineLabelListEntity();
 
     public:
-        const QsApi::MusicTimeline *timeline() const;
-
-    public:
         void sortRecords(QVector<AceTreeEntity *> &records) const override;
-
-    protected:
-        void doInitialize() override;
-        void doSetup() override;
 
     Q_SIGNALS:
         ACE_TREE_DECLARE_RECORD_TABLE_SIGNALS(DspxTimelineLabelEntity)

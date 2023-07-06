@@ -31,7 +31,7 @@ namespace Core {
         PianoRoll *pianoRoll() const;
 
     protected:
-        void nextLoadingState(Core::IWindow::State destState) override;
+        void nextLoadingState(Core::IWindow::State nextState) override;
 
     protected:
         IProjectWindow(IProjectWindowPrivate &d, QObject *parent = nullptr);

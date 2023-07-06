@@ -57,7 +57,8 @@ namespace Core::Internal {
         return PianoKeyWidget::tr("UTAU/FL Studio");
     }
 
-    PianoKeyWidget::PianoKeyWidget(QWidget *parent) : Core::IPianoKeyWidget(parent), m_currentHeight(30) {
+    PianoKeyWidget::PianoKeyWidget(QWidget *parent)
+        : Core::IPianoKeyWidget(parent), m_currentHeight(30) {
         init();
     }
 
@@ -154,12 +155,12 @@ namespace Core::Internal {
     }
 
     void PianoKeyWidget::adjustHeight() {
-        for (auto key : m_whites) {
+        for (auto key : qAsConst(m_whites)) {
             key->move(0, key->posFactor() * m_currentHeight / 2);
             key->resize(width(), key->heightFactor() * m_currentHeight / 2);
         }
 
-        for (auto key : m_blacks) {
+        for (auto key : qAsConst(m_blacks)) {
             key->move(0, key->posFactor() * m_currentHeight / 2);
             key->resize(width() / 2, key->heightFactor() * m_currentHeight / 2);
         }
@@ -221,10 +222,10 @@ namespace Core::Internal {
     void PianoKeyWidget::resizeEvent(QResizeEvent *event) {
         int w = width();
         if (event->oldSize().width() != w) {
-            for (auto key : m_whites) {
+            for (auto key : qAsConst(m_whites)) {
                 key->resize(w, key->height());
             }
-            for (auto key : m_blacks) {
+            for (auto key : qAsConst(m_blacks)) {
                 key->resize(w / 2, key->height());
             }
             for (int i = 0; i < m_labels.size(); ++i) {
@@ -237,4 +238,4 @@ namespace Core::Internal {
         return QWidget::resizeEvent(event);
     }
 
-}
+} // namespace Core::Internal

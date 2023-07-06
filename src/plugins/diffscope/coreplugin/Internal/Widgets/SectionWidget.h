@@ -1,17 +1,17 @@
 #ifndef CHORUSKIT_SECTIONWIDGET_H
 #define CHORUSKIT_SECTIONWIDGET_H
 
-#include <QFrame>
+#include "PianoRoll/SectionBar.h"
 
 #include <QPixelSize.h>
 
 namespace Core::Internal {
 
-    class SectionWidget : public QFrame {
+    class SectionWidget : public SectionBar {
         Q_OBJECT
         Q_PROPERTY(QPixelSize preferredHeight READ preferredHeight WRITE setPreferredHeight)
     public:
-        explicit SectionWidget(QWidget *parent = nullptr);
+        explicit SectionWidget(IProjectWindow *iWin, QWidget *parent = nullptr);
         ~SectionWidget();
 
         QPixelSize preferredHeight() const;
