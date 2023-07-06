@@ -40,7 +40,6 @@ namespace ScriptMgr {
         void ScriptMgrAddOn::reloadStrings() {
             batchProcessMainGroup->setText(tr("Batch Process Actions"));
             batchProcessMainMenu->setText(tr("&Batch Process"));
-            scriptOperationsGroup->setText(tr("Script Operation Actions"));
             reloadScriptsAction->setText(tr("Reload Scripts"));
             scriptSettingsAction->setText(tr("Script Settings"));
             runScriptAction->setText(tr("Run"));
@@ -131,24 +130,29 @@ namespace ScriptMgr {
 
         void ScriptMgrAddOn::reloadActions() {
             windowKey = ScriptLoader::instance()->createHandles(internalObject);
+            scriptActionContext.reset(new QWidget);
             createScriptActions(ScriptLoader::instance()->builtInScriptEntries());
             createScriptActions(ScriptLoader::instance()->scriptEntries());
+            qDebug() << scriptActionContext.data()->actions();
+            windowHandle()->addShortcutContext(scriptActionContext.data(), IWindow::Mutable);
         }
 
         void ScriptMgrAddOn::createScriptActions(const QList<ScriptEntry> &entries) {
             auto actionBefore = reloadScriptsAction->action();
             for(const auto &entry: entries) {
+                qDebug() << "Create action:" << entry.id;
                 auto mainAction = new QAction(this);
                 mainAction->setText(ScriptLoader::instance()->getName(entry.id));
                 connect(ScriptLoader::instance(), &ScriptLoader::scriptNameReloaded, mainAction, [=](){
                     mainAction->setText(ScriptLoader::instance()->getName(entry.id));
                 });
                 if(entry.type == ScriptEntry::Script) {
-                    if(!entry.shortcut.isEmpty()) mainAction->setShortcut(QKeySequence(entry.shortcut));
+                    mainAction->setShortcut(ScriptLoader::instance()->cachedCustomShortcuts().value(entry.id, QKeySequence(entry.shortcut)));
                     connect(mainAction, &QAction::triggered, this, [=](){
                         ScriptLoader::instance()->invoke(windowKey, entry.id);
                     });
                     scriptMainActionDict.append(entry.id, mainAction);
+                    scriptActionContext->addAction(mainAction);
                 } else {
                     auto menu = ICore::createCoreMenu(windowHandle()->window());
                     for(int i = 0; i < entry.childrenId.size(); i++) {
@@ -159,16 +163,16 @@ namespace ScriptMgr {
                         connect(ScriptLoader::instance(), &ScriptLoader::scriptNameReloaded, childAction, [=](){
                             childAction->setText(ScriptLoader::instance()->getName(entry.id + '.' + childId));
                         });
-                        if(!childShortcut.isEmpty()) childAction->setShortcut(QKeySequence(childShortcut));
+                        childAction->setShortcut(ScriptLoader::instance()->cachedCustomShortcuts().value(entry.id + "." + childId, QKeySequence(childShortcut)));
                         connect(childAction, &QAction::triggered, this, [=](){
                             ScriptLoader::instance()->invoke(windowKey, entry.id, i);
                         });
                         childAction->setData(uintptr_t(mainAction));
                         menu->addAction(childAction);
+                        scriptActionContext->addAction(childAction);
                         scriptMainActionDict.append(entry.id + "." + childId, childAction);
                     }
                     mainAction->setMenu(menu);
-                    windowHandle()->addShortcutContext(menu, IWindow::Mutable);
                 }
                 batchProcessMainMenu->menu()->insertAction(actionBefore, mainAction);
                 allActions.append(mainAction);

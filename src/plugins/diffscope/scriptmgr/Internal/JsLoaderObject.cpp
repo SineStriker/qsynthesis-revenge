@@ -29,7 +29,16 @@ namespace ScriptMgr::Internal {
     }
     JsLoaderObject::JsLoaderObject(ScriptLoader *loader): m_loader(loader) {
     }
-    QString JsLoaderObject::coreMsgBox(const QString &title, const QString &message, const QString &icon, const QStringList &buttons, const QString &defaultButton) {
+    QString JsLoaderObject::coreMsgBox(const QString &title, const QString &message, const QString &icon, const QStringList &buttons, const QString &defaultButton) const {
         return jsMsgBox(nullptr, title, message, icon, buttons, defaultButton);
+    }
+    bool JsLoaderObject::versionMismatchWarning(const QString &id, const QString &requiredVersion) const {
+        return coreMsgBox(
+            tr("Version Mismatch"),
+            tr("The version of DiffScope Script Manager (%1) does not satisfy the requirement in script '%2' (%3).\n\nContinue loading anyway?")
+                .arg(version(), id, requiredVersion),
+            "Warning",
+            {"Yes", "No"},
+            "No") == "No";
     }
 } // Internal

@@ -5,7 +5,7 @@ $register(class extends $ScriptSet {
             vendor: 'CrSjimo',
             description: '', //TODO
             version: '0.0.1',
-            requiredVersion: '0.1.0',
+            requiredVersion: '>=0.0.0',
             role: ['pianoroll', 'arrangement'],
             name: __q_tr('JsBuiltIn', 'Transpose'),
             children: [{
