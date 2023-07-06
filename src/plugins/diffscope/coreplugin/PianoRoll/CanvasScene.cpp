@@ -1,27 +1,39 @@
 #include "CanvasScene.h"
 #include "CanvasScene_p.h"
 
+#include <QDebug>
+
 namespace Core {
 
-CanvasScenePrivate::CanvasScenePrivate() {
-}
+    CanvasScenePrivate::CanvasScenePrivate() {
+    }
 
-CanvasScenePrivate::~CanvasScenePrivate() {
-}
+    CanvasScenePrivate::~CanvasScenePrivate() {
+    }
 
-void CanvasScenePrivate::init() {
-}
+    void CanvasScenePrivate::init() {
+    }
 
-CanvasScene::CanvasScene(QObject *parent) : CanvasScene(*new CanvasScenePrivate(), parent) {
-}
+    CanvasScene::CanvasScene(IProjectWindow *iWin, QObject *parent)
+        : CanvasScene(*new CanvasScenePrivate(), iWin, parent) {
+    }
 
-CanvasScene::~CanvasScene() {
-}
+    CanvasScene::~CanvasScene() {
+    }
 
-CanvasScene::CanvasScene(CanvasScenePrivate &d, QObject *parent) : CGraphicsScene(parent), d_ptr(&d) {
-    d.q_ptr = this;
+    void CanvasScene::initialize() {
+    }
 
-    d.init();
-}
+    void CanvasScene::extensionInitialized() {
+        qDebug() << "what";
+        setSceneRect(QRect(0, 0, 10000, 4000));
+    }
+
+    CanvasScene::CanvasScene(CanvasScenePrivate &d, IProjectWindow *iWin, QObject *parent)
+        : CGraphicsScene(parent), IPianoRollComponent(iWin), d_ptr(&d) {
+        d.q_ptr = this;
+
+        d.init();
+    }
 
 }

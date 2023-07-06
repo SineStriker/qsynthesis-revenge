@@ -6,6 +6,7 @@
 
 #include <CoreApi/IWindow.h>
 
+#include "CanvasView.h"
 #include "IPianoKeyWidget.h"
 #include "SectionBar.h"
 
@@ -49,6 +50,7 @@ namespace Core {
         QWidget *floatingPanel(const QString &key);
 
         SectionBar *sectionBar() const;
+        CanvasView *canvasView() const;
 
     signals:
         void pianoKeyWidgetChanged(const QString &key);

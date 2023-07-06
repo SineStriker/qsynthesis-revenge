@@ -46,6 +46,8 @@ namespace Core {
         Internal::PianoKeyContainer *m_pianoKeyContainer;
         Internal::SectionWidget *m_sectionWidget;
         QsApi::SynthVSplitter *m_canvas;
+
+        CanvasView *m_view;
     };
 
 }

@@ -41,10 +41,16 @@ namespace Core {
 
         ICore::autoPolishScrollBars(m_canvas);
 
+        m_view = new CanvasView(q->iWin);
+        m_view->setObjectName("canvas-view");
+
+        m_canvas->setScrollArea(m_view);
+
         m_pianoKeyContainer = new Internal::PianoKeyContainer();
         m_pianoKeyContainer->setObjectName("piano-container");
 
         m_sectionWidget = new Internal::SectionWidget(q->iWin);
+        m_sectionWidget->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
         m_sectionWidget->setObjectName("section-widget");
 
         m_layout = new QGridLayout();
@@ -146,12 +152,14 @@ namespace Core {
 
     void PianoRoll::initialize() {
         Q_D(PianoRoll);
+        d->m_view->initialize();
         d->m_sectionWidget->initialize();
     }
 
     void PianoRoll::extensionInitialized() {
         Q_D(PianoRoll);
         d->m_sectionWidget->extensionInitialized();
+        d->m_view->extensionInitialized();
     }
 
     void PianoRoll::addPianoKeyWidgetFactory(const QString &key, IPianoKeyWidgetFactory *factory) {
@@ -342,6 +350,11 @@ namespace Core {
     SectionBar *PianoRoll::sectionBar() const {
         Q_D(const PianoRoll);
         return d->m_sectionWidget;
+    }
+
+    CanvasView *PianoRoll::canvasView() const {
+        Q_D(const PianoRoll);
+        return d->m_view;
     }
 
     PianoRoll::PianoRoll(PianoRollPrivate &d, IProjectWindow *iWin, QWidget *parent)
