@@ -13,6 +13,7 @@ namespace Vst::Internal {
         Q_OBJECT
     public:
         Q_INVOKABLE explicit VstClientAddOn(QObject *parent = nullptr);
+        ~VstClientAddOn();
 
         void initialize() override;
         void extensionsInitialized() override;

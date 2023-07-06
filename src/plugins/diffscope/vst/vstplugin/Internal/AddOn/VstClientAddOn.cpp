@@ -15,6 +15,12 @@ namespace Vst::Internal {
     VstClientAddOn::VstClientAddOn(QObject *parent) : Core::IWindowAddOn(parent) {
     }
 
+    VstClientAddOn::~VstClientAddOn() {
+        if(VstBridge::instance()->m_clientAddOn == this) {
+            VstBridge::instance()->m_clientAddOn = nullptr;
+        }
+    }
+
     void VstClientAddOn::initialize() {
         if(!VstBridge::instance()->m_clientAddOn) {
             VstBridge::instance()->m_clientAddOn = this;
