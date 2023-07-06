@@ -20,7 +20,8 @@ ck_target_components(${_library}
     AUTO_INCLUDE_CURRENT
     SOURCES ${_src}
     QT_LINKS Core Widgets Network RemoteObjects
-    LINKS QsFramework vstglobal
+    LINKS QsFramework
+    LINKS_PRIVATE vstglobal
     INCLUDE_PRIVATE ${CMAKE_CURRENT_BINARY_DIR}
 )
 

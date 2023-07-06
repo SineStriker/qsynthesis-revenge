@@ -22,7 +22,9 @@ namespace Core::Internal {
     }
 
     void SectionWidget::paintEvent(QPaintEvent *event) {
-        QFrame::paintEvent(event);
+        SectionBar::paintEvent(event);
+
+        // Paint
     }
 
 }

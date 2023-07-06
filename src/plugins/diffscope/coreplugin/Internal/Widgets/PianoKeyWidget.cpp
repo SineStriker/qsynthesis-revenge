@@ -49,21 +49,21 @@ namespace Core::Internal {
         m_heightFactor = heightFactor;
     }
 
-    Core::IPianoKeyWidget *PianoKeyWidgetFactory::create(QWidget *parent) {
-        return new PianoKeyWidget(parent);
+    Core::IPianoKeyWidget *PianoKeyWidgetFactory::create(IProjectWindow *iWin, QWidget *parent) {
+        return new PianoKeyWidget(iWin, parent);
     }
 
     QString PianoKeyWidgetFactory::name() const {
         return PianoKeyWidget::tr("UTAU/FL Studio");
     }
 
-    PianoKeyWidget::PianoKeyWidget(QWidget *parent)
-        : Core::IPianoKeyWidget(parent), m_currentHeight(30) {
+    PianoKeyWidget::PianoKeyWidget(IProjectWindow *iWin, QWidget *parent)
+        : Core::IPianoKeyWidget(iWin, parent), m_currentHeight(30) {
         init();
     }
 
-    PianoKeyWidget::PianoKeyWidget(int currentHeight, QWidget *parent)
-        : Core::IPianoKeyWidget(parent), m_currentHeight(currentHeight) {
+    PianoKeyWidget::PianoKeyWidget(IProjectWindow *iWin, int currentHeight, QWidget *parent)
+        : Core::IPianoKeyWidget(iWin, parent), m_currentHeight(currentHeight) {
         init();
     }
 
@@ -77,6 +77,12 @@ namespace Core::Internal {
     void PianoKeyWidget::setPreferredWidth(const QPixelSize &width) {
         resize(width, height());
         emit preferredWidthChanged(width);
+    }
+
+    void PianoKeyWidget::initialize() {
+    }
+
+    void PianoKeyWidget::extensionInitialized() {
     }
 
     void PianoKeyWidget::init() {

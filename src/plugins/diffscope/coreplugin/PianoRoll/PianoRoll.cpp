@@ -131,6 +131,11 @@ namespace Core {
 
         // Create new widget
         m_pianoKeyContainer->setArea(w);
+
+        if (w) {
+            w->initialize();
+            w->extensionInitialized();
+        }
     }
 
     PianoRoll::PianoRoll(IProjectWindow *iWin, QWidget *parent) : PianoRoll(*new PianoRollPrivate(), iWin, parent) {
@@ -209,7 +214,7 @@ namespace Core {
             if (!fac) {
                 return;
             }
-            d->setPianoKeyWidget_helper(fac->create(nullptr));
+            d->setPianoKeyWidget_helper(fac->create(iWin, nullptr));
         } else {
             d->setPianoKeyWidget_helper(nullptr);
         }

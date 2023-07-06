@@ -33,6 +33,8 @@ namespace Core {
         m_forceClose = false;
 
         m_doc = doc;
+        m_timeMgr = nullptr;
+
         doc->setAutoRemoveLogDir(false);
         doc->setParent(this);
     }
@@ -228,6 +230,12 @@ namespace Core {
         Q_D(const IProjectWindow);
         return d->m_doc;
     }
+
+    MusicTimeManager *IProjectWindow::timeManager() const {
+        Q_D(const IProjectWindow);
+        return d->m_timeMgr;
+    }
+
     QToolBar *IProjectWindow::mainToolbar() const {
         Q_D(const IProjectWindow);
         return d->m_toolbar;
@@ -258,6 +266,9 @@ namespace Core {
                     ICore::fatalError(win, tr("Failed to create main toolbar."));
                 }
 
+                auto &timeMgr = d->m_timeMgr;
+                timeMgr = new MusicTimeManager(this, d);
+
                 auto &toolbar = d->m_toolbar;
                 toolbar = new CToolBar();
                 toolbar->setObjectName("main-toolbar");
@@ -285,9 +296,9 @@ namespace Core {
                 centralWidget->setAttribute(Qt::WA_StyledBackground);
                 centralWidget->setLayout(layout);
 
-                auto &m_pianoRoll = d->m_pianoRoll;
-                m_pianoRoll = new PianoRoll(this);
-                frame->setWidget(m_pianoRoll);
+                auto &pianoRoll = d->m_pianoRoll;
+                pianoRoll = new PianoRoll(this);
+                frame->setWidget(pianoRoll);
 
                 setCentralWidget(centralWidget);
                 d->cp->setParent(centralWidget);
@@ -300,13 +311,15 @@ namespace Core {
                 connect(d->m_doc, &IDocument::closeRequested, d, &IProjectWindowPrivate::_q_documentCloseRequested);
 
                 // Initialize
-                m_pianoRoll->initialize();
+                timeMgr->initialize();
+                pianoRoll->initialize();
                 break;
             }
 
             case IWindow::Initialized: {
                 // Initialized
                 d->m_pianoRoll->extensionInitialized();
+                d->m_timeMgr->extensionInitialized();
                 break;
             }
 

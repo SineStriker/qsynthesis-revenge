@@ -5,7 +5,8 @@ namespace Core {
     IPianoKeyWidgetFactory::~IPianoKeyWidgetFactory() {
     }
 
-    IPianoKeyWidget::IPianoKeyWidget(QWidget *parent) : QFrame(parent) {
+    IPianoKeyWidget::IPianoKeyWidget(IProjectWindow *iWin, QWidget *parent)
+        : QFrame(parent), IPianoRollComponent(iWin) {
     }
 
     IPianoKeyWidget::~IPianoKeyWidget() {

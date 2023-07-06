@@ -42,7 +42,7 @@ namespace Core::Internal {
 
     class PianoKeyWidgetFactory : public Core::IPianoKeyWidgetFactory {
     public:
-        Core::IPianoKeyWidget *create(QWidget *parent) override;
+        Core::IPianoKeyWidget *create(IProjectWindow *iWin, QWidget *parent) override;
         QString name() const override;
     };
 
@@ -50,12 +50,15 @@ namespace Core::Internal {
         Q_OBJECT
         Q_PROPERTY(QPixelSize preferredWidth READ preferredWidth WRITE setPreferredWidth NOTIFY preferredWidthChanged)
     public:
-        explicit PianoKeyWidget(QWidget *parent = nullptr);
-        explicit PianoKeyWidget(int currentHeight, QWidget *parent = nullptr);
+        explicit PianoKeyWidget(IProjectWindow *iWin, QWidget *parent = nullptr);
+        explicit PianoKeyWidget(IProjectWindow *iWin, int currentHeight, QWidget *parent = nullptr);
         ~PianoKeyWidget();
 
         QPixelSize preferredWidth() const;
         void setPreferredWidth(const QPixelSize &width);
+
+        void initialize() override;
+        void extensionInitialized() override;
 
     private:
         void init();

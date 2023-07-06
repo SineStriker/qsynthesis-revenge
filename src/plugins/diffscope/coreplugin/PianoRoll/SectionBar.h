@@ -23,7 +23,11 @@ namespace Core {
         void extensionInitialized() override;
 
     public:
-        const QsApi::MusicTimeline *timeline() const;
+        int currentWidth() const;
+        void setCurrentWidth(int width);
+
+    protected:
+        void paintEvent(QPaintEvent *event) override;
 
     protected:
         SectionBar(SectionBarPrivate &d, IProjectWindow *iWin, QWidget *parent = nullptr);

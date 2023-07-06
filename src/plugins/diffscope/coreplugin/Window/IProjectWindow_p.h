@@ -8,6 +8,7 @@
 #include "ICoreWindow_p.h"
 #include "IProjectWindow.h"
 #include "Internal/Widgets/FloatingTitleBar.h"
+#include "PianoRoll/MusicTimeManager.h"
 #include "PianoRoll/PianoRoll.h"
 
 namespace Core {
@@ -31,6 +32,8 @@ namespace Core {
         ActionContext *mainToolbarCtx;
 
         DspxDocument *m_doc;
+
+        MusicTimeManager *m_timeMgr;
 
         bool m_changeHandled;
         bool m_forceClose;

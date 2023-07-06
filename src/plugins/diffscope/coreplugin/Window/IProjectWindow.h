@@ -8,6 +8,7 @@
 
 #include "Document/DspxDocument.h"
 #include "ICoreWindow.h"
+#include "PianoRoll/MusicTimeManager.h"
 #include "PianoRoll/PianoRoll.h"
 
 namespace Core {
@@ -24,6 +25,7 @@ namespace Core {
     public:
         // Meta
         DspxDocument *doc() const;
+        MusicTimeManager *timeManager() const;
 
         // UI
         QToolBar *mainToolbar() const;

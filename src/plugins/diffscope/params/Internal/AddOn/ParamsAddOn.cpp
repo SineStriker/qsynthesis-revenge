@@ -42,9 +42,12 @@ namespace Params::Internal {
         });
 
         qIDec->installLocale(this, _LOC(ParamsAddOn, this));
+
+        paramsPanel->initialize();
     }
 
     void ParamsAddOn::extensionsInitialized() {
+        paramsPanel->extensionInitialized();
     }
 
     void ParamsAddOn::reloadStrings() {

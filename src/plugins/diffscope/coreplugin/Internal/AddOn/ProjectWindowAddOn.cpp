@@ -75,10 +75,16 @@ namespace Core {
             pianoRoll->addPianoKeyWidgetFactory(DefaultPianoKeyWidget, new PianoKeyWidgetFactory());
 
             qIDec->installLocale(this, _LOC(ProjectWindowAddOn, this));
+
+            phonemePanel->initialize();
+            trackPanel->initialize();
         }
 
         void ProjectWindowAddOn::extensionsInitialized() {
             CoreWindowAddOn::extensionsInitialized();
+
+            trackPanel->extensionInitialized();
+            phonemePanel->extensionInitialized();
         }
 
         void ProjectWindowAddOn::reloadStrings() {
