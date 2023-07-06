@@ -181,17 +181,20 @@ namespace QsApi {
                            << pair.first << ".";
                 continue;
             }
-            if (d->timeSignatureMap.contains(pair.first) &&
-                d->timeSignatureMap[pair.first] == pair.second) {
-                // identical to current time signature
-                continue;
-            }
             if (!pair.second.isValid()) {
                 qWarning() << "Invalid time signature '" << pair.second.toString() << "'.";
                 continue;
             }
+            auto it = d->timeSignatureMap.find(pair.first);
+            if(it == d->timeSignatureMap.end()) {
+                d->timeSignatureMap.insert(pair.first, pair.second);
+            } else if(it.value() == pair.second) {
+                // identical to current time signature
+                continue;
+            } else {
+                it.value() = pair.second;
+            }
             isChanged = true;
-            d->timeSignatureMap[pair.first] = pair.second;
             minPos = qMin(minPos, pair.first);
         }
 
@@ -212,12 +215,11 @@ namespace QsApi {
                            << ".";
                 continue;
             }
-            if (!d->timeSignatureMap.contains(barPos)) {
+            if (!d->timeSignatureMap.remove(barPos)) {
                 qWarning() << "Bar" << barPos << "does not have time signature.";
                 continue;
             }
             isChanged = true;
-            d->timeSignatureMap.remove(barPos);
             minPos = qMin(minPos, barPos);
         }
         if (isChanged) {
@@ -269,16 +271,20 @@ namespace QsApi {
                            << pair.first << " .";
                 continue;
             }
-            if (d->msecSumMap.contains(pair.first) && d->msecSumMap[pair.first] == pair.second) {
-                // identical to current time signature
-                continue;
-            }
             if (pair.second <= 0) {
                 qWarning() << "Invalid tempo '" << pair.second << "'.";
                 continue;
             }
+            auto it = d->tempoMap.find(pair.first);
+            if(it == d->tempoMap.end()) {
+                d->tempoMap.insert(pair.first, pair.second);
+            } else if(it.value() == pair.second) {
+                // identical to current tempo
+                continue;
+            } else {
+                it.value() = pair.second;
+            }
             isChanged = true;
-            d->tempoMap[pair.first] = pair.second;
             minPos = qMin(minPos, pair.first);
         }
         if (isChanged) {
@@ -297,12 +303,11 @@ namespace QsApi {
                 qWarning() << "Position of a tempo must be positive, but read" << tickPos << ".";
                 continue;
             }
-            if (!d->msecSumMap.contains(tickPos)) {
+            if (!d->tempoMap.remove(tickPos)) {
                 qWarning() << "Tick" << tickPos << "does not have tempo.";
                 continue;
             }
             isChanged = true;
-            d->tempoMap.remove(tickPos);
             minPos = qMin(minPos, tickPos);
         }
         if (isChanged) {
