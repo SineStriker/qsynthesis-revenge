@@ -6,8 +6,11 @@
 
 #include <QSharedMemory>
 #include <QLocalSocket>
+#include <QTimer>
+#include <QThread>
 
 #include <Window/IProjectWindow.h>
+#include <Window/IHomeWindow.h>
 #include "ICore.h"
 
 #include "AddOn/VstClientAddOn.h"
@@ -58,13 +61,20 @@ namespace Vst::Internal {
 
     bool VstBridge::openDataToEditor(const QByteArray &data) {
         qDebug() << "VstBridge: openDataToEditor";
-        qDebug() << "data is: " << data;
-        auto docMgr = Core::ICore::instance()->documentSystem();
-        //TODO temporarily do this
-        auto recentFiles = docMgr->recentFiles();
-        if(!recentFiles.empty()) {
-            auto spec = docMgr->docType("org.ChorusKit.dspx");
-            spec->open(recentFiles[0], nullptr);
+        auto doc = new Core::DspxDocument(Core::DspxDocument::VSTMode);
+        if(data.isEmpty()) {
+            doc->makeNew("VST");
+        } else {
+            if (!doc->openRawData("VST", data)) {
+                delete doc;
+                return false;
+            }
+        }
+        if(m_clientAddOn) emit m_clientAddOn->windowHandle()->cast<Core::IProjectWindow>()->doc()->closeRequested();
+        Core::IWindow::create<Core::IProjectWindow>(doc);
+        if (qApp->property("closeHomeOnOpen").toBool() && Core::ICore::instance()->windowSystem()->count() == 2) {
+            auto iWin = Core::IHomeWindow::instance();
+            
         }
         return true;
     }

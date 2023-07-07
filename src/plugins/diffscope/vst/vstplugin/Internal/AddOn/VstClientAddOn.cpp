@@ -22,6 +22,8 @@ namespace Vst::Internal {
     }
 
     void VstClientAddOn::initialize() {
+        auto iWin = windowHandle()->cast<Core::IProjectWindow>();
+        if(!iWin->doc()->isVST()) return;
         if(!VstBridge::instance()->m_clientAddOn) {
             VstBridge::instance()->m_clientAddOn = this;
         }
