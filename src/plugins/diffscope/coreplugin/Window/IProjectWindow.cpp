@@ -215,7 +215,8 @@ namespace Core {
         Q_Q(IProjectWindow);
 
         m_forceClose = true;
-        q->setProperty("choruskit_show_home", true);
+        if (!m_doc->isVST())
+            q->setProperty("choruskit_show_home", true);
         q->window()->close();
     }
 
