@@ -34,10 +34,9 @@ namespace ScriptMgr {
             // Add resources
             qIDec->addTranslationPath(pluginSpec()->location() + "/translations");
 
-            auto splash = qobject_cast<QSplashScreen *>(
-                ILoader::instance()->getFirstObject("choruskit_init_splash"));
-            if (splash) {
-                splash->showMessage(tr("Initializing script manager..."));
+            auto rout = qobject_cast<Core::InitialRoutine *>(ILoader::instance()->getFirstObject("choruskit_init_routine"));
+            if (rout) {
+                rout->splash()->showMessage(tr("Initializing script manager..."));
             }
 
             auto actionMgr = ICore::instance()->actionSystem();

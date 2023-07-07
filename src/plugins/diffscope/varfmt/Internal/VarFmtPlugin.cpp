@@ -32,9 +32,10 @@ namespace VarFmt {
             qIDec->addTranslationPath(pluginSpec()->location() + "/translations");
             // qIDec->addThemePath(pluginSpec()->location() +"/themes");
 
-            auto splash = qobject_cast<QSplashScreen *>(ILoader::instance()->getFirstObject("choruskit_init_splash"));
-            if (splash) {
-                splash->showMessage(tr("Initializing variable formats converter..."));
+            auto rout =
+                qobject_cast<Core::InitialRoutine *>(ILoader::instance()->getFirstObject("choruskit_init_routine"));
+            if (rout) {
+                rout->splash()->showMessage(tr("Initializing variable formats converter..."));
             }
             // QThread::msleep(2000);
 

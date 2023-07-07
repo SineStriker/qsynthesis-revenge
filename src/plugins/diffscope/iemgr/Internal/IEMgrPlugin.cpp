@@ -3,10 +3,10 @@
 #include <QApplication>
 #include <QThread>
 
-#include "CoreApi/ILoader.h"
-
 #include <QMDecoratorV2.h>
 #include <QMSystem.h>
+
+#include "CoreApi/ILoader.h"
 
 #include <coreplugin/ICore.h>
 #include <extensionsystem/pluginspec.h>
@@ -39,9 +39,10 @@ namespace IEMgr {
             qIDec->addTranslationPath(pluginSpec()->location() + "/translations");
             qIDec->addThemePath(pluginSpec()->location() + "/themes");
 
-            auto splash = qobject_cast<QSplashScreen *>(ILoader::instance()->getFirstObject("choruskit_init_splash"));
-            if (splash) {
-                splash->showMessage(tr("Initializing import/export manager..."));
+            auto rout =
+                qobject_cast<Core::InitialRoutine *>(ILoader::instance()->getFirstObject("choruskit_init_routine"));
+            if (rout) {
+                rout->splash()->showMessage(tr("Initializing import/export manager..."));
             }
             // QThread::msleep(2000);
 
@@ -59,7 +60,7 @@ namespace IEMgr {
 
             // Add basic windows and add-ons
             auto winMgr = icore->windowSystem();
-            winMgr->addAddOn({"home","project"}, &IEMgrAddOn::staticMetaObject);
+            winMgr->addAddOn({"home", "project"}, &IEMgrAddOn::staticMetaObject);
 
             // Add wizards
             imgr->addWizard(new MidiWizard());

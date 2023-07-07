@@ -39,6 +39,29 @@ namespace Core {
         QScopedPointer<ILoaderPrivate> d_ptr;
     };
 
+    class CKAPPCORE_API InitialRoutine : public QObject {
+        Q_OBJECT
+    public:
+        explicit InitialRoutine(QSplashScreen *screen, QObject *parent = nullptr) : QObject(parent), m_screen(screen) {
+        }
+
+    public:
+        inline QSplashScreen *splash() const {
+            return m_screen;
+        }
+
+        inline QList<std::function<void ()>> &routines() {
+            return m_routines;
+        }
+
+    signals:
+        void done();
+
+    protected:
+        QSplashScreen *m_screen;
+        QList<std::function<void ()>> m_routines;
+    };
+
 }
 
 

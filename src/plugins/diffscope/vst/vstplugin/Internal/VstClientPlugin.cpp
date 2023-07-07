@@ -5,8 +5,9 @@
 
 #include <cmath>
 
-#include "AddOn/VstClientAddOn.h"
 #include "CoreApi/ILoader.h"
+
+#include "AddOn/VstClientAddOn.h"
 #include "VstBridge.h"
 
 #include <QMDecoratorV2.h>
@@ -16,7 +17,6 @@
 #include <QtRemoteObjects>
 #include <coreplugin/ICore.h>
 #include <extensionsystem/pluginspec.h>
-
 
 namespace Vst {
 
@@ -35,9 +35,10 @@ namespace Vst {
             // Add resources
             qIDec->addTranslationPath(pluginSpec()->location() + "/translations");
 
-            auto splash = qobject_cast<QSplashScreen *>(ILoader::instance()->getFirstObject("choruskit_init_splash"));
-            if (splash) {
-                splash->showMessage(tr("Initializing vst support..."));
+            auto rout =
+                qobject_cast<Core::InitialRoutine *>(ILoader::instance()->getFirstObject("choruskit_init_routine"));
+            if (rout) {
+                rout->splash()->showMessage(tr("Initializing vst support..."));
             }
 
             generateVstConfig();
@@ -59,10 +60,11 @@ namespace Vst {
         void VstClientPlugin::generateVstConfig() {
             QFile configFile(QMFs::appDataPath() + "/ChorusKit/DiffScope/vstconfig.txt");
             configFile.open(QFile::WriteOnly | QFile::Text);
-            if(configFile.isOpen()) {
+            if (configFile.isOpen()) {
                 QTextStream stream(&configFile);
                 stream << QDir::toNativeSeparators(QApplication::applicationDirPath()) << QDir::separator() << Qt::endl;
-                stream << "vstbridge." <<
+                stream << "vstbridge."
+                       <<
 #ifdef Q_OS_WINDOWS
                     "dll"
 #elif defined(Q_OS_MAC)
@@ -70,7 +72,7 @@ namespace Vst {
 #else
                     "so"
 #endif
-                    << Qt::endl;
+                       << Qt::endl;
                 stream << QDir::toNativeSeparators(QApplication::applicationFilePath()) << Qt::endl;
                 stream.flush();
                 configFile.close();
@@ -80,7 +82,6 @@ namespace Vst {
         }
 
         void VstClientPlugin::extensionsInitialized() {
-
         }
 
         bool VstClientPlugin::delayedInitialize() {

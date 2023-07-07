@@ -24,6 +24,7 @@
 
 #include "CoreApi/ILoader.h"
 
+
 Q_LOGGING_CATEGORY(loaderLog, "apploader")
 
 #define USE_NATIVE_MESSAGEBOX
@@ -360,10 +361,12 @@ int main_entry(int argc, char *argv[]) {
     SplashScreen splash;
     g_splash = &splash;
 
-    // Add splash to loader object pool
-    loader.addObject("choruskit_init_splash", &splash);
-    QObject::connect(&splash, &SplashScreen::closed, [&] {
-        loader.removeObject(&splash); //
+    Core::InitialRoutine initialRoutine(&splash);
+
+    // Add initial routine to loader object pool
+    loader.addObject("choruskit_init_routine", &initialRoutine);
+    QObject::connect(&initialRoutine, &Core::InitialRoutine::done, [&] {
+        loader.removeObject(&initialRoutine); //
     });
 
     splash.setPixmap(splashImage);

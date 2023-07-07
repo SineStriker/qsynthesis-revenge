@@ -1,7 +1,5 @@
 #include "ParamsPlugin.h"
 
-#include <QSplashScreen>
-
 #include <extensionsystem/pluginspec.h>
 
 #include <QMDecoratorV2.h>
@@ -27,10 +25,9 @@ namespace Params::Internal {
         qIDec->addTranslationPath(pluginSpec()->location() + "/translations");
         qIDec->addThemePath(pluginSpec()->location() + "/themes");
 
-        auto splash = qobject_cast<QSplashScreen *>(
-            ILoader::instance()->getFirstObject("choruskit_init_splash"));
-        if (splash) {
-            splash->showMessage(tr("Initializing param-curve editor..."));
+        auto rout = qobject_cast<Core::InitialRoutine *>(ILoader::instance()->getFirstObject("choruskit_init_routine"));
+        if (rout) {
+            rout->splash()->showMessage(tr("Initializing param-curve editor..."));
         }
         // QThread::msleep(2000);
 

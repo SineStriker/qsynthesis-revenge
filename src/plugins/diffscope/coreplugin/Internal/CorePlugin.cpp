@@ -37,7 +37,7 @@ namespace Core {
 
         static ICore *icore = nullptr;
 
-        static QSplashScreen *m_splash = nullptr;
+        static InitialRoutine *m_rout = nullptr;
 
         static int openFileFromCommand(QString workingDir, const QStringList &args, IWindow *iWin) {
             int cnt = 0;
@@ -78,12 +78,12 @@ namespace Core {
             qIDec->addTranslationPath(pluginSpec()->location() + "/translations");
             qIDec->addThemePath(pluginSpec()->location() + "/themes");
 
-            auto splash = qobject_cast<QSplashScreen *>(
-                ILoader::instance()->getFirstObject("choruskit_init_splash"));
-            if (splash) {
-                splash->showMessage(tr("Initializing core plugin..."));
+            auto rout =
+                qobject_cast<Core::InitialRoutine *>(ILoader::instance()->getFirstObject("choruskit_init_routine"));
+            if (rout) {
+                rout->splash()->showMessage(tr("Initializing core plugin..."));
             }
-            m_splash = splash;
+            m_rout = rout;
             // QThread::msleep(2000);
 
             // Init ICore instance
@@ -141,18 +141,24 @@ namespace Core {
         }
 
         bool CorePlugin::delayedInitialize() {
-            if (m_splash)
-                m_splash->showMessage(tr("Initializing user interface..."));
+            if (m_rout)
+                m_rout->splash()->showMessage(tr("Initializing user interface..."));
 
             QTimer::singleShot(0, this, [this]() {
                 auto winMgr = icore->windowSystem();
 
-                // If all files are failed to open, the guard will create a home window
-                LastWindowFilter guard;
+                LastWindowFilter g;
+
+                if (m_rout) {
+                    for (const auto &func : qAsConst(m_rout->routines())) {
+                        func();
+                    }
+                }
 
                 // Open files
                 openFileFromCommand({}, ExtensionSystem::PluginManager::arguments(), nullptr);
 
+                // If no window is created, create a default home window
                 if (winMgr->count() == 0) {
                     auto home = IWindow::create<IHomeWindow>();
                     waitSplash(home->window());
@@ -164,8 +170,7 @@ namespace Core {
             return false;
         }
 
-        QObject *CorePlugin::remoteCommand(const QStringList &options,
-                                           const QString &workingDirectory,
+        QObject *CorePlugin::remoteCommand(const QStringList &options, const QString &workingDirectory,
                                            const QStringList &args) {
             auto firstHandle = icore->windowSystem()->firstWindow();
             int cnt = openFileFromCommand(workingDirectory, args, firstHandle);
@@ -185,8 +190,10 @@ namespace Core {
 
         void CorePlugin::waitSplash(QWidget *w) {
             // Get splash screen handle
-            if (m_splash)
-                m_splash->finish(w);
+            if (m_rout) {
+                m_rout->splash()->finish(w);
+                emit m_rout->done();
+            }
         }
 
         // This scope is only to expose strings to Qt translation tool
