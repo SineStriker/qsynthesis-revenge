@@ -5,13 +5,15 @@ namespace Core {
 
     SectionBarPrivate::SectionBarPrivate() {
         curWidth = 100;
+        startPos = 0;
     }
 
     SectionBarPrivate::~SectionBarPrivate() {
     }
 
     void SectionBarPrivate::init() {
-
+        Q_Q(SectionBar);
+        q->setFrameStyle(QFrame::NoFrame);
     }
 
     void SectionBarPrivate::updateLayout() {
@@ -30,9 +32,23 @@ namespace Core {
 
     void SectionBar::initialize() {
         Q_D(SectionBar);
+
+        auto timeline = iWin->timeManager()->timeline();
+        connect(timeline, &QsApi::MusicTimeline::changed, d, &SectionBarPrivate::updateLayout);
     }
 
     void SectionBar::extensionInitialized() {
+    }
+
+    int SectionBar::startPos() const {
+        Q_D(const SectionBar);
+        return d->startPos;
+    }
+
+    void SectionBar::setStartPos(int tick) {
+        Q_D(SectionBar);
+        d->startPos = tick;
+        d->updateLayout();
     }
 
     int SectionBar::currentWidth() const {

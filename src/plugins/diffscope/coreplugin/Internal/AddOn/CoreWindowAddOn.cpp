@@ -9,7 +9,7 @@
 
 #include "ICore.h"
 #include "Internal/plugindialog.h"
-#include "Window/ICoreWindow.h"
+#include "Window/IProjectWindow.h"
 
 #include "QsFrameworkNamespace.h"
 
@@ -99,15 +99,13 @@ namespace Core::Internal {
         showRecentFileItem = new ActionItem("core.ShowRecentFiles", new QAction(this), this);
 
         connect(newFileItem->action(), &QAction::triggered, this, [this, iWin]() {
-            //
-            qDebug() << "New";
+            auto doc = new DspxDocument();
+            doc->makeNew();
+            IWindow::create<IProjectWindow>(doc);
 
-            // iWin->showMenuInPalette(fileItem->menu(), false);
-            iWin->selectRecentFiles();
-
-            auto action = new QAction("Test");
-            action->setShortcut(QKeySequence("Ctrl+N"));
-            helpItem->menu()->addAction(action);
+            if (qApp->property("closeHomeOnOpen").toBool() && iWin->id() == "home") {
+                QTimer::singleShot(0, iWin->window(), &QWidget::close);
+            }
         });
 
         connect(openFileItem->action(), &QAction::triggered, this, [iWin]() {

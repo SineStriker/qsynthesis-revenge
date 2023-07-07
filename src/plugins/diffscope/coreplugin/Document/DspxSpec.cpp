@@ -73,7 +73,6 @@ namespace Core {
         auto doc = new DspxDocument();
 
         if (!doc->open(fileName)) {
-            qDebug() << "1345";
             QMessageBox::critical(parent, tr("File Error"), doc->errorMessage());
             return false;
         }

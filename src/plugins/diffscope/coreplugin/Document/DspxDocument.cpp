@@ -90,8 +90,7 @@ namespace Core {
 
         savedStep = model->currentStep();
 
-        QObject::connect(model, &AceTreeModel::modelChanged, this,
-                         &DspxDocumentPrivate::_q_modelChanged);
+        QObject::connect(model, &AceTreeModel::modelChanged, this, &DspxDocumentPrivate::_q_modelChanged);
 
         emit q->changed();
     }
@@ -99,8 +98,10 @@ namespace Core {
     void DspxDocumentPrivate::changeToSaved() {
         Q_Q(DspxDocument);
 
-        if (!preferredDisplayName.isEmpty()) {
-            q->setPreferredDisplayName({});
+        if (mode == DspxDocument::FileMode) {
+            if (!preferredDisplayName.isEmpty()) {
+                q->setPreferredDisplayName({});
+            }
         }
 
         settings->setValue("File/Path", q->filePath());
@@ -156,8 +157,7 @@ namespace Core {
         QString versionString = value.toString();
         QVersionNumber version = QVersionNumber::fromString(versionString);
         if (version > DspxSpec::currentVersion()) {
-            errMsg =
-                DspxDocument::tr("The specified file version(%1) is too high").arg(versionString);
+            errMsg = DspxDocument::tr("The specified file version(%1) is too high").arg(versionString);
             return false;
         }
 
@@ -220,8 +220,7 @@ namespace Core {
         // Write content
         docObj.insert("content", obj);
 
-        *data =
-            QJsonDocument(docObj).toJson(QJsonDocument::Compact); // Disable indent to reduce size
+        *data = QJsonDocument(docObj).toJson(QJsonDocument::Compact); // Disable indent to reduce size
         return true;
     }
 
@@ -238,12 +237,10 @@ namespace Core {
         }
     }
 
-    DspxDocument::DspxDocument(QObject *parent)
-        : DspxDocument(*new DspxDocumentPrivate(FileMode), parent) {
+    DspxDocument::DspxDocument(QObject *parent) : DspxDocument(*new DspxDocumentPrivate(FileMode), parent) {
     }
 
-    DspxDocument::DspxDocument(Mode mode, QObject *parent)
-        : DspxDocument(*new DspxDocumentPrivate(mode), parent) {
+    DspxDocument::DspxDocument(Mode mode, QObject *parent) : DspxDocument(*new DspxDocumentPrivate(mode), parent) {
     }
 
 
@@ -357,7 +354,7 @@ namespace Core {
         return d->saveFile(data);
     }
 
-    void DspxDocument::makeNew() {
+    void DspxDocument::makeNew(const QString &suggestFileName) {
         Q_D(DspxDocument);
 
         if (d->opened) {
@@ -392,9 +389,10 @@ namespace Core {
             d->content = content;
         }
 
-        QString baseName = QString("Untitled-%1").arg(QString::number(++m_untitledIndex));
-        setFilePath(baseName + ".dspx");
-        setPreferredDisplayName(baseName);
+        QFileInfo info(suggestFileName.isEmpty() ? QString("Untitled-%1").arg(QString::number(++m_untitledIndex))
+                                                 : suggestFileName);
+        setFilePath(info.fileName());
+        setPreferredDisplayName(info.baseName());
         d->changeToOpen();
     }
 
@@ -497,8 +495,7 @@ namespace Core {
         return true;
     }
 
-    DspxDocument::DspxDocument(DspxDocumentPrivate &d, QObject *parent)
-        : IDocument(d, "org.ChorusKit.dspx", parent) {
+    DspxDocument::DspxDocument(DspxDocumentPrivate &d, QObject *parent) : IDocument(d, "org.ChorusKit.dspx", parent) {
         d.init();
     }
 

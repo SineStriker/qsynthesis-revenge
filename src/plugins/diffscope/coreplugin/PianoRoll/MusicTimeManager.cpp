@@ -55,7 +55,7 @@ namespace Core {
     void MusicTimeManager::extensionInitialized() {
     }
 
-    QsApi::MusicTimeline *MusicTimeManager::timeline() const {
+    const QsApi::MusicTimeline *MusicTimeManager::timeline() const {
         return &d->m_timeline;
     }
 

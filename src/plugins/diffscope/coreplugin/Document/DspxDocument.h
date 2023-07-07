@@ -38,7 +38,7 @@ namespace Core {
         // Initializers, must call one of them before accessing the instance
         bool open(const QString &fileName) override;
         bool openRawData(const QString &suggestFileName, const QByteArray &data);
-        void makeNew();
+        void makeNew(const QString &suggestFileName = {});
         bool recover(const QString &fileName);
 
         // Save functions

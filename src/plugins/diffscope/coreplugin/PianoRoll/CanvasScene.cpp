@@ -25,7 +25,6 @@ namespace Core {
     }
 
     void CanvasScene::extensionInitialized() {
-        qDebug() << "what";
         setSceneRect(QRect(0, 0, 10000, 4000));
     }
 

@@ -19,6 +19,7 @@ namespace Core {
         SectionBar *q_ptr;
 
         int curWidth;
+        int startPos;
 
         void updateLayout();
     };

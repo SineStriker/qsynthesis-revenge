@@ -23,6 +23,9 @@ namespace Core {
         void extensionInitialized() override;
 
     public:
+        int startPos() const;
+        void setStartPos(int tick);
+
         int currentWidth() const;
         void setCurrentWidth(int width);
 
