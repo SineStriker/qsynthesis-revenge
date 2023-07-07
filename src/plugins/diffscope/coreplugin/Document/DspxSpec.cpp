@@ -74,10 +74,12 @@ namespace Core {
 
         if (!doc->open(fileName)) {
             QMessageBox::critical(parent, tr("File Error"), doc->errorMessage());
+            delete doc;
             return false;
         }
 
-        return IWindow::create<IProjectWindow>(doc);
+        IWindow::create<IProjectWindow>(doc);
+        return true;
     }
 
     //    bool DspxSpec::canRecover() const {
