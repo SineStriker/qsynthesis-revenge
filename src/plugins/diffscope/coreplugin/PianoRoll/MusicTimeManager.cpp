@@ -67,6 +67,8 @@ namespace Core {
                 &MusicTimeManagerPrivate::_q_timeSignatureIndexChanged);
         connect(ts, &DspxTimeSignatureEntity::valueChanged, this,
                 &MusicTimeManagerPrivate::_q_timeSignatureValueChanged);
+
+        emit q->timeSignatureAdded(ts->barIndex(), ts->value());
     }
 
     void MusicTimeManagerPrivate::_q_timeSignatureRemoved(int seq) {
@@ -79,6 +81,8 @@ namespace Core {
                    &MusicTimeManagerPrivate::_q_timeSignatureValueChanged);
 
         timeSigs.erase(it);
+
+        emit q->timeSignatureRemoved(ts->barIndex());
     }
 
     void MusicTimeManagerPrivate::_q_timeSignatureIndexChanged(int bar) {
@@ -89,14 +93,19 @@ namespace Core {
 
         // Remove old time signature
         m_timeline.removeTimeSignature(ts.bar);
+        emit q->timeSignatureRemoved(ts.bar);
 
         ts.bar = bar;
 
         // Insert new time signature
         m_timeline.addTimeSignature(bar, ts.ts->value());
+        emit q->timeSignatureAdded(bar, ts.ts->value());
     }
 
     void MusicTimeManagerPrivate::_q_timeSignatureValueChanged(int num, int den) {
+        Q_UNUSED(num)
+        Q_UNUSED(den)
+
         auto entity = static_cast<DspxTimeSignatureEntity *>(sender());
         auto seq = timeSigsEntity->treeItem()->recordSequenceOf(entity->treeItem());
 
@@ -104,6 +113,7 @@ namespace Core {
 
         // Replace time signature
         m_timeline.addTimeSignature(ts.bar, ts.ts->value());
+        emit q->timeSignatureAdded(ts.bar, ts.ts->value());
     }
 
     void MusicTimeManagerPrivate::_q_tempoInserted(int seq, DspxTempoEntity *t) {
@@ -112,6 +122,8 @@ namespace Core {
 
         connect(t, &DspxTempoEntity::positionChanged, this, &MusicTimeManagerPrivate::_q_tempoPosChanged);
         connect(t, &DspxTempoEntity::valueChanged, this, &MusicTimeManagerPrivate::_q_tempoValueChanged);
+
+        emit q->tempoAdded(t->position(), t->value());
     }
 
     void MusicTimeManagerPrivate::_q_tempoRemoved(int seq) {
@@ -122,6 +134,8 @@ namespace Core {
         disconnect(t, &DspxTempoEntity::valueChanged, this, &MusicTimeManagerPrivate::_q_tempoValueChanged);
 
         tempos.erase(it);
+
+        emit q->tempoRemoved(t->position());
     }
 
     void MusicTimeManagerPrivate::_q_tempoPosChanged(int pos) {
@@ -132,11 +146,13 @@ namespace Core {
 
         // Remove old tempo
         m_timeline.removeTempo(t.pos);
+        emit q->tempoRemoved(t.pos);
 
         t.pos = pos;
 
         // Insert new tempo
         m_timeline.addTempo(pos, t.t->value());
+        emit q->tempoAdded(pos, t.t->value());
     }
 
     void MusicTimeManagerPrivate::_q_tempoValueChanged(double val) {
@@ -147,6 +163,7 @@ namespace Core {
 
         // Replace tempo
         m_timeline.addTempo(t.pos, t.t->value());
+        emit q->tempoAdded(t.pos, t.t->value());
     }
 
 }

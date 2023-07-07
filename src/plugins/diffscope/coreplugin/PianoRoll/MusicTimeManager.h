@@ -24,13 +24,11 @@ namespace Core {
         const QsApi::MusicTimeline *timeline() const;
 
     signals:
-        void timeSignatureAdded(int bar, QsApi::MusicTimeSignature timeSignature);
+        void timeSignatureAdded(int bar, const QsApi::MusicTimeSignature &timeSignature);
         void timeSignatureRemoved(int bar);
-        void timeSignatureMoved(int bar, int oldBar);
 
         void tempoAdded(int tick, double tempo);
-        void tempoRemoved(int tick, double tempo);
-        void tempoMoved(int tick, int oldTick);
+        void tempoRemoved(int tick);
 
     private:
         MusicTimeManagerPrivate *d;

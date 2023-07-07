@@ -266,7 +266,7 @@ namespace Core {
                 saveFileItem->setEnabled(!iWin->doc()->isVST() && iWin->doc()->isModified()); //
             });
 
-            connect(saveAsFileItem->action(), &QAction::triggered, this, [this, iWin]() {
+            connect(saveFileItem->action(), &QAction::triggered, this, [this, iWin]() {
                 auto doc = iWin->doc();
                 auto filePath = doc->filePath();
                 if (!QMFs::isFileExist(filePath)) {
