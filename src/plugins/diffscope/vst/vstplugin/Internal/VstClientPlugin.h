@@ -5,6 +5,8 @@
 
 namespace Vst::Internal {
 
+    class VstBridge;
+
     class VstClientPlugin : public ExtensionSystem::IPlugin {
         Q_OBJECT
         Q_PLUGIN_METADATA(IID "org.ChorusKit.DiffScope.Plugin" FILE "plugin.json")
@@ -20,6 +22,7 @@ namespace Vst::Internal {
                                const QStringList &args) override;
     private:
         static void generateVstConfig();
+        VstBridge *vstBridge = nullptr;
     };
 
 } // namespace Core

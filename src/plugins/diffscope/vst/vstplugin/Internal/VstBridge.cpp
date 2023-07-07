@@ -12,6 +12,7 @@
 #include <Window/IProjectWindow.h>
 #include <Window/IHomeWindow.h>
 #include "ICore.h"
+#include <CoreApi/ILoader.h>
 
 #include "AddOn/VstClientAddOn.h"
 
@@ -21,6 +22,7 @@ namespace Vst::Internal {
 
     VstBridge::VstBridge(QObject *parent): VstBridgeSource(parent), m_alivePipe(new QLocalSocket(this)) {
         m_instance = this;
+        connect(m_alivePipe, &QLocalSocket::disconnected, this, &VstBridge::finalizeVst);
     }
 
     VstBridge::~VstBridge() {
@@ -39,14 +41,16 @@ namespace Vst::Internal {
             qWarning() << "Cannot connect to alive pipe.";
             return false;
         }
-        connect(m_alivePipe, &QLocalSocket::disconnected, this, &VstBridge::finalizeVst);
         openDataToEditor({});
         return true;
     }
 
     void VstBridge::finalizeVst() {
         qDebug() << "VstBridge: finalizeVst";
-        if(m_clientAddOn) emit m_clientAddOn->windowHandle()->cast<Core::IProjectWindow>()->doc()->closeRequested();
+        if(m_clientAddOn) {
+            auto iWin = m_clientAddOn->windowHandle()->cast<Core::IProjectWindow>();
+            iWin->doc()->close();
+        }
         m_clientAddOn = nullptr;
     }
 
@@ -55,27 +59,38 @@ namespace Vst::Internal {
         static char failValue[1] = {-128};
         static const QByteArray failValueData(failValue, 1);
         if(!m_clientAddOn) return failValueData;
-        //TODO
-        return "test";
+        QByteArray data;
+        m_clientAddOn->windowHandle()->cast<Core::IProjectWindow>()->doc()->saveVST([&](const QByteArray &data_){
+            data = data_;
+            return true;
+        });
+        return data;
     }
 
     bool VstBridge::openDataToEditor(const QByteArray &data) {
         qDebug() << "VstBridge: openDataToEditor";
         auto doc = new Core::DspxDocument(Core::DspxDocument::VSTMode);
+        auto pseudoName = tr("VST Mode");
         if(data.isEmpty()) {
-            doc->makeNew("VST");
+            doc->makeNew(pseudoName);
         } else {
-            if (!doc->openRawData("VST", data)) {
-                delete doc;
-                return false;
+            if (!doc->openRawData(pseudoName, data)) {
+                doc->makeNew(pseudoName);
             }
         }
-        if(m_clientAddOn) emit m_clientAddOn->windowHandle()->cast<Core::IProjectWindow>()->doc()->closeRequested();
+        if(m_clientAddOn) m_clientAddOn->windowHandle()->cast<Core::IProjectWindow>()->doc()->close();
         Core::IWindow::create<Core::IProjectWindow>(doc);
-        if (qApp->property("closeHomeOnOpen").toBool() && Core::ICore::instance()->windowSystem()->count() == 2) {
-            auto iWin = Core::IHomeWindow::instance();
-            
+        auto rout = qobject_cast<Core::InitialRoutine *>(Core::ILoader::instance()->getFirstObject("choruskit_init_routine"));
+        if(rout && m_isLoadFromInitialization) {
+            connect(rout, &Core::InitialRoutine::done, this, [=]{
+                if(Core::IHomeWindow::instance()) {
+                    Core::IHomeWindow::instance()->window()->close();
+                }
+            });
         }
+        connect(doc, &Core::IDocument::changed, this, [=]{
+            emit this->documentChanged();
+        });
         return true;
     }
 
@@ -88,8 +103,18 @@ namespace Vst::Internal {
         qDebug() << "VstBridge: hideWindow";
         if(m_clientAddOn) m_clientAddOn->hideWindow();
     }
-
-    void VstBridge::notifySwitchAudioBuffer(qint64 position, int bufferSize, int channelCount, bool isPlaying, bool isRealtime) {
+    bool VstBridge::initializeProcess(int channelCount, int maxBufferSize, double sampleRate) {
+        return false;
+    }
+    void VstBridge::notifySwitchAudioBuffer(bool isRealtime, bool isPlaying, qint64 position, int bufferSize,
+                                            int channelCount) {
+    }
+    void VstBridge::finalizeProcess() {
+    }
+    void VstBridge::handleRemoteCommand() const {
+        if(m_clientAddOn) {
+            Core::ICore::showHome();
+        }
     }
 
 } // Vst

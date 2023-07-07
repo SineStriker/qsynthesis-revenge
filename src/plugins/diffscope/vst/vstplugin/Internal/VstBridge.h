@@ -28,15 +28,23 @@ namespace Vst::Internal {
 
         bool initializeVst() override;
         void finalizeVst() override;
+
         QByteArray saveDataFromEditor() override;
         bool openDataToEditor(const QByteArray &data) override;
+
         void showWindow() override;
         void hideWindow() override;
-        void notifySwitchAudioBuffer(qint64 position, int bufferSize, int channelCount, bool isPlaying, bool isRealtime) override;
+
+        bool initializeProcess(int channelCount, int maxBufferSize, double sampleRate) override;
+        void notifySwitchAudioBuffer(bool isRealtime, bool isPlaying, qint64 position, int bufferSize,
+                                     int channelCount) override;
+        void finalizeProcess() override;
 
     private:
         QLocalSocket *m_alivePipe;
         VstClientAddOn *m_clientAddOn = nullptr;
+        bool m_isLoadFromInitialization = false;
+        void handleRemoteCommand() const;
     };
 
 } // Vst

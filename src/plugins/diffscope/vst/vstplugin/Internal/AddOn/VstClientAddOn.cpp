@@ -46,4 +46,9 @@ namespace Vst::Internal {
         auto win = windowHandle()->window();
         win->hide();
     }
+
+    bool VstClientAddOn::isWindowHidden() const {
+        auto win = windowHandle()->window();
+        return win->isHidden();
+    }
 } // Internal

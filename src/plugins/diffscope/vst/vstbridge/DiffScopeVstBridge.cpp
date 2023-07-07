@@ -98,6 +98,9 @@ namespace Vst {
                     replicaInitialized();
                 }
             });
+            QObject::connect(vstRep, &VstBridgeReplica::documentChanged, vstRep, [=]{
+                callbacks->setDirty();
+            });
         });
 
         // Start editor process
@@ -114,6 +117,7 @@ namespace Vst {
 
     void DiffScopeVstBridge::terminate() {
         sbuf.detach();
+        QObject::disconnect(vstRep, &VstBridgeReplica::documentChanged, vstRep, nullptr);
         releaseSingleton();
     }
 

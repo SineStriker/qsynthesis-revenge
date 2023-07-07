@@ -2,10 +2,18 @@
 <!DOCTYPE TS>
 <TS version="2.1" language="ja_JP">
 <context>
+    <name>Vst::Internal::VstBridge</name>
+    <message>
+        <location filename="../../Internal/VstBridge.cpp" line="73"/>
+        <source>VST Mode</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>Vst::Internal::VstClientPlugin</name>
     <message>
-        <location filename="../../Internal/VstClientPlugin.cpp" line="39"/>
-        <source>Initializing vst support...</source>
+        <location filename="../../Internal/VstClientPlugin.cpp" line="41"/>
+        <source>Initializing VST plugin...</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

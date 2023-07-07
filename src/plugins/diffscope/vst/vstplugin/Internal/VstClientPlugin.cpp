@@ -38,13 +38,17 @@ namespace Vst {
             auto rout =
                 qobject_cast<Core::InitialRoutine *>(ILoader::instance()->getFirstObject("choruskit_init_routine"));
             if (rout) {
-                rout->splash()->showMessage(tr("Initializing vst support..."));
+                rout->splash()->showMessage(tr("Initializing VST plugin..."));
+                connect(rout, &Core::InitialRoutine::done, this, [=]{
+                    vstBridge->m_isLoadFromInitialization = false;
+                });
             }
 
             generateVstConfig();
 
             auto srcNode = new QRemoteObjectHost(QUrl("local:" + GLOBAL_UUID), this);
-            auto vstBridge = new VstBridge(this);
+            vstBridge = new VstBridge(this);
+            vstBridge->m_isLoadFromInitialization = arguments.contains("-vst");
             srcNode->enableRemoting(vstBridge);
 
             auto actionMgr = ICore::instance()->actionSystem();
@@ -90,6 +94,16 @@ namespace Vst {
 
         QObject *VstClientPlugin::remoteCommand(const QStringList &options, const QString &workingDirectory,
                                                 const QStringList &args) {
+            if(options.contains("-vst")) {
+                qDebug() << "VstClientPlugin: Remote command from vst mode";
+                if(vstBridge) vstBridge->showWindow();
+            } else {
+                qDebug() << "VstClientPlugin: Remote command from standalone mode";
+                // if there exists vst window and vst window is the only window, then show home window.
+                if(vstBridge->m_clientAddOn && Core::ICore::instance()->windowSystem()->count() == 1) {
+                    Core::ICore::showHome();
+                }
+            }
             return nullptr;
         }
 
