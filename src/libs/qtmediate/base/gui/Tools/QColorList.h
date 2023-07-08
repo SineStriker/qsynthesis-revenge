@@ -21,7 +21,7 @@ public:
 
     static QLatin1String MetaFunctionName();
 
-    friend QDebug operator<<(QDebug debug, const QColorList &list);
+    QMGUI_EXPORT friend QDebug operator<<(QDebug debug, const QColorList &list);
 
     QList<QColor> fromSet(const QSet<QColor> &) = delete;
 

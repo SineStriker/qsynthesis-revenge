@@ -2,7 +2,10 @@
 #include "QMarginsImpl.h"
 #include "QMetaTypeImpl.h"
 
+#include "QMCss.h"
+
 #include <QMetaType>
+#include <QRegularExpression>
 
 Qt::PenStyle StringToLineStyle(const QString &str, bool *ok) {
     Qt::PenStyle style = Qt::NoPen;
@@ -194,6 +197,8 @@ QLatin1String TypeToFunctionName(int id) {
         res = QTypeFace::MetaFunctionName();
     } else if (id == qMetaTypeId<QTypeList>()) {
         res = QTypeList::MetaFunctionName();
+    }else if (id == qMetaTypeId<QTypeMap>()) {
+        res = QTypeMap::MetaFunctionName();
     }
     return res;
 }
@@ -216,6 +221,57 @@ int FunctionNameToType(const QString &name) {
         id = qMetaTypeId<QTypeFace>();
     } else if (!name.compare(QTypeList::MetaFunctionName(), Qt::CaseInsensitive)) {
         id = qMetaTypeId<QTypeList>();
+    }else if (!name.compare(QTypeMap::MetaFunctionName(), Qt::CaseInsensitive)) {
+        id = qMetaTypeId<QTypeMap>();
     }
     return id;
+}
+
+QVariant StringToVariant(const QString &s) {
+    bool ok;
+    QStringList list = QMCss::extractFunctionToStringList(s, &ok);
+    if (ok) {
+        int id = FunctionNameToType(list.front());
+        if (id >= 0) {
+            QVariant var(list);
+            if (var.convert(id)) {
+                return var;
+            } else {
+                return s;
+            }
+        } else {
+            return s;
+        }
+    } else {
+        if (s.endsWith(QLatin1String(PixelSizeUnit), Qt::CaseInsensitive)) {
+            if (s.contains(' ')) {
+                // QSize
+                QRegularExpression regex(R"((\d+)px?\s+(\d+)px?)");
+                QRegularExpressionMatch match = regex.match(s);
+
+                QSize size;
+                if (match.hasMatch()) {
+                    QString widthString = match.captured(1);
+                    QString heightString = match.captured(2);
+                    int width = widthString.toInt();
+                    int height = heightString.toInt();
+                    size = QSize(width, height);
+                }
+                return size;
+            } else {
+                // QPixelSize
+                QVariant var;
+                var.setValue(QPixelSize::fromString(s));
+                return var;
+            }
+        } else {
+            bool ok2;
+            double val = s.toDouble(&ok2);
+            if (ok2) {
+                return val;
+            } else {
+                return s;
+            }
+        }
+    }
 }

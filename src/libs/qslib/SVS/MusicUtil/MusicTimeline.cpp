@@ -237,6 +237,11 @@ namespace QsApi {
         return list;
     }
 
+    QMap<int, MusicTimeSignature> MusicTimeline::timeSignatureMap() const {
+        Q_D(const MusicTimeline);
+        return d->timeSignatureMap;
+    }
+
     QList<int> MusicTimeline::timeSignatureBars() const {
         Q_D(const MusicTimeline);
         return d->timeSignatureMap.keys();
@@ -323,6 +328,11 @@ namespace QsApi {
             list.append({it.key(), it.value()});
         }
         return list;
+    }
+
+    QMap<int, double> MusicTimeline::tempoMap() const {
+        Q_D(const MusicTimeline);
+        return d->tempoMap;
     }
 
     QList<int> MusicTimeline::tempoTicks() const {

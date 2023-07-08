@@ -110,10 +110,10 @@ namespace Core::Internal {
      */
 
     HomeRecentBottomFrame::HomeRecentBottomFrame(QWidget *parent) : QFrame(parent) {
-        fileWidget = new QsApi::FileListWidget();
+        fileWidget = new QsApi::TitleListWidget();
         ICore::autoPolishScrollArea(fileWidget);
 
-        fileWidget->setObjectName("file-widget");
+        fileWidget->setObjectName("home-file-widget");
         fileWidget->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Expanding);
 
         emptyLabel = new QLabel();
@@ -133,7 +133,7 @@ namespace Core::Internal {
 
         auto docMgr = ICore::instance()->documentSystem();
         connect(docMgr, &DocumentSystem::recentFilesChanged, this, &HomeRecentBottomFrame::_q_recentFilesChanged);
-        connect(fileWidget, &QsApi::FileListWidget::itemClickedEx, this, &HomeRecentBottomFrame::_q_itemClickedEx);
+        connect(fileWidget, &QsApi::TitleListWidget::itemClickedEx, this, &HomeRecentBottomFrame::_q_itemClickedEx);
 
         // Reload recent files once
         reloadRecentFiles();

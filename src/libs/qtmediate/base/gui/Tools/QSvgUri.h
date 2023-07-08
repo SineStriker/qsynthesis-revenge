@@ -46,7 +46,7 @@ public:
 
     static QLatin1String MetaFunctionName();
 
-    friend QDebug operator<<(QDebug debug, const QSvgUri &uri);
+    QMGUI_EXPORT friend QDebug operator<<(QDebug debug, const QSvgUri &uri);
 };
 
 Q_DECLARE_METATYPE(QSvgUri)

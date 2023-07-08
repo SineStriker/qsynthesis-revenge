@@ -5,7 +5,7 @@
 #include <QVBoxLayout>
 
 #include "CommandPalette.h"
-#include "TitleListItemDelegate.h"
+#include "TitleListWidget.h"
 
 namespace QsApi {
 
@@ -22,12 +22,10 @@ namespace QsApi {
 
         QVBoxLayout *m_layout;
         QLineEdit *m_lineEdit;
-        QListWidget *m_listWidget;
+        TitleListWidget *m_listWidget;
 
         bool noClickOutsideEventToHandle;
         bool paletteActive;
-
-        TitleListItemDelegate *m_delegate;
 
         void showPalette();
         void hidePalette();

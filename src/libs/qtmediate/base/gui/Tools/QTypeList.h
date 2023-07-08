@@ -21,7 +21,7 @@ public:
 
     static QLatin1String MetaFunctionName();
 
-    friend QDebug operator<<(QDebug debug, const QTypeList &list);
+    QMGUI_EXPORT friend QDebug operator<<(QDebug debug, const QTypeList &list);
 
     friend uint qHash(const QVariant &var, uint seed);
 };

@@ -37,6 +37,7 @@ const char QCssCustomValue_Pen_Join_Round[] = "round";
 
 const char QCssCustomValue_ColorList[] = "qcolors";
 const char QCssCustomValue_TypeList[] = "qvariants";
+const char QCssCustomValue_TypeMap[] = "qvariantmap";
 const char QCssCustomValue_List[] = "qlist";
 
 const char QCssCustomValue_RectStyle[] = "qrectstyle";
@@ -58,5 +59,11 @@ QStringList SplitStringByComma(const QString &str);
 QLatin1String TypeToFunctionName(int id);
 
 int FunctionNameToType(const QString &name);
+
+QVariant StringToVariant(const QString &s);
+
+inline QString combineFunctionStringList(const QStringList &stringList) {
+    return stringList.size() != 2 ? QString() : stringList.front() + '(' + stringList.back() + ')';
+}
 
 #endif // QMETATYPEUTILS_H

@@ -116,11 +116,11 @@ Core--Internal--HomeRecentTopFrame>CTabButton {
 /* Recent Top Buttons */
 
 Core--Internal--HomeRecentTopFrame>CTabButton#new-button {
-    --iconUp: svg(":/svg/home/new-file.svg", ${home.recent.topButtons.iconColor});
+    --iconUp: svg(":/svg/home/new-file.svg", "${home.recent.topButtons.iconColor}");
 }
 
 Core--Internal--HomeRecentTopFrame>CTabButton#open-button {
-    --iconUp: svg(":/svg/home/open-file.svg", ${home.recent.topButtons.iconColor});
+    --iconUp: svg(":/svg/home/open-file.svg", "${home.recent.topButtons.iconColor}");
 }
 
 Core--Internal--HomeRecentTopFrame>CTabButton[type=top-button] {
@@ -162,29 +162,30 @@ Core--Internal--HomeRecentBottomFrame>QLabel {
     color: #CCCCCC;
 }
 
-Core--Internal--HomeRecentBottomFrame>QsApi--FileListWidget {
+Core--Internal--HomeRecentBottomFrame>QsApi--TitleListWidget {
     border: none;
     background-color: transparent;
-    --styleData: qvariants(/* styleData */
-    qrectstyle(0, (transparent, rgba(255, 255, 255, 10%))), /* idleType */
-    qpen(transparent, 1), /* underline */
-    qtypeface(#E0E0E0, 15px), /* fileType */
-    qtypeface(#909090, 15px), /* locType */
-    qtypeface(#909090, 15px), /* dateType */
-    qtypeface(transparent, 15px), /* dateHighlightType */
-    qrectstyle(0, 0, 2px, transparent), /* dateBackType */
-    qmargins(1.25px, 10px), /* fileMargins */
-    qmargins(1.25px, 10px), /* locMargins */
-    qmargins(0, 10px), /* dateMargins */
-    qmargins(10px), /* iconMargins */
-    qmargins(3.75px, 10px), /* padding */
-    qmargins(3px, 5px, 3px, 5px), /* margins */
-    40px 40px, /* defaultIconSize */
+    --styleData: qvariantmap(/* styleData */
+    background=qrectstyle(0, (transparent, rgba(255, 255, 255, 10%))), /**/
+    underline=qpen(transparent, 1), /**/
+    titleShape=qtypeface(#E0E0E0, 15px), /**/
+    subShape=qtypeface(#909090, 15px), /**/
+    descShape=qtypeface(#909090, 15px), /**/
+    descHighlightShape=qtypeface(transparent, 15px), /**/
+    descBackgroundShape=qrectstyle(0, 0, 2px, transparent), /**/
+    titleMargins=qmargins(1.25px, 10px), /**/
+    subMargins=qmargins(1.25px, 10px), /**/
+    descMargins=qmargins(0, 10px), /**/
+    iconMargins=qmargins(10px), /**/
+    padding=qmargins(3.75px, 10px), /**/
+    margins=qmargins(3px, 5px, 3px, 5px), /**/
+    defaultIconSize=40px 40px, /**/
     );
 }
 
 
 /* Home Recovery Widget */
+
 
 /* Core--Internal--HomeRecoveryWidget {
     padding: 20px;

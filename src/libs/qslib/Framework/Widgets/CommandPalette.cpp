@@ -31,8 +31,8 @@ namespace QsApi {
         m_lineEdit = new CLineEdit();
         m_lineEdit->setObjectName("search-box");
 
-        m_listWidget = new QListWidget();
-        m_listWidget->setObjectName("item-list");
+        m_listWidget = new TitleListWidget();
+        m_listWidget->setObjectName("command-palette-list");
 
         m_layout = new QVBoxLayout(q);
         m_layout->addWidget(m_lineEdit);
@@ -46,16 +46,10 @@ namespace QsApi {
         m_lineEdit->installEventFilter(this);
         m_listWidget->installEventFilter(this);
 
-        m_delegate = new TitleListItemDelegate(this);
-        m_listWidget->setItemDelegate(m_delegate);
-#ifndef Q_OS_WINDOWS
-        m_listWidget->setMouseTracking(true);
-#endif
-
         connect(m_lineEdit, &QLineEdit::textChanged, this, &CommandPalettePrivate::_q_textChanged);
         connect(m_listWidget, &QListWidget::currentRowChanged, this, &CommandPalettePrivate::_q_currentRowChanged);
         connect(m_listWidget, &QListWidget::currentItemChanged, this, &CommandPalettePrivate::_q_currentItemChanged);
-        connect(m_delegate, &TitleListItemDelegate::clicked, this, &CommandPalettePrivate::_q_delegateClicked);
+        connect(m_listWidget, &TitleListWidget::itemClickedEx, this, &CommandPalettePrivate::_q_delegateClicked);
 
         q->hide();
     }
@@ -339,20 +333,6 @@ namespace QsApi {
     void CommandPalette::setFilterKeyword(const QString &keyword) {
         Q_D(CommandPalette);
         d->m_lineEdit->setText(keyword);
-    }
-
-    QTypeList CommandPalette::styleData() const {
-        Q_D(const CommandPalette);
-        return d->m_delegate->styleData();
-    }
-
-    void CommandPalette::setStyleData(const QTypeList &list) {
-        Q_D(CommandPalette);
-
-        d->m_delegate->setStyleData(list);
-        update();
-
-        emit styleDataChanged();
     }
 
     void CommandPalette::start() {

@@ -11,6 +11,7 @@
 class QMGUI_EXPORT QRectStyle : public QRect {
 public:
     QRectStyle();
+    QRectStyle(const QRect &rect, const QColor &color);
 
 private:
     void init();
@@ -49,7 +50,7 @@ public:
 
     static QLatin1String MetaFunctionName();
 
-    friend QDebug operator<<(QDebug debug, const QRectStyle &info);
+    QMGUI_EXPORT friend QDebug operator<<(QDebug debug, const QRectStyle &info);
 };
 
 Q_DECLARE_METATYPE(QRectStyle)

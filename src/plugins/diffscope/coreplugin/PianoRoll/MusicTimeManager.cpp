@@ -33,6 +33,7 @@ namespace Core {
             for (const auto &seq : seqs) {
                 auto ts = timeSigs->at(seq);
                 d->timeSigs.insert(seq, {ts, ts->barIndex()});
+                d->m_timeline.addTimeSignature(ts->barIndex(), ts->value());
             }
         }
 
@@ -45,6 +46,7 @@ namespace Core {
             for (const auto &seq : seqs) {
                 auto t = tempos->at(seq);
                 d->tempos.insert(seq, {t, t->position()});
+                d->m_timeline.addTempo(t->position(), t->value());
             }
         }
 
@@ -69,6 +71,7 @@ namespace Core {
                 &MusicTimeManagerPrivate::_q_timeSignatureValueChanged);
 
         emit q->timeSignatureAdded(ts->barIndex(), ts->value());
+        emit q->changed();
     }
 
     void MusicTimeManagerPrivate::_q_timeSignatureRemoved(int seq) {
@@ -83,6 +86,7 @@ namespace Core {
         timeSigs.erase(it);
 
         emit q->timeSignatureRemoved(ts->barIndex());
+        emit q->changed();
     }
 
     void MusicTimeManagerPrivate::_q_timeSignatureIndexChanged(int bar) {
@@ -100,6 +104,8 @@ namespace Core {
         // Insert new time signature
         m_timeline.addTimeSignature(bar, ts.ts->value());
         emit q->timeSignatureAdded(bar, ts.ts->value());
+
+        emit q->changed();
     }
 
     void MusicTimeManagerPrivate::_q_timeSignatureValueChanged(int num, int den) {
@@ -114,6 +120,8 @@ namespace Core {
         // Replace time signature
         m_timeline.addTimeSignature(ts.bar, ts.ts->value());
         emit q->timeSignatureAdded(ts.bar, ts.ts->value());
+
+        emit q->changed();
     }
 
     void MusicTimeManagerPrivate::_q_tempoInserted(int seq, DspxTempoEntity *t) {
@@ -124,6 +132,7 @@ namespace Core {
         connect(t, &DspxTempoEntity::valueChanged, this, &MusicTimeManagerPrivate::_q_tempoValueChanged);
 
         emit q->tempoAdded(t->position(), t->value());
+        emit q->changed();
     }
 
     void MusicTimeManagerPrivate::_q_tempoRemoved(int seq) {
@@ -136,6 +145,7 @@ namespace Core {
         tempos.erase(it);
 
         emit q->tempoRemoved(t->position());
+        emit q->changed();
     }
 
     void MusicTimeManagerPrivate::_q_tempoPosChanged(int pos) {
@@ -153,6 +163,8 @@ namespace Core {
         // Insert new tempo
         m_timeline.addTempo(pos, t.t->value());
         emit q->tempoAdded(pos, t.t->value());
+
+        emit q->changed();
     }
 
     void MusicTimeManagerPrivate::_q_tempoValueChanged(double val) {
@@ -164,6 +176,8 @@ namespace Core {
         // Replace tempo
         m_timeline.addTempo(t.pos, t.t->value());
         emit q->tempoAdded(t.pos, t.t->value());
+
+        emit q->changed();
     }
 
 }

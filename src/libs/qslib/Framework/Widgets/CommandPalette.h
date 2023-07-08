@@ -5,7 +5,7 @@
 #include <QVBoxLayout>
 
 #include <QPixelSize.h>
-#include <QTypeList.h>
+#include <QTypeMap.h>
 
 #include "QsFrameworkGlobal.h"
 #include "Widgets/BaseContainer.h"
@@ -18,8 +18,6 @@ namespace QsApi {
         Q_OBJECT
         Q_DECLARE_PRIVATE(CommandPalette)
         Q_LAYOUT_PROPERTY_DELCARE
-        Q_PROPERTY(QTypeList styleData READ styleData WRITE setStyleData NOTIFY styleDataChanged)
-
     public:
         explicit CommandPalette(QWidget *parent = nullptr);
         ~CommandPalette();
@@ -41,10 +39,6 @@ namespace QsApi {
 
         QString filterKeyword() const;
         void setFilterKeyword(const QString &keyword);
-
-    public:
-        QTypeList styleData() const;
-        void setStyleData(const QTypeList &list);
 
     public slots:
         void start();

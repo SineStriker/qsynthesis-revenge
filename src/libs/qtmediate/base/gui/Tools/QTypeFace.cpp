@@ -202,3 +202,8 @@ QTypeFace QTypeFace::fromStringList(const QStringList &stringList) {
 QLatin1String QTypeFace::MetaFunctionName() {
     return QLatin1String(QCssCustomValue_TypeFace);
 }
+
+QDebug operator<<(QDebug debug, const QTypeFace &tf) {
+    debug.noquote().nospace() << "QTypeFace(" << tf.colors() << ", " << tf.m_font << ")";
+    return debug;
+}

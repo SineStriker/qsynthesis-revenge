@@ -64,10 +64,7 @@ public:
 
     static QLatin1String MetaFunctionName();
 
-    friend QDebug operator<<(QDebug debug, const QTypeFace &tf) {
-        debug.noquote().nospace() << "QTypeFace(" << tf.colors() << ", " << tf.m_font << ")";
-        return debug;
-    }
+    QMGUI_EXPORT friend QDebug operator<<(QDebug debug, const QTypeFace &tf);
 };
 
 Q_DECLARE_METATYPE(QTypeFace)

@@ -33,7 +33,7 @@ public:
     bool operator!=(const QUstPoint &point) const;
     bool operator<(const QUstPoint &point) const;
 
-    friend QDebug operator<<(QDebug debug, const QUstPoint &point);
+    QSSVS_API friend QDebug operator<<(QDebug debug, const QUstPoint &point);
 };
 
 #endif // QUSTPOINT_H

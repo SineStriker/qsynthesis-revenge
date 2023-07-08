@@ -12,8 +12,8 @@
 #include "CTabButton.h"
 #include "Layout/QMEqualBoxLayout.h"
 #include "QPixelSize.h"
-#include "Widgets/FileListWidget.h"
 #include "Widgets/LinearScrollArea.h"
+#include "Widgets/TitleListWidget.h"
 
 #include "Interfaces/IButtonBar.h"
 
@@ -80,7 +80,7 @@ namespace Core::Internal {
 
     private:
         QVBoxLayout *bottomLayout;
-        QsApi::FileListWidget *fileWidget;
+        QsApi::TitleListWidget *fileWidget;
         QLabel *emptyLabel;
 
         QString m_keyword;

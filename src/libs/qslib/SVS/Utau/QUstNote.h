@@ -51,7 +51,7 @@ public:
 
     bool operator==(const QUstNote &note) const;
 
-    friend QDebug operator<<(QDebug debug, const QUstNote &note);
+    QSSVS_API friend QDebug operator<<(QDebug debug, const QUstNote &note);
 };
 
 #endif // QUSTNOTE_H

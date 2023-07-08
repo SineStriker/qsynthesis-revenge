@@ -11,6 +11,7 @@
 #include "QSvgUri.h"
 #include "QTypeFace.h"
 #include "QTypeList.h"
+#include "QTypeMap.h"
 
 namespace QMetaTypeImpl {
 
@@ -61,6 +62,10 @@ namespace QMetaTypeImpl {
     QTypeList StringListToTypeList(const QStringList &stringList);
 
     QStringList TypeListToStringList(const QTypeList &types);
+
+    QTypeMap StringListToTypeMap(const QStringList &stringList);
+
+    QStringList TypeMapToStringList(const QTypeMap &types);
 
 };
 

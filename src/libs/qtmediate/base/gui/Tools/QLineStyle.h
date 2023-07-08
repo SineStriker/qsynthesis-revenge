@@ -21,7 +21,7 @@ public:
 
     static QLatin1String MetaFunctionName();
 
-    friend QDebug operator<<(QDebug debug, const QLineStyle &pen);
+    QMGUI_EXPORT friend QDebug operator<<(QDebug debug, const QLineStyle &pen);
 };
 
 Q_DECLARE_METATYPE(QLineStyle)

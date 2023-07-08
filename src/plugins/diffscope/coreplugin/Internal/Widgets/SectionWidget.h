@@ -5,6 +5,8 @@
 
 #include <QPixelSize.h>
 
+#include <QGraphicsScene>
+
 namespace Core::Internal {
 
     class SectionWidget : public SectionBar {
@@ -14,6 +16,10 @@ namespace Core::Internal {
         explicit SectionWidget(IProjectWindow *iWin, QWidget *parent = nullptr);
         ~SectionWidget();
 
+        void initialize() override;
+        void extensionInitialized() override;
+
+    public:
         QPixelSize preferredHeight() const;
         void setPreferredHeight(const QPixelSize &height);
 
@@ -22,8 +28,13 @@ namespace Core::Internal {
     protected:
         void paintEvent(QPaintEvent *event) override;
 
+        bool eventFilter(QObject *obj, QEvent *event) override;
+
     private:
         int m_preferredHeight;
+
+        QGraphicsView *view;
+        QGraphicsScene *scene;
     };
 
 }

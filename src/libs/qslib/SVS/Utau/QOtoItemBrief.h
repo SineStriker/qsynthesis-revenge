@@ -21,7 +21,7 @@ public:
     bool operator==(const QOtoItemBrief &oCorrect) const;
     bool operator!=(const QOtoItemBrief &oCorrect) const;
 
-    friend QDebug operator<<(QDebug debug, const QOtoItemBrief &item);
+    QSSVS_API friend QDebug operator<<(QDebug debug, const QOtoItemBrief &item);
 };
 
 #endif // QOTOITEMBRIEF_H

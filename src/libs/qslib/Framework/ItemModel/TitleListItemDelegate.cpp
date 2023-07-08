@@ -171,22 +171,28 @@ namespace QsApi {
     void TitleListItemDelegatePrivate::init() {
     }
 
-    QTypeList TitleListItemDelegatePrivate::styleData_helper() const {
+    QTypeMap TitleListItemDelegatePrivate::styleData_helper() const {
         return {
-            QVariant::fromValue(m_backgroundType),  QVariant::fromValue(m_underline),
-            QVariant::fromValue(m_fileType),        QVariant::fromValue(m_locType),
-            QVariant::fromValue(m_dateType),        QVariant::fromValue(m_dateHighlightType),
-            QVariant::fromValue(m_dateBackType),
+            {"background",          QVariant::fromValue(m_backgroundType)   },
+            {"underline",           QVariant::fromValue(m_underline)        },
+            {"titleShape",          QVariant::fromValue(m_fileType)         },
+            {"subShape",            QVariant::fromValue(m_locType)          },
+            {"descShape",           QVariant::fromValue(m_dateType)         },
+            {"descHighlightShape",  QVariant::fromValue(m_dateHighlightType)},
+            {"descBackgroundShape", QVariant::fromValue(m_dateBackType)     },
 
-            QVariant::fromValue(m_fileMargins),     QVariant::fromValue(m_locMargins),
-            QVariant::fromValue(m_dateMargins),     QVariant::fromValue(m_iconMargins),
-            QVariant::fromValue(m_padding),         QVariant::fromValue(m_margins),
+            {"titleMargins",        QVariant::fromValue(m_fileMargins)      },
+            {"subMargins",          QVariant::fromValue(m_locMargins)       },
+            {"descMargins",         QVariant::fromValue(m_dateMargins)      },
+            {"iconMargins",         QVariant::fromValue(m_iconMargins)      },
+            {"padding",             QVariant::fromValue(m_padding)          },
+            {"margins",             QVariant::fromValue(m_margins)          },
 
-            QVariant::fromValue(m_defaultIconSize),
+            {"defaultIconSize",     QVariant::fromValue(m_defaultIconSize)  },
         };
     }
 
-    void TitleListItemDelegatePrivate::setStyleData_helper(const QTypeList &list) {
+    void TitleListItemDelegatePrivate::setStyleData_helper(const QTypeMap &map) {
         auto decodeStyle = [](const QVariant &var, auto &val) {
             using Type = decltype(typename std::remove_reference<decltype(val)>::type());
             if (var.canConvert<Type>()) {
@@ -194,26 +200,22 @@ namespace QsApi {
             }
         };
 
-        if (list.size() >= 14) {
-            int i = 0;
+        decodeStyle(map["background"], m_backgroundType);
+        decodeStyle(map["underline"], m_underline);
+        decodeStyle(map["titleShape"], m_fileType);
+        decodeStyle(map["subShape"], m_locType);
+        decodeStyle(map["descShape"], m_dateType);
+        decodeStyle(map["descHighlightShape"], m_dateHighlightType);
+        decodeStyle(map["descBackgroundShape"], m_dateBackType);
 
-            decodeStyle(list.at(i++), m_backgroundType);
-            decodeStyle(list.at(i++), m_underline);
-            decodeStyle(list.at(i++), m_fileType);
-            decodeStyle(list.at(i++), m_locType);
-            decodeStyle(list.at(i++), m_dateType);
-            decodeStyle(list.at(i++), m_dateHighlightType);
-            decodeStyle(list.at(i++), m_dateBackType);
+        decodeStyle(map["titleMargins"], m_fileMargins);
+        decodeStyle(map["subMargins"], m_locMargins);
+        decodeStyle(map["descMargins"], m_dateMargins);
+        decodeStyle(map["iconMargins"], m_iconMargins);
+        decodeStyle(map["padding"], m_padding);
+        decodeStyle(map["margins"], m_margins);
 
-            decodeStyle(list.at(i++), m_fileMargins);
-            decodeStyle(list.at(i++), m_locMargins);
-            decodeStyle(list.at(i++), m_dateMargins);
-            decodeStyle(list.at(i++), m_iconMargins);
-            decodeStyle(list.at(i++), m_padding);
-            decodeStyle(list.at(i++), m_margins);
-
-            decodeStyle(list.at(i++), m_defaultIconSize);
-        }
+        decodeStyle(map["defaultIconSize"], m_defaultIconSize);
     }
 
     TitleListItemDelegate::TitleListItemDelegate(QObject *parent)
@@ -453,13 +455,13 @@ namespace QsApi {
         }
     }
 
-    QTypeList TitleListItemDelegate::styleData() const {
+    QTypeMap TitleListItemDelegate::styleData() const {
         Q_D(const TitleListItemDelegate);
         return d->styleData_helper();
     }
-    void TitleListItemDelegate::setStyleData(const QTypeList &list) {
+    void TitleListItemDelegate::setStyleData(const QTypeMap &map) {
         Q_D(TitleListItemDelegate);
-        d->setStyleData_helper(list);
+        d->setStyleData_helper(map);
     }
 
     bool TitleListItemDelegate::editorEvent(QEvent *event, QAbstractItemModel *model,

@@ -80,6 +80,7 @@ namespace QsApi {
         void addTimeSignatures(const QList<QPair<int, MusicTimeSignature>> &timeSignatureList);
         void removeTimeSignatures(const QList<int> &bars);
         QList<QPair<int, MusicTimeSignature>> timeSignatures() const;
+        QMap<int, MusicTimeSignature> timeSignatureMap() const;
         QList<int> timeSignatureBars() const;
         MusicTimeSignature timeSignature(int bar) const;
         int nearestTimeSignatureBar(int bar) const;
@@ -89,6 +90,7 @@ namespace QsApi {
         void addTempos(const QList<QPair<int, double>> &tempos);
         void removeTempos(const QList<int> &ticks);
         QList<QPair<int, double>> tempos() const;
+        QMap<int, double> tempoMap() const;
         QList<int> tempoTicks() const;
         double tempo(int tick) const;
         int nearestTempoTick(int tick) const;

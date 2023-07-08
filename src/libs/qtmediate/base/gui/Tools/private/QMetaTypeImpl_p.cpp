@@ -39,4 +39,7 @@ void Register_QMetaTypeImpl() {
 
     QMetaType::registerConverter<QStringList, QTypeList>(StringListToTypeList);
     QMetaType::registerConverter<QTypeList, QStringList>(TypeListToStringList);
+
+    QMetaType::registerConverter<QStringList, QTypeMap>(StringListToTypeMap);
+    QMetaType::registerConverter<QTypeMap, QStringList>(TypeMapToStringList);
 }

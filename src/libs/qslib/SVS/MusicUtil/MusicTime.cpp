@@ -9,6 +9,12 @@
 
 namespace QsApi {
 
+    QDebug operator<<(QDebug debug, const MusicTime &time) {
+        QDebugStateSaver saver(debug);
+        qDebug().noquote() << "MusicTime(" << time.m << ", " << time.b << ", " << time.t << ")";
+        return debug;
+    }
+
     PersistentMusicTimeData::PersistentMusicTimeData(const MusicTimeline *timeline, const MusicTimelinePrivate *td,
                                                      int totalTick)
         : timeline(timeline), td(td), totalTick(totalTick) {

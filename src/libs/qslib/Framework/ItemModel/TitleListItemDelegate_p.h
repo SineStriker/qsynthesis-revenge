@@ -35,16 +35,8 @@ namespace QsApi {
         QMargins m_iconMargins;
         QSize m_defaultIconSize;
 
-        [[nodiscard]] QTypeList styleData_helper() const;
-        void setStyleData_helper(const QTypeList &list);
-
-        template <class T>
-        inline void decodeStyle(const QVariant &var, void (TitleListItemDelegate::*func)(const T &)) {
-            Q_Q(TitleListItemDelegate);
-            if (var.canConvert<T>()) {
-                (q->*func)(var.value<T>());
-            }
-        }
+        QTypeMap styleData_helper() const;
+        void setStyleData_helper(const QTypeMap &map);
     };
 
 }

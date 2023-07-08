@@ -1,14 +1,19 @@
 #include "QRectStyle.h"
 #include "private/QMetaTypeUtils.h"
 
-#include "QMCss.h"
 #include "QMBatch.h"
+#include "QMCss.h"
 
 #include <QDebug>
 
 QRectStyle::QRectStyle() {
     init();
 }
+
+QRectStyle::QRectStyle(const QRect &rect, const QColor &color) : m_rect(rect), m_colors({color}) {
+    init();
+}
+
 
 void QRectStyle::init() {
     m_radius = 0;

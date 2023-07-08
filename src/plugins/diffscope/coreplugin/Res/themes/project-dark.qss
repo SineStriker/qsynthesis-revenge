@@ -158,6 +158,7 @@ Core--Internal--PianoKey[color=black]:hover {
 
 Core--Internal--SectionWidget {
     --preferredHeight: 40px;
+    background-color: #292929;
 }
 
 

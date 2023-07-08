@@ -30,6 +30,8 @@ namespace Core {
         void tempoAdded(int tick, double tempo);
         void tempoRemoved(int tick);
 
+        void changed();
+
     private:
         MusicTimeManagerPrivate *d;
     };

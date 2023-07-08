@@ -6,11 +6,31 @@
 #include <QLineStyle.h>
 #include <QRectStyle.h>
 #include <QTypeFace.h>
-#include <QTypeList.h>
+#include <QTypeMap.h>
 
 #include "QsFrameworkGlobal.h"
 
 namespace QsApi {
+
+    /**
+     *
+     * StyleData:
+     *  - background: QRectStyle
+     *  - underline: QPen
+     *  - titleShape: QTypeFace
+     *  - subShape: QTypeFace
+     *  - descShape: QTypeFace
+     *  - descHighlightShape: QTypeFace
+     *  - descBackgroundShape: QTypeFace
+     *  - titleMargins: QMargins
+     *  - subMargins: QMargins
+     *  - descMargins: QMargins
+     *  - iconMargins: QMargins
+     *  - padding: QMargins
+     *  - margins: QMargins
+     *  - defaultIconSize: QSize
+     *
+     */
 
     class TitleListItemDelegatePrivate;
 
@@ -26,8 +46,8 @@ namespace QsApi {
         void paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const override;
 
     public:
-        QTypeList styleData() const;
-        void setStyleData(const QTypeList &list);
+        QTypeMap styleData() const;
+        void setStyleData(const QTypeMap &map);
 
     signals:
         void clicked(const QModelIndex &index, int button);

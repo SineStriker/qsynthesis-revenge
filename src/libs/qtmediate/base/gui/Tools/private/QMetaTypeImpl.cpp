@@ -6,106 +6,117 @@
 #include <QMap>
 #include <QMargins>
 
-QStringList QMetaTypeImpl::MarginsToStringList(const QMargins &margins) {
-    return QMarginsImpl::toStringList(margins);
-}
+namespace QMetaTypeImpl {
 
-QMargins QMetaTypeImpl::StringListToMargins(const QStringList &stringList) {
-    return QMarginsImpl::fromStringList(stringList);
-}
-
-QString QMetaTypeImpl::MarginsToString(const QMargins &margins) {
-    return QString("%1%2").arg(QString::number(margins.left()), QLatin1String(PixelSizeUnit));
-}
-
-QMargins QMetaTypeImpl::StringToMargins(const QString &string) {
-    QPixelSize px = QPixelSize::fromString(string);
-    int value = px.value();
-    return QMargins(value, value, value, value);
-}
-
-QStringList QMetaTypeImpl::PenToStringList(const QLineStyle &pen) {
-    return pen.toStringList();
-}
-
-QLineStyle QMetaTypeImpl::StringListToPen(const QStringList &stringList) {
-    return QLineStyle::fromStringList(stringList);
-}
-
-QStringList QMetaTypeImpl::DataUriToStringList(const QDataUri &uri) {
-    return uri.toStringList();
-}
-
-QDataUri QMetaTypeImpl::StringListToDataUri(const QStringList &stringList) {
-    return QDataUri::fromStringList(stringList);
-}
-
-QStringList QMetaTypeImpl::SvgUriToStringList(const QSvgUri &uri) {
-    return uri.toStringList();
-}
-
-QSvgUri QMetaTypeImpl::StringListToSvgUri(const QStringList &stringList) {
-    return QSvgUri::fromStringList(stringList);
-}
-
-QString QMetaTypeImpl::SvgUriToString(const QSvgUri &uri) {
-    return uri.filename();
-}
-
-QSvgUri QMetaTypeImpl::StringToSvgUri(const QString &string) {
-    QFileInfo info(string);
-    if (info.isFile() && string.compare(QLatin1String(NoneValue), Qt::CaseInsensitive)) {
-        QSvgUri uri;
-        uri.setFilename(info.fileName());
-        return uri;
+    QStringList MarginsToStringList(const QMargins &margins) {
+        return QMarginsImpl::toStringList(margins);
     }
-    return QSvgUri();
-}
 
-QStringList QMetaTypeImpl::TypeFaceToStringList(const QTypeFace &tf) {
-    return tf.toStringList();
-}
+    QMargins StringListToMargins(const QStringList &stringList) {
+        return QMarginsImpl::fromStringList(stringList);
+    }
 
-QTypeFace QMetaTypeImpl::StringListToTypeFace(const QStringList &stringList) {
-    return QTypeFace::fromStringList(stringList);
-}
+    QString MarginsToString(const QMargins &margins) {
+        return QString("%1%2").arg(QString::number(margins.left()), QLatin1String(PixelSizeUnit));
+    }
 
-QString QMetaTypeImpl::PixelSizeToString(const QPixelSize &pixel) {
-    return pixel.toString();
-}
+    QMargins StringToMargins(const QString &string) {
+        QPixelSize px = QPixelSize::fromString(string);
+        int value = px.value();
+        return QMargins(value, value, value, value);
+    }
 
-QPixelSize QMetaTypeImpl::StringToPixelSize(const QString &string) {
-    return QPixelSize::fromString(string);
-}
+    QStringList PenToStringList(const QLineStyle &pen) {
+        return pen.toStringList();
+    }
 
-double QMetaTypeImpl::PixelSizeToDouble(const QPixelSize &pixel) {
-    return pixel.value();
-}
+    QLineStyle StringListToPen(const QStringList &stringList) {
+        return QLineStyle::fromStringList(stringList);
+    }
 
-QPixelSize QMetaTypeImpl::DoubleToPixelSize(double size) {
-    return QPixelSize(size);
-}
+    QStringList DataUriToStringList(const QDataUri &uri) {
+        return uri.toStringList();
+    }
 
-QColorList QMetaTypeImpl::StringListColorList(const QStringList &stringList) {
-    return QColorList::fromStringList(stringList);
-}
+    QDataUri StringListToDataUri(const QStringList &stringList) {
+        return QDataUri::fromStringList(stringList);
+    }
 
-QStringList QMetaTypeImpl::ColorListToStringList(const QColorList &colors) {
-    return colors.toStringList();
-}
+    QStringList SvgUriToStringList(const QSvgUri &uri) {
+        return uri.toStringList();
+    }
 
-QRectStyle QMetaTypeImpl::StringListToRectStyle(const QStringList &stringList) {
-    return QRectStyle::fromStringList(stringList);
-}
+    QSvgUri StringListToSvgUri(const QStringList &stringList) {
+        return QSvgUri::fromStringList(stringList);
+    }
 
-QStringList QMetaTypeImpl::RectStyleToStringList(const QRectStyle &rectStyle) {
-    return rectStyle.toStringList();
-}
+    QString SvgUriToString(const QSvgUri &uri) {
+        return uri.filename();
+    }
 
-QTypeList QMetaTypeImpl::StringListToTypeList(const QStringList &stringList) {
-    return QTypeList::fromStringList(stringList);
-}
+    QSvgUri StringToSvgUri(const QString &string) {
+        QFileInfo info(string);
+        if (info.isFile() && string.compare(QLatin1String(NoneValue), Qt::CaseInsensitive)) {
+            QSvgUri uri;
+            uri.setFilename(info.fileName());
+            return uri;
+        }
+        return QSvgUri();
+    }
 
-QStringList QMetaTypeImpl::TypeListToStringList(const QTypeList &types) {
-    return types.toStringList();
+    QStringList TypeFaceToStringList(const QTypeFace &tf) {
+        return tf.toStringList();
+    }
+
+    QTypeFace StringListToTypeFace(const QStringList &stringList) {
+        return QTypeFace::fromStringList(stringList);
+    }
+
+    QString PixelSizeToString(const QPixelSize &pixel) {
+        return pixel.toString();
+    }
+
+    QPixelSize StringToPixelSize(const QString &string) {
+        return QPixelSize::fromString(string);
+    }
+
+    double PixelSizeToDouble(const QPixelSize &pixel) {
+        return pixel.value();
+    }
+
+    QPixelSize DoubleToPixelSize(double size) {
+        return QPixelSize(size);
+    }
+
+    QColorList StringListColorList(const QStringList &stringList) {
+        return QColorList::fromStringList(stringList);
+    }
+
+    QStringList ColorListToStringList(const QColorList &colors) {
+        return colors.toStringList();
+    }
+
+    QRectStyle StringListToRectStyle(const QStringList &stringList) {
+        return QRectStyle::fromStringList(stringList);
+    }
+
+    QStringList RectStyleToStringList(const QRectStyle &rectStyle) {
+        return rectStyle.toStringList();
+    }
+
+    QTypeList StringListToTypeList(const QStringList &stringList) {
+        return QTypeList::fromStringList(stringList);
+    }
+
+    QStringList TypeListToStringList(const QTypeList &types) {
+        return types.toStringList();
+    }
+
+    QTypeMap StringListToTypeMap(const QStringList &stringList) {
+        return QTypeMap::fromStringList(stringList);
+    }
+    QStringList TypeMapToStringList(const QTypeMap &types) {
+        return types.toStringList();
+    }
+
 }
