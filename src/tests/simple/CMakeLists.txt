@@ -13,3 +13,5 @@ add_subdirectory(QtROTest)
 add_subdirectory(SynthVTest)
 
 add_subdirectory(ASIOTest)
+
+add_subdirectory(Audio2Test)
