@@ -22,8 +22,10 @@ namespace Core {
 
         SectionBar *q_ptr;
         bool pressed;
+        QPoint pressedPos;
 
         int curWidth;
+        int curSnap;
         int startPos;
 
         QTypeFace sectionNumber;
@@ -38,6 +40,9 @@ namespace Core {
 
         const QsApi::MusicTimeline *timeline;
 
+        int deltaX;
+        int curBarNumber;
+
         struct TimeSig {
             QRect rect;
             int section;
@@ -45,6 +50,7 @@ namespace Core {
             QsApi::MusicTimeSignature value;
         };
         QMap<int, TimeSig> timeSignatureBlocks;
+        int curTimeSignature;
 
         struct Tempo {
             QRect rect;
@@ -52,6 +58,8 @@ namespace Core {
             double value;
         };
         QMap<int, Tempo> tempoBlocks;
+        int curTempo;
+        int targetTempo;
 
         void updateLayout();
         void updateMouseArea(QMouseEvent *event);

@@ -47,6 +47,9 @@ namespace Core {
         int currentWidth() const;
         void setCurrentWidth(int width);
 
+        int currentSnap() const;
+        void setCurrentSnap(int snap);
+
     signals:
         void styleDataChanged();
 

@@ -12,8 +12,7 @@ CGraphicsView::CGraphicsView(QWidget *parent) : QGraphicsView(parent) {
     init();
 }
 
-CGraphicsView::CGraphicsView(QGraphicsScene *scene, QWidget *parent)
-    : QGraphicsView(scene, parent) {
+CGraphicsView::CGraphicsView(QGraphicsScene *scene, QWidget *parent) : QGraphicsView(scene, parent) {
     init();
 }
 
@@ -43,8 +42,7 @@ QRectF CGraphicsView::viewportRect() const {
 }
 
 void CGraphicsView::horizontalTween(int value) {
-    if (value == m_horizontalAnimation->endValue() &&
-        m_horizontalAnimation->state() == QPropertyAnimation::Running) {
+    if (value == m_horizontalAnimation->endValue() && m_horizontalAnimation->state() == QPropertyAnimation::Running) {
         return;
     }
     m_horizontalAnimation->stop();
@@ -54,8 +52,7 @@ void CGraphicsView::horizontalTween(int value) {
 }
 
 void CGraphicsView::verticalTween(int value) {
-    if (value == m_verticalAnimation->endValue() &&
-        m_verticalAnimation->state() == QPropertyAnimation::Running) {
+    if (value == m_verticalAnimation->endValue() && m_verticalAnimation->state() == QPropertyAnimation::Running) {
         return;
     }
     m_verticalAnimation->stop();
@@ -98,7 +95,7 @@ void CGraphicsView::scrollContentsBy(int dx, int dy) {
 bool CGraphicsView::viewportEvent(QEvent *event) {
     auto scene = this->scene();
     if (event->type() == QEvent::Resize) {
-        QResizeEvent *e = static_cast<QResizeEvent *>(event);
+        auto e = static_cast<QResizeEvent *>(event);
         QGraphicsSceneResizeEvent e2;
         e2.setOldSize(e->oldSize());
         e2.setNewSize(e->size());

@@ -17,6 +17,10 @@ namespace Core {
 
         QsApi::MusicTimeline m_timeline;
 
+        int m_currentWidth;
+        int m_currentHeight;
+        int m_currentSnap;
+
         struct TimeSignature {
             DspxTimeSignatureEntity *ts;
             int bar;

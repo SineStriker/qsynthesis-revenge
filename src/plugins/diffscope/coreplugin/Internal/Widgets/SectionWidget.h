@@ -28,13 +28,16 @@ namespace Core::Internal {
     protected:
         void paintEvent(QPaintEvent *event) override;
 
-        bool eventFilter(QObject *obj, QEvent *event) override;
-
     private:
         int m_preferredHeight;
 
         QGraphicsView *view;
         QGraphicsScene *scene;
+
+        void _q_viewMoved(const QPointF &pos, const QPointF &oldPos);
+        void _q_viewResized(const QSizeF &size, const QSizeF &newSize);
+        void _q_currentWidthChanged(int w);
+        void _q_currentSnapChanged(int s);
     };
 
 }

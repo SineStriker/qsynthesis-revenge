@@ -1,10 +1,15 @@
 #include "MusicTimeManager_p.h"
+#include "MusicTimeManager.h"
+
 
 namespace Core {
 
     MusicTimeManagerPrivate::MusicTimeManagerPrivate(Core::MusicTimeManager *q) : q(q) {
         timeSigsEntity = nullptr;
         temposEntity = nullptr;
+
+        m_currentWidth = 100;
+        m_currentHeight = 30;
     }
 
     MusicTimeManagerPrivate::~MusicTimeManagerPrivate() {
@@ -59,6 +64,33 @@ namespace Core {
 
     const QsApi::MusicTimeline *MusicTimeManager::timeline() const {
         return &d->m_timeline;
+    }
+
+    int MusicTimeManager::currentWidth() const {
+        return d->m_currentWidth;
+    }
+
+    void MusicTimeManager::setCurrentWidth(int currentWidth) {
+        d->m_currentWidth = currentWidth;
+        emit currentWidthChanged(currentWidth);
+    }
+
+    int MusicTimeManager::currentHeight() const {
+        return d->m_currentHeight;
+    }
+
+    void MusicTimeManager::setCurrentHeight(int currentHeight) {
+        d->m_currentHeight = currentHeight;
+        emit currentHeightChanged(currentHeight);
+    }
+
+    int MusicTimeManager::currentSnap() const {
+        return 0;
+    }
+
+    void MusicTimeManager::setCurrentSnap(int currentSnap) {
+        d->m_currentSnap = currentSnap;
+        emit currentHeightChanged(currentSnap);
     }
 
     void MusicTimeManagerPrivate::_q_timeSignatureInserted(int seq, DspxTimeSignatureEntity *ts) {

@@ -23,12 +23,28 @@ namespace Core {
 
         const QsApi::MusicTimeline *timeline() const;
 
+        int currentWidth() const;
+        void setCurrentWidth(int currentWidth);
+
+        int currentHeight() const;
+        void setCurrentHeight(int currentHeight);
+
+        int currentSnap() const;
+        void setCurrentSnap(int currentSnap);
+
     signals:
         void timeSignatureAdded(int bar, const QsApi::MusicTimeSignature &timeSignature);
         void timeSignatureRemoved(int bar);
 
         void tempoAdded(int tick, double tempo);
         void tempoRemoved(int tick);
+
+        void viewMoved(const QPointF &pos, const QPointF &oldPos);
+        void viewResized(const QSizeF &size, const QSizeF &newSize);
+
+        void currentWidthChanged(int w);
+        void currentHeightChanged(int h);
+        void currentSnapChanged(int s);
 
         void changed();
 

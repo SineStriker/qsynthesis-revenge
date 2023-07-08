@@ -11,9 +11,10 @@ namespace Core {
 
     SectionBarPrivate::SectionBarPrivate() {
         curWidth = 100;
+        curSnap = 480;
         startPos = 0;
 
-        sectionNumber.setColor(0x999999);
+        sectionNumber.setColors({0x999999, 0xCCCCCC});
         sectionBackground.setRect({4, 0, 4, 0});
         sectionBackground.setColor(Qt::transparent);
 
@@ -31,6 +32,12 @@ namespace Core {
 
         timeline = nullptr;
         pressed = false;
+
+        deltaX = 0;
+        curBarNumber = -1;
+        curTimeSignature = -1;
+        curTempo = -1;
+        targetTempo = -1;
     }
 
     SectionBarPrivate::~SectionBarPrivate() {
@@ -107,10 +114,28 @@ namespace Core {
         d->updateLayout();
     }
 
+    int SectionBar::currentSnap() const {
+        Q_D(const SectionBar);
+        return d->curSnap;
+    }
+
+    void SectionBar::setCurrentSnap(int snap) {
+        Q_D(SectionBar);
+        d->curSnap = snap;
+        d->updateLayout();
+    }
+
     void SectionBar::paintEvent(QPaintEvent *event) {
         Q_D(SectionBar);
 
         QFrame::paintEvent(event);
+
+        auto orgTempo = d->curTempo;
+
+        d->curBarNumber = -1;
+        d->curTimeSignature = -1;
+        d->curTempo = -1;
+        d->targetTempo = -1;
 
         QPainter painter(this);
 
@@ -126,8 +151,9 @@ namespace Core {
             bool hasSignature;
         };
 
-        auto drawTimeSig = [&](const QRect &r0, const QsApi::MusicTimeSignature &ts) {
+        auto drawTimeSig = [&](const QRect &r0, int tick, const QsApi::MusicTimeSignature &ts) {
             if (r0.contains(mapFromGlobal(QCursor::pos()))) {
+                d->curTimeSignature = tick;
                 if (d->pressed) {
                     painter.setPen(d->signatureNumber.color3());
                     painter.setBrush(d->signatureBackground.color3());
@@ -152,8 +178,21 @@ namespace Core {
             }
         };
 
-        auto drawTempo = [&](const QRect &r0, double tempo) {
-            if (r0.contains(mapFromGlobal(QCursor::pos()))) {
+        auto drawTempo = [&](QRect r0, int tick, double tempo) {
+            bool highlight = false;
+            if (orgTempo == tick && d->deltaX != 0) {
+                highlight = true;
+
+                int toX = r0.left() + d->deltaX;
+                int tick = (toX + d->startPos) / unit;
+                tick = qMax(0, (tick + d->curSnap / 2) / d->curSnap * d->curSnap);
+                toX = tick * unit - d->startPos;
+                d->targetTempo = tick;
+
+                r0.moveLeft(toX);
+            }
+            if ((r0.contains(mapFromGlobal(QCursor::pos())) && !(orgTempo != tick && d->deltaX != 0)) || highlight) {
+                d->curTempo = (d->deltaX != 0) ? orgTempo : tick;
                 if (d->pressed) {
                     painter.setPen(d->tempoNumber.color3());
                     painter.setBrush(d->tempoBackground.color3());
@@ -215,8 +254,17 @@ namespace Core {
                     }
                 }
 
+                const SectionBarPrivate::Tempo *deferredBlock = nullptr;
                 for (const auto &item : qAsConst(d->tempoBlocks)) {
-                    drawTempo(item.rect, item.value);
+                    if (orgTempo == item.tick && d->deltaX != 0) {
+                        deferredBlock = &item;
+                    }
+                    drawTempo(item.rect, item.tick, item.value);
+                }
+
+                if (deferredBlock) {
+                    const auto &item = *deferredBlock;
+                    drawTempo(item.rect, item.tick, item.value);
                 }
             }
 
@@ -269,13 +317,26 @@ namespace Core {
                         int rh = fm0.height() + margins.top() + margins.bottom();
                         QRect r0(x0, h * 3 / 4 - rh / 2, rw, rh);
                         if (r0.left() > changedRect.left() || r0.right() < changedRect.right()) {
-                            painter.setBrush(d->sectionBackground.color());
+                            if (r0.contains(mapFromGlobal(QCursor::pos()))) {
+                                d->curBarNumber = curSection;
+                                if (d->pressed) {
+                                    painter.setPen(d->sectionNumber.color3());
+                                    painter.setBrush(d->sectionBackground.color3());
+                                } else {
+                                    painter.setPen(d->sectionNumber.color2());
+                                    painter.setBrush(d->sectionBackground.color2());
+                                }
+                            } else {
+                                painter.setPen(d->sectionNumber.color());
+                                painter.setBrush(d->sectionBackground.color());
+                            }
                             if (painter.brush() != Qt::NoBrush) {
+                                auto pen = painter.pen();
                                 painter.setPen(Qt::NoPen);
                                 painter.drawRect(r0);
+                                painter.setPen(pen);
                             }
                             painter.setFont(d->sectionNumber.font());
-                            painter.setPen(d->sectionNumber.color());
                             painter.drawText(r0, Qt::AlignCenter, text);
                         }
 
@@ -321,7 +382,7 @@ namespace Core {
             }
 
             for (const auto &item : qAsConst(d->timeSignatureBlocks)) {
-                drawTimeSig(item.rect, item.value);
+                drawTimeSig(item.rect, item.tick, item.value);
             }
         }
     }
@@ -330,12 +391,25 @@ namespace Core {
         Q_D(SectionBar);
         if (event->button() == Qt::LeftButton) {
             d->pressed = true;
+            d->pressedPos = event->pos();
+            d->deltaX = 0;
+
+            if (d->curBarNumber >= 0) {
+                qDebug() << "bar clicked" << d->curBarNumber;
+            } else if (d->curTimeSignature >= 0) {
+                qDebug() << "time sig clicked" << d->curTimeSignature;
+            } else if (d->curTempo >= 0) {
+                qDebug() << "tempo clicked" << d->curTempo;
+            }
         }
         d->updateMouseArea(event);
     }
 
     void SectionBar::mouseMoveEvent(QMouseEvent *event) {
         Q_D(SectionBar);
+
+        if (d->pressed)
+            d->deltaX = event->pos().x() - d->pressedPos.x();
         d->updateMouseArea(event);
     }
 
@@ -343,6 +417,11 @@ namespace Core {
         Q_D(SectionBar);
         if (event->button() == Qt::LeftButton) {
             d->pressed = false;
+            d->deltaX = 0;
+
+            if (d->targetTempo >= 0) {
+                qDebug() << "tempo released" << d->curTempo << d->targetTempo;
+            }
         }
         d->updateMouseArea(event);
     }

@@ -21,6 +21,12 @@ namespace Core {
         void extensionInitialized() override;
 
     protected:
+        void viewMoveEvent(QGraphicsSceneMoveEvent *event) override;
+        void viewResizeEvent(QGraphicsSceneResizeEvent *event) override;
+
+        void drawBackground(QPainter *painter, const QRectF &rect) override;
+
+    protected:
         CanvasScene(CanvasScenePrivate &d, IProjectWindow *iWin, QObject *parent = nullptr);
 
         QScopedPointer<CanvasScenePrivate> d_ptr;
