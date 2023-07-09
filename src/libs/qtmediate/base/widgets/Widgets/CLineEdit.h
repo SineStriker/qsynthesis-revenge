@@ -20,6 +20,9 @@ public:
     explicit CLineEdit(const QString &text, QWidget *parent = nullptr);
     ~CLineEdit();
 
+signals:
+    void specialKeyPressed(int key);
+
 protected:
     bool event(QEvent *event) override;
 };

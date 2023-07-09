@@ -161,6 +161,48 @@ Core--Internal--SectionWidget {
     background-color: #292929;
 }
 
+QWidget#section-edit-popup {
+    background-color: #1E1E1E;
+}
+
+QWidget#section-edit-popup>QComboBox,
+QWidget#section-edit-popup>QLineEdit {
+    padding: -1.5px 0;
+    border: 1px solid transparent;
+    color: #CCCCCC;
+    background-color: #3C3C3C;
+}
+
+QWidget#section-edit-popup>QComboBox:focus,
+QWidget#section-edit-popup>QLineEdit:focus {
+    border-color: #167FD2;
+}
+
+QWidget#section-edit-popup>QLabel {
+    color: #999999;
+    background-color: transparent;
+}
+
+QWidget#section-edit-popup>QComboBox QAbstractItemView {
+    background: #3C3C3C;
+    border: 1px solid #167FD2;
+}
+
+QWidget#section-edit-popup>QComboBox QAbstractItemView::item {
+    background-color: transparent;
+    color: #CCCCCC;
+}
+
+QWidget#section-edit-popup>QComboBox QAbstractItemView::item:hover {
+    background-color: rgba(255, 255, 255, 10%);
+    color: #FFFFFF;
+}
+
+QWidget#section-edit-popup>QComboBox QAbstractItemView::item:selected {
+    background-color: rgba(22, 127, 210, 50%);
+    color: #FFFFFF;
+}
+
 
 /* CCoupleTabBar */
 

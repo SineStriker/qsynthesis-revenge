@@ -2,6 +2,7 @@
 
 #include <QDebug>
 #include <QEvent>
+#include <QKeyEvent>
 #include <QTimer>
 
 CLineEdit::CLineEdit(QWidget *parent) : QLineEdit(parent) {
@@ -30,6 +31,23 @@ bool CLineEdit::event(QEvent *event) {
                 setPalette(palette);
             }
             break;
+        }
+        case QEvent::KeyPress:
+        case QEvent::ShortcutOverride: {
+            auto keyEvent = static_cast<QKeyEvent *>(event);
+            int key = keyEvent->key();
+            switch (key) {
+                case Qt::Key_Return:
+                case Qt::Key_Enter:
+                case Qt::Key_Tab:
+                case Qt::Key_Escape:
+                    emit specialKeyPressed(key);
+                    return true;
+                    break;
+                default: {
+                    break;
+                }
+            }
         }
         default:
             break;

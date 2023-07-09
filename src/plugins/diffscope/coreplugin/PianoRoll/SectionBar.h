@@ -50,6 +50,9 @@ namespace Core {
         int currentSnap() const;
         void setCurrentSnap(int snap);
 
+        void changeTimeSignatureAt(int bar);
+        void changeTempoAt(int tick);
+
     signals:
         void styleDataChanged();
 
@@ -59,6 +62,7 @@ namespace Core {
         void mousePressEvent(QMouseEvent *event) override;
         void mouseMoveEvent(QMouseEvent *event) override;
         void mouseReleaseEvent(QMouseEvent *event) override;
+        void mouseDoubleClickEvent(QMouseEvent *event) override;
 
         void enterEvent(QEvent *event) override;
         void leaveEvent(QEvent *event) override;

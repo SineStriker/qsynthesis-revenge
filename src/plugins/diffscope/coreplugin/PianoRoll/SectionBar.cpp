@@ -2,6 +2,7 @@
 #include "SectionBar_p.h"
 
 #include <QApplication>
+#include <QComboBox>
 #include <QDialog>
 #include <QFontMetrics>
 #include <QLabel>
@@ -10,7 +11,44 @@
 
 #include <cmath>
 
+#include "CLineEdit.h"
+#include "QMSystem.h"
+
+#include "ICore.h"
+
 namespace Core {
+
+    class EditDialog : public QDialog {
+    public:
+        EditDialog(QWidget *parent = nullptr) : QDialog(parent) {
+            setObjectName("section-edit-popup");
+            setWindowFlags(Qt::Popup);
+        }
+        bool event(QEvent *event) override {
+            switch (event->type()) {
+                case QEvent::KeyPress:
+                case QEvent::ShortcutOverride: {
+                    auto e = static_cast<QKeyEvent *>(event);
+                    int key = e->key();
+                    switch (key) {
+                        case Qt::Key_Enter:
+                        case Qt::Key_Return:
+                            accept();
+                            break;
+                        case Qt::Key_Escape:
+                            reject();
+                            break;
+                        default:
+                            break;
+                    }
+                    break;
+                }
+                default:
+                    break;
+            }
+            return QDialog::event(event);
+        }
+    };
 
     SectionBarPrivate::SectionBarPrivate() {
         curWidth = 100;
@@ -100,6 +138,192 @@ namespace Core {
         decodeStyle(map["tempoLine"], tempoLine);
     }
 
+    void SectionBarPrivate::edit_sectionClicked() {
+        edit_sectionRightClicked();
+    }
+
+    void SectionBarPrivate::edit_sectionRightClicked() {
+        Q_Q(SectionBar);
+
+        auto menu = ICore::createCoreMenu(q);
+
+        QAction addAction(tr("Add time signature here"));
+        QAction editAction(tr("Edit time signature here"));
+        if (timeline->timeSignatureMap().contains(curBarNumber)) {
+            menu->addAction(&editAction);
+        } else {
+            menu->addAction(&addAction);
+        }
+
+        auto action = menu->exec(QCursor::pos());
+        if (action == &addAction || action == &editAction) {
+            // Add new time signature
+            q->changeTimeSignatureAt(curBarNumber);
+        }
+    }
+
+    void SectionBarPrivate::edit_sectionDoubleClicked() {
+    }
+
+    void SectionBarPrivate::edit_timeSignatureClicked() {
+    }
+
+    void SectionBarPrivate::edit_timeSignatureRightClicked() {
+        Q_Q(SectionBar);
+        auto menu = ICore::createCoreMenu(q);
+
+        QAction removeAction(tr("Remove"));
+        QAction editAction(tr("Edit"));
+
+        if (curTimeSignature > 0)
+            menu->addAction(&removeAction);
+        menu->addAction(&editAction);
+
+        auto action = menu->exec(QCursor::pos());
+        if (action == &removeAction) {
+            // Remove
+        } else if (action == &editAction) {
+            // Edit
+            q->changeTimeSignatureAt(timeSignatureBlocks.value(curTimeSignature).section);
+        }
+    }
+
+    void SectionBarPrivate::edit_timeSignatureDoubleClicked() {
+        Q_Q(SectionBar);
+
+        q->changeTimeSignatureAt(timeSignatureBlocks.value(curTimeSignature).section);
+
+        //        const auto &block = timeSignatureBlocks.value(curTimeSignature);
+        //
+        //        EditDialog dlg(q);
+        //        auto lineEdit = new CLineEdit();
+        //        lineEdit->setObjectName("time-signature-text");
+        //        lineEdit->setText(QString::number(block.value.numerator()));
+        //
+        //        auto combo = new QComboBox();
+        //        combo->setView(new QListView());
+        //        ICore::autoPolishScrollArea(combo);
+        //        combo->setObjectName("time-signature-combo");
+        //        combo->addItems({"2", "4", "8", "16", "32"});
+        //        combo->setCurrentText(QString::number(block.value.denominator()));
+        //
+        //        auto label = new QLabel("/");
+        //        label->setObjectName("time-signature-label");
+        //
+        //        QIntValidator validator;
+        //
+        //        auto layout = new QHBoxLayout();
+        //        layout->setMargin(0);
+        //        layout->setSpacing(0);
+        //        layout->addWidget(lineEdit);
+        //        layout->addWidget(label);
+        //        layout->addWidget(combo);
+        //        layout->setStretch(0, 1);
+        //        layout->setStretch(2, 1);
+        //
+        //        //        double ratio = QGuiApplication::primaryScreen()->logicalDotsPerInch() / QMOs::unitDpi();
+        //
+        //        dlg.setLayout(layout);
+        //        dlg.adjustSize();
+        //        dlg.move(q->mapToGlobal(QPoint(block.rect.left(), block.rect.center().y() - dlg.height() / 2)));
+        //
+        //        lineEdit->setFocus();
+        //        lineEdit->setValidator(&validator);
+        //        combo->setValidator(&validator);
+        //        dlg.exec();
+    }
+
+    void SectionBarPrivate::edit_tempoClicked() {
+    }
+
+    void SectionBarPrivate::edit_tempoRightClicked() {
+        Q_Q(SectionBar);
+        auto menu = ICore::createCoreMenu(q);
+
+        QAction removeAction(tr("Remove"));
+        QAction editAction(tr("Edit"));
+        if (curTempo > 0)
+            menu->addAction(&removeAction);
+        menu->addAction(&editAction);
+
+        auto action = menu->exec(QCursor::pos());
+        if (action == &removeAction) {
+            // Remove
+        } else if (action == &editAction) {
+            // Edit
+            q->changeTempoAt(curTempo);
+        }
+    }
+
+    void SectionBarPrivate::edit_tempoDoubleClicked() {
+        Q_Q(SectionBar);
+
+        const auto &block = tempoBlocks.value(curTempo);
+
+        EditDialog dlg(q);
+        auto lineEdit = new CLineEdit();
+        lineEdit->setObjectName("tempo-text");
+        lineEdit->setText(QString::number(block.value));
+
+        QFontMetrics fm(lineEdit->font());
+        auto offset = fm.horizontalAdvance(" ") * 2;
+        auto adjust = [&](const QString &text) {
+            dlg.resize(fm.horizontalAdvance(text) + offset * 4, lineEdit->height()); //
+        };
+        connect(lineEdit, &QLineEdit::textChanged, &dlg, adjust);
+
+        QDoubleValidator validator(0.0, std::numeric_limits<double>::max(), 3);
+        validator.setNotation(QDoubleValidator::StandardNotation);
+
+        auto layout = new QHBoxLayout();
+        layout->setMargin(0);
+        layout->addWidget(lineEdit);
+
+        dlg.setLayout(layout);
+        dlg.adjustSize();
+        dlg.move(q->mapToGlobal(QPoint(block.rect.left(), block.rect.center().y() - dlg.height() / 2)));
+
+        lineEdit->setFocus();
+        lineEdit->setValidator(&validator);
+        adjust(lineEdit->text());
+        dlg.exec();
+
+        // Result
+        qDebug() << dlg.result() << lineEdit->text();
+    }
+
+    void SectionBarPrivate::edit_tempoMoved() {
+    }
+
+    void SectionBarPrivate::edit_blankRightClicked() {
+        Q_Q(SectionBar);
+
+        auto pos = q->mapFromGlobal(QCursor::pos());
+        int tick = startPos + double(pos.x()) / curWidth * 480;
+        auto time = timeline->tickToTime(tick);
+
+        auto menu = ICore::createCoreMenu(q);
+
+        QAction addTempoAction(tr("Add tempo"));
+        menu->addAction(&addTempoAction);
+
+        QAction addTimeSigAction(tr("Add time signature"));
+        QAction editTimeSigAction(tr("Edit time signature"));
+
+        if (timeline->timeSignatureMap().contains(time.measure())) {
+            menu->addAction(&editTimeSigAction);
+        } else {
+            menu->addAction(&addTimeSigAction);
+        }
+
+        auto action = menu->exec(QCursor::pos());
+        if (action == &addTempoAction) {
+            q->changeTempoAt(tick);
+        } else if (action == &addTimeSigAction || action == &editTimeSigAction) {
+            q->changeTimeSignatureAt(time.measure());
+        }
+    }
+
     SectionBar::SectionBar(IProjectWindow *iWin, QWidget *parent) : SectionBar(*new SectionBarPrivate(), iWin, parent) {
     }
 
@@ -162,6 +386,14 @@ namespace Core {
         d->updateLayout();
     }
 
+    void SectionBar::changeTimeSignatureAt(int bar) {
+        qDebug() << "change time signature at" << bar;
+    }
+
+    void SectionBar::changeTempoAt(int tick) {
+        qDebug() << "change tempo at" << tick;
+    }
+
     void SectionBar::paintEvent(QPaintEvent *event) {
         Q_D(SectionBar);
 
@@ -221,7 +453,7 @@ namespace Core {
 
         auto drawTempo = [&](QRect r0, int tick, double tempo) {
             bool highlight = false;
-            if (orgTempo == tick && d->deltaX != 0) {
+            if (orgTempo == tick && d->deltaX != 0 && tick > 0) {
                 highlight = true;
 
                 int toX = r0.left() + d->deltaX;
@@ -250,7 +482,7 @@ namespace Core {
 
                 // Draw line
                 painter.setPen(d->tempoLine);
-                painter.drawLine(r0.left(), 0, r0.left(), h);
+                painter.drawLine(r0.left(), r0.top(), r0.left(), h);
 
                 // Draw back
                 if (painter.brush() != Qt::NoBrush) {
@@ -287,7 +519,7 @@ namespace Core {
                     int rh = fm.height() + margins.top() + margins.bottom();
                     QRect r0(x2, h / 4 - rh / 2, rw, rh);
                     if (r0.left() > changedRect.left() || r0.right() < changedRect.right()) {
-                        d->tempoBlocks.insert(x2, {r0, it.key(), it.value()});
+                        d->tempoBlocks.insert(it.key(), {r0, it.key(), it.value()});
                     }
                 }
 
@@ -333,7 +565,7 @@ namespace Core {
             // First bar
             int curSection = time.measure();
             for (const auto &bar : qAsConst(barAndSigs)) {
-                auto beatTicks = bar.timeSignature.numerator() * 480 / bar.timeSignature.denominator();
+                auto beatTicks = 1920 / bar.timeSignature.denominator();
 
                 do {
                     // Draw section line
@@ -400,7 +632,7 @@ namespace Core {
                         }
 
                         if (r0.left() > changedRect.left() || r0.right() < changedRect.right()) {
-                            d->timeSignatureBlocks.insert(x1, {r0, curSection, bar.tick, bar.timeSignature});
+                            d->timeSignatureBlocks.insert(bar.tick, {r0, curSection, bar.tick, bar.timeSignature});
                         }
                     }
                 } while (false);
@@ -431,14 +663,6 @@ namespace Core {
             d->pressed = true;
             d->pressedPos = event->pos();
             d->deltaX = 0;
-
-            if (d->curBarNumber >= 0) {
-                qDebug() << "bar pressed" << d->curBarNumber;
-            } else if (d->curTimeSignature >= 0) {
-                qDebug() << "time sig pressed" << d->curTimeSignature;
-            } else if (d->curTempo >= 0) {
-                qDebug() << "tempo pressed" << d->curTempo;
-            }
         }
         d->updateMouseArea(event);
     }
@@ -446,8 +670,18 @@ namespace Core {
     void SectionBar::mouseMoveEvent(QMouseEvent *event) {
         Q_D(SectionBar);
 
-        if (d->pressed)
+        if (d->pressed) {
             d->deltaX = event->pos().x() - d->pressedPos.x();
+        }
+
+        if (d->curBarNumber >= 0) {
+        } else if (d->curTimeSignature >= 0) {
+        } else if (d->targetTempo >= 0) {
+        } else if (d->curTempo >= 0) {
+        } else {
+            // Update play head
+        }
+
         d->updateMouseArea(event);
     }
 
@@ -458,34 +692,47 @@ namespace Core {
             d->deltaX = 0;
 
             if (d->curBarNumber >= 0) {
-                qDebug() << "bar clicked" << d->curBarNumber;
+                d->edit_sectionClicked();
             } else if (d->curTimeSignature >= 0) {
-                qDebug() << "time sig clicked" << d->curTimeSignature;
-            }
-            if (d->targetTempo >= 0) {
-                qDebug() << "tempo released" << d->curTempo << d->targetTempo;
+                d->edit_timeSignatureClicked();
+            } else if (d->targetTempo >= 0) {
+                d->edit_tempoMoved();
             } else if (d->curTempo >= 0) {
-                qDebug() << "tempo released" << d->curTempo;
-
-                QDialog dlg;
-                dlg.setWindowFlags(Qt::Popup);
-
-                auto label = new QLabel("Tempo: ");
-                auto lineEdit = new QLineEdit();
-                auto layout = new QHBoxLayout();
-
-                layout->addWidget(label);
-                layout->addWidget(lineEdit);
-
-                lineEdit->setText(QString::number(d->timeline->tempo(d->curTempo)));
-
-                dlg.setLayout(layout);
-                dlg.move(QCursor::pos());
-                dlg.exec();
+                d->edit_tempoClicked();
+            }
+        } else if (event->button() == Qt::RightButton) {
+            if (d->curBarNumber >= 0) {
+                d->edit_sectionRightClicked();
+            } else if (d->curTimeSignature >= 0) {
+                d->edit_timeSignatureRightClicked();
+            } else if (d->targetTempo >= 0) {
+                // Nothing
+            } else if (d->curTempo >= 0) {
+                d->edit_tempoRightClicked();
+            } else {
+                d->edit_blankRightClicked();
             }
         }
 
         d->updateMouseArea(event);
+    }
+
+    void SectionBar::mouseDoubleClickEvent(QMouseEvent *event) {
+        Q_D(SectionBar);
+        if (event->button() == Qt::LeftButton) {
+            d->pressed = false;
+            d->deltaX = 0;
+
+            if (d->curBarNumber >= 0) {
+                d->edit_sectionDoubleClicked();
+            } else if (d->curTimeSignature >= 0) {
+                d->edit_timeSignatureDoubleClicked();
+            } else if (d->targetTempo >= 0) {
+                // Nothing
+            } else if (d->curTempo >= 0) {
+                d->edit_tempoDoubleClicked();
+            }
+        }
     }
 
     void SectionBar::enterEvent(QEvent *event) {

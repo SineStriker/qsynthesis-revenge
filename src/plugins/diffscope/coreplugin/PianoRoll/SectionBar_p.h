@@ -66,6 +66,21 @@ namespace Core {
 
         QTypeMap styleData_helper() const;
         void setStyleData_helper(const QTypeMap &map);
+
+        void edit_sectionClicked();
+        void edit_sectionRightClicked();
+        void edit_sectionDoubleClicked();
+
+        void edit_timeSignatureClicked();
+        void edit_timeSignatureRightClicked();
+        void edit_timeSignatureDoubleClicked();
+
+        void edit_tempoClicked();
+        void edit_tempoRightClicked();
+        void edit_tempoDoubleClicked();
+        void edit_tempoMoved();
+
+        void edit_blankRightClicked();
     };
 
 } // namespace Core
