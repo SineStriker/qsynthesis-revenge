@@ -2,7 +2,10 @@
 #include "SectionBar_p.h"
 
 #include <QApplication>
+#include <QDialog>
 #include <QFontMetrics>
+#include <QLabel>
+#include <QLineEdit>
 #include <QPaintEvent>
 
 #include <cmath>
@@ -141,6 +144,10 @@ namespace Core {
 
         double unit = double(d->curWidth) / 480;
         const auto &changedRect = event->rect();
+        // const auto &changedRect = this->rect();
+
+        int startPos = d->startPos + changedRect.left() / unit;
+        int endPos = d->startPos + changedRect.right() / unit;
         int h = height();
 
         // Previous time signature
@@ -184,9 +191,9 @@ namespace Core {
                 highlight = true;
 
                 int toX = r0.left() + d->deltaX;
-                int tick = (toX + d->startPos) / unit;
+                int tick = toX / unit + startPos;
                 tick = qMax(0, (tick + d->curSnap / 2) / d->curSnap * d->curSnap);
-                toX = tick * unit - d->startPos;
+                toX = (tick - startPos) * unit;
                 d->targetTempo = tick;
 
                 r0.moveLeft(toX);
@@ -227,11 +234,8 @@ namespace Core {
 
         {
             // Draw time signatures
-            int curPos = d->startPos + changedRect.left() / unit;
-            int endPos = d->startPos + changedRect.right() / unit;
-
-            auto time = d->timeline->tickToTime(d->startPos); // start pos time
-            int startPos = d->timeline->timeToTick(time.measure(), 0, 0);
+            auto time = d->timeline->tickToTime(startPos); // start pos time
+            int lastTimeSigPos = d->timeline->timeToTick(time.measure(), 0, 0);
 
             // Draw tempo
             const auto &tempoMap = d->timeline->tempoMap();
@@ -241,7 +245,7 @@ namespace Core {
                     if (it.key() >= endPos)
                         break;
 
-                    int x2 = (it.key() - curPos) * unit;
+                    int x2 = (it.key() - startPos) * unit;
 
                     QFontMetrics fm(d->tempoNumber.font());
                     QString text = QString::number(it.value());
@@ -258,6 +262,7 @@ namespace Core {
                 for (const auto &item : qAsConst(d->tempoBlocks)) {
                     if (orgTempo == item.tick && d->deltaX != 0) {
                         deferredBlock = &item;
+                        continue;
                     }
                     drawTempo(item.rect, item.tick, item.value);
                 }
@@ -276,7 +281,7 @@ namespace Core {
             auto it0 = timeSigMap.upperBound(time.measure()) - 1;
             {
                 int curBar = time.measure();
-                int curTick = startPos;
+                int curTick = lastTimeSigPos;
 
                 auto it = it0;
                 while (curTick < endPos) {
@@ -299,7 +304,7 @@ namespace Core {
 
                 do {
                     // Draw section line
-                    int x0 = (bar.tick - curPos) * unit;
+                    int x0 = (bar.tick - startPos) * unit + changedRect.left();
                     int x1;
 
                     if (x0 >= changedRect.left()) {
@@ -369,7 +374,7 @@ namespace Core {
 
                 // Draw beat line
                 for (int i = 1; i < bar.timeSignature.numerator(); ++i) {
-                    int x0 = (bar.tick + i * beatTicks - curPos) * unit;
+                    int x0 = (bar.tick + i * beatTicks - startPos) * unit + changedRect.left();
                     if (x0 < changedRect.left()) {
                         continue;
                     }
@@ -395,11 +400,11 @@ namespace Core {
             d->deltaX = 0;
 
             if (d->curBarNumber >= 0) {
-                qDebug() << "bar clicked" << d->curBarNumber;
+                qDebug() << "bar pressed" << d->curBarNumber;
             } else if (d->curTimeSignature >= 0) {
-                qDebug() << "time sig clicked" << d->curTimeSignature;
+                qDebug() << "time sig pressed" << d->curTimeSignature;
             } else if (d->curTempo >= 0) {
-                qDebug() << "tempo clicked" << d->curTempo;
+                qDebug() << "tempo pressed" << d->curTempo;
             }
         }
         d->updateMouseArea(event);
@@ -419,10 +424,34 @@ namespace Core {
             d->pressed = false;
             d->deltaX = 0;
 
+            if (d->curBarNumber >= 0) {
+                qDebug() << "bar clicked" << d->curBarNumber;
+            } else if (d->curTimeSignature >= 0) {
+                qDebug() << "time sig clicked" << d->curTimeSignature;
+            }
             if (d->targetTempo >= 0) {
                 qDebug() << "tempo released" << d->curTempo << d->targetTempo;
+            } else if (d->curTempo >= 0) {
+                qDebug() << "tempo released" << d->curTempo;
+
+                QDialog dlg;
+                dlg.setWindowFlags(Qt::Popup);
+
+                auto label = new QLabel("Tempo: ");
+                auto lineEdit = new QLineEdit();
+                auto layout = new QHBoxLayout();
+
+                layout->addWidget(label);
+                layout->addWidget(lineEdit);
+
+                lineEdit->setText(QString::number(d->timeline->tempo(d->curTempo)));
+
+                dlg.setLayout(layout);
+                dlg.move(QCursor::pos());
+                dlg.exec();
             }
         }
+
         d->updateMouseArea(event);
     }
 
