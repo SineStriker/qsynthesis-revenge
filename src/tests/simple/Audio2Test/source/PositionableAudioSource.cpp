@@ -3,3 +3,18 @@
 //
 
 #include "PositionableAudioSource.h"
+#include "PositionableAudioSource_p.h"
+
+PositionableAudioSource::PositionableAudioSource(): PositionableAudioSource(*new PositionableAudioSourcePrivate) {
+}
+PositionableAudioSource::PositionableAudioSource(PositionableAudioSourcePrivate &d): AudioSource(d) {
+}
+
+int PositionableAudioSource::nextReadPosition() const {
+    Q_D(const PositionableAudioSource);
+    return d->position;
+}
+void PositionableAudioSource::setNextReadPosition(int pos) {
+    Q_D(PositionableAudioSource);
+    d->position = pos;
+}

@@ -3,30 +3,46 @@
 //
 
 #include "AudioDataWrapper.h"
+#include "AudioDataWrapper_p.h"
 
-AudioDataWrapper::AudioDataWrapper(float *const *data, int channelCount, int sampleCount, int startPos): m_data(data), m_channelCount(channelCount), m_sampleCount(sampleCount), m_startPos(startPos) {
+AudioDataWrapper::AudioDataWrapper(float *const *data, int channelCount, int sampleCount, int startPos): AudioDataWrapper(*new AudioDataWrapperPrivate) {
+    Q_D(AudioDataWrapper);
+    d->data = data;
+    d->channelCount = channelCount;
+    d->sampleCount = sampleCount;
+    d->startPos = startPos;
 }
 
 float &AudioDataWrapper::sampleAt(int channel, int pos) {
-    return m_data[channel][m_startPos + pos];
+    Q_D(AudioDataWrapper);
+    return d->data[channel][d->startPos + pos];
 }
 float AudioDataWrapper::constSampleAt(int channel, int pos) const {
-    return m_data[channel][m_startPos + pos];
+    Q_D(const AudioDataWrapper);
+    return d->data[channel][d->startPos + pos];
 }
 int AudioDataWrapper::channelCount() const {
-    return m_channelCount;
+    Q_D(const AudioDataWrapper);
+    return d->channelCount;
 }
 int AudioDataWrapper::sampleCount() const {
-    return m_sampleCount;
+    Q_D(const AudioDataWrapper);
+    return d->sampleCount;
 }
 
 float *const *AudioDataWrapper::data() const {
-    return m_data;
+    Q_D(const AudioDataWrapper);
+    return d->data;
 }
 
 void AudioDataWrapper::resetData(float *const *data, int channelCount, int sampleCount, int startPos) {
-    m_data = data;
-    m_channelCount = channelCount;
-    m_sampleCount = sampleCount;
-    m_startPos = startPos;
+    Q_D(AudioDataWrapper);
+    d->data = data;
+    d->channelCount = channelCount;
+    d->sampleCount = sampleCount;
+    d->startPos = startPos;
+}
+
+AudioDataWrapper::AudioDataWrapper(AudioDataWrapperPrivate &d): d_ptr(&d) {
+    d.q_ptr = this;
 }

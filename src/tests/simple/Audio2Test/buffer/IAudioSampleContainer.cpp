@@ -7,13 +7,14 @@
 #include <cassert>
 #include <cmath>
 
-static inline void boundCheck(const IAudioSampleContainer &iAudioStorage, int channel, int startPos, int length) {
+static inline void boundCheck(const IAudioSampleProvider &iAudioStorage, int channel, int startPos, int length) {
     assert(channel >= 0 && channel < iAudioStorage.channelCount());
-    assert(startPos >= 0 && startPos < iAudioStorage.sampleCount());
-    assert(startPos + length >= 0 && startPos + length < iAudioStorage.sampleCount());
+    assert(startPos >= 0 && startPos <= iAudioStorage.sampleCount());
+    assert(startPos + length >= 0 && startPos + length <= iAudioStorage.sampleCount());
 }
 
-void IAudioSampleContainer::setSampleRange(int destChannel, int destStartPos, int length, const IAudioSampleContainer &src,
+void IAudioSampleContainer::setSampleRange(int destChannel, int destStartPos, int length,
+                                           const IAudioSampleProvider &src,
                                    int srcChannel, int srcStartPos) {
     boundCheck(*this, destChannel, destStartPos, length);
     boundCheck(src, srcChannel, srcStartPos, length);
@@ -22,7 +23,7 @@ void IAudioSampleContainer::setSampleRange(int destChannel, int destStartPos, in
     }
 
 }
-void IAudioSampleContainer::setSampleRange(const IAudioSampleContainer &src) {
+void IAudioSampleContainer::setSampleRange(const IAudioSampleProvider &src) {
     auto minChannelCount = std::min(channelCount(), src.channelCount());
     auto minSampleCount = std::min(sampleCount(), src.sampleCount());
     for(int i = 0; i < minChannelCount; i++) {
@@ -30,7 +31,8 @@ void IAudioSampleContainer::setSampleRange(const IAudioSampleContainer &src) {
     }
 }
 
-void IAudioSampleContainer::addSampleRange(int destChannel, int destStartPos, int length, const IAudioSampleContainer &src,
+void IAudioSampleContainer::addSampleRange(int destChannel, int destStartPos, int length,
+                                           const IAudioSampleProvider &src,
                                    int srcChannel, int srcStartPos, float gain) {
     boundCheck(*this, destChannel, destStartPos, length);
     boundCheck(src, srcChannel, srcStartPos, length);
@@ -38,7 +40,7 @@ void IAudioSampleContainer::addSampleRange(int destChannel, int destStartPos, in
         sampleAt(destStartPos, destStartPos + i) += src.constSampleAt(srcStartPos, srcStartPos + i) * gain;
     }
 }
-void IAudioSampleContainer::addSampleRange(const IAudioSampleContainer &src, float gain) {
+void IAudioSampleContainer::addSampleRange(const IAudioSampleProvider &src, float gain) {
     auto minChannelCount = std::min(channelCount(), src.channelCount());
     auto minSampleCount = std::min(sampleCount(), src.sampleCount());
     for(int i = 0; i < minChannelCount; i++) {
@@ -78,27 +80,4 @@ void IAudioSampleContainer::clear() {
     for(int i = 0; i < destChannelCount; i++) {
         clear(i, 0, destSampleCount);
     }
-}
-
-float IAudioSampleContainer::magnitude(int channel, int startPos, int length) const {
-    float m = 0;
-    for(int i = 0; i < length; i++) {
-        m = std::max(m, std::abs(constSampleAt(channel, startPos + i)));
-    }
-    return m;
-}
-float IAudioSampleContainer::magnitude(int channel) const {
-    return magnitude(channel, 0, sampleCount());
-}
-
-float IAudioSampleContainer::rms(int channel, int startPos, int length) const {
-    float s = 0;
-    for(int i = 0; i < length; i++) {
-        auto sample = constSampleAt(channel, startPos + i);
-        s += sample * sample;
-    }
-    return std::sqrt(s / length);
-}
-float IAudioSampleContainer::rms(int channel) const {
-    return rms(channel, 0, sampleCount());
 }

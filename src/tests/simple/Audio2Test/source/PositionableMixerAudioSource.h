@@ -6,30 +6,29 @@
 #define CHORUSKIT_POSITIONABLEMIXERAUDIOSOURCE_H
 
 #include <QMChronMap.h>
+#include <QMutex>
 
 #include "PositionableAudioSource.h"
 
-
+class PositionableMixerAudioSourcePrivate;
 
 class PositionableMixerAudioSource: public PositionableAudioSource {
+    Q_DECLARE_PRIVATE(PositionableMixerAudioSource)
 public:
+    PositionableMixerAudioSource();
     ~PositionableMixerAudioSource() override;
     bool start(int bufferSize, double sampleRate) override;
-    bool isStarted() const override;
     int read(const AudioSourceReadData &readData) override;
     void stop() override;
     int length() const override;
-    int nextReadPosition() const override;
     void setNextReadPosition(int pos) override;
 
-    void addSource(PositionableAudioSource *src, bool takeOwnership);
+    void addSource(PositionableAudioSource *src, bool takeOwnership = false);
     void removeSource(PositionableAudioSource *src);
     void removeAllSource();
     QList<PositionableAudioSource *> sources() const;
-private:
-    QMChronMap<PositionableAudioSource *, bool> m_sourceDict;
-    bool m_isStarted = false;
-    int m_position = 0;
+protected:
+    PositionableMixerAudioSource(PositionableMixerAudioSourcePrivate &d);
 };
 
 

@@ -5,11 +5,14 @@
 #ifndef CHORUSKIT_AUDIODATAWRAPPER_H
 #define CHORUSKIT_AUDIODATAWRAPPER_H
 
+#include <QScopedPointer>
+
 #include "IAudioSampleContainer.h"
 
+class AudioDataWrapperPrivate;
 
 class AudioDataWrapper: public IAudioSampleContainer {
-
+    Q_DECLARE_PRIVATE(AudioDataWrapper)
 public:
     AudioDataWrapper(float *const *data, int channelCount, int sampleCount, int startPos = 0);
 
@@ -20,12 +23,9 @@ public:
 
     float *const *data() const;
     void resetData(float *const *data, int channelCount, int sampleCount, int startPos = 0);
-
-private:
-    float *const *m_data;
-    int m_channelCount;
-    int m_sampleCount;
-    int m_startPos;
+protected:
+    QScopedPointer<AudioDataWrapperPrivate> d_ptr;
+    AudioDataWrapper(AudioDataWrapperPrivate &d);
 };
 
 

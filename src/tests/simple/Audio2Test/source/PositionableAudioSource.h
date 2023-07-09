@@ -7,12 +7,17 @@
 
 #include "AudioSource.h"
 
+class PositionableAudioSourcePrivate;
 
 class PositionableAudioSource: public AudioSource {
+    Q_DECLARE_PRIVATE(PositionableAudioSource)
 public:
+    PositionableAudioSource();
     virtual int length() const = 0;
-    virtual int nextReadPosition() const = 0;
-    virtual void setNextReadPosition(int pos) = 0;
+    virtual int nextReadPosition() const;
+    virtual void setNextReadPosition(int pos);
+protected:
+    PositionableAudioSource(PositionableAudioSourcePrivate &d);
 };
 
 

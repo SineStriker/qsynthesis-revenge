@@ -6,20 +6,19 @@
 #define CHORUSKIT_MIXERAUDIOSOURCE_H
 
 #include <QList>
-#include <QMap>
-
-#include <QMChronMap.h>
 
 #include "AudioSource.h"
 
-class MixerAudioSource: public AudioSource {
+class MixerAudioSourcePrivate;
 
+class MixerAudioSource: public AudioSource {
+    Q_DECLARE_PRIVATE(MixerAudioSource)
 public:
 
+    MixerAudioSource();
     ~MixerAudioSource();
 
     bool start(int bufferSize, double sampleRate) override;
-    bool isStarted() const override;
     int read(const AudioSourceReadData &readData) override;
     void stop() override;
 
@@ -28,9 +27,8 @@ public:
     void removeAllSource();
     QList<AudioSource *> sources() const;
 
-private:
-    QMChronMap<AudioSource *, bool> m_sourceDict;
-    bool m_isStarted = false;
+protected:
+    MixerAudioSource(MixerAudioSourcePrivate &d);
 };
 
 

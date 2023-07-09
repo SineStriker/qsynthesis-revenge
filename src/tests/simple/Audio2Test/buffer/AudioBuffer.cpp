@@ -49,3 +49,11 @@ AudioBuffer AudioBuffer::slice(int startChannelIndex, int startSampleCount, int 
     newBuf.m_buffer = std::move(b);
     return newBuf;
 }
+
+AudioBuffer AudioBuffer::from(const IAudioSampleProvider &src) {
+    auto channelCount = src.channelCount();
+    auto sampleCount = src.sampleCount();
+    AudioBuffer buf(channelCount, sampleCount);
+    buf.setSampleRange(src);
+    return buf;
+}

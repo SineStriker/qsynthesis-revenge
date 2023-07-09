@@ -27,6 +27,8 @@ public:
 
     AudioBuffer slice(int startChannelIndex, int startSampleCount, int channelSize = -1, int length = -1) const;
 
+    static AudioBuffer from(const IAudioSampleProvider &src);
+
 private:
     QVector<QVector<float>> m_buffer;
 };

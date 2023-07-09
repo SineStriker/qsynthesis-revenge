@@ -3,57 +3,62 @@
 //
 
 #include "MemoryAudioSource.h"
+#include "MemoryAudioSource_p.h"
 
 #include "buffer/IAudioSampleContainer.h"
 #include <algorithm>
 
-MemoryAudioSource::MemoryAudioSource(IAudioSampleContainer *buffer, bool takeOwnership): m_buffer(buffer), m_takeOwnership(takeOwnership) {
+MemoryAudioSource::MemoryAudioSource(IAudioSampleProvider *buffer, bool takeOwnership): MemoryAudioSource(*new MemoryAudioSourcePrivate) {
+    Q_D(MemoryAudioSource);
+    d->buffer = buffer;
+    d->takeOwnership = takeOwnership;
+}
+
+MemoryAudioSource::MemoryAudioSource(MemoryAudioSourcePrivate &d): PositionableAudioSource(d) {
 }
 
 MemoryAudioSource::~MemoryAudioSource() {
-    if(m_takeOwnership) {
-        delete m_buffer;
+    Q_D(MemoryAudioSource);
+    if(d->takeOwnership) {
+        delete d->buffer;
     }
 }
 
-IAudioSampleContainer *MemoryAudioSource::buffer() const {
-    return m_buffer;
+IAudioSampleProvider *MemoryAudioSource::buffer() const {
+    Q_D(const MemoryAudioSource);
+    return d->buffer;
 }
 
-IAudioSampleContainer *MemoryAudioSource::resetBuffer(IAudioSampleContainer *newBuffer, bool takeOwnership) {
-    auto oldBuffer = m_buffer;
-    m_buffer = newBuffer;
-    m_takeOwnership = takeOwnership;
-    m_position = 0;
+IAudioSampleProvider *MemoryAudioSource::resetBuffer(IAudioSampleProvider *newBuffer, bool takeOwnership) {
+    Q_D(MemoryAudioSource);
+    QMutexLocker locker(&d->mutex);
+    auto oldBuffer = d->buffer;
+    d->buffer = newBuffer;
+    d->takeOwnership = takeOwnership;
+    d->position = 0;
     return oldBuffer;
 }
 
-bool MemoryAudioSource::start(int bufferSize, double sampleRate) {
-    m_isStarted = true;
-    return true;
-}
-bool MemoryAudioSource::isStarted() const {
-    return m_isStarted;
-}
 int MemoryAudioSource::read(const AudioSourceReadData &readData) {
+    Q_D(MemoryAudioSource);
+    QMutexLocker locker(&d->mutex);
     auto bufferLength = length();
-    auto channelCount = std::min(m_buffer->channelCount(), readData.buffer->channelCount());
-    auto readLength = std::min(readData.length, bufferLength - m_position);
+    auto channelCount = std::min(d->buffer->channelCount(), readData.buffer->channelCount());
+    auto readLength = std::min(readData.length, bufferLength - nextReadPosition());
     for(int i = 0; i < channelCount; i++) {
-        readData.buffer->setSampleRange(i, readData.startPos, readLength, *m_buffer, i, m_position);
+        readData.buffer->setSampleRange(i, readData.startPos, readLength, *d->buffer, i, d->position);
     }
-    m_position += readLength;
+    d->position += readLength;
     return readLength;
 }
-void MemoryAudioSource::stop() {
-    m_isStarted = false;
-}
+
 int MemoryAudioSource::length() const {
-    return m_buffer->sampleCount();
+    Q_D(const MemoryAudioSource);
+    return d->buffer->sampleCount();
 }
-int MemoryAudioSource::nextReadPosition() const {
-    return m_position;
-}
+
 void MemoryAudioSource::setNextReadPosition(int pos) {
-    m_position = pos;
+    Q_D(MemoryAudioSource);
+    QMutexLocker locker(&d->mutex);
+    PositionableAudioSource::setNextReadPosition(pos);
 }

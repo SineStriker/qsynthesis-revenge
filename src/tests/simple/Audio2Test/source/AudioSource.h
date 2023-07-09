@@ -5,25 +5,35 @@
 #ifndef CHORUSKIT_AUDIOSOURCE_H
 #define CHORUSKIT_AUDIOSOURCE_H
 
-class IAudioSampleContainer;
+#include <QScopedPointer>
+
+#include "buffer/IAudioSampleContainer.h"
 
 class AudioSourceReadData {
 public:
-    AudioSourceReadData(IAudioSampleContainer *buffer);
+    AudioSourceReadData(IAudioSampleContainer *buffer); //implicit use IAudioSampleContainer
     AudioSourceReadData(IAudioSampleContainer *buffer, int startPos, int length);
     IAudioSampleContainer *buffer;
     int startPos;
     int length;
 };
 
-class AudioSource {
+class AudioSourcePrivate;
 
+class AudioSource {
+    Q_DECLARE_PRIVATE(AudioSource)
 public:
-    virtual ~AudioSource() = default;
-    virtual bool start(int bufferSize, double sampleRate) = 0;
-    virtual bool isStarted() const = 0;
+    AudioSource();
+    virtual ~AudioSource();
+    virtual bool start(int bufferSize, double sampleRate);
+    bool isStarted() const;
+    int bufferSize() const;
+    double sampleRate() const;
     virtual int read(const AudioSourceReadData &readData) = 0;
-    virtual void stop() = 0;
+    virtual void stop();
+protected:
+    AudioSource(AudioSourcePrivate &d);
+    QScopedPointer<AudioSourcePrivate> d_ptr;
 };
 
 
