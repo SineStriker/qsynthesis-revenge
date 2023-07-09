@@ -44,7 +44,7 @@ void SplashScreen::drawContents(QPainter *painter) {
 
         QFont font;
 #ifdef Q_OS_WINDOWS
-        font.setFamily("Microsoft YaHei");
+        // font.setFamily("Microsoft YaHei");
 #endif
         font.setPixelSize(attr.fontSize
                           //* screen()->logicalDotsPerInch() / QMOs::unitDpi()

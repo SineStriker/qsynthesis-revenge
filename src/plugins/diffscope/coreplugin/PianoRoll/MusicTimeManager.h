@@ -39,9 +39,6 @@ namespace Core {
         void tempoAdded(int tick, double tempo);
         void tempoRemoved(int tick);
 
-        void viewMoved(const QPointF &pos, const QPointF &oldPos);
-        void viewResized(const QSizeF &size, const QSizeF &newSize);
-
         void currentWidthChanged(int w);
         void currentHeightChanged(int h);
         void currentSnapChanged(int s);

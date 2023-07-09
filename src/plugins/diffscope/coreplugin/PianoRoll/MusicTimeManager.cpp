@@ -10,6 +10,7 @@ namespace Core {
 
         m_currentWidth = 100;
         m_currentHeight = 30;
+        m_currentSnap = 240;
     }
 
     MusicTimeManagerPrivate::~MusicTimeManagerPrivate() {
@@ -85,7 +86,7 @@ namespace Core {
     }
 
     int MusicTimeManager::currentSnap() const {
-        return 0;
+        return d->m_currentSnap;
     }
 
     void MusicTimeManager::setCurrentSnap(int currentSnap) {

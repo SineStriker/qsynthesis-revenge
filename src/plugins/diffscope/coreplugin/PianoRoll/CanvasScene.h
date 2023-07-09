@@ -20,6 +20,10 @@ namespace Core {
         void initialize() override;
         void extensionInitialized() override;
 
+    signals:
+        void viewMoved(const QPointF &pos, const QPointF &oldPos);
+        void viewResized(const QSizeF &size, const QSizeF &newSize);
+
     protected:
         void viewMoveEvent(QGraphicsSceneMoveEvent *event) override;
         void viewResizeEvent(QGraphicsSceneResizeEvent *event) override;

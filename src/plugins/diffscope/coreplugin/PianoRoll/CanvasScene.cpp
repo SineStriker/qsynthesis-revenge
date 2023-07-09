@@ -8,12 +8,29 @@
 namespace Core {
 
     CanvasScenePrivate::CanvasScenePrivate() {
+        timeMgr = nullptr;
     }
 
     CanvasScenePrivate::~CanvasScenePrivate() {
     }
 
     void CanvasScenePrivate::init() {
+    }
+
+    void CanvasScenePrivate::adjustSceneRect() {
+        Q_Q(CanvasScene);
+        q->setSceneRect(QRect(0, 0, 10000, timeMgr->currentHeight() * 84));
+    }
+
+    void CanvasScenePrivate::_q_currentWidthChanged(int w) {
+        adjustSceneRect();
+    }
+
+    void CanvasScenePrivate::_q_currentHeightChanged(int h) {
+        adjustSceneRect();
+    }
+
+    void CanvasScenePrivate::_q_currentSnapChanged(int s) {
     }
 
     CanvasScene::CanvasScene(IProjectWindow *iWin, QObject *parent)
@@ -24,18 +41,27 @@ namespace Core {
     }
 
     void CanvasScene::initialize() {
+        Q_D(CanvasScene);
+
+        auto timeMgr = iWin->timeManager();
+        d->timeMgr = timeMgr;
+
+        connect(timeMgr, &MusicTimeManager::currentWidthChanged, d, &CanvasScenePrivate::_q_currentWidthChanged);
+        connect(timeMgr, &MusicTimeManager::currentHeightChanged, d, &CanvasScenePrivate::_q_currentHeightChanged);
+        connect(timeMgr, &MusicTimeManager::currentSnapChanged, d, &CanvasScenePrivate::_q_currentSnapChanged);
     }
 
     void CanvasScene::extensionInitialized() {
-        setSceneRect(QRect(0, 0, 10000, 4000));
+        Q_D(CanvasScene);
+        d->adjustSceneRect();
     }
 
     void CanvasScene::viewMoveEvent(QGraphicsSceneMoveEvent *event) {
-        emit iWin->timeManager()->viewMoved(event->newPos(), event->oldPos());
+        emit viewMoved(event->newPos(), event->oldPos());
     }
 
     void CanvasScene::viewResizeEvent(QGraphicsSceneResizeEvent *event) {
-        emit iWin->timeManager()->viewResized(event->newSize(), event->oldSize());
+        emit viewResized(event->newSize(), event->oldSize());
     }
 
     void CanvasScene::drawBackground(QPainter *painter, const QRectF &rect) {

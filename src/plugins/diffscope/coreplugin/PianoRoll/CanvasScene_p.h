@@ -5,16 +5,28 @@
 
 namespace Core {
 
-class CanvasScenePrivate {
-    Q_DECLARE_PUBLIC(CanvasScene)
-public:
-    CanvasScenePrivate();
-    virtual ~CanvasScenePrivate();
+    class MusicTimeManager;
 
-    void init();
+    class CanvasScenePrivate : public QObject {
+        Q_OBJECT
+        Q_DECLARE_PUBLIC(CanvasScene)
+    public:
+        CanvasScenePrivate();
+        virtual ~CanvasScenePrivate();
 
-    CanvasScene *q_ptr;
-};
+        void init();
+
+        CanvasScene *q_ptr;
+
+        MusicTimeManager *timeMgr;
+
+        void adjustSceneRect();
+
+    private:
+        void _q_currentWidthChanged(int w);
+        void _q_currentHeightChanged(int h);
+        void _q_currentSnapChanged(int s);
+    };
 
 }
 

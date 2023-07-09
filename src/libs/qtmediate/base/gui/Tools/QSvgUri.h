@@ -35,7 +35,9 @@ public:
 
     bool isNull() const;
 
-    operator QIcon() const;
+    inline operator QIcon() const{
+        return toIcon();
+    }
 
 private:
     QString m_filename;

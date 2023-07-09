@@ -10,6 +10,7 @@
 
 #include "ICore.h"
 #include "Internal/Widgets/PianoKeyWidget.h"
+#include "Window/IProjectWindow.h"
 
 namespace Core {
 
@@ -144,6 +145,31 @@ namespace Core {
         }
     }
 
+    void PianoRollPrivate::adjustPianoKeyWidget() {
+        m_pianoKeyContainer->setValueY(m_view->valueY());
+    }
+
+    void PianoRollPrivate::_q_viewMoved(const QPointF &pos, const QPointF &oldPos) {
+        if (pos.y() == oldPos.y()) {
+            return;
+        }
+        adjustPianoKeyWidget();
+    }
+
+    void PianoRollPrivate::_q_viewResized(const QSizeF &size, const QSizeF &newSize) {
+        adjustPianoKeyWidget();
+    }
+
+    void PianoRollPrivate::_q_currentHeightChanged(int h) {
+        auto area = m_pianoKeyContainer->area();
+        if (!area) {
+            return;
+        }
+
+        area->setCurrentHeight(h);
+        adjustPianoKeyWidget();
+    }
+
     PianoRoll::PianoRoll(IProjectWindow *iWin, QWidget *parent) : PianoRoll(*new PianoRollPrivate(), iWin, parent) {
     }
 
@@ -154,6 +180,13 @@ namespace Core {
         Q_D(PianoRoll);
         d->m_view->initialize();
         d->m_sectionWidget->initialize();
+
+        auto scene = d->m_view->scene();
+        connect(scene, &CanvasScene::viewMoved, d, &PianoRollPrivate::_q_viewMoved);
+        connect(scene, &CanvasScene::viewResized, d, &PianoRollPrivate::_q_viewResized);
+
+        auto timeMgr = iWin->timeManager();
+        connect(timeMgr, &MusicTimeManager::currentHeightChanged, d, &PianoRollPrivate::_q_currentHeightChanged);
     }
 
     void PianoRoll::extensionInitialized() {

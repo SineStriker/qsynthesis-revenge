@@ -12,7 +12,8 @@
 
 namespace Core {
 
-    class PianoRollPrivate {
+    class PianoRollPrivate : public QObject{
+        Q_OBJECT
         Q_DECLARE_PUBLIC(PianoRoll)
     public:
         PianoRollPrivate();
@@ -48,6 +49,13 @@ namespace Core {
         QsApi::SynthVSplitter *m_canvas;
 
         CanvasView *m_view;
+
+        void adjustPianoKeyWidget();
+
+    private:
+        void _q_viewMoved(const QPointF &pos, const QPointF &oldPos);
+        void _q_viewResized(const QSizeF &size, const QSizeF &newSize);
+        void _q_currentHeightChanged(int h);
     };
 
 }

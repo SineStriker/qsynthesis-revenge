@@ -29,7 +29,7 @@ QMenuBar[core-style=true]>QToolButton#qt_menubar_ext_button:pressed {
 QMenuBar[core-style=true]::item {
     color: #CCCCCC;
     border: none;
-    padding: 10px 12px;
+    padding: 8px 10px;
 }
 
 QMenuBar[core-style=true]::item:selected {
@@ -46,7 +46,7 @@ QMenu[core-style=true] {
 }
 
 QMenu[core-style=true]::item {
-    padding: 6px 30px;
+    padding: 4px 25px;
     background: transparent;
     color: #CCCCCC;
 }

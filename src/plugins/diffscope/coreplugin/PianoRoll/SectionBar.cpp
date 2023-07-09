@@ -69,6 +69,37 @@ namespace Core {
         q->update();
     }
 
+    QTypeMap SectionBarPrivate::styleData_helper() const {
+        return {
+            {"sectionNumber",       QVariant::fromValue(sectionNumber)      },
+            {"signatureNumber",     QVariant::fromValue(signatureNumber)    },
+            {"signatureBackground", QVariant::fromValue(signatureBackground)},
+            {"tempoNumber",         QVariant::fromValue(tempoNumber)        },
+            {"tempoBackground",     QVariant::fromValue(tempoBackground)    },
+            {"sectionLine",         QVariant::fromValue(sectionLine)        },
+            {"beatLine",            QVariant::fromValue(beatLine)           },
+            {"tempoLine",           QVariant::fromValue(tempoLine)          },
+        };
+    }
+
+    void SectionBarPrivate::setStyleData_helper(const QTypeMap &map) {
+        auto decodeStyle = [](const QVariant &var, auto &val) {
+            using Type = decltype(typename std::remove_reference<decltype(val)>::type());
+            if (var.canConvert<Type>()) {
+                val = var.value<Type>();
+            }
+        };
+
+        decodeStyle(map["sectionNumber"], sectionNumber);
+        decodeStyle(map["signatureNumber"], signatureNumber);
+        decodeStyle(map["signatureBackground"], signatureBackground);
+        decodeStyle(map["tempoNumber"], tempoNumber);
+        decodeStyle(map["tempoBackground"], tempoBackground);
+        decodeStyle(map["sectionLine"], sectionLine);
+        decodeStyle(map["beatLine"], beatLine);
+        decodeStyle(map["tempoLine"], tempoLine);
+    }
+
     SectionBar::SectionBar(IProjectWindow *iWin, QWidget *parent) : SectionBar(*new SectionBarPrivate(), iWin, parent) {
     }
 
@@ -89,10 +120,13 @@ namespace Core {
     }
 
     QTypeMap SectionBar::styleData() const {
-        return QTypeMap();
+        Q_D(const SectionBar);
+        return d->styleData_helper();
     }
 
     void SectionBar::setStyleData(const QTypeMap &map) {
+        Q_D(SectionBar);
+        d->setStyleData_helper(map);
     }
 
     int SectionBar::startPos() const {
@@ -191,11 +225,10 @@ namespace Core {
                 highlight = true;
 
                 int toX = r0.left() + d->deltaX;
-                int tick = toX / unit + startPos;
-                tick = qMax(0, (tick + d->curSnap / 2) / d->curSnap * d->curSnap);
-                toX = (tick - startPos) * unit;
-                d->targetTempo = tick;
-
+                int toTick = toX / unit + startPos;
+                toTick = qMax(0, (toTick + d->curSnap / 2) / d->curSnap * d->curSnap);
+                toX = (toTick - startPos) * unit;
+                d->targetTempo = toTick;
                 r0.moveLeft(toX);
             }
             if ((r0.contains(mapFromGlobal(QCursor::pos())) && !(orgTempo != tick && d->deltaX != 0)) || highlight) {
@@ -245,7 +278,7 @@ namespace Core {
                     if (it.key() >= endPos)
                         break;
 
-                    int x2 = (it.key() - startPos) * unit;
+                    int x2 = (it.key() - startPos) * unit + changedRect.left();
 
                     QFontMetrics fm(d->tempoNumber.font());
                     QString text = QString::number(it.value());

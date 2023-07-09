@@ -7,38 +7,45 @@
 
 #include <QGraphicsScene>
 
-namespace Core::Internal {
+namespace Core {
 
-    class SectionWidget : public SectionBar {
-        Q_OBJECT
-        Q_PROPERTY(QPixelSize preferredHeight READ preferredHeight WRITE setPreferredHeight)
-    public:
-        explicit SectionWidget(IProjectWindow *iWin, QWidget *parent = nullptr);
-        ~SectionWidget();
+    class CanvasView;
 
-        void initialize() override;
-        void extensionInitialized() override;
+    class CanvasScene;
 
-    public:
-        QPixelSize preferredHeight() const;
-        void setPreferredHeight(const QPixelSize &height);
+    namespace Internal {
 
-        QSize sizeHint() const override;
+        class SectionWidget : public SectionBar {
+            Q_OBJECT
+            Q_PROPERTY(QPixelSize preferredHeight READ preferredHeight WRITE setPreferredHeight)
+        public:
+            explicit SectionWidget(IProjectWindow *iWin, QWidget *parent = nullptr);
+            ~SectionWidget();
 
-    protected:
-        void paintEvent(QPaintEvent *event) override;
+            void initialize() override;
+            void extensionInitialized() override;
 
-    private:
-        int m_preferredHeight;
+        public:
+            QPixelSize preferredHeight() const;
+            void setPreferredHeight(const QPixelSize &height);
 
-        QGraphicsView *view;
-        QGraphicsScene *scene;
+            QSize sizeHint() const override;
 
-        void _q_viewMoved(const QPointF &pos, const QPointF &oldPos);
-        void _q_viewResized(const QSizeF &size, const QSizeF &newSize);
-        void _q_currentWidthChanged(int w);
-        void _q_currentSnapChanged(int s);
-    };
+        protected:
+            void paintEvent(QPaintEvent *event) override;
+
+        private:
+            int m_preferredHeight;
+
+            CanvasView *view;
+            CanvasScene *scene;
+
+            void _q_viewMoved(const QPointF &pos, const QPointF &oldPos);
+            void _q_viewResized(const QSizeF &size, const QSizeF &newSize);
+            void _q_currentWidthChanged(int w);
+            void _q_currentSnapChanged(int s);
+        };
+    }
 
 }
 

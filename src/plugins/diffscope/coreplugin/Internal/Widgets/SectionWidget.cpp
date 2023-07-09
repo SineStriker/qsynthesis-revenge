@@ -20,11 +20,15 @@ namespace Core::Internal {
         view = iWin->pianoRoll()->canvasView();
         scene = view->scene();
 
+        connect(scene, &CanvasScene::viewMoved, this, &SectionWidget::_q_viewMoved);
+        connect(scene, &CanvasScene::viewResized, this, &SectionWidget::_q_viewResized);
+
         auto timeMgr = iWin->timeManager();
-        connect(timeMgr, &MusicTimeManager::viewMoved, this, &SectionWidget::_q_viewMoved);
-        connect(timeMgr, &MusicTimeManager::viewResized, this, &SectionWidget::_q_viewResized);
         connect(timeMgr, &MusicTimeManager::currentWidthChanged, this, &SectionWidget::_q_currentWidthChanged);
         connect(timeMgr, &MusicTimeManager::currentSnapChanged, this, &SectionWidget::_q_currentSnapChanged);
+
+        setCurrentWidth(timeMgr->currentWidth());
+        setCurrentSnap(timeMgr->currentSnap());
     }
 
     void SectionWidget::extensionInitialized() {
@@ -50,12 +54,12 @@ namespace Core::Internal {
     }
 
     void SectionWidget::_q_viewMoved(const QPointF &pos, const QPointF &oldPos) {
-        setStartPos(double(static_cast<CanvasView *>(view)->valueX()) / currentWidth() * 480);
+        setStartPos(double(view->valueX()) / currentWidth() * 480);
         update();
     }
 
     void SectionWidget::_q_viewResized(const QSizeF &size, const QSizeF &newSize) {
-        setStartPos(double(static_cast<CanvasView *>(view)->valueX()) / currentWidth() * 480);
+        setStartPos(double(view->valueX()) / currentWidth() * 480);
         update();
     }
 

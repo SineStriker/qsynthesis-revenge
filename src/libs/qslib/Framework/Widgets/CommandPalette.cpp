@@ -168,6 +168,7 @@ namespace QsApi {
                         break;
                     }
                     case Qt::Key_Tab:
+                        emit q->tabPressed();
                         return true;
                         break;
                     case Qt::Key_Escape:

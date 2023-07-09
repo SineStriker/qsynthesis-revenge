@@ -63,6 +63,9 @@ namespace Core {
 
         void updateLayout();
         void updateMouseArea(QMouseEvent *event);
+
+        QTypeMap styleData_helper() const;
+        void setStyleData_helper(const QTypeMap &map);
     };
 
 } // namespace Core
