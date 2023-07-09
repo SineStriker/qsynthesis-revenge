@@ -75,10 +75,8 @@ namespace Core {
         pressed = false;
 
         deltaX = 0;
-        curBarNumber = -1;
-        curTimeSignature = -1;
-        curTempo = -1;
-        targetTempo = -1;
+        hoverDataType = TempDataType::None;
+        dragDataType = TempDataType::None;
     }
 
     SectionBarPrivate::~SectionBarPrivate() {
@@ -149,7 +147,7 @@ namespace Core {
 
         QAction addAction(tr("Add time signature here"));
         QAction editAction(tr("Edit time signature here"));
-        if (timeline->timeSignatureMap().contains(curBarNumber)) {
+        if (timeline->timeSignatureMap().contains(hoverData.curSectionNum)) {
             menu->addAction(&editAction);
         } else {
             menu->addAction(&addAction);
@@ -158,7 +156,7 @@ namespace Core {
         auto action = menu->exec(QCursor::pos());
         if (action == &addAction || action == &editAction) {
             // Add new time signature
-            q->changeTimeSignatureAt(curBarNumber);
+            q->changeTimeSignatureAt(hoverData.curSectionNum);
         }
     }
 
@@ -175,7 +173,7 @@ namespace Core {
         QAction removeAction(tr("Remove"));
         QAction editAction(tr("Edit"));
 
-        if (curTimeSignature > 0)
+        if (hoverData.curTimeSignature > 0)
             menu->addAction(&removeAction);
         menu->addAction(&editAction);
 
@@ -184,14 +182,14 @@ namespace Core {
             // Remove
         } else if (action == &editAction) {
             // Edit
-            q->changeTimeSignatureAt(timeSignatureBlocks.value(curTimeSignature).section);
+            q->changeTimeSignatureAt(timeSignatureBlocks.value(hoverData.curTimeSignature).section);
         }
     }
 
     void SectionBarPrivate::edit_timeSignatureDoubleClicked() {
         Q_Q(SectionBar);
 
-        q->changeTimeSignatureAt(timeSignatureBlocks.value(curTimeSignature).section);
+        q->changeTimeSignatureAt(timeSignatureBlocks.value(hoverData.curTimeSignature).section);
 
         //        const auto &block = timeSignatureBlocks.value(curTimeSignature);
         //
@@ -242,7 +240,7 @@ namespace Core {
 
         QAction removeAction(tr("Remove"));
         QAction editAction(tr("Edit"));
-        if (curTempo > 0)
+        if (hoverData.curTempo > 0)
             menu->addAction(&removeAction);
         menu->addAction(&editAction);
 
@@ -251,14 +249,14 @@ namespace Core {
             // Remove
         } else if (action == &editAction) {
             // Edit
-            q->changeTempoAt(curTempo);
+            q->changeTempoAt(hoverData.curTempo);
         }
     }
 
     void SectionBarPrivate::edit_tempoDoubleClicked() {
         Q_Q(SectionBar);
 
-        const auto &block = tempoBlocks.value(curTempo);
+        const auto &block = tempoBlocks.value(dragData.orgTempo);
 
         EditDialog dlg(q);
         auto lineEdit = new CLineEdit();
@@ -322,6 +320,9 @@ namespace Core {
         } else if (action == &addTimeSigAction || action == &editTimeSigAction) {
             q->changeTimeSignatureAt(time.measure());
         }
+    }
+
+    void SectionBarPrivate::updatePlayHead() {
     }
 
     SectionBar::SectionBar(IProjectWindow *iWin, QWidget *parent) : SectionBar(*new SectionBarPrivate(), iWin, parent) {
@@ -399,12 +400,7 @@ namespace Core {
 
         QFrame::paintEvent(event);
 
-        auto orgTempo = d->curTempo;
-
-        d->curBarNumber = -1;
-        d->curTimeSignature = -1;
-        d->curTempo = -1;
-        d->targetTempo = -1;
+        d->hoverDataType = SectionBarPrivate::TempDataType::None;
 
         QPainter painter(this);
 
@@ -424,16 +420,74 @@ namespace Core {
             bool hasSignature;
         };
 
-        auto drawTimeSig = [&](const QRect &r0, int tick, const QsApi::MusicTimeSignature &ts) {
-            if (r0.contains(mapFromGlobal(QCursor::pos()))) {
-                d->curTimeSignature = tick;
-                if (d->pressed) {
-                    painter.setPen(d->signatureNumber.color3());
-                    painter.setBrush(d->signatureBackground.color3());
-                } else {
-                    painter.setPen(d->signatureNumber.color2());
-                    painter.setBrush(d->signatureBackground.color2());
+        auto drawSectionNum = [&](const QRect &r0, int section) {
+            bool hover = false;
+            bool pressed = false;
+            if (d->dragDataType == SectionBarPrivate::TempDataType::SectionNum) {
+                if (d->dragData.orgSectionNum == section) {
+                    pressed = true;
                 }
+            } else if (d->dragDataType == SectionBarPrivate::TempDataType::None) {
+                if (r0.contains(mapFromGlobal(QCursor::pos()))) {
+                    if (d->pressed && d->deltaX == 0) {
+                        pressed = true;
+                        d->dragDataType = SectionBarPrivate::TempDataType::SectionNum;
+                        d->dragData.orgSectionNum = section;
+                    } else {
+                        hover = true;
+                    }
+
+                    d->hoverDataType = SectionBarPrivate::TempDataType::SectionNum;
+                    d->hoverData.curSectionNum = section;
+                }
+            }
+
+            if (pressed) {
+                painter.setPen(d->sectionNumber.color3());
+                painter.setBrush(d->sectionBackground.color3());
+            } else if (hover) {
+                painter.setPen(d->sectionNumber.color2());
+                painter.setBrush(d->sectionBackground.color2());
+            } else {
+                painter.setPen(d->sectionNumber.color());
+                painter.setBrush(d->sectionBackground.color());
+            }
+            if (painter.brush() != Qt::NoBrush) {
+                auto pen = painter.pen();
+                painter.setPen(Qt::NoPen);
+                painter.drawRect(r0);
+                painter.setPen(pen);
+            }
+            painter.setFont(d->sectionNumber.font());
+            painter.drawText(r0, Qt::AlignCenter, QString::number(section));
+        };
+
+        auto drawTimeSig = [&](const QRect &r0, int tick, const QsApi::MusicTimeSignature &ts) {
+            bool hover = false;
+            bool pressed = false;
+            if (d->dragDataType == SectionBarPrivate::TempDataType::TimeSignature) {
+                if (d->hoverData.curTimeSignature == tick) {
+                    pressed = true;
+                }
+            } else if (d->dragDataType == SectionBarPrivate::TempDataType::None) {
+                if (r0.contains(mapFromGlobal(QCursor::pos()))) {
+                    if (d->pressed && d->deltaX == 0) {
+                        pressed = true;
+                        d->dragDataType = SectionBarPrivate::TempDataType::TimeSignature;
+                    } else {
+                        hover = true;
+                    }
+                    d->hoverDataType = SectionBarPrivate::TempDataType::TimeSignature;
+                    d->hoverData.curTimeSignature = tick;
+                }
+            }
+
+            if (pressed) {
+                painter.setPen(d->signatureNumber.color3());
+                painter.setBrush(d->signatureBackground.color3());
+            } else if (hover) {
+                painter.setPen(d->signatureNumber.color2());
+                painter.setBrush(d->signatureBackground.color2());
             } else {
                 painter.setPen(d->signatureNumber.color());
                 painter.setBrush(d->signatureBackground.color());
@@ -452,26 +506,42 @@ namespace Core {
         };
 
         auto drawTempo = [&](QRect r0, int tick, double tempo) {
-            bool highlight = false;
-            if (orgTempo == tick && d->deltaX != 0 && tick > 0) {
-                highlight = true;
+            bool hover = false;
+            bool pressed = false;
+            if (d->dragDataType == SectionBarPrivate::TempDataType::Tempo) {
+                if (d->dragData.orgTempo == tick) {
+                    pressed = true;
 
-                int toX = r0.left() + d->deltaX;
-                int toTick = toX / unit + startPos;
-                toTick = qMax(0, (toTick + d->curSnap / 2) / d->curSnap * d->curSnap);
-                toX = (toTick - startPos) * unit;
-                d->targetTempo = toTick;
-                r0.moveLeft(toX);
-            }
-            if ((r0.contains(mapFromGlobal(QCursor::pos())) && !(orgTempo != tick && d->deltaX != 0)) || highlight) {
-                d->curTempo = (d->deltaX != 0) ? orgTempo : tick;
-                if (d->pressed) {
-                    painter.setPen(d->tempoNumber.color3());
-                    painter.setBrush(d->tempoBackground.color3());
-                } else {
-                    painter.setPen(d->tempoNumber.color2());
-                    painter.setBrush(d->tempoBackground.color2());
+                    int toX = r0.left() + d->deltaX;
+                    int toTick = toX / unit + startPos;
+                    toTick = qMax(0, (toTick + d->curSnap / 2) / d->curSnap * d->curSnap);
+                    toX = (toTick - startPos) * unit;
+                    r0.moveLeft(toX);
+
+                    d->dragData.targetTempo = toTick;
                 }
+            } else if (d->dragDataType == SectionBarPrivate::TempDataType::None) {
+                if (r0.contains(mapFromGlobal(QCursor::pos()))) {
+                    if (d->pressed && d->deltaX == 0) {
+                        pressed = true;
+                        d->dragDataType = SectionBarPrivate::TempDataType::Tempo;
+                        d->dragData.orgTempo = tick;
+                        d->dragData.targetTempo = -1;
+                    } else {
+                        hover = true;
+                    }
+
+                    d->hoverDataType = SectionBarPrivate::TempDataType::Tempo;
+                    d->hoverData.curTempo = tick;
+                }
+            }
+
+            if (pressed) {
+                painter.setPen(d->tempoNumber.color3());
+                painter.setBrush(d->tempoBackground.color3());
+            } else if (hover) {
+                painter.setPen(d->tempoNumber.color2());
+                painter.setBrush(d->tempoBackground.color2());
             } else {
                 painter.setPen(d->tempoNumber.color());
                 painter.setBrush(d->tempoBackground.color());
@@ -525,7 +595,8 @@ namespace Core {
 
                 const SectionBarPrivate::Tempo *deferredBlock = nullptr;
                 for (const auto &item : qAsConst(d->tempoBlocks)) {
-                    if (orgTempo == item.tick && d->deltaX != 0) {
+                    if (d->dragDataType == SectionBarPrivate::TempDataType::Tempo &&
+                        d->dragData.orgTempo == item.tick && d->deltaX != 0) {
                         deferredBlock = &item;
                         continue;
                     }
@@ -587,27 +658,7 @@ namespace Core {
                         int rh = fm0.height() + margins.top() + margins.bottom();
                         QRect r0(x0, h * 3 / 4 - rh / 2, rw, rh);
                         if (r0.left() > changedRect.left() || r0.right() < changedRect.right()) {
-                            if (r0.contains(mapFromGlobal(QCursor::pos()))) {
-                                d->curBarNumber = curSection;
-                                if (d->pressed) {
-                                    painter.setPen(d->sectionNumber.color3());
-                                    painter.setBrush(d->sectionBackground.color3());
-                                } else {
-                                    painter.setPen(d->sectionNumber.color2());
-                                    painter.setBrush(d->sectionBackground.color2());
-                                }
-                            } else {
-                                painter.setPen(d->sectionNumber.color());
-                                painter.setBrush(d->sectionBackground.color());
-                            }
-                            if (painter.brush() != Qt::NoBrush) {
-                                auto pen = painter.pen();
-                                painter.setPen(Qt::NoPen);
-                                painter.drawRect(r0);
-                                painter.setPen(pen);
-                            }
-                            painter.setFont(d->sectionNumber.font());
-                            painter.drawText(r0, Qt::AlignCenter, text);
+                            drawSectionNum(r0, curSection);
                         }
 
                         x1 = r0.right() + fm0.horizontalAdvance(' ');
@@ -659,12 +710,23 @@ namespace Core {
 
     void SectionBar::mousePressEvent(QMouseEvent *event) {
         Q_D(SectionBar);
+
         if (event->button() == Qt::LeftButton) {
             d->pressed = true;
             d->pressedPos = event->pos();
             d->deltaX = 0;
+            d->dragDataType = SectionBarPrivate::TempDataType::None;
+
+            d->updateMouseArea(event);
+
+            switch (d->dragDataType) {
+                case SectionBarPrivate::TempDataType::None:
+                    d->updatePlayHead();
+                    break;
+                default:
+                    break;
+            }
         }
-        d->updateMouseArea(event);
     }
 
     void SectionBar::mouseMoveEvent(QMouseEvent *event) {
@@ -672,45 +734,76 @@ namespace Core {
 
         if (d->pressed) {
             d->deltaX = event->pos().x() - d->pressedPos.x();
-        }
 
-        if (d->curBarNumber >= 0) {
-        } else if (d->curTimeSignature >= 0) {
-        } else if (d->targetTempo >= 0) {
-        } else if (d->curTempo >= 0) {
+            d->updateMouseArea(event);
+
+            switch (d->dragDataType) {
+                case SectionBarPrivate::TempDataType::None:
+                    d->updatePlayHead();
+                    break;
+                default:
+                    break;
+            }
         } else {
-            // Update play head
+            d->updateMouseArea(event);
         }
-
-        d->updateMouseArea(event);
     }
 
     void SectionBar::mouseReleaseEvent(QMouseEvent *event) {
         Q_D(SectionBar);
         if (event->button() == Qt::LeftButton) {
+            if (d->deltaX == 0) {
+                // After click
+                switch (d->hoverDataType) {
+                    case SectionBarPrivate::TempDataType::SectionNum:
+                        d->edit_sectionClicked();
+                        break;
+                    case SectionBarPrivate::TempDataType::TimeSignature:
+                        d->edit_timeSignatureClicked();
+                        break;
+                    case SectionBarPrivate::TempDataType::Tempo:
+                        d->edit_tempoClicked();
+                        break;
+                    default: {
+                        // Update play head
+                        break;
+                    }
+                }
+            } else {
+                // After drag
+                switch (d->dragDataType) {
+                    case SectionBarPrivate::TempDataType::Tempo:
+                        if (d->dragData.targetTempo >= 0) {
+                            d->edit_tempoMoved();
+                        }
+                        break;
+                    default: {
+                        break;
+                    }
+                }
+            }
+
             d->pressed = false;
             d->deltaX = 0;
-
-            if (d->curBarNumber >= 0) {
-                d->edit_sectionClicked();
-            } else if (d->curTimeSignature >= 0) {
-                d->edit_timeSignatureClicked();
-            } else if (d->targetTempo >= 0) {
-                d->edit_tempoMoved();
-            } else if (d->curTempo >= 0) {
-                d->edit_tempoClicked();
-            }
+            d->dragDataType = SectionBarPrivate::TempDataType::None;
         } else if (event->button() == Qt::RightButton) {
-            if (d->curBarNumber >= 0) {
-                d->edit_sectionRightClicked();
-            } else if (d->curTimeSignature >= 0) {
-                d->edit_timeSignatureRightClicked();
-            } else if (d->targetTempo >= 0) {
-                // Nothing
-            } else if (d->curTempo >= 0) {
-                d->edit_tempoRightClicked();
-            } else {
-                d->edit_blankRightClicked();
+            if (d->deltaX == 0) {
+                // After click
+                switch (d->hoverDataType) {
+                    case SectionBarPrivate::TempDataType::SectionNum:
+                        d->edit_sectionRightClicked();
+                        break;
+                    case SectionBarPrivate::TempDataType::TimeSignature:
+                        d->edit_timeSignatureRightClicked();
+                        break;
+                    case SectionBarPrivate::TempDataType::Tempo:
+                        d->edit_tempoRightClicked();
+                        break;
+                    default: {
+                        d->edit_blankRightClicked();
+                        break;
+                    }
+                }
             }
         }
 
@@ -720,19 +813,29 @@ namespace Core {
     void SectionBar::mouseDoubleClickEvent(QMouseEvent *event) {
         Q_D(SectionBar);
         if (event->button() == Qt::LeftButton) {
-            d->pressed = false;
-            d->deltaX = 0;
-
-            if (d->curBarNumber >= 0) {
-                d->edit_sectionDoubleClicked();
-            } else if (d->curTimeSignature >= 0) {
-                d->edit_timeSignatureDoubleClicked();
-            } else if (d->targetTempo >= 0) {
-                // Nothing
-            } else if (d->curTempo >= 0) {
-                d->edit_tempoDoubleClicked();
+            if (d->deltaX == 0) {
+                switch (d->hoverDataType) {
+                    case SectionBarPrivate::TempDataType::SectionNum:
+                        d->edit_sectionDoubleClicked();
+                        break;
+                    case SectionBarPrivate::TempDataType::TimeSignature:
+                        d->edit_timeSignatureDoubleClicked();
+                        break;
+                    case SectionBarPrivate::TempDataType::Tempo:
+                        d->edit_tempoDoubleClicked();
+                        break;
+                    default: {
+                        break;
+                    }
+                }
             }
+
+            d->deltaX = 0;
+            d->pressed = false;
+            d->dragDataType = SectionBarPrivate::TempDataType::None;
         }
+
+        d->updateMouseArea(event);
     }
 
     void SectionBar::enterEvent(QEvent *event) {

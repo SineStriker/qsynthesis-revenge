@@ -41,7 +41,6 @@ namespace Core {
         const QsApi::MusicTimeline *timeline;
 
         int deltaX;
-        int curBarNumber;
 
         struct TimeSig {
             QRect rect;
@@ -50,7 +49,6 @@ namespace Core {
             QsApi::MusicTimeSignature value;
         };
         QMap<int, TimeSig> timeSignatureBlocks;
-        int curTimeSignature;
 
         struct Tempo {
             QRect rect;
@@ -58,8 +56,36 @@ namespace Core {
             double value;
         };
         QMap<int, Tempo> tempoBlocks;
-        int curTempo;
-        int targetTempo;
+
+        enum class TempDataType {
+            None,
+            Tempo,
+            TimeSignature,
+            SectionNum,
+        };
+
+        union {
+            int curSectionNum;
+            int curTimeSignature;
+            int curTempo;
+        } hoverData;
+        TempDataType hoverDataType;
+
+        union {
+            struct {
+                int orgSectionNum;
+                int targetSectionNum;
+            };
+            struct {
+                int orgTimeSignature;
+                int targetTimeSignature;
+            };
+            struct {
+                int orgTempo;
+                int targetTempo;
+            };
+        } dragData;
+        TempDataType dragDataType;
 
         void updateLayout();
         void updateMouseArea(QMouseEvent *event);
@@ -81,6 +107,8 @@ namespace Core {
         void edit_tempoMoved();
 
         void edit_blankRightClicked();
+
+        void updatePlayHead();
     };
 
 } // namespace Core
