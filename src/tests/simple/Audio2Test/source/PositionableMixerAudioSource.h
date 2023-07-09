@@ -17,11 +17,11 @@ class PositionableMixerAudioSource: public PositionableAudioSource {
 public:
     PositionableMixerAudioSource();
     ~PositionableMixerAudioSource() override;
-    bool start(int bufferSize, double sampleRate) override;
-    int read(const AudioSourceReadData &readData) override;
+    bool start(qint64 bufferSize, double sampleRate) override;
+    qint64 read(const AudioSourceReadData &readData) override;
     void stop() override;
-    int length() const override;
-    void setNextReadPosition(int pos) override;
+    qint64 length() const override;
+    void setNextReadPosition(qint64 pos) override;
 
     void addSource(PositionableAudioSource *src, bool takeOwnership = false);
     void removeSource(PositionableAudioSource *src);

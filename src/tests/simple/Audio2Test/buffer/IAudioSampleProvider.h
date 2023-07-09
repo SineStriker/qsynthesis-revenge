@@ -5,17 +5,17 @@
 #ifndef CHORUSKIT_IAUDIOSAMPLEPROVIDER_H
 #define CHORUSKIT_IAUDIOSAMPLEPROVIDER_H
 
-
+#include <qglobal.h>
 
 class IAudioSampleProvider {
 public:
     virtual ~IAudioSampleProvider() = default;
-    virtual float constSampleAt(int channel, int pos) const = 0;
+    virtual float constSampleAt(int channel, qint64 pos) const = 0;
     virtual int channelCount() const = 0;
-    virtual int sampleCount() const = 0;
-    float magnitude(int channel, int startPos, int length) const;
+    virtual qint64 sampleCount() const = 0;
+    float magnitude(int channel, qint64 startPos, qint64 length) const;
     float magnitude(int channel) const;
-    float rms(int channel, int startPos, int length) const;
+    float rms(int channel, qint64 startPos, qint64 length) const;
     float rms(int channel) const;
 };
 

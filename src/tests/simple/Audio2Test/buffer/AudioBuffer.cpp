@@ -5,22 +5,22 @@
 #include "AudioBuffer.h"
 AudioBuffer::AudioBuffer() {
 }
-AudioBuffer::AudioBuffer(int channelCount, int sampleCount) {
+AudioBuffer::AudioBuffer(int channelCount, qint64 sampleCount) {
     resize(channelCount, sampleCount);
 }
-float &AudioBuffer::sampleAt(int channel, int pos) {
+float &AudioBuffer::sampleAt(int channel, qint64 pos) {
     return m_buffer[channel][pos];
 }
-float AudioBuffer::constSampleAt(int channel, int pos) const {
+float AudioBuffer::constSampleAt(int channel, qint64 pos) const {
     return m_buffer.at(channel).at(pos);
 }
 int AudioBuffer::channelCount() const {
     return m_buffer.size();
 }
-int AudioBuffer::sampleCount() const {
-    return m_buffer.isEmpty() ? 0 : m_buffer[0].size();
+qint64 AudioBuffer::sampleCount() const {
+    return m_buffer.empty() ? 0 : m_buffer[0].size();
 }
-void AudioBuffer::resize(int newChannelCount, int newSampleCount) {
+void AudioBuffer::resize(int newChannelCount, qint64 newSampleCount) {
     if(newChannelCount != -1) {
         m_buffer.resize(newChannelCount);
     }
@@ -32,18 +32,24 @@ float *AudioBuffer::data(int channel) {
     return m_buffer[channel].data();
 }
 float const *AudioBuffer::constData(int channel) const {
-    return m_buffer.at(channel).constData();
+    return m_buffer.at(channel).data();
 }
-QVector<float> &AudioBuffer::vector(int channel) {
+std::vector<float> &AudioBuffer::vector(int channel) {
     return m_buffer[channel];
 }
-const QVector<float> &AudioBuffer::constVector(int channel) const {
+const std::vector<float> &AudioBuffer::constVector(int channel) const {
     return m_buffer.at(channel);
 }
-AudioBuffer AudioBuffer::slice(int startChannelIndex, int startSampleCount, int channelSize, int length) const {
-    auto b = m_buffer.mid(startChannelIndex, channelSize);
+
+template<typename T>
+static inline std::vector<T> vectorSlice(const std::vector<T> &l, qint64 s, qint64 t = -1) {
+    return std::vector<T>(l.cbegin() + s, t == -1 ? l.cend() : l.cbegin() + s + t);
+}
+
+AudioBuffer AudioBuffer::slice(int startChannelIndex, qint64 startSampleCount, int channelSize, qint64 length) const {
+    auto b = vectorSlice(m_buffer, startChannelIndex, channelSize);
     for(auto &vec: b) {
-        vec = vec.mid(startSampleCount, length);
+        vec = vectorSlice(vec, startSampleCount, length);
     }
     AudioBuffer newBuf;
     newBuf.m_buffer = std::move(b);

@@ -10,13 +10,13 @@
 AudioSourceReadData::AudioSourceReadData(IAudioSampleContainer *buffer): buffer(buffer), startPos(0), length(buffer->sampleCount()) {
 }
 
-AudioSourceReadData::AudioSourceReadData(IAudioSampleContainer *buffer, int startPos, int length): buffer(buffer), startPos(startPos), length(length) {
+AudioSourceReadData::AudioSourceReadData(IAudioSampleContainer *buffer, qint64 startPos, qint64 length): buffer(buffer), startPos(startPos), length(length) {
 }
 
 AudioSource::AudioSource(): AudioSource(*new AudioSourcePrivate) {
 }
 
-bool AudioSource::start(int bufferSize, double sampleRate) {
+bool AudioSource::start(qint64 bufferSize, double sampleRate) {
     Q_D(AudioSource);
     d->bufferSize = bufferSize;
     d->sampleRate = sampleRate;
@@ -33,7 +33,7 @@ void AudioSource::stop() {
     d->sampleRate = 0;
     d->isStarted = false;
 }
-int AudioSource::bufferSize() const {
+qint64 AudioSource::bufferSize() const {
     Q_D(const AudioSource);
     return d->bufferSize;
 }

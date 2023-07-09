@@ -16,9 +16,9 @@
 struct IMixer {
     QMChronMap<AudioSource *, bool> sourceDict;
     QMutex mutex;
-    void deleteOwnedSources();
-    bool start(int bufferSize, double sampleRate);
-    void stop();
+    void deleteOwnedSources() const;
+    bool start(qint64 bufferSize, double sampleRate) const;
+    void stop() const;
 };
 
 class MixerAudioSourcePrivate: public AudioSourcePrivate, public IMixer {

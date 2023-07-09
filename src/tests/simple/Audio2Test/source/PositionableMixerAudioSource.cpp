@@ -17,17 +17,17 @@ PositionableMixerAudioSource::~PositionableMixerAudioSource() {
     d->deleteOwnedSources();
 }
 
-bool PositionableMixerAudioSource::start(int bufferSize, double sampleRate) {
+bool PositionableMixerAudioSource::start(qint64 bufferSize, double sampleRate) {
     Q_D(PositionableMixerAudioSource);
     QMutexLocker locker(&d->mutex);
     if(d->start(bufferSize, sampleRate)) {
-        d->setNextReadPosition(d->position);
+        d->setNextReadPositionToAll(d->position);
         return PositionableAudioSource::start(bufferSize, sampleRate);
     } else {
         return false;
     }
 }
-int PositionableMixerAudioSource::read(const AudioSourceReadData &readData) {
+qint64 PositionableMixerAudioSource::read(const AudioSourceReadData &readData) {
     Q_D(PositionableMixerAudioSource);
     QMutexLocker locker(&d->mutex);
     auto bufferLength = length();
@@ -52,24 +52,24 @@ void PositionableMixerAudioSource::stop() {
     d->stop();
     PositionableAudioSource::stop();
 }
-int PositionableMixerAudioSource::length() const {
+qint64 PositionableMixerAudioSource::length() const {
     auto sourceList = sources();
-    return std::reduce(sourceList.constBegin(), sourceList.constEnd(), std::numeric_limits<int>::max(), [](int l, PositionableAudioSource *src){
+    return std::reduce(sourceList.constBegin(), sourceList.constEnd(), std::numeric_limits<qint64>::max(), [](qint64 l, PositionableAudioSource *src){
         return std::min(l, src->length());
     });
 }
 
-void PositionableMixerAudioSourcePrivate::setNextReadPosition(int pos) {
+void PositionableMixerAudioSourcePrivate::setNextReadPositionToAll(qint64 pos) {
     auto sourceList = sourceDict.keys();
     std::for_each(sourceList.constBegin(), sourceList.constEnd(), [=](AudioSource *src){
         reinterpret_cast<PositionableAudioSource *>(src)->setNextReadPosition(pos);
     });
 }
 
-void PositionableMixerAudioSource::setNextReadPosition(int pos) {
+void PositionableMixerAudioSource::setNextReadPosition(qint64 pos) {
     Q_D(PositionableMixerAudioSource);
     QMutexLocker locker(&d->mutex);
-    d->setNextReadPosition(pos);
+    d->setNextReadPositionToAll(pos);
     PositionableAudioSource::setNextReadPosition(pos);
 }
 void PositionableMixerAudioSource::addSource(PositionableAudioSource *src, bool takeOwnership) {

@@ -12,7 +12,7 @@
 class PositionableMixerAudioSourcePrivate: public PositionableAudioSourcePrivate, public IMixer {
     Q_DECLARE_PUBLIC(PositionableMixerAudioSource)
 public:
-    void setNextReadPosition(int pos);
+    void setNextReadPositionToAll(qint64 pos);
 };
 
 #endif // CHORUSKIT_POSITIONABLEMIXERAUDIOSOURCE_P_H

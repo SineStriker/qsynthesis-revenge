@@ -20,10 +20,10 @@ public:
     IAudioSampleProvider *buffer() const;
     IAudioSampleProvider *resetBuffer(IAudioSampleProvider *newBuffer, bool takeOwnership = false);
 
-    int read(const AudioSourceReadData &readData) override;
-    int length() const override;
+    qint64 read(const AudioSourceReadData &readData) override;
+    qint64 length() const override;
 
-    void setNextReadPosition(int pos) override;
+    void setNextReadPosition(qint64 pos) override;
 protected:
     MemoryAudioSource(MemoryAudioSourcePrivate &d);
 };

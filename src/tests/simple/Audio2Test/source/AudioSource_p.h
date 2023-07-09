@@ -12,7 +12,7 @@ class AudioSourcePrivate {
 public:
     AudioSource *q_ptr;
     bool isStarted = false;
-    int bufferSize = 0;
+    qint64 bufferSize = 0;
     double sampleRate = 0;
 };
 

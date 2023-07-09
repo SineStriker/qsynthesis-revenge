@@ -12,10 +12,10 @@
 class AudioSourceReadData {
 public:
     AudioSourceReadData(IAudioSampleContainer *buffer); //implicit use IAudioSampleContainer
-    AudioSourceReadData(IAudioSampleContainer *buffer, int startPos, int length);
+    AudioSourceReadData(IAudioSampleContainer *buffer, qint64 startPos, qint64 length);
     IAudioSampleContainer *buffer;
-    int startPos;
-    int length;
+    qint64 startPos;
+    qint64 length;
 };
 
 class AudioSourcePrivate;
@@ -25,11 +25,11 @@ class AudioSource {
 public:
     AudioSource();
     virtual ~AudioSource();
-    virtual bool start(int bufferSize, double sampleRate);
+    virtual bool start(qint64 bufferSize, double sampleRate);
     bool isStarted() const;
-    int bufferSize() const;
+    qint64 bufferSize() const;
     double sampleRate() const;
-    virtual int read(const AudioSourceReadData &readData) = 0;
+    virtual qint64 read(const AudioSourceReadData &readData) = 0;
     virtual void stop();
 protected:
     AudioSource(AudioSourcePrivate &d);

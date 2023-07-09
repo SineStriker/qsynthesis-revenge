@@ -13,8 +13,8 @@ public:
     AudioDataWrapper *q_ptr;
     float *const *data;
     int channelCount;
-    int sampleCount;
-    int startPos;
+    qint64 sampleCount;
+    qint64 startPos;
 
 };
 

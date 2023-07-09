@@ -14,15 +14,15 @@ class AudioDataWrapperPrivate;
 class AudioDataWrapper: public IAudioSampleContainer {
     Q_DECLARE_PRIVATE(AudioDataWrapper)
 public:
-    AudioDataWrapper(float *const *data, int channelCount, int sampleCount, int startPos = 0);
+    AudioDataWrapper(float *const *data, int channelCount, qint64 sampleCount, qint64 startPos = 0);
 
-    float &sampleAt(int channel, int pos) override;
-    float constSampleAt(int channel, int pos) const override;
+    float &sampleAt(int channel, qint64 pos) override;
+    float constSampleAt(int channel, qint64 pos) const override;
     int channelCount() const override;
-    int sampleCount() const override;
+    qint64 sampleCount() const override;
 
-    float *const *data() const;
-    void resetData(float *const *data, int channelCount, int sampleCount, int startPos = 0);
+    float *data(int channel) const;
+    void resetData(float *const *data, int channelCount, qint64 sampleCount, qint64 startPos = 0);
 protected:
     QScopedPointer<AudioDataWrapperPrivate> d_ptr;
     AudioDataWrapper(AudioDataWrapperPrivate &d);

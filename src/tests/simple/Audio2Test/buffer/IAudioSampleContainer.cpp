@@ -7,18 +7,18 @@
 #include <cassert>
 #include <cmath>
 
-static inline void boundCheck(const IAudioSampleProvider &iAudioStorage, int channel, int startPos, int length) {
+static inline void boundCheck(const IAudioSampleProvider &iAudioStorage, int channel, qint64 startPos, qint64 length) {
     assert(channel >= 0 && channel < iAudioStorage.channelCount());
     assert(startPos >= 0 && startPos <= iAudioStorage.sampleCount());
     assert(startPos + length >= 0 && startPos + length <= iAudioStorage.sampleCount());
 }
 
-void IAudioSampleContainer::setSampleRange(int destChannel, int destStartPos, int length,
+void IAudioSampleContainer::setSampleRange(int destChannel, qint64 destStartPos, qint64 length,
                                            const IAudioSampleProvider &src,
-                                   int srcChannel, int srcStartPos) {
+                                   int srcChannel, qint64 srcStartPos) {
     boundCheck(*this, destChannel, destStartPos, length);
     boundCheck(src, srcChannel, srcStartPos, length);
-    for(int i = 0; i < length; i++) {
+    for(qint64 i = 0; i < length; i++) {
         sampleAt(destStartPos, destStartPos + i) = src.constSampleAt(srcStartPos, srcStartPos + i);
     }
 
@@ -31,12 +31,12 @@ void IAudioSampleContainer::setSampleRange(const IAudioSampleProvider &src) {
     }
 }
 
-void IAudioSampleContainer::addSampleRange(int destChannel, int destStartPos, int length,
+void IAudioSampleContainer::addSampleRange(int destChannel, qint64 destStartPos, qint64 length,
                                            const IAudioSampleProvider &src,
-                                   int srcChannel, int srcStartPos, float gain) {
+                                   int srcChannel, qint64 srcStartPos, float gain) {
     boundCheck(*this, destChannel, destStartPos, length);
     boundCheck(src, srcChannel, srcStartPos, length);
-    for(int i = 0; i < length; i++) {
+    for(qint64 i = 0; i < length; i++) {
         sampleAt(destStartPos, destStartPos + i) += src.constSampleAt(srcStartPos, srcStartPos + i) * gain;
     }
 }
@@ -48,9 +48,9 @@ void IAudioSampleContainer::addSampleRange(const IAudioSampleProvider &src, floa
     }
 }
 
-void IAudioSampleContainer::gainSampleRange(int destChannel, int destStartPos, int length, float gain) {
+void IAudioSampleContainer::gainSampleRange(int destChannel, qint64 destStartPos, qint64 length, float gain) {
     boundCheck(*this, destChannel, destStartPos, length);
-    for(int i = 0; i < length; i++) {
+    for(qint64 i = 0; i < length; i++) {
         sampleAt(destChannel, destStartPos + i) *= gain;
     }
 }
@@ -65,9 +65,9 @@ void IAudioSampleContainer::gainSampleRange(float gain) {
     }
 }
 
-void IAudioSampleContainer::clear(int destChannel, int destStartPos, int length) {
+void IAudioSampleContainer::clear(int destChannel, qint64 destStartPos, qint64 length) {
     boundCheck(*this, destChannel, destStartPos, length);
-    for(int i = 0; i < length; i++) {
+    for(qint64 i = 0; i < length; i++) {
         sampleAt(destChannel, destStartPos + i) = 0;
     }
 }

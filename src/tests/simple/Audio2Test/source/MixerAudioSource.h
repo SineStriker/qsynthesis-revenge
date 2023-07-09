@@ -18,8 +18,8 @@ public:
     MixerAudioSource();
     ~MixerAudioSource();
 
-    bool start(int bufferSize, double sampleRate) override;
-    int read(const AudioSourceReadData &readData) override;
+    bool start(qint64 bufferSize, double sampleRate) override;
+    qint64 read(const AudioSourceReadData &readData) override;
     void stop() override;
 
     void addSource(AudioSource *src, bool takeOwnership = false);

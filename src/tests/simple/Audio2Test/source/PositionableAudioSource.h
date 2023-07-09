@@ -13,9 +13,9 @@ class PositionableAudioSource: public AudioSource {
     Q_DECLARE_PRIVATE(PositionableAudioSource)
 public:
     PositionableAudioSource();
-    virtual int length() const = 0;
-    virtual int nextReadPosition() const;
-    virtual void setNextReadPosition(int pos);
+    virtual qint64 length() const = 0;
+    virtual qint64 nextReadPosition() const;
+    virtual void setNextReadPosition(qint64 pos);
 protected:
     PositionableAudioSource(PositionableAudioSourcePrivate &d);
 };

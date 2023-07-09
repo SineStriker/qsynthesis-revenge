@@ -39,7 +39,7 @@ IAudioSampleProvider *MemoryAudioSource::resetBuffer(IAudioSampleProvider *newBu
     return oldBuffer;
 }
 
-int MemoryAudioSource::read(const AudioSourceReadData &readData) {
+qint64 MemoryAudioSource::read(const AudioSourceReadData &readData) {
     Q_D(MemoryAudioSource);
     QMutexLocker locker(&d->mutex);
     auto bufferLength = length();
@@ -52,12 +52,12 @@ int MemoryAudioSource::read(const AudioSourceReadData &readData) {
     return readLength;
 }
 
-int MemoryAudioSource::length() const {
+qint64 MemoryAudioSource::length() const {
     Q_D(const MemoryAudioSource);
     return d->buffer->sampleCount();
 }
 
-void MemoryAudioSource::setNextReadPosition(int pos) {
+void MemoryAudioSource::setNextReadPosition(qint64 pos) {
     Q_D(MemoryAudioSource);
     QMutexLocker locker(&d->mutex);
     PositionableAudioSource::setNextReadPosition(pos);

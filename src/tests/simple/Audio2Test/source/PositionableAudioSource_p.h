@@ -11,7 +11,7 @@
 class PositionableAudioSourcePrivate: public AudioSourcePrivate {
     Q_DECLARE_PUBLIC(PositionableAudioSource)
 public:
-    int position = 0;
+    qint64 position = 0;
 };
 
 #endif // CHORUSKIT_POSITIONABLEAUDIOSOURCE_P_H

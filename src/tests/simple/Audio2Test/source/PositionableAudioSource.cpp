@@ -10,11 +10,11 @@ PositionableAudioSource::PositionableAudioSource(): PositionableAudioSource(*new
 PositionableAudioSource::PositionableAudioSource(PositionableAudioSourcePrivate &d): AudioSource(d) {
 }
 
-int PositionableAudioSource::nextReadPosition() const {
+qint64 PositionableAudioSource::nextReadPosition() const {
     Q_D(const PositionableAudioSource);
     return d->position;
 }
-void PositionableAudioSource::setNextReadPosition(int pos) {
+void PositionableAudioSource::setNextReadPosition(qint64 pos) {
     Q_D(PositionableAudioSource);
     d->position = pos;
 }

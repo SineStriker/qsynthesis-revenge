@@ -15,9 +15,9 @@ public:
     SineWaveAudioSource();
     explicit SineWaveAudioSource(double frequency);
     ~SineWaveAudioSource() override = default;
-    bool start(int bufferSize, double sampleRate) override;
-    int read(const AudioSourceReadData &readData) override;
-    int length() const override;
+    bool start(qint64 bufferSize, double sampleRate) override;
+    qint64 read(const AudioSourceReadData &readData) override;
+    qint64 length() const override;
 
     void setFrequency(double frequency);
     double frequency() const;
