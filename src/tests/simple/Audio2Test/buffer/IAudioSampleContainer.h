@@ -8,7 +8,7 @@
 
 
 #include "IAudioSampleProvider.h"
-class IAudioSampleContainer : public IAudioSampleProvider {
+/* abstract */ class IAudioSampleContainer : public IAudioSampleProvider {
 public:
     virtual float &sampleAt(int channel, qint64 pos) = 0;
 

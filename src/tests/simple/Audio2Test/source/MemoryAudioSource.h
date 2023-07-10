@@ -25,7 +25,7 @@ public:
 
     void setNextReadPosition(qint64 pos) override;
 protected:
-    MemoryAudioSource(MemoryAudioSourcePrivate &d);
+    explicit MemoryAudioSource(MemoryAudioSourcePrivate &d);
 };
 
 

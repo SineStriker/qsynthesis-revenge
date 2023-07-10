@@ -16,31 +16,6 @@ AudioSourceReadData::AudioSourceReadData(IAudioSampleContainer *buffer, qint64 s
 AudioSource::AudioSource(): AudioSource(*new AudioSourcePrivate) {
 }
 
-bool AudioSource::start(qint64 bufferSize, double sampleRate) {
-    Q_D(AudioSource);
-    d->bufferSize = bufferSize;
-    d->sampleRate = sampleRate;
-    d->isStarted = true;
-    return true;
-}
-bool AudioSource::isStarted() const {
-    Q_D(const AudioSource);
-    return d->isStarted;
-}
-void AudioSource::stop() {
-    Q_D(AudioSource);
-    d->bufferSize = 0;
-    d->sampleRate = 0;
-    d->isStarted = false;
-}
-qint64 AudioSource::bufferSize() const {
-    Q_D(const AudioSource);
-    return d->bufferSize;
-}
-double AudioSource::sampleRate() const {
-    Q_D(const AudioSource);
-    return d->sampleRate;
-}
 AudioSource::AudioSource(AudioSourcePrivate &d): d_ptr(&d) {
     d.q_ptr = this;
 }

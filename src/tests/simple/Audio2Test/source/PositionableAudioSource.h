@@ -9,7 +9,7 @@
 
 class PositionableAudioSourcePrivate;
 
-class PositionableAudioSource: public AudioSource {
+/* abstract */ class PositionableAudioSource: public AudioSource {
     Q_DECLARE_PRIVATE(PositionableAudioSource)
 public:
     PositionableAudioSource();
@@ -17,7 +17,7 @@ public:
     virtual qint64 nextReadPosition() const;
     virtual void setNextReadPosition(qint64 pos);
 protected:
-    PositionableAudioSource(PositionableAudioSourcePrivate &d);
+    explicit PositionableAudioSource(PositionableAudioSourcePrivate &d);
 };
 
 

@@ -14,8 +14,8 @@ SineWaveAudioSource::SineWaveAudioSource(double frequency): SineWaveAudioSource(
 SineWaveAudioSource::SineWaveAudioSource(SineWaveAudioSourcePrivate &d): PositionableAudioSource(d) {
 }
 
-bool SineWaveAudioSource::start(qint64 bufferSize, double sampleRate) {
-    return AudioSource::start(bufferSize, sampleRate);
+bool SineWaveAudioSource::open(qint64 bufferSize, double sampleRate) {
+    return AudioSource::open(bufferSize, sampleRate);
 }
 
 qint64 SineWaveAudioSource::read(const AudioSourceReadData &readData) {
@@ -23,7 +23,7 @@ qint64 SineWaveAudioSource::read(const AudioSourceReadData &readData) {
     QMutexLocker locker(&d->mutex);
     auto channelCount = readData.buffer->channelCount();
     auto pos = PositionableAudioSource::nextReadPosition();
-    double omega = 2 * 3.14159265358979323846 * d->freq / d->sampleRate;
+    double omega = 2 * 3.14159265358979323846 * d->freq / sampleRate();
     for(qint64 i = 0; i < readData.length; i++) {
         float sample = sin(omega * (pos + i));
         for(int ch = 0; ch < channelCount; ch++) {

@@ -18,11 +18,11 @@ MixerAudioSource::~MixerAudioSource() {
 
 }
 
-bool MixerAudioSource::start(qint64 bufferSize, double sampleRate) {
+bool MixerAudioSource::open(qint64 bufferSize, double sampleRate) {
     Q_D(MixerAudioSource);
     QMutexLocker locker(&d->mutex);
     if(d->start(bufferSize, sampleRate)) {
-        return AudioSource::start(bufferSize, sampleRate);
+        return AudioSource::open(bufferSize, sampleRate);
     } else {
         return false;
     }
@@ -46,11 +46,11 @@ qint64 MixerAudioSource::read(const AudioSourceReadData &readData) {
     return readLength;
 }
 
-void MixerAudioSource::stop() {
+void MixerAudioSource::close() {
     Q_D(MixerAudioSource);
     QMutexLocker locker(&d->mutex);
     d->stop();
-    AudioSource::stop();
+    AudioSource::close();
 }
 
 void MixerAudioSource::addSource(AudioSource *src, bool takeOwnership) {
@@ -83,7 +83,7 @@ void IMixer::deleteOwnedSources() const {
 bool IMixer::start(qint64 bufferSize, double sampleRate) const {
     auto sourceList = sourceDict.keys();
     if(std::all_of(sourceList.constBegin(), sourceList.constEnd(), [=](AudioSource *src){
-            return src->start(bufferSize, sampleRate);
+            return src->open(bufferSize, sampleRate);
         })) {
         return true;
     } else {
@@ -92,7 +92,6 @@ bool IMixer::start(qint64 bufferSize, double sampleRate) const {
 }
 void IMixer::stop() const {
     auto sourceList = sourceDict.keys();
-    std::for_each(sourceList.constBegin(), sourceList.constEnd(), [=](AudioSource *src){
-        src->stop();
+    std::for_each(sourceList.constBegin(), sourceList.constEnd(), [=](AudioSource *src){ src->close();
     });
 }

@@ -15,14 +15,14 @@ public:
     SineWaveAudioSource();
     explicit SineWaveAudioSource(double frequency);
     ~SineWaveAudioSource() override = default;
-    bool start(qint64 bufferSize, double sampleRate) override;
+    bool open(qint64 bufferSize, double sampleRate) override;
     qint64 read(const AudioSourceReadData &readData) override;
     qint64 length() const override;
 
     void setFrequency(double frequency);
     double frequency() const;
 protected:
-    SineWaveAudioSource(SineWaveAudioSourcePrivate &d);
+    explicit SineWaveAudioSource(SineWaveAudioSourcePrivate &d);
 };
 
 

@@ -7,7 +7,7 @@
 
 #include <qglobal.h>
 
-class IAudioSampleProvider {
+/* abstract */ class IAudioSampleProvider {
 public:
     virtual ~IAudioSampleProvider() = default;
     virtual float constSampleAt(int channel, qint64 pos) const = 0;

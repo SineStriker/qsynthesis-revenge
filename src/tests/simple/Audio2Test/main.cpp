@@ -22,7 +22,7 @@ int main(){
     src.addSource(&src1);
     src.addSource(&src2);
 
-    src.start(bufferSize, sampleRate);
+    src.open(bufferSize, sampleRate);
 
     audioFile.open(QFile::WriteOnly);
 
@@ -35,7 +35,7 @@ int main(){
     while(src.nextReadPosition() < length && (readSize = src.read(&buf))) audioFile.write((char *)buf.constData(0), readSize * sizeof(float));
     qDebug() << src.nextReadPosition();
 
-    src.stop();
+    src.close();
 
     return 0;
 }

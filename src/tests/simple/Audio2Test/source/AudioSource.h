@@ -8,6 +8,7 @@
 #include <QScopedPointer>
 
 #include "buffer/IAudioSampleContainer.h"
+#include "utils/IAudioStream.h"
 
 class AudioSourceReadData {
 public:
@@ -20,19 +21,14 @@ public:
 
 class AudioSourcePrivate;
 
-class AudioSource {
+/* abstract */ class AudioSource: public IAudioStream {
     Q_DECLARE_PRIVATE(AudioSource)
 public:
     AudioSource();
     virtual ~AudioSource();
-    virtual bool start(qint64 bufferSize, double sampleRate);
-    bool isStarted() const;
-    qint64 bufferSize() const;
-    double sampleRate() const;
     virtual qint64 read(const AudioSourceReadData &readData) = 0;
-    virtual void stop();
 protected:
-    AudioSource(AudioSourcePrivate &d);
+    explicit AudioSource(AudioSourcePrivate &d);
     QScopedPointer<AudioSourcePrivate> d_ptr;
 };
 

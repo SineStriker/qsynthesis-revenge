@@ -11,3 +11,5 @@ ck_target_components(${PROJECT_NAME}
     LINKS QsFramework
     QT_INCLUDES_PRIVATE Core
 )
+
+target_link_libraries(${PROJECT_NAME} PRIVATE SDL2::SDL2)

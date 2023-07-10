@@ -18,9 +18,9 @@ public:
     MixerAudioSource();
     ~MixerAudioSource();
 
-    bool start(qint64 bufferSize, double sampleRate) override;
+    bool open(qint64 bufferSize, double sampleRate) override;
     qint64 read(const AudioSourceReadData &readData) override;
-    void stop() override;
+    void close() override;
 
     void addSource(AudioSource *src, bool takeOwnership = false);
     void removeSource(AudioSource *src);
@@ -28,7 +28,7 @@ public:
     QList<AudioSource *> sources() const;
 
 protected:
-    MixerAudioSource(MixerAudioSourcePrivate &d);
+    explicit MixerAudioSource(MixerAudioSourcePrivate &d);
 };
 
 

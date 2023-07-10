@@ -1,0 +1,53 @@
+//
+// Created by Crs_1 on 2023/7/10.
+//
+
+#include "AudioDriverManager.h"
+#include "AudioDriverManager_p.h"
+
+AudioDriverManager::AudioDriverManager(QObject *parent): AudioDriverManager(*new AudioDriverManagerPrivate, parent) {
+}
+AudioDriverManager::~AudioDriverManager() {
+}
+bool AudioDriverManager::addAudioDriver(AudioDriver *driver) {
+    Q_D(AudioDriverManager);
+    if(!driver) {
+        qWarning() << "AudioDriverManager: driver to add is null.";
+        return false;
+    }
+    auto driverName = driver->name();
+    if(d->driverDict.contains(driverName)) {
+        qWarning() << QString("AudioDriverManager: driver '%1' is already added.").arg(driverName);
+        return false;
+    }
+    driver->setParent(this);
+    d->driverDict.append(driverName, driver);
+    return true;
+}
+bool AudioDriverManager::removeDriver(AudioDriver *driver) {
+    Q_D(AudioDriverManager);
+    if(!driver) {
+        qWarning() << "AudioDriverManager: driver to remove is null.";
+        return false;
+    }
+    auto driverName = driver->name();
+    auto it = d->driverDict.find(driverName);
+    if(it == d->driverDict.end()) {
+        qWarning() << QString("AudioDriverManager: driver '%1' does not exist.").arg(driverName);
+        return false;
+    }
+    driver->setParent(nullptr);
+    d->driverDict.erase(it);
+    return true;
+}
+AudioDriver *AudioDriverManager::driver(const QString &name) const {
+    Q_D(const AudioDriverManager);
+    return d->driverDict.value(name, nullptr);
+}
+QStringList AudioDriverManager::drivers() const {
+    Q_D(const AudioDriverManager);
+    return d->driverDict.keys();
+}
+AudioDriverManager::AudioDriverManager(AudioDriverManagerPrivate &d, QObject *parent): QObject(parent), d_ptr(&d) {
+    d.q_ptr = this;
+}

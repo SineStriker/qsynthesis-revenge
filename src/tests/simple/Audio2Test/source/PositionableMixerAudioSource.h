@@ -17,9 +17,9 @@ class PositionableMixerAudioSource: public PositionableAudioSource {
 public:
     PositionableMixerAudioSource();
     ~PositionableMixerAudioSource() override;
-    bool start(qint64 bufferSize, double sampleRate) override;
+    bool open(qint64 bufferSize, double sampleRate) override;
     qint64 read(const AudioSourceReadData &readData) override;
-    void stop() override;
+    void close() override;
     qint64 length() const override;
     void setNextReadPosition(qint64 pos) override;
 
@@ -28,7 +28,7 @@ public:
     void removeAllSource();
     QList<PositionableAudioSource *> sources() const;
 protected:
-    PositionableMixerAudioSource(PositionableMixerAudioSourcePrivate &d);
+    explicit PositionableMixerAudioSource(PositionableMixerAudioSourcePrivate &d);
 };
 
 

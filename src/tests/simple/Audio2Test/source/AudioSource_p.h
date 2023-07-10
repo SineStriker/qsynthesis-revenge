@@ -11,9 +11,6 @@ class AudioSourcePrivate {
     Q_DECLARE_PUBLIC(AudioSource)
 public:
     AudioSource *q_ptr;
-    bool isStarted = false;
-    qint64 bufferSize = 0;
-    double sampleRate = 0;
 };
 
 #endif // CHORUSKIT_AUDIOSOURCE_P_H
