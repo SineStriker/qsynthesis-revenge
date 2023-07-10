@@ -47,19 +47,21 @@ void CDockTabDragProxy::setFrame(CDockFrame *frame) {
 }
 
 QList<CDockTabBar *> CDockTabDragProxy::tabBars() const {
+    auto d = m_frame->d_func();
     return {
-        m_frame->d->m_leftBar->firstBar(),   m_frame->d->m_leftBar->secondBar(),   m_frame->d->m_topBar->firstBar(),
-        m_frame->d->m_topBar->secondBar(),   m_frame->d->m_rightBar->firstBar(),   m_frame->d->m_rightBar->secondBar(),
-        m_frame->d->m_bottomBar->firstBar(), m_frame->d->m_bottomBar->secondBar(),
+        d->m_leftBar->firstBar(),   d->m_leftBar->secondBar(),   d->m_topBar->firstBar(),
+        d->m_topBar->secondBar(),   d->m_rightBar->firstBar(),   d->m_rightBar->secondBar(),
+        d->m_bottomBar->firstBar(), d->m_bottomBar->secondBar(),
     };
 }
 
 QList<CDockSideBar *> CDockTabDragProxy::doubleTabBars() const {
+    auto d = m_frame->d_func();
     return {
-        m_frame->d->m_leftBar,
-        m_frame->d->m_topBar,
-        m_frame->d->m_rightBar,
-        m_frame->d->m_bottomBar,
+        d->m_leftBar,
+        d->m_topBar,
+        d->m_rightBar,
+        d->m_bottomBar,
     };
 }
 
@@ -134,13 +136,14 @@ void CDockTabDragProxy::_q_tabDragMove() {
             if (bar->count() == 0) {
                 QPoint pos;
                 QSize size;
-                if (bar == m_frame->d->m_leftBar) {
+                auto d = m_frame->d_func();
+                if (bar == d->m_leftBar) {
                     pos = bar->mapToGlobal(QPoint(0, 0));
                     size = QSize(widthHint, bar->height());
-                } else if (bar == m_frame->d->m_rightBar) {
+                } else if (bar == d->m_rightBar) {
                     pos = bar->mapToGlobal(QPoint(bar->width() - widthHint, 0));
                     size = QSize(widthHint, bar->height());
-                } else if (bar == m_frame->d->m_topBar) {
+                } else if (bar == d->m_topBar) {
                     pos = bar->mapToGlobal(QPoint(0, 0));
                     size = QSize(bar->width(), widthHint);
                 } else {

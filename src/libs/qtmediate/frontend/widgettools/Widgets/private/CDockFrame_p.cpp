@@ -1,12 +1,19 @@
 #include "CDockFrame_p.h"
 
-CDockFramePrivate::CDockFramePrivate(CDockFrame *parent) : QObject(parent), q(parent) {
+#include <QMenu>
+
+#include "CDockCard_p.h"
+#include "CDockToolWindow.h"
+
+CDockFramePrivate::CDockFramePrivate() {
 }
 
 CDockFramePrivate::~CDockFramePrivate() {
 }
 
 void CDockFramePrivate::init() {
+    Q_Q(CDockFrame);
+
     q->setAttribute(Qt::WA_StyledBackground);
 
     m_layout = new QGridLayout();
@@ -137,6 +144,8 @@ void CDockFramePrivate::_q_cardRemoved(QM::Priority number, CDockCard *card) {
 }
 
 void CDockFramePrivate::_q_cardToggled(QM::Priority number, CDockCard *card) {
+    Q_Q(CDockFrame);
+
     auto doubleBar = qobject_cast<CDockSideBar *>(sender());
     CDockPanel *container;
     Qt::Edge edge;
@@ -191,4 +200,15 @@ void CDockFramePrivate::_q_cardViewModeChanged(QM::Priority number, CDockCard *c
             card->container()->layout()->invalidate();
         }
     }
+}
+
+void CDockFramePrivate::_q_cardContextMenuRequested() {
+    Q_Q(CDockFrame);
+
+    auto card = qobject_cast<CDockCard *>(sender());
+    auto w = qobject_cast<CDockToolWindow *>(card->widget());
+
+    auto menu = w ? w->cardMenu() : CDockCardPrivate::createViewModeMenu(card);
+    menu->exec(QCursor::pos());
+    delete menu;
 }

@@ -6,15 +6,16 @@
 #include "../CDockCard.h"
 
 class CDockCardPrivate {
+    Q_DECLARE_PUBLIC(CDockCard)
 public:
-    explicit CDockCardPrivate(CDockCard *q);
+    CDockCardPrivate();
     ~CDockCardPrivate();
 
     void init();
 
     QPixmap cardShot() const;
 
-    CDockCard *q;
+    CDockCard *q_ptr;
 
     CDockTabBar *m_tabBar;
 
@@ -31,6 +32,8 @@ public:
 
     bool m_closing;
     CDockCard::ViewMode m_viewMode;
+
+    static QMenu *createViewModeMenu(CDockCard *card);
 };
 
 #endif // CHORUSKIT_CDOCKCARD_P_H

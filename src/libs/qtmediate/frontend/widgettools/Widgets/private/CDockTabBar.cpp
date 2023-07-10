@@ -126,7 +126,7 @@ void CDockTabBar::insertCard(int index, CDockCard *card) {
         m_cards.insert(index, card);
     }
     card->show();
-    card->d->m_tabBar = this;
+    card->d_func()->m_tabBar = this;
     connect(card, &CDockCard::toggled, this, &CDockTabBar::_q_tabToggled);
     connect(card, &CDockCard::viewModeChanged, this, &CDockTabBar::_q_tabViewModeChanged);
 
@@ -142,7 +142,7 @@ void CDockTabBar::removeCard(CDockCard *card) {
     if (!m_cards.contains(card)) {
         return;
     }
-    card->d->m_tabBar = nullptr;
+    card->d_func()->m_tabBar = nullptr;
     disconnect(card, &CDockCard::toggled, this, &CDockTabBar::_q_tabToggled);
     disconnect(card, &CDockCard::viewModeChanged, this, &CDockTabBar::_q_tabViewModeChanged);
 
@@ -154,7 +154,7 @@ void CDockTabBar::removeCard(CDockCard *card) {
 void CDockTabBar::clearCards() {
     auto layout = static_cast<QBoxLayout *>(this->layout());
     for (auto card : m_cards) {
-        card->d->m_tabBar = nullptr;
+        card->d_func()->m_tabBar = nullptr;
         disconnect(card, &CDockCard::toggled, this, &CDockTabBar::_q_tabToggled);
         disconnect(card, &CDockCard::viewModeChanged, this, &CDockTabBar::_q_tabViewModeChanged);
 

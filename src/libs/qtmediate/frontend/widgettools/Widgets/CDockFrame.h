@@ -5,12 +5,15 @@
 #include <QFrame>
 
 #include "CDockCard.h"
+#include "CDockToolWindow.h"
+
 #include "QMNamespace.h"
 
 class CDockFramePrivate;
 
 class QMWTOOLS_EXPORT CDockFrame : public QFrame {
     Q_OBJECT
+    Q_DECLARE_PRIVATE(CDockFrame)
 public:
     explicit CDockFrame(QWidget *parent = nullptr);
     ~CDockFrame();
@@ -27,7 +30,7 @@ public:
     CDockCard *addWidget(Qt::Edge edge, QM::Priority number, QWidget *w);
     void removeWidget(CDockCard *card);
     void moveWidget(CDockCard *card, Qt::Edge edge, QM::Priority number);
-    QList<CDockCard *> widgets(Qt::Edge edge, QM::Priority number);
+    QList<CDockCard *> widgets(Qt::Edge edge, QM::Priority number) const;
 
     bool barVisible() const;
     void setBarVisible(bool visible);
@@ -40,13 +43,16 @@ signals:
     void cardToggled(Qt::Edge edge, QM::Priority number, CDockCard *card);
 
 protected:
+    virtual CDockCard *createCard(QWidget *w);
     virtual void widgetAdded(Qt::Edge edge, QM::Priority number, QWidget *w, CDockCard *card);
     virtual void widgetAboutToRemove(CDockCard *card);
 
-protected:
-    CDockFramePrivate *d;
-
     bool eventFilter(QObject *obj, QEvent *event) override;
+
+protected:
+    QScopedPointer<CDockFramePrivate> d_ptr;
+
+    CDockFrame(CDockFramePrivate &d, QWidget *parent = nullptr);
 
 private:
     friend class CDockTabDragProxy;

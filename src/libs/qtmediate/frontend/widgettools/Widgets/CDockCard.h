@@ -11,6 +11,7 @@ class CDockCardPrivate;
 
 class QMWTOOLS_EXPORT CDockCard : public CLTabButton {
     Q_OBJECT
+    Q_DECLARE_PRIVATE(CDockCard)
     Q_PROPERTY(QSize dragOffset READ dragOffset WRITE setDragOffset)
 public:
     explicit CDockCard(QWidget *parent = nullptr);
@@ -56,7 +57,6 @@ protected:
     void mousePressEvent(QMouseEvent *event) override;
     void mouseMoveEvent(QMouseEvent *event) override;
     void mouseReleaseEvent(QMouseEvent *event) override;
-    void contextMenuEvent(QContextMenuEvent *event) override;
     void leaveEvent(QEvent *event) override;
     void paintEvent(QPaintEvent *event) override;
 
@@ -66,9 +66,13 @@ signals:
     void viewModeChanged(ViewMode viewMode, ViewMode oldViewMode);
 
 private:
-    CDockCardPrivate *d;
+    QScopedPointer<CDockCardPrivate> d_ptr;
+
+    CDockCard(CDockCardPrivate &d, QWidget *parent = nullptr);
 
     friend class CDockTabBar;
+
+    friend class CDockFrame;
 };
 
 #endif // CDOCKCARD_H

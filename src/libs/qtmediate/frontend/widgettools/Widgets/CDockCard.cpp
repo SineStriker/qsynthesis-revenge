@@ -14,34 +14,34 @@
 
 #include "QMView.h"
 
-CDockCard::CDockCard(QWidget *parent) : CLTabButton(parent), d(new CDockCardPrivate(this)) {
-    d->init();
+CDockCard::CDockCard(QWidget *parent) : CDockCard(*new CDockCardPrivate(), parent) {
 }
 
-CDockCard::CDockCard(const QString &text, QWidget *parent) : CLTabButton(text, parent), d(new CDockCardPrivate(this)) {
-    d->init();
+CDockCard::CDockCard(const QString &text, QWidget *parent) : CDockCard(*new CDockCardPrivate(), parent) {
+    setText(text);
 }
 
-CDockCard::CDockCard(const QIcon &icon, const QString &text, QWidget *parent)
-    : CLTabButton(icon, text, parent), d(new CDockCardPrivate(this)) {
-    d->init();
+CDockCard::CDockCard(const QIcon &icon, const QString &text, QWidget *parent) : CDockCard(text, parent) {
+    setIcon(icon);
 }
 
 CDockCard::~CDockCard() {
-    delete d;
 }
 
 Qt::Orientation CDockCard::orientation() const {
+    Q_D(const CDockCard);
     return d->m_orientation;
 }
 
 void CDockCard::setOrientation(Qt::Orientation orient) {
+    Q_D(CDockCard);
     d->m_orientation = orient;
     setSizePolicy((d->m_orientation == Qt::Horizontal) ? d->m_sizePolicyH : d->m_sizePolicyV);
     adjustSize();
 }
 
 QSize CDockCard::sizeHint() const {
+    Q_D(const CDockCard);
     return (d->m_orientation == Qt::Horizontal) ? CTabButton::sizeHint() : CLTabButton::sizeHint();
 }
 
@@ -54,22 +54,27 @@ int CDockCard::widthHint() const {
 }
 
 QSize CDockCard::dragOffset() const {
+    Q_D(const CDockCard);
     return d->m_dragOffset;
 }
 
 void CDockCard::setDragOffset(const QSize &dragOffset) {
+    Q_D(CDockCard);
     d->m_dragOffset = dragOffset;
 }
 
 QWidget *CDockCard::widget() const {
+    Q_D(const CDockCard);
     return d->m_widget;
 }
 
 QWidget *CDockCard::container() const {
+    Q_D(const CDockCard);
     return d->m_container;
 }
 
 QWidget *CDockCard::takeWidget() {
+    Q_D(CDockCard);
     auto &m_widget = d->m_widget;
     auto &m_container = d->m_container;
 
@@ -96,6 +101,7 @@ QWidget *CDockCard::takeWidget() {
 }
 
 void CDockCard::setWidget(QWidget *widget) {
+    Q_D(CDockCard);
     auto &m_widget = d->m_widget;
     auto &m_container = d->m_container;
 
@@ -125,6 +131,7 @@ void CDockCard::setWidget(QWidget *widget) {
 }
 
 CDockCard::ViewMode CDockCard::viewMode() const {
+    Q_D(const CDockCard);
     return d->m_viewMode;
 }
 
@@ -141,6 +148,7 @@ static void adjustWindowGeometry(QWidget *w) {
 }
 
 void CDockCard::setViewMode(CDockCard::ViewMode viewMode) {
+    Q_D(CDockCard);
     auto &m_viewMode = d->m_viewMode;
     auto &m_widget = d->m_widget;
     auto &m_container = d->m_container;
@@ -192,10 +200,12 @@ void CDockCard::setViewMode(CDockCard::ViewMode viewMode) {
 }
 
 CDockTabBar *CDockCard::tabBar() const {
+    Q_D(const CDockCard);
     return d->m_tabBar;
 }
 
 void CDockCard::moveWidget(const QPoint &pos) {
+    Q_D(CDockCard);
     auto &m_widget = d->m_widget;
 
     m_widget->move(pos);
@@ -203,6 +213,7 @@ void CDockCard::moveWidget(const QPoint &pos) {
 }
 
 void CDockCard::mousePressEvent(QMouseEvent *event) {
+    Q_D(CDockCard);
     auto &m_dragPos = d->m_dragPos;
     auto &m_readyDrag = d->m_readyDrag;
 
@@ -212,6 +223,7 @@ void CDockCard::mousePressEvent(QMouseEvent *event) {
 }
 
 void CDockCard::mouseMoveEvent(QMouseEvent *event) {
+    Q_D(CDockCard);
     auto &m_dragPos = d->m_dragPos;
     auto &m_dragOffset = d->m_dragOffset;
     auto &m_readyDrag = d->m_readyDrag;
@@ -231,6 +243,7 @@ void CDockCard::mouseMoveEvent(QMouseEvent *event) {
 }
 
 void CDockCard::mouseReleaseEvent(QMouseEvent *event) {
+    Q_D(CDockCard);
     auto &m_readyDrag = d->m_readyDrag;
 
     CLTabButton::mouseReleaseEvent(event);
@@ -239,44 +252,9 @@ void CDockCard::mouseReleaseEvent(QMouseEvent *event) {
     }
 }
 
-void CDockCard::contextMenuEvent(QContextMenuEvent *event) {
-    QMenu menu(this);
-
-    auto dockPinnedAction = new QAction(tr("Dock pinned"), &menu);
-    auto floatAction = new QAction(tr("Float"), &menu);
-    auto windowAction = new QAction(tr("Window"), &menu);
-
-    dockPinnedAction->setCheckable(true);
-    floatAction->setCheckable(true);
-    windowAction->setCheckable(true);
-
-    switch (d->m_viewMode) {
-        case DockPinned:
-            dockPinnedAction->setChecked(true);
-            break;
-        case Float:
-            floatAction->setChecked(true);
-            break;
-        case Window:
-            windowAction->setChecked(true);
-            break;
-    }
-
-    menu.addAction(dockPinnedAction);
-    menu.addAction(floatAction);
-    menu.addAction(windowAction);
-
-    auto action = menu.exec(QCursor::pos());
-    if (action == dockPinnedAction) {
-        setViewMode(DockPinned);
-    } else if (action == floatAction) {
-        setViewMode(Float);
-    } else if (action == windowAction) {
-        setViewMode(Window);
-    }
-}
-
 void CDockCard::leaveEvent(QEvent *event) {
+    Q_D(CDockCard);
+
     Q_UNUSED(event)
 
     auto &m_readyDrag = d->m_readyDrag;
@@ -287,14 +265,16 @@ void CDockCard::leaveEvent(QEvent *event) {
 }
 
 void CDockCard::paintEvent(QPaintEvent *event) {
+    Q_D(CDockCard);
     return (d->m_orientation == Qt::Horizontal) ? CTabButton::paintEvent(event) : CLTabButton::paintEvent(event);
 }
 
 bool CDockCard::eventFilter(QObject *obj, QEvent *event) {
+    Q_D(CDockCard);
     if (obj == d->m_widget) {
         if (event->type() == QEvent::Close) {
             d->m_closing = true;
-            QTimer::singleShot(0, this, [this]() {
+            QTimer::singleShot(0, this, [d]() {
                 d->m_closing = false; //
             });
         }
@@ -302,11 +282,16 @@ bool CDockCard::eventFilter(QObject *obj, QEvent *event) {
             // Close accepted
             setChecked(false);
             if (d->m_viewMode == DockPinned) {
-                QTimer::singleShot(0, this, [this]() {
+                QTimer::singleShot(0, this, [d]() {
                     d->m_widget->show(); //
                 });
             }
         }
     }
     return QObject::eventFilter(obj, event);
+}
+
+CDockCard::CDockCard(CDockCardPrivate &d, QWidget *parent) : CLTabButton(parent), d_ptr(&d) {
+    d.q_ptr = this;
+    d.init();
 }
