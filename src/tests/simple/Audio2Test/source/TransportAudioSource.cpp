@@ -22,6 +22,7 @@ static inline bool inRange(qint64 x, qint64 l, qint64 r) {
 
 qint64 TransportAudioSource::read(const AudioSourceReadData &readData) {
     Q_D(TransportAudioSource);
+    if(d->position == d->loopingStart && d->position == d->loopingEnd) return 0;
     QMutexLocker locker(&d->mutex);
     int channelCount = readData.buffer->channelCount();
     for(int i = 0; i < channelCount; i++) {
