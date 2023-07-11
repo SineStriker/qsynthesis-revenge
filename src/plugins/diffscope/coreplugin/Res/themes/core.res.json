@@ -7,12 +7,18 @@
         "Visual Studio Code - Dark": {
             "home.recent.topButtons.iconColor": "#FFFFFF",
             "project.toolbar.iconColor": "#FFFFFF",
-            "project.floatingPanel.iconColor": "#FFFFFF"
+            "project.floatingPanel.iconColor": "#FFFFFF",
+            "project.dockCard.iconColor": "#CCCCCC",
+            "project.dockCard.iconColor.checked": "#FFFFFF",
+            "project.sidePanel.iconColor": "#CCCCCC",
+            "project.sidePanel.iconColor.checked": "#FFFFFF"
         },
         "Visual Studio Code - Light": {
             "home.recent.topButtons.iconColor": "#FFFFFF",
             "project.toolbar.iconColor": "#FFFFFF",
-            "project.floatingPanel.iconColor": "#FFFFFF"
+            "project.floatingPanel.iconColor": "#FFFFFF",
+            "project.sidePanel.iconColor": "#CCCCCC",
+            "project.sidePanel.iconColor.checked": "#FFFFFF"
         }
     },
     "stylesheets": {
@@ -35,6 +41,9 @@
             },
             "Core::ProjectWindow": {
                 "file": "project-dark.qss"
+            },
+            "Core::ISidePanel": {
+                "file": "side-panel-dark.qss"
             }
         },
         "Visual Studio Code - Light": {
@@ -46,6 +55,9 @@
             },
             "Core::ProjectWindow": {
                 "file": "project-light.qss"
+            },
+            "Core::ISidePanel": {
+                "file": "side-panel-light.qss"
             }
         }
     },
@@ -57,6 +69,10 @@
         "core.ProjectWindow": [
             "Global",
             "Core::ProjectWindow"
+        ],
+        "core.ISidePanel": [
+            "Global",
+            "Core::ISidePanel"
         ]
     }
 }

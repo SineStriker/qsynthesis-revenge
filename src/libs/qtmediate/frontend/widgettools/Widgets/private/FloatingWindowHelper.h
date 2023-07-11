@@ -14,6 +14,7 @@ public:
 public:
     void addTitleBarWidget(QWidget *w);
     void removeTitleBarWidget(QWidget *w);
+    void clearTitleBarWidgets();
 
     bool floating() const;
     void setFloating(bool floating, Qt::WindowFlags flags = Qt::Window);

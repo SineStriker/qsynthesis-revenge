@@ -6,6 +6,15 @@
 #include <QHoverEvent>
 #include <QWidget>
 
+static bool isDescendantOfWidget(QWidget *widget, QWidget *parent) {
+    while (widget) {
+        if (widget == parent)
+            return true;
+        widget = widget->parentWidget();
+    }
+    return false;
+}
+
 FloatingWindowHelper::FloatingWindowHelper(QWidget *w, QObject *parent) : QObject(parent), w(w) {
     m_resizeMargins = {5, 5, 5, 5};
 
@@ -32,6 +41,12 @@ void FloatingWindowHelper::addTitleBarWidget(QWidget *w) {
 void FloatingWindowHelper::removeTitleBarWidget(QWidget *w) {
     m_titleBarWidgets.remove(w);
     disconnect(w, &QObject::destroyed, this, &FloatingWindowHelper::_q_titleBarWidgetDestroyed);
+}
+
+void FloatingWindowHelper::clearTitleBarWidgets() {
+    for (const auto &item : qAsConst(m_titleBarWidgets))
+        disconnect(w, &QObject::destroyed, this, &FloatingWindowHelper::_q_titleBarWidgetDestroyed);
+    m_titleBarWidgets.clear();
 }
 
 bool FloatingWindowHelper::floating() const {
@@ -74,10 +89,13 @@ bool FloatingWindowHelper::eventFilter(QObject *obj, QEvent *event) {
             case QEvent::MouseButtonRelease: {
                 if (obj->isWidgetType()) {
                     auto e = static_cast<QMouseEvent *>(event);
-                    auto me = *e;
-                    me.setLocalPos(w->mapFromGlobal(e->globalPos()));
-                    if (dummyEventFilter(obj, &me)) {
-                        return true;
+                    auto w0 = qobject_cast<QWidget *>(obj);
+                    if (w0 && isDescendantOfWidget(w0, w)) {
+                        auto me = *e;
+                        me.setLocalPos(w->mapFromGlobal(e->globalPos()));
+                        if (dummyEventFilter(obj, &me)) {
+                            return true;
+                        }
                     }
                 }
             }
@@ -90,6 +108,7 @@ bool FloatingWindowHelper::eventFilter(QObject *obj, QEvent *event) {
 
 bool FloatingWindowHelper::dummyEventFilter(QObject *obj, QEvent *event) {
     switch (event->type()) {
+        case QEvent::Show:
         case QEvent::Resize: {
             // Re-calc anchor areas
             int width = w->width();
@@ -121,11 +140,9 @@ bool FloatingWindowHelper::dummyEventFilter(QObject *obj, QEvent *event) {
                 w->setCursor(Qt::SizeHorCursor);
             } else if (m_pressedRect[Top].contains(pos) || m_pressedRect[Bottom].contains(pos)) {
                 w->setCursor(Qt::SizeVerCursor);
-            } else if (m_pressedRect[TopLeft].contains(pos) ||
-                       m_pressedRect[BottomRight].contains(pos)) {
+            } else if (m_pressedRect[TopLeft].contains(pos) || m_pressedRect[BottomRight].contains(pos)) {
                 w->setCursor(Qt::SizeFDiagCursor);
-            } else if (m_pressedRect[TopRight].contains(pos) ||
-                       m_pressedRect[BottomLeft].contains(pos)) {
+            } else if (m_pressedRect[TopRight].contains(pos) || m_pressedRect[BottomLeft].contains(pos)) {
                 w->setCursor(Qt::SizeBDiagCursor);
             } else {
                 w->setCursor(Qt::ArrowCursor);
@@ -134,7 +151,6 @@ bool FloatingWindowHelper::dummyEventFilter(QObject *obj, QEvent *event) {
             // Calc the movement by mouse pos
             int offsetX = pos.x() - m_pressedPos.x();
             int offsetY = pos.y() - m_pressedPos.y();
-
 
             int rectX = m_orgGeometry.x();
             int rectY = m_orgGeometry.y();

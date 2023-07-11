@@ -1,7 +1,6 @@
 /* Stylesheet Content */
 
 QWidget {
-    font-family: "Microsoft YaHei";
     font-size: 15px;
 }
 

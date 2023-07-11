@@ -5,9 +5,10 @@
 #include <QFrame>
 
 #include "CDockCard.h"
-#include "CDockToolWindow.h"
 
 #include "QMNamespace.h"
+
+class CDockToolWindow;
 
 class CDockFramePrivate;
 
@@ -35,6 +36,13 @@ public:
     bool barVisible() const;
     void setBarVisible(bool visible);
     void toggleBarVisible();
+    void toggleMaximize(Qt::Edge edge);
+
+    QList<int> orientationSizes(Qt::Orientation orientation) const;
+    void setOrientationSizes(Qt::Orientation orientation, const QList<int> &sizes);
+
+    int edgeSize(Qt::Edge edge) const;
+    void setEdgeSize(Qt::Edge edge, int size);
 
 signals:
     void barVisibleToggled(bool visible);
@@ -54,8 +62,9 @@ protected:
 
     CDockFrame(CDockFramePrivate &d, QWidget *parent = nullptr);
 
-private:
     friend class CDockTabDragProxy;
+    friend class CDockCard;
+    friend class CDockToolWindow;
 };
 
 

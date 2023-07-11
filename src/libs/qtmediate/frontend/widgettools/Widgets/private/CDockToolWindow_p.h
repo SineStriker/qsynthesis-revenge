@@ -1,6 +1,8 @@
 #ifndef CDOCKTOOLWINDOWPRIVATE_H
 #define CDOCKTOOLWINDOWPRIVATE_H
 
+#include <QSet>
+
 #include "CDockToolWindow.h"
 
 class CDockToolWindowPrivate {
@@ -11,9 +13,14 @@ public:
 
     void init();
 
+    void setCard(CDockCard *card);
+
     CDockToolWindow *q_ptr;
 
     CDockCard *card;
+
+    QMargins resizeMargins;
+    QSet<QWidget *> hitTestWidgets;
 };
 
 #endif // CDOCKTOOLWINDOWPRIVATE_H

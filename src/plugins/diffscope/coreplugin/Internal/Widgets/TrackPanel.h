@@ -3,11 +3,11 @@
 
 #include <QFrame>
 
-#include "Interfaces/IPianoRollComponent.h"
+#include "PianoRoll/ISidePanel.h"
 
 namespace Core::Internal {
 
-    class TrackPanel : public QFrame, public IPianoRollComponent {
+    class TrackPanel : public ISidePanel {
         Q_OBJECT
     public:
         explicit TrackPanel(IProjectWindow *iWin, QWidget *parent = nullptr);

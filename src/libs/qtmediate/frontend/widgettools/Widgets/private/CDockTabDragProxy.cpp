@@ -4,6 +4,7 @@
 
 #include "../CDockFrame.h"
 #include "CDockFrame_p.h"
+#include "CDockCard_p.h"
 
 #include <QDrag>
 #include <QDragEnterEvent>
@@ -89,7 +90,7 @@ bool CDockTabDragProxy::eventFilter(QObject *obj, QEvent *event) {
 }
 
 void CDockTabDragProxy::_q_tabDragStarted(CDockCard *card, const QPoint &pos, const QPixmap &pixmap) {
-    auto orgDoubleBar = card->tabBar()->sideBar();
+    auto orgDoubleBar = card->d_func()->m_tabBar->sideBar();
     if (orgDoubleBar->count() == 1) {
         card->setDisabled(true);
         card->installEventFilter(this);
@@ -205,7 +206,7 @@ void CDockTabDragProxy::_q_tabDragOver() {
 
     if (m_dragger->targetBar) {
         auto bar = m_dragger->targetBar;
-        auto orgBar = card->tabBar();
+        auto orgBar = card->d_func()->m_tabBar;
         if (bar->orientation() == Qt::Horizontal) {
             auto leftBar = bar->firstBar();
             auto rightBar = bar->secondBar();

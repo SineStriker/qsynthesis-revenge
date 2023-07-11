@@ -96,7 +96,7 @@ namespace Core {
 
         double ratio = (msgBox.screen()->logicalDotsPerInch() / QMOs::unitDpi());
 
-        QIcon icon(":/svg/app/diffsinger.svg");
+        QIcon icon(qApp->windowIcon());
         if (!icon.isNull())
             msgBox.setIconPixmap(icon.pixmap(QSize(40, 40) * ratio));
 

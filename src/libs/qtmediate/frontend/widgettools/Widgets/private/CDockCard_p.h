@@ -4,6 +4,7 @@
 #include "QMView.h"
 
 #include "../CDockCard.h"
+#include "FloatingWindowHelper.h"
 
 class CDockCardPrivate {
     Q_DECLARE_PUBLIC(CDockCard)
@@ -18,6 +19,7 @@ public:
     CDockCard *q_ptr;
 
     CDockTabBar *m_tabBar;
+    QRect oldGeometry;
 
     Qt::Orientation m_orientation;
     QSizePolicy m_sizePolicyH, m_sizePolicyV;
@@ -32,6 +34,8 @@ public:
 
     bool m_closing;
     CDockCard::ViewMode m_viewMode;
+
+    FloatingWindowHelper *m_floatingHelper;
 
     static QMenu *createViewModeMenu(CDockCard *card);
 };

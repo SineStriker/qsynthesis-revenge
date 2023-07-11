@@ -21,5 +21,7 @@
         <file>svg/floating-titlebar/fold.svg</file>
         <file>svg/floating-titlebar/unfold.svg</file>
         <file>svg/main-dock/layer-group-solid.svg</file>
+        <file>svg/side-panel/close-line.svg</file>
+        <file>svg/side-panel/menu-line.svg</file>
     </qresource>
 </RCC>

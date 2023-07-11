@@ -675,7 +675,7 @@ namespace Core {
                         auto margins = d->signatureBackground.margins();
                         int rw = margins.left() + margins.right() + fm1.horizontalAdvance(text);
                         int rh = fm1.height() + margins.top() + margins.bottom();
-                        QRect r0(x1, h - rh, rw, rh);
+                        QRect r0(x1, h * 3 / 4 - rh / 2, rw, rh);
 
                         int maxW = beatTicks * unit + x0 - x1;
                         if (r0.width() > maxW) {
@@ -683,7 +683,7 @@ namespace Core {
                         }
 
                         if (r0.left() > changedRect.left() || r0.right() < changedRect.right()) {
-                            d->timeSignatureBlocks.insert(bar.tick, {r0, curSection, bar.tick, bar.timeSignature});
+                           d->timeSignatureBlocks.insert(bar.tick, {r0, curSection, bar.tick, bar.timeSignature});
                         }
                     }
                 } while (false);

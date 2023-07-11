@@ -6,8 +6,10 @@
 
 namespace Core::Internal {
 
-    TrackPanel::TrackPanel(IProjectWindow *iWin, QWidget *parent) : QFrame(parent), IPianoRollComponent(iWin) {
+    TrackPanel::TrackPanel(IProjectWindow *iWin, QWidget *parent) : ISidePanel(iWin, parent) {
         setProperty("dock-panel", true);
+
+        setWindowTitle("Tracks");
 
         auto label = new QLabel("This is the track panel!!!");
         label->setStyleSheet(R"(
@@ -18,11 +20,7 @@ background-color: rgba(255, 0, 0, 25%);
 
 )");
 
-        auto layout = new QVBoxLayout();
-        layout->setMargin(0);
-        layout->setSpacing(0);
-        layout->addWidget(label);
-        setLayout(layout);
+        setCentralWidget(label);
     }
 
     TrackPanel::~TrackPanel() {

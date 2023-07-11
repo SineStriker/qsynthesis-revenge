@@ -22,6 +22,9 @@ public:
 
     void init();
 
+    QList<int> orgHSizes;
+    QList<int> orgVSizes;
+
     CDockFrame *q_ptr;
 
     QGridLayout *m_layout;
@@ -48,8 +51,6 @@ private:
     void _q_cardRemoved(QM::Priority number, CDockCard *card);
     void _q_cardToggled(QM::Priority number, CDockCard *card);
     void _q_cardViewModeChanged(QM::Priority number, CDockCard *card, CDockCard::ViewMode oldViewMode);
-
-    void _q_cardContextMenuRequested();
 };
 
 #endif // __CDOCKFRAME_P_H__

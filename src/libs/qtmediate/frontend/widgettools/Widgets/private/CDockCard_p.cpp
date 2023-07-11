@@ -14,6 +14,7 @@ CDockCardPrivate::CDockCardPrivate() {
     m_readyDrag = false;
 
     m_tabBar = nullptr;
+    m_floatingHelper = nullptr;
 }
 
 CDockCardPrivate::~CDockCardPrivate() {
@@ -31,7 +32,7 @@ void CDockCardPrivate::init() {
         QSizePolicy(m_sizePolicyV.verticalPolicy(), m_sizePolicyV.horizontalPolicy(), m_sizePolicyV.controlType());
 
     q->setCheckable(true);
-    q->setContextMenuPolicy(Qt::CustomContextMenu);
+    q->setContextMenuPolicy(Qt::DefaultContextMenu);
     q->setOrientation(Qt::Horizontal); // orientation
 }
 

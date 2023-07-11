@@ -131,6 +131,8 @@ namespace Core {
             qApp->setProperty("closeHomeOnOpen", true);
             qApp->setProperty("projectDocTypeId", "org.ChorusKit.dspx");
 
+            qApp->setWindowIcon(QIcon(":/svg/app/diffsinger.svg"));
+
             // Handle FileOpenEvent
             qApp->installEventFilter(this);
 

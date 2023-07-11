@@ -1,5 +1,7 @@
 #include "CDockSideBar.h"
 
+#include "CDockFrame.h"
+
 #include <QBoxLayout>
 #include <QDragEnterEvent>
 #include <QDropEvent>
@@ -64,6 +66,23 @@ void CDockSideBar::setOrientation(Qt::Orientation orient) {
     }
 }
 
+Qt::Edge CDockSideBar::edge() const {
+    if (orientation() == Qt::Horizontal) {
+        if (cardDirection() == QM::Backward) {
+            return Qt::TopEdge;
+        } else {
+            return Qt::BottomEdge;
+        }
+    } else {
+
+        if (cardDirection() == QM::Backward) {
+            return Qt::LeftEdge;
+        } else {
+            return Qt::RightEdge;
+        }
+    }
+}
+
 bool CDockSideBar::highlight() const {
     return property(PROPERTY_HIGHLIGHT).toBool();
 }
@@ -109,6 +128,18 @@ QSize CDockSideBar::sizeHint() const {
 
 QSize CDockSideBar::minimumSizeHint() const {
     return sizeHint();
+}
+
+CDockFrame *CDockSideBar::frame() const {
+    QWidget *w = const_cast<CDockSideBar *>(this);
+    while (w) {
+        auto f = qobject_cast<CDockFrame *>(w);
+        if (f) {
+            return f;
+        }
+        w = parentWidget();
+    }
+    return nullptr;
 }
 
 void CDockSideBar::resetLayout() {

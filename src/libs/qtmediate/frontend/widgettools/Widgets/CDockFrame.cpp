@@ -71,7 +71,7 @@ void CDockFrame::removeWidget(CDockCard *card) {
         qDebug() << "CDockFrame: invalid card pointer" << (void *) card;
         return;
     }
-    auto tabBar = card->tabBar();
+    auto tabBar = card->d_func()->m_tabBar;
     auto doubleBar = tabBar->sideBar();
     if (doubleBar == d->m_leftBar) {
         goto out;
@@ -102,7 +102,7 @@ void CDockFrame::moveWidget(CDockCard *card, Qt::Edge edge, QM::Priority number)
         qDebug() << "CDockFrame: invalid card pointer" << (void *) card;
         return;
     }
-    auto tabBar = card->tabBar();
+    auto tabBar = card->d_func()->m_tabBar;
     auto doubleBar = tabBar->sideBar();
     if (doubleBar == d->m_leftBar) {
         goto out;
@@ -136,7 +136,7 @@ out:
             break;
     }
     auto newBar = (number == QM::Primary) ? bar->firstBar() : bar->secondBar();
-    auto orgBar = card->tabBar();
+    auto orgBar = card->d_func()->m_tabBar;
     orgBar->removeCard(card);
     newBar->addCard(card);
 }
@@ -179,12 +179,165 @@ void CDockFrame::toggleBarVisible() {
     setBarVisible(!barVisible());
 }
 
-CDockCard *CDockFrame::createCard(QWidget *w) {
+void CDockFrame::toggleMaximize(Qt::Edge edge) {
+    Q_D(CDockFrame);
+    switch (edge) {
+        case Qt::TopEdge: {
+            auto offset = d->m_horizontalSplitter->height() - d->m_horizontalSplitter->minimumSizeHint().height();
+            if (offset == 0) {
+                d->m_verticalSplitter->setSizes(d->orgVSizes);
+            } else {
+                auto sizes = d->m_verticalSplitter->sizes();
+                d->orgVSizes = sizes;
+                sizes[0] += offset;
+                sizes[1] -= offset;
+                d->m_verticalSplitter->setSizes(sizes);
+            }
+            break;
+        }
+        case Qt::BottomEdge: {
+            auto offset = d->m_horizontalSplitter->height() - d->m_horizontalSplitter->minimumSizeHint().height();
+            if (offset == 0) {
+                d->m_verticalSplitter->setSizes(d->orgVSizes);
+            } else {
+                auto sizes = d->m_verticalSplitter->sizes();
+                d->orgVSizes = sizes;
+                sizes[2] += offset;
+                sizes[1] -= offset;
+                d->m_verticalSplitter->setSizes(sizes);
+            }
+            break;
+        }
+        case Qt::LeftEdge: {
+            auto offset = d->m_centralContainer->width() - d->m_centralContainer->minimumSizeHint().width();
+            if (offset == 0) {
+                d->m_horizontalSplitter->setSizes(d->orgHSizes);
+            } else {
+                auto sizes = d->m_horizontalSplitter->sizes();
+                d->orgHSizes = sizes;
+                sizes[0] += offset;
+                sizes[1] -= offset;
+                d->m_horizontalSplitter->setSizes(sizes);
+            }
+            break;
+        }
+        case Qt::RightEdge: {
+            auto offset = d->m_centralContainer->width() - d->m_centralContainer->minimumSizeHint().width();
+            if (offset == 0) {
+                d->m_horizontalSplitter->setSizes(d->orgHSizes);
+            } else {
+                auto sizes = d->m_horizontalSplitter->sizes();
+                d->orgHSizes = sizes;
+                sizes[2] += offset;
+                sizes[1] -= offset;
+                d->m_horizontalSplitter->setSizes(sizes);
+            }
+            break;
+        }
+    }
+}
+
+QList<int> CDockFrame::orientationSizes(Qt::Orientation orientation) const {
+    Q_D(const CDockFrame);
+    switch (orientation) {
+        case Qt::Horizontal: {
+            auto sizes = d->m_horizontalSplitter->sizes();
+            if (sizes == QList<int>{0, 0, 0}) {
+                sizes = {0, d->m_horizontalSplitter->width(), 0};
+            }
+            return sizes;
+            break;
+        }
+        case Qt::Vertical: {
+            auto sizes = d->m_verticalSplitter->sizes();
+            if (sizes == QList<int>{0, 0, 0}) {
+                sizes = {0, d->m_verticalSplitter->height(), 0};
+            }
+            return sizes;
+            break;
+        }
+    }
+    return {};
+}
+
+void CDockFrame::setOrientationSizes(Qt::Orientation orientation, const QList<int> &sizes) {
+    Q_D(CDockFrame);
+    switch (orientation) {
+        case Qt::Horizontal:
+            d->m_horizontalSplitter->setSizes(sizes);
+            break;
+        case Qt::Vertical:
+            d->m_verticalSplitter->setSizes(sizes);
+            break;
+    }
+}
+
+int CDockFrame::edgeSize(Qt::Edge edge) const {
+    Q_D(const CDockFrame);
+    switch (edge) {
+        case Qt::TopEdge: {
+            return d->m_topPanel->height();
+            break;
+        }
+        case Qt::BottomEdge: {
+            return d->m_bottomPanel->height();
+            break;
+        }
+        case Qt::LeftEdge: {
+            return d->m_leftPanel->width();
+            break;
+        }
+        case Qt::RightEdge: {
+            return d->m_rightPanel->width();
+            break;
+        }
+    }
+    return 0;
+}
+
+void CDockFrame::setEdgeSize(Qt::Edge edge, int size) {
     Q_D(CDockFrame);
 
-    auto card = new CDockCard();
-    connect(card, &CDockCard::customContextMenuRequested, d, &CDockFramePrivate::_q_cardContextMenuRequested);
-    return card;
+    switch (edge) {
+        case Qt::TopEdge: {
+            auto sizes = d->m_verticalSplitter->sizes();
+            auto offset = size - sizes[0];
+            sizes[0] += offset;
+            sizes[1] -= offset;
+            d->m_verticalSplitter->setSizes(sizes);
+            break;
+        }
+        case Qt::BottomEdge: {
+            auto sizes = d->m_verticalSplitter->sizes();
+            auto offset = size - sizes[2];
+            d->orgVSizes = sizes;
+            sizes[2] += offset;
+            sizes[1] -= offset;
+            d->m_verticalSplitter->setSizes(sizes);
+            break;
+        }
+        case Qt::LeftEdge: {
+            auto sizes = d->m_horizontalSplitter->sizes();
+            auto offset = size - sizes[0];
+            sizes[0] += offset;
+            sizes[1] -= offset;
+            d->m_horizontalSplitter->setSizes(sizes);
+            break;
+        }
+        case Qt::RightEdge: {
+            auto sizes = d->m_horizontalSplitter->sizes();
+            auto offset = size - sizes[2];
+            sizes[2] += offset;
+            sizes[1] -= offset;
+            d->m_horizontalSplitter->setSizes(sizes);
+            break;
+        }
+    }
+}
+
+CDockCard *CDockFrame::createCard(QWidget *w) {
+    Q_UNUSED(w)
+    return new CDockCard();
 }
 
 void CDockFrame::widgetAdded(Qt::Edge edge, QM::Priority number, QWidget *w, CDockCard *card) {

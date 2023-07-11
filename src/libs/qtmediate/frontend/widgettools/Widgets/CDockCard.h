@@ -2,10 +2,11 @@
 #define CDOCKCARD_H
 
 #include "CLTabButton.h"
+#include "QMNamespace.h"
 
 #include "QMWidgetToolsGlobal.h"
 
-class CDockTabBar;
+class CDockTabDragProxy;
 
 class CDockCardPrivate;
 
@@ -46,12 +47,13 @@ public:
     ViewMode viewMode() const;
     void setViewMode(ViewMode viewMode);
 
-    inline bool dockVisible() const {
-        return isChecked() && viewMode() == DockPinned;
-    }
+    inline bool dockVisible() const;
+    Qt::Edge edge() const;
+    QM::Priority priority() const;
 
-    CDockTabBar *tabBar() const;
     void moveWidget(const QPoint &pos);
+    void toggleMaximizeState();
+    void setSize(const QSize &size);
 
 protected:
     void mousePressEvent(QMouseEvent *event) override;
@@ -59,6 +61,7 @@ protected:
     void mouseReleaseEvent(QMouseEvent *event) override;
     void leaveEvent(QEvent *event) override;
     void paintEvent(QPaintEvent *event) override;
+    void contextMenuEvent(QContextMenuEvent *event) override;
 
     bool eventFilter(QObject *obj, QEvent *event) override;
 
@@ -71,8 +74,14 @@ private:
     CDockCard(CDockCardPrivate &d, QWidget *parent = nullptr);
 
     friend class CDockTabBar;
-
+    friend class CDockTabDragProxy;
     friend class CDockFrame;
+    friend class CDockToolWindow;
+    friend class CDockToolWindowPrivate;
 };
+
+inline bool CDockCard::dockVisible() const {
+    return isChecked() && viewMode() == DockPinned;
+}
 
 #endif // CDOCKCARD_H

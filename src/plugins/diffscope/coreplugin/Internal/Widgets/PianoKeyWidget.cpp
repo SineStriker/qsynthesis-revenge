@@ -147,7 +147,7 @@ namespace Core::Internal {
 
         adjustHeight();
 
-        startTimer(10);
+        startTimer(100);
         handleUpdateToneLabel();
     }
 

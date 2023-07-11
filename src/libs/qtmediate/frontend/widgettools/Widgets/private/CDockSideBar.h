@@ -6,6 +6,8 @@
 #include "CDockTabBar.h"
 #include "QMWidgetToolsGlobal.h"
 
+class CDockFrame;
+
 class CDockTabDragProxy;
 
 class QMWTOOLS_EXPORT CDockSideBar : public QFrame {
@@ -26,6 +28,8 @@ public:
     Qt::Orientation orientation() const;
     void setOrientation(Qt::Orientation orient);
 
+    Qt::Edge edge() const;
+
     bool highlight() const;
     void setHighlight(bool highlight, int widthHint = 0);
 
@@ -36,6 +40,8 @@ public:
 
     QSize sizeHint() const override;
     QSize minimumSizeHint() const override;
+
+    CDockFrame *frame() const;
 
 protected:
     CDockTabBar *m_firstBar;

@@ -1,12 +1,13 @@
 #include "CDockCard.h"
 #include "private/CDockCard_p.h"
+#include "private/CDockFrame_p.h"
+#include "private/CDockSideBar.h"
 #include "private/CDockTabBar.h"
+#include "private/CDockToolWindow_p.h"
 
 #include <QApplication>
 #include <QBoxLayout>
 #include <QDesktopWidget>
-#include <QLabel>
-#include <QMenu>
 #include <QPainter>
 #include <QResizeEvent>
 #include <QStyle>
@@ -85,12 +86,26 @@ QWidget *CDockCard::takeWidget() {
     auto layout = d->m_container->layout();
 
     // Remove old widget
-    auto w = m_widget;
+    auto &w = m_widget;
     if (layout->count() > 0) {
         layout->removeWidget(w);
         w->setParent(nullptr);
     }
     w->removeEventFilter(this);
+
+    // Remove card reference
+    {
+        auto tw = qobject_cast<CDockToolWindow *>(w);
+        if (tw) {
+            tw->d_func()->setCard(nullptr);
+        }
+    }
+
+    // Delete helper
+    if (d->m_floatingHelper) {
+        delete d->m_floatingHelper;
+        d->m_floatingHelper = nullptr;
+    }
 
     // Delete container
     delete m_container;
@@ -123,11 +138,25 @@ void CDockCard::setWidget(QWidget *widget) {
             layout->removeWidget(m_widget);
         }
         delete m_widget;
+
+        if (d->m_floatingHelper) {
+            delete d->m_floatingHelper;
+        }
     }
     layout->addWidget(widget);
     widget->installEventFilter(this);
+    d->m_floatingHelper = new FloatingWindowHelper(widget, this);
 
     m_widget = widget;
+
+    // Add card reference
+    {
+        auto tw = qobject_cast<CDockToolWindow *>(widget);
+        if (tw) {
+            tw->d_func()->setCard(this);
+            tw->viewModeChanged(d->m_viewMode);
+        }
+    }
 }
 
 CDockCard::ViewMode CDockCard::viewMode() const {
@@ -157,38 +186,67 @@ void CDockCard::setViewMode(CDockCard::ViewMode viewMode) {
         return;
     }
 
+    auto asWindow = [&](const QSize &size) {
+        // Size
+        if (!size.isEmpty()) {
+            m_widget->resize(size);
+        } else if (!d->oldGeometry.isEmpty()) {
+            m_widget->resize(d->oldGeometry.size());
+        }
+
+        // Pos
+        if (!d->oldGeometry.isEmpty()) {
+            m_widget->move(d->oldGeometry.topLeft());
+        } else {
+            QPoint offset;
+            switch (d->m_tabBar->sideBar()->edge()) {
+                case Qt::TopEdge:
+                    offset.ry() += height();
+                    break;
+                case Qt::BottomEdge:
+                    offset.ry() -= height() + size.height();
+                    break;
+                case Qt::LeftEdge:
+                    offset.rx() += width();
+                    break;
+                case Qt::RightEdge:
+                    offset.rx() -= width() + size.width();
+                    break;
+            }
+            moveWidget(mapToGlobal({0, 0}) + offset);
+        }
+
+        m_widget->setVisible(isChecked());
+    };
+
     auto layout = m_container->layout();
     switch (viewMode) {
         case DockPinned: {
+            d->oldGeometry = m_widget->geometry();
+            d->m_floatingHelper->setFloating(false);
             m_widget->setWindowFlags(Qt::Widget);
             layout->addWidget(m_widget);
             m_widget->setVisible(true);
+            QTimer::singleShot(0, this, [d, this]() {
+                setSize(d->oldGeometry.size()); //
+            });
             break;
         }
         case Float: {
             auto size = m_widget->size();
             layout->removeWidget(m_widget);
             m_widget->setParent(m_container);
-            m_widget->setWindowFlags(Qt::Tool);
-            if (m_viewMode == DockPinned) {
-                if (!size.isEmpty())
-                    m_widget->resize(size);
-                moveWidget(mapToGlobal({0, 0}));
-            }
-            m_widget->setVisible(isChecked());
+            d->m_floatingHelper->setFloating(true, Qt::Tool);
+            asWindow(size);
             break;
         }
         case Window: {
             auto size = m_widget->size();
             layout->removeWidget(m_widget);
             m_widget->setParent(nullptr);
+            d->m_floatingHelper->setFloating(false);
             m_widget->setWindowFlags(Qt::Window);
-            if (m_viewMode == DockPinned) {
-                if (!size.isEmpty())
-                    m_widget->resize(size);
-                moveWidget(mapToGlobal({0, 0}));
-            }
-            m_widget->setVisible(isChecked());
+            asWindow(size);
             break;
         }
     }
@@ -196,12 +254,26 @@ void CDockCard::setViewMode(CDockCard::ViewMode viewMode) {
     auto org = m_viewMode;
     m_viewMode = viewMode;
 
+    // Tool Window extra
+    {
+        auto tw = qobject_cast<CDockToolWindow *>(m_widget);
+        if (tw) {
+            tw->viewModeChanged(viewMode);
+        }
+    }
+
     emit viewModeChanged(viewMode, org);
 }
 
-CDockTabBar *CDockCard::tabBar() const {
+Qt::Edge CDockCard::edge() const {
     Q_D(const CDockCard);
-    return d->m_tabBar;
+    return d->m_tabBar->sideBar()->edge();
+}
+
+QM::Priority CDockCard::priority() const {
+    Q_D(const CDockCard);
+    auto tabBar = d->m_tabBar;
+    return tabBar->sideBar()->firstBar() == tabBar ? QM::Primary : QM::Secondary;
 }
 
 void CDockCard::moveWidget(const QPoint &pos) {
@@ -210,6 +282,34 @@ void CDockCard::moveWidget(const QPoint &pos) {
 
     m_widget->move(pos);
     adjustWindowGeometry(m_widget);
+}
+
+void CDockCard::toggleMaximizeState() {
+    Q_D(CDockCard);
+    auto sideBar = d->m_tabBar->sideBar();
+    auto frame = sideBar->frame();
+    frame->toggleMaximize(sideBar->edge());
+}
+
+void CDockCard::setSize(const QSize &size) {
+    if (size.isEmpty())
+        return;
+
+    Q_D(CDockCard);
+    switch (d->m_viewMode) {
+        case DockPinned: {
+            auto sideBar = d->m_tabBar->sideBar();
+            if (sideBar->orientation() == Qt::Horizontal) {
+                sideBar->frame()->setEdgeSize(sideBar->edge(), size.height());
+            } else {
+                sideBar->frame()->setEdgeSize(sideBar->edge(), size.width());
+            }
+            break;
+        }
+        default:
+            d->m_widget->resize(size);
+            break;
+    }
 }
 
 void CDockCard::mousePressEvent(QMouseEvent *event) {
@@ -235,7 +335,7 @@ void CDockCard::mouseMoveEvent(QMouseEvent *event) {
             qAbs(pos.y() - m_dragPos.y()) >= m_dragOffset.height()) {
             m_readyDrag = false;
 
-            if (auto tabBar = this->tabBar()) {
+            if (auto tabBar = d->m_tabBar) {
                 emit tabBar->dragStarted(this, m_dragPos, d->cardShot());
             }
         }
@@ -267,6 +367,18 @@ void CDockCard::leaveEvent(QEvent *event) {
 void CDockCard::paintEvent(QPaintEvent *event) {
     Q_D(CDockCard);
     return (d->m_orientation == Qt::Horizontal) ? CTabButton::paintEvent(event) : CLTabButton::paintEvent(event);
+}
+
+void CDockCard::contextMenuEvent(QContextMenuEvent *event) {
+    Q_D(CDockCard);
+    auto tw = qobject_cast<CDockToolWindow *>(d->m_widget);
+
+    auto menu = tw ? tw->createCardMenu() : nullptr;
+    if (!menu)
+        menu = CDockCardPrivate::createViewModeMenu(this);
+
+    menu->exec(QCursor::pos());
+    menu->deleteLater();
 }
 
 bool CDockCard::eventFilter(QObject *obj, QEvent *event) {

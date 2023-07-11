@@ -1,7 +1,7 @@
 #include "QMDecoratorV2.h"
 #include "private/QMDecoratorV2_p.h"
 
-#include <QCoreApplication>
+#include <QApplication>
 #include <QDir>
 #include <QFileInfo>
 #include <QJsonArray>
@@ -15,7 +15,7 @@
 #include <QMSystem.h>
 
 ThemeGuardV2::ThemeGuardV2(QWidget *w, QMDecoratorV2Private *parent)
-    : QObject(parent), w(w), d(parent), winHandle(w->windowHandle()) {
+    : QObject(parent), w(w), d(parent), winHandle(nullptr) {
     needUpdate = false;
     w->installEventFilter(this);
 }
@@ -63,10 +63,11 @@ void ThemeGuardV2::updateScreen() {
                     stylesheet = QMSimpleVarExp::EvaluateVariables(stylesheet, d->variables.value(curTheme, {}),
                                                                    R"(\$\{([^\}]+)\})");
 
+                    stylesheet = QMDecoratorV2Private::replaceSizes(
+                        stylesheet, screen->logicalDotsPerInch() / QMOs::unitDpi(), true);
+
                     // Zoom
-                    allStylesheets += QMDecoratorV2Private::replaceSizes(
-                                          stylesheet, screen->logicalDotsPerInch() / QMOs::unitDpi(), true) +
-                                      "\n\n";
+                    allStylesheets += stylesheet + "\n\n";
                 }
             }
         }
@@ -127,8 +128,7 @@ bool ThemeGuardV2::eventFilter(QObject *obj, QEvent *event) {
 void ThemeGuardV2::_q_logicalRatioChanged(double dpi) {
     Q_UNUSED(dpi)
 
-    // Delay setting stylesheets
-    QTimer::singleShot(0, this, &ThemeGuardV2::updateScreen);
+    updateScreen();
 }
 
 QMDecoratorV2Private::QMDecoratorV2Private() {

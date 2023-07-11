@@ -237,8 +237,8 @@ CDockCard:not(:checked):hover {
 }
 
 CDockCard#track-card {
-    --iconUp: svg(":/svg/main-dock/layer-group-solid.svg", #CCCCCC);
-    --iconUpChecked: svg(":/svg/main-dock/layer-group-solid.svg", white);
+    --iconUp: svg(":/svg/main-dock/layer-group-solid.svg", "${project.dockCard.iconColor}");
+    --iconUpChecked: svg(":/svg/main-dock/layer-group-solid.svg", "${project.dockCard.iconColor.checked}");
 }
 
 CDockPanelSplitter:handle {

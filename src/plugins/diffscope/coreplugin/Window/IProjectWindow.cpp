@@ -70,6 +70,8 @@ namespace Core {
     void IProjectWindowPrivate::saveMainDockState() const {
         auto settings = ILoader::instance()->settings();
 
+        QJsonObject obj;
+
         QJsonArray arr;
         for (const auto &corner : qAsConst(corners)) {
             QJsonArray arr0;
@@ -77,21 +79,44 @@ namespace Core {
                  m_frame->widgets(static_cast<Qt::Edge>(corner[0]), static_cast<QM::Priority>(corner[1]))) {
                 if (card->objectName().isEmpty())
                     continue;
+
+                auto w = card->widget();
+
                 arr0.append(QJsonObject{
                     {"name",     card->objectName()                                                     },
                     {"checked",  card->isChecked()                                                      },
                     {"viewMode", QMetaEnum::fromType<CDockCard::ViewMode>().valueToKey(card->viewMode())},
+                    {"geometry", QJsonObject{
+                                     {"x", w->x()},
+                                     {"y", w->y()},
+                                     {"width", w->width()},
+                                     {"height", w->height()},
+                                 }                                      }
                 });
             }
             arr.append(arr0);
         }
 
-        settings->insert(mainDockSettingCatalogC, arr);
+        QJsonArray harr;
+        for (const auto &item : m_frame->orientationSizes(Qt::Horizontal)) {
+            harr.append(item);
+        }
+        QJsonArray varr;
+        for (const auto &item : m_frame->orientationSizes(Qt::Vertical)) {
+            varr.append(item);
+        }
+        obj.insert("sizes", QJsonObject{
+                                {"horizontal", harr},
+                                {"vertical",   varr},
+        });
+        obj.insert("cards", arr);
+
+        settings->insert(mainDockSettingCatalogC, obj);
     }
 
     void IProjectWindowPrivate::restoreMainDockState() const {
         auto settings = ILoader::instance()->settings();
-        auto arr = settings->value(mainDockSettingCatalogC).toArray();
+        auto settingObj = settings->value(mainDockSettingCatalogC).toObject();
 
         QHash<QString, CDockCard *> cardMap;
         for (const auto &corner : qAsConst(corners)) {
@@ -105,37 +130,85 @@ namespace Core {
         }
 
         QJsonValue value;
-        for (int i = 0; i < qMin(arr.size(), 8); ++i) {
-            const auto &val = arr.at(i);
-            if (!val.isArray())
-                continue;
-
-            for (const auto &item : val.toArray()) {
-                if (!item.isObject())
+        value = settingObj.value("cards");
+        if (value.isArray()) {
+            auto arr = value.toArray();
+            for (int i = 0; i < qMin(arr.size(), 8); ++i) {
+                const auto &val = arr.at(i);
+                if (!val.isArray())
                     continue;
 
-                auto obj = item.toObject();
-                value = obj.value("name");
-                if (value.isUndefined() || !value.isString())
-                    continue;
+                for (const auto &item : val.toArray()) {
+                    if (!item.isObject())
+                        continue;
 
-                auto card = cardMap.value(value.toString());
-                if (!card)
-                    continue;
+                    auto obj = item.toObject();
+                    value = obj.value("name");
+                    if (value.isUndefined() || !value.isString())
+                        continue;
 
-                const auto &corner = corners[i];
-                m_frame->moveWidget(card, static_cast<Qt::Edge>(corner[0]), static_cast<QM::Priority>(corner[1]));
+                    auto card = cardMap.value(value.toString());
+                    if (!card)
+                        continue;
 
-                value = obj.value("checked");
-                if (value.isBool())
-                    card->setChecked(value.toBool());
+                    const auto &corner = corners[i];
+                    m_frame->moveWidget(card, static_cast<Qt::Edge>(corner[0]), static_cast<QM::Priority>(corner[1]));
 
-                value = obj.value("viewMode");
-                if (value.isString()) {
-                    auto viewMode = QMetaEnum::fromType<CDockCard::ViewMode>().keyToValue(value.toString().toLatin1());
-                    if (viewMode >= 0) {
-                        card->setViewMode(static_cast<CDockCard::ViewMode>(viewMode));
+                    value = obj.value("checked");
+                    if (value.isBool())
+                        card->setChecked(value.toBool());
+
+                    value = obj.value("viewMode");
+                    if (value.isString()) {
+                        auto viewMode =
+                            QMetaEnum::fromType<CDockCard::ViewMode>().keyToValue(value.toString().toLatin1());
+                        if (viewMode >= 0) {
+                            card->setViewMode(static_cast<CDockCard::ViewMode>(viewMode));
+                        }
                     }
+
+                    value = obj.value("geometry");
+                    if (value.isObject()) {
+                        const auto &rectObj = value.toObject();
+                        QRect rect = {
+                            rectObj.value("x").toInt(),
+                            rectObj.value("y").toInt(),
+                            rectObj.value("width").toInt(),
+                            rectObj.value("height").toInt(),
+                        };
+                        card->setSize(rect.size());
+                        if (card->viewMode() != CDockCard::DockPinned) {
+                            card->moveWidget(rect.topLeft());
+                        }
+                    }
+                }
+            }
+        }
+
+        value = settingObj.value("sizes");
+        if (value.isObject()) {
+            auto obj = value.toObject();
+            value = obj.value("vertical");
+            if (value.isArray()) {
+                QList<int> sizes;
+                for (const auto &item : value.toArray()) {
+                    sizes.append(item.toInt());
+                }
+
+                if (sizes.size() == 3) {
+                    m_frame->setOrientationSizes(Qt::Vertical, sizes);
+                }
+            }
+
+            value = obj.value("horizontal");
+            if (value.isArray()) {
+                QList<int> sizes;
+                for (const auto &item : value.toArray()) {
+                    sizes.append(item.toInt());
+                }
+
+                if (sizes.size() == 3) {
+                    m_frame->setOrientationSizes(Qt::Horizontal, sizes);
                 }
             }
         }

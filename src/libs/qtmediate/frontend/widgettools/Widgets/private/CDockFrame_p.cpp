@@ -111,6 +111,9 @@ void CDockFramePrivate::init() {
     connect(m_bottomBar, &CDockSideBar::cardRemoved, this, &CDockFramePrivate::_q_cardRemoved);
     connect(m_bottomBar, &CDockSideBar::cardToggled, this, &CDockFramePrivate::_q_cardToggled);
     connect(m_bottomBar, &CDockSideBar::cardViewModeChanged, this, &CDockFramePrivate::_q_cardViewModeChanged);
+
+    orgHSizes = m_horizontalSplitter->sizes();
+    orgVSizes = m_verticalSplitter->sizes();
 }
 
 void CDockFramePrivate::_q_cardAdded(QM::Priority number, CDockCard *card) {
@@ -200,15 +203,4 @@ void CDockFramePrivate::_q_cardViewModeChanged(QM::Priority number, CDockCard *c
             card->container()->layout()->invalidate();
         }
     }
-}
-
-void CDockFramePrivate::_q_cardContextMenuRequested() {
-    Q_Q(CDockFrame);
-
-    auto card = qobject_cast<CDockCard *>(sender());
-    auto w = qobject_cast<CDockToolWindow *>(card->widget());
-
-    auto menu = w ? w->cardMenu() : CDockCardPrivate::createViewModeMenu(card);
-    menu->exec(QCursor::pos());
-    delete menu;
 }
