@@ -9,6 +9,8 @@
 
 #include <SDL2/SDL.h>
 
+#include <QDebug>
+
 SDLAudioDriver::SDLAudioDriver(QObject *parent): SDLAudioDriver(*new SDLAudioDriverPrivate, parent) {
     Q_D(SDLAudioDriver);
     d->eventPollerThread.d = d;
@@ -61,11 +63,14 @@ AudioDevice *SDLAudioDriver::createDevice(const QString &name) {
 
 void SDLEventPollerThread::run() {
     forever {
+        if(quitFlag) break;
         SDL_Event e;
         while(SDL_PollEvent(&e) > 0) {
             if(e.type == SDL_AUDIODEVICEADDED) {
+                qDebug() << "SDL_AUDIODEVICEADDED";
                 d->_q_deviceChanged();
             } else if(e.type == SDL_AUDIODEVICEREMOVED) {
+                qDebug() << "SDL_AUDIODEVICEREMOVED";
                 d->handleDeviceRemoved(e.adevice.which);
                 d->_q_deviceChanged();
             }
@@ -103,6 +108,7 @@ void SDLAudioDriverPrivate::startEventPoller() {
     eventPollerThread.start();
 }
 void SDLAudioDriverPrivate::stopEventPoller() {
+    eventPollerThread.quitFlag = true;
     eventPollerThread.quit();
     eventPollerThread.wait();
 }

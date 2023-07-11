@@ -38,6 +38,7 @@ SDLAudioDevice::SDLAudioDevice(const QString &name, AudioDriver *driver, QObject
     if(preferredSpec.samples == 0) preferredSpec.samples = 1024;
     setPreferredBufferSize(preferredSpec.samples);
     setAvailableBufferSizes(COMMON_SDL_BUFFER_SIZES);
+    if(preferredSpec.freq == 0) preferredSpec.freq = 48000;
     setPreferredSampleRate(preferredSpec.freq);
     setAvailableSampleRates(COMMON_SAMPLE_RATES);
 }
@@ -95,6 +96,6 @@ void SDLAudioDevice::stop() {
 void SDLAudioDevicePrivate::sdlCallback(quint8 *rawBuf, int length) {
     Q_Q(SDLAudioDevice);
     SDL_memset(rawBuf, 0, length);
-    InterleavedAudioDataWrapper buf(reinterpret_cast<float *>(rawBuf), spec.channels, length / 4);
+    InterleavedAudioDataWrapper buf(reinterpret_cast<float *>(rawBuf), spec.channels, length / spec.channels / 4);
     audioDeviceCallback->workCallback(&buf);
 }

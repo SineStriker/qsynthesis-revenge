@@ -16,6 +16,7 @@ class SDLEventPollerThread: public QThread {
 public:
     [[noreturn]] void run() override;
     SDLAudioDriverPrivate *d;
+    QAtomicInteger<bool> quitFlag = false;
 };
 
 class SDLAudioDriverPrivate: public AudioDriverPrivate {

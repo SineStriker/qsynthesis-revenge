@@ -19,7 +19,7 @@ void IAudioSampleContainer::setSampleRange(int destChannel, qint64 destStartPos,
     boundCheck(*this, destChannel, destStartPos, length);
     boundCheck(src, srcChannel, srcStartPos, length);
     for(qint64 i = 0; i < length; i++) {
-        sampleAt(destStartPos, destStartPos + i) = src.constSampleAt(srcStartPos, srcStartPos + i);
+        sampleAt(destChannel, destStartPos + i) = src.constSampleAt(srcChannel, srcStartPos + i);
     }
 
 }
@@ -37,7 +37,7 @@ void IAudioSampleContainer::addSampleRange(int destChannel, qint64 destStartPos,
     boundCheck(*this, destChannel, destStartPos, length);
     boundCheck(src, srcChannel, srcStartPos, length);
     for(qint64 i = 0; i < length; i++) {
-        sampleAt(destStartPos, destStartPos + i) += src.constSampleAt(srcStartPos, srcStartPos + i) * gain;
+        sampleAt(destChannel, destStartPos + i) += src.constSampleAt(srcChannel, srcStartPos + i) * gain;
     }
 }
 void IAudioSampleContainer::addSampleRange(const IAudioSampleProvider &src, float gain) {
