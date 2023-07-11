@@ -21,6 +21,7 @@ MixerAudioSource::~MixerAudioSource() {
 bool MixerAudioSource::open(qint64 bufferSize, double sampleRate) {
     Q_D(MixerAudioSource);
     QMutexLocker locker(&d->mutex);
+    d->stop();
     if(d->start(bufferSize, sampleRate)) {
         return AudioSource::open(bufferSize, sampleRate);
     } else {
@@ -53,10 +54,16 @@ void MixerAudioSource::close() {
     AudioSource::close();
 }
 
-void MixerAudioSource::addSource(AudioSource *src, bool takeOwnership) {
+bool MixerAudioSource::addSource(AudioSource *src, bool takeOwnership) {
     Q_D(MixerAudioSource);
     QMutexLocker locker(&d->mutex);
-    d->sourceDict.append(src, takeOwnership);
+    if(d->sourceDict.append(src, takeOwnership).second) {
+        if(isOpened()) {
+            src->open(bufferSize(), sampleRate());
+        }
+        return true;
+    }
+    return false;
 }
 void MixerAudioSource::removeSource(AudioSource *src) {
     Q_D(MixerAudioSource);

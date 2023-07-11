@@ -24,7 +24,7 @@ SDLAudioDriver::~SDLAudioDriver() {
 
 bool SDLAudioDriver::initialize() {
     Q_D(SDLAudioDriver);
-    if(SDL_AudioInit(name().toLocal8Bit()) == 0) {
+    if(SDL_Init(SDL_INIT_AUDIO) == 0 && SDL_AudioInit(name().toLocal8Bit()) == 0) {
         d->startEventPoller();
         return AudioDriver::initialize();
     } else {
@@ -33,7 +33,10 @@ bool SDLAudioDriver::initialize() {
     }
 }
 void SDLAudioDriver::finalize() {
+    Q_D(SDLAudioDriver);
+    d->stopEventPoller();
     SDL_AudioQuit();
+    SDL_Quit();
     AudioDriver::finalize();
 }
 QStringList SDLAudioDriver::devices() {
@@ -66,10 +69,10 @@ void SDLEventPollerThread::run() {
         if(quitFlag) break;
         SDL_Event e;
         while(SDL_PollEvent(&e) > 0) {
-            if(e.type == SDL_AUDIODEVICEADDED) {
+            if(e.type == SDL_AUDIODEVICEADDED && e.adevice.iscapture == 0) {
                 qDebug() << "SDL_AUDIODEVICEADDED";
                 d->_q_deviceChanged();
-            } else if(e.type == SDL_AUDIODEVICEREMOVED) {
+            } else if(e.type == SDL_AUDIODEVICEREMOVED && e.adevice.iscapture == 0) {
                 qDebug() << "SDL_AUDIODEVICEREMOVED";
                 d->handleDeviceRemoved(e.adevice.which);
                 d->_q_deviceChanged();

@@ -22,7 +22,7 @@ public:
     qint64 read(const AudioSourceReadData &readData) override;
     void close() override;
 
-    void addSource(AudioSource *src, bool takeOwnership = false);
+    bool addSource(AudioSource *src, bool takeOwnership = false);
     void removeSource(AudioSource *src);
     void removeAllSource();
     QList<AudioSource *> sources() const;

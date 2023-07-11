@@ -20,6 +20,7 @@ PositionableMixerAudioSource::~PositionableMixerAudioSource() {
 bool PositionableMixerAudioSource::open(qint64 bufferSize, double sampleRate) {
     Q_D(PositionableMixerAudioSource);
     QMutexLocker locker(&d->mutex);
+    d->stop();
     if(d->start(bufferSize, sampleRate)) {
         d->setNextReadPositionToAll(d->position);
         return PositionableAudioSource::open(bufferSize, sampleRate);
@@ -72,10 +73,17 @@ void PositionableMixerAudioSource::setNextReadPosition(qint64 pos) {
     d->setNextReadPositionToAll(pos);
     PositionableAudioSource::setNextReadPosition(pos);
 }
-void PositionableMixerAudioSource::addSource(PositionableAudioSource *src, bool takeOwnership) {
+bool PositionableMixerAudioSource::addSource(PositionableAudioSource *src, bool takeOwnership) {
     Q_D(PositionableMixerAudioSource);
     QMutexLocker locker(&d->mutex);
-    d->sourceDict.append(src, takeOwnership);
+    if(d->sourceDict.append(src, takeOwnership).second) {
+        if(isOpened()) {
+            src->open(bufferSize(), sampleRate());
+            src->setNextReadPosition(nextReadPosition());
+        }
+        return true;
+    }
+    return false;
 }
 void PositionableMixerAudioSource::removeSource(PositionableAudioSource *src) {
     Q_D(PositionableMixerAudioSource);

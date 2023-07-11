@@ -23,7 +23,7 @@ public:
     qint64 length() const override;
     void setNextReadPosition(qint64 pos) override;
 
-    void addSource(PositionableAudioSource *src, bool takeOwnership = false);
+    bool addSource(PositionableAudioSource *src, bool takeOwnership = false);
     void removeSource(PositionableAudioSource *src);
     void removeAllSource();
     QList<PositionableAudioSource *> sources() const;

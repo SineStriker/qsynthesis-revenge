@@ -7,6 +7,7 @@
 #include "source/MemoryAudioSource.h"
 #include "source/PositionableMixerAudioSource.h"
 #include "source/SineWaveAudioSource.h"
+#include "source/TransportAudioSource.h"
 #include <QApplication>
 #include <QComboBox>
 #include <QDebug>
@@ -16,8 +17,9 @@
 #include <QFormLayout>
 #include <QLabel>
 #include <QMainWindow>
-#include <QPushButton>
 #include <QMessageBox>
+#include <QPushButton>
+#include <QCheckBox>
 
 int main(int argc, char **argv){
 
@@ -41,6 +43,22 @@ int main(int argc, char **argv){
 
     auto fileNameLabel = new QLabel;
 
+    auto transportSlider = new QSlider;
+    transportSlider->setOrientation(Qt::Horizontal);
+
+    auto playPauseButton = new QPushButton("Pause");
+    playPauseButton->setDisabled(true);
+
+    auto enableLoopingCheckBox = new QCheckBox("Looping");
+
+    auto loopingStartSlider = new QSlider;
+    loopingStartSlider->setOrientation(Qt::Horizontal);
+    loopingStartSlider->setDisabled(true);
+
+    auto loopingEndSlider = new QSlider;
+    loopingEndSlider->setOrientation(Qt::Horizontal);
+    loopingEndSlider->setDisabled(true);
+
     auto browseFileButton = new QPushButton("Browse (Raw data, 2ch, f32)");
 
     auto startButton = new QPushButton("Start");
@@ -57,6 +75,11 @@ int main(int argc, char **argv){
     layout->addRow("Sample Rate", sampleRateComboBox);
     layout->addRow(fileNameLabel);
     layout->addRow(browseFileButton);
+    layout->addRow("Transport", transportSlider);
+    layout->addRow(playPauseButton);
+    layout->addRow(enableLoopingCheckBox);
+    layout->addRow("Loop Start", loopingStartSlider);
+    layout->addRow("Loop End", loopingEndSlider);
     layout->addRow(startButton);
     layout->addRow(resetPosButton);
     layout->addRow(stopButton);
@@ -109,6 +132,7 @@ int main(int argc, char **argv){
         driverComboBoxCtx = new QObject;
         QObject::connect(driver, &AudioDriver::deviceChanged, driverComboBoxCtx, [&](){
             QMessageBox::information(&mainWindow, "Device changed", "Audio device is changed.");
+            emit driverComboBox->currentIndexChanged(driverComboBox->currentIndex());
         });
         QObject::connect(deviceComboBox, QOverload<int>::of(&QComboBox::currentIndexChanged), driverComboBoxCtx, [&](int index){
             if(device) {
@@ -144,15 +168,23 @@ int main(int argc, char **argv){
     QByteArray audioFileData;
     InterleavedAudioDataWrapper audioFileBuffer(nullptr, 2, 0);
     MemoryAudioSource src(&audioFileBuffer);
-    AudioSourcePlayback playback(&src);
+    TransportAudioSource transportSrc;
+    transportSrc.resetSource(&src);
+    AudioSourcePlayback playback(&transportSrc);
 
     QObject::connect(browseFileButton, &QPushButton::clicked, [&](){
         auto fileName = QFileDialog::getOpenFileName(&mainWindow);
+        if(fileName.isEmpty()) return;
         fileNameLabel->setText(fileName);
         QFile f(fileName);
         f.open(QFile::ReadOnly);
         audioFileData = f.readAll();
-        audioFileBuffer.resetData((float *)audioFileData.data(), 2, audioFileData.size() / 8);
+        qint64 audioLength = audioFileData.size() / 8;
+        transportSlider->setRange(0, audioLength - 1);
+        loopingStartSlider->setRange(0, audioLength - 1);
+        loopingEndSlider->setRange(0, audioLength);
+        loopingEndSlider->setValue(audioLength);
+        audioFileBuffer.resetData((float *)audioFileData.data(), 2, audioLength);
     });
 
     QObject::connect(startButton, &QPushButton::clicked, [&](){
@@ -164,13 +196,51 @@ int main(int argc, char **argv){
         driverComboBox->setDisabled(true);
         bufferSizeComboBox->setDisabled(true);
         sampleRateComboBox->setDisabled(true);
+        playPauseButton->setDisabled(false);
+        playPauseButton->setText("Pause");
         startButton->setDisabled(true);
         stopButton->setDisabled(false);
+        transportSrc.play();
     });
 
     QObject::connect(resetPosButton, &QPushButton::clicked, [&](){
-        src.setNextReadPosition(0);
+        transportSrc.setPosition(0);
     });
+
+    QObject::connect(&transportSrc, &TransportAudioSource::positionAboutToChange, transportSlider, [&](qint64 value){
+        QSignalBlocker blocker(transportSlider);
+        transportSlider->setValue(value);
+    });
+    QObject::connect(transportSlider, &QSlider::valueChanged, &transportSrc, &TransportAudioSource::setPosition);
+
+    QObject::connect(playPauseButton, &QPushButton::clicked, [&](){
+        if(transportSrc.isPlaying()) {
+            transportSrc.pause();
+            playPauseButton->setText("Play");
+        } else {
+            transportSrc.play();
+            playPauseButton->setText("Pause");
+        }
+    });
+
+    auto updateLoopingRange = [&](){
+        if(enableLoopingCheckBox->isChecked()) {
+            transportSrc.setLoopingRange(loopingStartSlider->value(), loopingEndSlider->value());
+        } else {
+            transportSrc.setLoopingRange(-1, -1);
+        }
+    };
+
+    QObject::connect(enableLoopingCheckBox, &QCheckBox::clicked, [&](bool checked){
+        loopingStartSlider->setDisabled(!checked);
+        loopingEndSlider->setDisabled(!checked);
+    });
+
+    QObject::connect(enableLoopingCheckBox, &QCheckBox::clicked, updateLoopingRange);
+
+    QObject::connect(loopingStartSlider, &QSlider::valueChanged, updateLoopingRange);
+
+    QObject::connect(loopingEndSlider, &QSlider::valueChanged, updateLoopingRange);
 
     QObject::connect(stopButton, &QPushButton::clicked, [&](){
         device->stop();
@@ -178,6 +248,8 @@ int main(int argc, char **argv){
         driverComboBox->setDisabled(false);
         bufferSizeComboBox->setDisabled(false);
         sampleRateComboBox->setDisabled(false);
+        playPauseButton->setDisabled(true);
+        playPauseButton->setText("Pause");
         startButton->setDisabled(false);
         stopButton->setDisabled(true);
     });
