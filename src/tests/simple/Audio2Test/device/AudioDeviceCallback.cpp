@@ -4,9 +4,9 @@
 
 #include "AudioDeviceCallback.h"
 
-void AudioDeviceCallback::deviceWillStart(AudioDevice *device) {
+void AudioDeviceCallback::deviceWillStartCallback(AudioDevice *device) {
 }
-void AudioDeviceCallback::deviceStopped() {
+void AudioDeviceCallback::deviceStoppedCallback() {
 }
-void AudioDeviceCallback::deviceError(const QString &error) {
+void AudioDeviceCallback::deviceErrorCallback(const QString &error) {
 }

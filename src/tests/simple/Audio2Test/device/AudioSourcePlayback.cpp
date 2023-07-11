@@ -32,16 +32,16 @@ void AudioSourcePlayback::resetSource(AudioSource *src, bool takeOwnership) {
     d->takeOwnership = takeOwnership;
 }
 
-void AudioSourcePlayback::deviceWillStart(AudioDevice *device) {
+void AudioSourcePlayback::deviceWillStartCallback(AudioDevice *device) {
     Q_D(AudioSourcePlayback);
     d->src->open(device->bufferSize(), device->sampleRate());
 }
-void AudioSourcePlayback::deviceStopped() {
+void AudioSourcePlayback::deviceStoppedCallback() {
     Q_D(AudioSourcePlayback);
     d->src->close();
 }
 
-void AudioSourcePlayback::callback(const AudioSourceReadData &readData) {
+void AudioSourcePlayback::workCallback(const AudioSourceReadData &readData) {
     Q_D(AudioSourcePlayback);
     d->src->read(readData);
 }

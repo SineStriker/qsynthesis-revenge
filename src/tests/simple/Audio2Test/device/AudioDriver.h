@@ -27,7 +27,7 @@ public:
     virtual QStringList devices() = 0;
     virtual QString defaultDevice();
 
-    virtual AudioDevice *createDevice(const QString &name, QObject *parent) = 0;
+    virtual AudioDevice *createDevice(const QString &name) = 0;
 
 signals:
     void deviceChanged();

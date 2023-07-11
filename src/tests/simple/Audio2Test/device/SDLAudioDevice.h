@@ -22,7 +22,7 @@ public:
     void close() override;
 
 protected:
-    explicit SDLAudioDevice(QObject *parent = nullptr);
+    SDLAudioDevice(const QString &name, AudioDriver *driver, QObject *parent = nullptr);
     SDLAudioDevice(SDLAudioDevicePrivate &d, QObject *parent);
 
 };

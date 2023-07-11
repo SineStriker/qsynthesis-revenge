@@ -1,5 +1,7 @@
 project(tst_Audio2Test VERSION 0.0.0.0)
 
+set(CMAKE_CXX_STANDARD 20)
+
 ck_add_files(_src ALLDIRS PATTERNS *.h *.cpp)
 
 ck_add_test(${PROJECT_NAME} AUTOGEN)

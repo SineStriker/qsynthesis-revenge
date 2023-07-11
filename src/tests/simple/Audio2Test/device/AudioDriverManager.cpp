@@ -22,6 +22,7 @@ bool AudioDriverManager::addAudioDriver(AudioDriver *driver) {
     }
     driver->setParent(this);
     d->driverDict.append(driverName, driver);
+    emit driverAdded(driver);
     return true;
 }
 bool AudioDriverManager::removeDriver(AudioDriver *driver) {
@@ -38,6 +39,7 @@ bool AudioDriverManager::removeDriver(AudioDriver *driver) {
     }
     driver->setParent(nullptr);
     d->driverDict.erase(it);
+    emit driverRemoved(driver);
     return true;
 }
 AudioDriver *AudioDriverManager::driver(const QString &name) const {

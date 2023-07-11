@@ -15,11 +15,11 @@ class AudioBuffer;
 /* abstract */ class AudioDeviceCallback {
 
 public:
-    virtual void deviceWillStart(AudioDevice *device);
-    virtual void deviceStopped();
-    virtual void deviceError(const QString &error);
+    virtual void deviceWillStartCallback(AudioDevice *device);
+    virtual void deviceStoppedCallback();
+    virtual void deviceErrorCallback(const QString &error);
 
-    virtual void callback(const AudioSourceReadData &readData) = 0;
+    virtual void workCallback(const AudioSourceReadData &readData) = 0;
 
 };
 

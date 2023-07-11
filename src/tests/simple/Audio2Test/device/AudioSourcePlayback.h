@@ -18,9 +18,9 @@ public:
     AudioSource *source() const;
     void resetSource(AudioSource *src, bool takeOwnership);
 
-    void deviceWillStart(AudioDevice *device) override;
-    void deviceStopped() override;
-    void callback(const AudioSourceReadData &readData) override;
+    void deviceWillStartCallback(AudioDevice *device) override;
+    void deviceStoppedCallback() override;
+    void workCallback(const AudioSourceReadData &readData) override;
 
 protected:
     explicit AudioSourcePlayback(AudioSourcePlaybackPrivate &d);

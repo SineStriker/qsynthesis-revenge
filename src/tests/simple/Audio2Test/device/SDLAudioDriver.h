@@ -8,21 +8,29 @@
 #include "AudioDriver.h"
 
 class SDLAudioDriverPrivate;
+class SDLAudioDriverEventPoller;
+class SDLAudioDevice;
 
 class SDLAudioDriver: public AudioDriver {
     Q_OBJECT
     Q_DECLARE_PRIVATE(SDLAudioDriver)
+    friend class SDLAudioDevice;
 public:
     explicit SDLAudioDriver(QObject *parent = nullptr);
+    ~SDLAudioDriver();
 
     bool initialize() override;
     void finalize() override;
     QStringList devices() override;
     QString defaultDevice() override;
-    AudioDevice *createDevice(const QString &name, QObject *parent) override;
+    AudioDevice *createDevice(const QString &name) override;
+
+    static QList<SDLAudioDriver *> getDrivers();
 
 protected:
     SDLAudioDriver(SDLAudioDriverPrivate &d, QObject *parent);
+    void addOpenedDevice(quint32 devId, SDLAudioDevice *dev);
+    void removeOpenedDevice(quint32 devId);
 };
 
 
