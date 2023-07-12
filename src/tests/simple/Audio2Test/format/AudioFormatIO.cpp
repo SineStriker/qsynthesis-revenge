@@ -10,9 +10,7 @@
 #include <QDebug>
 #include <QIODevice>
 
-AudioFormatIO::AudioFormatIO(): AudioFormatIO(*new AudioFormatIOPrivate) {
-}
-AudioFormatIO::AudioFormatIO(QIODevice *stream): AudioFormatIO() {
+AudioFormatIO::AudioFormatIO(QIODevice *stream): AudioFormatIO(*new AudioFormatIOPrivate) {
       setStream(stream);
 }
 AudioFormatIO::AudioFormatIO(AudioFormatIOPrivate &d): d_ptr(&d) {

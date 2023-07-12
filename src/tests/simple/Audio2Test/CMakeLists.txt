@@ -3,6 +3,7 @@ project(tst_Audio2Test VERSION 0.0.0.0)
 set(CMAKE_CXX_STANDARD 20)
 
 find_package(SndFile QUIET)
+find_package(SampleRate QUIET)
 
 if(NOT SndFile_FOUND)
     message(STATUS "SndFile not found, skip build Audio2Test")
@@ -22,3 +23,4 @@ ck_target_components(${PROJECT_NAME}
 
 target_link_libraries(${PROJECT_NAME} PRIVATE SDL2::SDL2)
 target_link_libraries(${PROJECT_NAME} PRIVATE SndFile::sndfile)
+target_link_libraries(${PROJECT_NAME} PRIVATE SampleRate::samplerate)

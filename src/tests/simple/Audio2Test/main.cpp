@@ -23,6 +23,7 @@
 
 #include "format/AudioFormatIO.h"
 #include "sndfile.h"
+#include "source/AudioFormatInputSource.h"
 
 #include <math.h>
 #include <stdio.h>
@@ -178,9 +179,10 @@ int main(int argc, char **argv){
 
     if(driverComboBox->count()) emit driverComboBox->currentIndexChanged(driverComboBox->currentIndex());
 
-    QByteArray audioFileData;
-    InterleavedAudioDataWrapper audioFileBuffer(nullptr, 2, 0);
-    MemoryAudioSource src(&audioFileBuffer);
+    AudioFormatInputSource src;
+    AudioFormatIO srcIo;
+    QFile srcFile;
+    src.setAudioFormatIo(&srcIo);
     TransportAudioSource transportSrc;
     transportSrc.resetSource(&src);
     AudioSourcePlayback playback(&transportSrc);
@@ -191,29 +193,30 @@ int main(int argc, char **argv){
         auto fileName = QFileDialog::getOpenFileName(&mainWindow);
         if(fileName.isEmpty()) return;
         fileNameLabel->setText(fileName);
-        QFile f(fileName);
-        AudioFormatIO audioFormatIO(&f);
-        audioFormatIO.open(QIODevice::ReadOnly);
+        srcFile.close();
+        srcFile.setFileName(fileName);
+        srcIo.setStream(&srcFile);
+        if(!srcIo.open(QIODevice::ReadOnly)) {
+            QMessageBox::critical(&mainWindow, "Audio Decode Error", srcIo.errorString());
+            return;
+        }
         QString majorFormatName, subtypeName;
         for(const auto &formatInfo: availableFormats) {
-            if(audioFormatIO.majorFormat() != formatInfo.majorFormat) continue;
+            if(srcIo.majorFormat() != formatInfo.majorFormat) continue;
             majorFormatName = formatInfo.name;
             for(const auto &subtypeInfo: formatInfo.subtypes) {
-                if(audioFormatIO.subType() != subtypeInfo.subtype) continue;
+                if(srcIo.subType() != subtypeInfo.subtype) continue;
                 subtypeName = subtypeInfo.name;
                 break;
             }
             break;
         }
-        fileSpecLabel->setText(QString("mf: %1, st: %2, ch: %3, sr: %4").arg(majorFormatName).arg(subtypeName).arg(audioFormatIO.channels()).arg(audioFormatIO.sampleRate()));
-        audioFileData = QByteArray(4 * audioFormatIO.channels() * audioFormatIO.length(), 0);
-        audioFormatIO.read((float *)audioFileData.data(), audioFormatIO.length());
-        qint64 audioLength = audioFormatIO.length();
+        fileSpecLabel->setText(QString("mf: %1, st: %2, ch: %3, sr: %4").arg(majorFormatName).arg(subtypeName).arg(srcIo.channels()).arg(srcIo.sampleRate()));
+        qint64 audioLength = srcIo.length();
         transportSlider->setRange(0, audioLength - 1);
         loopingStartSlider->setRange(0, audioLength - 1);
         loopingEndSlider->setRange(0, audioLength);
         loopingEndSlider->setValue(audioLength);
-        audioFileBuffer.resetData((float *)audioFileData.data(), 2, audioLength);
     });
 
     QObject::connect(startButton, &QPushButton::clicked, [&](){

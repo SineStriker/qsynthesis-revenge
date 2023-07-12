@@ -17,8 +17,7 @@ class AudioFormatIOPrivate;
 class AudioFormatIO: public IErrorStringProvider {
     Q_DECLARE_PRIVATE(AudioFormatIO)
 public:
-    AudioFormatIO();
-    explicit AudioFormatIO(QIODevice *stream);
+    explicit AudioFormatIO(QIODevice *stream = nullptr);
     ~AudioFormatIO();
 
     void setStream(QIODevice *stream);
