@@ -1,43 +1,44 @@
 /* Dock Tool Window */
 
-Core--ISidePanel {
+Core--IDockPanel {
     --captionLayoutMargins: qmargins(2px);
     --captionLayoutSpacing: 10px;
+    --resizeMargins: qmargins(8px);
     border: 1.25px solid transparent;
     background-color: #333333;
 }
 
-Core--ISidePanel[view-mode=float] {
+Core--IDockPanel[view-mode=float] {
     border: 1.25px solid #666666;
 }
 
-Core--ISidePanel>QLabel#side-panel-caption-label {
+Core--IDockPanel>QLabel#side-panel-caption-label {
     color: #CCCCCC;
     padding-left: 5px;
 }
 
-Core--ISidePanel>QToolBar#side-panel-toolbar {
+Core--IDockPanel>QToolBar#side-panel-toolbar {
     --iconSize: 16px 16px;
 }
 
-Core--ISidePanel>QToolBar#side-panel-toolbar>QToolButton {
+Core--IDockPanel>QToolBar#side-panel-toolbar>QToolButton {
     padding: 4px;
     border: none;
     background-color: transparent;
 }
 
-Core--ISidePanel>QToolBar#side-panel-toolbar>QToolButton:hover {
+Core--IDockPanel>QToolBar#side-panel-toolbar>QToolButton:hover {
     background-color: rgba(255, 255, 255, 20%);
 }
 
-Core--ISidePanel>QToolBar#side-panel-toolbar>QToolButton:pressed {
+Core--IDockPanel>QToolBar#side-panel-toolbar>QToolButton:pressed {
     background-color: rgba(255, 255, 255, 15%);
 }
 
-Core--ISidePanel>QToolBar#side-panel-toolbar>QToolButton#close {
+Core--IDockPanel>QToolBar#side-panel-toolbar>QToolButton#close {
     --iconUp: svg(":/svg/side-panel/close-line.svg", "${project.sidePanel.iconColor}");
 }
 
-Core--ISidePanel>QToolBar#side-panel-toolbar>QToolButton#menu {
+Core--IDockPanel>QToolBar#side-panel-toolbar>QToolButton#menu {
     --iconUp: svg(":/svg/side-panel/menu-line.svg", "${project.sidePanel.iconColor}");
 }

@@ -325,7 +325,7 @@ bool QMCoreAppExtension::createDataAndTempDirs() const {
 }
 
 QString QMCoreAppExtension::configurationPath(QSettings::Scope scope) {
-    return QT_CONFIG_FILE_DIR + "/" + (scope == QSettings::SystemScope ? "qtmediate.json" : "qtmediate.json.user");
+    return QT_CONFIG_FILE_DIR + "/" + (scope == QSettings::SystemScope ? "qtmediate.json" : "qtmediate.user.json");
 }
 
 QString QMCoreAppExtension::configurationBasePrefix() {

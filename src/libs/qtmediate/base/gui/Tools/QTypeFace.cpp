@@ -183,6 +183,7 @@ QTypeFace QTypeFace::fromStringList(const QStringList &stringList) {
             }
             if (content.size() > 3) {
                 tf.m_font.setFamily(content.at(3).simplified());
+                tf.m_font.setStyleStrategy(QFont::PreferAntialias);
             }
             if (pixelSize >= 0) {
                 tf.setPixelSize(pixelSize);

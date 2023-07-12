@@ -5,15 +5,98 @@
 #include "private/CDockTabBar.h"
 #include "private/CDockToolWindow_p.h"
 
+#include <QAction>
 #include <QApplication>
 #include <QBoxLayout>
 #include <QDesktopWidget>
+#include <QMenu>
 #include <QPainter>
 #include <QResizeEvent>
 #include <QStyle>
 #include <QTimer>
 
 #include "QMView.h"
+
+CDockCardPrivate::CDockCardPrivate() {
+    m_closing = false;
+
+    m_container = nullptr;
+    m_widget = nullptr;
+    m_viewMode = CDockCard::DockPinned;
+
+    m_dragOffset = QSize(10, 10);
+    m_readyDrag = false;
+
+    m_tabBar = nullptr;
+    m_floatingHelper = nullptr;
+}
+
+CDockCardPrivate::~CDockCardPrivate() {
+    if (!m_widget->parentWidget()) {
+        m_widget->deleteLater();
+    }
+    if (!m_container->parentWidget()) {
+        m_container->deleteLater();
+    }
+}
+void CDockCardPrivate::init() {
+    Q_Q(CDockCard);
+    m_sizePolicyV = q->sizePolicy();
+    m_sizePolicyH =
+        QSizePolicy(m_sizePolicyV.verticalPolicy(), m_sizePolicyV.horizontalPolicy(), m_sizePolicyV.controlType());
+
+    q->setCheckable(true);
+    q->setContextMenuPolicy(Qt::DefaultContextMenu);
+    q->setOrientation(Qt::Horizontal); // orientation
+}
+
+QPixmap CDockCardPrivate::cardShot() const {
+    Q_Q(const CDockCard);
+    QPixmap pixmap = QMView::createDeviceRenderPixmap(q->window()->windowHandle(), q->size());
+    pixmap.fill(Qt::transparent);
+    const_cast<CDockCard *>(q)->render(&pixmap);
+    return pixmap;
+}
+
+QMenu *CDockCardPrivate::createViewModeMenu(CDockCard *card) {
+    auto menu = new QMenu(card);
+
+    auto dockPinnedAction = new QAction(CDockCard::tr("Dock pinned"), menu);
+    auto floatAction = new QAction(CDockCard::tr("Float"), menu);
+    auto windowAction = new QAction(CDockCard::tr("Window"), menu);
+
+    dockPinnedAction->setCheckable(true);
+    floatAction->setCheckable(true);
+    windowAction->setCheckable(true);
+
+    switch (card->viewMode()) {
+        case CDockCard::DockPinned:
+            dockPinnedAction->setChecked(true);
+            break;
+        case CDockCard::Float:
+            floatAction->setChecked(true);
+            break;
+        case CDockCard::Window:
+            windowAction->setChecked(true);
+            break;
+    }
+
+    menu->addAction(dockPinnedAction);
+    menu->addAction(floatAction);
+    menu->addAction(windowAction);
+
+    QObject::connect(dockPinnedAction, &QAction::triggered, menu, [card]() {
+        card->setViewMode(CDockCard::DockPinned); //
+    });
+    QObject::connect(floatAction, &QAction::triggered, menu, [card]() {
+        card->setViewMode(CDockCard::Float); //
+    });
+    QObject::connect(windowAction, &QAction::triggered, menu, [card]() {
+        card->setViewMode(CDockCard::Window); //
+    });
+
+    return menu;
+}
 
 CDockCard::CDockCard(QWidget *parent) : CDockCard(*new CDockCardPrivate(), parent) {
 }
@@ -145,7 +228,7 @@ void CDockCard::setWidget(QWidget *widget) {
     }
     layout->addWidget(widget);
     widget->installEventFilter(this);
-    d->m_floatingHelper = new FloatingWindowHelper(widget, this);
+    d->m_floatingHelper = new QMFloatingWindowHelper(widget, this);
 
     m_widget = widget;
 
@@ -186,7 +269,7 @@ void CDockCard::setViewMode(CDockCard::ViewMode viewMode) {
         return;
     }
 
-    auto asWindow = [&](const QSize &size) {
+    auto asWindow = [&](const QSize &size, const QPoint &extraOffset) {
         // Size
         if (!size.isEmpty()) {
             m_widget->resize(size);
@@ -196,7 +279,7 @@ void CDockCard::setViewMode(CDockCard::ViewMode viewMode) {
 
         // Pos
         if (!d->oldGeometry.isEmpty()) {
-            m_widget->move(d->oldGeometry.topLeft());
+            m_widget->move(d->oldGeometry.topLeft() - extraOffset);
         } else {
             QPoint offset;
             switch (d->m_tabBar->sideBar()->edge()) {
@@ -213,7 +296,8 @@ void CDockCard::setViewMode(CDockCard::ViewMode viewMode) {
                     offset.rx() -= width() + size.width();
                     break;
             }
-            moveWidget(mapToGlobal({0, 0}) + offset);
+
+            moveWidget(mapToGlobal({0, 0}) + offset - extraOffset);
         }
 
         m_widget->setVisible(isChecked());
@@ -222,7 +306,6 @@ void CDockCard::setViewMode(CDockCard::ViewMode viewMode) {
     auto layout = m_container->layout();
     switch (viewMode) {
         case DockPinned: {
-            d->oldGeometry = m_widget->geometry();
             d->m_floatingHelper->setFloating(false);
             m_widget->setWindowFlags(Qt::Widget);
             layout->addWidget(m_widget);
@@ -234,19 +317,23 @@ void CDockCard::setViewMode(CDockCard::ViewMode viewMode) {
         }
         case Float: {
             auto size = m_widget->size();
+            auto extraOffset =
+                m_viewMode == DockPinned ? QPoint{0, 0} : (m_widget->mapToGlobal({0, 0}) - m_widget->pos());
             layout->removeWidget(m_widget);
             m_widget->setParent(m_container);
             d->m_floatingHelper->setFloating(true, Qt::Tool);
-            asWindow(size);
+            asWindow(size, extraOffset);
             break;
         }
         case Window: {
             auto size = m_widget->size();
+            auto extraOffset =
+                m_viewMode == DockPinned ? QPoint{0, 0} : (m_widget->mapToGlobal({0, 0}) - m_widget->pos());
             layout->removeWidget(m_widget);
             m_widget->setParent(nullptr);
             d->m_floatingHelper->setFloating(false);
             m_widget->setWindowFlags(Qt::Window);
-            asWindow(size);
+            asWindow(size, extraOffset);
             break;
         }
     }
@@ -281,6 +368,7 @@ void CDockCard::moveWidget(const QPoint &pos) {
     auto &m_widget = d->m_widget;
 
     m_widget->move(pos);
+
     adjustWindowGeometry(m_widget);
 }
 
@@ -384,20 +472,36 @@ void CDockCard::contextMenuEvent(QContextMenuEvent *event) {
 bool CDockCard::eventFilter(QObject *obj, QEvent *event) {
     Q_D(CDockCard);
     if (obj == d->m_widget) {
-        if (event->type() == QEvent::Close) {
-            d->m_closing = true;
-            QTimer::singleShot(0, this, [d]() {
-                d->m_closing = false; //
-            });
-        }
-        if (event->type() == QEvent::Hide && d->m_closing) {
-            // Close accepted
-            setChecked(false);
-            if (d->m_viewMode == DockPinned) {
+        switch (event->type()) {
+            case QEvent::Close: {
+                d->m_closing = true;
                 QTimer::singleShot(0, this, [d]() {
-                    d->m_widget->show(); //
+                    d->m_closing = false; //
                 });
+                break;
             }
+            case QEvent::Hide: {
+                if (d->m_closing) {
+                    // Close accepted
+                    setChecked(false);
+                    if (d->m_viewMode == DockPinned) {
+                        QTimer::singleShot(0, this, [d]() {
+                            d->m_widget->show(); //
+                        });
+                    }
+                }
+                break;
+            }
+            case QEvent::Show:
+            case QEvent::Move:
+            case QEvent::Resize: {
+                if (d->m_viewMode != DockPinned) {
+                    d->oldGeometry = d->m_widget->geometry();
+                }
+                break;
+            }
+            default:
+                break;
         }
     }
     return QObject::eventFilter(obj, event);

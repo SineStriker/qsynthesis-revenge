@@ -6,7 +6,7 @@
 
 namespace Core::Internal {
 
-    TrackPanel::TrackPanel(IProjectWindow *iWin, QWidget *parent) : ISidePanel(iWin, parent) {
+    TrackPanel::TrackPanel(IProjectWindow *iWin, QWidget *parent) : IDockPanel(iWin, parent) {
         setProperty("dock-panel", true);
 
         setWindowTitle("Tracks");

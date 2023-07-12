@@ -23,7 +23,7 @@ namespace QMetaTypeImpl {
     QMargins StringToMargins(const QString &string) {
         QPixelSize px = QPixelSize::fromString(string);
         int value = px.value();
-        return QMargins(value, value, value, value);
+        return {value, value, value, value};
     }
 
     QStringList PenToStringList(const QLineStyle &pen) {
@@ -85,7 +85,7 @@ namespace QMetaTypeImpl {
     }
 
     QPixelSize DoubleToPixelSize(double size) {
-        return QPixelSize(size);
+        return {size};
     }
 
     QColorList StringListColorList(const QStringList &stringList) {

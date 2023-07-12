@@ -42,7 +42,7 @@
             "Core::ProjectWindow": {
                 "file": "project-dark.qss"
             },
-            "Core::ISidePanel": {
+            "Core::IDockPanel": {
                 "file": "side-panel-dark.qss"
             }
         },
@@ -56,7 +56,7 @@
             "Core::ProjectWindow": {
                 "file": "project-light.qss"
             },
-            "Core::ISidePanel": {
+            "Core::IDockPanel": {
                 "file": "side-panel-light.qss"
             }
         }
@@ -70,9 +70,9 @@
             "Global",
             "Core::ProjectWindow"
         ],
-        "core.ISidePanel": [
+        "core.IDockPanel": [
             "Global",
-            "Core::ISidePanel"
+            "Core::IDockPanel"
         ]
     }
 }

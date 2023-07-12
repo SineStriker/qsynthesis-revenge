@@ -1,35 +1,35 @@
-#ifndef ISIDEPANELPRIVATE_H
-#define ISIDEPANELPRIVATE_H
+#ifndef IDOCKPANELPRIVATE_H
+#define IDOCKPANELPRIVATE_H
 
 #include <QBoxLayout>
 #include <QLabel>
 #include <QToolBar>
 
-#include "ISidePanel.h"
+#include "IDockPanel.h"
 
 namespace Core {
 
     class CaptionLabel : public QLabel {
     public:
-        explicit CaptionLabel(ISidePanel *sp, QWidget *parent = nullptr);
+        explicit CaptionLabel(IDockPanel *sp, QWidget *parent = nullptr);
         ~CaptionLabel();
 
-        ISidePanel *s;
+        IDockPanel *s;
 
     protected:
         void mouseDoubleClickEvent(QMouseEvent *event) override;
     };
 
-    class ISidePanelPrivate : public QObject {
+    class IDockPanelPrivate : public QObject {
         Q_OBJECT
-        Q_DECLARE_PUBLIC(ISidePanel)
+        Q_DECLARE_PUBLIC(IDockPanel)
     public:
-        ISidePanelPrivate();
-        virtual ~ISidePanelPrivate();
+        IDockPanelPrivate();
+        virtual ~IDockPanelPrivate();
 
         void init();
 
-        ISidePanel *q_ptr;
+        IDockPanel *q_ptr;
 
         QWidget *captionWidget;
 
@@ -46,4 +46,4 @@ namespace Core {
 
 }
 
-#endif // ISIDEPANELPRIVATE_H
+#endif // IDOCKPANELPRIVATE_H

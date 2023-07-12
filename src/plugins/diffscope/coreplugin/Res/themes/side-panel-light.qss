@@ -1,18 +1,18 @@
 /* Dock Tool Window */
 
-Core--ISidePanel {
+Core--IDockPanel {
     --captionLayoutMargins: qmargins(5px);
     --captionLayoutSpacing: 10px;
 }
 
-Core--ISidePanel>QLabel#side-panel-caption-label {
+Core--IDockPanel>QLabel#side-panel-caption-label {
     color: #CCCCCC;
 }
 
-Core--ISidePanel>QToolBar#side-panel-toolbar>QToolButton#close {
+Core--IDockPanel>QToolBar#side-panel-toolbar>QToolButton#close {
     --iconUp: svg(":/svg/side-panel/close-line.svg", "${project.sidePanel.iconColor}");
 }
 
-Core--ISidePanel>QToolBar#side-panel-toolbar>QToolButton#menu {
+Core--IDockPanel>QToolBar#side-panel-toolbar>QToolButton#menu {
     --iconUp: svg(":/svg/side-panel/menu-line.svg", "${project.sidePanel.iconColor}");
 }

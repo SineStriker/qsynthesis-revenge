@@ -73,6 +73,7 @@ void QMGuiAppExtensionPrivate::init() {
         }
     }
 
+    font.setStyleStrategy(QFont::PreferAntialias);
     qApp->setFont(font);
 }
 

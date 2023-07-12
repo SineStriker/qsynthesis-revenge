@@ -9,7 +9,7 @@
 
 class CDockToolWindowPrivate;
 
-class QMWTOOLS_EXPORT CDockToolWindow : public QFrame {
+class QMWTOOLS_EXPORT CDockToolWindow : public QWidget {
     Q_OBJECT
     Q_PROPERTY(QMargins resizeMargins READ resizeMargins WRITE setResizeMargins NOTIFY resizeMarginsChanged)
     Q_DECLARE_PRIVATE(CDockToolWindow)
@@ -20,9 +20,6 @@ public:
 public:
     QMargins resizeMargins() const;
     void setResizeMargins(const QMargins &resizeMargins);
-
-    void addHitTestVisibleWidget(QWidget *w);
-    void removeHitTestVisibleWidget(QWidget *w);
 
     CDockCard *card() const;
     virtual QMenu *createCardMenu() const;

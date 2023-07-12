@@ -20,7 +20,7 @@ public:
     CDockCard *card;
 
     QMargins resizeMargins;
-    QSet<QWidget *> hitTestWidgets;
+    QMargins orgResizeMargins;
 };
 
 #endif // CDOCKTOOLWINDOWPRIVATE_H

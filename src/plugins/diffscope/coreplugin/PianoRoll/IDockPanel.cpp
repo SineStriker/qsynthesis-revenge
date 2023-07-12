@@ -1,5 +1,5 @@
-#include "ISidePanel.h"
-#include "ISidePanel_p.h"
+#include "IDockPanel.h"
+#include "IDockPanel_p.h"
 
 #include <QApplication>
 #include <QContextMenuEvent>
@@ -12,9 +12,9 @@
 
 namespace Core {
 
-    Q_D_LAYOUT_PROPERTY_DECLARE(caption, Caption, captionLayout, ISidePanel)
+    Q_D_LAYOUT_PROPERTY_DECLARE(caption, Caption, captionLayout, IDockPanel)
 
-    CaptionLabel::CaptionLabel(ISidePanel *s, QWidget *parent) : QLabel(parent), s(s) {
+    CaptionLabel::CaptionLabel(IDockPanel *s, QWidget *parent) : QLabel(parent), s(s) {
     }
 
     CaptionLabel::~CaptionLabel() {
@@ -27,15 +27,15 @@ namespace Core {
         }
     }
 
-    ISidePanelPrivate::ISidePanelPrivate() {
+    IDockPanelPrivate::IDockPanelPrivate() {
         captionWidget = nullptr;
     }
 
-    ISidePanelPrivate::~ISidePanelPrivate() {
+    IDockPanelPrivate::~IDockPanelPrivate() {
     }
 
-    void ISidePanelPrivate::init() {
-        Q_Q(ISidePanel);
+    void IDockPanelPrivate::init() {
+        Q_Q(IDockPanel);
 
         captionLayout = new QHBoxLayout();
         captionLayout->setMargin(0);
@@ -75,49 +75,49 @@ namespace Core {
         toolBar->addAction(closeAction);
         toolBar->addAction(menuAction);
 
-        connect(closeAction, &QAction::triggered, this, &ISidePanelPrivate::_q_closeActionTriggered);
-        connect(menuAction, &QAction::triggered, this, &ISidePanelPrivate::_q_menuActionTriggered);
+        connect(closeAction, &QAction::triggered, this, &IDockPanelPrivate::_q_closeActionTriggered);
+        connect(menuAction, &QAction::triggered, this, &IDockPanelPrivate::_q_menuActionTriggered);
 
-        qIDec->installTheme(q, "core.ISidePanel");
+        qIDec->installTheme(q, "core.IDockPanel");
     }
 
-    void ISidePanelPrivate::_q_closeActionTriggered() {
-        Q_Q(ISidePanel);
+    void IDockPanelPrivate::_q_closeActionTriggered() {
+        Q_Q(IDockPanel);
         q->card()->setChecked(false);
     }
 
-    void ISidePanelPrivate::_q_menuActionTriggered() {
-        Q_Q(ISidePanel);
+    void IDockPanelPrivate::_q_menuActionTriggered() {
+        Q_Q(IDockPanel);
 
         QContextMenuEvent e(QContextMenuEvent::Other, q->card()->mapFromGlobal(QCursor::pos()), QCursor::pos(),
                             QApplication::keyboardModifiers());
         QApplication::sendEvent(q->card(), &e);
     }
 
-    ISidePanel::ISidePanel(IProjectWindow *iWin, QWidget *parent) : ISidePanel(*new ISidePanelPrivate(), iWin, parent) {
+    IDockPanel::IDockPanel(IProjectWindow *iWin, QWidget *parent) : IDockPanel(*new IDockPanelPrivate(), iWin, parent) {
     }
 
-    ISidePanel::~ISidePanel() {
+    IDockPanel::~IDockPanel() {
     }
 
-    void ISidePanel::initialize() {
+    void IDockPanel::initialize() {
     }
 
-    void ISidePanel::extensionInitialized() {
+    void IDockPanel::extensionInitialized() {
     }
 
-    QToolBar *ISidePanel::toolBar() const {
-        Q_D(const ISidePanel);
+    QToolBar *IDockPanel::toolBar() const {
+        Q_D(const IDockPanel);
         return d->toolBar;
     }
 
-    QWidget *ISidePanel::captionWidget() const {
-        Q_D(const ISidePanel);
+    QWidget *IDockPanel::captionWidget() const {
+        Q_D(const IDockPanel);
         return d->captionWidget;
     }
 
-    QWidget *ISidePanel::takeCaptionWidget() {
-        Q_D(ISidePanel);
+    QWidget *IDockPanel::takeCaptionWidget() {
+        Q_D(IDockPanel);
         if (d->captionWidget)
             return nullptr;
 
@@ -130,8 +130,8 @@ namespace Core {
         return org;
     }
 
-    void ISidePanel::setCaptionWidget(QWidget *w) {
-        Q_D(ISidePanel);
+    void IDockPanel::setCaptionWidget(QWidget *w) {
+        Q_D(IDockPanel);
 
         if (!d->captionWidget) {
             d->captionLayout->replaceWidget(d->captionLabel, w);
@@ -148,15 +148,15 @@ namespace Core {
         org = nullptr;
     }
 
-    QWidget *ISidePanel::centralWidget() const {
-        Q_D(const ISidePanel);
+    QWidget *IDockPanel::centralWidget() const {
+        Q_D(const IDockPanel);
         if (d->mainLayout->count() < 2)
             return nullptr;
         return d->mainLayout->itemAt(1)->widget();
     }
 
-    QWidget *ISidePanel::takeCentralWidget() {
-        Q_D(ISidePanel);
+    QWidget *IDockPanel::takeCentralWidget() {
+        Q_D(IDockPanel);
         if (d->mainLayout->count() < 2)
             return nullptr;
 
@@ -166,14 +166,14 @@ namespace Core {
         return org;
     }
 
-    void ISidePanel::setCentralWidget(QWidget *w) {
-        Q_D(ISidePanel);
+    void IDockPanel::setCentralWidget(QWidget *w) {
+        Q_D(IDockPanel);
         delete takeCentralWidget();
         d->mainLayout->addWidget(w);
     }
 
-    bool ISidePanel::event(QEvent *event) {
-        Q_D(ISidePanel);
+    bool IDockPanel::event(QEvent *event) {
+        Q_D(IDockPanel);
         switch (event->type()) {
             case QEvent::WindowTitleChange: {
                 d->captionLabel->setText(windowTitle());
@@ -185,7 +185,7 @@ namespace Core {
         return CDockToolWindow::event(event);
     }
 
-    void ISidePanel::viewModeChanged(CDockCard::ViewMode viewMode) {
+    void IDockPanel::viewModeChanged(CDockCard::ViewMode viewMode) {
         switch (viewMode) {
             case CDockCard::DockPinned:
                 setProperty("view-mode", "dock-pinned");
@@ -203,7 +203,7 @@ namespace Core {
         }
     }
 
-    ISidePanel::ISidePanel(ISidePanelPrivate &d, IProjectWindow *iWin, QWidget *parent)
+    IDockPanel::IDockPanel(IDockPanelPrivate &d, IProjectWindow *iWin, QWidget *parent)
         : CDockToolWindow(parent), IPianoRollComponent(iWin), d_ptr(&d) {
         d.q_ptr = this;
 

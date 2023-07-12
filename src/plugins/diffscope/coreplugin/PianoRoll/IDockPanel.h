@@ -1,5 +1,5 @@
-#ifndef ISIDEPANEL_H
-#define ISIDEPANEL_H
+#ifndef IDOCKPANEL_H
+#define IDOCKPANEL_H
 
 #include <QLayout>
 #include <QToolBar>
@@ -14,16 +14,16 @@
 
 namespace Core {
 
-    class ISidePanelPrivate;
+    class IDockPanelPrivate;
 
-    class CORE_EXPORT ISidePanel : public CDockToolWindow, public IPianoRollComponent {
+    class CORE_EXPORT IDockPanel : public CDockToolWindow, public IPianoRollComponent {
         Q_OBJECT
         Q_LAYOUT_PROPERTY_DELCARE
-        Q_DECLARE_PRIVATE(ISidePanel)
+        Q_DECLARE_PRIVATE(IDockPanel)
         Q_D_LAYOUT_PROPERTY(caption, Caption)
     public:
-        explicit ISidePanel(IProjectWindow *iWin, QWidget *parent = nullptr);
-        ~ISidePanel();
+        explicit IDockPanel(IProjectWindow *iWin, QWidget *parent = nullptr);
+        ~IDockPanel();
 
     public:
         void initialize() override;
@@ -46,11 +46,11 @@ namespace Core {
         void viewModeChanged(CDockCard::ViewMode viewMode) override;
 
     protected:
-        ISidePanel(ISidePanelPrivate &d, IProjectWindow *iWin, QWidget *parent = nullptr);
+        IDockPanel(IDockPanelPrivate &d, IProjectWindow *iWin, QWidget *parent = nullptr);
 
-        QScopedPointer<ISidePanelPrivate> d_ptr;
+        QScopedPointer<IDockPanelPrivate> d_ptr;
     };
 
 }
 
-#endif // ISIDEPANEL_H
+#endif // IDOCKPANEL_H

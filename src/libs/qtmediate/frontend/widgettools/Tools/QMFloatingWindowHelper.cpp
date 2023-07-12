@@ -1,13 +1,13 @@
-#include "FloatingWindowHelper.h"
+#include "QMFloatingWindowHelper.h"
+#include "QMFloatingWindowHelper_p.h"
 
 #include <QApplication>
-#include <QDebug>
-#include <QEvent>
-#include <QHoverEvent>
+#include <QMouseEvent>
 #include <QWidget>
 
 static bool isDescendantOfWidget(QWidget *widget, QWidget *parent) {
-    while (widget) {
+    auto upper = parent->parentWidget();
+    while (widget && widget != upper) {
         if (widget == parent)
             return true;
         widget = widget->parentWidget();
@@ -15,7 +15,7 @@ static bool isDescendantOfWidget(QWidget *widget, QWidget *parent) {
     return false;
 }
 
-FloatingWindowHelper::FloatingWindowHelper(QWidget *w, QObject *parent) : QObject(parent), w(w) {
+QMFloatingWindowHelperPrivate::QMFloatingWindowHelperPrivate(QWidget *w, QMFloatingWindowHelper *q) : q(q), w(w) {
     m_resizeMargins = {5, 5, 5, 5};
 
     m_floating = false;
@@ -24,39 +24,17 @@ FloatingWindowHelper::FloatingWindowHelper(QWidget *w, QObject *parent) : QObjec
     m_pressedArea = None;
 
     // Initialize array
-    for (int i = 0; i < SizeOfEdgeAndCorner; ++i) {
-        m_pressedRect[i] = {0, 0, 0, 0};
+    for (auto &r : m_pressedRect) {
+        r = {0, 0, 0, 0};
     }
+
     w->setAttribute(Qt::WA_Hover);
 }
 
-FloatingWindowHelper::~FloatingWindowHelper() {
+QMFloatingWindowHelperPrivate::~QMFloatingWindowHelperPrivate() {
 }
 
-void FloatingWindowHelper::addTitleBarWidget(QWidget *w) {
-    m_titleBarWidgets.insert(w);
-    connect(w, &QObject::destroyed, this, &FloatingWindowHelper::_q_titleBarWidgetDestroyed);
-}
-
-void FloatingWindowHelper::removeTitleBarWidget(QWidget *w) {
-    m_titleBarWidgets.remove(w);
-    disconnect(w, &QObject::destroyed, this, &FloatingWindowHelper::_q_titleBarWidgetDestroyed);
-}
-
-void FloatingWindowHelper::clearTitleBarWidgets() {
-    for (const auto &item : qAsConst(m_titleBarWidgets))
-        disconnect(w, &QObject::destroyed, this, &FloatingWindowHelper::_q_titleBarWidgetDestroyed);
-    m_titleBarWidgets.clear();
-}
-
-bool FloatingWindowHelper::floating() const {
-    return m_floating;
-}
-
-void FloatingWindowHelper::setFloating(bool floating, Qt::WindowFlags flags) {
-    if (m_floating == floating)
-        return;
-
+void QMFloatingWindowHelperPrivate::setFloating_helper(bool floating, Qt::WindowFlags flags) {
     m_floating = floating;
 
     if (floating) {
@@ -70,43 +48,7 @@ void FloatingWindowHelper::setFloating(bool floating, Qt::WindowFlags flags) {
     }
 }
 
-QMargins FloatingWindowHelper::resizeMargins() const {
-    return m_resizeMargins;
-}
-
-void FloatingWindowHelper::setResizeMargins(const QMargins &resizeMargins) {
-    m_resizeMargins = resizeMargins;
-}
-
-bool FloatingWindowHelper::eventFilter(QObject *obj, QEvent *event) {
-    if (obj == w) {
-        if (dummyEventFilter(obj, event)) {
-            return true;
-        }
-    } else {
-        switch (event->type()) {
-            case QEvent::MouseButtonPress:
-            case QEvent::MouseButtonRelease: {
-                if (obj->isWidgetType()) {
-                    auto e = static_cast<QMouseEvent *>(event);
-                    auto w0 = qobject_cast<QWidget *>(obj);
-                    if (w0 && isDescendantOfWidget(w0, w)) {
-                        auto me = *e;
-                        me.setLocalPos(w->mapFromGlobal(e->globalPos()));
-                        if (dummyEventFilter(obj, &me)) {
-                            return true;
-                        }
-                    }
-                }
-            }
-            default:
-                break;
-        }
-    }
-    return QObject::eventFilter(obj, event);
-}
-
-bool FloatingWindowHelper::dummyEventFilter(QObject *obj, QEvent *event) {
+bool QMFloatingWindowHelperPrivate::dummyEventFilter(QObject *obj, QEvent *event) {
     switch (event->type()) {
         case QEvent::Show:
         case QEvent::Resize: {
@@ -246,7 +188,7 @@ bool FloatingWindowHelper::dummyEventFilter(QObject *obj, QEvent *event) {
 
             if (!pressed) {
                 auto widget = qobject_cast<QWidget *>(obj);
-                if (widget && (widget == w || m_titleBarWidgets.contains(widget))) {
+                if (widget && (widget == w || QMFloatingWindowHelper::isWidgetHitTestVisible(w))) {
                     m_pressed = true;
                     pressed = true;
                 }
@@ -277,6 +219,66 @@ bool FloatingWindowHelper::dummyEventFilter(QObject *obj, QEvent *event) {
     return false;
 }
 
-void FloatingWindowHelper::_q_titleBarWidgetDestroyed() {
-    removeTitleBarWidget(static_cast<QWidget *>(sender()));
+bool QMFloatingWindowHelperPrivate::eventFilter(QObject *obj, QEvent *event) {
+    if (obj == w) {
+        if (dummyEventFilter(obj, event)) {
+            return true;
+        }
+    } else {
+        switch (event->type()) {
+            case QEvent::MouseButtonPress:
+            case QEvent::MouseButtonRelease: {
+                if (obj->isWidgetType()) {
+                    auto e = static_cast<QMouseEvent *>(event);
+                    auto widget = qobject_cast<QWidget *>(obj);
+                    if (widget && isDescendantOfWidget(widget, w)) {
+                        auto me = *e;
+                        me.setLocalPos(w->mapFromGlobal(e->globalPos()));
+                        if (dummyEventFilter(obj, &me)) {
+                            return true;
+                        }
+                    }
+                }
+            }
+            default:
+                break;
+        }
+    }
+    return QObject::eventFilter(obj, event);
+}
+
+QMFloatingWindowHelper::QMFloatingWindowHelper(QWidget *w, QObject *parent)
+    : QObject(parent), d(new QMFloatingWindowHelperPrivate(w, this)) {
+}
+
+QMFloatingWindowHelper::~QMFloatingWindowHelper() {
+    delete d;
+}
+
+bool QMFloatingWindowHelper::floating() const {
+    return d->m_floating;
+}
+
+void QMFloatingWindowHelper::setFloating(bool floating, Qt::WindowFlags flags) {
+    if (d->m_floating == floating)
+        return;
+    d->setFloating_helper(floating, flags);
+}
+
+QMargins QMFloatingWindowHelper::resizeMargins() const {
+    return d->m_resizeMargins;
+}
+
+void QMFloatingWindowHelper::setResizeMargins(const QMargins &resizeMargins) {
+    d->m_resizeMargins = resizeMargins;
+}
+
+static const char KEY_NAME_HIT_TEST_VISIBLE[] = "qtm_hit_test_visible";
+
+bool QMFloatingWindowHelper::isWidgetHitTestVisible(QWidget *w) {
+    return w->property(KEY_NAME_HIT_TEST_VISIBLE).toBool();
+}
+
+void QMFloatingWindowHelper::setWidgetHitTestVisible(QWidget *w, bool value) {
+    w->setProperty(KEY_NAME_HIT_TEST_VISIBLE, value);
 }

@@ -30,11 +30,18 @@ QToolBar#main-toolbar>QToolButton {
     padding: 5px;
     border: none;
     background-color: transparent;
-    border-radius: 4px;
 }
 
 QToolBar#main-toolbar>QToolButton:hover {
-    background-color: rgba(35, 50, 51, 50%);
+    background-color: rgba(255, 255, 255, 20%);
+}
+
+QToolBar#main-toolbar>QToolButton:pressed {
+    background-color: rgba(255, 255, 255, 15%);
+}
+
+QToolBar#main-toolbar>QToolButton[selectable=true]:checked {
+    background-color: rgba(35, 50, 51, 100%);
 }
 
 QToolBar#main-toolbar>QToolButton[action-id="core.Play"] {
@@ -68,10 +75,6 @@ QToolBar#main-toolbar>QToolButton[action-id="core.FindAction"] {
 
 QToolBar#main-toolbar>QToolButton[action-id="core.Settings"] {
     --iconUp: svg(":/svg/main-toolbar/setting-line.svg", "${project.toolbar.iconColor}");
-}
-
-QToolBar#main-toolbar>QToolButton[selectable=true]:checked {
-    background-color: rgba(35, 50, 51, 100%);
 }
 
 QsApi--SynthVSplitter#canvas>QsApi--SynthVSplitterHandle {

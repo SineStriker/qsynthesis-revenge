@@ -4,7 +4,7 @@
 #include "QMView.h"
 
 #include "../CDockCard.h"
-#include "FloatingWindowHelper.h"
+#include "QMFloatingWindowHelper.h"
 
 class CDockCardPrivate {
     Q_DECLARE_PUBLIC(CDockCard)
@@ -35,7 +35,7 @@ public:
     bool m_closing;
     CDockCard::ViewMode m_viewMode;
 
-    FloatingWindowHelper *m_floatingHelper;
+    QMFloatingWindowHelper *m_floatingHelper;
 
     static QMenu *createViewModeMenu(CDockCard *card);
 };
