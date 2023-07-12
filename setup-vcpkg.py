@@ -81,6 +81,7 @@ vcpkg_tasks: list[library_task] = [
     library_task("zlib"),
     library_task("sdl2"),
     library_task("yaml-cpp"),
+    library_task("libsndfile"),
     library_task("quazip", True),
     library_task("framelesshelper", True, os_flags=OSFlags.EXCLUDE_MAC),
     library_task("ffmpeg-fake", True),

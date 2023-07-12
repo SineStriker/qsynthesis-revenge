@@ -15,3 +15,4 @@ ck_target_components(${PROJECT_NAME}
 )
 
 target_link_libraries(${PROJECT_NAME} PRIVATE SDL2::SDL2)
+target_link_libraries(${PROJECT_NAME} PRIVATE libsndfile)
