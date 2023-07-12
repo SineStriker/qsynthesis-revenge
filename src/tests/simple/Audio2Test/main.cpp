@@ -21,6 +21,8 @@
 #include <QPushButton>
 #include <QCheckBox>
 
+#include "sndfile.h"
+
 int main(int argc, char **argv){
 
     QApplication a(argc, argv);
