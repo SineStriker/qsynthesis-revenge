@@ -21,9 +21,32 @@
 #include <QPushButton>
 #include <QCheckBox>
 
+#include "format/AudioFormatIO.h"
 #include "sndfile.h"
 
-int main(int argc, char **argv){
+#include <math.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#include	<sndfile.h>
+
+int main() {
+    QFile f("D:/CloudMusic/JUSF周存 - 心跳同步的时光-Memory Ver.mp3");
+    AudioFormatIO audioFormatIO(&f);
+    if(!audioFormatIO.open(QIODevice::ReadOnly)) {
+        qDebug() << "open error:" << audioFormatIO.errorString();
+    }
+    qDebug() << audioFormatIO.length() << audioFormatIO.channels() << audioFormatIO.sampleRate() << QString::number(audioFormatIO.format(), 16);
+    auto audioData = new float[audioFormatIO.length() * audioFormatIO.channels()];
+    audioFormatIO.read(audioData, audioFormatIO.length());
+    QFile f2("D:/Downloads/test2.pcm");
+    f2.open(QIODevice::WriteOnly);
+    f2.write((char *)audioData, sizeof(float) * audioFormatIO.length() * audioFormatIO.channels());
+    return 0;
+}
+
+int main1(int argc, char **argv){
 
     QApplication a(argc, argv);
 
@@ -107,7 +130,7 @@ int main(int argc, char **argv){
         if(!device) return;
         device->close();
         if(!device->open(bufferSizeComboBox->currentText().toULongLong(), sampleRateComboBox->currentText().toDouble())) {
-            QMessageBox::critical(&mainWindow, "Device Error", device->error());
+            QMessageBox::critical(&mainWindow, "Device Error", device->errorString());
         }
     };
 
@@ -123,7 +146,7 @@ int main(int argc, char **argv){
         driver = drvMgr.driver(driverComboBox->itemText(index));
         deviceComboBox->clear();
         if(!driver->initialize()) {
-            QMessageBox::critical(&mainWindow, "Driver Error", driver->error());
+            QMessageBox::critical(&mainWindow, "Driver Error", driver->errorString());
             return;
         }
         auto defaultDev = driver->defaultDevice();
@@ -192,7 +215,7 @@ int main(int argc, char **argv){
     QObject::connect(startButton, &QPushButton::clicked, [&](){
         if(!device) return;
         if(!device->start(&playback)) {
-            QMessageBox::critical(&mainWindow, "Playback Error", device->error());
+            QMessageBox::critical(&mainWindow, "Playback Error", device->errorString());
         }
         deviceComboBox->setDisabled(true);
         driverComboBox->setDisabled(true);
