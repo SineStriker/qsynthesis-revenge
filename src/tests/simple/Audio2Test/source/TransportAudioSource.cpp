@@ -72,8 +72,10 @@ PositionableAudioSource *TransportAudioSource::resetSource(PositionableAudioSour
     auto curSrc = d->src;
     d->src = src;
     if(src) {
-        if(isOpened()) src->open(bufferSize(), sampleRate());
-        src->setNextReadPosition(d->position);
+        if(isOpened()) {
+            src->setNextReadPosition(d->position);
+            src->open(bufferSize(), sampleRate());
+        }
     }
     return curSrc;
 }

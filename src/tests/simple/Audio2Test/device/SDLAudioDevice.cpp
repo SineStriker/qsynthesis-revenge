@@ -31,7 +31,7 @@ SDLAudioDevice::SDLAudioDevice(const QString &name, AudioDriver *driver, QObject
         }
     }
     if(SDL_GetAudioDeviceSpec(devIndex, 0, &preferredSpec) != 0) {
-        setError(SDL_GetError());
+        setErrorString(SDL_GetError());
         return;
     }
     setChannelCount(preferredSpec.channels);
@@ -65,7 +65,7 @@ bool SDLAudioDevice::open(qint64 bufferSize, double sampleRate) {
     };
     d->devId = SDL_OpenAudioDevice(name().toUtf8().data(), 0, &d->spec, nullptr, 0);
     if(d->devId == 0) {
-        setError(SDL_GetError());
+        setErrorString(SDL_GetError());
         return false;
     }
     reinterpret_cast<SDLAudioDriver *>(d->driver)->addOpenedDevice(d->devId, this);

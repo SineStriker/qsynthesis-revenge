@@ -21,7 +21,16 @@
 #include <QPushButton>
 #include <QCheckBox>
 
+#include "format/AudioFormatIO.h"
 #include "sndfile.h"
+#include "source/AudioFormatInputSource.h"
+
+#include <math.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#include	<sndfile.h>
 
 int main(int argc, char **argv){
 
@@ -61,7 +70,9 @@ int main(int argc, char **argv){
     loopingEndSlider->setOrientation(Qt::Horizontal);
     loopingEndSlider->setDisabled(true);
 
-    auto browseFileButton = new QPushButton("Browse (Raw data, 2ch, f32)");
+    auto fileSpecLabel = new QLabel;
+
+    auto browseFileButton = new QPushButton("Browse");
 
     auto startButton = new QPushButton("Start");
 
@@ -76,6 +87,7 @@ int main(int argc, char **argv){
     layout->addRow("Buffer Size", bufferSizeComboBox);
     layout->addRow("Sample Rate", sampleRateComboBox);
     layout->addRow(fileNameLabel);
+    layout->addRow(fileSpecLabel);
     layout->addRow(browseFileButton);
     layout->addRow("Transport", transportSlider);
     layout->addRow(playPauseButton);
@@ -107,7 +119,7 @@ int main(int argc, char **argv){
         if(!device) return;
         device->close();
         if(!device->open(bufferSizeComboBox->currentText().toULongLong(), sampleRateComboBox->currentText().toDouble())) {
-            QMessageBox::critical(&mainWindow, "Device Error", device->error());
+            QMessageBox::critical(&mainWindow, "Device Error", device->errorString());
         }
     };
 
@@ -123,7 +135,7 @@ int main(int argc, char **argv){
         driver = drvMgr.driver(driverComboBox->itemText(index));
         deviceComboBox->clear();
         if(!driver->initialize()) {
-            QMessageBox::critical(&mainWindow, "Driver Error", driver->error());
+            QMessageBox::critical(&mainWindow, "Driver Error", driver->errorString());
             return;
         }
         auto defaultDev = driver->defaultDevice();
@@ -167,32 +179,50 @@ int main(int argc, char **argv){
 
     if(driverComboBox->count()) emit driverComboBox->currentIndexChanged(driverComboBox->currentIndex());
 
-    QByteArray audioFileData;
-    InterleavedAudioDataWrapper audioFileBuffer(nullptr, 2, 0);
-    MemoryAudioSource src(&audioFileBuffer);
+    AudioFormatInputSource src;
+    AudioFormatIO srcIo;
+    QFile srcFile;
+    src.setAudioFormatIo(&srcIo);
     TransportAudioSource transportSrc;
     transportSrc.resetSource(&src);
     AudioSourcePlayback playback(&transportSrc);
+
+    auto availableFormats = AudioFormatIO::availableFormats();
 
     QObject::connect(browseFileButton, &QPushButton::clicked, [&](){
         auto fileName = QFileDialog::getOpenFileName(&mainWindow);
         if(fileName.isEmpty()) return;
         fileNameLabel->setText(fileName);
-        QFile f(fileName);
-        f.open(QFile::ReadOnly);
-        audioFileData = f.readAll();
-        qint64 audioLength = audioFileData.size() / 8;
+        srcFile.close();
+        srcFile.setFileName(fileName);
+        srcIo.setStream(&srcFile);
+        if(!srcIo.open(QIODevice::ReadOnly)) {
+            QMessageBox::critical(&mainWindow, "Audio Decode Error", srcIo.errorString());
+            return;
+        }
+        QString majorFormatName, subtypeName;
+        for(const auto &formatInfo: availableFormats) {
+            if(srcIo.majorFormat() != formatInfo.majorFormat) continue;
+            majorFormatName = formatInfo.name;
+            for(const auto &subtypeInfo: formatInfo.subtypes) {
+                if(srcIo.subType() != subtypeInfo.subtype) continue;
+                subtypeName = subtypeInfo.name;
+                break;
+            }
+            break;
+        }
+        fileSpecLabel->setText(QString("mf: %1, st: %2, ch: %3, sr: %4").arg(majorFormatName).arg(subtypeName).arg(srcIo.channels()).arg(srcIo.sampleRate()));
+        qint64 audioLength = srcIo.length();
         transportSlider->setRange(0, audioLength - 1);
         loopingStartSlider->setRange(0, audioLength - 1);
         loopingEndSlider->setRange(0, audioLength);
         loopingEndSlider->setValue(audioLength);
-        audioFileBuffer.resetData((float *)audioFileData.data(), 2, audioLength);
     });
 
     QObject::connect(startButton, &QPushButton::clicked, [&](){
         if(!device) return;
         if(!device->start(&playback)) {
-            QMessageBox::critical(&mainWindow, "Playback Error", device->error());
+            QMessageBox::critical(&mainWindow, "Playback Error", device->errorString());
         }
         deviceComboBox->setDisabled(true);
         driverComboBox->setDisabled(true);
