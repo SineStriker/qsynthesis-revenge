@@ -31,22 +31,7 @@
 
 #include	<sndfile.h>
 
-int main() {
-    QFile f("D:/CloudMusic/JUSF周存 - 心跳同步的时光-Memory Ver.mp3");
-    AudioFormatIO audioFormatIO(&f);
-    if(!audioFormatIO.open(QIODevice::ReadOnly)) {
-        qDebug() << "open error:" << audioFormatIO.errorString();
-    }
-    qDebug() << audioFormatIO.length() << audioFormatIO.channels() << audioFormatIO.sampleRate() << QString::number(audioFormatIO.format(), 16);
-    auto audioData = new float[audioFormatIO.length() * audioFormatIO.channels()];
-    audioFormatIO.read(audioData, audioFormatIO.length());
-    QFile f2("D:/Downloads/test2.pcm");
-    f2.open(QIODevice::WriteOnly);
-    f2.write((char *)audioData, sizeof(float) * audioFormatIO.length() * audioFormatIO.channels());
-    return 0;
-}
-
-int main1(int argc, char **argv){
+int main(int argc, char **argv){
 
     QApplication a(argc, argv);
 
@@ -84,7 +69,9 @@ int main1(int argc, char **argv){
     loopingEndSlider->setOrientation(Qt::Horizontal);
     loopingEndSlider->setDisabled(true);
 
-    auto browseFileButton = new QPushButton("Browse (Raw data, 2ch, f32)");
+    auto fileSpecLabel = new QLabel;
+
+    auto browseFileButton = new QPushButton("Browse");
 
     auto startButton = new QPushButton("Start");
 
@@ -99,6 +86,7 @@ int main1(int argc, char **argv){
     layout->addRow("Buffer Size", bufferSizeComboBox);
     layout->addRow("Sample Rate", sampleRateComboBox);
     layout->addRow(fileNameLabel);
+    layout->addRow(fileSpecLabel);
     layout->addRow(browseFileButton);
     layout->addRow("Transport", transportSlider);
     layout->addRow(playPauseButton);
@@ -197,14 +185,30 @@ int main1(int argc, char **argv){
     transportSrc.resetSource(&src);
     AudioSourcePlayback playback(&transportSrc);
 
+    auto availableFormats = AudioFormatIO::availableFormats();
+
     QObject::connect(browseFileButton, &QPushButton::clicked, [&](){
         auto fileName = QFileDialog::getOpenFileName(&mainWindow);
         if(fileName.isEmpty()) return;
         fileNameLabel->setText(fileName);
         QFile f(fileName);
-        f.open(QFile::ReadOnly);
-        audioFileData = f.readAll();
-        qint64 audioLength = audioFileData.size() / 8;
+        AudioFormatIO audioFormatIO(&f);
+        audioFormatIO.open(QIODevice::ReadOnly);
+        QString majorFormatName, subtypeName;
+        for(const auto &formatInfo: availableFormats) {
+            if(audioFormatIO.majorFormat() != formatInfo.majorFormat) continue;
+            majorFormatName = formatInfo.name;
+            for(const auto &subtypeInfo: formatInfo.subtypes) {
+                if(audioFormatIO.subType() != subtypeInfo.subtype) continue;
+                subtypeName = subtypeInfo.name;
+                break;
+            }
+            break;
+        }
+        fileSpecLabel->setText(QString("mf: %1, st: %2, ch: %3, sr: %4").arg(majorFormatName).arg(subtypeName).arg(audioFormatIO.channels()).arg(audioFormatIO.sampleRate()));
+        audioFileData = QByteArray(4 * audioFormatIO.channels() * audioFormatIO.length(), 0);
+        audioFormatIO.read((float *)audioFileData.data(), audioFormatIO.length());
+        qint64 audioLength = audioFormatIO.length();
         transportSlider->setRange(0, audioLength - 1);
         loopingStartSlider->setRange(0, audioLength - 1);
         loopingEndSlider->setRange(0, audioLength);
