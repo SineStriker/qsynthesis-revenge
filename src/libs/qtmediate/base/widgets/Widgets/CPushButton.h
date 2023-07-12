@@ -4,8 +4,8 @@
 #include <QDebug>
 #include <QPushButton>
 
-#include "QSvgUri.h"
 #include "QMWidgetsGlobal.h"
+#include "QSvgUri.h"
 
 class CPushButtonPrivate;
 
@@ -17,10 +17,8 @@ class QMWIDGETS_EXPORT CPushButton : public QPushButton {
     Q_PROPERTY(QSvgUri iconOver READ iconOver WRITE setIconOver NOTIFY iconChanged)
     Q_PROPERTY(QSvgUri iconDown READ iconDown WRITE setIconDown NOTIFY iconChanged)
     Q_PROPERTY(QSvgUri iconUpChecked READ iconUpChecked WRITE setIconUpChecked NOTIFY iconChanged)
-    Q_PROPERTY(
-        QSvgUri iconOverChecked READ iconOverChecked WRITE setIconOverChecked NOTIFY iconChanged)
-    Q_PROPERTY(
-        QSvgUri iconDownChecked READ iconDownChecked WRITE setIconDownChecked NOTIFY iconChanged)
+    Q_PROPERTY(QSvgUri iconOverChecked READ iconOverChecked WRITE setIconOverChecked NOTIFY iconChanged)
+    Q_PROPERTY(QSvgUri iconDownChecked READ iconDownChecked WRITE setIconDownChecked NOTIFY iconChanged)
     Q_PROPERTY(QSvgUri iconDisabled READ iconDisabled WRITE setIconDisabled NOTIFY iconChanged)
 
 public:
@@ -57,8 +55,12 @@ public:
 protected:
     bool event(QEvent *event) override;
 
+    void paintEvent(QPaintEvent *event) override;
+
     void nextCheckState() override;
     void checkStateSet() override;
+
+    QColor currentTextColor(const QSize &hint = {}) const;
 
 protected:
     CPushButton(CPushButtonPrivate &d, QWidget *parent = nullptr);

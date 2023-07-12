@@ -15,6 +15,9 @@ namespace Core::Internal {
 
         void initialize() override;
         void extensionInitialized() override;
+
+    protected:
+        QMenu *createCardMenu() const override;
     };
 
 }

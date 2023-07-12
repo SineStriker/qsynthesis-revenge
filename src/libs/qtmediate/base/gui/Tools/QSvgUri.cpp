@@ -8,6 +8,8 @@
 #include <QFileInfo>
 #include <QMimeDatabase>
 
+#include <private/qicon_p.h>
+
 QSvgUri::QSvgUri() {
 }
 
@@ -109,4 +111,19 @@ QDebug operator<<(QDebug debug, const QSvgUri &uri) {
     QStringList list = uri.toStringList();
     debug.noquote() << QString("QSvgUri(%1)").arg(list.back());
     return debug;
+}
+
+void QSvgUri::tryFallbackIconColor(QIcon &icon, const std::function<QString()> &getColor) {
+    auto &d = icon.data_ptr();
+    if (!d)
+        return;
+
+    auto engine = dynamic_cast<CSvgIconEngine *>(d->engine);
+    if (!engine || engine->currentColor() != "auto") {
+        return;
+    }
+
+    auto newEngine = new CSvgIconEngine(*engine);
+    newEngine->setCurrentColor(getColor());
+    icon = QIcon(newEngine);
 }

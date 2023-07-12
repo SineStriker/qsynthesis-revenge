@@ -59,14 +59,6 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Log Error</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Failed to create log!</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>File is opened</source>
         <translation type="unfinished"></translation>
     </message>
@@ -146,15 +138,19 @@ The application is about to exit because an unresolvable exception has occurred,
 <context>
     <name>Core::ICoreWindow</name>
     <message>
-        <source>Can&apos;t find editor of the file %1!</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Failed to create main menu.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <source>Failed to create internal action context.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>%1: not a file!</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>%1: Can&apos;t find editor of file!</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -224,6 +220,13 @@ The application is about to exit because an unresolvable exception has occurred,
     <name>Core::IProjectWindow</name>
     <message>
         <source>Failed to create main toolbar.</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>Core::IProjectWindowPrivate</name>
+    <message>
+        <source>There are unsaved changes, do you want to save them?</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -350,6 +353,14 @@ The application is about to exit because an unresolvable exception has occurred,
         <source>More...</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Exit Actions</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Close</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>Core::Internal::DisplayPage</name>
@@ -401,20 +412,9 @@ The application is about to exit because an unresolvable exception has occurred,
     </message>
 </context>
 <context>
-    <name>Core::Internal::HomeRecoveryWidget</name>
-    <message>
-        <source>No data.</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
     <name>Core::Internal::HomeWindowAddOn</name>
     <message>
         <source>Recent</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Failure Recovery</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -468,14 +468,6 @@ The application is about to exit because an unresolvable exception has occurred,
     </message>
     <message>
         <source>Save &amp;As...</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Exit Actions</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Close</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -607,6 +599,37 @@ The application is about to exit because an unresolvable exception has occurred,
     </message>
     <message>
         <source>Settings</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>Core::SectionBarPrivate</name>
+    <message>
+        <source>Add time signature here</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Edit time signature here</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Remove</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Edit</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Add tempo</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Add time signature</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Edit time signature</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

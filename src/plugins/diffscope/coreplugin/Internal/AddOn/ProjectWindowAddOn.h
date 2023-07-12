@@ -35,9 +35,6 @@ namespace Core {
             ActionItem *saveFileItem;
             ActionItem *saveAsFileItem;
 
-            ActionItem *exitGroupItem;
-            ActionItem *closeFileItem;
-
             // Edit
             ActionItem *undoGroupItem;
             ActionItem *undoItem;

@@ -138,7 +138,8 @@ namespace Core {
     void ICore::fatalError(QWidget *parent, const QString &text, int exitCode) {
         QMessageBox msgBox(QMessageBox::Critical, tr("Fatal Error"), text, QMessageBox::Ok, parent);
         msgBox.setText(tr("%1\n\nThe application is about to exit because an unresolvable exception has occurred, "
-                          "which may be caused by an illegal operation of an plugin.").arg(text));
+                          "which may be caused by an illegal operation of an plugin.")
+                           .arg(text));
         msgBox.setDefaultButton(QMessageBox::Ok);
         msgBox.exec();
         std::exit(exitCode);
@@ -160,6 +161,9 @@ namespace Core {
                     if ((menu = qobject_cast<QMenu *>(child))) {
                         menu->setProperty("core-style", true);
                         menu->style()->polish(menu);
+
+                        // Why need to place after polish?
+                        menu->setFont(QApplication::font());
                     }
                 });
             }

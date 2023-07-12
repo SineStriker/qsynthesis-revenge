@@ -90,8 +90,9 @@ QIcon::Mode CSvgIconEnginePrivate::loadDataForModeAndState(QSvgRenderer *rendere
 CSvgIconEngine::CSvgIconEngine() : d(new CSvgIconEnginePrivate) {
 }
 
-CSvgIconEngine::CSvgIconEngine(const CSvgIconEngine &other) : QIconEngine(other), d(new CSvgIconEnginePrivate) {
+CSvgIconEngine::CSvgIconEngine(const CSvgIconEngine &other) : QIconEngine(other), d(new CSvgIconEnginePrivate()) {
     d->svgFiles = other.d->svgFiles;
+    d->currentColor = other.d->currentColor;
 }
 
 CSvgIconEngine::CSvgIconEngine(const QString &currentColor) : d(new CSvgIconEnginePrivate) {

@@ -2,6 +2,12 @@
 
 #include <QDateTime>
 #include <QPaintEvent>
+#include <QStyle>
+#include <QStyleOptionButton>
+#include <QStylePainter>
+
+#include "QMCss.h"
+#include "QMView.h"
 
 class CPushButtonPrivate {
     Q_DECLARE_PUBLIC(CPushButton)
@@ -205,6 +211,17 @@ bool CPushButton::event(QEvent *event) {
     return QPushButton::event(event);
 }
 
+void CPushButton::paintEvent(QPaintEvent *event) {
+    QStylePainter p(this);
+    QStyleOptionButton option;
+    initStyleOption(&option);
+
+    // Correct icon color
+    QSvgUri::tryFallbackIconColor(option.icon, [this]() { return QMCss::ColorToCssString(currentTextColor()); });
+
+    p.drawControl(QStyle::CE_PushButton, option);
+}
+
 void CPushButton::nextCheckState() {
     Q_D(CPushButton);
     if (d->m_autoCheck) {
@@ -218,4 +235,27 @@ void CPushButton::checkStateSet() {
 
     QPushButton::checkStateSet();
     d->reloadIcon();
+}
+
+QColor CPushButton::currentTextColor(const QSize &hint) const {
+    auto size = hint.isEmpty() ? minimumSizeHint() : hint;
+
+    QStyleOptionButton option2;
+    initStyleOption(&option2);
+    option2.rect.setSize(size);
+    option2.text = QChar(0x25A0);
+    option2.icon = {};
+    option2.iconSize = {};
+
+    QPixmap pixmap = QMView::createDeviceRenderPixmap(window()->windowHandle(), size);
+    pixmap.fill(Qt::transparent);
+    QPainter p2(&pixmap);
+    style()->drawControl(QStyle::CE_PushButtonLabel, &option2, &p2, this);
+
+    QImage image = pixmap.toImage();
+    int centerX = image.width() / 2;
+    int centerY = image.height() / 2;
+    QColor color = image.pixelColor(centerX, centerY);
+
+    return color;
 }

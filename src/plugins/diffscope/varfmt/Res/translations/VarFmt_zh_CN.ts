@@ -68,7 +68,7 @@
 <context>
     <name>VarFmt::Internal::VarFmtPlugin</name>
     <message>
-        <location filename="../../Internal/VarFmtPlugin.cpp" line="37"/>
+        <location filename="../../Internal/VarFmtPlugin.cpp" line="38"/>
         <source>Initializing variable formats converter...</source>
         <translation>初始化易变格式转换器...</translation>
     </message>

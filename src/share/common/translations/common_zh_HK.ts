@@ -189,14 +189,6 @@
         <source>Save As File</source>
         <translation type="unfinished"></translation>
     </message>
-    <message>
-        <source>Restore all</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>The following files have been detected that closed unexpectedly, would you like to restore them?</source>
-        <translation type="unfinished"></translation>
-    </message>
 </context>
 <context>
     <name>Core::DocumentWatcher</name>

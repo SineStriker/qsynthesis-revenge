@@ -32,4 +32,9 @@ background-color: rgba(255, 0, 0, 25%);
     void TrackPanel::extensionInitialized() {
     }
 
+    QMenu *TrackPanel::createCardMenu() const {
+        auto orgMenu = CDockToolWindow::createCardMenu();
+        return orgMenu;
+    }
+
 }

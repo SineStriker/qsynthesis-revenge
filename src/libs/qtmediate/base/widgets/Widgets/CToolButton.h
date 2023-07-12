@@ -7,6 +7,8 @@
 #include "QMWidgetsGlobal.h"
 #include "QSvgUri.h"
 
+class CToolButtonPrivate;
+
 class QMWIDGETS_EXPORT CToolButton : public QToolButton {
     Q_OBJECT
 
@@ -18,8 +20,11 @@ class QMWIDGETS_EXPORT CToolButton : public QToolButton {
     Q_PROPERTY(QSvgUri iconOverChecked READ iconOverChecked WRITE setIconOverChecked NOTIFY iconChanged)
     Q_PROPERTY(QSvgUri iconDownChecked READ iconDownChecked WRITE setIconDownChecked NOTIFY iconChanged)
     Q_PROPERTY(QSvgUri iconDisabled READ iconDisabled WRITE setIconDisabled NOTIFY iconChanged)
+
 public:
     explicit CToolButton(QWidget *parent = nullptr);
+    explicit CToolButton(const QString &text, QWidget *parent = nullptr);
+    CToolButton(const QIcon &icon, const QString &text, QWidget *parent = nullptr);
     ~CToolButton();
 
 public:
@@ -48,25 +53,20 @@ public:
     void setAutoCheck(bool autoCheck);
 
 protected:
-    QSvgUri m_svgUris[7];
-
-    QIcon m_iconUp;
-    QIcon m_iconOver;
-    QIcon m_iconDown;
-    QIcon m_iconUpChecked;
-    QIcon m_iconOverChecked;
-    QIcon m_iconDownChecked;
-    QIcon m_iconDisabled;
-
-    bool m_autoCheck;
-
     bool event(QEvent *event) override;
+
+    void paintEvent(QPaintEvent *event) override;
 
     void nextCheckState() override;
     void checkStateSet() override;
 
-private:
-    void reloadIcon();
+    QColor currentTextColor(const QSize &hint = {}) const;
+
+protected:
+    CToolButton(CToolButtonPrivate &d, QWidget *parent = nullptr);
+    QScopedPointer<CToolButtonPrivate> d_ptr;
+
+    Q_DECLARE_PRIVATE(CToolButton);
 
 signals:
     void iconChanged();

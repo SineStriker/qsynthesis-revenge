@@ -103,11 +103,11 @@
     </message>
     <message>
         <source>Log Error</source>
-        <translation>日志错误</translation>
+        <translation type="vanished">日志错误</translation>
     </message>
     <message>
         <source>Failed to create log!</source>
-        <translation>无法创建日志！</translation>
+        <translation type="vanished">无法创建日志！</translation>
     </message>
     <message>
         <source>File is opened</source>
@@ -264,7 +264,7 @@ The application is about to exit because an unresolvable exception has occurred,
     <name>Core::ICoreWindow</name>
     <message>
         <source>Can&apos;t find editor of the file %1!</source>
-        <translation>无法找到 %1 的编辑器！</translation>
+        <translation type="vanished">无法找到 %1 的编辑器！</translation>
     </message>
     <message>
         <source>Failed to create main menu.</source>
@@ -273,6 +273,14 @@ The application is about to exit because an unresolvable exception has occurred,
     <message>
         <source>Failed to create internal action context.</source>
         <translation>无法创建内部菜单。</translation>
+    </message>
+    <message>
+        <source>%1: not a file!</source>
+        <translation>%1：不是一个文件！</translation>
+    </message>
+    <message>
+        <source>%1: Can&apos;t find editor of file!</source>
+        <translation>%1：找不到编辑器！</translation>
     </message>
 </context>
 <context>
@@ -353,6 +361,13 @@ The application is about to exit because an unresolvable exception has occurred,
     <message>
         <source>Failed to create main toolbar.</source>
         <translation>无法创建主工具栏。</translation>
+    </message>
+</context>
+<context>
+    <name>Core::IProjectWindowPrivate</name>
+    <message>
+        <source>There are unsaved changes, do you want to save them?</source>
+        <translation>存在未保存的更改，是否保存？</translation>
     </message>
 </context>
 <context>
@@ -526,6 +541,14 @@ The application is about to exit because an unresolvable exception has occurred,
         <source>More...</source>
         <translation>更多...</translation>
     </message>
+    <message>
+        <source>Exit Actions</source>
+        <translation>关闭组</translation>
+    </message>
+    <message>
+        <source>Close</source>
+        <translation>关闭</translation>
+    </message>
 </context>
 <context>
     <name>Core::Internal::DisplayPage</name>
@@ -599,7 +622,7 @@ The application is about to exit because an unresolvable exception has occurred,
     <name>Core::Internal::HomeRecoveryWidget</name>
     <message>
         <source>No data.</source>
-        <translation>没有数据。</translation>
+        <translation type="vanished">没有数据。</translation>
     </message>
 </context>
 <context>
@@ -658,7 +681,7 @@ The application is about to exit because an unresolvable exception has occurred,
     </message>
     <message>
         <source>Failure Recovery</source>
-        <translation>故障恢复</translation>
+        <translation type="vanished">故障恢复</translation>
     </message>
 </context>
 <context>
@@ -723,11 +746,11 @@ The application is about to exit because an unresolvable exception has occurred,
     </message>
     <message>
         <source>Exit Actions</source>
-        <translation>关闭组</translation>
+        <translation type="vanished">关闭组</translation>
     </message>
     <message>
         <source>Close</source>
-        <translation>关闭</translation>
+        <translation type="vanished">关闭</translation>
     </message>
     <message>
         <source>Play</source>
@@ -863,6 +886,37 @@ The application is about to exit because an unresolvable exception has occurred,
     <message>
         <source>Settings</source>
         <translation>设置</translation>
+    </message>
+</context>
+<context>
+    <name>Core::SectionBarPrivate</name>
+    <message>
+        <source>Add time signature here</source>
+        <translation>此处添加拍号</translation>
+    </message>
+    <message>
+        <source>Edit time signature here</source>
+        <translation>编辑此处拍号</translation>
+    </message>
+    <message>
+        <source>Remove</source>
+        <translation>删除</translation>
+    </message>
+    <message>
+        <source>Edit</source>
+        <translation>编辑</translation>
+    </message>
+    <message>
+        <source>Add tempo</source>
+        <translation>添加曲速</translation>
+    </message>
+    <message>
+        <source>Add time signature</source>
+        <translation>添加拍号</translation>
+    </message>
+    <message>
+        <source>Edit time signature</source>
+        <translation>编辑拍号</translation>
     </message>
 </context>
 <context>

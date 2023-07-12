@@ -5,6 +5,7 @@
 #include <QStyleOptionButton>
 #include <QStylePainter>
 
+#include "QMCss.h"
 #include "QMView.h"
 
 CTabButton::CTabButton(QWidget *parent) : CPushButton(parent) {
@@ -15,8 +16,7 @@ CTabButton::CTabButton(const QString &text, QWidget *parent) : CPushButton(text,
     init();
 }
 
-CTabButton::CTabButton(const QIcon &icon, const QString &text, QWidget *parent)
-    : CPushButton(icon, text, parent) {
+CTabButton::CTabButton(const QIcon &icon, const QString &text, QWidget *parent) : CPushButton(icon, text, parent) {
     init();
 }
 
@@ -39,26 +39,31 @@ void CTabButton::setSpaceRatio(double ratio) {
 QSize CTabButton::sizeHint() const {
     QSize sz = QPushButton::sizeHint();
     QSize iconSz = iconSize();
-    if (paintedIcon().isNull()) {
+    if (icon().isNull()) {
         iconSz = QSize(0, 0);
     }
     int offset = iconSz.width() * m_spaceRatio;
-    return QSize(sz.width() + offset, sz.height());
+    return {sz.width() + offset, sz.height()};
 }
 
 QSize CTabButton::minimumSizeHint() const {
     return sizeHint();
 }
 
-QIcon CTabButton::paintedIcon() const {
-    return icon();
-}
-
 void CTabButton::paintEvent(QPaintEvent *event) {
-    QSize sz = iconSize();
-    QPixmap tmp = paintedIcon().pixmap(sz); // Get the pixmap to apply with right size
+    Q_UNUSED(event)
 
-    sz.rwidth() *= 1 + m_spaceRatio; // Multiply width
+    QStylePainter p(this);
+    QStyleOptionButton option;
+    initStyleOption(&option);
+
+    // Correct icon color
+    QSvgUri::tryFallbackIconColor(option.icon, [this]() { return QMCss::ColorToCssString(currentTextColor()); });
+
+    QSize sz = iconSize();
+    QPixmap tmp = option.icon.pixmap(sz); // Get the pixmap to apply with right size
+
+    sz.rwidth() *= 1 + m_spaceRatio;      // Multiply width
 
     QPixmap exp = QMView::createDeviceRenderPixmap(window()->windowHandle(), sz); // Expended
     exp.fill(Qt::transparent);
@@ -66,14 +71,8 @@ void CTabButton::paintEvent(QPaintEvent *event) {
     QPainter painter(&exp);
     painter.drawPixmap(QRect(QPoint(), iconSize()), tmp);
 
-    QStylePainter p(this);
-    QStyleOptionButton option;
-    initStyleOption(&option);
-
     option.icon = QIcon(exp);                          // Change to real icon
     option.iconSize = tmp.isNull() ? QSize(0, 0) : sz; // Change to real size
 
-    p.drawControl(QStyle::CE_PushButton, option); // From Qt source
-
-    Q_UNUSED(event)
+    p.drawControl(QStyle::CE_PushButton, option);      // From Qt source
 }

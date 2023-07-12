@@ -33,6 +33,8 @@ namespace Core {
     public:
         CommandPalette *commandPalette() const;
 
+        Q_INVOKABLE void closeWindow(bool showHome);
+
         Q_INVOKABLE void openFile(const QString &path);
 
         Q_INVOKABLE void openDirectory(const QString &path);

@@ -32,6 +32,8 @@ namespace Core {
         CDockFrame *mainDock() const;
         PianoRoll *pianoRoll() const;
 
+    public:
+
     protected:
         void nextLoadingState(Core::IWindow::State nextState) override;
 

@@ -4,12 +4,12 @@
 <context>
     <name>Core::CommandCategory</name>
     <message>
-        <location filename="../../Internal/ScriptMgrPlugin.cpp" line="71"/>
+        <location filename="../../Internal/ScriptMgrPlugin.cpp" line="70"/>
         <source>Script Manager</source>
         <translation>脚本管理器</translation>
     </message>
     <message>
-        <location filename="../../Internal/ScriptMgrPlugin.cpp" line="72"/>
+        <location filename="../../Internal/ScriptMgrPlugin.cpp" line="71"/>
         <source>Batch Process</source>
         <translation>批处理</translation>
     </message>
@@ -229,12 +229,12 @@ Continue loading anyway?</source>
 <context>
     <name>ScriptMgr::Internal::ScriptMgrPlugin</name>
     <message>
-        <location filename="../../Internal/ScriptMgrPlugin.cpp" line="40"/>
+        <location filename="../../Internal/ScriptMgrPlugin.cpp" line="39"/>
         <source>Initializing script manager...</source>
         <translation>初始化脚本管理器...</translation>
     </message>
     <message>
-        <location filename="../../Internal/ScriptMgrPlugin.cpp" line="45"/>
+        <location filename="../../Internal/ScriptMgrPlugin.cpp" line="44"/>
         <source>Failed to load action configuration!</source>
         <translation type="unfinished"></translation>
     </message>

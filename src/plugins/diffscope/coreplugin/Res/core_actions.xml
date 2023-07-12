@@ -14,6 +14,9 @@
                 <action id="Languages" command="Preferences: Locales And Languages"
                         shortcut="Ctrl+K,Ctrl+L"/>
             </menu>
+            <group id="ExitGroup">
+                <action id="CloseFile" command="File: Close File"/>
+            </group>
         </menu>
 
         <menu id="Help">

@@ -60,6 +60,7 @@ QPixmap CDockCardPrivate::cardShot() const {
 
 QMenu *CDockCardPrivate::createViewModeMenu(CDockCard *card) {
     auto menu = new QMenu(card);
+    menu->setTitle(CDockCard::tr("View Mode"));
 
     auto dockPinnedAction = new QAction(CDockCard::tr("Dock pinned"), menu);
     auto floatAction = new QAction(CDockCard::tr("Float"), menu);

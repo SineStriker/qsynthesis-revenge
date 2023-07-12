@@ -26,8 +26,6 @@ public:
 protected:
     double m_spaceRatio;
 
-    virtual QIcon paintedIcon() const;
-
     void paintEvent(QPaintEvent *event) override;
 
 signals:

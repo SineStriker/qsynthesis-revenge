@@ -95,9 +95,6 @@ namespace Core {
             saveFileItem->setText(tr("&Save"));
             saveAsFileItem->setText(tr("Save &As..."));
 
-            exitGroupItem->setText(tr("Exit Actions"));
-            closeFileItem->setText(tr("Close"));
-
             undoGroupItem->setText(tr("Undo Actions"));
             undoItem->setText(tr("&Undo"));
             redoItem->setText(tr("&Redo"));
@@ -172,9 +169,6 @@ namespace Core {
             saveGroupItem = new ActionItem("core.SaveGroup", new QActionGroup(this), this);
             saveFileItem = new ActionItem("core.SaveFile", new QAction(this), this);
             saveAsFileItem = new ActionItem("core.SaveAsFile", new QAction(this), this);
-
-            exitGroupItem = new ActionItem("core.ExitGroup", new QActionGroup(this), this);
-            closeFileItem = new ActionItem("core.CloseFile", new QAction(this), this);
 
             // Edit
             undoGroupItem = new ActionItem("core.UndoGroup", new QActionGroup(this), this);
@@ -280,11 +274,6 @@ namespace Core {
                 ICore::instance()->documentSystem()->saveFileBrowse(iWin->window(), iWin->doc()); //
             });
 
-            connect(closeFileItem->action(), &QAction::triggered, this, [iWin, win]() {
-                iWin->setProperty("choruskit_show_home", true);
-                win->close();
-            });
-
             connect(stopItem->action(), &QAction::triggered, this, [this, iWin]() {
                 iWin->requestGlobalEvent("playback.stop");
                 iWin->setGlobalAttribute("playback.playing", false);
@@ -341,9 +330,6 @@ namespace Core {
                 saveGroupItem,
                 saveFileItem,
                 saveAsFileItem,
-
-                exitGroupItem,
-                closeFileItem,
 
                 undoGroupItem,
                 undoItem,

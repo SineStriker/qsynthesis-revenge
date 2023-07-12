@@ -625,6 +625,18 @@ namespace Core {
         return d->cp;
     }
 
+    void ICoreWindow::closeWindow(bool showHome) {
+        if (!showHome) {
+            window()->close();
+            return;
+        }
+
+        setProperty("choruskit_show_home", true);
+        if (!window()->close()) {
+            setProperty("choruskit_show_home", QVariant());
+        }
+    }
+
     void ICoreWindow::openFile(const QString &path) {
         Q_D(ICoreWindow);
 

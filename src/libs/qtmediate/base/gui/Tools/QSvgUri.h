@@ -49,6 +49,8 @@ public:
     static QLatin1String MetaFunctionName();
 
     QMGUI_EXPORT friend QDebug operator<<(QDebug debug, const QSvgUri &uri);
+
+    static void tryFallbackIconColor(QIcon &icon, const std::function<QString()> &getColor);
 };
 
 Q_DECLARE_METATYPE(QSvgUri)

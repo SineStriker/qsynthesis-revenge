@@ -12,6 +12,8 @@ namespace QMCss {
 
     QMGUI_EXPORT QColor CssStringToColor(const QString &str);
 
+    QMGUI_EXPORT QString ColorToCssString(const QColor &color);
+
 }
 
 #endif // QMCSS_H

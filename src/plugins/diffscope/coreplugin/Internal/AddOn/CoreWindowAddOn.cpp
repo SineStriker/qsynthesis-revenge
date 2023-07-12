@@ -55,6 +55,9 @@ namespace Core::Internal {
         colorThemesItem->setText(tr("&Color Themes..."));
         languagesItem->setText(tr("&Locales And Languages..."));
 
+        exitGroupItem->setText(tr("Exit Actions"));
+        closeFileItem->setText(tr("Close"));
+
         welcomeGroupItem->setText(tr("Welcome Actions"));
         showHomeItem->setText(tr("Show Home"));
         findActionItem->setText(tr("&Find Action..."));
@@ -84,6 +87,9 @@ namespace Core::Internal {
         settingsItem = new ActionItem("core.Settings", new QAction(this), this);
         colorThemesItem = new ActionItem("core.ColorThemes", new QAction(this), this);
         languagesItem = new ActionItem("core.Languages", new QAction(this), this);
+
+        exitGroupItem = new ActionItem("core.ExitGroup", new QActionGroup(this), this);
+        closeFileItem = new ActionItem("core.CloseFile", new QAction(this), this);
 
         // Help
         aboutGroupItem = new ActionItem("core.AboutGroup", new QActionGroup(this), this);
@@ -137,6 +143,10 @@ namespace Core::Internal {
             iWin->selectTranslations(); //
         });
 
+        connect(closeFileItem->action(), &QAction::triggered, this, [iWin, win]() {
+            iWin->closeWindow(iWin->id() != "home"); //
+        });
+
         connect(aboutPluginsItem->action(), &QAction::triggered, this, [win]() {
             Internal::PluginDialog dlg(win);
             dlg.exec();
@@ -163,24 +173,10 @@ namespace Core::Internal {
         });
 
         iWin->addActionItems({
-            fileItem,
-            helpItem,
-            openGroupItem,
-            newFileItem,
-            openFileItem,
-            openRecentItem,
-            preferenceMenuItem,
-            settingsItem,
-            colorThemesItem,
-            languagesItem,
-            aboutGroupItem,
-            aboutPluginsItem,
-            aboutAppItem,
-            aboutQtItem,
-            welcomeGroupItem,
-            showHomeItem,
-            findActionItem,
-            showRecentFileItem,
+            fileItem,       helpItem,           openGroupItem,  newFileItem,      openFileItem,
+            openRecentItem, preferenceMenuItem, settingsItem,   colorThemesItem,  languagesItem,
+            exitGroupItem,  closeFileItem,      aboutGroupItem, aboutPluginsItem, aboutAppItem,
+            aboutQtItem,    welcomeGroupItem,   showHomeItem,   findActionItem,   showRecentFileItem,
         });
     }
 

@@ -39,6 +39,9 @@ namespace Core {
             ActionItem *colorThemesItem;
             ActionItem *languagesItem;
 
+            ActionItem *exitGroupItem;
+            ActionItem *closeFileItem;
+
             // Help
             ActionItem *aboutGroupItem;
             ActionItem *aboutPluginsItem;

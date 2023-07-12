@@ -6,6 +6,7 @@
 #include <QStyleOptionButton>
 #include <QStylePainter>
 
+#include "QMCss.h"
 #include "QMView.h"
 
 CLTabButton::CLTabButton(QWidget *parent) : CTabButton(parent) {
@@ -16,8 +17,7 @@ CLTabButton::CLTabButton(const QString &text, QWidget *parent) : CTabButton(text
     init();
 }
 
-CLTabButton::CLTabButton(const QIcon &icon, const QString &text, QWidget *parent)
-    : CTabButton(icon, text, parent) {
+CLTabButton::CLTabButton(const QIcon &icon, const QString &text, QWidget *parent) : CTabButton(icon, text, parent) {
     init();
 }
 
@@ -33,11 +33,11 @@ void CLTabButton::init() {
 QSize CLTabButton::sizeHint() const {
     QSize sz = QPushButton::sizeHint();
     QSize iconSz = iconSize();
-    if (paintedIcon().isNull()) {
+    if (icon().isNull()) {
         iconSz = QSize(0, 0);
     }
     int offset = iconSz.height() * m_spaceRatio;
-    return QSize(sz.height(), sz.width() + offset);
+    return {sz.height(), sz.width() + offset};
 }
 
 QSize CLTabButton::minimumSizeHint() const {
@@ -54,13 +54,25 @@ void CLTabButton::setLongitudinalDirection(LongitudinalDirection d) {
 }
 
 void CLTabButton::paintEvent(QPaintEvent *event) {
-    QSize sz = iconSize();
+    Q_UNUSED(event)
 
+    QRect rect = this->rect();
+    QPixmap tvPix = QMView::createDeviceRenderPixmap(window()->windowHandle(), rect.size().transposed());
+    tvPix.fill(Qt::transparent);
+
+    QStylePainter pp(&tvPix, this);
+    QStyleOptionButton option;
+    initStyleOption(&option);
+
+    // Correct icon color
+    QSvgUri::tryFallbackIconColor(option.icon, [this]() { return QMCss::ColorToCssString(currentTextColor()); });
+
+    QSize sz = iconSize();
     QTransform tf;
     tf.rotate((m_longitudinalDirection == TopToBottom) ? -90 : 90);
 
     // Get the pixmap to apply with right size
-    QPixmap tmp = paintedIcon().pixmap(sz).transformed(tf, Qt::SmoothTransformation);
+    QPixmap tmp = option.icon.pixmap(sz).transformed(tf, Qt::SmoothTransformation);
 
     sz.rheight() *= 1 + m_spaceRatio; // Multiply width
 
@@ -71,15 +83,6 @@ void CLTabButton::paintEvent(QPaintEvent *event) {
 
     QPainter painter(&exp);
     painter.drawPixmap(QRect(QPoint(), tmp.size()), tmp);
-
-    QRect rect = this->rect();
-    QPixmap tvPix =
-        QMView::createDeviceRenderPixmap(window()->windowHandle(), rect.size().transposed());
-    tvPix.fill(Qt::transparent);
-
-    QStylePainter pp(&tvPix, this);
-    QStyleOptionButton option;
-    initStyleOption(&option);
 
     option.icon = QIcon(exp);                          // Change to real icon
     option.iconSize = tmp.isNull() ? QSize(0, 0) : sz; // Change to real size
@@ -92,6 +95,4 @@ void CLTabButton::paintEvent(QPaintEvent *event) {
 
     QPainter p(this);
     p.drawPixmap(rect, tvPix.transformed(tf2, Qt::SmoothTransformation));
-
-    Q_UNUSED(event)
 }
