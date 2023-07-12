@@ -7,7 +7,7 @@
 
 #include "AudioDeviceCallback.h"
 #include "utils/IAudioStream.h"
-#include "utils/IErrorProvider.h"
+#include "utils/IErrorStringProvider.h"
 #include "utils/INameProvider.h"
 
 #include <QObject>
@@ -15,7 +15,7 @@
 class AudioDevicePrivate;
 class AudioDriver;
 
-/* abstract */ class AudioDevice: public QObject, public IAudioStream, public INameProvider, public IErrorProvider {
+/* abstract */ class AudioDevice: public QObject, public IAudioStream, public INameProvider, public IErrorStringProvider {
     Q_OBJECT
     Q_DECLARE_PRIVATE(AudioDevice)
     friend class AudioDriver;

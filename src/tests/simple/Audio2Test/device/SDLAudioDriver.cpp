@@ -28,7 +28,7 @@ bool SDLAudioDriver::initialize() {
         d->startEventPoller();
         return AudioDriver::initialize();
     } else {
-        setError(SDL_GetError());
+        setErrorString(SDL_GetError());
         return false;
     }
 }

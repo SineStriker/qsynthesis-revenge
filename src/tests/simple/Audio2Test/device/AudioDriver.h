@@ -7,13 +7,13 @@
 
 #include <QObject>
 
-#include "utils/IErrorProvider.h"
+#include "utils/IErrorStringProvider.h"
 #include "utils/INameProvider.h"
 
 class AudioDriverPrivate;
 class AudioDevice;
 
-/* abstract */ class AudioDriver: public QObject, public INameProvider, public IErrorProvider {
+/* abstract */ class AudioDriver: public QObject, public INameProvider, public IErrorStringProvider {
     Q_OBJECT
     Q_DECLARE_PRIVATE(AudioDriver)
 public:
