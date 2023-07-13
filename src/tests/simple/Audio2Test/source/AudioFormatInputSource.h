@@ -13,6 +13,13 @@ class AudioFormatIO;
 class AudioFormatInputSource: public PositionableAudioSource {
     Q_DECLARE_PRIVATE(AudioFormatInputSource);
 public:
+    enum ResampleMode {
+        SincBestQuality = 0,
+        SincMediumQuality,
+        SincFastest,
+        ZeroOrderHold,
+        Linear,
+    };
     explicit AudioFormatInputSource(AudioFormatIO *audioFormatIo = nullptr, bool takeOwnership = false);
     ~AudioFormatInputSource();
 
@@ -26,6 +33,12 @@ public:
     AudioFormatIO *audioFormatIo() const;
 
     void flush();
+
+    void setDoStereoize(bool doStereoize);
+    bool doStereoize() const;
+
+    void setResamplerMode(ResampleMode mode);
+    ResampleMode resampleMode() const;
 
 protected:
     explicit AudioFormatInputSource(AudioFormatInputSourcePrivate &d);

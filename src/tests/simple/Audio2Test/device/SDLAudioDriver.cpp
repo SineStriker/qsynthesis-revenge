@@ -19,7 +19,7 @@ SDLAudioDriver::SDLAudioDriver(SDLAudioDriverPrivate &d, QObject *parent): Audio
 }
 SDLAudioDriver::~SDLAudioDriver() {
     Q_D(SDLAudioDriver);
-    d->stopEventPoller();
+    finalize();
 }
 
 bool SDLAudioDriver::initialize() {

@@ -20,17 +20,23 @@
 #include <QMessageBox>
 #include <QPushButton>
 #include <QCheckBox>
+#include <QJsonDocument>
+#include <QJsonObject>
+#include <QJsonArray>
 
+#include "buffer/AudioClipSeries.h"
 #include "format/AudioFormatIO.h"
 #include "sndfile.h"
 #include "source/AudioFormatInputSource.h"
+#include "source/AudioSourceClipSeries.h"
 
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
-#include	<sndfile.h>
+#include <QProgressBar>
+#include <sndfile.h>
 
 int main(int argc, char **argv){
 
@@ -72,6 +78,14 @@ int main(int argc, char **argv){
 
     auto fileSpecLabel = new QLabel;
 
+    auto leftLevelMeter = new QProgressBar;
+    leftLevelMeter->setRange(0, 60);
+    leftLevelMeter->setTextVisible(false);
+
+    auto rightLevelMeter = new QProgressBar;
+    rightLevelMeter->setRange(0, 60);
+    rightLevelMeter->setTextVisible(false);
+
     auto browseFileButton = new QPushButton("Browse");
 
     auto startButton = new QPushButton("Start");
@@ -89,6 +103,8 @@ int main(int argc, char **argv){
     layout->addRow(fileNameLabel);
     layout->addRow(fileSpecLabel);
     layout->addRow(browseFileButton);
+    layout->addRow("Level (L)", leftLevelMeter);
+    layout->addRow("Level (R)", rightLevelMeter);
     layout->addRow("Transport", transportSlider);
     layout->addRow(playPauseButton);
     layout->addRow(enableLoopingCheckBox);
@@ -115,12 +131,75 @@ int main(int argc, char **argv){
     QObject *deviceComboBoxCtx = nullptr;
     QObject *driverComboBoxCtx = nullptr;
 
+    QList<QFile *> srcFileList;
+    QList<AudioFormatInputSource *> srcList;
+    QList<PositionableMixerAudioSource *> trackSrcList;
+    PositionableMixerAudioSource mixer;
+
+    TransportAudioSource transportSrc;
+    transportSrc.setSource(&mixer);
+    AudioSourcePlayback playback(&transportSrc);
+
+    auto reloadFile = [&](const QString &fileName) {
+        if(fileName.isEmpty()) return;
+        transportSrc.lock();
+        mixer.removeAllSource();
+        for(auto ptr: trackSrcList) delete ptr;
+        for(auto ptr: srcList) delete ptr;
+        for(auto ptr: srcFileList) delete ptr;
+        srcFileList.clear();
+        srcList.clear();
+        trackSrcList.clear();
+
+        fileNameLabel->setText(fileName);
+        QFile f(fileName);
+        f.open(QFile::ReadOnly);
+        auto doc = QJsonDocument::fromJson(f.readAll());
+        for(const auto &audioFileNameJsonVal: doc.object().value("audioFiles").toArray()) {
+            auto audioFile = new QFile(audioFileNameJsonVal.toString());
+            qDebug() << audioFileNameJsonVal.toString();
+            srcFileList.append(audioFile);
+            srcList.append(new AudioFormatInputSource(new AudioFormatIO(audioFile), true));
+        }
+
+        qint64 effectiveLength = 0;
+        for(const auto &trackSpec: doc.object().value("tracks").toArray()) {
+            auto clipSeries = new AudioSourceClipSeries;
+            auto trackSrc = new PositionableMixerAudioSource;
+            trackSrc->addSource(clipSeries, true);
+            trackSrcList.append(trackSrc);
+            trackSrc->setGain(trackSpec.toObject().value("gain").toDouble(1.0));
+            trackSrc->setPan(trackSpec.toObject().value("pan").toDouble(0.0));
+            for(const auto &clipSpec: trackSpec.toObject().value("clips").toArray()) {
+                auto audioId = clipSpec.toObject().value("audio").toInt();
+                auto positionSec = clipSpec.toObject().value("pos").toDouble();
+                auto startPosSec = clipSpec.toObject().value("start").toDouble();
+                auto lengthSec = clipSpec.toObject().value("length").toDouble();
+                qint64 position = positionSec * device->sampleRate();
+                qint64 startPos = startPosSec * device->sampleRate();
+                qint64 length = lengthSec * device->sampleRate();
+                if(!clipSeries->addClip({position, srcList[audioId], startPos, length})) {
+                    QMessageBox::critical(&mainWindow, "Mixer", "Cannot add clip.");
+                }
+            }
+            effectiveLength = std::max(effectiveLength, clipSeries->effectiveLength());
+            mixer.addSource(trackSrc);
+        }
+        transportSrc.unlock();
+        qint64 audioLength = effectiveLength;
+        transportSlider->setRange(0, audioLength - 1);
+        loopingStartSlider->setRange(0, audioLength - 1);
+        loopingEndSlider->setRange(0, audioLength);
+        loopingEndSlider->setValue(audioLength);
+    };
+
     auto restartDevice = [&](){
         if(!device) return;
         device->close();
         if(!device->open(bufferSizeComboBox->currentText().toULongLong(), sampleRateComboBox->currentText().toDouble())) {
             QMessageBox::critical(&mainWindow, "Device Error", device->errorString());
         }
+        reloadFile(fileNameLabel->text());
     };
 
     QObject::connect(driverComboBox, QOverload<int>::of(&QComboBox::currentIndexChanged), [&](int index){
@@ -179,44 +258,32 @@ int main(int argc, char **argv){
 
     if(driverComboBox->count()) emit driverComboBox->currentIndexChanged(driverComboBox->currentIndex());
 
-    AudioFormatInputSource src;
-    AudioFormatIO srcIo;
-    QFile srcFile;
-    src.setAudioFormatIo(&srcIo);
-    TransportAudioSource transportSrc;
-    transportSrc.resetSource(&src);
-    AudioSourcePlayback playback(&transportSrc);
-
     auto availableFormats = AudioFormatIO::availableFormats();
+
+    QObject::connect(&mixer, &PositionableMixerAudioSource::meterUpdated, fileSpecLabel, [=](float ml, float mr){
+        QString text = "bm: ";
+        if(ml == 0) {
+            text += "-inf dB, ";
+            leftLevelMeter->setValue(0);
+        } else {
+            double db = 10 * log(ml/1.0) / log(10);
+            text += QString::number(db, 'f', 1) + " dB, ";
+            leftLevelMeter->setValue(60 + db);
+        }
+        if(mr == 0) {
+            text += "-inf dB, ";
+            rightLevelMeter->setValue(0);
+        } else {
+            double db = 10 * log(mr/1.0) / log(10);
+            text += QString::number(db, 'f', 1) + " dB, ";
+            rightLevelMeter->setValue(60 + db);
+        }
+        fileSpecLabel->setText(text);
+    });
 
     QObject::connect(browseFileButton, &QPushButton::clicked, [&](){
         auto fileName = QFileDialog::getOpenFileName(&mainWindow);
-        if(fileName.isEmpty()) return;
-        fileNameLabel->setText(fileName);
-        srcFile.close();
-        srcFile.setFileName(fileName);
-        srcIo.setStream(&srcFile);
-        if(!srcIo.open(QIODevice::ReadOnly)) {
-            QMessageBox::critical(&mainWindow, "Audio Decode Error", srcIo.errorString());
-            return;
-        }
-        QString majorFormatName, subtypeName;
-        for(const auto &formatInfo: availableFormats) {
-            if(srcIo.majorFormat() != formatInfo.majorFormat) continue;
-            majorFormatName = formatInfo.name;
-            for(const auto &subtypeInfo: formatInfo.subtypes) {
-                if(srcIo.subType() != subtypeInfo.subtype) continue;
-                subtypeName = subtypeInfo.name;
-                break;
-            }
-            break;
-        }
-        fileSpecLabel->setText(QString("mf: %1, st: %2, ch: %3, sr: %4").arg(majorFormatName).arg(subtypeName).arg(srcIo.channels()).arg(srcIo.sampleRate()));
-        qint64 audioLength = srcIo.length();
-        transportSlider->setRange(0, audioLength - 1);
-        loopingStartSlider->setRange(0, audioLength - 1);
-        loopingEndSlider->setRange(0, audioLength);
-        loopingEndSlider->setValue(audioLength);
+        reloadFile(fileName);
     });
 
     QObject::connect(startButton, &QPushButton::clicked, [&](){

@@ -6,13 +6,17 @@
 #define CHORUSKIT_MIXERAUDIOSOURCE_H
 
 #include <QList>
+#include <QObject>
 
 #include "AudioSource.h"
 
 class MixerAudioSourcePrivate;
 
-class MixerAudioSource: public AudioSource {
+class MixerAudioSource: public QObject, public AudioSource {
+    Q_OBJECT
+#define d_ptr AudioSource::d_ptr
     Q_DECLARE_PRIVATE(MixerAudioSource)
+#undef d_ptr
 public:
 
     MixerAudioSource();
@@ -26,6 +30,15 @@ public:
     void removeSource(AudioSource *src);
     void removeAllSource();
     QList<AudioSource *> sources() const;
+
+    void setGain(float gain);
+    float gain() const;
+
+    void setPan(float pan);
+    float pan() const;
+
+signals:
+    void meterUpdated(float leftMagnitude, float rightMagnitude);
 
 protected:
     explicit MixerAudioSource(MixerAudioSourcePrivate &d);

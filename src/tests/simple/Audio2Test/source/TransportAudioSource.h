@@ -24,11 +24,15 @@ public:
     bool open(qint64 bufferSize, double sampleRate) override;
     void close() override;
 
-    PositionableAudioSource *resetSource(PositionableAudioSource *src);
+    void setSource(PositionableAudioSource *src);
+    PositionableAudioSource *source() const;
 
     void play();
     bool isPlaying() const;
     void pause();
+
+    void lock();
+    void unlock();
 
     qint64 position() const;
     void setPosition(qint64 position);

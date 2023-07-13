@@ -45,6 +45,7 @@ SDLAudioDevice::SDLAudioDevice(const QString &name, AudioDriver *driver, QObject
 SDLAudioDevice::SDLAudioDevice(SDLAudioDevicePrivate &d, QObject *parent): AudioDevice(d, parent) {
 }
 SDLAudioDevice::~SDLAudioDevice() {
+    close();
 }
 
 static void sdlCallback(void *d, quint8 *rawBuf, int length) {

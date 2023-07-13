@@ -14,6 +14,11 @@ AudioFormatInputSource::AudioFormatInputSource(AudioFormatIO *audioFormatIo, boo
     setAudioFormatIo(audioFormatIo, takeOwnership);
 }
 AudioFormatInputSource::~AudioFormatInputSource() {
+    Q_D(AudioFormatInputSource);
+    AudioFormatInputSource::close();
+    if(d->takeOwnership) {
+        delete d->io;
+    }
 }
 AudioFormatInputSource::AudioFormatInputSource(AudioFormatInputSourcePrivate &d): PositionableAudioSource(d) {
 }
@@ -32,6 +37,7 @@ long AudioFormatInputSourcePrivate::fetchInData(float **data) {
 
 qint64 AudioFormatInputSource::read(const AudioSourceReadData &readData) {
     Q_D(AudioFormatInputSource);
+    QMutexLocker locker(&d->mutex);
     auto readLength = std::min(readData.length, length() - d->position);
     if(!d->io) return readLength;
     if(readLength > bufferSize()) d->resizeOutDataBuffers(readLength);
@@ -40,6 +46,9 @@ qint64 AudioFormatInputSource::read(const AudioSourceReadData &readData) {
     int channelCount = std::min(d->io->channels(), readData.buffer->channelCount());
     for(int ch = 0; ch < channelCount; ch++) {
         readData.buffer->setSampleRange(ch, readData.startPos, readLength, outBuf, ch, 0);
+    }
+    if(d->doStereoize && d->io->channels() == 1 && readData.buffer->channelCount() > 1) {
+        readData.buffer->setSampleRange(1, readData.startPos, readLength, outBuf, 0, 0);
     }
     d->position += readLength;
     return readLength;
@@ -51,19 +60,21 @@ qint64 AudioFormatInputSource::length() const {
 }
 void AudioFormatInputSource::setNextReadPosition(qint64 pos) {
     Q_D(AudioFormatInputSource);
+    QMutexLocker locker(&d->mutex);
     src_reset(d->srcState);
     if(d->io) d->io->seek(pos / d->ratio);
     PositionableAudioSource::setNextReadPosition(pos);
 }
 bool AudioFormatInputSource::open(qint64 bufferSize, double sampleRate) {
     Q_D(AudioFormatInputSource);
+    QMutexLocker locker(&d->mutex);
     if(!d->io) return false;
     if(d->io->open(QIODevice::ReadOnly)) {
         d->ratio = sampleRate / d->io->sampleRate();
         int srcError = 0;
         d->srcState = src_callback_new([](void *cbData, float **data){
             return reinterpret_cast<AudioFormatInputSourcePrivate *>(cbData)->fetchInData(data);
-        }, 0, d->io->channels(), &srcError, d);
+        }, d->resampleMode, d->io->channels(), &srcError, d);
         if(srcError) {
             qWarning() << src_strerror(srcError);
             return false;
@@ -81,6 +92,7 @@ bool AudioFormatInputSource::open(qint64 bufferSize, double sampleRate) {
 }
 void AudioFormatInputSource::close() {
     Q_D(AudioFormatInputSource);
+    QMutexLocker locker(&d->mutex);
     if(!d->io) return;
     d->io->close();
     d->ratio = 0;
@@ -89,11 +101,13 @@ void AudioFormatInputSource::close() {
 }
 
 void AudioFormatInputSource::setAudioFormatIo(AudioFormatIO *audioFormatIo, bool takeOwnership) {
+    Q_ASSERT(!isOpened());
     if(isOpened()) {
         qWarning() << "Cannot set audio format io when source is opened.";
         return;
     }
     Q_D(AudioFormatInputSource);
+    QMutexLocker locker(&d->mutex);
     d->io = audioFormatIo;
     d->takeOwnership = takeOwnership;
     flush();
@@ -106,4 +120,27 @@ AudioFormatIO *AudioFormatInputSource::audioFormatIo() const {
 void AudioFormatInputSource::flush() {
     Q_D(AudioFormatInputSource);
     if(d->srcState) src_reset(d->srcState);
+}
+
+void AudioFormatInputSource::setDoStereoize(bool doStereoize) {
+    Q_D(AudioFormatInputSource);
+    QMutexLocker locker(&d->mutex);
+    d->doStereoize = doStereoize;
+}
+bool AudioFormatInputSource::doStereoize() const {
+    Q_D(const AudioFormatInputSource);
+    return d->doStereoize;
+}
+void AudioFormatInputSource::setResamplerMode(AudioFormatInputSource::ResampleMode mode) {
+    Q_ASSERT(!isOpened());
+    if(isOpened()) {
+        qWarning() << "Cannot set resampler mode when source is opened.";
+        return;
+    }
+    Q_D(AudioFormatInputSource);
+    d->resampleMode = mode;
+}
+AudioFormatInputSource::ResampleMode AudioFormatInputSource::resampleMode() const {
+    Q_D(const AudioFormatInputSource);
+    return d->resampleMode;
 }

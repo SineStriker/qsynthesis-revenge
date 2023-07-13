@@ -14,6 +14,7 @@ PositionableMixerAudioSource::PositionableMixerAudioSource(PositionableMixerAudi
 
 PositionableMixerAudioSource::~PositionableMixerAudioSource() {
     Q_D(PositionableMixerAudioSource);
+    PositionableMixerAudioSource::close();
     d->deleteOwnedSources();
 }
 
@@ -30,21 +31,39 @@ bool PositionableMixerAudioSource::open(qint64 bufferSize, double sampleRate) {
 }
 qint64 PositionableMixerAudioSource::read(const AudioSourceReadData &readData) {
     Q_D(PositionableMixerAudioSource);
-    QMutexLocker locker(&d->mutex);
-    auto bufferLength = length();
-    auto channelCount = readData.buffer->channelCount();
-    for(int i = 0; i < channelCount; i++) {
-        readData.buffer->clear(i, readData.startPos, readData.length);
-    }
-    auto readLength = std::min(readData.length, bufferLength - nextReadPosition());
-    AudioBuffer tmpBuf(channelCount, readLength);
-    for(auto src: sources()) {
-        src->read(&tmpBuf);
-        for(int i = 0; i < channelCount; i++) {
-            readData.buffer->addSampleRange(i, readData.startPos, readLength, tmpBuf, i, 0);
+    QList<float> magnitude;
+    qint64 readLength;
+    {
+        QMutexLocker locker(&d->mutex);
+        auto bufferLength = length();
+        auto channelCount = readData.buffer->channelCount();
+        for (int i = 0; i < channelCount; i++) {
+            readData.buffer->clear(i, readData.startPos, readData.length);
         }
+        readLength = std::min(readData.length, bufferLength - nextReadPosition());
+        AudioBuffer tmpBuf(channelCount, readLength);
+        for (auto src : sources()) {
+            src->read(&tmpBuf);
+            for (int i = 0; i < channelCount; i++) {
+                readData.buffer->addSampleRange(i, readData.startPos, readLength, tmpBuf, i, 0);
+            }
+        }
+        applyGainAndPan({readData.buffer, readData.startPos, readLength}, d->gain, d->pan);
+
+        for (int i = 0; i < channelCount; i++) {
+            magnitude.append(readData.buffer->magnitude(i, readData.startPos, readLength));
+        }
+        d->position += readLength;
     }
-    d->position += readLength;
+
+    float magL = 0, magR = 0;
+    if(magnitude.length() >= 2) {
+        magL = magnitude[0];
+        magR = magnitude[1];
+    } else if(magnitude.length() == 1) {
+        magL = magR = magnitude[0];
+    }
+    emit meterUpdated(magL, magR);
     return readLength;
 }
 void PositionableMixerAudioSource::close() {
@@ -76,6 +95,7 @@ void PositionableMixerAudioSource::setNextReadPosition(qint64 pos) {
 bool PositionableMixerAudioSource::addSource(PositionableAudioSource *src, bool takeOwnership) {
     Q_D(PositionableMixerAudioSource);
     QMutexLocker locker(&d->mutex);
+    if(src == this) return false;
     if(d->sourceDict.append(src, takeOwnership).second) {
         if(isOpened()) {
             src->open(bufferSize(), sampleRate());
@@ -102,4 +122,22 @@ QList<PositionableAudioSource *> PositionableMixerAudioSource::sources() const {
     return *reinterpret_cast<QList<PositionableAudioSource *> *>(&sourceList); // Don't worry, this is strictly ok.
 }
 
+void PositionableMixerAudioSource::setGain(float gain) {
+    Q_D(PositionableMixerAudioSource);
+    QMutexLocker locker(&d->mutex);
+    d->gain = gain;
+}
+float PositionableMixerAudioSource::gain() const {
+    Q_D(const PositionableMixerAudioSource);
+    return d->gain;
+}
+void PositionableMixerAudioSource::setPan(float pan) {
+    Q_D(PositionableMixerAudioSource);
+    QMutexLocker locker(&d->mutex);
+    d->pan = pan;
+}
+float PositionableMixerAudioSource::pan() const {
+    Q_D(const PositionableMixerAudioSource);
+    return d->pan;
+}
 

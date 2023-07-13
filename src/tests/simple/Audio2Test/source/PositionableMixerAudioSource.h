@@ -12,8 +12,11 @@
 
 class PositionableMixerAudioSourcePrivate;
 
-class PositionableMixerAudioSource: public PositionableAudioSource {
+class PositionableMixerAudioSource: public QObject, public PositionableAudioSource {
+    Q_OBJECT
+#define d_ptr PositionableAudioSource::d_ptr
     Q_DECLARE_PRIVATE(PositionableMixerAudioSource)
+#undef d_ptr
 public:
     PositionableMixerAudioSource();
     ~PositionableMixerAudioSource() override;
@@ -27,6 +30,16 @@ public:
     void removeSource(PositionableAudioSource *src);
     void removeAllSource();
     QList<PositionableAudioSource *> sources() const;
+
+    void setGain(float gain);
+    float gain() const;
+
+    void setPan(float pan);
+    float pan() const;
+
+signals:
+    void meterUpdated(float magnitudeLeft, float magnitudeRight);
+
 protected:
     explicit PositionableMixerAudioSource(PositionableMixerAudioSourcePrivate &d);
 };

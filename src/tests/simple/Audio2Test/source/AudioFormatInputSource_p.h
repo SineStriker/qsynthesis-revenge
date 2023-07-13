@@ -11,6 +11,7 @@
 #include <samplerate.h>
 
 #include <QVector>
+#include <QMutex>
 
 class AudioFormatIO;
 
@@ -24,10 +25,17 @@ public:
     QVector<float> inData;
     QVector<float> outData;
 
+    bool doStereoize = true;
+
+    QMutex mutex;
+
     void resizeInDataBuffers(qint64 bufferSize);
     void resizeOutDataBuffers(qint64 bufferSize);
 
     long fetchInData(float **data);
+
+    AudioFormatInputSource::ResampleMode resampleMode = AudioFormatInputSource::SincBestQuality;
+
 };
 
 #endif // CHORUSKIT_AUDIOFORMATINPUTSOURCE_P_H

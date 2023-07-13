@@ -34,16 +34,16 @@ float *AudioBuffer::data(int channel) {
 float const *AudioBuffer::constData(int channel) const {
     return m_buffer.at(channel).data();
 }
-std::vector<float> &AudioBuffer::vector(int channel) {
+QVector<float> &AudioBuffer::vector(int channel) {
     return m_buffer[channel];
 }
-const std::vector<float> &AudioBuffer::constVector(int channel) const {
+const QVector<float> &AudioBuffer::constVector(int channel) const {
     return m_buffer.at(channel);
 }
 
 template<typename T>
-static inline std::vector<T> vectorSlice(const std::vector<T> &l, qint64 s, qint64 t = -1) {
-    return std::vector<T>(l.cbegin() + s, t == -1 ? l.cend() : l.cbegin() + s + t);
+static inline QVector<T> vectorSlice(const QVector<T> &l, qint64 s, qint64 t = -1) {
+    return QVector<T>(l.cbegin() + s, t == -1 ? l.cend() : l.cbegin() + s + t);
 }
 
 AudioBuffer AudioBuffer::slice(int startChannelIndex, qint64 startSampleCount, int channelSize, qint64 length) const {

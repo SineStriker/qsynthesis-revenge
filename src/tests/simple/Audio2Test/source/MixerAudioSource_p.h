@@ -7,15 +7,28 @@
 
 #include "MixerAudioSource.h"
 
-#include <QMutex>
+#include <array>
 
+#include <QMutex>
 #include <QMChronMap.h>
 
 #include "AudioSource_p.h"
 
+static inline void applyGainAndPan(const AudioSourceReadData &readData, float gain, float pan) {
+    std::array<float, 2> a = {gain * std::max(1.0f, 1.0f - pan), gain * std::max(1.0f, 1.0f + pan)};
+    int chCnt = std::min(readData.buffer->channelCount(), 2);
+    for(int ch = 0; ch < chCnt; ch++) {
+        readData.buffer->gainSampleRange(ch, readData.startPos, readData.length, a[ch]);
+    }
+}
+
 struct IMixer {
     QMChronMap<AudioSource *, bool> sourceDict;
     QMutex mutex;
+
+    float gain = 1;
+    float pan = 0;
+
     void deleteOwnedSources() const;
     bool start(qint64 bufferSize, double sampleRate) const;
     void stop() const;

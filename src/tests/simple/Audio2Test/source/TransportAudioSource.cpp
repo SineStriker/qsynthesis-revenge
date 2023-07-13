@@ -8,6 +8,7 @@
 TransportAudioSource::TransportAudioSource(QObject *parent) : TransportAudioSource(*new TransportAudioSourcePrivate, parent) {
 }
 TransportAudioSource::~TransportAudioSource() {
+    TransportAudioSource::close();
 }
 TransportAudioSource::TransportAudioSource(TransportAudioSourcePrivate &d, QObject *parent): AudioSource(d), QObject(parent) {
 }
@@ -66,7 +67,7 @@ void TransportAudioSource::close() {
     IAudioStream::close();
 }
 
-PositionableAudioSource *TransportAudioSource::resetSource(PositionableAudioSource *src) {
+void TransportAudioSource::setSource(PositionableAudioSource *src) {
     Q_D(TransportAudioSource);
     QMutexLocker locker(&d->mutex);
     auto curSrc = d->src;
@@ -77,8 +78,12 @@ PositionableAudioSource *TransportAudioSource::resetSource(PositionableAudioSour
             src->open(bufferSize(), sampleRate());
         }
     }
-    return curSrc;
 }
+PositionableAudioSource *TransportAudioSource::source() const {
+    Q_D(const TransportAudioSource);
+    return d->src;
+}
+
 void TransportAudioSource::play() {
     Q_D(TransportAudioSource);
     QMutexLocker locker(&d->mutex);
@@ -124,4 +129,14 @@ void TransportAudioSource::setLoopingRange(qint64 l, qint64 r) {
 void TransportAudioSourcePrivate::_q_positionAboutToChange(qint64 pos) {
     Q_Q(TransportAudioSource);
     emit q->positionAboutToChange(pos);
+}
+
+void TransportAudioSource::lock() {
+    Q_D(TransportAudioSource);
+    d->mutex.lock();
+}
+
+void TransportAudioSource::unlock() {
+    Q_D(TransportAudioSource);
+    d->mutex.unlock();
 }

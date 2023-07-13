@@ -2,7 +2,7 @@
 #define CHORUSKIT_AUDIOBUFFER_H
 
 #include "IAudioSampleContainer.h"
-#include <vector>
+#include <QVector>
 
 
 class AudioBuffer: public IAudioSampleContainer {
@@ -22,15 +22,15 @@ public:
     float *data(int channel);
     float const *constData(int channel) const;
 
-    std::vector<float> &vector(int channel);
-    const std::vector<float> &constVector(int channel) const;
+    QVector<float> &vector(int channel);
+    const QVector<float> &constVector(int channel) const;
 
     AudioBuffer slice(int startChannelIndex, qint64 startSampleCount, int channelSize = -1, qint64 length = -1) const;
 
     static AudioBuffer from(const IAudioSampleProvider &src);
 
 private:
-    std::vector<std::vector<float>> m_buffer;
+    QVector<QVector<float>> m_buffer;
 };
 
 

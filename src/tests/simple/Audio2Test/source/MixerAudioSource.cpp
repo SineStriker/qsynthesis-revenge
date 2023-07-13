@@ -15,7 +15,8 @@ MixerAudioSource::MixerAudioSource(MixerAudioSourcePrivate &d): AudioSource(d) {
 
 MixerAudioSource::~MixerAudioSource() {
     Q_D(MixerAudioSource);
-
+    MixerAudioSource::close();
+    d->deleteOwnedSources();
 }
 
 bool MixerAudioSource::open(qint64 bufferSize, double sampleRate) {
@@ -31,19 +32,36 @@ bool MixerAudioSource::open(qint64 bufferSize, double sampleRate) {
 
 qint64 MixerAudioSource::read(const AudioSourceReadData &readData) {
     Q_D(MixerAudioSource);
-    QMutexLocker locker(&d->mutex);
-    auto channelCount = readData.buffer->channelCount();
-    AudioBuffer tmpBuf(channelCount, readData.length);
+    QList<float> magnitude;
     qint64 readLength = readData.length;
-    for(int i = 0; i < channelCount; i++) {
-        readData.buffer->clear(i, readData.startPos, readLength);
-    }
-    for(auto src: sources()) {
-        readLength = std::min(readLength, src->read(AudioSourceReadData(&tmpBuf, 0, readLength)));
+    {
+        QMutexLocker locker(&d->mutex);
+        auto channelCount = readData.buffer->channelCount();
+        AudioBuffer tmpBuf(channelCount, readData.length);
         for(int i = 0; i < channelCount; i++) {
-            readData.buffer->addSampleRange(i, readData.startPos, readLength, tmpBuf, i, 0);
+            readData.buffer->clear(i, readData.startPos, readLength);
+        }
+        for(auto src: sources()) {
+            readLength = std::min(readLength, src->read(AudioSourceReadData(&tmpBuf, 0, readLength)));
+            for(int i = 0; i < channelCount; i++) {
+                readData.buffer->addSampleRange(i, readData.startPos, readLength, tmpBuf, i, 0);
+            }
+        }
+        applyGainAndPan({readData.buffer, readData.startPos, readLength}, d->gain, d->pan);
+
+        for(int i = 0; i < channelCount; i++) {
+            magnitude.append(readData.buffer->magnitude(i, readData.startPos, readLength));
         }
     }
+
+    float magL = 0, magR = 0;
+    if(magnitude.length() >= 2) {
+        magL = magnitude[0];
+        magR = magnitude[1];
+    } else if(magnitude.length() == 1) {
+        magL = magR = magnitude[0];
+    }
+    emit meterUpdated(magL, magR);
     return readLength;
 }
 
@@ -57,6 +75,7 @@ void MixerAudioSource::close() {
 bool MixerAudioSource::addSource(AudioSource *src, bool takeOwnership) {
     Q_D(MixerAudioSource);
     QMutexLocker locker(&d->mutex);
+    if(src == this) return false;
     if(d->sourceDict.append(src, takeOwnership).second) {
         if(isOpened()) {
             src->open(bufferSize(), sampleRate());
@@ -101,4 +120,23 @@ void IMixer::stop() const {
     auto sourceList = sourceDict.keys();
     std::for_each(sourceList.constBegin(), sourceList.constEnd(), [=](AudioSource *src){ src->close();
     });
+}
+
+void MixerAudioSource::setGain(float gain) {
+    Q_D(MixerAudioSource);
+    QMutexLocker locker(&d->mutex);
+    d->gain = gain;
+}
+float MixerAudioSource::gain() const {
+    Q_D(const MixerAudioSource);
+    return d->gain;
+}
+void MixerAudioSource::setPan(float pan) {
+    Q_D(MixerAudioSource);
+    QMutexLocker locker(&d->mutex);
+    d->pan = pan;
+}
+float MixerAudioSource::pan() const {
+    Q_D(const MixerAudioSource);
+    return d->pan;
 }
