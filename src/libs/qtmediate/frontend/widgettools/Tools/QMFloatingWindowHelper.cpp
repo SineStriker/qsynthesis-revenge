@@ -91,95 +91,121 @@ bool QMFloatingWindowHelperPrivate::dummyEventFilter(QObject *obj, QEvent *event
             }
 
             // Calc the movement by mouse pos
-            int offsetX = pos.x() - m_pressedPos.x();
-            int offsetY = pos.y() - m_pressedPos.y();
+            auto globalPos = QCursor::pos();
+            int offsetX = globalPos.x() - m_pressedPos.x();
+            int offsetY = globalPos.y() - m_pressedPos.y();
 
-            int rectX = m_orgGeometry.x();
-            int rectY = m_orgGeometry.y();
-            int rectW = m_orgGeometry.width();
-            int rectH = m_orgGeometry.height();
+            const int &rectX = m_orgGeometry.x();
+            const int &rectY = m_orgGeometry.y();
+            const int &rectW = m_orgGeometry.width();
+            const int &rectH = m_orgGeometry.height();
 
-            int minW = w->minimumWidth();
-            int minH = w->minimumHeight();
+            auto minSize = w->minimumSizeHint();
+            minSize.rwidth() = qMax(minSize.width(), w->minimumWidth());
+            minSize.rheight() = qMax(minSize.height(), w->minimumHeight());
 
+            auto maxSize = w->maximumSize();
+
+            auto curRect = m_rect;
             switch (m_pressedArea) {
                 case Left: {
-                    int resizeW = w->width() - offsetX;
-                    if (minW <= resizeW) {
-                        w->setGeometry(w->x() + offsetX, rectY, resizeW, rectH);
+                    int resizeW = rectW - offsetX;
+                    if (resizeW >= minSize.width() && resizeW <= maxSize.width()) {
+                        curRect.setRect(rectX + offsetX, curRect.y(), resizeW, curRect.height());
                     }
                     break;
                 }
                 case Right: {
-                    w->setGeometry(rectX, rectY, rectW + offsetX, rectH);
+                    int resizeW = rectW + offsetX;
+                    if (resizeW >= minSize.width() && resizeW <= maxSize.width()) {
+                        curRect.setRect(rectX, curRect.y(), resizeW, curRect.height());
+                    }
                     break;
                 }
                 case Top: {
-                    int resizeH = w->height() - offsetY;
-                    if (minH <= resizeH) {
-                        w->setGeometry(rectX, w->y() + offsetY, rectW, resizeH);
+                    int resizeH = rectH - offsetY;
+                    if (resizeH >= minSize.height() && resizeH <= maxSize.height()) {
+                        curRect.setRect(curRect.x(), rectY + offsetY, curRect.width(), resizeH);
                     }
                     break;
                 }
                 case Bottom: {
-                    w->setGeometry(rectX, rectY, rectW, rectH + offsetY);
+                    int resizeH = rectH + offsetY;
+                    if (resizeH >= minSize.height() && resizeH <= maxSize.height()) {
+                        curRect.setRect(curRect.x(), rectY, curRect.width(), resizeH);
+                    }
                     break;
                 }
                 case TopLeft: {
-                    int resizeW = w->width() - offsetX;
-                    int resizeH = w->height() - offsetY;
-                    if (minW <= resizeW) {
-                        w->setGeometry(w->x() + offsetX, w->y(), resizeW, resizeH);
+                    int resizeW = rectW - offsetX;
+                    int resizeH = rectH - offsetY;
+                    if (resizeW >= minSize.width() && resizeW <= maxSize.width()) {
+                        curRect.setRect(rectX + offsetX, curRect.y(), resizeW, curRect.height());
                     }
-                    if (minH <= resizeH) {
-                        w->setGeometry(w->x(), w->y() + offsetY, resizeW, resizeH);
+                    if (resizeH >= minSize.height() && resizeH <= maxSize.height()) {
+                        curRect.setRect(curRect.x(), rectY + offsetY, curRect.width(), resizeH);
                     }
                     break;
                 }
                 case TopRight: {
                     int resizeW = rectW + offsetX;
-                    int resizeH = w->height() - offsetY;
-                    if (minH <= resizeH) {
-                        w->setGeometry(w->x(), w->y() + offsetY, resizeW, resizeH);
+                    int resizeH = rectH - offsetY;
+                    if (resizeW >= minSize.width() && resizeW <= maxSize.width()) {
+                        curRect.setRect(rectX, curRect.y(), resizeW, curRect.height());
+                    }
+                    if (resizeH >= minSize.height() && resizeH <= maxSize.height()) {
+                        curRect.setRect(curRect.x(), rectY + offsetY, curRect.width(), resizeH);
                     }
                     break;
                 }
                 case BottomLeft: {
-                    int resizeW = w->width() - offsetX;
+                    int resizeW = rectW - offsetX;
                     int resizeH = rectH + offsetY;
-                    if (minW <= resizeW) {
-                        w->setGeometry(w->x() + offsetX, w->y(), resizeW, resizeH);
+                    if (resizeW >= minSize.width() && resizeW <= maxSize.width()) {
+                        curRect.setRect(rectX + offsetX, curRect.y(), resizeW, curRect.height());
                     }
-                    if (minH <= resizeH) {
-                        w->setGeometry(w->x(), w->y(), resizeW, resizeH);
+                    if (resizeH >= minSize.height() && resizeH <= maxSize.height()) {
+                        curRect.setRect(curRect.x(), rectY, curRect.width(), resizeH);
                     }
                     break;
                 }
                 case BottomRight: {
                     int resizeW = rectW + offsetX;
                     int resizeH = rectH + offsetY;
-                    w->setGeometry(w->x(), w->y(), resizeW, resizeH);
+                    if (resizeW >= minSize.width() && resizeW <= maxSize.width()) {
+                        curRect.setRect(rectX, curRect.y(), resizeW, curRect.height());
+                    }
+                    if (resizeH >= minSize.height() && resizeH <= maxSize.height()) {
+                        curRect.setRect(curRect.x(), rectY, curRect.width(), resizeH);
+                    }
                     break;
                 }
                 default: {
                     if (m_pressed) {
                         // Execute stretch or move
-                        w->move(w->x() + offsetX, w->y() + offsetY);
+                        curRect.moveTopLeft(QPoint(rectX + offsetX, rectY + offsetY));
                     }
                     break;
                 }
+            }
+
+            if (curRect != m_rect) {
+                m_rect = curRect;
+                w->setGeometry(curRect);
             }
             break;
         }
         case QEvent::MouseButtonPress: {
             // Record mouse press coordinates
-            auto e = (QMouseEvent *) event;
-            m_pressedPos = e->pos();
+            auto e = static_cast<QMouseEvent *>(event);
+            auto pos = e->pos();
+            m_pressedPos = QCursor::pos();
             m_orgGeometry = w->geometry();
+            m_rect = m_orgGeometry;
 
             bool pressed = false;
             for (int i = 0; i < SizeOfEdgeAndCorner; ++i) {
-                if (m_pressedRect[i].contains(m_pressedPos)) {
+                if (m_pressedRect[i].contains(pos)) {
                     m_pressedArea = static_cast<EdgeAndCorner>(i);
                     pressed = true;
                     break;

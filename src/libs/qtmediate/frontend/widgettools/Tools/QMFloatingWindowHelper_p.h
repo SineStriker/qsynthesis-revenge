@@ -38,6 +38,7 @@ public:
     bool m_pressed;
     QPoint m_pressedPos;
     QRect m_orgGeometry;
+    QRect m_rect;
 
     EdgeAndCorner m_pressedArea;
     QRect m_pressedRect[SizeOfEdgeAndCorner];
