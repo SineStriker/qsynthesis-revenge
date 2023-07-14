@@ -385,7 +385,7 @@ int main(int argc, char **argv){
         QObject::connect(&dlg, &QDialog::rejected, &thread, [&](){
             writer.interrupt();
         });
-        QObject::connect(&writer, &TransportAudioSourceWriter::interrupted, [&]{
+        QObject::connect(&writer, &TransportAudioSourceWriter::interrupted, &mainWindow, [&]{
             QMessageBox::warning(&mainWindow, "Export", "Exporting is interrupted.");
         });
         thread.start();

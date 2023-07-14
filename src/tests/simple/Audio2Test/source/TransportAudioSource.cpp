@@ -146,11 +146,7 @@ void TransportAudioSource::unlock() {
     d->mutex.unlock();
 }
 
-void TransportAudioSource::writeToFile(AudioFormatIO *outFile, qint64 length) {
-
-}
-
-TransportAudioSourceWriter::TransportAudioSourceWriter(TransportAudioSource *src, AudioFormatIO *outFile, qint64 length): QObject(src), src(src), outFile(outFile), length(length) {
+TransportAudioSourceWriter::TransportAudioSourceWriter(TransportAudioSource *src, AudioFormatIO *outFile, qint64 length): src(src), outFile(outFile), length(length) {
 }
 void TransportAudioSourceWriter::start() {
     auto d = src->d_func();
@@ -170,7 +166,6 @@ void TransportAudioSourceWriter::start() {
         d->_q_positionAboutToChange(d->position + readLength);
         d->position += readLength;
         emit percentageUpdated(100.0 * (length - framesToRead) / length);
-        this->thread()->eventDispatcher()->processEvents(QEventLoop::AllEvents);
     }
     delete[] p;
     d->_q_positionAboutToChange(curPos);
