@@ -13,13 +13,10 @@
 #include <QMChronMap.h>
 
 #include "AudioSource_p.h"
+#include "buffer/AudioBuffer.h"
 
-static inline void applyGainAndPan(const AudioSourceReadData &readData, float gain, float pan) {
-    std::array<float, 2> a = {gain * std::max(1.0f, 1.0f - pan), gain * std::max(1.0f, 1.0f + pan)};
-    int chCnt = std::min(readData.buffer->channelCount(), 2);
-    for(int ch = 0; ch < chCnt; ch++) {
-        readData.buffer->gainSampleRange(ch, readData.startPos, readData.length, a[ch]);
-    }
+static inline QPair<float, float> applyGainAndPan(float gain, float pan) {
+    return {gain * std::max(1.0f, 1.0f - pan), gain * std::max(1.0f, 1.0f + pan)};
 }
 
 struct IMixer {
@@ -28,6 +25,7 @@ struct IMixer {
 
     float gain = 1;
     float pan = 0;
+    AudioBuffer tmpBuf;
 
     void deleteOwnedSources() const;
     bool start(qint64 bufferSize, double sampleRate) const;

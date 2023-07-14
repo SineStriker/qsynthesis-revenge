@@ -88,7 +88,7 @@ bool SDLAudioDevice::start(AudioDeviceCallback *audioDeviceCallback) {
 void SDLAudioDevice::stop() {
     Q_D(SDLAudioDevice);
     SDL_PauseAudioDevice(d->devId, 1);
-    d->audioDeviceCallback->deviceStoppedCallback();
+    if(d->audioDeviceCallback) d->audioDeviceCallback->deviceStoppedCallback();
     AudioDevice::stop();
 }
 

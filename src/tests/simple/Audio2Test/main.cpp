@@ -263,7 +263,7 @@ int main(int argc, char **argv){
         QString text = "bm: ";
         if(ml == 0) {
             text += "-inf dB, ";
-            leftLevelMeter->setValue(0);
+            leftLevelMeter->reset();
         } else {
             double db = 10 * log(ml/1.0) / log(10);
             text += QString::number(db, 'f', 1) + " dB, ";
@@ -271,7 +271,7 @@ int main(int argc, char **argv){
         }
         if(mr == 0) {
             text += "-inf dB, ";
-            rightLevelMeter->setValue(0);
+            rightLevelMeter->reset();
         } else {
             double db = 10 * log(mr/1.0) / log(10);
             text += QString::number(db, 'f', 1) + " dB, ";
@@ -281,7 +281,7 @@ int main(int argc, char **argv){
     });
 
     QObject::connect(browseFileButton, &QPushButton::clicked, [&](){
-        auto fileName = QFileDialog::getOpenFileName(&mainWindow);
+        auto fileName = QFileDialog::getOpenFileName(&mainWindow, {}, {}, "*.json");
         reloadFile(fileName);
     });
 
@@ -353,18 +353,20 @@ int main(int argc, char **argv){
     });
 
     QObject::connect(exportButton, &QPushButton::clicked, [&](){
-        auto exportFileName = QFileDialog::getSaveFileName(&mainWindow, {}, {}, "*.flac");
+        auto exportFileName = QFileDialog::getSaveFileName(&mainWindow, {}, {}, "*.wav");
         if(exportFileName.isEmpty()) return;
+
+        emit stopButton->clicked();
+
         auto curBufSize = transportSrc.bufferSize();
         auto curSampleRate = device->sampleRate();
         auto curPos = transportSrc.position();
-        auto curIsOpen = transportSrc.isOpened();
 
         transportSrc.close();
 
         QFile exportFile(exportFileName);
         AudioFormatIO exportIO(&exportFile);
-        exportIO.open(QFile::WriteOnly, AudioFormatIO::FLAC | AudioFormatIO::PCM_24, 2, curSampleRate);
+        exportIO.open(QFile::WriteOnly, AudioFormatIO::WAV | AudioFormatIO::PCM_24, 2, curSampleRate);
 
         transportSrc.open(65536, curSampleRate);
         transportSrc.setPosition(0);
@@ -374,27 +376,26 @@ int main(int argc, char **argv){
         auto exportProgressBar = new QProgressBar;
         dlgLayout->addWidget(exportProgressBar);
         dlg.setLayout(dlgLayout);
-        QObject::connect(&transportSrc, &TransportAudioSource::positionAboutToChange, exportProgressBar, [=](qint64 pos){
-            exportProgressBar->setValue(100 * pos / effectiveLength);
+        QThread thread;
+        TransportAudioSourceWriter writer(&transportSrc, &exportIO, effectiveLength);
+        writer.moveToThread(&thread);
+        QObject::connect(&thread, &QThread::started, &writer, &TransportAudioSourceWriter::start);
+        QObject::connect(&writer, &TransportAudioSourceWriter::percentageUpdated, exportProgressBar, &QProgressBar::setValue);
+        QObject::connect(&writer, &TransportAudioSourceWriter::finished, &dlg, &QDialog::accept);
+        QObject::connect(&dlg, &QDialog::rejected, &thread, [&](){
+            writer.interrupt();
         });
-        class WriteFileThread: public QThread {
-            void run() override {
-                transportSrc.writeToFile(&exportIO, effectiveLength);
-            }
-            TransportAudioSource &transportSrc;
-            AudioFormatIO &exportIO;
-            qint64 effectiveLength;
-        public:
-            WriteFileThread(TransportAudioSource &transportSrc, AudioFormatIO &exportIO, qint64 effectiveLength): transportSrc(transportSrc), exportIO(exportIO), effectiveLength(effectiveLength) {}
-        } thread(transportSrc, exportIO, effectiveLength);
-        QObject::connect(&thread, &QThread::finished, &dlg, &QDialog::accept);
+        QObject::connect(&writer, &TransportAudioSourceWriter::interrupted, [&]{
+            QMessageBox::warning(&mainWindow, "Export", "Exporting is interrupted.");
+        });
         thread.start();
         dlg.exec();
         transportSrc.close();
-        if(curIsOpen) {
-            transportSrc.open(curBufSize, curSampleRate);
-        }
-
+        transportSrc.setPosition(curPos);
+        leftLevelMeter->reset();
+        rightLevelMeter->reset();
+        thread.quit();
+        thread.wait();
     });
 
     mainWindow.show();

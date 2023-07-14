@@ -5,6 +5,9 @@
 #include "TransportAudioSource.h"
 #include "TransportAudioSource_p.h"
 
+#include <QThread>
+#include <QAbstractEventDispatcher>
+
 #include "buffer/InterleavedAudioDataWrapper.h"
 #include "format/AudioFormatIO.h"
 
@@ -144,25 +147,41 @@ void TransportAudioSource::unlock() {
 }
 
 void TransportAudioSource::writeToFile(AudioFormatIO *outFile, qint64 length) {
-    Q_D(TransportAudioSource);
+
+}
+
+TransportAudioSourceWriter::TransportAudioSourceWriter(TransportAudioSource *src, AudioFormatIO *outFile, qint64 length): QObject(src), src(src), outFile(outFile), length(length) {
+}
+void TransportAudioSourceWriter::start() {
+    auto d = src->d_func();
     QMutexLocker locker(&d->mutex);
     qint64 curPos = d->position;
-    qint64 blockSize = bufferSize();
+    qint64 blockSize = src->bufferSize();
     int chCnt = outFile->channels();
     auto *p = new float[blockSize * chCnt];
     memset(p, 0, sizeof(float) * blockSize * chCnt);
     InterleavedAudioDataWrapper buf(p, chCnt, blockSize);
     qint64 framesToRead = length;
-    while(framesToRead > 0) {
+    while(!stopRequested && framesToRead > 0) {
         qint64 readLength = std::min(framesToRead, blockSize);
         if(d->src) d->src->read({&buf, 0, readLength});
         framesToRead -= readLength;
         outFile->write(p, blockSize);
         d->_q_positionAboutToChange(d->position + readLength);
         d->position += readLength;
+        emit percentageUpdated(100.0 * (length - framesToRead) / length);
+        this->thread()->eventDispatcher()->processEvents(QEventLoop::AllEvents);
     }
     delete[] p;
     d->_q_positionAboutToChange(curPos);
     d->position = curPos;
     if(d->src) d->src->setNextReadPosition(curPos);
+    if(stopRequested) {
+        emit interrupted();
+    } else {
+        emit finished();
+    }
+}
+void TransportAudioSourceWriter::interrupt() {
+    stopRequested = true;
 }

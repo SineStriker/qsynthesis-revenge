@@ -23,6 +23,7 @@ bool MixerAudioSource::open(qint64 bufferSize, double sampleRate) {
     Q_D(MixerAudioSource);
     QMutexLocker locker(&d->mutex);
     if(d->start(bufferSize, sampleRate)) {
+        d->tmpBuf.resize(2, bufferSize);
         return AudioSource::open(bufferSize, sampleRate);
     } else {
         return false;
@@ -36,17 +37,18 @@ qint64 MixerAudioSource::read(const AudioSourceReadData &readData) {
     {
         QMutexLocker locker(&d->mutex);
         auto channelCount = readData.buffer->channelCount();
-        AudioBuffer tmpBuf(channelCount, readData.length);
+        if(d->tmpBuf.channelCount() < channelCount) d->tmpBuf.resize(channelCount);
         for(int i = 0; i < channelCount; i++) {
             readData.buffer->clear(i, readData.startPos, readLength);
         }
+        auto gainLeftRight = applyGainAndPan(d->gain, d->pan);
         for(auto src: sources()) {
-            readLength = std::min(readLength, src->read(AudioSourceReadData(&tmpBuf, 0, readLength)));
+            readLength = std::min(readLength, src->read(AudioSourceReadData(&d->tmpBuf, 0, readLength)));
             for(int i = 0; i < channelCount; i++) {
-                readData.buffer->addSampleRange(i, readData.startPos, readLength, tmpBuf, i, 0);
+                auto gain = i == 0 ? gainLeftRight.first : i == 1 ? gainLeftRight.second : d->gain;
+                readData.buffer->addSampleRange(i, readData.startPos, readLength, d->tmpBuf, i, 0, gain);
             }
         }
-        applyGainAndPan({readData.buffer, readData.startPos, readLength}, d->gain, d->pan);
 
         for(int i = 0; i < channelCount; i++) {
             magnitude.append(readData.buffer->magnitude(i, readData.startPos, readLength));
@@ -68,6 +70,7 @@ void MixerAudioSource::close() {
     Q_D(MixerAudioSource);
     QMutexLocker locker(&d->mutex);
     d->stop();
+    d->tmpBuf.resize(0, 0);
     AudioSource::close();
 }
 

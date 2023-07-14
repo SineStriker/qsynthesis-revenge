@@ -29,7 +29,7 @@ public:
         if(it != m_clips.end() && it->position < clipR) return false;
         if(it != m_clips.begin()) {
             it--;
-            if(it->startPos + it->position > clipL) return false;
+            if(it->position + it->length > clipL) return false;
         }
         m_clips.insert(clip);
         return true;

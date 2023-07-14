@@ -12,12 +12,14 @@
 
 class TransportAudioSourcePrivate;
 class AudioFormatIO;
+class TransportAudioSourceWriter;
 
 class TransportAudioSource: public QObject, public AudioSource {
     Q_OBJECT
 #define d_ptr AudioSource::d_ptr
     Q_DECLARE_PRIVATE(TransportAudioSource)
 #undef d_ptr
+    friend class TransportAudioSourceWriter;
 public:
     explicit TransportAudioSource(QObject *parent = nullptr);
     ~TransportAudioSource() override;
@@ -51,6 +53,22 @@ protected:
     TransportAudioSource(TransportAudioSourcePrivate &d, QObject *parent);
 };
 
+class TransportAudioSourceWriter: public QObject {
+    Q_OBJECT
+    TransportAudioSource *src;
+    AudioFormatIO *outFile;
+    qint64 length;
+    QAtomicInteger<bool> stopRequested = false;
+public:
+    TransportAudioSourceWriter(TransportAudioSource *src, AudioFormatIO *outFile, qint64 length);
+public slots:
+    void start();
+    void interrupt();
+signals:
+    void percentageUpdated(int percentage);
+    void finished();
+    void interrupted();
+};
 
 
 #endif // CHORUSKIT_TRANSPORTAUDIOSOURCE_H

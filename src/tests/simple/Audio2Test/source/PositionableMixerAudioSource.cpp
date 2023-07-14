@@ -24,6 +24,7 @@ bool PositionableMixerAudioSource::open(qint64 bufferSize, double sampleRate) {
     d->stop();
     if(d->start(bufferSize, sampleRate)) {
         d->setNextReadPositionToAll(d->position);
+        d->tmpBuf.resize(2, bufferSize);
         return PositionableAudioSource::open(bufferSize, sampleRate);
     } else {
         return false;
@@ -37,18 +38,19 @@ qint64 PositionableMixerAudioSource::read(const AudioSourceReadData &readData) {
         QMutexLocker locker(&d->mutex);
         auto bufferLength = length();
         auto channelCount = readData.buffer->channelCount();
+        if(d->tmpBuf.channelCount() < channelCount) d->tmpBuf.resize(channelCount);
         for (int i = 0; i < channelCount; i++) {
             readData.buffer->clear(i, readData.startPos, readData.length);
         }
         readLength = std::min(readData.length, bufferLength - nextReadPosition());
-        AudioBuffer tmpBuf(channelCount, readLength);
+        auto gainLeftRight = applyGainAndPan(d->gain, d->pan);
         for (auto src : sources()) {
-            src->read(&tmpBuf);
+            src->read(&d->tmpBuf);
             for (int i = 0; i < channelCount; i++) {
-                readData.buffer->addSampleRange(i, readData.startPos, readLength, tmpBuf, i, 0);
+                auto gain = i == 0 ? gainLeftRight.first : i == 1 ? gainLeftRight.second : d->gain;
+                readData.buffer->addSampleRange(i, readData.startPos, readLength, d->tmpBuf, i, 0, gain);
             }
         }
-        applyGainAndPan({readData.buffer, readData.startPos, readLength}, d->gain, d->pan);
 
         for (int i = 0; i < channelCount; i++) {
             magnitude.append(readData.buffer->magnitude(i, readData.startPos, readLength));
@@ -69,6 +71,7 @@ qint64 PositionableMixerAudioSource::read(const AudioSourceReadData &readData) {
 void PositionableMixerAudioSource::close() {
     Q_D(PositionableMixerAudioSource);
     QMutexLocker locker(&d->mutex);
+    d->tmpBuf.resize(0, 0);
     PositionableAudioSource::close();
 }
 qint64 PositionableMixerAudioSource::length() const {
