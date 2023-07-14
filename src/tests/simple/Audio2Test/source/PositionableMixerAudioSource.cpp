@@ -69,7 +69,6 @@ qint64 PositionableMixerAudioSource::read(const AudioSourceReadData &readData) {
 void PositionableMixerAudioSource::close() {
     Q_D(PositionableMixerAudioSource);
     QMutexLocker locker(&d->mutex);
-    d->stop();
     PositionableAudioSource::close();
 }
 qint64 PositionableMixerAudioSource::length() const {

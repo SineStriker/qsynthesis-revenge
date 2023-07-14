@@ -23,17 +23,13 @@
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QJsonArray>
+#include <QThread>
 
 #include "buffer/AudioClipSeries.h"
 #include "format/AudioFormatIO.h"
 #include "sndfile.h"
 #include "source/AudioFormatInputSource.h"
 #include "source/AudioSourceClipSeries.h"
-
-#include <math.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
 
 #include <QProgressBar>
 #include <sndfile.h>
@@ -95,6 +91,8 @@ int main(int argc, char **argv){
     auto stopButton = new QPushButton("Stop");
     stopButton->setDisabled(true);
 
+    auto exportButton = new QPushButton("Export Audio");
+
     layout->addRow("Driver", driverComboBox);
     layout->addRow("Device", deviceComboBox);
     layout->addRow(deviceSpecLabel);
@@ -113,6 +111,7 @@ int main(int argc, char **argv){
     layout->addRow(startButton);
     layout->addRow(resetPosButton);
     layout->addRow(stopButton);
+    layout->addRow(exportButton);
 
     mainWidget->setLayout(layout);
     mainWindow.setCentralWidget(mainWidget);
@@ -140,6 +139,8 @@ int main(int argc, char **argv){
     transportSrc.setSource(&mixer);
     AudioSourcePlayback playback(&transportSrc);
 
+    qint64 effectiveLength = 0;
+
     auto reloadFile = [&](const QString &fileName) {
         if(fileName.isEmpty()) return;
         transportSrc.lock();
@@ -161,8 +162,6 @@ int main(int argc, char **argv){
             srcFileList.append(audioFile);
             srcList.append(new AudioFormatInputSource(new AudioFormatIO(audioFile), true));
         }
-
-        qint64 effectiveLength = 0;
         for(const auto &trackSpec: doc.object().value("tracks").toArray()) {
             auto clipSeries = new AudioSourceClipSeries;
             auto trackSrc = new PositionableMixerAudioSource;
@@ -351,6 +350,51 @@ int main(int argc, char **argv){
         playPauseButton->setText("Pause");
         startButton->setDisabled(false);
         stopButton->setDisabled(true);
+    });
+
+    QObject::connect(exportButton, &QPushButton::clicked, [&](){
+        auto exportFileName = QFileDialog::getSaveFileName(&mainWindow, {}, {}, "*.flac");
+        if(exportFileName.isEmpty()) return;
+        auto curBufSize = transportSrc.bufferSize();
+        auto curSampleRate = device->sampleRate();
+        auto curPos = transportSrc.position();
+        auto curIsOpen = transportSrc.isOpened();
+
+        transportSrc.close();
+
+        QFile exportFile(exportFileName);
+        AudioFormatIO exportIO(&exportFile);
+        exportIO.open(QFile::WriteOnly, AudioFormatIO::FLAC | AudioFormatIO::PCM_24, 2, curSampleRate);
+
+        transportSrc.open(65536, curSampleRate);
+        transportSrc.setPosition(0);
+        QDialog dlg;
+        dlg.setWindowTitle("Exporting...");
+        auto dlgLayout = new QVBoxLayout;
+        auto exportProgressBar = new QProgressBar;
+        dlgLayout->addWidget(exportProgressBar);
+        dlg.setLayout(dlgLayout);
+        QObject::connect(&transportSrc, &TransportAudioSource::positionAboutToChange, exportProgressBar, [=](qint64 pos){
+            exportProgressBar->setValue(100 * pos / effectiveLength);
+        });
+        class WriteFileThread: public QThread {
+            void run() override {
+                transportSrc.writeToFile(&exportIO, effectiveLength);
+            }
+            TransportAudioSource &transportSrc;
+            AudioFormatIO &exportIO;
+            qint64 effectiveLength;
+        public:
+            WriteFileThread(TransportAudioSource &transportSrc, AudioFormatIO &exportIO, qint64 effectiveLength): transportSrc(transportSrc), exportIO(exportIO), effectiveLength(effectiveLength) {}
+        } thread(transportSrc, exportIO, effectiveLength);
+        QObject::connect(&thread, &QThread::finished, &dlg, &QDialog::accept);
+        thread.start();
+        dlg.exec();
+        transportSrc.close();
+        if(curIsOpen) {
+            transportSrc.open(curBufSize, curSampleRate);
+        }
+
     });
 
     mainWindow.show();

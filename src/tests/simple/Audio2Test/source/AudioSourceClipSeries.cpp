@@ -36,8 +36,8 @@ qint64 AudioSourceClipSeries::read(const AudioSourceReadData &readData) {
         prevClipIt->content->read({readData.buffer, readData.startPos, std::min(readData.length, prevClipIt->length - (d->position - prevClipIt->position))});
     }
     for(;nextClipIt != m_clips.end() && d->position + readData.length > nextClipIt->position && d->position + readData.length <= nextClipIt->position + nextClipIt->length; nextClipIt++) {
-        if(nextClipIt->content->nextReadPosition() != 0) {
-            nextClipIt->content->setNextReadPosition(0);
+        if(nextClipIt->content->nextReadPosition() != nextClipIt->startPos) {
+            nextClipIt->content->setNextReadPosition(nextClipIt->startPos);
         }
         nextClipIt->content->read({readData.buffer, readData.startPos + nextClipIt->position - d->position, std::min(nextClipIt->length, d->position + readData.length - nextClipIt->position)});
     }

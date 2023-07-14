@@ -17,6 +17,7 @@ AudioFormatIO::AudioFormatIO(AudioFormatIOPrivate &d): d_ptr(&d) {
     d.q_ptr = this;
 }
 AudioFormatIO::~AudioFormatIO() {
+    close();
 }
 void AudioFormatIO::setStream(QIODevice *stream) {
     Q_D(AudioFormatIO);
@@ -106,8 +107,8 @@ AudioFormatIO::OpenMode AudioFormatIO::openMode() const {
 }
 void AudioFormatIO::close() {
     Q_D(AudioFormatIO);
-    if(d->stream) d->stream->close();
     d->sf.reset();
+    if(d->stream) d->stream->close();
     d->openMode = QIODevice::NotOpen;
     clearErrorString();
 }

@@ -5,6 +5,9 @@
 #include "TransportAudioSource.h"
 #include "TransportAudioSource_p.h"
 
+#include "buffer/InterleavedAudioDataWrapper.h"
+#include "format/AudioFormatIO.h"
+
 TransportAudioSource::TransportAudioSource(QObject *parent) : TransportAudioSource(*new TransportAudioSourcePrivate, parent) {
 }
 TransportAudioSource::~TransportAudioSource() {
@@ -52,7 +55,6 @@ qint64 TransportAudioSource::read(const AudioSourceReadData &readData) {
 bool TransportAudioSource::open(qint64 bufferSize, double sampleRate) {
     Q_D(TransportAudioSource);
     QMutexLocker locker(&d->mutex);
-    if(d->src) d->src->close();
     d->isPlaying = false;
     if(d->src && d->src->open(bufferSize, sampleRate)) {
         d->isPlaying = false;
@@ -106,8 +108,8 @@ void TransportAudioSource::setPosition(qint64 position) {
     Q_D(TransportAudioSource);
     QMutexLocker locker(&d->mutex);
     if(position == d->position) return;
-    d->position = position;
     d->_q_positionAboutToChange(position);
+    d->position = position;
     if(d->src) d->src->setNextReadPosition(d->position);
 }
 qint64 TransportAudioSource::length() const {
@@ -139,4 +141,28 @@ void TransportAudioSource::lock() {
 void TransportAudioSource::unlock() {
     Q_D(TransportAudioSource);
     d->mutex.unlock();
+}
+
+void TransportAudioSource::writeToFile(AudioFormatIO *outFile, qint64 length) {
+    Q_D(TransportAudioSource);
+    QMutexLocker locker(&d->mutex);
+    qint64 curPos = d->position;
+    qint64 blockSize = bufferSize();
+    int chCnt = outFile->channels();
+    auto *p = new float[blockSize * chCnt];
+    memset(p, 0, sizeof(float) * blockSize * chCnt);
+    InterleavedAudioDataWrapper buf(p, chCnt, blockSize);
+    qint64 framesToRead = length;
+    while(framesToRead > 0) {
+        qint64 readLength = std::min(framesToRead, blockSize);
+        if(d->src) d->src->read({&buf, 0, readLength});
+        framesToRead -= readLength;
+        outFile->write(p, blockSize);
+        d->_q_positionAboutToChange(d->position + readLength);
+        d->position += readLength;
+    }
+    delete[] p;
+    d->_q_positionAboutToChange(curPos);
+    d->position = curPos;
+    if(d->src) d->src->setNextReadPosition(curPos);
 }

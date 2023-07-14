@@ -45,11 +45,7 @@ SDLAudioDevice::SDLAudioDevice(const QString &name, AudioDriver *driver, QObject
 SDLAudioDevice::SDLAudioDevice(SDLAudioDevicePrivate &d, QObject *parent): AudioDevice(d, parent) {
 }
 SDLAudioDevice::~SDLAudioDevice() {
-    close();
-}
-
-static void sdlCallback(void *d, quint8 *rawBuf, int length) {
-    reinterpret_cast<SDLAudioDevicePrivate *>(d)->sdlCallback(rawBuf, length);
+    SDLAudioDevice::close();
 }
 
 bool SDLAudioDevice::open(qint64 bufferSize, double sampleRate) {
@@ -61,7 +57,9 @@ bool SDLAudioDevice::open(qint64 bufferSize, double sampleRate) {
         .channels = (quint8)activeChannelCount(),
         .silence = 0,
         .samples = (quint16)bufferSize,
-        .callback = sdlCallback,
+        .callback = [](void *d, quint8 *rawBuf, int length){
+            reinterpret_cast<SDLAudioDevicePrivate *>(d)->sdlCallback(rawBuf, length);
+        },
         .userdata = d,
     };
     d->devId = SDL_OpenAudioDevice(name().toUtf8().data(), 0, &d->spec, nullptr, 0);

@@ -11,6 +11,7 @@
 #include "PositionableAudioSource.h"
 
 class TransportAudioSourcePrivate;
+class AudioFormatIO;
 
 class TransportAudioSource: public QObject, public AudioSource {
     Q_OBJECT
@@ -40,6 +41,8 @@ public:
 
     QPair<qint64, qint64> loopingRange() const;
     void setLoopingRange(qint64 l, qint64 r);
+
+    void writeToFile(AudioFormatIO *outFile, qint64 length);
 
 signals:
     void positionAboutToChange(qint64 nextPosition);
