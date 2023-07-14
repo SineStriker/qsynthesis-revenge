@@ -15,3 +15,5 @@ add_subdirectory(SynthVTest)
 add_subdirectory(ASIOTest)
 
 add_subdirectory(Audio2Test)
+
+add_subdirectory(AudioSlicerTest)
