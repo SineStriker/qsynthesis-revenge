@@ -11,7 +11,6 @@
 #include "PositionableAudioSource.h"
 
 class TransportAudioSourcePrivate;
-class AudioFormatIO;
 class TransportAudioSourceWriter;
 
 class TransportAudioSource: public QObject, public AudioSource {
@@ -50,23 +49,5 @@ signals:
 protected:
     TransportAudioSource(TransportAudioSourcePrivate &d, QObject *parent);
 };
-
-class TransportAudioSourceWriter: public QObject {
-    Q_OBJECT
-    TransportAudioSource *src;
-    AudioFormatIO *outFile;
-    qint64 length;
-    QAtomicInteger<bool> stopRequested = false;
-public:
-    TransportAudioSourceWriter(TransportAudioSource *src, AudioFormatIO *outFile, qint64 length);
-public slots:
-    void start();
-    void interrupt();
-signals:
-    void percentageUpdated(int percentage);
-    void finished();
-    void interrupted();
-};
-
 
 #endif // CHORUSKIT_TRANSPORTAUDIOSOURCE_H

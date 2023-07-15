@@ -27,6 +27,7 @@
 
 #include "buffer/AudioClipSeries.h"
 #include "format/AudioFormatIO.h"
+#include "format/TransportAudioSourceWriter.h"
 #include "sndfile.h"
 #include "source/AudioFormatInputSource.h"
 #include "source/AudioSourceClipSeries.h"
@@ -377,11 +378,11 @@ int main(int argc, char **argv){
         dlgLayout->addWidget(exportProgressBar);
         dlg.setLayout(dlgLayout);
         QThread thread;
-        TransportAudioSourceWriter writer(&transportSrc, &exportIO, effectiveLength);
+        TransportAudioSourceWriter writer(&transportSrc, &exportIO, 0, effectiveLength);
         writer.moveToThread(&thread);
         QObject::connect(&thread, &QThread::started, &writer, &TransportAudioSourceWriter::start);
         QObject::connect(&writer, &TransportAudioSourceWriter::percentageUpdated, exportProgressBar, &QProgressBar::setValue);
-        QObject::connect(&writer, &TransportAudioSourceWriter::finished, &dlg, &QDialog::accept);
+        QObject::connect(&writer, &TransportAudioSourceWriter::completed, &dlg, &QDialog::accept);
         QObject::connect(&dlg, &QDialog::rejected, &thread, [&](){
             writer.interrupt();
         });
