@@ -21,6 +21,18 @@ namespace QM {
     };
     Q_ENUM_NS(Priority)
 
+    enum ClickState {
+        CS_Normal,
+        CS_Hover,
+        CS_Pressed,
+        CS_Disabled,
+        CS_Normal_Checked,
+        CS_Hover_Checked,
+        CS_Pressed_Checked,
+        CS_Disabled_Checked,
+    };
+    Q_ENUM_NS(ClickState)
+
 }
 
 #endif // QMNAMESPACE_H

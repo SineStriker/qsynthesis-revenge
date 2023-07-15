@@ -24,6 +24,10 @@ public:
     static bool isWidgetHitTestVisible(QWidget *w);
     static void setWidgetHitTestVisible(QWidget *w, bool value);
 
+signals:
+    void clicked(Qt::MouseButton button);
+    void doubleClicked(Qt::MouseButton button);
+
 private:
     QMFloatingWindowHelperPrivate *d;
 };

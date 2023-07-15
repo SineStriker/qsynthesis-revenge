@@ -1,65 +1,66 @@
 #include "CMenu.h"
 
-#include <private/qkeysequence_p.h>
-#include <private/qmenu_p.h>
-
 #include <QDebug>
 #include <QFontMetrics>
 
-CMenu::CMenu(QWidget *parent) : QMenu(parent) {
-    // Initialize Font
-#ifdef QS_NO_TAB_FOCUS
-    QS_REMOVE_TAB_FOCUS(this)
-#endif
-    setFont(qApp->font());
+#include <private/qaction_p.h>
+#include <private/qkeysequence_p.h>
+#include <private/qmenu_p.h>
 
-    m_subIconMargins = QSize(0, 0);
+#include <QMAppExtension.h>
+#include <QMCss.h>
+#include <QMNamespace.h>
+
+#include <private/IconColorImpl.h>
+
+class HackAction : public QAction {
+public:
+    QActionPrivate *d_func() {
+        return reinterpret_cast<QActionPrivate *>(d_ptr.data());
+    }
+};
+
+class CMenuPrivate {
+public:
+    CMenu *q;
+    QSvgIconEx rightArrowIcon;
+    QMargins rightArrowMargins;
+
+    CMenuPrivate(CMenu *q) : q(q) {
+        // Initialize Font
+        q->setFont(qApp->font());
+
+        rightArrowIcon = qAppExt->svgIcon(QMAppExtension::SI_MenuRightArrow);
+    }
+};
+
+CMenu::CMenu(QWidget *parent) : QMenu(parent), d(new CMenuPrivate(this)) {
 }
 
 CMenu::CMenu(const QString &title, QWidget *parent) : CMenu(parent) {
-    auto d = reinterpret_cast<QMenuPrivate *>(d_ptr.data());
-    d->menuAction->setText(title);
+    setTitle(title);
 }
 
 CMenu::~CMenu() {
+    delete d;
 }
 
-QSvgUri CMenu::subIcon() const {
-    return m_subIcon;
+QSvgIconEx CMenu::rightArrowIcon() const {
+    return d->rightArrowIcon;
 }
 
-void CMenu::setSubIcon(const QSvgUri &icon) {
-    m_subIcon = icon;
+void CMenu::setRightArrowIcon(const QSvgIconEx &icon) {
+    d->rightArrowIcon = icon;
     update();
-    emit styleChanged();
 }
 
-QSvgUri CMenu::subIconActive() const {
-    return m_subIconActive;
+QMargins CMenu::rightArrowMargins() const {
+    return d->rightArrowMargins;
 }
 
-void CMenu::setSubIconActive(const QSvgUri &icon) {
-    m_subIconActive = icon;
+void CMenu::setRightArrowMargins(const QMargins &margins) {
+    d->rightArrowMargins = margins;
     update();
-    emit styleChanged();
-}
-
-QSvgUri CMenu::subIconDisabled() const {
-    return m_subIconDisabled;
-}
-
-void CMenu::setSubIconDisabled(const QSvgUri &subIconDisabled) {
-    m_subIconDisabled = subIconDisabled;
-}
-
-QSize CMenu::subIconMargins() const {
-    return m_subIconMargins;
-}
-
-void CMenu::setSubIconMargins(const QSize &margins) {
-    m_subIconMargins = margins;
-    update();
-    emit styleChanged();
 }
 
 void CMenu::paintEvent(QPaintEvent *event) {
@@ -144,25 +145,34 @@ void CMenu::paintEvent(QPaintEvent *event) {
         initStyleOption(&opt, action);
         opt.rect = actionRect;
 
-        QIcon subIcon;
-        if (action->menu()) {
-            subIcon = (opt.state & QStyle::State_Enabled)
-                          ? ((opt.state & QStyle::State_Selected) ? m_subIconActive.toIcon() : m_subIcon.toIcon())
-                          : m_subIconDisabled.toIcon();
-            if (subIcon.isNull()) {
-                opt.menuItemType = QStyleOptionMenuItem::SubMenu;
-            }
+        auto &raIcon = this->d->rightArrowIcon;
+        bool useRightArrow = action->menu() && !raIcon.isNull();
+        if (useRightArrow) {
+            QM::ClickState state = (opt.state & QStyle::State_Enabled)
+                                       ? ((opt.state & QStyle::State_Selected) ? QM::CS_Hover : QM::CS_Normal)
+                                       : QM::CS_Disabled;
+
+            IconColorImpl::correctIconStateAndColor(raIcon, state, [this, &opt]() -> QString {
+                QPen pen;
+                IconColorImpl::getTextColor(pen, opt.rect.size(), [&](QPainter *painter) {
+                    style()->drawControl(QStyle::CE_PushButton, &opt, painter, this); //
+                });
+                return QMCss::ColorToCssString(pen.color());
+            });
+
+            opt.menuItemType = QStyleOptionMenuItem::Normal;
         }
 
         style()->drawControl(QStyle::CE_MenuItem, &opt, &p, this);
 
         // Draw Right Arrow
-        if (!subIcon.isNull()) {
+        if (useRightArrow) {
+            auto &raMargins = this->d->rightArrowMargins;
             int a = actionRect.height();
             QRect iconRegion(actionRect.right() - a, actionRect.top(), a, a);
-            QRect iconRect = iconRegion.adjusted(m_subIconMargins.width(), m_subIconMargins.height(),
-                                                 -m_subIconMargins.width(), -m_subIconMargins.height());
-            p.drawPixmap(iconRect, subIcon.pixmap(iconRect.size()));
+            QRect iconRect =
+                iconRegion.adjusted(raMargins.left(), raMargins.top(), -raMargins.right(), -raMargins.bottom());
+            p.drawPixmap(iconRect, this->d->rightArrowIcon.pixmap(iconRect.size()));
         }
     }
 
@@ -253,8 +263,7 @@ void CMenu::initStyleOption(QStyleOptionMenuItem *option, const QAction *action)
         option->checked = action->isChecked();
     }
     if (action->menu()) {
-        // option->menuItemType = QStyleOptionMenuItem::SubMenu; // Ignore Right Arrow
-        option->menuItemType = QStyleOptionMenuItem::Normal;
+        option->menuItemType = QStyleOptionMenuItem::SubMenu;
     } else if (action->isSeparator()) {
         option->menuItemType = QStyleOptionMenuItem::Separator;
     } else if (d->defaultAction == action) {
@@ -268,6 +277,10 @@ void CMenu::initStyleOption(QStyleOptionMenuItem *option, const QAction *action)
 
     QString textAndAccel = action->text();
     int tabWidth = d->tabWidth;
+
+    // Two patches:
+    // 1. Change key sequence separator from "," to " "
+    // 2. Change tab width to right align shortcut text
 
 #ifndef QT_NO_SHORTCUT
     if ((action->isShortcutVisibleInContextMenu() || !d->isContextMenu()) &&

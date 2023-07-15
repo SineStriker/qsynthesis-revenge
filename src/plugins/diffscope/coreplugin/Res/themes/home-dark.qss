@@ -25,7 +25,7 @@ CTabButton#home-title-button {
     color: #CCCCCC;
     font-size: 20px;
     font-weight: bold;
-    --iconUp: svg(":/svg/app/diffsinger.svg");
+    --svgIcon: svg(":/svg/app/diffsinger.svg");
     --iconSize: 32px 32px;
     --spaceRatio: 0.2;
     padding: 20px;
@@ -75,8 +75,8 @@ CTabButton[type=home-bottom-button]:pressed {
 }
 
 CTabButton#home-about-button {
+    --svgIcon: svg(":/svg/home/info.svg", auto);
     border-top: 1.25px solid rgba(255, 255, 255, 15%);
-    --iconUp: svg(":/svg/home/info.svg", #FFFFFF);
     padding-top: 20px;
     padding-bottom: 20px;
 }
@@ -116,11 +116,11 @@ Core--Internal--HomeRecentTopFrame>CTabButton {
 /* Recent Top Buttons */
 
 Core--Internal--HomeRecentTopFrame>CTabButton#new-button {
-    --iconUp: svg(":/svg/home/new-file.svg", "${home.recent.topButtons.iconColor}");
+    --svgIcon: svg(":/svg/home/new-file.svg", auto);
 }
 
 Core--Internal--HomeRecentTopFrame>CTabButton#open-button {
-    --iconUp: svg(":/svg/home/open-file.svg", "${home.recent.topButtons.iconColor}");
+    --svgIcon: svg(":/svg/home/open-file.svg", auto);
 }
 
 Core--Internal--HomeRecentTopFrame>CTabButton[type=top-button] {
@@ -165,14 +165,14 @@ Core--Internal--HomeRecentBottomFrame>QLabel {
 Core--Internal--HomeRecentBottomFrame>QsApi--TitleListWidget {
     border: none;
     background-color: transparent;
-    --styleData: qvariantmap(/* styleData */
-    background=qrectstyle(0, (transparent, rgba(255, 255, 255, 10%))), /**/
+    --styleData: qmap(/* styleData */
+    background=qrect((transparent, rgba(255, 255, 255, 10%)), 0), /**/
     underline=qpen(transparent, 1), /**/
-    titleShape=qtypeface(#E0E0E0, 15px), /**/
-    subShape=qtypeface(#909090, 15px), /**/
-    descShape=qtypeface(#909090, 15px), /**/
-    descHighlightShape=qtypeface(transparent, 15px), /**/
-    descBackgroundShape=qrectstyle(0, 0, 2px, transparent), /**/
+    titleShape=qfont(#E0E0E0, 15px), /**/
+    subShape=qfont(#909090, 15px), /**/
+    descShape=qfont(#909090, 15px), /**/
+    descHighlightShape=qfont(transparent, 15px), /**/
+    descBackgroundShape=qrectstyle(transparent, (0, 0, 2px, 0)), /**/
     titleMargins=qmargins(1.25px, 10px), /**/
     subMargins=qmargins(1.25px, 10px), /**/
     descMargins=qmargins(0, 10px), /**/
@@ -182,15 +182,3 @@ Core--Internal--HomeRecentBottomFrame>QsApi--TitleListWidget {
     defaultIconSize=40px 40px, /**/
     );
 }
-
-
-/* Home Recovery Widget */
-
-
-/* Core--Internal--HomeRecoveryWidget {
-    padding: 20px;
-}
-
-Core--Internal--HomeRecoveryWidget>QLabel {
-    color: #CCCCCC;
-} */

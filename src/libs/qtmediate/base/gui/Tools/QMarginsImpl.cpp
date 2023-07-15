@@ -3,48 +3,36 @@
 
 #include <QDebug>
 
-QLatin1String QMarginsImpl::MetaFunctionName() {
-    return QLatin1String(QCssCustomValue_Margins);
-}
+#include "QPixelSize.h"
 
-QStringList QMarginsImpl::toStringList(const QMargins &margins) {
-    return {MetaFunctionName(),
-            QString::asprintf("%d%s,%d%s,%d%s,%d%s", margins.left(), PixelSizeUnit, margins.top(), PixelSizeUnit,
-                              margins.right(), PixelSizeUnit, margins.bottom(), PixelSizeUnit)};
-}
+namespace QMarginsImpl {
 
-QMargins QMarginsImpl::fromStringList(const QStringList &stringList) {
-    QMargins res;
-    if (stringList.size() == 2 && !stringList.front().compare(MetaFunctionName(), Qt::CaseInsensitive)) {
-        QString content = stringList.back().simplified();
-        QStringList valueList;
-        if (content.contains(',')) {
-            valueList = content.split(',');
-        } else {
-            valueList = content.split(' ');
-        }
-        QVector<int> x;
-        for (const auto &i : valueList) {
-            QString str = i.simplified();
-            QLatin1String px(PixelSizeUnit);
-            if (str.endsWith(px, Qt::CaseInsensitive)) {
-                str.chop(px.size());
-            }
-            bool isNum;
-            int num = str.toInt(&isNum);
-            if (isNum) {
-                x.push_back(num);
-            } else {
-                x.push_back(0);
+    QMargins fromStringList(const QStringList &stringList) {
+        QMargins res;
+        if (stringList.size() == 2 && !stringList.front().compare(metaFunctionName(), Qt::CaseInsensitive)) {
+            auto x = QMetaTypeUtils::SplitStringToIntList(stringList.back().simplified());
+            if (x.size() == 4) {
+                // qmargins(left, top, right, bottom)
+                res = QMargins(x.at(0), x.at(1), x.at(2), x.at(3));
+            } else if (x.size() >= 2) {
+                // qmargins(v, h)
+                res = QMargins(x.at(1), x.at(0), x.at(1), x.at(0));
+            } else if (!x.isEmpty()) {
+                // qmargins(i)
+                res = QMargins(x.front(), x.front(), x.front(), x.front());
             }
         }
-        if (x.size() == 4) {
-            res = QMargins(x.at(0), x.at(1), x.at(2), x.at(3));
-        } else if (x.size() >= 2) {
-            res = QMargins(x.at(1), x.at(0), x.at(1), x.at(0));
-        } else if (x.size() >= 1) {
-            res = QMargins(x.front(), x.front(), x.front(), x.front());
-        }
+        return res;
     }
-    return res;
+
+    QMargins fromString(const QString &s) {
+        QPixelSize px = QPixelSize::fromString(s);
+        int value = px.value();
+        return {value, value, value, value};
+    }
+
+    const char *metaFunctionName() {
+        return "qmargins";
+    }
+
 }

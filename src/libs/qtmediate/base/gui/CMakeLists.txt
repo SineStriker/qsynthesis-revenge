@@ -3,6 +3,8 @@ project(QMGui
     LANGUAGES CXX
 )
 
+set(_res_dir Res)
+
 ck_add_files(_src
     ALLDIRS
     PATTERNS *.h *.hpp *.cpp *.cc
@@ -11,7 +13,7 @@ ck_add_files(_src
 configure_library()
 
 ck_target_components(${PROJECT_NAME}
-    SOURCES ${_src}
+    SOURCES ${_src} ${_res_dir}/qmgui_res.qrc
     QT_LINKS Gui Svg
     QT_INCLUDES_PRIVATE Core Gui
     LINKS QMCore

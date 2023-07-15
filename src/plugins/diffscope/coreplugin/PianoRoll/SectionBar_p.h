@@ -5,9 +5,9 @@
 
 #include "Window/IProjectWindow.h"
 
-#include <QLineStyle.h>
-#include <QRectStyle.h>
-#include <QTypeFace.h>
+#include <QFontInfoEx.h>
+#include <QPenInfo.h>
+#include <QRectInfo.h>
 
 namespace Core {
 
@@ -28,15 +28,15 @@ namespace Core {
         int curSnap;
         int startPos;
 
-        QTypeFace sectionNumber;
-        QRectStyle sectionBackground;
-        QTypeFace signatureNumber;
-        QRectStyle signatureBackground;
-        QTypeFace tempoNumber;
-        QRectStyle tempoBackground;
-        QLineStyle sectionLine;
-        QLineStyle beatLine;
-        QLineStyle tempoLine;
+        QFontInfoEx sectionNumber;
+        QRectInfo sectionBackground;
+        QFontInfoEx signatureNumber;
+        QRectInfo signatureBackground;
+        QFontInfoEx tempoNumber;
+        QRectInfo tempoBackground;
+        QPenInfo sectionLine;
+        QPenInfo beatLine;
+        QPenInfo tempoLine;
 
         const QsApi::MusicTimeline *timeline;
 
@@ -90,8 +90,8 @@ namespace Core {
         void updateLayout();
         void updateMouseArea(QMouseEvent *event);
 
-        QTypeMap styleData_helper() const;
-        void setStyleData_helper(const QTypeMap &map);
+        QCssValueMap styleData_helper() const;
+        void setStyleData_helper(const QCssValueMap &map);
 
         void edit_sectionClicked();
         void edit_sectionRightClicked();

@@ -9,6 +9,8 @@
 #include "QMCss.h"
 #include "QMView.h"
 
+#include "private/IconColorImpl.h"
+
 CLTabButton::CLTabButton(QWidget *parent) : CTabButton(parent) {
     init();
 }
@@ -65,7 +67,9 @@ void CLTabButton::paintEvent(QPaintEvent *event) {
     initStyleOption(&option);
 
     // Correct icon color
-    QSvgUri::tryFallbackIconColor(option.icon, [this]() { return QMCss::ColorToCssString(currentTextColor()); });
+    IconColorImpl::correctIconStateAndColor(option.icon, IconColorImpl::getButtonClickState(this), [this]() {
+        return QMCss::ColorToCssString(currentTextColor()); //
+    });
 
     QSize sz = iconSize();
     QTransform tf;

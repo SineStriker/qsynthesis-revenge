@@ -2,9 +2,10 @@
 #define CGRAPHICSVIEW_H
 
 #include <QGraphicsView>
-#include <QPropertyAnimation>
 
 #include "QMWidgetsGlobal.h"
+
+class CGraphicsViewPrivate;
 
 class QMWIDGETS_EXPORT CGraphicsView : public QGraphicsView {
     Q_OBJECT
@@ -12,9 +13,6 @@ public:
     explicit CGraphicsView(QWidget *parent = nullptr);
     explicit CGraphicsView(QGraphicsScene *scene, QWidget *parent = nullptr);
     ~CGraphicsView();
-
-private:
-    void init();
 
 public:
     QRectF viewportRect() const;
@@ -29,13 +27,11 @@ public:
     int valueY() const;
 
 protected:
-    QPropertyAnimation *m_horizontalAnimation;
-    QPropertyAnimation *m_verticalAnimation;
-
     void scrollContentsBy(int dx, int dy) override;
     bool viewportEvent(QEvent *event) override;
 
-signals:
+private:
+    CGraphicsViewPrivate *d;
 };
 
 #endif // CGRAPHICSVIEW_H

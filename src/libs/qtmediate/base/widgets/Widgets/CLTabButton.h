@@ -28,8 +28,6 @@ protected:
     LongitudinalDirection m_longitudinalDirection;
 
     void paintEvent(QPaintEvent *event) override;
-
-signals:
 };
 
 #endif // CLTABBUTTON_H

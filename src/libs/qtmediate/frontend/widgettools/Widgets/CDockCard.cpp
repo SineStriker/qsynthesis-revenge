@@ -230,7 +230,6 @@ void CDockCard::setWidget(QWidget *widget) {
     layout->addWidget(widget);
     widget->installEventFilter(this);
     d->m_floatingHelper = new QMFloatingWindowHelper(widget, this);
-
     m_widget = widget;
 
     // Add card reference

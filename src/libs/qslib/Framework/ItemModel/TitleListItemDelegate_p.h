@@ -1,7 +1,9 @@
 #ifndef TITLELISTITEMDELEGATEPRIVATE_H
 #define TITLELISTITEMDELEGATEPRIVATE_H
 
-#include <QTypeList.h>
+#include <QFontInfoEx.h>
+#include <QPenInfo.h>
+#include <QRectInfo.h>
 
 #include "TitleListItemDelegate.h"
 
@@ -17,14 +19,14 @@ namespace QsApi {
 
         TitleListItemDelegate *q_ptr;
 
-        QRectStyle m_backgroundType;
-        QLineStyle m_underline;
+        QRectInfo m_backgroundType;
+        QPenInfo m_underline;
 
-        QTypeFace m_fileType;
-        QTypeFace m_locType;
-        QTypeFace m_dateType;
-        QTypeFace m_dateHighlightType;
-        QRectStyle m_dateBackType;
+        QFontInfoEx m_fileType;
+        QFontInfoEx m_locType;
+        QFontInfoEx m_dateType;
+        QFontInfoEx m_dateHighlightType;
+        QRectInfo m_dateBackType;
 
         QMargins m_fileMargins;
         QMargins m_locMargins;
@@ -35,8 +37,8 @@ namespace QsApi {
         QMargins m_iconMargins;
         QSize m_defaultIconSize;
 
-        QTypeMap styleData_helper() const;
-        void setStyleData_helper(const QTypeMap &map);
+        QCssValueMap styleData_helper() const;
+        void setStyleData_helper(const QCssValueMap &map);
     };
 
 }

@@ -24,10 +24,12 @@ Core--IDockPanel>QToolBar#side-panel-toolbar {
 Core--IDockPanel>QToolBar#side-panel-toolbar>QToolButton {
     padding: 4px;
     border: none;
+    color: #CCCCCC;
     background-color: transparent;
 }
 
 Core--IDockPanel>QToolBar#side-panel-toolbar>QToolButton:hover {
+    color: white;
     background-color: rgba(255, 255, 255, 20%);
 }
 
@@ -36,9 +38,9 @@ Core--IDockPanel>QToolBar#side-panel-toolbar>QToolButton:pressed {
 }
 
 Core--IDockPanel>QToolBar#side-panel-toolbar>QToolButton#close {
-    --iconUp: svg(":/svg/side-panel/close-line.svg", "${project.sidePanel.iconColor}");
+    --svgIcon: svg(":/svg/side-panel/close-line.svg", auto);
 }
 
 Core--IDockPanel>QToolBar#side-panel-toolbar>QToolButton#menu {
-    --iconUp: svg(":/svg/side-panel/menu-line.svg", "${project.sidePanel.iconColor}");
+    --svgIcon: svg(":/svg/side-panel/menu-line.svg", auto);
 }

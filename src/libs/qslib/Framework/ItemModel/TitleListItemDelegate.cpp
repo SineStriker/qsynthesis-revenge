@@ -3,6 +3,7 @@
 
 #include "QMarginsImpl.h"
 
+#include <QDebug>
 #include <QMouseEvent>
 #include <QPainter>
 
@@ -153,10 +154,10 @@ namespace QsApi {
     }
 
     TitleListItemDelegatePrivate::TitleListItemDelegatePrivate() {
-        m_backgroundType = QRectStyle();
-        m_underline = QLineStyle(Qt::lightGray, 1.0);
+        m_backgroundType = {};
+        m_underline = {Qt::lightGray, 1.0};
 
-        m_dateBackType = QRectStyle();
+        m_dateBackType = {};
 
         m_fileMargins = QMargins(5, 5, 5, 5);
         m_locMargins = QMargins(5, 5, 5, 5);
@@ -171,7 +172,7 @@ namespace QsApi {
     void TitleListItemDelegatePrivate::init() {
     }
 
-    QTypeMap TitleListItemDelegatePrivate::styleData_helper() const {
+    QCssValueMap TitleListItemDelegatePrivate::styleData_helper() const {
         return {
             {"background",          QVariant::fromValue(m_backgroundType)   },
             {"underline",           QVariant::fromValue(m_underline)        },
@@ -192,7 +193,7 @@ namespace QsApi {
         };
     }
 
-    void TitleListItemDelegatePrivate::setStyleData_helper(const QTypeMap &map) {
+    void TitleListItemDelegatePrivate::setStyleData_helper(const QCssValueMap &map) {
         auto decodeStyle = [](const QVariant &var, auto &val) {
             using Type = decltype(typename std::remove_reference<decltype(val)>::type());
             if (var.canConvert<Type>()) {
@@ -200,22 +201,23 @@ namespace QsApi {
             }
         };
 
-        decodeStyle(map["background"], m_backgroundType);
-        decodeStyle(map["underline"], m_underline);
-        decodeStyle(map["titleShape"], m_fileType);
-        decodeStyle(map["subShape"], m_locType);
-        decodeStyle(map["descShape"], m_dateType);
-        decodeStyle(map["descHighlightShape"], m_dateHighlightType);
-        decodeStyle(map["descBackgroundShape"], m_dateBackType);
+        auto &_map = map.get();
+        decodeStyle(_map["background"], m_backgroundType);
+        decodeStyle(_map["underline"], m_underline);
+        decodeStyle(_map["titleShape"], m_fileType);
+        decodeStyle(_map["subShape"], m_locType);
+        decodeStyle(_map["descShape"], m_dateType);
+        decodeStyle(_map["descHighlightShape"], m_dateHighlightType);
+        decodeStyle(_map["descBackgroundShape"], m_dateBackType);
 
-        decodeStyle(map["titleMargins"], m_fileMargins);
-        decodeStyle(map["subMargins"], m_locMargins);
-        decodeStyle(map["descMargins"], m_dateMargins);
-        decodeStyle(map["iconMargins"], m_iconMargins);
-        decodeStyle(map["padding"], m_padding);
-        decodeStyle(map["margins"], m_margins);
+        decodeStyle(_map["titleMargins"], m_fileMargins);
+        decodeStyle(_map["subMargins"], m_locMargins);
+        decodeStyle(_map["descMargins"], m_dateMargins);
+        decodeStyle(_map["iconMargins"], m_iconMargins);
+        decodeStyle(_map["padding"], m_padding);
+        decodeStyle(_map["margins"], m_margins);
 
-        decodeStyle(map["defaultIconSize"], m_defaultIconSize);
+        decodeStyle(_map["defaultIconSize"], m_defaultIconSize);
     }
 
     TitleListItemDelegate::TitleListItemDelegate(QObject *parent)
@@ -240,14 +242,14 @@ namespace QsApi {
         QSize size = QStyledItemDelegate::sizeHint(option, index);
         int iconHeight = icon.isNull() ? 0 : (iconSize.height() + d->m_iconMargins.top() + d->m_iconMargins.bottom());
         int midHeight =
-            QFontMetrics(d->m_fileType.font()).height() + d->m_fileMargins.top() + d->m_fileMargins.bottom() +
+            QFontMetrics(d->m_fileType.toFont()).height() + d->m_fileMargins.top() + d->m_fileMargins.bottom() +
             (location.isEmpty()
                  ? 0
-                 : (QFontMetrics(d->m_locType.font()).height() + d->m_locMargins.top() + d->m_locMargins.bottom()));
+                 : (QFontMetrics(d->m_locType.toFont()).height() + d->m_locMargins.top() + d->m_locMargins.bottom()));
         int dateHeight =
             date.isEmpty()
                 ? 0
-                : (QFontMetrics(d->m_dateType.font()).height() + d->m_dateMargins.top() + d->m_dateMargins.bottom());
+                : (QFontMetrics(d->m_dateType.toFont()).height() + d->m_dateMargins.top() + d->m_dateMargins.bottom());
 
         int h = qMax(iconHeight, qMax(midHeight, dateHeight));
         h += d->m_margins.top() + d->m_margins.bottom() + d->m_padding.top() + d->m_padding.bottom();
@@ -278,26 +280,26 @@ namespace QsApi {
 
         underlineColor = d->m_underline.color();
         if (!(option.state & QStyle::State_Enabled)) {
-            backgroundColor = d->m_backgroundType.color4();
-            fileColor = d->m_fileType.color4();
-            locColor = d->m_locType.color4();
-            dateColor = d->m_dateType.color4();
-            dateHighlightColor = d->m_dateHighlightType.color4();
-            dateBackColor = d->m_dateBackType.color4();
+            backgroundColor = d->m_backgroundType.color(QM::CS_Disabled);
+            fileColor = d->m_fileType.color(QM::CS_Disabled);
+            locColor = d->m_locType.color(QM::CS_Disabled);
+            dateColor = d->m_dateType.color(QM::CS_Disabled);
+            dateHighlightColor = d->m_dateHighlightType.color(QM::CS_Disabled);
+            dateBackColor = d->m_dateBackType.color(QM::CS_Disabled);
         } else if (option.state & QStyle::State_Selected) {
-            backgroundColor = d->m_backgroundType.color3();
-            fileColor = d->m_fileType.color3();
-            locColor = d->m_locType.color3();
-            dateColor = d->m_dateType.color3();
-            dateHighlightColor = d->m_dateHighlightType.color3();
-            dateBackColor = d->m_dateBackType.color3();
+            backgroundColor = d->m_backgroundType.color(QM::CS_Pressed);
+            fileColor = d->m_fileType.color(QM::CS_Pressed);
+            locColor = d->m_locType.color(QM::CS_Pressed);
+            dateColor = d->m_dateType.color(QM::CS_Pressed);
+            dateHighlightColor = d->m_dateHighlightType.color(QM::CS_Pressed);
+            dateBackColor = d->m_dateBackType.color(QM::CS_Pressed);
         } else if (option.state & QStyle::State_MouseOver) {
-            backgroundColor = d->m_backgroundType.color2();
-            fileColor = d->m_fileType.color2();
-            locColor = d->m_locType.color2();
-            dateColor = d->m_dateType.color2();
-            dateHighlightColor = d->m_dateHighlightType.color2();
-            dateBackColor = d->m_dateBackType.color2();
+            backgroundColor = d->m_backgroundType.color(QM::CS_Hover);
+            fileColor = d->m_fileType.color(QM::CS_Hover);
+            locColor = d->m_locType.color(QM::CS_Hover);
+            dateColor = d->m_dateType.color(QM::CS_Hover);
+            dateHighlightColor = d->m_dateHighlightType.color(QM::CS_Hover);
+            dateBackColor = d->m_dateBackType.color(QM::CS_Hover);
         } else {
             backgroundColor = d->m_backgroundType.color();
             underlineColor = d->m_underline.color();
@@ -328,10 +330,10 @@ namespace QsApi {
         Qt::AlignmentFlag dateVAlign = static_cast<Qt::AlignmentFlag>(index.data(QsApi::AlignmentRole).toInt());
 
         // Calculate size
-        QFont fileFont = d->m_fileType.font();
-        QFont locFont = d->m_locType.font();
-        QFont dateFont = d->m_dateType.font();
-        QFont dateHighlightFont = d->m_dateHighlightType.font();
+        QFont fileFont = d->m_fileType.toFont(option.widget);
+        QFont locFont = d->m_locType.toFont(option.widget);
+        QFont dateFont = d->m_dateType.toFont(option.widget);
+        QFont dateHighlightFont = d->m_dateHighlightType.toFont(option.widget);
 
         QFontMetrics fileFontM(fileFont);
         QFontMetrics locFontM(locFont);
@@ -455,11 +457,11 @@ namespace QsApi {
         }
     }
 
-    QTypeMap TitleListItemDelegate::styleData() const {
+    QCssValueMap TitleListItemDelegate::styleData() const {
         Q_D(const TitleListItemDelegate);
         return d->styleData_helper();
     }
-    void TitleListItemDelegate::setStyleData(const QTypeMap &map) {
+    void TitleListItemDelegate::setStyleData(const QCssValueMap &map) {
         Q_D(TitleListItemDelegate);
         d->setStyleData_helper(map);
     }

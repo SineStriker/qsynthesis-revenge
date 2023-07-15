@@ -35,11 +35,12 @@ public:
     bool m_floating;
     int m_windowFlags;
 
-    bool m_pressed;
+
     QPoint m_pressedPos;
     QRect m_orgGeometry;
     QRect m_rect;
 
+    Qt::MouseButton m_pressedButton;
     EdgeAndCorner m_pressedArea;
     QRect m_pressedRect[SizeOfEdgeAndCorner];
 

@@ -7,7 +7,7 @@
 #include <QListWidget>
 #include <QMenu>
 
-#include "QTypeMap.h"
+#include "QCssValueMap.h"
 
 #include "QsFrameworkGlobal.h"
 
@@ -18,14 +18,14 @@ namespace QsApi {
     class QSFRAMEWORK_API TitleListWidget : public QListWidget {
         Q_OBJECT
         Q_DECLARE_PRIVATE(TitleListWidget)
-        Q_PROPERTY(QTypeMap styleData READ styleData WRITE setStyleData NOTIFY styleDataChanged)
+        Q_PROPERTY(QCssValueMap styleData READ styleData WRITE setStyleData)
     public:
         explicit TitleListWidget(QWidget *parent = nullptr);
         ~TitleListWidget();
 
     public:
-        QTypeMap styleData() const;
-        void setStyleData(const QTypeMap &map);
+        QCssValueMap styleData() const;
+        void setStyleData(const QCssValueMap &map);
 
         QSize contentsSize() const;
 
@@ -38,7 +38,6 @@ namespace QsApi {
     signals:
         void itemClickedEx(const QModelIndex &index, int button);
         void contentsSizeUpdated(const QSize &size);
-        void styleDataChanged();
     };
 
 }

@@ -3,43 +3,93 @@
 #include <QMargins>
 #include <QMetaType>
 
+#include "QFontInfoEx.h"
 #include "QMarginsImpl.h"
-#include "QMetaTypeImpl.h"
+#include "QPenInfo.h"
+#include "QPixelSize.h"
+#include "QRectInfo.h"
+#include "QSvgIconEx.h"
 
-using namespace QMetaTypeImpl;
+#include "QColorList.h"
+#include "QCssValueList.h"
+#include "QCssValueMap.h"
 
-void Register_QMetaTypeImpl() {
-    QMetaType::registerConverter<QStringList, QMargins>(StringListToMargins);
-    QMetaType::registerConverter<QMargins, QStringList>(MarginsToStringList);
-    QMetaType::registerConverter<QString, QMargins>(StringToMargins);
-    QMetaType::registerConverter<QMargins, QString>(MarginsToString);
+namespace QMetaTypeImpl {
 
-    QMetaType::registerConverter<QStringList, QLineStyle>(StringListToPen);
-    QMetaType::registerConverter<QLineStyle, QStringList>(PenToStringList);
+    template <class T>
+    void registerFromString() {
+        QMetaType::registerConverter<QString, T>(T::fromString);
+    }
 
-    QMetaType::registerConverter<QStringList, QDataUri>(StringListToDataUri);
-    QMetaType::registerConverter<QDataUri, QStringList>(DataUriToStringList);
+    template <class T>
+    void registerFromStringList() {
+        QMetaType::registerConverter<QStringList, T>(T::fromStringList);
+    }
 
-    QMetaType::registerConverter<QStringList, QSvgUri>(StringListToSvgUri);
-    QMetaType::registerConverter<QSvgUri, QStringList>(SvgUriToStringList);
+    void Register() {
+        QMetaType::registerConverter<QStringList, QMargins>(QMarginsImpl::fromStringList);
+        QMetaType::registerConverter<QString, QMargins>(QMarginsImpl::fromString);
 
-    QMetaType::registerConverter<QStringList, QTypeFace>(StringListToTypeFace);
-    QMetaType::registerConverter<QTypeFace, QStringList>(TypeFaceToStringList);
+        QMetaType::registerConverter<QPixelSize, int>([](const QPixelSize &size) -> int {
+            return size.value(); //
+        });
+        QMetaType::registerConverter<QPixelSize, double>([](const QPixelSize &size) -> double {
+            return size.valueF(); //
+        });
+        registerFromString<QPixelSize>();
 
-    QMetaType::registerConverter<QString, QPixelSize>(StringToPixelSize);
-    QMetaType::registerConverter<QPixelSize, QString>(PixelSizeToString);
-    QMetaType::registerConverter<double, QPixelSize>(DoubleToPixelSize);
-    QMetaType::registerConverter<QPixelSize, double>(PixelSizeToDouble);
+        registerFromStringList<QPenInfo>();
+        registerFromStringList<QRectInfo>();
+        registerFromStringList<QFontInfoEx>();
+        registerFromStringList<QSvgIconEx>();
 
-    QMetaType::registerConverter<QStringList, QColorList>(StringListColorList);
-    QMetaType::registerConverter<QColorList, QStringList>(ColorListToStringList);
+        registerFromStringList<QColorList>();
+        registerFromStringList<QCssValueList>();
+        registerFromStringList<QCssValueMap>();
+    }
 
-    QMetaType::registerConverter<QStringList, QRectStyle>(StringListToRectStyle);
-    QMetaType::registerConverter<QRectStyle, QStringList>(RectStyleToStringList);
+    const char *TypeToFunctionName(int id) {
+        const char *res = "";
+        if (id == qMetaTypeId<QMargins>()) {
+            res = QMarginsImpl::metaFunctionName();
+        } else if (id == qMetaTypeId<QPenInfo>()) {
+            res = QPenInfo::metaFunctionName();
+        } else if (id == qMetaTypeId<QRectInfo>()) {
+            res = QRectInfo::metaFunctionName();
+        } else if (id == qMetaTypeId<QFontInfoEx>()) {
+            res = QFontInfoEx::metaFunctionName();
+        } else if (id == qMetaTypeId<QSvgIconEx>()) {
+            res = QSvgIconEx::metaFunctionName();
+        } else if (id == qMetaTypeId<QColorList>()) {
+            res = QColorList::metaFunctionName();
+        } else if (id == qMetaTypeId<QCssValueList>()) {
+            res = QCssValueList::metaFunctionName();
+        } else if (id == qMetaTypeId<QCssValueMap>()) {
+            res = QCssValueMap::metaFunctionName();
+        }
+        return res;
+    }
 
-    QMetaType::registerConverter<QStringList, QTypeList>(StringListToTypeList);
-    QMetaType::registerConverter<QTypeList, QStringList>(TypeListToStringList);
+    int FunctionNameToType(const QString &name) {
+        int id = -1;
+        if (!name.compare(QMarginsImpl::metaFunctionName(), Qt::CaseInsensitive)) {
+            id = qMetaTypeId<QMargins>();
+        } else if (!name.compare(QPenInfo::metaFunctionName(), Qt::CaseInsensitive)) {
+            id = qMetaTypeId<QPenInfo>();
+        } else if (!name.compare(QRectInfo::metaFunctionName(), Qt::CaseInsensitive)) {
+            id = qMetaTypeId<QRectInfo>();
+        } else if (!name.compare(QFontInfoEx::metaFunctionName(), Qt::CaseInsensitive)) {
+            id = qMetaTypeId<QFontInfoEx>();
+        } else if (!name.compare(QSvgIconEx::metaFunctionName(), Qt::CaseInsensitive)) {
+            id = qMetaTypeId<QSvgIconEx>();
+        } else if (!name.compare(QColorList::metaFunctionName(), Qt::CaseInsensitive)) {
+            id = qMetaTypeId<QColorList>();
+        } else if (!name.compare(QCssValueList::metaFunctionName(), Qt::CaseInsensitive)) {
+            id = qMetaTypeId<QCssValueList>();
+        } else if (!name.compare(QCssValueMap::metaFunctionName(), Qt::CaseInsensitive)) {
+            id = qMetaTypeId<QCssValueMap>();
+        }
+        return id;
+    }
 
-    QMetaType::registerConverter<QStringList, QTypeMap>(StringListToTypeMap);
-    QMetaType::registerConverter<QTypeMap, QStringList>(TypeMapToStringList);
 }

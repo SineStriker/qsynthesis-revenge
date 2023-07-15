@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/qtmediate.org">
+        <file>svg/check-line.svg</file>
+    </qresource>
+</RCC>

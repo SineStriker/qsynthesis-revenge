@@ -4,7 +4,7 @@
 #include <QFrame>
 
 #include <MusicUtil/MusicTimeline.h>
-#include <QTypeMap.h>
+#include <QCssValueMap.h>
 
 #include "coreplugin/CoreGlobal.h"
 #include "coreplugin/Interfaces/IPianoRollComponent.h"
@@ -28,7 +28,7 @@ namespace Core {
 
     class CORE_EXPORT SectionBar : public QFrame, public IPianoRollComponent {
         Q_OBJECT
-        Q_PROPERTY(QTypeMap styleData READ styleData WRITE setStyleData NOTIFY styleDataChanged)
+        Q_PROPERTY(QCssValueMap styleData READ styleData WRITE setStyleData)
         Q_DECLARE_PRIVATE(SectionBar)
     public:
         explicit SectionBar(IProjectWindow *iWin, QWidget *parent = nullptr);
@@ -37,8 +37,8 @@ namespace Core {
         void initialize() override;
         void extensionInitialized() override;
 
-        QTypeMap styleData() const;
-        void setStyleData(const QTypeMap &map);
+        QCssValueMap styleData() const;
+        void setStyleData(const QCssValueMap &map);
 
     public:
         int startPos() const;
@@ -54,7 +54,6 @@ namespace Core {
         void changeTempoAt(int tick);
 
     signals:
-        void styleDataChanged();
 
     protected:
         void paintEvent(QPaintEvent *event) override;

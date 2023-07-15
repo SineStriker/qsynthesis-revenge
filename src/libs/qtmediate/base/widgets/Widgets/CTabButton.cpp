@@ -8,6 +8,8 @@
 #include "QMCss.h"
 #include "QMView.h"
 
+#include "private/IconColorImpl.h"
+
 CTabButton::CTabButton(QWidget *parent) : CPushButton(parent) {
     init();
 }
@@ -58,7 +60,9 @@ void CTabButton::paintEvent(QPaintEvent *event) {
     initStyleOption(&option);
 
     // Correct icon color
-    QSvgUri::tryFallbackIconColor(option.icon, [this]() { return QMCss::ColorToCssString(currentTextColor()); });
+    IconColorImpl::correctIconStateAndColor(option.icon, IconColorImpl::getButtonClickState(this), [this]() {
+        return QMCss::ColorToCssString(currentTextColor()); //
+    });
 
     QSize sz = iconSize();
     QPixmap tmp = option.icon.pixmap(sz); // Get the pixmap to apply with right size

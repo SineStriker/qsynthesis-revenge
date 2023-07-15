@@ -32,7 +32,7 @@ void QMGuiAppExtensionPrivate::init() {
     QGuiApplication::setAttribute(Qt::AA_UseHighDpiPixmaps);
 
     // Must register all meta-types converters in advance
-    Register_QMetaTypeImpl();
+    QMetaTypeImpl::Register();
 
     for (const auto &path : qAsConst(fontPaths)) {
         QDir directory(path);
@@ -75,6 +75,20 @@ void QMGuiAppExtensionPrivate::init() {
 
     font.setStyleStrategy(QFont::PreferAntialias);
     qApp->setFont(font);
+
+    // Add icons
+    svgs.insert(QMGuiAppExtension::SI_MenuIndicator, QSvgIconEx::fromStringList({
+                                                         "svg",
+                                                         R"(":/qtmediate.org/svg/check-line.svg", auto)",
+                                                     }));
+    svgs.insert(QMGuiAppExtension::SI_MenuRightArrow, QSvgIconEx::fromStringList({
+                                                          "svg",
+                                                          R"(":/qtmediate.org/svg/arrow-right-s-line.svg", auto)",
+                                                      }));
+    svgs.insert(QMGuiAppExtension::SI_MenuBarExtension, QSvgIconEx::fromStringList({
+                                                            "svg",
+                                                            R"(":/qtmediate.org/svg/more-line.svg", auto)",
+                                                        }));
 }
 
 QMCoreInitFactory *QMGuiAppExtensionPrivate::createFactory() {
@@ -85,6 +99,16 @@ QMGuiAppExtension::QMGuiAppExtension(QObject *parent) : QMGuiAppExtension(*new Q
 }
 
 QMGuiAppExtension::~QMGuiAppExtension() {
+}
+
+QSvgIconEx QMGuiAppExtension::svgIcon(SvgIcon icon) const {
+    Q_D(const QMGuiAppExtension);
+    return d->svgs.value(icon);
+}
+
+void QMGuiAppExtension::setSvgIcon(SvgIcon icon, const QSvgIconEx &uri) {
+    Q_D(QMGuiAppExtension);
+    d->svgs.insert(icon, uri);
 }
 
 QMGuiAppExtension::QMGuiAppExtension(QMGuiAppExtensionPrivate &d, QObject *parent) : QMCoreAppExtension(d, parent) {

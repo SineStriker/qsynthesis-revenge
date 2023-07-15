@@ -2,68 +2,55 @@
 #define QMETATYPEUTILS_H
 
 #include <QVariant>
-
 #include <qnamespace.h>
 
+#include <QMNamespace.h>
+
+#include "QMGuiGlobal.h"
+
 const char PixelSizeUnit[] = "px";
+const char PointSizeUnit[] = "pt";
 
-const char NoneValue[] = "none";
+namespace QMetaTypeUtils {
 
-const char QCssCustomValue_Url[] = "url";
-const char QCssCustomValue_Url_Data[] = "data";
-const char QCssCustomValue_Url_Charset_Prefix[] = "charset=";
+    QVector<int> SplitStringToIntList(const QString &str);
 
-const char QCssCustomValue_Svg_Url[] = "svg";
-const char QCssCustomValue_Svg_CurrentColor_Prefix[] = "currentColor=";
+    QVector<double> SplitStringToDoubleList(const QString &str);
 
-const char QCssCustomValue_TypeFace[] = "qtypeface";
+    QStringList SplitStringByComma(const QStringRef &str);
 
-const char QCssCustomValue_Margins[] = "qmargins";
+    inline QStringList SplitStringByComma(const QString &str) {
+        return SplitStringByComma(QStringRef(&str));
+    }
 
-const char QCssCustomValue_Pen[] = "qpen";
-const char QCssCustomValue_Pen_2[] = "qlinestyle";
-const char QCssCustomValue_Pen_Line_None[] = "none";
-const char QCssCustomValue_Pen_Line_Solid[] = "solid";
-const char QCssCustomValue_Pen_Line_Dash[] = "dash";
-const char QCssCustomValue_Pen_Line_Dot[] = "dot";
-const char QCssCustomValue_Pen_Line_DashDot[] = "dashdot";
-const char QCssCustomValue_Pen_Line_DashDotDot[] = "dashdotdot";
-const char QCssCustomValue_Pen_Cap_Flat[] = "flat";
-const char QCssCustomValue_Pen_Cap_Square[] = "square";
-const char QCssCustomValue_Pen_Cap_Round[] = "round";
-const char QCssCustomValue_Pen_Join_Miter[] = "miter";
-const char QCssCustomValue_Pen_Join_Bevel[] = "bevel";
-const char QCssCustomValue_Pen_Join_Round[] = "round";
+    QVariant StringToVariant(const QString &s);
 
-const char QCssCustomValue_ColorList[] = "qcolors";
-const char QCssCustomValue_TypeList[] = "qvariants";
-const char QCssCustomValue_TypeMap[] = "qvariantmap";
-const char QCssCustomValue_List[] = "qlist";
+    bool StringToBool(const QString &s);
 
-const char QCssCustomValue_RectStyle[] = "qrectstyle";
+    int FindFirstEqualSign(const QString &s);
 
-Qt::PenStyle StringToLineStyle(const QString &str, bool *ok = nullptr);
+    enum FallbackOption {
+        FO_Value,
+        FO_Reference,
+    };
+    QMGUI_EXPORT QHash<QString, QString>
+        ParseFuncArgList(const QString &s, const QStringList &keys,
+                         const QHash<QString, QPair<QString, FallbackOption>> &fallbacks, bool addParen = false);
 
-QLatin1String LineStyleToString(Qt::PenStyle style);
+    QMGUI_EXPORT bool ParseClickStateArgList(const QString &s, QString arr[], bool resolveFallback = true);
 
-Qt::PenCapStyle StringToCapStyle(const QString &str, bool *ok = nullptr);
+    void InitializeStateIndexes(int arr[]);
 
-QLatin1String CapStyleToString(Qt::PenCapStyle style);
+    void UpdateStateIndex(int i, int arr[]);
 
-Qt::PenJoinStyle StringToJoinStyle(const QString &str, bool *ok = nullptr);
+    void UpdateStateIndexes(int arr[]);
 
-QLatin1String JoinStyleToString(Qt::PenJoinStyle style);
-
-QStringList SplitStringByComma(const QString &str);
-
-QLatin1String TypeToFunctionName(int id);
-
-int FunctionNameToType(const QString &name);
-
-QVariant StringToVariant(const QString &s);
-
-inline QString combineFunctionStringList(const QStringList &stringList) {
-    return stringList.size() != 2 ? QString() : stringList.front() + '(' + stringList.back() + ')';
 }
+
+#define QMETATYPE_CHECK_FUNC(LIST, MID)                                                                                \
+    if (LIST.size() != 2 || LIST.front().compare(metaFunctionName(), Qt::CaseInsensitive)) {                           \
+        return {};                                                                                                     \
+    }                                                                                                                  \
+    const auto &MID = LIST.at(1);
 
 #endif // QMETATYPEUTILS_H

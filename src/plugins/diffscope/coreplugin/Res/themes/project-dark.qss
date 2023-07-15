@@ -5,9 +5,9 @@ QWidget#project-window {
 }
 
 QToolBar#main-toolbar {
-    padding: 5px;
     ---spacing: 5px;
     --iconSize: 20px 20px;
+    padding: 5px;
 }
 
 QToolBar#main-toolbar>QToolBarSeparator {
@@ -30,13 +30,16 @@ QToolBar#main-toolbar>QToolButton {
     padding: 5px;
     border: none;
     background-color: transparent;
+    color: #CCCCCC;
 }
 
 QToolBar#main-toolbar>QToolButton:hover {
+    color: white;
     background-color: rgba(255, 255, 255, 20%);
 }
 
 QToolBar#main-toolbar>QToolButton:pressed {
+    color: #EFEFEF;
     background-color: rgba(255, 255, 255, 15%);
 }
 
@@ -45,36 +48,35 @@ QToolBar#main-toolbar>QToolButton[selectable=true]:checked {
 }
 
 QToolBar#main-toolbar>QToolButton[action-id="core.Play"] {
-    --iconUp: svg(":/svg/main-toolbar/play-line.svg", "${project.toolbar.iconColor}");
-    --iconUpChecked: svg(":/svg/main-toolbar/pause-line.svg", "${project.toolbar.iconColor}");
+    --svgIcon: svg((":/svg/main-toolbar/play-line.svg", up2=":/svg/main-toolbar/pause-line.svg"), auto);
 }
 
 QToolBar#main-toolbar>QToolButton[action-id="core.Stop"] {
-    --iconUp: svg(":/svg/main-toolbar/stop-line.svg", "${project.toolbar.iconColor}");
+    --svgIcon: svg(":/svg/main-toolbar/stop-line.svg", auto);
 }
 
 QToolBar#main-toolbar>QToolButton[action-id="core.MoveToStart"] {
-    --iconUp: svg(":/svg/main-toolbar/move-start-line.svg", "${project.toolbar.iconColor}");
+    --svgIcon: svg(":/svg/main-toolbar/move-start-line.svg", auto);
 }
 
 QToolBar#main-toolbar>QToolButton[action-id="core.MoveToEnd"] {
-    --iconUp: svg(":/svg/main-toolbar/move-end-line.svg", "${project.toolbar.iconColor}");
+    --svgIcon: svg(":/svg/main-toolbar/move-end-line.svg", auto);
 }
 
 QToolBar#main-toolbar>QToolButton[action-id="core.Metronome"] {
-    --iconUp: svg(":/svg/main-toolbar/metronome-line.svg", "${project.toolbar.iconColor}");
+    --svgIcon: svg(":/svg/main-toolbar/metronome-line.svg", auto);
 }
 
 QToolBar#main-toolbar>QToolButton[action-id="core.LoopPlay"] {
-    --iconUp: svg(":/svg/main-toolbar/loop-line.svg", "${project.toolbar.iconColor}");
+    --svgIcon: svg(":/svg/main-toolbar/loop-line.svg", auto);
 }
 
 QToolBar#main-toolbar>QToolButton[action-id="core.FindAction"] {
-    --iconUp: svg(":/svg/main-toolbar/search-line.svg", "${project.toolbar.iconColor}");
+    --svgIcon: svg(":/svg/main-toolbar/search-line.svg", auto);
 }
 
 QToolBar#main-toolbar>QToolButton[action-id="core.Settings"] {
-    --iconUp: svg(":/svg/main-toolbar/setting-line.svg", "${project.toolbar.iconColor}");
+    --svgIcon: svg(":/svg/main-toolbar/setting-line.svg", auto);
 }
 
 QsApi--SynthVSplitter#canvas>QsApi--SynthVSplitterHandle {
@@ -82,32 +84,32 @@ QsApi--SynthVSplitter#canvas>QsApi--SynthVSplitterHandle {
 }
 
 Core--Internal--FloatingTitleBar {
-    background-color: #363737;
     --layoutMargins: qmargins(5px);
     --layoutSpacing: 10px;
+    background-color: #363737;
 }
 
 Core--Internal--FloatingTitleBarButton {
+    --hintHeight: 4px;
+    --hintColor: #017FD4;
     background-color: transparent;
     border: none;
     color: white;
-    --hintHeight: 4px;
-    --hintColor: #017FD4;
 }
 
 Core--Internal--FloatingTitleBar>QToolButton {
+    --iconSize: 12px 12px;
+    color: white;
     background-color: transparent;
     border: none;
-    --iconSize: 12px 12px;
 }
 
 Core--Internal--FloatingTitleBar>QToolButton#fold-button {
-    --iconUp: svg(":/svg/floating-titlebar/unfold.svg", "${project.floatingPanel.iconColor}");
-    --iconUpChecked: svg(":/svg/floating-titlebar/fold.svg", "${project.floatingPanel.iconColor}");
+    --svgIcon: svg((":/svg/floating-titlebar/unfold.svg", up2=":/svg/floating-titlebar/fold.svg"), auto);
 }
 
 Core--Internal--FloatingTitleBar>QToolButton#close-button {
-    --iconUp: svg(":/svg/floating-titlebar/close.svg", "${project.floatingPanel.iconColor}");
+    --svgIcon: svg(":/svg/floating-titlebar/close.svg", auto);
 }
 
 QWidget[floating-panel=true] {
@@ -240,8 +242,7 @@ CDockCard:not(:checked):hover {
 }
 
 CDockCard#track-card {
-    --iconUp: svg(":/svg/main-dock/layer-group-solid.svg", "${project.dockCard.iconColor}");
-    --iconUpChecked: svg(":/svg/main-dock/layer-group-solid.svg", "${project.dockCard.iconColor.checked}");
+    --svgIcon: svg(":/svg/main-dock/layer-group-solid.svg", auto);
 }
 
 CDockPanelSplitter:handle {

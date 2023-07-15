@@ -9,7 +9,7 @@ QWidget:focus {
 }
 
 CWindowBarV2>CToolButton#icon-button {
-    --iconUp: svg(":/svg/app/diffsinger.svg", transparent);
+    --svgIcon: svg(":/svg/app/diffsinger.svg");
 }
 
 
@@ -172,14 +172,14 @@ Core--CommandPalette>QListWidget {
     border: none;
     outline: 0;
     background-color: transparent;
-    --styleData: qvariantmap(/* styleData */
-    background=qrectstyle(3.75px, (transparent, rgba(255, 255, 255, 10%), rgba(0, 96, 192, 25%))), /**/
+    --styleData: qmap(/* styleData */
+    background=qrect((transparent, rgba(255, 255, 255, 10%), rgba(0, 96, 192, 25%)), 3.75px), /**/
     underline=qpen(rgba(255, 255, 255, 7.5%), 1), /**/
-    titleShape=qtypeface((#CCCCCC, white), 15px), /**/
-    subShape=qtypeface((#909090, #CCCCCC), 15px), /**/
-    descShape=qtypeface((#CCCCCC, white), 15px), /**/
-    descHighlightShape=qtypeface((#3794F9, white), 15px), /**/
-    descBackgroundShape=qrectstyle(2px, 2px, 2px, rgba(255, 255, 255, 7.5%)), /**/
+    titleShape=qfont((#CCCCCC, white), 15px), /**/
+    subShape=qfont((#909090, #CCCCCC), 15px), /**/
+    descShape=qfont((#CCCCCC, white), 15px), /**/
+    descHighlightShape=qfont((#3794F9, white), 15px), /**/
+    descBackgroundShape=qrect(rgba(255, 255, 255, 7.5%), (2px, 2px, 2px, 0)), /**/
     titleMargins=qmargins(0, 1.25px, 10px, 1.25px), /**/
     subMargins=qmargins(0, 1.25px, 10px, 1.25px), /**/
     descMargins=qmargins(10px, 0, 0, 0), /**/

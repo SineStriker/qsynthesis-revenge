@@ -56,20 +56,21 @@ namespace Core {
         startPos = 0;
 
         sectionNumber.setColors({0x999999, 0xCCCCCC});
-        sectionBackground.setRect({4, 0, 4, 0});
+        signatureNumber.setColors({0x999999, 0xCCCCCC});
+        tempoNumber.setColors({0xCCCCCC});
+
+        sectionBackground.setMargins({4, 0, 4, 0});
         sectionBackground.setColor(Qt::transparent);
 
-        signatureNumber.setColors({0x999999, 0xCCCCCC});
-        signatureBackground.setRect({4, 0, 4, 0});
+        signatureBackground.setMargins({4, 0, 4, 0});
         signatureBackground.setColor(Qt::transparent);
 
-        tempoNumber.setColor(0xCCCCCC);
-        tempoBackground.setRect({4, 0, 4, 0});
+        tempoBackground.setMargins({4, 0, 4, 0});
         tempoBackground.setColors({0x636775, 0x878B9A, 0x999999});
 
-        sectionLine = QPen(Qt::lightGray, 0x1, Qt::SolidLine);
+        sectionLine = {Qt::lightGray, 0x1, Qt::SolidLine};
         beatLine = sectionLine;
-        tempoLine = QPen(Qt::lightGray, 0x1, Qt::DashLine);
+        tempoLine = {Qt::lightGray, 0x1, Qt::DashLine};
 
         timeline = nullptr;
         pressed = false;
@@ -105,7 +106,7 @@ namespace Core {
         q->update();
     }
 
-    QTypeMap SectionBarPrivate::styleData_helper() const {
+    QCssValueMap SectionBarPrivate::styleData_helper() const {
         return {
             {"sectionNumber",       QVariant::fromValue(sectionNumber)      },
             {"signatureNumber",     QVariant::fromValue(signatureNumber)    },
@@ -118,7 +119,7 @@ namespace Core {
         };
     }
 
-    void SectionBarPrivate::setStyleData_helper(const QTypeMap &map) {
+    void SectionBarPrivate::setStyleData_helper(const QCssValueMap &map) {
         auto decodeStyle = [](const QVariant &var, auto &val) {
             using Type = decltype(typename std::remove_reference<decltype(val)>::type());
             if (var.canConvert<Type>()) {
@@ -126,14 +127,15 @@ namespace Core {
             }
         };
 
-        decodeStyle(map["sectionNumber"], sectionNumber);
-        decodeStyle(map["signatureNumber"], signatureNumber);
-        decodeStyle(map["signatureBackground"], signatureBackground);
-        decodeStyle(map["tempoNumber"], tempoNumber);
-        decodeStyle(map["tempoBackground"], tempoBackground);
-        decodeStyle(map["sectionLine"], sectionLine);
-        decodeStyle(map["beatLine"], beatLine);
-        decodeStyle(map["tempoLine"], tempoLine);
+        auto &_map = map.get();
+        decodeStyle(_map["sectionNumber"], sectionNumber);
+        decodeStyle(_map["signatureNumber"], signatureNumber);
+        decodeStyle(_map["signatureBackground"], signatureBackground);
+        decodeStyle(_map["tempoNumber"], tempoNumber);
+        decodeStyle(_map["tempoBackground"], tempoBackground);
+        decodeStyle(_map["sectionLine"], sectionLine);
+        decodeStyle(_map["beatLine"], beatLine);
+        decodeStyle(_map["tempoLine"], tempoLine);
     }
 
     void SectionBarPrivate::edit_sectionClicked() {
@@ -344,12 +346,12 @@ namespace Core {
     void SectionBar::extensionInitialized() {
     }
 
-    QTypeMap SectionBar::styleData() const {
+    QCssValueMap SectionBar::styleData() const {
         Q_D(const SectionBar);
         return d->styleData_helper();
     }
 
-    void SectionBar::setStyleData(const QTypeMap &map) {
+    void SectionBar::setStyleData(const QCssValueMap &map) {
         Q_D(SectionBar);
         d->setStyleData_helper(map);
     }
@@ -443,11 +445,11 @@ namespace Core {
             }
 
             if (pressed) {
-                painter.setPen(d->sectionNumber.color3());
-                painter.setBrush(d->sectionBackground.color3());
+                painter.setPen(d->sectionNumber.color(QM::CS_Pressed));
+                painter.setBrush(d->sectionBackground.color(QM::CS_Pressed));
             } else if (hover) {
-                painter.setPen(d->sectionNumber.color2());
-                painter.setBrush(d->sectionBackground.color2());
+                painter.setPen(d->sectionNumber.color(QM::CS_Hover));
+                painter.setBrush(d->sectionBackground.color(QM::CS_Hover));
             } else {
                 painter.setPen(d->sectionNumber.color());
                 painter.setBrush(d->sectionBackground.color());
@@ -458,7 +460,7 @@ namespace Core {
                 painter.drawRect(r0);
                 painter.setPen(pen);
             }
-            painter.setFont(d->sectionNumber.font());
+            painter.setFont(d->sectionNumber.toFont(this));
             painter.drawText(r0, Qt::AlignCenter, QString::number(section));
         };
 
@@ -483,11 +485,11 @@ namespace Core {
             }
 
             if (pressed) {
-                painter.setPen(d->signatureNumber.color3());
-                painter.setBrush(d->signatureBackground.color3());
+                painter.setPen(d->signatureNumber.color(QM::CS_Pressed));
+                painter.setBrush(d->signatureBackground.color(QM::CS_Pressed));
             } else if (hover) {
-                painter.setPen(d->signatureNumber.color2());
-                painter.setBrush(d->signatureBackground.color2());
+                painter.setPen(d->signatureNumber.color(QM::CS_Hover));
+                painter.setBrush(d->signatureBackground.color(QM::CS_Hover));
             } else {
                 painter.setPen(d->signatureNumber.color());
                 painter.setBrush(d->signatureBackground.color());
@@ -500,7 +502,7 @@ namespace Core {
                     painter.drawRoundedRect(r0, d->signatureBackground.radius(), d->signatureBackground.radius());
                     painter.setPen(pen);
                 }
-                painter.setFont(d->signatureNumber.font());
+                painter.setFont(d->signatureNumber.toFont(this));
                 painter.drawText(r0, Qt::AlignCenter, ts.toString());
             }
         };
@@ -537,11 +539,11 @@ namespace Core {
             }
 
             if (pressed) {
-                painter.setPen(d->tempoNumber.color3());
-                painter.setBrush(d->tempoBackground.color3());
+                painter.setPen(d->tempoNumber.color(QM::CS_Pressed));
+                painter.setBrush(d->tempoBackground.color(QM::CS_Pressed));
             } else if (hover) {
-                painter.setPen(d->tempoNumber.color2());
-                painter.setBrush(d->tempoBackground.color2());
+                painter.setPen(d->tempoNumber.color(QM::CS_Hover));
+                painter.setBrush(d->tempoBackground.color(QM::CS_Hover));
             } else {
                 painter.setPen(d->tempoNumber.color());
                 painter.setBrush(d->tempoBackground.color());
@@ -562,7 +564,7 @@ namespace Core {
 
                 // Draw text
                 painter.setPen(pen);
-                painter.setFont(d->tempoNumber.font());
+                painter.setFont(d->tempoNumber.toFont(this));
                 painter.drawText(r0, Qt::AlignCenter, QString::number(tempo));
             }
         };
@@ -582,7 +584,7 @@ namespace Core {
 
                     int x2 = (it.key() - startPos) * unit + changedRect.left();
 
-                    QFontMetrics fm(d->tempoNumber.font());
+                    QFontMetrics fm(d->tempoNumber.toFont(this));
                     QString text = QString::number(it.value());
                     auto margins = d->tempoBackground.margins();
                     int rw = margins.left() + margins.right() + fm.horizontalAdvance(text);
@@ -650,7 +652,7 @@ namespace Core {
                     }
 
                     // Draw text
-                    QFontMetrics fm0(d->sectionNumber.font());
+                    QFontMetrics fm0(d->sectionNumber.toFont(this));
                     {
                         QString text = QString::number(curSection);
                         auto margins = d->sectionBackground.margins();
@@ -669,7 +671,7 @@ namespace Core {
                     }
 
                     // Draw time signature
-                    QFontMetrics fm1(d->signatureNumber.font());
+                    QFontMetrics fm1(d->signatureNumber.toFont(this));
                     {
                         QString text = bar.timeSignature.toString();
                         auto margins = d->signatureBackground.margins();
@@ -683,7 +685,7 @@ namespace Core {
                         }
 
                         if (r0.left() > changedRect.left() || r0.right() < changedRect.right()) {
-                           d->timeSignatureBlocks.insert(bar.tick, {r0, curSection, bar.tick, bar.timeSignature});
+                            d->timeSignatureBlocks.insert(bar.tick, {r0, curSection, bar.tick, bar.timeSignature});
                         }
                     }
                 } while (false);

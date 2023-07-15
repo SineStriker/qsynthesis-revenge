@@ -1,7 +1,3 @@
-//
-// Created by Functioner on 2023/6/4.
-//
-
 #ifndef CHORUSKIT_CLINEEDIT_H
 #define CHORUSKIT_CLINEEDIT_H
 

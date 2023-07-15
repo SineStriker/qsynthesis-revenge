@@ -2,7 +2,9 @@
 #include "QMFloatingWindowHelper_p.h"
 
 #include <QApplication>
+#include <QDebug>
 #include <QMouseEvent>
+#include <QTimer>
 #include <QWidget>
 
 static bool isDescendantOfWidget(QWidget *widget, QWidget *parent) {
@@ -20,12 +22,12 @@ QMFloatingWindowHelperPrivate::QMFloatingWindowHelperPrivate(QWidget *w, QMFloat
 
     m_floating = false;
     m_windowFlags = 0;
-    m_pressed = false;
+    m_pressedButton = Qt::NoButton;
     m_pressedArea = None;
 
     // Initialize array
-    for (auto &r : m_pressedRect) {
-        r = {0, 0, 0, 0};
+    for (auto &rec : m_pressedRect) {
+        rec = {0, 0, 0, 0};
     }
 
     w->setAttribute(Qt::WA_Hover);
@@ -90,6 +92,9 @@ bool QMFloatingWindowHelperPrivate::dummyEventFilter(QObject *obj, QEvent *event
                 w->setCursor(Qt::ArrowCursor);
             }
 
+            if (m_pressedButton != Qt::LeftButton)
+                break;
+
             // Calc the movement by mouse pos
             auto globalPos = QCursor::pos();
             int offsetX = globalPos.x() - m_pressedPos.x();
@@ -107,6 +112,8 @@ bool QMFloatingWindowHelperPrivate::dummyEventFilter(QObject *obj, QEvent *event
             auto maxSize = w->maximumSize();
 
             auto curRect = m_rect;
+
+            // Execute stretch or move
             switch (m_pressedArea) {
                 case Left: {
                     int resizeW = rectW - offsetX;
@@ -181,10 +188,7 @@ bool QMFloatingWindowHelperPrivate::dummyEventFilter(QObject *obj, QEvent *event
                     break;
                 }
                 default: {
-                    if (m_pressed) {
-                        // Execute stretch or move
-                        curRect.moveTopLeft(QPoint(rectX + offsetX, rectY + offsetY));
-                    }
+                    curRect.moveTopLeft(QPoint(rectX + offsetX, rectY + offsetY));
                     break;
                 }
             }
@@ -196,12 +200,11 @@ bool QMFloatingWindowHelperPrivate::dummyEventFilter(QObject *obj, QEvent *event
             break;
         }
         case QEvent::MouseButtonPress: {
-            // Record mouse press coordinates
             auto e = static_cast<QMouseEvent *>(event);
+            m_pressedButton = Qt::NoButton;
+
+            // Record mouse press coordinates
             auto pos = e->pos();
-            m_pressedPos = QCursor::pos();
-            m_orgGeometry = w->geometry();
-            m_rect = m_orgGeometry;
 
             bool pressed = false;
             for (int i = 0; i < SizeOfEdgeAndCorner; ++i) {
@@ -215,28 +218,91 @@ bool QMFloatingWindowHelperPrivate::dummyEventFilter(QObject *obj, QEvent *event
             if (!pressed) {
                 auto widget = qobject_cast<QWidget *>(obj);
                 if (widget && (widget == w || QMFloatingWindowHelper::isWidgetHitTestVisible(w))) {
-                    m_pressed = true;
                     pressed = true;
                 }
             }
 
             if (pressed) {
+                m_pressedButton = e->button();
+                m_pressedPos = QCursor::pos();
+                m_orgGeometry = w->geometry();
+                m_rect = m_orgGeometry;
                 return true;
             }
             break;
         }
-        case QEvent::Leave:
-        case QEvent::MouseButtonRelease: {
+        case QEvent::GraphicsSceneMouseDoubleClick: {
+            auto e = static_cast<QMouseEvent *>(event);
+
             // Restore all
             w->setCursor(Qt::ArrowCursor);
-            bool pressed = m_pressed || m_pressedArea != None;
+            m_pressedButton = Qt::NoButton;
+            m_pressedArea = None;
 
-            m_pressed = false;
+            auto pos = e->pos();
+
+            bool pressed = false;
+            for (const auto &rect : qAsConst(m_pressedRect)) {
+                if (rect.contains(pos)) {
+                    pressed = true;
+                    break;
+                }
+            }
+
+            if (!pressed) {
+                auto widget = qobject_cast<QWidget *>(obj);
+                if (widget && (widget == w || QMFloatingWindowHelper::isWidgetHitTestVisible(w))) {
+                    auto button = e->button();
+                    QTimer::singleShot(0, this, [this, button]() {
+                        emit q->doubleClicked(button); //
+                    });
+                }
+            }
+
+            if (pressed)
+                return true;
+
+            break;
+        }
+        case QEvent::Leave: {
+            w->setCursor(Qt::ArrowCursor);
+            break;
+        }
+        case QEvent::MouseButtonRelease: {
+            auto e = static_cast<QMouseEvent *>(event);
+
+            auto pos = e->pos();
+            {
+                bool pressed = false;
+                for (const auto &rect : qAsConst(m_pressedRect)) {
+                    if (rect.contains(pos)) {
+                        pressed = true;
+                        break;
+                    }
+                }
+
+                if (!pressed) {
+                    auto widget = qobject_cast<QWidget *>(obj);
+                    if (widget && (widget == w || QMFloatingWindowHelper::isWidgetHitTestVisible(w))) {
+                        auto button = e->button();
+                        QTimer::singleShot(0, this, [this, button]() {
+                            emit q->clicked(button); //
+                        });
+                    }
+                }
+            }
+
+            bool pressed = m_pressedButton != Qt::NoButton;
+
+            // Restore all
+            w->setCursor(Qt::ArrowCursor);
+            m_pressedButton = Qt::NoButton;
             m_pressedArea = None;
 
             if (pressed) {
                 return true;
             }
+
             break;
         }
         default:

@@ -3,10 +3,7 @@
 
 #include <QStyledItemDelegate>
 
-#include <QLineStyle.h>
-#include <QRectStyle.h>
-#include <QTypeFace.h>
-#include <QTypeMap.h>
+#include <QCssValueMap.h>
 
 #include "QsFrameworkGlobal.h"
 
@@ -46,8 +43,8 @@ namespace QsApi {
         void paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const override;
 
     public:
-        QTypeMap styleData() const;
-        void setStyleData(const QTypeMap &map);
+        QCssValueMap styleData() const;
+        void setStyleData(const QCssValueMap &map);
 
     signals:
         void clicked(const QModelIndex &index, int button);

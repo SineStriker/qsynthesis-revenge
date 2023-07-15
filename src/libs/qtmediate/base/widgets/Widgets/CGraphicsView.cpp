@@ -4,35 +4,42 @@
 #include <QApplication>
 #include <QGraphicsSceneMoveEvent>
 #include <QGraphicsSceneResizeEvent>
+#include <QPropertyAnimation>
 #include <QResizeEvent>
 
 #include <QDebug>
 
-CGraphicsView::CGraphicsView(QWidget *parent) : QGraphicsView(parent) {
-    init();
+class CGraphicsViewPrivate {
+public:
+    explicit CGraphicsViewPrivate(CGraphicsView *q) : q(q) {
+        m_horizontalAnimation = new QPropertyAnimation(q);
+        m_horizontalAnimation->setTargetObject(q->horizontalScrollBar());
+        m_horizontalAnimation->setPropertyName("value");
+        m_horizontalAnimation->setEasingCurve(QEasingCurve::OutCubic);
+        m_horizontalAnimation->setDuration(125);
+
+        m_verticalAnimation = new QPropertyAnimation(q);
+        m_verticalAnimation->setTargetObject(q->verticalScrollBar());
+        m_verticalAnimation->setPropertyName("value");
+        m_horizontalAnimation->setEasingCurve(QEasingCurve::OutCubic);
+        m_verticalAnimation->setDuration(125);
+    }
+
+    CGraphicsView *q;
+
+    QPropertyAnimation *m_horizontalAnimation;
+    QPropertyAnimation *m_verticalAnimation;
+};
+
+CGraphicsView::CGraphicsView(QWidget *parent) : QGraphicsView(parent), d(new CGraphicsViewPrivate(this)) {
 }
 
-CGraphicsView::CGraphicsView(QGraphicsScene *scene, QWidget *parent) : QGraphicsView(scene, parent) {
-    init();
+CGraphicsView::CGraphicsView(QGraphicsScene *scene, QWidget *parent) : CGraphicsView(parent) {
+    setScene(scene);
 }
 
 CGraphicsView::~CGraphicsView() {
-}
-
-void CGraphicsView::init() {
-    CScrollBar::replaceScrollBars(this);
-
-    m_horizontalAnimation = new QPropertyAnimation(this);
-    m_horizontalAnimation->setTargetObject(horizontalScrollBar());
-    m_horizontalAnimation->setPropertyName("value");
-    m_horizontalAnimation->setEasingCurve(QEasingCurve::OutCubic);
-    m_horizontalAnimation->setDuration(125);
-
-    m_verticalAnimation = new QPropertyAnimation(this);
-    m_verticalAnimation->setTargetObject(verticalScrollBar());
-    m_verticalAnimation->setPropertyName("value");
-    m_horizontalAnimation->setEasingCurve(QEasingCurve::OutCubic);
-    m_verticalAnimation->setDuration(125);
+    delete d;
 }
 
 QRectF CGraphicsView::viewportRect() const {
@@ -42,6 +49,8 @@ QRectF CGraphicsView::viewportRect() const {
 }
 
 void CGraphicsView::horizontalTween(int value) {
+    auto &m_horizontalAnimation = d->m_horizontalAnimation;
+
     if (value == m_horizontalAnimation->endValue() && m_horizontalAnimation->state() == QPropertyAnimation::Running) {
         return;
     }
@@ -52,6 +61,8 @@ void CGraphicsView::horizontalTween(int value) {
 }
 
 void CGraphicsView::verticalTween(int value) {
+    auto &m_verticalAnimation = d->m_verticalAnimation;
+
     if (value == m_verticalAnimation->endValue() && m_verticalAnimation->state() == QPropertyAnimation::Running) {
         return;
     }

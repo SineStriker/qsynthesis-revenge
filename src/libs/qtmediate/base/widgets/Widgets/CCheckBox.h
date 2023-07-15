@@ -10,6 +10,8 @@
 
 #include "QMWidgetsGlobal.h"
 
+class CCheckBoxPrivate;
+
 class QMWIDGETS_EXPORT CCheckBox : public QAbstractButton {
     Q_OBJECT
     Q_LAYOUT_PROPERTY_DELCARE
@@ -18,22 +20,11 @@ public:
     CCheckBox(const QString &text, QWidget *parent = nullptr);
     ~CCheckBox();
 
-private:
-    void init();
-
-protected:
-    CToolButton *m_box;
-    QLabel *m_label;
-
-    QHBoxLayout *m_layout;
-
-private:
-    void handleBoxToggled(bool checked);
-
 protected:
     void paintEvent(QPaintEvent *event) override;
-    void checkStateSet() override;
-    void nextCheckState() override;
+
+private:
+    CCheckBoxPrivate *d;
 };
 
 #endif // CCHECKBOX_H

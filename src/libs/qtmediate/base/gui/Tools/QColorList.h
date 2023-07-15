@@ -6,28 +6,42 @@
 
 #include "QMGuiGlobal.h"
 
-class QMGUI_EXPORT QColorList : public QList<QColor> {
+class QMGUI_EXPORT QColorList {
 public:
     QColorList() = default;
-    inline QColorList(std::initializer_list<QColor> args) : QColorList(args.begin(), args.end()) {
-    }
-    template <typename InputIterator, QtPrivate::IfIsInputIterator<InputIterator> = true>
-    QColorList(InputIterator first, InputIterator last) : QList(first, last){};
+    inline QColorList(std::initializer_list<QColor> args) : m_list(args.begin(), args.end()){};
+    inline QColorList(const QList<QColor> &list) : m_list(list){};
+
+    template <class InputIterator, QtPrivate::IfIsInputIterator<InputIterator> = true>
+    QColorList(InputIterator first, InputIterator last) : m_list(first, last){};
+
     ~QColorList() = default;
 
 public:
-    QStringList toStringList() const;
+    inline QList<QColor> &get();
+    inline const QList<QColor> &get() const;
+
+public:
     static QColorList fromStringList(const QStringList &stringList);
 
-    static QLatin1String MetaFunctionName();
+    static const char *metaFunctionName();
 
     QMGUI_EXPORT friend QDebug operator<<(QDebug debug, const QColorList &list);
 
-    QList<QColor> fromSet(const QSet<QColor> &) = delete;
-
-    friend uint qHash(const QColor &var, uint seed);
+private:
+    QList<QColor> m_list;
 };
 
+Q_DECLARE_TYPEINFO(QColorList, Q_MOVABLE_TYPE);
+
 Q_DECLARE_METATYPE(QColorList)
+
+inline QList<QColor> &QColorList::get() {
+    return m_list;
+}
+
+inline const QList<QColor> &QColorList::get() const {
+    return m_list;
+}
 
 #endif // QCOLORLIST_H

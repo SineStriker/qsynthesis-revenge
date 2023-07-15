@@ -43,17 +43,15 @@ namespace QsApi {
     TitleListWidget::~TitleListWidget() {
     }
 
-    QTypeMap TitleListWidget::styleData() const {
+    QCssValueMap TitleListWidget::styleData() const {
         Q_D(const TitleListWidget);
         return d->m_delegate->styleData();
     }
 
-    void TitleListWidget::setStyleData(const QTypeMap &map) {
+    void TitleListWidget::setStyleData(const QCssValueMap &map) {
         Q_D(TitleListWidget);
         d->m_delegate->setStyleData(map);
         update();
-
-        emit styleDataChanged();
     }
 
     QSize TitleListWidget::contentsSize() const {

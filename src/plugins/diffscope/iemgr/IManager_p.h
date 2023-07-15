@@ -1,9 +1,9 @@
 #ifndef IMANAGERPRIVATE_H
 #define IMANAGERPRIVATE_H
 
-#include "IManager.h"
-
 #include <QMChronMap.h>
+
+#include "IManager.h"
 
 namespace IEMgr {
 

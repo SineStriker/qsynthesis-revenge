@@ -23,13 +23,13 @@ public:
     QSize sizeHint() const override;
     QSize minimumSizeHint() const override;
 
+signals:
+    void spaceChanged();
+
 protected:
     double m_spaceRatio;
 
     void paintEvent(QPaintEvent *event) override;
-
-signals:
-    void spaceChanged();
 };
 
 #endif // CTABBUTTON_H

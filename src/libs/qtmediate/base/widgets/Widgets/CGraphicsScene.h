@@ -23,8 +23,6 @@ protected:
 
     virtual void enterEvent(QEnterEvent *event);
     virtual void leaveEvent(QEvent *event);
-
-signals:
 };
 
 #endif // CGRAPHICSSCENE_H

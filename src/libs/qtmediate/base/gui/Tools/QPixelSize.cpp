@@ -1,6 +1,8 @@
 #include "QPixelSize.h"
 #include "private/QMetaTypeUtils.h"
 
+#include <QDebug>
+
 QPixelSize::QPixelSize() : m_value(0) {
 }
 
@@ -50,16 +52,17 @@ QPixelSize QPixelSize::fromString(const QString &string) {
         str = string;
     }
 
-    QPixelSize p;
+    QPixelSize res;
     bool isNum;
-    int num = str.toInt(&isNum);
+    auto num = str.toDouble(&isNum);
     if (isNum) {
-        p.m_value = num;
+        res.m_value = num;
     }
-    return p;
+    return res;
 }
 
 QDebug operator<<(QDebug debug, const QPixelSize &pixel) {
+    QDebugStateSaver saver(debug);
     debug.nospace() << pixel.toString();
     return debug;
 }

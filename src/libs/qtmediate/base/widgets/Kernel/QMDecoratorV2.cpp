@@ -508,7 +508,8 @@ QString QMDecoratorV2Private::replaceSizes(const QString &stylesheet, double rat
 
 QString QMDecoratorV2Private::replaceCustomKeyWithQProperty(const QString &stylesheet) {
     // Replace "--key: value;" with "qproperty-key: value;"
-    QRegularExpression re(R"((\{|;)\s*(--|---)\w(\w|-)*:)",
+    // Replace "---key: value;" with "key: value;"
+    QRegularExpression re(R"((\{|;|^)\s*(--|---)\w(\w|-)*:)",
                           QRegularExpression::MultilineOption | QRegularExpression::DotMatchesEverythingOption);
     QRegularExpressionMatch match;
     int index = 0;

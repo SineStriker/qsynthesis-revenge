@@ -5,7 +5,6 @@
 #include <QVBoxLayout>
 
 #include <QPixelSize.h>
-#include <QTypeMap.h>
 
 #include "QsFrameworkGlobal.h"
 #include "Widgets/BaseContainer.h"

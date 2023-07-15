@@ -8,11 +8,11 @@
 
 namespace QMarginsImpl {
 
-    QMGUI_EXPORT QLatin1String MetaFunctionName();
-
-    QMGUI_EXPORT QStringList toStringList(const QMargins &margins);
-
     QMGUI_EXPORT QMargins fromStringList(const QStringList &stringList);
+
+    QMGUI_EXPORT QMargins fromString(const QString &s);
+
+    QMGUI_EXPORT const char *metaFunctionName();
 
 }
 

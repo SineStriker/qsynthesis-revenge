@@ -1,7 +1,7 @@
 #ifndef QPIXELSIZE_H
 #define QPIXELSIZE_H
 
-#include <QDebug>
+#include <QMetaType>
 #include <QString>
 
 #include "QMGuiGlobal.h"
@@ -25,14 +25,16 @@ public:
     operator int() const;
     operator double() const;
 
-protected:
-    double m_value;
-
 public:
     static QPixelSize fromString(const QString &string);
 
     friend QDebug operator<<(QDebug debug, const QPixelSize &pixel);
+
+private:
+    double m_value;
 };
+
+Q_DECLARE_TYPEINFO(QPixelSize, Q_MOVABLE_TYPE);
 
 Q_DECLARE_METATYPE(QPixelSize)
 

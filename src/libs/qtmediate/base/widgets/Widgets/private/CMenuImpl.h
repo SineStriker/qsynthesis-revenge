@@ -13,6 +13,10 @@
  *
  */
 
-bool appUseFullScreenForPopup();
+namespace CMenuImpl {
+
+    bool appUseFullScreenForPopup();
+
+}
 
 #endif // CMENUIMPL_H
