@@ -1,4 +1,4 @@
-#include "slicer/MainWindow.h"
+#include "slicer/mainwindow.h"
 
 #include "QMSystem.h"
 
@@ -18,11 +18,9 @@ int main(int argc, char *argv[]) {
 
 #if defined(Q_OS_WIN)
     QFont font("Microsoft Yahei UI");
-#else
-    QFont font;
-#endif
     font.setPointSize(9);
     a.setFont(font);
+#endif
 
     // Set library loading info
 #ifdef Q_OS_MAC

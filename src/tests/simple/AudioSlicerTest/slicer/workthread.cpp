@@ -55,7 +55,7 @@ void WorkThread::run() {
         std::string filename = m_filename.toStdString();
 
         auto path = std::filesystem::absolute(filename);
-        auto out = m_out_path.isEmpty() ? path.parent_path() : std::filesystem::path(m_out_path.toStdString());
+        auto out = m_outPath.isEmpty() ? path.parent_path() : std::filesystem::path(m_outPath.toStdString());
 #endif
         auto pathh = QDir(m_filename).absolutePath();
         auto dirname = QFileInfo(m_filename).absolutePath();
