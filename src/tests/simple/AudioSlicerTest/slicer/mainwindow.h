@@ -58,6 +58,7 @@ private:
     void warningProcessNotFinished();
     void setProcessing(bool processing);
     void logMessage(const QString &txt);
+    void addSingleAudioFile(const QString &fullPath);
 
 #ifdef Q_OS_WIN
     private:

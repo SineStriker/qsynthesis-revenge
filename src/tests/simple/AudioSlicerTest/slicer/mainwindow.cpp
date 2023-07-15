@@ -1,10 +1,14 @@
+#include <QDir>
+#include <QFile>
 #include <QFileDialog>
+#include <QIODevice>
 #include <QMessageBox>
 #include <QString>
 #include <QStringList>
 #include <QRegularExpression>
 #include <QValidator>
 #include <QThreadPool>
+#include <QTextStream>
 #include <QRunnable>
 #include <QSysInfo>
 #include <QDateTime>
@@ -115,10 +119,7 @@ void MainWindow::slot_addAudioFiles() {
 
     QStringList paths = QFileDialog::getOpenFileNames(this, "Select Audio Files", ".", "Wave Files (*.wav)");
     for (const QString& path : paths) {
-        auto *item = new QListWidgetItem();
-        item->setText(QFileInfo(path).fileName());
-        item->setData(Qt::ItemDataRole::UserRole + 1, path);
-        ui->listWidgetTaskList->addItem(item);
+        addSingleAudioFile(path);
     }
 }
 
@@ -127,7 +128,16 @@ void MainWindow::slot_addFolder() {
         warningProcessNotFinished();
         return;
     }
-    QMessageBox::warning(this, "Audio Slicer", "Not implemented yet!");
+    QString path = QFileDialog::getExistingDirectory(this, "Add Folder", ".");
+    QDir dir(path);
+    if (!dir.exists()) {
+        return;
+    }
+    QStringList files = dir.entryList({"*.wav"}, QDir::Files);
+    for (const QString &name : files) {
+        QString fullPath = path + QDir::separator() + name;
+        addSingleAudioFile(fullPath);
+    }
 }
 
 void MainWindow::slot_clearAudioList() {
@@ -220,7 +230,21 @@ void MainWindow::slot_start() {
 }
 
 void MainWindow::slot_saveLogs() {
-    QMessageBox::warning(this, "Audio Slicer", "Not implemented yet!");
+    QString timestamp = QDateTime::currentDateTime().toString("yyyyMMdd_hhmmss");
+    QString filename = QString("slicer-%1.log").arg(timestamp);
+    QString path = QFileDialog::getSaveFileName(this, "Save Log File", filename, "Log File (*.log)");
+    if (path.isEmpty()) {
+        return;
+    }
+    QFile writeFile(path);
+    if (!writeFile.open(QIODevice::WriteOnly | QIODevice::Text)) {
+        QMessageBox::critical(this, "Error", "Can't write output log file!");
+    } else {
+        QTextStream textStream(&writeFile);
+        QString txt = ui->txtLogs->toPlainText();
+        textStream << txt;
+    }
+    writeFile.close();
 }
 
 void MainWindow::slot_oneFinished(const QString &filename) {
@@ -307,6 +331,13 @@ void MainWindow::logMessage(const QString &txt) {
         auto timestamp = QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss.zzz");
         ui->txtLogs->append(QString("[%1] %2").arg(timestamp, txt));
     }
+}
+
+void MainWindow::addSingleAudioFile(const QString &fullPath) {
+    auto *item = new QListWidgetItem();
+    item->setText(QFileInfo(fullPath).fileName());
+    item->setData(Qt::ItemDataRole::UserRole + 1, fullPath);
+    ui->listWidgetTaskList->addItem(item);
 }
 
 void MainWindow::closeEvent(QCloseEvent *event) {
