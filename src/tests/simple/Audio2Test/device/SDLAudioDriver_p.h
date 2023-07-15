@@ -12,11 +12,16 @@
 #include <QMap>
 #include <QMutex>
 
-class SDLEventPollerThread: public QThread {
-public:
-    [[noreturn]] void run() override;
-    SDLAudioDriverPrivate *d;
-    QAtomicInteger<bool> quitFlag = false;
+class SDLEventPoller: public QObject {
+    Q_OBJECT
+    QAtomicInteger<bool> stopRequested = false;
+public slots:
+    void start();
+    void quit();
+
+signals:
+    void event(QByteArray sdlEventData);
+
 };
 
 class SDLAudioDriverPrivate: public AudioDriverPrivate {
@@ -24,11 +29,11 @@ class SDLAudioDriverPrivate: public AudioDriverPrivate {
 public:
     int driverIndex;
     QMutex mutex;
-    SDLEventPollerThread eventPollerThread;
+    SDLEventPoller eventPoller;
+    QThread eventPollerThread;
     QMap<quint32, SDLAudioDevice *> openedDevices;
-    void startEventPoller();
-    void stopEventPoller();
-    void _q_deviceChanged();
+
+    void handleSDLEvent(const QByteArray &sdlEventData);
     void handleDeviceRemoved(quint32 devId);
 };
 

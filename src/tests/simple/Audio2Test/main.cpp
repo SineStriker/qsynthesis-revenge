@@ -223,10 +223,6 @@ int main(int argc, char **argv){
         deviceComboBox->addItems(deviceList);
         if(defaultDevIndex != -1) deviceComboBox->setCurrentIndex(defaultDevIndex);
         driverComboBoxCtx = new QObject;
-        QObject::connect(driver, &AudioDriver::deviceChanged, driverComboBoxCtx, [&](){
-            QMessageBox::information(&mainWindow, "Device changed", "Audio device is changed.");
-            emit driverComboBox->currentIndexChanged(driverComboBox->currentIndex());
-        });
         QObject::connect(deviceComboBox, QOverload<int>::of(&QComboBox::currentIndexChanged), driverComboBoxCtx, [&](int index){
             if(device) {
                 device->close();

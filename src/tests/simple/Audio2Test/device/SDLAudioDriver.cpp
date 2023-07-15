@@ -12,8 +12,6 @@
 #include <QDebug>
 
 SDLAudioDriver::SDLAudioDriver(QObject *parent): SDLAudioDriver(*new SDLAudioDriverPrivate, parent) {
-    Q_D(SDLAudioDriver);
-    d->eventPollerThread.d = d;
 }
 SDLAudioDriver::SDLAudioDriver(SDLAudioDriverPrivate &d, QObject *parent): AudioDriver(d, parent) {
 }
@@ -25,7 +23,12 @@ SDLAudioDriver::~SDLAudioDriver() {
 bool SDLAudioDriver::initialize() {
     Q_D(SDLAudioDriver);
     if(SDL_Init(SDL_INIT_AUDIO) == 0 && SDL_AudioInit(name().toLocal8Bit()) == 0) {
-        d->startEventPoller();
+        d->eventPoller.moveToThread(&d->eventPollerThread);
+        connect(&d->eventPollerThread, &QThread::started, &d->eventPoller, &SDLEventPoller::start);
+        connect(&d->eventPoller, &SDLEventPoller::event, [=](const QByteArray &sdlEventData){
+            d->handleSDLEvent(sdlEventData);
+        });
+        d->eventPollerThread.start();
         return AudioDriver::initialize();
     } else {
         setErrorString(SDL_GetError());
@@ -34,7 +37,9 @@ bool SDLAudioDriver::initialize() {
 }
 void SDLAudioDriver::finalize() {
     Q_D(SDLAudioDriver);
-    d->stopEventPoller();
+    d->eventPoller.quit();
+    d->eventPollerThread.quit();
+    d->eventPollerThread.wait();
     SDL_AudioQuit();
     SDL_Quit();
     AudioDriver::finalize();
@@ -63,25 +68,6 @@ AudioDevice *SDLAudioDriver::createDevice(const QString &name) {
     return dev;
 }
 
-
-void SDLEventPollerThread::run() {
-    forever {
-        if(quitFlag) break;
-        SDL_Event e;
-        while(SDL_PollEvent(&e) > 0) {
-            if(e.type == SDL_AUDIODEVICEADDED && e.adevice.iscapture == 0) {
-                qDebug() << "SDL_AUDIODEVICEADDED";
-                d->_q_deviceChanged();
-            } else if(e.type == SDL_AUDIODEVICEREMOVED && e.adevice.iscapture == 0) {
-                qDebug() << "SDL_AUDIODEVICEREMOVED";
-                d->handleDeviceRemoved(e.adevice.which);
-                d->_q_deviceChanged();
-            }
-        }
-        SDL_Delay(1);
-    }
-}
-
 void SDLAudioDriver::addOpenedDevice(quint32 devId, SDLAudioDevice *dev) {
     Q_D(SDLAudioDriver);
     QMutexLocker locker(&d->mutex);
@@ -106,22 +92,35 @@ QList<SDLAudioDriver *> SDLAudioDriver::getDrivers() {
     return list;
 }
 
-
-void SDLAudioDriverPrivate::startEventPoller() {
-    eventPollerThread.start();
-}
-void SDLAudioDriverPrivate::stopEventPoller() {
-    eventPollerThread.quitFlag = true;
-    eventPollerThread.quit();
-    eventPollerThread.wait();
-}
-void SDLAudioDriverPrivate::_q_deviceChanged() {
+void SDLAudioDriverPrivate::handleSDLEvent(const QByteArray &sdlEventData) {
     Q_Q(SDLAudioDriver);
-    emit q->deviceChanged();
+    auto *e = reinterpret_cast<const SDL_Event *>(sdlEventData.data());
+    if(e->type == SDL_AUDIODEVICEADDED && e->adevice.iscapture == 0) {
+        qDebug() << "SDL_AUDIODEVICEADDED";
+        emit q->deviceChanged();
+    } else if(e->type == SDL_AUDIODEVICEREMOVED && e->adevice.iscapture == 0) {
+        qDebug() << "SDL_AUDIODEVICEREMOVED";
+        handleDeviceRemoved(e->adevice.which);
+        emit q->deviceChanged();
+    }
+
 }
 void SDLAudioDriverPrivate::handleDeviceRemoved(quint32 devId) {
     QMutexLocker locker(&mutex);
     auto it = openedDevices.find(devId);
     if(it == openedDevices.end()) return;
     it.value()->close();
+}
+
+void SDLEventPoller::start() {
+    while(!stopRequested) {
+        SDL_Event e;
+        while(SDL_PollEvent(&e) > 0) {
+            emit event(QByteArray(reinterpret_cast<char *>(&e), sizeof(SDL_Event)));
+        }
+        SDL_Delay(1);
+    }
+}
+void SDLEventPoller::quit() {
+    stopRequested = true;
 }
