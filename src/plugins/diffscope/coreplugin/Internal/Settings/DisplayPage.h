@@ -2,6 +2,7 @@
 #define CHORUSKIT_DISPLAYPAGE_H
 
 #include <CoreApi/ISettingPage.h>
+#include <QFont>
 
 namespace Core {
 
@@ -24,6 +25,11 @@ namespace Core {
 
         private:
             QWidget *m_widget;
+            QFont font;
+            bool loadJsonFile(const QString &filename, QJsonObject *jsonObj);
+            bool saveJsonFile(const QString &filename, QJsonObject &jsonObj);
+            bool loadFontSettings(QFont &font);
+            bool saveFontSettings(const QFont &font);
         };
 
     }
