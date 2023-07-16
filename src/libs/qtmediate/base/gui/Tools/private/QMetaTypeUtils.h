@@ -13,37 +13,37 @@ const char PointSizeUnit[] = "pt";
 
 namespace QMetaTypeUtils {
 
-    QVector<int> SplitStringToIntList(const QString &str);
+    QMGUI_EXPORT QVector<int> SplitStringToIntList(const QString &str);
 
-    QVector<double> SplitStringToDoubleList(const QString &str);
+    QMGUI_EXPORT QVector<double> SplitStringToDoubleList(const QString &str);
 
-    QStringList SplitStringByComma(const QStringRef &str);
+    QMGUI_EXPORT QStringList SplitStringByComma(const QStringRef &str);
 
     inline QStringList SplitStringByComma(const QString &str) {
         return SplitStringByComma(QStringRef(&str));
     }
 
-    QVariant StringToVariant(const QString &s);
+    QMGUI_EXPORT QVariant StringToVariant(const QString &s);
 
-    bool StringToBool(const QString &s);
+    QMGUI_EXPORT bool StringToBool(const QString &s);
 
-    int FindFirstEqualSign(const QString &s);
+    QMGUI_EXPORT int FindFirstEqualSign(const QString &s);
 
     enum FallbackOption {
         FO_Value,
         FO_Reference,
     };
-    QHash<QString, QString> ParseFuncArgList(const QString &s, const QStringList &keys,
-                                             const QHash<QString, QPair<QString, FallbackOption>> &fallbacks,
-                                             bool addParen = false);
+    QMGUI_EXPORT QHash<QString, QString>
+        ParseFuncArgList(const QString &s, const QStringList &keys,
+                         const QHash<QString, QPair<QString, FallbackOption>> &fallbacks, bool addParen = false);
 
-    bool ParseClickStateArgList(const QString &s, QString arr[], bool resolveFallback = true);
+    QMGUI_EXPORT bool ParseClickStateArgList(const QString &s, QString arr[], bool resolveFallback = true);
 
-    void InitializeStateIndexes(int arr[]);
+    QMGUI_EXPORT void InitializeStateIndexes(int arr[]);
 
-    void UpdateStateIndex(int i, int arr[]);
+    QMGUI_EXPORT void UpdateStateIndex(int i, int arr[]);
 
-    void UpdateStateIndexes(int arr[]);
+    QMGUI_EXPORT void UpdateStateIndexes(int arr[]);
 
 }
 

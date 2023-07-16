@@ -2,9 +2,11 @@
 
 #include <QMDecoratorV2.h>
 
-#include "QApplication"
-#include "QDebug"
-#include "QDir"
+#include <QApplication>
+#include <QDebug>
+#include <QDir>
+#include <QFontDatabase>
+
 #include <QFontDialog>
 #include <QJsonDocument>
 #include <QJsonObject>
@@ -21,7 +23,7 @@ namespace Core {
             setTitle([]() { return tr("Display"); });
             setDescription([]() { return tr("Display"); });
             loadFontSettings(font);
-//            qDebug() << "Loaded font " + font.toString();
+            //            qDebug() << "Loaded font " + font.toString();
         }
 
         DisplayPage::~DisplayPage() {
@@ -39,7 +41,7 @@ namespace Core {
             if (!m_widget) {
                 auto getLabelFontStr = [this](QFont &font) {
                     auto family = font.family() + " ";
-                    auto size = QString::number(font.pointSize()) +" ";
+                    auto size = QString::number(font.pointSize()) + " ";
                     auto weight = getFontWeightStr(QFont::Weight(font.weight())) + " ";
                     auto italic = font.italic() ? QString("Italic") : QString("");
                     return family + size + weight + italic;
@@ -60,7 +62,31 @@ namespace Core {
 
                 connect(button, &QPushButton::clicked, this, [=]() {
                     bool ok;
-                    auto resultFont = QFontDialog::getFont(&ok, font, mainWidget);
+
+                    auto getFont = [](bool *ok, const QFont &initial, QWidget *parent, const QString &title = {},
+                                      QFontDialog::FontDialogOptions options = {}) {
+                        /// auto f = QApplication::font();
+                        // qApp->setFont(QFontDatabase::systemFont(QFontDatabase::TitleFont));
+
+                        QFontDialog dlg(parent);
+                        dlg.setOptions(options);
+                        dlg.setCurrentFont(initial);
+                        if (!title.isEmpty())
+                            dlg.setWindowTitle(title);
+
+                        // qApp->setFont(f);
+
+                        int ret = (dlg.exec() || (options & QFontDialog::NoButtons));
+                        if (ok)
+                            *ok = !!ret;
+                        if (ret) {
+                            return dlg.selectedFont();
+                        } else {
+                            return initial;
+                        }
+                    };
+
+                    auto resultFont = getFont(&ok, font, mainWidget);
                     if (ok) {
                         font = resultFont;
                         label->setText(getLabelFontStr(font));
@@ -73,8 +99,8 @@ namespace Core {
         }
 
         bool DisplayPage::accept() {
-//            qDebug() << "[DisplayPage] On Accept";
-//            QApplication::setFont(selected_font);
+            //            qDebug() << "[DisplayPage] On Accept";
+            //            QApplication::setFont(selected_font);
             if (!saveFontSettings(font))
                 return false;
             return true;
@@ -162,7 +188,7 @@ namespace Core {
             // Deserialize json
             QFile loadFile(filename);
             if (!loadFile.open(QIODevice::ReadOnly)) {
-//                qDebug() << "Failed to open \"qtmediate.user.json\"";
+                //                qDebug() << "Failed to open \"qtmediate.user.json\"";
                 return false;
             }
             QByteArray allData = loadFile.readAll();
@@ -170,7 +196,7 @@ namespace Core {
             QJsonParseError err;
             QJsonDocument json = QJsonDocument::fromJson(allData, &err);
             if (err.error != QJsonParseError::NoError) {
-//                qDebug() << "Failed to deserialize \"qtmediate.user.json\"" << err.error;
+                //                qDebug() << "Failed to deserialize \"qtmediate.user.json\"" << err.error;
                 return false;
             }
             if (json.isObject()) {
@@ -191,8 +217,8 @@ namespace Core {
                 qDebug() << "Failed to write " + filename;
                 return false;
             }
-//            QTextStream in(&file);
-//            in << jsonStr;
+            //            QTextStream in(&file);
+            //            in << jsonStr;
             file.write(jsonStr.toUtf8());
 
             file.close();

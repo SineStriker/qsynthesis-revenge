@@ -1,7 +1,6 @@
 #ifndef QMGUIAPPEXTENSION_P_H
 #define QMGUIAPPEXTENSION_P_H
 
-#include <QSvgIconEx.h>
 #include <private/QMCoreAppExtension_p.h>
 
 #include "../QMGuiAppExtension.h"
@@ -21,8 +20,6 @@ public:
     void init();
 
     QMCoreInitFactory *createFactory() override;
-
-    QHash<int, QSvgIconEx> svgs;
 };
 
 #endif // QMGUIAPPEXTENSION_P_H

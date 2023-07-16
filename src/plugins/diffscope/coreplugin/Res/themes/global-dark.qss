@@ -9,7 +9,7 @@ QWidget:focus {
 }
 
 CWindowBarV2>CToolButton#icon-button {
-    --svgIcon: svg(":/svg/app/diffsinger.svg");
+    --icon: svg(":/svg/app/diffsinger.svg");
 }
 
 

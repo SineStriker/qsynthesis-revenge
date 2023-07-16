@@ -1,7 +1,8 @@
 #include "CDockTabBar.h"
-#include "CDockSideBar.h"
 #include "CDockCard_p.h"
+#include "CDockSideBar.h"
 
+#include <QDebug>
 #include <QDrag>
 #include <QHBoxLayout>
 #include <QMimeData>

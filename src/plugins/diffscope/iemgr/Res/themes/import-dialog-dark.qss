@@ -29,7 +29,7 @@ QWidget#tracks-widget>CCheckBox {
 }
 
 QWidget#tracks-widget>CCheckBox>CToolButton#box {
-    --svgIcon: svg((up2=":/svg/checkbox/check-line.svg"), #111111);
+    --icon: svg((up2=":/svg/checkbox/check-line.svg"), #111111);
     --iconSize: 12px 12px;
     background-color: transparent;
     border: 1.25px solid #111111;

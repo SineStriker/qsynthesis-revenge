@@ -531,19 +531,28 @@ QString QMDecoratorV2Private::replaceCustomKeyWithQProperty(const QString &style
 }
 
 QString QMDecoratorV2Private::replaceCssGrammars(const QString &stylesheet) {
-    // Replace ":not(:xxx)" with ":!xxx"
-    QRegularExpression re(R"(:not\(\s*:([^)]+)\s*\))",
-                          QRegularExpression::MultilineOption | QRegularExpression::DotMatchesEverythingOption);
-    QRegularExpressionMatch match;
-    int index = 0;
-
     QString Content = stylesheet;
-    while ((index = Content.indexOf(re, index, &match)) != -1) {
-        QString MatchString = match.captured();
-        QString ValueString = ":!" + match.captured(1).trimmed();
 
-        Content.replace(index, MatchString.size(), ValueString);
-        index += ValueString.size();
+    // Replace ":not(:xxx)" with ":!xxx"
+    {
+        QRegularExpression re(R"(:not\(\s*:([^)]+)\s*\))",
+                              QRegularExpression::MultilineOption | QRegularExpression::DotMatchesEverythingOption);
+        QRegularExpressionMatch match;
+        int index = 0;
+
+        while ((index = Content.indexOf(re, index, &match)) != -1) {
+            QString MatchString = match.captured();
+            QString ValueString = ":!" + match.captured(1).trimmed();
+
+            Content.replace(index, MatchString.size(), ValueString);
+            index += ValueString.size();
+        }
+    }
+
+    // Replace "svg(...);" to "url(..., .svgx);"
+    {
+        QRegularExpression re(R"(svg\((.*?)\);)");
+        Content.replace(re, R"(url("\1, .svgx");)");
     }
 
     return Content;

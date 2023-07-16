@@ -22,7 +22,7 @@ CWindowBarV2>QLabel#win-title-label {
 }
 
 CWindowBarV2>CToolButton#min-button {
-    --svgIcon: svg(":/svg/window-bar/minimize.svg", white);
+    --icon: svg(":/svg/window-bar/minimize.svg", white);
     --iconSize: 12px 12px;
     min-width: 50px;
     border: none;
@@ -36,7 +36,7 @@ CWindowBarV2>CToolButton#min-button:pressed {
 }
 
 CWindowBarV2>CToolButton#max-button {
-    --svgIcon: svg((":/svg/window-bar/maximize.svg", up2=":/svg/window-bar/maximize2.svg"), white);
+    --icon: svg((":/svg/window-bar/maximize.svg", up2=":/svg/window-bar/maximize2.svg"), white);
     --iconSize: 12px 12px;
     min-width: 50px;
     border: none;
@@ -50,7 +50,7 @@ CWindowBarV2>CToolButton#max-button:pressed {
 }
 
 CWindowBarV2>CToolButton#win-close-button {
-    --svgIcon: svg(":/svg/window-bar/close.svg", #FFFFFF);
+    --icon: svg(":/svg/window-bar/close.svg", #FFFFFF);
     --iconSize: 12px 12px;
     min-width: 50px;
     border: none;

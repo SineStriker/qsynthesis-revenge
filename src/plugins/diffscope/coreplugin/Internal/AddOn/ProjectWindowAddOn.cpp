@@ -9,6 +9,7 @@
 #include <QStatusBar>
 
 #include <QMDecoratorV2.h>
+#include <QMSvg.h>
 #include <QMSystem.h>
 
 #include "CoreApi/IWindow.h"
@@ -48,7 +49,7 @@ namespace Core {
             trackPanel->setProperty("choruskit_managed_window", true);
             trackButton = iWin->mainDock()->addWidget(Qt::TopEdge, QM::Primary, trackPanel);
             trackButton->setObjectName("track-card");
-            trackButton->setIcon(QSvgIconEx::create(":/svg/main-dock/layer-group-solid.svg"));
+            trackButton->setIcon(QMSvg::create(":/svg/main-dock/layer-group-solid.svg"));
             ICore::autoPolishPopupMenu(trackButton);
 
             connect(trackButton, &QAbstractButton::toggled, trackPanelVisibleItem->action(), &QAction::setChecked);
@@ -257,13 +258,13 @@ namespace Core {
             iWin->addCheckable("playback.metronome", metronomeItem->action());
             iWin->addCheckable("playback.loopPlay", loopPlayItem->action());
 
-            playItem->action()->setIcon(QSvgIconEx::create( //
+            playItem->action()->setIcon(QMSvg::create( //
                 ":/svg/main-toolbar/play-line.svg", ":/svg/main-toolbar/pause-line.svg"));
-            stopItem->action()->setIcon(QSvgIconEx::create(":/svg/main-toolbar/stop-line.svg"));
-            moveToStartItem->action()->setIcon(QSvgIconEx::create(":/svg/main-toolbar/move-start-line.svg"));
-            moveToEndItem->action()->setIcon(QSvgIconEx::create(":/svg/main-toolbar/move-end-line.svg"));
-            metronomeItem->action()->setIcon(QSvgIconEx::create(":/svg/main-toolbar/metronome-line.svg"));
-            loopPlayItem->action()->setIcon(QSvgIconEx::create(":/svg/main-toolbar/loop-line.svg"));
+            stopItem->action()->setIcon(QMSvg::create(":/svg/main-toolbar/stop-line.svg"));
+            moveToStartItem->action()->setIcon(QMSvg::create(":/svg/main-toolbar/move-start-line.svg"));
+            moveToEndItem->action()->setIcon(QMSvg::create(":/svg/main-toolbar/move-end-line.svg"));
+            metronomeItem->action()->setIcon(QMSvg::create(":/svg/main-toolbar/metronome-line.svg"));
+            loopPlayItem->action()->setIcon(QMSvg::create(":/svg/main-toolbar/loop-line.svg"));
 
             connect(iWin->doc(), &IDocument::changed, this, [this, iWin]() {
                 saveFileItem->setEnabled(!iWin->doc()->isVST() && iWin->doc()->isModified()); //

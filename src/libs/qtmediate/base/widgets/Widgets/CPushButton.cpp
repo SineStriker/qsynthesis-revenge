@@ -1,6 +1,7 @@
 #include "CPushButton.h"
 
 #include <QDateTime>
+#include <QDebug>
 #include <QPaintEvent>
 #include <QStyle>
 #include <QStyleOptionButton>
@@ -21,14 +22,6 @@ CPushButton::CPushButton(const QIcon &icon, const QString &text, QWidget *parent
 }
 
 CPushButton::~CPushButton() {
-}
-
-QSvgIconEx CPushButton::svgIcon() const {
-    return icon();
-}
-
-void CPushButton::setSvgIcon(const QSvgIconEx &icon) {
-    setIcon(icon);
 }
 
 void CPushButton::paintEvent(QPaintEvent *event) {

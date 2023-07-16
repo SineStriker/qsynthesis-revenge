@@ -8,7 +8,7 @@
 #include <private/qpaintengine_raster_p.h>
 #include <private/qpixmap_raster_p.h>
 
-#include <CSvgIconEngine.h>
+#include <QMSvg.h>
 
 class HackPaintEngine : public QRasterPaintEngine {
 public:
@@ -53,24 +53,17 @@ namespace IconColorImpl {
 
     void correctIconStateAndColor(QIcon &icon, QM::ClickState state, const QString &salt,
                                   const std::function<QString()> &getColor) {
-        auto &d = icon.data_ptr();
-        if (!d || !d->engine || d->engine->key() != "svg-ex")
+        Q_UNUSED(salt);
+
+        if (!QMSvg::update(&icon, state))
             return;
 
-        auto engine = static_cast<CSvgIconEngine *>(d->engine);
-        engine->setCurrentState(state);
-        engine->setSalt(salt);
-        if (engine->needColorHint()) {
-            engine->setColorHint(getColor());
+        if (QMSvg::getColor(&icon, state) == "auto"){
+            QMSvg::setColor(&icon, state, getColor());
         }
     }
 
     void getTextColor(QPen &pen, const QSize &size, const std::function<void(QPainter *)> &paint) {
-        QPointF pos;
-        getTextColor(pen, pos, size, paint);
-    }
-
-    void getTextColor(QPen &pen, QPointF &pos, const QSize &size, const std::function<void(QPainter *)> &paint) {
         QImage image(size, QImage::Format_ARGB32);
 
         auto engine = new HackPaintEngine(&image);
@@ -80,7 +73,6 @@ namespace IconColorImpl {
         paint(&p2);
 
         pen = engine->pen;
-        pos = engine->pos;
     }
 
     QM::ClickState getButtonClickState(QAbstractButton *button) {

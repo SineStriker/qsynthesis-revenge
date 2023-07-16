@@ -18,7 +18,7 @@ namespace QsApi {
         double ratio;
     };
 
-    QList<TextBlock> processString1(const QString &inputString, double ratio) {
+    static QList<TextBlock> processString1(const QString &inputString, double ratio) {
         QList<TextBlock> result;
 
         QRegularExpression tagRegex("<(highlight|quote)>(.*?)</\\1>");
@@ -51,7 +51,7 @@ namespace QsApi {
         return result;
     }
 
-    QList<TextBlock> processString(const QString &inputString) {
+    static QList<TextBlock> processString(const QString &inputString) {
         QList<TextBlock> result;
 
         QRegularExpression tagRegex("<(x[\\d.]+)>(.*?)</\\1>");
@@ -343,6 +343,20 @@ namespace QsApi {
 
         double radius = d->m_dateBackType.radius();
         auto dateTextBlocks = processString(date);
+
+        // Special step for italic fonts
+        for (auto &block : dateTextBlocks) {
+            if (block.isHighlight) {
+                if (dateHighlightFont.italic() && !block.text.endsWith(' ')) {
+                    block.text.append(' ');
+                }
+                continue;
+            } else if (!block.isQuote) {
+                if (dateFont.italic() && !block.text.endsWith(' ')) {
+                    block.text.append(' ');
+                }
+            }
+        }
 
         auto dateSize = dateTextBlocks.isEmpty()
                             ? QSize()

@@ -8,7 +8,6 @@
 #include "QPenInfo.h"
 #include "QPixelSize.h"
 #include "QRectInfo.h"
-#include "QSvgIconEx.h"
 
 #include "QColorList.h"
 #include "QCssValueList.h"
@@ -41,7 +40,6 @@ namespace QMetaTypeImpl {
         registerFromStringList<QPenInfo>();
         registerFromStringList<QRectInfo>();
         registerFromStringList<QFontInfoEx>();
-        registerFromStringList<QSvgIconEx>();
 
         registerFromStringList<QColorList>();
         registerFromStringList<QCssValueList>();
@@ -58,8 +56,6 @@ namespace QMetaTypeImpl {
             res = QRectInfo::metaFunctionName();
         } else if (id == qMetaTypeId<QFontInfoEx>()) {
             res = QFontInfoEx::metaFunctionName();
-        } else if (id == qMetaTypeId<QSvgIconEx>()) {
-            res = QSvgIconEx::metaFunctionName();
         } else if (id == qMetaTypeId<QColorList>()) {
             res = QColorList::metaFunctionName();
         } else if (id == qMetaTypeId<QCssValueList>()) {
@@ -80,8 +76,6 @@ namespace QMetaTypeImpl {
             id = qMetaTypeId<QRectInfo>();
         } else if (!name.compare(QFontInfoEx::metaFunctionName(), Qt::CaseInsensitive)) {
             id = qMetaTypeId<QFontInfoEx>();
-        } else if (!name.compare(QSvgIconEx::metaFunctionName(), Qt::CaseInsensitive)) {
-            id = qMetaTypeId<QSvgIconEx>();
         } else if (!name.compare(QColorList::metaFunctionName(), Qt::CaseInsensitive)) {
             id = qMetaTypeId<QColorList>();
         } else if (!name.compare(QCssValueList::metaFunctionName(), Qt::CaseInsensitive)) {

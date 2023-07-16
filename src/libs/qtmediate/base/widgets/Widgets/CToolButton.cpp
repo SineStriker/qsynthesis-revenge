@@ -26,14 +26,6 @@ CToolButton::CToolButton(const QIcon &icon, const QString &text, QWidget *parent
 CToolButton::~CToolButton() {
 }
 
-QSvgIconEx CToolButton::svgIcon() const {
-    return icon();
-}
-
-void CToolButton::setSvgIcon(const QSvgIconEx &icon) {
-    setIcon(icon);
-}
-
 void CToolButton::paintEvent(QPaintEvent *event) {
     QStylePainter p(this);
     QStyleOptionToolButton option;

@@ -38,9 +38,9 @@ Core--IDockPanel>QToolBar#side-panel-toolbar>QToolButton:pressed {
 }
 
 Core--IDockPanel>QToolBar#side-panel-toolbar>QToolButton#close {
-    --svgIcon: svg(":/svg/side-panel/close-line.svg", auto);
+    --icon: svg(":/svg/side-panel/close-line.svg", auto);
 }
 
 Core--IDockPanel>QToolBar#side-panel-toolbar>QToolButton#menu {
-    --svgIcon: svg(":/svg/side-panel/menu-line.svg", auto);
+    --icon: svg(":/svg/side-panel/menu-line.svg", auto);
 }

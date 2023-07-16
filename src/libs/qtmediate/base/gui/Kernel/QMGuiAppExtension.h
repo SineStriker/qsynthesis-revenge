@@ -3,7 +3,7 @@
 
 #include <QMCoreAppExtension.h>
 
-#include "QSvgIconEx.h"
+#include "QMGuiGlobal.h"
 
 #ifdef qAppExt
 #    undef qAppExt
@@ -18,16 +18,6 @@ class QMGUI_EXPORT QMGuiAppExtension : public QMCoreAppExtension {
 public:
     explicit QMGuiAppExtension(QObject *parent = nullptr);
     ~QMGuiAppExtension();
-
-public:
-    enum SvgIcon {
-        SI_MenuIndicator,
-        SI_MenuRightArrow,
-        SI_MenuBarExtension,
-    };
-
-    QSvgIconEx svgIcon(SvgIcon icon) const;
-    void setSvgIcon(SvgIcon icon, const QSvgIconEx &uri);
 
 protected:
     QMGuiAppExtension(QMGuiAppExtensionPrivate &d, QObject *parent = nullptr);

@@ -18,15 +18,9 @@ class CMenuPrivate {
 public:
     CMenu *q;
 
-    QSvgIconEx rightArrowIcon;
-    QSvgIconEx indicatorIcon;
-
     CMenuPrivate(CMenu *q) : q(q) {
         // Initialize Font
         q->setFont(qApp->font());
-
-        rightArrowIcon = qAppExt->svgIcon(QMAppExtension::SI_MenuRightArrow);
-        indicatorIcon = qAppExt->svgIcon(QMAppExtension::SI_MenuIndicator);
     }
 
     void updateActionStats() {
@@ -60,15 +54,6 @@ CMenu::CMenu(const QString &title, QWidget *parent) : CMenu(parent) {
 
 CMenu::~CMenu() {
     delete d;
-}
-
-QSvgIconEx CMenu::rightArrowIcon() const {
-    return d->rightArrowIcon;
-}
-
-void CMenu::setRightArrowIcon(const QSvgIconEx &icon) {
-    d->rightArrowIcon = icon;
-    update();
 }
 
 bool CMenu::event(QEvent *event) {
@@ -166,67 +151,29 @@ void CMenu::paintEvent(QPaintEvent *event) {
         initStyleOption(&opt, action);
         opt.rect = actionRect;
 
-        QString curColor;
-        auto getColor = [this, &opt, &curColor]() mutable -> QString {
-            if (!curColor.isEmpty()) {
-                return curColor;
-            }
 
-            QString text = opt.text;
-            opt.text = QChar(0x25A0);
-
-            QPen pen;
-            IconColorImpl::getTextColor(pen, opt.rect.size(), [&](QPainter *painter) {
-                style()->drawControl(QStyle::CE_MenuItem, &opt, painter, this); //
-            });
-
-            opt.text = text;
-
-            curColor = QMCss::ColorToCssString(pen.color());
-            return curColor;
-        };
-        QM::ClickState state = (opt.state & QStyle::State_Enabled)
-                                   ? ((opt.state & QStyle::State_Selected) ? QM::CS_Hover : QM::CS_Normal)
-                                   : QM::CS_Disabled;
-
-        //        bool useRightArrow = action->menu();
-        //
-        //        if (useRightArrow) {
-        //            opt.menuItemType = QStyleOptionMenuItem::Normal;
-        //        }
-
-        bool checked = opt.checked;
         if (!opt.icon.isNull()) {
-            IconColorImpl::correctIconStateAndColor(opt.icon, state, metaObject()->className(), getColor);
+            IconColorImpl::correctIconStateAndColor(
+                opt.icon,
+                (opt.state & QStyle::State_Enabled)
+                    ? ((opt.state & QStyle::State_Selected) ? QM::CS_Hover : QM::CS_Normal)
+                    : QM::CS_Disabled,
+                metaObject()->className(), [this, &opt]() mutable -> QString {
+                    QString text = opt.text;
+                    opt.text = QChar(0x25A0);
+
+                    QPen pen;
+                    IconColorImpl::getTextColor(pen, opt.rect.size(), [&](QPainter *painter) {
+                        style()->drawControl(QStyle::CE_MenuItem, &opt, painter, this); //
+                    });
+
+                    opt.text = text;
+
+                    return QMCss::ColorToCssString(pen.color());
+                });
         }
 
-        //        else if (checked) {
-        //            opt.checked = false;
-        //        }
-
         style()->drawControl(QStyle::CE_MenuItem, &opt, &p, this);
-
-        // Draw check mark
-        //        if (checked) {
-        //            auto icon = this->d->indicatorIcon;
-        //            IconColorImpl::correctIconStateAndColor(icon, state, metaObject()->className(), getColor);
-        //
-        //            auto icone = style()->pixelMetric(QStyle::PM_SmallIconSize, &opt, this);
-        //            QRect iconRegion((actionRect.left() + pos.x() - icone) / 2, actionRect.center().y() - icone / 2,
-        //            icone,
-        //                             icone);
-        //            p.drawPixmap(iconRegion, icon.pixmap(iconRegion.size()));
-        //        }
-
-        // Draw Right Arrow
-//        if (useRightArrow) {
-//            auto icon = this->d->rightArrowIcon;
-//            IconColorImpl::correctIconStateAndColor(icon, state, metaObject()->className(), getColor);
-//
-//            auto icone = style()->pixelMetric(QStyle::PM_SmallIconSize, &opt, this);
-//            QRect iconRegion(actionRect.right() - icone, actionRect.center().y() - icone / 2, icone, icone);
-//            p.drawPixmap(iconRegion, icon.pixmap(iconRegion.size()));
-//        }
     }
 
     emptyArea -= QRegion(scrollUpTearOffRect);

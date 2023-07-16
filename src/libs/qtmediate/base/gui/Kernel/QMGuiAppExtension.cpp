@@ -8,6 +8,7 @@
 #include "QMGuiConsole.h"
 #include "QMGuiDecoratorV2.h"
 #include "QMSystem.h"
+#include "QMSvg.h"
 
 #include "private/QMGuiAppExtension_p.h"
 #include "private/QMetaTypeImpl_p.h"
@@ -80,11 +81,6 @@ void QMGuiAppExtensionPrivate::init() {
 
     font.setStyleStrategy(QFont::PreferAntialias);
     qApp->setFont(font);
-
-    // Add icons
-    svgs.insert(QMGuiAppExtension::SI_MenuIndicator, QSvgIconEx::create(":/qtmediate.org/svg/check-line.svg"));
-    svgs.insert(QMGuiAppExtension::SI_MenuRightArrow, QSvgIconEx::create(":/qtmediate.org/svg/arrow-right-s-line.svg"));
-    svgs.insert(QMGuiAppExtension::SI_MenuBarExtension, QSvgIconEx::create(":/qtmediate.org/svg/more-line.svg"));
 }
 
 QMCoreInitFactory *QMGuiAppExtensionPrivate::createFactory() {
@@ -95,21 +91,6 @@ QMGuiAppExtension::QMGuiAppExtension(QObject *parent) : QMGuiAppExtension(*new Q
 }
 
 QMGuiAppExtension::~QMGuiAppExtension() {
-}
-
-QSvgIconEx QMGuiAppExtension::svgIcon(SvgIcon icon) const {
-    Q_D(const QMGuiAppExtension);
-    auto res = d->svgs.value(icon);
-    if (!res.isNull()) {
-        res.detach();
-        return res;
-    }
-    return {};
-}
-
-void QMGuiAppExtension::setSvgIcon(SvgIcon icon, const QSvgIconEx &uri) {
-    Q_D(QMGuiAppExtension);
-    d->svgs.insert(icon, uri);
 }
 
 QMGuiAppExtension::QMGuiAppExtension(QMGuiAppExtensionPrivate &d, QObject *parent) : QMCoreAppExtension(d, parent) {

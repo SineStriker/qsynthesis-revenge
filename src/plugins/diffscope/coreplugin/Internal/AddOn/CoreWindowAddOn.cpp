@@ -6,6 +6,7 @@
 #include <QMessageBox>
 
 #include <QMDecoratorV2.h>
+#include <QMSvg.h>
 
 #include "ICore.h"
 #include "Internal/plugindialog.h"
@@ -104,9 +105,9 @@ namespace Core::Internal {
         // Invisible
         showRecentFileItem = new ActionItem("core.ShowRecentFiles", new QAction(this), this);
 
-        openFileItem->action()->setIcon(QSvgIconEx::create(":/svg/home/open-file.svg"));
-        settingsItem->action()->setIcon(QSvgIconEx::create(":/svg/main-toolbar/setting-line.svg"));
-        findActionItem->action()->setIcon(QSvgIconEx::create(":/svg/main-toolbar/search-line.svg"));
+        openFileItem->action()->setIcon(QMSvg::create(":/svg/home/open-file.svg"));
+        settingsItem->action()->setIcon(QMSvg::create(":/svg/main-toolbar/setting-line.svg"));
+        findActionItem->action()->setIcon(QMSvg::create(":/svg/main-toolbar/search-line.svg"));
 
         connect(newFileItem->action(), &QAction::triggered, this, [this, iWin]() {
             auto doc = new DspxDocument();

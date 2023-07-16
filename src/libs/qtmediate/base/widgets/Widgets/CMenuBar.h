@@ -4,7 +4,6 @@
 #include <QMenuBar>
 
 #include "QMWidgetsGlobal.h"
-#include "QSvgIconEx.h"
 
 class QToolButton;
 
@@ -15,13 +14,14 @@ class CMenuBarPrivate;
 
 class QMWIDGETS_EXPORT CMenuBar : public QMenuBar {
     Q_OBJECT
-    Q_PROPERTY(QSvgIconEx extensionIcon READ extensionIcon WRITE setExtensionIcon)
+    Q_PROPERTY(QIcon extensionIcon READ extensionIcon WRITE setExtensionIcon)
 public:
     explicit CMenuBar(QWidget *parent = nullptr);
     ~CMenuBar();
 
-    QSvgIconEx extensionIcon() const;
-    void setExtensionIcon(const QSvgIconEx &extensionIcon);
+public:
+    QIcon extensionIcon() const;
+    void setExtensionIcon(const QIcon &extensionIcon);
 
     QMenu *extensionMenu() const;
 

@@ -10,7 +10,6 @@
 
 class CMenuBarPrivate {
 public:
-    QSvgIconEx m_extensionIcon;
     QToolButton *m_extension;
 };
 
@@ -26,13 +25,12 @@ CMenuBar::~CMenuBar() {
     delete d;
 }
 
-QSvgIconEx CMenuBar::extensionIcon() const {
-    return d->m_extensionIcon;
+QIcon CMenuBar::extensionIcon() const {
+    return d->m_extension->icon();
 }
 
-void CMenuBar::setExtensionIcon(const QSvgIconEx &extensionIcon) {
-    d-> m_extensionIcon = extensionIcon;
-    d->m_extension->setIcon(d->m_extensionIcon);
+void CMenuBar::setExtensionIcon(const QIcon &extensionIcon) {
+    d->m_extension->setIcon(extensionIcon);
 }
 
 QMenu *CMenuBar::extensionMenu() const {
