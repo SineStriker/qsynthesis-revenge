@@ -273,9 +273,9 @@ namespace QMetaTypeUtils {
                 {"down",      {"over", FO_Reference}    },
                 {"disabled",  {"up", FO_Reference}      },
                 {"up2",       {"up", FO_Reference}      },
-                {"over2",     {"over", FO_Reference}    },
-                {"down2",     {"down", FO_Reference}    },
-                {"disabled2", {"disabled", FO_Reference}},
+                {"over2",     {"up2", FO_Reference}    },
+                {"down2",     {"over2", FO_Reference}    },
+                {"disabled2", {"up2", FO_Reference}},
             };
         }
 
@@ -312,9 +312,9 @@ namespace QMetaTypeUtils {
         arr[QM::CS_Pressed] = QM::CS_Hover;
         arr[QM::CS_Disabled] = QM::CS_Normal;
         arr[QM::CS_Normal_Checked] = QM::CS_Normal;
-        arr[QM::CS_Hover_Checked] = QM::CS_Hover;
-        arr[QM::CS_Pressed_Checked] = QM::CS_Pressed;
-        arr[QM::CS_Disabled_Checked] = QM::CS_Disabled;
+        arr[QM::CS_Hover_Checked] = QM::CS_Normal_Checked;
+        arr[QM::CS_Pressed_Checked] = QM::CS_Hover_Checked;
+        arr[QM::CS_Disabled_Checked] = QM::CS_Normal_Checked;
     }
 
     void UpdateStateIndex(int i, int arr[]) {

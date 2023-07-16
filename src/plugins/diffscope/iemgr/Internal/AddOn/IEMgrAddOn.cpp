@@ -139,9 +139,8 @@ namespace IEMgr::Internal {
             button->setObjectName("import-button");
             connect(button, &QAbstractButton::clicked, this, &IEMgrAddOn::_q_importButtonClicked);
             importButton = button;
+            importButton->setIcon(QSvgIconEx::create(":/svg/home/import-file.svg"));
         }
-
-        qIDec->installTheme(importButton, "iemgr.ImportButton");
     }
 
     void IEMgrAddOn::_q_importButtonClicked() {

@@ -48,6 +48,7 @@ namespace Core {
             trackPanel->setProperty("choruskit_managed_window", true);
             trackButton = iWin->mainDock()->addWidget(Qt::TopEdge, QM::Primary, trackPanel);
             trackButton->setObjectName("track-card");
+            trackButton->setIcon(QSvgIconEx::create(":/svg/main-dock/layer-group-solid.svg"));
             ICore::autoPolishPopupMenu(trackButton);
 
             connect(trackButton, &QAbstractButton::toggled, trackPanelVisibleItem->action(), &QAction::setChecked);

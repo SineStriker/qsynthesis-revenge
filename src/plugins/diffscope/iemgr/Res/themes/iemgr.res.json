@@ -5,26 +5,17 @@
     },
     "stylesheets": {
         "Visual Studio Code - Dark": {
-            "iemgr.ImportButton": {
-                "content": "--svgIcon: svg(\":/svg/home/import-file.svg\", auto);"
-            },
             "IEMgr::ImportDialog": {
                 "file": "import-dialog-dark.qss"
             }
         },
         "Visual Studio Code - Light": {
-            "iemgr.ImportButton": {
-                "content": "--svgIcon: svg(\":/svg/home/import-file.svg\", auto);"
-            },
             "IEMgr::ImportDialog": {
                 "file": "import-dialog-light.qss"
             }
         }
     },
     "widgets": {
-        "iemgr.ImportButton": [
-            "iemgr.ImportButton"
-        ],
         "iemgr.ImportDialog": [
             "IEMgr::ImportDialog"
         ]

@@ -12,7 +12,7 @@ class QFontInfoExData : public QSharedData {
 public:
     QFontInfoExData() {
         weight = -1;
-        italic = false;
+        italic = -1;
         point = -1;
         pixel = -1;
 
@@ -20,7 +20,7 @@ public:
     }
 
     int weight;
-    bool italic;
+    int italic;
     double point;
     int pixel;
     QStringList families;
@@ -31,7 +31,10 @@ public:
         if (weight >= 0) {
             font.setWeight(weight);
         }
-        font.setItalic(italic);
+
+        if (italic >= 0) {
+            font.setItalic(italic);
+        }
 
         if (point > 0) {
             font.setPointSizeF(point);
@@ -103,7 +106,7 @@ void QFontInfoEx::setWeight(int weight) {
 }
 
 bool QFontInfoEx::italic() const {
-    return d->italic;
+    return d->italic < 0 ? false : bool(d->italic);
 }
 
 void QFontInfoEx::setItalic(bool italic) {

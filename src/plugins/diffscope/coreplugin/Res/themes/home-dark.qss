@@ -115,14 +115,6 @@ Core--Internal--HomeRecentTopFrame>CTabButton {
 
 /* Recent Top Buttons */
 
-Core--Internal--HomeRecentTopFrame>CTabButton#new-button {
-    --svgIcon: svg(":/svg/home/new-file.svg", auto);
-}
-
-Core--Internal--HomeRecentTopFrame>CTabButton#open-button {
-    --svgIcon: svg(":/svg/home/open-file.svg", auto);
-}
-
 Core--Internal--HomeRecentTopFrame>CTabButton[type=top-button] {
     --iconSize: 20px 20px;
     --spaceRatio: 0.2;

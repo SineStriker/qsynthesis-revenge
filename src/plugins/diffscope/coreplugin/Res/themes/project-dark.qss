@@ -213,10 +213,6 @@ CDockCard:not(:checked):hover {
     background-color: #292929;
 }
 
-CDockCard#track-card {
-    --svgIcon: svg(":/svg/main-dock/layer-group-solid.svg", auto);
-}
-
 CDockPanelSplitter:handle {
     background-color: transparent;
 }

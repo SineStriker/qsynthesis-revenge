@@ -48,10 +48,12 @@ namespace Core::Internal {
         newButton = new CTabButton();
         newButton->setProperty("type", "top-button");
         newButton->setObjectName("new-button");
+        newButton->setIcon(QSvgIconEx::create(":/svg/home/new-file.svg"));
 
         openButton = new CTabButton();
         openButton->setProperty("type", "top-button");
         openButton->setObjectName("open-button");
+        openButton->setIcon(QSvgIconEx::create(":/svg/home/open-file.svg"));
 
         topLayout = new QMEqualBoxLayout(QBoxLayout::LeftToRight);
         topLayout->setMargin(0);
