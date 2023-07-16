@@ -105,6 +105,7 @@ namespace Core::Internal {
         // Invisible
         showRecentFileItem = new ActionItem("core.ShowRecentFiles", new QAction(this), this);
 
+        newFileItem->action()->setIcon(QMSvg::create(":/svg/home/new-file.svg"));
         openFileItem->action()->setIcon(QMSvg::create(":/svg/home/open-file.svg"));
         settingsItem->action()->setIcon(QMSvg::create(":/svg/main-toolbar/setting-line.svg"));
         findActionItem->action()->setIcon(QMSvg::create(":/svg/main-toolbar/search-line.svg"));

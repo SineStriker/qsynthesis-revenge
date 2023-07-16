@@ -20,6 +20,8 @@ namespace Core {
 
     static const char floatingPanelsGroupC[] = "FloatingPanels";
 
+    static const char floatingPanelSizesGroupC[] = "FloatingPanelSizes";
+
     static const char pianoKeyWidgetC[] = "PianoKeyWidget";
 
     PianoRollPrivate::PianoRollPrivate() {
@@ -102,6 +104,16 @@ namespace Core {
             }
         }
 
+        // Floating panel sizes
+        auto floatingPanelSizesArr = obj.value(floatingPanelSizesGroupC).toArray();
+        QList<int> state;
+        for (const auto &item : qAsConst(floatingPanelSizesArr)) {
+            if (!item.isDouble())
+                continue;
+            state.append(item.toInt());
+        }
+        m_canvas->restoreState(state);
+
         // Piano key widget
         value = obj.value(pianoKeyWidgetC);
         q->setCurrentPianoKeyWidget(value.isString() ? value.toString() : Internal::DefaultPianoKeyWidget);
@@ -121,6 +133,14 @@ namespace Core {
             });
         }
         obj.insert(floatingPanelsGroupC, floatingPanelsStateArr);
+
+        // Floating panel sizes
+        auto state = m_canvas->saveState();
+        QJsonArray floatingPanelSizesArr;
+        for (const auto &item : qAsConst(state)) {
+            floatingPanelSizesArr.append(item);
+        }
+        obj.insert(floatingPanelSizesGroupC, floatingPanelSizesArr);
 
         // Piano key widget
         obj.insert(pianoKeyWidgetC, currentPianoKeyWidget);

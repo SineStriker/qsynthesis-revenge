@@ -48,7 +48,7 @@ namespace Core {
 
         QJsonDocument doc;
         doc.setObject(in);
-        file.write(doc.toJson());
+        file.write(doc.toJson(QJsonDocument::Compact));
         file.close();
 
         return true;

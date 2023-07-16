@@ -340,6 +340,28 @@ namespace QsApi {
         return d->layout->count() - 1 == 0;
     }
 
+    QList<int> SynthVSplitter::saveState() const {
+        Q_D(const SynthVSplitter);
+        QList<int> res;
+        for (int i = 0; i < d->layout->count() - 1; i += 2) {
+            auto item = static_cast<SynthVLayoutItem *>(d->layout->itemAt(i));
+            res.append(item->delta);
+        }
+        return res;
+    }
+
+    void SynthVSplitter::restoreState(const QList<int> &state) {
+        if (state.size() != count())
+            return;
+
+        Q_D(SynthVSplitter);
+        auto it = state.begin();
+        for (int i = 0; i < d->layout->count() - 1; i += 2) {
+            auto item = static_cast<SynthVLayoutItem *>(d->layout->itemAt(i));
+            item->delta = *(it++);
+        }
+    }
+
     SynthVSplitterHandle *SynthVSplitter::handle(int index) const {
         Q_D(const SynthVSplitter);
         return qobject_cast<SynthVSplitterHandle *>(

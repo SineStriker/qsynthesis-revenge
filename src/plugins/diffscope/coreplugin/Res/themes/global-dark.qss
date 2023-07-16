@@ -46,25 +46,24 @@ QMenu[core-style=true] {
 }
 
 QMenu[core-style=true]::indicator {
-    padding-left: 10px;
+    left: 6px;
+    width: 20px;
+    height: 20px;
 }
 
 QMenu[core-style=true]::icon {
-    padding-left: 10px;
+    left: 6px;
 }
 
 QMenu[core-style=true]::item {
     background: transparent;
     color: #CCCCCC;
-    padding: 4px 24px;
+    padding: 4px 28px;
 }
 
+QMenu[core-style=true][stats=checkable]::item,
 QMenu[core-style=true][stats=icon]::item {
-    padding-left: 6px;
-}
-
-QMenu[core-style=true][stats=checkable]::item {
-    padding-left: 6px;
+    padding-left: 12px;
 }
 
 QMenu[core-style=true]::item:selected {

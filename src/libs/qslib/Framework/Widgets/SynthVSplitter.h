@@ -34,6 +34,9 @@ namespace QsApi {
         int count() const;
         bool isEmpty() const;
 
+        QList<int> saveState() const;
+        void restoreState(const QList<int> &state);
+
         SynthVSplitterHandle *handle(int index) const;
         int indexOfHandle(SynthVSplitterHandle *handle) const;
 
