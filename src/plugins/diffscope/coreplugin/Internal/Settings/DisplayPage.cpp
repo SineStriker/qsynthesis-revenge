@@ -21,7 +21,7 @@ namespace Core {
             setTitle([]() { return tr("Display"); });
             setDescription([]() { return tr("Display"); });
             loadFontSettings(font);
-            // qDebug() << font;
+//            qDebug() << "Loaded font " + font.toString();
         }
 
         DisplayPage::~DisplayPage() {
@@ -37,8 +37,16 @@ namespace Core {
 
         QWidget *DisplayPage::widget() {
             if (!m_widget) {
+                auto getLabelFontStr = [this](QFont &font) {
+                    auto family = font.family() + " ";
+                    auto size = QString::number(font.pointSize()) +" ";
+                    auto weight = getFontWeightStr(QFont::Weight(font.weight())) + " ";
+                    auto italic = font.italic() ? QString("Italic") : QString("");
+                    return family + size + weight + italic;
+                };
+
                 auto label = new QLabel();
-                label->setText(font.family() + font.pointSize());
+                label->setText(getLabelFontStr(font));
 
                 auto button = new QPushButton();
                 button->setText("Pick a Font...");
@@ -55,8 +63,7 @@ namespace Core {
                     auto resultFont = QFontDialog::getFont(&ok, font, mainWidget);
                     if (ok) {
                         font = resultFont;
-                        label->setText(font.family() + QString(font.pointSize()));
-                        // qDebug() << font.family() << font.pointSize();
+                        label->setText(getLabelFontStr(font));
                     }
                 });
 
@@ -106,6 +113,10 @@ namespace Core {
 
             font.setFamily(objAppFont.value("Family").toString());
             font.setPointSize(objAppFont.value("Size").toInt());
+            if (objAppFont.contains("Weight"))
+                font.setWeight(objAppFont.value("Weight").toInt());
+            if (objAppFont.contains("Italic"))
+                font.setItalic(objAppFont.value("Italic").toBool());
 
             return true;
         }
@@ -131,11 +142,15 @@ namespace Core {
                 auto objAppFont = jsonObj.value("AppFont").toObject();
                 objAppFont["Family"] = font.family();
                 objAppFont["Size"] = font.pointSize();
+                objAppFont["Weight"] = font.weight();
+                objAppFont["Italic"] = font.italic();
                 jsonObj["AppFont"] = objAppFont;
             } else {
                 QJsonObject objAppFont;
                 objAppFont.insert("Family", font.family());
                 objAppFont.insert("Size", font.pointSize());
+                objAppFont.insert("Weight", font.weight());
+                objAppFont.insert("Italic", font.italic());
                 jsonObj.insert("AppFont", objAppFont);
             }
 
@@ -147,7 +162,7 @@ namespace Core {
             // Deserialize json
             QFile loadFile(filename);
             if (!loadFile.open(QIODevice::ReadOnly)) {
-                // qDebug() << "Failed to open \"qtmediate.user.json\"";
+//                qDebug() << "Failed to open \"qtmediate.user.json\"";
                 return false;
             }
             QByteArray allData = loadFile.readAll();
@@ -155,7 +170,7 @@ namespace Core {
             QJsonParseError err;
             QJsonDocument json = QJsonDocument::fromJson(allData, &err);
             if (err.error != QJsonParseError::NoError) {
-                // qDebug() << "Failed to deserialize \"qtmediate.user.json\"" << err.error;
+//                qDebug() << "Failed to deserialize \"qtmediate.user.json\"" << err.error;
                 return false;
             }
             if (json.isObject()) {
@@ -173,7 +188,7 @@ namespace Core {
             file.remove();
 
             if (!file.open(QIODevice::ReadWrite | QIODevice::Text)) {
-                // qDebug() << "Failed to write json file";
+                qDebug() << "Failed to write " + filename;
                 return false;
             }
 //            QTextStream in(&file);
@@ -182,6 +197,31 @@ namespace Core {
 
             file.close();
             return true;
+        }
+        QString DisplayPage::getFontWeightStr(const QFont::Weight &weight) {
+            switch (weight) {
+                case QFont::Thin:
+                    // TODO: translation.
+                    return "Thin";
+                case QFont::ExtraLight:
+                    return "ExtraLight";
+                case QFont::Light:
+                    return "Light";
+                case QFont::Normal:
+                    return "Normal";
+                case QFont::Medium:
+                    return "Medium";
+                case QFont::DemiBold:
+                    return "DemiBold";
+                case QFont::Bold:
+                    return "Bold";
+                case QFont::ExtraBold:
+                    return "ExtraBold";
+                case QFont::Black:
+                    return "Black";
+                default:
+                    return "";
+            }
         }
 
     }
