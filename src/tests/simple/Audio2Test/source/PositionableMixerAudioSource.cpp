@@ -98,23 +98,27 @@ bool PositionableMixerAudioSource::addSource(PositionableAudioSource *src, bool 
     Q_D(PositionableMixerAudioSource);
     QMutexLocker locker(&d->mutex);
     if(src == this) return false;
-    if(d->sourceDict.append(src, takeOwnership).second) {
-        if(isOpened()) {
-            src->open(bufferSize(), sampleRate());
-            src->setNextReadPosition(nextReadPosition());
-        }
+    if(d->sourceDict.contains(src)) return false;
+    d->sourceDict.insert(src, takeOwnership);
+    if(isOpened()) {
+        if(!src->open(bufferSize(), sampleRate())) return false;
+        src->setNextReadPosition(nextReadPosition());
+    }
+    return true;
+}
+bool PositionableMixerAudioSource::removeSource(PositionableAudioSource *src) {
+    Q_D(PositionableMixerAudioSource);
+    QMutexLocker locker(&d->mutex);
+    if (d->sourceDict.remove(src)) {
+        src->close();
         return true;
     }
     return false;
 }
-void PositionableMixerAudioSource::removeSource(PositionableAudioSource *src) {
-    Q_D(PositionableMixerAudioSource);
-    QMutexLocker locker(&d->mutex);
-    d->sourceDict.remove(src);
-}
 void PositionableMixerAudioSource::removeAllSource() {
     Q_D(PositionableMixerAudioSource);
     QMutexLocker locker(&d->mutex);
+    d->stop();
     d->sourceDict.clear();
 }
 

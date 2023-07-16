@@ -14,6 +14,8 @@ class TransportAudioSourcePrivate: public AudioSourcePrivate {
     Q_DECLARE_PUBLIC(TransportAudioSource)
 public:
     PositionableAudioSource *src = nullptr;
+    bool takeOwnership = false;
+
     qint64 position = 0;
     bool isPlaying = false;
     qint64 loopingStart = -1;

@@ -10,6 +10,12 @@
 #include <QDebug>
 #include <QIODevice>
 
+#define TEST_IS_OPEN(ret) \
+if(d->sf.isNull()) { \
+    qDebug() << "AudioFormatIO: Not open."; \
+    return ret; \
+} \
+
 AudioFormatIO::AudioFormatIO(QIODevice *stream): AudioFormatIO(*new AudioFormatIOPrivate) {
       setStream(stream);
 }
@@ -36,9 +42,9 @@ qint64 AudioFormatIOPrivate::sfVioGetFilelen() {
     return stream->size();
 }
 qint64 AudioFormatIOPrivate::sfVioSeek(qint64 offset, int whence) {
-    if(whence == 1) offset += stream->pos();
-    else if(whence == 2) offset += stream->size();
-    stream->seek(offset);
+    if(whence == SF_SEEK_CUR) offset += stream->pos();
+    else if(whence == SF_SEEK_END) offset += stream->size();
+    if(offset != stream->pos()) stream->seek(offset);
     return stream->pos();
 }
 qint64 AudioFormatIOPrivate::sfVioRead(void *ptr, qint64 count) {
@@ -114,17 +120,17 @@ void AudioFormatIO::close() {
 }
 int AudioFormatIO::channels() const {
     Q_D(const AudioFormatIO);
-    Q_ASSERT(!d->sf.isNull());
+    TEST_IS_OPEN(0)
     return d->sf->channels();
 }
 double AudioFormatIO::sampleRate() const {
     Q_D(const AudioFormatIO);
-    Q_ASSERT(!d->sf.isNull());
+    TEST_IS_OPEN(0)
     return d->sf->samplerate();
 }
 int AudioFormatIO::format() const {
     Q_D(const AudioFormatIO);
-    Q_ASSERT(!d->sf.isNull());
+    TEST_IS_OPEN(0)
     return d->sf->format();
 }
 AudioFormatIO::MajorFormat AudioFormatIO::majorFormat() const {
@@ -138,33 +144,38 @@ AudioFormatIO::ByteOrder AudioFormatIO::byteOrder() const {
 }
 qint64 AudioFormatIO::length() const {
     Q_D(const AudioFormatIO);
-    Q_ASSERT(!d->sf.isNull());
+    TEST_IS_OPEN(0)
     return d->sf->frames();
 }
 void AudioFormatIO::setMetaData(AudioFormatIO::MetaData metaDataType, const QString &str) {
     Q_D(AudioFormatIO);
-    Q_ASSERT(!d->sf.isNull());
+    TEST_IS_OPEN(void())
     d->sf->setString(metaDataType, str.toUtf8().data());
 }
 QString AudioFormatIO::getMetaData(AudioFormatIO::MetaData metaDataType) const {
     Q_D(const AudioFormatIO);
-    Q_ASSERT(!d->sf.isNull());
+    TEST_IS_OPEN({})
     return QString::fromUtf8(d->sf->getString(metaDataType));
 }
 qint64 AudioFormatIO::read(float *ptr, qint64 length) {
     Q_D(AudioFormatIO);
-    Q_ASSERT(!d->sf.isNull());
+    TEST_IS_OPEN(0)
     return d->sf->readf(ptr, length);
 }
 qint64 AudioFormatIO::write(float *ptr, qint64 length) {
     Q_D(AudioFormatIO);
-    Q_ASSERT(!d->sf.isNull());
+    TEST_IS_OPEN(0)
     return d->sf->writef(ptr, length);
 }
 qint64 AudioFormatIO::seek(qint64 pos) {
     Q_D(AudioFormatIO);
-    Q_ASSERT(!d->sf.isNull());
-    return d->sf->seek(pos, SEEK_SET);
+    TEST_IS_OPEN(0)
+    return d->sf->seek(pos, SF_SEEK_SET);
+}
+qint64 AudioFormatIO::pos() {
+    Q_D(AudioFormatIO);
+    TEST_IS_OPEN(0)
+    return d->sf->seek(0, SF_SEEK_CUR);
 }
 QList<AudioFormatIO::FormatInfo> AudioFormatIO::availableFormats() {
     QList<FormatInfo> formatInfoList;

@@ -27,7 +27,7 @@ public:
     void close() override;
 
     bool addSource(AudioSource *src, bool takeOwnership = false);
-    void removeSource(AudioSource *src);
+    bool removeSource(AudioSource *src);
     void removeAllSource();
     QList<AudioSource *> sources() const;
 

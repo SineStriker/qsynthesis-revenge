@@ -10,7 +10,7 @@
 #include <array>
 
 #include <QMutex>
-#include <QMChronMap.h>
+#include <QMap>
 
 #include "AudioSource_p.h"
 #include "buffer/AudioBuffer.h"
@@ -20,7 +20,7 @@ static inline QPair<float, float> applyGainAndPan(float gain, float pan) {
 }
 
 struct IMixer {
-    QMChronMap<AudioSource *, bool> sourceDict;
+    QMap<AudioSource *, bool> sourceDict;
     QMutex mutex;
 
     float gain = 1;

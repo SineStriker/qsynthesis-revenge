@@ -78,22 +78,26 @@ bool MixerAudioSource::addSource(AudioSource *src, bool takeOwnership) {
     Q_D(MixerAudioSource);
     QMutexLocker locker(&d->mutex);
     if(src == this) return false;
-    if(d->sourceDict.append(src, takeOwnership).second) {
-        if(isOpened()) {
-            src->open(bufferSize(), sampleRate());
-        }
+    if(d->sourceDict.contains(src)) return false;
+    d->sourceDict.insert(src, takeOwnership);
+    if(isOpened()) {
+        return src->open(bufferSize(), sampleRate());
+    }
+    return true;
+}
+bool MixerAudioSource::removeSource(AudioSource *src) {
+    Q_D(MixerAudioSource);
+    QMutexLocker locker(&d->mutex);
+    if(d->sourceDict.remove(src)) {
+        src->close();
         return true;
     }
     return false;
 }
-void MixerAudioSource::removeSource(AudioSource *src) {
-    Q_D(MixerAudioSource);
-    QMutexLocker locker(&d->mutex);
-    d->sourceDict.remove(src);
-}
 void MixerAudioSource::removeAllSource() {
     Q_D(MixerAudioSource);
     QMutexLocker locker(&d->mutex);
+    d->stop();
     d->sourceDict.clear();
 }
 QList<AudioSource *> MixerAudioSource::sources() const {

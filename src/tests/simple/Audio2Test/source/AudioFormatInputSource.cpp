@@ -37,7 +37,6 @@ qint64 AudioFormatInputSource::read(const AudioSourceReadData &readData) {
     Q_D(AudioFormatInputSource);
     QMutexLocker locker(&d->mutex);
     auto readLength = std::min(readData.length, length() - d->position);
-    if(!d->io) return readLength;
     if(readLength > bufferSize()) d->resizeOutDataBuffers(readLength);
     src_callback_read(d->srcState, d->ratio, readLength, d->outData.data());
     InterleavedAudioDataWrapper outBuf(d->outData.data(), d->io->channels(), readLength);
@@ -53,7 +52,7 @@ qint64 AudioFormatInputSource::read(const AudioSourceReadData &readData) {
 }
 qint64 AudioFormatInputSource::length() const {
     Q_D(const AudioFormatInputSource);
-    if(!d->q_ptr || !isOpened()) return 0;
+    if(!d->io || !isOpened()) return 0;
     return d->io->length() * d->ratio;
 }
 void AudioFormatInputSource::setNextReadPosition(qint64 pos) {

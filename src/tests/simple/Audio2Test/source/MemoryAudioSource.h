@@ -14,7 +14,7 @@ class MemoryAudioSourcePrivate;
 class MemoryAudioSource: public PositionableAudioSource {
     Q_DECLARE_PRIVATE(MemoryAudioSource)
 public:
-    explicit MemoryAudioSource(IAudioSampleProvider *buffer, bool takeOwnership = false);
+    explicit MemoryAudioSource(IAudioSampleProvider *buffer = nullptr, bool takeOwnership = false);
     ~MemoryAudioSource();
 
     IAudioSampleProvider *buffer() const;

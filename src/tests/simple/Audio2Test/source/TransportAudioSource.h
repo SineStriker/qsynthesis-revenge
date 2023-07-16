@@ -21,12 +21,13 @@ class TransportAudioSource: public QObject, public AudioSource {
     friend class TransportAudioSourceWriter;
 public:
     explicit TransportAudioSource(QObject *parent = nullptr);
+    TransportAudioSource(PositionableAudioSource *src, bool takeOwnership = false, QObject *parent = nullptr);
     ~TransportAudioSource() override;
     qint64 read(const AudioSourceReadData &readData) override;
     bool open(qint64 bufferSize, double sampleRate) override;
     void close() override;
 
-    void setSource(PositionableAudioSource *src);
+    void setSource(PositionableAudioSource *src, bool takeOwnership = false);
     PositionableAudioSource *source() const;
 
     void play();

@@ -7,7 +7,14 @@
 
 TransportAudioSource::TransportAudioSource(QObject *parent) : TransportAudioSource(*new TransportAudioSourcePrivate, parent) {
 }
+TransportAudioSource::TransportAudioSource(PositionableAudioSource *src, bool takeOwnership, QObject *parent): TransportAudioSource(parent) {
+    setSource(src, takeOwnership);
+}
 TransportAudioSource::~TransportAudioSource() {
+    Q_D(TransportAudioSource);
+    if(d->takeOwnership) {
+        delete d->src;
+    }
     TransportAudioSource::close();
 }
 TransportAudioSource::TransportAudioSource(TransportAudioSourcePrivate &d, QObject *parent): AudioSource(d), QObject(parent) {
@@ -66,11 +73,11 @@ void TransportAudioSource::close() {
     IAudioStream::close();
 }
 
-void TransportAudioSource::setSource(PositionableAudioSource *src) {
+void TransportAudioSource::setSource(PositionableAudioSource *src, bool takeOwnership) {
     Q_D(TransportAudioSource);
     QMutexLocker locker(&d->mutex);
-    auto curSrc = d->src;
     d->src = src;
+    d->takeOwnership = takeOwnership;
     if(src) {
         if(isOpened()) {
             src->setNextReadPosition(d->position);

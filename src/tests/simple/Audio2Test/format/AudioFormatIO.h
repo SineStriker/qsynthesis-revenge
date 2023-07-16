@@ -54,6 +54,7 @@ public:
         RF64 = 0x220000,
         MPEG = 0x230000,
 
+        InvalidMajorFormat = 0,
         MajorFormatMask = 0x0FFF0000
     };
 
@@ -93,6 +94,7 @@ public:
         MPEG_LAYER_II = 0x0081,
         MPEG_LAYER_III = 0x0082,
 
+        InvalidSubtype = 0,
         SubtypeMask = 0x0000FFFF
     };
 
@@ -137,6 +139,7 @@ public:
     qint64 read(float *ptr, qint64 length);
     qint64 write(float *ptr, qint64 length);
     qint64 seek(qint64 pos);
+    qint64 pos();
 
     struct SubtypeInfo {
         Subtype subtype;
