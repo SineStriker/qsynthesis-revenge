@@ -132,6 +132,7 @@ int main(int argc, char **argv){
     QObject *driverComboBoxCtx = nullptr;
 
     QList<QFile *> srcFileList;
+    QList<AudioFormatIO *> srcIoList;
     QList<AudioFormatInputSource *> srcList;
     QList<PositionableMixerAudioSource *> trackSrcList;
     PositionableMixerAudioSource mixer;
@@ -147,10 +148,10 @@ int main(int argc, char **argv){
         transportSrc.lock();
         mixer.removeAllSource();
         for(auto ptr: trackSrcList) delete ptr;
-        for(auto ptr: srcList) delete ptr;
+        for(auto ptr: srcIoList) delete ptr;
         for(auto ptr: srcFileList) delete ptr;
         srcFileList.clear();
-        srcList.clear();
+        srcIoList.clear();
         trackSrcList.clear();
 
         fileNameLabel->setText(fileName);
@@ -161,7 +162,7 @@ int main(int argc, char **argv){
             auto audioFile = new QFile(audioFileNameJsonVal.toString());
             qDebug() << audioFileNameJsonVal.toString();
             srcFileList.append(audioFile);
-            srcList.append(new AudioFormatInputSource(new AudioFormatIO(audioFile), true));
+            srcIoList.append(new AudioFormatIO(audioFile));
         }
         for(const auto &trackSpec: doc.object().value("tracks").toArray()) {
             auto clipSeries = new AudioSourceClipSeries;
@@ -178,7 +179,9 @@ int main(int argc, char **argv){
                 qint64 position = positionSec * device->sampleRate();
                 qint64 startPos = startPosSec * device->sampleRate();
                 qint64 length = lengthSec * device->sampleRate();
-                if(!clipSeries->addClip({position, srcList[audioId], startPos, length})) {
+                auto src = new AudioFormatInputSource(srcIoList[audioId]);
+                srcList.append(src);
+                if(!clipSeries->addClip({position, src, startPos, length})) {
                     QMessageBox::critical(&mainWindow, "Mixer", "Cannot add clip.");
                 }
             }

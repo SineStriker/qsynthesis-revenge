@@ -19,9 +19,11 @@ class AudioFormatInputSourcePrivate: public PositionableAudioSourcePrivate {
     Q_DECLARE_PUBLIC(AudioFormatInputSource);
 public:
     AudioFormatIO *io = nullptr;
-    bool takeOwnership = false;
     double ratio = 0;
     SRC_STATE *srcState = nullptr;
+
+    qint64 inPosition = 0;
+
     QVector<float> inData;
     QVector<float> outData;
 

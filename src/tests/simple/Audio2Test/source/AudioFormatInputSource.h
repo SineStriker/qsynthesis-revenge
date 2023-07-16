@@ -20,7 +20,7 @@ public:
         ZeroOrderHold,
         Linear,
     };
-    explicit AudioFormatInputSource(AudioFormatIO *audioFormatIo = nullptr, bool takeOwnership = false);
+    explicit AudioFormatInputSource(AudioFormatIO *audioFormatIo = nullptr);
     ~AudioFormatInputSource();
 
     qint64 read(const AudioSourceReadData &readData) override;
@@ -29,7 +29,7 @@ public:
     bool open(qint64 bufferSize, double sampleRate) override;
     void close() override;
 
-    void setAudioFormatIo(AudioFormatIO *audioFormatIo, bool takeOwnership = false);
+    void setAudioFormatIo(AudioFormatIO *audioFormatIo);
     AudioFormatIO *audioFormatIo() const;
 
     void flush();

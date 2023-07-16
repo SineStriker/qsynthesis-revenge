@@ -10,15 +10,10 @@
 #include "buffer/InterleavedAudioDataWrapper.h"
 #include "format/AudioFormatIO.h"
 
-AudioFormatInputSource::AudioFormatInputSource(AudioFormatIO *audioFormatIo, bool takeOwnership): AudioFormatInputSource(*new AudioFormatInputSourcePrivate) {
-    setAudioFormatIo(audioFormatIo, takeOwnership);
+AudioFormatInputSource::AudioFormatInputSource(AudioFormatIO *audioFormatIo): AudioFormatInputSource(*new AudioFormatInputSourcePrivate) {
+    setAudioFormatIo(audioFormatIo);
 }
 AudioFormatInputSource::~AudioFormatInputSource() {
-    Q_D(AudioFormatInputSource);
-    AudioFormatInputSource::close();
-    if(d->takeOwnership) {
-        delete d->io;
-    }
 }
 AudioFormatInputSource::AudioFormatInputSource(AudioFormatInputSourcePrivate &d): PositionableAudioSource(d) {
 }
@@ -32,7 +27,10 @@ void AudioFormatInputSourcePrivate::resizeOutDataBuffers(qint64 bufferSize) {
 long AudioFormatInputSourcePrivate::fetchInData(float **data) {
     Q_Q(AudioFormatInputSource);
     *data = inData.data();
-    return io->read(inData.data(), q->bufferSize() / ratio);
+    io->seek(inPosition);
+    auto inLength =  io->read(inData.data(), q->bufferSize() / ratio);
+    inPosition += inLength;
+    return inLength;
 }
 
 qint64 AudioFormatInputSource::read(const AudioSourceReadData &readData) {
@@ -62,7 +60,8 @@ void AudioFormatInputSource::setNextReadPosition(qint64 pos) {
     Q_D(AudioFormatInputSource);
     QMutexLocker locker(&d->mutex);
     src_reset(d->srcState);
-    if(d->io) d->io->seek(pos / d->ratio);
+    if(d->io && d->io->openMode()) d->io->seek(pos / d->ratio);
+    d->inPosition = pos / d->ratio;
     PositionableAudioSource::setNextReadPosition(pos);
 }
 bool AudioFormatInputSource::open(qint64 bufferSize, double sampleRate) {
@@ -100,7 +99,7 @@ void AudioFormatInputSource::close() {
     d->srcState = nullptr;
 }
 
-void AudioFormatInputSource::setAudioFormatIo(AudioFormatIO *audioFormatIo, bool takeOwnership) {
+void AudioFormatInputSource::setAudioFormatIo(AudioFormatIO *audioFormatIo) {
     Q_ASSERT(!isOpened());
     if(isOpened()) {
         qWarning() << "Cannot set audio format io when source is opened.";
@@ -109,7 +108,7 @@ void AudioFormatInputSource::setAudioFormatIo(AudioFormatIO *audioFormatIo, bool
     Q_D(AudioFormatInputSource);
     QMutexLocker locker(&d->mutex);
     d->io = audioFormatIo;
-    d->takeOwnership = takeOwnership;
+    if(d->io && d->io->openMode()) d->io->seek(d->inPosition);
     flush();
 }
 AudioFormatIO *AudioFormatInputSource::audioFormatIo() const {
