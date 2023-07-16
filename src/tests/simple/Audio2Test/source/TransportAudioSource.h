@@ -34,9 +34,6 @@ public:
     bool isPlaying() const;
     void pause();
 
-    void lock();
-    void unlock();
-
     qint64 position() const;
     void setPosition(qint64 position);
     qint64 length() const;

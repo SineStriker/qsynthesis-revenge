@@ -74,7 +74,7 @@ void AudioSourceClipSeries::close() {
 bool AudioSourceClipSeries::addClip(const AudioSourceClip &clip) {
     Q_D(AudioSourceClipSeries);
     QMutexLocker locker(&d->mutex);
-    if(isOpened()) {
+    if(isOpen()) {
         if(!clip.content->open(bufferSize(), sampleRate())) {
             return false;
         }

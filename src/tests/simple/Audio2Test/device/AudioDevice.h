@@ -38,6 +38,9 @@ public:
     bool isStarted() const;
     virtual void stop();
 
+    virtual void lock();
+    virtual void unlock();
+
 signals:
 
 

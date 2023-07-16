@@ -79,8 +79,8 @@ bool MixerAudioSource::addSource(AudioSource *src, bool takeOwnership) {
     QMutexLocker locker(&d->mutex);
     if(src == this) return false;
     if(d->sourceDict.contains(src)) return false;
-    d->sourceDict.insert(src, takeOwnership);
-    if(isOpened()) {
+    d->sourceDict.append(src, takeOwnership);
+    if(isOpen()) {
         return src->open(bufferSize(), sampleRate());
     }
     return true;
@@ -104,30 +104,6 @@ QList<AudioSource *> MixerAudioSource::sources() const {
     Q_D(const MixerAudioSource);
     return d->sourceDict.keys();
 }
-
-void IMixer::deleteOwnedSources() const {
-    for(auto src: sourceDict.keys()) {
-        if(sourceDict.value(src)) {
-            delete src;
-        }
-    }
-}
-bool IMixer::start(qint64 bufferSize, double sampleRate) const {
-    auto sourceList = sourceDict.keys();
-    if(std::all_of(sourceList.constBegin(), sourceList.constEnd(), [=](AudioSource *src){
-            return src->open(bufferSize, sampleRate);
-        })) {
-        return true;
-    } else {
-        return false;
-    }
-}
-void IMixer::stop() const {
-    auto sourceList = sourceDict.keys();
-    std::for_each(sourceList.constBegin(), sourceList.constEnd(), [=](AudioSource *src){ src->close();
-    });
-}
-
 void MixerAudioSource::setGain(float gain) {
     Q_D(MixerAudioSource);
     QMutexLocker locker(&d->mutex);

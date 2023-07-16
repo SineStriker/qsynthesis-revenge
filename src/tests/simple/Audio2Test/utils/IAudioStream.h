@@ -10,7 +10,7 @@
 class IAudioStream {
 public:
     virtual bool open(qint64 bufferSize, double sampleRate);
-    bool isOpened() const;
+    bool isOpen() const;
     virtual void close();
 
     qint64 bufferSize() const;

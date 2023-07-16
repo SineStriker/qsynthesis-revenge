@@ -79,7 +79,7 @@ void TransportAudioSource::setSource(PositionableAudioSource *src, bool takeOwne
     d->src = src;
     d->takeOwnership = takeOwnership;
     if(src) {
-        if(isOpened()) {
+        if(isOpen()) {
             src->setNextReadPosition(d->position);
             src->open(bufferSize(), sampleRate());
         }
@@ -135,14 +135,4 @@ void TransportAudioSource::setLoopingRange(qint64 l, qint64 r) {
 void TransportAudioSourcePrivate::_q_positionAboutToChange(qint64 pos) {
     Q_Q(TransportAudioSource);
     emit q->positionAboutToChange(pos);
-}
-
-void TransportAudioSource::lock() {
-    Q_D(TransportAudioSource);
-    d->mutex.lock();
-}
-
-void TransportAudioSource::unlock() {
-    Q_D(TransportAudioSource);
-    d->mutex.unlock();
 }

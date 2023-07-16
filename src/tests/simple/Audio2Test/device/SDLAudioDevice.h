@@ -20,6 +20,8 @@ public:
     void stop() override;
     bool open(qint64 bufferSize, double sampleRate) override;
     void close() override;
+    void lock() override;
+    void unlock() override;
 
 protected:
     SDLAudioDevice(const QString &name, AudioDriver *driver, QObject *parent = nullptr);

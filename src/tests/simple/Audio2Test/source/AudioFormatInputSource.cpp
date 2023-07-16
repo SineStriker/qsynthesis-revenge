@@ -36,6 +36,7 @@ long AudioFormatInputSourcePrivate::fetchInData(float **data) {
 qint64 AudioFormatInputSource::read(const AudioSourceReadData &readData) {
     Q_D(AudioFormatInputSource);
     QMutexLocker locker(&d->mutex);
+    Q_ASSERT(d->io && isOpen());
     auto readLength = std::min(readData.length, length() - d->position);
     if(readLength > bufferSize()) d->resizeOutDataBuffers(readLength);
     src_callback_read(d->srcState, d->ratio, readLength, d->outData.data());
@@ -52,7 +53,7 @@ qint64 AudioFormatInputSource::read(const AudioSourceReadData &readData) {
 }
 qint64 AudioFormatInputSource::length() const {
     Q_D(const AudioFormatInputSource);
-    if(!d->io || !isOpened()) return 0;
+    if(!d->io || !isOpen()) return 0;
     return d->io->length() * d->ratio;
 }
 void AudioFormatInputSource::setNextReadPosition(qint64 pos) {
@@ -99,8 +100,8 @@ void AudioFormatInputSource::close() {
 }
 
 void AudioFormatInputSource::setAudioFormatIo(AudioFormatIO *audioFormatIo) {
-    Q_ASSERT(!isOpened());
-    if(isOpened()) {
+    Q_ASSERT(!isOpen());
+    if(isOpen()) {
         qWarning() << "Cannot set audio format io when source is opened.";
         return;
     }
@@ -130,8 +131,8 @@ bool AudioFormatInputSource::doStereoize() const {
     return d->doStereoize;
 }
 void AudioFormatInputSource::setResamplerMode(AudioFormatInputSource::ResampleMode mode) {
-    Q_ASSERT(!isOpened());
-    if(isOpened()) {
+    Q_ASSERT(!isOpen());
+    if(isOpen()) {
         qWarning() << "Cannot set resampler mode when source is opened.";
         return;
     }

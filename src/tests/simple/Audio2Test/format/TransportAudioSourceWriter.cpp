@@ -27,39 +27,42 @@ TransportAudioSourceWriter::~TransportAudioSourceWriter() {
 
 void TransportAudioSourceWriter::start() {
     Q_D(TransportAudioSourceWriter);
+    {
+        QMutexLocker locker(&d->pSrc->mutex);
 
-    d->src->lock();
+        qint64 curPos = d->pSrc->position;
+        qint64 blockSize = d->src->bufferSize();
+        int chCnt = d->outFile->channels();
 
-    qint64 curPos = d->pSrc->position;
-    qint64 blockSize = d->src->bufferSize();
-    int chCnt = d->outFile->channels();
+        auto *p = new float[blockSize * chCnt];
+        memset(p, 0, sizeof(float) * blockSize * chCnt);
+        InterleavedAudioDataWrapper buf(p, chCnt, blockSize);
 
-    auto *p = new float[blockSize * chCnt];
-    memset(p, 0, sizeof(float) * blockSize * chCnt);
-    InterleavedAudioDataWrapper buf(p, chCnt, blockSize);
+        d->pSrc->_q_positionAboutToChange(d->startPos);
+        d->pSrc->position = d->startPos;
+        if (d->pSrc->src)
+            d->pSrc->src->setNextReadPosition(d->pSrc->position);
 
-    d->pSrc->_q_positionAboutToChange(d->startPos);
-    d->pSrc->position = d->startPos;
-    if(d->pSrc->src) d->pSrc->src->setNextReadPosition(d->pSrc->position);
+        qint64 framesToRead = d->length;
+        while (!d->stopRequested && framesToRead > 0) {
+            qint64 readLength = std::min(framesToRead, blockSize);
+            if (d->pSrc->src)
+                d->pSrc->src->read({&buf, 0, readLength});
+            framesToRead -= readLength;
+            d->outFile->write(p, blockSize);
+            d->pSrc->_q_positionAboutToChange(d->pSrc->position + readLength);
+            d->pSrc->position += readLength;
+            emit percentageUpdated(100.0 * (d->length - framesToRead) / d->length);
+        }
 
-    qint64 framesToRead = d->length;
-    while(!d->stopRequested && framesToRead > 0) {
-        qint64 readLength = std::min(framesToRead, blockSize);
-        if(d->pSrc->src) d->pSrc->src->read({&buf, 0, readLength});
-        framesToRead -= readLength;
-        d->outFile->write(p, blockSize);
-        d->pSrc->_q_positionAboutToChange(d->pSrc->position + readLength);
-        d->pSrc->position += readLength;
-        emit percentageUpdated(100.0 * (d->length - framesToRead) / d->length);
+        delete[] p;
+
+        d->pSrc->_q_positionAboutToChange(curPos);
+        d->pSrc->position = curPos;
+        if (d->pSrc->src)
+            d->pSrc->src->setNextReadPosition(curPos);
     }
 
-    delete[] p;
-
-    d->pSrc->_q_positionAboutToChange(curPos);
-    d->pSrc->position = curPos;
-    if(d->pSrc->src) d->pSrc->src->setNextReadPosition(curPos);
-
-    d->src->unlock();
 
     if(d->stopRequested) {
         emit interrupted();

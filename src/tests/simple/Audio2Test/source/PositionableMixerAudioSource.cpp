@@ -99,8 +99,8 @@ bool PositionableMixerAudioSource::addSource(PositionableAudioSource *src, bool 
     QMutexLocker locker(&d->mutex);
     if(src == this) return false;
     if(d->sourceDict.contains(src)) return false;
-    d->sourceDict.insert(src, takeOwnership);
-    if(isOpened()) {
+    d->sourceDict.append(src, takeOwnership);
+    if(isOpen()) {
         if(!src->open(bufferSize(), sampleRate())) return false;
         src->setNextReadPosition(nextReadPosition());
     }
@@ -124,8 +124,7 @@ void PositionableMixerAudioSource::removeAllSource() {
 
 QList<PositionableAudioSource *> PositionableMixerAudioSource::sources() const {
     Q_D(const PositionableMixerAudioSource);
-    auto sourceList = d->sourceDict.keys();
-    return *reinterpret_cast<QList<PositionableAudioSource *> *>(&sourceList); // Don't worry, this is strictly ok.
+    return d->sourceDict.keys();
 }
 
 void PositionableMixerAudioSource::setGain(float gain) {

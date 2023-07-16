@@ -82,3 +82,7 @@ void AudioDevice::stop() {
     Q_D(AudioDevice);
     d->isStarted = false;
 }
+void AudioDevice::lock() {
+}
+void AudioDevice::unlock() {
+}

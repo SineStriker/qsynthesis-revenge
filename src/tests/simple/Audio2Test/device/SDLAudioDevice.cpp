@@ -50,7 +50,7 @@ SDLAudioDevice::~SDLAudioDevice() {
 
 bool SDLAudioDevice::open(qint64 bufferSize, double sampleRate) {
     Q_D(SDLAudioDevice);
-    if(isOpened()) close();
+    if(isOpen()) close();
     d->spec = {
         .freq = (int)sampleRate,
         .format = AUDIO_F32SYS,
@@ -90,6 +90,14 @@ void SDLAudioDevice::stop() {
     SDL_PauseAudioDevice(d->devId, 1);
     if(d->audioDeviceCallback) d->audioDeviceCallback->deviceStoppedCallback();
     AudioDevice::stop();
+}
+void SDLAudioDevice::lock() {
+    Q_D(SDLAudioDevice);
+    SDL_LockAudioDevice(d->devId);
+}
+void SDLAudioDevice::unlock() {
+    Q_D(SDLAudioDevice);
+    SDL_UnlockAudioDevice(d->devId);
 }
 
 void SDLAudioDevicePrivate::sdlCallback(quint8 *rawBuf, int length) {

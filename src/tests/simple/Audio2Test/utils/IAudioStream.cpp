@@ -10,7 +10,7 @@ bool IAudioStream::open(qint64 bufferSize, double sampleRate) {
     m_isOpened = true;
     return true;
 }
-bool IAudioStream::isOpened() const {
+bool IAudioStream::isOpen() const {
     return m_isOpened;
 }
 void IAudioStream::close() {

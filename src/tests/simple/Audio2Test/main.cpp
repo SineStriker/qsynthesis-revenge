@@ -145,7 +145,7 @@ int main(int argc, char **argv){
 
     auto reloadFile = [&](const QString &fileName) {
         if(fileName.isEmpty()) return;
-        transportSrc.lock();
+        device->lock();
         mixer.removeAllSource();
         for(auto ptr: trackSrcList) delete ptr;
         for(auto ptr: srcIoList) delete ptr;
@@ -188,7 +188,7 @@ int main(int argc, char **argv){
             effectiveLength = std::max(effectiveLength, clipSeries->effectiveLength());
             mixer.addSource(trackSrc);
         }
-        transportSrc.unlock();
+        device->unlock();
         qint64 audioLength = effectiveLength;
         transportSlider->setRange(0, audioLength - 1);
         loopingStartSlider->setRange(0, audioLength - 1);

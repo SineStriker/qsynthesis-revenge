@@ -9,7 +9,7 @@
 #include "MixerAudioSource_p.h"
 #include "PositionableAudioSource_p.h"
 
-class PositionableMixerAudioSourcePrivate: public PositionableAudioSourcePrivate, public IMixer {
+class PositionableMixerAudioSourcePrivate: public PositionableAudioSourcePrivate, public IMixer<PositionableAudioSource> {
     Q_DECLARE_PUBLIC(PositionableMixerAudioSource)
 public:
     void setNextReadPositionToAll(qint64 pos);
