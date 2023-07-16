@@ -71,24 +71,20 @@ void QMGuiAppExtensionPrivate::init() {
         if (value.isDouble()) {
             font.setWeight(value.toInt());
         }
+
+        value = appFont.value("Italic");
+        if (value.isBool()) {
+            font.setItalic(value.toBool());
+        }
     }
 
     font.setStyleStrategy(QFont::PreferAntialias);
     qApp->setFont(font);
 
     // Add icons
-    svgs.insert(QMGuiAppExtension::SI_MenuIndicator, QSvgIconEx::fromStringList({
-                                                         "svg",
-                                                         R"(":/qtmediate.org/svg/check-line.svg", auto)",
-                                                     }));
-    svgs.insert(QMGuiAppExtension::SI_MenuRightArrow, QSvgIconEx::fromStringList({
-                                                          "svg",
-                                                          R"(":/qtmediate.org/svg/arrow-right-s-line.svg", auto)",
-                                                      }));
-    svgs.insert(QMGuiAppExtension::SI_MenuBarExtension, QSvgIconEx::fromStringList({
-                                                            "svg",
-                                                            R"(":/qtmediate.org/svg/more-line.svg", auto)",
-                                                        }));
+    svgs.insert(QMGuiAppExtension::SI_MenuIndicator, QSvgIconEx::create(":/qtmediate.org/svg/check-line.svg"));
+    svgs.insert(QMGuiAppExtension::SI_MenuRightArrow, QSvgIconEx::create(":/qtmediate.org/svg/arrow-right-s-line.svg"));
+    svgs.insert(QMGuiAppExtension::SI_MenuBarExtension, QSvgIconEx::create(":/qtmediate.org/svg/more-line.svg"));
 }
 
 QMCoreInitFactory *QMGuiAppExtensionPrivate::createFactory() {
@@ -103,7 +99,12 @@ QMGuiAppExtension::~QMGuiAppExtension() {
 
 QSvgIconEx QMGuiAppExtension::svgIcon(SvgIcon icon) const {
     Q_D(const QMGuiAppExtension);
-    return d->svgs.value(icon);
+    auto res = d->svgs.value(icon);
+    if (!res.isNull()) {
+        res.detach();
+        return res;
+    }
+    return {};
 }
 
 void QMGuiAppExtension::setSvgIcon(SvgIcon icon, const QSvgIconEx &uri) {

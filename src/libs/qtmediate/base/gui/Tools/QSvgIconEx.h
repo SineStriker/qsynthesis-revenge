@@ -4,6 +4,7 @@
 #include <QIcon>
 
 #include "QMGuiGlobal.h"
+#include "QMNamespace.h"
 
 class QMGUI_EXPORT QSvgIconEx : public QIcon {
 public:
@@ -14,6 +15,11 @@ public:
     explicit QSvgIconEx(QIconEngine *engine);
 
 public:
+    static QSvgIconEx create(const QMap<QM::ClickState, QString> &fileMap,
+                             const QMap<QM::ClickState, QString> &colorMap);
+
+    static QSvgIconEx create(const QString &file, const QString &checkedFile = {}, const QString &color = "auto");
+
     static QSvgIconEx fromStringList(const QStringList &stringList);
 
     static const char *metaFunctionName();

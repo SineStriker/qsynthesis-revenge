@@ -37,9 +37,10 @@ void CPushButton::paintEvent(QPaintEvent *event) {
     initStyleOption(&option);
 
     // Correct icon color
-    IconColorImpl::correctIconStateAndColor(option.icon, IconColorImpl::getButtonClickState(this), [this]() {
-        return QMCss::ColorToCssString(currentTextColor()); //
-    });
+    IconColorImpl::correctIconStateAndColor(option.icon, IconColorImpl::getButtonClickState(this),
+                                            metaObject()->className(), [this]() {
+                                                return QMCss::ColorToCssString(currentTextColor()); //
+                                            });
 
     p.drawControl(QStyle::CE_PushButton, option);
 }

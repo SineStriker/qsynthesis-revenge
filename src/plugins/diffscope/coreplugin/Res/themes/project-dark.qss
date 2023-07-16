@@ -28,6 +28,10 @@ QToolBar#main-toolbar>QLabel {
 
 QToolBar#main-toolbar>QToolButton {
     padding: 5px;
+    color: #CCCCCC;
+}
+QToolBar#main-toolbar>QToolButton {
+    padding: 5px;
     border: none;
     background-color: transparent;
     color: #CCCCCC;
@@ -45,39 +49,7 @@ QToolBar#main-toolbar>QToolButton:pressed {
 
 QToolBar#main-toolbar>QToolButton[selectable=true]:checked {
     background-color: rgba(35, 50, 51, 100%);
-}
-
-QToolBar#main-toolbar>QToolButton[action-id="core.Play"] {
-    --svgIcon: svg((":/svg/main-toolbar/play-line.svg", up2=":/svg/main-toolbar/pause-line.svg"), auto);
-}
-
-QToolBar#main-toolbar>QToolButton[action-id="core.Stop"] {
-    --svgIcon: svg(":/svg/main-toolbar/stop-line.svg", auto);
-}
-
-QToolBar#main-toolbar>QToolButton[action-id="core.MoveToStart"] {
-    --svgIcon: svg(":/svg/main-toolbar/move-start-line.svg", auto);
-}
-
-QToolBar#main-toolbar>QToolButton[action-id="core.MoveToEnd"] {
-    --svgIcon: svg(":/svg/main-toolbar/move-end-line.svg", auto);
-}
-
-QToolBar#main-toolbar>QToolButton[action-id="core.Metronome"] {
-    --svgIcon: svg(":/svg/main-toolbar/metronome-line.svg", auto);
-}
-
-QToolBar#main-toolbar>QToolButton[action-id="core.LoopPlay"] {
-    --svgIcon: svg(":/svg/main-toolbar/loop-line.svg", auto);
-}
-
-QToolBar#main-toolbar>QToolButton[action-id="core.FindAction"] {
-    --svgIcon: svg(":/svg/main-toolbar/search-line.svg", auto);
-}
-
-QToolBar#main-toolbar>QToolButton[action-id="core.Settings"] {
-    --svgIcon: svg(":/svg/main-toolbar/setting-line.svg", auto);
-}
+} 
 
 QsApi--SynthVSplitter#canvas>QsApi--SynthVSplitterHandle {
     --handleHeight: 6px;

@@ -67,9 +67,10 @@ void CLTabButton::paintEvent(QPaintEvent *event) {
     initStyleOption(&option);
 
     // Correct icon color
-    IconColorImpl::correctIconStateAndColor(option.icon, IconColorImpl::getButtonClickState(this), [this]() {
-        return QMCss::ColorToCssString(currentTextColor()); //
-    });
+    IconColorImpl::correctIconStateAndColor(option.icon, IconColorImpl::getButtonClickState(this),
+                                            metaObject()->className(), [this]() {
+                                                return QMCss::ColorToCssString(currentTextColor()); //
+                                            });
 
     QSize sz = iconSize();
     QTransform tf;

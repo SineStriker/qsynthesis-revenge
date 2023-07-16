@@ -9,6 +9,8 @@
 
 namespace Core {
 
+    Q_GLOBAL_STATIC(QJsonObject, m_tempSettings)
+
     ILoaderPrivate::ILoaderPrivate() {
         settingsUnread = true;
         settingsNeedWrite = false;
@@ -86,6 +88,10 @@ namespace Core {
 
     QDateTime ILoader::atime() {
         return *m_atime;
+    }
+
+    QJsonObject *ILoader::tempSettings() {
+        return m_tempSettings;
     }
 
     QString ILoader::settingsPath(QSettings::Scope scope) const {

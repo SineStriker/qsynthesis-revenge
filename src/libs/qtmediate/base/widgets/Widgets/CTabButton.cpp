@@ -60,9 +60,10 @@ void CTabButton::paintEvent(QPaintEvent *event) {
     initStyleOption(&option);
 
     // Correct icon color
-    IconColorImpl::correctIconStateAndColor(option.icon, IconColorImpl::getButtonClickState(this), [this]() {
-        return QMCss::ColorToCssString(currentTextColor()); //
-    });
+    IconColorImpl::correctIconStateAndColor(option.icon, IconColorImpl::getButtonClickState(this),
+                                            metaObject()->className(), [this]() {
+                                                return QMCss::ColorToCssString(currentTextColor()); //
+                                            });
 
     QSize sz = iconSize();
     QPixmap tmp = option.icon.pixmap(sz); // Get the pixmap to apply with right size

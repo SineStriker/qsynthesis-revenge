@@ -72,6 +72,107 @@ QSvgIconEx::QSvgIconEx(const QString &fileName) : QIcon(fileName) {
 QSvgIconEx::QSvgIconEx(QIconEngine *engine) : QIcon(engine) {
 }
 
+QSvgIconEx QSvgIconEx::create(const QMap<QM::ClickState, QString> &fileMap,
+                              const QMap<QM::ClickState, QString> &colorMap) {
+    // Handle file contents
+    QByteArray svgContents[8];
+    for (int i = 0; i < 8; ++i) {
+        const auto &item = fileMap.value(static_cast<QM::ClickState>(i));
+        if (item.isEmpty())
+            continue;
+
+        if (item.startsWith("data:")) {
+            svgContents[i] = parseDataUrl(fromDataUrl(item));
+        } else {
+            QFile file(item);
+            if (file.open(QIODevice::ReadOnly)) {
+                svgContents[i] = file.readAll();
+            }
+        }
+    }
+
+    // Handle colors
+    QString colors[8];
+    for (int i = 0; i < 8; ++i) {
+        auto it = colorMap.find(static_cast<QM::ClickState>(i));
+        if (it == colorMap.end())
+            continue;
+        colors[i] = it.value();
+    }
+
+    for (int i = 0; i < 8; ++i) {
+        if (!colors[i].isEmpty())
+            continue;
+
+        switch (i) {
+            case QM::CS_Hover:
+            case QM::CS_Disabled: {
+                colors[i] = colors[QM::CS_Normal];
+                break;
+            }
+            case QM::CS_Pressed: {
+                colors[i] = colors[QM::CS_Hover];
+                break;
+            }
+            case QM::CS_Normal_Checked: {
+                colors[i] = colors[QM::CS_Normal];
+                break;
+            }
+            case QM::CS_Hover_Checked:
+            case QM::CS_Disabled_Checked: {
+                colors[i] = colors[QM::CS_Normal_Checked];
+                break;
+            }
+            case QM::CS_Pressed_Checked: {
+                colors[i] = colors[QM::CS_Hover_Checked];
+                break;
+            }
+            default:
+                break;
+        }
+    }
+
+    auto engine = new CSvgIconEngine();
+    engine->setValues(svgContents, colors);
+
+    return QSvgIconEx(engine);
+}
+
+QSvgIconEx QSvgIconEx::create(const QString &file, const QString &checkedFile, const QString &color) {
+    if (checkedFile.isEmpty()) {
+        return create(
+            {
+                {
+                 QM::CS_Normal,
+                 file, //
+                },
+        },
+            {
+                {
+                    QM::CS_Normal,
+                    color,
+                },
+            });
+    }
+    return create(
+        {
+            {
+             QM::CS_Normal,
+             file,                  //
+            },
+            {
+             QM::CS_Normal_Checked,
+             checkedFile,                      //
+            },
+    },
+        {
+            {
+                QM::CS_Normal,
+                color,
+            },
+        });
+}
+
 QSvgIconEx QSvgIconEx::fromStringList(const QStringList &stringList) {
     QMETATYPE_CHECK_FUNC(stringList, strData);
 

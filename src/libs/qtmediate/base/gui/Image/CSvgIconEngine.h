@@ -31,6 +31,9 @@ public:
     QM::ClickState currentState() const;
     void setCurrentState(QM::ClickState state);
 
+    QString salt() const;
+    void setSalt(const QString &salt);
+
     bool needColorHint() const;
     void setColorHint(const QString &color);
 

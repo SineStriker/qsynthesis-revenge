@@ -73,6 +73,10 @@
         <source>Window</source>
         <translation>窗口</translation>
     </message>
+    <message>
+        <source>View Mode</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>CScrollBar</name>

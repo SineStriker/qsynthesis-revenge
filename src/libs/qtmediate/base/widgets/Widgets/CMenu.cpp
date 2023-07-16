@@ -6,6 +6,7 @@
 #include <private/qaction_p.h>
 #include <private/qkeysequence_p.h>
 #include <private/qmenu_p.h>
+#include <qiconengine.h>
 
 #include <QMAppExtension.h>
 #include <QMCss.h>
@@ -13,24 +14,40 @@
 
 #include <private/IconColorImpl.h>
 
-class HackAction : public QAction {
-public:
-    QActionPrivate *d_func() {
-        return reinterpret_cast<QActionPrivate *>(d_ptr.data());
-    }
-};
-
 class CMenuPrivate {
 public:
     CMenu *q;
+
     QSvgIconEx rightArrowIcon;
-    QMargins rightArrowMargins;
+    QSvgIconEx indicatorIcon;
 
     CMenuPrivate(CMenu *q) : q(q) {
         // Initialize Font
         q->setFont(qApp->font());
 
         rightArrowIcon = qAppExt->svgIcon(QMAppExtension::SI_MenuRightArrow);
+        indicatorIcon = qAppExt->svgIcon(QMAppExtension::SI_MenuIndicator);
+    }
+
+    void updateActionStats() {
+        for (const auto &action : q->actions()) {
+            if (!action->icon().isNull()) {
+                q->setProperty("stats", "icon");
+                goto out;
+            }
+        }
+
+        for (const auto &action : q->actions()) {
+            if (action->isCheckable()) {
+                q->setProperty("stats", "checkable");
+                goto out;
+            }
+        }
+
+        q->setProperty("stats", "trivial");
+
+    out:
+        q->style()->polish(q);
     }
 };
 
@@ -54,13 +71,17 @@ void CMenu::setRightArrowIcon(const QSvgIconEx &icon) {
     update();
 }
 
-QMargins CMenu::rightArrowMargins() const {
-    return d->rightArrowMargins;
-}
-
-void CMenu::setRightArrowMargins(const QMargins &margins) {
-    d->rightArrowMargins = margins;
-    update();
+bool CMenu::event(QEvent *event) {
+    switch (event->type()) {
+        case QEvent::ActionAdded:
+        case QEvent::ActionChanged:
+        case QEvent::ActionRemoved:
+            d->updateActionStats();
+            break;
+        default:
+            break;
+    }
+    return QMenu::event(event);
 }
 
 void CMenu::paintEvent(QPaintEvent *event) {
@@ -145,35 +166,67 @@ void CMenu::paintEvent(QPaintEvent *event) {
         initStyleOption(&opt, action);
         opt.rect = actionRect;
 
-        auto &raIcon = this->d->rightArrowIcon;
-        bool useRightArrow = action->menu() && !raIcon.isNull();
-        if (useRightArrow) {
-            QM::ClickState state = (opt.state & QStyle::State_Enabled)
-                                       ? ((opt.state & QStyle::State_Selected) ? QM::CS_Hover : QM::CS_Normal)
-                                       : QM::CS_Disabled;
+        QString curColor;
+        auto getColor = [this, &opt, &curColor]() mutable -> QString {
+            if (!curColor.isEmpty()) {
+                return curColor;
+            }
 
-            IconColorImpl::correctIconStateAndColor(raIcon, state, [this, &opt]() -> QString {
-                QPen pen;
-                IconColorImpl::getTextColor(pen, opt.rect.size(), [&](QPainter *painter) {
-                    style()->drawControl(QStyle::CE_PushButton, &opt, painter, this); //
-                });
-                return QMCss::ColorToCssString(pen.color());
+            QString text = opt.text;
+            opt.text = QChar(0x25A0);
+
+            QPen pen;
+            IconColorImpl::getTextColor(pen, opt.rect.size(), [&](QPainter *painter) {
+                style()->drawControl(QStyle::CE_MenuItem, &opt, painter, this); //
             });
 
-            opt.menuItemType = QStyleOptionMenuItem::Normal;
+            opt.text = text;
+
+            curColor = QMCss::ColorToCssString(pen.color());
+            return curColor;
+        };
+        QM::ClickState state = (opt.state & QStyle::State_Enabled)
+                                   ? ((opt.state & QStyle::State_Selected) ? QM::CS_Hover : QM::CS_Normal)
+                                   : QM::CS_Disabled;
+
+        //        bool useRightArrow = action->menu();
+        //
+        //        if (useRightArrow) {
+        //            opt.menuItemType = QStyleOptionMenuItem::Normal;
+        //        }
+
+        bool checked = opt.checked;
+        if (!opt.icon.isNull()) {
+            IconColorImpl::correctIconStateAndColor(opt.icon, state, metaObject()->className(), getColor);
         }
+
+        //        else if (checked) {
+        //            opt.checked = false;
+        //        }
 
         style()->drawControl(QStyle::CE_MenuItem, &opt, &p, this);
 
+        // Draw check mark
+        //        if (checked) {
+        //            auto icon = this->d->indicatorIcon;
+        //            IconColorImpl::correctIconStateAndColor(icon, state, metaObject()->className(), getColor);
+        //
+        //            auto icone = style()->pixelMetric(QStyle::PM_SmallIconSize, &opt, this);
+        //            QRect iconRegion((actionRect.left() + pos.x() - icone) / 2, actionRect.center().y() - icone / 2,
+        //            icone,
+        //                             icone);
+        //            p.drawPixmap(iconRegion, icon.pixmap(iconRegion.size()));
+        //        }
+
         // Draw Right Arrow
-        if (useRightArrow) {
-            auto &raMargins = this->d->rightArrowMargins;
-            int a = actionRect.height();
-            QRect iconRegion(actionRect.right() - a, actionRect.top(), a, a);
-            QRect iconRect =
-                iconRegion.adjusted(raMargins.left(), raMargins.top(), -raMargins.right(), -raMargins.bottom());
-            p.drawPixmap(iconRect, this->d->rightArrowIcon.pixmap(iconRect.size()));
-        }
+//        if (useRightArrow) {
+//            auto icon = this->d->rightArrowIcon;
+//            IconColorImpl::correctIconStateAndColor(icon, state, metaObject()->className(), getColor);
+//
+//            auto icone = style()->pixelMetric(QStyle::PM_SmallIconSize, &opt, this);
+//            QRect iconRegion(actionRect.right() - icone, actionRect.center().y() - icone / 2, icone, icone);
+//            p.drawPixmap(iconRegion, icon.pixmap(iconRegion.size()));
+//        }
     }
 
     emptyArea -= QRegion(scrollUpTearOffRect);

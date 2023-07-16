@@ -21,7 +21,7 @@ namespace Core {
             setTitle([]() { return tr("Display"); });
             setDescription([]() { return tr("Display"); });
             loadFontSettings(font);
-            qDebug() << font;
+            // qDebug() << font;
         }
 
         DisplayPage::~DisplayPage() {
@@ -56,7 +56,7 @@ namespace Core {
                     if (ok) {
                         font = resultFont;
                         label->setText(font.family() + QString(font.pointSize()));
-                        qDebug() << font.family() << font.pointSize();
+                        // qDebug() << font.family() << font.pointSize();
                     }
                 });
 
@@ -84,7 +84,7 @@ namespace Core {
             auto appPath = QCoreApplication::applicationDirPath();
             auto jsonPath = QDir::cleanPath(appPath + QDir::separator() + QString("qtmediate.user.json"));
             if (!QFile::exists(jsonPath)) {
-                qDebug() << "\"qtmediate.user.json\" does not exist.";
+                // qDebug() << "\"qtmediate.user.json\" does not exist.";
                 return false;
             }
 
@@ -93,7 +93,7 @@ namespace Core {
                 return false;
 
             if (!jsonObj.contains("AppFont")) {
-                qDebug() << "\"AppFont\" does not exist";
+                // qDebug() << "\"AppFont\" does not exist";
                 return false;
             }
 
@@ -115,7 +115,7 @@ namespace Core {
             auto appPath = QCoreApplication::applicationDirPath();
             auto jsonPath = QDir::cleanPath(appPath + QDir::separator() + QString("qtmediate.user.json"));
             if (!QFile::exists(jsonPath)) {
-                qDebug() << "\"qtmediate.user.json\" does not exist.";
+                // qDebug() << "\"qtmediate.user.json\" does not exist.";
                 QFile file(jsonPath);
                 file.open(QIODevice::WriteOnly | QIODevice::Text);
                 QTextStream out(&file);
@@ -147,7 +147,7 @@ namespace Core {
             // Deserialize json
             QFile loadFile(filename);
             if (!loadFile.open(QIODevice::ReadOnly)) {
-                qDebug() << "Failed to open \"qtmediate.user.json\"";
+                // qDebug() << "Failed to open \"qtmediate.user.json\"";
                 return false;
             }
             QByteArray allData = loadFile.readAll();
@@ -155,7 +155,7 @@ namespace Core {
             QJsonParseError err;
             QJsonDocument json = QJsonDocument::fromJson(allData, &err);
             if (err.error != QJsonParseError::NoError) {
-                qDebug() << "Failed to deserialize \"qtmediate.user.json\"" << err.error;
+                // qDebug() << "Failed to deserialize \"qtmediate.user.json\"" << err.error;
                 return false;
             }
             if (json.isObject()) {
@@ -173,7 +173,7 @@ namespace Core {
             file.remove();
 
             if (!file.open(QIODevice::ReadWrite | QIODevice::Text)) {
-                qDebug() << "Failed to write json file";
+                // qDebug() << "Failed to write json file";
                 return false;
             }
 //            QTextStream in(&file);

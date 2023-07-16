@@ -9,11 +9,12 @@
 #include <QApplication>
 #include <QBoxLayout>
 #include <QDesktopWidget>
-#include <QMenu>
 #include <QPainter>
 #include <QResizeEvent>
 #include <QStyle>
 #include <QTimer>
+
+#include <CMenu.h>
 
 #include "QMView.h"
 
@@ -59,7 +60,7 @@ QPixmap CDockCardPrivate::cardShot() const {
 }
 
 QMenu *CDockCardPrivate::createViewModeMenu(CDockCard *card) {
-    auto menu = new QMenu(card);
+    auto menu = new CMenu(card);
     menu->setTitle(CDockCard::tr("View Mode"));
 
     auto dockPinnedAction = new QAction(CDockCard::tr("Dock pinned"), menu);

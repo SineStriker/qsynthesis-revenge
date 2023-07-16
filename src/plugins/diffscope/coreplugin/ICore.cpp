@@ -151,20 +151,24 @@ namespace Core {
             parent->installEventFilter(this);
         }
 
+        static void polishMenu(QObject *child) {
+            QMenu *menu;
+            if ((menu = qobject_cast<QMenu *>(child))) {
+                menu->setProperty("core-style", true);
+                menu->style()->polish(menu);
+
+                // Why need to place after polish?
+                menu->setFont(QApplication::font());
+            }
+        }
+
     protected:
         bool eventFilter(QObject *obj, QEvent *event) override {
             if (event->type() == QEvent::ChildAdded) {
                 auto e = static_cast<QChildEvent *>(event);
                 auto child = e->child();
                 QTimer::singleShot(0, child, [child]() {
-                    QMenu *menu;
-                    if ((menu = qobject_cast<QMenu *>(child))) {
-                        menu->setProperty("core-style", true);
-                        menu->style()->polish(menu);
-
-                        // Why need to place after polish?
-                        menu->setFont(QApplication::font());
-                    }
+                    polishMenu(child);     //
                 });
             }
             return QObject::eventFilter(obj, event);

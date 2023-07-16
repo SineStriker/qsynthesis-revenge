@@ -25,6 +25,7 @@ namespace QsApi {
 #ifndef Q_OS_WINDOWS
         q->setMouseTracking(true);
 #endif
+        q->setFont(QApplication::font());
 
         connect(m_delegate, &TitleListItemDelegate::clicked, this, &TitleListWidgetPrivate::_q_delegateClicked);
     }

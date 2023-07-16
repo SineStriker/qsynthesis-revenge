@@ -29,6 +29,7 @@ public:
     QString colorHints[8];
 
     QM::ClickState currentState;
+    QString salt;
 
     mutable bool noSaveCache;
 };

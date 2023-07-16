@@ -256,6 +256,14 @@ namespace Core {
             iWin->addCheckable("playback.metronome", metronomeItem->action());
             iWin->addCheckable("playback.loopPlay", loopPlayItem->action());
 
+            playItem->action()->setIcon(QSvgIconEx::create( //
+                ":/svg/main-toolbar/play-line.svg", ":/svg/main-toolbar/pause-line.svg"));
+            stopItem->action()->setIcon(QSvgIconEx::create(":/svg/main-toolbar/stop-line.svg"));
+            moveToStartItem->action()->setIcon(QSvgIconEx::create(":/svg/main-toolbar/move-start-line.svg"));
+            moveToEndItem->action()->setIcon(QSvgIconEx::create(":/svg/main-toolbar/move-end-line.svg"));
+            metronomeItem->action()->setIcon(QSvgIconEx::create(":/svg/main-toolbar/metronome-line.svg"));
+            loopPlayItem->action()->setIcon(QSvgIconEx::create(":/svg/main-toolbar/loop-line.svg"));
+
             connect(iWin->doc(), &IDocument::changed, this, [this, iWin]() {
                 saveFileItem->setEnabled(!iWin->doc()->isVST() && iWin->doc()->isModified()); //
             });

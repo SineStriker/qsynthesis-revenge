@@ -12,7 +12,6 @@ class CMenuPrivate;
 class QMWIDGETS_EXPORT CMenu : public QMenu {
     Q_OBJECT
     Q_PROPERTY(QSvgIconEx rightArrowIcon READ rightArrowIcon WRITE setRightArrowIcon)
-    Q_PROPERTY(QMargins rightArrowMargins READ rightArrowMargins WRITE setRightArrowMargins)
 public:
     explicit CMenu(QWidget *parent = nullptr);
     explicit CMenu(const QString &title, QWidget *parent = nullptr);
@@ -22,10 +21,9 @@ public:
     QSvgIconEx rightArrowIcon() const;
     void setRightArrowIcon(const QSvgIconEx &icon);
 
-    QMargins rightArrowMargins() const;
-    void setRightArrowMargins(const QMargins &margins);
-
 protected:
+    bool event(QEvent *event) override;
+
     void paintEvent(QPaintEvent *event) override;
 
     void initStyleOption(QStyleOptionMenuItem *option, const QAction *action) const;

@@ -39,29 +39,38 @@ public:
     void drawPixmap(const QRectF &r, const QPixmap &pm, const QRectF &sr) override{};
     void drawTextItem(const QPointF &p, const QTextItem &textItem) override {
         pen = painter()->pen();
+        pos = p;
     }
     void drawTiledPixmap(const QRectF &r, const QPixmap &pixmap, const QPointF &s) override{};
     void drawImage(const QRectF &r, const QImage &pm, const QRectF &sr,
                    Qt::ImageConversionFlags flags = Qt::AutoColor) override{};
 
     QPen pen;
+    QPointF pos;
 };
 
 namespace IconColorImpl {
 
-    void correctIconStateAndColor(QIcon &icon, QM::ClickState state, const std::function<QString()> &getColor) {
+    void correctIconStateAndColor(QIcon &icon, QM::ClickState state, const QString &salt,
+                                  const std::function<QString()> &getColor) {
         auto &d = icon.data_ptr();
         if (!d || !d->engine || d->engine->key() != "svg-ex")
             return;
 
         auto engine = static_cast<CSvgIconEngine *>(d->engine);
         engine->setCurrentState(state);
+        engine->setSalt(salt);
         if (engine->needColorHint()) {
             engine->setColorHint(getColor());
         }
     }
 
     void getTextColor(QPen &pen, const QSize &size, const std::function<void(QPainter *)> &paint) {
+        QPointF pos;
+        getTextColor(pen, pos, size, paint);
+    }
+
+    void getTextColor(QPen &pen, QPointF &pos, const QSize &size, const std::function<void(QPainter *)> &paint) {
         QImage image(size, QImage::Format_ARGB32);
 
         auto engine = new HackPaintEngine(&image);
@@ -71,6 +80,7 @@ namespace IconColorImpl {
         paint(&p2);
 
         pen = engine->pen;
+        pos = engine->pos;
     }
 
     QM::ClickState getButtonClickState(QAbstractButton *button) {

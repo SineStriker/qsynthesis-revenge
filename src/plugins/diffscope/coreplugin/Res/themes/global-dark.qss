@@ -40,15 +40,31 @@ QMenuBar[core-style=true]::item:selected {
 /* Old Menu */
 
 QMenu[core-style=true] {
-    padding: 5px;
+    padding: 4px;
     background: #303030;
     border: 1.25px solid transparent;
 }
 
+QMenu[core-style=true]::indicator {
+    padding-left: 10px;
+}
+
+QMenu[core-style=true]::icon {
+    padding-left: 10px;
+}
+
 QMenu[core-style=true]::item {
-    padding: 4px 25px;
     background: transparent;
     color: #CCCCCC;
+    padding: 4px 24px;
+}
+
+QMenu[core-style=true][stats=icon]::item {
+    padding-left: 6px;
+}
+
+QMenu[core-style=true][stats=checkable]::item {
+    padding-left: 6px;
 }
 
 QMenu[core-style=true]::item:selected {
@@ -64,7 +80,7 @@ QMenu[core-style=true]::item:disabled {
 QMenu[core-style=true]::separator {
     height: 1.25px;
     background-color: #5B5B5B;
-    margin: 6px;
+    margin: 6px 0;
 }
 
 

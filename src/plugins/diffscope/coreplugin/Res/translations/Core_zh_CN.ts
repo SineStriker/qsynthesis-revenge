@@ -549,6 +549,10 @@ The application is about to exit because an unresolvable exception has occurred,
         <source>Close</source>
         <translation>关闭</translation>
     </message>
+    <message>
+        <source>Exit</source>
+        <translation>退出</translation>
+    </message>
 </context>
 <context>
     <name>Core::Internal::DisplayPage</name>

@@ -22,6 +22,7 @@ CSvgIconEnginePrivate::CSvgIconEnginePrivate() {
 
     currentState = QM::CS_Normal;
     noSaveCache = false;
+    salt = "Dummy";
 }
 
 CSvgIconEnginePrivate::~CSvgIconEnginePrivate() {
@@ -32,9 +33,10 @@ QString CSvgIconEnginePrivate::pmcKey(const QSize &size, QIcon::Mode mode, QIcon
     //           QString::number((((((qint64(size.width()) << 11) | size.height()) << 11) | mode) << 4) | state, 16);
 
     return QLatin1String("$qtm_svgicon_") + QString::number(serialNum, 16).append(QLatin1Char('_')) +
-           QString::number((((((qint64(size.width()) << 11) | size.height()) << 11) | mode) << 4) | state |
-                               (currentState << 1),
-                           16);
+           QString::number(
+               (((((qint64(size.width()) << 11) | size.height()) << 11) | mode) << 4) | state | (currentState << 1), 16)
+               .append("_") +
+           salt;
 }
 
 void CSvgIconEnginePrivate::stepSerialNum() {
@@ -209,6 +211,14 @@ QM::ClickState CSvgIconEngine::currentState() const {
 
 void CSvgIconEngine::setCurrentState(QM::ClickState state) {
     d->currentState = state;
+}
+
+QString CSvgIconEngine::salt() const {
+    return d->salt;
+}
+
+void CSvgIconEngine::setSalt(const QString &salt) {
+    d->salt = salt;
 }
 
 bool CSvgIconEngine::needColorHint() const {

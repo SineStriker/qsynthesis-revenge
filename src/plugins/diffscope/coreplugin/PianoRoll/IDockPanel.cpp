@@ -14,6 +14,24 @@ namespace Core {
 
     Q_D_LAYOUT_PROPERTY_DECLARE(caption, Caption, captionLayout, IDockPanel)
 
+    class TitleBarStretch : public QWidget {
+    public:
+        TitleBarStretch(IDockPanel *panel, QWidget *parent = nullptr) : QWidget(parent), panel(panel) {
+            setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
+            setContextMenuPolicy(Qt::DefaultContextMenu);
+        }
+
+        IDockPanel *panel;
+
+    protected:
+        void contextMenuEvent(QContextMenuEvent *event) override {
+            auto card = panel->card();
+            QContextMenuEvent e(QContextMenuEvent::Other, card->mapFromGlobal(QCursor::pos()), QCursor::pos(),
+                                QApplication::keyboardModifiers());
+            QApplication::sendEvent(card, &e);
+        }
+    };
+
     CaptionLabel::CaptionLabel(IDockPanel *s, QWidget *parent) : QLabel(parent), s(s) {
     }
 
@@ -49,7 +67,7 @@ namespace Core {
         toolBar->setLayoutDirection(Qt::RightToLeft);
 
         captionLayout->addWidget(captionLabel);
-        captionLayout->addStretch();
+        captionLayout->addWidget(new TitleBarStretch(q));
         captionLayout->addWidget(toolBar);
 
         mainLayout = new QVBoxLayout();

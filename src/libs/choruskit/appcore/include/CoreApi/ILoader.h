@@ -24,6 +24,8 @@ namespace Core {
 
         static QDateTime atime();
 
+        static QJsonObject *tempSettings();
+
     public:
         QString settingsPath(QSettings::Scope scope) const;
         void setSettingsPath(QSettings::Scope scope, const QString &path);
@@ -50,7 +52,7 @@ namespace Core {
             return m_screen;
         }
 
-        inline QList<std::function<void ()>> &routines() {
+        inline QList<std::function<void()>> &routines() {
             return m_routines;
         }
 
@@ -59,7 +61,7 @@ namespace Core {
 
     protected:
         QSplashScreen *m_screen;
-        QList<std::function<void ()>> m_routines;
+        QList<std::function<void()>> m_routines;
     };
 
 }

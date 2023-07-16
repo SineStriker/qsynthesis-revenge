@@ -33,11 +33,11 @@ namespace QMetaTypeUtils {
         FO_Value,
         FO_Reference,
     };
-    QMGUI_EXPORT QHash<QString, QString>
-        ParseFuncArgList(const QString &s, const QStringList &keys,
-                         const QHash<QString, QPair<QString, FallbackOption>> &fallbacks, bool addParen = false);
+    QHash<QString, QString> ParseFuncArgList(const QString &s, const QStringList &keys,
+                                             const QHash<QString, QPair<QString, FallbackOption>> &fallbacks,
+                                             bool addParen = false);
 
-    QMGUI_EXPORT bool ParseClickStateArgList(const QString &s, QString arr[], bool resolveFallback = true);
+    bool ParseClickStateArgList(const QString &s, QString arr[], bool resolveFallback = true);
 
     void InitializeStateIndexes(int arr[]);
 

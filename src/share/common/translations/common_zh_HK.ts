@@ -61,6 +61,10 @@
         <source>Window</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>View Mode</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>CScrollBar</name>

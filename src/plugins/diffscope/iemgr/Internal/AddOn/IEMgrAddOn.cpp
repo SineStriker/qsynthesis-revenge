@@ -4,6 +4,7 @@
 #include "IManager.h"
 
 #include <QMDecoratorV2.h>
+#include <QSvgIconEx.h>
 
 #include <QDebug>
 #include <QMetaObject>
@@ -62,6 +63,8 @@ namespace IEMgr::Internal {
         exportItem = new ActionItem("iemgr.Export", ICore::createCoreMenu(win), this);
         exportProjectItem = new ActionItem("iemgr.ExportProject", new QAction(this), this);
         exportAudioItem = new ActionItem("iemgr.ExportAudio", new QAction(this), this);
+
+        importItem->menu()->setIcon(QSvgIconEx::create(":/svg/home/import-file.svg"));
 
         connect(importProjectItem->action(), &QAction::triggered, this, [iWin]() {
             IManager::instance()->runImport(iWin->window(), {}, {}); //

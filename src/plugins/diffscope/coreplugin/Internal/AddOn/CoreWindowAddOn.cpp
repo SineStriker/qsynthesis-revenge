@@ -56,7 +56,7 @@ namespace Core::Internal {
         languagesItem->setText(tr("&Locales And Languages..."));
 
         exitGroupItem->setText(tr("Exit Actions"));
-        closeFileItem->setText(tr("Close"));
+        closeFileItem->setText(windowHandle()->id() == "home" ? tr("Exit") : tr("Close"));
 
         welcomeGroupItem->setText(tr("Welcome Actions"));
         showHomeItem->setText(tr("Show Home"));
@@ -103,6 +103,10 @@ namespace Core::Internal {
 
         // Invisible
         showRecentFileItem = new ActionItem("core.ShowRecentFiles", new QAction(this), this);
+
+        openFileItem->action()->setIcon(QSvgIconEx::create(":/svg/home/open-file.svg"));
+        settingsItem->action()->setIcon(QSvgIconEx::create(":/svg/main-toolbar/setting-line.svg"));
+        findActionItem->action()->setIcon(QSvgIconEx::create(":/svg/main-toolbar/search-line.svg"));
 
         connect(newFileItem->action(), &QAction::triggered, this, [this, iWin]() {
             auto doc = new DspxDocument();

@@ -42,6 +42,7 @@ namespace QsApi {
         q->setFocusPolicy(Qt::ClickFocus);
         m_lineEdit->setFocusPolicy(Qt::ClickFocus);
         m_listWidget->setFocusPolicy(Qt::ClickFocus);
+        m_listWidget->setFont(QApplication::font());
 
         m_lineEdit->installEventFilter(this);
         m_listWidget->installEventFilter(this);
