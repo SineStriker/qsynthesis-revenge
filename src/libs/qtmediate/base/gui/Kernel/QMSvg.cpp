@@ -69,13 +69,14 @@ namespace QMSvg {
             });
     }
 
-    bool update(QIcon *icon, QM::ClickState state) {
+    bool update(QIcon *icon, QM::ClickState state, const QString &salt) {
         auto engine = get_engine(*icon);
         if (!engine)
             return false;
 
-        const void *a[1] = {
+        const void *a[2] = {
             &state,
+            &salt,
         };
         engine->virtual_hook(QMSvgPrivate::Update, a);
         return true;

@@ -55,10 +55,10 @@ namespace IconColorImpl {
                                   const std::function<QString()> &getColor) {
         Q_UNUSED(salt);
 
-        if (!QMSvg::update(&icon, state))
+        if (!QMSvg::update(&icon, state, salt))
             return;
 
-        if (QMSvg::getColor(&icon, state) == "auto"){
+        if (QMSvg::getColor(&icon, state) == "auto") {
             QMSvg::setColor(&icon, state, getColor());
         }
     }
@@ -73,6 +73,11 @@ namespace IconColorImpl {
         paint(&p2);
 
         pen = engine->pen;
+    }
+
+    QString defaultSalt(QObject *obj) {
+        return QString("%1_%2_%3")
+            .arg(obj->metaObject()->className(), obj->objectName(), QString::number(quintptr(obj), 16));
     }
 
     QM::ClickState getButtonClickState(QAbstractButton *button) {

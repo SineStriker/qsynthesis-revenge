@@ -27,6 +27,8 @@ public:
     mutable QString realColors[8];
 
     QM::ClickState currentState;
+
+    QString salt;
 };
 
 #endif // SVGXICONENGINE_P_H

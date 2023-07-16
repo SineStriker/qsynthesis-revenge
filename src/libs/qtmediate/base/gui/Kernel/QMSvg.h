@@ -13,7 +13,7 @@ namespace QMSvg {
 
     QMGUI_EXPORT QIcon create(const QString &file, const QString &checkedFile = {}, const QString &color = "auto");
 
-    QMGUI_EXPORT bool update(QIcon *icon, QM::ClickState state);
+    QMGUI_EXPORT bool update(QIcon *icon, QM::ClickState state, const QString &salt);
 
     QMGUI_EXPORT QString getColor(QIcon *icon, QM::ClickState state);
 

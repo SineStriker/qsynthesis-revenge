@@ -14,6 +14,8 @@ namespace IconColorImpl {
 
     void getTextColor(QPen &pen, const QSize &size, const std::function<void(QPainter *)> &paint);
 
+    QString defaultSalt(QObject *obj);
+
     QM::ClickState getButtonClickState(QAbstractButton *button);
 
 };

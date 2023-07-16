@@ -27,6 +27,8 @@ SvgxIconEnginePrivate::SvgxIconEnginePrivate() {
         contentIndexes[i] = i;
 
     currentState = QM::CS_Normal;
+
+    salt = "0";
 }
 
 SvgxIconEnginePrivate::~SvgxIconEnginePrivate() {
@@ -269,8 +271,10 @@ void SvgxIconEngine::virtual_hook(int id, void *data) {
         case QMSvgPrivate::Update: {
             auto a = reinterpret_cast<void **>(data);
             auto &state = *reinterpret_cast<const QM::ClickState *>(a[0]);
+            auto &salt = *reinterpret_cast<const QString *>(a[1]);
 
             setCurrentState(state);
+            setSalt(salt);
             return;
         }
 
@@ -312,6 +316,17 @@ QString SvgxIconEngine::stateColor(QM::ClickState state) const {
 
 void SvgxIconEngine::setStateColor(QM::ClickState state, const QString &color) {
     d->realColors[d->currentState] = color;
+}
+
+QString SvgxIconEngine::salt() const {
+    return d->salt;
+}
+
+void SvgxIconEngine::setSalt(const QString &salt) {
+    if (salt != d->salt && d->colors[d->currentState] == "auto"){
+        d->realColors[d->currentState] = "auto";
+    }
+    d->salt = salt;
 }
 
 void SvgxIconEngine::setValues(QByteArray *dataList, QString *colorList) {

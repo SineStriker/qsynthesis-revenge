@@ -33,6 +33,9 @@ public:
     QString stateColor(QM::ClickState state) const;
     void setStateColor(QM::ClickState state, const QString &color);
 
+    QString salt() const;
+    void setSalt(const QString &salt);
+
     void setValues(QByteArray *dataList, QString *colorList);
 
 private:

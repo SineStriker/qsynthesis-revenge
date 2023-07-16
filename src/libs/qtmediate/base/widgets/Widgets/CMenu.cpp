@@ -155,10 +155,14 @@ void CMenu::paintEvent(QPaintEvent *event) {
         if (!opt.icon.isNull()) {
             IconColorImpl::correctIconStateAndColor(
                 opt.icon,
+                //
                 (opt.state & QStyle::State_Enabled)
                     ? ((opt.state & QStyle::State_Selected) ? QM::CS_Hover : QM::CS_Normal)
                     : QM::CS_Disabled,
-                metaObject()->className(), [this, &opt]() mutable -> QString {
+                //
+                IconColorImpl::defaultSalt(this),
+                //
+                [this, &opt]() mutable -> QString {
                     QString text = opt.text;
                     opt.text = QChar(0x25A0);
 
