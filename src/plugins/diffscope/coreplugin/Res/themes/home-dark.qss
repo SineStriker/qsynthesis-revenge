@@ -61,7 +61,7 @@ CTabButton[type=home-nav-button]:checked {
 /* Nav Bottom Buttons */
 
 CTabButton[type=home-bottom-button] {
-    --iconSize: 20px 20px;
+    --iconSize: 28px 28px;
     --spaceRatio: 0.2;
     background-color: transparent;
     color: #FFFFFF;

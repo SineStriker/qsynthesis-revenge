@@ -6,7 +6,7 @@
                 <rule id="core.OpenGroup" mode="insertBehind"/>
             </rules>
             <content>
-                <menu id="Import" icon="svg(:/svg/home/import-file.svg)">
+                <menu id="Import">
                     <action id="ImportProject" command="Import: Import Project"/>
                     <action id="ImportAudio" command="Import: Import Audio"/>
                 </menu>

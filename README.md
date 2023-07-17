@@ -85,6 +85,8 @@ For detailed information, see [Related Tools](./docs/related-tools.md).
     + LGPL-3.0 license
 + [QtCreator 3.6](https://github.com/qt-creator/qt-creator/tree/3.6) (ExtensionSystem, Aggregation, Utils)
     + GNU LGPL v2.1 or later
++ [fluentui-system-icons](https://github.com/microsoft/fluentui-system-icons)
+    + MIT License
 
 ## Sub-projects
 + [qastool](https://github.com/SineStriker/qt-json-autogen)
