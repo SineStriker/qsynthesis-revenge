@@ -96,7 +96,7 @@ namespace ScriptMgr::Internal {
             auto defaultShortcut = item->data(1, DefaultShortcutRole).value<QKeySequence>();
             auto customShortcut = item->data(1, CustomShortcutRole).value<QKeySequence>();
 
-            QDialog dlg;
+            QDialog dlg(mainWidget);
             dlg.setWindowFlag(Qt::WindowContextHelpButtonHint, false);
             dlg.setWindowTitle(tr("Custom Shortcut"));
             auto dlgLayout = new QVBoxLayout;
@@ -267,7 +267,9 @@ namespace ScriptMgr::Internal {
         if(type == ScriptEntry::Script) {
             auto *shortcutItem = new QTreeWidgetItem({tr("Shortcut"), ""});
             QKeySequence customShortcut, defaultShortcut;
-            if(ScriptLoader::instance()->m_cachedCustomShortcuts.contains(id)) {
+            if(m_unsavedCustomShortcuts.contains(id)) {
+                customShortcut = m_unsavedCustomShortcuts.value(id);
+            } else if(ScriptLoader::instance()->m_cachedCustomShortcuts.contains(id)) {
                 customShortcut = ScriptLoader::instance()->m_cachedCustomShortcuts.value(id);
             }
             JS_PROP_OPTIONAL_IF(scriptInfo, shortcut, String)
@@ -286,7 +288,9 @@ namespace ScriptMgr::Internal {
                 childTopItem->addChild(new QTreeWidgetItem({tr("Name"), JS_PROP_AS(childScript.toMap(), name, String)}));
                 auto *shortcutItem = new QTreeWidgetItem({tr("Shortcut"), ""});
                 QKeySequence customShortcut, defaultShortcut;
-                if(ScriptLoader::instance()->m_cachedCustomShortcuts.contains(id + "." + childId)) {
+                if(m_unsavedCustomShortcuts.contains(id + "." + childId)) {
+                    customShortcut = m_unsavedCustomShortcuts.value(id + "." + childId);
+                } else if(ScriptLoader::instance()->m_cachedCustomShortcuts.contains(id + "." + childId)) {
                     customShortcut = ScriptLoader::instance()->m_cachedCustomShortcuts.value(id + "." + childId);
                 }
                 JS_PROP_OPTIONAL_IF(childScript.toMap(), shortcut, String)

@@ -10,6 +10,7 @@
 #include "QMSvg.h"
 #include "QsFrameworkNamespace.h"
 #include "ScriptLoader.h"
+#include "ScriptSettingsConfigurableDialog.h"
 #include "Window/IProjectWindow.h"
 
 namespace ScriptMgr {
@@ -61,7 +62,8 @@ namespace ScriptMgr {
 
             connect(reloadScriptsAction->action(), &QAction::triggered, ScriptLoader::instance(), &ScriptLoader::reloadEngine);
             connect(scriptSettingsAction->action(), &QAction::triggered, this, [=](){
-                ICore::showSettingsDialog("scriptmgr.Script", windowHandle()->window());
+                ScriptSettingsConfigurableDialog dlg(windowHandle()->window());
+                dlg.exec();
             });
             connect(runScriptAction->action(), &QAction::triggered, this, &ScriptMgrAddOn::selectScript);
             iWin->addActionItems({
