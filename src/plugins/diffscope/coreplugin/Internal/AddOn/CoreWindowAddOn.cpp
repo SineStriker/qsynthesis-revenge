@@ -108,7 +108,13 @@ namespace Core::Internal {
         newFileItem->action()->setIcon(QMSvg::create(":/svg/icons/document_add_16_filled.svg"));
         openFileItem->action()->setIcon(QMSvg::create(":/svg/icons/folder_open_16_filled.svg"));
         settingsItem->action()->setIcon(QMSvg::create(":/svg/icons/settings_16_filled.svg"));
+        colorThemesItem->action()->setIcon(QMSvg::create(":/svg/icons/color_16_filled.svg"));
+        languagesItem->action()->setIcon(QMSvg::create(":/svg/icons/globe_16_regular.svg"));
+
+        showHomeItem->action()->setIcon(QMSvg::create(":/svg/icons/home_16_filled.svg"));
         findActionItem->action()->setIcon(QMSvg::create(":/svg/icons/search_16_filled.svg"));
+        aboutPluginsItem->action()->setIcon(QMSvg::create(":/svg/icons/puzzle_piece_16_filled.svg"));
+        aboutAppItem->action()->setIcon(QMSvg::create(":/svg/icons/info_16_filled.svg"));
 
         connect(newFileItem->action(), &QAction::triggered, this, [this, iWin]() {
             auto doc = new DspxDocument();

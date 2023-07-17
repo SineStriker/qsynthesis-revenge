@@ -1,6 +1,7 @@
 <RCC>
     <qresource prefix="/">
         <file>scriptmgr_actions.xml</file>
+        <file>svg/icons/arrow_clockwise_16_filled.svg</file>
     </qresource>
     <qresource prefix="/scripts">
         <file alias="internal/callbacks.js">scripts/src/internal/callbacks.js</file>

@@ -17,6 +17,19 @@
 
         <file>svg/icons/layer_20_filled.svg</file>
 
+        <file>svg/icons/color_16_filled.svg</file>
+        <file>svg/icons/globe_16_regular.svg</file>
+        <file>svg/icons/home_16_filled.svg</file>
+        <file>svg/icons/puzzle_piece_16_filled.svg</file>
+
+        <file>svg/icons/save_16_filled.svg</file>
+        <file>svg/icons/save_edit_20_filled.svg</file>
+        <file>svg/icons/arrow_undo_16_filled.svg</file>
+        <file>svg/icons/arrow_redo_16_filled.svg</file>
+        <file>svg/icons/cut_20_filled.svg</file>
+        <file>svg/icons/copy_16_filled.svg</file>
+        <file>svg/icons/clipboard_paste_16_filled.svg</file>
+
         <file>svg/icons/play_16_filled.svg</file>
         <file>svg/icons/pause_16_filled.svg</file>
         <file>svg/icons/stop_16_filled.svg</file>

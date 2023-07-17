@@ -1,6 +1,8 @@
 <RCC>
     <qresource prefix="/">
         <file>iemgr_actions.xml</file>
-        <file>svg/home/import-file.svg</file>
+        <file>svg/icons/document_arrow_right_16_filled.svg</file>
+        <file>svg/icons/document_arrow_left_16_filled.svg</file>
+        <file>svg/icons/arrow_export_up_16_filled.svg</file>
     </qresource>
 </RCC>

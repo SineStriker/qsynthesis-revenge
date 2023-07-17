@@ -64,7 +64,9 @@ namespace IEMgr::Internal {
         exportProjectItem = new ActionItem("iemgr.ExportProject", new QAction(this), this);
         exportAudioItem = new ActionItem("iemgr.ExportAudio", new QAction(this), this);
 
-        importItem->menu()->setIcon(QMSvg::create(":/svg/home/import-file.svg"));
+        importProjectItem->action()->setIcon(QMSvg::create(":/svg/icons/document_arrow_right_16_filled.svg"));
+        exportProjectItem->action()->setIcon(QMSvg::create(":/svg/icons/document_arrow_left_16_filled.svg"));
+        exportAudioItem->action()->setIcon(QMSvg::create(":/svg/icons/arrow_export_up_16_filled.svg"));
 
         connect(importProjectItem->action(), &QAction::triggered, this, [iWin]() {
             IManager::instance()->runImport(iWin->window(), {}, {}); //
@@ -139,7 +141,7 @@ namespace IEMgr::Internal {
             button->setObjectName("import-button");
             connect(button, &QAbstractButton::clicked, this, &IEMgrAddOn::_q_importButtonClicked);
             importButton = button;
-            importButton->setIcon(QMSvg::create(":/svg/home/import-file.svg"));
+            importButton->setIcon(QMSvg::create(":/svg/icons/document_arrow_right_16_filled.svg"));
         }
     }
 

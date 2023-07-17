@@ -258,6 +258,15 @@ namespace Core {
             iWin->addCheckable("playback.metronome", metronomeItem->action());
             iWin->addCheckable("playback.loopPlay", loopPlayItem->action());
 
+            saveFileItem->action()->setIcon(QMSvg::create(":/svg/icons/save_16_filled.svg"));
+            saveAsFileItem->action()->setIcon(QMSvg::create(":/svg/icons/save_edit_20_filled.svg"));
+
+            undoItem->action()->setIcon(QMSvg::create(":/svg/icons/arrow_undo_16_filled.svg"));
+            redoItem->action()->setIcon(QMSvg::create(":/svg/icons/arrow_redo_16_filled.svg"));
+            cutItem->action()->setIcon(QMSvg::create(":/svg/icons/cut_20_filled.svg"));
+            copyItem->action()->setIcon(QMSvg::create(":/svg/icons/copy_16_filled.svg"));
+            pasteItem->action()->setIcon(QMSvg::create(":/svg/icons/clipboard_paste_16_filled.svg"));
+
             playItem->action()->setIcon(QMSvg::create( //
                 ":/svg/icons/play_16_filled.svg", ":/svg/icons/pause_16_filled.svg"));
             stopItem->action()->setIcon(QMSvg::create(":/svg/icons/stop_16_filled.svg"));

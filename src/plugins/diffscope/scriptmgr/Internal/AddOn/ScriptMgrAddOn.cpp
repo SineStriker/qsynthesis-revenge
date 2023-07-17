@@ -7,6 +7,7 @@
 #include <QMDecoratorV2.h>
 
 #include "JsInternalObject.h"
+#include "QMSvg.h"
 #include "QsFrameworkNamespace.h"
 #include "ScriptLoader.h"
 #include "Window/IProjectWindow.h"
@@ -54,6 +55,10 @@ namespace ScriptMgr {
             scriptOperationsGroup = new ActionItem("scriptmgr.ScriptOperations", new QActionGroup(this), this);
             reloadScriptsAction = new ActionItem("scriptmgr.ReloadScripts", new QAction(this), this);
             scriptSettingsAction = new ActionItem("scriptmgr.ScriptSettings", new QAction(this), this);
+
+            reloadScriptsAction->action()->setIcon(QMSvg::create(":/svg/icons/arrow_clockwise_16_filled.svg"));
+            scriptSettingsAction->action()->setIcon(QMSvg::create(":/svg/icons/settings_16_filled.svg"));
+
             connect(reloadScriptsAction->action(), &QAction::triggered, ScriptLoader::instance(), &ScriptLoader::reloadEngine);
             connect(scriptSettingsAction->action(), &QAction::triggered, this, [=](){
                 ICore::showSettingsDialog("scriptmgr.Script", windowHandle()->window());
