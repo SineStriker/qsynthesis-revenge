@@ -39,16 +39,17 @@ QToolBar#main-toolbar>QToolButton {
 
 QToolBar#main-toolbar>QToolButton:hover {
     color: white;
-    background-color: rgba(255, 255, 255, 20%);
+    background-color: rgba(255, 255, 255, 15%);
 }
 
 QToolBar#main-toolbar>QToolButton:pressed {
     color: #EFEFEF;
-    background-color: rgba(255, 255, 255, 15%);
+    background-color: rgba(255, 255, 255, 10%);
 }
 
 QToolBar#main-toolbar>QToolButton[selectable=true]:checked {
-    background-color: rgba(35, 50, 51, 100%);
+    color: white;
+    background-color: rgba(255, 255, 255, 20%);
 } 
 
 QsApi--SynthVSplitter#canvas>QsApi--SynthVSplitterHandle {
@@ -135,7 +136,7 @@ Core--Internal--PianoKey[color=black]:hover {
 
 Core--Internal--SectionWidget {
     --preferredHeight: 40px;
-    background-color: #292929;
+    background-color: transparent;
 }
 
 QWidget#section-edit-popup {
@@ -206,11 +207,11 @@ CDockCard {
 
 CDockCard:checked {
     color: white;
-    background-color: #2F2F2F;
+    background-color: #4B4B4B;
 }
 
 CDockCard:not(:checked):hover {
-    background-color: #292929;
+    background-color: #404040;
 }
 
 CDockPanelSplitter:handle {
