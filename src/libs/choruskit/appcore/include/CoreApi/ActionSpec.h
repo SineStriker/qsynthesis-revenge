@@ -1,6 +1,7 @@
 #ifndef ACTIONSPEC_H
 #define ACTIONSPEC_H
 
+#include <QIcon>
 #include <QKeySequence>
 #include <QObject>
 
@@ -29,8 +30,12 @@ namespace Core {
         QList<QKeySequence> shortcuts() const;
         void setShortcuts(const QList<QKeySequence> &shortcuts);
 
+        QIcon icon() const;
+        void setIcon(const QIcon &icon);
+
     signals:
         void shortcutsChanged(const QList<QKeySequence> &shortcuts);
+        void iconChanged(const QIcon &icon);
 
     protected:
         ActionSpec(ActionSpecPrivate &d, const QString &id, QObject *parent = nullptr);

@@ -323,13 +323,14 @@ QString SvgxIconEngine::salt() const {
 }
 
 void SvgxIconEngine::setSalt(const QString &salt) {
-    if (salt != d->salt && d->colors[d->currentState] == "auto"){
+    if (!salt.isEmpty() && salt != d->salt && d->colors[d->currentState] == "auto") {
         d->realColors[d->currentState] = "auto";
     }
     d->salt = salt;
 }
 
 void SvgxIconEngine::setValues(QByteArray *dataList, QString *colorList) {
+    bool hasCurrentColor[8] = {};
     for (int i = 0; i < 8; ++i) {
         const auto &data = dataList[i];
         d->svgContents[i] = data;
@@ -337,11 +338,22 @@ void SvgxIconEngine::setValues(QByteArray *dataList, QString *colorList) {
             QMetaTypeUtils::UpdateStateIndex(i, d->contentIndexes);
         } else {
             d->contentIndexes[i] = i;
+            hasCurrentColor[i] = data.contains("currentColor");
         }
     }
 
     for (int i = 0; i < 8; ++i) {
-        const auto &data = colorList[i];
+        auto data = colorList[i];
+        if (hasCurrentColor[d->contentIndexes[i]]) {
+            if (data.isEmpty()) {
+                data = "auto";
+            }
+        } else {
+            if (data == "auto") {
+                data.clear();
+            }
+        }
+
         d->colors[i] = data;
         d->realColors[i] = data;
     }

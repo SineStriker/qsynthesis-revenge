@@ -1,10 +1,8 @@
 #include "CTreeWidget.h"
-#include "CScrollBar.h"
 
 #include <private/qtreewidget_p.h>
 
 CTreeWidget::CTreeWidget(QWidget *parent) : QTreeWidget(parent) {
-    // CScrollBar::replaceScrollBars(this);
     setFont(qApp->font());
 }
 

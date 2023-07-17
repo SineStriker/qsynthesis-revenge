@@ -23,7 +23,7 @@ namespace Core {
         void removeNavWidget(QWidget *w);
 
     protected:
-        void nextLoadingState(Core::IWindow::State nextState) override;
+        void nextLoadingState(IWindow::State nextState) override;
 
     protected:
         IHomeWindow(IHomeWindowPrivate &d, QObject *parent = nullptr);

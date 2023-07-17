@@ -167,7 +167,10 @@ bool QMXmlAdaptor::load(const QString &filename) {
                     const auto &top = stack.back();
 
                     // Store text
-                    top.first->value = reader.text().toString();
+                    auto val = reader.text().trimmed();
+                    if (!val.isEmpty()){
+                        top.first->value = val.toString();
+                    }
                 }
                 break;
             }

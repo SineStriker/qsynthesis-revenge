@@ -54,6 +54,17 @@ namespace Core {
         emit shortcutsChanged(shortcuts);
     }
 
+    QIcon ActionSpec::icon() const {
+        Q_D(const ActionSpec);
+        return d->icon;
+    }
+
+    void ActionSpec::setIcon(const QIcon &icon) {
+        Q_D(ActionSpec);
+        d->icon = icon;
+        emit iconChanged(icon);
+    }
+
     ActionSpec::ActionSpec(ActionSpecPrivate &d, const QString &id, QObject *parent) : QObject(parent), d_ptr(&d) {
         d.q_ptr = this;
         d.id = id;

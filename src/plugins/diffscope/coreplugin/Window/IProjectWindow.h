@@ -35,7 +35,7 @@ namespace Core {
     public:
 
     protected:
-        void nextLoadingState(Core::IWindow::State nextState) override;
+        void nextLoadingState(IWindow::State nextState) override;
 
     protected:
         IProjectWindow(IProjectWindowPrivate &d, QObject *parent = nullptr);

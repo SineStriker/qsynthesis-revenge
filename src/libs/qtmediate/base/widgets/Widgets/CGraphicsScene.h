@@ -13,7 +13,7 @@ public:
     explicit CGraphicsScene(QObject *parent = nullptr);
     CGraphicsScene(const QRectF &sceneRect, QObject *parent = nullptr);
     CGraphicsScene(qreal x, qreal y, qreal width, qreal height, QObject *parent = nullptr);
-    virtual ~CGraphicsScene();
+    ~CGraphicsScene();
 
 protected:
     bool event(QEvent *event) override;

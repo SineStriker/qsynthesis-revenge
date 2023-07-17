@@ -24,7 +24,7 @@ QIconEngine *SvgxIconPlugin::create(const QString &fileName) {
 
     // Decode
     QStringList valueList = QMetaTypeUtils::SplitStringByComma(fileName);
-    if (!valueList.isEmpty() && valueList.back().trimmed().endsWith(".svg"))
+    if (!valueList.isEmpty() && valueList.back().trimmed().endsWith(".svgx"))
         valueList.pop_back();
 
     if (valueList.isEmpty())
@@ -57,10 +57,11 @@ QIconEngine *SvgxIconPlugin::create(const QString &fileName) {
     QString colors[8];
     if (valueList.size() > 1) {
         QMetaTypeUtils::ParseClickStateArgList(valueList.at(1).trimmed(), colors);
-    } else {
-        for (auto &c : colors)
-            c = "transparent";
     }
+    //    else {
+    //        for (auto &c : colors)
+    //            c = "transparent";
+    //    }
 
     engine->setValues(svgContents, colors);
 

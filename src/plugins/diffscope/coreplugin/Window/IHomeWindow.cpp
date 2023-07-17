@@ -62,7 +62,7 @@ namespace Core {
         d->navFrame->removeWidget(w);
     }
 
-    void IHomeWindow::nextLoadingState(Core::IWindow::State nextState) {
+    void IHomeWindow::nextLoadingState(IWindow::State nextState) {
         ICoreWindow::nextLoadingState(nextState);
 
         Q_D(IHomeWindow);

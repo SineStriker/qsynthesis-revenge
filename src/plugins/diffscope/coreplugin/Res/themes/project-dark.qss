@@ -30,6 +30,7 @@ QToolBar#main-toolbar>QToolButton {
     padding: 5px;
     color: #CCCCCC;
 }
+
 QToolBar#main-toolbar>QToolButton {
     padding: 5px;
     border: none;
@@ -71,10 +72,11 @@ Core--Internal--FloatingTitleBarButton {
 }
 
 Core--Internal--FloatingTitleBar>QToolButton {
-    --iconSize: 12px 12px;
+    --iconSize: 16px 16px;
     color: white;
     background-color: transparent;
     border: none;
+    padding: 0;
 }
 
 Core--Internal--FloatingTitleBar>QToolButton#fold-button {
@@ -201,7 +203,7 @@ CDockCard {
     background-color: transparent;
     border: 1px solid transparent;
     padding: 4px 8px;
-    --iconSize: 16px 16px;
+    --iconSize: 20px 20px;
     --spaceRatio: 0.25;
 }
 
@@ -236,4 +238,16 @@ CDockPanel:handle:horizontal {
 
 CDockPanel:handle:vertical {
     height: 0;
+}
+
+
+/* Canvas */
+
+QsApi--SynthVSplitter#canvas>QScrollBar::handle:vertical {
+    min-height: 120px;
+}
+
+QsApi--SynthVSplitter#canvas>QScrollBar::handle:horizontal {
+    min-width: 120px;
+
 }

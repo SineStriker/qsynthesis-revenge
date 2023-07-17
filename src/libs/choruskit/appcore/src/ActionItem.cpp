@@ -31,8 +31,22 @@ namespace Core {
         }
 
         connect(spec, &ActionSpec::shortcutsChanged, this, &ActionItemPrivate::_q_actionShortcutsChanged);
-        if (type == ActionItem::Action) {
-            action->setShortcuts(spec->shortcuts());
+        switch (type) {
+            case ActionItem::Action: {
+                action->setShortcuts(spec->shortcuts());
+                auto icon = spec->icon();
+                if (!icon.isNull())
+                    action->setIcon(icon);
+                break;
+            }
+            case ActionItem::Menu: {
+                auto icon = spec->icon();
+                if (!icon.isNull())
+                    menu->setIcon(icon);
+                break;
+            }
+            default:
+                break;
         }
 
         return true;

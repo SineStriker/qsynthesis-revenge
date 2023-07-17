@@ -150,6 +150,19 @@ namespace Core {
         return d->contexts.keys();
     }
 
+    static void getIcon(QIcon &icon, const QString &iconArg) {
+        if (iconArg.isNull()) {
+            return;
+        }
+
+        // Extract icon
+        if (iconArg.startsWith("svg(") && iconArg.endsWith(')')) {
+            icon = QIcon(iconArg.mid(4, iconArg.size() - 5) + ", .svgx");
+        } else {
+            icon = QIcon(iconArg);
+        }
+    }
+
     void ActionSystemPrivate::loadContexts_dfs(const QString &prefix, const QString &parentId,
                                                const QMXmlAdaptorElement *ele, ActionContext *context) {
         Q_Q(ActionSystem);
@@ -169,7 +182,9 @@ namespace Core {
         QList<ActionInsertRule> rules;
         QList<QKeySequence> shortcuts;
         QString commandName;
-        bool isGroup = ctx2.name == "menu" || ctx2.name == "group";
+        QIcon icon;
+        bool isMenu = ctx2.name == "menu";
+        bool isGroup = isMenu || ctx2.name == "group";
         if (!isGroup) {
             if (ctx2.name != "action") {
                 return;
@@ -184,6 +199,10 @@ namespace Core {
             if (!key.isEmpty() && commandName.isEmpty()) {
                 commandName = configVars.parse(key);
             }
+        }
+
+        if (!isGroup || isMenu) {
+            getIcon(icon, ctx2.properties.value("icon"));
         }
 
         if (!parentId.isEmpty()) {
@@ -231,6 +250,10 @@ namespace Core {
                         shortcuts.append(ctx4.value);
                     }
                 }
+            } else if (ctx3.name == "icon") {
+                if (!isGroup || isMenu) {
+                    getIcon(icon, ctx3.value);
+                }
             } else if (ctx3.name == "content") {
                 if (isGroup) {
                     for (const auto &ctx_ref4 : qAsConst(ctx3.children)) {
@@ -254,6 +277,9 @@ namespace Core {
                 auto spec = new ActionSpec(id);
                 spec->setShortcuts(shortcuts);
                 spec->setCommandName(commandName);
+                if (!icon.isNull()) {
+                    spec->setIcon(icon);
+                }
                 q->addAction(spec);
             }
             // else {

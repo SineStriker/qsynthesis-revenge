@@ -324,7 +324,7 @@ namespace Core {
         return d->m_pianoRoll;
     }
 
-    void IProjectWindow::nextLoadingState(Core::IWindow::State nextState) {
+    void IProjectWindow::nextLoadingState(IWindow::State nextState) {
         ICoreWindow::nextLoadingState(nextState);
 
         Q_D(IProjectWindow);

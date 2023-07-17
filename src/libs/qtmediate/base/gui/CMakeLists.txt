@@ -13,7 +13,7 @@ ck_add_files(_src
 configure_library()
 
 ck_target_components(${PROJECT_NAME}
-    SOURCES ${_src} ${_res_dir}/qmgui_res.qrc
+    SOURCES ${_src}
     QT_LINKS Gui Svg
     QT_INCLUDES_PRIVATE Core Gui
     LINKS QMCore

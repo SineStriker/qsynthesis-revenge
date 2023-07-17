@@ -1,14 +1,11 @@
 #ifndef LINEARSCROLLAREA_H
 #define LINEARSCROLLAREA_H
 
-#include <QDebug>
-#include <QEvent>
-
-#include "Widgets/CScrollArea.h"
+#include <QScrollArea>
 
 #include "QsFrameworkGlobal.h"
 
-class QSFRAMEWORK_API LinearScrollArea : public CScrollArea {
+class QSFRAMEWORK_API LinearScrollArea : public QScrollArea {
     Q_OBJECT
 public:
     explicit LinearScrollArea(Qt::Orientation ori, QWidget *parent = nullptr);

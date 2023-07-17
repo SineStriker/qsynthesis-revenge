@@ -549,10 +549,11 @@ QString QMDecoratorV2Private::replaceCssGrammars(const QString &stylesheet) {
         }
     }
 
-    // Replace "svg(...);" to "url(..., .svgx);"
+    // Replace "svg(...);" to "url(\"..., .svgx\");"
     {
-        QRegularExpression re(R"(svg\((.*?)\);)");
-        Content.replace(re, R"(url("\1, .svgx");)");
+        QRegularExpression re(R"(svg\((.*?)\)(;|\s*\}))",
+                              QRegularExpression::MultilineOption | QRegularExpression::DotMatchesEverythingOption);
+        Content.replace(re, R"(url("\1, .svgx")\2)");
     }
 
     return Content;

@@ -16,8 +16,6 @@ public:
     explicit IWindowHandle(QMainWindow *parent);
     ~IWindowHandle();
 
-    void setParent(QObject *) = delete;
-
 public:
     /**
      * @brief Parent window, cast from QWidget::parentWidget

@@ -3,12 +3,15 @@
     <context id="home.MainMenu" prefix="core.">
         <menu id="File">
             <group id="OpenGroup">
-                <action id="NewFile" command="Create: New File" shortcut="Ctrl+N"/>
-                <action id="OpenFile" command="File: Open File" shortcut="Ctrl+O"/>
+                <action id="NewFile" command="Create: New File" shortcut="Ctrl+N"
+                        icon="svg(:/svg/icons/document_add_16_filled.svg)"/>
+                <action id="OpenFile" command="File: Open File" shortcut="Ctrl+O"
+                        icon="svg(:/svg/icons/folder_open_16_filled.svg)"/>
                 <menu id="OpenRecent"/>
             </group>
             <menu id="PreferenceMenu">
-                <action id="Settings" command="Preferences: Settings" shortcut="Ctrl+,"/>
+                <action id="Settings" command="Preferences: Settings" shortcut="Ctrl+,"
+                        icon="svg(:/svg/icons/settings_16_filled.svg)"/>
                 <action id="ColorThemes" command="Preferences: Color Themes"
                         shortcut="Ctrl+K,Ctrl+T"/>
                 <action id="Languages" command="Preferences: Locales And Languages"
@@ -22,7 +25,8 @@
         <menu id="Help">
             <group id="WelcomeGroup">
                 <action id="ShowHome" command="Help: Show Home"/>
-                <action id="FindAction" command="Help: Show All Actions" shortcut="Ctrl+Shift+P"/>
+                <action id="FindAction" command="Help: Show All Actions" shortcut="Ctrl+Shift+P"
+                        icon="svg(:/svg/icons/search_16_filled.svg)"/>
             </group>
             <group id="AboutGroup">
                 <action id="AboutPlugins" command="About: About Plugins"/>

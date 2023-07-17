@@ -1,11 +1,12 @@
 #include "CGraphicsView.h"
-#include "CScrollBar.h"
+
 
 #include <QApplication>
 #include <QGraphicsSceneMoveEvent>
 #include <QGraphicsSceneResizeEvent>
 #include <QPropertyAnimation>
 #include <QResizeEvent>
+#include <QScrollBar>
 
 #include <QDebug>
 

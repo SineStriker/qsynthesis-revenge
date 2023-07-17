@@ -19,6 +19,7 @@ namespace Core {
         QString commandName;
         QString commandDisplayName;
         QList<QKeySequence> shortcuts;
+        QIcon icon;
     };
 
 }
