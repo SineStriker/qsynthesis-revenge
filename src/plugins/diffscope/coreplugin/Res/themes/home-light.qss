@@ -73,7 +73,7 @@ CTabButton[type=home-bottom-button]:pressed {
 
 CTabButton#home-about-button {
     border-top: 1px solid rgba(255, 255, 255, 15%);
-    --icon: svg(":/svg/home/info.svg", #FFFFFF);
+    --icon: svg(":/svg/icons/info_16_filled.svg", #FFFFFF);
     padding-top: 20px;
     padding-bottom: 20px;
 }
@@ -113,11 +113,11 @@ Core--Internal--HomeRecentTopFrame>CTabButton {
 /* Recent Top Buttons */
 
 Core--Internal--HomeRecentTopFrame>CTabButton#new-button {
-    --icon: svg(":/svg/home/new-file.svg", #FFFFFF);
+    --icon: svg(":/svg/icons/document_add_20_filled.svg", #FFFFFF);
 }
 
 Core--Internal--HomeRecentTopFrame>CTabButton#open-button {
-    --icon: svg(":/svg/home/open-file.svg", #FFFFFF);
+    --icon: svg(":/svg/icons/folder_open_20_filled.svg", #FFFFFF);
 }
 
 Core--Internal--HomeRecentTopFrame>CTabButton[type=top-button] {

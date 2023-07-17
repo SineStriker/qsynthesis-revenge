@@ -1,27 +1,33 @@
 <RCC>
     <qresource prefix="/">
         <file>svg/app/diffsinger.svg</file>
-        <file>svg/home/info.svg</file>
-        <file>svg/home/new-file.svg</file>
-        <file>svg/home/open-file.svg</file>
-        <file>svg/menu-bar/more-line.svg</file>
         <file>core_actions.xml</file>
-        <file>svg/checkbox/check-line.svg</file>
         <file>images/dspx.png</file>
-        <file>svg/main-toolbar/play-line.svg</file>
-        <file>svg/main-toolbar/pause-line.svg</file>
-        <file>svg/main-toolbar/stop-line.svg</file>
-        <file>svg/main-toolbar/move-start-line.svg</file>
-        <file>svg/main-toolbar/move-end-line.svg</file>
-        <file>svg/main-toolbar/loop-line.svg</file>
-        <file>svg/main-toolbar/metronome-line.svg</file>
-        <file>svg/main-toolbar/search-line.svg</file>
-        <file>svg/main-toolbar/setting-line.svg</file>
-        <file>svg/floating-titlebar/close.svg</file>
-        <file>svg/floating-titlebar/fold.svg</file>
-        <file>svg/floating-titlebar/unfold.svg</file>
-        <file>svg/main-dock/layer-group-solid.svg</file>
-        <file>svg/side-panel/close-line.svg</file>
-        <file>svg/side-panel/menu-line.svg</file>
+        <file>svg/checkbox/check-line.svg</file>
+
+        <file>svg/icons/checkmark_16_filled.svg</file>
+        <file>svg/icons/more_horizontal_24_regular.svg</file>
+        <file>svg/icons/info_16_filled.svg</file>
+        <file>svg/icons/document_add_16_filled.svg</file>
+        <file>svg/icons/folder_open_16_filled.svg</file>
+        <file>svg/icons/chevron_right_16_filled.svg</file>
+        <file>svg/icons/chevron_down_16_filled.svg</file>
+        <file>svg/icons/dismiss_16_filled.svg</file>
+        <file>svg/icons/navigation_16_filled.svg</file>
+
+        <file>svg/icons/layer_20_filled.svg</file>
+
+        <file>svg/icons/play_16_filled.svg</file>
+        <file>svg/icons/pause_16_filled.svg</file>
+        <file>svg/icons/stop_16_filled.svg</file>
+        <file>svg/icons/previous_16_filled.svg</file>
+        <file>svg/icons/next_16_filled.svg</file>
+        <file>svg/icons/metronome-line.svg</file>
+        <file>svg/icons/arrow_repeat_all_16_filled.svg</file>
+
+        <file>svg/icons/document_add_16_filled.svg</file>
+        <file>svg/icons/folder_open_16_filled.svg</file>
+        <file>svg/icons/settings_16_filled.svg</file>
+        <file>svg/icons/search_16_filled.svg</file>
     </qresource>
 </RCC>

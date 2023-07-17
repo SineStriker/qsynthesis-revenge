@@ -14,7 +14,7 @@ CWindowBarV2>CToolButton#icon-button {
 QMenuBar[core-style=true] {
     background-color: transparent;
     border: none;
-    --extensionIcon: svg(":/svg/menu-bar/more-line.svg", white);
+    --extensionIcon: svg(":/svg/icons/more_horizontal_24_regular.svg", white);
 }
 
 QMenuBar[core-style=true]>QToolButton#qt_menubar_ext_button:hover,

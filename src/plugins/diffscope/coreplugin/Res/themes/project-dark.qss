@@ -77,11 +77,11 @@ Core--Internal--FloatingTitleBar>QToolButton {
 }
 
 Core--Internal--FloatingTitleBar>QToolButton#fold-button {
-    --icon: svg((":/svg/floating-titlebar/unfold.svg", up2=":/svg/floating-titlebar/fold.svg"), auto);
+    --icon: svg((":/svg/icons/chevron_right_16_filled.svg", up2=":/svg/icons/chevron_down_16_filled.svg"), auto);
 }
 
 Core--Internal--FloatingTitleBar>QToolButton#close-button {
-    --icon: svg(":/svg/floating-titlebar/close.svg", auto);
+    --icon: svg(":/svg/icons/dismiss_16_filled.svg", auto);
 }
 
 QWidget[floating-panel=true] {

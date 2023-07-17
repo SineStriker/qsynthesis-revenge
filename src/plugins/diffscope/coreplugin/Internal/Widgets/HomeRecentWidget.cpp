@@ -49,12 +49,12 @@ namespace Core::Internal {
         newButton = new CTabButton();
         newButton->setProperty("type", "top-button");
         newButton->setObjectName("new-button");
-        newButton->setIcon(QMSvg::create(":/svg/home/new-file.svg"));
+        newButton->setIcon(QMSvg::create(":/svg/icons/document_add_16_filled.svg"));
 
         openButton = new CTabButton();
         openButton->setProperty("type", "top-button");
         openButton->setObjectName("open-button");
-        openButton->setIcon(QMSvg::create(":/svg/home/open-file.svg"));
+        openButton->setIcon(QMSvg::create(":/svg/icons/folder_open_16_filled.svg"));
 
         topLayout = new QMEqualBoxLayout(QBoxLayout::LeftToRight);
         topLayout->setMargin(0);

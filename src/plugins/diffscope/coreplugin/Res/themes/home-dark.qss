@@ -75,7 +75,7 @@ CTabButton[type=home-bottom-button]:pressed {
 }
 
 CTabButton#home-about-button {
-    --icon: svg(":/svg/home/info.svg", auto);
+    --icon: svg(":/svg/icons/info_16_filled.svg", auto);
     border-top: 1.25px solid rgba(255, 255, 255, 15%);
     padding-top: 20px;
     padding-bottom: 20px;

@@ -105,10 +105,10 @@ namespace Core::Internal {
         // Invisible
         showRecentFileItem = new ActionItem("core.ShowRecentFiles", new QAction(this), this);
 
-        newFileItem->action()->setIcon(QMSvg::create(":/svg/home/new-file.svg"));
-        openFileItem->action()->setIcon(QMSvg::create(":/svg/home/open-file.svg"));
-        settingsItem->action()->setIcon(QMSvg::create(":/svg/main-toolbar/setting-line.svg"));
-        findActionItem->action()->setIcon(QMSvg::create(":/svg/main-toolbar/search-line.svg"));
+        newFileItem->action()->setIcon(QMSvg::create(":/svg/icons/document_add_16_filled.svg"));
+        openFileItem->action()->setIcon(QMSvg::create(":/svg/icons/folder_open_16_filled.svg"));
+        settingsItem->action()->setIcon(QMSvg::create(":/svg/icons/settings_16_filled.svg"));
+        findActionItem->action()->setIcon(QMSvg::create(":/svg/icons/search_16_filled.svg"));
 
         connect(newFileItem->action(), &QAction::triggered, this, [this, iWin]() {
             auto doc = new DspxDocument();

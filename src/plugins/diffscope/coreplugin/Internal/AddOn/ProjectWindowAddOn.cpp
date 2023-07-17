@@ -49,7 +49,7 @@ namespace Core {
             trackPanel->setProperty("choruskit_managed_window", true);
             trackButton = iWin->mainDock()->addWidget(Qt::TopEdge, QM::Primary, trackPanel);
             trackButton->setObjectName("track-card");
-            trackButton->setIcon(QMSvg::create(":/svg/main-dock/layer-group-solid.svg"));
+            trackButton->setIcon(QMSvg::create(":/svg/icons/layer_20_filled.svg"));
             ICore::autoPolishPopupMenu(trackButton);
 
             connect(trackButton, &QAbstractButton::toggled, trackPanelVisibleItem->action(), &QAction::setChecked);
@@ -259,12 +259,12 @@ namespace Core {
             iWin->addCheckable("playback.loopPlay", loopPlayItem->action());
 
             playItem->action()->setIcon(QMSvg::create( //
-                ":/svg/main-toolbar/play-line.svg", ":/svg/main-toolbar/pause-line.svg"));
-            stopItem->action()->setIcon(QMSvg::create(":/svg/main-toolbar/stop-line.svg"));
-            moveToStartItem->action()->setIcon(QMSvg::create(":/svg/main-toolbar/move-start-line.svg"));
-            moveToEndItem->action()->setIcon(QMSvg::create(":/svg/main-toolbar/move-end-line.svg"));
-            metronomeItem->action()->setIcon(QMSvg::create(":/svg/main-toolbar/metronome-line.svg"));
-            loopPlayItem->action()->setIcon(QMSvg::create(":/svg/main-toolbar/loop-line.svg"));
+                ":/svg/icons/play_16_filled.svg", ":/svg/icons/pause_16_filled.svg"));
+            stopItem->action()->setIcon(QMSvg::create(":/svg/icons/stop_16_filled.svg"));
+            moveToStartItem->action()->setIcon(QMSvg::create(":/svg/icons/previous_16_filled.svg"));
+            moveToEndItem->action()->setIcon(QMSvg::create(":/svg/icons/next_16_filled.svg"));
+            metronomeItem->action()->setIcon(QMSvg::create(":/svg/icons/metronome-line.svg"));
+            loopPlayItem->action()->setIcon(QMSvg::create(":/svg/icons/arrow_repeat_all_16_filled.svg"));
 
             connect(iWin->doc(), &IDocument::changed, this, [this, iWin]() {
                 saveFileItem->setEnabled(!iWin->doc()->isVST() && iWin->doc()->isModified()); //
