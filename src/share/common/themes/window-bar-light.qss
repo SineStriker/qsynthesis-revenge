@@ -5,7 +5,7 @@ CWindowBarV2 {
 }
 
 CWindowBarV2[bar-active=true] {
-    background-color: #E0E0E0;
+    background-color: #DDDDDD;
 }
 
 CWindowBarV2[bar-active=false] {
@@ -15,14 +15,14 @@ CWindowBarV2[bar-active=false] {
 CWindowBarV2>QLabel#win-title-label {
     padding: 0;
     border: none;
-    color: #111111;
+    color: #333333;
     background-color: transparent;
     /* Limit window bar height */
     min-height: 36px;
 }
 
 CWindowBarV2>CToolButton#min-button {
-    --icon: svg(":/svg/window-bar/minimize.svg", #111111);
+    --icon: svg(":/svg/window-bar/minimize.svg", #333333);
     --iconSize: 12px 12px;
     min-width: 50px;
     border: none;
@@ -30,13 +30,15 @@ CWindowBarV2>CToolButton#min-button {
     background-color: transparent;
 }
 
-CWindowBarV2>CToolButton#min-button:hover,
+CWindowBarV2>CToolButton#min-button:hover {
+    background-color: #c0c0c0;
+}
 CWindowBarV2>CToolButton#min-button:pressed {
-    background-color: rgba(0, 0, 0, 10%);
+    background-color: #a4a4a4;
 }
 
 CWindowBarV2>CToolButton#max-button {
-    --icon: svg((":/svg/window-bar/maximize.svg", up2=":/svg/window-bar/maximize2.svg"), #111111);
+    --icon: svg((":/svg/window-bar/maximize.svg", up2=":/svg/window-bar/maximize2.svg"), #333333);
     --iconSize: 12px 12px;
     min-width: 50px;
     border: none;
@@ -44,13 +46,15 @@ CWindowBarV2>CToolButton#max-button {
     background-color: transparent;
 }
 
-CWindowBarV2>CToolButton#max-button:hover,
+CWindowBarV2>CToolButton#max-button:hover {
+    background-color: #c0c0c0;
+}
 CWindowBarV2>CToolButton#max-button:pressed {
-    background-color: rgba(0, 0, 0, 10%);
+    background-color: #a4a4a4;
 }
 
 CWindowBarV2>CToolButton#win-close-button {
-    --iconUp: svg(":/svg/window-bar/close.svg", (#111111, #FFFFFF));
+    --icon: svg(":/svg/window-bar/close.svg", (#333, #FFF));
     --iconSize: 12px 12px;
     min-width: 50px;
     border: none;
@@ -58,9 +62,11 @@ CWindowBarV2>CToolButton#win-close-button {
     background-color: transparent;
 }
 
-CWindowBarV2>CToolButton#win-close-button:hover,
-CWindowBarV2>CToolButton#win-close-button:pressed {
+CWindowBarV2>CToolButton#win-close-button:hover {
     background-color: #e81123;
+}
+CWindowBarV2>CToolButton#win-close-button:pressed {
+    background-color: #e3636d;
 }
 
 CWindowBarV2>CToolButton#icon-button {

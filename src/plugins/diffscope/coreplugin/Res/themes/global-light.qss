@@ -4,8 +4,43 @@ QWidget {
     font-size: 15px;
 }
 
+QWidget:focus {
+    outline: none;
+}
+
+/* Basic Controls */
+
+QPushButton {
+    color: white;
+    background-color: #007acc;
+    padding: 6px 12px;
+    border: 1px solid transparent;
+}
+
+QPushButton:hover {
+    background-color: #008CEC;
+}
+
+QPushButton:pressed {
+    background-color: #0062a3;
+}
+
+QLineEdit {
+    border: 1px solid transparent;
+    /* border-radius: 4px; */
+    color: #616161;
+    background-color: #FFFFFF;
+    selection-color: #FFFFFF;
+    selection-background-color: #0060c0;
+    padding: 3px;
+}
+
+QLineEdit:focus {
+    border-color: #0060c0;
+}
+
 CWindowBarV2>CToolButton#icon-button {
-    --iconUp: svg(":/svg/app/diffsinger.svg", transparent);
+    --icon: svg(":/svg/app/diffsinger.svg");
 }
 
 
@@ -23,41 +58,200 @@ QMenuBar[core-style=true]>QToolButton#qt_menubar_ext_button:pressed {
 }
 
 QMenuBar[core-style=true]::item {
-    color: #CCCCCC;
+    color: #333333;
     border: none;
-    padding: 10px 12px;
+    padding: 8px 10px;
 }
 
-QMenuBar[core-style=true]::item:selected {
-    background-color: rgba(255, 255, 255, 10%);
+QMenuBar[core-style=true]::item:selected { /* MenuBar Item hover and active */
+    background-color: #d2d2d2;
 }
 
 
 /* Old Menu */
 
-QMenu[core-style=true] {
-    padding: 5px;
-    background: #303030;
-    border: 1px solid transparent;
+QMenu[core-style=true] { /* Menu Panel */
+    padding: 4px;
+    background: #FFFFFF;
+    border: 1.25px solid #d4d4d4; /* border is necessary on white background. */
+}
+
+QMenu[core-style=true]::indicator {
+    left: 6px;
+    width: 20px;
+    height: 20px;
+}
+
+QMenu[core-style=true]::icon {
+    left: 6px;
 }
 
 QMenu[core-style=true]::item {
-    padding: 6px 30px;
     background: transparent;
-    color: #CCCCCC;
+    color: #616161;
+    padding: 4px 28px;
+}
+
+QMenu[core-style=true][stats=checkable]::item,
+QMenu[core-style=true][stats=icon]::item {
+    padding-left: 12px;
 }
 
 QMenu[core-style=true]::item:selected {
     color: white;
     background-color: #0060C0;
+    border: 1px solid transparent;
+    border-style: none;
+    border-radius: 4px;
 }
 
 QMenu[core-style=true]::item:disabled {
-    color: #666666;
+    color: #d5d5d5;
+    background-color: transparent;
 }
 
 QMenu[core-style=true]::separator {
-    height: 1px;
-    background-color: #5B5B5B;
-    margin: 6px;
+    height: 1.25px;
+    background-color: #d4d4d4;
+    margin: 6px 0;
+}
+
+
+/* QScrollBar */
+
+CScrollArea[core-style=true] {
+    border: none;
+    background-color: transparent;
+}
+
+CGraphicsView[core-style=true] {
+    border: none;
+    background-color: transparent;
+}
+
+QScrollBar[core-style=true] {
+    background: transparent;
+    margin: 0;
+}
+
+QScrollBar[core-style=true]:vertical {
+    width: 10px;
+}
+
+QScrollBar[core-style=true]:horizontal {
+    height: 10px;
+}
+
+QScrollBar[core-style=true]::handle:vertical {
+    min-height: 40px;
+}
+
+QScrollBar[core-style=true]::handle:horizontal {
+    min-width: 40px;
+}
+
+QScrollBar[core-style=true]::handle { /* ScrollBar thumb normal */
+    background: rgba(0, 0, 0, 0.2);
+    border: 0px;
+    /* margin: 4px 4px 4px 4px; */
+}
+
+QScrollBar[core-style=true]::handle:hover {
+    background: rgba(0, 0, 0, 0.4);
+}
+
+QScrollBar[core-style=true]::handle:pressed {
+    background: rgba(0, 0, 0, 0.6);
+}
+
+QScrollBar[core-style=true]::sub-page {
+    background: transparent;
+}
+
+QScrollBar[core-style=true]::add-page {
+    background: transparent;
+}
+
+QScrollBar[core-style=true]::up-arrow {
+    background: transparent;
+}
+
+QScrollBar[core-style=true]::down-arrow {
+    background: transparent;
+}
+
+QScrollBar[core-style=true]::left-arrow {
+    background: transparent;
+}
+
+QScrollBar[core-style=true]::right-arrow {
+    background: transparent;
+}
+
+QScrollBar[core-style=true]::sub-line {
+    background: transparent;
+    width: 0px;
+}
+
+QScrollBar[core-style=true]::add-line {
+    background: transparent;
+    width: 0px;
+}
+
+
+/* CommandPalette */
+
+Core--CommandPalette {
+    background-color: transparent;
+    min-width: 450px;
+    max-width: 750px;
+    min-height: 400px;
+    --layoutMargins: qmargins(10px, 10px, 10px, 0);
+    --layoutSpacing: 12px;
+    --wallpaper: #f3f3f3;
+    --margins: qmargins(0, 0, 0, 0);
+    /* border-top: 10px solid qlineargradient(y0:0, y1:1, stop: 0 #ECECEC, stop: 1 transparent); */
+    border-top: none;
+    ---border-left: 8px solid qlineargradient(x0: 0, x1: 1, stop: 0 rgba(0, 0, 0, 25%), stop: 1 transparent);
+    ---border-bottom: 8px solid qlineargradient(y0: 0, y1: 1, stop: 0 transparent, stop: 1 rgba(0, 0, 0, 25%));
+    ---border-right: 8px solid qlineargradient(x0: 0, x1: 1, stop: 0 transparent, stop: 1 rgba(0, 0, 0, 25%));
+}
+
+Core--CommandPalette>QListWidget {
+    border: none;
+    outline: 0;
+    background-color: transparent;
+    --styleData: qmap(/* styleData */
+    background=qrect((transparent, #e8e8e8, rgb(0, 96, 192)), 3.75px, 4px), /*ListViewItem Background (normal, hover, selected) */
+    underline=qpen(rgba(255, 255, 255, 7.5%), 1), /**/
+    titleShape=qfont((#616161, #616161, white), 15px), /* ListViewItem Title */
+    subShape=qfont((#8d8d8d, #8d8d8d, rgba(255, 255, 255, 70%)), 15px), /* ListViewItem Subtitle */
+    descShape=qfont((#616161, #616161, white), 15px), /* Shortcut Keys Text */
+    descHighlightShape=qfont((#0060c0, #0060c0, white), 15px), /* ListViewItem Description (at right top) */
+    descBackgroundShape=qrect((#eaeaea, #eaeaea, #0060c0), (2px, 2px, 2px, 0)), /* Shortcut Keys Background*/
+    titleMargins=qmargins(0, 1.25px, 10px, 1.25px), /**/
+    subMargins=qmargins(0, 1.25px, 10px, 1.25px), /**/
+    descMargins=qmargins(10px, 0, 0, 0), /**/
+    iconMargins=qmargins(0, 0, 8px, 0), /**/
+    padding=qmargins(3.75px, 12.5px), /**/
+    margins=qmargins(0), /**/
+    defaultIconSize=18px 18px, /**/
+    );
+}
+
+Core--CommandPalette>QLineEdit {
+    padding: 3px 3px;
+}
+
+Core--CommandPalette>QLineEdit {
+    border: 1px solid transparent;
+    /* border-radius: 4px; */
+    color: #616161;
+    background-color: #FFFFFF;
+    selection-color: #FFFFFF;
+    selection-background-color: #0060c0;
+}
+
+Core--CommandPalette>QLineEdit:focus {
+    border-color: #0060c0;
 }
