@@ -15,6 +15,8 @@ QPushButton {
     background-color: #007acc;
     padding: 6px 12px;
     border: 1px solid transparent;
+    border-style: none;
+    border-radius: 4px;
 }
 
 QPushButton:hover {
@@ -26,8 +28,8 @@ QPushButton:pressed {
 }
 
 QLineEdit {
-    border: 1px solid transparent;
-    /* border-radius: 4px; */
+    border: 1px solid #d4d4d4;
+    border-radius: 4px;
     color: #616161;
     background-color: #FFFFFF;
     selection-color: #FFFFFF;
@@ -245,7 +247,7 @@ Core--CommandPalette>QLineEdit {
 
 Core--CommandPalette>QLineEdit {
     border: 1px solid transparent;
-    /* border-radius: 4px; */
+    border-radius: 4px;
     color: #616161;
     background-color: #FFFFFF;
     selection-color: #FFFFFF;
