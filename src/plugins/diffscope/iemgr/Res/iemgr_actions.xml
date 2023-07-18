@@ -7,7 +7,7 @@
             </rules>
             <content>
                 <menu id="Import">
-                    <action id="ImportProject" command="Import: Import Project"/>
+                    <action id="ImportProject" command="Import: Import Project" icon="svg(:/svg/icons/document_arrow_right_16_filled.svg)"/>
                     <action id="ImportAudio" command="Import: Import Audio"/>
                 </menu>
             </content>
@@ -25,8 +25,8 @@
                     <action id="ImportAudio"/>
                 </menu>
                 <menu id="Export">
-                    <action id="ExportProject" command="Export: Export Project"/>
-                    <action id="ExportAudio" command="Export: Export Audio"/>
+                    <action id="ExportProject" command="Export: Export Project" icon="svg(:/svg/icons/document_arrow_left_16_filled.svg)"/>
+                    <action id="ExportAudio" command="Export: Export Audio" icon="svg(:/svg/icons/arrow_export_up_16_filled.svg)"/>
                 </menu>
             </content>
         </group>

@@ -258,23 +258,6 @@ namespace Core {
             iWin->addCheckable("playback.metronome", metronomeItem->action());
             iWin->addCheckable("playback.loopPlay", loopPlayItem->action());
 
-            saveFileItem->action()->setIcon(QMSvg::create(":/svg/icons/save_16_filled.svg"));
-            saveAsFileItem->action()->setIcon(QMSvg::create(":/svg/icons/save_edit_20_filled.svg"));
-
-            undoItem->action()->setIcon(QMSvg::create(":/svg/icons/arrow_undo_16_filled.svg"));
-            redoItem->action()->setIcon(QMSvg::create(":/svg/icons/arrow_redo_16_filled.svg"));
-            cutItem->action()->setIcon(QMSvg::create(":/svg/icons/cut_20_filled.svg"));
-            copyItem->action()->setIcon(QMSvg::create(":/svg/icons/copy_16_filled.svg"));
-            pasteItem->action()->setIcon(QMSvg::create(":/svg/icons/clipboard_paste_16_filled.svg"));
-
-            playItem->action()->setIcon(QMSvg::create( //
-                ":/svg/icons/play_16_filled.svg", ":/svg/icons/pause_16_filled.svg"));
-            stopItem->action()->setIcon(QMSvg::create(":/svg/icons/stop_16_filled.svg"));
-            moveToStartItem->action()->setIcon(QMSvg::create(":/svg/icons/previous_16_filled.svg"));
-            moveToEndItem->action()->setIcon(QMSvg::create(":/svg/icons/next_16_filled.svg"));
-            metronomeItem->action()->setIcon(QMSvg::create(":/svg/icons/metronome-line.svg"));
-            loopPlayItem->action()->setIcon(QMSvg::create(":/svg/icons/arrow_repeat_all_16_filled.svg"));
-
             connect(iWin->doc(), &IDocument::changed, this, [this, iWin]() {
                 saveFileItem->setEnabled(!iWin->doc()->isVST() && iWin->doc()->isModified()); //
             });

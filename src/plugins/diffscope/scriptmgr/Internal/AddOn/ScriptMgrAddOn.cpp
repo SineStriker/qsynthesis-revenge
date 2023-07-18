@@ -57,9 +57,6 @@ namespace ScriptMgr {
             reloadScriptsAction = new ActionItem("scriptmgr.ReloadScripts", new QAction(this), this);
             scriptSettingsAction = new ActionItem("scriptmgr.ScriptSettings", new QAction(this), this);
 
-            reloadScriptsAction->action()->setIcon(QMSvg::create(":/svg/icons/arrow_clockwise_16_filled.svg"));
-            scriptSettingsAction->action()->setIcon(QMSvg::create(":/svg/icons/settings_16_filled.svg"));
-
             connect(reloadScriptsAction->action(), &QAction::triggered, ScriptLoader::instance(), &ScriptLoader::reloadEngine);
             connect(scriptSettingsAction->action(), &QAction::triggered, this, [=](){
                 ScriptSettingsConfigurableDialog dlg(windowHandle()->window());

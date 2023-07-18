@@ -64,10 +64,6 @@ namespace IEMgr::Internal {
         exportProjectItem = new ActionItem("iemgr.ExportProject", new QAction(this), this);
         exportAudioItem = new ActionItem("iemgr.ExportAudio", new QAction(this), this);
 
-        importProjectItem->action()->setIcon(QMSvg::create(":/svg/icons/document_arrow_right_16_filled.svg"));
-        exportProjectItem->action()->setIcon(QMSvg::create(":/svg/icons/document_arrow_left_16_filled.svg"));
-        exportAudioItem->action()->setIcon(QMSvg::create(":/svg/icons/arrow_export_up_16_filled.svg"));
-
         connect(importProjectItem->action(), &QAction::triggered, this, [iWin]() {
             IManager::instance()->runImport(iWin->window(), {}, {}); //
         });

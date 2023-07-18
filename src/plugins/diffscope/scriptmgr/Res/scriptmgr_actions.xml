@@ -13,8 +13,8 @@
             <content>
                 <menu id="BatchProcessMenu">
                     <group id="ScriptOperations">
-                        <action id="ReloadScripts" command="Script Manager: Reload Scripts"/>
-                        <action id="ScriptSettings" command="Script Manager: Script Settings"/>
+                        <action id="ReloadScripts" command="Script Manager: Reload Scripts" icon="svg(:/svg/icons/arrow_clockwise_16_filled.svg)"/>
+                        <action id="ScriptSettings" command="Script Manager: Script Settings" icon="svg(:/svg/icons/settings_16_filled.svg)"/>
                     </group>
                 </menu>
             </content>

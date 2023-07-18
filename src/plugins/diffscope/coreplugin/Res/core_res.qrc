@@ -42,5 +42,9 @@
         <file>svg/icons/folder_open_16_filled.svg</file>
         <file>svg/icons/settings_16_filled.svg</file>
         <file>svg/icons/search_16_filled.svg</file>
+
+        <file>svg/icons/window_apps_16_filled.svg</file>
+        <file>svg/icons/panel_separate_window_20_filled.svg</file>
+        <file>svg/icons/panel_bottom_20_filled.svg</file>
     </qresource>
 </RCC>
