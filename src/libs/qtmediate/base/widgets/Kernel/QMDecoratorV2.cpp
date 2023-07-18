@@ -446,20 +446,7 @@ void QMDecoratorV2Private::scanForThemes() const {
                     continue;
                 }
 
-                // Remove comments
-                content = QMDecoratorV2Private::removeAllComments(content);
-
-                // Replace custom keys
-                content = QMDecoratorV2Private::replaceCustomKeyWithQProperty(content);
-
-                // Replace CSS grammars
-                content = QMDecoratorV2Private::replaceCssGrammars(content);
-
-                if (item.ratio != 1 && item.ratio > 0) {
-                    content = QMDecoratorV2Private::replaceSizes(content, item.ratio, false);
-                }
-
-                res.append(content + "\n\n");
+                res.append(QMDecoratorV2::evaluateStyleSheet(content, item.ratio) + "\n\n");
             }
         }
 
@@ -583,6 +570,25 @@ QMDecoratorV2::QMDecoratorV2(QObject *parent) : QMDecoratorV2(*new QMDecoratorV2
 }
 
 QMDecoratorV2::~QMDecoratorV2() {
+}
+
+QString QMDecoratorV2::evaluateStyleSheet(const QString &stylesheet, double ratio) {
+    QString content = stylesheet;
+
+    // Remove comments
+    content = QMDecoratorV2Private::removeAllComments(content);
+
+    // Replace custom keys
+    content = QMDecoratorV2Private::replaceCustomKeyWithQProperty(content);
+
+    // Replace CSS grammars
+    content = QMDecoratorV2Private::replaceCssGrammars(content);
+
+    if (ratio != 1 && ratio > 0) {
+        content = QMDecoratorV2Private::replaceSizes(content, ratio, false);
+    }
+
+    return content;
 }
 
 void QMDecoratorV2::addThemePath(const QString &path) {

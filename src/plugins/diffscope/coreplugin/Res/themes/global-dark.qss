@@ -85,7 +85,7 @@ QMenu[core-style=true]::separator {
 
 /* QScrollBar */
 
-CScrollArea[core-style=true] {
+QScrollArea[core-style=true] {
     border: none;
     background-color: transparent;
 }

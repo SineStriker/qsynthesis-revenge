@@ -8,6 +8,7 @@
 
 #include <CTabButton.h>
 #include <QMAppExtension.h>
+#include <QMDecoratorV2.h>
 
 int main(int argc, char *argv[]) {
     QApplication a(argc, argv);
@@ -30,18 +31,18 @@ int main(int argc, char *argv[]) {
         "C:/Users/truef/Documents/GitHub/qsynthesis-revenge/src/plugins/diffscope/coreplugin/Res/svg/home/info.svg"));
 
     auto action3 = menu->addAction("Action3");
-//    action3->setCheckable(true);
+    //    action3->setCheckable(true);
 
     w.menuBar()->addMenu(menu);
 
-    w.setStyleSheet(R"(
+    w.setStyleSheet(QMDecoratorV2::evaluateStyleSheet(R"(
 
 QPushButton#test-button {
-    qproperty-icon: url(C:/Users/truef/Documents/GitHub/qsynthesis-revenge/src/plugins/diffscope/coreplugin/Res/svg/home/info.svg, green, .svgx);
+    qproperty-icon: svg(C:/Users/truef/Documents/GitHub/qsynthesis-revenge/src/plugins/diffscope/coreplugin/Res/svg/home/info.svg, green);
 }
 
 QMenu::indicator::checked {
-    image: url(C:/Users/truef/Documents/GitHub/qsynthesis-revenge/src/plugins/diffscope/coreplugin/Res/svg/home/info.svg, green, .svgx);
+    image: svg(C:/Users/truef/Documents/GitHub/qsynthesis-revenge/src/plugins/diffscope/coreplugin/Res/svg/home/info.svg, green);
     height: 20px;
     width: 20px;
     left: 10px;
@@ -59,7 +60,7 @@ QMenu::item {
     background: transparent;
 }
 
-)");
+)"));
 
     return a.exec();
 }

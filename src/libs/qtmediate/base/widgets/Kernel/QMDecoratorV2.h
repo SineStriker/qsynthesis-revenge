@@ -21,6 +21,8 @@ public:
     explicit QMDecoratorV2(QObject *parent = nullptr);
     ~QMDecoratorV2();
 
+    static QString evaluateStyleSheet(const QString &stylesheet, double ratio = 1);
+
 public:
     void addThemePath(const QString &path);
     void removeThemePath(const QString &path);
