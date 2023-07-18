@@ -67,61 +67,6 @@
     </message>
 </context>
 <context>
-    <name>CScrollBar</name>
-    <message>
-        <source>Scroll here</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Left edge</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Top</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Right edge</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Bottom</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Page left</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Page up</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Page right</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Page down</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Scroll left</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Scroll up</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Scroll right</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Scroll down</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
     <name>CWindowBarV2</name>
     <message>
         <source>Minimize</source>

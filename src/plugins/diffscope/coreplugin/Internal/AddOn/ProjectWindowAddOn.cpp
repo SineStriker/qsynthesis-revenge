@@ -133,6 +133,13 @@ namespace Core {
             metronomeItem->setText(tr("Metronome"));
             loopPlayItem->setText(tr("Loop Play"));
 
+            cursorModeItem->setText(tr("Cursor"));
+            notePenModeItem->setText(tr("Note Pen"));
+            pitchAnchorModeItem->setText(tr("Pitch Control Point"));
+            pitchFreeModeItem->setText(tr("Pitch Drawing"));
+            pitchBrushModeItem->setText(tr("Pitch Fixing Brush"));
+            vibratoModeItem->setText(tr("Vibrato"));
+
             selectPianoKeyWidgetItem->setText(tr("Select Piano Key Widget"));
 
             trackButton->setText(tr("Tracks"));
@@ -158,6 +165,11 @@ namespace Core {
             action->setCheckable(true);
             QObject::connect(action, &QAction::toggled, w, &CDockFrame::setBarVisible);
             action->setChecked(initState);
+        }
+
+        static inline void makeCheckable(ActionItem *item) {
+            item->action()->setCheckable(true);
+            item->action()->setProperty("selectable", true);
         }
 
         void ProjectWindowAddOn::initActions() {
@@ -225,6 +237,18 @@ namespace Core {
 
             mainToolbarHelpGroupItem = new ActionItem("core.MainToolbarHelpGroup", new QActionGroup(this), this);
 
+            // PianoRoll Toolbar
+            trackLabelGroupItem = new ActionItem("core.TrackLabelGroup", new QActionGroup(this), this);
+            trackLabelItem = new ActionItem("core.TrackLabel", new QLabel("Current Track"), this);
+
+            editModeGroupItem = new ActionItem("core.EditModeGroup", new QActionGroup(this), this);
+            cursorModeItem = new ActionItem("core.CursorMode", new QAction(this), this);
+            notePenModeItem = new ActionItem("core.NotePenMode", new QAction(this), this);
+            pitchAnchorModeItem = new ActionItem("core.PitchAnchorMode", new QAction(this), this);
+            pitchFreeModeItem = new ActionItem("core.PitchFreeMode", new QAction(this), this);
+            pitchBrushModeItem = new ActionItem("core.PitchBrushMode", new QAction(this), this);
+            vibratoModeItem = new ActionItem("core.VibratoMode", new QAction(this), this);
+
             // Invisible
             selectPianoKeyWidgetItem = new ActionItem("core.SelectPianoKeyWidget", new QAction(this), this);
 
@@ -248,15 +272,22 @@ namespace Core {
 
             playAssistGroupItem->actionGroup()->setExclusionPolicy(QActionGroup::ExclusionPolicy::None);
 
-            metronomeItem->action()->setProperty("selectable", true);
-            loopPlayItem->action()->setProperty("selectable", true);
-
-            metronomeItem->action()->setCheckable(true);
-            loopPlayItem->action()->setCheckable(true);
+            makeCheckable(metronomeItem);
+            makeCheckable(loopPlayItem);
 
             iWin->addCheckable("playback.playing", playItem->action());
             iWin->addCheckable("playback.metronome", metronomeItem->action());
             iWin->addCheckable("playback.loopPlay", loopPlayItem->action());
+
+            editModeGroupItem->actionGroup()->setExclusive(true);
+            makeCheckable(cursorModeItem);
+            makeCheckable(notePenModeItem);
+            makeCheckable(pitchAnchorModeItem);
+            makeCheckable(pitchFreeModeItem);
+            makeCheckable(pitchBrushModeItem);
+            makeCheckable(vibratoModeItem);
+
+            cursorModeItem->action()->setChecked(true);
 
             connect(iWin->doc(), &IDocument::changed, this, [this, iWin]() {
                 saveFileItem->setEnabled(!iWin->doc()->isVST() && iWin->doc()->isModified()); //
@@ -377,6 +408,17 @@ namespace Core {
 
                 mainToolbarStretchItem,
                 mainToolbarHelpGroupItem,
+
+                trackLabelGroupItem,
+                trackLabelItem,
+
+                editModeGroupItem,
+                cursorModeItem,
+                notePenModeItem,
+                pitchAnchorModeItem,
+                pitchFreeModeItem,
+                pitchBrushModeItem,
+                vibratoModeItem,
 
                 selectPianoKeyWidgetItem,
             });

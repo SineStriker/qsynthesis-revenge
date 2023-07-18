@@ -594,6 +594,30 @@ The application is about to exit because an unresolvable exception has occurred,
         <source>Tracks</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Cursor</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Note Pen</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Pitch Control Point</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Pitch Drawing</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Pitch Fixing Brush</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Vibrato</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>Core::Internal::SettingsDialog</name>
@@ -603,6 +627,13 @@ The application is about to exit because an unresolvable exception has occurred,
     </message>
     <message>
         <source>Settings</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>Core::PianoRoll</name>
+    <message>
+        <source>Failed to create piano roll toolbar.</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

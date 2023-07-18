@@ -4,6 +4,8 @@ QWidget#project-window {
     background-color: #1E1E1E;
 }
 
+/* Main Toolbar */
+
 QToolBar#main-toolbar {
     ---spacing: 5px;
     --iconSize: 20px 20px;
@@ -28,11 +30,6 @@ QToolBar#main-toolbar>QLabel {
 
 QToolBar#main-toolbar>QToolButton {
     padding: 5px;
-    color: #CCCCCC;
-}
-
-QToolBar#main-toolbar>QToolButton {
-    padding: 5px;
     border: none;
     background-color: transparent;
     color: #CCCCCC;
@@ -52,6 +49,46 @@ QToolBar#main-toolbar>QToolButton[selectable=true]:checked {
     color: white;
     background-color: rgba(255, 255, 255, 20%);
 } 
+
+/* PianoRoll Toolbar */
+
+QToolBar#piano-roll-toolbar {
+    padding: 2px;
+    ---spacing: 0;
+    --iconSize: 16px 16px;
+    color: white;
+}
+
+QToolBar#piano-roll-toolbar>QLabel {
+    padding: 2px;
+    font-weight: bold;
+    color: white;
+    text-align: left;
+}
+
+QToolBar#piano-roll-toolbar>QToolButton {
+    padding: 2px;
+    border: none;
+    background-color: transparent;
+    color: #CCCCCC;
+}
+
+QToolBar#piano-roll-toolbar>QToolButton:hover {
+    color: white;
+    background-color: rgba(255, 255, 255, 15%);
+}
+
+QToolBar#piano-roll-toolbar>QToolButton:pressed {
+    color: #EFEFEF;
+    background-color: rgba(255, 255, 255, 10%);
+}
+
+QToolBar#piano-roll-toolbar>QToolButton:checked {
+    color: white;
+    background-color: rgba(255, 255, 255, 20%);
+} 
+
+/* SynthV Splitter */
 
 QsApi--SynthVSplitter#canvas>QsApi--SynthVSplitterHandle {
     --handleHeight: 6px;

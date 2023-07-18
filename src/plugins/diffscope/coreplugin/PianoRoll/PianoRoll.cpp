@@ -39,6 +39,9 @@ namespace Core {
     void PianoRollPrivate::init() {
         Q_Q(PianoRoll);
 
+        m_toolbar = new CToolBar();
+        m_toolbar->setObjectName("piano-roll-toolbar");
+
         m_canvas = new QsApi::SynthVSplitter();
         m_canvas->setObjectName("canvas");
 
@@ -59,10 +62,11 @@ namespace Core {
         m_layout = new QGridLayout();
         m_layout->setMargin(0);
         m_layout->setSpacing(0);
-        m_layout->addItem(new QSpacerItem(0, 0), 0, 0);
-        m_layout->addWidget(m_sectionWidget, 0, 1);
-        m_layout->addWidget(m_pianoKeyContainer, 1, 0);
-        m_layout->addWidget(m_canvas, 1, 1);
+        m_layout->addWidget(m_toolbar, 0, 0, 1, 2);
+        m_layout->addItem(new QSpacerItem(0, 0), 1, 0);
+        m_layout->addWidget(m_sectionWidget, 1, 1);
+        m_layout->addWidget(m_pianoKeyContainer, 2, 0);
+        m_layout->addWidget(m_canvas, 2, 1);
 
         q->setLayout(m_layout);
     }
@@ -169,6 +173,13 @@ namespace Core {
         m_pianoKeyContainer->setValueY(m_view->valueY());
     }
 
+    void PianoRollPrivate::reloadToolbar() {
+        Q_Q(PianoRoll);
+
+        auto items = q->iWin->actionItems();
+        toolbarCtx->buildToolBarWithState(items, m_toolbar);
+    }
+
     void PianoRollPrivate::_q_viewMoved(const QPointF &pos, const QPointF &oldPos) {
         if (pos.y() == oldPos.y()) {
             return;
@@ -207,12 +218,20 @@ namespace Core {
 
         auto timeMgr = iWin->timeManager();
         connect(timeMgr, &MusicTimeManager::currentHeightChanged, d, &PianoRollPrivate::_q_currentHeightChanged);
+
+        d->toolbarCtx = ICore::instance()->actionSystem()->context("project.PianoRollToolbar");
+        if (!d->toolbarCtx) {
+            ICore::fatalError(iWin->window(), tr("Failed to create piano roll toolbar."));
+        }
     }
 
     void PianoRoll::extensionInitialized() {
         Q_D(PianoRoll);
         d->m_sectionWidget->extensionInitialized();
         d->m_view->extensionInitialized();
+
+        connect(d->toolbarCtx, &ActionContext::stateChanged, d, &PianoRollPrivate::reloadToolbar);
+        d->reloadToolbar();
     }
 
     void PianoRoll::addPianoKeyWidgetFactory(const QString &key, IPianoKeyWidgetFactory *factory) {
@@ -398,6 +417,11 @@ namespace Core {
             return nullptr;
         }
         return it->panel;
+    }
+
+    QToolBar *PianoRoll::toolbar() const {
+        Q_D(const PianoRoll);
+        return d->m_toolbar;
     }
 
     SectionBar *PianoRoll::sectionBar() const {

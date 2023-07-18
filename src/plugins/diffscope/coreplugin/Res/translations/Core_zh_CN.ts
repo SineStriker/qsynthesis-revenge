@@ -880,6 +880,30 @@ The application is about to exit because an unresolvable exception has occurred,
         <source>Tracks</source>
         <translation>音轨</translation>
     </message>
+    <message>
+        <source>Cursor</source>
+        <translation>指针</translation>
+    </message>
+    <message>
+        <source>Note Pen</source>
+        <translation>音符画笔</translation>
+    </message>
+    <message>
+        <source>Pitch Control Point</source>
+        <translation>音高控制点</translation>
+    </message>
+    <message>
+        <source>Pitch Drawing</source>
+        <translation>音高绘制</translation>
+    </message>
+    <message>
+        <source>Pitch Fixing Brush</source>
+        <translation>音高固定笔刷</translation>
+    </message>
+    <message>
+        <source>Vibrato</source>
+        <translation>颤音</translation>
+    </message>
 </context>
 <context>
     <name>Core::Internal::SettingsDialog</name>
@@ -890,6 +914,13 @@ The application is about to exit because an unresolvable exception has occurred,
     <message>
         <source>Settings</source>
         <translation>设置</translation>
+    </message>
+</context>
+<context>
+    <name>Core::PianoRoll</name>
+    <message>
+        <source>Failed to create piano roll toolbar.</source>
+        <translation>无法创建钢琴卷帘工具栏。</translation>
     </message>
 </context>
 <context>

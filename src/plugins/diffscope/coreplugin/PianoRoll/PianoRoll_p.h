@@ -3,6 +3,8 @@
 
 #include <CDockFrame.h>
 
+#include <CoreApi/ActionContext.h>
+
 #include "PianoRoll.h"
 
 #include "IPianoKeyWidget.h"
@@ -12,7 +14,7 @@
 
 namespace Core {
 
-    class PianoRollPrivate : public QObject{
+    class PianoRollPrivate : public QObject {
         Q_OBJECT
         Q_DECLARE_PUBLIC(PianoRoll)
     public:
@@ -44,13 +46,19 @@ namespace Core {
         // Layout
         QGridLayout *m_layout;
 
+        QToolBar *m_toolbar;
         Internal::PianoKeyContainer *m_pianoKeyContainer;
         Internal::SectionWidget *m_sectionWidget;
         QsApi::SynthVSplitter *m_canvas;
 
         CanvasView *m_view;
 
+        // Meta
+        ActionContext *toolbarCtx;
+
         void adjustPianoKeyWidget();
+
+        void reloadToolbar();
 
     private:
         void _q_viewMoved(const QPointF &pos, const QPointF &oldPos);

@@ -83,6 +83,18 @@ namespace Core {
             ActionItem *mainToolbarStretchItem;
             ActionItem *mainToolbarHelpGroupItem;
 
+            // PianoRoll Toolbar
+            ActionItem *trackLabelGroupItem;
+            ActionItem *trackLabelItem;
+
+            ActionItem *editModeGroupItem;
+            ActionItem *cursorModeItem;
+            ActionItem *notePenModeItem;
+            ActionItem *pitchAnchorModeItem;
+            ActionItem *pitchFreeModeItem;
+            ActionItem *pitchBrushModeItem;
+            ActionItem *vibratoModeItem;
+
             // Invisible
             ActionItem *selectPianoKeyWidgetItem;
 

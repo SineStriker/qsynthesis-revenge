@@ -152,12 +152,12 @@ Continue loading anyway?</source>
 <context>
     <name>ScriptMgr::Internal::ScriptMgrAddOn</name>
     <message>
-        <location filename="../../Internal/AddOn/ScriptMgrAddOn.cpp" line="41"/>
+        <location filename="../../Internal/AddOn/ScriptMgrAddOn.cpp" line="43"/>
         <source>Batch Process Actions</source>
         <translation>批处理组</translation>
     </message>
     <message>
-        <location filename="../../Internal/AddOn/ScriptMgrAddOn.cpp" line="42"/>
+        <location filename="../../Internal/AddOn/ScriptMgrAddOn.cpp" line="44"/>
         <source>&amp;Batch Process</source>
         <translation>批处理(&amp;B)</translation>
     </message>
@@ -174,22 +174,22 @@ Continue loading anyway?</source>
         <translation type="vanished">脚本操作组</translation>
     </message>
     <message>
-        <location filename="../../Internal/AddOn/ScriptMgrAddOn.cpp" line="43"/>
+        <location filename="../../Internal/AddOn/ScriptMgrAddOn.cpp" line="45"/>
         <source>Reload Scripts</source>
         <translation>重新加载脚本</translation>
     </message>
     <message>
-        <location filename="../../Internal/AddOn/ScriptMgrAddOn.cpp" line="44"/>
+        <location filename="../../Internal/AddOn/ScriptMgrAddOn.cpp" line="46"/>
         <source>Script Settings</source>
         <translation>脚本设置</translation>
     </message>
     <message>
-        <location filename="../../Internal/AddOn/ScriptMgrAddOn.cpp" line="45"/>
+        <location filename="../../Internal/AddOn/ScriptMgrAddOn.cpp" line="47"/>
         <source>Run</source>
         <translation>运行</translation>
     </message>
     <message>
-        <location filename="../../Internal/AddOn/ScriptMgrAddOn.cpp" line="119"/>
+        <location filename="../../Internal/AddOn/ScriptMgrAddOn.cpp" line="123"/>
         <source>Search for batch process actions</source>
         <translation>查找批处理命令</translation>
     </message>
@@ -237,6 +237,14 @@ Continue loading anyway?</source>
         <location filename="../../Internal/ScriptMgrPlugin.cpp" line="44"/>
         <source>Failed to load action configuration!</source>
         <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>ScriptMgr::Internal::ScriptSettingsConfigurableDialog</name>
+    <message>
+        <location filename="../../Internal/ScriptSettingsConfigurableDialog.cpp" line="10"/>
+        <source>Script Settings</source>
+        <translation type="unfinished">脚本设置</translation>
     </message>
 </context>
 <context>
@@ -329,13 +337,13 @@ Continue loading anyway?</source>
     </message>
     <message>
         <location filename="../../Internal/ScriptSettingsPage.cpp" line="235"/>
-        <location filename="../../Internal/ScriptSettingsPage.cpp" line="285"/>
+        <location filename="../../Internal/ScriptSettingsPage.cpp" line="287"/>
         <source>ID</source>
         <translation>ID</translation>
     </message>
     <message>
         <location filename="../../Internal/ScriptSettingsPage.cpp" line="237"/>
-        <location filename="../../Internal/ScriptSettingsPage.cpp" line="286"/>
+        <location filename="../../Internal/ScriptSettingsPage.cpp" line="288"/>
         <source>Name</source>
         <translation>名称</translation>
     </message>
@@ -370,17 +378,17 @@ Continue loading anyway?</source>
     </message>
     <message>
         <location filename="../../Internal/ScriptSettingsPage.cpp" line="268"/>
-        <location filename="../../Internal/ScriptSettingsPage.cpp" line="287"/>
+        <location filename="../../Internal/ScriptSettingsPage.cpp" line="289"/>
         <source>Shortcut</source>
         <translation>快捷键</translation>
     </message>
     <message>
-        <location filename="../../Internal/ScriptSettingsPage.cpp" line="282"/>
+        <location filename="../../Internal/ScriptSettingsPage.cpp" line="284"/>
         <source>Sub-action %1</source>
         <translation>子命令 %1</translation>
     </message>
     <message>
-        <location filename="../../Internal/ScriptSettingsPage.cpp" line="319"/>
+        <location filename="../../Internal/ScriptSettingsPage.cpp" line="323"/>
         <source>&lt;None&gt;</source>
         <translation>&lt;无&gt;</translation>
     </message>

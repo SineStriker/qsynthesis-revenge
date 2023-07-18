@@ -14,9 +14,25 @@ namespace Core {
 
     Q_D_LAYOUT_PROPERTY_DECLARE(caption, Caption, captionLayout, IDockPanel)
 
+    class CaptionLabel : public QLabel {
+    public:
+        explicit CaptionLabel(IDockPanel *panel, QWidget *parent = nullptr) : QLabel(parent), panel(panel) {
+        }
+
+        IDockPanel *panel;
+
+    protected:
+        void mouseDoubleClickEvent(QMouseEvent *event) override {
+            auto card = panel->card();
+            if (card->viewMode() == CDockCard::DockPinned) {
+                card->toggleMaximizeState();
+            }
+        }
+    };
+
     class TitleBarStretch : public QWidget {
     public:
-        TitleBarStretch(IDockPanel *panel, QWidget *parent = nullptr) : QWidget(parent), panel(panel) {
+        explicit TitleBarStretch(IDockPanel *panel, QWidget *parent = nullptr) : QWidget(parent), panel(panel) {
             setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
             setContextMenuPolicy(Qt::DefaultContextMenu);
         }
@@ -30,20 +46,14 @@ namespace Core {
                                 QApplication::keyboardModifiers());
             QApplication::sendEvent(card, &e);
         }
-    };
 
-    CaptionLabel::CaptionLabel(IDockPanel *s, QWidget *parent) : QLabel(parent), s(s) {
-    }
-
-    CaptionLabel::~CaptionLabel() {
-    }
-
-    void CaptionLabel::mouseDoubleClickEvent(QMouseEvent *event) {
-        auto card = s->card();
-        if (card->viewMode() == CDockCard::DockPinned) {
-            s->card()->toggleMaximizeState();
+        void mouseDoubleClickEvent(QMouseEvent *event) override {
+            auto card = panel->card();
+            if (card->viewMode() == CDockCard::DockPinned) {
+                card->toggleMaximizeState();
+            }
         }
-    }
+    };
 
     IDockPanelPrivate::IDockPanelPrivate() {
         captionWidget = nullptr;

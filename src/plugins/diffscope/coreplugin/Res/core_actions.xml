@@ -31,7 +31,8 @@
                         icon="svg(:/svg/icons/search_16_filled.svg)"/>
             </group>
             <group id="AboutGroup">
-                <action id="AboutPlugins" command="About: About Plugins" icon="svg(:/svg/icons/puzzle_piece_16_filled.svg)"/>
+                <action id="AboutPlugins" command="About: About Plugins"
+                        icon="svg(:/svg/icons/puzzle_piece_16_filled.svg)"/>
                 <action id="AboutApp" command="About: About ${APPNAME}" icon="svg(:/svg/icons/info_16_filled.svg)"/>
                 <action id="AboutQt" command="About: About Qt"/>
             </group>
@@ -51,9 +52,9 @@
             </group>
             <group id="SaveGroup">
                 <action id="SaveFile" command="File: Save File" shortcut="Ctrl+S"
-                    icon="svg(:/svg/icons/save_16_filled.svg)"/>
+                        icon="svg(:/svg/icons/save_16_filled.svg)"/>
                 <action id="SaveAsFile" command="File: Save As File" shortcut="Ctrl+Shift+S"
-                    icon="svg(:/svg/icons/save_edit_20_filled.svg)"/>
+                        icon="svg(:/svg/icons/save_edit_20_filled.svg)"/>
             </group>
             <menu id="PreferenceMenu">
                 <action id="Settings"/>
@@ -68,17 +69,17 @@
         <menu id="Edit">
             <group id="UndoGroup">
                 <action id="Undo" command="Edit: Undo" shortcut="Ctrl+Z"
-                    icon="svg(:/svg/icons/arrow_undo_16_filled.svg)"/>
+                        icon="svg(:/svg/icons/arrow_undo_16_filled.svg)"/>
                 <action id="Redo" command="Edit: Redo" shortcut="Ctrl+Shift+Z"
-                    icon="svg(:/svg/icons/arrow_redo_16_filled.svg)"/>
+                        icon="svg(:/svg/icons/arrow_redo_16_filled.svg)"/>
             </group>
             <group id="EditGroup">
                 <action id="Cut" command="Edit: Cut" shortcut="Ctrl+X"
-                    icon="svg(:/svg/icons/cut_20_filled.svg)"/>
+                        icon="svg(:/svg/icons/cut_20_filled.svg)"/>
                 <action id="Copy" command="Edit: Copy" shortcut="Ctrl+C"
-                    icon="svg(:/svg/icons/copy_16_filled.svg)"/>
+                        icon="svg(:/svg/icons/copy_16_filled.svg)"/>
                 <action id="Paste" command="Edit: Paste" shortcut="Ctrl+V"
-                    icon="svg(:/svg/icons/clipboard_paste_16_filled.svg)"/>
+                        icon="svg(:/svg/icons/clipboard_paste_16_filled.svg)"/>
                 <action id="Delete" command="Edit: Delete" shortcut="Del"/>
             </group>
             <group id="SelectGroup">
@@ -129,19 +130,19 @@
         </group>
         <group id="PlayControlGroup">
             <action id="Play" command="Playback: Play" shortcut="SPACE"
-                icon="svg((:/svg/icons/play_16_filled.svg, up2=:/svg/icons/pause_16_filled.svg), auto)"/>
+                    icon="svg((:/svg/icons/play_16_filled.svg, up2=:/svg/icons/pause_16_filled.svg), auto)"/>
             <action id="Stop" command="Playback: Stop" shortcut="F7"
-                icon="svg(:/svg/icons/stop_16_filled.svg)"/>
+                    icon="svg(:/svg/icons/stop_16_filled.svg)"/>
             <action id="MoveToStart" command="Playback: Move To Start"
-                icon="svg(:/svg/icons/previous_16_filled.svg)"/>
+                    icon="svg(:/svg/icons/previous_16_filled.svg)"/>
             <action id="MoveToEnd" command="Playback: Move To End"
-                icon="svg(:/svg/icons/next_16_filled.svg)"/>
+                    icon="svg(:/svg/icons/next_16_filled.svg)"/>
         </group>
         <group id="PlayAssistGroup">
             <action id="Metronome" command="Playback: Metronome"
-                icon="svg(:/svg/icons/metronome-line.svg)"/>
+                    icon="svg(:/svg/icons/metronome-line.svg)"/>
             <action id="LoopPlay" command="Playback: Loop Play"
-                icon="svg(:/svg/icons/arrow_repeat_all_16_filled.svg)"/>
+                    icon="svg(:/svg/icons/arrow_repeat_all_16_filled.svg)"/>
         </group>
 
         <!--    Stretch    -->
@@ -152,4 +153,19 @@
             <action id="Settings"/>
         </group>
     </context>
+
+    <context id="project.PianoRollToolbar" prefix="core.">
+        <group id="TrackLabelGroup">
+            <action id="TrackLabel"/>
+        </group>
+        <group id="EditModeGroup">
+            <action id="CursorMode" command="Edit Mode: Cursor" shortcut="V"/>
+            <action id="NotePenMode" command="Edit Mode: Note Pen" shortcut="B"/>
+            <action id="PitchAnchorMode" command="Edit Mode: Pitch Anchor Point" shortcut="1"/>
+            <action id="PitchFreeMode" command="Edit Mode: Pitch Drawing" shortcut="2"/>
+            <action id="PitchBrushMode" command="Edit Mode: Pitch Brush" shortcut="3"/>
+            <action id="VibratoMode" command="Edit Mode: Vibrato" shortcut="4"/>
+        </group>
+    </context>
+
 </actionSystem>

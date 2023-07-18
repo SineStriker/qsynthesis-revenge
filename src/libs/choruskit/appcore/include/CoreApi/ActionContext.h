@@ -1,4 +1,3 @@
-
 #ifndef ACTIONCONTEXT_H
 #define ACTIONCONTEXT_H
 

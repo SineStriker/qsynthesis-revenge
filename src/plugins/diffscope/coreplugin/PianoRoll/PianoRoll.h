@@ -3,6 +3,7 @@
 
 #include <QAbstractButton>
 #include <QFrame>
+#include <QToolBar>
 
 #include <CoreApi/IWindow.h>
 
@@ -49,6 +50,7 @@ namespace Core {
         void setFloatingPanelState(const QString &key, FloatingPanelState state);
         QWidget *floatingPanel(const QString &key);
 
+        QToolBar *toolbar() const;
         SectionBar *sectionBar() const;
         CanvasView *canvasView() const;
 
