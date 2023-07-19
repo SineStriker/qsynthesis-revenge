@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/">
+        <file>icons/chevron_down_16_filled.svg</file>
+    </qresource>
+</RCC>
