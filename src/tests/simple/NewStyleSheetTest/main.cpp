@@ -109,9 +109,10 @@ QMenu::item {
 QComboBox
 {
     background-color:#1e2228;
-    color:#FFFFFF;
+    color:#adbac7;
     border-style: none;
     border-radius: 4px;
+    border: 1px solid #6b6b6b;
     padding: 4px;
 }
 QComboBox:disabled
@@ -132,7 +133,7 @@ QComboBox QAbstractItemView
 {
     outline: 0px solid gray;
     background-color: #1e2228;
-    color: #FFFFFF;
+    color: #adbac7;
     selection-background-color: #2d333b;
     border-style: none;
     /* border-radius: 8px; */
@@ -168,12 +169,12 @@ QComboBox::down-arrow
     right: 10px;
     width: 20px;
     height: 20px;
-    image: svg(":/icons/chevron_down_16_filled.svg", blue);
+    image: svg(":/icons/chevron_down_16_filled.svg", #adbac7);
 }
 
 QComboBox::down-arrow:on
 {
-    image: svg(":/icons/chevron_down_16_filled.svg", yellow);
+    image: svg(":/icons/chevron_down_16_filled.svg", #adbac7);
 }
 
 QComboBox QScrollBar::vertical{
@@ -212,20 +213,19 @@ CCheckBox {
 }
 
 CCheckBox>QLabel#label {
-    color: blue;
+    color: #adbac7;
 }
 
 CCheckBox>CToolButton#box {
     padding: 0;
-    border-radius: 3px;
-    background-color: #3C3C3C;
-    border: 1px solid #3C3C3C;
+    border-radius: 4px;
+    background-color: #1e2228;
+    border: 1px solid #6b6b6b;
     --icon: svg(":/icons/check-line.svg", (up=transparent, up2=#FFFFFF));
     --iconSize: 16px 16px;
 }
 
 CCheckBox>CToolButton#box:focus {
-    border-radius: 0;
     border-color: #167FD2;
 }
 
