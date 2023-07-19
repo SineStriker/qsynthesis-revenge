@@ -160,16 +160,17 @@
         </group>
         <group id="EditModeGroup">
             <action id="CursorMode" command="Edit Mode: Cursor" shortcut="V"
-                    icon="svg(:/svg/icons-custom/cursor_24_filled.svg)"/>
+                    icon="svg(:/svg/icons/cursor_24_filled.svg)"/>
             <action id="NotePenMode" command="Edit Mode: Note Pen" shortcut="B"
-                    icon="svg(:/svg/icons-custom/edit_24_filled.svg)"/>
+                    icon="svg(:/svg/icons/edit_24_filled.svg)"/>
             <action id="PitchAnchorMode" command="Edit Mode: Pitch Anchor Point" shortcut="1"
-                    icon="svg(:/svg/icons-custom/pitch_anchor_24_filled.svg)"/>
+                    icon="svg(:/svg/icons/pitch_anchor_24_filled.svg)"/>
             <action id="PitchFreeMode" command="Edit Mode: Pitch Drawing" shortcut="2"
-                    icon="svg(:/svg/icons-custom/pitch_edit_24_filled.svg)"/>
+                    icon="svg(:/svg/icons/pitch_edit_24_filled.svg)"/>
             <action id="PitchBrushMode" command="Edit Mode: Pitch Brush" shortcut="3"
-                    icon="svg(:/svg/icons-custom/paint_brush_arrow_down_24_filled.svg)"/>
-            <action id="VibratoMode" command="Edit Mode: Vibrato" shortcut="4"/>
+                    icon="svg(:/svg/icons/paint_brush_arrow_down_24_filled.svg)"/>
+            <action id="VibratoMode" command="Edit Mode: Vibrato" shortcut="4"
+                    icon="svg(:/svg/icons/pitch_vibrato_24_filled.svg)"/>
         </group>
     </context>
 
