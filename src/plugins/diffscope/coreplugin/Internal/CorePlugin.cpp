@@ -140,6 +140,10 @@ namespace Core {
         }
 
         void CorePlugin::extensionsInitialized() {
+            // Theme fallback
+            if (!qIDec->themes().contains(qIDec->theme())) {
+                qIDec->setTheme("Visual Studio Code - Dark");
+            }
         }
 
         bool CorePlugin::delayedInitialize() {

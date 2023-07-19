@@ -224,7 +224,9 @@ int main_entry(int argc, char *argv[]) {
     Q_ASSERT(qApp->applicationName() == a.applicationName());
     QString corePluginNameC = "Core";
     QString pluginIID = QString("org.ChorusKit.%1.Plugin").arg(qApp->applicationName());
-    QPixmap splashImage;
+    QString splashImagePath;
+    QImage splashImage;
+    QSize splashSize;
     QStringList resourcesFiles; // Unused
 
     // Load configuration
@@ -239,7 +241,10 @@ int main_entry(int argc, char *argv[]) {
             if (QDir::isRelativePath(path)) {
                 path = configDir + "/" + path;
             }
-            splashImage = QPixmap(path);
+            splashImagePath = path;
+        }
+        if (configFile.splashSize.size() == 2) {
+            splashSize = QSize(configFile.splashSize.front(), configFile.splashSize.back());
         }
         if (!configFile.coreName.isEmpty()) {
             corePluginNameC = configFile.coreName;
@@ -255,7 +260,11 @@ int main_entry(int argc, char *argv[]) {
 
     if (splashImage.isNull()) {
         // splashImage = QPixmap(":/yqzhishen.png");
-        splashImage = QPixmap(":/A60.jpg");
+        splashImage = QImage(":/A60.jpg");
+    }
+
+    if (splashSize.isEmpty()) {
+        splashSize = splashImage.size();
     }
 
     // Parse command line
@@ -361,6 +370,11 @@ int main_entry(int argc, char *argv[]) {
     SplashScreen splash;
     g_splash = &splash;
 
+    auto ratio = splash.screen()->logicalDotsPerInch() / QMOs::unitDpi() * 0.8;
+    if (configFile.resizable) {
+        splashSize *= ratio;
+    }
+
     Core::InitialRoutine initialRoutine(&splash);
 
     // Add initial routine to loader object pool
@@ -369,7 +383,13 @@ int main_entry(int argc, char *argv[]) {
         loader.removeObject(&initialRoutine); //
     });
 
-    splash.setPixmap(splashImage);
+    QPixmap pixmap;
+    if (splashImagePath.endsWith(".svg", Qt::CaseInsensitive)) {
+        pixmap = QIcon(splashImagePath).pixmap(splashSize);
+    } else {
+        pixmap = QPixmap::fromImage(splashImage.scaled(splashSize));
+    }
+    splash.setPixmap(pixmap);
 
     for (auto it = configFile.splashSettings.texts.begin(); it != configFile.splashSettings.texts.end(); ++it) {
         const auto &item = it.value();
@@ -380,6 +400,15 @@ int main_entry(int argc, char *argv[]) {
         attr.fontColor = QMCss::CssStringToColor(item.fontColor);
         attr.maxWidth = item.maxWidth > 0 ? item.maxWidth : attr.maxWidth;
         attr.text = item.text;
+
+        if (configFile.resizable) {
+            attr.pos *= ratio;
+            attr.anchor.first *= ratio;
+            attr.anchor.second *= ratio;
+            attr.fontSize *= ratio;
+            attr.maxWidth *= ratio;
+        }
+
         splash.setTextAttribute(it.key(), attr);
     }
 

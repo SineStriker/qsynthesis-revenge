@@ -34,6 +34,8 @@ struct LoadConfig {
     SplashSettings splashSettings;
     QString coreName;
     QStringList resourceFiles;
+    bool resizable;
+    QList<int> splashSize;
 
     bool load(const QString &filename);
 };

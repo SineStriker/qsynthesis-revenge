@@ -16,7 +16,7 @@ QCssValueMap QCssValueMap::fromStringList(const QStringList &stringList) {
         auto eq = QMetaTypeUtils::FindFirstEqualSign(item);
         if (eq < 0)
             continue;
-        res.get().insert(QMBatch::removeSideQuote(item.left(eq).trimmed()),
+        res.get().insert(QMBatch::removeSideQuote(item.left(eq).trimmed(), true),
                          QMetaTypeUtils::StringToVariant(item.mid(eq + 1).trimmed()));
     }
     return res;

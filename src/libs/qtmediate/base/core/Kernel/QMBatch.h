@@ -15,7 +15,7 @@ namespace QMBatch {
      * @param token String
      * @return
      */
-    QMCORE_EXPORT QString removeSideQuote(const QString &token);
+    QMCORE_EXPORT QString removeSideQuote(const QString &token, bool escape = false);
 
     /**
      * @brief Convert a list of string to a list of int, skip if fail

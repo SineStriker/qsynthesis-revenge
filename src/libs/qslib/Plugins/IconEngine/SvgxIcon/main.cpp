@@ -7,6 +7,8 @@
 #include <qiodevice.h>
 #include <qstringlist.h>
 
+#include <QMCodec.h>
+
 #include "Common.h"
 
 class SvgxIconPlugin : public QIconEnginePlugin {
@@ -39,7 +41,7 @@ QIconEngine *SvgxIconPlugin::create(const QString &fileName) {
     // Handle file contents
     QByteArray svgContents[8];
     for (int i = 0; i < 8; ++i) {
-        const auto &item = files[i];
+        const auto &item = QMCodec::unescape(files[i]);
         if (item.isEmpty())
             continue;
 

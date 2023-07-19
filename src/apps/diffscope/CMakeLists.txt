@@ -13,7 +13,7 @@ ck_add_application(${PROJECT_NAME}
 
 # Set configration file variables
 set(APP_CONFIG_CORE_NAME "Core")
-set(APP_CONFIG_SPLASH_IMAGE "splash.png")
+set(APP_CONFIG_SPLASH_IMAGE "splash.svg")
 set(APP_CONFIG_PADDING 20)
 
 # Configure configuration file

@@ -1,6 +1,8 @@
 {
     "coreName": "@APP_CONFIG_CORE_NAME@",
     "splashImage": "@APP_CONFIG_SPLASH_IMAGE@",
+    "splashSize": [550, 320],
+    "resizable": true,
     "splashSettings": {
         "texts": {
             "_status": {

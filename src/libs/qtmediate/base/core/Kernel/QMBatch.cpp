@@ -6,15 +6,19 @@
 
 #include <cstdio>
 
+#include "QMCodec.h"
+
 namespace QMBatch {
 
-    QString removeSideQuote(const QString &token) {
+    QString removeSideQuote(const QString &token, bool escape) {
         auto str = token;
-        if (str.front() == '\"') {
+        if (str.front() == '\"' && str.back() == '\"') {
             str.remove(0, 1);
-        }
-        if (str.back() == '\"') {
             str.remove(str.size() - 1, 1);
+            if (escape) {
+                // str.replace(R"(\")", R"(")");
+                str = QMCodec::unescape(str);
+            }
         }
         return str;
     }
@@ -34,9 +38,9 @@ namespace QMBatch {
 
     QList<double> toDoubleList(const QStringList &list) {
         QList<double> res;
-        for (auto it = list.begin(); it != list.end(); ++it) {
+        for (const auto &it : list) {
             bool isNum;
-            int num = it->toDouble(&isNum);
+            int num = it.toDouble(&isNum);
             if (!isNum) {
                 return {};
             }
