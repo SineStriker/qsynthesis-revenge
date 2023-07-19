@@ -208,6 +208,7 @@ namespace Core {
             QApplication::translate("Core::CommandCategory", "Playback");
             QApplication::translate("Core::CommandCategory", "Help");
             QApplication::translate("Core::CommandCategory", "About");
+            QApplication::translate("Core::CommandCategory", "Edit Mode");
         }
 
     } // namespace Internal

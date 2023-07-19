@@ -16,6 +16,7 @@
 
 int main(int argc, char *argv[]) {
     QApplication a(argc, argv);
+    QApplication::setEffectEnabled(Qt::UI_AnimateCombo, false);
 
     QMAppExtension appExt;
 
@@ -146,17 +147,15 @@ QComboBox::drop-down
 
 QComboBox::down-arrow
 {
-    right:10px;
-    width: 9px;
-    height: 9px;
-    /* image: url(:); */
+    right: 10px;
+    width: 20px;
+    height: 20px;
+    image: svg(":/icons/chevron_down_16_filled.svg", blue);
 }
 
 QComboBox::down-arrow:on
 {
-    width: 9px;
-    height: 9px;
-    /* image: url(:); */
+    image: svg(":/icons/chevron_down_16_filled.svg", yellow);
 }
 
 QComboBox QScrollBar::vertical{

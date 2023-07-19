@@ -3,8 +3,8 @@
 #include "CDockTabBar.h"
 
 #include "../CDockFrame.h"
-#include "CDockFrame_p.h"
 #include "CDockCard_p.h"
+#include "CDockFrame_p.h"
 
 #include <QDrag>
 #include <QDragEnterEvent>
@@ -50,9 +50,8 @@ void CDockTabDragProxy::setFrame(CDockFrame *frame) {
 QList<CDockTabBar *> CDockTabDragProxy::tabBars() const {
     auto d = m_frame->d_func();
     return {
-        d->m_leftBar->firstBar(),   d->m_leftBar->secondBar(),   d->m_topBar->firstBar(),
-        d->m_topBar->secondBar(),   d->m_rightBar->firstBar(),   d->m_rightBar->secondBar(),
-        d->m_bottomBar->firstBar(), d->m_bottomBar->secondBar(),
+        d->m_leftBar->firstBar(),  d->m_leftBar->secondBar(),  d->m_topBar->firstBar(),    d->m_topBar->secondBar(),
+        d->m_rightBar->firstBar(), d->m_rightBar->secondBar(), d->m_bottomBar->firstBar(), d->m_bottomBar->secondBar(),
     };
 }
 
@@ -210,8 +209,11 @@ void CDockTabDragProxy::_q_tabDragOver() {
         if (bar->orientation() == Qt::Horizontal) {
             auto leftBar = bar->firstBar();
             auto rightBar = bar->secondBar();
-            int leftPos = bar->x() + leftBar->width();
-            int rightPos = bar->x() + bar->width() - rightBar->width();
+
+            int barX = bar->mapToGlobal({}).x();
+            int leftPos = barX + leftBar->width();
+            int rightPos = barX + bar->width() - rightBar->width();
+
             orgBar->removeCard(card);
             if (m_dragger->x() - leftPos < rightPos - (m_dragger->x() + m_dragger->width())) {
                 int index = cardAtWidget(leftBar, m_dragger);
@@ -223,8 +225,11 @@ void CDockTabDragProxy::_q_tabDragOver() {
         } else {
             auto topBar = bar->firstBar();
             auto bottomBar = bar->secondBar();
-            int topPos = bar->y() + topBar->height();
-            int bottomPos = bar->y() + bar->height() - bottomBar->height();
+
+            int barY = bar->mapToGlobal({}).y();
+            int topPos = barY + topBar->height();
+            int bottomPos = barY + bar->height() - bottomBar->height();
+
             orgBar->removeCard(card);
             if (m_dragger->y() - topPos < bottomPos - (m_dragger->y() + m_dragger->height())) {
                 int index = cardAtWidget(topBar, m_dragger);

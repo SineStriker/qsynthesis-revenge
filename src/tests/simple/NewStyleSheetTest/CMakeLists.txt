@@ -6,7 +6,7 @@ ck_add_test(${PROJECT_NAME} AUTOGEN)
 
 ck_target_components(${PROJECT_NAME}
     INCLUDE_CURRENT_PRIVATE
-    SOURCES ${_src}
+    SOURCES ${_src} res.qrc
     QT_LINKS Core Widgets
     QT_INCLUDES_PRIVATE Core Widgets
     LINKS QsFramework
