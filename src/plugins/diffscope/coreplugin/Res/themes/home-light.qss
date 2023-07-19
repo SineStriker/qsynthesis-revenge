@@ -89,8 +89,8 @@ Core--Internal--HomeRecentWidget>QSplitterHandle {
     --enabled: false;
 }
 
-Core--Internal--HomeRecentWidget::handle {
-    background-color: #666666;
+Core--Internal--HomeRecentWidget::handle { /* Dividing line for search box and list */ 
+    background-color: transparent;
     height: 1.25px;
 }
 
@@ -164,11 +164,11 @@ Core--Internal--HomeRecentBottomFrame>QsApi--TitleListWidget {
     border: none;
     background-color: transparent;
     --styleData: qmap(/* styleData */
-    background=qrect((transparent, #e8e8e8, rgb(0, 96, 192)), 0, 4px), /* Recent List Item Background (normal, hover, selected)*/
+    background=qrect((transparent, #e8e8e8, #d2d2d2), 0, 4px), /* Recent List Item Background (normal, hover, selected)*/
     underline=qpen(transparent, 1), /**/
-    titleShape=qfont((#616161, #616161, white), 15px), /* Recent List Item Title*/
-    subShape=qfont((#8d8d8d, #8d8d8d, rgba(255, 255, 255, 70%)), 15px), /* Recent List Item Subtitle*/
-    descShape=qfont((#8d8d8d, #8d8d8d, rgba(255, 255, 255, 70%)), 15px), /* Recent List Item Time*/
+    titleShape=qfont((#616161, #616161, #616161), 15px), /* Recent List Item Title*/
+    subShape=qfont((#8d8d8d, #8d8d8d, #8d8d8d), 15px), /* Recent List Item Subtitle*/
+    descShape=qfont((#8d8d8d, #8d8d8d, #8d8d8d), 15px), /* Recent List Item Time*/
     descHighlightShape=qfont(transparent, 15px), /**/
     descBackgroundShape=qrectstyle(transparent, (0, 0, 2px, 0)), /**/
     titleMargins=qmargins(1.25px, 10px), /**/

@@ -1,5 +1,257 @@
 /* Stylesheet Content */
 
 QWidget#project-window {
+    background-color: #f3f3f3;
+}
+
+QToolBar#main-toolbar {
+    ---spacing: 5px;
+    --iconSize: 20px 20px;
+    padding: 5px;
+}
+
+QToolBar#main-toolbar>QToolBarSeparator {
+    max-height: 18px;
+}
+
+QToolBar#main-toolbar::separator {
+    width: 2.5px;
+    margin: 0 5px;
+    background-color: rgba(255, 255, 255, 7.5%);
+}
+
+QToolBar#main-toolbar>QLabel {
+    padding: 5px;
+    font-weight: bold;
+    color: #333;
+}
+
+QToolBar#main-toolbar>QToolButton {
+    padding: 5px;
+    color: #424242;
+}
+
+QToolBar#main-toolbar>QToolButton {
+    padding: 5px;
+    border: none;
+    background-color: transparent;
+    color: #424242;
+}
+
+QToolBar#main-toolbar>QToolButton:hover {
+    color: #616161;
+    background-color: rgba(255, 255, 255, 15%);
+}
+
+QToolBar#main-toolbar>QToolButton:pressed {
+    color: #333;
+    background-color: rgba(255, 255, 255, 10%);
+}
+
+QToolBar#main-toolbar>QToolButton[selectable=true]:checked {
+    color: #333;
+    background-color: rgba(255, 255, 255, 20%);
+} 
+
+QsApi--SynthVSplitter#canvas>QsApi--SynthVSplitterHandle {
+    --handleHeight: 6px;
+}
+
+Core--Internal--FloatingTitleBar { /* Phoneme Panel */
+    --layoutMargins: qmargins(5px);
+    --layoutSpacing: 10px;
+    background-color: #ddd;
+}
+
+Core--Internal--FloatingTitleBarButton,
+Core--Internal--FloatingTitleBarButton:hover,
+Core--Internal--FloatingTitleBarButton:pressed {
+    --hintHeight: 4px;
+    --hintColor: #017FD4;
+    background-color: transparent;
+    padding: 0px;
+    border: none;
+    color: #424242;
+}
+
+Core--Internal--FloatingTitleBar>QToolButton {
+    --iconSize: 16px 16px;
+    color: #424242;
+    background-color: transparent;
+    border: none;
+    padding: 0;
+}
+
+Core--Internal--FloatingTitleBar>QToolButton#fold-button {
+    --icon: svg((":/svg/icons/chevron_right_16_filled.svg", up2=":/svg/icons/chevron_down_16_filled.svg"), auto);
+}
+
+Core--Internal--FloatingTitleBar>QToolButton#close-button {
+    --icon: svg(":/svg/icons/dismiss_16_filled.svg", auto);
+}
+
+QWidget[floating-panel=true] {
+    background-color: rgba(0, 0, 0, 40%);
+}
+
+
+/* PianoArea */
+
+Core--Internal--PianoKeyWidget {
+    --preferredWidth: 125px;
+    background-color: #333333;
+}
+
+Core--Internal--PianoKeyWidget>QLabel[type=standard] {
+    color: #333333;
+}
+
+Core--Internal--PianoKeyWidget>QLabel[type=realtime] {
+    color: black;
+    background-color: transparent;
+}
+
+Core--Internal--PianoKeyWidget>QLabel[type=realtime][black=true] {
+    color: white;
+}
+
+Core--Internal--PianoKey {
+    border: none;
+    margin: 1px 2px 1px 0;
+}
+
+Core--Internal--PianoKey[color=white] {
+    background-color: lightgrey;
+}
+
+Core--Internal--PianoKey[color=white]:hover {
+    background-color: #EFEFEF;
+}
+
+Core--Internal--PianoKey[color=black] {
+    background-color: black;
+}
+
+Core--Internal--PianoKey[color=black]:hover {
+    background-color: #535353;
+}
+
+
+/* SectionsArea */
+
+Core--Internal--SectionWidget {
+    --preferredHeight: 40px;
+    background-color: transparent;
+}
+
+QWidget#section-edit-popup {
     background-color: #1E1E1E;
+}
+
+QWidget#section-edit-popup>QComboBox,
+QWidget#section-edit-popup>QLineEdit {
+    padding: -1.5px 0;
+    border: 1px solid transparent;
+    color: #CCCCCC;
+    background-color: #3C3C3C;
+}
+
+QWidget#section-edit-popup>QComboBox:focus,
+QWidget#section-edit-popup>QLineEdit:focus {
+    border-color: #167FD2;
+}
+
+QWidget#section-edit-popup>QLabel {
+    color: #999999;
+    background-color: transparent;
+}
+
+QWidget#section-edit-popup>QComboBox QAbstractItemView {
+    background: #3C3C3C;
+    border: 1px solid #167FD2;
+}
+
+QWidget#section-edit-popup>QComboBox QAbstractItemView::item {
+    background-color: transparent;
+    color: #CCCCCC;
+}
+
+QWidget#section-edit-popup>QComboBox QAbstractItemView::item:hover {
+    background-color: rgba(255, 255, 255, 10%);
+    color: #FFFFFF;
+}
+
+QWidget#section-edit-popup>QComboBox QAbstractItemView::item:selected {
+    background-color: rgba(22, 127, 210, 50%);
+    color: #FFFFFF;
+}
+
+
+/* CCoupleTabBar */
+
+CDockFrame {
+    background-color: transparent;
+}
+
+CDockSideBar[highlight=false] {
+    background-color: transparent;
+}
+
+CDockSideBar[highlight=true] {
+    background-color: #f3f3f3;
+}
+
+CDockCard {
+    color: #333;
+    background-color: transparent;
+    border: 1px solid transparent;
+    border-radius: 0;
+    padding: 4px 8px;
+    --iconSize: 20px 20px;
+    --spaceRatio: 0.25;
+}
+
+CDockCard:checked {
+    color: #333;
+    background-color: #d2d2d2;
+}
+
+CDockCard:not(:checked):hover {
+    background-color: #d2d2d2;
+}
+
+CDockPanelSplitter:handle {
+    background-color: transparent;
+}
+
+CDockPanelSplitter:handle:horizontal {
+    width: 0;
+}
+
+CDockPanelSplitter:handle:vertical {
+    height: 0;
+}
+
+CDockPanel:handle {
+    background-color: transparent;
+}
+
+CDockPanel:handle:horizontal {
+    width: 0;
+}
+
+CDockPanel:handle:vertical {
+    height: 0;
+}
+
+
+/* Canvas */
+
+QsApi--SynthVSplitter#canvas>QScrollBar::handle:vertical {
+    min-height: 120px;
+}
+
+QsApi--SynthVSplitter#canvas>QScrollBar::handle:horizontal {
+    min-width: 120px;
+
 }
