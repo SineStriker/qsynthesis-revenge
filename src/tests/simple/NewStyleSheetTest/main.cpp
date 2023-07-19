@@ -1,18 +1,19 @@
 #include <QAction>
 #include <QApplication>
+#include <QComboBox>
 #include <QDebug>
+#include <QListView>
 #include <QMainWindow>
 #include <QMenu>
 #include <QMenuBar>
 #include <QMetaEnum>
-
-#include "QComboBox"
-#include <CTabButton.h>
-#include <QListView>
-#include <QMAppExtension.h>
-#include <QMDecoratorV2.h>
 #include <QStyledItemDelegate>
 #include <QVBoxLayout>
+
+#include <CCheckBox.h>
+#include <CTabButton.h>
+#include <QMAppExtension.h>
+#include <QMDecoratorV2.h>
 
 int main(int argc, char *argv[]) {
     QApplication a(argc, argv);
@@ -28,21 +29,38 @@ int main(int argc, char *argv[]) {
     auto comboBox1 = new QComboBox;
     comboBox1->setObjectName("test-comboBox");
     QStringList list1;
-    list1 << "test1" << "test2" << "test3" << "test4" << "test5"<< "test6"<< "test7" << "test8"<< "test9"<< "test10"<< "test11"<< "test12";
+    list1 << "test1"
+          << "test2"
+          << "test3"
+          << "test4"
+          << "test5"
+          << "test6"
+          << "test7"
+          << "test8"
+          << "test9"
+          << "test10"
+          << "test11"
+          << "test12";
     comboBox1->addItems(list1);
     comboBox1->setItemDelegate(new QStyledItemDelegate());
 
     auto comboBox2 = new QComboBox;
     comboBox2->setObjectName("test-comboBox");
     QStringList list2;
-    list2 << "test1" << "test2" << "test3";
+    list2 << "test1"
+          << "test2"
+          << "test3";
     comboBox2->addItems(list2);
     comboBox2->setItemDelegate(new QStyledItemDelegate());
+
+    auto checkBox1 = new CCheckBox();
+    checkBox1->setText("123");
 
     auto mainLayout = new QVBoxLayout;
     mainLayout->addWidget(button);
     mainLayout->addWidget(comboBox1);
     mainLayout->addWidget(comboBox2);
+    mainLayout->addWidget(checkBox1);
 
     auto mainWidget = new QWidget;
     mainWidget->setLayout(mainLayout);
@@ -183,6 +201,32 @@ QComboBox QScrollBar::add-line::vertical{
 }
 QComboBox QScrollBar::sub-line::vertical{
     border:none;
+}
+
+
+
+
+CCheckBox {
+    --layoutMargins: 0;
+    --layoutSpacing: 5px;
+}
+
+CCheckBox>QLabel#label {
+    color: blue;
+}
+
+CCheckBox>CToolButton#box {
+    padding: 0;
+    border-radius: 3px;
+    background-color: #3C3C3C;
+    border: 1px solid #3C3C3C;
+    --icon: svg(":/icons/check-line.svg", (up=transparent, up2=#FFFFFF));
+    --iconSize: 16px 16px;
+}
+
+CCheckBox>CToolButton#box:focus {
+    border-radius: 0;
+    border-color: #167FD2;
 }
 
 )"));
