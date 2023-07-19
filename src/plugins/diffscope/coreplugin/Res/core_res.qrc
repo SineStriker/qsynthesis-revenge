@@ -46,5 +46,12 @@
         <file>svg/icons/window_apps_16_filled.svg</file>
         <file>svg/icons/panel_separate_window_20_filled.svg</file>
         <file>svg/icons/panel_bottom_20_filled.svg</file>
+
+        <file>svg/icons-custom/cursor_24_filled.svg</file>
+        <file>svg/icons-custom/edit_24_filled.svg</file>
+        <file>svg/icons-custom/paint_brush_arrow_down_24_filled.svg</file>
+        <file>svg/icons-custom/pitch_anchor_24_filled.svg</file>
+        <file>svg/icons-custom/pitch_edit_24_filled.svg</file>
+
     </qresource>
 </RCC>
