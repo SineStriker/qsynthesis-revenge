@@ -27,6 +27,8 @@ public:
 protected:
     virtual void viewModeChanged(CDockCard::ViewMode viewMode);
 
+    void keyPressEvent(QKeyEvent *event) override;
+
 signals:
     void resizeMarginsChanged();
 

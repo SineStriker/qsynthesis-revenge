@@ -3,7 +3,12 @@
 
 #include "private/CDockCard_p.h"
 
+#include <QDebug>
 #include <QEvent>
+#include <QKeyEvent>
+
+#include <private/qapplication_p.h>
+#include <qpa/qwindowsysteminterface.h>
 
 CDockToolWindowPrivate::CDockToolWindowPrivate() {
     card = nullptr;
@@ -33,7 +38,8 @@ void CDockToolWindowPrivate::setCard(CDockCard *card) {
     this->card = card;
 }
 
-CDockToolWindow::CDockToolWindow(QWidget *parent) : CDockToolWindow(*new CDockToolWindowPrivate(), parent) {
+CDockToolWindow::CDockToolWindow(QWidget *parent)
+    : CDockToolWindow(*new CDockToolWindowPrivate(), parent) {
 }
 
 CDockToolWindow::~CDockToolWindow() {
@@ -69,7 +75,34 @@ QMenu *CDockToolWindow::createCardMenu() const {
 void CDockToolWindow::viewModeChanged(CDockCard::ViewMode viewMode) {
 }
 
-CDockToolWindow::CDockToolWindow(CDockToolWindowPrivate &d, QWidget *parent) : QWidget(parent), d_ptr(&d) {
+void CDockToolWindow::keyPressEvent(QKeyEvent *event) {
+    if (!isWindow())
+        return;
+
+    auto window = parentWidget() ? parentWidget()->window() : nullptr;
+    if (!window) {
+        return;
+    }
+
+    auto org = QApplicationPrivate::active_window;
+    QApplicationPrivate::active_window = window;
+
+    // QApplication::setActiveWindow(window);
+
+    if (!QWindowSystemInterface::handleShortcutEvent(
+            window->windowHandle(), event->timestamp(), event->key(), event->modifiers(),
+            event->nativeScanCode(), event->nativeVirtualKey(), event->nativeModifiers(),
+            event->text(), event->isAutoRepeat(), event->count())) {
+        // QApplication::setActiveWindow(this);
+    }
+
+    if (QApplicationPrivate::active_window == window) {
+        QApplicationPrivate::active_window = org;
+    }
+}
+
+CDockToolWindow::CDockToolWindow(CDockToolWindowPrivate &d, QWidget *parent)
+    : QWidget(parent), d_ptr(&d) {
     d.q_ptr = this;
 
     d.init();

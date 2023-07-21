@@ -146,7 +146,8 @@ QComboBox QAbstractItemView::item
     min-height: 24px;
     border-style: none;
     border-radius: 4px;
-    margin: 0px 4px 0px 4px
+    margin: 0px 4px 0px 4px;
+    padding: 10px;
 }
 
 QComboBox QAbstractItemView::item:hover

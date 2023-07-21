@@ -3,15 +3,16 @@
 #include <QMDecoratorV2.h>
 
 #include <QApplication>
+#include <QComboBox>
 #include <QDebug>
 #include <QDir>
 #include <QFontDatabase>
-
 #include <QFontDialog>
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QLabel>
 #include <QPushButton>
+#include <QStyledItemDelegate>
 #include <QVBoxLayout>
 
 namespace Core {
@@ -73,6 +74,12 @@ namespace Core {
                         dlg.setCurrentFont(initial);
                         if (!title.isEmpty())
                             dlg.setWindowTitle(title);
+
+                        auto combos = dlg.findChildren<QComboBox *>();
+                        for (auto combo : qAsConst(combos)) {
+                            qDebug() << combo;
+                            combo->setItemDelegate(new QStyledItemDelegate());
+                        }
 
                         // qApp->setFont(f);
 

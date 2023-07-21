@@ -53,9 +53,9 @@ QToolBar#main-toolbar>QToolButton[selectable=true]:checked {
 /* PianoRoll Toolbar */
 
 QToolBar#piano-roll-toolbar {
-    padding: 2px;
+    padding: 4px;
     ---spacing: 0;
-    --iconSize: 16px 16px;
+    --iconSize: 20px 20px;
     color: white;
 }
 
