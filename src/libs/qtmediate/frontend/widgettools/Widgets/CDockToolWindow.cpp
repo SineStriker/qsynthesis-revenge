@@ -8,6 +8,7 @@
 #include <QKeyEvent>
 
 #include <private/qapplication_p.h>
+#include <private/qshortcutmap_p.h>
 #include <qpa/qwindowsysteminterface.h>
 
 CDockToolWindowPrivate::CDockToolWindowPrivate() {
@@ -38,8 +39,7 @@ void CDockToolWindowPrivate::setCard(CDockCard *card) {
     this->card = card;
 }
 
-CDockToolWindow::CDockToolWindow(QWidget *parent)
-    : CDockToolWindow(*new CDockToolWindowPrivate(), parent) {
+CDockToolWindow::CDockToolWindow(QWidget *parent) : CDockToolWindow(*new CDockToolWindowPrivate(), parent) {
 }
 
 CDockToolWindow::~CDockToolWindow() {
@@ -73,36 +73,65 @@ QMenu *CDockToolWindow::createCardMenu() const {
 }
 
 void CDockToolWindow::viewModeChanged(CDockCard::ViewMode viewMode) {
+    Q_UNUSED(viewMode);
 }
 
-void CDockToolWindow::keyPressEvent(QKeyEvent *event) {
-    if (!isWindow())
-        return;
-
-    auto window = parentWidget() ? parentWidget()->window() : nullptr;
-    if (!window) {
-        return;
+class ShortcutFilter : public QObject {
+public:
+    ShortcutFilter(QWidget *org) : m_org(org), m_handled(false) {
     }
 
+    inline bool handled() const {
+        return m_handled;
+    }
+
+protected:
+    bool eventFilter(QObject *watched, QEvent *event) override {
+        if (event->type() == QEvent::Shortcut) {
+            QApplicationPrivate::active_window = m_org;
+            m_handled = true;
+        }
+        return QObject::eventFilter(watched, event);
+    }
+
+private:
+    QWidget *m_org;
+    bool m_handled;
+};
+
+void CDockToolWindow::keyPressEvent(QKeyEvent *event) {
+    auto card = this->card();
+
+    QWidget *window;
+    if (isWindow() && card && (window = card->window())) {
+        goto out;
+    }
+    event->ignore();
+    return;
+
+out:
+    event->accept();
+
+    // Hack `active_window` temporarily
     auto org = QApplicationPrivate::active_window;
     QApplicationPrivate::active_window = window;
 
-    // QApplication::setActiveWindow(window);
+    // Make sure to restore `active_window` right away if shortcut matches
+    ShortcutFilter filter(org);
+    qApp->installEventFilter(&filter);
 
-    if (!QWindowSystemInterface::handleShortcutEvent(
-            window->windowHandle(), event->timestamp(), event->key(), event->modifiers(),
-            event->nativeScanCode(), event->nativeVirtualKey(), event->nativeModifiers(),
-            event->text(), event->isAutoRepeat(), event->count())) {
-        // QApplication::setActiveWindow(this);
-    }
+    // Retransmit event
+    QKeyEvent keyEvent(QEvent::ShortcutOverride, event->key(), event->modifiers(), event->nativeScanCode(),
+                       event->nativeVirtualKey(), event->nativeModifiers(), event->text(), event->isAutoRepeat(),
+                       event->count());
+    QGuiApplicationPrivate::instance()->shortcutMap.tryShortcut(&keyEvent);
 
-    if (QApplicationPrivate::active_window == window) {
+    if (!filter.handled()) {
         QApplicationPrivate::active_window = org;
     }
 }
 
-CDockToolWindow::CDockToolWindow(CDockToolWindowPrivate &d, QWidget *parent)
-    : QWidget(parent), d_ptr(&d) {
+CDockToolWindow::CDockToolWindow(CDockToolWindowPrivate &d, QWidget *parent) : QWidget(parent), d_ptr(&d) {
     d.q_ptr = this;
 
     d.init();

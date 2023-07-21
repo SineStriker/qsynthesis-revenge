@@ -165,7 +165,10 @@ namespace Core::Internal {
             ICore::showHome(); //
         });
 
-        connect(findActionItem->action(), &QAction::triggered, this, [iWin]() {
+        connect(findActionItem->action(), &QAction::triggered, this, [iWin, win]() {
+            if (!win->isActiveWindow()){
+                QApplication::setActiveWindow(win);
+            }
             iWin->showAllActions(); //
         });
 

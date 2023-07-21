@@ -331,7 +331,7 @@ void CDockCard::setViewMode(CDockCard::ViewMode viewMode) {
             auto extraOffset =
                 m_viewMode == DockPinned ? QPoint{0, 0} : (m_widget->mapToGlobal({0, 0}) - m_widget->pos());
             layout->removeWidget(m_widget);
-            m_widget->setParent(m_container);
+            m_widget->setParent(nullptr);
             d->m_floatingHelper->setFloating(false);
             m_widget->setWindowFlags(Qt::Window);
             asWindow(size, extraOffset);
