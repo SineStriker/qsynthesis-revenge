@@ -516,7 +516,14 @@ void F0Widget::paintEvent(QPaintEvent *event) {
                 pen.setStyle(Qt::DashLine);
                 pen.setColor(NoteColors[0]);
                 painter.setPen(pen);
+                auto brush = painter.brush();
+                auto fillColor = NoteColors[i.value.isSlur];
+                fillColor.setAlphaF(0.35);
+                brush.setColor(fillColor);
+                brush.setStyle(Qt::SolidPattern);
+                painter.setBrush(brush);
                 painter.drawRect(rec);
+                painter.setBrush(Qt::NoBrush);
             }
             // rec.adjust(NotePadding, NotePadding, -NotePadding, -NotePadding);
             // painter.drawText(rec, Qt::AlignVCenter | Qt::AlignLeft, i.value.text);
