@@ -41,82 +41,82 @@ WorkThread::WorkThread(
 {}
 
 void WorkThread::run() {
-        emit oneInfo(QString("%1 started processing.").arg(m_filename));
+    emit oneInfo(QString("%1 started processing.").arg(m_filename));
 
-        auto fileInfo = QFileInfo(m_filename);
-        auto fileBaseName = fileInfo.completeBaseName();
-        auto fileDirName = fileInfo.absoluteDir().absolutePath();
-        auto outPath = m_outPath.isEmpty() ? fileDirName : m_outPath;
+    auto fileInfo = QFileInfo(m_filename);
+    auto fileBaseName = fileInfo.completeBaseName();
+    auto fileDirName = fileInfo.absoluteDir().absolutePath();
+    auto outPath = m_outPath.isEmpty() ? fileDirName : m_outPath;
 
-        initPlugins();
-        QsMedia::WaveArguments wa;
-        wa.sampleFormat = QsMedia::AV_SAMPLE_FMT_FLT;
-        auto succeed = m_decoder->open(m_filename, wa);
-        if (!succeed) {
-            emit oneError(QString("Error opening file! ") + m_filename);
-            return;
+    initPlugins();
+    QsMedia::WaveArguments wa;
+    wa.sampleFormat = QsMedia::AV_SAMPLE_FMT_FLT;
+    auto succeed = m_decoder->open(m_filename, wa);
+    if (!succeed) {
+        emit oneError(QString("Error opening file! ") + m_filename);
+        return;
+    }
+
+    auto wavFmt = m_decoder->Format();
+    int channels = wavFmt.Channels();
+    int sr = wavFmt.SampleRate();
+    int bits = wavFmt.BitsPerSample();
+    auto frames = m_decoder->TotalSamples();
+
+    auto total_size = frames * channels;
+
+    Slicer slicer(m_decoder, m_threshold, m_minLength, m_minInterval, m_hopSize, m_maxSilKept);
+    auto chunks = slicer.slice();
+
+    if (chunks.empty()) {
+        QString errmsg = QString("ValueError: The following conditions must be satisfied: (m_minLength >= m_minInterval >= m_hopSize) and (m_maxSilKept >= m_hopSize).");
+        emit oneError(errmsg);
+        return;
+    }
+
+    if (!QDir().mkpath(outPath)) {
+        QString errmsg = QString("Could not create directory %1.").arg(outPath);
+        emit oneError(errmsg);
+    }
+
+    bool isWriteError = false;
+    int idx = 0;
+    for (auto chunk : chunks) {
+        auto beginFrame = std::get<0>(chunk);
+        auto endFrame = std::get<1>(chunk);
+        auto frameCount = endFrame - beginFrame;
+        if ((beginFrame == endFrame) || (beginFrame > total_size) || (endFrame > total_size)) {
+            continue;
         }
+        qDebug() << "begin frame: " << beginFrame << " (" << 1.0 * beginFrame / sr << " seconds) " << '\n' << "end frame: " << endFrame << " (" << 1.0 * endFrame / sr << " seconds) "  << '\n';
 
-        auto wavFmt = m_decoder->Format();
-        int channels = wavFmt.Channels();
-        int sr = wavFmt.SampleRate();
-        int bits = wavFmt.BitsPerSample();
-        auto frames = m_decoder->TotalSamples();
-
-        auto total_size = frames * channels;
-
-        Slicer slicer(m_decoder, m_threshold, m_minLength, m_minInterval, m_hopSize, m_maxSilKept);
-        auto chunks = slicer.slice();
-
-        if (chunks.empty()) {
-            QString errmsg = QString("ValueError: The following conditions must be satisfied: (m_minLength >= m_minInterval >= m_hopSize) and (m_maxSilKept >= m_hopSize).");
-            emit oneError(errmsg);
-            return;
-        }
-
-        if (!QDir().mkpath(outPath)) {
-            QString errmsg = QString("Could not create directory %1.").arg(outPath);
-            emit oneError(errmsg);
-        }
-
-        bool write_error = false;
-        int idx = 0;
-        for (auto chunk : chunks) {
-            auto begin_frame = std::get<0>(chunk);
-            auto end_frame = std::get<1>(chunk);
-            auto frame_count = (qint64)(end_frame - begin_frame);
-            if ((begin_frame == end_frame) || (begin_frame > total_size) || (end_frame > total_size)) {
-                continue;
-            }
-            qDebug() << "begin frame: " << begin_frame << " (" << 1.0 * begin_frame / sr << " seconds) " << '\n' << "end frame: " << end_frame << " (" << 1.0 * end_frame / sr << " seconds) "  << '\n';
-
-            auto outFileName = QString("%1_%2.wav").arg(fileBaseName).arg(idx);
-            auto outFilePath = QDir(outPath).absoluteFilePath(outFileName);
+        auto outFileName = QString("%1_%2.wav").arg(fileBaseName).arg(idx);
+        auto outFilePath = QDir(outPath).absoluteFilePath(outFileName);
 
 #ifdef USE_WIDE_CHAR
-            auto outFilePathStr = outFilePath.toStdWString();
+        auto outFilePathStr = outFilePath.toStdWString();
 #else
-            auto outFilePathStr = outFilePath.toStdString();
+        auto outFilePathStr = outFilePath.toStdString();
 #endif
 
-            int sndfile_outputWaveFormat = determineSndFileFormat(m_outputWaveFormat);
-            SndfileHandle wf = SndfileHandle(outFilePathStr.c_str(), SFM_WRITE,
-                                             SF_FORMAT_WAV | sndfile_outputWaveFormat, channels, sr);
-            m_decoder->SetCurrentSample(0);
-            m_decoder->SkipSamples(begin_frame * channels);
-            std::vector<float> tmp((end_frame - begin_frame) * channels);
-            m_decoder->Read(tmp.data(), 0, tmp.size());
-            auto bytes_written = wf.write(tmp.data(), tmp.size());
-            if (bytes_written == 0) {
-                write_error = true;
-            }
-            idx++;
+        int sndfile_outputWaveFormat = determineSndFileFormat(m_outputWaveFormat);
+        SndfileHandle wf = SndfileHandle(outFilePathStr.c_str(), SFM_WRITE,
+                                         SF_FORMAT_WAV | sndfile_outputWaveFormat, channels, sr);
+        m_decoder->SetCurrentSample(0);
+        m_decoder->SkipSamples(beginFrame * channels);
+        std::vector<float> tmp(frameCount * channels);
+        m_decoder->Read(tmp.data(), 0, tmp.size());
+        auto bytesWritten = wf.write(tmp.data(), tmp.size());
+        if (bytesWritten == 0) {
+            isWriteError = true;
         }
-        if (write_error) {
-            QString errmsg = QString("Zero bytes written");
-            emit oneError(errmsg);
-            return;
-        }
+        idx++;
+    }
+    if (isWriteError) {
+        QString errmsg = QString("Zero bytes written");
+        emit oneError(errmsg);
+        return;
+    }
 
     emit oneFinished(m_filename);
 }
