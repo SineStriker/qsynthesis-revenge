@@ -17,7 +17,7 @@
 #include "qjsonstream.h"
 
 
-F0Widget::F0Widget(QWidget *parent) : QFrame(parent), draggingNoteInterval(0, 0) {
+F0Widget::F0Widget(QWidget *parent) : QFrame(parent), draggingNoteInterval(0, 0), contextMenuNoteInterval(0, 0, {}) {
     hasError = false;
     assert(FrequencyToMidiNote(440.0) == 69.0);
     assert(FrequencyToMidiNote(110.0) == 45.0);
@@ -34,10 +34,14 @@ F0Widget::F0Widget(QWidget *parent) : QFrame(parent), draggingNoteInterval(0, 0)
 
     noteMenu = new QMenu(this);
     noteMenuMergeLeft = new QAction("&Merge to left", noteMenu);
+    noteMenuToggleRest = new QAction("&Toggle Rest", noteMenu);
     noteMenu->addAction(noteMenuMergeLeft);
+    noteMenu->addAction(noteMenuToggleRest);
 
     bgMenu = new QMenu(this);
     bgMenuReloadSentence = new QAction("&Discard changes and reload current sentence");
+    bgMenu_CautionPrompt = new QAction("Use the following with caution");
+    bgMenuConvRestsToNormal = new QAction("Convert all Rests to normal notes");
     bgMenu_OptionPrompt = new QAction("Options");
     bgMenuSnapByDefault = new QAction("&Snap to piano keys by default");
     bgMenuShowPitchTextOverlay = new QAction("Show pitch text &overlay");
@@ -45,9 +49,14 @@ F0Widget::F0Widget(QWidget *parent) : QFrame(parent), draggingNoteInterval(0, 0)
     boldMenuItemFont.setBold(true);
     bgMenu_OptionPrompt->setFont(boldMenuItemFont);
     bgMenu_OptionPrompt->setDisabled(true);
+    bgMenu_CautionPrompt->setFont(boldMenuItemFont);
+    bgMenu_CautionPrompt->setDisabled(true);
     bgMenuShowPitchTextOverlay->setCheckable(true);
     bgMenuSnapByDefault->setCheckable(true);
     bgMenu->addAction(bgMenuReloadSentence);
+    bgMenu->addSeparator();
+    bgMenu->addAction(bgMenu_CautionPrompt);
+    bgMenu->addAction(bgMenuConvRestsToNormal);
     bgMenu->addSeparator();
     bgMenu->addAction(bgMenu_OptionPrompt);
     bgMenu->addAction(bgMenuSnapByDefault);
@@ -58,8 +67,10 @@ F0Widget::F0Widget(QWidget *parent) : QFrame(parent), draggingNoteInterval(0, 0)
     connect(verticalScrollBar, &QScrollBar::valueChanged, this, &F0Widget::onVerticalScroll);
 
     connect(noteMenuMergeLeft, &QAction::triggered, this, &F0Widget::mergeCurrentSlurToLeftNode);
+    connect(noteMenuToggleRest, &QAction::triggered, this, &F0Widget::toggleCurrentNoteRest);
 
-    connect(bgMenuReloadSentence, &QAction::triggered, [=]() { emit requestReloadSentence(); });
+    connect(bgMenuReloadSentence, &QAction::triggered, this, &F0Widget::requestReloadSentence);
+    connect(bgMenuConvRestsToNormal, &QAction::triggered, this, &F0Widget::convertAllRestsToNormal);
     connect(bgMenuShowPitchTextOverlay, &QAction::triggered, [=]() {
         showPitchTextOverlay = bgMenuShowPitchTextOverlay->isChecked();
         update();
@@ -327,6 +338,19 @@ double F0Widget::timeOnWidgetX(int x) const {
     return centerTime - w / 2 / secondWidth + (x - KeyWidth) / secondWidth;
 }
 
+void F0Widget::setNoteContextMenuEntriesEnabled() {
+    auto noteInterval = contextMenuNoteInterval;
+    // auto leftIntervals = midiIntervals.findOverlappingIntervals({noteInterval.low - 0.1, noteInterval.low}, false);
+    auto rightIntervals = midiIntervals.findOverlappingIntervals({noteInterval.high, noteInterval.high + 0.1}, false);
+
+    // Only slurs can be merged to left
+    noteMenuMergeLeft->setEnabled(noteInterval.value.isSlur);
+
+    // If a note has slurs following, it cannot be converted to a rest. If it has no notes following, it can be.
+    noteMenuToggleRest->setEnabled(rightIntervals.empty() ||
+                                   (!rightIntervals.empty() && !rightIntervals.front().value.isSlur));
+}
+
 void F0Widget::splitNoteUnderMouse() {
     MiniNoteInterval noteInterval{-1, -1};
     auto cursorPos = mapFromGlobal(QCursor::pos());
@@ -379,14 +403,21 @@ void F0Widget::setDraggedNotePitch(int pitch) {
     midiIntervals.insert(intervals[0]);
 }
 
+void F0Widget::convertAllRestsToNormal() {
+    for (auto &i : midiIntervals.intervals()) {
+        if (i.value.isRest) {
+            midiIntervals.remove(i);
+            i.value.isRest = false;
+            midiIntervals.insert(i);
+        }
+    }
+    update();
+}
+
 void F0Widget::mergeCurrentSlurToLeftNode(bool checked) {
     Q_UNUSED(checked);
 
-    auto ctxintervals = midiIntervals.findOverlappingIntervals(
-        {std::get<0>(contextMenuNoteInterval), std::get<1>(contextMenuNoteInterval)}, false);
-    if (ctxintervals.empty())
-        return;
-    auto noteInterval = ctxintervals[0];
+    auto noteInterval = contextMenuNoteInterval;
 
     auto intervals = midiIntervals.findOverlappingIntervals({noteInterval.low - 0.1, noteInterval.low}, false);
     if (intervals.empty())
@@ -402,6 +433,15 @@ void F0Widget::mergeCurrentSlurToLeftNode(bool checked) {
     midiIntervals.insert(leftNode);
     update();
 };
+
+void F0Widget::toggleCurrentNoteRest() {
+    auto noteInterval = contextMenuNoteInterval;
+
+    midiIntervals.remove(noteInterval);
+    noteInterval.value.isRest = !noteInterval.value.isRest;
+    midiIntervals.insert(noteInterval);
+    update();
+}
 
 void F0Widget::paintEvent(QPaintEvent *event) {
     QPainter painter(this);
@@ -563,11 +603,9 @@ void F0Widget::paintEvent(QPaintEvent *event) {
         w += KeyWidth;
 
         // Debug text
-        if (showPitchTextOverlay)
-        {
+        if (showPitchTextOverlay) {
             auto mousePos = mapFromGlobal(QCursor::pos());
-            auto mousePitch = centerPitch + h / 2 / semitoneHeight -
-                              (mousePos.y() - TimelineHeight) / semitoneHeight;
+            auto mousePitch = centerPitch + h / 2 / semitoneHeight - (mousePos.y() - TimelineHeight) / semitoneHeight;
             painter.setPen(Qt::white);
             painter.drawText(KeyWidth, TimelineHeight,
                              QString("CenterPitch %1 (%2)  LowestPitch %3 (%4) MousePitch %5 MousePos (%6, %7)")
@@ -587,7 +625,8 @@ void F0Widget::paintEvent(QPaintEvent *event) {
             lowestPitch++;
             lowestPitchY -= semitoneHeight;
 
-            if (lowestPitch < 21) continue;
+            if (lowestPitch < 21)
+                continue;
 
             auto rec = QRectF(0, lowestPitchY, 60.0, semitoneHeight);
             auto color = keyColor[lowestPitch % 12];
@@ -674,7 +713,8 @@ void F0Widget::mouseMoveEvent(QMouseEvent *event) {
                 if (draggingMode == Note) {
                     // Drag note
                     draggingNoteInCents = event->modifiers() & Qt::ShiftModifier;
-                    if (!snapToKey) draggingNoteInCents = !draggingNoteInCents;
+                    if (!snapToKey)
+                        draggingNoteInCents = !draggingNoteInCents;
                 }
                 update();
             } else if (draggingButton == Qt::RightButton) {
@@ -735,8 +775,9 @@ void F0Widget::mouseReleaseEvent(QMouseEvent *event) {
 
 void F0Widget::contextMenuEvent(QContextMenuEvent *event) {
     MiniNoteInterval noteInterval{-1, -1};
-    if (mouseOnNote(event->pos(), &noteInterval) && !noteInterval.value.isRest && noteInterval.value.isSlur) {
-        contextMenuNoteInterval = {noteInterval.low, noteInterval.high};
+    if (mouseOnNote(event->pos(), &contextMenuNoteInterval)) {
+        // Has to determine whether some actions should be enabled
+        setNoteContextMenuEntriesEnabled();
         noteMenu->exec(event->globalPos());
     } else if (QRectF(KeyWidth, TimelineHeight, width() - KeyWidth - ScrollBarWidth, height() - TimelineHeight)
                    .contains(event->pos())) {

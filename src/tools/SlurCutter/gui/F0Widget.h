@@ -53,12 +53,22 @@ protected:
     // Convenience methods
     double pitchOnWidgetY(int y) const;
     double timeOnWidgetX(int x) const;
+    void setNoteContextMenuEntriesEnabled();
 
     // Data manipulation methods
     void splitNoteUnderMouse();
     void shiftDraggedNoteByPitch(double pitchDelta);
     void setDraggedNotePitch(int pitch);
-    Q_SLOT void mergeCurrentSlurToLeftNode(bool checked);
+
+protected slots:
+    // Data manip (global)
+    void convertAllRestsToNormal();
+
+    // (Note)
+    void mergeCurrentSlurToLeftNode(bool checked);
+    void toggleCurrentNoteRest();
+
+protected:
 
     // Events
     void paintEvent(QPaintEvent *event) override;
@@ -112,7 +122,8 @@ protected:
     // Data Manipulation State
     QPoint draggingStartPos = {-1, -1};
     Qt::MouseButton draggingButton = Qt::MouseButton::NoButton;
-    std::tuple<double, double> draggingNoteInterval, contextMenuNoteInterval;
+    std::tuple<double, double> draggingNoteInterval;
+    MiniNoteInterval contextMenuNoteInterval;
     enum {
         None,
         Note
@@ -127,11 +138,14 @@ protected:
     QMenu *bgMenu;
     QAction *bgMenuReloadSentence;
     QAction *bgMenu_OptionPrompt;
+    QAction *bgMenu_CautionPrompt;
     QAction *bgMenuSnapByDefault;
     QAction *bgMenuShowPitchTextOverlay;
+    QAction *bgMenuConvRestsToNormal;
 
     QMenu *noteMenu;
     QAction *noteMenuMergeLeft;
+    QAction *noteMenuToggleRest;
 
 private:
     // Private unified methods
