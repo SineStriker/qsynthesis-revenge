@@ -345,10 +345,6 @@ void F0Widget::setNoteContextMenuEntriesEnabled() {
 
     // Only slurs can be merged to left
     noteMenuMergeLeft->setEnabled(noteInterval.value.isSlur);
-
-    // If a note has slurs following, it cannot be converted to a rest. If it has no notes following, it can be.
-    noteMenuToggleRest->setEnabled(rightIntervals.empty() ||
-                                   (!rightIntervals.empty() && !rightIntervals.front().value.isSlur));
 }
 
 void F0Widget::splitNoteUnderMouse() {
