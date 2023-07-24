@@ -2,8 +2,6 @@
 #include <vector>
 #include <tuple>
 #include <string>
-#include <filesystem>
-#include <sstream>
 #include <sndfile.hh>
 
 #include <QFile>
@@ -43,22 +41,13 @@ WorkThread::WorkThread(
 {}
 
 void WorkThread::run() {
-    try {
         emit oneInfo(QString("%1 started processing.").arg(m_filename));
 
-#ifdef USE_WIDE_CHAR
-        std::wstring filename = m_filename.toStdWString();
+        auto fileInfo = QFileInfo(m_filename);
+        auto fileBaseName = fileInfo.completeBaseName();
+        auto fileDirName = fileInfo.absoluteDir().absolutePath();
+        auto outPath = m_outPath.isEmpty() ? fileDirName : m_outPath;
 
-        auto path = std::filesystem::absolute(filename);
-        auto out = m_outPath.isEmpty() ? path.parent_path() : std::filesystem::path(m_outPath.toStdWString());
-#else
-        std::string filename = m_filename.toStdString();
-
-        auto path = std::filesystem::absolute(filename);
-        auto out = m_outPath.isEmpty() ? path.parent_path() : std::filesystem::path(m_outPath.toStdString());
-#endif
-        auto pathh = QDir(m_filename).absolutePath();
-        auto dirname = QFileInfo(m_filename).absolutePath();
         initPlugins();
         QsMedia::WaveArguments wa;
         wa.sampleFormat = QsMedia::AV_SAMPLE_FMT_FLT;
@@ -85,8 +74,9 @@ void WorkThread::run() {
             return;
         }
 
-        if (!std::filesystem::exists(out)) {
-            std::filesystem::create_directories(out);
+        if (!QDir().mkpath(outPath)) {
+            QString errmsg = QString("Could not create directory %1.").arg(outPath);
+            emit oneError(errmsg);
         }
 
         bool write_error = false;
@@ -99,19 +89,18 @@ void WorkThread::run() {
                 continue;
             }
             qDebug() << "begin frame: " << begin_frame << " (" << 1.0 * begin_frame / sr << " seconds) " << '\n' << "end frame: " << end_frame << " (" << 1.0 * end_frame / sr << " seconds) "  << '\n';
+
+            auto outFileName = QString("%1_%2.wav").arg(fileBaseName).arg(idx);
+            auto outFilePath = QDir(outPath).absoluteFilePath(outFileName);
+
 #ifdef USE_WIDE_CHAR
-            std::wstringstream ss;
-            ss << std::filesystem::path(filename).stem().wstring() << L"_" << idx << L".wav";
-            std::filesystem::path out_file_path = out / ss.str();
-            std::wstring out_file_path_str = out_file_path.wstring();
+            auto outFilePathStr = outFilePath.toStdWString();
 #else
-            std::stringstream ss;
-            ss << std::filesystem::path(filename).stem().string() << "_" << idx << ".wav";
-            std::filesystem::path out_file_path = out / ss.str();
-            std::string out_file_path_str = out_file_path.string();
+            auto outFilePathStr = outFilePath.toStdString();
 #endif
+
             int sndfile_outputWaveFormat = determineSndFileFormat(m_outputWaveFormat);
-            SndfileHandle wf = SndfileHandle(out_file_path_str.c_str(), SFM_WRITE,
+            SndfileHandle wf = SndfileHandle(outFilePathStr.c_str(), SFM_WRITE,
                                              SF_FORMAT_WAV | sndfile_outputWaveFormat, channels, sr);
             m_decoder->SetCurrentSample(0);
             m_decoder->SkipSamples(begin_frame * channels);
@@ -128,12 +117,6 @@ void WorkThread::run() {
             emit oneError(errmsg);
             return;
         }
-    }
-    catch (const std::filesystem::filesystem_error& err) {
-        QString errmsg = QString("Filesystem error: %1").arg(err.what());
-        emit oneError(errmsg);
-        return;
-    }
 
     emit oneFinished(m_filename);
 }
