@@ -7,6 +7,7 @@
 namespace ScriptMgr::Internal {
 
     class ScriptMgrAddOn;
+    class JsLoaderObject;
 
     class JsInternalObject : public QObject {
         Q_OBJECT
@@ -18,6 +19,7 @@ namespace ScriptMgr::Internal {
         QString msgBox(const QString &title, const QString &message, const QString &icon, const QStringList &buttons, const QString &defaultButton) const;
         QJSValue form(const QString &title, const QVariantList &widgets, QJSValue listener) const;
     protected:
+        friend class JsLoaderObject;
         ScriptMgrAddOn *addOn;
     };
 

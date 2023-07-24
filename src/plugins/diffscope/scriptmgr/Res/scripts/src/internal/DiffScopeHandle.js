@@ -57,6 +57,11 @@ export class DiffScopeHandle {
         this.project = {};
 
         this.utils = {};
+
+        this.ext = {};
+        for(let extHandleName of __q_loader.handleExtList()) {
+            this.ext[extHandleName] = __q_loader.getHandleExt(extHandleName, internal);
+        }
     }
 
 }

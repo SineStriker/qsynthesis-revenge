@@ -56,10 +56,13 @@ namespace ScriptMgr {
             auto winMgr = ICore::instance()->windowSystem();
             winMgr->addAddOn("project", &ScriptMgrAddOn::staticMetaObject);
 
+            Core::ILoader::instance()->addObject("ScriptMgr.ScriptLoader", ScriptLoader::instance());
+
             return true;
         }
 
         void ScriptMgrPlugin::extensionsInitialized() {
+            Core::ILoader::instance()->removeObjects("ScriptMgr.ScriptLoader");
         }
 
         bool ScriptMgrPlugin::delayedInitialize() {

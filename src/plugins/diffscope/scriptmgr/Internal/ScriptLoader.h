@@ -1,6 +1,8 @@
 #ifndef CHORUSKIT_SCRIPTLOADER_H
 #define CHORUSKIT_SCRIPTLOADER_H
 
+#include <Window/IProjectWindow.h>
+
 #include <QJSEngine>
 
 namespace ScriptMgr::Internal {
@@ -49,6 +51,8 @@ namespace ScriptMgr::Internal {
 
         QMap<QString, QKeySequence> cachedCustomShortcuts() const;
 
+        Q_INVOKABLE void setHandleExtension(const QString &name, QObject *extFactory);
+
     signals:
         void engineWillReload();
         void engineReloaded();
@@ -87,6 +91,8 @@ namespace ScriptMgr::Internal {
         QMap<QString, QString> scriptNameDict;
 
         QMap<QString, QKeySequence> m_cachedCustomShortcuts;
+
+        QMap<QString, QObject *> m_extFactoryDict;
     };
 
 } // Internal

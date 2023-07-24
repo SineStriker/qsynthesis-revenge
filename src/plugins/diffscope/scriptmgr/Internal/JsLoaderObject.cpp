@@ -6,6 +6,8 @@
 
 #include "JsUtils.h"
 #include "ScriptLoader.h"
+#include "JsInternalObject.h"
+#include "AddOn/ScriptMgrAddOn.h"
 
 
 namespace ScriptMgr::Internal {
@@ -40,5 +42,14 @@ namespace ScriptMgr::Internal {
             "Warning",
             {"Yes", "No"},
             "No") == "No";
+    }
+    QStringList JsLoaderObject::handleExtList() const {
+        return m_loader->m_extFactoryDict.keys();
+    }
+    QJSValue JsLoaderObject::getHandleExt(const QString &name, const QJSValue &internalObjectJSValue) const {
+        auto win = qobject_cast<JsInternalObject *>(internalObjectJSValue.toQObject())->addOn->windowHandle()->cast<Core::IProjectWindow>();
+        QJSValue handleExt;
+        QMetaObject::invokeMethod(m_loader->m_extFactoryDict[name], "create", Q_RETURN_ARG(QJSValue, handleExt), Q_ARG(QObject *, win));
+        return handleExt;
     }
 } // Internal

@@ -1,6 +1,8 @@
 #ifndef CHORUSKIT_JSLOADEROBJECT_H
 #define CHORUSKIT_JSLOADEROBJECT_H
 
+#include <QJSValue>
+#include <QMap>
 #include <QObject>
 
 namespace ScriptMgr::Internal {
@@ -18,6 +20,9 @@ namespace ScriptMgr::Internal {
         QString getLang() const;
         QString coreMsgBox(const QString &title, const QString &message, const QString &icon, const QStringList &buttons, const QString &defaultButton) const;
         bool versionMismatchWarning(const QString &id, const QString &requiredVersion) const;
+
+        QStringList handleExtList() const;
+        QJSValue getHandleExt(const QString &name, const QJSValue &internalObjectJSValue) const;
     private:
         friend class ScriptLoader;
         JsLoaderObject(ScriptLoader *loader);
