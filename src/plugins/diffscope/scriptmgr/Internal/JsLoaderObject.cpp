@@ -49,7 +49,11 @@ namespace ScriptMgr::Internal {
     QJSValue JsLoaderObject::getHandleExt(const QString &name, const QJSValue &internalObjectJSValue) const {
         auto win = qobject_cast<JsInternalObject *>(internalObjectJSValue.toQObject())->addOn->windowHandle()->cast<Core::IProjectWindow>();
         QJSValue handleExt;
-        QMetaObject::invokeMethod(m_loader->m_extFactoryDict[name], "create", Q_RETURN_ARG(QJSValue, handleExt), Q_ARG(QObject *, win));
+        if(!QMetaObject::invokeMethod(m_loader->m_extFactoryDict[name], "create", Q_RETURN_ARG(QJSValue, handleExt), Q_ARG(QObject *, win))) {
+            m_loader->engine()->throwError(QString("Cannot create handle extension '%1'.").arg(name));
+        } else {
+            qDebug() << "JsLoaderObject: Handle extension created" << name;
+        }
         return handleExt;
     }
 } // Internal

@@ -137,7 +137,7 @@ namespace ScriptMgr {
             scriptActionContext.reset(new QWidget);
             createScriptActions(ScriptLoader::instance()->builtInScriptEntries());
             createScriptActions(ScriptLoader::instance()->scriptEntries());
-            qDebug() << scriptActionContext.data()->actions();
+//            qDebug() << scriptActionContext.data()->actions();
             windowHandle()->addShortcutContext(scriptActionContext.data(), IWindow::Mutable);
         }
 

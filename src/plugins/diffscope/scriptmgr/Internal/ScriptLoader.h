@@ -51,7 +51,7 @@ namespace ScriptMgr::Internal {
 
         QMap<QString, QKeySequence> cachedCustomShortcuts() const;
 
-        Q_INVOKABLE void setHandleExtension(const QString &name, QObject *extFactory);
+        Q_INVOKABLE bool setHandleExtension(const QString &name, QObject *extFactory);
 
     signals:
         void engineWillReload();

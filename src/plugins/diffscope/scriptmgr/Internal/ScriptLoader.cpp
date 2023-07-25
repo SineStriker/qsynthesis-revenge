@@ -223,8 +223,11 @@ namespace ScriptMgr::Internal {
     QMap<QString, QKeySequence> ScriptLoader::cachedCustomShortcuts() const {
         return m_cachedCustomShortcuts;
     }
-    void ScriptLoader::setHandleExtension(const QString &name, QObject *extFactory) {
+    bool ScriptLoader::setHandleExtension(const QString &name, QObject *extFactory) {
+        if(m_extFactoryDict.contains(name)) return false;
         m_extFactoryDict.insert(name, extFactory);
+        qDebug() << "ScriptLoader: Handle extension added" << name;
+        return true;
     }
 
 }

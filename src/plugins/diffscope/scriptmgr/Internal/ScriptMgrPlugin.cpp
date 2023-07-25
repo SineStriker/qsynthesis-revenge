@@ -62,7 +62,6 @@ namespace ScriptMgr {
         }
 
         void ScriptMgrPlugin::extensionsInitialized() {
-            Core::ILoader::instance()->removeObjects("ScriptMgr.ScriptLoader");
         }
 
         bool ScriptMgrPlugin::delayedInitialize() {
