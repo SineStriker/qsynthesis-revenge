@@ -110,12 +110,12 @@ QComboBox::down-arrow
     right: 10px;
     width: 20px;
     height: 20px;
-    image: svg(":/icons/chevron_down_16_filled.svg", #333);
+    image: svg(":/svg/icons/chevron_down_16_filled.svg", #616161);
 }
 
 QComboBox::down-arrow:on
 {
-    image: svg(":/icons/chevron_down_16_filled.svg", #333);
+    image: svg(":/svg/icons/chevron_down_16_filled.svg", #616161);
 }
 
 QComboBox QScrollBar::vertical{
