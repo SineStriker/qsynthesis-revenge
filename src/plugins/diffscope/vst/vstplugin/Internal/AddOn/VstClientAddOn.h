@@ -22,9 +22,6 @@ namespace Vst::Internal {
         void showWindow() const;
         void hideWindow() const;
         bool isWindowHidden() const;
-
-    private:
-        friend class VstBridge;
     };
 
 } // namespace Vst::Internal

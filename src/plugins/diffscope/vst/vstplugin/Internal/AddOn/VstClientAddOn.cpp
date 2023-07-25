@@ -7,7 +7,7 @@
 #include <CoreApi/IWindow.h>
 #include <ICore.h>
 
-#include "VstBridge.h"
+#include "VstHelper.h"
 #include "Window/IProjectWindow.h"
 
 namespace Vst::Internal {
@@ -16,16 +16,16 @@ namespace Vst::Internal {
     }
 
     VstClientAddOn::~VstClientAddOn() {
-        if(VstBridge::instance()->m_clientAddOn == this) {
-            VstBridge::instance()->m_clientAddOn = nullptr;
+        if(VstHelper::instance()->addOn == this) {
+            VstHelper::instance()->addOn = nullptr;
         }
     }
 
     void VstClientAddOn::initialize() {
         auto iWin = windowHandle()->cast<Core::IProjectWindow>();
         if(!iWin->doc()->isVST()) return;
-        if(!VstBridge::instance()->m_clientAddOn) {
-            VstBridge::instance()->m_clientAddOn = this;
+        if(!VstHelper::instance()->addOn) {
+            VstHelper::instance()->addOn = this;
         }
     }
 

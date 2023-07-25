@@ -11,15 +11,11 @@ class QLocalSocket;
 
 namespace Vst::Internal {
 
-    const QString GLOBAL_UUID = "77F6E993-671E-4283-99BE-C1CD1FF5C09E";
-
-    class VstClientPlugin;
-    class VstClientAddOn;
+    class VstHelper;
 
     class VstBridge: public VstBridgeSource {
         Q_OBJECT
-        friend class VstClientPlugin;
-        friend class VstClientAddOn;
+        friend class VstHelper;
         explicit VstBridge(QObject *parent = nullptr);
     public:
 
@@ -42,9 +38,6 @@ namespace Vst::Internal {
 
     private:
         QLocalSocket *m_alivePipe;
-        VstClientAddOn *m_clientAddOn = nullptr;
-        bool m_isLoadFromInitialization = false;
-        void handleRemoteCommand() const;
     };
 
 } // Vst
