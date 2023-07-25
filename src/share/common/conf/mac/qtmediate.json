@@ -3,7 +3,7 @@
     "Libraries": "Frameworks",
     "Share": "Resources",
     "Plugins": [
-        "Frameworks/QsLib/plugins"
+        "Frameworks/ChorusKit/plugins"
     ],
     "Translations": [
         "Resources/ChorusKit/translations"
