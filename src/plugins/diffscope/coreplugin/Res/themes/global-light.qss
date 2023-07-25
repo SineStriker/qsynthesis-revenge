@@ -32,6 +32,11 @@ QPushButton:disabled {
     background-color: #e0e0e0;
 }
 
+QPushButton:checked {
+    background-color: #0060C0;
+    color: #fff;
+}
+
 QLineEdit {
     border: 1px solid #d4d4d4;
     border-radius: 4px;
@@ -216,16 +221,13 @@ QScrollBar::sub-line::horizontal{
     border:none;
 }
 
-CWindowBarV2>CToolButton#icon-button {
-    --icon: svg(":/svg/app/diffsinger.svg");
-}
-
 /* ListView */
 QListView {
     background-color: #fff;
     border: 1px solid #d4d4d4;
     border-radius: 4px;
     color: #616161;
+    padding: 4px 0px 4px 0px
 }
 
 QListView::item
@@ -246,6 +248,116 @@ QListView::item:selected
 {
     background-color: #0060C0;
     color: #fff;
+}
+
+/* TreeView */
+
+QTreeView {
+    background-color: #fff;
+    border: 1px solid #d4d4d4;
+    border-radius: 4px;
+    color: #616161;
+    /* padding: 4px 0px 4px 0px */
+}
+
+QTreeView::item
+{
+    border-style: none;
+    /* border-radius: 4px; */
+    /* margin: 0px 4px 0px 4px; */
+    padding: 4px;
+    color: #616161;
+}
+
+QTreeView::item:hover
+{
+    background-color: #f6f6f6;
+}
+
+QTreeView::item:selected
+{
+    background-color: #0060C0;
+    color: #fff;
+}
+
+/* QTreeView::branch:closed:has-children:!has-siblings,
+QTreeView::branch:closed:has-children:has-siblings {
+    border-image: none;
+    width: 10px;
+    height: 10px;
+    image: svg(":/svg/icons/chevron_right_16_filled.svg", #616161);
+}
+ 
+ 
+QTreeView::branch:open:has-children:!has-siblings,
+QTreeView::branch:open:has-children:has-siblings  {
+    border-image: none;
+    image: svg(":/svg/icons/chevron_down_16_filled.svg", #616161);
+} */
+
+/* QTreeView > QHeaderView {
+    background-color: red;
+} */
+
+QTreeView QHeaderView::section {
+    border: 1px solid transparent;
+    /* border-left-color: #d4d4d4; */
+    border-right-color: #d4d4d4;
+    /* background-color: #fff; */
+    background-color: transparent;
+    /* border-radius: 4px; */
+    padding: 2px;
+    color: #333;
+}
+
+QTreeView QHeaderView::section:hover {
+    background-color: #f6f6f6;
+}
+
+QDialog {
+    background-color: #fff;
+}
+
+QLabel {
+    color: #333;
+}
+
+QProgressBar {
+    background-color:#FFFFFF;
+    color:#808080;
+    border-style: none;
+    border-radius: 4px;
+    border: 1px solid #d4d4d4;
+    text-align:center;
+}
+
+QProgressBar::chunk {
+    background-color: #0060C0;
+    border-radius: 4px;
+}
+
+/* GroupBox */
+
+QGroupBox {
+    margin-top: 8px;
+    padding: 2px 1px 1px 1px;
+    border-radius: 4px;
+    border: 1px solid #d4d4d4;
+}
+
+QGroupBox::title {
+    subcontrol-origin: margin;
+    subcontrol-position: top left;
+    left: 8px;
+    margin: 0 2px 0 2px;
+}
+QGroupBox:flat {
+    border-color: transparent;
+}
+
+
+CWindowBarV2>CToolButton#icon-button {
+    --icon: svg(":/svg/app/diffsinger.svg");
 }
 
 /* Menu Bar */
@@ -320,6 +432,35 @@ QMenu[core-style=true]::separator {
     margin: 6px 0;
 }
 
+QSplitter {
+    background-color: transparent;
+    border: none;
+}
+
+QSplitter::handle {
+	/* image: ; */
+    background-color: #d4d4d4;
+    margin: 0px 4px;
+}
+
+/* QSplitter::handle:hover {
+    background: green;
+} */
+
+QSplitter::handle:pressed {
+	
+	background-color:#0060C0;
+}
+
+QSplitter::handle:horizontal {
+    width: 4px;
+    /* image: ; */
+}
+
+QSplitter::handle:vertical {
+    height: 4px;
+    /* image: ; */
+}
 
 /* QScrollBar */
 

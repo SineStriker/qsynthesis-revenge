@@ -145,7 +145,7 @@ QWidget[floating-panel=true] {
 
 Core--Internal--PianoKeyWidget {
     --preferredWidth: 125px;
-    background-color: #333333;
+    background-color: #d4d4d4;
 }
 
 Core--Internal--PianoKeyWidget>QLabel[type=standard] {
