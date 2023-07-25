@@ -7,9 +7,9 @@
 
 #include <QMDecoratorV2.h>
 
-#include "JsInternalObject.h"
-#include "JsLoaderObject.h"
-#include "ScriptSettingsPage.h"
+#include "Internal/Objects/JsInternalObject.h"
+#include "Internal/Objects/JsLoaderObject.h"
+#include "Internal/Settings/ScriptSettingsPage.h"
 
 #define CHECK_ENGINE(ret) \
 if(m_engine.isNull()) { \

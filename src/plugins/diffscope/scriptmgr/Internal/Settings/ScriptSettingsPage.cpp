@@ -13,10 +13,10 @@
 #include <QStandardPaths>
 #include <QTreeWidget>
 
-#include <CoreApi/ILoader.h>
+#include "CoreApi/ILoader.h"
 #include <QKeySequenceEdit>
 
-#include "JsMacros.h"
+#include "Internal/Utils/JsMacros.h"
 #include "ScriptLoader.h"
 
 namespace ScriptMgr::Internal {

@@ -11,8 +11,8 @@
 
 #include "QMEqualBoxLayout.h"
 
-#include "JsInternalObject.h"
-#include "JsMacros.h"
+#include "Internal/Objects/JsInternalObject.h"
+#include "Internal/Utils/JsMacros.h"
 
 namespace ScriptMgr::Internal {
 

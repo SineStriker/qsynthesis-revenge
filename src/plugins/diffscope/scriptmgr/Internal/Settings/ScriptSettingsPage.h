@@ -1,7 +1,7 @@
 #ifndef CHORUSKIT_SCRIPTSETTINGSPAGE_H
 #define CHORUSKIT_SCRIPTSETTINGSPAGE_H
 
-#include <CoreApi/ISettingPage.h>
+#include "CoreApi/ISettingPage.h"
 #include "ScriptLoader.h"
 
 class QCheckBox;

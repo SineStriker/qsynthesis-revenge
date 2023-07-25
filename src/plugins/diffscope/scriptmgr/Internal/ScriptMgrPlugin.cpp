@@ -13,8 +13,8 @@
 #include <extensionsystem/pluginspec.h>
 
 #include "AddOn/ScriptMgrAddOn.h"
+#include "Internal/Settings/ScriptSettingsPage.h"
 #include "ScriptLoader.h"
-#include "ScriptSettingsPage.h"
 
 namespace ScriptMgr {
 

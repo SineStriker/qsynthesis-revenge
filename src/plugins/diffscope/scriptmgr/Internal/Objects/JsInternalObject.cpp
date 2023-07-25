@@ -7,8 +7,8 @@
 #include "QMCoreDecoratorV2.h"
 #include "CoreApi/IWindow.h"
 
+#include "Internal/Utils/JsUtils.h"
 #include "JsIntegrationUtils/JsFormDialog.h"
-#include "JsUtils.h"
 
 namespace ScriptMgr::Internal {
 

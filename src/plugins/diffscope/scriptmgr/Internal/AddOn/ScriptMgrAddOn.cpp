@@ -6,11 +6,11 @@
 #include <coreplugin/ICore.h>
 #include <QMDecoratorV2.h>
 
-#include "JsInternalObject.h"
+#include "Internal/Objects/JsInternalObject.h"
+#include "Internal/Settings/ScriptSettingsConfigurableDialog.h"
 #include "QMSvg.h"
 #include "QsFrameworkNamespace.h"
 #include "ScriptLoader.h"
-#include "ScriptSettingsConfigurableDialog.h"
 #include "Window/IProjectWindow.h"
 
 namespace ScriptMgr {
