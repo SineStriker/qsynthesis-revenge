@@ -72,6 +72,7 @@ namespace Core {
                         QFontDialog dlg(parent);
                         dlg.setOptions(options);
                         dlg.setCurrentFont(initial);
+                        dlg.resize(480, 640);
                         if (!title.isEmpty())
                             dlg.setWindowTitle(title);
 
