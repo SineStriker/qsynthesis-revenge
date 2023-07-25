@@ -164,7 +164,7 @@ Core--Internal--HomeRecentBottomFrame>QsApi--TitleListWidget {
     border: none;
     background-color: transparent;
     --styleData: qmap(/* styleData */
-    background=qrect((transparent, #e8e8e8, #d2d2d2), 0, 4px), /* Recent List Item Background (normal, hover, selected)*/
+    background=qrect((transparent, #f6f6f6, #f0f0f0), 0, 4px), /* Recent List Item Background (normal, hover, selected)*/
     underline=qpen(transparent, 1), /**/
     titleShape=qfont((#616161, #616161, #616161), 15px), /* Recent List Item Title*/
     subShape=qfont((#8d8d8d, #8d8d8d, #8d8d8d), 15px), /* Recent List Item Subtitle*/

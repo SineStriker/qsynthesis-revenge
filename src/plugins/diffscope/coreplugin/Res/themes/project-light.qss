@@ -4,6 +4,8 @@ QWidget#project-window {
     background-color: #f3f3f3;
 }
 
+/* Main Toolbar */
+
 QToolBar#main-toolbar {
     ---spacing: 5px;
     --iconSize: 20px 20px;
@@ -17,7 +19,7 @@ QToolBar#main-toolbar>QToolBarSeparator {
 QToolBar#main-toolbar::separator {
     width: 2.5px;
     margin: 0 5px;
-    background-color: rgba(255, 255, 255, 7.5%);
+    background-color: rgba(0, 0, 0, 7.5%);
 }
 
 QToolBar#main-toolbar>QLabel {
@@ -34,24 +36,68 @@ QToolBar#main-toolbar>QToolButton {
 QToolBar#main-toolbar>QToolButton {
     padding: 5px;
     border: none;
+    border-style: none;
+    border-radius: 4px;
     background-color: transparent;
     color: #424242;
 }
 
 QToolBar#main-toolbar>QToolButton:hover {
-    color: #616161;
-    background-color: rgba(255, 255, 255, 15%);
+    color: #333;
+    background-color: rgba(0, 0, 0, 15%);
 }
 
 QToolBar#main-toolbar>QToolButton:pressed {
     color: #333;
-    background-color: rgba(255, 255, 255, 10%);
+    background-color: rgba(0, 0, 0, 10%);
 }
 
 QToolBar#main-toolbar>QToolButton[selectable=true]:checked {
     color: #333;
-    background-color: rgba(255, 255, 255, 20%);
+    background-color: #0060C0;
 } 
+
+/* PianoRoll Toolbar */
+
+QToolBar#piano-roll-toolbar {
+    padding: 4px;
+    ---spacing: 0;
+    --iconSize: 20px 20px;
+    color: #333;
+}
+
+QToolBar#piano-roll-toolbar>QLabel {
+    padding: 2px;
+    font-weight: bold;
+    color: #333;
+    text-align: left;
+}
+
+QToolBar#piano-roll-toolbar>QToolButton {
+    padding: 2px;
+    border: none;
+    border-style: none;
+    border-radius: 4px;
+    background-color: transparent;
+    color: #333;
+}
+
+QToolBar#piano-roll-toolbar>QToolButton:hover {
+    color: #333;
+    background-color: rgba(0, 0, 0, 15%);
+}
+
+QToolBar#piano-roll-toolbar>QToolButton:pressed {
+    color: #333;
+    background-color: rgba(0, 0, 0, 10%);
+}
+
+QToolBar#piano-roll-toolbar>QToolButton:checked {
+    color: #fff;
+    background-color: #0060C0;
+} 
+
+/* SynthV Splitter */
 
 QsApi--SynthVSplitter#canvas>QsApi--SynthVSplitterHandle {
     --handleHeight: 6px;
@@ -121,11 +167,11 @@ Core--Internal--PianoKey {
 }
 
 Core--Internal--PianoKey[color=white] {
-    background-color: lightgrey;
+    background-color: #fff;
 }
 
 Core--Internal--PianoKey[color=white]:hover {
-    background-color: #EFEFEF;
+    background-color: #f6f6f6;
 }
 
 Core--Internal--PianoKey[color=black] {
@@ -145,15 +191,15 @@ Core--Internal--SectionWidget {
 }
 
 QWidget#section-edit-popup {
-    background-color: #1E1E1E;
+    background-color: #fff;
 }
 
 QWidget#section-edit-popup>QComboBox,
 QWidget#section-edit-popup>QLineEdit {
     padding: -1.5px 0;
-    border: 1px solid transparent;
+    /* border: 1px solid transparent;
     color: #CCCCCC;
-    background-color: #3C3C3C;
+    background-color: #3C3C3C; */
 }
 
 QWidget#section-edit-popup>QComboBox:focus,
