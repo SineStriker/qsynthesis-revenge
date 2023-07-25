@@ -220,6 +220,33 @@ CWindowBarV2>CToolButton#icon-button {
     --icon: svg(":/svg/app/diffsinger.svg");
 }
 
+/* ListView */
+QListView {
+    background-color: #fff;
+    border: 1px solid #d4d4d4;
+    border-radius: 4px;
+    color: #616161;
+}
+
+QListView::item
+{
+    border-style: none;
+    border-radius: 4px;
+    margin: 0px 4px 0px 4px;
+    padding: 4px;
+    color: #616161;
+}
+
+QListView::item:hover
+{
+    background-color: #f6f6f6;
+}
+
+QListView::item:selected
+{
+    background-color: #0060C0;
+    color: #fff;
+}
 
 /* Menu Bar */
 
@@ -394,7 +421,7 @@ Core--CommandPalette {
     ---border-right: 8px solid qlineargradient(x0: 0, x1: 1, stop: 0 transparent, stop: 1 rgba(0, 0, 0, 25%));
 }
 
-Core--CommandPalette>QListWidget {
+Core--CommandPalette>QListView {
     border: none;
     outline: 0;
     background-color: transparent;
