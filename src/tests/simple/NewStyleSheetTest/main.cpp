@@ -9,6 +9,7 @@
 #include <QMetaEnum>
 #include <QStyledItemDelegate>
 #include <QVBoxLayout>
+#include "QProgressBar"
 
 #include <CCheckBox.h>
 #include <CTabButton.h>
@@ -56,11 +57,18 @@ int main(int argc, char *argv[]) {
     auto checkBox1 = new CCheckBox();
     checkBox1->setText("123");
 
+    auto progressBar = new QProgressBar();
+    progressBar->setMaximum(100);
+    progressBar->setMinimum(0);
+    progressBar->setValue(50);
+//    progressBar->setTextVisible(false);
+
     auto mainLayout = new QVBoxLayout;
     mainLayout->addWidget(button);
     mainLayout->addWidget(comboBox1);
     mainLayout->addWidget(comboBox2);
     mainLayout->addWidget(checkBox1);
+    mainLayout->addWidget(progressBar);
 
     auto mainWidget = new QWidget;
     mainWidget->setLayout(mainLayout);
@@ -228,6 +236,20 @@ CCheckBox>CToolButton#box {
 
 CCheckBox>CToolButton#box:focus {
     border-color: #167FD2;
+}
+
+QProgressBar {
+    background-color:#FFFFFF;
+    color:#808080;
+    border-style: none;
+    border-radius: 4px;
+    border: 1px solid #d4d4d4;
+    text-align:center;
+}
+
+QProgressBar::chunk {
+    background-color: #0060C0;
+    border-radius: 4px;
 }
 
 )"));
