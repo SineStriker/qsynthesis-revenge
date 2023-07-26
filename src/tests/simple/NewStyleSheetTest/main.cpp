@@ -13,6 +13,7 @@
 
 #include <CCheckBox.h>
 #include <CTabButton.h>
+#include <QGraphicsDropShadowEffect>
 #include <QMAppExtension.h>
 #include <QMDecoratorV2.h>
 
@@ -23,6 +24,18 @@ int main(int argc, char *argv[]) {
     QMAppExtension appExt;
 
     QMainWindow w;
+
+    auto applyShadow = [](QWidget *widget, QWidget *parent) {
+        widget->setWindowFlags(Qt::Popup
+                                                    | Qt::FramelessWindowHint
+                                                    | Qt::NoDropShadowWindowHint);
+        widget->setAttribute(Qt::WA_TranslucentBackground);
+        auto *shadow = new QGraphicsDropShadowEffect(parent);
+        shadow->setOffset(0, 4);
+        shadow->setColor(QColor(0, 0, 0, 80));
+        shadow->setBlurRadius(12);
+        widget->setGraphicsEffect(shadow);
+    };
 
     auto button = new QPushButton("Test");
     button->setObjectName("test-button");
@@ -44,6 +57,7 @@ int main(int argc, char *argv[]) {
           << "test12";
     comboBox1->addItems(list1);
     comboBox1->setItemDelegate(new QStyledItemDelegate());
+    applyShadow(comboBox1->view()->window(), &w);
 
     auto comboBox2 = new QComboBox;
     comboBox2->setObjectName("test-comboBox");
@@ -53,6 +67,7 @@ int main(int argc, char *argv[]) {
           << "test3";
     comboBox2->addItems(list2);
     comboBox2->setItemDelegate(new QStyledItemDelegate());
+    applyShadow(comboBox2->view()->window(), &w);
 
     auto checkBox1 = new CCheckBox();
     checkBox1->setText("123");
@@ -74,6 +89,7 @@ int main(int argc, char *argv[]) {
     mainWidget->setLayout(mainLayout);
 
     w.setCentralWidget(mainWidget);
+    w.resize(300, 300);
     w.show();
 
     auto menu = new QMenu("File", &w);
@@ -87,6 +103,7 @@ int main(int argc, char *argv[]) {
     auto action3 = menu->addAction("Action3");
     //    action3->setCheckable(true);
 
+    applyShadow(menu, &w);
     w.menuBar()->addMenu(menu);
 
     w.setStyleSheet(QMDecoratorV2::evaluateStyleSheet(R"(
@@ -103,6 +120,10 @@ QMenu::indicator::checked {
 }
 
 QMenu {
+    background-color: white;
+    border-radius: 8px;
+    border: 1px solid #f0f0f0;
+    margin: 4px 8px 12px 8px;
 }
 
 QMenu::icon {
@@ -143,10 +164,11 @@ QComboBox QAbstractItemView
     background-color: #1e2228;
     color: #adbac7;
     selection-background-color: #2d333b;
-    border-style: none;
-    /* border-radius: 8px; */
+    /* border-style: none; */
+    border-radius: 8px;
     border: 1px solid #444c56;
-    padding: 4px 0px 4px 0px
+    padding: 4px 0px 4px 0px;
+    margin: 4px 8px 12px 8px;
 }
 
 QComboBox QAbstractItemView::item
@@ -155,7 +177,7 @@ QComboBox QAbstractItemView::item
     border-style: none;
     border-radius: 4px;
     margin: 0px 4px 0px 4px;
-    padding: 10px;
+    padding: 4px;
 }
 
 QComboBox QAbstractItemView::item:hover
@@ -189,8 +211,8 @@ QComboBox::down-arrow:on
 QComboBox QScrollBar::vertical{
     width:10px;
     background-color: #282c31;
-    border-style: none;
-    border-radius: 4px;
+    /* border-style: none;
+    border-radius: 4px; */
 }
 
 QComboBox QScrollBar::add-page:vertical,
