@@ -11,7 +11,7 @@ QWidget:focus {
 /* Basic Controls */
 
 QPushButton {
-    color: #333;
+    color: #616161;
     background-color: #fff;
     padding: 6px 12px;
     border: 1px solid #d4d4d4;
@@ -175,6 +175,7 @@ QComboBox QScrollBar::sub-line::vertical{
 /* CheckBox */
 QCheckBox {
     border: none;
+    color: #616161;
 }
 
 QCheckBox::indicator:checked {
@@ -217,6 +218,44 @@ QCheckBox::indicator:unchecked:disabled {
     border: 1px solid #f0f0f0;
 }
 
+CCheckBox {
+    --layoutSpacing: 5px;
+}
+
+CCheckBox>CToolButton#box {
+    --icon: svg((up2=":/svg/checkbox/check-line.svg"), white);
+    --iconSize: 12px 12px;
+    border-radius: 4px;
+    border: 1px solid #d4d4d4;
+    background-color: white;
+}
+
+CCheckBox>CToolButton#box:hover {
+    background-color: #f6f6f6;
+}
+
+CCheckBox>CToolButton#box:pressed {
+    background-color: #f0f0f0;
+}
+
+CCheckBox>CToolButton#box:checked {
+    border: none;
+    background-color: #0060c0;
+}
+
+CCheckBox>CToolButton#box:checked:hover {
+    background-color: #0075EA;
+}
+
+CCheckBox>CToolButton#box:checked:pressed {
+    background-color: #004F9E;
+}
+
+CCheckBox>QLabel {
+    color: #616161;
+    padding: 0 0 2px 0;
+}
+
 /* TabBar */
 
 QTabBar {
@@ -224,7 +263,7 @@ QTabBar {
 }
 
 QTabBar::tab {
-    color: #333;
+    color: #616161;
     background-color: #fff;
     padding: 6px 12px;
     border-bottom: 2px solid transparent;
@@ -235,7 +274,7 @@ QTabBar::tab:hover {
 }
 
 QTabBar::tab:selected {
-    color: #333;
+    color: #616161;
     background-color: #f0f0f0;
     border-bottom-color: #0060C0;
 }
@@ -390,7 +429,7 @@ QTreeView QHeaderView::section {
     background-color: transparent;
     /* border-radius: 4px; */
     padding: 2px;
-    color: #333;
+    color: #616161;
 }
 
 QTreeView QHeaderView::section:hover {
@@ -402,7 +441,7 @@ QDialog {
 }
 
 QLabel {
-    color: #333;
+    color: #616161;
 }
 
 QProgressBar {
@@ -433,6 +472,7 @@ QGroupBox::title {
     subcontrol-position: top left;
     left: 8px;
     margin: 0 2px 0 2px;
+    color: #616161;
 }
 QGroupBox:flat {
     border-color: transparent;

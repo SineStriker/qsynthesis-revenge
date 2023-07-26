@@ -3,7 +3,6 @@
 IEMgr--ImportDialog {
     min-width: 400px;
     background-color: white;
-    --maxInitHeight: 500px;
     --layoutMargins: qmargins(20px);
     --boxesLayoutMargins: qmargins(5px);
     --boxesLayoutSpacing: 5px;
@@ -25,24 +24,43 @@ QWidget#tracks-widget {
 
 /* CheckBox */
 
-QWidget#tracks-widget>CCheckBox {
+/* QWidget#tracks-widget>CCheckBox {
     --layoutSpacing: 5px;
 }
 
 QWidget#tracks-widget>CCheckBox>CToolButton#box {
-    --icon: svg(":/svg/checkbox/check-line.svg", #111111);
+    --icon: svg((up2=":/svg/checkbox/check-line.svg"), white);
     --iconSize: 12px 12px;
-    background-color: transparent;
-    border: 1px solid #111111;
+    border-radius: 4px;
+    border: 1px solid #d4d4d4;
+    background-color: white;
 }
 
 QWidget#tracks-widget>CCheckBox>CToolButton#box:hover {
-    background-color: #CCCCCC;
+    background-color: #f6f6f6;
+}
+
+QWidget#tracks-widget>CCheckBox>CToolButton#box:pressed {
+    background-color: #f0f0f0;
+}
+
+QWidget#tracks-widget>CCheckBox>CToolButton#box:checked {
+    border: none;
+    background-color: #0060c0;
+}
+
+QWidget#tracks-widget>CCheckBox>CToolButton#box:checked:hover {
+    background-color: #0075EA;
+}
+
+QWidget#tracks-widget>CCheckBox>CToolButton#box:checked:pressed {
+    background-color: #004F9E;
 }
 
 QWidget#tracks-widget>CCheckBox>QLabel {
+    color: #616161;
     padding: 0 0 2px 0;
-}
+} */
 
 
 /* Codec Widget */
@@ -58,9 +76,9 @@ QSplitter#codec-widget::handle {
 
 /* Tab Widget */
 
-QTabWidget#tab-widget {
-    background-color: transparent;
-}
+/* QTabWidget#tab-widget {
+    background-color: white;
+} */
 
 /* Button */
 
