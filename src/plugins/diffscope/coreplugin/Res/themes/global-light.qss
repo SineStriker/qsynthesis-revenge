@@ -11,7 +11,7 @@ QWidget:focus {
 /* Basic Controls */
 
 QPushButton {
-    color: #616161;
+    color: #333;
     background-color: #fff;
     padding: 6px 12px;
     border: 1px solid #d4d4d4;
@@ -51,10 +51,11 @@ QPushButton:checked:pressed {
 }
 
 QPlainTextEdit,
+QTextEdit,
 QLineEdit {
     border: 1px solid #d4d4d4;
     border-radius: 4px;
-    color: #616161;
+    color: #333;
     background-color: #FFFFFF;
     selection-color: #FFFFFF;
     selection-background-color: #0060c0;
@@ -63,6 +64,7 @@ QLineEdit {
 }
 
 QPlainTextEdit:focus,
+QTextEdit:focus,
 QLineEdit:focus {
     border-color: #0060c0;
 }
@@ -70,7 +72,7 @@ QLineEdit:focus {
 QComboBox
 {
     background-color:#FFFFFF;
-    color:#616161;
+    color:#333;
     border-style: none;
     border-radius: 4px;
     border: 1px solid #d4d4d4;
@@ -94,7 +96,7 @@ QComboBox QAbstractItemView
 {
     outline: 0px solid gray;
     background-color: #fff;
-    color: #616161;
+    color: #333;
     selection-background-color: #0060C0;
     border-style: none;
     /* border-radius: 8px; */
@@ -130,12 +132,12 @@ QComboBox::down-arrow
     right: 10px;
     width: 20px;
     height: 20px;
-    image: svg(":/svg/icons/chevron_down_16_filled.svg", #616161);
+    image: svg(":/svg/icons/chevron_down_16_filled.svg", #333);
 }
 
 QComboBox::down-arrow:on
 {
-    image: svg(":/svg/icons/chevron_down_16_filled.svg", #616161);
+    image: svg(":/svg/icons/chevron_down_16_filled.svg", #333);
 }
 
 QComboBox QScrollBar::vertical{
@@ -175,7 +177,7 @@ QComboBox QScrollBar::sub-line::vertical{
 /* CheckBox */
 QCheckBox {
     border: none;
-    color: #616161;
+    color: #333;
 }
 
 QCheckBox::indicator:checked {
@@ -252,7 +254,7 @@ CCheckBox>CToolButton#box:checked:pressed {
 }
 
 CCheckBox>QLabel {
-    color: #616161;
+    color: #333;
     padding: 0 0 2px 0;
 }
 
@@ -263,7 +265,7 @@ QTabBar {
 }
 
 QTabBar::tab {
-    color: #616161;
+    color: #333;
     background-color: #fff;
     padding: 6px 12px;
     border-bottom: 2px solid transparent;
@@ -274,7 +276,7 @@ QTabBar::tab:hover {
 }
 
 QTabBar::tab:selected {
-    color: #616161;
+    color: #333;
     background-color: #f0f0f0;
     border-bottom-color: #0060C0;
 }
@@ -348,7 +350,7 @@ QListView {
     background-color: #fff;
     border: 1px solid #d4d4d4;
     border-radius: 4px;
-    color: #616161;
+    color: #333;
     padding: 4px 0px 4px 0px
 }
 
@@ -358,7 +360,7 @@ QListView::item
     border-radius: 4px;
     margin: 0px 4px 0px 4px;
     padding: 4px;
-    color: #616161;
+    color: #333;
 }
 
 QListView::item:hover
@@ -372,13 +374,18 @@ QListView::item:selected
     color: #fff;
 }
 
+QListView::item:selected:hover
+{
+    background-color: #0075EA;
+}
+
 /* TreeView */
 
 QTreeView {
     background-color: #fff;
     border: 1px solid #d4d4d4;
     border-radius: 4px;
-    color: #616161;
+    color: #333;
     /* padding: 4px 0px 4px 0px */
 }
 
@@ -388,7 +395,7 @@ QTreeView::item
     /* border-radius: 4px; */
     /* margin: 0px 4px 0px 4px; */
     padding: 4px;
-    color: #616161;
+    color: #333;
 }
 
 QTreeView::item:hover
@@ -402,19 +409,24 @@ QTreeView::item:selected
     color: #fff;
 }
 
+QTreeView::item:selected:hover
+{
+    background-color: #0075EA;
+}
+
 /* QTreeView::branch:closed:has-children:!has-siblings,
 QTreeView::branch:closed:has-children:has-siblings {
     border-image: none;
     width: 10px;
     height: 10px;
-    image: svg(":/svg/icons/chevron_right_16_filled.svg", #616161);
+    image: svg(":/svg/icons/chevron_right_16_filled.svg", #333);
 }
  
  
 QTreeView::branch:open:has-children:!has-siblings,
 QTreeView::branch:open:has-children:has-siblings  {
     border-image: none;
-    image: svg(":/svg/icons/chevron_down_16_filled.svg", #616161);
+    image: svg(":/svg/icons/chevron_down_16_filled.svg", #333);
 } */
 
 /* QTreeView > QHeaderView {
@@ -429,7 +441,7 @@ QTreeView QHeaderView::section {
     background-color: transparent;
     /* border-radius: 4px; */
     padding: 2px;
-    color: #616161;
+    color: #333;
 }
 
 QTreeView QHeaderView::section:hover {
@@ -441,7 +453,7 @@ QDialog {
 }
 
 QLabel {
-    color: #616161;
+    color: #333;
 }
 
 QProgressBar {
@@ -472,7 +484,7 @@ QGroupBox::title {
     subcontrol-position: top left;
     left: 8px;
     margin: 0 2px 0 2px;
-    color: #616161;
+    color: #333;
 }
 QGroupBox:flat {
     border-color: transparent;
@@ -527,7 +539,7 @@ QMenu::icon {
 
 QMenu::item {
     background: transparent;
-    color: #616161;
+    color: #333;
     padding: 4px 28px;
 }
 
@@ -692,9 +704,9 @@ Core--CommandPalette>QListView {
     --styleData: qmap(/* styleData */
     background=qrect((transparent, #e8e8e8, rgb(0, 96, 192)), 3.75px, 4px), /*ListViewItem Background (normal, hover, selected) */
     underline=qpen(rgba(255, 255, 255, 7.5%), 1), /**/
-    titleShape=qfont((#616161, #616161, white), 15px), /* ListViewItem Title */
+    titleShape=qfont((#333, #333, white), 15px), /* ListViewItem Title */
     subShape=qfont((#8d8d8d, #8d8d8d, rgba(255, 255, 255, 70%)), 15px), /* ListViewItem Subtitle */
-    descShape=qfont((#616161, #616161, white), 15px), /* Shortcut Keys Text */
+    descShape=qfont((#333, #333, white), 15px), /* Shortcut Keys Text */
     descHighlightShape=qfont((#0060c0, #0060c0, white), 15px), /* ListViewItem Description (at right top) */
     descBackgroundShape=qrect((#eaeaea, #eaeaea, #0060c0), (2px, 2px, 2px, 0)), /* Shortcut Keys Background*/
     titleMargins=qmargins(0, 1.25px, 10px, 1.25px), /**/
@@ -714,7 +726,7 @@ Core--CommandPalette>QLineEdit {
 Core--CommandPalette>QLineEdit {
     border: 1px solid transparent;
     border-radius: 4px;
-    color: #616161;
+    color: #333;
     background-color: #FFFFFF;
     selection-color: #FFFFFF;
     selection-background-color: #0060c0;
