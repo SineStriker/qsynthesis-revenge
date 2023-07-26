@@ -30,14 +30,19 @@ namespace Vst {
         QScopedPointer<CommunicationHelper> ch;
         QProcess editorProc;
 
-        std::atomic<bool> isConnected = false;
-        std::atomic<bool> isPending = false;
+        QAtomicInteger<bool> isConnected = false;
+        QAtomicInteger<bool> isPending = false;
 
         QSharedMemory sbuf;
         QScopedPointer<QSharedMemory> guardSharedMemory;
         QLocalServer alivePipe;
 
         QByteArray cachedState;
+        struct {
+            int channelCount = 0;
+            int maxBufferSize = 0;
+            double sampleRate = 0;
+        } cachedProcessInfo;
 
     private:
         bool checkSingleton();

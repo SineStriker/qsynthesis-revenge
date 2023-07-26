@@ -21,7 +21,7 @@ namespace Vst::Internal {
 
     static VstBridge *m_instance = nullptr;
 
-    VstBridge::VstBridge(QObject *parent): VstBridgeSource(parent), m_alivePipe(new QLocalSocket(this)) {
+    VstBridge::VstBridge(QObject *parent): VstBridgeSource(parent), m_alivePipe(new QLocalSocket(this)), m_ipcBuffer(new QSharedMemory(VstHelper::globalUuid() + "buffer", this)) {
         m_instance = this;
         connect(m_alivePipe, &QLocalSocket::disconnected, this, &VstBridge::finalizeVst);
     }
@@ -108,6 +108,15 @@ namespace Vst::Internal {
         if(VstHelper::instance()->addOn) VstHelper::instance()->addOn->hideWindow();
     }
     bool VstBridge::initializeProcess(int channelCount, int maxBufferSize, double sampleRate) {
+        if(m_ipcBuffer->isAttached()) {
+            m_ipcBuffer->detach();
+        }
+        if(m_ipcBuffer->attach()) {
+            m_ipcBuffer->detach();
+        }
+        if(!m_ipcBuffer->create(maxBufferSize * channelCount * sizeof(float) * 2)) {
+            return false;
+        }
         VstHelper::instance()->connectionStatus.isProcessing = true;
         VstHelper::instance()->connectionStatus.channelCount = channelCount;
         VstHelper::instance()->connectionStatus.bufferSize = maxBufferSize;
@@ -118,6 +127,7 @@ namespace Vst::Internal {
                                             int channelCount) {
     }
     void VstBridge::finalizeProcess() {
+        m_ipcBuffer->detach();
         VstHelper::instance()->connectionStatus.isProcessing = false;
     }
 

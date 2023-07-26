@@ -40,17 +40,20 @@ namespace Vst {
         auto reply = vstRep->initializeVst();
         if(reply.waitForFinished(ipcTimeout)) {
             callbacks->setStatus("Connected");
-            isConnected.store(true);
+            isConnected = true;
         }
         if(!cachedState.isNull()) {
             stateChanged(cachedState);
             cachedState.clear();
         }
+        if(cachedProcessInfo.sampleRate != 0) {
+            initializeProcess(cachedProcessInfo.channelCount, cachedProcessInfo.maxBufferSize, cachedProcessInfo.sampleRate);
+        }
     }
 
     void DiffScopeVstBridge::replicaNotInitialized() {
         callbacks->setStatus("Not Connected");
-        isConnected.store(false);
+        isConnected = false;
     }
 
     bool DiffScopeVstBridge::initialize() {
@@ -126,7 +129,7 @@ namespace Vst {
     }
 
     void DiffScopeVstBridge::showWindow() {
-        if(!isConnected.load() && !isPending.load()) {
+        if(!isConnected && !isPending) {
             if(!editorProc.startDetached()) {
                 callbacks->setError("Cannot start DiffScope Editor");
             } else {
@@ -134,37 +137,72 @@ namespace Vst {
             }
             return;
         }
-        ch->invokeSync<int>([=](){
-            vstRep->showWindow();
-            return 0;
-        });
+        vstRep->showWindow();
     }
 
     void DiffScopeVstBridge::hideWindow() {
-        if(!isConnected.load()) return;
-        ch->invokeSync<int>([=](){
-            vstRep->hideWindow();
-            return 0;
-        });
+        if(!isConnected) return;
+        vstRep->hideWindow();
     }
 
     // TODO
 
     bool DiffScopeVstBridge::initializeProcess(int channelCount, int maxBufferSize, double sampleRate) {
-        return false;
+        if(!isConnected) {
+            cachedProcessInfo = {channelCount, maxBufferSize, sampleRate};
+            return true;
+        }
+        cachedProcessInfo = {};
+        sbuf.setKey(GLOBAL_UUID + "buffer");
+        if(sbuf.isAttached()) {
+            sbuf.detach();
+        }
+        if(sbuf.attach()) {
+            sbuf.detach();
+        }
+        if(!ch->invokeSync<bool>([=](){
+            auto reply = vstRep->initializeProcess(channelCount, maxBufferSize, sampleRate);
+            if(!reply.waitForFinished(ipcTimeout)) return false;
+            if(reply.returnValue()) {
+                return sbuf.attach();
+            }
+            return false;
+        })) {
+            callbacks->setError("Cannot initialize process.");
+            return false;
+        }
+        return true;
     }
-    bool DiffScopeVstBridge::processPlayback(bool isRealtime, bool isPlaying, int64_t position, int size, int channelCount,
-                                             float *const *outputs) {
-        return false;
+    bool DiffScopeVstBridge::processPlayback(bool isRealtime, bool isPlaying, int64_t position, int size, int channelCount, float *const *outputs) {
+        if(!sbuf.isAttached()) return false;
+        auto buf = reinterpret_cast<const float *>(sbuf.constData());
+        vstRep->notifySwitchAudioBuffer(isRealtime, isPlaying, position, size, channelCount);
+        return ch->invokeSync<bool>([=]{
+            QEventLoop eventLoop;
+            QObject::connect(vstRep, &VstBridgeReplica::bufferSwitched, &eventLoop, &QEventLoop::exit);
+            QTimer::singleShot(ipcTimeout, &eventLoop, [&]{
+                eventLoop.exit(false);
+            });
+            if(eventLoop.exec()) {
+                for(int i = 0; i < channelCount; i++) {
+                    memcpy(outputs[i], buf + i * size, size * sizeof(float));
+                }
+                return true;
+            }
+            return false;
+        });
     }
     void DiffScopeVstBridge::finalizeProcess() {
+        sbuf.detach();
+        vstRep->finalizeProcess();
     }
 
     void DiffScopeVstBridge::stateChanged(const QByteArray &data) {
         if(!isConnected) {
             cachedState = data;
         } else {
-            if(!ch->invokeSync<bool>([=](){
+            cachedState.clear();
+            if(!ch->invokeSync<bool>([=]{
                     auto reply = vstRep->openDataToEditor(data);
                     if(!reply.waitForFinished(ipcTimeout)) return false;
                     auto ret = reply.returnValue();
@@ -180,7 +218,7 @@ namespace Vst {
     }
 
     bool DiffScopeVstBridge::stateWillSave(int &size, const char *&data) {
-        return ch->invokeSync<bool>([&](){
+        return ch->invokeSync<bool>([&]{
             auto reply = vstRep->saveDataFromEditor();
             if(!reply.waitForFinished(ipcTimeout)) return false;
             auto ret = reply.returnValue();

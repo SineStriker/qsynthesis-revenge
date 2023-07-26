@@ -8,6 +8,7 @@
 #include "rep_VstBridge_source.h"
 
 class QLocalSocket;
+class QSharedMemory;
 
 namespace Vst::Internal {
 
@@ -38,6 +39,7 @@ namespace Vst::Internal {
 
     private:
         QLocalSocket *m_alivePipe;
+        QSharedMemory *m_ipcBuffer;
     };
 
 } // Vst

@@ -52,6 +52,14 @@ namespace Vst {
             return awaiter.returnValue().value<T>();
         }
 
+        template <>
+        void invokeSync<void>(const std::function<void()> &fx) {
+            invokeSync<int>([&](){
+                fx();
+                return 0;
+            });
+        }
+
         template <typename T>
         void invokeAsync(const std::function<T()> &fx, const std::function<void(const T &)> &callback) {
             auto awaiter = new Awaiter;
