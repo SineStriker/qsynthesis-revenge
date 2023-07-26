@@ -29,7 +29,12 @@ QPushButton:pressed {
 }
 
 QPushButton:disabled {
-    background-color: #e0e0e0;
+    color: #e0e0e0;
+    border-color: #e0e0e0;
+}
+
+QPushButton:default {
+    border-color: #0060C0;
 }
 
 QPushButton:checked {
@@ -37,6 +42,15 @@ QPushButton:checked {
     color: #fff;
 }
 
+QPushButton:checked:hover {
+    background-color: #0075EA;
+}
+
+QPushButton:checked:pressed {
+    background-color: #004F9E;
+}
+
+QPlainTextEdit,
 QLineEdit {
     border: 1px solid #d4d4d4;
     border-radius: 4px;
@@ -48,6 +62,7 @@ QLineEdit {
     /* margin: 1px; */
 }
 
+QPlainTextEdit:focus,
 QLineEdit:focus {
     border-color: #0060c0;
 }
@@ -155,6 +170,51 @@ QComboBox QScrollBar::add-line::vertical{
 
 QComboBox QScrollBar::sub-line::vertical{
     border:none;
+}
+
+/* CheckBox */
+QCheckBox {
+    border: none;
+}
+
+QCheckBox::indicator:checked {
+    border: 2px solid #0060c0; /* Use border to set image padding because cannot resize image */
+    border-radius: 4px;
+    background-color: #0060c0;
+    image: svg(":/svg/checkbox/check-line.svg", white);
+}
+
+QCheckBox::indicator:checked:hover {
+    border: 2px solid #0075EA;
+    background-color: #0075EA;
+}
+
+QCheckBox::indicator:checked:pressed {
+    border: 2px solid #004F9E;
+    background-color: #004F9E;
+}
+
+QCheckBox::indicator:checked:disabled {
+    border: 2px solid #606060;
+    background-color: #606060;
+}
+
+QCheckBox::indicator:unchecked {
+    border: 1px solid #d4d4d4;
+    border-radius: 4px;
+    background-color: white;
+}
+
+QCheckBox::indicator:unchecked:hover {
+    background-color: #f6f6f6;
+}
+
+QCheckBox::indicator:unchecked:pressed {
+    background-color: #f0f0f0;
+}
+
+QCheckBox::indicator:unchecked:disabled {
+    border: 1px solid #f0f0f0;
 }
 
 /* ScrollBars */
