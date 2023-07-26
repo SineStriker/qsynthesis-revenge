@@ -217,6 +217,29 @@ QCheckBox::indicator:unchecked:disabled {
     border: 1px solid #f0f0f0;
 }
 
+/* TabBar */
+
+QTabBar {
+    background-color: #f3f3f3;
+}
+
+QTabBar::tab {
+    color: #333;
+    background-color: #fff;
+    padding: 6px 12px;
+    border-bottom: 2px solid transparent;
+}
+
+QTabBar::tab:hover {
+    background-color: #f6f6f6;
+}
+
+QTabBar::tab:selected {
+    color: #333;
+    background-color: #f0f0f0;
+    border-bottom-color: #0060C0;
+}
+
 /* ScrollBars */
 
 QScrollBar::vertical{
@@ -446,34 +469,34 @@ QMenuBar[core-style=true]::item:selected { /* MenuBar Item hover and active */
 
 /* Old Menu */
 
-QMenu[core-style=true] { /* Menu Panel */
+QMenu { /* Menu Panel */
     padding: 4px;
     background: #FFFFFF;
     border: 1.25px solid #d4d4d4; /* border is necessary on white background. */
 }
 
-QMenu[core-style=true]::indicator {
+QMenu::indicator {
     left: 6px;
     width: 20px;
     height: 20px;
 }
 
-QMenu[core-style=true]::icon {
+QMenu::icon {
     left: 6px;
 }
 
-QMenu[core-style=true]::item {
+QMenu::item {
     background: transparent;
     color: #616161;
     padding: 4px 28px;
 }
 
-QMenu[core-style=true][stats=checkable]::item,
-QMenu[core-style=true][stats=icon]::item {
+QMenu[stats=checkable]::item,
+QMenu[stats=icon]::item {
     padding-left: 12px;
 }
 
-QMenu[core-style=true]::item:selected {
+QMenu::item:selected {
     color: white;
     background-color: #0060C0;
     border: 1px solid transparent;
@@ -481,12 +504,12 @@ QMenu[core-style=true]::item:selected {
     border-radius: 4px;
 }
 
-QMenu[core-style=true]::item:disabled {
+QMenu::item:disabled {
     color: #d5d5d5;
     background-color: transparent;
 }
 
-QMenu[core-style=true]::separator {
+QMenu::separator {
     height: 1.25px;
     background-color: #d4d4d4;
     margin: 6px 0;
