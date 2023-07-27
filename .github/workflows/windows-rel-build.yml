@@ -15,12 +15,16 @@ jobs:
     runs-on: windows-2022
 
     steps:
+    - uses: actions/checkout@v2
+    - name: List out workspace layout
+      shell: bash
+      run: ls ${{runner.workspace}}
+    
+    
     - name: Install Qt
       uses: jurplel/install-qt-action@v3
       with:
         version: '5.15.2'
-    
-    - uses: actions/checkout@v2
     
     - name: Setup vcpkg packages
       shell: bash
