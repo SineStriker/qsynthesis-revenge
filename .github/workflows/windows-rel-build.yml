@@ -63,7 +63,12 @@ jobs:
       working-directory: ${{runner.workspace}}/build
       shell: bash
       # Execute the build.  You can specify a specific target with "--target <NAME>"
-      run: cmake --build .
+      run: cmake --build . --target all
+      
+    - name: Install (Deploy to target directory)
+      working-directory: ${{runner.workspace}}/build
+      shell: bash
+      run: cmake --build . --target install
     
     - name: Set Commit ID
       shell: bash
