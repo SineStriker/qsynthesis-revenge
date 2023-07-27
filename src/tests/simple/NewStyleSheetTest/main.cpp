@@ -26,10 +26,10 @@ int main(int argc, char *argv[]) {
     QMainWindow w;
 
     auto applyShadow = [](QWidget *widget, QWidget *parent) {
-        widget->setWindowFlags(Qt::Popup
-                                                    | Qt::FramelessWindowHint
-                                                    | Qt::NoDropShadowWindowHint);
-        widget->setAttribute(Qt::WA_TranslucentBackground);
+        widget->setWindowFlags(widget->windowFlags()
+                               | Qt::FramelessWindowHint
+                               | Qt::NoDropShadowWindowHint);
+        widget->setAttribute(Qt::WA_TranslucentBackground, true);
         auto *shadow = new QGraphicsDropShadowEffect(parent);
         shadow->setOffset(0, 4);
         shadow->setColor(QColor(0, 0, 0, 80));

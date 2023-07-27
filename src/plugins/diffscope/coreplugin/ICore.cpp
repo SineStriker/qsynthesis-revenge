@@ -22,6 +22,7 @@
 #include <CoreApi/ICoreBase_p.h>
 #include <CoreApi/ILoader.h>
 
+#include <QGraphicsDropShadowEffect>
 #include <extensionsystem/pluginmanager.h>
 
 #include "Internal/Dialogs/SettingsDialog.h"
@@ -203,6 +204,18 @@ namespace Core {
     QMenu *ICore::createCoreMenu(QWidget *parent) {
         auto menu = new CMenu(parent);
         menu->setProperty("core-style", true);
+        /*auto applyShadow = [](QWidget *widget, QWidget *parent) {
+            widget->setWindowFlags(widget->windowFlags()
+                                   | Qt::FramelessWindowHint
+                                   | Qt::NoDropShadowWindowHint);
+            widget->setAttribute(Qt::WA_TranslucentBackground, true);
+            auto *shadow = new QGraphicsDropShadowEffect(parent);
+            shadow->setOffset(0, 4);
+            shadow->setColor(QColor(0, 0, 0, 80));
+            shadow->setBlurRadius(12);
+            widget->setGraphicsEffect(shadow);
+        };
+        applyShadow(menu, parent);*/
         return menu;
     }
 

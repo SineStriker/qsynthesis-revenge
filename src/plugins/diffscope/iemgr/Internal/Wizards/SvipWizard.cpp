@@ -9,6 +9,13 @@
 #include <QNrbfStream.h>
 #include <QtMath>
 
+typedef QNrbf::XSAppModel XSModel;
+typedef QNrbf::XSSongTempo XSTempo;
+typedef QNrbf::XSSongBeat XSTimeSig;
+typedef QNrbf::XSSingingTrack XSSingingTrack;
+typedef QNrbf::XSInstrumentTrack XSInstTrack;
+typedef QNrbf::XSNote XSNote;
+
 namespace IEMgr ::Internal {
 
     SvipWizard::SvipWizard(QObject *parent) : IWizardFactory("iemgr.SvipWizard", parent) {
@@ -47,7 +54,7 @@ namespace IEMgr ::Internal {
         return true;
     }
     bool SvipWizard::load(const QString &filename, QDspxModel *out, QWidget *parent) {
-        auto loadProjectFile = [](const QString &filename, QNrbf::XSAppModel *model) {
+        auto loadProjectFile = [](const QString &filename, XSModel *model) {
             QFile file(filename);
             if (!file.open(QIODevice::ReadOnly)) {
                 return false;
@@ -66,9 +73,6 @@ namespace IEMgr ::Internal {
             if (in.status() != QDataStream::Ok) {
                 return false;
             }
-//            qDebug() << version;
-
-//            QNrbf::XSAppModel xsProject;
             in >> *model;
             if (in.status() != QDataStream::Ok) {
                 return false;
@@ -151,7 +155,7 @@ namespace IEMgr ::Internal {
 
             switch (xsTrack->type()) {
                 case QNrbf::XSITrack::Singing: {
-                    auto xsSingingTrack = xsTrack.dynamicCast<QNrbf::XSSingingTrack>();
+                    auto xsSingingTrack = xsTrack.dynamicCast<XSSingingTrack>();
                     auto *singingClipPtr = new QDspx::SingingClip;
                     QSharedPointer<QDspx::SingingClip> singingClip(singingClipPtr);
 
@@ -179,7 +183,7 @@ namespace IEMgr ::Internal {
                     break;
                 }
                 case QNrbf::XSITrack::Instrument: {
-                    auto xsInstTrack = xsTrack.dynamicCast<QNrbf::XSInstrumentTrack>();
+                    auto xsInstTrack = xsTrack.dynamicCast<XSInstTrack>();
                     auto *audioClipPtr = new QDspx::AudioClip;
                     QSharedPointer<QDspx::AudioClip> audioClip(audioClipPtr);
                     QDspx::ClipTime clipTime;
@@ -203,7 +207,122 @@ namespace IEMgr ::Internal {
         return true;
     }
     bool SvipWizard::save(const QString &filename, const QDspxModel &in, QWidget *parent) {
-        return false;
+        XSModel model;
+
+        auto &dsProject = in;
+        auto &dsContent = dsProject.content;
+        auto &dsTimeline = dsContent.timeline;
+
+        // Tempos
+        for (const auto &dsTempo : qAsConst(dsTimeline.tempos)) {
+            XSTempo tempo;
+            tempo.pos = dsTempo.pos;
+            tempo.tempo = round(dsTempo.value * 100);
+            model.tempoList.append(tempo);
+        }
+
+        // TimeSignatures
+        int timeSigIndex = 0;
+        int currentBarIndex = 0;
+        for (const auto &dsTimeSig : qAsConst(dsTimeline.timeSignatures)) {
+            int deltaTime = 0;
+            int barIndex;
+            if (timeSigIndex == 0)
+                barIndex = 0;
+            else {
+                auto curTime = dsTimeSig.pos;
+                auto &prevTimeSig = dsTimeline.timeSignatures.at(timeSigIndex - 1);
+                auto prevTime = prevTimeSig.pos;
+                deltaTime = curTime - prevTime;
+                auto bars = deltaTime * prevTimeSig.den / 1920 / prevTimeSig.num;
+                currentBarIndex += bars;
+                barIndex = currentBarIndex;
+            }
+            timeSigIndex++;
+            XSTimeSig timeSig;
+            timeSig.barIndex = barIndex;
+            timeSig.beatSize.x = dsTimeSig.num;
+            timeSig.beatSize.y = dsTimeSig.den;
+            model.beatList.append(timeSig);
+        }
+
+        // Tracks
+        for (const auto &dsTrack : qAsConst(dsContent.tracks)) {
+            if (dsTrack.clips.isEmpty()) { // Insert an empty singing track if ds track is empty.
+                auto *singingTrackPtr = new XSSingingTrack;
+                QSharedPointer<XSSingingTrack> singingTrack(singingTrackPtr);
+                singingTrack->name = dsTrack.name;
+                singingTrack->mute = dsTrack.control.mute;
+                singingTrack->solo = dsTrack.control.solo;
+                singingTrack->volume = SvipWizard::toLinearVolume(dsTrack.control.gain);
+                singingTrack->pan = dsTrack.control.pan;
+                model.trackList.append(singingTrack);
+            } else { // Assign clips to proper tracks
+                for (const auto &dsClip : qAsConst(dsTrack.clips)) {
+                    if (dsClip->type == QDspx::Clip::Singing) {
+                        auto dsSingingClip = dsClip.dynamicCast<QDspx::SingingClip>();
+                        auto *singingTrackPtr = new XSSingingTrack ;
+                        QSharedPointer<XSSingingTrack> singingTrack(singingTrackPtr);
+                        singingTrack->name = dsTrack.name + " " + dsSingingClip->name;
+                        singingTrack->mute = dsSingingClip->control.mute;
+                        singingTrack->solo = dsTrack.control.solo;
+                        singingTrack->volume = SvipWizard::toLinearVolume(dsSingingClip->control.gain);
+                        singingTrack->pan = dsTrack.control.pan;
+
+                        // Only visible notes will be exported
+                        int start = dsClip->time.start;
+                        int clipStart = dsClip->time.clipStart;
+                        int visibleLeft = start + clipStart;
+                        int length = dsClip->time.length;
+                        int clipLen = dsClip->time.clipLen;
+                        int visibleRight = visibleLeft + clipLen;
+                        for (const auto &dsNote : qAsConst(dsSingingClip->notes)) {
+                            if (dsNote.pos < visibleLeft ||
+                                dsNote.pos + dsNote.length > visibleRight) // Ignore invisible note
+                                continue;
+
+                            XSNote note;
+                            note.startPos = dsNote.pos;
+                            note.widthPos = dsNote.length;
+                            note.lyric = dsNote.lyric;
+                            note.keyIndex = dsNote.keyNum;
+                            // TODO: Phoneme conversion
+                            singingTrack->noteList.append(note);
+                        }
+                        // TODO: Params Conversion
+                        model.trackList.append(singingTrack);
+                    } else if (dsClip->type == QDspx::Clip::Audio) {
+                        auto dsAudioClip = dsClip.dynamicCast<QDspx::AudioClip>();
+                        auto *instTrackPtr = new XSInstTrack ;
+                        QSharedPointer<XSInstTrack> instTrack(instTrackPtr);
+                        instTrack->name = dsTrack.name + " " + dsAudioClip->name;
+                        instTrack->mute = dsAudioClip->control.mute;
+                        instTrack->solo = dsTrack.control.solo;
+                        instTrack->volume = SvipWizard::toLinearVolume(dsAudioClip->control.gain);
+                        instTrack->pan = dsTrack.control.pan;
+
+                        instTrack->InstrumentFilePath = dsAudioClip->path;
+                        instTrack->OffsetInPos = dsAudioClip->time.start;
+                        model.trackList.append(instTrack);
+                    }
+                }
+            }
+        }
+
+        auto saveProjectFile = [](const QString &filename, const XSModel &model) {
+            QFile file(filename);
+            if (!file.open(QIODevice::WriteOnly))
+                return false;
+
+            QNrbfStream output(&file);
+            output << "SVIP" << "6.0.0" << model;
+            file.close();
+            return true;
+        };
+
+        if (!saveProjectFile(filename, model))
+            return false;
+        return true;
     }
     double SvipWizard::toLinearVolume(const double &gain) {
         return gain >= 0 ? qMin(gain / (20 * log10(4)) + 1.0, 2.0) : qPow(10, gain / 20.0);

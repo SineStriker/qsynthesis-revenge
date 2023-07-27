@@ -273,11 +273,12 @@ QTabBar::tab {
 
 QTabBar::tab:hover {
     background-color: #f6f6f6;
+    border-bottom-color: #d4d4d4;
 }
 
 QTabBar::tab:selected {
-    color: #333;
-    background-color: #f0f0f0;
+    color: #0060C0;
+    /* background-color: #f0f0f0; */
     border-bottom-color: #0060C0;
 }
 
@@ -525,6 +526,8 @@ QMenu { /* Menu Panel */
     padding: 4px;
     background: #FFFFFF;
     border: 1.25px solid #d4d4d4; /* border is necessary on white background. */
+    /* border-radius: 8px;
+    margin: 4px 8px 8px 8px; */
 }
 
 QMenu::indicator {
