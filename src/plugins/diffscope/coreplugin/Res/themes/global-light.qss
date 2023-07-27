@@ -574,16 +574,17 @@ QSplitter {
 
 QSplitter::handle {
 	/* image: ; */
-    background-color: #d4d4d4;
+    background-color: transparent;
     margin: 0px 4px;
 }
 
-/* QSplitter::handle:hover {
-    background: green;
-} */
+/* QSplitter::handle:hover cannot take effect without this. */
+QSplitterHandle::item:hover {}
 
+QSplitter::handle:hover {
+    background-color: #d4d4d4;
+}
 QSplitter::handle:pressed {
-	
 	background-color:#0060C0;
 }
 
