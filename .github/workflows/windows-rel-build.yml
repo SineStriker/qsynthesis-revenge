@@ -33,7 +33,7 @@ jobs:
       run: |
         Qt5_Dir=$(echo "$Qt5_Dir" | sed 's/\\/\//g') && export Qt5_Dir
         QT5_DIR_FOR_SED=$(echo "${Qt5_Dir}/lib/cmake/Qt5" | sed 's/\//\\\//g') && export QT5_DIR_FOR_SED
-        sed "s/<edit here>/${QT5_DIR_FOR_SED}/g" $GITHUB_WORKSPACE/setup-vcpkg.json | tee $GITHUB_WORKSPACE/setup_vcpkg.json
+        sed "s/<edit here>/${QT5_DIR_FOR_SED}/g" $GITHUB_WORKSPACE/setup-vcpkg.json | tee $GITHUB_WORKSPACE/setup-vcpkg.json
         python3 $GITHUB_WORKSPACE/setup-vcpkg.py
 
     - name: Create Build Environment
