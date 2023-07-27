@@ -22,6 +22,9 @@ jobs:
       with:
         version: '5.15.2'
     
+    - name: Install Ninja
+      uses: seanmiddleditch/gha-setup-ninja@master
+    
     - name: Generate Qt path JSON file
       shell: bash
       continue-on-error: true
