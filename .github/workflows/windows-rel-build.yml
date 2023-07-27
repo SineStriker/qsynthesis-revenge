@@ -31,8 +31,8 @@ jobs:
     - name: Configure vcpkg packages
       shell: bash
       run: |
-        echo "QT5_DIR_FOR_SED=${Qt5_Dir}/lib/cmake/Qt5" | sed 's/\//\\\//g' >> $GITHUB_ENV
-        sed 's/<edit here>/${{env.QT5_DIR_FOR_SED}}/g' $GITHUB_WORKSPACE/setup-vcpkg.json | tee $GITHUB_WORKSPACE/setup_vcpkg.json
+        QT5_DIR_FOR_SED=$(echo "${Qt5_Dir}/lib/cmake/Qt5" | sed 's/\//\\\//g') && export QT5_DIR_FOR_SED
+        sed 's/<edit here>/${QT5_DIR_FOR_SED}/g' $GITHUB_WORKSPACE/setup-vcpkg.json | tee $GITHUB_WORKSPACE/setup_vcpkg.json
         python3 $GITHUB_WORKSPACE/setup-vcpkg.py
 
     - name: Create Build Environment
