@@ -17,20 +17,20 @@ jobs:
     steps:
     - uses: actions/checkout@v3
     
-    - name: List out workspace layout
-      shell: bash
-      run: ls $GITHUB_WORKSPACE
-    
     - name: Install Qt
       uses: jurplel/install-qt-action@v3
       with:
         version: '5.15.2'
     
-    - name: Setup vcpkg packages
+    - name: Generate Qt path JSON file
       shell: bash
       continue-on-error: true
-      run: |
+      run:
         python3 $GITHUB_WORKSPACE/setup-vcpkg.py
+    
+    - name: Configure vcpkg packages
+      shell: bash
+      run: |
         sed 's/<edit here>/${{env.QT_ROOT_DIR}}/lib/cmake/Qt5' $GITHUB_WORKSPACE/setup-vcpkg.json | tee $GITHUB_WORKSPACE/setup_vcpkg.json
         python3 $GITHUB_WORKSPACE/setup-vcpkg.py
 
