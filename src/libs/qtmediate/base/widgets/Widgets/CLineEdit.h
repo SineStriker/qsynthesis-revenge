@@ -21,6 +21,7 @@ signals:
 
 protected:
     bool event(QEvent *event) override;
+    void contextMenuEvent(QContextMenuEvent *event) override;
 };
 
 

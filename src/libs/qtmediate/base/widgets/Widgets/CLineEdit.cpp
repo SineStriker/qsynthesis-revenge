@@ -1,9 +1,12 @@
 #include "CLineEdit.h"
 
+#include "CMenu.h"
 #include <QDebug>
 #include <QEvent>
 #include <QKeyEvent>
+#include <QMenu>
 #include <QTimer>
+
 
 CLineEdit::CLineEdit(QWidget *parent) : QLineEdit(parent) {
 }
@@ -53,4 +56,18 @@ bool CLineEdit::event(QEvent *event) {
             break;
     }
     return QLineEdit::event(event);
+}
+
+void CLineEdit::contextMenuEvent(QContextMenuEvent *event) {
+    // HACK: Hijack with our implementation
+    if (QMenu *m = createStandardContextMenu()) {
+        CMenu *menu = new CMenu(this);
+        foreach (QAction *i, m->actions()) {
+            i->setParent(menu);
+            menu->addAction(i);
+        }
+        delete m;
+        menu->setAttribute(Qt::WA_DeleteOnClose);
+        menu->popup(event->globalPos());
+    }
 }
