@@ -12,7 +12,13 @@
 #include <QMCss.h>
 #include <QMNamespace.h>
 
+#ifdef Q_OS_WIN
+// For Windows drop shadow enhancement
+#    include <dwmapi.h>
+#endif
+
 #include <private/IconColorImpl.h>
+
 
 class CMenuPrivate {
 public:
@@ -21,6 +27,8 @@ public:
     CMenuPrivate(CMenu *q) : q(q) {
         // Initialize Font
         q->setFont(qApp->font());
+        // Call Windows enhancement (if applicable)
+        initWindowsEnhancement();
     }
 
     void updateActionStats() {
@@ -43,6 +51,44 @@ public:
     out:
         q->style()->polish(q);
     }
+
+private:
+    void initWindowsEnhancement() {
+#ifdef Q_OS_WIN
+        // Disable Qt drop shadow attribute in order to remove CS_DROPSHADOW
+        q->setWindowFlag(Qt::NoDropShadowWindowHint, true);
+        // Enable DWM shadow for popup
+        m_winEnhanceTrigger = QObject::connect(q, &CMenu::aboutToShow, [&]() {
+            constexpr int mgn = 1;
+            constexpr int DWMWA_USE_IMMERSIVE_DARK_MODE = 20;
+            DWMNCRENDERINGPOLICY ncrp = DWMNCRP_ENABLED;
+            DWM_WINDOW_CORNER_PREFERENCE dwcp = DWMWCP_ROUNDSMALL;
+            UINT dark = 1;
+            MARGINS margins = {mgn, mgn, mgn, mgn};
+            Q_ASSERT(this->q->window()->windowHandle());
+            // Let DWM compose non-client area
+            DwmSetWindowAttribute(reinterpret_cast<HWND>(this->q->winId()), DWMWA_NCRENDERING_POLICY, &ncrp,
+                                  sizeof(ncrp));
+            // Allow extending frame into popup, this way CMenu will have better drop shadow
+            DwmExtendFrameIntoClientArea(reinterpret_cast<HWND>(this->q->winId()), &margins);
+            // This undocumented API call is required, since with shadow composition, Qt cannot keep up drawing the
+            // contents 1 frame too late when the popup window was shown. Without this call the 1 frame will be
+            // white which causes flicker.
+            // Workaround taken from https://github.com/AvaloniaUI/Avalonia/issues/8316#issuecomment-1166417480
+            DwmSetWindowAttribute(reinterpret_cast<HWND>(this->q->winId()), DWMWA_USE_IMMERSIVE_DARK_MODE, &dark,
+                                  sizeof(dark));
+            // This round corner settings only works for Windows 11, sets round corner to small so it doesn't look
+            // too off
+            DwmSetWindowAttribute(reinterpret_cast<HWND>(this->q->winId()), DWMWA_WINDOW_CORNER_PREFERENCE, &dwcp,
+                                  sizeof(dwcp));
+            // Disconnect this connection, don't run again
+            QObject::disconnect(m_winEnhanceTrigger);
+        });
+    }
+    QMetaObject::Connection m_winEnhanceTrigger;
+#else
+    }
+#endif
 };
 
 CMenu::CMenu(QWidget *parent) : QMenu(parent), d(new CMenuPrivate(this)) {
