@@ -60,12 +60,14 @@ private:
         // Enable DWM shadow for popup
         m_winEnhanceTrigger = QObject::connect(q, &CMenu::aboutToShow, [&]() {
             constexpr int mgn = 1;
-            constexpr int DWMWA_USE_IMMERSIVE_DARK_MODE = 20;
+            // Constants defined to make older Windows SDK happy
+            constexpr int DWMWA_USE_IMMERSIVE_DARK_MODE_ = 20;
+            constexpr int DWMWA_WINDOW_CORNER_PREFERENCE_ = 33;
             DWMNCRENDERINGPOLICY ncrp = DWMNCRP_ENABLED;
-            DWM_WINDOW_CORNER_PREFERENCE dwcp = DWMWCP_ROUNDSMALL;
+            /*DWM_WINDOW_CORNER_PREFERENCE*/INT dwcp = /*DWMWCP_ROUNDSMALL*/3;
             UINT dark = 1;
             MARGINS margins = {mgn, mgn, mgn, mgn};
-            Q_ASSERT(this->q->window()->windowHandle());
+            Q_ASSERT(this->q->winId());
             // Let DWM compose non-client area
             DwmSetWindowAttribute(reinterpret_cast<HWND>(this->q->winId()), DWMWA_NCRENDERING_POLICY, &ncrp,
                                   sizeof(ncrp));
@@ -75,11 +77,11 @@ private:
             // contents 1 frame too late when the popup window was shown. Without this call the 1 frame will be
             // white which causes flicker.
             // Workaround taken from https://github.com/AvaloniaUI/Avalonia/issues/8316#issuecomment-1166417480
-            DwmSetWindowAttribute(reinterpret_cast<HWND>(this->q->winId()), DWMWA_USE_IMMERSIVE_DARK_MODE, &dark,
+            DwmSetWindowAttribute(reinterpret_cast<HWND>(this->q->winId()), DWMWA_USE_IMMERSIVE_DARK_MODE_, &dark,
                                   sizeof(dark));
             // This round corner settings only works for Windows 11, sets round corner to small so it doesn't look
             // too off
-            DwmSetWindowAttribute(reinterpret_cast<HWND>(this->q->winId()), DWMWA_WINDOW_CORNER_PREFERENCE, &dwcp,
+            DwmSetWindowAttribute(reinterpret_cast<HWND>(this->q->winId()), DWMWA_WINDOW_CORNER_PREFERENCE_, &dwcp,
                                   sizeof(dwcp));
             // Disconnect this connection, don't run again
             QObject::disconnect(m_winEnhanceTrigger);
