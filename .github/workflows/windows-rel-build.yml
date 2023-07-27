@@ -30,6 +30,16 @@ jobs:
       continue-on-error: true
       run:
         python3 $GITHUB_WORKSPACE/setup-vcpkg.py
+        
+    - name: Initialize MSVC environment
+      uses: ilammy/msvc-dev-cmd@v1
+      with:
+        arch: amd64
+    
+    - name: Execute CMake and observe
+      shell: bash
+      continue-on-error: true
+      run: cmake -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DCMAKE_INSTALL_PREFIX=${{runner.workspace}}/deploy -G Ninja $GITHUB_WORKSPACE
     
     - name: Configure vcpkg packages
       shell: bash
