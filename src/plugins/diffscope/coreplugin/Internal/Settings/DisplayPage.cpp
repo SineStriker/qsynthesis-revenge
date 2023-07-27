@@ -23,7 +23,12 @@ namespace Core {
             m_widget = nullptr;
             setTitle([]() { return tr("Display"); });
             setDescription([]() { return tr("Display"); });
-            loadFontSettings(font);
+
+            QFont resultFont;
+            if (!loadFontSettings(resultFont))
+                resultFont = QApplication::font();
+            font = resultFont;
+//            qDebug() << QApplication::font();
             //            qDebug() << "Loaded font " + font.toString();
         }
 
