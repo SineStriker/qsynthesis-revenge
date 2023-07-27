@@ -17,8 +17,8 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - name: List out workspace layout
-      shell: bash
-      run: ls ${{runner.workspace}}
+      shell: cmd
+      run: dir ${{runner.workspace}}
     
     
     - name: Install Qt
