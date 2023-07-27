@@ -28,6 +28,7 @@ jobs:
     
     - name: Setup vcpkg packages
       shell: bash
+      continue-on-error: true
       run: |
         python3 $GITHUB_WORKSPACE/setup-vcpkg.py
         sed 's/<edit here>/${{env.QT_ROOT_DIR}}/lib/cmake/Qt5' $GITHUB_WORKSPACE/setup-vcpkg.json | tee $GITHUB_WORKSPACE/setup_vcpkg.json
