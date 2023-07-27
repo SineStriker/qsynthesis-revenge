@@ -21,6 +21,13 @@ jobs:
         version: '5.15.2'
     
     - uses: actions/checkout@v2
+    
+    - name: Setup vcpkg packages
+      shell: bash
+      run: |
+        python3 ${{runner.workspace}}/setup-vcpkg.py
+        sed 's/<edit here>/${{env.QT_ROOT_DIR}}/lib/cmake/Qt5' setup-vcpkg.json | tee setup_vcpkg.json
+        python3 ${{runner.workspace}}/setup-vcpkg.py
 
     - name: Create Build Environment
       # Some projects don't allow in-source building, so create a separate build directory
