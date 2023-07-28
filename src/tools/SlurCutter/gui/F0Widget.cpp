@@ -304,7 +304,7 @@ QString F0Widget::PitchToNotePlusCentsString(double pitch) {
 
 std::tuple<size_t, size_t> F0Widget::refF0IndexRange(double startTime, double endTime) const {
     return {std::min((size_t)::floor(std::max(0.0, startTime / f0Timestep)), (size_t) f0Values.size() - 1),
-            std::min((size_t)::ceil(endTime / f0Timestep), (size_t) f0Values.size() - 1)};
+            std::min((size_t)::ceil(endTime / f0Timestep), (size_t) f0Values.size())};
 }
 
 
