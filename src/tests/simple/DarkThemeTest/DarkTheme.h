@@ -1,0 +1,6 @@
+#ifndef CHORUSKIT_DARKTHEME_H
+#define CHORUSKIT_DARKTHEME_H
+
+bool isDarkTheme();
+
+#endif // CHORUSKIT_DARKTHEME_H

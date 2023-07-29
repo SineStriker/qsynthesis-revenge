@@ -19,3 +19,5 @@ add_subdirectory(Audio2Test)
 add_subdirectory(AudioSlicerTest)
 
 add_subdirectory(NewStyleSheetTest)
+
+add_subdirectory(DarkThemeTest)
