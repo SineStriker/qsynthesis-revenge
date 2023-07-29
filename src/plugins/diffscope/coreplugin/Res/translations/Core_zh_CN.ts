@@ -35,6 +35,10 @@
         <source>About</source>
         <translation>关于</translation>
     </message>
+    <message>
+        <source>Edit Mode</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>Core::ConfigurableDialogPrivate</name>
@@ -559,6 +563,18 @@ The application is about to exit because an unresolvable exception has occurred,
     <message>
         <source>Display</source>
         <translation>显示</translation>
+    </message>
+    <message>
+        <source>Italic</source>
+        <translation>斜体</translation>
+    </message>
+    <message>
+        <source>Font: </source>
+        <translation>字体: </translation>
+    </message>
+    <message>
+        <source>Pick a Font...</source>
+        <translation>选择字体...</translation>
     </message>
 </context>
 <context>

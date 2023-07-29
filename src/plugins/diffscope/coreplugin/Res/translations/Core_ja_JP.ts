@@ -35,6 +35,10 @@
         <source>About</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <source>Edit Mode</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>Core::DspxDocument</name>
@@ -370,6 +374,18 @@ The application is about to exit because an unresolvable exception has occurred,
     <name>Core::Internal::DisplayPage</name>
     <message>
         <source>Display</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Italic</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Font: </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Pick a Font...</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

@@ -47,26 +47,38 @@ namespace Core {
             if (!m_widget) {
                 auto getLabelFontStr = [this](QFont &font) {
                     auto family = font.family() + " ";
-                    auto size = QString::number(font.pointSize()) + " ";
+                    auto size = QString::number(font.pointSize()) + "pt ";
                     auto weight = getFontWeightStr(QFont::Weight(font.weight())) + " ";
-                    auto italic = font.italic() ? QString("Italic") : QString("");
+                    auto italic = font.italic() ? QString(tr("Italic")) : QString("");
                     return family + size + weight + italic;
                 };
 
-                auto label = new QLabel();
-                label->setText(getLabelFontStr(font));
+                auto lbFont = new QLabel(tr("Font: "));
 
-                auto button = new QPushButton();
-                button->setText("Pick a Font...");
+                auto lbCurrentFontInfo = new QLabel();
+                lbCurrentFontInfo->setText(getLabelFontStr(font));
+
+                auto btnPickFont = new QPushButton();
+                btnPickFont->setText(tr("Pick a Font..."));
+
+                auto horizontalSpacer = new QSpacerItem(40, 20, QSizePolicy::Expanding, QSizePolicy::Minimum);
+
+                auto fontSettingsBox = new QHBoxLayout;
+                fontSettingsBox->addWidget(lbFont);
+                fontSettingsBox->addWidget(lbCurrentFontInfo);
+                fontSettingsBox->addWidget(btnPickFont);
+                fontSettingsBox->addItem(horizontalSpacer);
+
+                auto verticalSpacerMain = new QSpacerItem(20, 40, QSizePolicy::Minimum, QSizePolicy::Expanding);
 
                 auto mainLayout = new QVBoxLayout;
-                mainLayout->addWidget(label);
-                mainLayout->addWidget(button);
+                mainLayout->addLayout(fontSettingsBox);
+                mainLayout->addItem(verticalSpacerMain);
 
                 auto mainWidget = new QWidget;
                 mainWidget->setLayout(mainLayout);
 
-                connect(button, &QPushButton::clicked, this, [=]() {
+                connect(btnPickFont, &QPushButton::clicked, this, [=]() {
                     bool ok;
 
                     auto getFont = [](bool *ok, const QFont &initial, QWidget *parent, const QString &title = {},
@@ -102,7 +114,7 @@ namespace Core {
                     auto resultFont = getFont(&ok, font, mainWidget);
                     if (ok) {
                         font = resultFont;
-                        label->setText(getLabelFontStr(font));
+                        lbCurrentFontInfo->setText(getLabelFontStr(font));
                     }
                 });
 
@@ -197,6 +209,7 @@ namespace Core {
 
             return true;
         }
+
         bool DisplayPage::loadJsonFile(const QString &filename, QJsonObject *jsonObj) {
             // Deserialize json
             QFile loadFile(filename);
@@ -217,6 +230,7 @@ namespace Core {
             }
             return true;
         }
+
         bool DisplayPage::saveJsonFile(const QString &filename, QJsonObject &jsonObj) {
             QJsonDocument document;
             document.setObject(jsonObj);
@@ -237,6 +251,7 @@ namespace Core {
             file.close();
             return true;
         }
+
         QString DisplayPage::getFontWeightStr(const QFont::Weight &weight) {
             switch (weight) {
                 case QFont::Thin:

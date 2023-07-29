@@ -1,7 +1,7 @@
 /* Stylesheet Content */
 
 QWidget#project-window {
-    background-color: #f3f3f3;
+    background-color: #fff;
 }
 
 /* Main Toolbar */
@@ -255,6 +255,10 @@ CDockCard {
     padding: 4px 8px;
     --iconSize: 20px 20px;
     --spaceRatio: 0.25;
+}
+
+CDockCard:checked:hover {
+    background-color: #d2d2d2;
 }
 
 CDockCard:checked {

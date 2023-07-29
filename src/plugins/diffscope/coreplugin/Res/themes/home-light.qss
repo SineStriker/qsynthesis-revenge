@@ -70,14 +70,19 @@ CTabButton[type=home-bottom-button] {
     padding: 15px;
 }
 
-CTabButton[type=home-bottom-button]:hover,
+CTabButton[type=home-bottom-button]:hover {
+    background-color: rgba(0, 0, 0, 5%);
+}
 CTabButton[type=home-bottom-button]:pressed {
-    background-color: rgba(0, 0, 0, 15%);
+    background-color: rgba(0, 0, 0, 10%);
 }
 
 CTabButton#home-about-button {
     --icon: svg(":/svg/icons/info_16_filled.svg", auto);
     border-top: 1.25px solid rgba(0, 0, 0, 15%);
+    border-bottom: none;
+    border-left: none;
+    border-right: none;
     padding-top: 20px;
     padding-bottom: 20px;
     border-radius: 0px;
