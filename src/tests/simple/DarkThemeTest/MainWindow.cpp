@@ -11,37 +11,39 @@ MainWindow::MainWindow(QWidget *parent) {
     ui_centralWidget->setLayout(ui_layout);
     setCentralWidget(ui_centralWidget);
 
-    _displayInfo();
+    m_dt = new DarkTheme();
+
+    connect(m_dt, &DarkTheme::themeChanged,
+            this, &MainWindow::slot_updateTheme);
+
+    _displayInfo(m_dt->isDarkTheme());
 }
 
-MainWindow::~MainWindow() {}
+MainWindow::~MainWindow() {
+    delete m_dt;
+}
 
-void MainWindow::changeEvent(QEvent *e) {
+/*void MainWindow::changeEvent(QEvent *e) {
     if ( e->type() == QEvent::PaletteChange )
     {
         _displayInfo();
     }
     QMainWindow::changeEvent(e);
-}
+}*/
 
-void MainWindow::_displayInfo() {
+void MainWindow::_displayInfo(bool isDarkTheme) {
     QString osName, theme;
 
-#if defined(Q_OS_MAC)
-    osName = "macOS";
-#elif defined(Q_OS_WIN)
-    osName = "Windows";
-#elif defined(Q_OS_LINUX)
-    osName = "Linux";
-#else
-    osName = "Other system";
-#endif
+    osName = m_dt->getOSName();
 
-    if (isDarkTheme()) {
+    if (isDarkTheme) {
         theme = "dark theme";
     } else {
         theme = "light theme";
     }
 
     ui_label->setText(osName + ": " + theme);
+}
+void MainWindow::slot_updateTheme(bool isDarkTheme) {
+    _displayInfo(isDarkTheme);
 }

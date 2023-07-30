@@ -10,15 +10,23 @@ set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 set(CMAKE_CXX_STANDARD 17)
 
+
 if(APPLE)
     ck_add_files(_src
             CURRENT
-            DIRS mac
+            DIRS platforms/mac
             PATTERNS *.h *.cpp *.mm  # also include objc sources
+    )
+elseif(WIN32)
+    ck_add_files(_src
+            CURRENT
+            DIRS platforms/win
+            PATTERNS *.h *.cpp
     )
 else()
     ck_add_files(_src
             CURRENT
+            DIRS platforms/default
             PATTERNS *.h *.cpp
     )
 endif()
