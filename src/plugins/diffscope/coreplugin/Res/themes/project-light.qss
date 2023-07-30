@@ -53,9 +53,17 @@ QToolBar#main-toolbar>QToolButton:pressed {
 }
 
 QToolBar#main-toolbar>QToolButton[selectable=true]:checked {
-    color: #333;
+    color: #fff;
     background-color: #0060C0;
 } 
+
+QToolBar#main-toolbar>QToolButton[selectable=true]:checked:hover {
+    background-color: #0075EA;
+}
+
+QToolBar#main-toolbar>QToolButton[selectable=true]:checked:pressed {
+    background-color: #004F9E;
+}
 
 /* PianoRoll Toolbar */
 
@@ -95,6 +103,14 @@ QToolBar#piano-roll-toolbar>QToolButton:pressed {
 QToolBar#piano-roll-toolbar>QToolButton:checked {
     color: #fff;
     background-color: #0060C0;
+} 
+
+QToolBar#piano-roll-toolbar>QToolButton:checked:hover {
+    background-color: #0075EA;
+} 
+
+QToolBar#piano-roll-toolbar>QToolButton:checked:pressed {
+    background-color: #004F9E;
 } 
 
 /* SynthV Splitter */
