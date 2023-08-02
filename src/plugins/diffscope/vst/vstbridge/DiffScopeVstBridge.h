@@ -33,7 +33,7 @@ namespace Vst {
         QAtomicInteger<bool> isConnected = false;
         QAtomicInteger<bool> isPending = false;
 
-        QSharedMemory sbuf;
+        QSharedMemory ipcBuffer;
         QScopedPointer<QSharedMemory> guardSharedMemory;
         QLocalServer alivePipe;
 

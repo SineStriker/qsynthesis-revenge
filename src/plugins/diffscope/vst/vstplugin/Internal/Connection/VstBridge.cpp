@@ -123,8 +123,9 @@ namespace Vst::Internal {
         VstHelper::instance()->connectionStatus.sampleRate = sampleRate;
         return true;
     }
-    void VstBridge::notifySwitchAudioBuffer(bool isRealtime, bool isPlaying, qint64 position, int bufferSize,
-                                            int channelCount) {
+    void VstBridge::notifySwitchAudioBuffer(bool isRealtime, bool isPlaying, qint64 position, int bufferSize, int channelCount) {
+        //TODO
+        emit bufferSwitched(true);
     }
     void VstBridge::finalizeProcess() {
         m_ipcBuffer->detach();

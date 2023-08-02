@@ -119,7 +119,7 @@ namespace Vst {
     }
 
     void DiffScopeVstBridge::terminate() {
-        sbuf.detach();
+        ipcBuffer.detach();
         QObject::disconnect(vstRep, &VstBridgeReplica::documentChanged, vstRep, nullptr);
         releaseSingleton();
     }
@@ -148,23 +148,22 @@ namespace Vst {
     // TODO
 
     bool DiffScopeVstBridge::initializeProcess(int channelCount, int maxBufferSize, double sampleRate) {
+        cachedProcessInfo = {channelCount, maxBufferSize, sampleRate};
         if(!isConnected) {
-            cachedProcessInfo = {channelCount, maxBufferSize, sampleRate};
             return true;
         }
-        cachedProcessInfo = {};
-        sbuf.setKey(GLOBAL_UUID + "buffer");
-        if(sbuf.isAttached()) {
-            sbuf.detach();
+        ipcBuffer.setKey(GLOBAL_UUID + "buffer");
+        if(ipcBuffer.isAttached()) {
+            ipcBuffer.detach();
         }
-        if(sbuf.attach()) {
-            sbuf.detach();
+        if(ipcBuffer.attach()) {
+            ipcBuffer.detach();
         }
         if(!ch->invokeSync<bool>([=](){
             auto reply = vstRep->initializeProcess(channelCount, maxBufferSize, sampleRate);
             if(!reply.waitForFinished(ipcTimeout)) return false;
             if(reply.returnValue()) {
-                return sbuf.attach();
+                return ipcBuffer.attach();
             }
             return false;
         })) {
@@ -174,42 +173,50 @@ namespace Vst {
         return true;
     }
     bool DiffScopeVstBridge::processPlayback(bool isRealtime, bool isPlaying, int64_t position, int size, int channelCount, float *const *outputs) {
-        if(!sbuf.isAttached()) return false;
-        auto buf = reinterpret_cast<const float *>(sbuf.constData());
+        if(!isConnected) return false;
+        if(!ipcBuffer.isAttached()) return false;
+        auto buf = reinterpret_cast<const float *>(ipcBuffer.constData());
         vstRep->notifySwitchAudioBuffer(isRealtime, isPlaying, position, size, channelCount);
         return ch->invokeSync<bool>([=]{
             QEventLoop eventLoop;
             QObject::connect(vstRep, &VstBridgeReplica::bufferSwitched, &eventLoop, &QEventLoop::exit);
             QTimer::singleShot(ipcTimeout, &eventLoop, [&]{
-                eventLoop.exit(false);
+                eventLoop.exit(-1);
             });
-            if(eventLoop.exec()) {
+            auto execRet = eventLoop.exec();
+            if(execRet == 1) {
                 for(int i = 0; i < channelCount; i++) {
                     memcpy(outputs[i], buf + i * size, size * sizeof(float));
                 }
                 return true;
+            } else if(execRet == 0) {
+                callbacks->setError("Playback processing failed.");
+                return false;
+            } else if(execRet == -1) {
+                callbacks->setError("Playback processing timeout.");
+                return false;
             }
             return false;
         });
     }
     void DiffScopeVstBridge::finalizeProcess() {
-        sbuf.detach();
+        ipcBuffer.detach();
+        cachedProcessInfo = {};
         vstRep->finalizeProcess();
     }
 
     void DiffScopeVstBridge::stateChanged(const QByteArray &data) {
+        cachedState = data;
         if(!isConnected) {
-            cachedState = data;
-        } else {
-            cachedState.clear();
-            if(!ch->invokeSync<bool>([=]{
-                    auto reply = vstRep->openDataToEditor(data);
-                    if(!reply.waitForFinished(ipcTimeout)) return false;
-                    auto ret = reply.returnValue();
-                    return ret;
-                })) {
-                callbacks->setError("Cannot load file to editor.");
-            }
+            return;
+        }
+        if(!ch->invokeSync<bool>([=]{
+                auto reply = vstRep->openDataToEditor(data);
+                if(!reply.waitForFinished(ipcTimeout)) return false;
+                auto ret = reply.returnValue();
+                return ret;
+            })) {
+            callbacks->setError("Cannot load file to editor.");
         }
     }
 
@@ -227,6 +234,7 @@ namespace Vst {
             auto dataCopy = new char[size];
             memcpy(dataCopy, ret.constData(), size);
             data = dataCopy;
+            cachedState = ret;
             return true;
         });
     }
