@@ -144,9 +144,9 @@ declare global {
         protected static tr(s: string): string;
 
         /**
-         * Override this method to provide the information of script.
+         * Must override this static method to provide the information of script.
          */
-        public abstract static info(): ScriptInfoBase;
+        public static info(): ScriptInfoBase;
 
         /**
          * The main entry of script.
@@ -172,7 +172,7 @@ declare global {
          * The preparation of script.
          */
         public prepare(): any;
-        public override abstract static info(): ScriptInfo;
+        public static info(): ScriptInfo;
     }
 
     interface ScriptSetInfo extends ScriptInfoBase {
@@ -192,7 +192,7 @@ declare global {
          * @param index Index of child script in script set
          */
         public prepare(index: number): any;
-        public override abstract static info(): ScriptSetInfo;
+        public static info(): ScriptSetInfo;
     }
 
     /**

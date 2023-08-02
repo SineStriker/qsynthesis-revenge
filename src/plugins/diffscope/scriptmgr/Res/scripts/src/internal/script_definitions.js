@@ -15,11 +15,9 @@ class ScriptBase {
 }
 
 export class Script extends ScriptBase {
-    main() { }
     static info() { return null; }
 }
 
 export class ScriptSet extends ScriptBase {
-    main(index) { }
     static info() { return null; }
 }
