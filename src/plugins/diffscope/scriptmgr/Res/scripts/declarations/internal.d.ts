@@ -149,6 +149,12 @@ declare global {
         public abstract static info(): ScriptInfoBase;
 
         /**
+         * The main entry of script.
+         * @param preparedValue Return value of `prepare` method
+         */
+        public abstract main(preparedValue: any): void;
+
+        /**
          * APIs provided by DiffScope Editor.
          */
         protected ds:DS;
@@ -163,9 +169,9 @@ declare global {
      */
     abstract class $Script extends ScriptBase {
         /**
-         * The main entry of script.
+         * The preparation of script.
          */
-        public abstract main(): void;
+        public prepare(): any;
         public override abstract static info(): ScriptInfo;
     }
 
@@ -182,10 +188,10 @@ declare global {
      */
     abstract class $ScriptSet extends ScriptBase {
         /**
-         * The main entry of script.
+         * The preparation of script.
          * @param index Index of child script in script set
          */
-        public abstract main(index: number): void;
+        public prepare(index: number): any;
         public override abstract static info(): ScriptSetInfo;
     }
 

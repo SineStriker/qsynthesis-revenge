@@ -33,11 +33,11 @@ $register(class extends $ScriptSet {
             }],
         };
     }
-    main(index) {
-        if(index == 0) this.transpose(1);
-        else if(index == 1) this.transpose(-1);
-        else if(index == 2) this.transpose(12);
-        else if(index == 3) this.transpose(-12);
+    prepare(index) {
+        if(index == 0) return () => this.transpose(1);
+        else if(index == 1) return () => this.transpose(-1);
+        else if(index == 2) return () => this.transpose(12);
+        else if(index == 3) return () => this.transpose(-12);
         else if(index == 4) {
             let res = this.ds.dialogSystem.form(
                 __q_tr('JsBuiltIn', 'Transpose'),
@@ -48,7 +48,9 @@ $register(class extends $ScriptSet {
                 }],
             );
             if(res.result == 'Ok') {
-                this.transpose(res.form[0]);
+                return () => this.transpose(res.form[0]);
+            } else {
+                return undefined;
             }
         } else {
             let res = this.ds.dialogSystem.form(
@@ -63,7 +65,10 @@ $register(class extends $ScriptSet {
                     options: [__q_tr('JsBuiltIn', 'Ionian (Major mode)'), 'Dorian', 'Phrygian', 'Lydian', 'Mixolydian', __q_tr('JsBuiltIn', 'Aeolian (Minor mode)'), 'Locrian'],
                 }],
             )
-        }
+        };
+    }
+    main(preparedValue) {
+        preparedValue();
     }
     transpose(degrees) {
         this.ds.dialogSystem.alert(__q_tr('JsBuiltIn', 'Transpose'), degrees);

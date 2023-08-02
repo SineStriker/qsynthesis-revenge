@@ -32,5 +32,14 @@ namespace ScriptMgr::Internal {
         }
         return dlg.jsExec();
     }
+    bool JsInternalObject::startTransaction(const QString &id, const QJSValue &index) const {
+        //TODO
+        qDebug() << "Transaction start:" << id << index.toString();
+        return true;
+    }
+    void JsInternalObject::endTransaction(const QString &id, const QJSValue &index) const {
+        //TODO
+        qDebug() << "Transaction end:" << id << index.toString();
+    }
 
 }

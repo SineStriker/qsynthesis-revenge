@@ -21,11 +21,20 @@ __q_callbacks.createHandles = function (internal) {
 
 __q_callbacks.invoke = function (windowKey, id, index) {
     let script = instanceRegistry.get(windowKey).get(id);
-    if(script instanceof Script) {
-        script.main();
-    } else if(script instanceof ScriptSet) {
-        script.main(index);
+    let preparedValue = undefined;
+    if(script.prepare instanceof Function) {
+        if(script instanceof Script) {
+            preparedValue = script.prepare();
+        } else if(script instanceof ScriptSet) {
+            preparedValue = script.prepare(index);
+        }
+        if(preparedValue == undefined) return;
     }
+    if(!script.ds._internal.startTransaction(id, index)) {
+        throw new Error('Cannot start document transaction while running script.');
+    }
+    script.main(preparedValue);
+    script.ds._internal.endTransaction(id, index);
 }
 
 __q_callbacks.getNameFromJs = function (id, index) {

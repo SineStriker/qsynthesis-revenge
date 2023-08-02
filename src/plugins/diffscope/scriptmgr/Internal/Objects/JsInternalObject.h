@@ -18,6 +18,8 @@ namespace ScriptMgr::Internal {
     public slots:
         QString msgBox(const QString &title, const QString &message, const QString &icon, const QStringList &buttons, const QString &defaultButton) const;
         QJSValue form(const QString &title, const QVariantList &widgets, QJSValue listener) const;
+        bool startTransaction(const QString &id, const QJSValue &index) const;
+        void endTransaction(const QString &id, const QJSValue &index) const;
     protected:
         friend class JsLoaderObject;
         ScriptMgrAddOn *addOn;
