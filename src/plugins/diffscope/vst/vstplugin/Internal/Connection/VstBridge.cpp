@@ -16,17 +16,29 @@
 
 #include "AddOn/VstClientAddOn.h"
 #include "VstHelper.h"
+#include "Connection/VstPlaybackWorker.h"
 
 namespace Vst::Internal {
 
     static VstBridge *m_instance = nullptr;
 
-    VstBridge::VstBridge(QObject *parent): VstBridgeSource(parent), m_alivePipe(new QLocalSocket(this)), m_ipcBuffer(new QSharedMemory(VstHelper::globalUuid() + "buffer", this)) {
+    VstBridge::VstBridge(QObject *parent):
+          VstBridgeSource(parent),
+          m_alivePipe(new QLocalSocket(this)),
+          m_ipcBuffer(new QSharedMemory(VstHelper::globalUuid() + "buffer", this)),
+          m_vstPlaybackWorkerThread(new QThread(this)),
+          m_worker(new VstPlaybackWorker(this))
+    {
         m_instance = this;
+        m_worker->moveToThread(m_vstPlaybackWorkerThread);
+        connect(m_worker, &VstPlaybackWorker::workFinished, this, [=](bool isSuccessful){
+            emit bufferSwitched(isSuccessful);
+        });
         connect(m_alivePipe, &QLocalSocket::disconnected, this, &VstBridge::finalizeVst);
     }
 
     VstBridge::~VstBridge() {
+        VstBridge::finalizeVst();
         m_instance = nullptr;
     }
 
@@ -108,6 +120,9 @@ namespace Vst::Internal {
         if(VstHelper::instance()->addOn) VstHelper::instance()->addOn->hideWindow();
     }
     bool VstBridge::initializeProcess(int channelCount, int maxBufferSize, double sampleRate) {
+        qDebug() << "VstBridge: initializeProcess (" << channelCount << maxBufferSize << sampleRate << ")";
+
+        // Setup shared memory
         if(m_ipcBuffer->isAttached()) {
             m_ipcBuffer->detach();
         }
@@ -117,6 +132,15 @@ namespace Vst::Internal {
         if(!m_ipcBuffer->create(maxBufferSize * channelCount * sizeof(float) * 2)) {
             return false;
         }
+        planarOutputData.resize(channelCount);
+        for(int i = 0; i < channelCount; i++) {
+            planarOutputData[i] = reinterpret_cast<float *>(m_ipcBuffer->data()) + (maxBufferSize * 2);
+        }
+
+        // Start worker thread
+        m_vstPlaybackWorkerThread->start(QThread::TimeCriticalPriority);
+
+        // Set processing information to VstHelper
         VstHelper::instance()->connectionStatus.isProcessing = true;
         VstHelper::instance()->connectionStatus.channelCount = channelCount;
         VstHelper::instance()->connectionStatus.bufferSize = maxBufferSize;
@@ -124,10 +148,13 @@ namespace Vst::Internal {
         return true;
     }
     void VstBridge::notifySwitchAudioBuffer(bool isRealtime, bool isPlaying, qint64 position, int bufferSize, int channelCount) {
-        //TODO
-        emit bufferSwitched(true);
+        emit m_worker->requestWork(isRealtime, isPlaying, position, bufferSize, channelCount, planarOutputData.constData());
     }
     void VstBridge::finalizeProcess() {
+        qDebug() << "VstBridge: finalizeProcess";
+        m_vstPlaybackWorkerThread->quit();
+        m_vstPlaybackWorkerThread->wait();
+        planarOutputData.clear();
         m_ipcBuffer->detach();
         VstHelper::instance()->connectionStatus.isProcessing = false;
     }

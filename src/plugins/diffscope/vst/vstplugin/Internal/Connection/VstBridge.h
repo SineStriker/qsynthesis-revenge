@@ -13,6 +13,7 @@ class QSharedMemory;
 namespace Vst::Internal {
 
     class VstHelper;
+    class VstPlaybackWorker;
 
     class VstBridge: public VstBridgeSource {
         Q_OBJECT
@@ -40,6 +41,9 @@ namespace Vst::Internal {
     private:
         QLocalSocket *m_alivePipe;
         QSharedMemory *m_ipcBuffer;
+        QThread *m_vstPlaybackWorkerThread;
+        VstPlaybackWorker *m_worker;
+        QVector<float *> planarOutputData;
     };
 
 } // Vst

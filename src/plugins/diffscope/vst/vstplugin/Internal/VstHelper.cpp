@@ -30,6 +30,8 @@ namespace Vst::Internal {
         srcNode = new QRemoteObjectHost(QUrl("local:" + globalUuid()), this);
     }
     VstHelper::~VstHelper() {
+        delete srcNode;
+        delete vstBridge;
         m_instance = nullptr;
     }
     VstHelper *VstHelper::instance() {

@@ -137,12 +137,16 @@ namespace Vst {
             }
             return;
         }
-        vstRep->showWindow();
+        ch->invokeSync<void>([=]{
+            vstRep->showWindow();
+        });
     }
 
     void DiffScopeVstBridge::hideWindow() {
         if(!isConnected) return;
-        vstRep->hideWindow();
+        ch->invokeSync<void>([=]{
+            vstRep->hideWindow();
+        });
     }
 
     // TODO
@@ -176,7 +180,9 @@ namespace Vst {
         if(!isConnected) return false;
         if(!ipcBuffer.isAttached()) return false;
         auto buf = reinterpret_cast<const float *>(ipcBuffer.constData());
-        vstRep->notifySwitchAudioBuffer(isRealtime, isPlaying, position, size, channelCount);
+        ch->invokeSync<void>([=]{
+            vstRep->notifySwitchAudioBuffer(isRealtime, isPlaying, position, size, channelCount);
+        });
         return ch->invokeSync<bool>([=]{
             QEventLoop eventLoop;
             QObject::connect(vstRep, &VstBridgeReplica::bufferSwitched, &eventLoop, &QEventLoop::exit);
@@ -202,7 +208,9 @@ namespace Vst {
     void DiffScopeVstBridge::finalizeProcess() {
         ipcBuffer.detach();
         cachedProcessInfo = {};
-        vstRep->finalizeProcess();
+        ch->invokeSync<void>([=]{
+            vstRep->finalizeProcess();
+        });
     }
 
     void DiffScopeVstBridge::stateChanged(const QByteArray &data) {
