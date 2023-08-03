@@ -10,10 +10,12 @@
 #include <QStyledItemDelegate>
 #include <QVBoxLayout>
 #include "QProgressBar"
+#include "QRadioButton"
 
 #include <CCheckBox.h>
 #include <CTabButton.h>
 #include <QGraphicsDropShadowEffect>
+#include <QGroupBox>
 #include <QMAppExtension.h>
 #include <QMDecoratorV2.h>
 
@@ -72,6 +74,19 @@ int main(int argc, char *argv[]) {
     auto checkBox1 = new CCheckBox();
     checkBox1->setText("123");
 
+    auto groupBox = new QGroupBox;
+
+    auto verticalLayout = new QVBoxLayout(groupBox);
+
+    auto radioButton1 = new QRadioButton("RadioButton1", groupBox);
+    radioButton1->setChecked(true);
+    auto radioButton2 = new QRadioButton("RadioButton2", groupBox);
+    auto radioButton3 = new QRadioButton("RadioButton3", groupBox);
+
+    verticalLayout->addWidget(radioButton1);
+    verticalLayout->addWidget(radioButton2);
+    verticalLayout->addWidget(radioButton3);
+
     auto progressBar = new QProgressBar();
     progressBar->setMaximum(100);
     progressBar->setMinimum(0);
@@ -83,6 +98,7 @@ int main(int argc, char *argv[]) {
     mainLayout->addWidget(comboBox1);
     mainLayout->addWidget(comboBox2);
     mainLayout->addWidget(checkBox1);
+    mainLayout->addWidget(groupBox);
     mainLayout->addWidget(progressBar);
 
     auto mainWidget = new QWidget;
@@ -258,6 +274,48 @@ CCheckBox>CToolButton#box {
 
 CCheckBox>CToolButton#box:focus {
     border-color: #167FD2;
+}
+
+QRadioButton {
+    border: none;
+    color: #333;
+}
+
+QRadioButton::indicator:checked {
+    border: 4px solid #0060c0;
+    background-color: white;
+    border-radius: 8px;
+}
+
+QRadioButton::indicator:checked:hover {
+    border: 3px solid #0075EA;
+}
+
+QRadioButton::indicator:checked:pressed {
+    border: 4px solid #004F9E;
+}
+
+QRadioButton::indicator:checked:disabled {
+    border: 4px solid #e0e0e0;
+}
+
+QRadioButton::indicator:unchecked {
+    border: 1px solid #d4d4d4;
+    background-color: white;
+    border-radius: 8px;
+}
+
+QRadioButton::indicator:unchecked:hover {
+    background-color: #f6f6f6;
+}
+
+QRadioButton::indicator:unchecked:pressed {
+    border: 4px solid #d4d4d4;
+    background-color: #fff;
+}
+
+QRadioButton::indicator:unchecked:disabled {
+    border: 1px solid #f0f0f0;
 }
 
 QProgressBar {

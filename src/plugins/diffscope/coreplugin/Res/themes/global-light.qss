@@ -258,6 +258,50 @@ CCheckBox>QLabel {
     padding: 0 0 2px 0;
 }
 
+/* RadioButton */
+
+QRadioButton {
+    border: none;
+    color: #333;
+}
+
+QRadioButton::indicator:checked {
+    border: 4px solid #0060c0;
+    background-color: white;
+    border-radius: 8px;
+}
+
+QRadioButton::indicator:checked:hover {
+    border: 3px solid #0075EA;
+}
+
+QRadioButton::indicator:checked:pressed {
+    border: 4px solid #004F9E;
+}
+
+QRadioButton::indicator:checked:disabled {
+    border: 4px solid #e0e0e0;
+}
+
+QRadioButton::indicator:unchecked {
+    border: 1px solid #d4d4d4;
+    background-color: white;
+    border-radius: 8px;
+}
+
+QRadioButton::indicator:unchecked:hover {
+    background-color: #f6f6f6;
+}
+
+QRadioButton::indicator:unchecked:pressed {
+    border: 4px solid #d4d4d4;
+    background-color: #fff;
+}
+
+QRadioButton::indicator:unchecked:disabled {
+    border: 1px solid #f0f0f0;
+}
+
 /* TabBar */
 
 QTabBar {
