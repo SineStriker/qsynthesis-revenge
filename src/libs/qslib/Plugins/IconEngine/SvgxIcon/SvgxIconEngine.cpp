@@ -13,6 +13,8 @@
 #include <private/qguiapplication_p.h>
 
 #include <QMNamespace.h>
+#include <private/QMGuiAppExtension_p.h>
+
 #include <private/QMSvg_p.h>
 #include <private/QMetaTypeUtils.h>
 
@@ -41,10 +43,11 @@ QString SvgxIconEnginePrivate::pmcKey(const QSize &size, QIcon::Mode mode, QIcon
     mode = QIcon::Normal;
     state = QIcon::Off;
 
-    return QLatin1String("$qtm_svgicon_") + QString::number(serialNum, 16).append(QLatin1Char('_')) +
+    return QLatin1String("$qtm_svgxicon_") + QString::number(serialNum, 16).append(QLatin1Char('_')) +
            QString::number(
                (((((qint64(size.width()) << 11) | size.height()) << 11) | mode) << 4) | state | (currentState << 1), 16)
                .append("_") +
+           QString::number(QMGuiAppExtensionPrivate::globalImageCacheSerialNum, 16).append(QLatin1Char('_')) +
            realColors[currentState];
 }
 

@@ -1,6 +1,8 @@
 #ifndef QMGUIAPPEXTENSION_P_H
 #define QMGUIAPPEXTENSION_P_H
 
+#include <QAtomicInt>
+
 #include <private/QMCoreAppExtension_p.h>
 
 #include "../QMGuiAppExtension.h"
@@ -20,6 +22,8 @@ public:
     void init();
 
     QMCoreInitFactory *createFactory() override;
+
+    static QAtomicInt globalImageCacheSerialNum;
 };
 
 #endif // QMGUIAPPEXTENSION_P_H

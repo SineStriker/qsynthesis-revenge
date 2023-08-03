@@ -7,8 +7,8 @@
 
 #include "QMGuiConsole.h"
 #include "QMGuiDecoratorV2.h"
-#include "QMSystem.h"
 #include "QMSvg.h"
+#include "QMSystem.h"
 
 #include "private/QMGuiAppExtension_p.h"
 #include "private/QMetaTypeImpl_p.h"
@@ -82,6 +82,8 @@ void QMGuiAppExtensionPrivate::init() {
     font.setStyleStrategy(QFont::PreferAntialias);
     qApp->setFont(font);
 }
+
+QAtomicInt QMGuiAppExtensionPrivate::globalImageCacheSerialNum;
 
 QMCoreInitFactory *QMGuiAppExtensionPrivate::createFactory() {
     return new QMGuiInitFactory();

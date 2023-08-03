@@ -9,6 +9,7 @@
 #include <private/qpixmap_raster_p.h>
 
 #include <QMSvg.h>
+#include <private/QMGuiAppExtension_p.h>
 
 class HackPaintEngine : public QRasterPaintEngine {
 public:
@@ -76,8 +77,9 @@ namespace IconColorImpl {
     }
 
     QString defaultSalt(QObject *obj) {
-        return QString("%1_%2_%3")
-            .arg(obj->metaObject()->className(), obj->objectName(), QString::number(quintptr(obj), 16));
+        return QString("%1_%2_%3_%4")
+            .arg(obj->metaObject()->className(), obj->objectName(), QString::number(quintptr(obj), 16),
+                 QString::number(QMGuiAppExtensionPrivate::globalImageCacheSerialNum, 16));
     }
 
     QM::ClickState getButtonClickState(QAbstractButton *button) {

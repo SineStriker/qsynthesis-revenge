@@ -14,6 +14,8 @@
 #include <QMSimpleVarExp.h>
 #include <QMSystem.h>
 
+#include "private/QMGuiAppExtension_p.h"
+
 ThemeGuardV2::ThemeGuardV2(QWidget *w, QMDecoratorV2Private *parent)
     : QObject(parent), w(w), d(parent), winHandle(nullptr) {
     needUpdate = false;
@@ -651,10 +653,11 @@ void QMDecoratorV2::setTheme(const QString &theme) {
     }
 
     d->currentTheme = theme;
+    QMGuiAppExtensionPrivate::globalImageCacheSerialNum++;
+
     for (const auto &item : qAsConst(d->themeSubscribers)) {
         item->updateScreen();
     }
-
     emit themeChanged(theme);
 }
 
