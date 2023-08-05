@@ -6,6 +6,8 @@
 #include "../CDockCard.h"
 #include "QMFloatingWindowHelper.h"
 
+class CDockTabBar;
+
 class CDockCardPrivate {
     Q_DECLARE_PUBLIC(CDockCard)
 public:

@@ -109,14 +109,14 @@ namespace ScriptMgr {
                 auto item = new QListWidgetItem;
                 auto action = scriptMainActionDict.value(key);
                 if(key.contains('.')) {
-                    auto parentName = reinterpret_cast<QAction *>(action->data().value<uintptr_t>())->text();
+                    auto parentName = static_cast<QAction *>(action->data().value<void *>())->text();
                     item->setText(parentName + " > " + action->text());
                 } else {
                     item->setText(action->text());
                 }
                 item->setData(QsApi::SubtitleRole, key);
                 item->setData(QsApi::DescriptionRole, keySequenceToRichText(action->shortcut()));
-                item->setData(QsApi::ObjectPointerRole, uintptr_t(action));
+                item->setData(QsApi::ObjectPointerRole, QVariant::fromValue(static_cast<void *>(action)));
                 item->setData(QsApi::AlignmentRole, int(Qt::AlignTop));
                 cp->addItem(item);
             }
@@ -127,7 +127,7 @@ namespace ScriptMgr {
             connect(cp, &QsApi::CommandPalette::finished, obj, [=](QListWidgetItem *item){
                 delete obj;
                 if(!item) return;
-                auto action = reinterpret_cast<QAction *>(item->data(QsApi::ObjectPointerRole).value<uintptr_t>());
+                auto action = static_cast<QAction *>(item->data(QsApi::ObjectPointerRole).value<void *>());
                 QTimer::singleShot(0, action, &QAction::trigger);
             });
         }
@@ -171,7 +171,7 @@ namespace ScriptMgr {
                         connect(childAction, &QAction::triggered, this, [=](){
                             ScriptLoader::instance()->invoke(windowKey, entry.id, i);
                         });
-                        childAction->setData(uintptr_t(mainAction));
+                        childAction->setData(QVariant::fromValue(static_cast<void *>(mainAction)));
                         menu->addAction(childAction);
                         scriptActionContext->addAction(childAction);
                         scriptMainActionDict.append(entry.id + "." + childId, childAction);

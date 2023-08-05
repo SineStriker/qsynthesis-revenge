@@ -2,6 +2,8 @@
 // Created by Crs_1 on 2023/8/3.
 //
 
+#include <cmath>
+
 #include "VstPlaybackWorker.h"
 
 #include "VstHelper.h"
