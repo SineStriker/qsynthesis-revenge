@@ -25,6 +25,7 @@
 #include <QJsonArray>
 #include <QThread>
 
+#include "LevelMeter.h"
 #include "buffer/AudioClipSeries.h"
 #include "format/AudioFormatIO.h"
 #include "format/TransportAudioSourceWriter.h"
@@ -38,6 +39,7 @@
 int main(int argc, char **argv){
 
     QApplication a(argc, argv);
+    a.setFont(QFont("Microsoft Yahei UI", 9));
 
     QMainWindow mainWindow;
 
@@ -75,15 +77,17 @@ int main(int argc, char **argv){
 
     auto fileSpecLabel = new QLabel;
 
-    auto leftLevelMeter = new QProgressBar;
-    leftLevelMeter->setRange(0, 60);
-    leftLevelMeter->setTextVisible(false);
+//    auto leftLevelMeter = new QProgressBar;
+//    leftLevelMeter->setRange(0, 60);
+//    leftLevelMeter->setTextVisible(false);
+    auto leftLevelMeter = new LevelMeter;
 
-    auto rightLevelMeter = new QProgressBar;
-    rightLevelMeter->setRange(0, 60);
-    rightLevelMeter->setTextVisible(false);
+//    auto rightLevelMeter = new QProgressBar;
+//    rightLevelMeter->setRange(0, 60);
+//    rightLevelMeter->setTextVisible(false);
+    auto rightLevelMeter = new LevelMeter;
 
-    auto browseFileButton = new QPushButton("Browse");
+        auto browseFileButton = new QPushButton("Browse");
 
     auto startButton = new QPushButton("Start");
 
@@ -263,19 +267,23 @@ int main(int argc, char **argv){
         QString text = "bm: ";
         if(ml == 0) {
             text += "-inf dB, ";
-            leftLevelMeter->reset();
+//            leftLevelMeter->reset();
+            leftLevelMeter->setLevel(0);
         } else {
             double db = 10 * log(ml/1.0) / log(10);
             text += QString::number(db, 'f', 1) + " dB, ";
-            leftLevelMeter->setValue(60 + db);
+//            leftLevelMeter->setValue(60 + db);
+            leftLevelMeter->setLevel(ml);
         }
         if(mr == 0) {
             text += "-inf dB, ";
-            rightLevelMeter->reset();
+//            rightLevelMeter->reset();
+            rightLevelMeter->setLevel(0);
         } else {
             double db = 10 * log(mr/1.0) / log(10);
             text += QString::number(db, 'f', 1) + " dB, ";
-            rightLevelMeter->setValue(60 + db);
+//            rightLevelMeter->setValue(60 + db);
+            rightLevelMeter->setLevel(mr);
         }
         fileSpecLabel->setText(text);
     });
@@ -392,8 +400,10 @@ int main(int argc, char **argv){
         dlg.exec();
         transportSrc.close();
         transportSrc.setPosition(curPos);
-        leftLevelMeter->reset();
-        rightLevelMeter->reset();
+//        leftLevelMeter->reset();
+//        rightLevelMeter->reset();
+        leftLevelMeter->setLevel(0);
+        rightLevelMeter->setLevel(0);
         thread.quit();
         thread.wait();
     });

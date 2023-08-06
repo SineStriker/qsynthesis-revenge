@@ -94,8 +94,17 @@ int main(int argc, char *argv[]) {
     progressBar->setValue(50);
 //    progressBar->setTextVisible(false);
 
-    auto levelMeter = new LevelMeter;
-    levelMeter->setLevel(0.6);
+    auto levelMeter1 = new LevelMeter;
+    levelMeter1->setLevel(0.6);
+
+    auto levelMeter2 = new LevelMeter;
+    levelMeter2->setLevel(0.8);
+
+    auto levelMeter3 = new LevelMeter;
+    levelMeter3->setLevel(0.95);
+
+    auto levelMeter4 = new LevelMeter;
+    levelMeter4->setLevel(1.2);
 
     auto verticalSpacer = new QSpacerItem(20, 40, QSizePolicy::Minimum, QSizePolicy::Expanding);
 
@@ -106,7 +115,10 @@ int main(int argc, char *argv[]) {
     mainLayout->addWidget(checkBox1);
     mainLayout->addWidget(groupBox);
     mainLayout->addWidget(progressBar);
-    mainLayout->addWidget(levelMeter);
+    mainLayout->addWidget(levelMeter1);
+    mainLayout->addWidget(levelMeter2);
+    mainLayout->addWidget(levelMeter3);
+    mainLayout->addWidget(levelMeter4);
     mainLayout->addItem(verticalSpacer);
 
     auto mainWidget = new QWidget;
@@ -343,15 +355,13 @@ QProgressBar::chunk {
 LevelMeter {
     border-style: none;
     border-radius: 4px;
-    border: 1px solid #d4d4d4;
 }
 
 LevelMeter > QProgressBar#bar {
-    background-color:#FFFFFF;
+    background-color:#d9d9d9;
     color:#808080;
     border-style: none;
     border-radius: 0px;
-    border: none;
     text-align:center;
 }
 
@@ -361,8 +371,13 @@ LevelMeter > QProgressBar#bar::chunk {
 }
 
 LevelMeter > QPushButton#button {
-    background-color: #0060C0;
+    background-color: #d9d9d9;
     border-radius: 0px;
+    border-left: 1px solid #d4d4d4;
+}
+
+LevelMeter > QPushButton#button:checked {
+    background-color: #ff7c80;
 }
 
 )"));

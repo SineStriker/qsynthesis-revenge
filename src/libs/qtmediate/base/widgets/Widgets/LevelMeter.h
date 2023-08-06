@@ -17,6 +17,7 @@
 class LevelMeterPrivate;
 
 class QMWIDGETS_EXPORT LevelMeter : public QWidget {
+    Q_OBJECT
 public:
     explicit LevelMeter(QWidget *parent = nullptr);
     ~LevelMeter();
@@ -28,6 +29,7 @@ protected:
 
 private:
     LevelMeterPrivate *d;
+    bool *clipped;
 };
 
 
