@@ -13,6 +13,7 @@
 #include "QHBoxLayout"
 #include "QPushButton"
 #include "QSizePolicy"
+#include "LevelMeterChunk.h"
 
 class LevelMeterPrivate;
 

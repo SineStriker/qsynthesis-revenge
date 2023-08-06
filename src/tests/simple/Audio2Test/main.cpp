@@ -293,7 +293,7 @@ int main(int argc, char **argv){
         reloadFile(fileName);
     });
 
-    QObject::connect(startButton, &QPushButton::clicked, [&](){
+    QObject::connect(startButton, &QPushButton::pressed, [&](){
         if(!device) return;
         if(!device->start(&playback)) {
             QMessageBox::critical(&mainWindow, "Playback Error", device->errorString());

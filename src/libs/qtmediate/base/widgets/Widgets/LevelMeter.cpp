@@ -9,20 +9,24 @@ class LevelMeterPrivate {
 public:
     LevelMeter *q;
 
-    QProgressBar *m_progressbar;
+//    QProgressBar *m_progressbar;
+    LevelMeterChunk *m_chunk;
     QPushButton *m_button;
     QHBoxLayout *m_layout;
 
     explicit LevelMeterPrivate(LevelMeter *q) : q(q) {
         q->setAttribute(Qt::WA_StyledBackground);
 
-        m_progressbar = new QProgressBar;
-        m_progressbar->setObjectName("bar");
-        m_progressbar->setFocusPolicy(Qt::StrongFocus);
-        m_progressbar->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-        m_progressbar->setTextVisible(false);
-        m_progressbar->setMaximum(10000);
-        m_progressbar->setMinimum(0);
+//        m_progressbar = new QProgressBar;
+//        m_progressbar->setObjectName("bar");
+//        m_progressbar->setFocusPolicy(Qt::StrongFocus);
+//        m_progressbar->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+//        m_progressbar->setTextVisible(false);
+//        m_progressbar->setMaximum(10000);
+//        m_progressbar->setMinimum(0);
+
+        m_chunk = new LevelMeterChunk;
+        m_chunk->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 
         m_button = new QPushButton;
         m_button->setObjectName("button");
@@ -35,7 +39,8 @@ public:
         m_layout->setSpacing(0);
         m_layout->setMargin(0);
         m_layout->setObjectName("layout");
-        m_layout->addWidget(m_progressbar);
+//        m_layout->addWidget(m_progressbar);
+        m_layout->addWidget(m_chunk);
         m_layout->addWidget(m_button);
 
         q->setMinimumHeight(24);
@@ -89,7 +94,10 @@ void LevelMeter::paintEvent(QPaintEvent *event) {
 }
 
 void LevelMeter::setLevel(double level) {
-    auto styleSheet = QMDecoratorV2::evaluateStyleSheet(R"(
+    this->d->m_chunk->setLevel(level);
+    if (level > 1)
+        this->d->m_button->setChecked(true);
+    /*auto styleSheet = QMDecoratorV2::evaluateStyleSheet(R"(
 QProgressBar#bar::chunk {
     background-color: qlineargradient(x1: 0, x2: 1, stop: 0 #709cff, stop: %1 #709cff, stop: %2 #ffcc99, stop: %3 #ffcc99, stop: %4 #ff7c80, stop: 1 #ff7c80);
     border-radius: 0px;
@@ -140,5 +148,5 @@ QProgressBar#bar::chunk {
     background-color: qlineargradient(x1: 0, x2: 1, stop: 0 #709cff, stop: 0.707945 #709cff, stop: 0.707946 #ffcc99, stop: 0.891250 #ffcc99, stop: 0.891251 #ff7c80, stop: 1 #ff7c80);
 }
     )"));
-    }
+    }*/
 }
