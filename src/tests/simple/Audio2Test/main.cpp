@@ -81,11 +81,13 @@ int main(int argc, char **argv){
 //    leftLevelMeter->setRange(0, 60);
 //    leftLevelMeter->setTextVisible(false);
     auto leftLevelMeter = new LevelMeter;
+    leftLevelMeter->initBuffer();
 
 //    auto rightLevelMeter = new QProgressBar;
 //    rightLevelMeter->setRange(0, 60);
 //    rightLevelMeter->setTextVisible(false);
     auto rightLevelMeter = new LevelMeter;
+    rightLevelMeter->initBuffer();
 
         auto browseFileButton = new QPushButton("Browse");
 

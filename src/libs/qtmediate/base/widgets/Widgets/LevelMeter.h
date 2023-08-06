@@ -24,6 +24,7 @@ public:
     ~LevelMeter();
 
     void setLevel(double d);
+    void initBuffer();
 
 protected:
     void paintEvent(QPaintEvent *event) override;

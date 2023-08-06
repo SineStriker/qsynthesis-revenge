@@ -150,3 +150,6 @@ QProgressBar#bar::chunk {
     )"));
     }*/
 }
+void LevelMeter::initBuffer() {
+    this->d->m_chunk->initBuffer();
+}
