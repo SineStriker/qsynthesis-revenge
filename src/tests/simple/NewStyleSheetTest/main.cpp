@@ -11,6 +11,7 @@
 #include <QVBoxLayout>
 #include "QProgressBar"
 #include "QRadioButton"
+#include "LevelMeter.h"
 
 #include <CCheckBox.h>
 #include <CTabButton.h>
@@ -93,6 +94,11 @@ int main(int argc, char *argv[]) {
     progressBar->setValue(50);
 //    progressBar->setTextVisible(false);
 
+    auto levelMeter = new LevelMeter;
+    levelMeter->setLevel(0.6);
+
+    auto verticalSpacer = new QSpacerItem(20, 40, QSizePolicy::Minimum, QSizePolicy::Expanding);
+
     auto mainLayout = new QVBoxLayout;
     mainLayout->addWidget(button);
     mainLayout->addWidget(comboBox1);
@@ -100,6 +106,8 @@ int main(int argc, char *argv[]) {
     mainLayout->addWidget(checkBox1);
     mainLayout->addWidget(groupBox);
     mainLayout->addWidget(progressBar);
+    mainLayout->addWidget(levelMeter);
+    mainLayout->addItem(verticalSpacer);
 
     auto mainWidget = new QWidget;
     mainWidget->setLayout(mainLayout);
@@ -330,6 +338,31 @@ QProgressBar {
 QProgressBar::chunk {
     background-color: #0060C0;
     border-radius: 4px;
+}
+
+LevelMeter {
+    border-style: none;
+    border-radius: 4px;
+    border: 1px solid #d4d4d4;
+}
+
+LevelMeter > QProgressBar#bar {
+    background-color:#FFFFFF;
+    color:#808080;
+    border-style: none;
+    border-radius: 0px;
+    border: none;
+    text-align:center;
+}
+
+LevelMeter > QProgressBar#bar::chunk {
+    background-color: #0060C0;
+    border-radius: 0px;
+}
+
+LevelMeter > QPushButton#button {
+    background-color: #0060C0;
+    border-radius: 0px;
 }
 
 )"));
