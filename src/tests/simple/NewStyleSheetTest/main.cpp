@@ -1,3 +1,7 @@
+#include "LevelMeter.h"
+#include "PanSlider.h"
+#include "QProgressBar"
+#include "QRadioButton"
 #include <QAction>
 #include <QApplication>
 #include <QComboBox>
@@ -9,9 +13,6 @@
 #include <QMetaEnum>
 #include <QStyledItemDelegate>
 #include <QVBoxLayout>
-#include "QProgressBar"
-#include "QRadioButton"
-#include "LevelMeter.h"
 
 #include <CCheckBox.h>
 #include <CTabButton.h>
@@ -94,38 +95,44 @@ int main(int argc, char *argv[]) {
     progressBar->setValue(50);
 //    progressBar->setTextVisible(false);
 
-    auto levelMeter1 = new LevelMeter;
-    levelMeter1->setLevel(0.6);
+    auto panSlider = new PanSlider();
+//    panSlider->setMaximum(100);
+//    panSlider->setMinimum(0);
+    panSlider->setValue(80);
 
-    auto levelMeter2 = new LevelMeter;
-    levelMeter2->setLevel(0.8);
+    auto volumeSlider = new PanSlider();
+    volumeSlider->setMax(120);
+    volumeSlider->setMin(0);
+    volumeSlider->setValue(100);
+    volumeSlider->setDefaultValue(100);
+    volumeSlider->setTrackActiveStartValue(0);
 
-    auto levelMeter3 = new LevelMeter;
-    levelMeter3->setLevel(0.95);
-
-    auto levelMeter4 = new LevelMeter;
-    levelMeter4->setLevel(1.2);
+    auto reverseVolumeSlider = new PanSlider();
+    reverseVolumeSlider->setMax(120);
+    reverseVolumeSlider->setMin(0);
+    reverseVolumeSlider->setValue(50);
+    reverseVolumeSlider->setDefaultValue(100);
+    reverseVolumeSlider->setTrackActiveStartValue(120);
 
     auto verticalSpacer = new QSpacerItem(20, 40, QSizePolicy::Minimum, QSizePolicy::Expanding);
 
     auto mainLayout = new QVBoxLayout;
-    mainLayout->addWidget(button);
-    mainLayout->addWidget(comboBox1);
-    mainLayout->addWidget(comboBox2);
-    mainLayout->addWidget(checkBox1);
-    mainLayout->addWidget(groupBox);
-    mainLayout->addWidget(progressBar);
-    mainLayout->addWidget(levelMeter1);
-    mainLayout->addWidget(levelMeter2);
-    mainLayout->addWidget(levelMeter3);
-    mainLayout->addWidget(levelMeter4);
+//    mainLayout->addWidget(button);
+//    mainLayout->addWidget(comboBox1);
+//    mainLayout->addWidget(comboBox2);
+//    mainLayout->addWidget(checkBox1);
+//    mainLayout->addWidget(groupBox);
+//    mainLayout->addWidget(progressBar);
+    mainLayout->addWidget(panSlider);
+    mainLayout->addWidget(volumeSlider);
+    mainLayout->addWidget(reverseVolumeSlider);
     mainLayout->addItem(verticalSpacer);
 
     auto mainWidget = new QWidget;
     mainWidget->setLayout(mainLayout);
 
     w.setCentralWidget(mainWidget);
-    w.resize(300, 300);
+    w.resize(500, 200);
     w.show();
 
     auto menu = new QMenu("File", &w);

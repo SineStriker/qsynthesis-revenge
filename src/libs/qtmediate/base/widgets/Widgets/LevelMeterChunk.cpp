@@ -26,7 +26,7 @@ LevelMeterChunk::LevelMeterChunk(QWidget *parent) : QWidget(parent), d(new Level
         }
         averageLevel = sum / bufferSize;
         // qDebug() << averageLevel;
-        update();
+        repaint();
     });
 }
 
