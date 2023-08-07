@@ -4,15 +4,13 @@
 
 #include "LevelMeter.h"
 #include "QMDecoratorV2.h"
+#include "QDebug"
 
 class LevelMeterPrivate {
 public:
     LevelMeter *q;
 
 //    QProgressBar *m_progressbar;
-    LevelMeterChunk *m_chunk;
-    QPushButton *m_button;
-    QHBoxLayout *m_layout;
 
     explicit LevelMeterPrivate(LevelMeter *q) : q(q) {
         q->setAttribute(Qt::WA_StyledBackground);
@@ -25,35 +23,56 @@ public:
 //        m_progressbar->setMaximum(10000);
 //        m_progressbar->setMinimum(0);
 
-        m_chunk = new LevelMeterChunk;
-        m_chunk->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 
-        m_button = new QPushButton;
-        m_button->setObjectName("button");
-        m_button->setMaximumWidth(10);
-        m_button->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Expanding);
-        m_button->setCheckable(true);
-        m_button->setChecked(false);
-
-        m_layout = new QHBoxLayout;
-        m_layout->setSpacing(0);
-        m_layout->setMargin(0);
-        m_layout->setObjectName("layout");
-//        m_layout->addWidget(m_progressbar);
-        m_layout->addWidget(m_chunk);
-        m_layout->addWidget(m_button);
-
-        q->setMinimumHeight(24);
-        q->setMaximumHeight(24);
-        q->setLayout(m_layout);
-
-        QObject::connect(m_button, &QPushButton::clicked, q, [=]() {
-            this->m_button->setChecked(false);
-        });
     }
 };
 
-LevelMeter::LevelMeter(QWidget *parent) : QWidget(parent), d(new LevelMeterPrivate(this)) {
+LevelMeter::LevelMeter(Qt::Orientation orientation, QWidget *parent) : QWidget(parent), d(new LevelMeterPrivate(this)) {
+    m_orientation = orientation;
+    m_chunk = new LevelMeterChunk;
+
+    m_button = new QPushButton;
+    m_button->setObjectName("button");
+    m_button->setCheckable(true);
+    m_button->setChecked(false);
+
+    if (m_orientation == Qt::Horizontal) {
+        m_chunk->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+        m_chunk->setOrientation(Qt::Horizontal);
+        m_button->setMaximumWidth(10);
+        m_button->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Expanding);
+
+        m_hLayout = new QHBoxLayout;
+        m_hLayout->setSpacing(1);
+        m_hLayout->setMargin(0);
+        m_hLayout->setObjectName("hLayout");
+        m_hLayout->addWidget(m_chunk);
+        m_hLayout->addWidget(m_button);
+
+        this->setMinimumHeight(24);
+        this->setMaximumHeight(24);
+        this->setLayout(m_hLayout);
+    } else {
+        m_chunk->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+        m_chunk->setOrientation(Qt::Vertical);
+        m_button->setMaximumHeight(10);
+        m_button->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Minimum);
+
+        m_vLayout = new QVBoxLayout;
+        m_vLayout->setSpacing(1);
+        m_vLayout->setMargin(0);
+        m_vLayout->setObjectName("vLayout");
+        m_vLayout->addWidget(m_button);
+        m_vLayout->addWidget(m_chunk);
+        this->setMinimumWidth(6);
+        this->setMaximumWidth(24);
+        this->setLayout(m_vLayout);
+    }
+
+    QObject::connect(m_button, &QPushButton::clicked, this, [=]() {
+        this->m_button->setChecked(false);
+    });
+
     this->setStyleSheet(QMDecoratorV2::evaluateStyleSheet(R"(
 LevelMeter {
     border-style: none;
@@ -76,7 +95,6 @@ LevelMeter > QProgressBar#bar::chunk {
 LevelMeter > QPushButton#button {
     background-color: #d9d9d9;
     border-radius: 0px;
-    border-left: 1px solid #d4d4d4;
 }
 
 LevelMeter > QPushButton#button:checked {
@@ -94,9 +112,9 @@ void LevelMeter::paintEvent(QPaintEvent *event) {
 }
 
 void LevelMeter::setLevel(double level) {
-    this->d->m_chunk->setLevel(level);
+    m_chunk->setLevel(level);
     if (level > 1)
-        this->d->m_button->setChecked(true);
+        m_button->setChecked(true);
     /*auto styleSheet = QMDecoratorV2::evaluateStyleSheet(R"(
 QProgressBar#bar::chunk {
     background-color: qlineargradient(x1: 0, x2: 1, stop: 0 #709cff, stop: %1 #709cff, stop: %2 #ffcc99, stop: %3 #ffcc99, stop: %4 #ff7c80, stop: 1 #ff7c80);
@@ -151,5 +169,5 @@ QProgressBar#bar::chunk {
     }*/
 }
 void LevelMeter::initBuffer() {
-    this->d->m_chunk->initBuffer();
+    m_chunk->initBuffer();
 }

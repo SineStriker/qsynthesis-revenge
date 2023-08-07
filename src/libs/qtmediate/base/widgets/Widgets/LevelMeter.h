@@ -20,7 +20,7 @@ class LevelMeterPrivate;
 class QMWIDGETS_EXPORT LevelMeter : public QWidget {
     Q_OBJECT
 public:
-    explicit LevelMeter(QWidget *parent = nullptr);
+    explicit LevelMeter(Qt::Orientation orientation, QWidget *parent = nullptr);
     ~LevelMeter();
 
     void setLevel(double d);
@@ -28,6 +28,11 @@ public:
 
 protected:
     void paintEvent(QPaintEvent *event) override;
+    Qt::Orientation m_orientation;
+    LevelMeterChunk *m_chunk;
+    QPushButton *m_button;
+    QHBoxLayout *m_hLayout;
+    QVBoxLayout *m_vLayout;
 
 private:
     LevelMeterPrivate *d;

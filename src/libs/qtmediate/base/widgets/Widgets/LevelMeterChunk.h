@@ -18,12 +18,15 @@ public:
     ~LevelMeterChunk();
 
     void setLevel(double d);
+    void setOrientation(Qt:: Orientation orientation);
     void setSampleRate(int sampleRate);
     void setBufferSize(int size);
     void initBuffer();
 
 protected:
     void paintEvent(QPaintEvent *event) override;
+
+    Qt::Orientation m_orientation;
     double averageLevel = 0;
     int sampleRate = 44100;
     double *bufferPtr;
