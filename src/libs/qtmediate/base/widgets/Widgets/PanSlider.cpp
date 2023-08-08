@@ -26,6 +26,7 @@ PanSlider::PanSlider(QWidget *parent) : QWidget(parent), d(new PanSliderPrivate(
         timer->stop();
         doubleClickLocked = false;
     });
+    this->setMinimumWidth(50);
 }
 
 PanSlider::~PanSlider() {
@@ -81,6 +82,7 @@ void PanSlider::paintEvent(QPaintEvent *event) {
 
 void PanSlider::setValue(double value) {
     m_value = value;
+    emit valueChanged(m_value);
     repaint();
 }
 

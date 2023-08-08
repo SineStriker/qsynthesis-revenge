@@ -25,6 +25,9 @@ public:
     void setTrackActiveStartValue(double pos);
     void reset();
 
+signals:
+    void valueChanged(double value);
+
 protected:
     void paintEvent(QPaintEvent *event) override;
     void mouseMoveEvent(QMouseEvent *event) override;

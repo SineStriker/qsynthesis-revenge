@@ -2,6 +2,7 @@
 #include "PanSlider.h"
 #include "QProgressBar"
 #include "QRadioButton"
+#include "TrackControlPanel.h"
 #include <QAction>
 #include <QApplication>
 #include <QComboBox>
@@ -93,11 +94,8 @@ int main(int argc, char *argv[]) {
     progressBar->setMaximum(100);
     progressBar->setMinimum(0);
     progressBar->setValue(50);
-//    progressBar->setTextVisible(false);
 
     auto panSlider = new PanSlider();
-//    panSlider->setMaximum(100);
-//    panSlider->setMinimum(0);
     panSlider->setValue(80);
 
     auto volumeSlider = new PanSlider();
@@ -114,6 +112,41 @@ int main(int argc, char *argv[]) {
     reverseVolumeSlider->setDefaultValue(100);
     reverseVolumeSlider->setTrackActiveStartValue(120);
 
+    auto track1 = new TrackControlPanel;
+    track1->setTrackIndex(1);
+    track1->setTrackName("轨道1");
+    track1->setTrackColor(QColor(112, 156, 255));
+    track1->setTrackPan(-100);
+    track1->setTrackVolume(0);
+
+    auto track2 = new TrackControlPanel;
+    track2->setTrackIndex(2);
+    track2->setTrackName("轨道2");
+    track2->setTrackColor(QColor(113, 218, 255));
+    track2->setTrackPan(-50);
+    track2->setTrackVolume(30);
+
+    auto track3 = new TrackControlPanel;
+    track3->setTrackIndex(3);
+    track3->setTrackName("轨道3");
+    track3->setTrackColor(QColor(255, 204, 153));
+    track3->setTrackPan(0);
+    track3->setTrackVolume(60);
+
+    auto track4 = new TrackControlPanel;
+    track4->setTrackIndex(4);
+    track4->setTrackName("轨道4");
+    track4->setTrackColor(QColor(92, 236, 130));
+    track4->setTrackPan(50);
+    track4->setTrackVolume(90);
+
+    auto track5 = new TrackControlPanel;
+    track5->setTrackIndex(5);
+    track5->setTrackName("轨道5");
+    track5->setTrackColor(QColor(255, 124, 128));
+    track5->setTrackPan(100);
+    track5->setTrackVolume(120);
+
     auto verticalSpacer = new QSpacerItem(20, 40, QSizePolicy::Minimum, QSizePolicy::Expanding);
 
     auto mainLayout = new QVBoxLayout;
@@ -123,16 +156,21 @@ int main(int argc, char *argv[]) {
 //    mainLayout->addWidget(checkBox1);
 //    mainLayout->addWidget(groupBox);
 //    mainLayout->addWidget(progressBar);
-    mainLayout->addWidget(panSlider);
-    mainLayout->addWidget(volumeSlider);
-    mainLayout->addWidget(reverseVolumeSlider);
-    mainLayout->addItem(verticalSpacer);
+//    mainLayout->addWidget(panSlider);
+//    mainLayout->addWidget(volumeSlider);
+//    mainLayout->addWidget(reverseVolumeSlider);
+    mainLayout->addWidget(track1);
+    mainLayout->addWidget(track2);
+    mainLayout->addWidget(track3);
+    mainLayout->addWidget(track4);
+    mainLayout->addWidget(track5);
+//    mainLayout->addItem(verticalSpacer);
 
     auto mainWidget = new QWidget;
     mainWidget->setLayout(mainLayout);
 
     w.setCentralWidget(mainWidget);
-    w.resize(500, 200);
+    w.resize(500, 700);
     w.show();
 
     auto menu = new QMenu("File", &w);
