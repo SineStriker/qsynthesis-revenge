@@ -25,20 +25,19 @@ namespace Vst::Internal {
     VstBridge::VstBridge(QObject *parent):
           VstBridgeSource(parent),
           m_alivePipe(new QLocalSocket(this)),
-          m_ipcBuffer(new QSharedMemory(VstHelper::globalUuid() + "buffer", this)),
+          m_processBufferSharedMemory(new QSharedMemory(VstHelper::globalUuid() + "buffer", this)),
+          m_processDataSharedMemory(new QSharedMemory(VstHelper::globalUuid() + "process_data", this)),
           m_vstPlaybackWorkerThread(new QThread(this)),
-          m_worker(new VstPlaybackWorker(this))
+          m_worker(new VstPlaybackWorker(m_processDataSharedMemory, m_processBufferSharedMemory))
     {
         m_instance = this;
         m_worker->moveToThread(m_vstPlaybackWorkerThread);
-        connect(m_worker, &VstPlaybackWorker::workFinished, this, [=](bool isSuccessful){
-            emit bufferSwitched(isSuccessful);
-        });
         connect(m_alivePipe, &QLocalSocket::disconnected, this, &VstBridge::finalizeVst);
     }
 
     VstBridge::~VstBridge() {
         VstBridge::finalizeVst();
+        delete m_worker;
         m_instance = nullptr;
     }
 
@@ -55,6 +54,15 @@ namespace Vst::Internal {
             return false;
         }
         VstHelper::instance()->connectionStatus.isConnected = true;
+        if(m_processDataSharedMemory->isAttached()) {
+            m_processDataSharedMemory->detach();
+        }
+        if(!m_processDataSharedMemory->attach()) {
+            return false;
+        }
+        connect(m_vstPlaybackWorkerThread, &QThread::started, m_worker, &VstPlaybackWorker::start);
+        qDebug() << "Main thread:" << QThread::currentThreadId();
+        m_vstPlaybackWorkerThread->start();
         openDataToEditor({});
         return true;
     }
@@ -66,6 +74,10 @@ namespace Vst::Internal {
             auto iWin = VstHelper::instance()->addOn->windowHandle()->cast<Core::IProjectWindow>();
             iWin->doc()->close();
         }
+        m_worker->quit();
+        m_vstPlaybackWorkerThread->quit();
+        m_vstPlaybackWorkerThread->wait();
+        m_processDataSharedMemory->detach();
         VstHelper::instance()->connectionStatus.isConnected = false;
         VstHelper::instance()->addOn = nullptr;
     }
@@ -120,43 +132,13 @@ namespace Vst::Internal {
         if(VstHelper::instance()->addOn) VstHelper::instance()->addOn->hideWindow();
     }
     bool VstBridge::initializeProcess(int channelCount, int maxBufferSize, double sampleRate) {
-        qDebug() << "VstBridge: initializeProcess (" << channelCount << maxBufferSize << sampleRate << ")";
-
-        // Setup shared memory
-        if(m_ipcBuffer->isAttached()) {
-            m_ipcBuffer->detach();
-        }
-        if(m_ipcBuffer->attach()) {
-            m_ipcBuffer->detach();
-        }
-        if(!m_ipcBuffer->create(maxBufferSize * channelCount * sizeof(float) * 2)) {
-            return false;
-        }
-        planarOutputData.resize(channelCount);
-        for(int i = 0; i < channelCount; i++) {
-            planarOutputData[i] = reinterpret_cast<float *>(m_ipcBuffer->data()) + (maxBufferSize * 2);
-        }
-
-        // Start worker thread
-        m_vstPlaybackWorkerThread->start(QThread::TimeCriticalPriority);
-
-        // Set processing information to VstHelper
-        VstHelper::instance()->connectionStatus.isProcessing = true;
-        VstHelper::instance()->connectionStatus.channelCount = channelCount;
-        VstHelper::instance()->connectionStatus.bufferSize = maxBufferSize;
-        VstHelper::instance()->connectionStatus.sampleRate = sampleRate;
-        return true;
+        return false;
     }
     void VstBridge::notifySwitchAudioBuffer(bool isRealtime, bool isPlaying, qint64 position, int bufferSize, int channelCount) {
-        emit m_worker->requestWork(isRealtime, isPlaying, position, bufferSize, channelCount, planarOutputData.constData());
+
     }
     void VstBridge::finalizeProcess() {
-        qDebug() << "VstBridge: finalizeProcess";
-        m_vstPlaybackWorkerThread->quit();
-        m_vstPlaybackWorkerThread->wait();
-        planarOutputData.clear();
-        m_ipcBuffer->detach();
-        VstHelper::instance()->connectionStatus.isProcessing = false;
+
     }
 
 } // Vst

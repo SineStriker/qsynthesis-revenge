@@ -7,17 +7,31 @@
 
 #include <QObject>
 
+class QSharedMemory;
+
+namespace Vst {
+    class VstProcessData;
+    class VstBufferSwitchData;
+}
+
 namespace Vst::Internal {
 
     class VstPlaybackWorker: public QObject {
         Q_OBJECT
+        QAtomicInteger<bool> m_requestFinish = false;
+        QSharedMemory *m_processBufferSharedMemory;
+        QSharedMemory *m_processDataSharedMemory;
+        VstProcessData *m_processData = nullptr;
+        VstBufferSwitchData *m_bufferSwitchData = nullptr;
+        QVector<float *> m_planarOutputData;
     public:
-        explicit VstPlaybackWorker(QObject *parent = nullptr);
+        VstPlaybackWorker(QSharedMemory *processDataSharedMemory, QSharedMemory *processBufferSharedMemory, QObject *parent = nullptr);
     public slots:
-        void work(bool isRealtime, bool isPlaying, qint64 position, int bufferSize, int channelCount, float *const *output);
-    signals:
-        void requestWork(bool isRealtime, bool isPlaying, qint64 position, int bufferSize, int channelCount, float *const *output);
-        void workFinished(bool isSuccessful);
+        void start();
+        void quit();
+        bool initialize(float sampleRate, int bufferSize, int channelCount);
+        void finalize();
+        bool work(bool isRealtime, bool isPlaying, qint64 position, int bufferSize, int channelCount, float *const *output);
     };
 
 } // Internal

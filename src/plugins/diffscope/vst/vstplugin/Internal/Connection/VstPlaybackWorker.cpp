@@ -1,17 +1,20 @@
 //
 // Created by Crs_1 on 2023/8/3.
 //
+#include "VstPlaybackWorker.h"
 
 #include <cmath>
 
-#include "VstPlaybackWorker.h"
+#include <QSharedMemory>
+#include <QThread>
 
+#include "../../VstProcessData.h"
 #include "VstHelper.h"
 
 namespace Vst::Internal {
 
-    VstPlaybackWorker::VstPlaybackWorker(QObject *parent) : QObject(parent) {
-        connect(this, &VstPlaybackWorker::requestWork, this, &VstPlaybackWorker::work);
+    VstPlaybackWorker::VstPlaybackWorker(QSharedMemory *processDataSharedMemory, QSharedMemory *processBufferSharedMemory, QObject *parent): m_processDataSharedMemory(processDataSharedMemory), m_processBufferSharedMemory(processBufferSharedMemory), QObject(parent) {
+
     }
 
     static qint64 pos = 0;
@@ -23,15 +26,80 @@ namespace Vst::Internal {
         }
     }
 
-    void VstPlaybackWorker::work(bool isRealtime, bool isPlaying, qint64 position, int bufferSize, int channelCount, float *const *output) {
+    void VstPlaybackWorker::start() {
+        m_requestFinish = false;
+        m_processData = reinterpret_cast<VstProcessData *>(m_processDataSharedMemory->data());
+        qDebug() << "Worker thread:" << QThread::currentThreadId();
+        while(!m_requestFinish) {
+            m_processDataSharedMemory->lock();
+            if(m_processData->flag == VstProcessData::ProcessInitializationRequest) {
+                if(m_processData->sampleRate != 0) {
+                    if(initialize(m_processData->sampleRate, m_processData->bufferSize, m_processData->channelCount)) {
+                        m_processData->flag = VstProcessData::ProcessInitializationResponse;
+                    } else {
+                        m_processData->flag = VstProcessData::ProcessInitializationError;
+                    }
+                } else {
+                    finalize();
+                    m_processData->flag = VstProcessData::ProcessInitializationResponse;
+                }
+            } else if(m_processData->flag == VstProcessData::BufferSwitchRequest) {
+                if(work(m_bufferSwitchData->isRealtime, m_bufferSwitchData->isPlaying, m_bufferSwitchData->position, m_bufferSwitchData->size, m_bufferSwitchData->channelCount, m_planarOutputData.constData())) {
+                    m_processData->flag = VstProcessData::BufferSwitchFinished;
+                } else {
+                    m_processData->flag = VstProcessData::BufferSwitchError;
+                }
+            }
+            m_processDataSharedMemory->unlock();
+        }
+        m_processData = nullptr;
+        finalize();
+    }
+    void VstPlaybackWorker::quit() {
+        m_requestFinish = true;
+    }
+    bool VstPlaybackWorker::initialize(float sampleRate, int bufferSize, int channelCount) {
+        qDebug() << "VstPlaybackWorker: initialize (" << channelCount << bufferSize << sampleRate << ")";
+
+        // Setup shared memory
+        if(m_processBufferSharedMemory->isAttached()) {
+            m_processBufferSharedMemory->detach();
+        }
+        if(!m_processBufferSharedMemory->attach()) {
+            return false;
+        }
+        m_bufferSwitchData = reinterpret_cast<VstBufferSwitchData *>(m_processBufferSharedMemory->data());
+        m_planarOutputData.resize(channelCount);
+        for(int i = 0; i < channelCount; i++) {
+            m_planarOutputData[i] = reinterpret_cast<float *>(m_processBufferSharedMemory->data()) + i * (bufferSize * 2);
+        }
+
+        // Set processing information to VstHelper
+        VstHelper::instance()->connectionStatus.isProcessing = true;
+        VstHelper::instance()->connectionStatus.channelCount = channelCount;
+        VstHelper::instance()->connectionStatus.bufferSize = bufferSize;
+        VstHelper::instance()->connectionStatus.sampleRate = sampleRate;
+        return true;
+    }
+    void VstPlaybackWorker::finalize() {
+        qDebug() << "VstPlaybackWorker: finalize";
+        m_planarOutputData.resize(0);
+        m_bufferSwitchData = nullptr;
+        m_processBufferSharedMemory->detach();
+        VstHelper::instance()->connectionStatus.isProcessing = false;
+    }
+
+    bool VstPlaybackWorker::work(bool isRealtime, bool isPlaying, qint64 position, int bufferSize, int channelCount, float *const *output) {
         // TODO
         if(isPlaying) {
-            genSineWave(position, bufferSize, 440, VstHelper::instance()->connectionStatus.sampleRate, output[0]);
+            for(int i = 0; i < channelCount; i++)
+                genSineWave(position, bufferSize, 440, VstHelper::instance()->connectionStatus.sampleRate, output[i]);
             pos = 0;
         } else {
-            genSineWave(pos, bufferSize, 880, VstHelper::instance()->connectionStatus.sampleRate, output[0]);
+            for(int i = 0; i < channelCount; i++)
+                genSineWave(pos, bufferSize, 880, VstHelper::instance()->connectionStatus.sampleRate, output[i]);
             pos += bufferSize;
         }
-        emit workFinished(true);
+        return true;
     }
 } // Internal

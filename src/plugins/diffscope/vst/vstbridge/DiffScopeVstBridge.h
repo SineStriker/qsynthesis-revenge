@@ -8,6 +8,9 @@
 
 namespace Vst {
 
+    struct VstProcessData;
+    struct VstBufferSwitchData;
+
     class DiffScopeVstBridge: public IVstBridge {
 
     public:
@@ -33,7 +36,11 @@ namespace Vst {
         QAtomicInteger<bool> isConnected = false;
         QAtomicInteger<bool> isPending = false;
 
-        QSharedMemory ipcBuffer;
+        QSharedMemory processBufferSharedMemory;
+        QSharedMemory processDataSharedMemory;
+        VstProcessData *processData = nullptr;
+        VstBufferSwitchData *bufferSwitchData = nullptr;
+        QVector<const float *> planarOutputData;
         QScopedPointer<QSharedMemory> guardSharedMemory;
         QLocalServer alivePipe;
 

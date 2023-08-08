@@ -40,10 +40,10 @@ namespace Vst::Internal {
 
     private:
         QLocalSocket *m_alivePipe;
-        QSharedMemory *m_ipcBuffer;
+        QSharedMemory *m_processBufferSharedMemory;
+        QSharedMemory *m_processDataSharedMemory;
         QThread *m_vstPlaybackWorkerThread;
         VstPlaybackWorker *m_worker;
-        QVector<float *> planarOutputData;
     };
 
 } // Vst

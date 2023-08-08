@@ -1,6 +1,7 @@
 #include "DiffScopeVstBridge.h"
-#include "QMSystem.h"
-#include "rep_VstBridge_replica.h"
+#include <QMSystem.h>
+#include <rep_VstBridge_replica.h>
+#include <VstProcessData.h>
 
 #define vstRep (ch->replica<VstBridgeReplica>())
 
@@ -89,6 +90,15 @@ namespace Vst {
         ch.reset(new CommunicationHelper);
         ch->start();
         alivePipe.listen(GLOBAL_UUID + "alive");
+        processDataSharedMemory.setKey(GLOBAL_UUID + "process_data");
+        if(processDataSharedMemory.isAttached()) {
+            processDataSharedMemory.detach();
+        }
+        if(processDataSharedMemory.attach()) {
+            processDataSharedMemory.detach();
+        }
+        processDataSharedMemory.create(sizeof(VstProcessData));
+        memset(processDataSharedMemory.data(), 0, sizeof(VstProcessData));
         ch->connectAsync<VstBridgeReplica>("local:" + GLOBAL_UUID, [=](bool isValid){
             isPending = false;
             if(isValid) {
@@ -119,7 +129,9 @@ namespace Vst {
     }
 
     void DiffScopeVstBridge::terminate() {
-        ipcBuffer.detach();
+        processBufferSharedMemory.detach();
+        processDataSharedMemory.detach();
+        alivePipe.close();
         QObject::disconnect(vstRep, &VstBridgeReplica::documentChanged, vstRep, nullptr);
         releaseSingleton();
     }
@@ -156,61 +168,90 @@ namespace Vst {
         if(!isConnected) {
             return true;
         }
-        ipcBuffer.setKey(GLOBAL_UUID + "buffer");
-        if(ipcBuffer.isAttached()) {
-            ipcBuffer.detach();
+        processBufferSharedMemory.setKey(GLOBAL_UUID + "buffer");
+        if(processBufferSharedMemory.isAttached()) {
+            processBufferSharedMemory.detach();
         }
-        if(ipcBuffer.attach()) {
-            ipcBuffer.detach();
+        if(processBufferSharedMemory.attach()) {
+            processBufferSharedMemory.detach();
         }
-        if(!ch->invokeSync<bool>([=](){
-            auto reply = vstRep->initializeProcess(channelCount, maxBufferSize, sampleRate);
-            if(!reply.waitForFinished(ipcTimeout)) return false;
-            if(reply.returnValue()) {
-                return ipcBuffer.attach();
+        processBufferSharedMemory.create(std::max(sizeof(VstBufferSwitchData), channelCount * maxBufferSize * sizeof(float) * 2));
+
+        auto buf = reinterpret_cast<const float *>(processBufferSharedMemory.constData());
+        planarOutputData.resize(channelCount);
+        for(int i = 0; i < channelCount; i++) {
+            planarOutputData[i] = buf + i * (maxBufferSize * 2);
+        }
+        bufferSwitchData = reinterpret_cast<VstBufferSwitchData *>(processBufferSharedMemory.data());
+        processData = reinterpret_cast<VstProcessData *>(processDataSharedMemory.data());
+
+        processData->channelCount = channelCount;
+        processData->bufferSize = maxBufferSize;
+        processData->sampleRate = sampleRate;
+        processDataSharedMemory.lock();
+        processData->flag = VstProcessData::ProcessInitializationRequest;
+        processDataSharedMemory.unlock();
+        while(isConnected) {
+            processDataSharedMemory.lock();
+            if(processData->flag == VstProcessData::ProcessInitializationResponse) {
+                processDataSharedMemory.unlock();
+                return true;
+            } else if(processData->flag == VstProcessData::ProcessInitializationError) {
+                processDataSharedMemory.unlock();
+                return false;
             }
-            return false;
-        })) {
-            callbacks->setError("Cannot initialize process.");
-            return false;
+            processDataSharedMemory.unlock();
         }
-        return true;
+        return false;
     }
     bool DiffScopeVstBridge::processPlayback(bool isRealtime, bool isPlaying, int64_t position, int size, int channelCount, float *const *outputs) {
         if(!isConnected) return false;
-        if(!ipcBuffer.isAttached()) return false;
-        auto buf = reinterpret_cast<const float *>(ipcBuffer.constData());
-        ch->invokeSync<void>([=]{
-            vstRep->notifySwitchAudioBuffer(isRealtime, isPlaying, position, size, channelCount);
-        });
-        return ch->invokeSync<bool>([=]{
-            QEventLoop eventLoop;
-            QObject::connect(vstRep, &VstBridgeReplica::bufferSwitched, &eventLoop, &QEventLoop::exit);
-            QTimer::singleShot(ipcTimeout, &eventLoop, [&]{
-                eventLoop.exit(-1);
-            });
-            auto execRet = eventLoop.exec();
-            if(execRet == 1) {
+        if(!processBufferSharedMemory.isAttached()) return false;
+        if(!processData) return false;
+        bufferSwitchData->isRealtime = isRealtime;
+        bufferSwitchData->isPlaying = isPlaying;
+        bufferSwitchData->position = position;
+        bufferSwitchData->size = size;
+        bufferSwitchData->channelCount = channelCount;
+        processDataSharedMemory.lock();
+        processData->flag = VstProcessData::BufferSwitchRequest;
+        processDataSharedMemory.unlock();
+        while(isConnected) {
+            processDataSharedMemory.lock();
+            if(processData->flag == VstProcessData::BufferSwitchFinished) {
+                processDataSharedMemory.unlock();
                 for(int i = 0; i < channelCount; i++) {
-                    memcpy(outputs[i], buf + i * size, size * sizeof(float));
+                    memcpy(outputs[i], planarOutputData[i], size * sizeof(float));
                 }
                 return true;
-            } else if(execRet == 0) {
-                callbacks->setError("Playback processing failed.");
-                return false;
-            } else if(execRet == -1) {
-                callbacks->setError("Playback processing timeout.");
+            } else if(processData->flag == VstProcessData::BufferSwitchError) {
+                processDataSharedMemory.unlock();
                 return false;
             }
-            return false;
-        });
+            processDataSharedMemory.unlock();
+        }
+        return false;
     }
     void DiffScopeVstBridge::finalizeProcess() {
-        ipcBuffer.detach();
+        processBufferSharedMemory.detach();
         cachedProcessInfo = {};
-        ch->invokeSync<void>([=]{
-            vstRep->finalizeProcess();
-        });
+        if(processData) {
+            processData->sampleRate = 0;
+            processDataSharedMemory.lock();
+            processData->flag = VstProcessData::ProcessInitializationRequest;
+            processDataSharedMemory.unlock();
+            while(isConnected) {
+                processDataSharedMemory.lock();
+                if(processData->flag == VstProcessData::ProcessInitializationResponse) {
+                    processDataSharedMemory.unlock();
+                    break;
+                }
+                processDataSharedMemory.unlock();
+            }
+        }
+        processData = nullptr;
+        bufferSwitchData = nullptr;
+        planarOutputData.resize(0);
     }
 
     void DiffScopeVstBridge::stateChanged(const QByteArray &data) {
