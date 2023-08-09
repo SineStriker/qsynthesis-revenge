@@ -56,9 +56,12 @@ namespace Vst {
     }
 
     void DiffScopeVstBridge::replicaNotInitialized() {
-        callbacks->setStatus("Not Connected");
-        processDataSharedMemory.unlock();
         isConnected = false;
+        isPending = false;
+        processDataSharedMemory.unlock();
+        callbacks->setStatus("Not Connected");
+        terminate();
+        initialize();
     }
 
     bool DiffScopeVstBridge::initialize() {
@@ -273,6 +276,7 @@ namespace Vst {
     }
 
     bool DiffScopeVstBridge::stateWillSave(int &size, const char *&data) {
+        if(!isConnected) return false;
         return ch->invokeSync<bool>([&]{
             auto reply = vstRep->saveDataFromEditor();
             if(!reply.waitForFinished(ipcTimeout)) return false;
