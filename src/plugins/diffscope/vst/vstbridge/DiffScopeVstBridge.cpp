@@ -57,6 +57,7 @@ namespace Vst {
 
     void DiffScopeVstBridge::replicaNotInitialized() {
         callbacks->setStatus("Not Connected");
+        processDataSharedMemory.unlock();
         isConnected = false;
     }
 
