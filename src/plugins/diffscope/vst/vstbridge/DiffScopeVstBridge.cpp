@@ -61,10 +61,14 @@ namespace Vst {
         processDataSharedMemory.unlock();
         callbacks->setStatus("Not Connected");
         terminate();
-        initialize();
+        initialize(false);
     }
 
     bool DiffScopeVstBridge::initialize() {
+        return initialize(true);
+    }
+
+    bool DiffScopeVstBridge::initialize(bool isFirstInitialization) {
 
         // check singleton
         if(!checkSingleton()) {
@@ -93,12 +97,17 @@ namespace Vst {
             return false;
         }
 
-        // Connect to editor
-        ch.reset(new CommunicationHelper);
-        ch->start();
+        editorProc.setProgram(path);
+        editorProc.setArguments({"-vst"});
 
+        // Connect to editor
         // TODO: handle error
-        alivePipe.listen(GLOBAL_UUID + "alive");
+        if(isFirstInitialization) {
+            ch.reset(new CommunicationHelper);
+            ch->start();
+            alivePipe.listen(GLOBAL_UUID + "alive");
+        }
+
         processDataSharedMemory.setKey(GLOBAL_UUID + "process_data");
 
         if(processDataSharedMemory.isAttached()) {
@@ -117,18 +126,19 @@ namespace Vst {
             QObject::connect(vstRep, &QRemoteObjectReplica::stateChanged, vstRep, [=](QRemoteObjectReplica::State state){
                 if(state != QRemoteObjectReplica::Valid) {
                     replicaNotInitialized();
-                } else {
-                    replicaInitialized();
                 }
             });
             QObject::connect(vstRep, &VstBridgeReplica::documentChanged, vstRep, [=]{
                 callbacks->setDirty();
             });
         });
+        if(isFirstInitialization) {
+            startEditorProcess();
+        }
+        return true;
+    }
 
-        // Start editor process
-        editorProc.setProgram(path);
-        editorProc.setArguments({"-vst"});
+    bool DiffScopeVstBridge::startEditorProcess() {
         if(!editorProc.startDetached()) {
             callbacks->setError("Cannot start DiffScope Editor");
             return false;
@@ -141,7 +151,7 @@ namespace Vst {
     void DiffScopeVstBridge::terminate() {
         processBufferSharedMemory.detach();
         processDataSharedMemory.detach();
-        alivePipe.close();
+//        alivePipe.close();
         QObject::disconnect(vstRep, &VstBridgeReplica::documentChanged, vstRep, nullptr);
         releaseSingleton();
     }
@@ -152,16 +162,12 @@ namespace Vst {
 
     void DiffScopeVstBridge::showWindow() {
         if(!isConnected && !isPending) {
-            if(!editorProc.startDetached()) {
-                callbacks->setError("Cannot start DiffScope Editor");
-            } else {
-                isPending = true;
-            }
-            return;
+            startEditorProcess();
+        } else if(isConnected) {
+            ch->invokeSync<void>([=]{
+                vstRep->showWindow();
+            });
         }
-        ch->invokeSync<void>([=]{
-            vstRep->showWindow();
-        });
     }
 
     void DiffScopeVstBridge::hideWindow() {

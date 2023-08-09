@@ -14,6 +14,8 @@ namespace Vst {
     class DiffScopeVstBridge: public IVstBridge {
 
     public:
+        bool initialize(bool isFirstInitialization);
+        bool startEditorProcess();
         bool initialize() override;
         void terminate() override;
         void bindEditorCallbacks(IEditorCallbacks *iEditorCallbacks) override;
