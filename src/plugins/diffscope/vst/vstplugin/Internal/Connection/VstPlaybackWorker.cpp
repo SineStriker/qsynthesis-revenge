@@ -29,7 +29,6 @@ namespace Vst::Internal {
     void VstPlaybackWorker::start() {
         m_requestFinish = false;
         m_processData = reinterpret_cast<VstProcessData *>(m_processDataSharedMemory->data());
-        qDebug() << "Worker thread:" << QThread::currentThreadId();
         while(!m_requestFinish) {
             m_processDataSharedMemory->lock();
             if(m_processData->flag == VstProcessData::ProcessInitializationRequest) {

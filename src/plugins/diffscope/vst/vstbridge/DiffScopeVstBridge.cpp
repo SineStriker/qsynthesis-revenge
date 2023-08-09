@@ -42,7 +42,10 @@ namespace Vst {
         if(reply.waitForFinished(ipcTimeout)) {
             callbacks->setStatus("Connected");
             isConnected = true;
+        } else {
+            return;
         }
+        processDataSharedMemory.lock();
         if(!cachedState.isNull()) {
             stateChanged(cachedState);
             cachedState.clear();
@@ -89,8 +92,11 @@ namespace Vst {
         // Connect to editor
         ch.reset(new CommunicationHelper);
         ch->start();
+
+        // TODO: handle error
         alivePipe.listen(GLOBAL_UUID + "alive");
         processDataSharedMemory.setKey(GLOBAL_UUID + "process_data");
+
         if(processDataSharedMemory.isAttached()) {
             processDataSharedMemory.detach();
         }
@@ -188,16 +194,13 @@ namespace Vst {
         processData->channelCount = channelCount;
         processData->bufferSize = maxBufferSize;
         processData->sampleRate = sampleRate;
-        processDataSharedMemory.lock();
         processData->flag = VstProcessData::ProcessInitializationRequest;
         processDataSharedMemory.unlock();
         while(isConnected) {
             processDataSharedMemory.lock();
             if(processData->flag == VstProcessData::ProcessInitializationResponse) {
-                processDataSharedMemory.unlock();
                 return true;
             } else if(processData->flag == VstProcessData::ProcessInitializationError) {
-                processDataSharedMemory.unlock();
                 return false;
             }
             processDataSharedMemory.unlock();
@@ -213,19 +216,16 @@ namespace Vst {
         bufferSwitchData->position = position;
         bufferSwitchData->size = size;
         bufferSwitchData->channelCount = channelCount;
-        processDataSharedMemory.lock();
         processData->flag = VstProcessData::BufferSwitchRequest;
         processDataSharedMemory.unlock();
         while(isConnected) {
             processDataSharedMemory.lock();
             if(processData->flag == VstProcessData::BufferSwitchFinished) {
-                processDataSharedMemory.unlock();
                 for(int i = 0; i < channelCount; i++) {
                     memcpy(outputs[i], planarOutputData[i], size * sizeof(float));
                 }
                 return true;
             } else if(processData->flag == VstProcessData::BufferSwitchError) {
-                processDataSharedMemory.unlock();
                 return false;
             }
             processDataSharedMemory.unlock();
@@ -237,13 +237,11 @@ namespace Vst {
         cachedProcessInfo = {};
         if(processData) {
             processData->sampleRate = 0;
-            processDataSharedMemory.lock();
             processData->flag = VstProcessData::ProcessInitializationRequest;
             processDataSharedMemory.unlock();
             while(isConnected) {
                 processDataSharedMemory.lock();
                 if(processData->flag == VstProcessData::ProcessInitializationResponse) {
-                    processDataSharedMemory.unlock();
                     break;
                 }
                 processDataSharedMemory.unlock();

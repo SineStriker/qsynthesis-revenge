@@ -61,7 +61,6 @@ namespace Vst::Internal {
             return false;
         }
         connect(m_vstPlaybackWorkerThread, &QThread::started, m_worker, &VstPlaybackWorker::start);
-        qDebug() << "Main thread:" << QThread::currentThreadId();
         m_vstPlaybackWorkerThread->start();
         openDataToEditor({});
         return true;
