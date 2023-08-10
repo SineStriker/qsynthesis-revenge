@@ -20,7 +20,7 @@ namespace Vst::Internal {
           m_processCallMutex(new QSystemSemaphore(VstHelper::globalUuid() + "process_call")),
           QObject(parent)
     {
-
+        m_processCallMutex->release();
     }
 
     static qint64 pos = 0;
