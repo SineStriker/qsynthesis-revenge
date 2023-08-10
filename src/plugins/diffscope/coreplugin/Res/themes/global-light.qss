@@ -413,15 +413,23 @@ QListView::item:hover
     background-color: #f6f6f6;
 }
 
-QListView::item:selected
-{
+QListView::item:selected {
+    background-color: #f0f0f0;
+}
+
+QListView::item:selected:active {
     background-color: #0060C0;
     color: #fff;
 }
 
-QListView::item:selected:hover
+QListView::item:selected:active:hover
 {
     background-color: #0075EA;
+}
+
+QListView::item:selected:hover
+{
+    background-color: #f6f6f6;
 }
 
 /* TreeView */
@@ -468,15 +476,23 @@ QTreeView::item:hover
     background-color: #f6f6f6;
 }
 
-QTreeView::item:selected
-{
+QTreeView::item:selected {
+    background-color: #f0f0f0;
+}
+
+QTreeView::item:selected:active {
     background-color: #0060C0;
     color: #fff;
 }
 
-QTreeView::item:selected:hover
+QTreeView::item:selected:active:hover
 {
     background-color: #0075EA;
+}
+
+QTreeView::item:selected:hover
+{
+    background-color: #f6f6f6;
 }
 
 /* QTreeView::branch:closed:has-children:not(has-siblings), */
