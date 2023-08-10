@@ -106,10 +106,15 @@ void PanSlider::reset() {
 }
 void PanSlider::mouseMoveEvent(QMouseEvent *event) {
     auto pos = event->pos();
-    if (pos.x() >= actualLeft && pos.x() <= actualRight) {
+    if (pos.x() < actualLeft) {
+        setValue(m_min);
+    }
+    else if (pos.x() < actualRight) {
         //        auto valuePos = actualWidth * (m_value - m_min) / (m_max - m_min) + 16;
         auto posValue = (pos.x() - 16) * (m_max - m_min) / actualWidth + m_min;
         setValue(posValue);
+    } else {
+        setValue(m_max);
     }
     QWidget::mouseMoveEvent(event);
 }
