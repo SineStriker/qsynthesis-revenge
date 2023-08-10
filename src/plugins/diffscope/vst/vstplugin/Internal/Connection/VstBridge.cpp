@@ -8,6 +8,7 @@
 #include <QLocalSocket>
 #include <QTimer>
 #include <QThread>
+#include <QSystemSemaphore>
 
 #include <Window/IProjectWindow.h>
 #include <Window/IHomeWindow.h>
@@ -25,10 +26,9 @@ namespace Vst::Internal {
     VstBridge::VstBridge(QObject *parent):
           VstBridgeSource(parent),
           m_alivePipe(new QLocalSocket(this)),
-          m_processBufferSharedMemory(new QSharedMemory(VstHelper::globalUuid() + "buffer", this)),
           m_processDataSharedMemory(new QSharedMemory(VstHelper::globalUuid() + "process_data", this)),
           m_vstPlaybackWorkerThread(new QThread(this)),
-          m_worker(new VstPlaybackWorker(m_processDataSharedMemory, m_processBufferSharedMemory))
+          m_worker(new VstPlaybackWorker(m_processDataSharedMemory))
     {
         m_instance = this;
         m_worker->moveToThread(m_vstPlaybackWorkerThread);
@@ -37,6 +37,7 @@ namespace Vst::Internal {
 
     VstBridge::~VstBridge() {
         VstBridge::finalizeVst();
+        // TODO: use scoped pointer
         delete m_worker;
         m_instance = nullptr;
     }

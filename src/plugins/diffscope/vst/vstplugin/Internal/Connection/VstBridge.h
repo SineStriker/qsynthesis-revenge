@@ -9,6 +9,7 @@
 
 class QLocalSocket;
 class QSharedMemory;
+class QSystemSemaphore;
 
 namespace Vst::Internal {
 
@@ -40,7 +41,6 @@ namespace Vst::Internal {
 
     private:
         QLocalSocket *m_alivePipe;
-        QSharedMemory *m_processBufferSharedMemory;
         QSharedMemory *m_processDataSharedMemory;
         QThread *m_vstPlaybackWorkerThread;
         VstPlaybackWorker *m_worker;

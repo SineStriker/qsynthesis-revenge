@@ -41,14 +41,13 @@ namespace Vst {
         auto reply = vstRep->initializeVst();
         if(reply.waitForFinished(ipcTimeout)) {
             callbacks->setStatus("Connected");
-            isConnected = true;
         } else {
             return;
         }
-        processDataSharedMemory.lock();
+        processCallMutex->acquire();
+        isConnected = true;
         if(!cachedState.isNull()) {
             stateChanged(cachedState);
-            cachedState.clear();
         }
         if(cachedProcessInfo.sampleRate != 0) {
             initializeProcess(cachedProcessInfo.channelCount, cachedProcessInfo.maxBufferSize, cachedProcessInfo.sampleRate);
@@ -58,8 +57,10 @@ namespace Vst {
     void DiffScopeVstBridge::replicaNotInitialized() {
         isConnected = false;
         isPending = false;
-        processDataSharedMemory.unlock();
         callbacks->setStatus("Not Connected");
+
+        QMutexLocker locker(&processSyncMutex);
+
         terminate();
         initialize(false);
     }
@@ -118,6 +119,7 @@ namespace Vst {
         }
         processDataSharedMemory.create(sizeof(VstProcessData));
         memset(processDataSharedMemory.data(), 0, sizeof(VstProcessData));
+        if(isFirstInitialization) processCallMutex.reset(new QSystemSemaphore(GLOBAL_UUID + "process_call", 1, QSystemSemaphore::Create));
         ch->connectAsync<VstBridgeReplica>("local:" + GLOBAL_UUID, [=](bool isValid){
             isPending = false;
             if(isValid) {
@@ -151,7 +153,7 @@ namespace Vst {
     void DiffScopeVstBridge::terminate() {
         processBufferSharedMemory.detach();
         processDataSharedMemory.detach();
-//        alivePipe.close();
+        processCallMutex->release();
         QObject::disconnect(vstRep, &VstBridgeReplica::documentChanged, vstRep, nullptr);
         releaseSingleton();
     }
@@ -205,15 +207,18 @@ namespace Vst {
         processData->bufferSize = maxBufferSize;
         processData->sampleRate = sampleRate;
         processData->flag = VstProcessData::ProcessInitializationRequest;
-        processDataSharedMemory.unlock();
+
+        QMutexLocker locker(&processSyncMutex);
+
+        processCallMutex->release();
         while(isConnected) {
-            processDataSharedMemory.lock();
+            processCallMutex->acquire();
             if(processData->flag == VstProcessData::ProcessInitializationResponse) {
                 return true;
             } else if(processData->flag == VstProcessData::ProcessInitializationError) {
                 return false;
             }
-            processDataSharedMemory.unlock();
+            processCallMutex->release();
         }
         return false;
     }
@@ -227,9 +232,12 @@ namespace Vst {
         bufferSwitchData->size = size;
         bufferSwitchData->channelCount = channelCount;
         processData->flag = VstProcessData::BufferSwitchRequest;
-        processDataSharedMemory.unlock();
+
+        QMutexLocker locker(&processSyncMutex);
+
+        processCallMutex->release();
         while(isConnected) {
-            processDataSharedMemory.lock();
+            processCallMutex->acquire();
             if(processData->flag == VstProcessData::BufferSwitchFinished) {
                 for(int i = 0; i < channelCount; i++) {
                     memcpy(outputs[i], planarOutputData[i], size * sizeof(float));
@@ -238,7 +246,7 @@ namespace Vst {
             } else if(processData->flag == VstProcessData::BufferSwitchError) {
                 return false;
             }
-            processDataSharedMemory.unlock();
+            processCallMutex->release();
         }
         return false;
     }
@@ -248,13 +256,16 @@ namespace Vst {
         if(processData) {
             processData->sampleRate = 0;
             processData->flag = VstProcessData::ProcessInitializationRequest;
-            processDataSharedMemory.unlock();
+
+            QMutexLocker locker(&processSyncMutex);
+
+            processCallMutex->release();
             while(isConnected) {
-                processDataSharedMemory.lock();
+                processCallMutex->acquire();
                 if(processData->flag == VstProcessData::ProcessInitializationResponse) {
                     break;
                 }
-                processDataSharedMemory.unlock();
+                processCallMutex->release();
             }
         }
         processData = nullptr;

@@ -8,6 +8,7 @@
 #include <QObject>
 
 class QSharedMemory;
+class QSystemSemaphore;
 
 namespace Vst {
     class VstProcessData;
@@ -21,11 +22,12 @@ namespace Vst::Internal {
         QAtomicInteger<bool> m_requestFinish = false;
         QSharedMemory *m_processBufferSharedMemory;
         QSharedMemory *m_processDataSharedMemory;
+        QScopedPointer<QSystemSemaphore> m_processCallMutex;
         VstProcessData *m_processData = nullptr;
         VstBufferSwitchData *m_bufferSwitchData = nullptr;
         QVector<float *> m_planarOutputData;
     public:
-        VstPlaybackWorker(QSharedMemory *processDataSharedMemory, QSharedMemory *processBufferSharedMemory, QObject *parent = nullptr);
+        VstPlaybackWorker(QSharedMemory *processDataSharedMemory, QObject *parent = nullptr);
     public slots:
         void start();
         void quit();

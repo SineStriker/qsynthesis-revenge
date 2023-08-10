@@ -7,13 +7,19 @@
 
 #include <QSharedMemory>
 #include <QThread>
+#include <QSystemSemaphore>
 
 #include "../../VstProcessData.h"
 #include "VstHelper.h"
 
 namespace Vst::Internal {
 
-    VstPlaybackWorker::VstPlaybackWorker(QSharedMemory *processDataSharedMemory, QSharedMemory *processBufferSharedMemory, QObject *parent): m_processDataSharedMemory(processDataSharedMemory), m_processBufferSharedMemory(processBufferSharedMemory), QObject(parent) {
+    VstPlaybackWorker::VstPlaybackWorker(QSharedMemory *processDataSharedMemory, QObject *parent):
+          m_processDataSharedMemory(processDataSharedMemory),
+          m_processBufferSharedMemory(new QSharedMemory(VstHelper::globalUuid() + "buffer", this)),
+          m_processCallMutex(new QSystemSemaphore(VstHelper::globalUuid() + "process_call")),
+          QObject(parent)
+    {
 
     }
 
@@ -30,7 +36,7 @@ namespace Vst::Internal {
         m_requestFinish = false;
         m_processData = reinterpret_cast<VstProcessData *>(m_processDataSharedMemory->data());
         while(!m_requestFinish) {
-            m_processDataSharedMemory->lock();
+            m_processCallMutex->acquire();
             if(m_processData->flag == VstProcessData::ProcessInitializationRequest) {
                 if(m_processData->sampleRate != 0) {
                     if(initialize(m_processData->sampleRate, m_processData->bufferSize, m_processData->channelCount)) {
@@ -49,7 +55,7 @@ namespace Vst::Internal {
                     m_processData->flag = VstProcessData::BufferSwitchError;
                 }
             }
-            m_processDataSharedMemory->unlock();
+            m_processCallMutex->release();
         }
         m_processData = nullptr;
         finalize();

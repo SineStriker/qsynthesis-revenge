@@ -40,6 +40,8 @@ namespace Vst {
 
         QSharedMemory processBufferSharedMemory;
         QSharedMemory processDataSharedMemory;
+        QScopedPointer<QSystemSemaphore> processCallMutex;
+        QMutex processSyncMutex;
         VstProcessData *processData = nullptr;
         VstBufferSwitchData *bufferSwitchData = nullptr;
         QVector<const float *> planarOutputData;
