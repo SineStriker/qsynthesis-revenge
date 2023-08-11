@@ -38,19 +38,5 @@ bool QSystemSemaphoreExtendedPrivate::tryAcquire(int timeout) {
     clearError();
     return true;
 }
-int QSystemSemaphoreExtendedPrivate::available() {
-    if(handle() == -1) {
-        return -1;
-    }
-    struct semid_ds sem_info;
-    union semun {
-        struct semid_ds *buf;
-    } arg;
-    arg.buf = &sem_info;
-    if (semctl(semaphore, 0, IPC_STAT, &arg) == -1) {
-        return -1;
-    }
-    return sem_info.sem_nsems;
-}
 
 #endif // Q_OS_UNIX

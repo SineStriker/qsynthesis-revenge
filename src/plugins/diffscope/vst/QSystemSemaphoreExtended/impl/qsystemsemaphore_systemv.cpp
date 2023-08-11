@@ -66,6 +66,20 @@
 
 QT_BEGIN_NAMESPACE
 
+int QSharedMemoryPrivate::createUnixKeyFile(const QString &fileName)
+{
+    int fd = qt_safe_open(QFile::encodeName(fileName).constData(),
+                          O_EXCL | O_CREAT | O_RDWR, 0640);
+    if (-1 == fd) {
+        if (errno == EEXIST)
+            return 0;
+        return -1;
+    } else {
+        close(fd);
+    }
+    return 1;
+}
+
 /*!
     \internal
 

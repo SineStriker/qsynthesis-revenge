@@ -18,3 +18,6 @@ bool QSystemSemaphoreExtended::tryAcquire(int timeout) {
     Q_D(QSystemSemaphoreExtended);
     return d->tryAcquire(timeout);
 }
+
+QSystemSemaphoreExtendedPrivate::QSystemSemaphoreExtendedPrivate(): QSystemSemaphorePrivate() {
+}
