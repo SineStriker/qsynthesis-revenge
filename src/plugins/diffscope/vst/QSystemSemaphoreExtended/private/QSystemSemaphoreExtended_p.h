@@ -12,7 +12,7 @@
 class QSystemSemaphoreExtendedPrivate: public QSystemSemaphorePrivate {
 public:
     bool tryAcquire(int timeout);
-    int available() const;
+    int available();
 };
 
 #endif // CHORUSKIT_QSYSTEMSEMAPHOREEXTENDED_P_H

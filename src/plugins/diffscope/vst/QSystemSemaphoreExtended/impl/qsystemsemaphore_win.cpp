@@ -41,6 +41,9 @@
 #include "private/qsystemsemaphore_p.h"
 #include "qcoreapplication.h"
 #include <qdebug.h>
+
+#ifdef Q_OS_WIN
+
 #include <qt_windows.h>
 
 QT_BEGIN_NAMESPACE
@@ -140,3 +143,5 @@ bool QSystemSemaphorePrivate::modifySemaphore(int count)
 #endif //QT_NO_SYSTEMSEMAPHORE
 
 QT_END_NAMESPACE
+
+#endif //Q_OS_WIN

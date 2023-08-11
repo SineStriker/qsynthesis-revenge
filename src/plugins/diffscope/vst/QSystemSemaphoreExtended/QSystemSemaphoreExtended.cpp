@@ -16,7 +16,7 @@ bool QSystemSemaphoreExtended::tryAcquire(int timeout) {
     Q_D(QSystemSemaphoreExtended);
     return d->tryAcquire(timeout);
 }
-int QSystemSemaphoreExtended::available() const {
-    Q_D(const QSystemSemaphoreExtended);
+int QSystemSemaphoreExtended::available() {
+    Q_D(QSystemSemaphoreExtended);
     return d->available();
 }

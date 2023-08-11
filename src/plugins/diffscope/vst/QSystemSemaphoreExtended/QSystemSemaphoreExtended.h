@@ -16,7 +16,7 @@ public:
     ~QSystemSemaphoreExtended();
 
     bool tryAcquire(int timeout = 0);
-    int available() const;
+    int available();
 
 protected:
     QScopedPointer<QSystemSemaphoreExtendedPrivate> d_ptr;
