@@ -37,8 +37,8 @@
 **
 ****************************************************************************/
 
-#include "qsystemsemaphore.h"
 #include "private/qsystemsemaphore_p.h"
+#include "qsystemsemaphore_friended.h"
 
 #include <qdebug.h>
 #include <qfile.h>

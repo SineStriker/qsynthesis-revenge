@@ -7,7 +7,9 @@
 
 QSystemSemaphoreExtended::QSystemSemaphoreExtended(const QString &key, int initialValue,
                                                    QSystemSemaphore::AccessMode mode)
-    : QSystemSemaphore(key, initialValue, mode), d_ptr(new QSystemSemaphoreExtendedPrivate) {
+    : QSystemSemaphore(key, initialValue, mode) {
+    d_ptr.reset(new QSystemSemaphoreExtendedPrivate);
+    setKey(key, initialValue, mode);
 }
 QSystemSemaphoreExtended::~QSystemSemaphoreExtended() {
 }
@@ -15,8 +17,4 @@ QSystemSemaphoreExtended::~QSystemSemaphoreExtended() {
 bool QSystemSemaphoreExtended::tryAcquire(int timeout) {
     Q_D(QSystemSemaphoreExtended);
     return d->tryAcquire(timeout);
-}
-int QSystemSemaphoreExtended::available() {
-    Q_D(QSystemSemaphoreExtended);
-    return d->available();
 }

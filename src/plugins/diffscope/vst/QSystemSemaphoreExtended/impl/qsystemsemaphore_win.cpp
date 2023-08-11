@@ -37,9 +37,9 @@
 **
 ****************************************************************************/
 
-#include "qsystemsemaphore.h"
 #include "private/qsystemsemaphore_p.h"
 #include "qcoreapplication.h"
+#include "qsystemsemaphore_friended.h"
 #include <qdebug.h>
 
 #ifdef Q_OS_WIN

@@ -16,10 +16,7 @@ bool QSystemSemaphoreExtendedPrivate::tryAcquire(int timeout) {
         return false;
     }
 }
-int QSystemSemaphoreExtendedPrivate::available() {
-    long ret;
-    ::ReleaseSemaphore(semaphore, 0, &ret);
-    return ret;
+QSystemSemaphoreExtendedPrivate::QSystemSemaphoreExtendedPrivate(): QSystemSemaphorePrivate() {
 }
 
 #endif // Q_OS_WIN

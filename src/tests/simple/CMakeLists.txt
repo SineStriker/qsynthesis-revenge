@@ -21,3 +21,5 @@ add_subdirectory(AudioSlicerTest)
 add_subdirectory(NewStyleSheetTest)
 
 add_subdirectory(DarkThemeTest)
+
+add_subdirectory(QSystemSemaphoreExtendedTest)
