@@ -414,7 +414,7 @@ QListView::item:hover
 }
 
 QListView::item:selected {
-    background-color: #f0f0f0;
+    background-color: #e8e8e8;
 }
 
 QListView::item:selected:active {
@@ -477,7 +477,7 @@ QTreeView::item:hover
 }
 
 QTreeView::item:selected {
-    background-color: #f0f0f0;
+    background-color: #e8e8e8;
 }
 
 QTreeView::item:selected:active {
@@ -540,7 +540,7 @@ QTreeView QHeaderView::section:hover {
 }
 
 QDialog {
-    background-color: #fff;
+    background-color: #f3f3f3;
 }
 
 QLabel {

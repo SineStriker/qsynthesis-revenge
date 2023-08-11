@@ -1,7 +1,7 @@
 /* Stylesheet Content */
 
 QWidget#project-window {
-    background-color: #fff;
+    background-color: #f3f3f3;
 }
 
 /* Main Toolbar */
