@@ -3,6 +3,7 @@
 
 #include <IVstBridge.h>
 #include <IEditorCallbacks.h>
+#include <QSystemSemaphoreExtended.h>
 
 #include "CommunicationHelper.h"
 
@@ -40,7 +41,7 @@ namespace Vst {
 
         QSharedMemory processBufferSharedMemory;
         QSharedMemory processDataSharedMemory;
-        QScopedPointer<QSystemSemaphore> processCallMutex;
+        QScopedPointer<QSystemSemaphoreExtended> processCallMutex;
         QMutex processSyncMutex;
         VstProcessData *processData = nullptr;
         VstBufferSwitchData *bufferSwitchData = nullptr;

@@ -21,7 +21,7 @@ ck_target_components(${_library}
     SOURCES ${_src}
     QT_LINKS Core Widgets Network RemoteObjects
     LINKS QsFramework
-    LINKS_PRIVATE vstglobal
+    LINKS_PRIVATE vstglobal QSystemSemaphoreExtended
     INCLUDE_PRIVATE ${CMAKE_CURRENT_BINARY_DIR}
 )
 

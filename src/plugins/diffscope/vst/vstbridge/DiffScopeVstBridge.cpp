@@ -9,6 +9,7 @@ namespace Vst {
 
     static const QString GLOBAL_UUID = "77F6E993-671E-4283-99BE-C1CD1FF5C09E";
     static int ipcTimeout = 5000; //TODO configurate in DiffScope settings
+    static int ipcProcessTimeout = 1000;
 
     bool DiffScopeVstBridge::checkSingleton() {
         QSystemSemaphore sema(GLOBAL_UUID, 1);
@@ -41,10 +42,13 @@ namespace Vst {
         auto reply = vstRep->initializeVst();
         if(reply.waitForFinished(ipcTimeout)) {
             callbacks->setStatus("Connected");
+            callbacks->setError("");
         } else {
             return;
         }
-        processCallMutex->acquire();
+        if(!processCallMutex->tryAcquire(ipcTimeout)) {
+            return;
+        }
         isConnected = true;
         if(!cachedState.isNull()) {
             stateChanged(cachedState);
@@ -58,6 +62,7 @@ namespace Vst {
         isConnected = false;
         isPending = false;
         callbacks->setStatus("Not Connected");
+        callbacks->setError("DiffScope Editor exited abnormally.");
 
         QMutexLocker locker(&processSyncMutex);
 
@@ -119,7 +124,7 @@ namespace Vst {
         }
         processDataSharedMemory.create(sizeof(VstProcessData));
         memset(processDataSharedMemory.data(), 0, sizeof(VstProcessData));
-        if(isFirstInitialization) processCallMutex.reset(new QSystemSemaphore(GLOBAL_UUID + "process_call", 1, QSystemSemaphore::Create));
+        if(isFirstInitialization) processCallMutex.reset(new QSystemSemaphoreExtended(GLOBAL_UUID + "process_call", 1, QSystemSemaphore::Create));
         ch->connectAsync<VstBridgeReplica>("local:" + GLOBAL_UUID, [=](bool isValid){
             isPending = false;
             if(isValid) {
@@ -214,7 +219,9 @@ namespace Vst {
 
         processCallMutex->release();
         while(isConnected) {
-            processCallMutex->acquire();
+            if(!processCallMutex->tryAcquire(ipcTimeout)) {
+                return false;
+            }
             if(processData->flag == VstProcessData::ProcessInitializationResponse) {
                 return true;
             } else if(processData->flag == VstProcessData::ProcessInitializationError) {
@@ -239,7 +246,9 @@ namespace Vst {
 
         processCallMutex->release();
         while(isConnected) {
-            processCallMutex->acquire();
+            if(!processCallMutex->tryAcquire(ipcProcessTimeout)) {
+                return false;
+            }
             if(processData->flag == VstProcessData::BufferSwitchFinished) {
                 for(int i = 0; i < channelCount; i++) {
                     memcpy(outputs[i], planarOutputData[i], size * sizeof(float));
@@ -263,7 +272,9 @@ namespace Vst {
 
             processCallMutex->release();
             while(isConnected) {
-                processCallMutex->acquire();
+                if(!processCallMutex->tryAcquire(ipcTimeout)) {
+                    break;
+                }
                 if(processData->flag == VstProcessData::ProcessInitializationResponse) {
                     break;
                 }
