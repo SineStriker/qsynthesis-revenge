@@ -5,6 +5,8 @@
 #include "SineWaveAudioSource.h"
 #include "SineWaveAudioSource_p.h"
 
+#include <cmath>
+
 SineWaveAudioSource::SineWaveAudioSource(): SineWaveAudioSource(*new SineWaveAudioSourcePrivate) {
 }
 SineWaveAudioSource::SineWaveAudioSource(double frequency): SineWaveAudioSource() {

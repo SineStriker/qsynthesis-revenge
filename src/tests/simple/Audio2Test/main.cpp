@@ -24,6 +24,7 @@
 #include <QJsonObject>
 #include <QJsonArray>
 #include <QThread>
+#include <cmath>
 
 #include "LevelMeter.h"
 #include "buffer/AudioClipSeries.h"

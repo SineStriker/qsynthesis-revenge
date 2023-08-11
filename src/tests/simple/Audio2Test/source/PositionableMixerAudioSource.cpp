@@ -76,9 +76,21 @@ void PositionableMixerAudioSource::close() {
 }
 qint64 PositionableMixerAudioSource::length() const {
     auto sourceList = sources();
-    return std::reduce(sourceList.constBegin(), sourceList.constEnd(), std::numeric_limits<qint64>::max(), [](qint64 l, PositionableAudioSource *src){
-        return std::min(l, src->length());
-    });
+    struct {
+        inline bool operator()(qint64 l1, qint64 l2) {
+            return std::min(l1, l2);
+        }
+        inline bool operator()(qint64 l, PositionableAudioSource *src) {
+            return operator()(l, src->length());
+        }
+        inline bool operator()(PositionableAudioSource *src, qint64 l) {
+            return operator()(l, src);
+        }
+        inline bool operator()(PositionableAudioSource *src1, PositionableAudioSource *src2) {
+            return operator()(src1->length(), src2->length());
+        }
+    } op;
+    return std::reduce(sourceList.constBegin(), sourceList.constEnd(), std::numeric_limits<qint64>::max(), op);
 }
 
 void PositionableMixerAudioSourcePrivate::setNextReadPositionToAll(qint64 pos) {

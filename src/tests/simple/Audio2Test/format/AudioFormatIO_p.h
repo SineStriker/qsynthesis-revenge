@@ -15,11 +15,11 @@ public:
     QScopedPointer<SndfileHandle> sf;
     AudioFormatIO::OpenMode openMode = QIODevice::NotOpen;
 
-    qint64 sfVioGetFilelen();
-    qint64 sfVioSeek(qint64 offset, int whence);
-    qint64 sfVioRead(void *ptr, qint64 count);
-    qint64 sfVioWrite(const void *ptr, qint64 count);
-    qint64 sfVioTell();
+    int64_t sfVioGetFilelen();
+    int64_t sfVioSeek(int64_t offset, int whence);
+    int64_t sfVioRead(void *ptr, int64_t count);
+    int64_t sfVioWrite(const void *ptr, int64_t count);
+    int64_t sfVioTell();
 };
 
 #endif // CHORUSKIT_AUDIOFORMATIO_P_H

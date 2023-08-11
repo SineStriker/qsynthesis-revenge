@@ -6,6 +6,8 @@
 #include "SDLAudioDevice_p.h"
 #include "buffer/InterleavedAudioDataWrapper.h"
 
+#include <cstring>
+
 #include <SDL2/SDL.h>
 
 #include <QDebug>

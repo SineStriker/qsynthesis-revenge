@@ -28,6 +28,7 @@ namespace Vst::Internal {
         QVector<float *> m_planarOutputData;
     public:
         VstPlaybackWorker(QSharedMemory *processDataSharedMemory, QObject *parent = nullptr);
+        ~VstPlaybackWorker();
     public slots:
         void start();
         void quit();

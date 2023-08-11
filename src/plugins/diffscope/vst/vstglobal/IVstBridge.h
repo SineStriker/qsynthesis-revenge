@@ -1,6 +1,7 @@
 #ifndef VSTGLOBAL_IVSTBRIDGE_H
 #define VSTGLOBAL_IVSTBRIDGE_H
 
+#include <cstdint>
 #include "IEditorCallbacks.h"
 
 class IVstBridge {
@@ -19,7 +20,7 @@ public:
     virtual bool processPlayback(
         bool isRealtime,
         bool isPlaying,
-        long long position,
+        int64_t position,
         int size,
         int channelCount,
         float *const *outputs) = 0;

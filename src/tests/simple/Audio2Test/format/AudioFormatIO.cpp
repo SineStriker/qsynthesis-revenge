@@ -38,35 +38,35 @@ QIODevice *AudioFormatIO::stream() const {
     return d->stream;
 }
 
-qint64 AudioFormatIOPrivate::sfVioGetFilelen() {
+int64_t AudioFormatIOPrivate::sfVioGetFilelen() {
     return stream->size();
 }
-qint64 AudioFormatIOPrivate::sfVioSeek(qint64 offset, int whence) {
+int64_t AudioFormatIOPrivate::sfVioSeek(int64_t offset, int whence) {
     if(whence == SF_SEEK_CUR) offset += stream->pos();
     else if(whence == SF_SEEK_END) offset += stream->size();
     if(offset != stream->pos()) stream->seek(offset);
     return stream->pos();
 }
-qint64 AudioFormatIOPrivate::sfVioRead(void *ptr, qint64 count) {
+int64_t AudioFormatIOPrivate::sfVioRead(void *ptr, int64_t count) {
     return stream->read((char *)ptr, count);
 }
-qint64 AudioFormatIOPrivate::sfVioWrite(const void *ptr, qint64 count) {
+int64_t AudioFormatIOPrivate::sfVioWrite(const void *ptr, int64_t count) {
     return stream->write((char *)ptr, count);
 }
-qint64 AudioFormatIOPrivate::sfVioTell() {
+int64_t AudioFormatIOPrivate::sfVioTell() {
     return stream->pos();
 }
 static SF_VIRTUAL_IO sfVio = {
     [](void *d) {
         return reinterpret_cast<AudioFormatIOPrivate *>(d)->sfVioGetFilelen();
     },
-    [](qint64 offset, int whence, void *d) {
+    [](int64_t offset, int whence, void *d) {
         return reinterpret_cast<AudioFormatIOPrivate *>(d)->sfVioSeek(offset, whence);
     },
-    [](void *ptr, qint64 count, void *d) {
+    [](void *ptr, int64_t count, void *d) {
         return reinterpret_cast<AudioFormatIOPrivate *>(d)->sfVioRead(ptr, count);
     },
-    [](const void *ptr, qint64 count, void *d) {
+    [](const void *ptr, int64_t count, void *d) {
         return reinterpret_cast<AudioFormatIOPrivate *>(d)->sfVioWrite(ptr, count);
     },
     [](void *d) {

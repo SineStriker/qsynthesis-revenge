@@ -166,16 +166,18 @@ namespace Vst {
         if(!isConnected && !isPending) {
             startEditorProcess();
         } else if(isConnected) {
-            ch->invokeSync<void>([=]{
+            ch->invokeSync<int>([=]{
                 vstRep->showWindow();
+                return 0;
             });
         }
     }
 
     void DiffScopeVstBridge::hideWindow() {
         if(!isConnected) return;
-        ch->invokeSync<void>([=]{
+        ch->invokeSync<int>([=]{
             vstRep->hideWindow();
+            return 0;
         });
     }
 

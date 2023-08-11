@@ -8,6 +8,7 @@
 #include "AudioClipSeries.h"
 
 #include <set>
+#include <limits>
 
 class AudioClipSeriesPrivate {
     Q_DECLARE_PUBLIC(AudioClipSeries)

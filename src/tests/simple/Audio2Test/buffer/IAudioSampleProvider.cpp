@@ -18,7 +18,7 @@ float IAudioSampleProvider::magnitude(int channel, qint64 startPos, qint64 lengt
     boundCheck(*this, channel, startPos, length);
     float m = 0;
     for(qint64 i = 0; i < length; i++) {
-        m = std::max(m, abs(constSampleAt(channel, startPos + i)));
+        m = std::max(m, std::abs(constSampleAt(channel, startPos + i)));
     }
     return m;
 }

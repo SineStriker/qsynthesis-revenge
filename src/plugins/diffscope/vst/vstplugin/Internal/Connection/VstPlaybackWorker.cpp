@@ -23,6 +23,9 @@ namespace Vst::Internal {
         m_processCallMutex->release();
     }
 
+    VstPlaybackWorker::~VstPlaybackWorker() {
+    }
+
     static qint64 pos = 0;
 
     static void genSineWave(qint64 position, qint64 size, float freq, float sampleRate, float *output) {
