@@ -8,8 +8,7 @@
 QSystemSemaphoreExtended::QSystemSemaphoreExtended(const QString &key, int initialValue,
                                                    QSystemSemaphore::AccessMode mode)
     : QSystemSemaphore(key, initialValue, mode) {
-    d_ptr.reset(new QSystemSemaphoreExtendedPrivate);
-    setKey(key, initialValue, mode);
+
 }
 QSystemSemaphoreExtended::~QSystemSemaphoreExtended() {
 }

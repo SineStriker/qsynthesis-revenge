@@ -11,10 +11,10 @@ int main(int argc, char **argv) {
 
     QCoreApplication a(argc, argv);
 
-    QSystemSemaphoreExtended sem("2c5a947fec7e485b91a4576cccdb804c", 3, QSystemSemaphore::Create);
+    QSystemSemaphoreExtended sem("2c5a947fec7e485b91a4576cccdb804c", 1, QSystemSemaphore::Create);
 
     qDebug() << sem.tryAcquire(0);
-    qDebug() << sem.tryAcquire(114514);
+    qDebug() << sem.tryAcquire(2001);
     qDebug() << sem.acquire();
 
     qDebug() << sem.tryAcquire(2000);

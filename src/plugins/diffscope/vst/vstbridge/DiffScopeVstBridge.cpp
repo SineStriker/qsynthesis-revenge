@@ -39,14 +39,15 @@ namespace Vst {
     }
 
     void DiffScopeVstBridge::replicaInitialized() {
+        if(!processCallMutex->tryAcquire(ipcTimeout)) {
+            return;
+        }
         auto reply = vstRep->initializeVst();
         if(reply.waitForFinished(ipcTimeout)) {
             callbacks->setStatus("Connected");
             callbacks->setError("");
         } else {
-            return;
-        }
-        if(!processCallMutex->tryAcquire(ipcTimeout)) {
+            processCallMutex->release();
             return;
         }
         isConnected = true;

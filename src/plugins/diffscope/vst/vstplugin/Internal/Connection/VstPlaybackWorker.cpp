@@ -17,10 +17,9 @@ namespace Vst::Internal {
     VstPlaybackWorker::VstPlaybackWorker(QSharedMemory *processDataSharedMemory, QObject *parent):
           m_processDataSharedMemory(processDataSharedMemory),
           m_processBufferSharedMemory(new QSharedMemory(VstHelper::globalUuid() + "buffer", this)),
-          m_processCallMutex(new QSystemSemaphore(VstHelper::globalUuid() + "process_call")),
           QObject(parent)
     {
-        m_processCallMutex->release();
+
     }
 
     VstPlaybackWorker::~VstPlaybackWorker() {
@@ -38,6 +37,7 @@ namespace Vst::Internal {
     void VstPlaybackWorker::start() {
         m_requestFinish = false;
         m_processData = reinterpret_cast<VstProcessData *>(m_processDataSharedMemory->data());
+        m_processCallMutex.reset(new QSystemSemaphore(VstHelper::globalUuid() + "process_call"));
         while(!m_requestFinish) {
             m_processCallMutex->acquire();
             if(m_processData->flag == VstProcessData::ProcessInitializationRequest) {
