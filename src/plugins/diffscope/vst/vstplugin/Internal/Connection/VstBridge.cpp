@@ -33,6 +33,7 @@ namespace Vst::Internal {
         m_instance = this;
         m_worker->moveToThread(m_vstPlaybackWorkerThread);
         connect(m_alivePipe, &QLocalSocket::disconnected, this, &VstBridge::finalizeVst);
+        connect(m_vstPlaybackWorkerThread, &QThread::started, m_worker, &VstPlaybackWorker::start);
     }
 
     VstBridge::~VstBridge() {
@@ -61,7 +62,6 @@ namespace Vst::Internal {
         if(!m_processDataSharedMemory->attach()) {
             return false;
         }
-        connect(m_vstPlaybackWorkerThread, &QThread::started, m_worker, &VstPlaybackWorker::start);
         m_vstPlaybackWorkerThread->start();
         openDataToEditor({});
         return true;

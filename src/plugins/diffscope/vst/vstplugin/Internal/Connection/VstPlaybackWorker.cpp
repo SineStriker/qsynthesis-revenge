@@ -60,6 +60,7 @@ namespace Vst::Internal {
             }
             m_processCallMutex->release();
         }
+        m_processCallMutex.reset();
         m_processData = nullptr;
         finalize();
     }
