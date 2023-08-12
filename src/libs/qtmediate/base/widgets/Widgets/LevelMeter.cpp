@@ -27,8 +27,9 @@ public:
     }
 };
 
-LevelMeter::LevelMeter(Qt::Orientation orientation, QWidget *parent) : QWidget(parent), d(new LevelMeterPrivate(this)) {
+LevelMeter::LevelMeter(Qt::Orientation orientation, ChannelType channelType, QWidget *parent) : QWidget(parent), d(new LevelMeterPrivate(this)) {
     m_orientation = orientation;
+    m_channelType = channelType;
     m_chunk = new LevelMeterChunk;
 
     m_button = new QPushButton;
@@ -111,9 +112,9 @@ void LevelMeter::paintEvent(QPaintEvent *event) {
     return QWidget::paintEvent(event);
 }
 
-void LevelMeter::setLevel(double level) {
-    m_chunk->setLevel(level);
-    if (level > 1)
+void LevelMeter::readSample(double sample) {
+    m_chunk->readSample(sample);
+    if (sample > 1)
         m_button->setChecked(true);
     /*auto styleSheet = QMDecoratorV2::evaluateStyleSheet(R"(
 QProgressBar#bar::chunk {
@@ -168,6 +169,11 @@ QProgressBar#bar::chunk {
     )"));
     }*/
 }
-void LevelMeter::initBuffer() {
-    m_chunk->initBuffer();
+
+void LevelMeter::initBuffer(int bufferSize) {
+    m_chunk->initBuffer(bufferSize);
+}
+
+void LevelMeter::dismissIndicator() {
+    m_button->setChecked(false);
 }

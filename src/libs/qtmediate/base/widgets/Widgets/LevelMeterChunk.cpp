@@ -21,10 +21,10 @@ LevelMeterChunk::LevelMeterChunk(QWidget *parent) : QWidget(parent), d(new Level
     timer->start(17);
     QObject::connect(timer, &QTimer::timeout, this, [=]() {
         double sum = 0;
-        for (int i = 0; i < bufferSize; i++){
+        for (int i = 0; i < m_bufferSize; i++){
             sum += bufferPtr[i];
         }
-        averageLevel = sum / bufferSize;
+        averageLevel = sum / m_bufferSize;
         // qDebug() << averageLevel;
         repaint();
     });
@@ -38,84 +38,103 @@ LevelMeterChunk::~LevelMeterChunk() {
 void LevelMeterChunk::paintEvent(QPaintEvent *event) {
     QPainter painter(this);
     // Fill background
-    painter.fillRect(rect(), QColor("#d9d9d9"));
+    painter.fillRect(rect(), m_colorBackground);
 //    qDebug() << rect();
 
     // Calculate and draw chunk
     if (m_orientation == Qt::Horizontal) {
-        auto levelLength = rect().width() * averageLevel;
-        if (averageLevel < 0.707946) {
+        auto rectWidth = rect().width();
+        auto rectLeft = rect().left();
+        auto rectTop = rect().top();
+        auto rectHeight = rect().height();
+
+        auto levelLength = int(rectWidth * averageLevel);
+        auto lengthSafe = int(rectWidth * m_safeThreshold);
+        auto lengthWarn = int(rectWidth * m_warnThreshold) - lengthSafe;
+        auto lengthCritical = rect().width() - lengthSafe - lengthWarn;
+
+        auto leftSafe = rectLeft;
+        auto leftWarn = rectLeft + lengthSafe;
+        auto leftCritical = rectLeft + lengthSafe + lengthWarn;
+
+        if (averageLevel < m_safeThreshold) {
             auto width = levelLength;
-            auto chunk1 = QRect(rect().left(), rect().top(), width, rect().height());
-            painter.fillRect(chunk1, QColor("#709cff"));
-        } else if (averageLevel < 0.891251) {
-            auto width1 = rect().width() * 0.707946;
-            auto chunk1 = QRect(rect().left(), rect().top(), width1, rect().height());
-            painter.fillRect(chunk1, QColor("#709cff"));
+            auto chunk1 = QRect(leftSafe, rectTop, width, rectHeight);
+            painter.fillRect(chunk1, m_colorSafe);
+        } else if (averageLevel < m_warnThreshold) {
+            auto chunk1 = QRect(leftSafe, rectTop, lengthSafe, rectHeight);
+            painter.fillRect(chunk1, m_colorSafe);
 
-            auto width2 = levelLength - width1;
-            auto chunk2 = QRect(rect().left() + width1, rect().top(), width2, rect().height());
-            painter.fillRect(chunk2, QColor("#ffcc99"));
+            auto width2 = levelLength - lengthSafe;
+            auto chunk2 = QRect(leftWarn, rectTop, width2, rectHeight);
+            painter.fillRect(chunk2, m_colorWarn);
         } else if (averageLevel < 1) {
-            auto width1 = rect().width() * 0.707946;
-            auto chunk1 = QRect(rect().left(), rect().top(), width1, rect().height());
-            painter.fillRect(chunk1, QColor("#709cff"));
+            auto chunk1 = QRect(leftSafe, rectTop, lengthSafe, rectHeight);
+            painter.fillRect(chunk1, m_colorSafe);
 
-            auto width2 = rect().width() * 0.891251 - width1;
-            auto chunk2 = QRect(rect().left() + width1, rect().top(), width2, rect().height());
-            painter.fillRect(chunk2, QColor("#ffcc99"));
+            auto chunk2 = QRect(leftWarn, rectTop, lengthWarn, rectHeight);
+            painter.fillRect(chunk2, m_colorWarn);
 
-            auto width3 = levelLength - width1 - width2;
-            auto chunk3 = QRect(rect().left() + width1 + width2, rect().top(), width3, rect().height());
-            painter.fillRect(chunk3, QColor("#ff7c80"));
+            auto width3 = levelLength - lengthSafe - lengthWarn;
+            auto chunk3 = QRect(leftCritical, rectTop, width3, rectHeight);
+            painter.fillRect(chunk3, m_colorCritical);
         } else {
-            auto width1 = rect().width() * 0.707946;
-            auto chunk1 = QRect(rect().left(), rect().top(), width1, rect().height());
-            painter.fillRect(chunk1, QColor("#709cff"));
+            auto chunk1 = QRect(leftSafe, rectTop, lengthSafe, rectHeight);
+            painter.fillRect(chunk1, m_colorSafe);
 
-            auto width2 = rect().width() * 0.891251 - width1;
-            auto chunk2 = QRect(rect().left() + width1, rect().top(), width2, rect().height());
-            painter.fillRect(chunk2, QColor("#ffcc99"));
+            auto chunk2 = QRect(leftWarn, rectTop, lengthWarn, rectHeight);
+            painter.fillRect(chunk2, m_colorWarn);
 
-            auto width3 = rect().width() - width1 - width2;
-            auto chunk3 = QRect(rect().left() + width1 + width2, rect().top(), width3, rect().height());
-            painter.fillRect(chunk3, QColor("#ff7c80"));
+            auto chunk3 = QRect(leftCritical, rectTop, lengthCritical, rectHeight);
+            painter.fillRect(chunk3, m_colorCritical);
         }
     } else {
-        auto levelLength = int(rect().height() * averageLevel);
-        auto length1 = int(rect().height() * 0.707946);
-        auto length2 = int(rect().height() * 0.891251) - length1;
-        auto length3 = rect().height() - length1 - length2;
-        if (averageLevel < 0.707946) {
+        auto rectLeft = rect().left();
+        auto rectHeight = rect().height();
+        auto rectWidth = rect().width();
+
+        auto levelLength = int(rectHeight * averageLevel);
+        auto lengthSafe = int(rectHeight * m_safeThreshold);
+        auto lengthWarn = int(rectHeight * m_warnThreshold) - lengthSafe;
+        auto lengthCritical = rectHeight - lengthSafe - lengthWarn;
+
+        auto topSafe = rectHeight - lengthSafe;
+        auto topWarn = rectHeight - lengthSafe - lengthWarn;
+        auto topCritical = rect().top();
+
+        if (averageLevel < m_safeThreshold) {
             auto height = levelLength;
-            auto chunk1 = QRect(rect().left(), rect().height() - height, rect().width(), height);
-            painter.fillRect(chunk1, QColor("#709cff"));
-        } else if (averageLevel < 0.891251) {
-            auto chunk1 = QRect(rect().left(), rect().height() - length1, rect().width(), length1);
-            painter.fillRect(chunk1, QColor("#709cff"));
+            auto top1 = rectHeight - height;
+            auto chunkSafe = QRect(rectLeft, top1, rectWidth, height);
+            painter.fillRect(chunkSafe, m_colorSafe);
+        } else if (averageLevel < m_warnThreshold) {
+            auto chunkSafe = QRect(rectLeft, topSafe, rectWidth, lengthSafe);
+            painter.fillRect(chunkSafe, m_colorSafe);
 
-            auto height = levelLength - length1;
-            auto chunk2 = QRect(rect().left(), rect().height() - levelLength, rect().width(), height);
-            painter.fillRect(chunk2, QColor("#ffcc99"));
+            auto height = levelLength - lengthSafe;
+            auto top2 = rectHeight - levelLength;
+            auto chunkWarn = QRect(rectLeft, top2, rectWidth, height);
+            painter.fillRect(chunkWarn, m_colorWarn);
         } else if (averageLevel < 1) {
-            auto chunk1 = QRect(rect().left(), rect().height() - length1, rect().width(), length1);
-            painter.fillRect(chunk1, QColor("#709cff"));
+            auto chunkSafe = QRect(rectLeft, topSafe, rectWidth, lengthSafe);
+            painter.fillRect(chunkSafe, m_colorSafe);
 
-            auto chunk2 = QRect(rect().left(), rect().height() - length1 - length2, rect().width(), length2);
-            painter.fillRect(chunk2, QColor("#ffcc99"));
+            auto chunkWarn = QRect(rectLeft, topWarn, rectWidth, lengthWarn);
+            painter.fillRect(chunkWarn, m_colorWarn);
 
-            auto height = levelLength - length1 - length2;
-            auto chunk3 = QRect(rect().left(), rect().height() - levelLength, rect().width(), height);
-            painter.fillRect(chunk3, QColor("#ff7c80"));
+            auto height = levelLength - lengthSafe - lengthWarn;
+            auto top3 = rectHeight - levelLength;
+            auto chunk3 = QRect(rectLeft, top3, rectWidth, height);
+            painter.fillRect(chunk3, m_colorCritical);
         } else {
-            auto chunk1 = QRect(rect().left(), rect().height() - length1, rect().width(), length1);
-            painter.fillRect(chunk1, QColor("#709cff"));
+            auto chunkSafe = QRect(rectLeft, topSafe, rectWidth, lengthSafe);
+            painter.fillRect(chunkSafe, m_colorSafe);
 
-            auto chunk2 = QRect(rect().left(), rect().height() - length1 - length2, rect().width(), length2);
-            painter.fillRect(chunk2, QColor("#ffcc99"));
+            auto chunkWarn = QRect(rectLeft, topWarn, rectWidth, lengthWarn);
+            painter.fillRect(chunkWarn, m_colorWarn);
 
-            auto chunk3 = QRect(rect().left(), rect().top(), rect().width(), length3);
-            painter.fillRect(chunk3, QColor("#ff7c80"));
+            auto chunkCritical = QRect(rectLeft, topCritical, rectWidth, lengthCritical);
+            painter.fillRect(chunkCritical, m_colorCritical);
         }
     }
 
@@ -123,30 +142,30 @@ void LevelMeterChunk::paintEvent(QPaintEvent *event) {
     QWidget::paintEvent(event);
 }
 
-void LevelMeterChunk::setLevel(double l) {
+void LevelMeterChunk::readSample(double sample) {
 //    qDebug() << l;
-    bufferPtr[bufferPos] = l;
+    bufferPtr[bufferPos] = sample;
     bufferPos++;
-    if(bufferPos == bufferSize) {
+    if(bufferPos == m_bufferSize) {
         bufferPos = 0;
     }
 //    update();
 }
 
-void LevelMeterChunk::setSampleRate(int sampleRate) {
-}
+//void LevelMeterChunk::setSampleRate(int sampleRate) {
+//}
 
 void LevelMeterChunk::setBufferSize(int size) {
 }
 
-void LevelMeterChunk::initBuffer() {
-    qDebug() << "init buffer" << bufferSize;
-    bufferPtr = new double[bufferSize];
+void LevelMeterChunk::initBuffer(int bufferSize) {
+    m_bufferSize = bufferSize;
+    bufferPtr = new double[m_bufferSize];
     resetBuffer();
 }
 
 void LevelMeterChunk::resetBuffer() {
-    for (int i = 0; i < bufferSize; i++)
+    for (int i = 0; i < m_bufferSize; i++)
         bufferPtr[i] = 0;
     bufferPos = 0;
 }

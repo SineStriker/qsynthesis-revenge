@@ -20,15 +20,23 @@ class LevelMeterPrivate;
 class QMWIDGETS_EXPORT LevelMeter : public QWidget {
     Q_OBJECT
 public:
-    explicit LevelMeter(Qt::Orientation orientation, QWidget *parent = nullptr);
+    enum ChannelType {
+        Mono,
+        Stereo
+    };
+
+    explicit LevelMeter(Qt::Orientation orientation, ChannelType channelType = Stereo, QWidget *parent = nullptr);
     ~LevelMeter();
 
-    void setLevel(double d);
-    void initBuffer();
+
+    void readSample(double sample);
+    void dismissIndicator();
+    void initBuffer(int bufferSize);
 
 protected:
     void paintEvent(QPaintEvent *event) override;
     Qt::Orientation m_orientation;
+    ChannelType m_channelType;
     LevelMeterChunk *m_chunk;
     QPushButton *m_button;
     QHBoxLayout *m_hLayout;
@@ -36,7 +44,6 @@ protected:
 
 private:
     LevelMeterPrivate *d;
-    bool *clipped;
 };
 
 
