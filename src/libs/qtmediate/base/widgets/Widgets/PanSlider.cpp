@@ -82,8 +82,7 @@ void PanSlider::paintEvent(QPaintEvent *event) {
 
 void PanSlider::setValue(double value) {
     m_value = value;
-    emit valueChanged(m_value);
-    repaint();
+    update();
 }
 
 void PanSlider::setDefaultValue(double value) {
@@ -102,26 +101,31 @@ void PanSlider::setMin(double min) {
 }
 
 void PanSlider::reset() {
-    setValue(m_defaultValue);
+    m_value = m_defaultValue;
+    update();
+    emit valueChanged(m_value);
 }
 void PanSlider::mouseMoveEvent(QMouseEvent *event) {
     auto pos = event->pos();
     if (pos.x() < actualLeft) {
         setValue(m_min);
+        emit valueChanged(m_value);
     }
     else if (pos.x() < actualRight) {
         //        auto valuePos = actualWidth * (m_value - m_min) / (m_max - m_min) + 16;
         auto posValue = (pos.x() - 16) * (m_max - m_min) / actualWidth + m_min;
         setValue(posValue);
+        emit valueChanged(m_value);
     } else {
         setValue(m_max);
+        emit valueChanged(m_value);
     }
     QWidget::mouseMoveEvent(event);
 }
 void PanSlider::mouseDoubleClickEvent(QMouseEvent *event) {
 //    qDebug() << "double click";
     auto pos = event->pos();
-    if (MouseOnHandle(pos))
+    if (mouseOnHandle(pos))
         reset();
     QWidget::mouseDoubleClickEvent(event);
 }
@@ -129,11 +133,12 @@ void PanSlider::mousePressEvent(QMouseEvent *event) {
 //    qDebug() << "press";
     timer->start();
     auto pos = event->pos();
-    if (!MouseOnHandle(pos) && !doubleClickLocked) {
+    if (!mouseOnHandle(pos) && !doubleClickLocked) {
         if (pos.x() >= actualLeft && pos.x() <= actualRight) {
             //        auto valuePos = actualWidth * (m_value - m_min) / (m_max - m_min) + 16;
             auto posValue = (pos.x() - 16) * (m_max - m_min) / actualWidth + m_min;
             setValue(posValue);
+            emit valueChanged(m_value);
         }
     }
     doubleClickLocked = true;
@@ -142,7 +147,7 @@ void PanSlider::mousePressEvent(QMouseEvent *event) {
 void PanSlider::mouseReleaseEvent(QMouseEvent *event) {
     QWidget::mouseReleaseEvent(event);
 }
-bool PanSlider::MouseOnHandle(const QPoint &mousePos) {
+bool PanSlider::mouseOnHandle(const QPoint &mousePos) {
     auto pos = mousePos;
     auto valuePos = actualWidth * (m_value - m_min) / (m_max - m_min) + 16;
     if (pos.x() >= valuePos - 8 - 4 && pos.x() <= valuePos + 8 + 4) {
@@ -153,4 +158,8 @@ bool PanSlider::MouseOnHandle(const QPoint &mousePos) {
 void PanSlider::setTrackActiveStartValue(double pos) {
     m_trackActiveStartValue = pos;
     update();
+}
+void PanSlider::setRange(double min, double max) {
+    setMin(min);
+    setMax(max);
 }

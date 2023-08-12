@@ -22,6 +22,7 @@ public:
     void setDefaultValue(double value);
     void setMax(double max);
     void setMin(double min);
+    void setRange(double min, double max);
     void setTrackActiveStartValue(double pos);
     void reset();
 
@@ -39,7 +40,7 @@ protected:
     double m_max = 100;
     double m_min = -100;
     double m_trackActiveStartValue = 0;
-    bool MouseOnHandle(const QPoint &mousePos);
+    bool mouseOnHandle(const QPoint &mousePos);
     bool handleHover = false;
     bool handlePressed = false;
     int actualLeft = 0;

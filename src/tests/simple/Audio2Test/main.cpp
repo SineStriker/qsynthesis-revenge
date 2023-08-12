@@ -27,6 +27,7 @@
 #include <cmath>
 
 #include "LevelMeter.h"
+#include "PanSlider.h"
 #include "buffer/AudioClipSeries.h"
 #include "format/AudioFormatIO.h"
 #include "format/TransportAudioSourceWriter.h"
@@ -60,8 +61,11 @@ int main(int argc, char **argv){
 
     auto fileNameLabel = new QLabel;
 
-    auto transportSlider = new QSlider;
-    transportSlider->setOrientation(Qt::Horizontal);
+//    auto transportSlider = new QSlider;
+//    transportSlider->setOrientation(Qt::Horizontal);
+    auto transportSlider = new PanSlider;
+    transportSlider->setMin(0);
+    transportSlider->setMax(100);
 
     auto playPauseButton = new QPushButton("Pause");
     playPauseButton->setDisabled(true);
@@ -321,7 +325,8 @@ int main(int argc, char **argv){
         QSignalBlocker blocker(transportSlider);
         transportSlider->setValue(value);
     });
-    QObject::connect(transportSlider, &QSlider::valueChanged, &transportSrc, &TransportAudioSource::setPosition);
+//    QObject::connect(transportSlider, &QSlider::valueChanged, &transportSrc, &TransportAudioSource::setPosition);
+    QObject::connect(transportSlider, &PanSlider::valueChanged, &transportSrc, &TransportAudioSource::setPosition);
 
     QObject::connect(playPauseButton, &QPushButton::clicked, [&](){
         if(transportSrc.isPlaying()) {
