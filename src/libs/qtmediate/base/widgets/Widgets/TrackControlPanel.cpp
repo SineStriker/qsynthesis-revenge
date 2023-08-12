@@ -132,7 +132,7 @@ public:
         m_controlWidgetLayout->addItem(m_panVolumeSpacer);
 
         m_levelMeter = new LevelMeter(Qt::Vertical);
-        m_levelMeter->initBuffer();
+        m_levelMeter->initBuffer(8);
         m_levelMeter->setMaximumWidth(12);
 
         m_mainLayout = new QHBoxLayout;

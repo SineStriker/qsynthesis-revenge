@@ -18,6 +18,7 @@ public:
     ~LevelMeterChunk();
 
     void readSample(double sample);
+    void setValue(double value);
     void setOrientation(Qt:: Orientation orientation);
 //    void setSampleRate(int sampleRate);
     void setBufferSize(int size);

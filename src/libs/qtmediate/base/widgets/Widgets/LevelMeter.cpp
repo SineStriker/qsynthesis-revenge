@@ -27,51 +27,118 @@ public:
     }
 };
 
-LevelMeter::LevelMeter(Qt::Orientation orientation, ChannelType channelType, QWidget *parent) : QWidget(parent), d(new LevelMeterPrivate(this)) {
+LevelMeter::LevelMeter(Qt::Orientation orientation, ChannelType channelType, QWidget *parent) : QWidget(parent),
+      d(new LevelMeterPrivate(this)) {
     m_orientation = orientation;
     m_channelType = channelType;
-    m_chunk = new LevelMeterChunk;
 
-    m_button = new QPushButton;
-    m_button->setObjectName("button");
-    m_button->setCheckable(true);
-    m_button->setChecked(false);
+    auto buildChannelMeter = [](LevelMeterChunk *chunk,
+                                QPushButton *button, Qt::Orientation orientation) -> QBoxLayout* {
+        if (orientation == Qt::Horizontal) {
+            chunk->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+            chunk->setOrientation(Qt::Horizontal);
+            button->setMaximumWidth(10);
+            button->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Expanding);
+
+            auto layout = new QHBoxLayout;
+            layout->setSpacing(1);
+            layout->setMargin(0);
+            layout->addWidget(chunk);
+            layout->addWidget(button);
+
+            return layout;
+        } else {
+            chunk->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+            chunk->setOrientation(Qt::Vertical);
+            button->setMaximumHeight(10);
+            button->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Minimum);
+
+            auto layout = new QVBoxLayout;
+            layout->setSpacing(1);
+            layout->setMargin(0);
+            layout->addWidget(button);
+            layout->addWidget(chunk);
+
+            return layout;
+        }
+    };
+
+    m_chunk1 = new LevelMeterChunk;
+    m_button1 = new QPushButton;
+    m_button1->setObjectName("button1");
+    m_button1->setCheckable(true);
+    m_button1->setChecked(false);
 
     if (m_orientation == Qt::Horizontal) {
-        m_chunk->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-        m_chunk->setOrientation(Qt::Horizontal);
-        m_button->setMaximumWidth(10);
-        m_button->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Expanding);
+//        m_chunk1->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+//        m_chunk1->setOrientation(Qt::Horizontal);
+//        m_button1->setMaximumWidth(10);
+//        m_button1->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Expanding);
+//
+//        m_channelLayout1 = new QHBoxLayout;
+//        m_channelLayout1->setSpacing(1);
+//        m_channelLayout1->setMargin(0);
+//        m_channelLayout1->setObjectName("hLayout");
+//        m_channelLayout1->addWidget(m_chunk1);
+//        m_channelLayout1->addWidget(m_button1);
 
-        m_hLayout = new QHBoxLayout;
-        m_hLayout->setSpacing(1);
-        m_hLayout->setMargin(0);
-        m_hLayout->setObjectName("hLayout");
-        m_hLayout->addWidget(m_chunk);
-        m_hLayout->addWidget(m_button);
+        m_mainLayout = new QVBoxLayout;
+
+        m_channelLayout1 = buildChannelMeter(m_chunk1, m_button1, Qt::Horizontal);
+        m_mainLayout->addLayout(m_channelLayout1);
+        if (m_channelType == Stereo) {
+            m_chunk2 = new LevelMeterChunk;
+            m_button2 = new QPushButton;
+            m_button2->setObjectName("button2");
+            m_button2->setCheckable(true);
+            m_button2->setChecked(false);
+
+            m_channelLayout2 = buildChannelMeter(m_chunk2, m_button2, Qt::Horizontal);
+            m_mainLayout->addLayout(m_channelLayout2);
+        }
+        m_mainLayout->setSpacing(1);
+        m_mainLayout->setMargin(0);
 
         this->setMinimumHeight(24);
         this->setMaximumHeight(24);
-        this->setLayout(m_hLayout);
+        this->setLayout(m_mainLayout);
     } else {
-        m_chunk->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-        m_chunk->setOrientation(Qt::Vertical);
-        m_button->setMaximumHeight(10);
-        m_button->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Minimum);
+//        m_chunk1->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+//        m_chunk1->setOrientation(Qt::Vertical);
+//        m_button1->setMaximumHeight(10);
+//        m_button1->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Minimum);
+//
+//        m_channelLayout1 = new QVBoxLayout;
+//        m_channelLayout1->setSpacing(1);
+//        m_channelLayout1->setMargin(0);
+//        m_channelLayout1->setObjectName("vLayout");
+//        m_channelLayout1->addWidget(m_button1);
+//        m_channelLayout1->addWidget(m_chunk1);
 
-        m_vLayout = new QVBoxLayout;
-        m_vLayout->setSpacing(1);
-        m_vLayout->setMargin(0);
-        m_vLayout->setObjectName("vLayout");
-        m_vLayout->addWidget(m_button);
-        m_vLayout->addWidget(m_chunk);
+        m_mainLayout = new QHBoxLayout;
+
+        m_channelLayout1 = buildChannelMeter(m_chunk1, m_button1, Qt::Vertical);
+        m_mainLayout->addLayout(m_channelLayout1);
+        if (m_channelType == Stereo) {
+            m_chunk2 = new LevelMeterChunk;
+            m_button2 = new QPushButton;
+            m_button2->setObjectName("button2");
+            m_button2->setCheckable(true);
+            m_button2->setChecked(false);
+
+            m_channelLayout2 = buildChannelMeter(m_chunk2, m_button2, Qt::Vertical);
+            m_mainLayout->addLayout(m_channelLayout2);
+        }
+        m_mainLayout->setSpacing(1);
+        m_mainLayout->setMargin(0);
+
         this->setMinimumWidth(6);
         this->setMaximumWidth(24);
-        this->setLayout(m_vLayout);
+        this->setLayout(m_mainLayout);
     }
 
-    QObject::connect(m_button, &QPushButton::clicked, this, [=]() {
-        this->m_button->setChecked(false);
+    QObject::connect(m_button1, &QPushButton::clicked, this, [=]() {
+        this->m_button1->setChecked(false);
     });
 
     this->setStyleSheet(QMDecoratorV2::evaluateStyleSheet(R"(
@@ -93,12 +160,12 @@ LevelMeter > QProgressBar#bar::chunk {
     border-radius: 0px;
 }
 
-LevelMeter > QPushButton#button {
+LevelMeter > QPushButton {
     background-color: #d9d9d9;
     border-radius: 0px;
 }
 
-LevelMeter > QPushButton#button:checked {
+LevelMeter > QPushButton:checked {
     background-color: #ff7c80;
 }
 )"));
@@ -113,9 +180,9 @@ void LevelMeter::paintEvent(QPaintEvent *event) {
 }
 
 void LevelMeter::readSample(double sample) {
-    m_chunk->readSample(sample);
+    m_chunk1->readSample(sample);
     if (sample > 1)
-        m_button->setChecked(true);
+        m_button1->setChecked(true);
     /*auto styleSheet = QMDecoratorV2::evaluateStyleSheet(R"(
 QProgressBar#bar::chunk {
     background-color: qlineargradient(x1: 0, x2: 1, stop: 0 #709cff, stop: %1 #709cff, stop: %2 #ffcc99, stop: %3 #ffcc99, stop: %4 #ff7c80, stop: 1 #ff7c80);
@@ -160,7 +227,7 @@ QProgressBar#bar::chunk {
 }
     )").arg(pos1 - 0.000001).arg(pos1).arg(pos2 - 0.000001).arg(pos2));
     } else {
-        this->d->m_button->setChecked(true);
+        this->d->m_button1->setChecked(true);
         this->d->m_progressbar->setValue(10000);
         this->d->m_progressbar->setStyleSheet(QMDecoratorV2::evaluateStyleSheet(R"(
 QProgressBar#bar::chunk {
@@ -171,9 +238,34 @@ QProgressBar#bar::chunk {
 }
 
 void LevelMeter::initBuffer(int bufferSize) {
-    m_chunk->initBuffer(bufferSize);
+    m_chunk1->initBuffer(bufferSize);
+    if (m_chunk2 != nullptr)
+        m_chunk2->initBuffer(bufferSize);
 }
 
-void LevelMeter::dismissIndicator() {
-    m_button->setChecked(false);
+void LevelMeter::setClippedIndicator(bool on) {
+    m_button1->setChecked(on);
+}
+
+void LevelMeter::setValue(double value) {
+    m_chunk1->setValue(value);
+}
+
+void LevelMeter::readSample(double sampleL, double sampleR) {
+    m_chunk1->readSample(sampleL);
+    if (sampleL > 1)
+        m_button1->setChecked(true);
+    m_chunk2->readSample(sampleR);
+    if (sampleR > 1)
+        m_button2->setChecked(true);
+}
+
+void LevelMeter::setValue(double valueL, double valueR) {
+    m_chunk1->setValue(valueL);
+    m_chunk2->setValue(valueR);
+}
+
+void LevelMeter::setClippedIndicator(bool onL, bool onR) {
+    m_button1->setChecked(onL);
+    m_button2->setChecked(onR);
 }

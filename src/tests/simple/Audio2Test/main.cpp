@@ -81,13 +81,13 @@ int main(int argc, char **argv){
 //    auto leftLevelMeter = new QProgressBar;
 //    leftLevelMeter->setRange(0, 60);
 //    leftLevelMeter->setTextVisible(false);
-    auto leftLevelMeter = new LevelMeter(Qt::Horizontal);
+    auto leftLevelMeter = new LevelMeter(Qt::Horizontal, LevelMeter::Stereo);
     leftLevelMeter->initBuffer(8);
 
 //    auto rightLevelMeter = new QProgressBar;
 //    rightLevelMeter->setRange(0, 60);
 //    rightLevelMeter->setTextVisible(false);
-    auto rightLevelMeter = new LevelMeter(Qt::Vertical);
+    auto rightLevelMeter = new LevelMeter(Qt::Vertical, LevelMeter::Stereo);
     rightLevelMeter->initBuffer(8);
 
         auto browseFileButton = new QPushButton("Browse");
@@ -271,23 +271,24 @@ int main(int argc, char **argv){
         if(ml == 0) {
             text += "-inf dB, ";
 //            leftLevelMeter->reset();
-            leftLevelMeter->readSample(0);
+//            leftLevelMeter->readSample(0);
         } else {
             double db = 10 * log(ml/1.0) / log(10);
             text += QString::number(db, 'f', 1) + " dB, ";
 //            leftLevelMeter->setValue(60 + db);
-            leftLevelMeter->readSample(ml);
+//            leftLevelMeter->readSample(ml);
         }
         if(mr == 0) {
             text += "-inf dB, ";
 //            rightLevelMeter->reset();
-            rightLevelMeter->readSample(0);
+//            rightLevelMeter->readSample(0);
         } else {
             double db = 10 * log(mr/1.0) / log(10);
             text += QString::number(db, 'f', 1) + " dB, ";
 //            rightLevelMeter->setValue(60 + db);
-            rightLevelMeter->readSample(mr);
+//            rightLevelMeter->readSample(mr);
         }
+        leftLevelMeter->readSample(ml, mr);
         fileSpecLabel->setText(text);
     });
 

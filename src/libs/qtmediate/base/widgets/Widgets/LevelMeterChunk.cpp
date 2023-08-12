@@ -18,7 +18,7 @@ public:
 
 LevelMeterChunk::LevelMeterChunk(QWidget *parent) : QWidget(parent), d(new LevelMeterChunkPrivate(this)) {
     timer = new QTimer(parent);
-    timer->start(17);
+//    timer->start(17);
     QObject::connect(timer, &QTimer::timeout, this, [=]() {
         double sum = 0;
         for (int i = 0; i < m_bufferSize; i++){
@@ -173,4 +173,9 @@ void LevelMeterChunk::resetBuffer() {
 void LevelMeterChunk::setOrientation(Qt::Orientation orientation) {
     m_orientation = orientation;
     update();
+}
+
+void LevelMeterChunk::setValue(double value) {
+    averageLevel = value;
+    repaint();
 }

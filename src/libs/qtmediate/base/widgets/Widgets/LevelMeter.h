@@ -30,17 +30,29 @@ public:
 
 
     void readSample(double sample);
-    void dismissIndicator();
+    void readSample(double sampleL, double sampleR);
+    void setValue(double value);
+    void setValue(double valueL, double valueR);
+    void setClippedIndicator(bool on);
+    void setClippedIndicator(bool onL, bool onR);
     void initBuffer(int bufferSize);
 
 protected:
     void paintEvent(QPaintEvent *event) override;
     Qt::Orientation m_orientation;
     ChannelType m_channelType;
-    LevelMeterChunk *m_chunk;
-    QPushButton *m_button;
-    QHBoxLayout *m_hLayout;
-    QVBoxLayout *m_vLayout;
+
+    // Channel left or mono
+    LevelMeterChunk *m_chunk1;
+    QPushButton *m_button1;
+    QBoxLayout *m_channelLayout1;
+
+    // Channel right
+    LevelMeterChunk *m_chunk2;
+    QPushButton *m_button2;
+    QBoxLayout *m_channelLayout2;
+
+    QBoxLayout *m_mainLayout;
 
 private:
     LevelMeterPrivate *d;
