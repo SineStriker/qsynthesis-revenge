@@ -34,11 +34,6 @@ namespace Vst::Internal {
         void showWindow() override;
         void hideWindow() override;
 
-        bool initializeProcess(int channelCount, int maxBufferSize, double sampleRate) override;
-        void notifySwitchAudioBuffer(bool isRealtime, bool isPlaying, qint64 position, int bufferSize,
-                                     int channelCount) override;
-        void finalizeProcess() override;
-
     private:
         QLocalSocket *m_alivePipe;
         QSharedMemory *m_processDataSharedMemory;

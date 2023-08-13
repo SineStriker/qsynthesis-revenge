@@ -17,6 +17,7 @@ namespace Vst::Internal {
     struct ConnectionStatus {
         bool isRemoting = false;
         bool isConnected = false;
+        QString hostName;
         bool isProcessing = false;
         double sampleRate = 0;
         int channelCount = 0;
@@ -39,10 +40,15 @@ namespace Vst::Internal {
         bool startRemoting();
         void stopRemoting();
 
-        QString statusText() const;
+        void notifyUpdateConnectionStatus();
+        void notifyUpdateStatistics();
 
         static void generateVstConfig();
         static QString globalUuid();
+
+    signals:
+        void connectionStatusChanged();
+        void statisticsChanged();
     };
 
 } // Internal

@@ -9,6 +9,7 @@
 
 #include "AddOn/VstClientAddOn.h"
 #include "Connection/VstBridge.h"
+#include "Settings/VstSettingPage.h"
 #include "VstHelper.h"
 
 #include <QMDecoratorV2.h>
@@ -50,11 +51,6 @@ namespace Vst {
 
             VstHelper::instance()->isLoadFromInitialization = arguments.contains("-vst");
 
-            if(!VstHelper::instance()->startRemoting()) {
-                qWarning() << "VstClientPlugin: Cannot start remoting.";
-                return true;
-            }
-
 
             auto actionMgr = ICore::instance()->actionSystem();
 
@@ -62,6 +58,12 @@ namespace Vst {
 
             auto winMgr = ICore::instance()->windowSystem();
             winMgr->addAddOn("project", &VstClientAddOn::staticMetaObject);
+
+            ICore::instance()->settingCatalog()->addPage(new VstSettingPage);
+
+            if(!VstHelper::instance()->startRemoting()) {
+                qWarning() << "VstClientPlugin: Cannot start remoting.";
+            }
 
             return true;
         }

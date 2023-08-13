@@ -19,13 +19,16 @@
 #include <ICore.h>
 
 #include "Connection//VstBridge.h"
+#include "Settings/VstSettingPage.h"
 
 namespace Vst::Internal {
 
     static VstHelper *m_instance = nullptr;
+    static QString mainKey;
 
     VstHelper::VstHelper(QObject *parent) : QObject(parent) {
         m_instance = this;
+        mainKey = VstSettingPage::mainKey();
         vstBridge = new VstBridge(this);
         srcNode = new QRemoteObjectHost(QUrl("local:" + globalUuid()), this);
     }
@@ -62,6 +65,8 @@ namespace Vst::Internal {
 #endif
                    << Qt::endl;
             stream << QDir::toNativeSeparators(QApplication::applicationFilePath()) << Qt::endl;
+            stream << VstSettingPage::ipcTimeout() << Qt::endl;
+            stream << VstSettingPage::mainKey() << Qt::endl;
             stream.flush();
             configFile.close();
         } else {
@@ -69,18 +74,12 @@ namespace Vst::Internal {
         }
     }
     QString VstHelper::globalUuid() {
-        return "77F6E993-671E-4283-99BE-C1CD1FF5C09E";
+        return mainKey;
     }
-    QString VstHelper::statusText() const {
-        QString yesText = tr("Yes");
-        QString noText = tr("No");
-        QString naText = "N/A";
-        return
-            tr("Enabled: ") + (connectionStatus.isRemoting ? yesText : noText) + "\n" +
-            tr("Connected: ") + (connectionStatus.isConnected ? yesText : noText) + "\n" +
-            tr("Processing: ") + (connectionStatus.isProcessing ? yesText: noText) + "\n" +
-            tr("Sample rate: ") + (connectionStatus.isProcessing ? QString::number(connectionStatus.sampleRate) : naText) + "\n" +
-            tr("Channel count: ") + (connectionStatus.isProcessing ? QString::number(connectionStatus.channelCount) : naText) + "\n" +
-            tr("Buffer size: ") + (connectionStatus.isProcessing ? QString::number(connectionStatus.bufferSize) : naText);
+    void VstHelper::notifyUpdateConnectionStatus() {
+        emit connectionStatusChanged();
+    }
+    void VstHelper::notifyUpdateStatistics() {
+        emit statisticsChanged();
     }
 } // Internal

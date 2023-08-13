@@ -9,15 +9,17 @@
 #include <QTimer>
 #include <QThread>
 #include <QSystemSemaphore>
+#include <QApplication>
 
-#include <Window/IProjectWindow.h>
-#include <Window/IHomeWindow.h>
 #include "ICore.h"
 #include <CoreApi/ILoader.h>
+#include <QMessageBox>
+#include <Window/IHomeWindow.h>
+#include <Window/IProjectWindow.h>
 
 #include "AddOn/VstClientAddOn.h"
-#include "VstHelper.h"
 #include "Connection/VstPlaybackWorker.h"
+#include "VstHelper.h"
 
 namespace Vst::Internal {
 
@@ -55,7 +57,6 @@ namespace Vst::Internal {
             qWarning() << "Cannot connect to alive pipe.";
             return false;
         }
-        VstHelper::instance()->connectionStatus.isConnected = true;
         if(m_processDataSharedMemory->isAttached()) {
             m_processDataSharedMemory->detach();
         }
@@ -64,21 +65,26 @@ namespace Vst::Internal {
         }
         m_vstPlaybackWorkerThread->start();
         openDataToEditor({});
+        VstHelper::instance()->connectionStatus.isConnected = true;
+        VstHelper::instance()->notifyUpdateConnectionStatus();
         return true;
     }
 
     void VstBridge::finalizeVst() {
         qDebug() << "VstBridge: finalizeVst";
-        finalizeProcess();
         if(VstHelper::instance()->addOn) {
             auto iWin = VstHelper::instance()->addOn->windowHandle()->cast<Core::IProjectWindow>();
             iWin->doc()->close();
         }
         m_worker->quit();
         m_vstPlaybackWorkerThread->quit();
-        m_vstPlaybackWorkerThread->wait();
+        if(!m_vstPlaybackWorkerThread->wait(5000)) {
+            qWarning() << "VstPlaybackWorker failed to quit.";
+            QMessageBox::warning(nullptr, "Warning", tr("VstPlaybackWorker failed to quit for unknown reasons.\nIt is recommended to save all unsaved documents before the problem gets worse, and restart %1.").arg(QApplication::applicationName()));
+        }
         m_processDataSharedMemory->detach();
         VstHelper::instance()->connectionStatus.isConnected = false;
+        VstHelper::instance()->notifyUpdateConnectionStatus();
         VstHelper::instance()->addOn = nullptr;
     }
 
@@ -130,15 +136,6 @@ namespace Vst::Internal {
     void VstBridge::hideWindow() {
         qDebug() << "VstBridge: hideWindow";
         if(VstHelper::instance()->addOn) VstHelper::instance()->addOn->hideWindow();
-    }
-    bool VstBridge::initializeProcess(int channelCount, int maxBufferSize, double sampleRate) {
-        return false;
-    }
-    void VstBridge::notifySwitchAudioBuffer(bool isRealtime, bool isPlaying, qint64 position, int bufferSize, int channelCount) {
-
-    }
-    void VstBridge::finalizeProcess() {
-
     }
 
 } // Vst

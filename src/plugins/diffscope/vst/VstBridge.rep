@@ -10,9 +10,5 @@ class VstBridge {
     SLOT(void showWindow());
     SLOT(void hideWindow());
 
-    SLOT(bool initializeProcess(int channelCount, int maxBufferSize, double sampleRate));
-    SLOT(void notifySwitchAudioBuffer(bool isRealtime, bool isPlaying, qint64 position, int bufferSize, int channelCount));
-    SLOT(void finalizeProcess());
-    SIGNAL(bufferSwitched(bool isSuccessful));
 };
 

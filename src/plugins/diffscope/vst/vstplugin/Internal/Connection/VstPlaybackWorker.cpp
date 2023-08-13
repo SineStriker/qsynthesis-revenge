@@ -88,6 +88,7 @@ namespace Vst::Internal {
         VstHelper::instance()->connectionStatus.channelCount = channelCount;
         VstHelper::instance()->connectionStatus.bufferSize = bufferSize;
         VstHelper::instance()->connectionStatus.sampleRate = sampleRate;
+        VstHelper::instance()->notifyUpdateConnectionStatus();
         return true;
     }
     void VstPlaybackWorker::finalize() {
@@ -96,6 +97,7 @@ namespace Vst::Internal {
         m_bufferSwitchData = nullptr;
         m_processBufferSharedMemory->detach();
         VstHelper::instance()->connectionStatus.isProcessing = false;
+        VstHelper::instance()->notifyUpdateConnectionStatus();
     }
 
     bool VstPlaybackWorker::work(bool isRealtime, bool isPlaying, qint64 position, int bufferSize, int channelCount, float *const *output) {

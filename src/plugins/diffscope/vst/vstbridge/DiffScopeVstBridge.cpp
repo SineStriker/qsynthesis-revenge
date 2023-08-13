@@ -7,9 +7,8 @@
 
 namespace Vst {
 
-    static const QString GLOBAL_UUID = "77F6E993-671E-4283-99BE-C1CD1FF5C09E";
-    static int ipcTimeout = 5000; //TODO configurate in DiffScope settings
-    static int ipcProcessTimeout = 1000;
+    static QString GLOBAL_UUID = "77F6E993-671E-4283-99BE-C1CD1FF5C09E";
+    static int ipcTimeout = 5000;
 
     bool DiffScopeVstBridge::checkSingleton() {
         QSystemSemaphore sema(GLOBAL_UUID, 1);
@@ -98,11 +97,23 @@ namespace Vst {
         configFile.readLine(); //vst bridge dir
         configFile.readLine(); //vst bridge file name
         QString path = configFile.readLine().trimmed();
-        configFile.close();
         if(!QFileInfo(path).isExecutable()) {
             callbacks->setError(QString("Not a valid executable: %1").arg(path).toUtf8());
             return false;
         }
+        QString ipcTimeoutStr = configFile.readLine().trimmed();
+        {
+            bool ok = false;
+            ipcTimeoutStr.toInt(&ok);
+            if(ok) ipcTimeout = ipcTimeoutStr.toInt();
+        }
+        QString mainKey = configFile.readLine().trimmed();
+        if(!mainKey.isEmpty()) {
+            GLOBAL_UUID = mainKey;
+        }
+
+
+        configFile.close();
 
         editorProc.setProgram(path);
         editorProc.setArguments({"-vst"});
@@ -247,7 +258,7 @@ namespace Vst {
 
         processCallMutex->release();
         while(isConnected) {
-            if(!processCallMutex->tryAcquire(ipcProcessTimeout)) {
+            if(!processCallMutex->tryAcquire(ipcTimeout)) {
                 return false;
             }
             if(processData->flag == VstProcessData::BufferSwitchFinished) {
