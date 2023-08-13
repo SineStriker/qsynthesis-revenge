@@ -13,6 +13,9 @@ public:
     virtual float constSampleAt(int channel, qint64 pos) const = 0;
     virtual int channelCount() const = 0;
     virtual qint64 sampleCount() const = 0;
+    virtual bool isContinuous() const;
+    virtual const float *readPointerTo(int channel, qint64 startPos) const;
+
     float magnitude(int channel, qint64 startPos, qint64 length) const;
     float magnitude(int channel) const;
     float rms(int channel, qint64 startPos, qint64 length) const;

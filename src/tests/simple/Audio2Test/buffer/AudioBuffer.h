@@ -14,6 +14,9 @@ public:
 
     float &sampleAt(int channel, qint64 pos) override;
     float constSampleAt(int channel, qint64 pos) const override;
+    float *writePointerTo(int channel, qint64 startPos) override;
+    bool isContinuous() const override;
+    const float *readPointerTo(int channel, qint64 startPos) const override;
 
     int channelCount() const override;
     qint64 sampleCount() const override;

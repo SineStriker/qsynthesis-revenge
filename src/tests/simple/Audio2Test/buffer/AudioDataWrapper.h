@@ -21,6 +21,10 @@ public:
     int channelCount() const override;
     qint64 sampleCount() const override;
 
+    float *writePointerTo(int channel, qint64 startPos) override;
+    bool isContinuous() const override;
+    const float *readPointerTo(int channel, qint64 startPos) const override;
+
     float *data(int channel) const;
     void resetData(float *const *data, int channelCount, qint64 sampleCount, qint64 startPos = 0);
 protected:

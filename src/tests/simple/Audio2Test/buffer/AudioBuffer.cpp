@@ -65,3 +65,12 @@ AudioBuffer AudioBuffer::from(const IAudioSampleProvider &src) {
     buf.setSampleRange(src);
     return buf;
 }
+float *AudioBuffer::writePointerTo(int channel, qint64 startPos) {
+    return m_buffer[channel].data() + startPos;
+}
+bool AudioBuffer::isContinuous() const {
+    return true;
+}
+const float *AudioBuffer::readPointerTo(int channel, qint64 startPos) const {
+    return m_buffer[channel].constData() + startPos;
+}

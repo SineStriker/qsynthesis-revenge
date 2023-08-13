@@ -46,3 +46,14 @@ void AudioDataWrapper::resetData(float *const *data, int channelCount, qint64 sa
 AudioDataWrapper::AudioDataWrapper(AudioDataWrapperPrivate &d): d_ptr(&d) {
     d.q_ptr = this;
 }
+float *AudioDataWrapper::writePointerTo(int channel, qint64 startPos) {
+    Q_D(AudioDataWrapper);
+    return d->data[channel] + startPos;
+}
+bool AudioDataWrapper::isContinuous() const {
+    return true;
+}
+const float *AudioDataWrapper::readPointerTo(int channel, qint64 startPos) const {
+    Q_D(const AudioDataWrapper);
+    return d->data[channel] + startPos;
+}

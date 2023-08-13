@@ -13,15 +13,24 @@ static inline void boundCheck(const IAudioSampleProvider &iAudioStorage, int cha
     assert(startPos + length >= 0 && startPos + length <= iAudioStorage.sampleCount());
 }
 
+float *IAudioSampleContainer::writePointerTo(int channel, qint64 startPos) {
+    return nullptr;
+}
+
 void IAudioSampleContainer::setSampleRange(int destChannel, qint64 destStartPos, qint64 length,
                                            const IAudioSampleProvider &src,
                                    int srcChannel, qint64 srcStartPos) {
     boundCheck(*this, destChannel, destStartPos, length);
     boundCheck(src, srcChannel, srcStartPos, length);
-    for(qint64 i = 0; i < length; i++) {
-        sampleAt(destChannel, destStartPos + i) = src.constSampleAt(srcChannel, srcStartPos + i);
+    if(isContinuous() && src.isContinuous()) {
+        auto pDest = writePointerTo(destChannel, destStartPos);
+        auto pSrc = src.readPointerTo(srcChannel, srcStartPos);
+        std::copy(pSrc, pSrc + length, pDest);
+    } else {
+        for(qint64 i = 0; i < length; i++) {
+            sampleAt(destChannel, destStartPos + i) = src.constSampleAt(srcChannel, srcStartPos + i);
+        }
     }
-
 }
 void IAudioSampleContainer::setSampleRange(const IAudioSampleProvider &src) {
     auto minChannelCount = std::min(channelCount(), src.channelCount());
@@ -36,9 +45,16 @@ void IAudioSampleContainer::addSampleRange(int destChannel, qint64 destStartPos,
                                    int srcChannel, qint64 srcStartPos, float gain) {
     boundCheck(*this, destChannel, destStartPos, length);
     boundCheck(src, srcChannel, srcStartPos, length);
-    for(qint64 i = 0; i < length; i++) {
-        sampleAt(destChannel, destStartPos + i) += src.constSampleAt(srcChannel, srcStartPos + i) * gain;
+    if(isContinuous() && src.isContinuous()) {
+        auto pDest = writePointerTo(destChannel, destStartPos);
+        auto pSrc = src.readPointerTo(srcChannel, srcStartPos);
+        std::transform(pDest, pDest + length, pSrc, pDest, std::plus());
+    } else {
+        for(qint64 i = 0; i < length; i++) {
+            sampleAt(destChannel, destStartPos + i) += src.constSampleAt(srcChannel, srcStartPos + i) * gain;
+        }
     }
+
 }
 void IAudioSampleContainer::addSampleRange(const IAudioSampleProvider &src, float gain) {
     auto minChannelCount = std::min(channelCount(), src.channelCount());
@@ -50,8 +66,15 @@ void IAudioSampleContainer::addSampleRange(const IAudioSampleProvider &src, floa
 
 void IAudioSampleContainer::gainSampleRange(int destChannel, qint64 destStartPos, qint64 length, float gain) {
     boundCheck(*this, destChannel, destStartPos, length);
-    for(qint64 i = 0; i < length; i++) {
-        sampleAt(destChannel, destStartPos + i) *= gain;
+    if(isContinuous()) {
+        auto p = writePointerTo(destChannel, destStartPos);
+        std::transform(p, p + length, p, [gain](float num){
+            return num * gain;
+        });
+    } else {
+        for(qint64 i = 0; i < length; i++) {
+            sampleAt(destChannel, destStartPos + i) *= gain;
+        }
     }
 }
 void IAudioSampleContainer::gainSampleRange(int destChannel, float gain) {
@@ -67,8 +90,12 @@ void IAudioSampleContainer::gainSampleRange(float gain) {
 
 void IAudioSampleContainer::clear(int destChannel, qint64 destStartPos, qint64 length) {
     boundCheck(*this, destChannel, destStartPos, length);
-    for(qint64 i = 0; i < length; i++) {
-        sampleAt(destChannel, destStartPos + i) = 0;
+    if(isContinuous()) {
+        memset(writePointerTo(destChannel, destStartPos), 0, length * sizeof(float));
+    } else {
+        for(qint64 i = 0; i < length; i++) {
+            sampleAt(destChannel, destStartPos + i) = 0;
+        }
     }
 }
 void IAudioSampleContainer::clear(int destChannel) {
