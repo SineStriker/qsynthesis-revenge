@@ -31,29 +31,13 @@ namespace QsApi {
         m_registered = true;
     }
 
-    Q_DECL_CONSTEXPR MusicTimeSignature::MusicTimeSignature() : MusicTimeSignature(4, 4) {
+    MusicTimeSignature::MusicTimeSignature() : MusicTimeSignature(4, 4) {
     }
 
-    Q_DECL_CONSTEXPR MusicTimeSignature::MusicTimeSignature(int numerator, int denominator)
+    MusicTimeSignature::MusicTimeSignature(int numerator, int denominator)
         : num(numerator), den(denominator) {
         if (!m_registered)
             registerMetaType();
-    }
-
-    Q_DECL_CONSTEXPR bool MusicTimeSignature::isValid() const {
-        if (num <= 0)
-            return false;
-        if (den < 1 || den > 32)
-            return false;
-        return !(den & (den - 1));
-    }
-
-    Q_DECL_CONSTEXPR int MusicTimeSignature::ticksPerBar(int resolution) const {
-        return resolution * num * 4 / den;
-    }
-
-    Q_DECL_CONSTEXPR int MusicTimeSignature::ticksPerBeat(int resolution) const {
-        return resolution * 4 / den;
     }
 
     QString MusicTimeSignature::toString() const {

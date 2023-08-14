@@ -13,8 +13,8 @@ namespace QsApi {
 
     class QSSVS_API MusicTimeSignature {
     public:
-        Q_DECL_CONSTEXPR MusicTimeSignature();
-        Q_DECL_CONSTEXPR MusicTimeSignature(int numerator, int denominator);
+        MusicTimeSignature();
+        MusicTimeSignature(int numerator, int denominator);
 
         Q_DECL_CONSTEXPR inline int numerator() const;
         Q_DECL_CONSTEXPR inline int denominator() const;
@@ -52,6 +52,22 @@ namespace QsApi {
 
     Q_DECL_RELAXED_CONSTEXPR void MusicTimeSignature::setDenominator(int denominator) {
         den = denominator;
+    }
+
+    Q_DECL_CONSTEXPR bool MusicTimeSignature::isValid() const {
+        if (num <= 0)
+            return false;
+        if (den < 1 || den > 32)
+            return false;
+        return !(den & (den - 1));
+    }
+
+    Q_DECL_CONSTEXPR int MusicTimeSignature::ticksPerBar(int resolution) const {
+        return resolution * num * 4 / den;
+    }
+
+    Q_DECL_CONSTEXPR int MusicTimeSignature::ticksPerBeat(int resolution) const {
+        return resolution * 4 / den;
     }
 
     Q_DECL_CONSTEXPR bool MusicTimeSignature::operator==(const MusicTimeSignature &t) const {
