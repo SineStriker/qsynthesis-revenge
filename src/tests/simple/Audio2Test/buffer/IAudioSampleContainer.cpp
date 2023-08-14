@@ -6,6 +6,8 @@
 #include <algorithm>
 #include <cassert>
 #include <cmath>
+#include <cstring>
+#include <functional>
 
 static inline void boundCheck(const IAudioSampleProvider &iAudioStorage, int channel, qint64 startPos, qint64 length) {
     assert(channel >= 0 && channel < iAudioStorage.channelCount());
