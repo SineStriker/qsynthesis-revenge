@@ -5,7 +5,7 @@
 #ifndef CHORUSKIT_TRACKCONTROLPANEL_H
 #define CHORUSKIT_TRACKCONTROLPANEL_H
 
-#include "QWidget"
+#include <QWidget>
 #include "QMWidgetsGlobal.h"
 
 class TrackControlPanelPrivate;

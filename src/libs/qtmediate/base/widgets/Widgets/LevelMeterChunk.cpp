@@ -3,9 +3,9 @@
 //
 
 #include "LevelMeterChunk.h"
-#include "QPainter"
-#include "QDebug"
-#include "QTimer"
+#include <QPainter>
+#include <QDebug>
+#include <QTimer>
 
 class LevelMeterChunkPrivate {
 public:
@@ -18,7 +18,7 @@ public:
 
 LevelMeterChunk::LevelMeterChunk(QWidget *parent) : QWidget(parent), d(new LevelMeterChunkPrivate(this)) {
     timer = new QTimer(parent);
-//    timer->start(17);
+    timer->start(17);
     QObject::connect(timer, &QTimer::timeout, this, [=]() {
         double sum = 0;
         for (int i = 0; i < m_bufferSize; i++){
@@ -26,7 +26,8 @@ LevelMeterChunk::LevelMeterChunk(QWidget *parent) : QWidget(parent), d(new Level
         }
         averageLevel = sum / m_bufferSize;
         // qDebug() << averageLevel;
-        repaint();
+//        repaint();
+        update();
     });
 }
 

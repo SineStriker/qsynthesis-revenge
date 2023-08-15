@@ -2,21 +2,21 @@
 // Created by fluty on 2023/8/7.
 //
 
-#ifndef CHORUSKIT_PANSLIDER_H
-#define CHORUSKIT_PANSLIDER_H
+#ifndef CHORUSKIT_SEEKBAR_H
+#define CHORUSKIT_SEEKBAR_H
 
 #include "QSlider"
 #include "QMWidgetsGlobal.h"
 #include "QMouseEvent"
 
-class PanSliderPrivate;
+class SeekBarPrivate;
 
-class QMWIDGETS_EXPORT PanSlider : public QWidget {
+class QMWIDGETS_EXPORT SeekBar : public QWidget {
     Q_OBJECT
 
 public:
-    explicit PanSlider(QWidget *parent = nullptr);
-    ~PanSlider();
+    explicit SeekBar(QWidget *parent = nullptr);
+    ~SeekBar();
 
     void setValue(double value);
     void setDefaultValue(double value);
@@ -40,7 +40,7 @@ protected:
     double m_max = 100;
     double m_min = -100;
     double m_trackActiveStartValue = 0;
-    bool mouseOnHandle(const QPoint &mousePos);
+    bool mouseOnHandle(const QPoint &mousePos) const;
     bool handleHover = false;
     bool handlePressed = false;
     int actualLeft = 0;
@@ -50,9 +50,9 @@ protected:
     bool doubleClickLocked = false;
 
 private:
-    PanSliderPrivate *d;
+    SeekBarPrivate *d;
 };
 
 
 
-#endif // CHORUSKIT_PANSLIDER_H
+#endif // CHORUSKIT_SEEKBAR_H

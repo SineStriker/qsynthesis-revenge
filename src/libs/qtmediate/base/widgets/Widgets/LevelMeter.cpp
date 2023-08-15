@@ -4,7 +4,7 @@
 
 #include "LevelMeter.h"
 #include "QMDecoratorV2.h"
-#include "QDebug"
+#include <QDebug>
 
 class LevelMeterPrivate {
 public:

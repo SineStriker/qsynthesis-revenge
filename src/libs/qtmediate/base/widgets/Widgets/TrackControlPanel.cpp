@@ -5,11 +5,11 @@
 #include "TrackControlPanel.h"
 #include "CLineEdit.h"
 #include "LevelMeter.h"
-#include "PanSlider.h"
+#include "QDebug"
 #include "QMDecoratorV2.h"
+#include "SeekBar.h"
 #include <QLabel>
 #include <QPushButton>
-#include "QDebug"
 
 class TrackControlPanelPrivate {
 public:
@@ -19,9 +19,9 @@ public:
     QPushButton *m_btnMute;
     QPushButton *m_btnSolo;
     CLineEdit *m_leTrackName;
-    PanSlider *m_panSlider;
+    SeekBar *m_panSlider;
     CLineEdit *m_lePan;
-    PanSlider *m_volumeSlider;
+    SeekBar *m_volumeSlider;
     CLineEdit *m_leVolume;
     QSpacerItem *m_panVolumeSpacer;
     LevelMeter *m_levelMeter;
@@ -86,7 +86,7 @@ public:
         placeHolder->setMinimumHeight(30);
         placeHolder->setMaximumHeight(30);
 
-        m_panSlider = new PanSlider;
+        m_panSlider = new SeekBar;
         m_panSlider->setObjectName("m_panSlider");
 //        m_panSlider->setValue(50);
 
@@ -99,7 +99,7 @@ public:
         m_lePan->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Minimum);
         m_lePan->setAlignment(Qt::AlignCenter);
 
-        m_volumeSlider = new PanSlider;
+        m_volumeSlider = new SeekBar;
         m_volumeSlider->setObjectName("m_volumeSlider");
         m_volumeSlider->setMax(120);
         m_volumeSlider->setMin(0);
@@ -145,7 +145,7 @@ public:
 
         q->setLayout(m_mainLayout);
 
-        QObject::connect(m_panSlider, &PanSlider::valueChanged, m_lePan, [=](double value) {
+        QObject::connect(m_panSlider, &SeekBar::valueChanged, m_lePan, [=](double value) {
 //            q->setTrackPan(value);
 //            if (value > 0)
 //                m_lePan->setText("R" + QString::number(value));

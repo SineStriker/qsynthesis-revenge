@@ -1,7 +1,7 @@
 #include "LevelMeter.h"
-#include "PanSlider.h"
 #include "QProgressBar"
 #include "QRadioButton"
+#include "SeekBar.h"
 #include "TrackControlPanel.h"
 #include <QAction>
 #include <QApplication>
@@ -95,17 +95,17 @@ int main(int argc, char *argv[]) {
     progressBar->setMinimum(0);
     progressBar->setValue(50);
 
-    auto panSlider = new PanSlider();
+    auto panSlider = new SeekBar();
     panSlider->setValue(80);
 
-    auto volumeSlider = new PanSlider();
+    auto volumeSlider = new SeekBar();
     volumeSlider->setMax(120);
     volumeSlider->setMin(0);
     volumeSlider->setValue(100);
     volumeSlider->setDefaultValue(100);
     volumeSlider->setTrackActiveStartValue(0);
 
-    auto reverseVolumeSlider = new PanSlider();
+    auto reverseVolumeSlider = new SeekBar();
     reverseVolumeSlider->setMax(120);
     reverseVolumeSlider->setMin(0);
     reverseVolumeSlider->setValue(50);

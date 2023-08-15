@@ -5,7 +5,7 @@
 #ifndef CHORUSKIT_LEVELMETERCHUNK_H
 #define CHORUSKIT_LEVELMETERCHUNK_H
 
-#include "QWidget"
+#include <QWidget>
 #include "QMWidgetsGlobal.h"
 
 class LevelMeterChunkPrivate;

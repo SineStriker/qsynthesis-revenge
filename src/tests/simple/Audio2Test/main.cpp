@@ -27,7 +27,7 @@
 #include <cmath>
 
 #include "LevelMeter.h"
-#include "PanSlider.h"
+#include "SeekBar.h"
 #include "buffer/AudioClipSeries.h"
 #include "format/AudioFormatIO.h"
 #include "format/TransportAudioSourceWriter.h"
@@ -63,7 +63,7 @@ int main(int argc, char **argv){
 
 //    auto transportSlider = new QSlider;
 //    transportSlider->setOrientation(Qt::Horizontal);
-    auto transportSlider = new PanSlider;
+    auto transportSlider = new SeekBar;
     transportSlider->setMin(0);
     transportSlider->setMax(100);
 
@@ -293,6 +293,7 @@ int main(int argc, char **argv){
 //            rightLevelMeter->readSample(mr);
         }
         leftLevelMeter->readSample(ml, mr);
+        rightLevelMeter->readSample(ml, mr);
         fileSpecLabel->setText(text);
     });
 
@@ -326,7 +327,7 @@ int main(int argc, char **argv){
         transportSlider->setValue(value);
     });
 //    QObject::connect(transportSlider, &QSlider::valueChanged, &transportSrc, &TransportAudioSource::setPosition);
-    QObject::connect(transportSlider, &PanSlider::valueChanged, &transportSrc, &TransportAudioSource::setPosition);
+    QObject::connect(transportSlider, &SeekBar::valueChanged, &transportSrc, &TransportAudioSource::setPosition);
 
     QObject::connect(playPauseButton, &QPushButton::clicked, [&](){
         if(transportSrc.isPlaying()) {
@@ -411,8 +412,8 @@ int main(int argc, char **argv){
         transportSrc.setPosition(curPos);
 //        leftLevelMeter->reset();
 //        rightLevelMeter->reset();
-        leftLevelMeter->readSample(0);
-        rightLevelMeter->readSample(0);
+        leftLevelMeter->readSample(0, 0);
+        rightLevelMeter->readSample(0, 0);
         thread.quit();
         thread.wait();
     });

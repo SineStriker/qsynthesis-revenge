@@ -2,24 +2,22 @@
 // Created by fluty on 2023/8/7.
 //
 
-#include "PanSlider.h"
-#include "QAbstractSlider"
-#include "QStyleOptionSlider"
-#include "QPainter"
-#include "QDebug"
-#include "QTimer"
+#include "SeekBar.h"
+#include <QDebug>
+#include <QPainter>
+#include <QTimer>
 
-class PanSliderPrivate {
+class SeekBarPrivate {
 public:
-    PanSlider *q;
+    SeekBar *q;
 
-    explicit PanSliderPrivate(PanSlider *q) : q(q) {
+    explicit SeekBarPrivate(SeekBar *q) : q(q) {
         q->setMinimumHeight(24);
         q->setMaximumHeight(24);
     }
 };
 
-PanSlider::PanSlider(QWidget *parent) : QWidget(parent), d(new PanSliderPrivate(this)) {
+SeekBar::SeekBar(QWidget *parent) : QWidget(parent), d(new SeekBarPrivate(this)) {
     timer = new QTimer(parent);
     timer->setInterval(200);
     QObject::connect(timer, &QTimer::timeout, this, [=]() {
@@ -29,11 +27,11 @@ PanSlider::PanSlider(QWidget *parent) : QWidget(parent), d(new PanSliderPrivate(
     this->setMinimumWidth(50);
 }
 
-PanSlider::~PanSlider() {
+SeekBar::~SeekBar() {
     delete d;
 }
 
-void PanSlider::paintEvent(QPaintEvent *event) {
+void SeekBar::paintEvent(QPaintEvent *event) {
     QPainter painter(this);
     painter.setRenderHint(QPainter::Antialiasing);
     // Fill background
@@ -55,9 +53,9 @@ void PanSlider::paintEvent(QPaintEvent *event) {
     painter.drawLine(trackLeft, trackRight);
 
     // Calculate slider track active
-    auto activeStartPos = actualWidth * (m_trackActiveStartValue - m_min) / (m_max - m_min) + 16;
+    auto activeStartPos = int(actualWidth * (m_trackActiveStartValue - m_min) / (m_max - m_min)) + 16;
     auto activePoint1 = QPoint(activeStartPos, rect().height() / 2);
-    auto valuePos = actualWidth * (m_value - m_min) / (m_max - m_min) + 16;
+    auto valuePos = int(actualWidth * (m_value - m_min) / (m_max - m_min)) + 16;
     auto activePoint2 = QPoint(valuePos, rect().height() / 2);
 
     // Draw slider track active
@@ -80,32 +78,32 @@ void PanSlider::paintEvent(QPaintEvent *event) {
     painter.end();
 }
 
-void PanSlider::setValue(double value) {
+void SeekBar::setValue(double value) {
     m_value = value;
     update();
 }
 
-void PanSlider::setDefaultValue(double value) {
+void SeekBar::setDefaultValue(double value) {
     m_defaultValue = value;
     update();
 }
 
-void PanSlider::setMax(double max) {
+void SeekBar::setMax(double max) {
     m_max = max;
     update();
 }
 
-void PanSlider::setMin(double min) {
+void SeekBar::setMin(double min) {
     m_min = min;
     update();
 }
 
-void PanSlider::reset() {
+void SeekBar::reset() {
     m_value = m_defaultValue;
     update();
     emit valueChanged(m_value);
 }
-void PanSlider::mouseMoveEvent(QMouseEvent *event) {
+void SeekBar::mouseMoveEvent(QMouseEvent *event) {
     auto pos = event->pos();
     if (pos.x() < actualLeft) {
         setValue(m_min);
@@ -122,14 +120,14 @@ void PanSlider::mouseMoveEvent(QMouseEvent *event) {
     }
     QWidget::mouseMoveEvent(event);
 }
-void PanSlider::mouseDoubleClickEvent(QMouseEvent *event) {
+void SeekBar::mouseDoubleClickEvent(QMouseEvent *event) {
 //    qDebug() << "double click";
     auto pos = event->pos();
     if (mouseOnHandle(pos))
         reset();
     QWidget::mouseDoubleClickEvent(event);
 }
-void PanSlider::mousePressEvent(QMouseEvent *event) {
+void SeekBar::mousePressEvent(QMouseEvent *event) {
 //    qDebug() << "press";
     timer->start();
     auto pos = event->pos();
@@ -144,10 +142,10 @@ void PanSlider::mousePressEvent(QMouseEvent *event) {
     doubleClickLocked = true;
     QWidget::mousePressEvent(event);
 }
-void PanSlider::mouseReleaseEvent(QMouseEvent *event) {
+void SeekBar::mouseReleaseEvent(QMouseEvent *event) {
     QWidget::mouseReleaseEvent(event);
 }
-bool PanSlider::mouseOnHandle(const QPoint &mousePos) {
+bool SeekBar::mouseOnHandle(const QPoint &mousePos) const {
     auto pos = mousePos;
     auto valuePos = actualWidth * (m_value - m_min) / (m_max - m_min) + 16;
     if (pos.x() >= valuePos - 8 - 4 && pos.x() <= valuePos + 8 + 4) {
@@ -155,11 +153,11 @@ bool PanSlider::mouseOnHandle(const QPoint &mousePos) {
     }
     return false;
 }
-void PanSlider::setTrackActiveStartValue(double pos) {
+void SeekBar::setTrackActiveStartValue(double pos) {
     m_trackActiveStartValue = pos;
     update();
 }
-void PanSlider::setRange(double min, double max) {
+void SeekBar::setRange(double min, double max) {
     setMin(min);
     setMax(max);
 }

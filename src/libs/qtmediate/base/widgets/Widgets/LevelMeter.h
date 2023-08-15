@@ -5,14 +5,13 @@
 #ifndef CHORUSKIT_LEVELMETER_H
 #define CHORUSKIT_LEVELMETER_H
 
-#include "QProgressBar"
-#include "QWidget"
+#include <QWidget>
 #include "QMWidgetsGlobal.h"
 #include "QPixelSize.h"
-#include "QVBoxLayout"
-#include "QHBoxLayout"
-#include "QPushButton"
-#include "QSizePolicy"
+#include <QVBoxLayout>
+#include <QHBoxLayout>
+#include <QPushButton>
+#include <QSizePolicy>
 #include "LevelMeterChunk.h"
 
 class LevelMeterPrivate;
