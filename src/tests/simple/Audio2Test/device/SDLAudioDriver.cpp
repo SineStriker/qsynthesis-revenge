@@ -44,7 +44,7 @@ void SDLAudioDriver::finalize() {
     SDL_Quit();
     AudioDriver::finalize();
 }
-QStringList SDLAudioDriver::devices() {
+QStringList SDLAudioDriver::devices() const {
     QStringList list;
     int cnt = SDL_GetNumAudioDevices(0);
     for(int i = 0; i < cnt; i++) {
@@ -52,7 +52,7 @@ QStringList SDLAudioDriver::devices() {
     }
     return list;
 }
-QString SDLAudioDriver::defaultDevice() {
+QString SDLAudioDriver::defaultDevice() const {
     char *name;
     SDL_AudioSpec spec;
     if(SDL_GetDefaultAudioInfo(&name, &spec, 0) == 0) {

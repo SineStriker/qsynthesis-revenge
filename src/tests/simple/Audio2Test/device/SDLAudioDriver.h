@@ -21,8 +21,8 @@ public:
 
     bool initialize() override;
     void finalize() override;
-    QStringList devices() override;
-    QString defaultDevice() override;
+    QStringList devices() const override;
+    QString defaultDevice() const override;
     AudioDevice *createDevice(const QString &name) override;
 
     static QList<SDLAudioDriver *> getDrivers();

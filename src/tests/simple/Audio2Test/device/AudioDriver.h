@@ -24,8 +24,8 @@ public:
     virtual void finalize();
     bool isInitialized() const;
 
-    virtual QStringList devices() = 0;
-    virtual QString defaultDevice();
+    virtual QStringList devices() const = 0;
+    virtual QString defaultDevice() const;
 
     virtual AudioDevice *createDevice(const QString &name) = 0;
 

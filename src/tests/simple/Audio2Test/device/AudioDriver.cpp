@@ -24,6 +24,6 @@ bool AudioDriver::isInitialized() const {
     Q_D(const AudioDriver);
     return d->isInitialized;
 }
-QString AudioDriver::defaultDevice() {
+QString AudioDriver::defaultDevice() const {
     return QString();
 }
