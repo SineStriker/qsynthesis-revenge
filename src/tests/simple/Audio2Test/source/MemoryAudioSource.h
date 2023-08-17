@@ -18,7 +18,7 @@ public:
     ~MemoryAudioSource();
 
     IAudioSampleProvider *buffer() const;
-    IAudioSampleProvider *resetBuffer(IAudioSampleProvider *newBuffer, bool takeOwnership = false);
+    IAudioSampleProvider *setBuffer(IAudioSampleProvider *newBuffer, bool takeOwnership = false);
 
     qint64 read(const AudioSourceReadData &readData) override;
     qint64 length() const override;

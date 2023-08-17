@@ -29,7 +29,7 @@ IAudioSampleProvider *MemoryAudioSource::buffer() const {
     return d->buffer;
 }
 
-IAudioSampleProvider *MemoryAudioSource::resetBuffer(IAudioSampleProvider *newBuffer, bool takeOwnership) {
+IAudioSampleProvider *MemoryAudioSource::setBuffer(IAudioSampleProvider *newBuffer, bool takeOwnership) {
     Q_D(MemoryAudioSource);
     QMutexLocker locker(&d->mutex);
     auto oldBuffer = d->buffer;
