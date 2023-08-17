@@ -5,6 +5,8 @@
 #ifndef CHORUSKIT_ASIOAUDIODRIVER_P_H
 #define CHORUSKIT_ASIOAUDIODRIVER_P_H
 
+#ifdef USE_FEATURE_ASIO
+
 #include "ASIOAudioDriver.h"
 #include "AudioDriver_p.h"
 
@@ -13,15 +15,17 @@
 static const int MAXPATHLEN = 512;
 static const int MAXDRVNAMELEN = 128;
 
-struct ASIODriverSpec {
+struct ASIODeviceSpec {
     CLSID clsid;
     QString driverName;
 };
 
 class ASIOAudioDriverPrivate : public AudioDriverPrivate {
     Q_DECLARE_PUBLIC(ASIOAudioDriver)
-    QList<ASIODriverSpec> asioDriverSpecs;
+    QList<ASIODeviceSpec> asioDriverSpecs;
     void createDriverSpec(HKEY hkey, char *keyName);
 };
+
+#endif // USE_FEATURE_ASIO
 
 #endif // CHORUSKIT_ASIOAUDIODRIVER_P_H

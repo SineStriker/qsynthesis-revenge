@@ -7,11 +7,16 @@
 #include "ASIOAudioDriver.h"
 #include "ASIOAudioDriver_p.h"
 
+#include "ASIOAudioDevice.h"
+
 #include <QFileInfo>
+#include <QDebug>
 
 ASIOAudioDriver::ASIOAudioDriver(QObject *parent) : ASIOAudioDriver(*new ASIOAudioDriverPrivate, parent) {
+    setName("ASIO");
 }
 ASIOAudioDriver::~ASIOAudioDriver() {
+    ASIOAudioDriver::finalize();
 }
 ASIOAudioDriver::ASIOAudioDriver(ASIOAudioDriverPrivate &d, QObject *parent): AudioDriver(d, parent) {
 }
@@ -125,8 +130,17 @@ QStringList ASIOAudioDriver::devices() const {
 QString ASIOAudioDriver::defaultDevice() const {
     return AudioDriver::defaultDevice();
 }
+
 AudioDevice *ASIOAudioDriver::createDevice(const QString &name) {
-    return nullptr; // TODO
+    Q_D(ASIOAudioDriver);
+    for(const auto &spec: d->asioDriverSpecs) {
+        if(spec.driverName != name) continue;
+        void *iasio;
+        if(::CoCreateInstance(spec.clsid, NULL, CLSCTX_INPROC_SERVER, spec.clsid, &iasio) != S_OK)
+            return nullptr;
+        return new ASIOAudioDevice(name, (IASIO *)iasio, this);
+    }
+    return nullptr;
 }
 
 #endif // USE_FEATURE_ASIO
