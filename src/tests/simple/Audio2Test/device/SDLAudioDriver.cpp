@@ -64,7 +64,7 @@ QString SDLAudioDriver::defaultDevice() const {
     }
 }
 AudioDevice *SDLAudioDriver::createDevice(const QString &name) {
-    auto dev = new SDLAudioDevice(name, this, this);
+    auto dev = new SDLAudioDevice(name, this);
     return dev;
 }
 

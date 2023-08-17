@@ -24,7 +24,7 @@ public:
     void unlock() override;
 
 protected:
-    SDLAudioDevice(const QString &name, AudioDriver *driver, QObject *parent = nullptr);
+    SDLAudioDevice(const QString &name, SDLAudioDriver *driver);
     SDLAudioDevice(SDLAudioDevicePrivate &d, QObject *parent);
 
 };

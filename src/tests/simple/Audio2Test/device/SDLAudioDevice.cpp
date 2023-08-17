@@ -18,7 +18,7 @@ static const QList<double> COMMON_SAMPLE_RATES = {8000, 11025, 12000, 16000, 220
 
 static const QList<qint64> COMMON_SDL_BUFFER_SIZES = {512, 1024, 2048, 4096, 8192};
 
-SDLAudioDevice::SDLAudioDevice(const QString &name, AudioDriver *driver, QObject *parent) : SDLAudioDevice(*new SDLAudioDevicePrivate, parent) {
+SDLAudioDevice::SDLAudioDevice(const QString &name, SDLAudioDriver *driver) : SDLAudioDevice(*new SDLAudioDevicePrivate, driver) {
     Q_D(SDLAudioDevice);
     setName(name);
     setDriver(driver);
@@ -43,6 +43,7 @@ SDLAudioDevice::SDLAudioDevice(const QString &name, AudioDriver *driver, QObject
     if(preferredSpec.freq == 0) preferredSpec.freq = 48000;
     setPreferredSampleRate(preferredSpec.freq);
     setAvailableSampleRates(COMMON_SAMPLE_RATES);
+
 }
 SDLAudioDevice::SDLAudioDevice(SDLAudioDevicePrivate &d, QObject *parent): AudioDevice(d, parent) {
 }
