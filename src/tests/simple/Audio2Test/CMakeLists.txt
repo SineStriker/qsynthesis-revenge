@@ -5,13 +5,18 @@ set(CMAKE_CXX_STANDARD 20)
 find_package(SndFile QUIET)
 find_package(SampleRate QUIET)
 
-if(NOT SndFile_FOUND)
-    message(STATUS "SndFile not found, skip build Audio2Test")
-endif()
-
 ck_add_files(_src ALLDIRS PATTERNS *.h *.cpp)
 
 ck_add_test(${PROJECT_NAME} AUTOGEN)
+
+if(WIN32)
+    if(NOT ASIOSDK_DIR)
+        message(STATUS "ASIOSDK_DIR not specified. ASIO Feature will be disabled.")
+    else()
+        target_compile_definitions(${PROJECT_NAME} PRIVATE USE_FEATURE_ASIO)
+        target_include_directories(${PROJECT_NAME} PRIVATE ${ASIOSDK_DIR}/common)
+    endif()
+endif()
 
 ck_target_components(${PROJECT_NAME}
     INCLUDE_CURRENT_PRIVATE
