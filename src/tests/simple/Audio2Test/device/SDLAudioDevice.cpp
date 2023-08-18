@@ -110,3 +110,13 @@ void SDLAudioDevicePrivate::sdlCallback(quint8 *rawBuf, int length) {
     InterleavedAudioDataWrapper buf(reinterpret_cast<float *>(rawBuf), spec.channels, length / spec.channels / 4);
     audioDeviceCallback->workCallback(&buf);
 }
+
+bool SDLAudioDevice::openControlPanel() {
+#ifdef Q_OS_WINDOWS
+    return std::system("mmsys.cpl") == 0;
+#elif defined(Q_OS_MACOS)
+    return std::system("open 'x-apple.systempreferences:com.apple.preference.sound'") == 0;
+#else
+    return false;
+#endif
+}

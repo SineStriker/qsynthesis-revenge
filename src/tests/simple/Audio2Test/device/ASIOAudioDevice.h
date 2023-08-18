@@ -26,6 +26,7 @@ public:
     void close() override;
     void lock() override;
     void unlock() override;
+    bool openControlPanel() override;
 
 protected:
     friend class ASIOAudioDriver;

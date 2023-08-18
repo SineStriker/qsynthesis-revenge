@@ -271,4 +271,9 @@ ASIOTime *ASIOAudioDevicePrivate::bufferSwitchTimeInfo(ASIOTime *timeInfo, long 
     return nullptr;
 }
 
+bool ASIOAudioDevice::openControlPanel() {
+    Q_D(ASIOAudioDevice);
+    return d->iasio->controlPanel() == ASE_OK;
+}
+
 #endif // USE_FEATURE_ASIO

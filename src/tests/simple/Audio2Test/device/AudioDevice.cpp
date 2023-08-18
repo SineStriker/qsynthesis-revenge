@@ -95,3 +95,7 @@ void AudioDevice::setIsInitialized(bool isInitialized) {
     Q_D(AudioDevice);
     d->isInitialized = isInitialized;
 }
+
+bool AudioDevice::openControlPanel() {
+    return false;
+}

@@ -22,6 +22,7 @@ public:
     void close() override;
     void lock() override;
     void unlock() override;
+    bool openControlPanel() override;
 
 protected:
     SDLAudioDevice(const QString &name, SDLAudioDriver *driver);

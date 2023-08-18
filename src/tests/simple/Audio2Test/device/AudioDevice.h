@@ -43,6 +43,8 @@ public:
     virtual void lock();
     virtual void unlock();
 
+    virtual bool openControlPanel();
+
 signals:
 
 

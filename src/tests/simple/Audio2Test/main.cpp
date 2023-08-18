@@ -105,8 +105,11 @@ int main(int argc, char **argv){
 
     auto exportButton = new QPushButton("Export Audio");
 
+    auto cplButton = new QPushButton("Open Control Panel");
+
     layout->addRow("Driver", driverComboBox);
     layout->addRow("Device", deviceComboBox);
+    layout->addRow(cplButton);
     layout->addRow(deviceSpecLabel);
     layout->addRow("Buffer Size", bufferSizeComboBox);
     layout->addRow("Sample Rate", sampleRateComboBox);
@@ -261,6 +264,11 @@ int main(int argc, char **argv){
             restartDevice();
         });
         if(deviceComboBox->count()) emit deviceComboBox->currentIndexChanged(deviceComboBox->currentIndex());
+    });
+
+    QObject::connect(cplButton, &QPushButton::clicked, [&](){
+        if(device)
+            device->openControlPanel();
     });
 
     if(driverComboBox->count()) emit driverComboBox->currentIndexChanged(driverComboBox->currentIndex());
