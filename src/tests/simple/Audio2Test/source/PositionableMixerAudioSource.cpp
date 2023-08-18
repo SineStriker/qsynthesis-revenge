@@ -76,6 +76,8 @@ void PositionableMixerAudioSource::close() {
 }
 qint64 PositionableMixerAudioSource::length() const {
     auto sourceList = sources();
+    if(sourceList.length() == 0)
+        return 0;
     return (*std::min_element(sourceList.begin(), sourceList.end(), [](PositionableAudioSource *src1, PositionableAudioSource *src2){
         return src1->length() < src2->length();
     }))->length();

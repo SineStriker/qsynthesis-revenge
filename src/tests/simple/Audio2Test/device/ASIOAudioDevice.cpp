@@ -27,7 +27,8 @@ ASIOAudioDevice::ASIOAudioDevice(const QString &name, IASIO *iasio, ASIOAudioDri
     setName(name);
     setDriver(driver);
     d->iasio = iasio;
-    if(d->iasio->init(nullptr) != ASE_OK) {
+    if(!d->iasio->init(nullptr)) {
+        qWarning() << "ASIOAudioDevice: Initialization failed" << name;
         d->iasio->getErrorMessage(d->errorMessageBuffer);
         setErrorString(d->errorMessageBuffer);
         return;
@@ -92,9 +93,9 @@ bool ASIOAudioDevice::open(qint64 bufferSize, double sampleRate) {
             ASIOFalse,
         });
     }
-    if(d->iasio->createBuffers(d->bufferInfoList.data(), activeChannelCount(), bufferSize, &d->callbacks) != ASE_OK)
-        return false;
     if(d->iasio->getChannelInfo(d->channelInfoList.data()) != ASE_OK)
+        return false;
+    if(d->iasio->createBuffers(d->bufferInfoList.data(), activeChannelCount(), bufferSize, &d->callbacks) != ASE_OK)
         return false;
     return IAudioStream::open(bufferSize, sampleRate);
 }
@@ -130,10 +131,12 @@ void ASIOAudioDevice::stop() {
 }
 
 void ASIOAudioDevice::lock() {
-    AudioDevice::lock();
+    Q_D(ASIOAudioDevice);
+    d->mutex.lock();
 }
 void ASIOAudioDevice::unlock() {
-    AudioDevice::unlock();
+    Q_D(ASIOAudioDevice);
+    d->mutex.unlock();
 }
 
 void ASIOAudioDevicePrivate::bufferSwitch(long index, ASIOBool processNow) {
@@ -207,7 +210,11 @@ long ASIOAudioDevicePrivate::asioMessage(long selector, long value, void *messag
 }
 ASIOTime *ASIOAudioDevicePrivate::bufferSwitchTimeInfo(ASIOTime *timeInfo, long index, ASIOBool processNow) {
     QMutexLocker locker(&m_device->d_func()->mutex);
-    m_audioDeviceCallback->workCallback(&audioBuffer);
+    if(m_audioDeviceCallback) {
+        m_audioDeviceCallback->workCallback(&audioBuffer);
+    } else {
+        audioBuffer.clear();
+    }
     for(int i = 0; i < audioBuffer.channelCount(); i++) {
         switch(m_device->d_func()->channelInfoList[i].type) {
             case ASIOSTInt16LSB:

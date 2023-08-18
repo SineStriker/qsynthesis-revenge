@@ -128,13 +128,9 @@ int main(int argc, char **argv){
     mainWidget->setLayout(layout);
     mainWindow.setCentralWidget(mainWidget);
 
-    AudioDriverManager drvMgr;
+    AudioDriverManager *drvMgr = AudioDriverManager::createBuiltInDriverManager();
 
-    for(auto drv: SDLAudioDriver::getDrivers()) {
-        drvMgr.addAudioDriver(drv);
-    }
-
-    driverComboBox->addItems(drvMgr.drivers());
+    driverComboBox->addItems(drvMgr->drivers());
 
     AudioDriver *driver = nullptr;
     AudioDevice *device = nullptr;
@@ -225,7 +221,7 @@ int main(int argc, char **argv){
         }
         delete driverComboBoxCtx;
         if(driverComboBox->itemText(index).isEmpty()) return;
-        driver = drvMgr.driver(driverComboBox->itemText(index));
+        driver = drvMgr->driver(driverComboBox->itemText(index));
         deviceComboBox->clear();
         if(!driver->initialize()) {
             QMessageBox::critical(&mainWindow, "Driver Error", driver->errorString());
@@ -240,6 +236,7 @@ int main(int argc, char **argv){
         QObject::connect(deviceComboBox, QOverload<int>::of(&QComboBox::currentIndexChanged), driverComboBoxCtx, [&](int index){
             if(device) {
                 device->close();
+                delete device;
             }
             delete deviceComboBoxCtx;
             if(deviceComboBox->itemText(index).isEmpty()) return;

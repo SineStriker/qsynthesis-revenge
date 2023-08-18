@@ -23,7 +23,7 @@ int AudioDevice::channelCount() const {
 }
 int AudioDevice::activeChannelCount() const {
     Q_D(const AudioDevice);
-    return d->activeChannelCount < 0 || d->activeChannelCount > d->channelCount ? d->channelCount : d->activeChannelCount;
+    return (d->activeChannelCount < 0 || d->activeChannelCount > d->channelCount) ? d->channelCount : d->activeChannelCount;
 }
 void AudioDevice::setActiveChannelCount(int num) {
     Q_D(AudioDevice);

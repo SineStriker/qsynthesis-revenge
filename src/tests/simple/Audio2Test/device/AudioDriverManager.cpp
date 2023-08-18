@@ -4,6 +4,11 @@
 
 #include "AudioDriverManager.h"
 #include "AudioDriverManager_p.h"
+#include "SDLAudioDriver.h"
+
+#ifdef USE_FEATURE_ASIO
+#   include "ASIOAudioDriver.h"
+#endif
 
 AudioDriverManager::AudioDriverManager(QObject *parent): AudioDriverManager(*new AudioDriverManagerPrivate, parent) {
 }
@@ -52,4 +57,15 @@ QStringList AudioDriverManager::drivers() const {
 }
 AudioDriverManager::AudioDriverManager(AudioDriverManagerPrivate &d, QObject *parent): QObject(parent), d_ptr(&d) {
     d.q_ptr = this;
+}
+
+AudioDriverManager *AudioDriverManager::createBuiltInDriverManager(QObject *parent) {
+    auto drvMgr = new AudioDriverManager(parent);
+    for(auto drv: SDLAudioDriver::getDrivers()) {
+        drvMgr->addAudioDriver(drv);
+    }
+#ifdef USE_FEATURE_ASIO
+    drvMgr->addAudioDriver(new ASIOAudioDriver);
+#endif
+    return drvMgr;
 }

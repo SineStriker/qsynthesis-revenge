@@ -23,6 +23,9 @@ qint64 AudioBuffer::sampleCount() const {
 void AudioBuffer::resize(int newChannelCount, qint64 newSampleCount) {
     if(newChannelCount != -1) {
         m_buffer.resize(newChannelCount);
+        for(auto &vec: m_buffer) {
+            vec.resize(m_buffer[0].size());
+        }
     }
     if(newSampleCount != -1) {
         for(auto &vec: m_buffer) {

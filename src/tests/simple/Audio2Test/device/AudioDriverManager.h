@@ -21,6 +21,8 @@ public:
     AudioDriver *driver(const QString &name) const;
     QStringList drivers() const;
 
+    static AudioDriverManager *createBuiltInDriverManager(QObject *parent = nullptr);
+
 signals:
     void driverAdded(AudioDriver *driver);
     void driverRemoved(AudioDriver *driver);
