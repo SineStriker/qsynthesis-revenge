@@ -6,8 +6,8 @@
 #define CHORUSKIT_ASIOAUDIODEVICE_H
 
 #ifndef USE_FEATURE_ASIO
-#   error ASIO Feature is not enabled
-#endif
+#   warning ASIO Feature is not enabled
+#else
 
 #include "AudioDevice.h"
 
@@ -33,6 +33,6 @@ protected:
     ASIOAudioDevice(ASIOAudioDevicePrivate &d, QObject *parent);
 };
 
-
+#endif // USE_FEATURE_ASIO
 
 #endif // CHORUSKIT_ASIOAUDIODEVICE_H

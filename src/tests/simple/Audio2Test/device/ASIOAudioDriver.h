@@ -6,8 +6,8 @@
 #define CHORUSKIT_ASIOAUDIODRIVER_H
 
 #ifndef USE_FEATURE_ASIO
-#   error ASIO Feature is not enabled
-#endif
+#   warning ASIO Feature is not enabled
+#else
 
 #include "AudioDriver.h"
 
@@ -29,6 +29,6 @@ protected:
     ASIOAudioDriver(ASIOAudioDriverPrivate &d, QObject *parent);
 };
 
-
+#endif // USE_FEATURE_ASIO
 
 #endif // CHORUSKIT_ASIOAUDIODRIVER_H

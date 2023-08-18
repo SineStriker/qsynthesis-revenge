@@ -8,7 +8,7 @@
 
 #include <QDebug>
 
-#include "ASIOAudioDriver_p.h"
+#include "ASIOAudioDriver.h"
 #include "buffer/AudioBuffer.h"
 #include "utils/AudioSampleConverter.h"
 
@@ -21,9 +21,10 @@ ASIOAudioDevice::ASIOAudioDevice(const QString &name, IASIO *iasio, ASIOAudioDri
     Q_D(ASIOAudioDevice);
     if(m_device) {
         qWarning() << "ASIOAudioDevice: Duplicated instance is not supported.";
-    } else {
-        m_device = this;
+        setErrorString("Duplicated instance is not supported.");
+        return;
     }
+    m_device = this;
     setName(name);
     setDriver(driver);
     d->iasio = iasio;
@@ -66,6 +67,8 @@ ASIOAudioDevice::ASIOAudioDevice(const QString &name, IASIO *iasio, ASIOAudioDri
     setAvailableSampleRates(sampleRateList);
 
     d->postOutput = (d->iasio->outputReady() == ASE_OK);
+
+    d->isInitialized = true;
 }
 ASIOAudioDevice::ASIOAudioDevice(ASIOAudioDevicePrivate &d, QObject *parent): AudioDevice(d, parent) {
 }
@@ -78,6 +81,8 @@ ASIOAudioDevice::~ASIOAudioDevice() {
 }
 
 bool ASIOAudioDevice::open(qint64 bufferSize, double sampleRate) {
+    if(!isInitialized())
+        return false;
     Q_D(ASIOAudioDevice);
     ASIOAudioDevice::stop();
     if(d->iasio->setSampleRate(sampleRate) != ASE_OK) return false;
@@ -88,18 +93,18 @@ bool ASIOAudioDevice::open(qint64 bufferSize, double sampleRate) {
             i,
             {nullptr, nullptr},
         });
-        d->channelInfoList.append({
-            i,
-            ASIOFalse,
-        });
+        ASIOChannelInfo channelInfo = {i, ASIOFalse};
+        if(d->iasio->getChannelInfo(&channelInfo) != ASE_OK)
+            return false;
+        d->channelInfoList.append(channelInfo);
     }
-    if(d->iasio->getChannelInfo(d->channelInfoList.data()) != ASE_OK)
-        return false;
     if(d->iasio->createBuffers(d->bufferInfoList.data(), activeChannelCount(), bufferSize, &d->callbacks) != ASE_OK)
         return false;
     return IAudioStream::open(bufferSize, sampleRate);
 }
 void ASIOAudioDevice::close() {
+    if(!isInitialized())
+        return;
     Q_D(ASIOAudioDevice);
     ASIOAudioDevice::stop();
     d->iasio->disposeBuffers();
@@ -112,6 +117,8 @@ static AudioDeviceCallback *m_audioDeviceCallback = nullptr;
 static AudioBuffer audioBuffer;
 
 bool ASIOAudioDevice::start(AudioDeviceCallback *audioDeviceCallback) {
+    if(!isInitialized())
+        return false;
     Q_D(ASIOAudioDevice);
     QMutexLocker locker(&d->mutex);
     m_audioDeviceCallback = audioDeviceCallback;
@@ -121,6 +128,8 @@ bool ASIOAudioDevice::start(AudioDeviceCallback *audioDeviceCallback) {
     return AudioDevice::start(audioDeviceCallback);
 }
 void ASIOAudioDevice::stop() {
+    if(!isInitialized())
+        return;
     Q_D(ASIOAudioDevice);
     QMutexLocker locker(&d->mutex);
     d->iasio->stop();
