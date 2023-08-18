@@ -10,7 +10,7 @@
 
 #include "ASIOAudioDriver_p.h"
 #include "buffer/AudioBuffer.h"
-#    include "utils/AudioSampleConverter.h"
+#include "utils/AudioSampleConverter.h"
 
 static ASIOAudioDevice *m_device = nullptr;
 
@@ -208,50 +208,54 @@ long ASIOAudioDevicePrivate::asioMessage(long selector, long value, void *messag
     }
     return ret;
 }
+
+static void convertBuffer(void *dest, const float *src, qint64 length, ASIOSampleType type) {
+    switch(type) {
+        case ASIOSTInt16LSB:
+            AudioSampleConverter::convertFloatToInt16(dest, src, length, true);
+            break;
+        case ASIOSTInt16MSB:
+            AudioSampleConverter::convertFloatToInt16(dest, src, length, false);
+            break;
+        case ASIOSTInt24LSB:
+            AudioSampleConverter::convertFloatToInt24(dest, src, length, true);
+            break;
+        case ASIOSTInt24MSB:
+            AudioSampleConverter::convertFloatToInt24(dest, src, length, false);
+            break;
+        case ASIOSTInt32LSB:
+            AudioSampleConverter::convertFloatToInt32(dest, src, length, true);
+            break;
+        case ASIOSTInt32MSB:
+            AudioSampleConverter::convertFloatToInt32(dest, src, length, false);
+            break;
+        case ASIOSTFloat32LSB:
+            AudioSampleConverter::convertFloatToFloat32(dest, src, length, true);
+            break;
+        case ASIOSTFloat32MSB:
+            AudioSampleConverter::convertFloatToFloat32(dest, src, length, false);
+            break;
+        case ASIOSTFloat64LSB:
+            AudioSampleConverter::convertFloatToFloat64(dest, src, length, true);
+            break;
+        case ASIOSTFloat64MSB:
+            AudioSampleConverter::convertFloatToFloat64(dest, src, length, false);
+            break;
+        default:
+            // unsupported sample type
+            Q_ASSERT(false);
+    }
+}
+
 ASIOTime *ASIOAudioDevicePrivate::bufferSwitchTimeInfo(ASIOTime *timeInfo, long index, ASIOBool processNow) {
     QMutexLocker locker(&m_device->d_func()->mutex);
     if(m_audioDeviceCallback) {
         m_audioDeviceCallback->workCallback(&audioBuffer);
-    } else {
-        audioBuffer.clear();
     }
     for(int i = 0; i < audioBuffer.channelCount(); i++) {
-        switch(m_device->d_func()->channelInfoList[i].type) {
-            case ASIOSTInt16LSB:
-                AudioSampleConverter::convertFloatToInt16(m_device->d_func()->bufferInfoList[i].buffers[index], audioBuffer.constData(i), audioBuffer.sampleCount(), true);
-                break;
-            case ASIOSTInt16MSB:
-                AudioSampleConverter::convertFloatToInt16(m_device->d_func()->bufferInfoList[i].buffers[index], audioBuffer.constData(i), audioBuffer.sampleCount(), false);
-                break;
-            case ASIOSTInt24LSB:
-                AudioSampleConverter::convertFloatToInt24(m_device->d_func()->bufferInfoList[i].buffers[index], audioBuffer.constData(i), audioBuffer.sampleCount(), true);
-                break;
-            case ASIOSTInt24MSB:
-                AudioSampleConverter::convertFloatToInt24(m_device->d_func()->bufferInfoList[i].buffers[index], audioBuffer.constData(i), audioBuffer.sampleCount(), false);
-                break;
-            case ASIOSTInt32LSB:
-                AudioSampleConverter::convertFloatToInt32(m_device->d_func()->bufferInfoList[i].buffers[index], audioBuffer.constData(i), audioBuffer.sampleCount(), true);
-                break;
-            case ASIOSTInt32MSB:
-                AudioSampleConverter::convertFloatToInt32(m_device->d_func()->bufferInfoList[i].buffers[index], audioBuffer.constData(i), audioBuffer.sampleCount(), false);
-                break;
-            case ASIOSTFloat32LSB:
-                AudioSampleConverter::convertFloatToFloat32(m_device->d_func()->bufferInfoList[i].buffers[index], audioBuffer.constData(i), audioBuffer.sampleCount(), true);
-                break;
-            case ASIOSTFloat32MSB:
-                AudioSampleConverter::convertFloatToFloat32(m_device->d_func()->bufferInfoList[i].buffers[index], audioBuffer.constData(i), audioBuffer.sampleCount(), false);
-                break;
-            case ASIOSTFloat64LSB:
-                AudioSampleConverter::convertFloatToFloat64(m_device->d_func()->bufferInfoList[i].buffers[index], audioBuffer.constData(i), audioBuffer.sampleCount(), true);
-                break;
-            case ASIOSTFloat64MSB:
-                AudioSampleConverter::convertFloatToFloat64(m_device->d_func()->bufferInfoList[i].buffers[index], audioBuffer.constData(i), audioBuffer.sampleCount(), false);
-                break;
-            default:
-                // unsupported sample type
-                Q_ASSERT(false);
-        }
+        convertBuffer(m_device->d_func()->bufferInfoList[i].buffers[index], audioBuffer.constData(i), audioBuffer.sampleCount(), m_device->d_func()->channelInfoList[i].type);
     }
+    audioBuffer.clear();
     if(m_device->d_func()->postOutput) {
         m_device->d_func()->iasio->outputReady();
     }
