@@ -19,6 +19,7 @@ public:
     QList<double> availableSampleRates;
     double preferredSampleRate = 0;
     bool isStarted = false;
+    bool isInitialized = false;
 };
 
 #endif // CHORUSKIT_AUDIODEVICE_P_H

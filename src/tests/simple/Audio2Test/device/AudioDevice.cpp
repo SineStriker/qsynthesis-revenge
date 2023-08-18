@@ -86,3 +86,12 @@ void AudioDevice::lock() {
 }
 void AudioDevice::unlock() {
 }
+
+bool AudioDevice::isInitialized() const {
+    Q_D(const AudioDevice);
+    return d->isInitialized;
+}
+void AudioDevice::setIsInitialized(bool isInitialized) {
+    Q_D(AudioDevice);
+    d->isInitialized = isInitialized;
+}

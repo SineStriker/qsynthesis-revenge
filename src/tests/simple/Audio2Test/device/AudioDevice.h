@@ -20,6 +20,8 @@ class AudioDriver;
     Q_DECLARE_PRIVATE(AudioDevice)
     friend class AudioDriver;
 public:
+    bool isInitialized() const;
+
     virtual ~AudioDevice();
 
     AudioDriver *driver() const;
@@ -48,6 +50,8 @@ protected:
     explicit AudioDevice(QObject *parent = nullptr);
     AudioDevice(AudioDevicePrivate &d, QObject *parent);
     QScopedPointer<AudioDevicePrivate> d_ptr;
+
+    void setIsInitialized(bool isInitialized);
 
     void setDriver(AudioDriver *driver);
 

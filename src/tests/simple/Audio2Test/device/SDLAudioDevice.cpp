@@ -44,6 +44,7 @@ SDLAudioDevice::SDLAudioDevice(const QString &name, SDLAudioDriver *driver) : SD
     setPreferredSampleRate(preferredSpec.freq);
     setAvailableSampleRates(COMMON_SAMPLE_RATES);
 
+    setIsInitialized(true);
 }
 SDLAudioDevice::SDLAudioDevice(SDLAudioDevicePrivate &d, QObject *parent): AudioDevice(d, parent) {
 }
