@@ -159,8 +159,7 @@ long ASIOAudioDevicePrivate::asioMessage(long selector, long value, void *messag
     // TODO work out on this
     // currently the parameters "value", "message" and "opt" are not used.
     long ret = 0;
-    switch(selector)
-    {
+    switch(selector) {
         case kAsioSelectorSupported:
             if(value == kAsioResetRequest
                 || value == kAsioEngineVersion
@@ -177,7 +176,7 @@ long ASIOAudioDevicePrivate::asioMessage(long selector, long value, void *messag
             // You cannot reset the driver right now, as this code is called from the driver.
             // Reset the driver is done by completely destruct is. I.e. ASIOStop(), ASIODisposeBuffers(), Destruction
             // Afterwards you initialize the driver again.
-
+            qDebug() << "kAsioResetRequest";
             ret = 1L;
             break;
         case kAsioResyncRequest:
@@ -187,6 +186,7 @@ long ASIOAudioDevicePrivate::asioMessage(long selector, long value, void *messag
             // Windows Multimedia system, which could loose data because the Mutex was hold too long
             // by another thread.
             // However a driver can issue it in other situations, too.
+            qDebug() << "kAsioResyncRequest";
             ret = 1L;
             break;
         case kAsioLatenciesChanged:

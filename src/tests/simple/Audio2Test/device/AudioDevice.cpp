@@ -99,3 +99,7 @@ void AudioDevice::setIsInitialized(bool isInitialized) {
 bool AudioDevice::openControlPanel() {
     return false;
 }
+void AudioDevice::close() {
+    IAudioStream::close();
+    emit closed();
+}

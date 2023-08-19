@@ -45,8 +45,10 @@ public:
 
     virtual bool openControlPanel();
 
-signals:
+    void close() override;
 
+signals:
+    void closed();
 
 protected:
     explicit AudioDevice(QObject *parent = nullptr);

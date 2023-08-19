@@ -12,6 +12,12 @@
 #include <QDebug>
 
 SDLAudioDriver::SDLAudioDriver(QObject *parent): SDLAudioDriver(*new SDLAudioDriverPrivate, parent) {
+    Q_D(SDLAudioDriver);
+    d->eventPoller.moveToThread(&d->eventPollerThread);
+    connect(&d->eventPollerThread, &QThread::started, &d->eventPoller, &SDLEventPoller::start);
+    connect(&d->eventPoller, &SDLEventPoller::event, [=](const QByteArray &sdlEventData){
+        d->handleSDLEvent(sdlEventData);
+    });
 }
 SDLAudioDriver::SDLAudioDriver(SDLAudioDriverPrivate &d, QObject *parent): AudioDriver(d, parent) {
 }
@@ -23,11 +29,6 @@ SDLAudioDriver::~SDLAudioDriver() {
 bool SDLAudioDriver::initialize() {
     Q_D(SDLAudioDriver);
     if(SDL_Init(SDL_INIT_AUDIO) == 0 && SDL_AudioInit(name().toLocal8Bit()) == 0) {
-        d->eventPoller.moveToThread(&d->eventPollerThread);
-        connect(&d->eventPollerThread, &QThread::started, &d->eventPoller, &SDLEventPoller::start);
-        connect(&d->eventPoller, &SDLEventPoller::event, [=](const QByteArray &sdlEventData){
-            d->handleSDLEvent(sdlEventData);
-        });
         d->eventPollerThread.start();
         return AudioDriver::initialize();
     } else {
