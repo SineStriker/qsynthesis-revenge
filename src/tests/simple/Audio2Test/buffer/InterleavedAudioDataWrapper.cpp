@@ -42,3 +42,20 @@ void InterleavedAudioDataWrapper::resetData(float *data, int channelCount, qint6
 InterleavedAudioDataWrapper::InterleavedAudioDataWrapper(InterleavedAudioDataWrapperPrivate &d): d_ptr(&d) {
     d.q_ptr = this;
 }
+
+float *InterleavedAudioDataWrapper::writePointerTo(int channel, qint64 startPos) {
+    Q_D(InterleavedAudioDataWrapper);
+    if(d->channelCount == 1 && channel == 0)
+        return d->data + startPos;
+    return nullptr;
+}
+bool InterleavedAudioDataWrapper::isContinuous() const {
+    Q_D(const InterleavedAudioDataWrapper);
+    return d->channelCount == 1;
+}
+const float *InterleavedAudioDataWrapper::readPointerTo(int channel, qint64 startPos) const {
+    Q_D(const InterleavedAudioDataWrapper);
+    if(d->channelCount == 1 && channel == 0)
+        return d->data + startPos;
+    return nullptr;
+}

@@ -35,7 +35,7 @@ float *AudioDataWrapper::data(int channel) const {
     return d->data[channel] + d->startPos;
 }
 
-void AudioDataWrapper::resetData(float *const *data, int channelCount, qint64 sampleCount, qint64 startPos) {
+void AudioDataWrapper::reset(float *const *data, int channelCount, qint64 sampleCount, qint64 startPos) {
     Q_D(AudioDataWrapper);
     d->data = data;
     d->channelCount = channelCount;

@@ -28,7 +28,6 @@
 
 #include "LevelMeter.h"
 #include "SeekBar.h"
-#include "buffer/AudioClipSeries.h"
 #include "format/AudioFormatIO.h"
 #include "format/TransportAudioSourceWriter.h"
 #include "sndfile.h"

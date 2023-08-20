@@ -32,9 +32,9 @@ float IAudioSampleProvider::magnitude(int channel, qint64 startPos, qint64 lengt
         return m;
     } else {
         auto p = readPointerTo(channel, startPos);
-        return *std::max_element(p, p + length, [](float lhs, float rhs){
+        return std::abs(*std::max_element(p, p + length, [](float lhs, float rhs){
             return std::abs(lhs) < std::abs(rhs);
-        });
+        }));
     }
 }
 float IAudioSampleProvider::magnitude(int channel) const {
