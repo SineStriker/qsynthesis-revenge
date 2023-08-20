@@ -16,9 +16,10 @@ public:
 
     /**
      * Gets the sample at a specified channel and position.
+     *
      * Note that if the sample data is stored continuously, performance will be better when using the pointer to read directly.
-     * @see isContinuous()
-     * @see readPointerTo()
+     *
+     * @see isContinuous(), readPointerTo()
      */
     virtual float constSampleAt(int channel, qint64 pos) const = 0;
 
@@ -34,13 +35,16 @@ public:
 
     /**
      * Gets whether the sample data is stored continuously or not. If so, the pointer can be used to read data directly.
+     *
      * @see readPointerTo()
      */
     virtual bool isContinuous() const;
 
     /**
      * Gets the read pointer to a specified position of a specified channel.
-     * Note that his function should return <code>nullptr</code> if the sample data is not stored continuously.
+     *
+     * Note that his function should return @c nullptr if the sample data is not stored continuously.
+     *
      * @see isContinuous
      */
     virtual const float *readPointerTo(int channel, qint64 startPos) const;

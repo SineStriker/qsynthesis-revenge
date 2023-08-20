@@ -18,16 +18,20 @@ public:
 
     /**
      * Gets the reference to the sample at a specified channel and position.
+     *
      * Note that if the sample data is stored continuously, performance will be better when using the pointer to write directly.
+     *
      * @return a non-const reference for writing.
-     * @see isContinuous()
-     * @see readPointerTo()
+     *
+     * @see isContinuous(), writePointerTo()
      */
     virtual float &sampleAt(int channel, qint64 pos) = 0;
 
     /**
      * Gets the write pointer to a specified position of a specified channel.
+     *
      * Note that his function should return \c nullptr if the sample data is not stored continuously.
+     *
      * @see isContinuous()
      **/
     virtual float *writePointerTo(int channel, qint64 startPos);
@@ -35,6 +39,7 @@ public:
 
     /**
      * Copies samples from another object to this one.
+     *
      * @param destChannel   the channel of this object to copy samples to
      * @param destStartPos  the start position within destination channel
      * @param length        the number of samples to copy
@@ -46,13 +51,17 @@ public:
 
     /**
      * Copies samples from another object to this one.
+     *
      * This overloaded function will copy all channels and samples from another object to this one.
-     * Note that if the number of channels or the number of samples in the source object is less than that in this object or vice versa, only the overlapping part will be processed.
+     *
+     * Note that if the number of channels or the number of samples in the source object is less than that in this
+     * object or vice versa, only the overlapping part will be processed.
      */
     void setSampleRange(const IAudioSampleProvider &src);
 
     /**
      * Adds samples from another object to this one.
+     *
      * @param destChannel   the channel of this object to copy samples to
      * @param destStartPos  the start position within destination channel
      * @param length        the number of samples to copy
@@ -65,13 +74,17 @@ public:
 
     /**
      * Adds samples from another object to this one.
+     *
      * This overloaded function will add all channels and samples from another object to this one.
-     * Note that if the number of channels or the number of samples in the source object is less than that in this object or vice versa, only the overlapping part will be processed.
+     *
+     * Note that if the number of channels or the number of samples in the source object is less than that in this
+     * object or vice versa, only the overlapping part will be processed.
      */
     void addSampleRange(const IAudioSampleProvider &src, float gain = 1);
 
     /**
      * Applies gain to samples within a range of a specified channel.
+     *
      * @param destChannel   the channel to apply gain to
      * @param destStartPos  the start position within destination channel
      * @param length        the number of samples to apply gain to
@@ -91,6 +104,7 @@ public:
 
     /**
      * Sets samples within a range of a specified channel to zero.
+     *
      * @param destChannel   the channel to clear
      * @param destStartPos  the start position within destination channel
      * @param length        the number of samples to clear

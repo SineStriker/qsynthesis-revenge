@@ -13,7 +13,9 @@ class AudioDataWrapperPrivate;
 
 /**
  * @brief A Wrapper that points to a set of pre-allocated arrays of sample data
+ *
  * This class is useful when processing audio data stored planarly in the memory.
+ *
  * @see InterLeavedAudioDataWrapper
  */
 class AudioDataWrapper: public IAudioSampleContainer {
@@ -22,6 +24,7 @@ public:
 
     /**
      * Creates a wrapper that points to a set of pre-allocated arrays of sample data.
+     *
      * @param data          a two-dimensional float array contains sample data
      * @param channelCount  the number of channels, indicating the number the first dimension that will be used
      * @param sampleCount   the number of samples, indicating the number of the second dimension that will be used
@@ -40,6 +43,7 @@ public:
 
     /**
      * This is an overriden function.
+     *
      * @return @c true always
      */
     bool isContinuous() const override;
@@ -51,6 +55,7 @@ public:
 
     /**
      * Resets the data. This function behaviors like the constructor, but it does that dynamically.
+     *
      * @see AudioDataWrapper()
      */
     void reset(float *const *data, int channelCount, qint64 sampleCount, qint64 startPos = 0);
