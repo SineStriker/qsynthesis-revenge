@@ -21,11 +21,32 @@ public:
     void setValue(double value);
     void setOrientation(Qt:: Orientation orientation);
 //    void setSampleRate(int sampleRate);
+    int bufferSize() const;
     void setBufferSize(int size);
     void initBuffer(int bufferSize);
+    bool freeze() const;
+    void setFreeze(bool on);
 
 protected:
     void paintEvent(QPaintEvent *event) override;
+    void resizeEvent(QResizeEvent *event) override;
+
+    void calculateParams();
+    QRect m_rect;
+    int m_rectLeft;
+    int m_rectTop;
+    int m_rectWidth;
+    int m_rectHeight;
+    int m_levelLength;
+    int m_safeLength;
+    int m_warnLength;
+    int m_criticalLength;
+    int m_safeStart;
+    int m_warnStart;
+    int m_criticalStart;
+    QRect m_safeChunk;
+    QRect m_warnChunk;
+    QRect m_criticalChunk;
 
     Qt::Orientation m_orientation;
     QColor m_colorBackground = QColor(217, 217, 217);
@@ -36,10 +57,11 @@ protected:
     const double m_warnThreshold = 0.891251; //-1 dB
     double averageLevel = 0;
 //    int sampleRate = 44100;
-    double *bufferPtr;
-    int bufferPos = 0;
+    double *m_bufferPtr;
+    int m_bufferPos = 0;
     int m_bufferSize = 8;
-    QTimer *timer;
+    QTimer *m_timer;
+    bool m_freeze = false;
 
 private:
     LevelMeterChunkPrivate *d;

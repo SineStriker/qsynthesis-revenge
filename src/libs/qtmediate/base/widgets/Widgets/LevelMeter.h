@@ -34,7 +34,11 @@ public:
     void setValue(double valueL, double valueR);
     void setClippedIndicator(bool on);
     void setClippedIndicator(bool onL, bool onR);
+    int bufferSize() const;
+    void setBufferSize(int size);
     void initBuffer(int bufferSize);
+    bool freeze() const;
+    void setFreeze(bool on);
 
 protected:
     void paintEvent(QPaintEvent *event) override;

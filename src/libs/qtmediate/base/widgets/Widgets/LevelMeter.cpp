@@ -269,3 +269,23 @@ void LevelMeter::setClippedIndicator(bool onL, bool onR) {
     m_button1->setChecked(onL);
     m_button2->setChecked(onR);
 }
+
+int LevelMeter::bufferSize() const {
+    return m_chunk1->bufferSize();
+}
+
+void LevelMeter::setBufferSize(int size) {
+    m_chunk1->setBufferSize(size);
+    if (m_chunk2 != nullptr)
+        m_chunk2->setBufferSize(size);
+}
+
+bool LevelMeter::freeze() const {
+    return m_chunk1->freeze();
+}
+
+void LevelMeter::setFreeze(bool on) {
+    m_chunk1->setFreeze(on);
+    if (m_chunk1 != nullptr)
+        m_chunk2->setFreeze(on);
+}
