@@ -38,9 +38,13 @@
 #include <sndfile.h>
 
 int main(int argc, char **argv){
+    qputenv("QT_ENABLE_HIGHDPI_SCALING", "1");
+    QGuiApplication::setHighDpiScaleFactorRoundingPolicy(Qt::HighDpiScaleFactorRoundingPolicy::PassThrough);
 
     QApplication a(argc, argv);
-    a.setFont(QFont("Microsoft Yahei UI", 9));
+    auto font = QFont("Microsoft Yahei UI", 9);
+    font.setHintingPreference(QFont::PreferNoHinting);
+    a.setFont(font);
 
     QMainWindow mainWindow;
 
