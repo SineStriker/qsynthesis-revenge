@@ -38,22 +38,25 @@ QIODevice *AudioFormatIO::stream() const {
     return d->stream;
 }
 
-int64_t AudioFormatIOPrivate::sfVioGetFilelen() {
+int64_t AudioFormatIOPrivate::sfVioGetFilelen() const {
     return stream->size();
 }
-int64_t AudioFormatIOPrivate::sfVioSeek(int64_t offset, int whence) {
+int64_t AudioFormatIOPrivate::sfVioSeek(int64_t offset, int whence) const {
     if(whence == SF_SEEK_CUR) offset += stream->pos();
     else if(whence == SF_SEEK_END) offset += stream->size();
-    if(offset != stream->pos()) stream->seek(offset);
+    if(offset != stream->pos()) {
+        if(!stream->seek(offset))
+            return -1;
+    }
     return stream->pos();
 }
-int64_t AudioFormatIOPrivate::sfVioRead(void *ptr, int64_t count) {
+int64_t AudioFormatIOPrivate::sfVioRead(void *ptr, int64_t count) const {
     return stream->read((char *)ptr, count);
 }
-int64_t AudioFormatIOPrivate::sfVioWrite(const void *ptr, int64_t count) {
+int64_t AudioFormatIOPrivate::sfVioWrite(const void *ptr, int64_t count) const {
     return stream->write((char *)ptr, count);
 }
-int64_t AudioFormatIOPrivate::sfVioTell() {
+int64_t AudioFormatIOPrivate::sfVioTell() const {
     return stream->pos();
 }
 static SF_VIRTUAL_IO sfVio = {
@@ -74,10 +77,10 @@ static SF_VIRTUAL_IO sfVio = {
     }
 };
 
-bool AudioFormatIO::open(AudioFormatIO::OpenMode openMode) {
+bool AudioFormatIO::open(QIODevice::OpenMode openMode) {
     return open(openMode, 0, 0, 0);
 }
-bool AudioFormatIO::open(AudioFormatIO::OpenMode openMode, int format, int channels, double sampleRate) {
+bool AudioFormatIO::open(QIODevice::OpenMode openMode, int format, int channels, double sampleRate) {
     Q_D(AudioFormatIO);
     close();
     int sfOpenMode = 0;
@@ -107,7 +110,7 @@ bool AudioFormatIO::open(AudioFormatIO::OpenMode openMode, int format, int chann
     d->openMode = openMode;
     return true;
 }
-AudioFormatIO::OpenMode AudioFormatIO::openMode() const {
+QIODevice::OpenMode AudioFormatIO::openMode() const {
     Q_D(const AudioFormatIO);
     return d->openMode;
 }
@@ -162,7 +165,7 @@ qint64 AudioFormatIO::read(float *ptr, qint64 length) {
     TEST_IS_OPEN(0)
     return d->sf->readf(ptr, length);
 }
-qint64 AudioFormatIO::write(float *ptr, qint64 length) {
+qint64 AudioFormatIO::write(const float *ptr, qint64 length) {
     Q_D(AudioFormatIO);
     TEST_IS_OPEN(0)
     return d->sf->writef(ptr, length);
@@ -185,7 +188,7 @@ QList<AudioFormatIO::FormatInfo> AudioFormatIO::availableFormats() {
     sf_command (nullptr, SFC_GET_FORMAT_SUBTYPE_COUNT, &subTypeCnt, sizeof (int)) ;
     sfinfo.channels = 1 ;
     for (int i = 0 ; i < majorTypeCnt ; i++) {
-        SF_FORMAT_INFO	info = {};
+        SF_FORMAT_INFO info = {};
         FormatInfo formatInfo = {};
         info.format = i ;
         sf_command (nullptr, SFC_GET_FORMAT_MAJOR, &info, sizeof (info)) ;

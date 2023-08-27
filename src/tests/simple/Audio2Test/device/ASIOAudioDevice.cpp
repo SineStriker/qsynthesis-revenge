@@ -11,6 +11,7 @@
 #include "ASIOAudioDriver.h"
 #include "buffer/AudioBuffer.h"
 #include "utils/AudioSampleConverter.h"
+#include "source/AudioSource.h"
 
 static ASIOAudioDevice *m_device = nullptr;
 

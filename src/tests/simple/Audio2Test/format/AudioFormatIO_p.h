@@ -13,13 +13,13 @@ public:
     AudioFormatIO *q_ptr;
     QIODevice *stream = nullptr;
     QScopedPointer<SndfileHandle> sf;
-    AudioFormatIO::OpenMode openMode = QIODevice::NotOpen;
+    QIODevice::OpenMode openMode = QIODevice::NotOpen;
 
-    int64_t sfVioGetFilelen();
-    int64_t sfVioSeek(int64_t offset, int whence);
-    int64_t sfVioRead(void *ptr, int64_t count);
-    int64_t sfVioWrite(const void *ptr, int64_t count);
-    int64_t sfVioTell();
+    int64_t sfVioGetFilelen() const;
+    int64_t sfVioSeek(int64_t offset, int whence) const;
+    int64_t sfVioRead(void *ptr, int64_t count) const;
+    int64_t sfVioWrite(const void *ptr, int64_t count) const;
+    int64_t sfVioTell() const;
 };
 
 #endif // CHORUSKIT_AUDIOFORMATIO_P_H

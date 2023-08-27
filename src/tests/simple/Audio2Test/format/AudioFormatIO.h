@@ -14,17 +14,40 @@ class QIODevice;
 
 class AudioFormatIOPrivate;
 
+/**
+ * @brief The AudioFormatIO class provides interfaces to access audio files based on libsndfile.
+ * @see @link URL https://libsndfile.github.io/libsndfile/ @endlink
+ */
 class AudioFormatIO: public IErrorStringProvider {
     Q_DECLARE_PRIVATE(AudioFormatIO)
 public:
+
+    /**
+     * Constructor.
+     *
+     * Note that the device must be closed, and it will cause undefined behavior to set one device to multiple AudioFormatIO.
+     *
+     * @param stream the QIODevice to access. This object will not take the ownership of the QIODevice object.
+     * @see setStream()
+     */
     explicit AudioFormatIO(QIODevice *stream = nullptr);
+
     ~AudioFormatIO();
 
+    /**
+     * Dynamically sets the device.
+     *
+     * Note that this function will neither change the open mode of the original QIODevice object, nor set the open mode
+     * of the original device to the new device.
+     *
+     * @see AudioFormatIO()
+     */
     void setStream(QIODevice *stream);
-    QIODevice *stream() const;
 
-    typedef QIODevice::OpenMode OpenMode;
-    typedef QIODevice::OpenModeFlag OpenModeFlag;
+    /**
+     * Gets the device that this object is currently using.
+     */
+    QIODevice *stream() const;
 
     enum MajorFormat {
         WAV = 0x010000,
@@ -107,9 +130,23 @@ public:
         ByteOrderMask = 0x30000000
     };
 
-    bool open(OpenMode openMode);
-    bool open(OpenMode openMode, int format, int channels, double sampleRate);
-    OpenMode openMode() const;
+    /**
+     * Opens the device and initialize libsndfile with default format, number of channels and sample rate, usually used for reading.
+     * @return true if successful
+     */
+    bool open(QIODevice::OpenMode openMode);
+
+    /**
+     * Opens the device and initialize libsndfile with specified format, number of channels and sample rate.
+     * @return true if successful
+     */
+    bool open(QIODevice::OpenMode openMode, int format, int channels, double sampleRate);
+
+    /**
+     * Gets the open mode of the device.
+     * @return
+     */
+    QIODevice::OpenMode openMode() const;
     void close();
 
     int channels() const;
@@ -118,6 +155,10 @@ public:
     MajorFormat majorFormat() const;
     Subtype subType() const;
     ByteOrder byteOrder() const;
+
+    /**
+     * Gets the length of the audio measured in samples.
+     */
     qint64 length() const;
 
     enum MetaData {
@@ -136,9 +177,32 @@ public:
     void setMetaData(MetaData metaDataType, const QString &str);
     QString getMetaData(MetaData metaDataType) const;
 
+    /**
+     * Reads audio data and moves the file pointer.
+     * @param ptr pointer to a pre-allocated float array to store audio data in
+     * @param length size of audio data to read measured in samples
+     * @return the size of audio data actually read.
+     */
     qint64 read(float *ptr, qint64 length);
-    qint64 write(float *ptr, qint64 length);
+
+    /**
+     * Writes audio data and moves the file pointer.
+     * @param ptr pointer to a pre-allocated float array that stores audio data
+     * @param length size of audio data to write measured in samples
+     * @return the size of audio data actually written.
+     */
+    qint64 write(const float *ptr, qint64 length);
+
+    /**
+     * Sets the file pointer to a new position.
+     * @param pos position measured in samples
+     * @return the resulting position if successful, -1 if any error occurs
+     */
     qint64 seek(qint64 pos);
+
+    /**
+     * Gets the position of the file pointer measured in samples.
+     */
     qint64 pos();
 
     struct SubtypeInfo {
@@ -153,6 +217,11 @@ public:
         QList<SubtypeInfo> subtypes;
         QList<ByteOrder> byteOrders;
     };
+
+    /**
+     * Lists all formats that could be processed.
+     * @see @link URL https://libsndfile.github.io/libsndfile/formats.html @endlink
+     */
     static QList<FormatInfo> availableFormats();
 
 protected:

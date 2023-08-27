@@ -6,6 +6,7 @@
 #include "AudioSourcePlayback_p.h"
 
 #include "AudioDevice.h"
+#include "source/AudioSource.h"
 
 AudioSourcePlayback::AudioSourcePlayback(AudioSource *src, bool takeOwnership): AudioSourcePlayback(*new AudioSourcePlaybackPrivate) {
     Q_D(AudioSourcePlayback);
@@ -26,7 +27,7 @@ AudioSource *AudioSourcePlayback::source() const {
     Q_D(const AudioSourcePlayback);
     return d->src;
 }
-void AudioSourcePlayback::resetSource(AudioSource *src, bool takeOwnership) {
+void AudioSourcePlayback::setSource(AudioSource *src, bool takeOwnership) {
     Q_D(AudioSourcePlayback);
     d->src = src;
     d->takeOwnership = takeOwnership;

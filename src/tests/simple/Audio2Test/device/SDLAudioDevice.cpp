@@ -13,6 +13,7 @@
 #include <QDebug>
 
 #include "SDLAudioDriver.h"
+#include "source/AudioSource.h"
 
 static const QList<double> COMMON_SAMPLE_RATES = {8000, 11025, 12000, 16000, 22050, 24000, 32000, 44100, 48000, 64000, 88200, 96000, 128000, 176400, 192000, 256000, 352800, 384000};
 
