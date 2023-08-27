@@ -1,0 +1,87 @@
+name: CMake
+
+on: [push]
+
+env:
+  # Customize the CMake build type here (Release, Debug, RelWithDebInfo, etc.)
+  BUILD_TYPE: RelWithDebInfo
+
+jobs:
+  build:
+    # The CMake configure and build commands are platform agnostic and should work equally
+    # well on Windows or Mac.  You can convert this to a matrix build if you need
+    # cross-platform coverage.
+    # See: https://docs.github.com/en/actions/configuring-and-managing-workflows/configuring-a-workflow#configuring-a-build-matrix
+    runs-on: windows-2022
+
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Install Qt
+      uses: jurplel/install-qt-action@v3
+      with:
+        version: '5.15.2'
+    
+    - name: Install Ninja
+      uses: seanmiddleditch/gha-setup-ninja@master
+    
+    - name: Generate Qt path JSON file
+      shell: bash
+      continue-on-error: true
+      run:
+        python3 $GITHUB_WORKSPACE/setup-vcpkg.py
+        
+    - name: Initialize MSVC environment
+      uses: ilammy/msvc-dev-cmd@v1
+      with:
+        arch: amd64
+    
+    - name: Configure vcpkg packages
+      shell: bash
+      run: |
+        Qt5_Dir=$(echo "$Qt5_Dir" | sed 's/\\/\//g') && export Qt5_Dir
+        QT5_DIR_FOR_SED=$(echo "${Qt5_Dir}/lib/cmake/Qt5" | sed 's/\//\\\//g') && export QT5_DIR_FOR_SED
+        sed "s/<edit here>/${QT5_DIR_FOR_SED}/g" $GITHUB_WORKSPACE/setup-vcpkg.json | tee $GITHUB_WORKSPACE/setup-vcpkg.json
+        python3 $GITHUB_WORKSPACE/setup-vcpkg.py
+
+    - name: Create Build Environment
+      # Some projects don't allow in-source building, so create a separate build directory
+      # We'll use this as our working directory for all subsequent commands
+      run: cmake -E make_directory ${{runner.workspace}}/build
+
+    - name: Configure CMake
+      # Use a bash shell so we can use the same syntax for environment variable
+      # access regardless of the host operating system
+      shell: bash
+      working-directory: ${{runner.workspace}}/build
+      # Note the current convention is to use the -S and -B options here to specify source 
+      # and build directories, but this is only available with CMake 3.13 and higher.  
+      # The CMake binaries on the Github Actions machines are (as of this writing) 3.12
+      run: |
+        RUNNER_WORKSPACE=$(echo "${{runner.workspace}}" | sed 's/\\/\//g') && export RUNNER_WORKSPACE
+        cmake -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DCMAKE_INSTALL_PREFIX=${RUNNER_WORKSPACE}/deploy -G Ninja $GITHUB_WORKSPACE
+
+    - name: Build
+      working-directory: ${{runner.workspace}}/build
+      shell: bash
+      # Execute the build.  You can specify a specific target with "--target <NAME>"
+      run: cmake --build . --target all
+      
+    - name: Install (Deploy to target directory)
+      working-directory: ${{runner.workspace}}/build
+      shell: bash
+      run: cmake --build . --target install
+    
+    - name: Set Commit ID
+      shell: bash
+      working-directory: ${{runner.workspace}}/build
+      run: |
+        cd $GITHUB_WORKSPACE
+        export VERSION=`git log --format="%H" -n 1 | head -c 7`
+        echo "VERSION="$VERSION >> $GITHUB_ENV
+
+    - name: Upload Artifact
+      uses: actions/upload-artifact@v2
+      with:
+        name: chorus-kit-msvc2022-x64-${{env.VERSION}}
+        path: ${{runner.workspace}}/deploy
